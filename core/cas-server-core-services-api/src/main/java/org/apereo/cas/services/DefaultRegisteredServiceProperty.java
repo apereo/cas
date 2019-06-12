@@ -1,14 +1,20 @@
 package org.apereo.cas.services;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.Lob;
 import javax.persistence.Table;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * The {@link DefaultRegisteredServiceProperty} represents
@@ -21,12 +27,23 @@ import java.util.Set;
 @Embeddable
 @Table(name = "RegexRegisteredServiceProperty")
 @EqualsAndHashCode
+@ToString
+@NoArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class DefaultRegisteredServiceProperty implements RegisteredServiceProperty {
     private static final long serialVersionUID = 1349556364689133211L;
 
     @Lob
     @Column(name = "property_values")
     private HashSet<String> values = new HashSet<>();
+
+    public DefaultRegisteredServiceProperty(final String... propertyValues) {
+        setValues(Arrays.stream(propertyValues).collect(Collectors.toSet()));
+    }
+
+    public DefaultRegisteredServiceProperty(final Collection<String> propertyValues) {
+        setValues(new HashSet<>(propertyValues));
+    }
 
     @Override
     public Set<String> getValues() {

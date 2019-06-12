@@ -2,7 +2,7 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.cosmosdb.CosmosDbDocument;
 import org.apereo.cas.cosmosdb.CosmosDbObjectFactory;
-import org.apereo.cas.services.util.DefaultRegisteredServiceJsonSerializer;
+import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.util.serialization.StringSerializer;
 
 import com.fasterxml.jackson.core.util.MinimalPrettyPrinter;
@@ -17,6 +17,7 @@ import com.microsoft.azure.spring.data.documentdb.DocumentDbFactory;
 import com.microsoft.azure.spring.data.documentdb.core.DocumentDbTemplate;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -38,16 +39,21 @@ public class CosmosDbServiceRegistry extends AbstractServiceRegistry {
     private final StringSerializer<RegisteredService> serializer;
 
     public CosmosDbServiceRegistry(final DocumentDbTemplate db, final DocumentDbFactory dbFactory,
-                                   final String collectionName, final String databaseName) {
+                                   final String collectionName, final String databaseName,
+                                   final ApplicationEventPublisher eventPublisher,
+                                   final Collection<ServiceRegistryListener> serviceRegistryListeners) {
+        super(eventPublisher, serviceRegistryListeners);
+
         this.documentDbTemplate = db;
         this.collectionName = collectionName;
         this.documentDbFactory = dbFactory;
         this.databaseName = databaseName;
-        this.serializer = new DefaultRegisteredServiceJsonSerializer(new MinimalPrettyPrinter());
+        this.serializer = new RegisteredServiceJsonSerializer(new MinimalPrettyPrinter());
     }
 
     @Override
     public RegisteredService save(final RegisteredService registeredService) {
+        invokeServiceRegistryListenerPreSave(registeredService);
         if (registeredService.getId() == RegisteredService.INITIAL_IDENTIFIER_VALUE) {
             registeredService.setId(System.currentTimeMillis());
             insert(registeredService);
@@ -94,7 +100,10 @@ public class CosmosDbServiceRegistry extends AbstractServiceRegistry {
         val services = new ArrayList<RegisteredService>();
         while (it.hasNext()) {
             val doc = it.next();
-            val svc = getRegisteredServiceFromDocumentBody(doc);
+            var svc = getRegisteredServiceFromDocumentBody(doc);
+            if (svc != null) {
+                svc = invokeServiceRegistryListenerPostLoad(svc);
+            }
             if (svc != null) {
                 services.add(svc);
             }

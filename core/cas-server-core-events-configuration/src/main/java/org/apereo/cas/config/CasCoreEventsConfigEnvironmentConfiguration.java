@@ -8,7 +8,10 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.context.properties.ConfigurationPropertiesBindingPostProcessor;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.refresh.ContextRefresher;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -26,10 +29,20 @@ public class CasCoreEventsConfigEnvironmentConfiguration {
     @Qualifier("configurationPropertiesEnvironmentManager")
     private ObjectProvider<CasConfigurationPropertiesEnvironmentManager> manager;
 
+    @Autowired
+    private ObjectProvider<ConfigurationPropertiesBindingPostProcessor> binder;
+
+    @Autowired
+    private ObjectProvider<ContextRefresher> contextRefresher;
+
+    @Autowired
+    private ApplicationContext applicationContext;
+
     @ConditionalOnMissingBean(name = "casConfigurationEventListener")
     @Bean
     public CasConfigurationEventListener casConfigurationEventListener() {
-        return new CasConfigurationEventListener(manager.getIfAvailable());
+        return new CasConfigurationEventListener(manager.getIfAvailable(), binder.getIfAvailable(),
+            contextRefresher.getIfAvailable(), applicationContext);
     }
 
 }

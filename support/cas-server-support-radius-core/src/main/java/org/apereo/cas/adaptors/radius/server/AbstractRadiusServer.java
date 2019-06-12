@@ -1,11 +1,10 @@
 package org.apereo.cas.adaptors.radius.server;
 
 import org.apereo.cas.adaptors.radius.CasRadiusResponse;
-import org.apereo.cas.adaptors.radius.RadiusClientFactory;
-import org.apereo.cas.adaptors.radius.RadiusProtocol;
 import org.apereo.cas.adaptors.radius.RadiusServer;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -48,6 +47,7 @@ import java.util.Optional;
 @Slf4j
 @ToString
 @Getter
+@RequiredArgsConstructor
 public abstract class AbstractRadiusServer implements RadiusServer {
 
     /**
@@ -62,52 +62,10 @@ public abstract class AbstractRadiusServer implements RadiusServer {
         Security.addProvider(new BouncyCastleProvider());
     }
 
-    /**
-     * RADIUS protocol.
-     */
-    private final RadiusProtocol protocol;
-    /**
-     * Produces RADIUS client instances for authentication.
-     */
-    private final RadiusClientFactory radiusClientFactory;
-    private final String nasIpAddress;
-
-    private final String nasIpv6Address;
-    private final String nasIdentifier;
-
-    /**
-     * Number of times to retry authentication when no response is received.
-     */
-    private final int retries;
-
-    private final long nasPort;
-    private final long nasPortId;
-    private final long nasRealPort;
-
-    private final long nasPortType;
-
-    public AbstractRadiusServer(final RadiusProtocol protocol, final RadiusClientFactory radiusClientFactory) {
-        this(protocol, radiusClientFactory, 1, null,
-            null, -1, -1, null, -1, -1);
-    }
-
-    public AbstractRadiusServer(final RadiusProtocol protocol, final RadiusClientFactory clientFactory, final int retries,
-                                final String nasIpAddress, final String nasIpv6Address, final long nasPort, final long nasPortId,
-                                final String nasIdentifier, final long nasRealPort, final long nasPortType) {
-        this.protocol = protocol;
-        this.radiusClientFactory = clientFactory;
-        this.retries = retries;
-        this.nasIpAddress = nasIpAddress;
-        this.nasIpv6Address = nasIpv6Address;
-        this.nasPort = nasPort;
-        this.nasPortId = nasPortId;
-        this.nasIdentifier = nasIdentifier;
-        this.nasRealPort = nasRealPort;
-        this.nasPortType = nasPortType;
-    }
+    private final RadiusServerConfigurationContext radiusServerConfigurationContext;
 
     @Override
-    public final CasRadiusResponse authenticate(final String username, final String password, final Optional<Serializable> state) throws Exception {
+    public final CasRadiusResponse authenticate(final String username, final String password, final Optional state) throws Exception {
         val attributeList = new AttributeList();
 
         if (StringUtils.isNotBlank(username)) {
@@ -126,30 +84,30 @@ public abstract class AbstractRadiusServer implements RadiusServer {
             attributeList.add(clientIpAttribute);
         }
 
-        state.ifPresent(value -> attributeList.add(new Attr_State(value)));
+        state.ifPresent(value -> attributeList.add(new Attr_State(Serializable.class.cast(value))));
 
-        if (StringUtils.isNotBlank(this.nasIpAddress)) {
-            attributeList.add(new Attr_NASIPAddress(this.nasIpAddress));
+        if (StringUtils.isNotBlank(radiusServerConfigurationContext.getNasIpAddress())) {
+            attributeList.add(new Attr_NASIPAddress(radiusServerConfigurationContext.getNasIpAddress()));
         }
-        if (StringUtils.isNotBlank(this.nasIpv6Address)) {
-            attributeList.add(new Attr_NASIPv6Address(this.nasIpv6Address));
+        if (StringUtils.isNotBlank(radiusServerConfigurationContext.getNasIpv6Address())) {
+            attributeList.add(new Attr_NASIPv6Address(radiusServerConfigurationContext.getNasIpv6Address()));
         }
-        if (this.nasPort != -1) {
-            attributeList.add(new Attr_NASPort(this.nasPort));
+        if (radiusServerConfigurationContext.getNasPort() != -1) {
+            attributeList.add(new Attr_NASPort(radiusServerConfigurationContext.getNasPort()));
         }
-        if (this.nasPortId != -1) {
-            attributeList.add(new Attr_NASPortId(this.nasPortId));
+        if (radiusServerConfigurationContext.getNasPortId() != -1) {
+            attributeList.add(new Attr_NASPortId(radiusServerConfigurationContext.getNasPortId()));
         }
-        if (StringUtils.isNotBlank(this.nasIdentifier)) {
-            attributeList.add(new Attr_NASIdentifier(this.nasIdentifier));
+        if (StringUtils.isNotBlank(radiusServerConfigurationContext.getNasIdentifier())) {
+            attributeList.add(new Attr_NASIdentifier(radiusServerConfigurationContext.getNasIdentifier()));
         }
-        if (this.nasRealPort != -1) {
-            attributeList.add(new Attr_NASRealPort(this.nasRealPort));
+        if (radiusServerConfigurationContext.getNasRealPort() != -1) {
+            attributeList.add(new Attr_NASRealPort(radiusServerConfigurationContext.getNasRealPort()));
         }
-        if (this.nasPortType != -1) {
-            attributeList.add(new Attr_NASPortType(this.nasPortType));
+        if (radiusServerConfigurationContext.getNasPortType() != -1) {
+            attributeList.add(new Attr_NASPortType(radiusServerConfigurationContext.getNasPortType()));
         }
-        val client = this.radiusClientFactory.newInstance();
+        val client = radiusServerConfigurationContext.getRadiusClientFactory().newInstance();
         try {
             val request = new AccessRequest(client, attributeList);
             LOGGER.debug("RADIUS access request prepared as [{}]", request.toString(true, true));
@@ -160,7 +118,8 @@ public abstract class AbstractRadiusServer implements RadiusServer {
 
             if (response instanceof AccessAccept || response instanceof AccessChallenge) {
                 val attributes = response.getAttributes().getAttributeList();
-                LOGGER.debug("Radius response code [{}] accepted with attributes [{}] and identifier [{}]", response.getCode(), attributes, response.getIdentifier());
+                LOGGER.debug("Radius response code [{}] accepted with attributes [{}] and identifier [{}]",
+                    response.getCode(), attributes, response.getIdentifier());
                 return new CasRadiusResponse(response.getCode(), response.getIdentifier(), attributes);
             }
             LOGGER.warn("Response is not recognized");
@@ -178,7 +137,7 @@ public abstract class AbstractRadiusServer implements RadiusServer {
      * @return the radius authenticator
      */
     public RadiusAuthenticator getRadiusAuthenticator() {
-        return RadiusClient.getAuthProtocol(this.protocol.getName());
+        return RadiusClient.getAuthProtocol(radiusServerConfigurationContext.getProtocol().getName());
     }
 
     /**

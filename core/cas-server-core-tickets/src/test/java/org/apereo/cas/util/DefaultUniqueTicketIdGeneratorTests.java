@@ -1,9 +1,9 @@
 package org.apereo.cas.util;
 
 import lombok.val;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Scott Battaglia
@@ -23,15 +23,15 @@ public class DefaultUniqueTicketIdGeneratorTests {
         val suffix = "suffix";
         val generator = new DefaultUniqueTicketIdGenerator(10, suffix);
 
-        assertTrue(generator.getNewTicketId("test").endsWith(suffix));
+        assertTrue(generator.getNewTicketId("test").endsWith('-' + suffix));
     }
 
     @Test
     public void verifyNullSuffix() {
         val lengthWithoutSuffix = 23;
         val generator = new DefaultUniqueTicketIdGenerator(12, null);
-
         val ticketId = generator.getNewTicketId("test");
+
         assertEquals(lengthWithoutSuffix, ticketId.length());
     }
 }

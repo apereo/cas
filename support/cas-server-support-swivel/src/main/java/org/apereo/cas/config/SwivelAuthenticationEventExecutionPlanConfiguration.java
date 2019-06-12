@@ -5,14 +5,14 @@ import org.apereo.cas.adaptors.swivel.SwivelMultifactorAuthenticationProvider;
 import org.apereo.cas.adaptors.swivel.SwivelTokenCredential;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
-import org.apereo.cas.authentication.MultifactorAuthenticationProviderBypass;
-import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
+import org.apereo.cas.authentication.MultifactorAuthenticationFailureModeEvaluator;
+import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
+import org.apereo.cas.authentication.bypass.MultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.authentication.handler.ByCredentialTypeAuthenticationHandlerResolver;
 import org.apereo.cas.authentication.metadata.AuthenticationContextAttributeMetaDataPopulator;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.ServicesManager;
 
 import lombok.val;
@@ -42,18 +42,23 @@ public class SwivelAuthenticationEventExecutionPlanConfiguration {
     @Qualifier("servicesManager")
     private ObjectProvider<ServicesManager> servicesManager;
 
+    @Autowired
+    @Qualifier("swivelBypassEvaluator")
+    private ObjectProvider<MultifactorAuthenticationProviderBypassEvaluator> swivelBypassEvaluator;
+
+    @Autowired
+    @Qualifier("failureModeEvaluator")
+    private ObjectProvider<MultifactorAuthenticationFailureModeEvaluator> failureModeEvaluator;
+
     @Bean
     @RefreshScope
     public AuthenticationMetaDataPopulator swivelAuthenticationMetaDataPopulator() {
         val authenticationContextAttribute = casProperties.getAuthn().getMfa().getAuthenticationContextAttribute();
-        return new AuthenticationContextAttributeMetaDataPopulator(authenticationContextAttribute,
-            swivelAuthenticationHandler(), swivelAuthenticationProvider());
-    }
-
-    @Bean
-    @RefreshScope
-    public MultifactorAuthenticationProviderBypass swivelBypassEvaluator() {
-        return MultifactorAuthenticationUtils.newMultifactorAuthenticationProviderBypass(casProperties.getAuthn().getMfa().getSwivel().getBypass());
+        return new AuthenticationContextAttributeMetaDataPopulator(
+            authenticationContextAttribute,
+            swivelAuthenticationHandler(),
+            swivelMultifactorAuthenticationProvider().getId()
+        );
     }
 
     @ConditionalOnMissingBean(name = "swivelPrincipalFactory")
@@ -72,11 +77,12 @@ public class SwivelAuthenticationEventExecutionPlanConfiguration {
 
     @Bean
     @RefreshScope
-    public MultifactorAuthenticationProvider swivelAuthenticationProvider() {
+    public MultifactorAuthenticationProvider swivelMultifactorAuthenticationProvider() {
         val swivel = this.casProperties.getAuthn().getMfa().getSwivel();
         val p = new SwivelMultifactorAuthenticationProvider(swivel.getSwivelUrl());
-        p.setBypassEvaluator(swivelBypassEvaluator());
-        p.setGlobalFailureMode(casProperties.getAuthn().getMfa().getGlobalFailureMode());
+        p.setBypassEvaluator(swivelBypassEvaluator.getIfAvailable());
+        p.setFailureMode(swivel.getFailureMode());
+        p.setFailureModeEvaluator(failureModeEvaluator.getIfAvailable());
         p.setOrder(swivel.getRank());
         p.setId(swivel.getId());
         return p;
@@ -87,7 +93,7 @@ public class SwivelAuthenticationEventExecutionPlanConfiguration {
     public AuthenticationEventExecutionPlanConfigurer swivelAuthenticationEventExecutionPlanConfigurer() {
         return plan -> {
             plan.registerAuthenticationHandler(swivelAuthenticationHandler());
-            plan.registerMetadataPopulator(swivelAuthenticationMetaDataPopulator());
+            plan.registerAuthenticationMetadataPopulator(swivelAuthenticationMetaDataPopulator());
             plan.registerAuthenticationHandlerResolver(new ByCredentialTypeAuthenticationHandlerResolver(SwivelTokenCredential.class));
         };
     }

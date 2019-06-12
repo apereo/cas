@@ -1,6 +1,6 @@
 package org.apereo.cas.configuration.metadata;
 
-import com.github.javaparser.JavaParser;
+import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -42,15 +42,15 @@ public class ConfigurationMetadataUnitParser {
                                      final boolean indexNameWithBrackets) {
 
         try (val is = Files.newInputStream(Paths.get(typePath))) {
-            val cu = JavaParser.parse(is);
+            val cu = StaticJavaParser.parse(is);
             new ConfigurationMetadataFieldVisitor(collectedProps, collectedGroups, indexNameWithBrackets, typeName, sourcePath).visit(cu, p);
-            if (cu.getTypes().size() > 0) {
+            if (!cu.getTypes().isEmpty()) {
                 val decl = ClassOrInterfaceDeclaration.class.cast(cu.getType(0));
                 for (var i = 0; i < decl.getExtendedTypes().size(); i++) {
                     val parentType = decl.getExtendedTypes().get(i);
                     val instance = ConfigurationMetadataClassSourceLocator.getInstance();
                     val parentClazz = instance.locatePropertiesClassForType(parentType);
-                    val parentTypePath = instance.buildTypeSourcePath(this.sourcePath, parentClazz.getName());
+                    val parentTypePath = ConfigurationMetadataClassSourceLocator.buildTypeSourcePath(this.sourcePath, parentClazz.getName());
 
                     parseCompilationUnit(collectedProps, collectedGroups, p,
                         parentTypePath, parentClazz.getName(), indexNameWithBrackets);

@@ -9,6 +9,7 @@ import lombok.ToString;
 import org.apereo.services.persondir.IPersonAttributeDao;
 
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * Implementation of PrincipalResolver that converts the OpenId
@@ -21,8 +22,12 @@ import java.util.Optional;
 public class OpenIdPrincipalResolver extends PersonDirectoryPrincipalResolver {
 
     public OpenIdPrincipalResolver(final IPersonAttributeDao attributeRepository, final PrincipalFactory principalFactory,
-                                   final boolean returnNullIfNoAttributes, final String principalAttributeName) {
-        super(attributeRepository, principalFactory, returnNullIfNoAttributes, principalAttributeName);
+                                   final boolean returnNullIfNoAttributes, final String principalAttributeName,
+                                   final boolean useCurrentPrincipalId, final boolean resolveAttributes,
+                                   final Set<String> activeAttributeRepositoryIdentifiers) {
+        super(attributeRepository, principalFactory, returnNullIfNoAttributes,
+            principalAttributeName, useCurrentPrincipalId, resolveAttributes,
+            activeAttributeRepositoryIdentifiers);
     }
 
     @Override

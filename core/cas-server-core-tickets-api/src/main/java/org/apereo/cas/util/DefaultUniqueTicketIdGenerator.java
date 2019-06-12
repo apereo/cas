@@ -12,7 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 
 /**
  * Default implementation of {@link UniqueTicketIdGenerator}. Implementation
- * utilizes a DefaultLongNumericGeneraor and a DefaultRandomStringGenerator to
+ * utilizes a {@link DefaultLongNumericGenerator} and a {@link org.apereo.cas.util.gen.DefaultRandomStringGenerator} to
  * construct the ticket id.
  * <p>
  * Tickets are of the form [PREFIX]-[SEQUENCE NUMBER]-[RANDOM STRING]-[SUFFIX]
@@ -103,7 +103,9 @@ public class DefaultUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
     public String getNewTicketId(final String prefix) {
         val number = this.numericGenerator.getNextNumberAsString();
         val ticketBody = this.randomStringGenerator.getNewString().replace('_', '-');
-        return prefix + '-' + number + '-' + ticketBody + StringUtils.defaultString(this.suffix);
+        val origSuffix = StringUtils.defaultString(this.suffix);
+        val finalizedSuffix = StringUtils.isEmpty(origSuffix) ? origSuffix : '-' + origSuffix;
+        return prefix + '-' + number + '-' + ticketBody + finalizedSuffix;
     }
 
     /**

@@ -8,6 +8,11 @@ package org.apereo.cas.web.flow;
  */
 public interface CasWebflowConstants {
 
+    /**
+     * Base path for webflow configuration files.
+     */
+    String BASE_CLASSPATH_WEBFLOW = "classpath*:/webflow";
+
     /*
      ****************************************
      * Transitions.
@@ -22,6 +27,11 @@ public interface CasWebflowConstants {
      * The transition state 'yes'.
      */
     String TRANSITION_ID_YES = "yes";
+
+    /**
+     * The transition state 'finalize'.
+     */
+    String TRANSITION_ID_FINALIZE = "finalize";
 
     /**
      * The transition state 'warn'.
@@ -42,6 +52,11 @@ public interface CasWebflowConstants {
      * The transition state 'error'.
      */
     String TRANSITION_ID_ERROR = "error";
+
+    /**
+     * The transition state 'resume'.
+     */
+    String TRANSITION_ID_RESUME = "resume";
 
     /**
      * The transition state 'gateway'.
@@ -94,6 +109,11 @@ public interface CasWebflowConstants {
     String TRANSITION_ID_DENY = "deny";
 
     /**
+     * Transition id 'register'.
+     */
+    String TRANSITION_ID_REGISTER = "register";
+
+    /**
      * The transition state 'success'.
      */
     String TRANSITION_ID_SUCCESS = "success";
@@ -102,6 +122,16 @@ public interface CasWebflowConstants {
      * Transition id 'redirect' .
      */
     String TRANSITION_ID_REDIRECT = "redirect";
+
+    /**
+     * Transition id 'skip' .
+     */
+    String TRANSITION_ID_SKIP = "skip";
+
+    /**
+     * Transition id 'approve' .
+     */
+    String TRANSITION_ID_APPROVE = "approve";
 
     /**
      * Propagate transition id.
@@ -139,6 +169,11 @@ public interface CasWebflowConstants {
     String TRANSITION_ID_ENROLL = "enroll";
 
     /**
+     * Renew transition id.
+     */
+    String TRANSITION_ID_RENEW = "renew";
+
+    /**
      * The transition state 'successWithWarnings'.
      */
     String TRANSITION_ID_SUCCESS_WITH_WARNINGS = "successWithWarnings";
@@ -162,6 +197,11 @@ public interface CasWebflowConstants {
      * Transition id 'acceptedUsagePolicy'.
      */
     String TRANSITION_ID_AUP_ACCEPTED = "acceptedUsagePolicy";
+
+    /**
+     * State to determine the MFA failure mode and what action to take.
+     */
+    String TRANSITION_ID_MFA_FAILURE = "mfaFailure";
 
     /*
      ****************************************
@@ -359,6 +399,11 @@ public interface CasWebflowConstants {
     String STATE_ID_FINISH_LOGOUT = "finishLogout";
 
     /**
+     * Delegated authentication state id.
+     */
+    String STATE_ID_DELEGATED_AUTHENTICATION = "delegatedAuthenticationAction";
+
+    /**
      * State id 'frontLogout'.
      */
     String STATE_ID_FRONT_LOGOUT = "frontLogout";
@@ -409,10 +454,24 @@ public interface CasWebflowConstants {
     String STATE_ID_CHECK_DO_CHANGE_PASSWORD = "checkDoChangePassword";
 
     /**
-     * Delegated authentication state id.
+     * State to check if the MFA provider is available.
      */
-    String STATE_ID_DELEGATED_AUTHENTICATION = "delegatedAuthenticationAction";
+    String STATE_ID_MFA_CHECK_AVAILABLE = "mfaCheckAvailable";
 
+    /**
+     * State to check if the MFA provider should be bypassed.
+     */
+    String STATE_ID_MFA_CHECK_BYPASS = "mfaCheckBypass";
+
+    /**
+     * State that can be used by MFA providers that offer preAuth endpoints.
+     */
+    String STATE_ID_MFA_PRE_AUTH = "mfaPreAuth";
+
+    /**
+     * The view state 'showAuthenticationWarningMessages'.
+     */
+    String STATE_ID_SHOW_AUTHN_WARNING_MSGS = "showAuthenticationWarningMessages";
     /*
      ****************************************
      * Views.
@@ -437,11 +496,6 @@ public interface CasWebflowConstants {
      * The view state 'error'.
      */
     String VIEW_ID_ERROR = "error";
-
-    /**
-     * The view state 'showAuthenticationWarningMessages'.
-     */
-    String VIEW_ID_SHOW_AUTHN_WARNING_MSGS = "showAuthenticationWarningMessages";
 
     /**
      * View id when MFA provider has been detected as unavailable and failureMode is closed.
@@ -538,6 +592,10 @@ public interface CasWebflowConstants {
      */
     String VIEW_ID_SENT_RESET_PASSWORD_ACCT_INFO = "casResetPasswordSentInstructionsView";
 
+    /**
+     * View name used for form-login into admin/actuator endpoints.
+     */
+    String VIEW_ID_ENDPOINT_ADMIN_LOGIN_VIEW = "casAdminLoginView";
     /*
      ****************************************
      * Decisions.
@@ -570,6 +628,11 @@ public interface CasWebflowConstants {
      */
     String VAR_ID_CREDENTIAL = "credential";
 
+    /**
+     * The flow var id 'providerId'.
+     */
+    String VAR_ID_MFA_PROVIDER_ID = "mfaProviderId";
+
 
     /**
      * Event attribute id 'authenticationWarnings'.
@@ -581,11 +644,29 @@ public interface CasWebflowConstants {
      * Actions.
      ****************************************
      */
+    /**
+     * Action id 'renderLoginFormAction'.
+     */
+    String ACTION_ID_RENDER_LOGIN_FORM = "renderLoginFormAction";
+
+    /**
+     * Action id 'authenticationViaFormAction'.
+     */
+    String ACTION_ID_AUTHENTICATION_VIA_FORM_ACTION = "authenticationViaFormAction";
+
+    /**
+     * Action id 'compositeMfaProviderSelectedAction'.
+     */
+    String ACTION_ID_MFA_PROVIDER_SELECTED = "compositeMfaProviderSelectedAction";
 
     /**
      * Action id 'initialFlowSetupAction'.
      */
     String ACTION_ID_INIT_FLOW_SETUP = "initialFlowSetupAction";
+    /**
+     * Action id 'verifyRequiredServiceAction'.
+     */
+    String ACTION_ID_VERIFY_REQUIRED_SERVICE = "verifyRequiredServiceAction";
 
     /**
      * Action id 'ticketGrantingTicketCheckAction'.
@@ -643,7 +724,12 @@ public interface CasWebflowConstants {
     String ACTION_ID_CREATE_TICKET_GRANTING_TICKET = "createTicketGrantingTicketAction";
 
     /**
-     * Delegated authentication action id.
+     * Action id `delegatedAuthenticationAction`.
      */
     String ACTION_ID_DELEGATED_AUTHENTICATION = "delegatedAuthenticationAction";
+
+    /**
+     * Action id `renewAuthenticationRequestCheckAction`.
+     */
+    String ACTION_ID_RENEW_AUTHN_REQUEST = "renewAuthenticationRequestCheckAction";
 }

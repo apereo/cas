@@ -9,6 +9,7 @@ import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceSe
 import org.apereo.cas.support.saml.util.AbstractSaml20ObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectEncrypter;
+import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
 import org.jasig.cas.client.validation.Assertion;
@@ -32,7 +33,8 @@ public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20Obje
     private final SamlIdPProperties samlIdPProperties;
     private final SamlIdPObjectEncrypter samlObjectEncrypter;
 
-    public SamlProfileSamlAttributeStatementBuilder(final OpenSamlConfigBean configBean, final ProtocolAttributeEncoder samlAttributeEncoder,
+    public SamlProfileSamlAttributeStatementBuilder(final OpenSamlConfigBean configBean,
+                                                    final ProtocolAttributeEncoder samlAttributeEncoder,
                                                     final SamlIdPProperties samlIdPProperties,
                                                     final SamlIdPObjectEncrypter samlObjectEncrypter) {
         super(configBean);
@@ -67,9 +69,16 @@ public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20Obje
         val resp = samlIdPProperties.getResponse();
         val nameFormats = new HashMap<String, String>(resp.configureAttributeNameFormats());
         nameFormats.putAll(service.getAttributeNameFormats());
-        return newAttributeStatement(encodedAttrs, service.getAttributeFriendlyNames(),
+
+        val globalFriendlyNames = samlIdPProperties.getAttributeFriendlyNames();
+        val friendlyNames = new HashMap<String, String>(CollectionUtils.convertDirectedListToMap(globalFriendlyNames));
+        friendlyNames.putAll(service.getAttributeFriendlyNames());
+
+        val attrBuilder = new SamlProfileSamlRegisteredServiceAttributeBuilder(service, adaptor, messageContext, samlObjectEncrypter);
+        return newAttributeStatement(encodedAttrs, friendlyNames,
+            service.getAttributeValueTypes(),
             nameFormats,
             resp.getDefaultAttributeNameFormat(),
-            new SamlProfileSamlRegisteredServiceAttributeBuilder(service, adaptor, messageContext, samlObjectEncrypter));
+            attrBuilder);
     }
 }

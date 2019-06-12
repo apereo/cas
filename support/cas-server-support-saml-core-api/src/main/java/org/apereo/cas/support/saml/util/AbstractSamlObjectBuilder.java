@@ -3,20 +3,37 @@ package org.apereo.cas.support.saml.util;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.gen.HexRandomStringGenerator;
+import org.apereo.cas.util.serialization.JacksonXmlSerializer;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.xerces.xs.XSObject;
 import org.jdom.Document;
 import org.jdom.input.DOMBuilder;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.XMLOutputter;
+import org.joda.time.DateTime;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
+import org.opensaml.core.xml.schema.XSBase64Binary;
+import org.opensaml.core.xml.schema.XSBoolean;
+import org.opensaml.core.xml.schema.XSBooleanValue;
+import org.opensaml.core.xml.schema.XSDateTime;
+import org.opensaml.core.xml.schema.XSInteger;
+import org.opensaml.core.xml.schema.XSString;
+import org.opensaml.core.xml.schema.XSURI;
 import org.opensaml.core.xml.schema.impl.XSAnyBuilder;
+import org.opensaml.core.xml.schema.impl.XSBase64BinaryBuilder;
+import org.opensaml.core.xml.schema.impl.XSBooleanBuilder;
+import org.opensaml.core.xml.schema.impl.XSDateTimeBuilder;
+import org.opensaml.core.xml.schema.impl.XSIntegerBuilder;
+import org.opensaml.core.xml.schema.impl.XSStringBuilder;
+import org.opensaml.core.xml.schema.impl.XSURIBuilder;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.common.xml.SAMLConstants;
@@ -55,7 +72,7 @@ import java.util.List;
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public abstract class AbstractSamlObjectBuilder implements Serializable {
     /**
      * The constant DEFAULT_ELEMENT_NAME_FIELD.
@@ -73,11 +90,11 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
 
     private static final long serialVersionUID = -6833230731146922780L;
 
-
     /**
      * The Config bean.
      */
-    protected OpenSamlConfigBean configBean;
+    @Getter
+    protected final transient OpenSamlConfigBean openSamlConfigBean;
 
     /**
      * Sign SAML response.
@@ -112,6 +129,7 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
             builder.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
             return builder.build(new ByteArrayInputStream(xmlString.getBytes(Charset.defaultCharset())));
         } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
             return null;
         }
     }
@@ -137,33 +155,25 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
             val ref = sigFactory.newReference(StringUtils.EMPTY, sigFactory
                 .newDigestMethod(DigestMethod.SHA1, null), envelopedTransform, null, null);
 
-            // Create the SignatureMethod based on the type of key
             val signatureMethod = getSignatureMethodFromPublicKey(pubKey, sigFactory);
             val canonicalizationMethod = sigFactory
                 .newCanonicalizationMethod(
                     CanonicalizationMethod.INCLUSIVE_WITH_COMMENTS,
                     (C14NMethodParameterSpec) null);
 
-            // Create the SignedInfo
             val signedInfo = sigFactory.newSignedInfo(canonicalizationMethod, signatureMethod, CollectionUtils.wrap(ref));
 
-            // Create a KeyValue containing the DSA or RSA PublicKey
             val keyInfoFactory = sigFactory.getKeyInfoFactory();
             val keyValuePair = keyInfoFactory.newKeyValue(pubKey);
 
-            // Create a KeyInfo and add the KeyValue to it
             val keyInfo = keyInfoFactory.newKeyInfo(CollectionUtils.wrap(keyValuePair));
-            // Convert the JDOM document to w3c (Java XML signature API requires w3c representation)
             val w3cElement = toDom(element);
 
-            // Create a DOMSignContext and specify the DSA/RSA PrivateKey and
-            // location of the resulting XMLSignature's parent element
             val dsc = new DOMSignContext(privKey, w3cElement);
 
             val xmlSigInsertionPoint = getXmlSignatureInsertLocation(w3cElement);
             dsc.setNextSibling(xmlSigInsertionPoint);
 
-            // Marshal, generate (and sign) the enveloped signature
             val signature = sigFactory.newXMLSignature(signedInfo, keyInfo);
             signature.sign(dsc);
 
@@ -307,15 +317,66 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
      * New attribute value.
      *
      * @param value       the value
+     * @param valueType   the value type
      * @param elementName the element name
      * @return the xS string
      */
-    protected XMLObject newAttributeValue(final Object value, final QName elementName) {
-        //final XSStringBuilder attrValueBuilder = new XSStringBuilder();
-        val attrValueBuilder = new XSAnyBuilder();
-        val stringValue = attrValueBuilder.buildObject(elementName);
-        stringValue.setTextContent(value.toString());
-        return stringValue;
+    protected XMLObject newAttributeValue(final Object value, final String valueType, final QName elementName) {
+
+        if (XSString.class.getSimpleName().equalsIgnoreCase(valueType)) {
+            val builder = new XSStringBuilder();
+            val attrValueObj = builder.buildObject(elementName, XSString.TYPE_NAME);
+            attrValueObj.setValue(value.toString());
+            return attrValueObj;
+        }
+
+        if (XSURI.class.getSimpleName().equalsIgnoreCase(valueType)) {
+            val builder = new XSURIBuilder();
+            val attrValueObj = builder.buildObject(elementName, XSURI.TYPE_NAME);
+            attrValueObj.setValue(value.toString());
+            return attrValueObj;
+        }
+
+        if (XSBoolean.class.getSimpleName().equalsIgnoreCase(valueType)) {
+            val builder = new XSBooleanBuilder();
+            val attrValueObj = builder.buildObject(elementName, XSBoolean.TYPE_NAME);
+            attrValueObj.setValue(XSBooleanValue.valueOf(value.toString().toLowerCase()));
+            return attrValueObj;
+        }
+
+        if (XSInteger.class.getSimpleName().equalsIgnoreCase(valueType)) {
+            val builder = new XSIntegerBuilder();
+            val attrValueObj = builder.buildObject(elementName, XSInteger.TYPE_NAME);
+            attrValueObj.setValue(Integer.valueOf(value.toString()));
+            return attrValueObj;
+        }
+
+        if (XSDateTime.class.getSimpleName().equalsIgnoreCase(valueType)) {
+            val builder = new XSDateTimeBuilder();
+            val attrValueObj = builder.buildObject(elementName, XSDateTime.TYPE_NAME);
+            attrValueObj.setValue(DateTime.parse(value.toString()));
+            return attrValueObj;
+        }
+
+        if (XSBase64Binary.class.getSimpleName().equalsIgnoreCase(valueType)) {
+            val builder = new XSBase64BinaryBuilder();
+            val attrValueObj = builder.buildObject(elementName, XSBase64Binary.TYPE_NAME);
+            attrValueObj.setValue(value.toString());
+            return attrValueObj;
+        }
+
+        if (XSObject.class.getSimpleName().equalsIgnoreCase(valueType)) {
+            val mapper = new JacksonXmlSerializer();
+            val builder = new XSAnyBuilder();
+            val attrValueObj = builder.buildObject(elementName);
+            attrValueObj.setTextContent(mapper.writeValueAsString(value));
+            return attrValueObj;
+        }
+
+        val builder = new XSAnyBuilder();
+        val attrValueObj = builder.buildObject(elementName);
+        attrValueObj.setTextContent(value.toString());
+        return attrValueObj;
     }
 
     /**
@@ -341,11 +402,13 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
      *
      * @param attributeName      the attribute name
      * @param attributeValue     the attribute value
+     * @param valueType          the value type
      * @param attributeList      the attribute list
      * @param defaultElementName the default element name
      */
     protected void addAttributeValuesToSamlAttribute(final String attributeName,
                                                      final Object attributeValue,
+                                                     final String valueType,
                                                      final List<XMLObject> attributeList,
                                                      final QName defaultElementName) {
         if (attributeValue == null) {
@@ -353,19 +416,15 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
             return;
         }
 
-        LOGGER.debug("Attempting to generate SAML attribute [{}] with value(s) [{}]", attributeName, attributeValue);
+        LOGGER.trace("Attempting to generate SAML attribute [{}] with value(s) [{}]", attributeName, attributeValue);
         if (attributeValue instanceof Collection<?>) {
             val c = (Collection<?>) attributeValue;
             LOGGER.debug("Generating multi-valued SAML attribute [{}] with values [{}]", attributeName, c);
-            c.stream().map(value -> newAttributeValue(value, defaultElementName)).forEach(attributeList::add);
+            c.stream().map(value -> newAttributeValue(value, valueType, defaultElementName)).forEach(attributeList::add);
         } else {
             LOGGER.debug("Generating SAML attribute [{}] with value [{}]", attributeName, attributeValue);
-            attributeList.add(newAttributeValue(attributeValue, defaultElementName));
+            attributeList.add(newAttributeValue(attributeValue, valueType, defaultElementName));
         }
-    }
-
-    public OpenSamlConfigBean getConfigBean() {
-        return configBean;
     }
 }
 

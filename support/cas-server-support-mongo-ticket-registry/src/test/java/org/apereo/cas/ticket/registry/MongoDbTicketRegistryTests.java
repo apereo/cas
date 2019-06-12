@@ -1,6 +1,5 @@
 package org.apereo.cas.ticket.registry;
 
-import org.apereo.cas.category.MongoDbCategory;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -14,6 +13,7 @@ import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
+import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
@@ -21,11 +21,11 @@ import org.apereo.cas.config.MongoDbTicketRegistryConfiguration;
 import org.apereo.cas.config.MongoDbTicketRegistryTicketCatalogConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
+import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
+import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
-import org.junit.Before;
-import org.junit.experimental.categories.Category;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -35,21 +35,19 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 
-import java.util.Arrays;
-import java.util.Collection;
-
 /**
  * This is {@link MongoDbTicketRegistryTests}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@RunWith(Parameterized.class)
-@Category(MongoDbCategory.class)
+@Tag("MongoDb")
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     CasCoreUtilConfiguration.class,
     AopAutoConfiguration.class,
+    MongoDbTicketRegistryTicketCatalogConfiguration.class,
+    MongoDbTicketRegistryConfiguration.class,
     CasCoreAuthenticationConfiguration.class,
     CasCoreServicesAuthenticationConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class,
@@ -65,10 +63,10 @@ import java.util.Collection;
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
-    MongoDbTicketRegistryTicketCatalogConfiguration.class,
-    MongoDbTicketRegistryConfiguration.class,
+    CasCoreTicketsSerializationConfiguration.class,
     CasCoreWebConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class})
+    CasWebApplicationServiceFactoryConfiguration.class
+})
 @EnableScheduling
 @TestPropertySource(properties = {
     "cas.ticket.registry.mongo.databaseName=ticket-registry",
@@ -79,24 +77,16 @@ import java.util.Collection;
     "cas.ticket.registry.mongo.userId=root",
     "cas.ticket.registry.mongo.password=secret"
 })
-
-@DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
-public class MongoDbTicketRegistryTests extends BaseSpringRunnableTicketRegistryTests {
+@DirtiesContext
+@EnabledIfPortOpen(port = 27017)
+@EnabledIfContinuousIntegration
+public class MongoDbTicketRegistryTests extends BaseTicketRegistryTests {
 
     @Autowired
     @Qualifier("ticketRegistry")
     private TicketRegistry ticketRegistry;
 
-    public MongoDbTicketRegistryTests(final boolean useEncryption) {
-        super(useEncryption);
-    }
-
-    @Parameterized.Parameters
-    public static Collection<Object> getTestParameters() {
-        return Arrays.asList(true, false);
-    }
-
-    @Before
+    @BeforeEach
     public void before() {
         ticketRegistry.deleteAll();
     }

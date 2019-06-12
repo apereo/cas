@@ -11,15 +11,17 @@ import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.pac4j.core.context.Pac4jConstants;
 import org.pac4j.core.profile.CommonProfile;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
-import static org.junit.Assert.*;
+import java.util.HashMap;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -28,10 +30,8 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@Tag("OIDC")
 public class OidcIdTokenGeneratorServiceTests extends AbstractOidcTests {
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
     @Test
     public void verifyTokenGeneration() {
         val request = new MockHttpServletRequest();
@@ -49,10 +49,41 @@ public class OidcIdTokenGeneratorServiceTests extends AbstractOidcTests {
 
         val service = new WebApplicationServiceFactory().createService(callback);
         when(tgt.getServices()).thenReturn(CollectionUtils.wrap("service", service));
-        when(tgt.getAuthentication()).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
+        var authentication = CoreAuthenticationTestUtils.getAuthentication("casuser",
+            CollectionUtils.wrap(OAuth20Constants.STATE, List.of("some-state"),
+                OAuth20Constants.NONCE, List.of("some-nonce")));
+        when(tgt.getAuthentication()).thenReturn(authentication);
 
         val accessToken = mock(AccessToken.class);
-        when(accessToken.getAuthentication()).thenReturn(CoreAuthenticationTestUtils.getAuthentication("casuser"));
+        when(accessToken.getAuthentication()).thenReturn(authentication);
+        when(accessToken.getTicketGrantingTicket()).thenReturn(tgt);
+        when(accessToken.getId()).thenReturn(getClass().getSimpleName());
+
+        val idToken = oidcIdTokenGenerator.generate(request, response, accessToken, 30,
+            OAuth20ResponseTypes.CODE, OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, "clientid"));
+        assertNotNull(idToken);
+    }
+
+    @Test
+    public void verifyTokenGenerationWithoutCallbackService() {
+        val request = new MockHttpServletRequest();
+        val profile = new CommonProfile();
+        profile.setClientName("OIDC");
+        profile.setId("casuser");
+        request.setAttribute(Pac4jConstants.USER_PROFILES, profile);
+
+        val response = new MockHttpServletResponse();
+
+        val tgt = mock(TicketGrantingTicket.class);
+
+        when(tgt.getServices()).thenReturn(new HashMap<>());
+        var authentication = CoreAuthenticationTestUtils.getAuthentication("casuser",
+            CollectionUtils.wrap(OAuth20Constants.STATE, List.of("some-state"),
+                OAuth20Constants.NONCE, List.of("some-nonce")));
+        when(tgt.getAuthentication()).thenReturn(authentication);
+
+        val accessToken = mock(AccessToken.class);
+        when(accessToken.getAuthentication()).thenReturn(authentication);
         when(accessToken.getTicketGrantingTicket()).thenReturn(tgt);
         when(accessToken.getId()).thenReturn(getClass().getSimpleName());
 
@@ -63,12 +94,13 @@ public class OidcIdTokenGeneratorServiceTests extends AbstractOidcTests {
 
     @Test
     public void verifyTokenGenerationFailsWithoutProfile() {
-        thrown.expect(IllegalArgumentException.class);
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        val accessToken = mock(AccessToken.class);
-        oidcIdTokenGenerator.generate(request, response, accessToken, 30,
-            OAuth20ResponseTypes.CODE,
-            OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, "clientid"));
+        assertThrows(IllegalArgumentException.class, () -> {
+            val request = new MockHttpServletRequest();
+            val response = new MockHttpServletResponse();
+            val accessToken = mock(AccessToken.class);
+            oidcIdTokenGenerator.generate(request, response, accessToken, 30,
+                OAuth20ResponseTypes.CODE,
+                OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, "clientid"));
+        });
     }
 }

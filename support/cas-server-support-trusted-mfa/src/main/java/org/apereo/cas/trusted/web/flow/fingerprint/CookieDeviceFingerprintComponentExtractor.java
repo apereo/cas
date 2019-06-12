@@ -1,7 +1,7 @@
 package org.apereo.cas.trusted.web.flow.fingerprint;
 
 import org.apereo.cas.util.gen.RandomStringGenerator;
-import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
+import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.Getter;
@@ -24,7 +24,7 @@ import java.util.function.Supplier;
 @Setter
 @RequiredArgsConstructor
 public class CookieDeviceFingerprintComponentExtractor implements DeviceFingerprintComponentExtractor {
-    private final CookieRetrievingCookieGenerator cookieGenerator;
+    private final CasCookieBuilder cookieGenerator;
     private final RandomStringGenerator randomStringGenerator;
 
     private int order = LOWEST_PRECEDENCE;
@@ -35,7 +35,6 @@ public class CookieDeviceFingerprintComponentExtractor implements DeviceFingerpr
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         val cookieValue = Optional.ofNullable(cookieGenerator.retrieveCookieValue(request)).orElseGet(createDeviceFingerPrintCookieValue());
 
-        // set/update the cookie in the response if we are "creating" a fingerprint
         if (isNew) {
             createDeviceFingerPrintCookie(context, request, cookieValue);
         }

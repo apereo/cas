@@ -1,19 +1,17 @@
 package org.apereo.cas.support.saml;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlAttributeEncoder;
+import org.apereo.cas.authentication.ProtocolAttributeEncoder;
+import org.apereo.cas.support.saml.web.idp.profile.builders.enc.attribute.SamlAttributeEncoder;
 import org.apereo.cas.util.EncodingUtils;
 
 import lombok.val;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link SamlAttributeEncoderTests}.
@@ -21,13 +19,8 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Tag("SAML")
 public class SamlAttributeEncoderTests {
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
-
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
-
     @Test
     public void verifyAction() {
         val encoder = new SamlAttributeEncoder();
@@ -42,7 +35,7 @@ public class SamlAttributeEncoderTests {
     public void ensureSamlUrnAttributesEncoded() {
         val encoder = new SamlAttributeEncoder();
         val attributes = new HashMap<String, Object>();
-        attributes.put(EncodingUtils.hexEncode("urn:oid:2.5.4.3"), "testValue");
+        attributes.put(ProtocolAttributeEncoder.encodeAttribute("urn:oid:2.5.4.3"), "testValue");
         val result = encoder.encodeAttributes(attributes, CoreAuthenticationTestUtils.getRegisteredService("test"));
         assertTrue(result.containsKey("urn:oid:2.5.4.3"));
     }

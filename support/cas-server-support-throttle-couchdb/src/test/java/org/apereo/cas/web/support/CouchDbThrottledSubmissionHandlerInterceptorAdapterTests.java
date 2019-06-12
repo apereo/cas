@@ -1,7 +1,6 @@
 package org.apereo.cas.web.support;
 
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
-import org.apereo.cas.category.CouchDbCategory;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -29,9 +28,9 @@ import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 
 import lombok.Getter;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -44,7 +43,7 @@ import org.springframework.test.context.TestPropertySource;
  * @author Timur Duehr
  * @since 6.0.0
  */
-@Category(CouchDbCategory.class)
+@Tag("CouchDb")
 @SpringBootTest(classes = {
     CasCouchDbThrottlingConfiguration.class,
     CasCouchDbCoreConfiguration.class,
@@ -74,7 +73,9 @@ import org.springframework.test.context.TestPropertySource;
 @TestPropertySource(properties = {
     "cas.audit.couchDb.dbName=throttle",
     "cas.audit.couchDb.asynchronous=false",
-    "org.ektorp.support.AutoUpdateViewOnChange=true"})
+    "cas.audit.couchDb.username=cas",
+    "cas.audit.couchdb.password=password"
+})
 @Getter
 public class CouchDbThrottledSubmissionHandlerInterceptorAdapterTests extends
     BaseThrottledSubmissionHandlerInterceptorAdapterTests {
@@ -91,13 +92,13 @@ public class CouchDbThrottledSubmissionHandlerInterceptorAdapterTests extends
     @Qualifier("auditCouchDbFactory")
     private CouchDbConnectorFactory couchDbFactory;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         couchDbFactory.getCouchDbInstance().createDatabaseIfNotExists(couchDbFactory.getCouchDbConnector().getDatabaseName());
         couchDbRepository.initStandardDesignDocument();
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         couchDbFactory.getCouchDbInstance().deleteDatabase(couchDbFactory.getCouchDbConnector().getDatabaseName());
     }

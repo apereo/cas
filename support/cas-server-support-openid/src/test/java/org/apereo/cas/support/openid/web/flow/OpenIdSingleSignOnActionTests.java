@@ -10,7 +10,8 @@ import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
-import org.junit.Test;
+import org.apache.commons.lang3.StringUtils;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -20,7 +21,7 @@ import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.test.MockRequestContext;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Scott Battaglia
@@ -66,9 +67,9 @@ public class OpenIdSingleSignOnActionTests extends AbstractOpenIdTests {
         request.setParameter(OpenIdProtocolConstants.OPENID_IDENTITY, "fablah");
         request.setParameter(OpenIdProtocolConstants.OPENID_RETURNTO, "http://www.cnn.com");
 
-        val factory = new OpenIdServiceFactory("");
+        val factory = new OpenIdServiceFactory(StringUtils.EMPTY);
         val service = factory.createService(request);
-        context.getFlowScope().put("service", service);
+        WebUtils.putServiceIntoFlowScope(context, service);
         context.getFlowScope().put(WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID, "tgtId");
 
         context.setExternalContext(new ServletExternalContext(
@@ -90,7 +91,7 @@ public class OpenIdSingleSignOnActionTests extends AbstractOpenIdTests {
         request.setParameter(OpenIdProtocolConstants.OPENID_RETURNTO, "https://google.com");
 
         val service = new OpenIdServiceFactory().createService(request);
-        context.getFlowScope().put("service", service);
+        WebUtils.putServiceIntoFlowScope(context, service);
         context.getFlowScope().put(WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID, t.getId());
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         assertEquals("success", this.action.execute(context).getId());

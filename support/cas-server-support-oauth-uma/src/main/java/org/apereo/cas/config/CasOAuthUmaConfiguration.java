@@ -5,12 +5,14 @@ import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
+import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGenerator;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.IdTokenGeneratorService;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.support.HardTimeoutExpirationPolicy;
+import org.apereo.cas.uma.UmaConfigurationContext;
 import org.apereo.cas.uma.claim.DefaultUmaResourceSetClaimPermissionExaminer;
 import org.apereo.cas.uma.claim.UmaResourceSetClaimPermissionExaminer;
 import org.apereo.cas.uma.discovery.UmaServerDiscoverySettings;
@@ -41,6 +43,7 @@ import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import lombok.val;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.context.session.J2ESessionStore;
+import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.pac4j.http.client.direct.HeaderClient;
 import org.pac4j.springframework.web.SecurityInterceptor;
@@ -81,6 +84,10 @@ public class CasOAuthUmaConfiguration implements WebMvcConfigurer {
     private ObjectProvider<TicketRegistry> ticketRegistry;
 
     @Autowired
+    @Qualifier("oauthDistributedSessionStore")
+    private ObjectProvider<SessionStore> oauthDistributedSessionStore;
+
+    @Autowired
     @Qualifier("oauthTokenGenerator")
     private ObjectProvider<OAuth20TokenGenerator> oauthTokenGenerator;
 
@@ -95,47 +102,42 @@ public class CasOAuthUmaConfiguration implements WebMvcConfigurer {
 
     @Bean
     @ConditionalOnMissingBean(name = "umaResourceSetClaimPermissionExaminer")
+    @RefreshScope
     public UmaResourceSetClaimPermissionExaminer umaResourceSetClaimPermissionExaminer() {
         return new DefaultUmaResourceSetClaimPermissionExaminer();
     }
 
     @Bean
+    @RefreshScope
     @ConditionalOnMissingBean(name = "umaRequestingPartyTokenGenerator")
     public IdTokenGeneratorService umaRequestingPartyTokenGenerator() {
         val uma = casProperties.getAuthn().getUma();
         val jwks = uma.getRequestingPartyToken().getJwksFile();
         val signingService = new UmaRequestingPartyTokenSigningService(jwks, uma.getIssuer());
-        return new UmaIdTokenGeneratorService(casProperties, signingService, servicesManager.getIfAvailable(), ticketRegistry.getIfAvailable());
+        val context = OAuth20ConfigurationContext.builder()
+            .ticketRegistry(ticketRegistry.getIfAvailable())
+            .servicesManager(servicesManager.getIfAvailable())
+            .idTokenSigningAndEncryptionService(signingService)
+            .sessionStore(oauthDistributedSessionStore.getIfAvailable())
+            .casProperties(casProperties)
+            .accessTokenGenerator(oauthTokenGenerator.getIfAvailable())
+            .build();
+        return new UmaIdTokenGeneratorService(context);
     }
 
     @Bean
     public UmaAuthorizationRequestEndpointController umaAuthorizationRequestEndpointController() {
-        return new UmaAuthorizationRequestEndpointController(defaultUmaPermissionTicketFactory(),
-            umaResourceSetRepository(),
-            casProperties,
-            servicesManager.getIfAvailable(),
-            ticketRegistry.getIfAvailable(),
-            oauthTokenGenerator.getIfAvailable(),
-            umaResourceSetClaimPermissionExaminer(),
-            umaRequestingPartyTokenGenerator());
+        return new UmaAuthorizationRequestEndpointController(buildConfigurationContext().build());
     }
 
     @Bean
     public UmaRequestingPartyTokenJwksEndpointController umaRequestingPartyTokenJwksEndpointController() {
-        return new UmaRequestingPartyTokenJwksEndpointController(defaultUmaPermissionTicketFactory(),
-            umaResourceSetRepository(),
-            casProperties,
-            servicesManager.getIfAvailable(),
-            ticketRegistry.getIfAvailable());
+        return new UmaRequestingPartyTokenJwksEndpointController(buildConfigurationContext().build());
     }
 
     @Bean
     public UmaRequestingPartyClaimsCollectionEndpointController umaRequestingPartyClaimsCollectionEndpointController() {
-        return new UmaRequestingPartyClaimsCollectionEndpointController(defaultUmaPermissionTicketFactory(),
-            umaResourceSetRepository(),
-            casProperties,
-            servicesManager.getIfAvailable(),
-            ticketRegistry.getIfAvailable());
+        return new UmaRequestingPartyClaimsCollectionEndpointController(buildConfigurationContext().build());
     }
 
     @Autowired
@@ -146,58 +148,47 @@ public class CasOAuthUmaConfiguration implements WebMvcConfigurer {
 
     @Bean
     public UmaPermissionRegistrationEndpointController umaPermissionRegistrationEndpointController() {
-        return new UmaPermissionRegistrationEndpointController(defaultUmaPermissionTicketFactory(),
-            umaResourceSetRepository(),
-            casProperties,
-            ticketRegistry.getIfAvailable());
+        return new UmaPermissionRegistrationEndpointController(buildConfigurationContext().build());
     }
 
     @Bean
     public UmaCreateResourceSetRegistrationEndpointController umaCreateResourceSetRegistrationEndpointController() {
-        return new UmaCreateResourceSetRegistrationEndpointController(defaultUmaPermissionTicketFactory(),
-            umaResourceSetRepository(), casProperties);
+        return new UmaCreateResourceSetRegistrationEndpointController(buildConfigurationContext().build());
     }
 
     @Bean
     public UmaDeleteResourceSetRegistrationEndpointController umaDeleteResourceSetRegistrationEndpointController() {
-        return new UmaDeleteResourceSetRegistrationEndpointController(defaultUmaPermissionTicketFactory(),
-            umaResourceSetRepository(), casProperties);
+        return new UmaDeleteResourceSetRegistrationEndpointController(buildConfigurationContext().build());
     }
 
     @Bean
     public UmaUpdateResourceSetRegistrationEndpointController umaUpdateResourceSetRegistrationEndpointController() {
-        return new UmaUpdateResourceSetRegistrationEndpointController(defaultUmaPermissionTicketFactory(),
-            umaResourceSetRepository(), casProperties);
+        return new UmaUpdateResourceSetRegistrationEndpointController(buildConfigurationContext().build());
     }
 
     @Bean
     public UmaFindResourceSetRegistrationEndpointController umaFindResourceSetRegistrationEndpointController() {
-        return new UmaFindResourceSetRegistrationEndpointController(defaultUmaPermissionTicketFactory(),
-            umaResourceSetRepository(), casProperties);
+        return new UmaFindResourceSetRegistrationEndpointController(buildConfigurationContext().build());
     }
 
     @Bean
     public UmaCreatePolicyForResourceSetEndpointController umaCreatePolicyForResourceSetEndpointController() {
-        return new UmaCreatePolicyForResourceSetEndpointController(defaultUmaPermissionTicketFactory(),
-            umaResourceSetRepository(), casProperties);
+        return new UmaCreatePolicyForResourceSetEndpointController(buildConfigurationContext().build());
     }
 
     @Bean
     public UmaDeletePolicyForResourceSetEndpointController umaDeletePolicyForResourceSetEndpointController() {
-        return new UmaDeletePolicyForResourceSetEndpointController(defaultUmaPermissionTicketFactory(),
-            umaResourceSetRepository(), casProperties);
+        return new UmaDeletePolicyForResourceSetEndpointController(buildConfigurationContext().build());
     }
 
     @Bean
     public UmaUpdatePolicyForResourceSetEndpointController umaUpdatePolicyForResourceSetEndpointController() {
-        return new UmaUpdatePolicyForResourceSetEndpointController(defaultUmaPermissionTicketFactory(),
-            umaResourceSetRepository(), casProperties);
+        return new UmaUpdatePolicyForResourceSetEndpointController(buildConfigurationContext().build());
     }
 
     @Bean
     public UmaFindPolicyForResourceSetEndpointController umaFindPolicyForResourceSetEndpointController() {
-        return new UmaFindPolicyForResourceSetEndpointController(defaultUmaPermissionTicketFactory(),
-            umaResourceSetRepository(), casProperties);
+        return new UmaFindPolicyForResourceSetEndpointController(buildConfigurationContext().build());
     }
 
     @Bean
@@ -250,14 +241,29 @@ public class CasOAuthUmaConfiguration implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(final InterceptorRegistry registry) {
-        registry.addInterceptor(umaRequestingPartyTokenSecurityInterceptor())
+        registry
+            .addInterceptor(umaRequestingPartyTokenSecurityInterceptor())
             .addPathPatterns(BASE_OAUTH20_URL.concat("/").concat(OAuth20Constants.UMA_PERMISSION_URL).concat("*"))
             .addPathPatterns(BASE_OAUTH20_URL.concat("/").concat(OAuth20Constants.UMA_RESOURCE_SET_REGISTRATION_URL).concat("*"))
             .addPathPatterns(BASE_OAUTH20_URL.concat("/*/").concat(OAuth20Constants.UMA_POLICY_URL).concat("*"))
             .addPathPatterns(BASE_OAUTH20_URL.concat("/").concat(OAuth20Constants.UMA_POLICY_URL).concat("*"))
             .addPathPatterns(BASE_OAUTH20_URL.concat("/").concat(OAuth20Constants.UMA_CLAIMS_COLLECTION_URL).concat("*"));
 
-        registry.addInterceptor(umaAuthorizationApiTokenSecurityInterceptor())
+        registry
+            .addInterceptor(umaAuthorizationApiTokenSecurityInterceptor())
             .addPathPatterns(BASE_OAUTH20_URL.concat("/").concat(OAuth20Constants.UMA_AUTHORIZATION_REQUEST_URL).concat("*"));
+    }
+
+    private UmaConfigurationContext.UmaConfigurationContextBuilder buildConfigurationContext() {
+        return UmaConfigurationContext.builder()
+            .accessTokenGenerator(oauthTokenGenerator.getIfAvailable())
+            .casProperties(casProperties)
+            .claimPermissionExaminer(umaResourceSetClaimPermissionExaminer())
+            .requestingPartyTokenGenerator(umaRequestingPartyTokenGenerator())
+            .servicesManager(servicesManager.getIfAvailable())
+            .sessionStore(oauthDistributedSessionStore.getIfAvailable())
+            .ticketRegistry(ticketRegistry.getIfAvailable())
+            .umaPermissionTicketFactory(defaultUmaPermissionTicketFactory())
+            .umaResourceSetRepository(umaResourceSetRepository());
     }
 }

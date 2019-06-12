@@ -1,18 +1,15 @@
 package org.apereo.cas.util.io;
 
 import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.category.MailCategory;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.configuration.model.support.email.EmailProperties;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.junit.ConditionalIgnore;
-import org.apereo.cas.util.junit.ConditionalIgnoreRule;
-import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
+import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
+import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.val;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
@@ -20,10 +17,10 @@ import org.springframework.boot.autoconfigure.mail.MailSenderValidatorAutoConfig
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
-import static org.junit.Assert.*;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -38,19 +35,11 @@ import static org.mockito.Mockito.*;
     MailSenderAutoConfiguration.class,
     MailSenderValidatorAutoConfiguration.class
 })
-@Category(MailCategory.class)
-@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class, port = 25000)
+@Tag("Mail")
+@EnabledIfContinuousIntegration
+@EnabledIfPortOpen(port = 25000)
 @TestPropertySource(properties = {"spring.mail.host=localhost", "spring.mail.port=25000", "spring.mail.testConnection=true"})
 public class CommunicationsManagerTests {
-
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
-
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
-
-    @Rule
-    public final ConditionalIgnoreRule conditionalIgnoreRule = new ConditionalIgnoreRule();
 
     @Autowired
     @Qualifier("communicationsManager")
@@ -59,13 +48,18 @@ public class CommunicationsManagerTests {
     @Test
     public void verifyMailSender() {
         assertTrue(communicationsManager.isMailSenderDefined());
-        assertTrue(communicationsManager.email("Test Body", "cas@example.org", "Subject", "sample@example.org"));
+
+        var props = new EmailProperties();
+        props.setText("Test Body");
+        props.setSubject("Subject");
+        props.setFrom("cas@example.org");
+        props.setCc("cc@example.org");
+        props.setBcc("bcc@example.org");
+
+        assertTrue(communicationsManager.email(props, "sample@example.org", props.getFormattedBody()));
         val p = mock(Principal.class);
         when(p.getId()).thenReturn("casuser");
-        when(p.getAttributes()).thenReturn(CollectionUtils.wrap("email", "cas@example.org"));
-        assertTrue(communicationsManager.email(p, "email", "Body",
-            "cas@example.org", "Test Subject", "cc@example.org", "bcc@example.org"));
-        assertTrue(communicationsManager.email("Test Body", "cas@example.org", "Subject",
-            "sample@example.org", "cc@example.org", "bcc@example.org"));
+        when(p.getAttributes()).thenReturn(CollectionUtils.wrap("email", List.of("cas@example.org")));
+        assertTrue(communicationsManager.email(p, "email", props, props.getFormattedBody()));
     }
 }

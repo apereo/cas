@@ -3,13 +3,14 @@ package org.apereo.cas.web.flow.actions;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.ContextualAuthenticationPolicy;
+import org.apereo.cas.configuration.model.core.web.MessageBundleProperties;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.UnsatisfiedAuthenticationPolicyException;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.binding.message.DefaultMessageResolver;
 import org.springframework.binding.message.MessageContext;
@@ -21,7 +22,7 @@ import java.security.GeneralSecurityException;
 import java.util.HashMap;
 import java.util.Optional;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -34,8 +35,8 @@ public class AuthenticationExceptionHandlerActionTests {
     @Test
     public void handleAccountNotFoundExceptionByDefault() {
         val handler = new AuthenticationExceptionHandlerAction(
-            CollectionUtils.wrapSet(AccountLockedException.class, AccountNotFoundException.class)
-        );
+            CollectionUtils.wrapSet(AccountLockedException.class, AccountNotFoundException.class),
+            MessageBundleProperties.DEFAULT_BUNDLE_PREFIX_AUTHN_FAILURE);
         val req = getMockRequestContext();
 
         val map = new HashMap<String, Throwable>();
@@ -44,7 +45,7 @@ public class AuthenticationExceptionHandlerActionTests {
         assertEquals(AccountNotFoundException.class.getSimpleName(), id);
     }
 
-    private RequestContext getMockRequestContext() {
+    private static RequestContext getMockRequestContext() {
         val ctx = mock(RequestContext.class);
         when(ctx.getMessageContext()).thenReturn(mock(MessageContext.class));
         return ctx;
@@ -52,7 +53,7 @@ public class AuthenticationExceptionHandlerActionTests {
 
     @Test
     public void handleUnknownExceptionByDefault() {
-        val handler = new AuthenticationExceptionHandlerAction();
+        val handler = new AuthenticationExceptionHandlerAction(MessageBundleProperties.DEFAULT_BUNDLE_PREFIX_AUTHN_FAILURE);
         val req = getMockRequestContext();
         val map = new HashMap<String, Throwable>();
         map.put("unknown", new GeneralSecurityException());
@@ -73,7 +74,7 @@ public class AuthenticationExceptionHandlerActionTests {
     public void handleUnsatisfiedAuthenticationPolicyExceptionByDefault() {
         val handler = new AuthenticationExceptionHandlerAction(
             CollectionUtils.wrapSet(UnsatisfiedAuthenticationPolicyException.class,
-                AccountNotFoundException.class)
+                AccountNotFoundException.class), MessageBundleProperties.DEFAULT_BUNDLE_PREFIX_AUTHN_FAILURE
         );
         val req = getMockRequestContext();
 

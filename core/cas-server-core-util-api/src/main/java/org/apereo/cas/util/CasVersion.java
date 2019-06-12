@@ -7,6 +7,7 @@ import lombok.val;
 import org.springframework.core.io.VfsResource;
 
 import java.io.File;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 
 
@@ -70,6 +71,6 @@ public class CasVersion {
             return DateTimeUtils.zonedDateTimeOf(file.lastModified());
         }
         LOGGER.warn("Unhandled url protocol: [{}] resource: [{}]", resource.getProtocol(), resource);
-        return ZonedDateTime.now();
+        return ZonedDateTime.now(ZoneOffset.UTC);
     }
 }

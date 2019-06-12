@@ -1,21 +1,15 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.response.query;
 
-import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
-import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
-import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectEncrypter;
-import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
+import org.apereo.cas.support.saml.web.idp.profile.builders.response.SamlProfileSamlResponseBuilderConfigurationContext;
 import org.apereo.cas.support.saml.web.idp.profile.builders.response.soap.SamlProfileSamlSoap11ResponseBuilder;
 
 import lombok.val;
-import org.apache.velocity.app.VelocityEngine;
 import org.opensaml.messaging.context.MessageContext;
-import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.xml.SAMLConstants;
-import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.AttributeQuery;
 import org.opensaml.saml.saml2.core.RequestAbstractType;
 import org.opensaml.soap.soap11.Body;
@@ -34,14 +28,8 @@ import javax.servlet.http.HttpServletResponse;
 public class SamlProfileAttributeQueryResponseBuilder extends SamlProfileSamlSoap11ResponseBuilder {
     private static final long serialVersionUID = -5582616946993706815L;
 
-    public SamlProfileAttributeQueryResponseBuilder(final OpenSamlConfigBean openSamlConfigBean,
-                                                    final SamlIdPObjectSigner samlObjectSigner,
-                                                    final VelocityEngine velocityEngineFactory,
-                                                    final SamlProfileObjectBuilder<Assertion> samlProfileSamlAssertionBuilder,
-                                                    final SamlProfileObjectBuilder<? extends SAMLObject> saml2ResponseBuilder,
-                                                    final SamlIdPObjectEncrypter samlObjectEncrypter) {
-        super(openSamlConfigBean, samlObjectSigner, velocityEngineFactory,
-            samlProfileSamlAssertionBuilder, saml2ResponseBuilder, samlObjectEncrypter);
+    public SamlProfileAttributeQueryResponseBuilder(final SamlProfileSamlResponseBuilderConfigurationContext samlResponseBuilderConfigurationContext) {
+        super(samlResponseBuilderConfigurationContext);
     }
 
     @Override
@@ -60,8 +48,9 @@ public class SamlProfileAttributeQueryResponseBuilder extends SamlProfileSamlSoa
         val envelope = newSoapObject(Envelope.class);
         envelope.setHeader(header);
         envelope.setBody(body);
-        SamlUtils.logSamlObject(this.configBean, envelope);
+        SamlUtils.logSamlObject(this.openSamlConfigBean, envelope);
 
-        return encodeFinalResponse(request, response, service, adaptor, envelope, binding, authnRequest, casAssertion);
+        return encodeFinalResponse(request, response, service, adaptor, envelope,
+            binding, authnRequest, casAssertion, messageContext);
     }
 }

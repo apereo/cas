@@ -29,18 +29,13 @@ component by the same name hosted here, with support for a plethora of additiona
 If you have already identified an enhancement or a bug, it is STRONGLY recommended that you simply submit a pull request to address the case.
 There is no need for special ceremony to create separate issues. The pull request IS the issue and it will be tracked and tagged as such.
 
-## Documentation [![Javadoc](https://img.shields.io/badge/Documentation-Javadoc-ff69b4.svg)](https://www.javadoc.io/doc/org.apereo.cas/cas-server)
+## Documentation [![Javadoc](https://img.shields.io/badge/Documentation-Javadoc-ff69b4.svg)](https://www.javadoc.io/doc/org.apereo.cas/cas-server-core)
 
 | Version         | Reference
 |------------|-----------------------------------
 | ![](https://img.shields.io/badge/Development-WIP-blue.svg?style=flat) | [Link](https://apereo.github.io/cas/development)
+| ![](https://img.shields.io/badge/6.0.x-Current-green.svg?style=flat) | [Link](https://apereo.github.io/cas/6.0.x)
 | ![](https://img.shields.io/badge/5.3.x-Current-green.svg?style=flat) | [Link](https://apereo.github.io/cas/5.3.x)
-| ![](https://img.shields.io/badge/5.2.x-Current-green.svg?style=flat) | [Link](https://apereo.github.io/cas/5.2.x)
-| ![](https://img.shields.io/badge/5.1.x-EOL-lightgrey.svg?style=flat) | [Link](https://apereo.github.io/cas/5.1.x)
-| ![](https://img.shields.io/badge/5.0.x-EOL-lightgrey.svg?style=flat) | [Link](https://apereo.github.io/cas/5.0.x)
-| ![](https://img.shields.io/badge/4.2.x-EOL-lightgrey.svg?style=flat) | [Link](https://apereo.github.io/cas/4.2.x)
-| ![](https://img.shields.io/badge/4.1.x-EOL-lightgrey.svg?style=flat) | [Link](https://apereo.github.io/cas/4.1.x)
-| ![](https://img.shields.io/badge/4.0.x-EOL-lightgrey.svg?style=flat) | [Link](https://apereo.github.io/cas/4.0.x)
 
 Additional resources are available as follows:
 
@@ -56,7 +51,8 @@ Additional resources are available as follows:
 [![Open Pull Requests](https://img.shields.io/github/issues-pr/apereo/cas.svg?style=flat)][contribute]
 [![codecov](https://codecov.io/gh/apereo/cas/branch/master/graph/badge.svg)](https://codecov.io/gh/apereo/cas)
 [![Build Status](https://api.travis-ci.org/apereo/cas.png?branch=master)](http://travis-ci.org/apereo/cas)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.apereo.cas/cas-server-webapp/badge.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/org.apereo.cas/cas-server)
+[![Build status](https://ci.appveyor.com/api/projects/status/0tl79vsqd2ei9bng?svg=true)](https://ci.appveyor.com/project/apereo/cas)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.apereo.cas/cas-server-core/badge.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/org.apereo.cas/cas-server-core)
 [![Github Releases](https://img.shields.io/github/release/apereo/cas.svg)](https://github.com/apereo/cas/releases)
 
 It is recommended to deploy CAS locally using the [WAR Overlay method][overlay]. Cloning or downloading the CAS codebase
@@ -71,11 +67,11 @@ The following features are supported by the CAS project:
 * OAuth v2 Protocol
 * OpenID & OpenID Connect Protocol
 * WS-Federation Passive Requestor Protocol
-* Authentication via JAAS, LDAP, RDBMS, X.509, Radius, SPNEGO, JWT, Remote, Trusted, BASIC, Apache Shiro, MongoDb, Pac4J and more.
+* Authentication via JAAS, LDAP, RDBMS, X.509, Radius, SPNEGO, JWT, Remote, Apache Cassandra, Trusted, BASIC, Apache Shiro, MongoDb, Pac4J and more.
 * Delegated authentication to WS-FED, Facebook, Twitter, SAML IdP, OpenID, OpenID Connect, CAS and more.
 * Authorization via ABAC, Time/Date, REST, Internet2's Grouper and more.
-* HA clustered deployments via Hazelcast, Ehcache, JPA, Memcached, Apache Ignite, MongoDb, Redis, DynamoDb, Couchbase and more.
-* Application registration backed by JSON, LDAP, YAML, JPA, Couchbase, MongoDb, DynamoDb, Redis and more.
+* HA clustered deployments via Hazelcast, Ehcache, JPA, Apache Cassandra, Memcached, Apache Ignite, MongoDb, Redis, DynamoDb, Couchbase and more.
+* Application registration backed by JSON, LDAP, YAML, Apache Cassandra, JPA, Couchbase, MongoDb, DynamoDb, Redis and more.
 * Multifactor authentication via Duo Security, YubiKey, RSA, Google Authenticator and more.
 * Administrative UIs to manage logging, monitoring, statistics, configuration, client registration and more.
 * Global and per-application user interface theme and branding.

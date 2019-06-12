@@ -33,7 +33,7 @@ public abstract class AbstractMapBasedTicketRegistry extends AbstractTicketRegis
     }
 
     @Override
-    public void addTicket(@NonNull final Ticket ticket) {
+    public void addTicket(final @NonNull Ticket ticket) {
         val encTicket = encodeTicket(ticket);
         LOGGER.debug("Added ticket [{}] to registry.", ticket.getId());
         getMapInstance().put(encTicket.getId(), encTicket);
@@ -63,10 +63,7 @@ public abstract class AbstractMapBasedTicketRegistry extends AbstractTicketRegis
     @Override
     public boolean deleteSingleTicket(final String ticketId) {
         val encTicketId = encodeTicketId(ticketId);
-        if (StringUtils.isBlank(encTicketId)) {
-            return false;
-        }
-        return getMapInstance().remove(encTicketId) != null;
+        return !StringUtils.isBlank(encTicketId) && getMapInstance().remove(encTicketId) != null;
     }
 
     @Override

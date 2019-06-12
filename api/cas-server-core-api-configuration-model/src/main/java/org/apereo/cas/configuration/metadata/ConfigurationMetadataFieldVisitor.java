@@ -42,11 +42,11 @@ public class ConfigurationMetadataFieldVisitor extends VoidVisitorAdapter<Config
             throw new IllegalArgumentException("Field " + field + " has no variable definitions");
         }
         val var = field.getVariable(0);
-        if (field.getModifiers().contains(Modifier.STATIC)) {
+        if (field.getModifiers().contains(Modifier.staticModifier())) {
             LOGGER.debug("Field [{}] is static and will be ignored for metadata generation", var.getNameAsString());
             return;
         }
-        if (!field.getJavadoc().isPresent()) {
+        if (field.getJavadoc().isEmpty()) {
             LOGGER.error("Field [{}] has no Javadoc defined", field);
         }
         val creator = new ConfigurationMetadataPropertyCreator(indexNameWithBrackets, properties, groups, parentClass);
@@ -62,7 +62,7 @@ public class ConfigurationMetadataFieldVisitor extends VoidVisitorAdapter<Config
                 val instance = ConfigurationMetadataClassSourceLocator.getInstance();
                 val clz = instance.locatePropertiesClassForType(type);
                 if (clz != null && !clz.isMemberClass()) {
-                    val typePath = instance.buildTypeSourcePath(this.sourcePath, clz.getName());
+                    val typePath = ConfigurationMetadataClassSourceLocator.buildTypeSourcePath(this.sourcePath, clz.getName());
                     val parser = new ConfigurationMetadataUnitParser(this.sourcePath);
                     parser.parseCompilationUnit(properties, groups, prop, typePath, clz.getName(), false);
                 }
@@ -70,7 +70,7 @@ public class ConfigurationMetadataFieldVisitor extends VoidVisitorAdapter<Config
         }
     }
 
-    private boolean shouldTypeBeExcluded(final ClassOrInterfaceType type) {
+    private static boolean shouldTypeBeExcluded(final ClassOrInterfaceType type) {
         return type.getNameAsString().matches(
             String.class.getSimpleName() + '|'
                 + Integer.class.getSimpleName() + '|'

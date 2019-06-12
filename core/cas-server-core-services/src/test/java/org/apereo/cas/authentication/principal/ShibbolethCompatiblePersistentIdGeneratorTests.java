@@ -5,12 +5,12 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
 public class ShibbolethCompatiblePersistentIdGeneratorTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "shibbolethCompatiblePersistentIdGenerator.json");
-    private static final ObjectMapper MAPPER = new ObjectMapper();
+    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
     @Test
     public void verifyGenerator() {
@@ -34,7 +34,7 @@ public class ShibbolethCompatiblePersistentIdGeneratorTests {
     }
 
     @Test
-    public void realTestofGeneratorThatVerifiesValueReturned() {
+    public void realTestOfGeneratorThatVerifiesValueReturned() {
         val generator = new ShibbolethCompatiblePersistentIdGenerator("thisisasalt");
 
         val p = mock(Principal.class);

@@ -83,8 +83,10 @@ public class CasCoreConfiguration {
     @ConditionalOnMissingBean(name = "authenticationPolicyFactory")
     public ContextualAuthenticationPolicyFactory<ServiceContext> authenticationPolicyFactory() {
         if (casProperties.getAuthn().getPolicy().isRequiredHandlerAuthenticationPolicyEnabled()) {
+            LOGGER.debug("Applying configuration for Required Handler Authentication Policy");
             return new RequiredHandlerAuthenticationPolicyFactory();
         }
+        LOGGER.debug("Applying configuration for Accept Any Authentication Policy");
         return new AcceptAnyAuthenticationPolicyFactory();
     }
 
@@ -95,7 +97,7 @@ public class CasCoreConfiguration {
         val plan = new DefaultAuthenticationServiceSelectionPlan();
         configurers.forEach(c -> {
             val name = RegExUtils.removePattern(c.getClass().getSimpleName(), "\\$.+");
-            LOGGER.debug("Configuring authentication request service selection strategy plan [{}]", name);
+            LOGGER.trace("Configuring authentication request service selection strategy plan [{}]", name);
             c.configureAuthenticationServiceSelectionStrategy(plan);
         });
         return plan;

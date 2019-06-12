@@ -17,6 +17,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import javax.security.auth.login.AccountExpiredException;
@@ -43,27 +44,27 @@ public class RestfulAuthenticationPolicy implements AuthenticationPolicy {
         val principal = authentication.getPrincipal();
         try {
             val acceptHeaders = new HttpHeaders();
-            acceptHeaders.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
-            val entity = new HttpEntity<>(principal, acceptHeaders);
-            LOGGER.warn("Checking authentication policy for [{}] via POST at [{}]", principal, this.endpoint);
+            acceptHeaders.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON_UTF8));
+            acceptHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
+            val entity = new HttpEntity<Principal>(principal, acceptHeaders);
+            LOGGER.debug("Checking authentication policy for [{}] via POST at [{}]", principal, this.endpoint);
             val resp = restTemplate.exchange(this.endpoint, HttpMethod.POST, entity, String.class);
-            if (resp == null) {
-                LOGGER.warn("[{}] returned no responses", this.endpoint);
-                throw new GeneralSecurityException("No response returned from REST endpoint to determine authentication policy");
-            }
             val statusCode = resp.getStatusCode();
             if (statusCode != HttpStatus.OK) {
                 val ex = handleResponseStatusCode(statusCode, principal);
                 throw new GeneralSecurityException(ex);
             }
             return true;
-        } catch (final HttpClientErrorException e) {
+        } catch (final HttpClientErrorException | HttpServerErrorException e) {
             val ex = handleResponseStatusCode(e.getStatusCode(), authentication.getPrincipal());
             throw new GeneralSecurityException(ex);
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
         }
+        return false;
     }
 
-    private Exception handleResponseStatusCode(final HttpStatus statusCode, final Principal p) {
+    private static Exception handleResponseStatusCode(final HttpStatus statusCode, final Principal p) {
         if (statusCode == HttpStatus.FORBIDDEN || statusCode == HttpStatus.METHOD_NOT_ALLOWED) {
             return new AccountDisabledException("Could not authenticate forbidden account for " + p.getId());
         }

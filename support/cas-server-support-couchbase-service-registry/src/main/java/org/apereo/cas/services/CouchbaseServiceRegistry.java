@@ -1,24 +1,32 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
+import org.apereo.cas.couchbase.core.CouchbaseException;
 import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
-import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.serialization.StringSerializer;
 
 import com.couchbase.client.java.document.RawJsonDocument;
-import com.couchbase.client.java.view.DefaultView;
-import com.couchbase.client.java.view.View;
-import com.couchbase.client.java.view.ViewQuery;
-import com.couchbase.client.java.view.ViewResult;
+import com.couchbase.client.java.query.N1qlQuery;
+import com.couchbase.client.java.query.N1qlQueryResult;
+import com.couchbase.client.java.query.N1qlQueryRow;
+import com.couchbase.client.java.query.Select;
+import com.couchbase.client.java.query.dsl.Expression;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.DisposableBean;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 /**
  * This is {@link CouchbaseServiceRegistry}.
@@ -34,52 +42,39 @@ import java.util.Collection;
  */
 @Slf4j
 public class CouchbaseServiceRegistry extends AbstractServiceRegistry implements DisposableBean {
-
-    /**
-     * The utils document.
-     */
-    public static final String UTIL_DOCUMENT = "utils";
-
-    /**
-     * All services view.
-     */
-    public static final View ALL_SERVICES_VIEW = DefaultView.create(
-        "all_services",
-        "function(d,m) {if (!isNaN(m.id)) {emit(m.id);}}");
-
-    /**
-     * All views.
-     */
-    public static final Collection<View> ALL_VIEWS = CollectionUtils.wrap(ALL_SERVICES_VIEW);
-
     private final CouchbaseClientFactory couchbase;
     private final StringSerializer<RegisteredService> registeredServiceJsonSerializer;
 
-    public CouchbaseServiceRegistry(final CouchbaseClientFactory couchbase,
-                                    final StringSerializer<RegisteredService> serviceJsonSerializer) {
+    public CouchbaseServiceRegistry(final ApplicationEventPublisher eventPublisher, final CouchbaseClientFactory couchbase,
+                                    final StringSerializer<RegisteredService> registeredServiceJsonSerializer,
+                                    final Collection<ServiceRegistryListener> serviceRegistryListeners) {
+        super(eventPublisher, serviceRegistryListeners);
         this.couchbase = couchbase;
-        this.registeredServiceJsonSerializer = serviceJsonSerializer;
+        this.registeredServiceJsonSerializer = registeredServiceJsonSerializer;
     }
 
     @Override
-    @SneakyThrows
     public RegisteredService save(final RegisteredService service) {
-        LOGGER.debug("Saving service [{}]", service.getName());
+        LOGGER.trace("Saving service [{}] [{}]", service.getClass().getName(), service.getName());
         if (service.getId() == AbstractRegisteredService.INITIAL_IDENTIFIER_VALUE) {
-            service.setId(service.hashCode());
+            service.setId(UUID.randomUUID().getLeastSignificantBits());
         }
-        try (val stringWriter = new StringWriter()) {
-            this.registeredServiceJsonSerializer.to(stringWriter, service);
-            val document = RawJsonDocument.create(String.valueOf(service.getId()), 0, stringWriter.toString());
-            this.couchbase.getBucket().upsert(document);
-        }
-        return service;
+        val stringWriter = new StringWriter();
+        this.registeredServiceJsonSerializer.to(stringWriter, service);
+        val document = RawJsonDocument.create(String.valueOf(service.getId()), 0, stringWriter.toString());
+        invokeServiceRegistryListenerPreSave(service);
+        val savedDocument= couchbase.getBucket().upsert(document, couchbase.getTimeout(), TimeUnit.MILLISECONDS);
+        val savedService = registeredServiceJsonSerializer.from(savedDocument.content());
+        LOGGER.debug("Saved service [{}] as [{}]", service.getName(), savedService.getName());
+        publishEvent(new CouchbaseRegisteredServiceSavedEvent(this));
+        return savedService;
     }
 
     @Override
     public boolean delete(final RegisteredService service) {
         LOGGER.debug("Deleting service [{}]", service.getName());
-        this.couchbase.getBucket().remove(String.valueOf(service.getId()));
+        this.couchbase.getBucket().remove(String.valueOf(service.getId()), couchbase.getTimeout(), TimeUnit.MILLISECONDS);
+        publishEvent(new CouchbaseRegisteredServiceDeletedEvent(this));
         return true;
     }
 
@@ -87,39 +82,56 @@ public class CouchbaseServiceRegistry extends AbstractServiceRegistry implements
     public Collection<RegisteredService> load() {
         try {
             val allKeys = executeViewQueryForAllServices();
-            val services = new ArrayList<RegisteredService>();
-            for (val row : allKeys) {
-                val document = row.document(RawJsonDocument.class);
-                if (document != null) {
-                    val json = document.content();
-                    LOGGER.debug("Found service: [{}]", json);
-
-                    val stringReader = new StringReader(json);
-                    val service = this.registeredServiceJsonSerializer.from(stringReader);
-                    services.add(service);
-                    publishEvent(new CasRegisteredServiceLoadedEvent(this, service));
-                }
-            }
-            return services;
+            val bucketName = couchbase.getBucket().name();
+            val spliterator = Spliterators.spliteratorUnknownSize(allKeys.iterator(), Spliterator.ORDERED);
+            return StreamSupport.stream(spliterator, false)
+                .map(N1qlQueryRow::value)
+                .filter(Objects::nonNull)
+                .filter(document -> document.containsKey(bucketName))
+                .map(document -> {
+                    val json = document.getObject(bucketName).toString();
+                    LOGGER.trace("Found service: [{}]", json);
+                    return this.registeredServiceJsonSerializer.from(json);
+                })
+                .filter(Objects::nonNull)
+                .map(this::invokeServiceRegistryListenerPostLoad)
+                .filter(Objects::nonNull)
+                .peek(service -> publishEvent(new CasRegisteredServiceLoadedEvent(this, service)))
+                .collect(Collectors.toList());
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
             throw new IllegalArgumentException(e.getMessage(), e);
         }
     }
 
-    private ViewResult executeViewQueryForAllServices() {
-        return this.couchbase.getBucket().query(ViewQuery.from(UTIL_DOCUMENT, ALL_SERVICES_VIEW.name()));
+    private N1qlQueryResult executeViewQueryForAllServices() {
+        val theBucket = couchbase.getBucket();
+        val statement = Select.select("*")
+            .from(Expression.i(theBucket.name()))
+            .where("REGEX_CONTAINS(" + Expression.i("@class") + ", \".*RegisteredService$\")");
+
+        val n1q1Query = N1qlQuery.simple(statement);
+        val queryResult = theBucket.query(n1q1Query, couchbase.getTimeout(), TimeUnit.MILLISECONDS);
+        if (!queryResult.finalSuccess()) {
+            throw new CouchbaseException(queryResult.status() + ": " + queryResult.errors().toString());
+        }
+        if (LOGGER.isTraceEnabled()) {
+            LOGGER.trace("executeViewQueryForAllServices() [");
+            queryResult.allRows().forEach(r -> LOGGER.trace("[{}]", r));
+            LOGGER.trace("]");
+        }
+        return queryResult;
     }
 
     @Override
     public RegisteredService findServiceById(final long id) {
         try {
-            LOGGER.debug("Lookup for service [{}]", id);
-            val document = this.couchbase.getBucket().get(String.valueOf(id), RawJsonDocument.class);
+            LOGGER.debug("Lookup for service long: [{}]", id);
+            val document = couchbase.getBucket().get(String.valueOf(id), RawJsonDocument.class);
             if (document != null) {
                 val json = document.content();
                 val stringReader = new StringReader(json);
-                return this.registeredServiceJsonSerializer.from(stringReader);
+                return registeredServiceJsonSerializer.from(stringReader);
             }
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
@@ -129,6 +141,7 @@ public class CouchbaseServiceRegistry extends AbstractServiceRegistry implements
 
     @Override
     public RegisteredService findServiceById(final String id) {
+        LOGGER.debug("Lookup for service string: [{}]", id);
         return load().stream().filter(r -> r.matches(id)).findFirst().orElse(null);
     }
 
@@ -143,6 +156,6 @@ public class CouchbaseServiceRegistry extends AbstractServiceRegistry implements
 
     @Override
     public long size() {
-        return executeViewQueryForAllServices().totalRows();
+        return executeViewQueryForAllServices().allRows().size();
     }
 }

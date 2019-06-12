@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<!DOCTYPE import-control PUBLIC "-//Checkstyle//DTD ImportControl Configuration 1.4//EN" "https://checkstyle.org/dtds/import_control_1_4.dtd">
+<import-control pkg="org" strategyOnMismatch="allowed">
+    <!--Use JUnit5 annotations.-->
+    <allow class="org.junit.runner.RunWith"/>
+    <allow pkg="org.junit.platform"/>
+    <allow pkg="org.junit.jupiter"/>
+
+    <disallow pkg="org.junit" exact-match="true"/>
+    <disallow pkg="org.junit.Assert"/>
+    <disallow pkg="org\.junit\.(runners?|experimental\.categories)" regex="true" />
+
+    <subpackage name="apereo.cas.util.junit">
+        <allow pkg="org.junit" exact-match="true"/>
+        <allow pkg="org\.junit\.runners?" regex="true"/>
+    </subpackage>
+</import-control>

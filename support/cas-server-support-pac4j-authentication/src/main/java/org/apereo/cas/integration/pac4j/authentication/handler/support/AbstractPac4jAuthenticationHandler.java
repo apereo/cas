@@ -1,9 +1,11 @@
 package org.apereo.cas.integration.pac4j.authentication.handler.support;
 
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
+import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.ClientCredential;
 import org.apereo.cas.authentication.principal.ClientCustomPropertyConstants;
+import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
@@ -19,7 +21,6 @@ import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 
 /**
  * Abstract pac4j authentication handler which builds the CAS handler result from the pac4j user profile.
@@ -59,9 +60,39 @@ public abstract class AbstractPac4jAuthenticationHandler extends AbstractPreAndP
         }
         credentials.setUserProfile(profile);
         credentials.setTypedIdUsed(isTypedIdUsed);
-        val principal = this.principalFactory.createPrincipal(id, new LinkedHashMap<>(profile.getAttributes()));
+        val attributes = CoreAuthenticationUtils.convertAttributeValuesToMultiValuedObjects(profile.getAttributes());
+        val principal = this.principalFactory.createPrincipal(id, attributes);
         LOGGER.debug("Constructed authenticated principal [{}] based on user profile [{}]", principal, profile);
+        return finalizeAuthenticationHandlerResult(credentials, principal, profile, client);
+    }
+
+    /**
+     * Finalize authentication handler result.
+     *
+     * @param credentials the credentials
+     * @param principal   the principal
+     * @param profile     the profile
+     * @param client      the client
+     * @return the authentication handler execution result
+     */
+    protected AuthenticationHandlerExecutionResult finalizeAuthenticationHandlerResult(final ClientCredential credentials,
+                                                                                       final Principal principal,
+                                                                                       final UserProfile profile,
+                                                                                       final BaseClient client) {
+        preFinalizeAuthenticationHandlerResult(credentials, principal, profile, client);
         return createHandlerResult(credentials, principal, new ArrayList<>(0));
+    }
+
+    /**
+     * Pre finalize authentication handler result.
+     *
+     * @param credentials the credentials
+     * @param principal   the principal
+     * @param profile     the profile
+     * @param client      the client
+     */
+    protected void preFinalizeAuthenticationHandlerResult(final ClientCredential credentials, final Principal principal,
+                                                          final UserProfile profile, final BaseClient client) {
     }
 
     /**
@@ -82,6 +113,7 @@ public abstract class AbstractPac4jAuthenticationHandler extends AbstractPreAndP
                     val firstAttribute = CollectionUtils.firstElement(profile.getAttribute(principalAttribute));
                     if (firstAttribute.isPresent()) {
                         id = firstAttribute.get().toString();
+                        id = typePrincipalId(id, profile);
                     }
                     LOGGER.debug("Delegated authentication indicates usage of client principal attribute [{}] for the identifier [{}]", principalAttribute, id);
                 } else {
@@ -95,6 +127,7 @@ public abstract class AbstractPac4jAuthenticationHandler extends AbstractPreAndP
                 val firstAttribute = CollectionUtils.firstElement(profile.getAttribute(principalAttributeId));
                 if (firstAttribute.isPresent()) {
                     id = firstAttribute.get().toString();
+                    id = typePrincipalId(id, profile);
                 }
             } else {
                 LOGGER.warn("CAS cannot use [{}] as the principal attribute id, since the profile attributes do not contain the attribute. "
@@ -108,5 +141,11 @@ public abstract class AbstractPac4jAuthenticationHandler extends AbstractPreAndP
         }
         LOGGER.debug("Final principal id determined based on client [{}] and user profile [{}] is [{}]", profile, client, id);
         return id;
+    }
+
+    private String typePrincipalId(final String id, final UserProfile profile) {
+        return isTypedIdUsed
+            ? profile.getClass().getName() + UserProfile.SEPARATOR + id
+            : id;
     }
 }

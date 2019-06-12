@@ -1,6 +1,6 @@
 package org.apereo.cas.shell.commands.services;
 
-import org.apereo.cas.services.util.DefaultRegisteredServiceJsonSerializer;
+import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -33,7 +33,7 @@ public class ValidateRegisteredServiceCommand {
      * @param directory the directory
      */
     @ShellMethod(key = "validate-service", value = "Validate a given JSON/YAML service definition by path or directory")
-    public void validateService(
+    public static void validateService(
         @ShellOption(value = {"file"},
             help = "Path to the JSON/YAML service definition file") final String file,
         @ShellOption(value = {"directory"},
@@ -53,16 +53,16 @@ public class ValidateRegisteredServiceCommand {
         if (StringUtils.isNotBlank(directory)) {
             val directoryPath = new File(directory);
             if (directoryPath.isDirectory()) {
-                FileUtils.listFiles(directoryPath, new String[]{"json", "yml"}, false).forEach(this::validate);
+                FileUtils.listFiles(directoryPath, new String[]{"json", "yml"}, false).forEach(ValidateRegisteredServiceCommand::validate);
             }
             return;
         }
 
     }
 
-    private void validate(final File filePath) {
+    private static void validate(final File filePath) {
         try {
-            val validator = new DefaultRegisteredServiceJsonSerializer();
+            val validator = new RegisteredServiceJsonSerializer();
             if (filePath.isFile() && filePath.exists() && filePath.canRead() && filePath.length() > 0) {
                 val svc = validator.from(filePath);
                 LOGGER.info("Service [{}] is valid at [{}].", svc.getName(), filePath.getCanonicalPath());
@@ -72,7 +72,7 @@ public class ValidateRegisteredServiceCommand {
         } catch (final Exception e) {
             LOGGER.error("Could not understand and validate [{}]: [{}]", filePath.getPath(), e.getMessage());
         } finally {
-            LOGGER.info(StringUtils.repeat('-', SEP_LINE_LENGTH));
+            LOGGER.info("-".repeat(SEP_LINE_LENGTH));
         }
 
     }

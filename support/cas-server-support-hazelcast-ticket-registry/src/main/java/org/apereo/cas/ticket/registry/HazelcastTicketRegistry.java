@@ -96,7 +96,8 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements A
 
     @Override
     public long deleteAll() {
-        return this.ticketCatalog.findAll().stream()
+        return this.ticketCatalog.findAll()
+            .stream()
             .map(this::getTicketMapInstanceByMetadata)
             .filter(Objects::nonNull)
             .mapToInt(instance -> {
@@ -136,7 +137,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements A
     }
 
     @Override
-    public void destroy() throws Exception {
+    public void destroy() {
         close();
     }
 

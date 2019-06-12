@@ -23,6 +23,7 @@ public class RandomUtils {
     private static final int SECURE_ID_CHARS_LENGTH = 40;
     private static final int SECURE_ID_BYTES_LENGTH = 20;
     private static final int SECURE_ID_SHIFT_LENGTH = 4;
+    private static final String NATIVE_NON_BLOCKING_ALGORITHM = "NativePRNGNonBlocking";
 
     /**
      * Get strong enough SecureRandom instance and of the checked exception.
@@ -31,11 +32,20 @@ public class RandomUtils {
      */
     public static SecureRandom getNativeInstance() {
         try {
-            return SecureRandom.getInstanceStrong();
+            return SecureRandom.getInstance(NATIVE_NON_BLOCKING_ALGORITHM);
         } catch (final NoSuchAlgorithmException e) {
             LOGGER.trace(e.getMessage(), e);
             return new SecureRandom();
         }
+    }
+
+    /**
+     * Next long between 0 and long's maximum value.
+     *
+     * @return the long
+     */
+    public static long nextLong() {
+        return org.apache.commons.lang3.RandomUtils.nextLong(0, Long.MAX_VALUE);
     }
 
     /**
@@ -50,7 +60,6 @@ public class RandomUtils {
             'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o',
             'p'};
 
-        // 160 bits
         val bytes = new byte[SECURE_ID_BYTES_LENGTH];
         generator.nextBytes(bytes);
 

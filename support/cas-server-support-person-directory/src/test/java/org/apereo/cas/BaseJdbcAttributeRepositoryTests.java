@@ -8,16 +8,12 @@ import lombok.Cleanup;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Rule;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import javax.sql.DataSource;
 import java.sql.Statement;
@@ -32,12 +28,6 @@ import java.sql.Statement;
     CasPersonDirectoryConfiguration.class,
     RefreshAutoConfiguration.class})
 public abstract class BaseJdbcAttributeRepositoryTests {
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
-
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
-
     @Autowired
     @Qualifier("attributeRepository")
     protected IPersonAttributeDao attributeRepository;
@@ -47,12 +37,13 @@ public abstract class BaseJdbcAttributeRepositoryTests {
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    @Before
+    @BeforeEach
     @SneakyThrows
     public void setupDatabase() {
         this.dataSource = JpaBeans.newDataSource(casProperties.getAuthn().getAttributeRepository().getJdbc().get(0));
         @Cleanup
         val c = dataSource.getConnection();
+        @Cleanup
         val s = c.createStatement();
         c.setAutoCommit(true);
         prepareDatabaseTable(s);
@@ -60,11 +51,12 @@ public abstract class BaseJdbcAttributeRepositoryTests {
 
     public abstract void prepareDatabaseTable(Statement statement);
 
-    @After
+    @AfterEach
     @SneakyThrows
     public void cleanup() {
         @Cleanup
         val c = dataSource.getConnection();
+        @Cleanup
         val s = c.createStatement();
         c.setAutoCommit(true);
         s.execute("delete from table_users;");

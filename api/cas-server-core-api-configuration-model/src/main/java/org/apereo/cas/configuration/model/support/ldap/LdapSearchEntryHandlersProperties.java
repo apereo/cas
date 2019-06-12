@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.support.ldap;
 
+import org.apereo.cas.configuration.support.RequiresModule;
+
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
@@ -12,6 +14,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@RequiresModule(name = "cas-server-support-ldap")
 @Getter
 @Setter
 public class LdapSearchEntryHandlersProperties implements Serializable {
@@ -26,7 +29,7 @@ public class LdapSearchEntryHandlersProperties implements Serializable {
      * Provides the ability to modify the case of search entry DNs, attribute names, and attribute values.
      */
     @NestedConfigurationProperty
-    private CaseChangeSearchEntryHandlersProperties casChange = new CaseChangeSearchEntryHandlersProperties();
+    private CaseChangeSearchEntryHandlersProperties caseChange = new CaseChangeSearchEntryHandlersProperties();
     /**
      * Adds the entry DN as an attribute to the result set. Provides a client side implementation of RFC 5020.
      */

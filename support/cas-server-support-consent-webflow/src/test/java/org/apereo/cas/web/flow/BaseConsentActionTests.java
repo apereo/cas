@@ -12,18 +12,13 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
-import org.apereo.cas.web.consent.config.CasConsentReviewConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
-import org.junit.ClassRule;
-import org.junit.Rule;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
 import org.springframework.webflow.execution.Action;
 
 /**
@@ -35,7 +30,6 @@ import org.springframework.webflow.execution.Action;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     CasConsentCoreConfiguration.class,
-    CasConsentReviewConfiguration.class,
     CasConsentWebflowConfiguration.class,
     CasCoreAuditConfiguration.class,
     CasRegisteredServicesTestConfiguration.class,
@@ -51,12 +45,6 @@ import org.springframework.webflow.execution.Action;
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class
 })
 public abstract class BaseConsentActionTests {
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
-
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
-
     @Autowired
     @Qualifier("confirmConsentAction")
     protected Action confirmConsentAction;

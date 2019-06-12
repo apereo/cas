@@ -9,13 +9,14 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.ResourceUtils;
-import org.apereo.cas.util.ScriptingUtils;
+import org.apereo.cas.util.scripting.ScriptingUtils;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.core.io.FileSystemResource;
@@ -52,6 +53,7 @@ public class RegisteredServiceThemeResolver extends AbstractThemeResolver {
     private final CasConfigurationProperties casProperties;
 
     private final ResourceLoader resourceLoader;
+    
     /**
      * This sets a flag on the request called "isMobile" and also
      * provides the custom flag called browserType which can be mapped into the theme.
@@ -128,6 +130,7 @@ public class RegisteredServiceThemeResolver extends AbstractThemeResolver {
     protected String determineThemeNameToChoose(final HttpServletRequest request,
                                                 final Service service,
                                                 final RegisteredService rService) {
+        HttpResponse response = null;
         try {
             LOGGER.debug("Service [{}] is configured to use a custom theme [{}]", rService, rService.getTheme());
 
@@ -141,7 +144,7 @@ public class RegisteredServiceThemeResolver extends AbstractThemeResolver {
             if (resource instanceof UrlResource) {
                 val url = resource.getURL().toExternalForm();
                 LOGGER.debug("Executing URL [{}] to determine theme for [{}]", url, service.getId());
-                val response = HttpUtils.executeGet(url, CollectionUtils.wrap("service", service.getId()));
+                response = HttpUtils.executeGet(url, CollectionUtils.wrap("service", service.getId()));
                 if (response != null && response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
                     val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
                     return StringUtils.defaultIfBlank(result, getDefaultThemeName());
@@ -157,6 +160,8 @@ public class RegisteredServiceThemeResolver extends AbstractThemeResolver {
             LOGGER.warn("Custom theme [{}] for service [{}] cannot be located. Falling back to default theme...", rService.getTheme(), rService);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
+        } finally {
+            HttpUtils.close(response);
         }
         return getDefaultThemeName();
     }
@@ -165,12 +170,27 @@ public class RegisteredServiceThemeResolver extends AbstractThemeResolver {
     public void setThemeName(final HttpServletRequest request, final HttpServletResponse response, final String themeName) {
     }
 
-    private String rememberThemeName(final HttpServletRequest request) {
+    /**
+     * Remember/save the theme in the request.
+     *
+     * @param request the HTTP request
+     * @return the remembered theme
+     */
+    protected String rememberThemeName(final HttpServletRequest request) {
         return rememberThemeName(request, getDefaultThemeName());
     }
 
-    private String rememberThemeName(final HttpServletRequest request, final String themeName) {
-        request.setAttribute(casProperties.getTheme().getParamName(), themeName);
+    /**
+     * Remember/save the theme in the request.
+     *
+     * @param request the HTTP request
+     * @param themeName the theme to remember
+     * @return the remembered theme
+     */
+    protected String rememberThemeName(final HttpServletRequest request, final String themeName) {
+        val attributeName = casProperties.getTheme().getParamName();
+        LOGGER.trace("Storing theme [{}] as a request attribute under [{}]", themeName, attributeName);
+        request.setAttribute(attributeName, themeName);
         return themeName;
     }
 

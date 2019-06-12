@@ -55,9 +55,15 @@ public class CreateTicketGrantingTicketAction extends AbstractAction {
      */
     private static Collection<MessageDescriptor> calculateAuthenticationWarningMessages(final TicketGrantingTicket tgtId, final MessageContext messageContext) {
         val entries = tgtId.getAuthentication().getSuccesses().entrySet();
-        return entries
+        val messages = entries
             .stream()
             .map(entry -> entry.getValue().getWarnings())
+            .filter(entry -> !entry.isEmpty())
+            .collect(Collectors.toList());
+        messages.add(tgtId.getAuthentication().getWarnings());
+
+        return messages
+            .stream()
             .flatMap(Collection::stream)
             .peek(message -> addMessageDescriptorToMessageContext(messageContext, message))
             .collect(Collectors.toSet());
@@ -84,9 +90,9 @@ public class CreateTicketGrantingTicketAction extends AbstractAction {
         val registeredService = WebUtils.getRegisteredService(context);
         val authenticationResultBuilder = WebUtils.getAuthenticationResultBuilder(context);
 
-        LOGGER.debug("Finalizing authentication transactions and issuing ticket-granting ticket");
+        LOGGER.trace("Finalizing authentication transactions and issuing ticket-granting ticket");
         val authenticationResult = this.authenticationSystemSupport.finalizeAllAuthenticationTransactions(authenticationResultBuilder, service);
-        LOGGER.debug("Finalizing authentication event...");
+        LOGGER.trace("Finalizing authentication event...");
         val authentication = buildFinalAuthentication(authenticationResult);
         val ticketGrantingTicket = WebUtils.getTicketGrantingTicketId(context);
         LOGGER.debug("Creating ticket-granting ticket, potentially based on [{}]", ticketGrantingTicket);
@@ -99,7 +105,7 @@ public class CreateTicketGrantingTicketAction extends AbstractAction {
         WebUtils.putAuthenticationResult(authenticationResult, context);
         WebUtils.putAuthentication(tgt.getAuthentication(), context);
 
-        LOGGER.debug("Calculating authentication warning messages...");
+        LOGGER.trace("Calculating authentication warning messages...");
         val warnings = calculateAuthenticationWarningMessages(tgt, context.getMessageContext());
         if (!warnings.isEmpty()) {
             val attributes = new LocalAttributeMap(CasWebflowConstants.ATTRIBUTE_ID_AUTHENTICATION_WARNINGS, warnings);
@@ -168,13 +174,17 @@ public class CreateTicketGrantingTicketAction extends AbstractAction {
         return true;
     }
 
-    private boolean areAuthenticationsEssentiallyEqual(final Authentication auth1, final Authentication auth2) {
+    private static boolean areAuthenticationsEssentiallyEqual(final Authentication auth1, final Authentication auth2) {
         if (auth1 == null && auth2 == null) {
             return false;
         }
-        if ((auth1 == null && auth2 != null) || (auth1 != null && auth2 == null)) {
+        if (auth1 == null && auth2 != null) {
             return false;
         }
+        if (auth1 != null && auth2 == null) {
+            return false;
+        }
+
         val builder = new EqualsBuilder();
         builder.append(auth1.getPrincipal(), auth2.getPrincipal());
         builder.append(auth1.getCredentials(), auth2.getCredentials());

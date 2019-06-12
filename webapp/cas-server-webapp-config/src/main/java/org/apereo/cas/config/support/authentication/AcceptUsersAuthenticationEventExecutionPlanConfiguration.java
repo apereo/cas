@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -28,14 +29,12 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class AcceptUsersAuthenticationEventExecutionPlanConfiguration {
-
-
     @Autowired
     private CasConfigurationProperties casProperties;
 
     @Autowired
-    @Qualifier("personDirectoryPrincipalResolver")
-    private ObjectProvider<PrincipalResolver> personDirectoryPrincipalResolver;
+    @Qualifier("defaultPrincipalResolver")
+    private ObjectProvider<PrincipalResolver> defaultPrincipalResolver;
 
     @Autowired
     @Qualifier("acceptUsersAuthenticationHandler")
@@ -43,6 +42,7 @@ public class AcceptUsersAuthenticationEventExecutionPlanConfiguration {
 
     @ConditionalOnMissingBean(name = "acceptUsersAuthenticationEventExecutionPlanConfigurer")
     @Bean
+    @RefreshScope
     public AuthenticationEventExecutionPlanConfigurer acceptUsersAuthenticationEventExecutionPlanConfigurer() {
         return plan -> {
             if (StringUtils.isNotBlank(this.casProperties.getAuthn().getAccept().getUsers())) {
@@ -52,7 +52,7 @@ public class AcceptUsersAuthenticationEventExecutionPlanConfiguration {
                         + "that you DISABLE this authentication method (by setting 'cas.authn.accept.users' "
                         + "to a blank value) and switch to a mode that is more suitable for production.";
                 AsciiArtUtils.printAsciiArtWarning(LOGGER, "STOP!", header);
-                plan.registerAuthenticationHandlerWithPrincipalResolver(acceptUsersAuthenticationHandler.getIfAvailable(), personDirectoryPrincipalResolver.getIfAvailable());
+                plan.registerAuthenticationHandlerWithPrincipalResolver(acceptUsersAuthenticationHandler.getIfAvailable(), defaultPrincipalResolver.getIfAvailable());
             }
         };
     }

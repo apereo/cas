@@ -45,10 +45,15 @@ import java.nio.file.Files;
 @Getter
 @RequiredArgsConstructor
 public abstract class AbstractJacksonBackedStringSerializer<T> implements StringSerializer<T> {
+    /**
+     * Minimal pretty printer instance.
+     */
+    protected static final PrettyPrinter MINIMAL_PRETTY_PRINTER = new MinimalPrettyPrinter();
+
     private static final long serialVersionUID = -8415599777321259365L;
 
     private final ObjectMapper objectMapper;
-    private final PrettyPrinter prettyPrinter;
+    private final transient PrettyPrinter prettyPrinter;
 
     /**
      * Instantiates a new Registered service json serializer.
@@ -76,25 +81,25 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
     @SneakyThrows
     public T from(final String json) {
         val jsonString = isJsonFormat() ? JsonValue.readHjson(json).toString() : json;
-        return readObjectFromJson(jsonString);
+        return readObjectFromString(jsonString);
     }
 
     @Override
     @SneakyThrows
     public T from(final File json) {
-        val jsonString = isJsonFormat()
+        val string = isJsonFormat()
             ? JsonValue.readHjson(FileUtils.readFileToString(json, StandardCharsets.UTF_8)).toString()
             : FileUtils.readFileToString(json, StandardCharsets.UTF_8);
-        return readObjectFromJson(jsonString);
+        return readObjectFromString(string);
     }
 
     @Override
     @SneakyThrows
     public T from(final Reader json) {
-        val jsonString = isJsonFormat()
+        val string = isJsonFormat()
             ? JsonValue.readHjson(json).toString()
-            : String.join("", IOUtils.readLines(json));
-        return readObjectFromJson(jsonString);
+            : String.join("\n", IOUtils.readLines(json));
+        return readObjectFromString(string);
     }
 
     @Override
@@ -106,7 +111,7 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
     @SneakyThrows
     public T from(final InputStream json) {
         val jsonString = readJsonFrom(json);
-        return readObjectFromJson(jsonString);
+        return readObjectFromString(jsonString);
     }
 
     /**
@@ -216,20 +221,14 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
     }
 
     /**
-     * Gets type to serialize.
-     *
-     * @return the type to serialize
-     */
-    protected abstract Class<T> getTypeToSerialize();
-
-    /**
      * Read object from json.
      *
      * @param jsonString the json string
      * @return the type
      */
-    protected T readObjectFromJson(final String jsonString) {
+    protected T readObjectFromString(final String jsonString) {
         try {
+            LOGGER.trace("Attempting to consume [{}]", jsonString);
             return this.objectMapper.readValue(jsonString, getTypeToSerialize());
         } catch (final Exception e) {
             LOGGER.error("Cannot read/parse [{}] to deserialize into type [{}]. This may be caused "

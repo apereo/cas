@@ -20,6 +20,14 @@ a different caching model, attributes by default and from
 a CAS perspective will not be refreshed and retrieved again on subsequent requests
 as long as the SSO session exists.</p></div>
 
+## Administrative Endpoints
+
+The following endpoints are provided by CAS:
+ 
+| Endpoint                 | Description
+|--------------------------|------------------------------------------------
+| `resolveAttributes/{name}`    | Invoke the CAS [attribute resolution](Attribute-Resolution.html) engine to locate attributes for `{name}`.
+
 ## Person Directory
 
 A framework for resolving persons and attributes from a variety of underlying sources.
@@ -31,6 +39,10 @@ To see the relevant list of CAS properties that deal with resolving principals, 
 Attribute sources are defined and configured to describe the global set of attributes to be fetched
 for each authenticated principal. That global set of attributes is then filtered by the
 service manager according to service-specific attribute release rules.
+
+Note that each attribute repository source can be assigned a unique identifier to be used for additional filtering. The attribute resolution engine
+provided by Person Directory can also be configured to only consult not all but a selection of attribute repository sources, *deferring* the task
+of attribute retrieval for later phases in the authentication process, such as [releasing attributes](Attribute-Release-Caching.html).
 
 <div class="alert alert-info"><strong>Principal Resolution</strong><p>Note that in most if not all cases,
 CAS authentication is able to retrieve and resolve attributes from the authentication source, which would

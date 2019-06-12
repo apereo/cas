@@ -85,6 +85,10 @@ public interface OidcConstants {
      */
     String REGISTRATION_URL = "register";
     /**
+     * Client configuration endpoint URL.
+     */
+    String CLIENT_CONFIGURATION_URL = "clientConfig";
+    /**
      * The introspection url.
      */
     String INTROSPECTION_URL = "introspect";
@@ -96,6 +100,43 @@ public interface OidcConstants {
      * The confirm/consent view.
      */
     String CONFIRM_VIEW = "oidcConfirmView";
+    /**
+     * Rel value for webfinger protocol.
+     */
+    String WEBFINGER_REL = "http://openid.net/specs/connect/1.0/issuer";
+
+    /**
+     * Scope assigned to access token internally
+     * to access client config urls and look up relying parties.
+     */
+    String CLIENT_REGISTRATION_SCOPE = "ClientRegistrationScope";
+
+    /**
+     * Parameter used to look up clients by their id.
+     */
+    String CLIENT_REGISTRATION_CLIENT_ID = "clientId";
+
+    /**
+     * Authenticator used to verify access to client configuration endpoint.
+     */
+    String CAS_OAUTH_CLIENT_CONFIG_ACCESS_TOKEN_AUTHN = "ClientRegistrationClient";
+    /**
+     * Authenticator used to verify access using private key jwts.
+     */
+    String CAS_OAUTH_CLIENT_PRIVATE_KEY_JWT_AUTHN = "ClientPrivateKeyJwtClient";
+    /**
+     * Authenticator used to verify access using client secret jwts.
+     */
+    String CAS_OAUTH_CLIENT_CLIENT_SECRET_JWT_AUTHN = "ClientSecretJwtClient";
+    /**
+     * This is a standard label for a custom scope which will have a scope name.
+     * This should not be added to StandardScopes enumeration because it isn't standard.
+     */
+    String CUSTOM_SCOPE_TYPE = "custom";
+    /**
+     * JWT content type.
+     */
+    String CONTENT_TYPE_JWT = "application/jwt";
 
     /**
      * Dynamic client registration mode.
@@ -122,10 +163,6 @@ public interface OidcConstants {
          * OpenId scope.
          */
         OPENID("openid"),
-        /**
-         * Custom scope.
-         */
-        CUSTOM("custom"),
         /**
          * address scope.
          */

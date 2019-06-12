@@ -162,6 +162,15 @@ public class MultifactorAuthenticationProperties implements Serializable {
     private transient Resource providerSelectorGroovyScript;
 
     /**
+     * In the event that multiple multifactor authentication providers are determined for a multifactor authentication transaction,
+     * this setting will allow one to interactively choose a provider out of the list of available providers.
+     * A trigger may be designed to support more than one provider, and rather than letting CAS auto-determine
+     * the selected provider via scripts or ranking strategies, this method puts the choice back onto the user
+     * to decide which provider makes the most sense at any given time.
+     */
+    private boolean providerSelectionEnabled;
+    
+    /**
      * Activate and configure a multifactor authentication provider via U2F FIDO.
      */
     @NestedConfigurationProperty
@@ -213,4 +222,10 @@ public class MultifactorAuthenticationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private SwivelMultifactorProperties swivel = new SwivelMultifactorProperties();
+
+    /**
+     * Activate and configure a multifactor authentication provider via Acceptto.
+     */
+    @NestedConfigurationProperty
+    private AccepttoMultifactorProperties acceptto = new AccepttoMultifactorProperties();
 }

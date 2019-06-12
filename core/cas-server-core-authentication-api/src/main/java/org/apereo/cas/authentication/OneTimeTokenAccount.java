@@ -9,17 +9,16 @@ import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.ToString;
 import org.apache.commons.lang3.builder.CompareToBuilder;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
+import javax.persistence.MappedSuperclass;
 import java.io.Serializable;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -32,20 +31,25 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Entity
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+@MappedSuperclass
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-@ToString
+@ToString(exclude = {"secretKey", "scratchCodes"})
 @Getter
 @Setter
 @EqualsAndHashCode
 public class OneTimeTokenAccount implements Serializable, Comparable<OneTimeTokenAccount>, Cloneable {
+    /**
+     * Table name used to hold otp scratch codes.
+     */
+    public static final String TABLE_NAME_SCRATCH_CODES = "scratch_codes";
 
     private static final long serialVersionUID = -8289105320642735252L;
 
-    @Id
     @org.springframework.data.annotation.Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
+    @GenericGenerator(name = "native", strategy = "native")
+    @JsonProperty("id")
     private long id = -1;
 
     @Column(nullable = false, length = 2048)
@@ -55,7 +59,7 @@ public class OneTimeTokenAccount implements Serializable, Comparable<OneTimeToke
     private int validationCode;
 
     @ElementCollection
-    @CollectionTable(name = "scratch_codes", joinColumns = @JoinColumn(name = "username"))
+    @CollectionTable(name = TABLE_NAME_SCRATCH_CODES, joinColumns = @JoinColumn(name = "username"))
     @Column(nullable = false)
     private List<Integer> scratchCodes = new ArrayList<>();
 
@@ -66,7 +70,7 @@ public class OneTimeTokenAccount implements Serializable, Comparable<OneTimeToke
     private ZonedDateTime registrationDate = ZonedDateTime.now(ZoneOffset.UTC);
 
     public OneTimeTokenAccount() {
-        setId(java.lang.System.currentTimeMillis());
+        setId(System.currentTimeMillis());
     }
 
     /**

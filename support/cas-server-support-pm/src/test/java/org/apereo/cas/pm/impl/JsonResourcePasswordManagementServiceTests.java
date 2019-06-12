@@ -17,24 +17,20 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
-import org.apereo.cas.pm.PasswordChangeBean;
+import org.apereo.cas.pm.PasswordChangeRequest;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.PasswordValidationService;
 import org.apereo.cas.pm.config.PasswordManagementConfiguration;
 
 import lombok.val;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link JsonResourcePasswordManagementServiceTests}.
@@ -42,7 +38,8 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@SpringBootTest(classes = {RefreshAutoConfiguration.class,
+@SpringBootTest(classes = {
+    RefreshAutoConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class,
     CasCoreAuthenticationPolicyConfiguration.class,
     CasCoreAuthenticationMetadataConfiguration.class,
@@ -60,15 +57,14 @@ import static org.junit.Assert.*;
     CasCoreWebConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreUtilConfiguration.class,
-    PasswordManagementConfiguration.class})
-@TestPropertySource(locations = {"classpath:/pm.properties"})
+    PasswordManagementConfiguration.class
+})
+@TestPropertySource(properties = {
+    "cas.authn.pm.json.location=classpath:jsonResourcePassword.json",
+    "cas.authn.pm.enabled=true",
+    "cas.authn.pm.policyPattern=^Test1.+"
+})
 public class JsonResourcePasswordManagementServiceTests {
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
-
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
-
     @Autowired
     @Qualifier("passwordChangeService")
     private PasswordManagementService passwordChangeService;
@@ -99,7 +95,7 @@ public class JsonResourcePasswordManagementServiceTests {
     @Test
     public void verifyUserPasswordChange() {
         val c = new UsernamePasswordCredential("casuser", "password");
-        val bean = new PasswordChangeBean();
+        val bean = new PasswordChangeRequest();
         bean.setConfirmedPassword("newPassword");
         bean.setPassword("newPassword");
         val res = passwordChangeService.change(c, bean);
@@ -109,9 +105,10 @@ public class JsonResourcePasswordManagementServiceTests {
     @Test
     public void verifyPasswordValidationService() {
         val c = new UsernamePasswordCredential("casuser", "password");
-        val bean = new PasswordChangeBean();
-        bean.setConfirmedPassword("Test@1234");
-        bean.setPassword("Test@1234");
+        val bean = new PasswordChangeRequest();
+        bean.setUsername(c.getUsername());
+        bean.setConfirmedPassword("Test1@1234");
+        bean.setPassword("Test1@1234");
         val isValid = passwordValidationService.isValid(c, bean);
         assertTrue(isValid);
     }

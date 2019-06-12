@@ -6,7 +6,7 @@ category: Password Management
 
 # Password Management - REST
 
-Tasks such as locating user's email and security questions as well as management
+Tasks such as locating users' email and security questions as well as management
 and updating of the password are delegated to user-defined rest endpoints.
 
 REST support is enabled by including the following dependencies in the WAR overlay:

@@ -50,7 +50,8 @@ public class HttpRequestUtils {
      */
     public static HttpServletRequest getHttpServletRequestFromRequestAttributes() {
         try {
-            return ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+            val requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+            return requestAttributes != null ? requestAttributes.getRequest() : null;
         } catch (final Exception e) {
             LOGGER.trace(e.getMessage(), e);
         }
@@ -63,7 +64,8 @@ public class HttpRequestUtils {
      * @return the http servlet response from request attributes
      */
     public static HttpServletResponse getHttpServletResponseFromRequestAttributes() {
-        return ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getResponse();
+        val requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        return requestAttributes != null ? requestAttributes.getResponse() : null;
     }
 
     /**
@@ -127,8 +129,12 @@ public class HttpRequestUtils {
      * @return the service, or null.
      */
     public static WebApplicationService getService(final List<ArgumentExtractor> argumentExtractors, final HttpServletRequest request) {
-        return argumentExtractors.stream().map(argumentExtractor -> argumentExtractor.extractService(request))
-            .filter(Objects::nonNull).findFirst().orElse(null);
+        return argumentExtractors
+            .stream()
+            .map(argumentExtractor -> argumentExtractor.extractService(request))
+            .filter(Objects::nonNull)
+            .findFirst()
+            .orElse(null);
     }
 
     /**
@@ -161,7 +167,7 @@ public class HttpRequestUtils {
             connection.setConnectTimeout(PING_URL_TIMEOUT);
             connection.setReadTimeout(PING_URL_TIMEOUT);
             connection.setRequestMethod(HttpMethod.HEAD.name());
-            val status = HttpStatus.valueOf(connection.getResponseCode());
+            return HttpStatus.valueOf(connection.getResponseCode());
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }

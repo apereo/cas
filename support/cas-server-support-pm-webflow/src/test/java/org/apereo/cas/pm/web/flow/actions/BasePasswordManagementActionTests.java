@@ -1,5 +1,7 @@
 package org.apereo.cas.pm.web.flow.actions;
 
+import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
@@ -13,27 +15,26 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.config.PasswordManagementConfiguration;
 import org.apereo.cas.pm.config.PasswordManagementWebflowConfiguration;
 import org.apereo.cas.services.web.config.CasThemesConfiguration;
-import org.apereo.cas.util.junit.ConditionalIgnoreRule;
+import org.apereo.cas.ticket.TicketFactory;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
-import org.junit.ClassRule;
-import org.junit.Rule;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.autoconfigure.mail.MailSenderValidatorAutoConfiguration;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
 import org.springframework.webflow.execution.Action;
 
 /**
@@ -67,17 +68,25 @@ import org.springframework.webflow.execution.Action;
     CasCoreHttpConfiguration.class,
     CasWebflowContextConfiguration.class
 })
-@TestPropertySource(locations = "classpath:cas-pm-webflow.properties")
-public abstract class BasePasswordManagementActionTests {
+@TestPropertySource(properties = {
+    "spring.mail.host=localhost",
+    "spring.mail.port=25000",
+    "spring.mail.testConnection=true",
 
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
+    "cas.authn.pm.enabled=true",
+    "cas.authn.pm.groovy.location=classpath:PasswordManagementService.groovy",
+    "cas.authn.pm.reset.mail.from=cas@example.org",
 
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
+    "cas.authn.pm.reset.securityQuestionsEnabled=true"
+})
+@EnableConfigurationProperties(CasConfigurationProperties.class)
+public class BasePasswordManagementActionTests {
+    @Autowired
+    protected CasConfigurationProperties casProperties;
 
-    @Rule
-    public final ConditionalIgnoreRule conditionalIgnoreRule = new ConditionalIgnoreRule();
+    @Autowired
+    @Qualifier("ticketRegistry")
+    protected TicketRegistry ticketRegistry;
 
     @Autowired
     @Qualifier("passwordChangeService")
@@ -98,4 +107,12 @@ public abstract class BasePasswordManagementActionTests {
     @Autowired
     @Qualifier("sendPasswordResetInstructionsAction")
     protected Action sendPasswordResetInstructionsAction;
+
+    @Autowired
+    @Qualifier("defaultTicketFactory")
+    protected TicketFactory ticketFactory;
+
+    @Autowired
+    @Qualifier("webApplicationServiceFactory")
+    protected ServiceFactory<WebApplicationService> webApplicationServiceFactory;
 }

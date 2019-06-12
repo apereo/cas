@@ -25,7 +25,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class DefaultTransientSessionTicketFactory implements TransientSessionTicketFactory {
     private final ExpirationPolicy expirationPolicy;
-    private UniqueTicketIdGenerator ticketIdGenerator = new DefaultUniqueTicketIdGenerator();
+    private final UniqueTicketIdGenerator ticketIdGenerator = new DefaultUniqueTicketIdGenerator();
 
     /**
      * Create delegated authentication request ticket.
@@ -38,6 +38,12 @@ public class DefaultTransientSessionTicketFactory implements TransientSessionTic
     public TransientSessionTicket create(final Service service, final Map<String, Serializable> properties) {
         val id = ticketIdGenerator.getNewTicketId(TransientSessionTicket.PREFIX);
         return new TransientSessionTicketImpl(id, expirationPolicy, service, properties);
+    }
+
+    @Override
+    public TransientSessionTicket create(final String id, final Map<String, Serializable> properties) {
+        return new TransientSessionTicketImpl(TransientSessionTicketFactory.normalizeTicketId(id),
+            expirationPolicy, null, properties);
     }
 
     @Override

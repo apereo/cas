@@ -1,15 +1,13 @@
 package org.apereo.cas.support.saml.idp.metadata;
 
-import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.support.saml.idp.metadata.generator.BaseSamlIdPMetadataGenerator;
-import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
-import org.apereo.cas.support.saml.idp.metadata.writer.SamlIdPCertificateAndKeyWriter;
+import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGeneratorConfigurationContext;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
 
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.core.io.ResourceLoader;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,7 +17,6 @@ import org.springframework.transaction.support.TransactionTemplate;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
-import java.io.StringWriter;
 
 /**
  * This is {@link JpaSamlIdPMetadataGenerator}.
@@ -35,45 +32,30 @@ public class JpaSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGenerator {
     private transient EntityManager entityManager;
 
     private final TransactionTemplate transactionTemplate;
-    private final CipherExecutor<String, String> metadataCipherExecutor;
 
-    public JpaSamlIdPMetadataGenerator(final SamlIdPMetadataLocator samlIdPMetadataLocator,
-                                       final SamlIdPCertificateAndKeyWriter samlIdPCertificateAndKeyWriter,
-                                       final String entityId,
-                                       final ResourceLoader resourceLoader,
-                                       final String casServerPrefix,
-                                       final String scope,
-                                       final CipherExecutor metadataCipherExecutor,
-                                       final TransactionTemplate transactionTemplate) {
-        super(samlIdPMetadataLocator, samlIdPCertificateAndKeyWriter, entityId, resourceLoader, casServerPrefix, scope);
-        this.metadataCipherExecutor = metadataCipherExecutor;
+    public JpaSamlIdPMetadataGenerator(final SamlIdPMetadataGeneratorConfigurationContext samlIdPMetadataGeneratorConfigurationContext, final TransactionTemplate transactionTemplate) {
+        super(samlIdPMetadataGeneratorConfigurationContext);
         this.transactionTemplate = transactionTemplate;
     }
 
     @Override
     @SneakyThrows
-    public void buildSelfSignedEncryptionCert() {
-        try (val certWriter = new StringWriter(); val keyWriter = new StringWriter()) {
-            this.samlIdPCertificateAndKeyWriter.writeCertificateAndKey(keyWriter, certWriter);
-            val encryptionKey = metadataCipherExecutor.encode(keyWriter.toString());
-            val doc = getSamlIdPMetadataDocument();
-            doc.setEncryptionCertificate(certWriter.toString());
-            doc.setEncryptionKey(encryptionKey);
-            saveSamlIdPMetadataDocument(doc);
-        }
+    public Pair<String, String> buildSelfSignedEncryptionCert() {
+        val results = generateCertificateAndKey();
+        val doc = getSamlIdPMetadataDocument();
+        doc.setEncryptionCertificate(results.getKey());
+        doc.setEncryptionKey(results.getValue());
+        return results;
     }
 
     @Override
     @SneakyThrows
-    public void buildSelfSignedSigningCert() {
-        try (val certWriter = new StringWriter(); val keyWriter = new StringWriter()) {
-            this.samlIdPCertificateAndKeyWriter.writeCertificateAndKey(keyWriter, certWriter);
-            val signingKey = metadataCipherExecutor.encode(keyWriter.toString());
-            val doc = getSamlIdPMetadataDocument();
-            doc.setSigningCertificate(certWriter.toString());
-            doc.setSigningKey(signingKey);
-            saveSamlIdPMetadataDocument(doc);
-        }
+    public Pair<String, String> buildSelfSignedSigningCert() {
+        val results = generateCertificateAndKey();
+        val doc = getSamlIdPMetadataDocument();
+        doc.setSigningCertificate(results.getKey());
+        doc.setSigningKey(results.getValue());
+        return results;
     }
 
     private void saveSamlIdPMetadataDocument(final SamlIdPMetadataDocument doc) {
@@ -86,15 +68,22 @@ public class JpaSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGenerator {
     }
 
     @Override
-    public void writeMetadata(final String metadata) {
+    public String writeMetadata(final String metadata) {
         val doc = getSamlIdPMetadataDocument();
         doc.setMetadata(metadata);
+        return metadata;
+    }
+
+    @Override
+    protected SamlIdPMetadataDocument finalizeMetadataDocument(final SamlIdPMetadataDocument doc) {
         saveSamlIdPMetadataDocument(doc);
+        return doc;
     }
 
     private SamlIdPMetadataDocument getSamlIdPMetadataDocument() {
         try {
-            return this.entityManager.createQuery("SELECT r FROM SamlIdPMetadataDocument r", SamlIdPMetadataDocument.class)
+            val query = this.entityManager.createQuery("SELECT r FROM SamlIdPMetadataDocument r", SamlIdPMetadataDocument.class);
+            return query
                 .setMaxResults(1)
                 .getSingleResult();
         } catch (final NoResultException e) {

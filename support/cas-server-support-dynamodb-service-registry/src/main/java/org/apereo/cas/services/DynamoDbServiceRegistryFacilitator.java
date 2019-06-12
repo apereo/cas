@@ -1,13 +1,15 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.configuration.model.support.dynamodb.DynamoDbServiceRegistryProperties;
-import org.apereo.cas.services.util.DefaultRegisteredServiceJsonSerializer;
+import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.serialization.StringSerializer;
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.model.AttributeDefinition;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+import com.amazonaws.services.dynamodbv2.model.ComparisonOperator;
+import com.amazonaws.services.dynamodbv2.model.Condition;
 import com.amazonaws.services.dynamodbv2.model.CreateTableRequest;
 import com.amazonaws.services.dynamodbv2.model.DeleteItemRequest;
 import com.amazonaws.services.dynamodbv2.model.DeleteTableRequest;
@@ -24,13 +26,16 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.math.NumberUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -43,7 +48,7 @@ import java.util.stream.Collectors;
 @Getter
 public class DynamoDbServiceRegistryFacilitator {
 
-    private final StringSerializer<RegisteredService> jsonSerializer = new DefaultRegisteredServiceJsonSerializer();
+    private final StringSerializer<RegisteredService> jsonSerializer = new RegisteredServiceJsonSerializer();
     private final DynamoDbServiceRegistryProperties dynamoDbProperties;
     private final AmazonDynamoDB amazonDynamoDBClient;
 
@@ -97,7 +102,8 @@ public class DynamoDbServiceRegistryFacilitator {
         return result.getItems()
             .stream()
             .map(this::deserializeServiceFromBinaryBlob)
-            .sorted((o1, o2) -> Integer.valueOf(o1.getEvaluationOrder()).compareTo(o2.getEvaluationOrder()))
+            .filter(Objects::nonNull)
+            .sorted(Comparator.comparingInt(RegisteredService::getEvaluationOrder))
             .collect(Collectors.toList());
     }
 
@@ -108,9 +114,24 @@ public class DynamoDbServiceRegistryFacilitator {
      * @return the registered service
      */
     public RegisteredService get(final String id) {
-        val keys = new HashMap<String, AttributeValue>();
-        keys.put(ColumnNames.SERVICE_ID.getColumnName(), new AttributeValue(id));
-        return getRegisteredServiceByKeys(keys);
+        if (NumberUtils.isCreatable(id)) {
+            return get(Long.parseLong(id));
+        }
+
+        val scanRequest = new ScanRequest(dynamoDbProperties.getTableName());
+        val cond = new Condition();
+        cond.setComparisonOperator(ComparisonOperator.EQ);
+        cond.setAttributeValueList(List.of(new AttributeValue(id)));
+        scanRequest.addScanFilterEntry(ColumnNames.SERVICE_ID.getColumnName(), cond);
+        LOGGER.debug("Submitting request [{}] to get service for id [{}]", scanRequest, id);
+        val items = amazonDynamoDBClient.scan(scanRequest).getItems();
+        if (items.isEmpty()) {
+            LOGGER.debug("No service definition could be found for [{}]", id);
+            return null;
+        }
+        val service = deserializeServiceFromBinaryBlob(items.get(0));
+        LOGGER.debug("Located service [{}]", service);
+        return service;
     }
 
     /**
@@ -138,13 +159,17 @@ public class DynamoDbServiceRegistryFacilitator {
     }
 
     private RegisteredService getRegisteredServiceByKeys(final Map<String, AttributeValue> keys) {
-        val request = new GetItemRequest().withKey(keys).withTableName(dynamoDbProperties.getTableName());
-        LOGGER.debug("Submitting request [{}] to get service with keys [{}]", request, keys);
-        val returnItem = amazonDynamoDBClient.getItem(request).getItem();
-        if (returnItem != null) {
-            val service = deserializeServiceFromBinaryBlob(returnItem);
-            LOGGER.debug("Located service [{}]", service);
-            return service;
+        try {
+            val request = new GetItemRequest().withKey(keys).withTableName(dynamoDbProperties.getTableName());
+            LOGGER.debug("Submitting request [{}] to get service with keys [{}]", request, keys);
+            val returnItem = amazonDynamoDBClient.getItem(request).getItem();
+            if (returnItem != null) {
+                val service = deserializeServiceFromBinaryBlob(returnItem);
+                LOGGER.debug("Located service [{}]", service);
+                return service;
+            }
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
         }
         return null;
     }

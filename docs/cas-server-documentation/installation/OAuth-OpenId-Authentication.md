@@ -12,6 +12,14 @@ Allow CAS to act as an OAuth/OpenID authentication provider. Please [review the 
 OAuth/OpenID server support for CAS. If you would like to have CAS act as an OAuth/OpenID client communicating with
 other providers (such as Google, Facebook, etc), <a href="../integration/Delegate-Authentication.html">see this page</a>.</p></div>
 
+## Administrative Endpoints
+
+The following endpoints are provided by CAS:
+ 
+| Endpoint                 | Description
+|--------------------------|------------------------------------------------
+| `oauthTokens`            | Manage and control [OAuth2 access tokens](OAuth-OpenId-Authentication.html). A `GET` operation produces a list of all access/refresh tokens. A `DELETE` operation will delete the provided access/refresh token provided in form of a parameter selector. (i.e. `/{token}`). A `GET` operation produces with a parameter selector of `/{token}` will list the details of the fetched access/refresh token.
+
 ## Configuration
 
 Support is enabled by including the following dependency in the WAR overlay:
@@ -155,11 +163,12 @@ The following fields are supported:
 | `supportedResponseTypes`          | Collection of supported response types for this service.
 | `bypassApprovalPrompt`            | Whether approval prompt/consent screen should be bypassed. Default is `false`.
 | `generateRefreshToken`            | Whether a refresh token should be generated along with the access token. Default is `false`.
+| `jwtAccessToken`                  | Whether access tokens should be created as JWTs. Default is `false`.
 | `serviceId`                       | The pattern that authorizes the redirect URI(s), or same as `clientId` in case `redirect_uri` is not required by the grant type (i.e `client_credentials`, etc).
 
 <div class="alert alert-info"><strong>Keep What You Need!</strong><p>You are encouraged to only keep and maintain properties and settings needed for a particular integration. It is <strong>UNNECESSARY</strong> to grab a copy of all service fields and try to configure them yet again based on their default. While you may wish to keep a copy as a reference, this strategy would ultimately lead to poor upgrades increasing chances of breaking changes and a messy deployment at that.</p></div>
 
-Service definitions are typically managed by the [service management](Service-Management.html) facility.
+Service definitions are typically managed by the [service management](../services/Service-Management.html) facility.
 
 <div class="alert alert-warning"><strong>Usage Warning!</strong><p>CAS today does not strictly enforce the collection of authorized supported response/grant types for backward compatibility reasons. This means that if left undefined, all grant and response types may be allowed by the service definition and related policies. Do please note that this behavior is <strong>subject to change</strong> in future releases and thus, it is strongly recommended that all authorized grant/response types for each profile be declared in the service definition immediately to avoid surprises in the future.</p></div>
 
@@ -168,11 +177,115 @@ Service definitions are typically managed by the [service management](Service-Ma
 Attribute/claim filtering and release policies are defined per OAuth service.
 See [this guide](../integration/Attribute-Release-Policies.html) for more info.
 
-## OAuth Expiration Policy
+## OAuth Token Expiration Policy
 
 The expiration policy for OAuth tokens is controlled by CAS settings and properties. Note that while access and refresh tokens may have their own lifetime and expiration policy, they are typically upper-bound to the length of the CAS single sign-on session.
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#oauth2).
+
+### Per Service
+
+The expiration policy of certain OAuth tokens can be conditionally decided on a per-application basis. The candidate service 
+whose token expiration policy is to deviate from the default configuration must be designed as the following snippets demonstrate.
+
+#### OAuth Code
+
+```json
+{
+  "@class" : "org.apereo.cas.support.oauth.services.OAuthRegisteredService",
+  "clientId": "clientid",
+  "clientSecret": "clientSecret",
+  "serviceId" : "^(https|imaps)://<redirect-uri>.*",
+  "name" : "OAuthService",
+  "id" : 100,
+  "codeExpirationPolicy": {
+    "@class": "org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthCodeExpirationPolicy",
+    "numberOfUses": 1,
+    "timeToLive": "10"
+  }
+}
+```
+
+#### OAuth Access Token
+
+```json
+{
+  "@class" : "org.apereo.cas.support.oauth.services.OAuthRegisteredService",
+  "clientId": "clientid",
+  "clientSecret": "clientSecret",
+  "serviceId" : "^(https|imaps)://<redirect-uri>.*",
+  "name" : "OAuthService",
+  "id" : 100,
+  "accessTokenExpirationPolicy": {
+    "@class": "org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthAccessTokenExpirationPolicy",
+    "maxTimeToLive": "1000",
+    "timeToLive": "100"
+  }
+}
+```
+
+#### OAuth Device Token
+
+```json
+{
+  "@class" : "org.apereo.cas.support.oauth.services.OAuthRegisteredService",
+  "clientId": "clientid",
+  "clientSecret": "clientSecret",
+  "serviceId" : "^(https|imaps)://<redirect-uri>.*",
+  "name" : "OAuthService",
+  "id" : 100,
+  "accessTokenExpirationPolicy": {
+    "@class": "org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthDeviceTokenExpirationPolicy",
+    "timeToLive": "100"
+  }
+}
+```
+
+#### OAuth Refresh Token
+
+```json
+{
+  "@class" : "org.apereo.cas.support.oauth.services.OAuthRegisteredService",
+  "clientId": "clientid",
+  "clientSecret": "clientSecret",
+  "serviceId" : "^(https|imaps)://<redirect-uri>.*",
+  "name" : "OAuthService",
+  "id" : 100,
+  "accessTokenExpirationPolicy": {
+    "@class": "org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthRefreshTokenExpirationPolicy",
+    "timeToLive": "100"
+  }
+}
+```
+
+## JWT Access Tokens
+
+By default, OAuth access tokens are created as opaque identifiers. There is also the option to generate JWTs as access tokens on a per-service basis:
+        
+```json
+{
+    "@class" : "org.apereo.cas.support.oauth.services.OAuthRegisteredService",
+    "clientId": "clientid",
+    "clientSecret": "clientSecret",
+    "serviceId" : "^(https|imaps)://<redirect-uri>.*",
+    "name" : "OAuthService",
+    "id" : 100,
+    "jwtAccessToken": true,
+    "properties" : {
+      "@class" : "java.util.HashMap",
+      "accessTokenAsJwtSigningKey" : {
+         "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
+         "values" : [ "java.util.HashSet", [ "..." ] ]
+      },
+      "accessTokenAsJwtEncryptionKey" : {
+           "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
+           "values" : [ "java.util.HashSet", [ "..." ] ]
+      }
+    }
+}
+```
+
+Signing and encryption keys may also be defined on a per-service basis, or globally via CAS settings. To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#oauth2).
 
 ## OAuth User Profile Structure
 
@@ -232,7 +345,7 @@ public class MyOAuthConfiguration {
 ## Throttling
 
 Authentication throttling may be enabled for the `/oauth2.0/accessToken` provided support is included in the overlay to [turn on authentication 
-throttling](Configuring-Authentication-Throttling.md) support. The throttling mechanism that handles the usual CAS server endpoints for authentication
+throttling](Configuring-Authentication-Throttling.html) support. The throttling mechanism that handles the usual CAS server endpoints for authentication
 and ticket validation, etc is then activated for the OAuth endpoints that are supported for throttling. 
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#oauth2).
@@ -242,6 +355,10 @@ To see the relevant list of CAS properties, please [review this guide](../config
 Remember that OAuth features of CAS require session affinity (and optionally session replication),
 as the authorization responses throughout the login flow are stored via server-backed session storage mechanisms. You will need to configure your deployment 
 environment and load balancers accordingly.
+
+## Sample Client Applications
+
+- [OAuth2 Sample Webapp](https://github.com/cas-projects/oauth2-sample-java-webapp)
 
 # OpenID Authentication
 

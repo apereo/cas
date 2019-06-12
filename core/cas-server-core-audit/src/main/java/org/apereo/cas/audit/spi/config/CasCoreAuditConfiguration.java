@@ -6,6 +6,7 @@ import org.apereo.cas.audit.AuditTrailExecutionPlan;
 import org.apereo.cas.audit.AuditTrailExecutionPlanConfigurer;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlan;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
+import org.apereo.cas.audit.spi.FilterAndDelegateAuditTrailManager;
 import org.apereo.cas.audit.spi.plan.DefaultAuditTrailExecutionPlan;
 import org.apereo.cas.audit.spi.plan.DefaultAuditTrailRecordResolutionPlan;
 import org.apereo.cas.audit.spi.principal.ChainingAuditPrincipalIdProvider;
@@ -29,6 +30,7 @@ import org.apereo.inspektr.audit.AuditTrailManagementAspect;
 import org.apereo.inspektr.audit.spi.AuditActionResolver;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 import org.apereo.inspektr.audit.spi.support.DefaultAuditActionResolver;
+import org.apereo.inspektr.audit.spi.support.ObjectCreationAuditActionResolver;
 import org.apereo.inspektr.audit.support.AbstractStringAuditTrailManager;
 import org.apereo.inspektr.audit.support.Slf4jLoggingAuditTrailManager;
 import org.apereo.inspektr.common.spi.PrincipalResolver;
@@ -69,12 +71,17 @@ public class CasCoreAuditConfiguration implements AuditTrailExecutionPlanConfigu
     private ApplicationContext applicationContext;
 
     @Bean
-    public AuditTrailManagementAspect auditTrailManagementAspect(@Qualifier("auditTrailExecutionPlan") final AuditTrailExecutionPlan auditTrailExecutionPlan,
-                                                                 @Qualifier("auditTrailRecordResolutionPlan") final AuditTrailRecordResolutionPlan auditTrailRecordResolutionPlan) {
+    public AuditTrailManagementAspect auditTrailManagementAspect(@Qualifier("auditTrailExecutionPlan")
+                                                                 final AuditTrailExecutionPlan auditTrailExecutionPlan,
+                                                                 @Qualifier("auditTrailRecordResolutionPlan")
+                                                                 final AuditTrailRecordResolutionPlan auditTrailRecordResolutionPlan) {
+        val supportedActions = casProperties.getAudit().getSupportedActions();
+        val auditManager = new FilterAndDelegateAuditTrailManager(auditTrailExecutionPlan.getAuditTrailManagers(), supportedActions);
         val aspect = new AuditTrailManagementAspect(
             casProperties.getAudit().getAppCode(),
             auditablePrincipalResolver(auditPrincipalIdProvider()),
-            auditTrailExecutionPlan.getAuditTrailManagers(), auditTrailRecordResolutionPlan.getAuditActionResolvers(),
+            CollectionUtils.wrapList(auditManager),
+            auditTrailRecordResolutionPlan.getAuditActionResolvers(),
             auditTrailRecordResolutionPlan.getAuditResourceResolvers());
         aspect.setFailOnAuditFailures(!casProperties.getAudit().isIgnoreAuditFailures());
         return aspect;
@@ -110,7 +117,7 @@ public class CasCoreAuditConfiguration implements AuditTrailExecutionPlanConfigu
     public FilterRegistrationBean casClientInfoLoggingFilter() {
         val audit = casProperties.getAudit();
 
-        val bean = new FilterRegistrationBean();
+        val bean = new FilterRegistrationBean<ClientInfoThreadLocalFilter>();
         bean.setFilter(new ClientInfoThreadLocalFilter());
         bean.setUrlPatterns(CollectionUtils.wrap("/*"));
         bean.setName("CAS Client Info Logging Filter");
@@ -222,7 +229,7 @@ public class CasCoreAuditConfiguration implements AuditTrailExecutionPlanConfigu
     @Bean
     public AuditPrincipalIdProvider auditPrincipalIdProvider() {
         val resolvers = applicationContext.getBeansOfType(AuditPrincipalIdProvider.class, false, true);
-        val providers = new ArrayList<>(resolvers.values());
+        val providers = new ArrayList<AuditPrincipalIdProvider>(resolvers.values());
         AnnotationAwareOrderComparator.sort(providers);
         return new ChainingAuditPrincipalIdProvider(providers);
     }
@@ -245,6 +252,9 @@ public class CasCoreAuditConfiguration implements AuditTrailExecutionPlanConfigu
         val resolver = authenticationActionResolver();
         plan.registerAuditActionResolver("AUTHENTICATION_RESOLVER", resolver);
         plan.registerAuditActionResolver("SAVE_SERVICE_ACTION_RESOLVER", resolver);
+        plan.registerAuditActionResolver("DELETE_SERVICE_ACTION_RESOLVER",
+            new ObjectCreationAuditActionResolver(AuditTrailConstants.AUDIT_ACTION_POSTFIX_SUCCESS,
+                AuditTrailConstants.AUDIT_ACTION_POSTFIX_FAILED));
 
         val defResolver = new DefaultAuditActionResolver();
         plan.registerAuditActionResolver("DESTROY_TICKET_GRANTING_TICKET_RESOLVER", defResolver);
@@ -267,6 +277,7 @@ public class CasCoreAuditConfiguration implements AuditTrailExecutionPlanConfigu
             Add audit resource resolvers here.
          */
         plan.registerAuditResourceResolver("AUTHENTICATION_RESOURCE_RESOLVER", new CredentialsAsFirstParameterResourceResolver());
+        plan.registerAuditResourceResolver("AUTHENTICATION_EVENT_RESOURCE_RESOLVER", nullableReturnValueResourceResolver());
 
         val messageBundleAwareResourceResolver = messageBundleAwareResourceResolver();
         plan.registerAuditResourceResolver("CREATE_TICKET_GRANTING_TICKET_RESOURCE_RESOLVER", messageBundleAwareResourceResolver);
@@ -281,8 +292,7 @@ public class CasCoreAuditConfiguration implements AuditTrailExecutionPlanConfigu
         plan.registerAuditResourceResolver("VALIDATE_SERVICE_TICKET_RESOURCE_RESOLVER", ticketValidationResourceResolver());
 
         plan.registerAuditResourceResolver("SAVE_SERVICE_RESOURCE_RESOLVER", returnValueResourceResolver());
-        plan.registerAuditResourceResolver("AUTHENTICATION_EVENT_RESOURCE_RESOLVER", nullableReturnValueResourceResolver());
-
+        plan.registerAuditResourceResolver("DELETE_SERVICE_RESOURCE_RESOLVER", returnValueResourceResolver());
         plan.registerAuditResourceResolver("SERVICE_ACCESS_ENFORCEMENT_RESOURCE_RESOLVER", serviceAccessEnforcementAuditResourceResolver());
 
         /*

@@ -29,17 +29,14 @@ import org.apereo.cas.web.config.CasCookieConfiguration;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
-import org.junit.ClassRule;
-import org.junit.Rule;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * This is {@link BaseOAuthExpirationPolicyTests}.
@@ -69,18 +66,11 @@ import java.util.ArrayList;
     CasOAuthAuthenticationServiceSelectionStrategyConfiguration.class
 })
 public abstract class BaseOAuthExpirationPolicyTests {
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
-
     protected static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "oAuthTokenExpirationPolicy.json");
     protected static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
     private static final UniqueTicketIdGenerator ID_GENERATOR = new DefaultUniqueTicketIdGenerator(64);
     private static final ExpirationPolicy EXP_POLICY_TGT = new HardTimeoutExpirationPolicy(1000);
-
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
-
 
     @Autowired
     @Qualifier("defaultAccessTokenFactory")
@@ -90,7 +80,7 @@ public abstract class BaseOAuthExpirationPolicyTests {
     @Qualifier("defaultRefreshTokenFactory")
     protected RefreshTokenFactory defaultRefreshTokenFactory;
 
-    protected TicketGrantingTicket newTicketGrantingTicket() {
+    protected static TicketGrantingTicket newTicketGrantingTicket() {
         val principal = CoreAuthenticationTestUtils.getPrincipal("casuser");
         return new TicketGrantingTicketImpl(
             ID_GENERATOR.getNewTicketId(TicketGrantingTicket.PREFIX),
@@ -100,13 +90,14 @@ public abstract class BaseOAuthExpirationPolicyTests {
 
     protected AccessToken newAccessToken(final TicketGrantingTicket tgt) {
         val testService = CoreAuthenticationTestUtils.getService("https://service.example.com");
-        return defaultAccessTokenFactory.create(testService, tgt.getAuthentication(), tgt, new ArrayList<>());
+        return defaultAccessTokenFactory.create(testService, tgt.getAuthentication(), tgt, new ArrayList<>(), null, new HashMap<>());
     }
 
     protected RefreshToken newRefreshToken(final AccessToken at) {
         val testService = CoreAuthenticationTestUtils.getService("https://service.example.com");
         val rt = defaultRefreshTokenFactory.create(testService, at.getAuthentication(),
-            at.getTicketGrantingTicket(), new ArrayList<>());
+            at.getTicketGrantingTicket(), new ArrayList<>(), "clientid12345",
+            new HashMap<>());
         at.getTicketGrantingTicket().getDescendantTickets().add(rt.getId());
         return rt;
     }

@@ -34,21 +34,18 @@ import org.apereo.cas.web.flow.services.DefaultRegisteredServiceUserInterfaceInf
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.test.MockRequestContext;
 
 import java.io.Serializable;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link OAuth20RegisteredServiceUIActionTests}.
@@ -85,13 +82,8 @@ import static org.junit.Assert.*;
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     CasOAuthAuthenticationServiceSelectionStrategyConfiguration.class,
     CasOAuthWebflowConfiguration.class})
+@Tag("OAuth")
 public class OAuth20RegisteredServiceUIActionTests {
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
-
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
-
     @Autowired
     @Qualifier("oauth20RegisteredServiceUIAction")
     private Action oauth20RegisteredServiceUIAction;
@@ -103,7 +95,7 @@ public class OAuth20RegisteredServiceUIActionTests {
     @Test
     public void verifyOAuthActionWithoutMDUI() throws Exception {
         val ctx = new MockRequestContext();
-        WebUtils.putService(ctx, RegisteredServiceTestUtils.getService());
+        WebUtils.putServiceIntoFlowScope(ctx, RegisteredServiceTestUtils.getService());
         val event = oauth20RegisteredServiceUIAction.execute(ctx);
         assertEquals("success", event.getId());
         val mdui = WebUtils.getServiceUserInterfaceMetadata(ctx, Serializable.class);
@@ -124,7 +116,7 @@ public class OAuth20RegisteredServiceUIActionTests {
         servicesManager.save(svc);
 
         val ctx = new MockRequestContext();
-        WebUtils.putService(ctx, RegisteredServiceTestUtils.getService(
+        WebUtils.putServiceIntoFlowScope(ctx, RegisteredServiceTestUtils.getService(
             "https://www.example.org?client_id=id&client_secret=secret&redirect_uri=https://oauth.example.org"));
         val event = oauth20RegisteredServiceUIAction.execute(ctx);
         assertEquals("success", event.getId());

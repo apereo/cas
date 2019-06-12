@@ -9,19 +9,19 @@ import org.apereo.cas.support.events.service.CasRegisteredServiceSavedEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServicesDeletedEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServicesLoadedEvent;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.scheduling.annotation.Scheduled;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -35,31 +35,26 @@ import java.util.stream.Stream;
  * @since 5.2.0
  */
 @Slf4j
-public abstract class AbstractServicesManager implements ServicesManager, InitializingBean {
-
-    private static final long serialVersionUID = -8581398063126547772L;
+@RequiredArgsConstructor
+public abstract class AbstractServicesManager implements ServicesManager {
 
     private final ServiceRegistry serviceRegistry;
-
     private final transient ApplicationEventPublisher eventPublisher;
+    private final Set<String> environments;
 
     private Map<Long, RegisteredService> services = new ConcurrentHashMap<>();
-
-    public AbstractServicesManager(final ServiceRegistry serviceRegistry,
-                                   final ApplicationEventPublisher eventPublisher) {
-        this.serviceRegistry = serviceRegistry;
-        this.eventPublisher = eventPublisher;
-    }
 
     @Override
     public Collection<RegisteredService> getAllServices() {
         return this.services.values()
             .stream()
+            .filter(this::validateAndFilterServiceByEnvironment)
             .filter(getRegisteredServicesFilteringPredicate())
             .sorted()
             .peek(RegisteredService::initialize)
             .collect(Collectors.toList());
     }
+
 
     @Override
     public Collection<RegisteredService> findServiceBy(final Predicate<RegisteredService> predicate) {
@@ -105,7 +100,7 @@ public abstract class AbstractServicesManager implements ServicesManager, Initia
             return null;
         }
         val service = findServiceBy(serviceId);
-        if (service != null && service.getClass().isAssignableFrom(clazz)) {
+        if (service != null && service.getClass().equals(clazz)) {
             return (T) service;
         }
         return null;
@@ -118,7 +113,8 @@ public abstract class AbstractServicesManager implements ServicesManager, Initia
 
     @Override
     public RegisteredService findServiceBy(final long id) {
-        return this.services.get(id);
+        val result = this.services.get(id);
+        return validateRegisteredService(result);
     }
 
     @Override
@@ -184,25 +180,18 @@ public abstract class AbstractServicesManager implements ServicesManager, Initia
         return r;
     }
 
-    @Override
-    public void afterPropertiesSet() {
-        load();
-    }
-
     /**
      * Load services that are provided by the DAO.
      */
-    @Scheduled(initialDelayString = "${cas.serviceRegistry.schedule.startDelay:20000}",
-        fixedDelayString = "${cas.serviceRegistry.schedule.repeatInterval:60000}")
     @Override
     public Collection<RegisteredService> load() {
-        LOGGER.trace("Loading services from [{}]", this.serviceRegistry);
+        LOGGER.trace("Loading services from [{}]", serviceRegistry.getName());
         this.services = this.serviceRegistry.load()
             .stream()
             .collect(Collectors.toConcurrentMap(r -> {
                 LOGGER.debug("Adding registered service [{}]", r.getServiceId());
                 return r.getId();
-            }, Function.identity(), (r, s) -> s == null ? r : s));
+            }, Function.identity(), (r, s) -> s));
         loadInternal();
         publishEvent(new CasRegisteredServicesLoadedEvent(this, getAllServices()));
         evaluateExpiredServiceDefinitions();
@@ -220,20 +209,22 @@ public abstract class AbstractServicesManager implements ServicesManager, Initia
     private void evaluateExpiredServiceDefinitions() {
         this.services.values()
             .stream()
-            .filter((Predicate<RegisteredService>) getRegisteredServicesFilteringPredicate().negate())
+            .filter(getRegisteredServicesFilteringPredicate().negate())
             .filter(Objects::nonNull)
             .forEach(this::processExpiredRegisteredService);
     }
 
-    private Predicate<RegisteredService> getRegisteredServicesFilteringPredicate(final Predicate<RegisteredService>... p) {
-
+    private static Predicate<RegisteredService> getRegisteredServicesFilteringPredicate(final Predicate<RegisteredService>... p) {
         val predicates = Stream.of(p).collect(Collectors.toCollection(ArrayList::new));
         return predicates.stream().reduce(x -> true, Predicate::and);
     }
 
     private RegisteredService validateRegisteredService(final RegisteredService registeredService) {
         val result = checkServiceExpirationPolicyIfAny(registeredService);
-        return result;
+        if (validateAndFilterServiceByEnvironment(result)) {
+            return result;
+        }
+        return null;
     }
 
     private RegisteredService checkServiceExpirationPolicyIfAny(final RegisteredService registeredService) {
@@ -293,5 +284,23 @@ public abstract class AbstractServicesManager implements ServicesManager, Initia
         if (this.eventPublisher != null) {
             this.eventPublisher.publishEvent(event);
         }
+    }
+
+    private boolean validateAndFilterServiceByEnvironment(final RegisteredService service) {
+        if (this.environments.isEmpty()) {
+            LOGGER.trace("No environments are defined by which services could be filtered");
+            return true;
+        }
+        if (service == null) {
+            LOGGER.trace("No service definition was provided");
+            return true;
+        }
+        if (service.getEnvironments() == null || service.getEnvironments().isEmpty()) {
+            LOGGER.trace("No environments are assigned to service [{}]", service.getName());
+            return true;
+        }
+        return service.getEnvironments()
+            .stream()
+            .anyMatch(this.environments::contains);
     }
 }

@@ -1,11 +1,19 @@
 ---
 layout: default
-title: CAS - SAML2 Dynamic Metadata Management
+title: CAS - SAML2 Metadata Management
 ---
 
-# SAML2 Dynamic Metadata Management
+# SAML2 Metadata Management
 
 Management of service provider metadata in a dynamic on-the-fly fashion may be accomplished via strategies outlined here.
+
+## Administrative Endpoints
+
+The following endpoints are provided by CAS:
+ 
+| Endpoint                                 | Description
+|------------------------------------------|--------------------------------------------------------------------------------------
+| `samlIdPRegisteredServiceMetadataCache`  | Manage and control the cache that holds metadata instances for SAML service providers. Note the cache is specific to the JVM memory of the CAS server node and it's **NOT** distributed or replicated. A `GET` operation produces the cached copy of the metadata for a given service provider, using the `serviceId` and `entityId` parameters. The `serviceId` parameter may be the numeric identifier for the registered service or its name. In case the service definition represents a metadata aggregate such as InCommon, the `entityId` parameter may be used to pinpoint and filter the exact entity within the aggregate. A `DELETE` operation will delete invalidate the metadata cache. If no parameters are provided, the metadata cache will be entirely invalidated. A `serviceId` parameter will force CAS to only invalidate the cached metadata instance for that service provider. The `serviceId` parameter may be the numeric identifier for the registered service or its name.
 
 ## Metadata Query Protocol
 
@@ -80,7 +88,7 @@ Metadata documents may also be stored in and fetched from a MongoDb instance.  T
 | `id`                          | The identifier of the record.
 | `name`             | Indexed field which describes and names the metadata briefly.
 | `value`              | The XML document representing the metadata for the service provider.
-| `signature`              | The contents of the signing key to validate metadata, if any.
+| `signature`              | The contents of the signing certificate to validate metadata, if any.
 
 Support is enabled by including the following module in the overlay:
 
@@ -114,8 +122,7 @@ To see the relevant CAS properties, please [see this guide](../configuration/Con
 
 ### Identity Provider Metadata
 
-Metadata artifacts that belong to CAS as a SAML2 identity provider may also be managed and stored via MongoDb. Artifacts such as the metadata, signing and encryption keys, etc are kept
-inside a MongoDb collection taught to CAS via settings as a single document that would have the following structure:
+Metadata artifacts that belong to CAS as a SAML2 identity provider may also be managed and stored via MongoDb. Artifacts such as the metadata, signing and encryption keys, etc are kept inside a MongoDb collection taught to CAS via settings as a single document that would have the following structure:
 
 ```json
 {
@@ -127,18 +134,18 @@ inside a MongoDb collection taught to CAS via settings as a single document that
 }
 ```
 
-To see the relevant CAS properties, please [see this guide](../configuration/Configuration-Properties.html#saml-metadata-mongodb).
+Note that the signing and encryption keys are expected to be encrypted and signed using CAS crypto keys. To see the relevant CAS properties, please [see this guide](../configuration/Configuration-Properties.html#saml-metadata-mongodb).
 
 ## JPA
 
 Metadata documents may also be stored in and fetched from a relational database instance. This may specially be used to avoid copying metadata files across CAS nodes in a cluster, particularly where one needs to deal with more than a few bilateral SAML integrations. Metadata documents are stored in and fetched from a single pre-defined table  (i.e. `SamlMetadataDocument`) whose connection information is taught to CAS via settings and is automatically generated.  The outline of the table is as follows:
 
-| Field                     | Description
+| Field        | Description
 |--------------|---------------------------------------------------
-| `id`                          | The identifier of the record.
-| `name`             | Indexed field which describes and names the metadata briefly.
-| `value`              | The XML document representing the metadata for the service provider.
-| `signature`              | The contents of the signing key to validate metadata, if any.
+| `id`         | The identifier of the record.
+| `name`       | Indexed field which describes and names the metadata briefly.
+| `value`      | The XML document representing the metadata for the service provider.
+| `signature`  | The contents of the signing certificate to validate metadata, if any.
 
 Support is enabled by including the following module in the overlay:
 
@@ -183,7 +190,7 @@ inside a database table that would have the following structure:
 | `encryptionKey`           | The encryption key.
 | `metadata`                | The SAML2 identity provider metadata.
 
-To see the relevant CAS properties, please [see this guide](../configuration/Configuration-Properties.html#saml-metadata-jpa).
+Note that the signing and encryption keys are expected to be encrypted and signed using CAS crypto keys. To see the relevant CAS properties, please [see this guide](../configuration/Configuration-Properties.html#saml-metadata-jpa).
 
 ## CouchDb
 
@@ -194,7 +201,7 @@ Metadata documents may also be stored in and fetched from a NoSQL database. This
 | `id`                          | The identifier of the record.
 | `name`             | Indexed field which describes and names the metadata briefly.
 | `value`              | The XML document representing the metadata for the service provider.
-| `signature`              | The contents of the signing key to validate metadata, if any.
+| `signature`              | The contents of the signing certificate to validate metadata, if any.
 
 Support is enabled by including the following module in the overlay:
 
@@ -223,7 +230,7 @@ SAML service definitions must then be designed as follows to allow CAS to fetch 
 The metadata location in the registration record above simply needs to be specified as <code>couchdb://</code> to signal to CAS that SAML metadata for registered service provider must be fetched from CouchDb as defined in CAS configuration.
 </p></div>
 
-To see the relevant CAS properties, please [see this guide](../configuration/Configuration-Properties.html#saml-metadata-couchdb).
+Note that the signing and encryption keys are expected to be encrypted and signed using CAS crypto keys. To see the relevant CAS properties, please [see this guide](../configuration/Configuration-Properties.html#saml-metadata-couchdb).
 
 ### Identity Provider Metadata
 
@@ -239,7 +246,7 @@ inside a database with documents that would have the following structure:
 | `encryptionKey`           | The encryption key.
 | `metadata`                | The SAML2 identity provider metadata.
 
-To see the relevant CAS properties, please [see this guide](../configuration/Configuration-Properties.html#saml-metadata-couchdb).
+Note that the signing and encryption keys are expected to be encrypted and signed using CAS crypto keys. To see the relevant CAS properties, please [see this guide](../configuration/Configuration-Properties.html#saml-metadata-couchdb).
 
 ## Groovy
 
@@ -268,7 +275,8 @@ def Collection<MetadataResolver> run(final Object... args) {
     def registeredService = args[0]
     def samlConfigBean = args[1]
     def samlProperties = args[2]
-    def logger = args[3]
+    def criteriaSet = args[3]
+    def logger = args[4]
 
     /*
      Stuff happens where you build the relevant metadata resolver instance(s).
@@ -287,6 +295,7 @@ The parameters passed are as follows:
 | `registeredService`   | The object representing the corresponding service definition in the registry.
 | `samlConfigBean`      | The object representing the OpenSAML configuration class holding various builder and marshaller factory instances.
 | `samlProperties`      | The object responsible for capturing the CAS SAML IdP properties defined in the configuration.
+| `criteriaSet`         | The object responsible for capturing the criteria for metadata solution, if any.
 | `logger`              | The object responsible for issuing log messages such as `logger.info(...)`.
 
 ## Amazon S3
@@ -319,9 +328,32 @@ SAML service definitions must then be designed as follows to allow CAS to fetch 
 }
 ```
 
+The following parameters are expected for the Amazon S3 object metadata:
+
+| Parameter             | Description
+|-----------------------|-------------------------------------------------------
+| `signature`           | The metadata signing certificate, if any.
+
 <div class="alert alert-info"><strong>Metadata Location</strong><p>
 The metadata location in the registration record above simply needs to be specified as <code>awss3://</code> to signal to CAS that 
 SAML metadata for registered service provider must be fetched from Amazon S3 defined in CAS configuration. 
 </p></div>
+
+To see the relevant CAS properties, please [see this guide](../configuration/Configuration-Properties.html#saml-metadata-amazon-s3).
+
+### Identity Provider Metadata
+
+Metadata artifacts that belong to CAS as a SAML2 identity provider may also be managed and stored via Amazon S3 buckets. Artifacts such as the metadata, signing and encryption keys, etc are kept
+inside a bucket with metadata that would have the following structure:
+
+| Field                     | Description
+|---------------------------|---------------------------------------------------
+| `id`                      | The identifier of the record.
+| `signingCertificate`      | The signing certificate.
+| `signingKey`              | The signing key.
+| `encryptionCertificate`   | The encryption certificate.
+| `encryptionKey`           | The encryption key.
+
+The actual object's content/body is expected to contain the SAML2 identity provider metadata. Note that the signing and encryption keys are expected to be encrypted and signed using CAS crypto keys. 
 
 To see the relevant CAS properties, please [see this guide](../configuration/Configuration-Properties.html#saml-metadata-amazon-s3).

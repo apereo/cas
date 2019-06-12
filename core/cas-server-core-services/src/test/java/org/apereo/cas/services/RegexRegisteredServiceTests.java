@@ -1,18 +1,24 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy;
+import org.apereo.cas.util.CollectionUtils;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Collection;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Stream;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 /**
  * Unit test for {@link RegexRegisteredService}.
@@ -20,100 +26,104 @@ import static org.junit.Assert.*;
  * @author Marvin S. Addison
  * @since 3.4.0
  */
-@RunWith(Parameterized.class)
 public class RegexRegisteredServiceTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "regexRegisteredService.json");
-    private static final ObjectMapper MAPPER = new ObjectMapper();
+    private static final ObjectMapper MAPPER = new ObjectMapper()
+        .setSerializationInclusion(JsonInclude.Include.NON_NULL)
+        .findAndRegisterModules();
 
-    private final RegexRegisteredService service;
-
-    private final String serviceToMatch;
-
-    private final boolean expected;
-
-    public RegexRegisteredServiceTests(
-        final RegexRegisteredService service,
-        final String serviceToMatch,
-        final boolean expectedResult) {
-        this.service = service;
-        this.serviceToMatch = serviceToMatch;
-        this.expected = expectedResult;
-    }
-
-    @Parameterized.Parameters
-    public static Collection<Object[]> getParameters() {
+    public static Stream<Arguments> getParameters() {
         val domainCatchallHttp = "https*://([A-Za-z0-9_-]+\\.)+vt\\.edu/.*";
         val domainCatchallHttpImap = "(https*|imaps*)://([A-Za-z0-9_-]+\\.)+vt\\.edu/.*";
         val globalCatchallHttpImap = "(https*|imaps*)://.*";
-        return Arrays.asList(new Object[][]{
-            // CAS-1071 domain-specific HTTP catch-all #1
-            {
+        return Stream.of(
+            arguments(
                 newService(domainCatchallHttp),
                 "https://service.vt.edu/webapp?a=1",
-                true,
-            },
-            {
+                true
+            ),
+            arguments(
                 newService(domainCatchallHttp),
                 "http://test-01.service.vt.edu/webapp?a=1",
-                true,
-            },
-            {
+                true
+            ),
+            arguments(
                 newService(domainCatchallHttp),
                 "https://thepiratebay.se?service.vt.edu/webapp?a=1",
-                false,
-            },
-            // Domain-specific catch-all for HTTP(S)/IMAP(S) #1
-            {
+                false
+            ),
+            arguments(
                 newService(domainCatchallHttpImap),
                 "http://test_service.vt.edu/login",
-                true,
-            },
-            // Domain-specific catch-all for HTTP(S)/IMAP(S) #2
-            {
+                true
+            ),
+            arguments(
                 newService(domainCatchallHttpImap),
                 "imaps://imap-server-01.vt.edu/",
-                true,
-            },
-            // Global catch-all for HTTP(S)/IMAP(S) #1
-            {
+                true
+            ),
+            arguments(
                 newService(globalCatchallHttpImap),
                 "https://host-01.example.com/",
-                true,
-            },
-            // Global catch-all for HTTP(S)/IMAP(S) #2
-            {
+                true
+            ),
+            arguments(
                 newService(globalCatchallHttpImap),
                 "imap://host-02.example.edu/",
-                true,
-            },
-            // Null case
-            {
+                true
+            ),
+            arguments(
                 newService(globalCatchallHttpImap),
                 null,
-                false,
-            },
-        });
+                false
+            )
+        );
     }
 
     private static RegexRegisteredService newService(final String id) {
         val service = new RegexRegisteredService();
         service.setServiceId(id);
+        service.setLogoutType(RegisteredServiceLogoutType.FRONT_CHANNEL);
+        service.setServiceTicketExpirationPolicy(
+            new DefaultRegisteredServiceServiceTicketExpirationPolicy(100, "100"));
+        service.setProxyTicketExpirationPolicy(
+            new DefaultRegisteredServiceProxyTicketExpirationPolicy(100, "100"));
+        val policy = new ChainingRegisteredServiceSingleSignOnParticipationPolicy();
+        policy.addPolicies(Arrays.asList(
+            new LastUsedTimeRegisteredServiceSingleSignOnParticipationPolicy(TimeUnit.SECONDS, 100, 1),
+            new AuthenticationDateRegisteredServiceSingleSignOnParticipationPolicy(TimeUnit.SECONDS, 100, 1)));
+        service.setSingleSignOnParticipationPolicy(policy);
+
+        val consent = new DefaultRegisteredServiceConsentPolicy(CollectionUtils.wrapSet("attr1", "attr2"),
+            CollectionUtils.wrapSet("ex-attr1", "ex-attr2"));
+        consent.setEnabled(true);
+
+        val attrPolicy = new ReturnAllowedAttributeReleasePolicy();
+        attrPolicy.setConsentPolicy(consent);
+        service.setAttributeReleasePolicy(attrPolicy);
         return service;
     }
 
-    @Test
-    public void verifyMatches() {
+    @ParameterizedTest
+    @MethodSource("getParameters")
+    public void verifyMatches(final RegexRegisteredService service,
+                              final String serviceToMatch,
+                              final boolean expectedResult) {
         val testService = serviceToMatch == null ? null : RegisteredServiceTestUtils.getService(serviceToMatch);
-        assertEquals(expected, service.matches(testService));
+        assertEquals(expectedResult, service.matches(testService));
     }
 
-    @Test
-    public void verifySerializeARegexRegisteredServiceToJson() throws IOException {
-        val serviceWritten = newService("serviceId");
-        serviceWritten.setLogoutType(RegisteredService.LogoutType.FRONT_CHANNEL);
-        MAPPER.writeValue(JSON_FILE, serviceWritten);
+    @ParameterizedTest
+    @MethodSource("getParameters")
+    public void verifySerialization(final RegexRegisteredService service,
+                                    final String serviceToMatch,
+                                    final boolean expectedResult) throws IOException {
+        MAPPER.writeValue(JSON_FILE, service);
         val serviceRead = MAPPER.readValue(JSON_FILE, RegexRegisteredService.class);
-        assertEquals(serviceWritten, serviceRead);
+        assertEquals(service, serviceRead);
+        val testService = serviceToMatch == null ? null : RegisteredServiceTestUtils.getService(serviceToMatch);
+        assertEquals(expectedResult, serviceRead.matches(testService));
     }
+
 }

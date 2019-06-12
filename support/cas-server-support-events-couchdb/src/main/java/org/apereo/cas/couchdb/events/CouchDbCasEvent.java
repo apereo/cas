@@ -37,12 +37,12 @@ public class CouchDbCasEvent extends CasEvent {
     private String rev;
 
     @JsonCreator
-    public CouchDbCasEvent(@JsonProperty("_id") final String cid, //NOPMD
+    public CouchDbCasEvent(@JsonProperty("_id") final String cid,
                            @JsonProperty("_rev") final String rev,
                            @JsonProperty("id") final long id,
-                           @NonNull @JsonProperty("type") final String type,
-                           @NonNull @JsonProperty("principalId") final String principalId,
-                           @NonNull @JsonProperty("creationTime") final String creationTime,
+                           @JsonProperty("type") final @NonNull String type,
+                           @JsonProperty("principalId") final @NonNull String principalId,
+                           @JsonProperty("creationTime") final @NonNull String creationTime,
                            @JsonProperty("properties") final Map<String, String> properties
                            ) {
         super(id, type, principalId, creationTime, properties);

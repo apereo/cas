@@ -1,7 +1,9 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
+import org.apereo.cas.configuration.model.core.authentication.passwordsync.PasswordSynchronizationProperties;
 import org.apereo.cas.configuration.model.support.cassandra.authentication.CassandraAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.clouddirectory.CloudDirectoryProperties;
+import org.apereo.cas.configuration.model.support.cognito.AmazonCognitoAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.couchbase.authentication.CouchbaseAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.couchdb.authentication.CouchDbAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.digest.DigestProperties;
@@ -29,6 +31,7 @@ import org.apereo.cas.configuration.model.support.radius.RadiusProperties;
 import org.apereo.cas.configuration.model.support.rest.RestAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.configuration.model.support.saml.shibboleth.ShibbolethIdPProperties;
+import org.apereo.cas.configuration.model.support.soap.SoapAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.spnego.SpnegoProperties;
 import org.apereo.cas.configuration.model.support.surrogate.SurrogateAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.syncope.SyncopeAuthenticationProperties;
@@ -69,6 +72,12 @@ public class AuthenticationProperties implements Serializable {
     private PasswordlessAuthenticationProperties passwordless = new PasswordlessAuthenticationProperties();
 
     /**
+     * Passwordless sync settings.
+     */
+    @NestedConfigurationProperty
+    private PasswordSynchronizationProperties passwordSync = new PasswordSynchronizationProperties();
+
+    /**
      * JSON authentication settings.
      */
     @NestedConfigurationProperty
@@ -97,6 +106,18 @@ public class AuthenticationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private CloudDirectoryProperties cloudDirectory = new CloudDirectoryProperties();
+
+    /**
+     * Configuration settings for cognito authentication.
+     */
+    @NestedConfigurationProperty
+    private AmazonCognitoAuthenticationProperties cognito = new AmazonCognitoAuthenticationProperties();
+
+    /**
+     * Settings that control SOAP authentication.
+     */
+    @NestedConfigurationProperty
+    private SoapAuthenticationProperties soap = new SoapAuthenticationProperties();
 
     /**
      * Surrogate authentication settings.
@@ -163,6 +184,12 @@ public class AuthenticationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private AuthenticationExceptionsProperties exceptions = new AuthenticationExceptionsProperties();
+
+    /**
+     * Customization of authentication engine and pre/post processing.
+     */
+    @NestedConfigurationProperty
+    private AuthenticationEngineProperties engine = new AuthenticationEngineProperties();
 
     /**
      * Authentication policy settings.

@@ -4,23 +4,31 @@ import org.apereo.cas.CoreAttributesTestUtils;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesRepository;
+import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.serialization.SerializationUtils;
+import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import com.google.common.collect.ArrayListMultimap;
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributes;
+import org.apereo.services.persondir.support.MergingPersonAttributeDaoImpl;
 import org.apereo.services.persondir.support.StubPersonAttributeDao;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -29,6 +37,10 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 4.0.0
  */
+@SpringBootTest(classes = {
+    RefreshAutoConfiguration.class,
+    CasCoreUtilConfiguration.class
+})
 public class RegisteredServiceAttributeReleasePolicyTests {
 
     private static final String ATTR_1 = "attr1";
@@ -39,6 +51,9 @@ public class RegisteredServiceAttributeReleasePolicyTests {
     private static final String NEW_ATTR_1_VALUE = "newAttr1";
     private static final String PRINCIPAL_ID = "principalId";
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+
     @Test
     public void verifyMappedAttributeFilterMappedAttributesIsCaseInsensitive() {
         val policy = new ReturnMappedAttributeReleasePolicy();
@@ -47,8 +62,8 @@ public class RegisteredServiceAttributeReleasePolicyTests {
         policy.setAllowedAttributes(CollectionUtils.wrap(mappedAttr));
 
         val p = mock(Principal.class);
-        val map = new HashMap<String, Object>();
-        map.put("ATTR1", VALUE_1);
+        val map = new HashMap<String, List<Object>>();
+        map.put("ATTR1", List.of(VALUE_1));
         when(p.getAttributes()).thenReturn(map);
         when(p.getId()).thenReturn(PRINCIPAL_ID);
 
@@ -69,9 +84,9 @@ public class RegisteredServiceAttributeReleasePolicyTests {
         policy.setAllowedAttributes(attrs);
 
         val p = mock(Principal.class);
-        val map = new HashMap<String, Object>();
-        map.put("ATTR1", VALUE_1);
-        map.put("ATTR2", VALUE_2);
+        val map = new HashMap<String, List<Object>>();
+        map.put("ATTR1", List.of(VALUE_1));
+        map.put("ATTR2", List.of(VALUE_2));
         when(p.getAttributes()).thenReturn(map);
         when(p.getId()).thenReturn(PRINCIPAL_ID);
 
@@ -91,9 +106,9 @@ public class RegisteredServiceAttributeReleasePolicyTests {
         policy.setAllowedAttributes(CollectionUtils.wrap(mappedAttr));
         val p = mock(Principal.class);
 
-        val map = new HashMap<String, Object>();
-        map.put(ATTR_1, VALUE_1);
-        map.put(ATTR_2, VALUE_2);
+        val map = new HashMap<String, List<Object>>();
+        map.put(ATTR_1, List.of(VALUE_1));
+        map.put(ATTR_2, List.of(VALUE_2));
         map.put(ATTR_3, Arrays.asList("v3", "v4"));
 
         when(p.getAttributes()).thenReturn(map);
@@ -116,9 +131,9 @@ public class RegisteredServiceAttributeReleasePolicyTests {
         policy.setAllowedAttributes(Arrays.asList(ATTR_1, ATTR_3));
         val p = mock(Principal.class);
 
-        val map = new HashMap<String, Object>();
-        map.put(ATTR_1, VALUE_1);
-        map.put(ATTR_2, VALUE_2);
+        val map = new HashMap<String, List<Object>>();
+        map.put(ATTR_1, List.of(VALUE_1));
+        map.put(ATTR_2, List.of(VALUE_2));
         map.put(ATTR_3, Arrays.asList("v3", "v4"));
 
         when(p.getAttributes()).thenReturn(map);
@@ -141,9 +156,9 @@ public class RegisteredServiceAttributeReleasePolicyTests {
     public void verifyServiceAttributeDenyAllAttributes() {
         val policy = new DenyAllAttributeReleasePolicy();
         val p = mock(Principal.class);
-        val map = new HashMap<String, Object>();
-        map.put("ATTR1", VALUE_1);
-        map.put("ATTR2", VALUE_2);
+        val map = new HashMap<String, List<Object>>();
+        map.put("ATTR1", List.of(VALUE_1));
+        map.put("ATTR2", List.of(VALUE_2));
         when(p.getAttributes()).thenReturn(map);
         when(p.getId()).thenReturn(PRINCIPAL_ID);
 
@@ -156,9 +171,9 @@ public class RegisteredServiceAttributeReleasePolicyTests {
         val policy = new ReturnAllAttributeReleasePolicy();
         val p = mock(Principal.class);
 
-        val map = new HashMap<String, Object>();
-        map.put(ATTR_1, VALUE_1);
-        map.put(ATTR_2, VALUE_2);
+        val map = new HashMap<String, List<Object>>();
+        map.put(ATTR_1, List.of(VALUE_1));
+        map.put(ATTR_2, List.of(VALUE_2));
         map.put(ATTR_3, Arrays.asList("v3", "v4"));
 
         when(p.getAttributes()).thenReturn(map);
@@ -181,22 +196,61 @@ public class RegisteredServiceAttributeReleasePolicyTests {
         attributes.put("cn", Arrays.asList(new Object[]{"commonName"}));
         attributes.put("username", Arrays.asList(new Object[]{"uid"}));
 
-        val dao = new StubPersonAttributeDao(attributes);
         val person = mock(IPersonAttributes.class);
         when(person.getName()).thenReturn("uid");
         when(person.getAttributes()).thenReturn(attributes);
 
-        val repository =
-            new CachingPrincipalAttributesRepository(TimeUnit.MILLISECONDS.name(), 100);
-        repository.setAttributeRepository(dao);
+        val stub = new StubPersonAttributeDao(attributes);
+        stub.setId("SampleStubRepository");
 
-        val p = new DefaultPrincipalFactory().createPrincipal("uid",
-            Collections.singletonMap("mail", "final@example.com"));
+        val dao = new MergingPersonAttributeDaoImpl();
+        dao.setPersonAttributeDaos(Collections.singletonList(stub));
+
+        ApplicationContextProvider.registerBeanIntoApplicationContext(this.applicationContext, dao, "attributeRepository");
+
+        val repository = new CachingPrincipalAttributesRepository(TimeUnit.MILLISECONDS.name(), 100);
+        repository.setAttributeRepositoryIds(Set.of(stub.getId()));
+        val p = new DefaultPrincipalFactory().createPrincipal("uid", Collections.singletonMap("mail", List.of("final@example.com")));
 
         policy.setPrincipalAttributesRepository(repository);
 
-        val attr = policy.getAttributes(p, CoreAttributesTestUtils.getService(),
-            CoreAttributesTestUtils.getRegisteredService());
-        assertEquals(attr.size(), attributes.size());
+        val service = CoreAttributesTestUtils.getService();
+        val registeredService = CoreAttributesTestUtils.getRegisteredService();
+        val attr = policy.getAttributes(p, service, registeredService);
+        assertEquals(attributes.size() + 1, attr.size());
+    }
+
+    @Test
+    public void checkServiceAttributeFilterByAttributeRepositoryId() {
+        val policy = new ReturnAllAttributeReleasePolicy();
+
+        val attributes = new HashMap<String, List<Object>>();
+        attributes.put("values", Arrays.asList(new Object[]{"v1", "v2", "v3"}));
+        attributes.put("cn", Arrays.asList(new Object[]{"commonName"}));
+        attributes.put("username", Arrays.asList(new Object[]{"uid"}));
+
+        val person = mock(IPersonAttributes.class);
+        when(person.getName()).thenReturn("uid");
+        when(person.getAttributes()).thenReturn(attributes);
+
+        val stub = new StubPersonAttributeDao(attributes);
+        stub.setId("SampleStubRepository");
+
+        val dao = new MergingPersonAttributeDaoImpl();
+        dao.setPersonAttributeDaos(Collections.singletonList(stub));
+
+        ApplicationContextProvider.registerBeanIntoApplicationContext(this.applicationContext, dao, "attributeRepository");
+        val repository = new CachingPrincipalAttributesRepository(TimeUnit.MILLISECONDS.name(), 0);
+        val p = new DefaultPrincipalFactory().createPrincipal("uid", Collections.singletonMap("mail", List.of("final@example.com")));
+
+        repository.setAttributeRepositoryIds(CollectionUtils.wrapSet("SampleStubRepository".toUpperCase()));
+        policy.setPrincipalAttributesRepository(repository);
+        var attr = policy.getAttributes(p, CoreAttributesTestUtils.getService(), CoreAttributesTestUtils.getRegisteredService());
+        assertEquals(attr.size(), attributes.size() + 1);
+
+        repository.setAttributeRepositoryIds(CollectionUtils.wrapSet("DoesNotExist"));
+        policy.setPrincipalAttributesRepository(repository);
+        attr = policy.getAttributes(p, CoreAttributesTestUtils.getService(), CoreAttributesTestUtils.getRegisteredService());
+        assertEquals(1, attr.size());
     }
 }

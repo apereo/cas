@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.LockModeType;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
@@ -72,7 +73,8 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public long deleteAll() {
-        return this.ticketCatalog.findAll().stream()
+        return this.ticketCatalog.findAll()
+            .stream()
             .map(JpaTicketRegistry::getTicketEntityName)
             .map(entityName -> entityManager.createQuery(String.format("delete from %s", entityName)))
             .mapToLong(Query::executeUpdate)
@@ -92,6 +94,8 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
                 return result;
             }
             return null;
+        } catch (final NoResultException e) {
+            LOGGER.debug("No record could be found for ticket [{}]", ticketId);
         } catch (final Exception e) {
             LOGGER.error("Error getting ticket [{}] from registry.", ticketId, e);
         }
@@ -122,7 +126,6 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
      * @return tickets
      */
     @Override
-    @SuppressWarnings("unchecked")
     public Stream<? extends Ticket> getTicketsStream() {
         return this.ticketCatalog.findAll()
             .stream()

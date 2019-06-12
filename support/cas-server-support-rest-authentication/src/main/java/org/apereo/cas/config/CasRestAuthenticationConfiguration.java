@@ -40,8 +40,8 @@ public class CasRestAuthenticationConfiguration {
     private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
-    @Qualifier("personDirectoryPrincipalResolver")
-    private ObjectProvider<PrincipalResolver> personDirectoryPrincipalResolver;
+    @Qualifier("defaultPrincipalResolver")
+    private ObjectProvider<PrincipalResolver> defaultPrincipalResolver;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -64,7 +64,7 @@ public class CasRestAuthenticationConfiguration {
     @Bean
     @RefreshScope
     public RestAuthenticationApi restAuthenticationApi() {
-        return new RestAuthenticationApi(restAuthenticationTemplate(), casProperties.getAuthn().getRest().getUri());
+        return new RestAuthenticationApi(restAuthenticationTemplate(), casProperties.getAuthn().getRest().getUri(), casProperties.getAuthn().getRest().getCharset());
     }
 
     @Bean
@@ -81,7 +81,7 @@ public class CasRestAuthenticationConfiguration {
     public AuthenticationEventExecutionPlanConfigurer casRestAuthenticationEventExecutionPlanConfigurer() {
         return plan -> {
             if (StringUtils.isNotBlank(casProperties.getAuthn().getRest().getUri())) {
-                plan.registerAuthenticationHandlerWithPrincipalResolver(restAuthenticationHandler(), personDirectoryPrincipalResolver.getIfAvailable());
+                plan.registerAuthenticationHandlerWithPrincipalResolver(restAuthenticationHandler(), defaultPrincipalResolver.getIfAvailable());
             }
         };
     }

@@ -12,6 +12,7 @@ import org.apereo.cas.util.RandomUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.AttributeStatement;
@@ -86,9 +87,13 @@ public class SamlProfileSamlAssertionBuilder extends AbstractSaml20ObjectBuilder
             statements.add(attrStatement);
         }
 
-        val id = '_' + String.valueOf(RandomUtils.getNativeInstance().nextLong());
-        val assertion = newAssertion(statements, casProperties.getAuthn().getSamlIdp().getEntityId(),
-            ZonedDateTime.now(ZoneOffset.UTC), id);
+        val id = '_' + String.valueOf(RandomUtils.nextLong());
+
+        val issuerId = StringUtils.isBlank(service.getIssuerEntityId())
+            ? casProperties.getAuthn().getSamlIdp().getEntityId()
+            : service.getIssuerEntityId();
+
+        val assertion = newAssertion(statements, issuerId, ZonedDateTime.now(ZoneOffset.UTC), id);
         assertion.setSubject(this.samlProfileSamlSubjectBuilder.build(authnRequest, request, response,
             casAssertion, service, adaptor, binding, messageContext));
         assertion.setConditions(this.samlProfileSamlConditionsBuilder.build(authnRequest,

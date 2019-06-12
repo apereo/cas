@@ -1,14 +1,13 @@
 package org.apereo.cas.consent;
 
-import org.apereo.cas.category.RestfulApiCategory;
 import org.apereo.cas.config.CasConsentRestConfiguration;
 import org.apereo.cas.util.CollectionUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
@@ -19,7 +18,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.client.ExpectedCount.*;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.*;
@@ -30,7 +29,7 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Category(RestfulApiCategory.class)
+@Tag("RestfulApi")
 @SpringBootTest(classes = {CasConsentRestConfiguration.class})
 public class RestConsentRepositoryTests extends BaseConsentRepositoryTests {
     private static final String CONSENT = "/consent";
@@ -49,7 +48,7 @@ public class RestConsentRepositoryTests extends BaseConsentRepositoryTests {
         return repos.computeIfAbsent(testName, n -> new RestConsentRepository(new RestTemplate(), CONSENT));
     }
 
-    private MockRestServiceServer getNewServer(final RestConsentRepository repository) {
+    private static MockRestServiceServer getNewServer(final RestConsentRepository repository) {
         return MockRestServiceServer.bindTo(repository.getRestTemplate()).build();
     }
 

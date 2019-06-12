@@ -1,6 +1,7 @@
 package org.apereo.cas.util.spring;
 
 import lombok.Setter;
+import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
 import org.springframework.context.NoSuchMessageException;
@@ -32,7 +33,7 @@ public class SpringAwareMessageMessageInterpolator implements MessageInterpolato
     public String interpolate(final String s, final Context context, final Locale locale) {
         try {
             return this.messageSource.getMessage(s, context.getConstraintDescriptor()
-                .getAttributes().values().toArray(new Object[context.getConstraintDescriptor().getAttributes().size()]), locale);
+                .getAttributes().values().toArray(ArrayUtils.EMPTY_OBJECT_ARRAY), locale);
         } catch (final NoSuchMessageException e) {
             return this.defaultMessageInterpolator.interpolate(s, context, locale);
         }

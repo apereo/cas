@@ -4,15 +4,16 @@ import org.apereo.cas.authentication.DefaultCasSslContext;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.http.SimpleHttpClientFactoryBean;
 
+import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
 
 import java.security.KeyStore;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Misagh Moayyed
@@ -24,11 +25,13 @@ public class TrustedProxyAuthenticationTrustStoreSslSocketFactoryTests {
 
     private HttpClient client;
 
-    @Before
+    @BeforeEach
+    @SneakyThrows
     public void prepareHttpClient() {
         val clientFactory = new SimpleHttpClientFactoryBean();
-        clientFactory.setSslSocketFactory(new SSLConnectionSocketFactory(
-            new DefaultCasSslContext(TRUST_STORE, TRUST_STORE_PSW, KeyStore.getDefaultType()).getSslContext()));
+        val context = new DefaultCasSslContext(TRUST_STORE, TRUST_STORE_PSW, KeyStore.getDefaultType());
+        val factory = new SSLConnectionSocketFactory(context.getSslContext());
+        clientFactory.setSslSocketFactory(factory);
         this.client = clientFactory.getObject();
     }
 
@@ -43,5 +46,4 @@ public class TrustedProxyAuthenticationTrustStoreSslSocketFactoryTests {
         val valid = client.isValidEndPoint("https://self-signed.badssl.com");
         assertTrue(valid);
     }
-
 }

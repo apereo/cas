@@ -5,10 +5,11 @@ import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.refreshtoken.RefreshToken;
 
 import lombok.val;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This class tests the {@link OAuth20AccessTokenEndpointController} class.
@@ -16,9 +17,10 @@ import static org.junit.Assert.*;
  * @author Jerome Leleu
  * @since 3.5.2
  */
+@Tag("OAuth")
 public class OAuth20RefreshTokenTests extends AbstractOAuth20Tests {
 
-    @Before
+    @BeforeEach
     public void initialize() {
         clearAllServices();
     }
@@ -28,7 +30,7 @@ public class OAuth20RefreshTokenTests extends AbstractOAuth20Tests {
         val service = addRegisteredService();
         service.setGenerateRefreshToken(true);
 
-        val result = internalVerifyClientOK(service, true);
+        val result = assertClientOK(service, true);
 
         val at = this.ticketRegistry.getTicket(result.getKey(), AccessToken.class);
         assertNotNull(at);
@@ -41,7 +43,7 @@ public class OAuth20RefreshTokenTests extends AbstractOAuth20Tests {
         val rt = this.ticketRegistry.getTicket(result.getRight(), RefreshToken.class);
         assertNotNull(rt);
 
-        val result2 = internalVerifyRefreshTokenOk(service, rt, createPrincipal());
+        val result2 = assertRefreshTokenOk(service, rt, createPrincipal());
         assertNotNull(result2.getKey());
     }
 

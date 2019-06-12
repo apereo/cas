@@ -12,17 +12,21 @@ import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingSt
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.FileSystemResource;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -31,16 +35,17 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Tag("SAML")
 public class SamlRegisteredServiceTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "samlRegisteredService.json");
-    private static final ObjectMapper MAPPER = new ObjectMapper();
+    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
     private static final ClassPathResource RESOURCE = new ClassPathResource("services");
     private static final String SAML_SERVICE = "SAMLService";
     private static final String METADATA_LOCATION = "classpath:/metadata/idp-metadata.xml";
 
-    @BeforeClass
+    @BeforeAll
     public static void prepTests() throws Exception {
         FileUtils.cleanDirectory(RESOURCE.getFile());
     }
@@ -54,7 +59,8 @@ public class SamlRegisteredServiceTests {
 
         val dao = new JsonServiceRegistry(RESOURCE, false,
             mock(ApplicationEventPublisher.class), new NoOpRegisteredServiceReplicationStrategy(),
-            new DefaultRegisteredServiceResourceNamingStrategy());
+            new DefaultRegisteredServiceResourceNamingStrategy(),
+            new ArrayList<>());
         dao.save(service);
         dao.load();
     }
@@ -70,9 +76,10 @@ public class SamlRegisteredServiceTests {
         chain.setPolicies(Arrays.asList(policy, new DenyAllAttributeReleasePolicy()));
         service.setAttributeReleasePolicy(chain);
 
-        val dao = new JsonServiceRegistry(RESOURCE, false,
+        val dao = new JsonServiceRegistry(new FileSystemResource(FileUtils.getTempDirectory()), false,
             mock(ApplicationEventPublisher.class), new NoOpRegisteredServiceReplicationStrategy(),
-            new DefaultRegisteredServiceResourceNamingStrategy());
+            new DefaultRegisteredServiceResourceNamingStrategy(),
+            new ArrayList<>());
         dao.save(service);
         dao.load();
     }
@@ -83,10 +90,8 @@ public class SamlRegisteredServiceTests {
         service.setName(SAML_SERVICE);
         service.setServiceId("^http://.+");
         service.setMetadataLocation(METADATA_LOCATION);
-
-        val dao = new InMemoryServiceRegistry();
-        dao.setRegisteredServices(Collections.singletonList(service));
-        val impl = new DefaultServicesManager(dao, mock(ApplicationEventPublisher.class));
+        val dao = new InMemoryServiceRegistry(mock(ApplicationEventPublisher.class), Collections.singletonList(service), new ArrayList<>());
+        val impl = new DefaultServicesManager(dao, mock(ApplicationEventPublisher.class), new HashSet<>());
         impl.load();
 
         val s = impl.findServiceBy(new WebApplicationServiceFactory()

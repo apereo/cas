@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.mfa.trusteddevice;
 
+import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.cookie.CookieProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
@@ -45,6 +46,7 @@ public class DeviceFingerprintProperties implements Serializable {
 
     @Getter
     @Setter
+    @RequiresModule(name = "cas-server-support-trusted-mfa")
     public static class ClientIp extends BaseDeviceFingerprintComponentProperties {
         private static final long serialVersionUID = 785014133279201757L;
 
@@ -56,6 +58,7 @@ public class DeviceFingerprintProperties implements Serializable {
 
     @Getter
     @Setter
+    @RequiresModule(name = "cas-server-support-trusted-mfa")
     public static class Cookie extends CookieProperties {
         private static final long serialVersionUID = -9022498833437602657L;
 
@@ -83,11 +86,15 @@ public class DeviceFingerprintProperties implements Serializable {
         public Cookie() {
             setName("MFATRUSTED");
             setMaxAge((int) Duration.ofDays(DEFAULT_MAX_AGE_DAYS).getSeconds());
+
+            crypto.getEncryption().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE);
+            crypto.getSigning().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_SIGNING_KEY_SIZE);
         }
     }
 
     @Getter
     @Setter
+    @RequiresModule(name = "cas-server-support-trusted-mfa")
     public static class UserAgent extends BaseDeviceFingerprintComponentProperties {
         private static final long serialVersionUID = -5325531035180836136L;
 

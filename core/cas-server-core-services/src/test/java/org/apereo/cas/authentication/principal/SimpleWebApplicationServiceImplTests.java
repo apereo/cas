@@ -8,14 +8,15 @@ import org.apereo.cas.services.ServiceRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashSet;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -26,7 +27,7 @@ import static org.mockito.Mockito.*;
 public class SimpleWebApplicationServiceImplTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "simpleWebApplicationServiceImpl.json");
 
-    private static final ObjectMapper MAPPER = new ObjectMapper();
+    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
     private static final String SERVICE = "service";
 
     @Test
@@ -45,7 +46,7 @@ public class SimpleWebApplicationServiceImplTests {
         request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, SERVICE);
         val impl = new WebApplicationServiceFactory().createService(request);
         val response = new WebApplicationServiceResponseBuilder(
-            new DefaultServicesManager(mock(ServiceRegistry.class), mock(ApplicationEventPublisher.class)))
+            new DefaultServicesManager(mock(ServiceRegistry.class), mock(ApplicationEventPublisher.class), new HashSet<>()))
             .build(impl, "ticketId", RegisteredServiceTestUtils.getAuthentication());
         assertNotNull(response);
         assertEquals(Response.ResponseType.REDIRECT, response.getResponseType());
@@ -75,7 +76,7 @@ public class SimpleWebApplicationServiceImplTests {
         val impl = new WebApplicationServiceFactory().createService(request);
 
         val response = new WebApplicationServiceResponseBuilder(
-            new DefaultServicesManager(mock(ServiceRegistry.class), mock(ApplicationEventPublisher.class)))
+            new DefaultServicesManager(mock(ServiceRegistry.class), mock(ApplicationEventPublisher.class), new HashSet<>()))
             .build(impl, null,
                 RegisteredServiceTestUtils.getAuthentication());
         assertNotNull(response);
@@ -89,7 +90,7 @@ public class SimpleWebApplicationServiceImplTests {
         request.setParameter(SERVICE, "http://foo.com/");
         val impl = new WebApplicationServiceFactory().createService(request);
         val response = new WebApplicationServiceResponseBuilder(
-            new DefaultServicesManager(mock(ServiceRegistry.class), mock(ApplicationEventPublisher.class)))
+            new DefaultServicesManager(mock(ServiceRegistry.class), mock(ApplicationEventPublisher.class), new HashSet<>()))
             .build(impl, null,
                 RegisteredServiceTestUtils.getAuthentication());
         assertNotNull(response);
@@ -104,7 +105,7 @@ public class SimpleWebApplicationServiceImplTests {
         request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, "http://foo.com/?param=test");
         val impl = new WebApplicationServiceFactory().createService(request);
         val response = new WebApplicationServiceResponseBuilder(
-            new DefaultServicesManager(mock(ServiceRegistry.class), mock(ApplicationEventPublisher.class)))
+            new DefaultServicesManager(mock(ServiceRegistry.class), mock(ApplicationEventPublisher.class), new HashSet<>()))
             .build(impl, null, RegisteredServiceTestUtils.getAuthentication());
         assertNotNull(response);
         assertEquals(Response.ResponseType.REDIRECT, response.getResponseType());

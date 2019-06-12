@@ -47,16 +47,11 @@ public class RegisteredServicesEventListener {
 
         val serviceName = StringUtils.defaultIfBlank(registeredService.getName(), registeredService.getServiceId());
         if (communicationsManager.isMailSenderDefined()) {
-            val message = String.format(mail.getText(), serviceName);
+            val message = mail.getFormattedBody(serviceName);
             contacts
                 .stream()
                 .filter(c -> StringUtils.isNotBlank(c.getEmail()))
-                .forEach(c -> communicationsManager.email(message,
-                    mail.getFrom(),
-                    mail.getSubject(),
-                    c.getEmail(),
-                    mail.getCc(),
-                    mail.getBcc()));
+                .forEach(c -> communicationsManager.email(mail, c.getEmail(), message));
         }
         if (communicationsManager.isSmsSenderDefined()) {
             val message = String.format(sms.getText(), serviceName);

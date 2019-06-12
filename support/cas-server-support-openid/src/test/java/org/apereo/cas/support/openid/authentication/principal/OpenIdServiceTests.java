@@ -10,16 +10,17 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openid4java.association.Association;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashSet;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -36,7 +37,7 @@ public class OpenIdServiceTests extends AbstractOpenIdTests {
     private OpenIdService openIdService;
     private Association association;
 
-    @Before
+    @BeforeEach
     public void initialize() throws Exception {
         request.addParameter(OpenIdProtocolConstants.OPENID_IDENTITY, OPEN_ID_PREFIX_URL);
         request.addParameter(OpenIdProtocolConstants.OPENID_RETURNTO, RETURN_TO_URL);
@@ -70,7 +71,7 @@ public class OpenIdServiceTests extends AbstractOpenIdTests {
 
             val response = new OpenIdServiceResponseBuilder(OPEN_ID_PREFIX_URL,
                 serverManager, centralAuthenticationService,
-                new DefaultServicesManager(mock(ServiceRegistry.class), mock(ApplicationEventPublisher.class)))
+                new DefaultServicesManager(mock(ServiceRegistry.class), mock(ApplicationEventPublisher.class), new HashSet<>()))
                 .build(openIdService, "something", CoreAuthenticationTestUtils.getAuthentication());
             assertNotNull(response);
 
@@ -79,7 +80,8 @@ public class OpenIdServiceTests extends AbstractOpenIdTests {
             assertEquals(OPEN_ID_PREFIX_URL, response.getAttributes().get(OpenIdProtocolConstants.OPENID_IDENTITY));
 
             val response2 = new OpenIdServiceResponseBuilder(OPEN_ID_PREFIX_URL, serverManager,
-                centralAuthenticationService, new DefaultServicesManager(mock(ServiceRegistry.class), mock(ApplicationEventPublisher.class)))
+                centralAuthenticationService,
+                new DefaultServicesManager(mock(ServiceRegistry.class), mock(ApplicationEventPublisher.class), new HashSet<>()))
                 .build(openIdService, null, CoreAuthenticationTestUtils.getAuthentication());
             assertEquals("cancel", response2.getAttributes().get(OpenIdProtocolConstants.OPENID_MODE));
         } catch (final Exception e) {
@@ -107,7 +109,8 @@ public class OpenIdServiceTests extends AbstractOpenIdTests {
                 }
             }
             val response = new OpenIdServiceResponseBuilder(OPEN_ID_PREFIX_URL, serverManager,
-                centralAuthenticationService, new DefaultServicesManager(mock(ServiceRegistry.class), mock(ApplicationEventPublisher.class)))
+                centralAuthenticationService,
+                new DefaultServicesManager(mock(ServiceRegistry.class), mock(ApplicationEventPublisher.class), new HashSet<>()))
                 .build(openIdService, st, CoreAuthenticationTestUtils.getAuthentication());
             assertNotNull(response);
 

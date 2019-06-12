@@ -3,18 +3,24 @@ package org.apereo.cas.oidc.util;
 import org.apereo.cas.oidc.OidcConstants;
 
 import lombok.val;
-import org.junit.Test;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+import org.pac4j.core.context.J2EContext;
+import org.pac4j.core.context.Pac4jConstants;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.profile.CommonProfile;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
  * @author David Rodriguez
  * @since 5.1.0
  */
+@Tag("OIDC")
 public class OidcAuthorizationRequestSupportTests {
 
     @Test
@@ -53,9 +59,11 @@ public class OidcAuthorizationRequestSupportTests {
 
     @Test
     public void verifyAuthnProfile() {
-        val context = mock(WebContext.class);
-        when(context.getSessionStore()).thenReturn(mock(SessionStore.class));
-        when(context.getRequestAttribute(anyString())).thenReturn(new CommonProfile());
+        val request = new MockHttpServletRequest();
+        request.setRequestURI("https://www.example.org");
+        request.setQueryString("param=value");
+        val context = new J2EContext(request, new MockHttpServletResponse(), mock(SessionStore.class));
+        context.setRequestAttribute(Pac4jConstants.USER_PROFILES, new CommonProfile());
         assertTrue(OidcAuthorizationRequestSupport.isAuthenticationProfileAvailable(context).isPresent());
     }
 }

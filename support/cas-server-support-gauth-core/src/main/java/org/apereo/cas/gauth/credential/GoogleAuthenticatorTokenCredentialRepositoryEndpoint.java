@@ -1,9 +1,10 @@
 package org.apereo.cas.gauth.credential;
 
 import org.apereo.cas.authentication.OneTimeTokenAccount;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
+import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.boot.actuate.endpoint.annotation.DeleteOperation;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
@@ -17,10 +18,15 @@ import java.util.Collection;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@RequiredArgsConstructor
-@Endpoint(id = "gauth-credential-repository", enableByDefault = false)
-public class GoogleAuthenticatorTokenCredentialRepositoryEndpoint {
+@Endpoint(id = "gauthCredentialRepository", enableByDefault = false)
+public class GoogleAuthenticatorTokenCredentialRepositoryEndpoint extends BaseCasActuatorEndpoint {
     private final OneTimeTokenCredentialRepository repository;
+
+    public GoogleAuthenticatorTokenCredentialRepositoryEndpoint(final CasConfigurationProperties casProperties,
+                                                                final OneTimeTokenCredentialRepository repository) {
+        super(casProperties);
+        this.repository = repository;
+    }
 
     /**
      * Get one time token account.

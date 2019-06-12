@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.couchbase;
 
 import org.apereo.cas.configuration.support.RequiredProperty;
+import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -15,6 +16,7 @@ import java.io.Serializable;
  */
 @Getter
 @Setter
+@RequiresModule(name = "cas-server-support-couchbase-core")
 public abstract class BaseCouchbaseProperties implements Serializable {
 
     private static final long serialVersionUID = 6550895842866988551L;

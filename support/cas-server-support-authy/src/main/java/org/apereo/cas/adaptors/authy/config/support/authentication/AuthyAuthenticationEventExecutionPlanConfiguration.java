@@ -8,14 +8,14 @@ import org.apereo.cas.adaptors.authy.web.flow.AuthyAuthenticationRegistrationWeb
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
-import org.apereo.cas.authentication.MultifactorAuthenticationProviderBypass;
-import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
+import org.apereo.cas.authentication.MultifactorAuthenticationFailureModeEvaluator;
+import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
+import org.apereo.cas.authentication.bypass.MultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.authentication.handler.ByCredentialTypeAuthenticationHandlerResolver;
 import org.apereo.cas.authentication.metadata.AuthenticationContextAttributeMetaDataPopulator;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.ServicesManager;
 
 import lombok.SneakyThrows;
@@ -49,6 +49,14 @@ public class AuthyAuthenticationEventExecutionPlanConfiguration {
     @Qualifier("servicesManager")
     private ObjectProvider<ServicesManager> servicesManager;
 
+    @Autowired
+    @Qualifier("authyBypassEvaluator")
+    private ObjectProvider<MultifactorAuthenticationProviderBypassEvaluator> authyBypassEvaluator;
+
+    @Autowired
+    @Qualifier("failureModeEvaluator")
+    private ObjectProvider<MultifactorAuthenticationFailureModeEvaluator> failureModeEvaluator;
+
     @RefreshScope
     @Bean
     public AuthyClientInstance authyClientInstance() {
@@ -61,6 +69,7 @@ public class AuthyAuthenticationEventExecutionPlanConfiguration {
             authy.getCountryCode());
     }
 
+    @ConditionalOnMissingBean(name = "authyAuthenticationHandler")
     @RefreshScope
     @Bean
     @SneakyThrows
@@ -68,7 +77,7 @@ public class AuthyAuthenticationEventExecutionPlanConfiguration {
         val authy = casProperties.getAuthn().getMfa().getAuthy();
         val forceVerification = authy.isForceVerification();
         return new AuthyAuthenticationHandler(authy.getName(), servicesManager.getIfAvailable(),
-            authyPrincipalFactory(), authyClientInstance(), forceVerification);
+            authyPrincipalFactory(), authyClientInstance(), forceVerification, authy.getOrder());
     }
 
     @ConditionalOnMissingBean(name = "authyPrincipalFactory")
@@ -79,19 +88,15 @@ public class AuthyAuthenticationEventExecutionPlanConfiguration {
 
     @Bean
     @RefreshScope
-    public MultifactorAuthenticationProvider authyAuthenticatorAuthenticationProvider() {
+    public MultifactorAuthenticationProvider authyAuthenticatorMultifactorAuthenticationProvider() {
         val p = new AuthyMultifactorAuthenticationProvider();
-        p.setBypassEvaluator(authyBypassEvaluator());
-        p.setGlobalFailureMode(casProperties.getAuthn().getMfa().getGlobalFailureMode());
-        p.setOrder(casProperties.getAuthn().getMfa().getAuthy().getRank());
-        p.setId(casProperties.getAuthn().getMfa().getAuthy().getId());
+        p.setBypassEvaluator(authyBypassEvaluator.getIfAvailable());
+        val authy = casProperties.getAuthn().getMfa().getAuthy();
+        p.setFailureMode(authy.getFailureMode());
+        p.setFailureModeEvaluator(failureModeEvaluator.getIfAvailable());
+        p.setOrder(authy.getRank());
+        p.setId(authy.getId());
         return p;
-    }
-
-    @Bean
-    @RefreshScope
-    public MultifactorAuthenticationProviderBypass authyBypassEvaluator() {
-        return MultifactorAuthenticationUtils.newMultifactorAuthenticationProviderBypass(casProperties.getAuthn().getMfa().getAuthy().getBypass());
     }
 
     @Bean
@@ -100,7 +105,7 @@ public class AuthyAuthenticationEventExecutionPlanConfiguration {
         return new AuthenticationContextAttributeMetaDataPopulator(
             casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
             authyAuthenticationHandler(),
-            authyAuthenticatorAuthenticationProvider()
+            authyAuthenticatorMultifactorAuthenticationProvider().getId()
         );
     }
 
@@ -115,7 +120,7 @@ public class AuthyAuthenticationEventExecutionPlanConfiguration {
     public AuthenticationEventExecutionPlanConfigurer authyAuthenticationEventExecutionPlanConfigurer() {
         return plan -> {
             plan.registerAuthenticationHandler(authyAuthenticationHandler());
-            plan.registerMetadataPopulator(authyAuthenticationMetaDataPopulator());
+            plan.registerAuthenticationMetadataPopulator(authyAuthenticationMetaDataPopulator());
             plan.registerAuthenticationHandlerResolver(new ByCredentialTypeAuthenticationHandlerResolver(AuthyTokenCredential.class));
         };
     }

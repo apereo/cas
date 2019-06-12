@@ -44,8 +44,7 @@ public class JpaGoogleAuthenticatorTokenCredentialRepository extends BaseGoogleA
     @Override
     public OneTimeTokenAccount get(final String username) {
         try {
-            val r = this.entityManager.createQuery("SELECT r FROM " + ENTITY_NAME + " r where r.username = :username",
-                GoogleAuthenticatorAccount.class)
+            val r = this.entityManager.createQuery("SELECT r FROM " + ENTITY_NAME + " r where r.username = :username", GoogleAuthenticatorAccount.class)
                 .setParameter("username", username)
                 .getSingleResult();
             this.entityManager.detach(r);
@@ -99,6 +98,7 @@ public class JpaGoogleAuthenticatorTokenCredentialRepository extends BaseGoogleA
 
     @Override
     public void deleteAll() {
+        this.entityManager.createNativeQuery("DELETE FROM " + OneTimeTokenAccount.TABLE_NAME_SCRATCH_CODES).executeUpdate();
         this.entityManager.createQuery("DELETE FROM " + ENTITY_NAME).executeUpdate();
     }
 

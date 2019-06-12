@@ -1,28 +1,25 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.response;
 
-import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.util.AbstractSaml20ObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
-import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectEncrypter;
-import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
 
+import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.velocity.app.VelocityEngine;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.messaging.context.MessageContext;
+import org.opensaml.messaging.context.ScratchContext;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.Issuer;
 import org.opensaml.saml.saml2.core.RequestAbstractType;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -35,35 +32,15 @@ import javax.servlet.http.HttpServletResponse;
  * @since 4.2
  */
 @Slf4j
+@Getter
 public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject> extends AbstractSaml20ObjectBuilder implements SamlProfileObjectBuilder {
     private static final long serialVersionUID = -1891703354216174875L;
-    /**
-     * The Velocity engine factory.
-     */
-    protected final VelocityEngine velocityEngineFactory;
-    /**
-     * The Saml object encoder.
-     */
-    protected SamlIdPObjectSigner samlObjectSigner;
-    /**
-     * CAS settings.
-     */
-    @Autowired
-    protected CasConfigurationProperties casProperties;
 
-    private final SamlProfileObjectBuilder<Assertion> samlProfileSamlAssertionBuilder;
-    private final SamlIdPObjectEncrypter samlObjectEncrypter;
+    private final transient SamlProfileSamlResponseBuilderConfigurationContext samlResponseBuilderConfigurationContext;
 
-    public BaseSamlProfileSamlResponseBuilder(final OpenSamlConfigBean openSamlConfigBean,
-                                              final SamlIdPObjectSigner samlObjectSigner,
-                                              final VelocityEngine velocityEngineFactory,
-                                              final SamlProfileObjectBuilder<Assertion> samlProfileSamlAssertionBuilder,
-                                              final SamlIdPObjectEncrypter samlObjectEncrypter) {
-        super(openSamlConfigBean);
-        this.samlObjectSigner = samlObjectSigner;
-        this.velocityEngineFactory = velocityEngineFactory;
-        this.samlProfileSamlAssertionBuilder = samlProfileSamlAssertionBuilder;
-        this.samlObjectEncrypter = samlObjectEncrypter;
+    public BaseSamlProfileSamlResponseBuilder(final SamlProfileSamlResponseBuilderConfigurationContext samlResponseBuilderConfigurationContext) {
+        super(samlResponseBuilderConfigurationContext.getOpenSamlConfigBean());
+        this.samlResponseBuilderConfigurationContext = samlResponseBuilderConfigurationContext;
     }
 
     @Audit(
@@ -83,20 +60,22 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject> ex
             casAssertion, service, adaptor, binding, messageContext);
         val finalResponse = buildResponse(assertion, casAssertion, authnRequest,
             service, adaptor, request, response, binding, messageContext);
-        return encodeFinalResponse(request, response, service, adaptor, finalResponse, binding, authnRequest, casAssertion);
+        return encodeFinalResponse(request, response, service, adaptor, finalResponse,
+            binding, authnRequest, casAssertion, messageContext);
     }
 
     /**
      * Encode final response.
      *
-     * @param request       the request
-     * @param response      the response
-     * @param service       the service
-     * @param adaptor       the adaptor
-     * @param finalResponse the final response
-     * @param binding       the binding
-     * @param authnRequest  the authn request
-     * @param assertion     the assertion
+     * @param request        the request
+     * @param response       the response
+     * @param service        the service
+     * @param adaptor        the adaptor
+     * @param finalResponse  the final response
+     * @param binding        the binding
+     * @param authnRequest   the authn request
+     * @param assertion      the assertion
+     * @param messageContext the message context
      * @return the response
      */
     protected T encodeFinalResponse(final HttpServletRequest request,
@@ -106,10 +85,18 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject> ex
                                     final T finalResponse,
                                     final String binding,
                                     final RequestAbstractType authnRequest,
-                                    final Object assertion) {
-        val relayState = request.getParameter(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE);
-        LOGGER.debug("RelayState is [{}]", relayState);
-        return encode(service, finalResponse, response, request, adaptor, relayState, binding, authnRequest, assertion);
+                                    final Object assertion,
+                                    final MessageContext messageContext) {
+
+        val scratch = messageContext.getSubcontext(ScratchContext.class, true);
+        val encodeResponse = (Boolean) scratch.getMap().getOrDefault(SamlProtocolConstants.PARAMETER_ENCODE_RESPONSE, Boolean.TRUE);
+
+        if (encodeResponse) {
+            val relayState = request != null ? request.getParameter(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE) : StringUtils.EMPTY;
+            LOGGER.trace("RelayState is [{}]", relayState);
+            return encode(service, finalResponse, response, request, adaptor, relayState, binding, authnRequest, assertion);
+        }
+        return finalResponse;
     }
 
     /**
@@ -133,8 +120,8 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject> ex
                                            final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                            final String binding,
                                            final MessageContext messageContext) {
-        return this.samlProfileSamlAssertionBuilder.build(authnRequest, request, response,
-            casAssertion, service, adaptor, binding, messageContext);
+        return samlResponseBuilderConfigurationContext.getSamlProfileSamlAssertionBuilder()
+            .build(authnRequest, request, response, casAssertion, service, adaptor, binding, messageContext);
     }
 
     /**
@@ -165,10 +152,11 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject> ex
     /**
      * Build entity issuer issuer.
      *
+     * @param entityId the entity id
      * @return the issuer
      */
-    protected Issuer buildEntityIssuer() {
-        val issuer = newIssuer(casProperties.getAuthn().getSamlIdp().getEntityId());
+    protected Issuer buildSamlResponseIssuer(final String entityId) {
+        val issuer = newIssuer(entityId);
         issuer.setFormat(Issuer.ENTITY);
         return issuer;
     }
@@ -218,8 +206,12 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject> ex
 
         if (service.isEncryptAssertions()) {
             LOGGER.debug("SAML service [{}] requires assertions to be encrypted", adaptor.getEntityId());
-            val encryptedAssertion = this.samlObjectEncrypter.encode(assertion, service, adaptor);
-            return encryptedAssertion;
+            val encrypted = samlResponseBuilderConfigurationContext.getSamlObjectEncrypter().encode(assertion, service, adaptor);
+            if (encrypted == null) {
+                LOGGER.debug("SAML registered service [{}] is unable to encrypt assertions", adaptor.getEntityId());
+                return assertion;
+            }
+            return encrypted;
         }
         LOGGER.debug("SAML registered service [{}] does not require assertions to be encrypted", adaptor.getEntityId());
         return assertion;

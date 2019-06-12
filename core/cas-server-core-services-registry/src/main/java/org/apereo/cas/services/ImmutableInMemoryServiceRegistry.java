@@ -1,7 +1,8 @@
 package org.apereo.cas.services;
 
-import lombok.NoArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -10,10 +11,11 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@NoArgsConstructor
 public class ImmutableInMemoryServiceRegistry extends InMemoryServiceRegistry implements ImmutableServiceRegistry {
-    public ImmutableInMemoryServiceRegistry(final List<RegisteredService> registeredServices) {
-        super(registeredServices);
+    public ImmutableInMemoryServiceRegistry(final List<RegisteredService> registeredServices,
+                                            final ApplicationEventPublisher eventPublisher,
+                                            final Collection<ServiceRegistryListener> serviceRegistryListeners) {
+        super(eventPublisher, registeredServices, serviceRegistryListeners);
     }
 
     @Override

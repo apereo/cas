@@ -4,6 +4,7 @@ import org.apereo.cas.support.events.AbstractCasEvent;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyTicket;
 
+import lombok.Getter;
 import lombok.ToString;
 
 /**
@@ -13,7 +14,8 @@ import lombok.ToString;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@ToString
+@ToString(callSuper = true)
+@Getter
 public class CasProxyTicketGrantedEvent extends AbstractCasEvent {
 
     private static final long serialVersionUID = 128616377249711105L;
@@ -23,7 +25,7 @@ public class CasProxyTicketGrantedEvent extends AbstractCasEvent {
     private final ProxyTicket proxyTicket;
 
     /**
-     * Instantiates a new Cas proxy ticket granted event.
+     * Instantiates a new CAS proxy ticket granted event.
      *
      * @param source              the source
      * @param proxyGrantingTicket the ticket granting ticket
@@ -33,13 +35,5 @@ public class CasProxyTicketGrantedEvent extends AbstractCasEvent {
         super(source);
         this.proxyGrantingTicket = proxyGrantingTicket;
         this.proxyTicket = proxyTicket;
-    }
-
-    public ProxyGrantingTicket getProxyGrantingTicket() {
-        return this.proxyGrantingTicket;
-    }
-
-    public ProxyTicket getProxyTicket() {
-        return this.proxyTicket;
     }
 }

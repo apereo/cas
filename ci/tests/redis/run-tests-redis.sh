@@ -27,9 +27,10 @@ echo -e "***********************************************"
 echo -e "Gradle build started at `date`"
 echo -e "***********************************************"
 
+./ci/tests/redis/run-redis-server.sh
+
 gradleBuild="$gradleBuild testRedis jacocoRootReport -x test -x javadoc -x check \
-    -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true -DskipNpmLint=true --parallel \
-    -DskipNodeModulesCleanUp=true -DskipNpmCache=true -DskipNestedConfigMetadataGen=true "
+    -DskipGradleLint=true -DskipNestedConfigMetadataGen=true "
 
 if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[show streams]"* ]]; then
     gradleBuild="$gradleBuild -DshowStandardStreams=true "
@@ -65,6 +66,8 @@ else
     echo -e "***************************************************************************************"
 
     if [ $retVal == 0 ]; then
+        echo "Uploading test coverage results..."
+        bash <(curl -s https://codecov.io/bash)
         echo "Gradle build finished successfully."
     else
         echo "Gradle build did NOT finish successfully."

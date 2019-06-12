@@ -30,12 +30,21 @@
                 </ul>
                 <input type="hidden" name="_eventId" value="submit"/>
                 <input class="btn btn-submit" name="submit" accesskey="l"
-                       th:value="#{screen.welcome.button.register}" tabindex="4" type="submit" value="Register"/>
+                       th:value="#{screen.welcome.button.register}"
+                       tabindex="4" type="submit" value="Register"/>
+                &nbsp;
                 <input class="btn btn-info" name="print" accesskey="p"
                        th:value="#{screen.welcome.button.print}"
                        tabindex="5" type="button"
                        value="Print"
                        onclick="window.print();"/>
+                &nbsp;
+                <input class="btn btn-danger" name="back" accesskey="c"
+                       th:value="Cancel"
+                       tabindex="6"
+                       type="button"
+                       value="Cancel"
+                       onclick="location.href = location.href;"/>
             </div>
             <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
         </form>

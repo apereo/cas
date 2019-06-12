@@ -24,7 +24,7 @@ public interface RegisteredServiceCipherExecutor {
      * @param data the data
      * @return the string
      */
-    default String encode(String data) {
+    default String encode(final String data) {
         return encode(data, Optional.empty());
     }
 
@@ -54,5 +54,34 @@ public interface RegisteredServiceCipherExecutor {
      */
     default boolean supports(final RegisteredService registeredService) {
         return true;
+    }
+
+    /**
+     * Factory method.
+     *
+     * @return the registered service cipher executor
+     */
+    static RegisteredServiceCipherExecutor noOp() {
+        return new RegisteredServiceCipherExecutor() {
+            @Override
+            public String encode(final String data, final Optional<RegisteredService> service) {
+                return data;
+            }
+
+            @Override
+            public String decode(final String data, final Optional<RegisteredService> service) {
+                return data;
+            }
+
+            @Override
+            public boolean supports(final RegisteredService registeredService) {
+                return false;
+            }
+
+            @Override
+            public boolean isEnabled() {
+                return false;
+            }
+        };
     }
 }

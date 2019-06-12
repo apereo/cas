@@ -19,15 +19,21 @@
             <div class="form-group">
                 <label for="deviceName" class="fl-label" th:utext="#{cas.mfa.registerdevice.label.name}">Name</label>
 
-                <input type="text" class="form-control" name="deviceName" id="deviceName" size="25"
+                <input type="text"
+                       class="form-control"
+                       name="deviceName"
+                       id="deviceName"
+                       size="25"
                        tabindex="1"
-                       autocomplete="off"
-                       required/>
+                       autocomplete="off" />
                 <div>
                     <br/>
-                    <input class="btn btn-submit" name="_eventId_submit" accesskey="l"
-                           th:value="#{cas.mfa.registerdevice.button.register}" tabindex="4" type="submit"
-                           value="Register"/>
+                    <input class="btn btn-submit" accesskey="s"
+                           th:value="#{cas.mfa.registerdevice.button.register}" tabindex="4" type="submit"/>
+                    &nbsp;&nbsp;
+                    <input class="btn btn-submit" accesskey="k"
+                           th:value="#{cas.mfa.registerdevice.button.skip}" tabindex="4" type="submit"/>
+                    <input type="hidden" name="_eventId_submit" value="Register" />
                 </div>
             </div>
             <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>

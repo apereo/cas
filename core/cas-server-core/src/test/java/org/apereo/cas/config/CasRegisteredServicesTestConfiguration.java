@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.principal.PrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesRepository;
 import org.apereo.cas.services.AnonymousRegisteredServiceUsernameAttributeProvider;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
+import org.apereo.cas.services.DefaultRegisteredServiceDelegatedAuthenticationPolicy;
 import org.apereo.cas.services.DefaultRegisteredServiceProperty;
 import org.apereo.cas.services.DefaultRegisteredServiceUsernameProvider;
 import org.apereo.cas.services.PrincipalAttributeRegisteredServiceUsernameProvider;
@@ -18,13 +19,15 @@ import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
 import org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy;
 import org.apereo.cas.util.CollectionUtils;
 
+import lombok.SneakyThrows;
 import lombok.val;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -41,7 +44,9 @@ public class CasRegisteredServicesTestConfiguration {
         return new CachingPrincipalAttributesRepository("SECONDS", 20);
     }
 
+    @ConditionalOnMissingBean(name = "inMemoryRegisteredServices")
     @Bean
+    @SneakyThrows
     public List inMemoryRegisteredServices() {
         val l = new ArrayList();
 
@@ -69,8 +74,7 @@ public class CasRegisteredServicesTestConfiguration {
         val svc4 = RegisteredServiceTestUtils.getRegisteredService("https://example\\.com/high/.*");
         svc4.setEvaluationOrder(20);
         svc4.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
-        final HashSet handlers = CollectionUtils.wrapHashSet(AcceptUsersAuthenticationHandler.class.getSimpleName(),
-            TestOneTimePasswordAuthenticationHandler.class.getSimpleName());
+        val handlers = CollectionUtils.wrapHashSet(AcceptUsersAuthenticationHandler.class.getSimpleName(), TestOneTimePasswordAuthenticationHandler.class.getSimpleName());
         svc4.setRequiredHandlers(handlers);
         svc4.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(new HashMap<>()));
         l.add(svc4);
@@ -162,7 +166,9 @@ public class CasRegisteredServicesTestConfiguration {
         l.add(svc17);
 
         val svc18 = RegisteredServiceTestUtils.getRegisteredService("https://github.com/apereo/cas");
-        svc18.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy());
+        val accessStrategy = new DefaultRegisteredServiceAccessStrategy();
+        accessStrategy.setUnauthorizedRedirectUrl(new URI("https://www.github.com"));
+        svc18.setAccessStrategy(accessStrategy);
         svc18.setUsernameAttributeProvider(new DefaultRegisteredServiceUsernameProvider());
         svc18.setEvaluationOrder(98);
         l.add(svc18);
@@ -190,6 +196,22 @@ public class CasRegisteredServicesTestConfiguration {
         svc21.getProperties().put(RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET.getPropertyName(), prop);
         svc21.setEvaluationOrder(2000);
         l.add(svc21);
+
+        val svc22 = RegisteredServiceTestUtils.getRegisteredService("cas-access-disabled");
+        val strategy = new DefaultRegisteredServiceAccessStrategy();
+        strategy.setEnabled(false);
+        strategy.setUnauthorizedRedirectUrl(new URI("https://www.github.com"));
+        svc22.setAccessStrategy(strategy);
+        l.add(svc22);
+
+        val svc23 = RegisteredServiceTestUtils.getRegisteredService("cas-access-delegation");
+        val strategy23 = new DefaultRegisteredServiceAccessStrategy();
+        strategy23.setEnabled(true);
+        val delegate = new DefaultRegisteredServiceDelegatedAuthenticationPolicy();
+        delegate.setExclusive(true);
+        strategy23.setDelegatedAuthenticationPolicy(delegate);
+        svc23.setAccessStrategy(strategy23);
+        l.add(svc23);
 
         return l;
     }

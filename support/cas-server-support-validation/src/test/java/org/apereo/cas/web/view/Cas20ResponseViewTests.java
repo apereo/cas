@@ -4,19 +4,22 @@ import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CasViewConstants;
 import org.apereo.cas.authentication.DefaultAuthenticationAttributeReleasePolicy;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
-import org.apereo.cas.authentication.DefaultMultifactorAuthenticationContextValidator;
-import org.apereo.cas.authentication.DefaultMultifactorTriggerSelectionStrategy;
-import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
+import org.apereo.cas.authentication.support.NoOpProtocolAttributeEncoder;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.validation.DefaultServiceTicketValidationAuthorizersExecutionPlan;
 import org.apereo.cas.web.AbstractServiceValidateController;
 import org.apereo.cas.web.AbstractServiceValidateControllerTests;
-import org.apereo.cas.web.ServiceValidateController;
+import org.apereo.cas.web.ServiceValidateConfigurationContext;
+import org.apereo.cas.web.ServiceValidationViewFactory;
+import org.apereo.cas.web.v2.ServiceValidateController;
+import org.apereo.cas.web.view.attributes.NoOpProtocolAttributesRenderer;
 
 import lombok.val;
-import org.junit.Test;
+import org.apache.commons.lang3.tuple.Pair;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -27,8 +30,9 @@ import org.springframework.web.servlet.support.RequestContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
+import java.util.Optional;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit tests for {@link Cas20ResponseView}.
@@ -37,37 +41,26 @@ import static org.junit.Assert.*;
  * @since 4.0.0
  */
 public class Cas20ResponseViewTests extends AbstractServiceValidateControllerTests {
-
     @Autowired
-    private ConfigurableApplicationContext applicationContext;
-
-    @Autowired
-    @Qualifier("cas3ServiceJsonView")
-    private View cas3ServiceJsonView;
-
-    @Autowired
-    @Qualifier("cas2SuccessView")
-    private View cas2SuccessView;
-
-    @Autowired
-    @Qualifier("cas2ServiceFailureView")
-    private View cas2ServiceFailureView;
+    @Qualifier("serviceValidationViewFactory")
+    private ServiceValidationViewFactory serviceValidationViewFactory;
 
     @Override
     public AbstractServiceValidateController getServiceValidateControllerInstance() {
-        return new ServiceValidateController(
-            getValidationSpecification(),
-            getAuthenticationSystemSupport(), getServicesManager(),
-            getCentralAuthenticationService(),
-            getProxyHandler(),
-            getArgumentExtractor(),
-            new DefaultMultifactorTriggerSelectionStrategy(new MultifactorAuthenticationProperties()),
-            new DefaultMultifactorAuthenticationContextValidator("", "OPEN", "test", applicationContext),
-            cas3ServiceJsonView, cas2SuccessView,
-            cas2ServiceFailureView, "authenticationContext",
-            new DefaultServiceTicketValidationAuthorizersExecutionPlan(),
-            true
-        );
+        val context = ServiceValidateConfigurationContext.builder()
+            .validationSpecifications(CollectionUtils.wrapSet(getValidationSpecification()))
+            .authenticationSystemSupport(getAuthenticationSystemSupport())
+            .servicesManager(getServicesManager())
+            .centralAuthenticationService(getCentralAuthenticationService())
+            .argumentExtractor(getArgumentExtractor())
+            .proxyHandler(getProxyHandler())
+            .requestedContextValidator((assertion, request) -> Pair.of(Boolean.TRUE, Optional.empty()))
+            .authnContextAttribute("authenticationContext")
+            .validationAuthorizers(new DefaultServiceTicketValidationAuthorizersExecutionPlan())
+            .renewEnabled(true)
+            .validationViewFactory(serviceValidationViewFactory)
+            .build();
+        return new ServiceValidateController(context);
     }
 
     @Test
@@ -77,10 +70,10 @@ public class Cas20ResponseViewTests extends AbstractServiceValidateControllerTes
         req.setAttribute(RequestContext.WEB_APPLICATION_CONTEXT_ATTRIBUTE, new GenericWebApplicationContext(req.getServletContext()));
 
         val resp = new MockHttpServletResponse();
-        final View delegatedView = new View() {
+        val delegatedView = new View() {
             @Override
             public String getContentType() {
-                return "text/html";
+                return MediaType.TEXT_HTML_VALUE;
             }
 
             @Override
@@ -88,9 +81,9 @@ public class Cas20ResponseViewTests extends AbstractServiceValidateControllerTes
                 map.forEach(request::setAttribute);
             }
         };
-        val view = new Cas20ResponseView(true, null,
+        val view = new Cas20ResponseView(true, new NoOpProtocolAttributeEncoder(),
             null, delegatedView, new DefaultAuthenticationAttributeReleasePolicy("attribute"),
-            new DefaultAuthenticationServiceSelectionPlan());
+            new DefaultAuthenticationServiceSelectionPlan(), new NoOpProtocolAttributesRenderer());
         view.render(modelAndView.getModel(), req, resp);
 
         assertNotNull(req.getAttribute(CasViewConstants.MODEL_ATTRIBUTE_NAME_CHAINED_AUTHENTICATIONS));

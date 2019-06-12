@@ -52,7 +52,7 @@ public class InterruptWebflowConfigurer extends AbstractCasWebflowConfigurer {
     }
 
     private void createTransitionStateForAuthenticationWarnings(final Flow flow) {
-        val state = getState(flow, CasWebflowConstants.VIEW_ID_SHOW_AUTHN_WARNING_MSGS, ViewState.class);
+        val state = getState(flow, CasWebflowConstants.STATE_ID_SHOW_AUTHN_WARNING_MSGS, ViewState.class);
         createTransitionForState(state, CasWebflowConstants.TRANSITION_ID_PROCEED, STATE_ID_INQUIRE_INTERRUPT_ACTION, true);
     }
 
@@ -88,7 +88,7 @@ public class InterruptWebflowConfigurer extends AbstractCasWebflowConfigurer {
         val finalizeInterrupt = createActionState(flow, STATE_ID_FINALIZE_INTERRUPT_ACTION,
             createEvaluateAction(STATE_ID_FINALIZE_INTERRUPT_ACTION));
         createTransitionForState(finalizeInterrupt, CasWebflowConstants.TRANSITION_ID_SUCCESS, target);
-        createTransitionForState(finalizeInterrupt, CasWebflowConstants.STATE_ID_STOP_WEBFLOW, STATE_ID_FINISHED_INTERRUPT);
+        createTransitionForState(finalizeInterrupt, CasWebflowConstants.TRANSITION_ID_STOP, STATE_ID_FINISHED_INTERRUPT);
         createEndState(flow, STATE_ID_FINISHED_INTERRUPT);
     }
 
@@ -97,7 +97,7 @@ public class InterruptWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
         val target = getRealSubmissionState(flow).getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS).getTargetStateId();
 
-        val noInterruptTransition = createTransition(CasWebflowConstants.TRANSITION_ID_INTERRUPT_REQUIRED, target);
+        val noInterruptTransition = createTransition(CasWebflowConstants.TRANSITION_ID_INTERRUPT_SKIPPED, target);
         val transitionSet = inquireState.getTransitionSet();
         transitionSet.add(noInterruptTransition);
 

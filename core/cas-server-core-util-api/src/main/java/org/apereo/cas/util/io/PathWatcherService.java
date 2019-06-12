@@ -87,7 +87,6 @@ public class PathWatcherService implements Runnable, Closeable {
             key.pollEvents().forEach(event -> {
                 val eventName = event.kind().name();
 
-                // The filename is the context of the event.
                 val ev = (WatchEvent<Path>) event;
                 val filename = ev.context();
 
@@ -124,8 +123,8 @@ public class PathWatcherService implements Runnable, Closeable {
      */
     @SneakyThrows
     public void start(final String name) {
-        this.thread = new Thread(this);
-        this.thread.setName(name);
+        thread = new Thread(this);
+        thread.setName(name);
         thread.start();
     }
 }

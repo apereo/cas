@@ -4,6 +4,7 @@ import org.apereo.cas.support.events.AbstractCasEvent;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.validation.Assertion;
 
+import lombok.Getter;
 import lombok.ToString;
 
 /**
@@ -13,7 +14,8 @@ import lombok.ToString;
  * @author Dmitriy Kopylenko
  * @since 4.2
  */
-@ToString
+@ToString(callSuper = true)
+@Getter
 public class CasServiceTicketValidatedEvent extends AbstractCasEvent {
 
     private static final long serialVersionUID = -1218257740549089556L;
@@ -23,7 +25,7 @@ public class CasServiceTicketValidatedEvent extends AbstractCasEvent {
     private final ServiceTicket serviceTicket;
 
     /**
-     * Instantiates a new Cas service ticket validated event.
+     * Instantiates a new CAS service ticket validated event.
      *
      * @param source        the source
      * @param serviceTicket the service ticket
@@ -33,13 +35,5 @@ public class CasServiceTicketValidatedEvent extends AbstractCasEvent {
         super(source);
         this.assertion = assertion;
         this.serviceTicket = serviceTicket;
-    }
-
-    public Assertion getAssertion() {
-        return this.assertion;
-    }
-
-    public ServiceTicket getServiceTicket() {
-        return this.serviceTicket;
     }
 }

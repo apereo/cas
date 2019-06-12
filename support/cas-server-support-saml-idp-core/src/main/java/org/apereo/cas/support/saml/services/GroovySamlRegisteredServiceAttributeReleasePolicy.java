@@ -1,9 +1,11 @@
 package org.apereo.cas.support.saml.services;
 
+import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.util.ResourceUtils;
-import org.apereo.cas.util.ScriptingUtils;
+import org.apereo.cas.util.scripting.ScriptingUtils;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -15,6 +17,7 @@ import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.springframework.context.ApplicationContext;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -35,13 +38,16 @@ public class GroovySamlRegisteredServiceAttributeReleasePolicy extends BaseSamlR
     private String groovyScript;
 
     @Override
-    protected Map<String, Object> getAttributesForSamlRegisteredService(final Map<String, Object> attributes,
-                                                                        final SamlRegisteredService service, final ApplicationContext applicationContext,
-                                                                        final SamlRegisteredServiceCachingMetadataResolver resolver,
-                                                                        final SamlRegisteredServiceServiceProviderMetadataFacade facade,
-                                                                        final EntityDescriptor entityDescriptor) {
+    protected Map<String, List<Object>> getAttributesForSamlRegisteredService(final Map<String, List<Object>> attributes,
+                                                                              final SamlRegisteredService registeredService,
+                                                                              final ApplicationContext applicationContext,
+                                                                              final SamlRegisteredServiceCachingMetadataResolver resolver,
+                                                                              final SamlRegisteredServiceServiceProviderMetadataFacade facade,
+                                                                              final EntityDescriptor entityDescriptor,
+                                                                              final Principal principal,
+                                                                              final Service selectedService) {
         try {
-            final Object[] args = {attributes, service, resolver, facade, entityDescriptor, applicationContext, LOGGER};
+            val args = new Object[] {attributes, registeredService, resolver, facade, entityDescriptor, applicationContext, LOGGER};
             val resource = ResourceUtils.getResourceFrom(this.groovyScript);
             return ScriptingUtils.executeGroovyScript(resource, args, Map.class, true);
         } catch (final Exception e) {

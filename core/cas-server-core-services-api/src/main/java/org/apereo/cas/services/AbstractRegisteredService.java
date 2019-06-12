@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -51,6 +52,7 @@ import java.util.Map;
 @Getter
 @Setter
 @EqualsAndHashCode(exclude = {"id"})
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public abstract class AbstractRegisteredService implements RegisteredService {
 
     private static final long serialVersionUID = 7645279151115635245L;
@@ -93,6 +95,18 @@ public abstract class AbstractRegisteredService implements RegisteredService {
     @Column(name = "proxy_policy", length = Integer.MAX_VALUE)
     private RegisteredServiceProxyPolicy proxyPolicy = new RefuseRegisteredServiceProxyPolicy();
 
+    @Lob
+    @Column(name = "proxy_ticket_expiration_policy", length = Integer.MAX_VALUE)
+    private RegisteredServiceProxyTicketExpirationPolicy proxyTicketExpirationPolicy;
+
+    @Lob
+    @Column(name = "service_ticket_expiration_policy", length = Integer.MAX_VALUE)
+    private RegisteredServiceServiceTicketExpirationPolicy serviceTicketExpirationPolicy;
+
+    @Lob
+    @Column(name = "sso_participation_policy", length = Integer.MAX_VALUE)
+    private RegisteredServiceSingleSignOnParticipationPolicy singleSignOnParticipationPolicy;
+
     @Column(name = "evaluation_order", nullable = false)
     private int evaluationOrder;
 
@@ -101,11 +115,15 @@ public abstract class AbstractRegisteredService implements RegisteredService {
     private RegisteredServiceUsernameAttributeProvider usernameAttributeProvider = new DefaultRegisteredServiceUsernameProvider();
 
     @Column(name = "logout_type")
-    private LogoutType logoutType = LogoutType.BACK_CHANNEL;
+    private RegisteredServiceLogoutType logoutType = RegisteredServiceLogoutType.BACK_CHANNEL;
 
     @Lob
     @Column(name = "required_handlers", length = Integer.MAX_VALUE)
     private HashSet<String> requiredHandlers = new HashSet<>();
+
+    @Lob
+    @Column(name = "environments", length = Integer.MAX_VALUE)
+    private HashSet<String> environments = new HashSet<>();
 
     @Lob
     @Column(name = "attribute_release", length = Integer.MAX_VALUE)
@@ -142,17 +160,11 @@ public abstract class AbstractRegisteredService implements RegisteredService {
     @OrderColumn
     private List<DefaultRegisteredServiceContact> contacts = new ArrayList<>();
 
-    /**
-     * Initializes the registered service with default values
-     * for fields that are unspecified. Only triggered by JPA.
-     *
-     * @since 4.1
-     */
     @Override
     public void initialize() {
         this.proxyPolicy = ObjectUtils.defaultIfNull(this.proxyPolicy, new RefuseRegisteredServiceProxyPolicy());
         this.usernameAttributeProvider = ObjectUtils.defaultIfNull(this.usernameAttributeProvider, new DefaultRegisteredServiceUsernameProvider());
-        this.logoutType = ObjectUtils.defaultIfNull(this.logoutType, LogoutType.BACK_CHANNEL);
+        this.logoutType = ObjectUtils.defaultIfNull(this.logoutType, RegisteredServiceLogoutType.BACK_CHANNEL);
         this.requiredHandlers = ObjectUtils.defaultIfNull(this.requiredHandlers, new HashSet<>());
         this.accessStrategy = ObjectUtils.defaultIfNull(this.accessStrategy, new DefaultRegisteredServiceAccessStrategy());
         this.multifactorPolicy = ObjectUtils.defaultIfNull(this.multifactorPolicy, new DefaultRegisteredServiceMultifactorPolicy());
@@ -169,19 +181,13 @@ public abstract class AbstractRegisteredService implements RegisteredService {
      */
     public abstract void setServiceId(String id);
 
-    /**
-     * {@inheritDoc}
-     * Compares this instance with the {@code other} registered service based on
-     * evaluation order, name. The name comparison is case insensitive.
-     *
-     * @see #getEvaluationOrder()
-     */
     @Override
     public int compareTo(final RegisteredService other) {
-        return new CompareToBuilder().append(getEvaluationOrder(),
-            other.getEvaluationOrder()).append(StringUtils.defaultIfBlank(getName(), StringUtils.EMPTY).toLowerCase(),
-            StringUtils.defaultIfBlank(other.getName(), StringUtils.EMPTY).toLowerCase())
-            .append(getServiceId(), other.getServiceId()).append(getId(), other.getId()).toComparison();
+        return new CompareToBuilder()
+            .append(getEvaluationOrder(), other.getEvaluationOrder())
+            .append(StringUtils.defaultIfBlank(getName(), StringUtils.EMPTY).toLowerCase(), StringUtils.defaultIfBlank(other.getName(), StringUtils.EMPTY).toLowerCase())
+            .append(getServiceId(), other.getServiceId()).append(getId(), other.getId())
+            .toComparison();
     }
 
     /**

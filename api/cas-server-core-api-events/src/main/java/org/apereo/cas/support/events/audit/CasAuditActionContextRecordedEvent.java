@@ -2,6 +2,7 @@ package org.apereo.cas.support.events.audit;
 
 import org.apereo.cas.support.events.AbstractCasEvent;
 
+import lombok.Getter;
 import org.apereo.inspektr.audit.AuditActionContext;
 
 /**
@@ -10,6 +11,7 @@ import org.apereo.inspektr.audit.AuditActionContext;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Getter
 public class CasAuditActionContextRecordedEvent extends AbstractCasEvent {
 
     private static final long serialVersionUID = -1262975970594313844L;
@@ -17,7 +19,7 @@ public class CasAuditActionContextRecordedEvent extends AbstractCasEvent {
     private final AuditActionContext auditActionContext;
 
     /**
-     * Instantiates a new Cas audit action context recorded event.
+     * Instantiates a new CAS audit action context recorded event.
      *
      * @param source             the source
      * @param auditActionContext the audit action context
@@ -25,9 +27,5 @@ public class CasAuditActionContextRecordedEvent extends AbstractCasEvent {
     public CasAuditActionContextRecordedEvent(final Object source, final AuditActionContext auditActionContext) {
         super(source);
         this.auditActionContext = auditActionContext;
-    }
-
-    public AuditActionContext getAuditActionContext() {
-        return this.auditActionContext;
     }
 }

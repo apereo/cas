@@ -2,26 +2,22 @@ package org.apereo.cas.adaptors.radius.authentication.handler.support;
 
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.category.RadiusCategory;
 import org.apereo.cas.config.RadiusConfiguration;
-import org.apereo.cas.util.junit.ConditionalIgnore;
-import org.apereo.cas.util.junit.ConditionalIgnoreRule;
-import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
+import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
+import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
+import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
+import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
 import lombok.val;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link RadiusAuthenticationHandlerTests}.
@@ -29,24 +25,21 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@SpringBootTest(classes = {RadiusConfiguration.class, RefreshAutoConfiguration.class})
+@SpringBootTest(classes = {
+    RadiusConfiguration.class,
+    RefreshAutoConfiguration.class,
+    CasCoreWebflowConfiguration.class,
+    CasWebflowContextConfiguration.class,
+    CasMultifactorAuthenticationWebflowConfiguration.class
+})
 @TestPropertySource(properties = {
     "cas.authn.radius.server.protocol=PAP",
     "cas.authn.radius.client.sharedSecret=testing123",
     "cas.authn.radius.client.inetAddress=localhost"
 })
-@Category(RadiusCategory.class)
-@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
+@Tag("Radius")
+@EnabledIfContinuousIntegration
 public class RadiusAuthenticationHandlerTests {
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
-
-    @Rule
-    public final ConditionalIgnoreRule conditionalIgnoreRule = new ConditionalIgnoreRule();
-    
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
-
     @Autowired
     @Qualifier("radiusAuthenticationHandler")
     private AuthenticationHandler radiusAuthenticationHandler;

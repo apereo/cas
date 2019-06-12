@@ -1,5 +1,6 @@
 package org.apereo.cas.util;
 
+import com.google.common.base.Splitter;
 import com.google.common.collect.Multimap;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
@@ -12,14 +13,18 @@ import org.springframework.util.MultiValueMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 /**
@@ -73,12 +78,12 @@ public class CollectionUtils {
      * @return The collection instance containing the object provided
      */
     public static Set<Object> toCollection(final Object obj) {
-        val c = new LinkedHashSet<>();
+        val c = new LinkedHashSet<Object>();
         if (obj == null) {
-            LOGGER.debug("Converting null obj to empty collection");
+            LOGGER.trace("Converting null obj to empty collection");
         } else if (obj instanceof Collection) {
             c.addAll((Collection<Object>) obj);
-            LOGGER.trace("Converting multi-valued attribute [{}]", obj);
+            LOGGER.trace("Converting multi-valued element [{}]", obj);
         } else if (obj instanceof Map) {
             val map = (Map) obj;
             val set = (Set<Map.Entry>) map.entrySet();
@@ -89,12 +94,22 @@ public class CollectionUtils {
             } else {
                 c.addAll(Arrays.stream((Object[]) obj).collect(Collectors.toSet()));
             }
-            LOGGER.trace("Converting array attribute [{}]", obj);
+            LOGGER.trace("Converting array element [{}]", obj);
+        } else if (obj instanceof Iterator) {
+            val it = (Iterator) obj;
+            while (it.hasNext()) {
+                c.add(it.next());
+            }
+        } else if (obj instanceof Enumeration) {
+            val it = (Enumeration) obj;
+            while (it.hasMoreElements()) {
+                c.add(it.nextElement());
+            }
         } else {
             c.add(obj);
-            LOGGER.trace("Converting attribute [{}]", obj);
+            LOGGER.trace("Converting element [{}]", obj);
         }
-        return c;
+        return c.stream().filter(Objects::nonNull).collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     /**
@@ -108,7 +123,7 @@ public class CollectionUtils {
     public static <K, V> Map<K, V> wrap(final Multimap<K, V> source) {
         if (source != null && !source.isEmpty()) {
             val inner = source.asMap();
-            val map = new HashMap<>();
+            val map = new HashMap<Object, Object>();
             inner.forEach((k, v) -> map.put(k, wrap(v)));
             return (Map) map;
         }
@@ -301,6 +316,83 @@ public class CollectionUtils {
     }
 
     /**
+     * Wrap map.
+     *
+     * @param <K>    the type parameter
+     * @param <V>    the type parameter
+     * @param key    the key
+     * @param value  the value
+     * @param key2   the key 2
+     * @param value2 the value 2
+     * @param key3   the key 3
+     * @param value3 the value 3
+     * @param key4   the key 4
+     * @param value4 the value 4
+     * @param key5   the key 5
+     * @param value5 the value 5
+     * @param key6   the key 6
+     * @param value6 the value 6
+     * @param key7   the key 7
+     * @param value7 the value 7
+     * @param key8   the key 8
+     * @param value8 the value 8
+     * @return the map
+     */
+    public static <K, V> Map<K, V> wrap(final String key, final Object value,
+                                        final String key2, final Object value2,
+                                        final String key3, final Object value3,
+                                        final String key4, final Object value4,
+                                        final String key5, final Object value5,
+                                        final String key6, final Object value6,
+                                        final String key7, final Object value7,
+                                        final String key8, final Object value8) {
+        val m = wrap(key, value, key2, value2, key3, value3, key4, value4,
+            key5, value5, key6, value6, key7, value7);
+        m.put(key8, value8);
+        return (Map) m;
+    }
+
+    /**
+     * Wrap map.
+     *
+     * @param <K>    the type parameter
+     * @param <V>    the type parameter
+     * @param key    the key
+     * @param value  the value
+     * @param key2   the key 2
+     * @param value2 the value 2
+     * @param key3   the key 3
+     * @param value3 the value 3
+     * @param key4   the key 4
+     * @param value4 the value 4
+     * @param key5   the key 5
+     * @param value5 the value 5
+     * @param key6   the key 6
+     * @param value6 the value 6
+     * @param key7   the key 7
+     * @param value7 the value 7
+     * @param key8   the key 8
+     * @param value8 the value 8
+     * @param key9   the key 9
+     * @param value9 the value 9
+     * @return the map
+     */
+    public static <K, V> Map<K, V> wrap(final String key, final Object value,
+                                        final String key2, final Object value2,
+                                        final String key3, final Object value3,
+                                        final String key4, final Object value4,
+                                        final String key5, final Object value5,
+                                        final String key6, final Object value6,
+                                        final String key7, final Object value7,
+                                        final String key8, final Object value8,
+                                        final String key9, final Object value9) {
+        val m = wrap(key, value, key2, value2, key3, value3, key4, value4,
+            key5, value5, key6, value6, key7, value7, key8, value8);
+        m.put(key9, value9);
+        return (Map) m;
+    }
+
+    /**
      * Wraps a possibly null list in an immutable wrapper.
      *
      * @param <T>    the type parameter
@@ -412,13 +504,26 @@ public class CollectionUtils {
     }
 
     /**
-     * Wrap set set.
+     * Wrap list.
      *
      * @param <T>    the type parameter
      * @param source the source
      * @return the set
      */
     public static <T> List<T> wrapList(final T... source) {
+        val list = new ArrayList<T>();
+        addToCollection(list, source);
+        return list;
+    }
+
+    /**
+     * Wrap array list array list.
+     *
+     * @param <T>    the type parameter
+     * @param source the source
+     * @return the array list
+     */
+    public static <T> ArrayList<T> wrapArrayList(final T... source) {
         val list = new ArrayList<T>();
         addToCollection(list, source);
         return list;
@@ -457,6 +562,24 @@ public class CollectionUtils {
     public static MultiValueMap asMultiValueMap(final String key1, final Object value1, final String key2, final Object value2) {
         val wrap = (Map) wrap(key1, wrapList(value1), key2, wrapList(value2));
         return org.springframework.util.CollectionUtils.toMultiValueMap(wrap);
+    }
+
+    /**
+     * Convert directed list to map.
+     *
+     * @param inputList the input list
+     * @return the map
+     */
+    public static Map<String, String> convertDirectedListToMap(final List<String> inputList) {
+        val mappings = new TreeMap<String, String>();
+        inputList
+            .stream()
+            .map(s -> {
+                val bits = Splitter.on("->").splitToList(s);
+                return Pair.of(bits.get(0), bits.get(1));
+            })
+            .forEach(p -> mappings.put(p.getKey(), p.getValue()));
+        return mappings;
     }
 
     private static <T> void addToCollection(final Collection<T> list, final T[] source) {

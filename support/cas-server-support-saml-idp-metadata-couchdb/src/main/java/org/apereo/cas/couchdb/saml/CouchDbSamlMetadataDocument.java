@@ -24,10 +24,10 @@ public class CouchDbSamlMetadataDocument extends SamlMetadataDocument {
     private String rev;
 
     @JsonCreator
-    public CouchDbSamlMetadataDocument(@JsonProperty("_id") final String cid, //NOPMD
+    public CouchDbSamlMetadataDocument(@JsonProperty("_id") final String cid,
                                        @JsonProperty("_rev") final String rev,
                                        @JsonProperty("id") final long id,
-                                       @JsonProperty("name") @NonNull final String name,
+                                       @JsonProperty("name") final @NonNull String name,
                                        @JsonProperty("value") final String value,
                                        @JsonProperty("signature") final String signature) {
         super(id, name, value, signature);

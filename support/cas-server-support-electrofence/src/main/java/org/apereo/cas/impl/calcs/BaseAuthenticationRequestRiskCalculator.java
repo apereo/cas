@@ -9,13 +9,14 @@ import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.support.events.dao.CasEvent;
 import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketCreatedEvent;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Collection;
 
@@ -26,20 +27,19 @@ import java.util.Collection;
  * @since 5.1.0
  */
 @Slf4j
+@RequiredArgsConstructor
 public abstract class BaseAuthenticationRequestRiskCalculator implements AuthenticationRequestRiskCalculator {
 
 
     /**
      * CAS event repository instance.
      */
-    protected CasEventRepository casEventRepository;
+    protected final CasEventRepository casEventRepository;
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    public BaseAuthenticationRequestRiskCalculator(final CasEventRepository casEventRepository) {
-        this.casEventRepository = casEventRepository;
-    }
+    /**
+     * CAS settings.
+     */
+    protected final CasConfigurationProperties casProperties;
 
     @Override
     public final AuthenticationRiskScore calculate(final Authentication authentication,
@@ -81,9 +81,27 @@ public abstract class BaseAuthenticationRequestRiskCalculator implements Authent
         val type = CasTicketGrantingTicketCreatedEvent.class.getName();
         LOGGER.debug("Retrieving events of type [{}] for [{}]", type, principal);
 
-        val date = ZonedDateTime.now()
+        val date = ZonedDateTime.now(ZoneOffset.UTC)
             .minusDays(casProperties.getAuthn().getAdaptive().getRisk().getDaysInRecentHistory());
         return casEventRepository.getEventsOfTypeForPrincipal(type, principal, date);
+    }
+
+    /**
+     * Calculate score based on events count big decimal.
+     *
+     * @param authentication the authentication
+     * @param events         the events
+     * @param count          the count
+     * @return the big decimal
+     */
+    protected BigDecimal calculateScoreBasedOnEventsCount(final Authentication authentication,
+                                                          final Collection<? extends CasEvent> events,
+                                                          final long count) {
+        if (count == events.size()) {
+            LOGGER.debug("Principal [{}] is assigned to the lowest risk score with attempted count of [{}]", authentication.getPrincipal(), count);
+            return LOWEST_RISK_SCORE;
+        }
+        return getFinalAveragedScore(count, events.size());
     }
 
     /**

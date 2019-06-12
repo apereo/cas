@@ -60,7 +60,22 @@ public class Pac4jSamlClientProperties extends Pac4jBaseClientProperties {
      * will accept assertions based on a previous authentication for one hour.
      * You can adjust this behavior by modifying this setting. The unit of time here is seconds.
      */
-    private int maximumAuthenticationLifetime = 600;
+    private int maximumAuthenticationLifetime = 3600;
+
+    /**
+     * Maximum skew in seconds between SP and IDP clocks.
+     * This skew is added onto the {@code NotOnOrAfter} field in seconds
+     * for the SAML response validation.
+     */
+    private int acceptedSkew = 300;
+
+    /**
+     * Describes the map of attributes that are to be fetched from the credential (map keys)
+     * and then transformed/renamed using map values before they are put into a profile.
+     * An example might be to fetch {@code givenName} from credential and rename it to {@code urn:oid:2.5.4.42} or vice versa.
+     * Note that this setting only applies to attribute names, and not friendly-names.
+     */
+    private List<ServiceProviderMappedAttribute> mappedAttributes = new ArrayList<>();
 
     /**
      * The entity id of the SP/CAS that is used in the SP metadata generation process.
@@ -103,6 +118,13 @@ public class Pac4jSamlClientProperties extends Pac4jBaseClientProperties {
      * The key alias used in the keystore.
      */
     private String keystoreAlias;
+
+    /**
+     * A name to append to signing certificates generated.
+     * The named part appended can be usefull to identify for which clientName it was generated
+     * If no name is provided the default certificate name will be used.
+     */
+    private String certificateNameToAppend;
 
     /**
      * NameID policy to request in the authentication requests.
@@ -179,5 +201,23 @@ public class Pac4jSamlClientProperties extends Pac4jBaseClientProperties {
          * be marked so in the metadata.
          */
         private boolean required;
+    }
+
+
+    @RequiresModule(name = "cas-server-support-pac4j-webflow")
+    @Getter
+    @Setter
+    public static class ServiceProviderMappedAttribute implements Serializable {
+        private static final long serialVersionUID = -762819796533384951L;
+
+        /**
+         * Attribute name.
+         */
+        private String name;
+
+        /**
+         * The name that should be used to rename {@link #name}.
+         */
+        private String mappedTo;
     }
 }

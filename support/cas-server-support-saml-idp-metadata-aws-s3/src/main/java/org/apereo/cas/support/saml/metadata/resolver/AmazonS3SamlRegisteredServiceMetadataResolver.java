@@ -12,6 +12,7 @@ import com.amazonaws.util.IOUtils;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.apache.commons.lang3.StringUtils;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 
@@ -41,9 +42,8 @@ public class AmazonS3SamlRegisteredServiceMetadataResolver extends BaseSamlRegis
     }
 
     @Override
-    public Collection<? extends MetadataResolver> resolve(final SamlRegisteredService service) {
+    public Collection<? extends MetadataResolver> resolve(final SamlRegisteredService service, final CriteriaSet criteriaSet) {
         try {
-            LOGGER.debug("Locating S3 object(s) from bucket [{}]...", bucketName);
             val result = s3Client.listObjectsV2(bucketName);
             val objects = result.getObjectSummaries();
             LOGGER.debug("Located [{}] S3 object(s) from bucket [{}]", objects.size(), bucketName);
@@ -101,9 +101,6 @@ public class AmazonS3SamlRegisteredServiceMetadataResolver extends BaseSamlRegis
 
     @Override
     public boolean isAvailable(final SamlRegisteredService service) {
-        if (supports(service)) {
-            return !s3Client.listBuckets().isEmpty();
-        }
-        return false;
+        return supports(service) && !s3Client.listBuckets().isEmpty();
     }
 }

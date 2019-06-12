@@ -1,21 +1,21 @@
 description = "Apereo CAS WS-Security IdP"
 dependencies {
-
-    api project(":api:cas-server-core-api-webflow")
-
     implementation libraries.opensaml
     implementation libraries.bouncycastle
     implementation libraries.apachecxf
     implementation libraries.apachefediz
+    implementation libraries.wss4j
     implementation libraries.casclient
 
     implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-services")
+    implementation project(":core:cas-server-core-services-api")
     implementation project(":core:cas-server-core-services-registry")
     implementation project(":core:cas-server-core-webflow")
     implementation project(":core:cas-server-core-webflow-api")
+    implementation project(":support:cas-server-support-ws-sts-api")
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":support:cas-server-support-validation")
     implementation project(":support:cas-server-support-saml-core")
@@ -23,8 +23,7 @@ dependencies {
     implementation project(":support:cas-server-support-ws-sts")
     implementation project(":support:cas-server-support-ws-idp-api")
     implementation project(":core:cas-server-core-cookie-api")
-
-
+    
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-logout-api")
     testImplementation project(":core:cas-server-core-cookie")

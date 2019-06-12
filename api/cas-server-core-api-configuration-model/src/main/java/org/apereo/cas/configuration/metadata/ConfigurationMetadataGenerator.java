@@ -5,18 +5,19 @@ import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.core.PrettyPrinter;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.core.util.MinimalPrettyPrinter;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.javaparser.JavaParser;
+import com.github.javaparser.StaticJavaParser;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 import org.springframework.boot.configurationmetadata.ConfigurationMetadataProperty;
+import org.springframework.boot.configurationmetadata.Deprecation;
 import org.springframework.boot.configurationmetadata.ValueHint;
 import org.springframework.util.ReflectionUtils;
 
@@ -92,6 +93,8 @@ public class ConfigurationMetadataGenerator {
         }
         final var mapper = new ObjectMapper().findAndRegisterModules();
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        mapper.enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS);
+
         final TypeReference<Map<String, Set<ConfigurationMetadataProperty>>> values = new TypeReference<>() {
         };
         final Map<String, Set> jsonMap = mapper.readValue(jsonFile, values);
@@ -107,7 +110,7 @@ public class ConfigurationMetadataGenerator {
                 final var matcher = NESTED_TYPE_PATTERN.matcher(p.getType());
                 final var indexBrackets = matcher.matches();
                 final var typeName = matcher.group(1);
-                final var typePath = ConfigurationMetadataClassSourceLocator.getInstance().buildTypeSourcePath(this.sourcePath, typeName);
+                final var typePath = ConfigurationMetadataClassSourceLocator.buildTypeSourcePath(this.sourcePath, typeName);
 
                 final var parser = new ConfigurationMetadataUnitParser(this.sourcePath);
                 parser.parseCompilationUnit(collectedProps, collectedGroups, p, typePath, typeName, indexBrackets);
@@ -125,7 +128,7 @@ public class ConfigurationMetadataGenerator {
         jsonMap.put("hints", hints);
 
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        final PrettyPrinter pp = new MinimalPrettyPrinter();
+        final var pp = new MinimalPrettyPrinter();
         final var writer = mapper.writer(pp);
         writer.writeValue(jsonFile, jsonMap);
     }
@@ -144,10 +147,10 @@ public class ConfigurationMetadataGenerator {
 
             val parent = matcher.group(1);
             val innerType = matcher.group(2);
-            val typePath = ConfigurationMetadataClassSourceLocator.getInstance().buildTypeSourcePath(this.sourcePath, parent);
+            val typePath = ConfigurationMetadataClassSourceLocator.buildTypeSourcePath(this.sourcePath, parent);
 
             try {
-                val cu = JavaParser.parse(new File(typePath));
+                val cu = StaticJavaParser.parse(new File(typePath));
                 val primaryType = cu.getPrimaryType().get();
                 primaryType.getMembers()
                     .stream()
@@ -198,12 +201,17 @@ public class ConfigurationMetadataGenerator {
         });
     }
 
-    private Set<ConfigurationMetadataHint> processHints(final Collection<ConfigurationMetadataProperty> props,
-                                                        final Collection<ConfigurationMetadataProperty> groups) {
+    private static Set<ConfigurationMetadataHint> processHints(final Collection<ConfigurationMetadataProperty> props,
+                                                               final Collection<ConfigurationMetadataProperty> groups) {
 
         final Set<ConfigurationMetadataHint> hints = new LinkedHashSet<>();
 
-        for (val entry : props) {
+        val nonDeprecatedErrors = props.stream()
+            .filter(p -> p.getDeprecation() == null
+                || !Deprecation.Level.ERROR.equals(p.getDeprecation().getLevel()))
+            .collect(Collectors.toList());
+
+        for (val entry : nonDeprecatedErrors) {
             try {
                 val propName = StringUtils.substringAfterLast(entry.getName(), ".");
                 val groupName = StringUtils.substringBeforeLast(entry.getName(), ".");
@@ -215,8 +223,7 @@ public class ConfigurationMetadataGenerator {
 
                 val matcher = PATTERN_GENERICS.matcher(grp.getType());
                 val className = matcher.find() ? matcher.group(1) : grp.getType();
-                final Class clazz = ClassUtils.getClass(className);
-
+                val clazz = ClassUtils.getClass(className);
 
                 val hint = new ConfigurationMetadataHint();
                 hint.setName(entry.getName());
@@ -228,21 +235,28 @@ public class ConfigurationMetadataGenerator {
                         .map(RequiresModule.class::cast)
                         .get();
                     val valueHint = new ValueHint();
-                    valueHint.setValue(Stream.of(RequiresModule.class.getName(), annotation.automated()).collect(Collectors.toList()));
+                    valueHint.setValue(Stream.of(RequiresModule.class.getName(), annotation.automated())
+                        .collect(Collectors.toList()));
                     valueHint.setDescription(annotation.name());
                     hint.getValues().add(valueHint);
                 }
 
-                val foundRequiredProperty = StreamSupport.stream(RelaxedPropertyNames.forCamelCase(propName).spliterator(), false)
+                StreamSupport.stream(RelaxedPropertyNames.forCamelCase(propName)
+                    .spliterator(), false)
                     .map(n -> ReflectionUtils.findField(clazz, n))
-                    .anyMatch(f -> f != null && f.isAnnotationPresent(RequiredProperty.class));
-
-                if (foundRequiredProperty) {
-                    val valueHint = new ValueHint();
-                    valueHint.setValue(RequiredProperty.class.getName());
-                    hint.getValues().add(valueHint);
-                }
-
+                    .filter(f -> f != null && f.isAnnotationPresent(RequiredProperty.class))
+                    .forEach(field -> {
+                        val annotation = Arrays.stream(clazz.getAnnotations())
+                            .filter(a -> a.annotationType().equals(RequiredProperty.class))
+                            .findFirst()
+                            .map(RequiredProperty.class::cast)
+                            .get();
+                        val valueHint = new ValueHint();
+                        valueHint.setValue(RequiredProperty.class.getName());
+                        valueHint.setDescription(annotation.message());
+                        hint.getValues().add(valueHint);
+                    });
+                
                 if (!hint.getValues().isEmpty()) {
                     hints.add(hint);
                 }

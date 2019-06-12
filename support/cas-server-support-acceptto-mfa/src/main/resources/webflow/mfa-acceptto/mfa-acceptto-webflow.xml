@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.springframework.org/schema/webflow
+                          http://www.springframework.org/schema/webflow/spring-webflow.xsd">
+
+    <on-start>
+        <evaluate expression="initialFlowSetupAction" />
+    </on-start>
+
+    <action-state id="initializeLoginForm">
+        <evaluate expression="initializeLoginAction" />
+        <transition on="success" to="fetchUserAccountStatus"/>
+    </action-state>
+
+    <action-state id="fetchUserAccountStatus">
+        <evaluate expression="mfaAccepttoMultifactorDetermineUserAccountStatusAction" />
+        <transition on="unavailable" to="mfaFailure" />
+        <transition on="deny" to="deny" />
+        <transition on="register" to="registerDevice" />
+        <transition on="success" to="authenticateAndFetchChannel" />
+        <transition on="approve" to="realSubmit" />
+    </action-state>
+
+    <action-state id="authenticateAndFetchChannel">
+        <evaluate expression="mfaAccepttoMultifactorFetchChannelAction" />
+        <transition on="success" to="redirectToAcceptto" />
+    </action-state>
+
+    <view-state id="redirectToAcceptto"
+               view="externalRedirect:#{requestScope.accepttoRedirectUrl}">
+        <transition to="success" />
+    </view-state>
+
+    <view-state id="registerDevice" view="casAccepttoRegistrationView">
+        <transition on="success" to="validateUser" />
+    </view-state>
+
+    <action-state id="validateUser">
+        <evaluate expression="mfaAccepttoMultifactorValidateUserDeviceRegistrationAction" />
+        <transition on="finalize" to="realSubmit" />
+        <transition on="error" to="deny" />
+        <transition on="deny" to="deny" />
+    </action-state>
+
+    <action-state id="realSubmit">
+        <evaluate expression="mfaAccepttoMultifactorFinalizeAuthenticationWebflowAction" />
+        <transition on="success" to="success" />
+        <transition on="error" to="initializeLoginForm" />
+    </action-state>
+
+    <end-state id="success"  />
+    <end-state id="unavailable"  />
+    <end-state id="deny"  />
+</flow>

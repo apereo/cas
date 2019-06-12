@@ -44,7 +44,8 @@ public class CachingTicketRegistry extends AbstractMapBasedTicketRegistry {
         this.storage = Caffeine.newBuilder()
             .initialCapacity(INITIAL_CACHE_SIZE)
             .maximumSize(MAX_CACHE_SIZE)
-            .expireAfter(new CachedTicketExpirationPolicy()).removalListener(new CachedTicketRemovalListener()).build(s -> {
+            .expireAfter(new CachedTicketExpirationPolicy()).removalListener(new CachedTicketRemovalListener())
+            .build(s -> {
                 LOGGER.error("Load operation of the cache is not supported.");
                 return null;
             });
@@ -57,7 +58,7 @@ public class CachingTicketRegistry extends AbstractMapBasedTicketRegistry {
      */
     public static class CachedTicketExpirationPolicy implements Expiry<String, Ticket> {
 
-        private long getExpiration(final Ticket value, final long currentTime) {
+        private static long getExpiration(final Ticket value, final long currentTime) {
             if (value.isExpired()) {
                 LOGGER.debug("Ticket [{}] has expired and shall be evicted from the cache", value.getId());
                 return 0;
@@ -66,17 +67,20 @@ public class CachingTicketRegistry extends AbstractMapBasedTicketRegistry {
         }
 
         @Override
-        public long expireAfterCreate(final String key, final Ticket value, final long currentTime) {
+        public long expireAfterCreate(final String key, final Ticket value,
+                                      final long currentTime) {
             return getExpiration(value, currentTime);
         }
 
         @Override
-        public long expireAfterUpdate(final String key, final Ticket value, final long currentTime, final long currentDuration) {
+        public long expireAfterUpdate(final String key, final Ticket value,
+                                      final long currentTime, final long currentDuration) {
             return getExpiration(value, currentDuration);
         }
 
         @Override
-        public long expireAfterRead(final String key, final Ticket value, final long currentTime, final long currentDuration) {
+        public long expireAfterRead(final String key, final Ticket value,
+                                    final long currentTime, final long currentDuration) {
             return getExpiration(value, currentDuration);
         }
     }

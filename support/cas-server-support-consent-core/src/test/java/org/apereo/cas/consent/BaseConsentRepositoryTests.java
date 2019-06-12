@@ -9,17 +9,15 @@ import org.apereo.cas.util.CollectionUtils;
 
 import lombok.Getter;
 import lombok.val;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
+import org.springframework.test.annotation.DirtiesContext;
 
+import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link BaseConsentRepositoryTests}.
@@ -31,19 +29,14 @@ import static org.junit.Assert.*;
     RefreshAutoConfiguration.class
 })
 @Getter
+@DirtiesContext
 public abstract class BaseConsentRepositoryTests {
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
-
     protected static final DefaultConsentDecisionBuilder BUILDER = new DefaultConsentDecisionBuilder(CipherExecutor.noOpOfSerializableToString());
     protected static final Service SVC = RegisteredServiceTestUtils.getService();
     protected static final AbstractRegisteredService REG_SVC = RegisteredServiceTestUtils.getRegisteredService(SVC.getId());
 
-    protected static final Map<String, Object> ATTR = CollectionUtils.wrap("attribute", "value");
+    protected static final Map<String, List<Object>> ATTR = CollectionUtils.wrap("attribute", List.of("value"));
     protected static final String CASUSER_2 = "casuser2";
-
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
 
     public abstract ConsentRepository getRepository();
 
@@ -57,7 +50,7 @@ public abstract class BaseConsentRepositoryTests {
         val decision = BUILDER.build(SVC, REG_SVC, "casuser", ATTR);
         decision.setId(1);
         repo.storeConsentDecision(decision);
-
+        assertFalse(repo.findConsentDecisions().isEmpty());
         assertNull(repo.findConsentDecision(SVC, REG_SVC, CoreAuthenticationTestUtils.getAuthentication()));
     }
 

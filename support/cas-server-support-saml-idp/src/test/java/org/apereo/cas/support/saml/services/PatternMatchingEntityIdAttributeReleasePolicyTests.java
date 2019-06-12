@@ -1,20 +1,18 @@
 package org.apereo.cas.support.saml.services;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.category.FileSystemCategory;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
+import org.apereo.cas.support.saml.SamlIdPTestUtils;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
 import org.apache.commons.io.FileUtils;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.springframework.core.io.FileSystemResource;
 
-import java.util.Map;
-
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link PatternMatchingEntityIdAttributeReleasePolicyTests}.
@@ -22,10 +20,10 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Category(FileSystemCategory.class)
+@Tag("SAML")
 public class PatternMatchingEntityIdAttributeReleasePolicyTests extends BaseSamlIdPConfigurationTests {
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         METADATA_DIRECTORY = new FileSystemResource(FileUtils.getTempDirectory());
     }
@@ -33,11 +31,25 @@ public class PatternMatchingEntityIdAttributeReleasePolicyTests extends BaseSaml
     @Test
     public void verifyPatternDoesNotMatch() {
         val filter = new PatternMatchingEntityIdAttributeReleasePolicy();
-        val registeredService = getSamlRegisteredServiceForTestShib();
+        filter.setAllowedAttributes(CollectionUtils.wrapList("uid"));
+        val registeredService = SamlIdPTestUtils.getSamlRegisteredService();
         registeredService.setAttributeReleasePolicy(filter);
-        final Map attributes = filter.getAttributes(CoreAuthenticationTestUtils.getPrincipal(),
+        val attributes = filter.getAttributes(CoreAuthenticationTestUtils.getPrincipal(),
             CoreAuthenticationTestUtils.getService(), registeredService);
         assertTrue(attributes.isEmpty());
+    }
+
+    @Test
+    public void verifyPatternDoesNotMatchAndReversed() {
+        val filter = new PatternMatchingEntityIdAttributeReleasePolicy();
+        filter.setAllowedAttributes(CollectionUtils.wrapList("cn"));
+        filter.setEntityIds("helloworld");
+        filter.setReverseMatch(true);
+        val registeredService = SamlIdPTestUtils.getSamlRegisteredService();
+        registeredService.setAttributeReleasePolicy(filter);
+        val attributes = filter.getAttributes(CoreAuthenticationTestUtils.getPrincipal(),
+            CoreAuthenticationTestUtils.getService(), registeredService);
+        assertFalse(attributes.isEmpty());
     }
 
     @Test
@@ -45,9 +57,9 @@ public class PatternMatchingEntityIdAttributeReleasePolicyTests extends BaseSaml
         val filter = new PatternMatchingEntityIdAttributeReleasePolicy();
         filter.setEntityIds("https://sp.+");
         filter.setAllowedAttributes(CollectionUtils.wrapList("uid", "givenName", "displayName"));
-        val registeredService = getSamlRegisteredServiceForTestShib();
+        val registeredService = SamlIdPTestUtils.getSamlRegisteredService();
         registeredService.setAttributeReleasePolicy(filter);
-        final Map attributes = filter.getAttributes(CoreAuthenticationTestUtils.getPrincipal(),
+        val attributes = filter.getAttributes(CoreAuthenticationTestUtils.getPrincipal(),
             CoreAuthenticationTestUtils.getService(), registeredService);
         assertFalse(attributes.isEmpty());
     }

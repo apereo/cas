@@ -7,13 +7,14 @@ import org.apereo.cas.util.CompressionUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import lombok.val;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link GoogleAppsSamlAuthenticationRequestTests}.
@@ -22,12 +23,13 @@ import static org.junit.Assert.*;
  * @since 4.2.0
  */
 @Import(SamlGoogleAppsConfiguration.class)
+@Tag("SAML")
 @TestPropertySource(locations = "classpath:/gapps.properties")
 public class GoogleAppsSamlAuthenticationRequestTests extends AbstractOpenSamlTests {
     @Autowired
     private ApplicationContextProvider applicationContextProvider;
 
-    @Before
+    @BeforeEach
     public void init() {
         this.applicationContextProvider.setApplicationContext(this.applicationContext);
     }

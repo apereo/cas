@@ -212,7 +212,7 @@ public class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
         method.setConfirmationMethod(confirmationMethod);
         confirmation.getConfirmationMethods().add(method);
         val nameIdentifier = newSamlObject(NameIdentifier.class);
-        nameIdentifier.setNameIdentifier(identifier);
+        nameIdentifier.setValue(identifier);
         val subject = newSamlObject(Subject.class);
         subject.setNameIdentifier(nameIdentifier);
         subject.setSubjectConfirmation(confirmation);
@@ -229,7 +229,8 @@ public class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
     public void addAttributeValuesToSaml1Attribute(final String attributeName,
                                                    final Object attributeValue,
                                                    final List<XMLObject> attributeList) {
-        addAttributeValuesToSamlAttribute(attributeName, attributeValue, attributeList, AttributeValue.DEFAULT_ELEMENT_NAME);
+        addAttributeValuesToSamlAttribute(attributeName, attributeValue, StringUtils.EMPTY,
+            attributeList, AttributeValue.DEFAULT_ELEMENT_NAME);
     }
 
     /**
@@ -278,7 +279,7 @@ public class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
                                    final HttpServletRequest httpRequest,
                                    final Response samlMessage) throws Exception {
 
-        SamlUtils.logSamlObject(this.configBean, samlMessage);
+        SamlUtils.logSamlObject(this.openSamlConfigBean, samlMessage);
 
         val encoder = new CasHttpSoap11Encoder();
         val context = new MessageContext<SAMLObject>();

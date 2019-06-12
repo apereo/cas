@@ -36,9 +36,9 @@ public class CasSupportCouchDbAuditConfiguration {
     @Qualifier("defaultObjectMapperFactory")
     private ObjectProvider<ObjectMapperFactory> defaultObjectMapperFactory;
 
-    @ConditionalOnMissingBean(name = "auditCouchDbFactory")
     @Bean
     @RefreshScope
+    @ConditionalOnMissingBean(name = "auditCouchDbFactory")
     public CouchDbConnectorFactory auditCouchDbFactory() {
         return new CouchDbConnectorFactory(casProperties.getAudit().getCouchDb(), defaultObjectMapperFactory.getIfAvailable());
     }
@@ -56,7 +56,7 @@ public class CasSupportCouchDbAuditConfiguration {
     @RefreshScope
     public AuditTrailManager couchDbAuditTrailManager(@Qualifier("auditActionContextCouchDbRepository") final AuditActionContextCouchDbRepository repository) {
         repository.initStandardDesignDocument();
-        return new CouchDbAuditTrailManager(repository, casProperties.getAudit().getCouchDb().isAsynchronous());
+        return new CouchDbAuditTrailManager(casProperties.getAudit().getCouchDb().isAsynchronous(), repository);
     }
 
     @ConditionalOnMissingBean(name = "couchDbAuditTrailExecutionPlanConfigurer")

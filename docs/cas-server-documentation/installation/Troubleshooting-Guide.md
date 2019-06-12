@@ -14,14 +14,14 @@ CAS server logs are the best resource for determining the root cause of the prob
 Specifically you want to make sure `DEBUG` levels are turned on the `org.apereo` package in the log configuration:
 
 ```xml
-<AsyncLogger name="org.apereo" level="debug" additivity="false" includeLocation="true">
+<AsyncLogger name="org.apereo" level="trace" additivity="false" includeLocation="true">
     <AppenderRef ref="console"/>
     <AppenderRef ref="file"/>
 </AsyncLogger>
 ```
 
 When changes are applied, restart the server environment and observe the log files to get a better 
-understanding of CAS behavior. For more info, please [review  this guide](Logging.html) on how to configure logs with CAS.
+understanding of CAS behavior. For more info, please [review  this guide](../logging/Logging.html) on how to configure logs with CAS.
 
 Note that the above configuration block only addresses logging behavior of CAS components; not those
 upon which CAS depends. Consult the log4j configuration and turn on appropriate `DEBUG` logs for each relevant component.
@@ -80,7 +80,7 @@ If your client application is not receiving attributes, you will need to make su
 3. The CAS server itself is [resolving and retrieving attributes](../integration/Attribute-Resolution.html) correctly.
 4. The CAS server is authorized to [release attributes](../integration/Attribute-Release.html) to that particular client application inside its service registry.
 
-Please [review this guide](Service-Management.html) to better understand the CAS service registry.
+Please [review this guide](../services/Service-Management.html) to better understand the CAS service registry.
 
 ## Application Not Authorized
 
@@ -91,13 +91,13 @@ message will be displayed back. Since service definitions in the registry have t
 it is entirely possible that the pattern in the registry for the service definition is misconfigured and does not produce a successful match 
 for the requested application url.
 
-Please [review this guide](Service-Management.html) to better understand the CAS service registry.
+Please [review this guide](../services/Service-Management.html) to better understand the CAS service registry.
 
 ## Invalid/Expired CAS Tickets
 
 You may experience `INVAILD_TICKET` related errors when attempting to use a CAS ticket whose expiration policy dictates that the ticket 
 has expired. The CAS log should further explain in more detail if the ticket is considered expired, but for diagnostic purposes, 
-you may want to adjust the [ticket expiration policy configuration](Configuring-Ticket-Expiration-Policy.html) to remove and troubleshoot this error.
+you may want to adjust the [ticket expiration policy configuration](../ticketing/Configuring-Ticket-Expiration-Policy.html) to remove and troubleshoot this error.
 
 Furthermore, if the ticket itself cannot be located in the CAS ticket registry the ticket is also considered invalid. You will need 
 to observe the ticket used and compare it with the value that exists in the ticket registry to ensure that the ticket id provided is valid.  
@@ -136,7 +136,9 @@ and analyzing offline using some analysis tool.
 
 Finally, review the eviction policy of your ticket registry and ensure the values that determine object lifetime are appropriate for your environment. 
 
-## PKIX Path Building Failed
+## SSL & Certificates
+
+### PKIX Path Building Failed
 
 ```bash
 Sep 28, 2009 4:13:26 PM org.apereo.cas.client.validation.AbstractCasProtocolUrlBasedTicketValidator retrieveResponseFromServer
@@ -168,7 +170,7 @@ If you have multiple java editions installed on your machine, make sure that the
 (The one to which the certificate has been exported correctly) One common mistake that occurs while generating self-validated certificates is that the `JAVA_HOME` might be different than that used by the server.
 
 
-## No subject alternative names
+### No subject alternative names
 
 ```bash
 javax.net.ssl.SSLHandshakeException: java.security.cert.CertificateException: No subject alternative names present
@@ -177,7 +179,7 @@ javax.net.ssl.SSLHandshakeException: java.security.cert.CertificateException: No
 This is a hostname/SSL certificate CN mismatch. This commonly happens when a self-signed certificate issued to localhost is placed on a machine that 
 is accessed by IP address. It should be noted that generating a certificate with an IP address for a common name, e.g. `CN=192.168.1.1,OU=Middleware,dc=vt,dc=edu`, will not work in most cases where the client making the connection is Java.
 
-## HTTPS hostname wrong
+### HTTPS hostname wrong
 
 ```bash
 java.lang.RuntimeException: java.io.IOException: HTTPS hostname wrong:  should be <eiger.iad.vt.edu>
@@ -195,7 +197,7 @@ CN does not match the fully-qualified host name of the CAS server. There are a f
 
 It is also worth checking that the certificate your CAS server is using for SSL encryption matches the one the client is checking against. 
 
-## No name matching X found
+### No name matching X found
 
 ```bash
 Caused by: java.security.cert.CertificateException: No name matching cas.server found
@@ -205,11 +207,11 @@ Caused by: java.security.cert.CertificateException: No name matching cas.server 
 
 Same as above.
 
-## Wildcard Certificates
+### Wildcard Certificates
 
 Java support for wildcard certificates is limited to hosts strictly in the same domain as the wildcard. For example, a certificate with `CN=.vt.edu` matches hosts **`a.vt.edu`** and **`b.vt.edu`**, but *not* **`a.b.vt.edu`**.
 
-## Unrecognized Name Error
+### Unrecognized Name Error
 
 ```bash
 javax.net.ssl.SSLProtocolException: handshake alert: unrecognized_name
@@ -230,7 +232,8 @@ Alternatively, you can disable the SNI detection in JDK, by adding this flag to 
 -Djsse.enableSNIExtension=false
 ```
 
-## When All Else Fails
+### When All Else Fails
+
 If you have read, understood, and tried all the troubleshooting tips on this page and continue to have problems, 
 please perform an SSL trace and attach it to a posting to the 
 CAS mailing lists. An SSL trace is written to 

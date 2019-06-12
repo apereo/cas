@@ -9,16 +9,20 @@ import org.apereo.cas.services.JpaServiceRegistry;
 import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryExecutionPlan;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
+import org.apereo.cas.services.ServiceRegistryListener;
 
 import lombok.val;
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
 import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -30,6 +34,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -43,10 +48,17 @@ import java.util.stream.Collectors;
 @Configuration("jpaServiceRegistryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement(proxyTargetClass = true)
-public class JpaServiceRegistryConfiguration implements ServiceRegistryExecutionPlanConfigurer {
+public class JpaServiceRegistryConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
+
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
+
+    @Autowired
+    @Qualifier("serviceRegistryListeners")
+    private ObjectProvider<Collection<ServiceRegistryListener>> serviceRegistryListeners;
 
     @RefreshScope
     @Bean
@@ -92,11 +104,17 @@ public class JpaServiceRegistryConfiguration implements ServiceRegistryExecution
     @Bean
     @RefreshScope
     public ServiceRegistry jpaServiceRegistry() {
-        return new JpaServiceRegistry();
+        return new JpaServiceRegistry(eventPublisher, serviceRegistryListeners.getIfAvailable());
     }
 
-    @Override
-    public void configureServiceRegistry(final ServiceRegistryExecutionPlan plan) {
-        plan.registerServiceRegistry(jpaServiceRegistry());
+    @Bean
+    @ConditionalOnMissingBean(name = "jpaServiceRegistryExecutionPlanConfigurer")
+    public ServiceRegistryExecutionPlanConfigurer jpaServiceRegistryExecutionPlanConfigurer() {
+        return new ServiceRegistryExecutionPlanConfigurer() {
+            @Override
+            public void configureServiceRegistry(final ServiceRegistryExecutionPlan plan) {
+                plan.registerServiceRegistry(jpaServiceRegistry());
+            }
+        };
     }
 }

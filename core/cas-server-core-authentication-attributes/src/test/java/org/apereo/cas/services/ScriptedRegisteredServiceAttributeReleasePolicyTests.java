@@ -3,11 +3,12 @@ package org.apereo.cas.services;
 import org.apereo.cas.CoreAttributesTestUtils;
 
 import lombok.val;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
+import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link ScriptedRegisteredServiceAttributeReleasePolicyTests}.
@@ -22,7 +23,7 @@ public class ScriptedRegisteredServiceAttributeReleasePolicyTests {
         val p = new ScriptedRegisteredServiceAttributeReleasePolicy();
         p.setScriptFile("groovy { return attributes }");
         val principal = CoreAttributesTestUtils.getPrincipal("cas",
-            Collections.singletonMap("attribute", "value"));
+            Collections.singletonMap("attribute", List.of("value")));
         val attrs = p.getAttributes(principal,
             CoreAttributesTestUtils.getService(),
             CoreAttributesTestUtils.getRegisteredService());

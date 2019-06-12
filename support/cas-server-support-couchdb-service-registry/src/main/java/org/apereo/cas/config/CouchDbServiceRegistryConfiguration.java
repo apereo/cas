@@ -8,6 +8,7 @@ import org.apereo.cas.services.CouchDbServiceRegistry;
 import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryExecutionPlan;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
+import org.apereo.cas.services.ServiceRegistryListener;
 
 import lombok.val;
 import org.ektorp.impl.ObjectMapperFactory;
@@ -17,8 +18,11 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.Collection;
 
 /**
  * This is {@link CouchDbServiceRegistryConfiguration}.
@@ -29,10 +33,13 @@ import org.springframework.context.annotation.Configuration;
 @RequiresModule(name = "cas-server-support-couchdb-service-registry")
 @Configuration("couchDbServiceRegistryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class CouchDbServiceRegistryConfiguration implements ServiceRegistryExecutionPlanConfigurer {
+public class CouchDbServiceRegistryConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
+
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
 
     @Autowired
     @Qualifier("serviceRegistryCouchDbFactory")
@@ -41,6 +48,10 @@ public class CouchDbServiceRegistryConfiguration implements ServiceRegistryExecu
     @Autowired
     @Qualifier("defaultObjectMapperFactory")
     private ObjectProvider<ObjectMapperFactory> objectMapperFactory;
+
+    @Autowired
+    @Qualifier("serviceRegistryListeners")
+    private ObjectProvider<Collection<ServiceRegistryListener>> serviceRegistryListeners;
 
     @Bean
     @RefreshScope
@@ -64,11 +75,18 @@ public class CouchDbServiceRegistryConfiguration implements ServiceRegistryExecu
     @RefreshScope
     @ConditionalOnMissingBean(name = "couchDbServiceRegistry")
     public ServiceRegistry couchDbServiceRegistry() {
-        return new CouchDbServiceRegistry(serviceRegistryCouchDbRepository(), casProperties.getServiceRegistry().getCouchDb().getRetries());
+        return new CouchDbServiceRegistry(eventPublisher, serviceRegistryCouchDbRepository(), serviceRegistryListeners.getIfAvailable());
     }
 
-    @Override
-    public void configureServiceRegistry(final ServiceRegistryExecutionPlan plan) {
-        plan.registerServiceRegistry(couchDbServiceRegistry());
+    @Bean
+    @ConditionalOnMissingBean(name = "couchDbServiceRegistryExecutionPlanConfigurer")
+    public ServiceRegistryExecutionPlanConfigurer couchDbServiceRegistryExecutionPlanConfigurer() {
+        return new ServiceRegistryExecutionPlanConfigurer() {
+            @Override
+            public void configureServiceRegistry(final ServiceRegistryExecutionPlan plan) {
+                plan.registerServiceRegistry(couchDbServiceRegistry());
+            }
+        };
     }
+
 }

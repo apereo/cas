@@ -1,8 +1,6 @@
 package org.apereo.cas.logout.slo;
 
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
-import org.apereo.cas.logout.LogoutMessageCreator;
-import org.apereo.cas.logout.SingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.http.HttpClient;
 
@@ -17,7 +15,7 @@ public class DefaultSingleLogoutServiceMessageHandler extends BaseSingleLogoutSe
 
 
     public DefaultSingleLogoutServiceMessageHandler(final HttpClient httpClient,
-                                                    final LogoutMessageCreator logoutMessageBuilder,
+                                                    final SingleLogoutMessageCreator logoutMessageBuilder,
                                                     final ServicesManager servicesManager,
                                                     final SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder,
                                                     final boolean asynchronous,

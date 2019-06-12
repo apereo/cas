@@ -1,6 +1,7 @@
 package org.apereo.cas.services.web;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -25,6 +26,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Slf4j
 @Setter
+@Getter
 public class ThemeBasedViewResolver implements ViewResolver, Ordered {
 
     private final ThemeResolver themeResolver;
@@ -54,13 +56,18 @@ public class ThemeBasedViewResolver implements ViewResolver, Ordered {
                 return delegate.get().resolveViewName(viewName, locale);
             }
         } catch (final Exception e) {
-            LOGGER.debug("error resolving view '{}' for theme '{}'", viewName, theme.orElse(null), e);
+            LOGGER.debug("error resolving view [{}] for theme [{}]", viewName, theme.orElse(null), e);
         }
-        // default to not resolving any view
         return null;
     }
 
-    private ViewResolver getViewResolver(final String theme) {
+    /**
+     * Get (or create) the view resolver for the theme.
+     *
+     * @param theme the theme
+     * @return the view resolver
+     */
+    protected ViewResolver getViewResolver(final String theme) {
         if (resolvers.containsKey(theme)) {
             return resolvers.get(theme);
         }
@@ -68,10 +75,5 @@ public class ThemeBasedViewResolver implements ViewResolver, Ordered {
         val resolver = viewResolverFactory.create(theme);
         resolvers.put(theme, resolver);
         return resolver;
-    }
-
-    @Override
-    public int getOrder() {
-        return order;
     }
 }

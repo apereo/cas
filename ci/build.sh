@@ -9,10 +9,7 @@ echo -e "***********************************************"
 echo -e "Gradle build started at `date`"
 echo -e "***********************************************"
 
-echo -e "Installing NPM...\n"
-./gradlew npmInstall --stacktrace -q
-
-gradleBuild="$gradleBuild build -x test -x javadoc -x check -DskipNpmLint=true \
+gradleBuild="$gradleBuild build -x test -x javadoc -x check \
     -DskipNestedConfigMetadataGen=true --parallel "
 
 if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[show streams]"* ]]; then

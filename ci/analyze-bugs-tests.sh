@@ -27,12 +27,9 @@ echo -e "***********************************************"
 echo -e "Gradle build started at `date`"
 echo -e "***********************************************"
 
-echo -e "Installing NPM...\n"
-./gradlew npmInstall --stacktrace -q
-
-gradleBuild="$gradleBuild spotbugsTest -x test -x javadoc \
-     -DskipGradleLint=true -DskipSass=true -DskipNestedConfigMetadataGen=true \
-     -DskipNodeModulesCleanUp=true -DskipNpmCache=true --parallel -DshowStandardStreams=true "
+gradleBuild="$gradleBuild spotbugsTest -q -x test -x javadoc \
+     -DskipGradleLint=true -DskipNestedConfigMetadataGen=true \
+     -DshowStandardStreams=true "
 
 if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[rerun tasks]"* ]]; then
     gradleBuild="$gradleBuild --rerun-tasks "
@@ -56,7 +53,7 @@ else
     waitRetVal=$?
 
     eval $prepCommand
-    eval $tasks
+    eval $tasks 2> /dev/null
     retVal=$?
 
     echo -e "***************************************************************************************"

@@ -21,7 +21,7 @@ The use of long term authentication sessions dramatically increases the length o
 stored in the ticket registry. Loss of a ticket-granting ticket corresponding to a long-term SSO session would require
 the user to re-authenticate to CAS. A security policy that requires that long term authentication sessions MUST NOT
 be terminated prior to their natural expiration would mandate a ticket 
-registry component that provides for durable storage, such as the [JPA Ticket Registry](JPA-Ticket-Registry.html).
+registry component that provides for durable storage, such as the [JPA Ticket Registry](../ticketing/JPA-Ticket-Registry.html).
 
 ## Configuration
 

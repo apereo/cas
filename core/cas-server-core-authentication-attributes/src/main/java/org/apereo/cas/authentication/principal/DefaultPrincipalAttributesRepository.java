@@ -1,12 +1,14 @@
 package org.apereo.cas.authentication.principal;
 
 import org.apereo.cas.authentication.principal.cache.AbstractPrincipalAttributesRepository;
+import org.apereo.cas.services.RegisteredService;
 
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -24,19 +26,23 @@ public class DefaultPrincipalAttributesRepository extends AbstractPrincipalAttri
     private static final long serialVersionUID = -4535358847021241725L;
 
     @Override
-    protected void addPrincipalAttributes(final String id, final Map<String, Object> attributes) {
+    protected void addPrincipalAttributes(final String id, final Map<String, List<Object>> attributes,
+                                          final RegisteredService registeredService) {
         LOGGER.debug("Using [{}], no caching takes place for [{}] to add attributes.", id, this.getClass().getSimpleName());
     }
 
     @Override
-    protected Map<String, Object> getPrincipalAttributes(final Principal p) {
-        val attributes = p.getAttributes();
-        LOGGER.debug("[{}] will return the collection of attributes directly associated with the principal object which are [{}]",
-            this.getClass().getSimpleName(), attributes);
-        return attributes;
-    }
+    public Map<String, List<Object>> getAttributes(final Principal principal, final RegisteredService registeredService) {
+        val mergeStrategy = determineMergingStrategy();
+        val principalAttributes = getPrincipalAttributes(principal);
 
-    @Override
-    public void close() {
+        if (areAttributeRepositoryIdsDefined()) {
+            val personDirectoryAttributes = retrievePersonAttributesFromAttributeRepository(principal.getId());
+            LOGGER.debug("Merging current principal attributes with that of the repository via strategy [{}]", mergeStrategy);
+            val mergedAttributes = mergeStrategy.getAttributeMerger().mergeAttributes(principalAttributes, personDirectoryAttributes);
+            LOGGER.debug("Merged current principal attributes are [{}]", mergedAttributes);
+            return convertAttributesToPrincipalAttributesAndCache(principal, mergedAttributes, registeredService);
+        }
+        return convertAttributesToPrincipalAttributesAndCache(principal, principalAttributes, registeredService);
     }
 }

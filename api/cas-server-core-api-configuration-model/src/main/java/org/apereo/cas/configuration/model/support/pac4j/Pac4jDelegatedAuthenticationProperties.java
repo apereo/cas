@@ -40,6 +40,13 @@ public class Pac4jDelegatedAuthenticationProperties implements Serializable {
     private String principalAttributeId;
 
     /**
+     * Handle provisioning ops when establishing profiles
+     * from external identity providers.
+     */
+    @NestedConfigurationProperty
+    private Pac4jDelegatedAuthenticationProvisioningProperties provisioning = new Pac4jDelegatedAuthenticationProvisioningProperties();
+
+    /**
      * Settings that deal with having Facebook as an external delegated-to authentication provider.
      */
     private Facebook facebook = new Facebook();
@@ -134,13 +141,7 @@ public class Pac4jDelegatedAuthenticationProperties implements Serializable {
      * The name of the authentication handler in CAS used for delegation.
      */
     private String name;
-
-    /**
-     * Indicates settings related to tracking the delegation cookie.
-     */
-    @NestedConfigurationProperty
-    private Pac4jDelegatedSessionCookieProperties cookie = new Pac4jDelegatedSessionCookieProperties();
-
+    
     @RequiresModule(name = "cas-server-support-pac4j-webflow")
     @Getter
     @Setter

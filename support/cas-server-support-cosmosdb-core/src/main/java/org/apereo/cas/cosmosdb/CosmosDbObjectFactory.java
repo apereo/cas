@@ -125,7 +125,7 @@ public class CosmosDbObjectFactory {
      * @param documentDbMappingContext the document db mapping context
      * @return the mapping document db converter
      */
-    private MappingDocumentDbConverter createMappingDocumentDbConverter(final DocumentDbMappingContext documentDbMappingContext) {
+    private static MappingDocumentDbConverter createMappingDocumentDbConverter(final DocumentDbMappingContext documentDbMappingContext) {
         return new MappingDocumentDbConverter(documentDbMappingContext);
     }
 }

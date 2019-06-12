@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.shibboleth.idp.profile.spring.factory.BasicResourceCredentialFactoryBean;
 import net.shibboleth.idp.profile.spring.factory.BasicX509CredentialFactoryBean;
-import org.apache.commons.lang3.StringUtils;
+import net.shibboleth.idp.profile.spring.relyingparty.metadata.filter.impl.SignatureValidationCriteriaSetFactoryBean;
 import org.cryptacular.util.CertUtil;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.saml.metadata.resolver.filter.impl.SignatureValidationFilter;
@@ -45,7 +45,6 @@ import java.util.ArrayList;
 @UtilityClass
 public class SamlUtils {
     private static final int SAML_OBJECT_LOG_ASTERIXLINE_LENGTH = 80;
-    private static final String NAMESPACE_URI = "http://www.w3.org/2000/xmlns/";
 
     /**
      * Read certificate x 509 certificate.
@@ -84,17 +83,28 @@ public class SamlUtils {
      */
     public static <T extends XMLObject> T transformSamlObject(final OpenSamlConfigBean configBean, final String xml,
                                                               final Class<T> clazz) {
-        try (InputStream in = new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8))) {
+        return transformSamlObject(configBean, xml.getBytes(StandardCharsets.UTF_8), clazz);
+    }
+
+    /**
+     * Transform saml object t.
+     *
+     * @param <T>        the type parameter
+     * @param configBean the config bean
+     * @param data       the data
+     * @param clazz      the clazz
+     * @return the type
+     */
+    public static <T extends XMLObject> T transformSamlObject(final OpenSamlConfigBean configBean, final byte[] data,
+                                                              final Class<T> clazz) {
+        try (InputStream in = new ByteArrayInputStream(data)) {
             val document = configBean.getParserPool().parse(in);
             val root = document.getDocumentElement();
-
             val marshaller = configBean.getUnmarshallerFactory().getUnmarshaller(root);
             if (marshaller != null) {
                 val result = marshaller.unmarshall(root);
                 if (!clazz.isAssignableFrom(result.getClass())) {
-                    throw new ClassCastException("Result [" + result
-                        + " is of type " + result.getClass()
-                        + " when we were expecting " + clazz);
+                    throw new ClassCastException("Result [" + result + " is of type " + result.getClass() + " when we were expecting " + clazz);
                 }
                 return (T) result;
             }
@@ -199,7 +209,8 @@ public class SamlUtils {
 
         LOGGER.debug("Adding signature validation filter based on the configured trust engine");
         val signatureValidationFilter = new SignatureValidationFilter(trustEngine);
-        signatureValidationFilter.setRequireSignedRoot(false);
+        signatureValidationFilter.setDefaultCriteria(new SignatureValidationCriteriaSetFactoryBean().getObject());
+
         LOGGER.debug("Added metadata SignatureValidationFilter with signature from [{}]", signatureResourceLocation);
         return signatureValidationFilter;
     }
@@ -220,15 +231,13 @@ public class SamlUtils {
         } catch (final Exception e) {
             LOGGER.trace(e.getMessage(), e);
 
-            LOGGER.debug("Credential cannot be extracted from [{}] via X.509. Treating it as a public key to locate credential...",
-                resource);
+            LOGGER.debug("Credential cannot be extracted from [{}] via X.509. Treating it as a public key to locate credential...", resource);
             val credentialFactoryBean = new BasicResourceCredentialFactoryBean();
             credentialFactoryBean.setPublicKeyInfo(resource);
             credentialFactoryBean.afterPropertiesSet();
             return credentialFactoryBean.getObject();
         }
     }
-
 
     /**
      * Log saml object.
@@ -239,15 +248,14 @@ public class SamlUtils {
      * @throws SamlException the saml exception
      */
     public static String logSamlObject(final OpenSamlConfigBean configBean, final XMLObject samlObject) throws SamlException {
-        val repeat = StringUtils.repeat('*', SAML_OBJECT_LOG_ASTERIXLINE_LENGTH);
+        val repeat = "*".repeat(SAML_OBJECT_LOG_ASTERIXLINE_LENGTH);
         LOGGER.debug(repeat);
         try (val writer = transformSamlObject(configBean, samlObject, true)) {
-            LOGGER.debug("Logging [{}]\n\n{}\n\n", samlObject.getClass().getName(), writer);
+            LOGGER.debug("Logging [{}]\n\n[{}]\n\n", samlObject.getClass().getName(), writer);
             LOGGER.debug(repeat);
             return writer.toString();
         } catch (final Exception e) {
             throw new SamlException(e.getMessage(), e);
         }
-
     }
 }

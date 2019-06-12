@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.web.CasPropertiesThymeleafViewResolverConfigurer;
+import org.apereo.cas.services.web.CasThymeleafLoginFormDirector;
 import org.apereo.cas.services.web.CasThymeleafOutputTemplateHandler;
 import org.apereo.cas.services.web.CasThymeleafViewResolverConfigurer;
 import org.apereo.cas.services.web.ChainingThemeResolver;
@@ -89,6 +90,7 @@ public class CasThemesConfiguration {
         return new CasPropertiesThymeleafViewResolverConfigurer(casProperties);
     }
 
+    @ConditionalOnMissingBean(name = "registeredServiceViewResolver")
     @Bean
     public ViewResolver registeredServiceViewResolver() {
         val resolver = new ThemeBasedViewResolver(themeResolver(), themeViewResolverFactory());
@@ -104,10 +106,15 @@ public class CasThemesConfiguration {
         return factory;
     }
 
+    @ConditionalOnMissingBean(name = "casThymeleafLoginFormDirector")
+    @Bean
+    public CasThymeleafLoginFormDirector casThymeleafLoginFormDirector() {
+        return new CasThymeleafLoginFormDirector();
+    }
+
     @Bean
     public Map serviceThemeResolverSupportedBrowsers() {
         val map = new HashMap<String, String>();
-        map.put(".*iPhone.*", "iphone");
         map.put(".*Android.*", "android");
         map.put(".*Safari.*Pre.*", "safari");
         map.put(".*iPhone.*", "iphone");
@@ -142,7 +149,7 @@ public class CasThemesConfiguration {
             new CasConfigurationProperties());
         serviceThemeResolver.setDefaultThemeName(defaultThemeName);
 
-        val header = new RequestHeaderThemeResolver();
+        val header = new RequestHeaderThemeResolver(casProperties.getTheme().getParamName());
         header.setDefaultThemeName(defaultThemeName);
 
         val chainingThemeResolver = new ChainingThemeResolver();
@@ -193,7 +200,6 @@ public class CasThemesConfiguration {
 
         r.setTemplateEngine(engine);
         r.setViewNames(thymeleafResolver.getViewNames());
-
         r.setCache(false);
 
         thymeleafViewResolverConfigurers.stream()
@@ -202,5 +208,4 @@ public class CasThemesConfiguration {
 
         return r;
     }
-
 }

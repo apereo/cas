@@ -43,7 +43,7 @@ public class DisplayBeforePasswordlessAuthenticationAction extends AbstractActio
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
         }
         val account = passwordlessUserAccountStore.findUser(username);
-        if (!account.isPresent()) {
+        if (account.isEmpty()) {
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
         }
         val user = account.get();
@@ -52,13 +52,11 @@ public class DisplayBeforePasswordlessAuthenticationAction extends AbstractActio
 
         communicationsManager.validate();
         if (communicationsManager.isMailSenderDefined() && StringUtils.isNotBlank(user.getEmail())) {
-            communicationsManager.email(token,
-                passwordlessProperties.getTokens().getMail().getFrom(),
-                passwordlessProperties.getTokens().getMail().getSubject(),
-                user.getEmail());
+            val mail = passwordlessProperties.getTokens().getMail();
+            communicationsManager.email(mail, user.getEmail(), mail.getFormattedBody(token));
         }
         if (communicationsManager.isSmsSenderDefined() && StringUtils.isNotBlank(user.getPhone())) {
-            communicationsManager.sms(passwordlessProperties.getTokens().getMail().getFrom(), user.getPhone(), token);
+            communicationsManager.sms(passwordlessProperties.getTokens().getSms().getFrom(), user.getPhone(), token);
         }
 
         passwordlessTokenRepository.deleteTokens(user.getUsername());

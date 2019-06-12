@@ -37,6 +37,14 @@ Support is provided via the following module:
 </dependency>
 ```
 
+## Administrative Endpoints
+
+The following endpoints are provided by CAS:
+ 
+| Endpoint                 | Description
+|--------------------------|------------------------------------------------
+| `multifactorTrustedDevices`   | Expose devices currently [registered and trusted](Multifactor-TrustedDevice-Authentication.html) by the CAS multifactor authentication engine. A `GET` operation produces a list of all trusted devices. Specifying a username in the URL as the placeholder/selector will fetch devices registered for that user (i.e. `multifactorTrustedDevices/{username}`). A `DELETE` operation with a device key  id will attempt to remove the trusted device (i.e. `multifactorTrustedDevices/{id}`).
+
 ## Settings
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#multifactor-trusted-devicebrowser).
@@ -67,12 +75,12 @@ User decisions must be remembered and processed later on subsequent requests.  A
 If you do nothing, by default records are kept inside the runtime memory and cached for a configurable amount of time.
 This is most useful if you have a very small deployment with a small user base or if you simply wish to demo the functionality.
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#json-storage).
-
 ### JSON
 
 Records may be kept inside a static json resource whose path is defined via CAS settings.
 This is also most useful if you have a very small deployment with a small user base or if you simply wish to demo the functionality.
+
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#json-storage).
 
 ### JDBC
 
@@ -123,6 +131,21 @@ Support is provided via the following module:
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#mongodb-storage).
 
+### DynamoDb
+
+User decisions may also be kept inside a DynamoDb instance.
+
+Support is provided via the following module:
+
+```xml
+<dependency>
+    <groupId>org.apereo.cas</groupId>
+    <artifactId>cas-server-support-trusted-mfa-dynamodb</artifactId>
+    <version>${cas.version}</version>
+</dependency>
+```
+
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#dynamodb-storage).
 
 ### REST
 

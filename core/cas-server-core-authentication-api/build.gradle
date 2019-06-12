@@ -7,12 +7,7 @@ dependencies {
     
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-util-api")
-    implementation project(":core:cas-server-core-authentication-mfa")
-    
-
-    implementation libraries.springsecurity
-    implementation libraries.caffein
-    implementation libraries.metrics
+    implementation project(":core:cas-server-core-authentication-mfa-api")
 
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
 }

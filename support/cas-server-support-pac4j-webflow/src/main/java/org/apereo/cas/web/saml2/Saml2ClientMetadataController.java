@@ -93,7 +93,7 @@ public class Saml2ClientMetadataController {
     }
 
     @SneakyThrows
-    private ResponseEntity<String> getSaml2ClientServiceProviderMetadataResponseEntity(final SAML2Client saml2Client) {
+    private static ResponseEntity<String> getSaml2ClientServiceProviderMetadataResponseEntity(final SAML2Client saml2Client) {
         val headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_XML);
         saml2Client.init();
@@ -115,7 +115,7 @@ public class Saml2ClientMetadataController {
         return new ResponseEntity<>(metadata, headers, HttpStatus.OK);
     }
 
-    private ResponseEntity<String> getNotAcceptableResponseEntity() {
+    private static ResponseEntity<String> getNotAcceptableResponseEntity() {
         return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
     }
 }

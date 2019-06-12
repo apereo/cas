@@ -13,12 +13,10 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import lombok.SneakyThrows;
 import lombok.val;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Test;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.Resource;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
 import javax.security.auth.login.AccountExpiredException;
@@ -29,7 +27,7 @@ import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.util.LinkedHashMap;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -39,52 +37,61 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 public class JsonResourceAuthenticationHandlerTests {
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
+    private final JsonResourceAuthenticationHandler handler;
 
-    private Resource resource;
-    private JsonResourceAuthenticationHandler handler;
-
-    public JsonResourceAuthenticationHandlerTests() throws Exception {
+    @SneakyThrows
+    public JsonResourceAuthenticationHandlerTests() {
         val accounts = new LinkedHashMap<String, CasUserAccount>();
 
         var acct = new CasUserAccount();
         acct.setPassword("Mellon");
         acct.setExpirationDate(LocalDate.now(ZoneOffset.UTC).plusWeeks(2));
-        acct.setAttributes(CollectionUtils.wrap("firstName", "Apereo", "lastName", "CAS"));
+        acct.setAttributes(CollectionUtils.wrap("firstName",
+            CollectionUtils.wrapList("Apereo"), "lastName",
+            CollectionUtils.wrapList("CAS")));
         accounts.put("casexpiring", acct);
 
         acct = new CasUserAccount();
         acct.setPassword("Mellon");
         acct.setStatus(CasUserAccount.AccountStatus.OK);
-        acct.setAttributes(CollectionUtils.wrap("firstName", "Apereo", "lastName", "CAS"));
+        acct.setAttributes(CollectionUtils.wrap("firstName",
+            CollectionUtils.wrapList("Apereo"), "lastName",
+            CollectionUtils.wrapList("CAS")));
         accounts.put("casuser", acct);
 
         acct = new CasUserAccount();
         acct.setPassword("Mellon");
         acct.setStatus(CasUserAccount.AccountStatus.DISABLED);
-        acct.setAttributes(CollectionUtils.wrap("firstName", "Apereo", "lastName", "CAS"));
+        acct.setAttributes(CollectionUtils.wrap("firstName",
+            CollectionUtils.wrapList("Apereo"), "lastName",
+            CollectionUtils.wrapList("CAS")));
         accounts.put("casdisabled", acct);
 
         acct = new CasUserAccount();
         acct.setPassword("Mellon");
         acct.setStatus(CasUserAccount.AccountStatus.MUST_CHANGE_PASSWORD);
-        acct.setAttributes(CollectionUtils.wrap("firstName", "Apereo", "lastName", "CAS"));
+        acct.setAttributes(CollectionUtils.wrap("firstName",
+            CollectionUtils.wrapList("Apereo"), "lastName",
+            CollectionUtils.wrapList("CAS")));
         accounts.put("casmustchange", acct);
 
         acct = new CasUserAccount();
         acct.setPassword("Mellon");
         acct.setStatus(CasUserAccount.AccountStatus.LOCKED);
-        acct.setAttributes(CollectionUtils.wrap("firstName", "Apereo", "lastName", "CAS"));
+        acct.setAttributes(CollectionUtils.wrap("firstName",
+            CollectionUtils.wrapList("Apereo"), "lastName",
+            CollectionUtils.wrapList("CAS")));
         accounts.put("caslocked", acct);
 
         acct = new CasUserAccount();
         acct.setPassword("Mellon");
         acct.setStatus(CasUserAccount.AccountStatus.EXPIRED);
-        acct.setAttributes(CollectionUtils.wrap("firstName", "Apereo", "lastName", "CAS"));
+        acct.setAttributes(CollectionUtils.wrap("firstName",
+            CollectionUtils.wrapList("Apereo"), "lastName",
+            CollectionUtils.wrapList("CAS")));
         accounts.put("casexpired", acct);
 
-        this.resource = new FileSystemResource(File.createTempFile("account", ".json"));
+        val resource = new FileSystemResource(File.createTempFile("account", ".json"));
 
         val mapper = Jackson2ObjectMapperBuilder.json()
             .featuresToDisable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
@@ -98,62 +105,51 @@ public class JsonResourceAuthenticationHandlerTests {
             .writerWithDefaultPrettyPrinter()
             .writeValue(resource.getFile(), accounts);
         this.handler = new JsonResourceAuthenticationHandler(null, mock(ServicesManager.class),
-            new DefaultPrincipalFactory(), null, this.resource);
+            new DefaultPrincipalFactory(), null, resource);
         this.handler.setPasswordPolicyConfiguration(new PasswordPolicyConfiguration(15));
     }
 
     @Test
-    public void verifyExpiringAccount() throws Exception {
-        val c =
-            CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casexpiring", "Mellon");
-        val result = handler.authenticate(c);
+    @SneakyThrows
+    public void verifyExpiringAccount() {
+        val result = handler.authenticate(
+            CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casexpiring", "Mellon"));
         assertFalse(result.getWarnings().isEmpty());
     }
 
     @Test
-    public void verifyOkAccount() throws Exception {
-        val c =
-            CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "Mellon");
-        assertNotNull(handler.authenticate(c));
+    @SneakyThrows
+    public void verifyOkAccount() {
+        assertNotNull(handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "Mellon")));
     }
 
     @Test
-    public void verifyNotFoundAccount() throws Exception {
-        this.thrown.expect(AccountNotFoundException.class);
-        val c =
-            CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("nobody", "Mellon");
-        handler.authenticate(c);
+    public void verifyNotFoundAccount() {
+        assertThrows(AccountNotFoundException.class,
+            () -> handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("nobody", "Mellon")));
     }
 
     @Test
-    public void verifyExpiredAccount() throws Exception {
-        this.thrown.expect(AccountExpiredException.class);
-        val c =
-            CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casexpired", "Mellon");
-        handler.authenticate(c);
+    public void verifyExpiredAccount() {
+        assertThrows(AccountExpiredException.class,
+            () -> handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casexpired", "Mellon")));
     }
 
     @Test
-    public void verifyDisabledAccount() throws Exception {
-        this.thrown.expect(AccountDisabledException.class);
-        val c =
-            CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casdisabled", "Mellon");
-        handler.authenticate(c);
+    public void verifyDisabledAccount() {
+        assertThrows(AccountDisabledException.class,
+            () -> handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casdisabled", "Mellon")));
     }
 
     @Test
-    public void verifyLockedAccount() throws Exception {
-        this.thrown.expect(AccountLockedException.class);
-        val c =
-            CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("caslocked", "Mellon");
-        handler.authenticate(c);
+    public void verifyLockedAccount() {
+        assertThrows(AccountLockedException.class,
+            () -> handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("caslocked", "Mellon")));
     }
 
     @Test
-    public void verifyMustChangePswAccount() throws Exception {
-        this.thrown.expect(AccountPasswordMustChangeException.class);
-        val c =
-            CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casmustchange", "Mellon");
-        handler.authenticate(c);
+    public void verifyMustChangePswAccount() {
+        assertThrows(AccountPasswordMustChangeException.class,
+            () -> handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casmustchange", "Mellon")));
     }
 }

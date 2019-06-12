@@ -2,8 +2,9 @@ package org.apereo.cas;
 
 import org.apereo.cas.services.MongoDbServiceRegistryCloudTests;
 
+import org.junit.platform.runner.JUnitPlatform;
+import org.junit.platform.suite.api.SelectClasses;
 import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
 
 /**
  * The {@link AllTestsSuite} is responsible for
@@ -12,7 +13,7 @@ import org.junit.runners.Suite;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses(MongoDbServiceRegistryCloudTests.class)
+@SelectClasses(MongoDbServiceRegistryCloudTests.class)
+@RunWith(JUnitPlatform.class)
 public class AllTestsSuite {
 }

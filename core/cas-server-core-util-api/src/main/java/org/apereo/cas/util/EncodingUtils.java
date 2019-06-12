@@ -1,6 +1,7 @@
 package org.apereo.cas.util;
 
 import org.apereo.cas.CipherExecutor;
+import org.apereo.cas.util.crypto.DecryptionException;
 
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
@@ -16,6 +17,7 @@ import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.OctJwkGenerator;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jws.JsonWebSignature;
+import org.jose4j.lang.JoseException;
 
 import javax.crypto.Cipher;
 import java.io.Serializable;
@@ -23,6 +25,7 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 
 /**
@@ -144,10 +147,13 @@ public class EncodingUtils {
      * @return the encoded string
      */
     public static String encodeBase64(final byte[] data, final boolean chunked) {
-        if (chunked) {
-            return BASE64_CHUNKED_ENCODER.encodeToString(data).trim();
+        if (data != null && data.length > 0) {
+            if (chunked) {
+                return BASE64_CHUNKED_ENCODER.encodeToString(data).trim();
+            }
+            return BASE64_UNCHUNKED_ENCODER.encodeToString(data).trim();
         }
-        return BASE64_UNCHUNKED_ENCODER.encodeToString(data).trim();
+        return StringUtils.EMPTY;
     }
 
     /**
@@ -333,6 +339,17 @@ public class EncodingUtils {
     }
 
     /**
+     * Sign jws hmac sha 256.
+     *
+     * @param key   the key
+     * @param value the value
+     * @return the byte [ ]
+     */
+    public static byte[] signJwsHMACSha256(final Key key, final byte[] value) {
+        return signJws(key, value, AlgorithmIdentifiers.HMAC_SHA256);
+    }
+
+    /**
      * Sign jws.
      *
      * @param key   the key
@@ -408,9 +425,9 @@ public class EncodingUtils {
             jwe.setEncryptionMethodHeaderParameter(contentEncryptionAlgorithmIdentifier);
             jwe.setKey(secretKeyEncryptionKey);
             jwe.setHeader("typ", "JWT");
-            LOGGER.debug("Encrypting via [{}]", contentEncryptionAlgorithmIdentifier);
+            LOGGER.trace("Encrypting via [{}]", contentEncryptionAlgorithmIdentifier);
             return jwe.getCompactSerialization();
-        } catch (final Exception e) {
+        } catch (final JoseException e) {
             throw new IllegalArgumentException("Is JCE Unlimited Strength Jurisdiction Policy installed? " + e.getMessage(), e);
         }
     }
@@ -427,8 +444,15 @@ public class EncodingUtils {
         val jwe = new JsonWebEncryption();
         jwe.setKey(secretKeyEncryptionKey);
         jwe.setCompactSerialization(value);
-        LOGGER.debug("Decrypting value...");
-        return jwe.getPayload();
+        LOGGER.trace("Decrypting value...");
+        try {
+            return jwe.getPayload();
+        } catch (final JoseException e) {
+            if (LOGGER.isTraceEnabled()) {
+                throw new DecryptionException(e);
+            }
+            throw new DecryptionException();
+        }
     }
 
     /**
@@ -440,7 +464,7 @@ public class EncodingUtils {
         try {
             val maxKeyLen = Cipher.getMaxAllowedKeyLength("AES");
             return maxKeyLen == Integer.MAX_VALUE;
-        } catch (final Exception e) {
+        } catch (final NoSuchAlgorithmException e) {
             return false;
         }
     }

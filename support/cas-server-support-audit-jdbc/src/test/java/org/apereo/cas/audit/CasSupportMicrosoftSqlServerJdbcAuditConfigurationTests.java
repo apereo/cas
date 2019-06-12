@@ -1,10 +1,9 @@
 package org.apereo.cas.audit;
 
-import org.apereo.cas.category.MsSqlServerCategory;
-import org.apereo.cas.util.junit.ConditionalIgnore;
-import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
+import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
+import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Tag;
 import org.springframework.test.context.TestPropertySource;
 
 /**
@@ -17,10 +16,11 @@ import org.springframework.test.context.TestPropertySource;
     "cas.audit.jdbc.user=sa",
     "cas.audit.jdbc.password=p@ssw0rd",
     "cas.audit.jdbc.driverClass=com.microsoft.sqlserver.jdbc.SQLServerDriver",
-    "cas.audit.jdbc.url=jdbc:sqlserver://localhost:1433;databaseName=master",
+    "cas.audit.jdbc.url=jdbc:sqlserver://localhost:1433;databaseName=audit",
     "cas.audit.jdbc.dialect=org.hibernate.dialect.SQLServer2012Dialect"
     })
-@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class, port = 1433)
-@Category(MsSqlServerCategory.class)
+@EnabledIfContinuousIntegration
+@EnabledIfPortOpen(port = 1433)
+@Tag("MsSqlServer")
 public class CasSupportMicrosoftSqlServerJdbcAuditConfigurationTests extends CasSupportJdbcAuditConfigurationTests {
 }

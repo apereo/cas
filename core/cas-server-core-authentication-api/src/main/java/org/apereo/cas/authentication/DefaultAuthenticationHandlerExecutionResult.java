@@ -55,51 +55,36 @@ public class DefaultAuthenticationHandlerExecutionResult implements Authenticati
      */
     private List<MessageDescriptor> warnings = new ArrayList<>();
 
-    /**
-     * Instantiates a new handler result.
-     *
-     * @param source   the source
-     * @param metaData the meta data
-     */
     public DefaultAuthenticationHandlerExecutionResult(final AuthenticationHandler source, final CredentialMetaData metaData) {
         this(source, metaData, null, new ArrayList<>());
     }
 
-    /**
-     * Instantiates a new handler result.
-     *
-     * @param source   the source
-     * @param metaData the meta data
-     * @param p        the p
-     */
+
     public DefaultAuthenticationHandlerExecutionResult(final AuthenticationHandler source, final CredentialMetaData metaData,
                                                        final Principal p) {
         this(source, metaData, p, new ArrayList<>());
     }
 
-    /**
-     * Instantiates a new handler result.
-     *
-     * @param source   the source
-     * @param metaData the meta data
-     * @param warnings the warnings
-     */
+
     public DefaultAuthenticationHandlerExecutionResult(final AuthenticationHandler source, final CredentialMetaData metaData,
-                                                       final List<MessageDescriptor> warnings) {
+                                                       final @NonNull List<MessageDescriptor> warnings) {
         this(source, metaData, null, warnings);
     }
 
-    /**
-     * Instantiates a new handler result.
-     *
-     * @param source   the source
-     * @param metaData the meta data
-     * @param p        the p
-     * @param warnings the warnings
-     */
     public DefaultAuthenticationHandlerExecutionResult(final AuthenticationHandler source, final CredentialMetaData metaData,
-                                                       final Principal p, @NonNull final List<MessageDescriptor> warnings) {
+                                                       final Principal p, final @NonNull List<MessageDescriptor> warnings) {
         this(StringUtils.isBlank(source.getName()) ? source.getClass().getSimpleName() : source.getName(), metaData, p, warnings);
     }
 
+    @Override
+    public AuthenticationHandlerExecutionResult addWarning(final MessageDescriptor message) {
+        this.warnings.add(message);
+        return this;
+    }
+
+    @Override
+    public AuthenticationHandlerExecutionResult clearWarnings() {
+        this.warnings.clear();
+        return this;
+    }
 }

@@ -1,19 +1,31 @@
+import java.util.concurrent.ConcurrentHashMap
+
 description = "Apereo Central Authentication Service $version"
 defaultTasks "clean", "build"
 
 ext {
-    publishSnapshots = Boolean.getBoolean("publishSnapshots")
-    publishReleases = Boolean.getBoolean("publishReleases")
+    srcTagMap = new ConcurrentHashMap<File, Set<String>>()
+
     sonatypeUsername = System.getProperty("sonatypeUsername")
     sonatypePassword = System.getProperty("sonatypePassword")
+
+    publishSnapshots = Boolean.getBoolean("publishSnapshots")
+    publishReleases = Boolean.getBoolean("publishReleases")
+
+    if ((publishSnapshots || publishReleases) && (sonatypeUsername == null || sonatypePassword == null)) {
+        throw new GradleException("No credentials are configured to publish releases or snapshots")
+    }                          
+
     testCategoryType = System.getProperty("testCategoryType")
     skipBootifulArtifact = System.getProperty("skipBootifulArtifact")
     skipErrorProneCompiler = System.getProperty("skipErrorProneCompiler")
-    forceBom = Boolean.getBoolean("forceBom")
-    enableRemoteDebugging = Boolean.getBoolean("enableRemoteDebugging")
-    continuousIntegrationBuild = Boolean.getBoolean("CI") || Boolean.getBoolean("TRAVIS") || Boolean.getBoolean("CONTINUOUS_INTEGRATION")
 
-    publishingRelease = publishReleases && rootProject.sonatypeUsername != null && rootProject.sonatypePassword != null
+    forceBom = Boolean.getBoolean("forceBom")
+
+    enableRemoteDebugging = Boolean.getBoolean("enableRemoteDebugging")
+    remoteDebuggingSuspend = Boolean.getBoolean("remoteDebuggingSuspend") ? "y" : "n"
+
+    continuousIntegrationBuild = Boolean.getBoolean("CI") || Boolean.getBoolean("TRAVIS") || Boolean.getBoolean("CONTINUOUS_INTEGRATION")
     /*
         Open the project git repository in the current directory.
         Get commit id of HEAD.
@@ -22,10 +34,11 @@ ext {
     def gitHead = git.head()
     currentRevision = gitHead.id
     currentAbbreviatedRevision = gitHead.abbreviatedId
+    git.close()
 }
 
 def isArtifactSigningRequired = {
-    return (publishReleases && sonatypeUsername != null && sonatypePassword != null)
+    return publishReleases
 }
 
 apply from: rootProject.file("gradle/overrides.gradle")
@@ -51,7 +64,8 @@ buildscript {
     }
 
     dependencies {
-        classpath "com.gradle:build-scan-plugin:1.16"
+        classpath "com.gradle:build-scan-plugin:2.3"
+        classpath "gradle.plugin.com.ewerk.gradle.plugins:jaxb2-plugin:1.0.9"
         classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
         classpath "com.netflix.nebula:gradle-lint-plugin:$gradleLintVersion"
         classpath "io.franzbecker:gradle-lombok:$gradleLombokVersion"
@@ -59,7 +73,6 @@ buildscript {
         classpath "io.spring.gradle:propdeps-plugin:$gradlePropDepsVersion"
         classpath "org.ajoberstar:grgit:$gradleGitVersion"
         classpath "net.ltgt.gradle:gradle-errorprone-javacplugin-plugin:$gradleErrorProneVersion"
-        classpath "com.moowork.gradle:gradle-node-plugin:$gradleNodeVersion"
         classpath "org.owasp:dependency-check-gradle:$gradleDependencyCheckVersion"
         classpath "gradle.plugin.com.github.spotbugs:spotbugs-gradle-plugin:$gradleSpotbugsVersion"
         classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:$gradleSonarqubeVersion"
@@ -75,38 +88,50 @@ if (rootProject.continuousIntegrationBuild) {
 
 apply plugin: "org.owasp.dependencycheck"
 dependencyCheck {
+    //logging.captureStandardOutput LogLevel.DEBUG
     /*
      * Specifies if the build should be failed if a CVSS score equal
      * to or above a specified level is identified.
      */
-    failBuildOnCVSS = 7
+    failBuildOnCVSS = 8
     skipTestGroups = true
+    skipConfigurations = ['jacocoAgent', 'jacocoAnt', 'optional', 'provided', 'providedCompile', 'providedRuntime',
+                          'signatures', 'spotbugs','spotbugsPlugins', 'checkstyle', 'errorprone', 'errorproneJavac',
+                          'annotationProcessor', 'archives', 'developmentOnly', 'compileOnly',
+                          'tests', 'testRuntimeOnly', 'testRuntimeClasspath', 'testRuntime', 'testImplementation',
+                          'testCompileOnly', 'testCompileClasspath', 'testCompile', 'testAnnotationProcessor' ,
+                          'bootArchives', 'bootRunAnnotationProcessor' ]
+    cveValidForHours = 24
     suppressionFile = file("$rootProject.projectDir/style/dependency-check-suppressions.xml")
     analyzers {
         assemblyEnabled = false
         swiftEnabled = false
         cocoapodsEnabled = false
-        nspEnabled = false
+        nodeEnabled = false
+        nodeAuditEnabled = false
         autoconfEnabled = false
         cmakeEnabled = false
-        pathToMono = false
+        pathToDotnet = false
         nuspecEnabled = false
         rubygemsEnabled = false
         pyPackageEnabled = false
         pyDistributionEnabled = false
         nexusEnabled = false
         centralEnabled = false
+        bundleAuditEnabled = false
+        composerEnabled = false
+        opensslEnabled = false
+        archiveEnabled = false
     }
 }
 
 allprojects {
     apply plugin: "idea"
     apply plugin: "eclipse"
-    apply plugin: "maven"
-    apply plugin: "signing"
     apply plugin: "jacoco"
-    apply plugin: "groovy"
+    apply plugin: "java"
 
+    
     project.ext["forceBootifulArtifact"] = null
 
     if (!rootProject.publishSnapshots && !Boolean.getBoolean("skipGradleLint")) {
@@ -114,20 +139,13 @@ allprojects {
         gradleLint.rules = ["dependency-parentheses", "dependency-tuple"]
     }
 
-    if (project.name == "cas-server-support-bom") {
-        logger.info "Skipping pom generation for [$project.name], letting it create <dependency-management> entries on its own."
-    } else {
-        apply from: rootProject.file("gradle/maven.gradle")
-    }
+
 
     jacoco {
         toolVersion = "$gradleJacocoVersion"
     }
 
-    signing {
-        required = isArtifactSigningRequired
-        sign configurations.archives
-    }
+    
 
     idea {
         module {
@@ -140,13 +158,6 @@ allprojects {
         }
     }
 
-    signArchives.enabled = rootProject.publishingRelease || rootProject.publishSnapshots
-
-    /*
-        Do NOT publish test dependencies into the final POM.
-    */
-    conf2ScopeMappings.mappings.remove(configurations.findByName("testCompileOnly"))
-    conf2ScopeMappings.mappings.remove(configurations.findByName("testRuntimeOnly"))
 
     repositories {
         mavenLocal()
@@ -159,11 +170,18 @@ allprojects {
     javadoc {
         options.addBooleanOption('html5', true)
         failOnError = Boolean.getBoolean("ignoreJavadocFailures")
+        excludes = ['**/generated/**']
     }
 }
 
 subprojects {
-    task dependencyCheckAnalyze(type: org.owasp.dependencycheck.gradle.tasks.Analyze)
+    task dependencyCheckAnalyze(type: org.owasp.dependencycheck.gradle.tasks.Analyze) {
+        /* 
+         Disable analyze in cas-server-core-api and cas-server-core because
+         support and webapp sub-projects will include their dependencies transitively.
+        */
+        enabled = !"${project.name}".contains("cas-server-core")
+    }
 
     task allDependenciesInsight(type: DependencyInsightReportTask,
             description: "Produce insight information for all dependencies") {
@@ -177,18 +195,26 @@ subprojects {
     if (!rootProject.skipErrorProneCompiler) {
         apply plugin: "net.ltgt.errorprone-javacplugin"
     }
-    apply plugin: "checkstyle"
-    apply plugin: "io.franzbecker.gradle-lombok"
-    if (!Boolean.getBoolean("skipFindbugs")) {
-        apply plugin: "com.github.spotbugs"
-    }
+    
     apply plugin: "propdeps"
     apply plugin: "propdeps-maven"
     apply plugin: "propdeps-idea"
     apply plugin: "propdeps-eclipse"
-
+    
+    
     apply from: rootProject.file("gradle/tasks.gradle")
     apply from: rootProject.file("gradle/tests.gradle")
+
+    if (projectShouldBePublished(project)) {
+        apply plugin: "maven-publish"
+        apply plugin: "signing"
+        apply from: rootProject.file("gradle/maven.gradle")
+        signing {
+            required = isArtifactSigningRequired
+            sign publishing.publications
+        }
+        //signArchives.enabled = rootProject.publishReleases || rootProject.publishSnapshots
+    }
 
     ext.libraries = rootProject.ext.libraries
 
@@ -197,23 +223,31 @@ subprojects {
         mavenCentral()
         maven { url "https://build.shibboleth.net/nexus/content/repositories/releases" }
         maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
+        maven { url "https://oss.sonatype.org/content/repositories/releases" }
         maven { url "https://repo.spring.io/plugins-release/" }
         maven { url "https://repo.spring.io/milestone/" }
+        maven { url "https://repo.spring.io/snapshot/" }
         maven { url "https://repo.spring.io/libs-milestone" }
         maven { url "https://dl.bintray.com/uniconiam/maven" }
         maven { url "https://jitpack.io" }
+        maven { url "https://oss.jfrog.org/artifactory/oss-snapshot-local" }
         jcenter()
     }
 
 
     configurations {
         tests
+        developmentOnly
+        
+        runtimeClasspath {
+            extendsFrom developmentOnly
+        }
     }
 
     configurations.all {
         resolutionStrategy {
             if (!Boolean.getBoolean("skipVersionConflict")) {
-                failOnVersionConflict()
+               failOnVersionConflict()
             }
             preferProjectModules()
             cacheDynamicVersionsFor 1, "days"
@@ -228,11 +262,10 @@ subprojects {
                 }
             }
         }
-        exclude(group: "ch.qos.logback", module: "logback-core")
-        exclude(group: "ch.qos.logback", module: "logback-classic")
         exclude(group: "cglib", module: "cglib")
         exclude(group: "cglib", module: "cglib-full")
         exclude(group: "org.slf4j", module: "slf4j-log4j12")
+        exclude(group: "org.slf4j", module: "slf4j-simple")
         exclude(group: "org.apache.logging.log4j", module: "log4j-to-slf4j")
     }
 
@@ -251,7 +284,6 @@ subprojects {
         main {
             java {
                 srcDirs = ["${projectDir}/src/main/java", "${projectDir}/src/main/groovy"]
-
             }
             resources {
                 srcDirs = ["${projectDir}/src/main/resources"]
@@ -283,6 +315,7 @@ subprojects {
             it.options.errorprone.errorproneArgs += ['-Xep:ParameterName:OFF', '-Xep:MissingOverride:OFF']
 
             casCompilerArgs.add("-XDcompilePolicy=byfile")
+            casCompilerArgs.add("-Werror")
         }
         it.options.compilerArgs += casCompilerArgs
     }
@@ -299,8 +332,11 @@ subprojects {
         project.buildDate != null || !project.buildJarFile.exists()
     }
 
-    lombok {
-        version = "$lombokVersion"
+    if (projectShouldBePublished(project)) {
+        apply plugin: "io.franzbecker.gradle-lombok"
+        lombok {
+            version = "$lombokVersion"
+        }
     }
 
     jar {
@@ -315,17 +351,23 @@ subprojects {
         }
     }
 
-    if (!Boolean.getBoolean("skipCheckstyle")) {
+
+    if (!Boolean.getBoolean("skipCheckstyle") && projectShouldBePublished(project)) {
+        apply plugin: "checkstyle"
         checkstyle {
-            configFile new File(rootDir, "style/checkstyle-rules.xml")
-            configProperties = ["checkstyle.suppressions.file": new File(rootDir, "style/checkstyle-suppressions.xml")]
+            configProperties = [
+                    "checkstyle.suppressions.file": new File(rootDir, "style/checkstyle-suppressions.xml"),
+                    "checkstyle.importcontrol.file": new File(rootDir, "style/import-control.xml")]
+            configFile = new File(rootDir, "style/checkstyle-rules.xml")
             ignoreFailures false
             showViolations true
             toolVersion "${checkstyleVersion}"
         }
     }
 
-    if (!Boolean.getBoolean("skipFindbugs")) {
+    if (!Boolean.getBoolean("skipFindbugs") && projectShouldBePublished(project)) {
+        apply plugin: "com.github.spotbugs"
+        apply from: rootProject.file("gradle/spotbugs.gradle")
         spotbugs {
             toolVersion = "${spotbugsVersion}"
             sourceSets = [sourceSets.main]
@@ -349,13 +391,11 @@ subprojects {
     }
 
     dependencies {
-        optional libraries.springcomponentindexer
-
         implementation libraries.aspectj
         implementation libraries.validationapi
 
         api libraries.jaxb
-        api libraries.log4j
+        api libraries.slf4j
         api libraries.guava
         api libraries.commons
         api libraries.jodatime
@@ -367,12 +407,14 @@ subprojects {
         api libraries.quartz
         api libraries.hibernate
         api libraries.groovy
+        api libraries.caffein
         api libraries.springcloud
         api libraries.springboot
+        api libraries.springsecurity
 
-        provided libraries.javax
+        api libraries.javax
 
-        if (!Boolean.getBoolean("skipFindbugs")) {
+        if (!Boolean.getBoolean("skipFindbugs") && projectShouldBePublished(project)) {
             spotbugs libraries.findbugs
             spotbugs configurations.spotbugsPlugins.dependencies
 
@@ -386,13 +428,8 @@ subprojects {
         }
         testImplementation libraries.tests
         testImplementation libraries.groovy
+        testImplementation libraries.log4j
         compileOnly libraries.findbugsannotations
-    }
-
-    if (project.name != 'cas-server-core-api-test-category') {
-        dependencies {
-            testImplementation project(path: ":api:cas-server-core-api-test-category", configuration: "tests")
-        }
     }
 }
 
@@ -492,4 +529,15 @@ task signingKey(description: "Display CAS signing key id") {
     doLast {
         println "Signing key: " + project.findProperty("signing.keyId")
     }
+}
+
+task verifyRequiredJavaVersion {
+    // println "Checking current Java version ${JavaVersion.current()} for required Java version ${project.targetCompatibility}"
+    if (!JavaVersion.current().name.equalsIgnoreCase("${project.targetCompatibility}")) {
+        throw new GradleException("Current Java version ${JavaVersion.current()} does not match required Java version ${project.targetCompatibility}")
+    }
+}
+
+boolean projectShouldBePublished(Project project) {
+    return !["api", "core", "docs", "support", "webapp", "cas-server-documentation"].contains(project.name)
 }

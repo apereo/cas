@@ -31,7 +31,7 @@ public class PasswordEncoderProperties implements Serializable {
     private String type = "NONE";
     /**
      * The encoding algorithm to use such as 'MD5'.
-     * Relevant when the type used is 'DEFAULT'.
+     * Relevant when the type used is 'DEFAULT' or 'GLIBC_CRYPT'.
      */
     private String encodingAlgorithm;
     /**
@@ -40,13 +40,14 @@ public class PasswordEncoderProperties implements Serializable {
      */
     private String characterEncoding;
     /**
-     * Secret to use with STANDARD, PBKDF2, BCRYPT password encoders.
+     * Secret to use with STANDARD, PBKDF2, BCRYPT, GLIBC_CRYPT password encoders.
      * Secret usually is an optional setting.
      */
     private String secret;
     /**
      * Strength or number of iterations to use for password hashing.
      * Usually relevant when dealing with PBKDF2 or BCRYPT encoders.
+     * Used by GLIBC_CRYPT encoders as well.
      */
     private int strength = 16;
 
@@ -77,6 +78,11 @@ public class PasswordEncoderProperties implements Serializable {
         /**
          * Uses Spring Security's {@code Pbkdf2PasswordEncoder}.
          */
-        PBKDF2
+        PBKDF2,
+        /**
+         * Uses {@code org.apereo.cas.util.crypto.GlibcCryptPasswordEncoder}.
+         * GNU libc crypt(3) compatible hash method.
+         */
+        GLIBC_CRYPT
     }
 }

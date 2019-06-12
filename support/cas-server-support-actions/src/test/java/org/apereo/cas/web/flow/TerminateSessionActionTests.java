@@ -1,18 +1,14 @@
 package org.apereo.cas.web.flow;
 
-import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
-import org.apereo.cas.web.config.CasSupportActionsConfiguration;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Action;
@@ -20,7 +16,7 @@ import org.springframework.webflow.test.MockRequestContext;
 
 import javax.servlet.http.Cookie;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link TerminateSessionActionTests}.
@@ -28,10 +24,8 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@DirtiesContext
-@Import(CasSupportActionsConfiguration.class)
 @TestPropertySource(properties = "cas.tgc.crypto.enabled=false")
-public class TerminateSessionActionTests extends AbstractCentralAuthenticationServiceTests {
+public class TerminateSessionActionTests extends AbstractWebflowActionsTests {
     @Autowired
     @Qualifier("terminateSessionAction")
     private Action action;

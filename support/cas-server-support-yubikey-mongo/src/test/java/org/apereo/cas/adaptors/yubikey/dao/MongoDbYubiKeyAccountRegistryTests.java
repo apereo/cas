@@ -2,7 +2,6 @@ package org.apereo.cas.adaptors.yubikey.dao;
 
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountRegistry;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
-import org.apereo.cas.category.MongoDbCategory;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
@@ -26,10 +25,8 @@ import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -40,10 +37,8 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link MongoDbYubiKeyAccountRegistryTests}.
@@ -51,35 +46,34 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Category(MongoDbCategory.class)
-@SpringBootTest(
-    classes = {
-        MongoDbYubiKeyConfiguration.class,
-        MongoDbYubiKeyAccountRegistryTests.MongoDbYubiKeyAccountRegistryTestConfiguration.class,
-        YubiKeyAuthenticationEventExecutionPlanConfiguration.class,
-        YubiKeyConfiguration.class,
-        CasCoreServicesConfiguration.class,
-        CasWebflowContextConfiguration.class,
-        CasCoreHttpConfiguration.class,
-        AopAutoConfiguration.class,
-        CasThemesConfiguration.class,
-        CasCoreTicketsConfiguration.class,
-        CasCoreLogoutConfiguration.class,
-        CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-        CasCoreAuthenticationPrincipalConfiguration.class,
-        CasCoreWebflowConfiguration.class,
-        CasCoreConfiguration.class,
-        CasPersonDirectoryTestConfiguration.class,
-        CasCoreAuthenticationSupportConfiguration.class,
-        CasCookieConfiguration.class,
-        CasCoreUtilConfiguration.class,
-        CasCoreWebConfiguration.class,
-        CasCoreHttpConfiguration.class,
-        CasCoreTicketCatalogConfiguration.class,
-        CasDefaultServiceTicketIdGeneratorsConfiguration.class,
-        CasWebApplicationServiceFactoryConfiguration.class,
-        RefreshAutoConfiguration.class
-    })
+@Tag("MongoDb")
+@SpringBootTest(classes = {
+    MongoDbYubiKeyConfiguration.class,
+    MongoDbYubiKeyAccountRegistryTests.MongoDbYubiKeyAccountRegistryTestConfiguration.class,
+    YubiKeyAuthenticationEventExecutionPlanConfiguration.class,
+    YubiKeyConfiguration.class,
+    CasCoreServicesConfiguration.class,
+    CasWebflowContextConfiguration.class,
+    CasCoreHttpConfiguration.class,
+    AopAutoConfiguration.class,
+    CasThemesConfiguration.class,
+    CasCoreTicketsConfiguration.class,
+    CasCoreLogoutConfiguration.class,
+    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
+    CasCoreAuthenticationPrincipalConfiguration.class,
+    CasCoreWebflowConfiguration.class,
+    CasCoreConfiguration.class,
+    CasPersonDirectoryTestConfiguration.class,
+    CasCoreAuthenticationSupportConfiguration.class,
+    CasCookieConfiguration.class,
+    CasCoreUtilConfiguration.class,
+    CasCoreWebConfiguration.class,
+    CasCoreHttpConfiguration.class,
+    CasCoreTicketCatalogConfiguration.class,
+    CasDefaultServiceTicketIdGeneratorsConfiguration.class,
+    CasWebApplicationServiceFactoryConfiguration.class,
+    RefreshAutoConfiguration.class
+})
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @TestPropertySource(properties = {
     "cas.authn.mfa.yubikey.mongo.databaseName=mfa-trusted",
@@ -91,17 +85,10 @@ import static org.junit.Assert.*;
     "cas.authn.mfa.yubikey.mongo.authenticationDatabaseName=admin",
     "cas.authn.mfa.yubikey.clientId=18423",
     "cas.authn.mfa.yubikey.secretKey=zAIqhjui12mK8x82oe9qzBEb0As="
-    })
+})
 public class MongoDbYubiKeyAccountRegistryTests {
-
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
-
     private static final String OTP = "cccccccvlidcnlednilgctgcvcjtivrjidfbdgrefcvi";
     private static final String BAD_TOKEN = "123456";
-
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
 
     @Autowired
     @Qualifier("yubiKeyAccountRegistry")

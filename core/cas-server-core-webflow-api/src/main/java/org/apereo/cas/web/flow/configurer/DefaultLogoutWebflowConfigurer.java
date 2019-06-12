@@ -51,8 +51,8 @@ public class DefaultLogoutWebflowConfigurer extends AbstractCasWebflowConfigurer
         }
     }
 
-    private void configureFlowStartState(final Flow flow, final ActionState terminateSessionActionState) {
-        LOGGER.debug("Setting the start state of the logout webflow identified by [{}] to [{}]", flow.getId(), terminateSessionActionState.getId());
+    private static void configureFlowStartState(final Flow flow, final ActionState terminateSessionActionState) {
+        LOGGER.trace("Setting the start state of the logout webflow identified by [{}] to [{}]", flow.getId(), terminateSessionActionState.getId());
         flow.setStartState(terminateSessionActionState);
     }
 

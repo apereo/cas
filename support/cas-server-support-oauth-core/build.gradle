@@ -7,20 +7,25 @@ dependencies {
     implementation project(":core:cas-server-core-authentication-attributes")
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-util-api")
-    implementation project(":support:cas-server-support-oauth-api")
-    implementation project(":support:cas-server-support-oauth-services")
     implementation project(":core:cas-server-core-services-registry")
     
+    implementation project(":support:cas-server-support-oauth-core-api")
+    implementation project(":support:cas-server-support-token-core-api")
+    implementation project(":support:cas-server-support-oauth-api")
+    implementation project(":support:cas-server-support-oauth-services")
+    
     compileOnly project(":core:cas-server-core-tickets")
+
+    implementation libraries.pac4jcore
+    implementation libraries.jose4j
+    implementation libraries.nimbus
     
-    implementation libraries.pac4j
-    
-    testImplementation project(":core:cas-server-core-util")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core-logout-api")
-    testImplementation project(path: ":support:cas-server-support-json-service-registry")
     testImplementation project(":core:cas-server-core-authentication-api")
     testImplementation project(":core:cas-server-core-tickets-api")
     testImplementation project(":core:cas-server-core-services-authentication")
+    testImplementation project(":support:cas-server-support-json-service-registry")
 }

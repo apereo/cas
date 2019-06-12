@@ -4,6 +4,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RegexUtils;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -39,6 +40,7 @@ import java.util.stream.Collectors;
 @Getter
 @EqualsAndHashCode
 @Setter
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class DefaultRegisteredServiceAccessStrategy implements RegisteredServiceAccessStrategy {
 
     private static final long serialVersionUID = 1245279151345635245L;
@@ -94,43 +96,21 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
      */
     protected boolean caseInsensitive;
 
-    /**
-     * Instantiates a new Default registered service authorization strategy.
-     * By default, rules indicate that services are both enabled
-     * and can participate in SSO.
-     */
     public DefaultRegisteredServiceAccessStrategy() {
         this(true, true);
     }
 
-    /**
-     * Instantiates a new Default registered service authorization strategy.
-     *
-     * @param enabled    the enabled
-     * @param ssoEnabled the sso enabled
-     */
     public DefaultRegisteredServiceAccessStrategy(final boolean enabled, final boolean ssoEnabled) {
         this.enabled = enabled;
         this.ssoEnabled = ssoEnabled;
     }
 
-    /**
-     * Instantiates a new Default registered service access strategy.
-     *
-     * @param requiredAttributes the required attributes
-     * @param rejectedAttributes the rejected attributes
-     */
     public DefaultRegisteredServiceAccessStrategy(final Map<String, Set<String>> requiredAttributes, final Map<String, Set<String>> rejectedAttributes) {
         this();
         this.requiredAttributes = requiredAttributes;
         this.rejectedAttributes = rejectedAttributes;
     }
 
-    /**
-     * Instantiates a new Default registered service access strategy.
-     *
-     * @param requiredAttributes the required attributes
-     */
     public DefaultRegisteredServiceAccessStrategy(final Map<String, Set<String>> requiredAttributes) {
         this();
         this.requiredAttributes = requiredAttributes;
@@ -184,7 +164,7 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
     @Override
     public boolean doPrincipalAttributesAllowServiceAccess(final String principal, final Map<String, Object> principalAttributes) {
         if (this.rejectedAttributes.isEmpty() && this.requiredAttributes.isEmpty()) {
-            LOGGER.debug("Skipping access strategy policy, since no attributes rules are defined");
+            LOGGER.trace("Skipping access strategy policy, since no attributes rules are defined");
             return true;
         }
         if (!enoughAttributesAvailableToProcess(principal, principalAttributes)) {
@@ -211,10 +191,7 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
      */
     protected boolean doRequiredAttributesAllowPrincipalAccess(final Map<String, Object> principalAttributes, final Map<String, Set<String>> requiredAttributes) {
         LOGGER.debug("These required attributes [{}] are examined against [{}] before service can proceed.", requiredAttributes, principalAttributes);
-        if (requiredAttributes.isEmpty()) {
-            return true;
-        }
-        return requiredAttributesFoundInMap(principalAttributes, requiredAttributes);
+        return requiredAttributes.isEmpty() || requiredAttributesFoundInMap(principalAttributes, requiredAttributes);
     }
 
     /**
@@ -225,10 +202,7 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
      */
     protected boolean doRejectedAttributesRefusePrincipalAccess(final Map<String, Object> principalAttributes) {
         LOGGER.debug("These rejected attributes [{}] are examined against [{}] before service can proceed.", rejectedAttributes, principalAttributes);
-        if (rejectedAttributes.isEmpty()) {
-            return false;
-        }
-        return requiredAttributesFoundInMap(principalAttributes, rejectedAttributes);
+        return !rejectedAttributes.isEmpty() && requiredAttributesFoundInMap(principalAttributes, rejectedAttributes);
     }
 
     /**
@@ -281,17 +255,24 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
      */
     protected boolean requiredAttributesFoundInMap(final Map<String, Object> principalAttributes, final Map<String, Set<String>> requiredAttributes) {
         val difference = requiredAttributes.keySet().stream().filter(a -> principalAttributes.keySet().contains(a)).collect(Collectors.toSet());
+        LOGGER.debug("Difference of checking required attributes: [{}]", difference);
         if (this.requireAllAttributes && difference.size() < requiredAttributes.size()) {
             return false;
         }
-        return difference.stream().anyMatch(key -> {
-            val values = requiredAttributes.get(key);
-            val availableValues = CollectionUtils.toCollection(principalAttributes.get(key));
-            val pattern = RegexUtils.concatenate(values, this.caseInsensitive);
-            if (pattern != RegexUtils.MATCH_NOTHING_PATTERN) {
-                return availableValues.stream().map(Object::toString).anyMatch(pattern.asPredicate());
-            }
-            return availableValues.stream().anyMatch(values::contains);
-        });
+        if (this.requireAllAttributes) {
+            return difference.stream().allMatch(key -> requiredAttributeFound(key, principalAttributes, requiredAttributes));
+        }
+        return difference.stream().anyMatch(key -> requiredAttributeFound(key, principalAttributes, requiredAttributes));
+    }
+    
+    private boolean requiredAttributeFound(final String attributeName, final Map<String, Object> principalAttributes, final Map<String, Set<String>> requiredAttributes) {
+        val values = requiredAttributes.get(attributeName);
+        val availableValues = CollectionUtils.toCollection(principalAttributes.get(attributeName));
+        val pattern = RegexUtils.concatenate(values, this.caseInsensitive);
+        LOGGER.debug("Checking [{}] against [{}] with pattern [{}] for attribute [{}]", values, availableValues, pattern, attributeName);
+        if (pattern != RegexUtils.MATCH_NOTHING_PATTERN) {
+            return availableValues.stream().map(Object::toString).anyMatch(pattern.asPredicate());
+        }
+        return availableValues.stream().anyMatch(values::contains);
     }
 }

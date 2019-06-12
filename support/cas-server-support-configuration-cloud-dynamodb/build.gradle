@@ -2,5 +2,5 @@ description = "Apereo CAS Configuration - DynamoDb"
 dependencies {
     implementation libraries.awsjavadynamodb
     implementation project(":support:cas-server-support-aws")
-    compileOnly project(":core:cas-server-core-configuration")
+    implementation project(":core:cas-server-core-configuration-api")
 }

@@ -1,7 +1,7 @@
 package org.apereo.cas.audit.config;
 
 import org.apereo.cas.audit.AuditTrailExecutionPlanConfigurer;
-import org.apereo.cas.audit.entity.AuditTrailEntity;
+import org.apereo.cas.audit.spi.entity.AuditTrailEntity;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.audit.AuditJdbcProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
@@ -20,7 +20,6 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -56,7 +55,7 @@ public class CasSupportJdbcAuditConfiguration {
         return t;
     }
 
-    private String getAuditTableNameFrom(final AuditJdbcProperties jdbc) {
+    private static String getAuditTableNameFrom(final AuditJdbcProperties jdbc) {
         var tableName = AuditTrailEntity.AUDIT_TRAIL_TABLE_NAME;
         if (StringUtils.isNotBlank(jdbc.getDefaultSchema())) {
             tableName = jdbc.getDefaultSchema().concat(".").concat(tableName);
@@ -72,7 +71,6 @@ public class CasSupportJdbcAuditConfiguration {
         return plan -> plan.registerAuditTrailManager(jdbcAuditTrailManager());
     }
 
-    @Lazy
     @Bean
     public LocalContainerEntityManagerFactoryBean inspektrAuditEntityManagerFactory() {
         return JpaBeans.newHibernateEntityManagerFactoryBean(

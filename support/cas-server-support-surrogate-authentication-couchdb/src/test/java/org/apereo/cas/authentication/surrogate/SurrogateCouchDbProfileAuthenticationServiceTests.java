@@ -1,6 +1,5 @@
 package org.apereo.cas.authentication.surrogate;
 
-import org.apereo.cas.category.CouchDbCategory;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -35,9 +34,9 @@ import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
 import lombok.Getter;
 import lombok.val;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -49,7 +48,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
  * @author Timur Duehr
  * @since 6.0.0
  */
-@Category(CouchDbCategory.class)
+@Tag("CouchDb")
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     CasCouchDbCoreConfiguration.class,
@@ -81,9 +80,11 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
     CasThemesConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class
     }, properties = {
+    "cas.authn.surrogate.couchDb.dbName=surrogate_profile",
     "cas.authn.surrogate.couchDb.profileBased=true",
     "cas.authn.surrogate.couchDb.surrogatePrincipalsAttribute=surrogateFor",
-    "org.ektorp.support.AutoUpdateViewOnChange=true"
+    "cas.authn.surrogate.couchDb.username=cas",
+    "cas.authn.surrogate.couchdb.password=password"
 })
 @Getter
 public class SurrogateCouchDbProfileAuthenticationServiceTests extends BaseSurrogateAuthenticationServiceTests {
@@ -100,7 +101,7 @@ public class SurrogateCouchDbProfileAuthenticationServiceTests extends BaseSurro
     @Qualifier("surrogateAuthorizationProfileCouchDbRepository")
     private ProfileCouchDbRepository repository;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         couchDbFactory.getCouchDbInstance().createDatabaseIfNotExists(couchDbFactory.getCouchDbConnector().getDatabaseName());
         repository.initStandardDesignDocument();
@@ -111,7 +112,7 @@ public class SurrogateCouchDbProfileAuthenticationServiceTests extends BaseSurro
         repository.add(profile);
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         couchDbFactory.getCouchDbInstance().deleteDatabase(couchDbFactory.getCouchDbConnector().getDatabaseName());
     }

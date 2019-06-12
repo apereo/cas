@@ -6,9 +6,11 @@ dependencies {
     implementation project(":support:cas-server-support-pac4j-authentication")
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-configuration-api")
-    implementation libraries.pac4j
+
+    implementation libraries.nimbus
+    implementation libraries.pac4jcore
     implementation libraries.ektorp
-    implementation libraries.pac4jCouchDb
+    implementation libraries.pac4jcouchdb
 
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":core:cas-server-core-services")

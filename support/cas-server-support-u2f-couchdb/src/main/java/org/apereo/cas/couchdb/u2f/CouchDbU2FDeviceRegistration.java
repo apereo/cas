@@ -28,7 +28,7 @@ public class CouchDbU2FDeviceRegistration extends U2FDeviceRegistration {
     private String rev;
 
     @JsonCreator
-    public CouchDbU2FDeviceRegistration(@JsonProperty("_id") final String cid, //NOPMD
+    public CouchDbU2FDeviceRegistration(@JsonProperty("_id") final String cid,
                                         @JsonProperty("_rev") final String rev,
                                         @JsonProperty("id") final long id,
                                         @JsonProperty("username") final String username,

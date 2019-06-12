@@ -7,10 +7,13 @@ import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.mdui.SamlMetadataUIInfo;
 import org.apereo.cas.support.saml.mdui.config.SamlMetadataUIConfiguration;
 import org.apereo.cas.support.saml.mdui.config.SamlMetadataUIWebflowConfiguration;
+import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
+import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
-import org.junit.Test;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
@@ -22,7 +25,7 @@ import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.test.MockRequestContext;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link SamlMetadataUIParserActionTests}.
@@ -30,7 +33,13 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-@Import({SamlMetadataUIConfiguration.class, SamlMetadataUIWebflowConfiguration.class})
+@Import({
+    CasCoreWebflowConfiguration.class,
+    CasWebflowContextConfiguration.class,
+    SamlMetadataUIConfiguration.class,
+    SamlMetadataUIWebflowConfiguration.class
+})
+@Tag("SAML")
 @TestPropertySource(properties = {"cas.samlMetadataUi.resources=classpath:sample-metadata.xml::classpath:inc-md-pub.pem"})
 public class SamlMetadataUIParserActionTests extends AbstractOpenSamlTests {
     @Autowired
@@ -49,7 +58,6 @@ public class SamlMetadataUIParserActionTests extends AbstractOpenSamlTests {
         samlMetadataUIParserAction.execute(ctx);
         assertNotNull(WebUtils.getServiceUserInterfaceMetadata(ctx, SamlMetadataUIInfo.class));
     }
-
 
     @Test
     public void verifyEntityIdUIInfoNoParam() throws Exception {

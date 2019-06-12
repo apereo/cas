@@ -45,7 +45,7 @@ public class RestConsentRepository implements ConsentRepository {
             val headers = new HttpHeaders();
             headers.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
             headers.put("principal", CollectionUtils.wrap(principal));
-            val entity = new HttpEntity<>(headers);
+            val entity = new HttpEntity<Object>(headers);
             val result = restTemplate.exchange(this.endpoint, HttpMethod.GET, entity, List.class);
             if (result.getStatusCodeValue() == HttpStatus.OK.value()) {
                 return result.getBody();
@@ -61,7 +61,7 @@ public class RestConsentRepository implements ConsentRepository {
         try {
             val headers = new HttpHeaders();
             headers.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
-            val entity = new HttpEntity<>(headers);
+            val entity = new HttpEntity<Object>(headers);
             val result = restTemplate.exchange(this.endpoint, HttpMethod.GET, entity, List.class);
             if (result.getStatusCodeValue() == HttpStatus.OK.value()) {
                 return result.getBody();
@@ -79,7 +79,7 @@ public class RestConsentRepository implements ConsentRepository {
             headers.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
             headers.put("service", CollectionUtils.wrap(service.getId()));
             headers.put("principal", CollectionUtils.wrap(authentication.getPrincipal().getId()));
-            val entity = new HttpEntity<>(headers);
+            val entity = new HttpEntity<Object>(headers);
             val result = restTemplate.exchange(this.endpoint, HttpMethod.GET, entity, ConsentDecision.class);
             if (result.getStatusCodeValue() == HttpStatus.OK.value()) {
                 return result.getBody();
@@ -95,7 +95,7 @@ public class RestConsentRepository implements ConsentRepository {
         try {
             val headers = new HttpHeaders();
             headers.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
-            val entity = new HttpEntity<>(decision, headers);
+            val entity = new HttpEntity<ConsentDecision>(decision, headers);
             val result = restTemplate.exchange(this.endpoint, HttpMethod.POST, entity, ConsentDecision.class);
             return result.getStatusCodeValue() == HttpStatus.OK.value();
         } catch (final Exception e) {
@@ -109,7 +109,7 @@ public class RestConsentRepository implements ConsentRepository {
         try {
             val headers = new HttpHeaders();
             headers.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
-            val entity = new HttpEntity<>(headers);
+            val entity = new HttpEntity<Object>(headers);
             val deleteEndpoint = this.endpoint.concat('/' + Long.toString(decisionId));
             val result = restTemplate.exchange(deleteEndpoint, HttpMethod.DELETE, entity, Boolean.class);
             return result.getStatusCodeValue() == HttpStatus.OK.value();

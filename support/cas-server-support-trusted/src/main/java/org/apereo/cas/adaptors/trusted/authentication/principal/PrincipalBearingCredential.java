@@ -44,7 +44,7 @@ public class PrincipalBearingCredential extends AbstractCredential {
      * @param principal the principal
      */
     @JsonCreator
-    public PrincipalBearingCredential(@NonNull @JsonProperty("principal") final Principal principal) {
+    public PrincipalBearingCredential(@JsonProperty("principal") final @NonNull Principal principal) {
         this.principal = principal;
     }
 

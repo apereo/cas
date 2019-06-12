@@ -1,0 +1,26 @@
+description = "Apereo CAS Redis Audit Support"
+ext {
+    maxParallelForksForTests = 1
+}
+dependencies {
+    api project(":api:cas-server-core-api")
+    api project(":api:cas-server-core-api-audit")
+
+    implementation libraries.springbootredis
+    
+    implementation project(":core:cas-server-core-util-api")
+    implementation project(":core:cas-server-core-audit-api")
+    implementation project(":support:cas-server-support-redis-core")
+
+    testImplementation project(":core:cas-server-core-services")
+    testImplementation project(":core:cas-server-core-tickets")
+    testImplementation project(":core:cas-server-core-web")
+    testImplementation project(":core:cas-server-core-audit")
+    testImplementation project(":core:cas-server-core-util")
+    testImplementation project(":core:cas-server-core-web-api")
+    testImplementation project(":core:cas-server-core-configuration")
+    testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-audit", configuration: "tests")
+}

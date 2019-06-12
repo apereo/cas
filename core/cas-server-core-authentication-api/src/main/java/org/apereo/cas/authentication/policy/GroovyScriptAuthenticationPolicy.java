@@ -4,7 +4,7 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationPolicy;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.ScriptingUtils;
+import org.apereo.cas.util.scripting.ScriptingUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -42,11 +42,12 @@ public class GroovyScriptAuthenticationPolicy implements AuthenticationPolicy {
     private Optional<Exception> getScriptExecutionResult(final Authentication auth, final Matcher matcherInline) {
         if (matcherInline.find()) {
             val args = CollectionUtils.wrap("principal", auth.getPrincipal(), "logger", LOGGER);
+            LOGGER.debug("Invoking Groovy script with principal=[{}], and default logger", auth.getPrincipal());
             val inlineScript = matcherInline.group(1);
             return ScriptingUtils.executeGroovyShellScript(inlineScript, args, Optional.class);
         }
         val res = this.resourceLoader.getResource(script);
-        final Object[] args = {auth.getPrincipal(), LOGGER};
+        val args = new Object[] {auth.getPrincipal(), LOGGER};
         return ScriptingUtils.executeGroovyScript(res, args, Optional.class, true);
     }
 }

@@ -33,17 +33,17 @@ public class CasHazelcastThrottlingConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Autowired
-    @Qualifier("casHazelcastInstance")
-    private ObjectProvider<HazelcastInstance> casHazelcastInstance;
+    @Qualifier("casTicketRegistryHazelcastInstance")
+    private ObjectProvider<HazelcastInstance> casTicketRegistryHazelcastInstance;
 
     @Bean
     public IMap throttleSubmissionMap() {
-        val hz = casProperties.getTicket().getRegistry().getHazelcast();
+        val hz = casProperties.getAuthn().getThrottle().getHazelcast();
         val timeout = Beans.newDuration(casProperties.getAuthn().getThrottle().getSchedule().getRepeatInterval()).getSeconds();
         val factory = new HazelcastConfigurationFactory();
         LOGGER.debug("Creating [{}] to record failed logins for throttling with timeout set to [{}]", MAP_KEY, timeout);
         val ipMapConfig = factory.buildMapConfig(hz, MAP_KEY, timeout);
-        val hazelcastInstance = this.casHazelcastInstance.getObject();
+        val hazelcastInstance = this.casTicketRegistryHazelcastInstance.getObject();
         hazelcastInstance.getConfig().addMapConfig(ipMapConfig);
         return hazelcastInstance.getMap(MAP_KEY);
     }

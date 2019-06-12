@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.support.mfa;
 
+import org.apereo.cas.configuration.support.RequiresModule;
+
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,6 +18,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @EqualsAndHashCode(of = "id")
+@RequiresModule(name = "cas-server-core-authentication-mfa")
 public abstract class BaseMultifactorProviderProperties implements Serializable {
 
     private static final long serialVersionUID = -2690281104343633871L;
@@ -45,6 +48,11 @@ public abstract class BaseMultifactorProviderProperties implements Serializable 
     private int rank;
 
     /**
+     * The order of the authentication handler in the chain.
+     */
+    private int order = Integer.MAX_VALUE;
+
+    /**
      * The identifier for the multifactor provider.
      * In most cases, this need not be configured explicitly, unless
      * multiple instances of the same provider type are configured in CAS.
@@ -64,4 +72,9 @@ public abstract class BaseMultifactorProviderProperties implements Serializable 
      * The name of the authentication handler used to verify credentials in MFA.
      */
     private String name;
+
+    /**
+     * The failure mode policy for this MFA provider.
+     */
+    private String failureMode = "UNDEFINED";
 }

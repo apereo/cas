@@ -4,14 +4,14 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link CheckConsentRequiredActionTests}.
@@ -28,7 +28,7 @@ public class CheckConsentRequiredActionTests extends BaseConsentActionTests {
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
 
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
-        WebUtils.putService(context, CoreAuthenticationTestUtils.getWebApplicationService("consentService"));
+        WebUtils.putServiceIntoFlowScope(context, CoreAuthenticationTestUtils.getWebApplicationService("consentService"));
         assertEquals(CheckConsentRequiredAction.EVENT_ID_CONSENT_REQUIRED, checkConsentRequiredAction.execute(context).getId());
         assertTrue(context.getFlowScope().contains("attributes"));
         assertTrue(context.getFlowScope().contains("principal"));

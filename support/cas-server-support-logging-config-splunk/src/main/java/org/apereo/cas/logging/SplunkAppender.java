@@ -8,6 +8,7 @@ import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.appender.AbstractAppender;
 import org.apache.logging.log4j.core.config.AppenderRef;
 import org.apache.logging.log4j.core.config.Configuration;
+import org.apache.logging.log4j.core.config.Property;
 import org.apache.logging.log4j.core.config.plugins.Plugin;
 import org.apache.logging.log4j.core.config.plugins.PluginAttribute;
 import org.apache.logging.log4j.core.config.plugins.PluginConfiguration;
@@ -24,13 +25,11 @@ import org.apache.logging.log4j.core.layout.PatternLayout;
 @Plugin(name = "SplunkAppender", category = "Core", elementType = "appender", printObject = true)
 @Slf4j
 public class SplunkAppender extends AbstractAppender {
-    private static final long serialVersionUID = 1244758357628847477L;
-
     private final Configuration config;
     private final AppenderRef appenderRef;
 
-    public SplunkAppender(final String name, @NonNull final Configuration config, @NonNull final AppenderRef appenderRef) {
-        super(name, null, PatternLayout.createDefaultLayout());
+    public SplunkAppender(final String name, final @NonNull Configuration config, final @NonNull AppenderRef appenderRef) {
+        super(name, null, PatternLayout.createDefaultLayout(), false, Property.EMPTY_ARRAY);
         this.config = config;
         this.appenderRef = appenderRef;
     }

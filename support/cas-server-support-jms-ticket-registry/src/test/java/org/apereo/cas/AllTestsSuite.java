@@ -1,12 +1,14 @@
 package org.apereo.cas;
 
+import org.apereo.cas.ticket.registry.JmsTicketRegistryTests;
 import org.apereo.cas.ticket.registry.queue.AddTicketMessageQueueCommandTests;
 import org.apereo.cas.ticket.registry.queue.DeleteTicketMessageQueueCommandTests;
 import org.apereo.cas.ticket.registry.queue.DeleteTicketsMessageQueueCommandTests;
 import org.apereo.cas.ticket.registry.queue.UpdateTicketMessageQueueCommandTests;
 
+import org.junit.platform.runner.JUnitPlatform;
+import org.junit.platform.suite.api.SelectClasses;
 import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
 
 /**
  * This is {@link AllTestsSuite}.
@@ -14,11 +16,14 @@ import org.junit.runners.Suite;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({AddTicketMessageQueueCommandTests.class,
+@SelectClasses({
+    AddTicketMessageQueueCommandTests.class,
     DeleteTicketsMessageQueueCommandTests.class,
     DeleteTicketMessageQueueCommandTests.class,
-    UpdateTicketMessageQueueCommandTests.class})
+    UpdateTicketMessageQueueCommandTests.class,
+    JmsTicketRegistryTests.class
+})
+@RunWith(JUnitPlatform.class)
 public class AllTestsSuite {
 }
 

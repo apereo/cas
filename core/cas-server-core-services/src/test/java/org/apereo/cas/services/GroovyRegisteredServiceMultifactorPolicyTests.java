@@ -3,12 +3,13 @@ package org.apereo.cas.services;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link GroovyRegisteredServiceMultifactorPolicyTests}.
@@ -16,6 +17,7 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@Tag("Groovy")
 public class GroovyRegisteredServiceMultifactorPolicyTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "GroovyRegisteredServiceMultifactorPolicyTests.json");
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
@@ -26,7 +28,7 @@ public class GroovyRegisteredServiceMultifactorPolicyTests {
         val authz = new GroovyRegisteredServiceMultifactorPolicy();
         authz.setGroovyScript("classpath:mfapolicy.groovy");
 
-        assertEquals(RegisteredServiceMultifactorPolicy.FailureModes.OPEN, authz.getFailureMode());
+        assertEquals(RegisteredServiceMultifactorPolicyFailureModes.OPEN, authz.getFailureMode());
         assertEquals("Test", authz.getPrincipalAttributeNameTrigger());
         assertEquals("TestMatch", authz.getPrincipalAttributeValueToMatch());
         assertTrue(authz.getMultifactorAuthenticationProviders().contains("mfa-something"));

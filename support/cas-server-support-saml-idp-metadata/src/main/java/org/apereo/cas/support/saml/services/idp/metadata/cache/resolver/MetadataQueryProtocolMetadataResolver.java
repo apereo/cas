@@ -1,8 +1,12 @@
 package org.apereo.cas.support.saml.services.idp.metadata.cache.resolver;
 
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
+import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.saml.InMemoryResourceMetadataResolver;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
+import org.apereo.cas.support.saml.SamlException;
+import org.apereo.cas.support.saml.SamlUtils;
+import org.apereo.cas.support.saml.StaticXmlObjectMetadataResolver;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.HttpRequestUtils;
@@ -11,12 +15,18 @@ import org.apereo.cas.util.HttpUtils;
 import com.google.common.io.ByteStreams;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
+import org.apache.http.util.EntityUtils;
+import org.opensaml.core.criterion.EntityIdCriterion;
+import org.opensaml.core.xml.XMLObject;
+import org.opensaml.core.xml.util.XMLObjectSource;
 import org.opensaml.saml.metadata.resolver.impl.AbstractMetadataResolver;
 import org.springframework.http.HttpStatus;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 /**
@@ -34,19 +44,31 @@ public class MetadataQueryProtocolMetadataResolver extends UrlResourceMetadataRe
     }
 
     @Override
-    protected String getMetadataLocationForService(final SamlRegisteredService service) {
-        LOGGER.info("Getting metadata dynamically for [{}]", service.getName());
-        return service.getMetadataLocation().replace("{0}", EncodingUtils.urlEncode(service.getServiceId()));
+    protected String getMetadataLocationForService(final SamlRegisteredService service, final CriteriaSet criteriaSet) {
+        LOGGER.debug("Getting metadata location dynamically for [{}] based on criteria [{}]", service.getName(), criteriaSet);
+        val entityIdCriteria = criteriaSet.get(EntityIdCriterion.class);
+        val entityId = entityIdCriteria == null ? service.getServiceId() : entityIdCriteria.getEntityId();
+        if (StringUtils.isBlank(entityId)) {
+            throw new SamlException("Unable to determine entity id to fetch metadata dynamically via MDQ for service " + service.getName());
+        }
+        return service.getMetadataLocation().replace("{0}", EncodingUtils.urlEncode(entityId));
     }
 
     @Override
-    protected HttpResponse fetchMetadata(final String metadataLocation) {
+    protected HttpResponse fetchMetadata(final String metadataLocation, final CriteriaSet criteriaSet) {
         val metadata = samlIdPProperties.getMetadata();
-        val headers = new LinkedHashMap();
+        val headers = new LinkedHashMap<String, Object>();
         headers.put("Content-Type", metadata.getSupportedContentTypes());
         headers.put("Accept", "*/*");
-        return HttpUtils.executeGet(metadataLocation, metadata.getBasicAuthnUsername(),
-            samlIdPProperties.getMetadata().getBasicAuthnPassword(), new LinkedHashMap<>(), headers);
+
+        LOGGER.debug("Fetching dynamic metadata via MDQ for [{}]", metadataLocation);
+        val response = HttpUtils.executeGet(metadataLocation, metadata.getBasicAuthnUsername(),
+            samlIdPProperties.getMetadata().getBasicAuthnPassword(), new HashMap<>(), headers);
+        if (response == null) {
+            LOGGER.error("Unable to fetch metadata from [{}]", metadataLocation);
+            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE);
+        }
+        return response;
     }
 
     /**
@@ -74,11 +96,13 @@ public class MetadataQueryProtocolMetadataResolver extends UrlResourceMetadataRe
         if (response.getStatusLine().getStatusCode() == HttpStatus.NOT_MODIFIED.value()) {
             return new InMemoryResourceMetadataResolver(backupFile, this.configBean);
         }
-
-        val ins = response.getEntity().getContent();
+        val entity = response.getEntity();
+        val ins = entity.getContent();
         val source = ByteStreams.toByteArray(ins);
-        val bais = new ByteArrayInputStream(source);
-        return new InMemoryResourceMetadataResolver(bais, this.configBean);
+        val xmlObject = SamlUtils.transformSamlObject(configBean, source, XMLObject.class);
+        xmlObject.getObjectMetadata().put(new XMLObjectSource(source));
+        EntityUtils.consume(entity);
+        return new StaticXmlObjectMetadataResolver(xmlObject);
     }
 
     @Override

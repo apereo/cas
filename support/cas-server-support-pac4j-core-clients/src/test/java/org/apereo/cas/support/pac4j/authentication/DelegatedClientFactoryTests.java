@@ -9,12 +9,12 @@ import org.apereo.cas.configuration.model.support.pac4j.saml.Pac4jSamlClientProp
 
 import lombok.val;
 import org.apache.commons.io.FileUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.pac4j.cas.config.CasProtocol;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link DelegatedClientFactoryTests}.
@@ -102,6 +102,7 @@ public class DelegatedClientFactoryTests {
 
         val oidc3 = new Pac4jOidcClientProperties();
         configureIdentifiableClient(oidc3.getAzure());
+        oidc3.getAzure().setTenant("contoso.onmicrosoft.com");
         oidc3.getAzure().setLogoutUrl("https://example.logout");
         props.getOidc().add(oidc3);
 
@@ -114,7 +115,7 @@ public class DelegatedClientFactoryTests {
         assertEquals(4, clients.size());
     }
 
-    private void configureIdentifiableClient(final Pac4jIdentifiableClientProperties props) {
+    private static void configureIdentifiableClient(final Pac4jIdentifiableClientProperties props) {
         props.setId("TestId");
         props.setSecret("TestSecret");
     }

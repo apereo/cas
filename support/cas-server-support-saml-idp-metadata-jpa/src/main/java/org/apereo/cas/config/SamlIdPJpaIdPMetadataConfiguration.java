@@ -8,6 +8,7 @@ import org.apereo.cas.support.saml.idp.metadata.JpaSamlIdPMetadataCipherExecutor
 import org.apereo.cas.support.saml.idp.metadata.JpaSamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.JpaSamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerator;
+import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGeneratorConfigurationContext;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.idp.metadata.writer.SamlIdPCertificateAndKeyWriter;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
@@ -67,6 +68,7 @@ public class SamlIdPJpaIdPMetadataConfiguration {
         return JpaBeans.newHibernateJpaVendorAdapter(casProperties.getJdbc());
     }
 
+    @RefreshScope
     @Bean
     public DataSource dataSourceSamlMetadataIdP() {
         val idp = casProperties.getAuthn().getSamlIdp().getMetadata();
@@ -100,6 +102,7 @@ public class SamlIdPJpaIdPMetadataConfiguration {
     }
 
 
+    @RefreshScope
     @Bean
     @ConditionalOnMissingBean(name = "jpaSamlIdPMetadataCipherExecutor")
     public CipherExecutor jpaSamlIdPMetadataCipherExecutor() {
@@ -110,7 +113,9 @@ public class SamlIdPJpaIdPMetadataConfiguration {
             return new JpaSamlIdPMetadataCipherExecutor(
                 crypto.getEncryption().getKey(),
                 crypto.getSigning().getKey(),
-                crypto.getAlg());
+                crypto.getAlg(),
+                crypto.getSigning().getKeySize(),
+                crypto.getEncryption().getKeySize());
         }
         LOGGER.info("JPA SAML IdP metadata encryption/signing is turned off and "
             + "MAY NOT be safe in a production environment. "
@@ -124,17 +129,22 @@ public class SamlIdPJpaIdPMetadataConfiguration {
         val idp = casProperties.getAuthn().getSamlIdp();
         val transactionTemplate = new TransactionTemplate(mgr);
 
+        val context = SamlIdPMetadataGeneratorConfigurationContext.builder()
+            .samlIdPMetadataLocator(samlIdPMetadataLocator())
+            .samlIdPCertificateAndKeyWriter(samlSelfSignedCertificateWriter.getIfAvailable())
+            .entityId(idp.getEntityId())
+            .resourceLoader(resourceLoader)
+            .casServerPrefix(casProperties.getServer().getPrefix())
+            .scope(idp.getScope())
+            .metadataCipherExecutor(jpaSamlIdPMetadataCipherExecutor())
+            .build();
+
         return new JpaSamlIdPMetadataGenerator(
-            samlIdPMetadataLocator(),
-            samlSelfSignedCertificateWriter.getIfAvailable(),
-            idp.getEntityId(),
-            resourceLoader,
-            casProperties.getServer().getPrefix(),
-            idp.getScope(),
-            jpaSamlIdPMetadataCipherExecutor(),
+            context,
             transactionTemplate);
     }
 
+    @RefreshScope
     @Bean
     @SneakyThrows
     public SamlIdPMetadataLocator samlIdPMetadataLocator() {

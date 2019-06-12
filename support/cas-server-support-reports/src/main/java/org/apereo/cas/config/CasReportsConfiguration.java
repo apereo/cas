@@ -10,19 +10,18 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.report.AuditLogEndpoint;
 import org.apereo.cas.web.report.CasInfoEndpointContributor;
 import org.apereo.cas.web.report.CasReleaseAttributesReportEndpoint;
 import org.apereo.cas.web.report.CasResolveAttributesReportEndpoint;
 import org.apereo.cas.web.report.ExportRegisteredServicesEndpoint;
-import org.apereo.cas.web.report.LoggingConfigurationEndpoint;
 import org.apereo.cas.web.report.RegisteredServicesEndpoint;
 import org.apereo.cas.web.report.SingleSignOnSessionStatusEndpoint;
 import org.apereo.cas.web.report.SingleSignOnSessionsEndpoint;
 import org.apereo.cas.web.report.SpringWebflowEndpoint;
 import org.apereo.cas.web.report.StatisticsEndpoint;
 import org.apereo.cas.web.report.StatusEndpoint;
-import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,8 +35,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-import org.springframework.core.env.Environment;
-import org.springframework.core.io.ResourceLoader;
 
 /**
  * This this {@link CasReportsConfiguration}.
@@ -50,11 +47,6 @@ import org.springframework.core.io.ResourceLoader;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasReportsConfiguration {
 
-    @Autowired
-    private ResourceLoader resourceLoader;
-
-    @Autowired
-    private Environment environment;
 
     @Autowired
     @Qualifier("defaultTicketRegistrySupport")
@@ -62,7 +54,7 @@ public class CasReportsConfiguration {
 
     @Autowired
     @Qualifier("ticketGrantingTicketCookieGenerator")
-    private ObjectProvider<CookieRetrievingCookieGenerator> ticketGrantingTicketCookieGenerator;
+    private ObjectProvider<CasCookieBuilder> ticketGrantingTicketCookieGenerator;
 
     @Autowired
     @Qualifier("auditTrailExecutionPlan")
@@ -80,8 +72,8 @@ public class CasReportsConfiguration {
     private ObjectProvider<ServiceFactory<WebApplicationService>> webApplicationServiceFactory;
 
     @Autowired
-    @Qualifier("personDirectoryPrincipalResolver")
-    private ObjectProvider<PrincipalResolver> personDirectoryPrincipalResolver;
+    @Qualifier("defaultPrincipalResolver")
+    private ObjectProvider<PrincipalResolver> defaultPrincipalResolver;
 
     @Autowired
     @Qualifier("centralAuthenticationService")
@@ -108,12 +100,6 @@ public class CasReportsConfiguration {
     @ConditionalOnEnabledEndpoint
     public AuditLogEndpoint auditLogEndpoint() {
         return new AuditLogEndpoint(auditTrailExecutionPlan.getIfAvailable(), casProperties);
-    }
-
-    @Bean
-    @ConditionalOnEnabledEndpoint
-    public LoggingConfigurationEndpoint loggingConfigurationEndpoint() {
-        return new LoggingConfigurationEndpoint(casProperties, resourceLoader, environment);
     }
 
     @Bean
@@ -145,7 +131,6 @@ public class CasReportsConfiguration {
         return new SingleSignOnSessionStatusEndpoint(ticketGrantingTicketCookieGenerator.getIfAvailable(), ticketRegistrySupport.getIfAvailable());
     }
 
-
     @Bean
     @ConditionalOnEnabledEndpoint
     public StatisticsEndpoint statisticsReportEndpoint() {
@@ -155,7 +140,7 @@ public class CasReportsConfiguration {
     @Bean
     @ConditionalOnEnabledEndpoint
     public CasResolveAttributesReportEndpoint resolveAttributesReportEndpoint() {
-        return new CasResolveAttributesReportEndpoint(casProperties, personDirectoryPrincipalResolver.getIfAvailable());
+        return new CasResolveAttributesReportEndpoint(casProperties, defaultPrincipalResolver.getIfAvailable());
     }
 
     @Bean
@@ -187,15 +172,18 @@ public class CasReportsConfiguration {
      * @since 6.0.0
      */
     @Configuration("statusEndpointConfiguration")
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class StatusEndpointConfiguration {
         @Autowired
         private CasConfigurationProperties casProperties;
 
         @Autowired
+        private ObjectProvider<HealthEndpoint> healthEndpoint;
+
         @Bean
         @ConditionalOnEnabledEndpoint
-        public StatusEndpoint statusEndpoint(final HealthEndpoint healthEndpoint) {
-            return new StatusEndpoint(casProperties, healthEndpoint);
+        public StatusEndpoint statusEndpoint() {
+            return new StatusEndpoint(casProperties, healthEndpoint.getIfAvailable());
         }
     }
 }

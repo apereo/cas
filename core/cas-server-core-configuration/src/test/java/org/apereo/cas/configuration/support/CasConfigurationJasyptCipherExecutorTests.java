@@ -1,16 +1,20 @@
 package org.apereo.cas.configuration.support;
 
+import com.google.common.collect.Sets;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
+import org.apache.commons.lang3.ArrayUtils;
+import org.jasypt.registry.AlgorithmRegistry;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.env.Environment;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
-import static org.junit.Assert.*;
+import java.util.Set;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link CasConfigurationJasyptCipherExecutorTests}.
@@ -18,13 +22,11 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@SpringBootTest(classes = {
+    RefreshAutoConfiguration.class
+})
+@Slf4j
 public class CasConfigurationJasyptCipherExecutorTests {
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
-
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
-
     static {
         System.setProperty(CasConfigurationJasyptCipherExecutor.JasyptEncryptionParameters.PASSWORD.getPropertyName(), "P@$$w0rd");
     }
@@ -34,7 +36,7 @@ public class CasConfigurationJasyptCipherExecutorTests {
 
     private CasConfigurationJasyptCipherExecutor jasypt;
 
-    @Before
+    @BeforeEach
     public void initialize() {
         this.jasypt = new CasConfigurationJasyptCipherExecutor(this.environment);
     }
@@ -58,16 +60,42 @@ public class CasConfigurationJasyptCipherExecutorTests {
     @Test
     public void verifyDecryptionEncryptionPairFails() {
         val encVal = CasConfigurationJasyptCipherExecutor.ENCRYPTED_VALUE_PREFIX + "keyValue";
-        val result = jasypt.decode(encVal, new Object[]{});
+        val result = jasypt.decode(encVal, ArrayUtils.EMPTY_OBJECT_ARRAY);
         assertNull(result);
     }
 
     @Test
     public void verifyDecryptionEncryptionPairSuccess() {
         val value = jasypt.encryptValue("Testing");
-        val result = jasypt.decode(value, new Object[]{});
+        val result = jasypt.decode(value, ArrayUtils.EMPTY_OBJECT_ARRAY);
         assertNotNull(result);
         assertEquals("Testing", result);
+    }
+
+    /**
+     * Test all algorithms and verify that algorithms known not to work still don't work.
+     * https://sourceforge.net/p/jasypt/bugs/32/
+     */
+    @Test
+    public void verifyAlgorithms() {
+        val algorithms = (Set<String>) AlgorithmRegistry.getAllPBEAlgorithms();
+        val goodAlgorithms = Sets.difference(algorithms, CasConfigurationJasyptCipherExecutor.ALGORITHM_BLACKLIST_SET);
+
+        for (val algorithm : goodAlgorithms) {
+            assertTrue(isAlgorithmFunctional(algorithm));
+        }
+        for (val algorithm : CasConfigurationJasyptCipherExecutor.ALGORITHM_BLACKLIST_SET) {
+            assertFalse(isAlgorithmFunctional(algorithm));
+        }
+    }
+
+    private boolean isAlgorithmFunctional(final String algorithm) {
+        val jasyptTest = new CasConfigurationJasyptCipherExecutor(this.environment);
+        jasyptTest.setAlgorithmForce(algorithm);
+        val testValue = "Testing_" + algorithm;
+        val value = jasyptTest.encryptValue(testValue);
+        val result = jasyptTest.decode(value, ArrayUtils.EMPTY_OBJECT_ARRAY);
+        return testValue.equals(result);
     }
 }
 

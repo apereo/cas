@@ -6,6 +6,7 @@ import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 
 import java.util.Collection;
+import java.util.Map;
 
 /**
  * Factory to create OAuth refresh tokens.
@@ -22,8 +23,13 @@ public interface RefreshTokenFactory extends TicketFactory {
      * @param authentication       the authentication
      * @param ticketGrantingTicket the ticket granting ticket
      * @param scopes               the scopes
+     * @param clientId             the client id
+     * @param requestClaims        the request claims
      * @return the refresh token
      */
     RefreshToken create(Service service, Authentication authentication,
-                        TicketGrantingTicket ticketGrantingTicket, Collection<String> scopes);
+                        TicketGrantingTicket ticketGrantingTicket,
+                        Collection<String> scopes,
+                        String clientId,
+                        Map<String, Map<String, Object>> requestClaims);
 }

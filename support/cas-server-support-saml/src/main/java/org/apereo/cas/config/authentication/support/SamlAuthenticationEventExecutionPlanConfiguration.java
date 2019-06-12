@@ -30,6 +30,6 @@ public class SamlAuthenticationEventExecutionPlanConfiguration {
     @ConditionalOnMissingBean(name = "samlAuthenticationEventExecutionPlanConfigurer")
     @Bean
     public AuthenticationEventExecutionPlanConfigurer samlAuthenticationEventExecutionPlanConfigurer() {
-        return plan -> plan.registerMetadataPopulator(samlAuthenticationMetaDataPopulator());
+        return plan -> plan.registerAuthenticationMetadataPopulator(samlAuthenticationMetaDataPopulator());
     }
 }

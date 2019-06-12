@@ -13,7 +13,7 @@ A few additional policies specific to SAML services are also provided below.
 ## InCommon Research and Scholarship
 
 A specific attribute release policy is available to release the [attribute bundles](https://spaces.internet2.edu/display/InCFederation/Research+and+Scholarship+Attribute+Bundle)
-needed for InCommon's Research and Scholarship service providers:
+needed for InCommon Research and Scholarship service providers using the entity attribute value `http://id.incommon.org/category/research-and-scholarship`:
 
 ```json
 {
@@ -32,6 +32,57 @@ needed for InCommon's Research and Scholarship service providers:
   }
 }
 ```
+
+Attributes authorized for release are set to be `eduPersonPrincipalName`, `eduPersonTargetedID`, `email`, `displayName`, 
+`givenName`, `surname`, `eduPersonScopedAffiliation`.
+
+## REFEDS Research and Scholarship
+
+A specific attribute release policy is available to release the [attribute bundles](https://refeds.org/category/research-and-scholarship)
+needed for REFEDS Research and Scholarship service providers using the entity attribute value `http://refeds.org/category/research-and-scholarship`:
+
+```json
+{
+  "@class": "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId": "entity-ids-allowed-via-regex",
+  "name": "SAML",
+  "id": 10,
+  "metadataLocation": "path/to/incommon/metadata.xml",
+  "attributeReleasePolicy": {
+    "@class": "org.apereo.cas.services.ChainingAttributeReleasePolicy",
+    "policies": [ "java.util.ArrayList",
+      [
+         {"@class": "org.apereo.cas.support.saml.services.RefedsRSAttributeReleasePolicy"}
+      ]
+    ]
+  }
+}
+```
+
+This policy is simply an extension of `InCommonRSAttributeReleasePolicy` that operates based on different entity attribute value.
+
+## Releasing `eduPersonTargetedID`
+
+If you do not have pre-calculated values for the `eduPersonTargetedID` attribute to fetch before release, 
+you can let CAS calculate the `eduPersonTargetedID` attribute dynamically at release time using the following policy:
+
+```json
+{
+  "@class": "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId": "entity-ids-allowed-via-regex",
+  "name": "SAML",
+  "id": 10,
+  "metadataLocation": "path/to/metadata.xml",
+  "attributeReleasePolicy": {
+    "@class": "org.apereo.cas.support.saml.services.EduPersonTargetedIdAttributeReleasePolicy",
+    "salt": "OqmG80fEKBQt",
+    "attribute": ""
+  }
+}
+```
+
+The generated id may be based off of an existing principal attribute. If left unspecified or attribute not found, 
+the authenticated principal id is used.
 
 ## Groovy Script
 
@@ -121,6 +172,7 @@ In the event that an aggregate is defined containing multiple entity ids, the be
     "@class": "org.apereo.cas.support.saml.services.PatternMatchingEntityIdAttributeReleasePolicy",
     "allowedAttributes" : [ "java.util.ArrayList", [ "cn", "mail", "sn" ] ],
     "fullMatch" : "true",
+    "reverseMatch" : "false",
     "entityIds" : "entityId1|entityId2|somewhere.+"
   }
 }

@@ -16,6 +16,7 @@ import org.cryptacular.x509.dn.StandardAttributeType;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 /**
@@ -53,7 +54,7 @@ public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver 
      * <bean class="X509SubjectPrincipalResolver"
      * p:descriptor="$UID@$DC.$DC"
      * }
-     * }*
+     * }**
      * <p>
      * The above bean when applied to a certificate with the DN
      * <p>
@@ -61,22 +62,29 @@ public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver 
      * <p>
      * produces the principal <strong>jacky@vt.edu</strong>.</p>
      *
-     * @param attributeRepository      the attribute repository
-     * @param principalFactory         the principal factory
-     * @param returnNullIfNoAttributes the return null if no attributes
-     * @param principalAttributeName   the principal attribute name
-     * @param descriptor               Descriptor string where attribute names are prefixed with "$"
-     *                                 to identify replacement by real attribute values from the subject DN.
-     *                                 Valid attributes include common X.509 DN attributes such as the following:
-     *                                 <ul><li>C</li><li>CN</li><li>DC</li><li>EMAILADDRESS</li>
-     *                                 <li>L</li><li>O</li><li>OU</li><li>SERIALNUMBER</li>
-     *                                 <li>ST</li><li>UID</li><li>UNIQUEIDENTIFIER</li></ul>
-     *                                 For a complete list of supported attributes, see {@link org.cryptacular.x509.dn.StandardAttributeType}.
+     * @param attributeRepository                  the attribute repository
+     * @param principalFactory                     the principal factory
+     * @param returnNullIfNoAttributes             the return null if no attributes
+     * @param principalAttributeName               the principal attribute name
+     * @param descriptor                           Descriptor string where attribute names are prefixed with "$"
+     *                                             to identify replacement by real attribute values from the subject DN.
+     *                                             Valid attributes include common X.509 DN attributes such as the following:
+     *                                             <ul><li>C</li><li>CN</li><li>DC</li><li>EMAILADDRESS</li>
+     *                                             <li>L</li><li>O</li><li>OU</li><li>SERIALNUMBER</li>
+     *                                             <li>ST</li><li>UID</li><li>UNIQUEIDENTIFIER</li></ul>
+     *                                             For a complete list of supported attributes, see {@link org.cryptacular.x509.dn.StandardAttributeType}.
+     * @param useCurrentPrincipalId                whether the principal id from the resolved principal should be used
+     * @param resolveAttributes                    the resolve attributes
+     * @param activeAttributeRepositoryIdentifiers the active attribute repository identifiers
      */
     public X509SubjectPrincipalResolver(final IPersonAttributeDao attributeRepository,
                                         final PrincipalFactory principalFactory, final boolean returnNullIfNoAttributes,
-                                        final String principalAttributeName, final String descriptor) {
-        super(attributeRepository, principalFactory, returnNullIfNoAttributes, principalAttributeName);
+                                        final String principalAttributeName, final String descriptor,
+                                        final boolean useCurrentPrincipalId, final boolean resolveAttributes,
+                                        final Set<String> activeAttributeRepositoryIdentifiers) {
+        super(attributeRepository, principalFactory, returnNullIfNoAttributes,
+            principalAttributeName, useCurrentPrincipalId, resolveAttributes,
+            activeAttributeRepositoryIdentifiers);
         this.descriptor = descriptor;
     }
 
@@ -86,6 +94,7 @@ public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver 
      * <p><strong>NOTE:</strong> no escaping is done on special characters in the
      * values, which could be different from what would appear in the string
      * representation of the DN.</p>
+     * Iterates sequence in reverse order as specified in section 2.1 of RFC 2253.
      *
      * @param rdnSequence list of relative distinguished names
      *                    that contains the attributes comprising the DN.
@@ -95,7 +104,6 @@ public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver 
      * array if the given attribute does not exist.
      */
     private static String[] getAttributeValues(final RDNSequence rdnSequence, final AttributeType attribute) {
-        // Iterates sequence in reverse order as specified in section 2.1 of RFC 2253
         val values = new ArrayList<String>();
         for (val rdn : rdnSequence.backward()) {
             for (val attr : rdn.getAttributes()) {
@@ -104,7 +112,7 @@ public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver 
                 }
             }
         }
-        return values.toArray(new String[0]);
+        return values.toArray(ArrayUtils.EMPTY_STRING_ARRAY);
     }
 
     @Override

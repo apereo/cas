@@ -27,17 +27,20 @@ The current implementation provides support for:
 - [Authorization Code Flow](http://openid.net/specs/openid-connect-basic-1_0.html)
 - [Implicit Flow](https://openid.net/specs/openid-connect-implicit-1_0.html)
 - [Dynamic Discovery](https://openid.net/specs/openid-connect-discovery-1_0.html)
-- Administration and registration of [OIDC clients and relying parties](Service-Management.html).
-- Administration and registration of [OIDC clients and relying parties](Service-Management.html) via [Dynamic Client Registration protocol](https://tools.ietf.org/html/draft-ietf-oauth-dyn-reg-management-01).
+- [WebFinger Issuer Discovery](https://openid.net/specs/openid-connect-discovery-1_0-21.html)
+- Administration and registration of [OIDC clients and relying parties](../services/Service-Management.html).
+- Administration and registration of [OIDC clients and relying parties](../services/Service-Management.html) via [Dynamic Client Registration protocol](https://tools.ietf.org/html/draft-ietf-oauth-dyn-reg-management-01).
 - Ability to [resolve, map and release claims](../integration/Attribute-Release-Policies.html).
 - Ability to configure expiration policies for various tokens.
 
 ## Endpoints
 
-| Field                                         | Description
-|-----------------------------------------------|-------------------------------------------------------
-| `/oidc/.well-known`, `/oidc/.well-known/openid-configuration` | The discovery endpoint is a static page that you/clients use to query for CAS OIDC configuration information and metadata. No session is required. CAS returns basic information about endpoints, supported scopes, etc used for OIDC authentication.
-| `/oidc/jwks`                              | A read-only endpoint that contains the server’s public signing keys, which clients may use to verify the digital signatures of access tokens and ID tokens issued by CAS.
+| Field                                     | Description
+|-------------------------------------------|-------------------------------------------------------
+| `/oidc/.well-known`                       | The discovery endpoint used to query for CAS OIDC configuration information and metadata.
+| `/oidc/.well-known/openid-configuration`  | Same as `.well-known` discovery endpoint.
+| `/oidc/.well-known/webfinger`             | [WebFinger](http://tools.ietf.org/html/rfc7033) discovery endpoint
+| `/oidc/jwks`                              | Contains the server’s public signing keys, which clients may use to verify the digital signatures of access tokens and ID tokens issued by CAS.
 | `/oidc/authorize`                         | Authorization requests are handled here.
 | `/oidc/profile`                           | User profile requests are handled here.
 | `/oidc/introspect`                        | Query CAS to detect the status of a given access token via [introspection](https://tools.ietf.org/html/rfc7662).
@@ -77,19 +80,26 @@ The following fields are specifically available for OpenID connect services:
 | `supportedResponseTypes`      | Optional. Collection of supported response types for this service.
 | `signIdToken`                 | Optional. Whether ID tokens should be signed. Default is `true`.
 | `jwks`                        | Optional. Resource path to the keystore location that holds the keys for this application.
+| `jwksCacheDuration`           | Optional. The expiration policy time value applied to loaded/cached keys for this application.
+| `jwksCacheTimeUnit`           | Optional. The expiration policy time unit of measure (i.e. `seconds`, `minutes`, etc) applied to loaded/cached keys.
 | `encryptIdToken`              | Optional. Whether ID tokens should be encrypted. Default is `false`.
 | `idTokenEncryptionAlg`        | Optional. The algorithm header value used to encrypt the id token.
-| `idTokenSigingAlg`            | Optional. The algorithm header value used to sign the id token.
+| `idTokenSigningAlg`           | Optional. The algorithm header value used to sign the id token.
+| `userInfoSigningAlg`          | Optional. The algorithm header value used to sign user profile responses.
+| `userInfoEncryptedResponseAlg`   | Optional. The algorithm header value used to encrypt user profile responses.
+| `tokenEndpointAuthenticationMethod`    | Optional. The requested client authentication method to the token endpoint. Default is `client_secret_basic`.
+| `applicationType`             | Optional. `web`, `native`, or blank. Defined the kind of the application. The default, if omitted, is `web`. 
 | `idTokenEncryptionEncoding`   | Optional. The algorithm method header value used to encrypt the id token.
+| `userInfoEncryptedResponseEncoding`   | Optional. The algorithm method header value used to encrypt the user profile response.
 | `subjectType`                 | Optional value chosen from `public` or `pairwise`. Type to use when generating principal identifiers. Default is `public`.
-| `sectoreIdentifierUri`        | Optional. Host value of this URL is used as the sector identifier for the pairwise identifier calculation. If left undefined, the host value of the `serviceId` will be used instead.
+| `sectorIdentifierUri`         | Optional. Host value of this URL is used as the sector identifier for the pairwise identifier calculation. If left undefined, the host value of the `serviceId` will be used instead.
 
 <div class="alert alert-info"><strong>Keep What You Need!</strong><p>You are encouraged to only keep and maintain properties and settings needed for a 
 particular integration. It is UNNECESSARY to grab a copy of all service fields and try to configure them yet again based on their default. While 
 you may wish to keep a copy as a reference, this strategy would ultimately lead to poor upgrades increasing chances of breaking changes and a messy 
 deployment at that.</p></div>
 
-Service definitions are typically managed and registered with CAS by the [service management](Service-Management.html) facility.
+Service definitions are typically managed and registered with CAS by the [service management](../services/Service-Management.html) facility.
 
 <div class="alert alert-warning"><strong>Usage Warning!</strong><p>CAS today does not strictly enforce the collection of authorized supported 
 response/grant types for backward compatibility reasons if left blank. This means that if left undefined, all grant and response types may be allowed by 
@@ -112,6 +122,10 @@ To see the relevant list of CAS properties, please [review this guide](../config
 Remember that OpenID Connect features of CAS require session affinity (and optionally session replication),
 as the authorization responses throughout the login flow are stored via server-backed session storage mechanisms. 
 You will need to configure your deployment environment and load-balancers accordingly.
+
+## Sample Client Applications
+
+- [MITREid Sample Java Webapp](https://github.com/cas-projects/oidc-sample-java-webapp)
 
 ## Claims
 
@@ -136,6 +150,15 @@ You may chain various attribute release policies that authorize claim release ba
 }
 ```
 
+Standard scopes that internally catalog pre-defined claims all belong to the namespace `org.apereo.cas.oidc.claims` and are described below:
+
+| Policy                                              | Description
+|-----------------------------------------------------|-----------------------------------------------------------------------------------------
+| `o.a.c.o.c.OidcProfileScopeAttributeReleasePolicy`  | Release claims mapped to the spec-predefined `profile` scope.
+| `o.a.c.o.c.OidcEmailScopeAttributeReleasePolicy`  | Release claims mapped to the spec-predefined `email` scope.
+| `o.a.c.o.c.OidcAddressScopeAttributeReleasePolicy`  | Release claims mapped to the spec-predefined `address` scope.
+| `o.a.c.o.c.OidcPhoneScopeAttributeReleasePolicy`  | Release claims mapped to the spec-predefined `phone` scope.
+ 
 ### Mapping Claims
 
 Claims associated with a scope (i.e. `given_name` for `profile`) are fixed in 
@@ -151,7 +174,21 @@ To see the relevant list of CAS properties, please [review this guide](../config
 
 ### User-Defined Scopes
 
-Note that in addition to standard system scopes, you may define your own custom scope with a number of attributes within. These such as `displayName` above, get bundled into a `custom` scope which can be used and requested by services and clients.
+Note that in addition to standard system scopes, you may define your own custom scope with a number of attributes within:
+
+```json
+{
+  "@class" : "org.apereo.cas.services.OidcRegisteredService",
+  "clientId": "...",
+  "clientSecret": "...",
+  "serviceId" : "...",
+  "name": "OIDC Test",
+  "id": 10,
+  "scopes" : [ "java.util.HashSet", [ "displayName", "eduPerson" ] ]
+}
+```
+ 
+These such as `displayName` above, get bundled into a `custom` scope which can be used and requested by services and clients.
 
 If you however wish to define your custom scopes as an extension of what OpenID Connect defines
 such that you may bundle attributes together, then you need to first register your `scope`,
@@ -159,6 +196,93 @@ define its attribute bundle and then use it a given service definition such as `
 Such user-defined scopes are also able to override the definition of system scopes.
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#openid-connect).
+
+### Releasing Claims
+
+Defined scopes for a given service definition control and build attribute release policies internally. Such attribute release
+policies allow one to release standard claims, remap attributes to standard claims, or define custom claims and scopes altogether. 
+
+It is also possible to define and use *free-form* attribute release policies outside the confines of a *scope* to freely build and release claims/attributes.  
+
+For example, the following service definition will decide on relevant attribute release policies based on the semantics
+of the scopes `profile` and `email`. There is no need to design or list individual claims as CAS will auto-configure
+the relevant attribute release policies:
+
+```json
+{
+  "@class" : "org.apereo.cas.services.OidcRegisteredService",
+  "clientId": "client",
+  "clientSecret": "secret",
+  "serviceId" : "...",
+  "name": "OIDC",
+  "id": 1,
+  "scopes" : [ "java.util.HashSet",
+    [ "profile", "email" ]
+  ]
+}
+```
+
+A *scope-free* attribute release policy may just as equally apply, allowing one in 
+the following example to release `userX` as a *claim*:
+
+```json
+{
+  "@class" : "org.apereo.cas.services.OidcRegisteredService",
+  "clientId": "client",
+  "clientSecret": "secret",
+  "serviceId" : "...",
+  "name": "OIDC",
+  "id": 1,
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.services.ReturnMappedAttributeReleasePolicy",
+    "allowedAttributes" : {
+      "@class" : "java.util.TreeMap",
+      "userX" : "groovy { return attributes['uid'].get(0) + '-X' }"
+    }
+  }
+}
+```
+
+It is also possible to mix *free-form* release policies with those that operate based on a scope by chaining such policies together. For example, the below policy
+allows the release of `user-x` as a claim, as well as all claims assigned and internally defined for the standard `email` scope.
+
+```json
+{
+  "@class": "org.apereo.cas.services.OidcRegisteredService",
+  "clientId": "client",
+  "clientSecret": "secret",
+  "serviceId": "...",
+  "name": "OIDC",
+  "id": 10,
+  "attributeReleasePolicy": {
+    "@class": "org.apereo.cas.services.ChainingAttributeReleasePolicy",
+    "policies": [
+      "java.util.ArrayList",
+      [
+        {
+          "@class" : "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy",
+          "allowedAttributes" : [ "java.util.ArrayList", [ "cn", "uid", "givenName" ] ],
+          "order": 0  
+        },
+        {
+          "@class": "org.apereo.cas.services.ReturnMappedAttributeReleasePolicy",
+          "allowedAttributes": {
+            "@class": "java.util.TreeMap",
+            "user-x": "groovy { return attributes['uid'].get(0) + '-X' }"
+          },
+          "order": 1
+        },
+        {
+          "@class": "org.apereo.cas.oidc.claims.OidcEmailScopeAttributeReleasePolicy",
+          "order": 2
+        }
+      ]
+    ]
+  }
+}
+```
+
+To learn more about attribute release policies and the chain of command, please [see this guide](../integration/Attribute-Release-Policies.html).
 
 ## Authentication Context Class
 
@@ -212,3 +336,105 @@ file is similar to the following:
 CAS will attempt to auto-generate a keystore if it can't find one, but if you wish to generate one manually, 
 a JWKS can be generated using [this tool](https://mkjwk.org/)
 or [this tool](http://connect2id.com/products/nimbus-jose-jwt/generator).
+
+## WebFinger Issuer Discovery
+
+OpenID Provider Issuer discovery is the process of determining the location of the OpenID Provider. Issuer discovery is optional; if a Relying Party 
+knows the OP's Issuer location through an out-of-band mechanism, it can skip this step.
+
+Issuer discovery requires the following information to make a discovery request:
+
+| Parameter                     | Description
+|-------------------------------|---------------------------------------------------------------------------------------
+| `resource`                    | Required. Identifier for the target End-User that is the subject of the discovery request.
+| `host`                        | Server where a WebFinger service is hosted.
+| `rel`                         | URI identifying the type of service whose location is being requested:`http://openid.net/specs/connect/1.0/issuer`
+
+To start discovery of OpenID endpoints, the End-User supplies an Identifier to the Relying Party. The RP applies normalization rules to the Identifier to
+determine the Resource and Host. Then it makes an HTTP `GET` request to the CAS WebFinger endpoint with the `resource` and `rel` parameters to obtain 
+the location of the requested service. The Issuer location **MUST** be returned in the WebFinger response as the value 
+of the `href` member of a links array element with `rel` member value `http://openid.net/specs/connect/1.0/issuer`.
+
+Example invocation of the `webfinger` endpoint follows:
+
+```bash
+curl https://sso.example.org/cas/oidc/.well-known/webfinger?resource=acct:casuser@somewhere.example.org
+```
+
+The expected response shall match the following example:
+
+```json
+{
+  "subject": "acct:casuser@somewhere.example.org",
+  "links": [
+    {
+      "rel": "http://openid.net/specs/connect/1.0/issuer",
+      "href": "https://sso.example.org/cas/oidc/"
+    }
+  ]
+}
+```
+
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#openid-connect-webfinger).
+
+### WebFinger Resource UserInfo
+
+To determine the correct issuer, resources that are provided to the `webfinger` discovery endpoint using the `acct` URI scheme
+can be located and fetched using external user repositories via `email` or `username`.
+
+<div class="alert alert-warning"><strong>Usage Warning!</strong><p>The default repository implementation will 
+simply echo back the provided email or username, etc as it is <strong>ONLY</strong> relevant for demo/testing purposes.</p></div>
+
+The following user-info repository choices are available for configuration and production use.
+
+#### Groovy UserInfo Repository
+
+The task of locating accounts linked to webfinger resources can be handled using an external Groovy script whose outline would match the following:
+
+```groovy
+def findByUsername(Object[] args) {
+    def username = args[0]
+    def logger = args[1]
+    return [username: username]
+}
+
+def findByEmailAddress(Object[] args) {
+    def email = args[0]
+    def logger = args[1]
+    return [email: email]
+}
+```
+
+The expected return value from the script is a `Map` that contains key-value objects, representing user account details. An empty `Map`
+would indicate the absence of the user record, leading to a `404` response status back to the relying party.
+
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#openid-connect-webfinger).
+
+#### REST UserInfo Repository
+
+The REST repository allows the CAS server to reach to a remote REST endpoint via the configured HTTP method to fetch user accout information.
+
+Query data is passed via either `email` or `username` HTTP headers. The response that is returned must be accompanied by a `200`
+status code where the body should contain `Map` representing the user account information. All other responses will lead to a `404` 
+response status back to the relying party.
+
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#openid-connect-webfinger).
+
+#### Custom UserInfo Repository
+
+It is possible to design and inject your own version of webfinger user repositories into CAS. First, you will need to design
+a `@Configuration` class to contain your own `OidcWebFingerUserInfoRepository` implementation:
+
+```java
+@Configuration("customWebFingerUserInfoConfiguration")
+@EnableConfigurationProperties(CasConfigurationProperties.class)
+public class CustomWebFingerUserInfoConfiguration {
+
+    @Bean
+    public OidcWebFingerUserInfoRepository oidcWebFingerUserInfoRepository() {
+        ...
+    }
+}
+```
+
+Your configuration class needs to be registered with CAS. [See this guide](../configuration/Configuration-Management-Extensions.html) for better details.

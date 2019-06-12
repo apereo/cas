@@ -16,10 +16,8 @@ import org.apereo.cas.util.HttpRequestUtils;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -28,14 +26,12 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import javax.security.auth.login.FailedLoginException;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link DefaultCasEventListenerTests}.
@@ -49,12 +45,6 @@ import static org.junit.Assert.*;
     RefreshAutoConfiguration.class
 })
 public class DefaultCasEventListenerTests {
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
-
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
-
     @Autowired
     private ApplicationEventPublisher eventPublisher;
 
@@ -62,7 +52,7 @@ public class DefaultCasEventListenerTests {
     @Qualifier("casEventRepository")
     private CasEventRepository casEventRepository;
 
-    @Before
+    @BeforeEach
     public void initialize() {
         val request = new MockHttpServletRequest();
         request.setRemoteAddr("123.456.789.000");
@@ -114,7 +104,7 @@ public class DefaultCasEventListenerTests {
         @Bean
         public CasEventRepository casEventRepository() {
             return new AbstractCasEventRepository() {
-                private Collection<CasEvent> events = new LinkedHashSet<>();
+                private final Collection<CasEvent> events = new LinkedHashSet<>();
 
                 @Override
                 public void save(final CasEvent event) {

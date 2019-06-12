@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.pm;
 
+import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.email.EmailProperties;
@@ -42,7 +43,7 @@ public class PasswordManagementProperties implements Serializable {
     private boolean autoLogin;
 
     /**
-     * A String value representing password policy regex pattarn.
+     * A String value representing password policy regex pattern.
      * <p>
      * Minimum 8 and Maximum 10 characters at least 1 Uppercase Alphabet, 1 Lowercase Alphabet, 1 Number and 1 Special Character.
      */
@@ -78,6 +79,11 @@ public class PasswordManagementProperties implements Serializable {
      */
     private ForgotUsername forgotUsername = new ForgotUsername();
 
+    /**
+     * Settings related to password history management.
+     */
+    private PasswordHistory history = new PasswordHistory();
+    
     /**
      * Handle password policy via Groovy script.
      */
@@ -143,6 +149,16 @@ public class PasswordManagementProperties implements Serializable {
          * Endpoint URL to use when updating passwords..
          */
         private String endpointUrlChange;
+
+        /**
+         * Username for Basic-Auth at the password management endpoints.
+         */
+        private String endpointUsername;
+
+        /**
+         * Password for Basic-Auth at the password management endpoints.
+         */
+        private String endpointPassword;
     }
 
     @RequiresModule(name = "cas-server-support-pm-ldap")
@@ -195,7 +211,24 @@ public class PasswordManagementProperties implements Serializable {
         }
     }
 
+    @RequiresModule(name = "cas-server-support-pm-webflow")
+    @Getter
+    @Setter
+    public static class PasswordHistory implements Serializable {
+        private static final long serialVersionUID = 2211199066765183587L;
 
+        /**
+         * Flag to indicate if password history tracking is enabled.
+         */
+        private boolean enabled;
+
+        /**
+         * Handle password history with Groovy.
+         */
+        @NestedConfigurationProperty
+        private SpringResourceProperties groovy = new SpringResourceProperties();
+    }
+    
     @RequiresModule(name = "cas-server-support-pm-webflow")
     @Getter
     @Setter
@@ -227,9 +260,11 @@ public class PasswordManagementProperties implements Serializable {
         private long expirationMinutes = 1;
 
         public Reset() {
-            this.mail.setAttributeName("mail");
-            this.mail.setText("Reset your password via this link: %s");
-            this.mail.setSubject("Password Reset");
+            mail.setAttributeName("mail");
+            mail.setText("Reset your password via this link: %s");
+            mail.setSubject("Password Reset");
+            crypto.getEncryption().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE);
+            crypto.getSigning().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_SIGNING_KEY_SIZE);
         }
     }
 

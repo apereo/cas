@@ -5,9 +5,9 @@ import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import lombok.val;
 
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
-
 
 /**
  * Some utils for creating test services for request validator testing.
@@ -35,10 +35,10 @@ public class RequestValidatorTestUtils {
                 .collect(Collectors.toCollection(HashSet::new)));
         return registeredService;
     }
-    public static OAuthRegisteredService getPromiscousService(final String serviceId,
-                                                              final String name,
-                                                              final String clientId,
-                                                              final String clientSecret) {
-        return getService(serviceId, name, clientId, clientSecret, new HashSet<>());
+    public static OAuthRegisteredService getPromiscuousService(final String serviceId,
+                                                               final String name,
+                                                               final String clientId,
+                                                               final String clientSecret) {
+        return getService(serviceId, name, clientId, clientSecret, new LinkedHashSet<>());
     }
 }

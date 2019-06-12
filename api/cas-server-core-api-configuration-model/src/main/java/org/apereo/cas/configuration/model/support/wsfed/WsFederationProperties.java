@@ -1,12 +1,15 @@
 package org.apereo.cas.configuration.model.support.wsfed;
 
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
+import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This is {@link WsFederationProperties}.
@@ -16,6 +19,7 @@ import java.io.Serializable;
  */
 @Getter
 @Setter
+@RequiresModule(name = "cas-server-support-ws-idp")
 public class WsFederationProperties implements Serializable {
 
     private static final long serialVersionUID = -8679379856243224647L;
@@ -95,6 +99,12 @@ public class WsFederationProperties implements Serializable {
          * Realm definition settings that define this CAS server.
          */
         private RealmDefinition realm = new RealmDefinition();
+
+        /**
+         * Collection of fully-qualified claims prefixed with the appropriate
+         * namespace that are expected to be released via attribute release policy.
+         */
+        private List<String> customClaims = new ArrayList<>();
 
         @Getter
         @Setter

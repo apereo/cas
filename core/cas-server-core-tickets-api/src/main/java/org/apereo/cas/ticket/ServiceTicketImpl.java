@@ -79,8 +79,10 @@ public class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
      * @throws IllegalArgumentException if the TicketGrantingTicket or the Service are null.
      */
     @JsonCreator
-    public ServiceTicketImpl(@JsonProperty("id") final String id, @NonNull @JsonProperty("ticketGrantingTicket") final TicketGrantingTicket ticket,
-                             @NonNull @JsonProperty("service") final Service service, @JsonProperty("credentialProvided") final boolean credentialProvided,
+    public ServiceTicketImpl(@JsonProperty("id") final @NonNull String id,
+                             @JsonProperty("ticketGrantingTicket") final @NonNull TicketGrantingTicket ticket,
+                             @JsonProperty("service") final @NonNull Service service,
+                             @JsonProperty("credentialProvided") final boolean credentialProvided,
                              @JsonProperty("expirationPolicy") final ExpirationPolicy policy) {
         super(id, policy);
         this.ticketGrantingTicket = ticket;
@@ -98,12 +100,13 @@ public class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
      */
     @Override
     public boolean isValidFor(final Service serviceToValidate) {
-        update();
+        updateTicketState();
         return serviceToValidate.matches(this.service);
     }
 
     @Override
-    public ProxyGrantingTicket grantProxyGrantingTicket(final String id, final Authentication authentication, final ExpirationPolicy expirationPolicy) throws AbstractTicketException {
+    public ProxyGrantingTicket grantProxyGrantingTicket(final @NonNull String id, final @NonNull Authentication authentication,
+                                                        final ExpirationPolicy expirationPolicy) throws AbstractTicketException {
         if (this.grantedTicketAlready) {
             LOGGER.warn("Service ticket [{}] issued for service [{}] has already allotted a proxy-granting ticket", getId(), this.service.getId());
             throw new InvalidProxyGrantingTicketForServiceTicketException(this.service);

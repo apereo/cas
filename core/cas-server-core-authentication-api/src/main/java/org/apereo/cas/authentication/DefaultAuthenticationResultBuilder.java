@@ -2,14 +2,12 @@ package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.util.CollectionUtils;
 
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.tuple.Pair;
-import org.apereo.services.persondir.support.merger.MultivaluedAttributeMerger;
 
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -19,7 +17,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link DefaultAuthenticationResultBuilder}.
@@ -33,29 +30,29 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
 
     private static final long serialVersionUID = 6180465589526463843L;
     private final Set<Authentication> authentications = Collections.synchronizedSet(new LinkedHashSet<>());
-    private List<Credential> providedCredentials = new ArrayList<>();
+    private final List<Credential> providedCredentials = new ArrayList<>();
 
     private static void buildAuthenticationHistory(final Set<Authentication> authentications,
-                                                   final Map<String, Object> authenticationAttributes,
-                                                   final Map<String, Object> principalAttributes,
+                                                   final Map<String, List<Object>> authenticationAttributes,
+                                                   final Map<String, List<Object>> principalAttributes,
                                                    final AuthenticationBuilder authenticationBuilder) {
 
-
-        LOGGER.debug("Collecting authentication history based on [{}] authentication events", authentications.size());
+        LOGGER.trace("Collecting authentication history based on [{}] authentication events", authentications.size());
         authentications.forEach(authn -> {
             val authenticatedPrincipal = authn.getPrincipal();
             LOGGER.debug("Evaluating authentication principal [{}] for inclusion in result", authenticatedPrincipal);
 
-            principalAttributes.putAll(mergeAttributes(principalAttributes, authenticatedPrincipal.getAttributes()));
+            principalAttributes.putAll(CoreAuthenticationUtils.mergeAttributes(principalAttributes, authenticatedPrincipal.getAttributes()));
             LOGGER.debug("Collected principal attributes [{}] for inclusion in this result for principal [{}]",
                 principalAttributes, authenticatedPrincipal.getId());
 
-            authenticationAttributes.putAll(mergeAttributes(authenticationAttributes, authn.getAttributes()));
+            authenticationAttributes.putAll(CoreAuthenticationUtils.mergeAttributes(authenticationAttributes, authn.getAttributes()));
             LOGGER.debug("Finalized authentication attributes [{}] for inclusion in this authentication result", authenticationAttributes);
 
             authenticationBuilder
                 .addSuccesses(authn.getSuccesses())
                 .addFailures(authn.getFailures())
+                .addWarnings(authn.getWarnings())
                 .addCredentials(authn.getCredentials());
         });
     }
@@ -86,6 +83,14 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
     }
 
     @Override
+    public Optional<Credential> getInitialCredential() {
+        if (this.providedCredentials.isEmpty()) {
+            LOGGER.warn("Provided credentials chain is empty as no credentials have been collected");
+        }
+        return this.providedCredentials.stream().findFirst();
+    }
+
+    @Override
     public AuthenticationResult build(final PrincipalElectionStrategy principalElectionStrategy) {
         return build(principalElectionStrategy, null);
     }
@@ -97,7 +102,7 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
             LOGGER.info("Authentication result cannot be produced because no authentication is recorded into in the chain. Returning null");
             return null;
         }
-        LOGGER.debug("Building an authentication result for authentication [{}] and service [{}]", authentication, service);
+        LOGGER.trace("Building an authentication result for authentication [{}] and service [{}]", authentication, service);
         val res = new DefaultAuthenticationResult(authentication, service);
         res.setCredentialProvided(!this.providedCredentials.isEmpty());
         return res;
@@ -112,8 +117,8 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
             LOGGER.warn("No authentication event has been recorded; CAS cannot finalize the authentication result");
             return null;
         }
-        val authenticationAttributes = new HashMap<String, Object>();
-        val principalAttributes = new HashMap<String, Object>();
+        val authenticationAttributes = new HashMap<String, List<Object>>();
+        val principalAttributes = new HashMap<String, List<Object>>();
         val authenticationBuilder = DefaultAuthenticationBuilder.newInstance();
 
         buildAuthenticationHistory(this.authentications, authenticationAttributes, principalAttributes, authenticationBuilder);
@@ -122,11 +127,12 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
         LOGGER.debug("Determined primary authentication principal to be [{}]", primaryPrincipal);
 
         authenticationBuilder.setAttributes(authenticationAttributes);
-        LOGGER.debug("Collected authentication attributes for this result are [{}]", authenticationAttributes);
+        LOGGER.trace("Collected authentication attributes for this result are [{}]", authenticationAttributes);
 
-        authenticationBuilder.setAuthenticationDate(ZonedDateTime.now());
+        authenticationBuilder.setAuthenticationDate(ZonedDateTime.now(ZoneOffset.UTC));
+
         val auth = authenticationBuilder.build();
-        LOGGER.debug("Authentication result commenced at [{}]", auth.getAuthenticationDate());
+        LOGGER.trace("Authentication result commenced at [{}]", auth.getAuthenticationDate());
         return auth;
     }
 
@@ -135,28 +141,9 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
      * Based on that restriction, it's safe to simply grab the first principal id in the chain
      * when composing the authentication chain for the caller.
      */
-    private Principal getPrimaryPrincipal(final PrincipalElectionStrategy principalElectionStrategy,
-                                          final Set<Authentication> authentications,
-                                          final Map<String, Object> principalAttributes) {
+    private static Principal getPrimaryPrincipal(final PrincipalElectionStrategy principalElectionStrategy,
+                                                 final Set<Authentication> authentications,
+                                                 final Map<String, List<Object>> principalAttributes) {
         return principalElectionStrategy.nominate(new LinkedHashSet<>(authentications), principalAttributes);
-    }
-
-    private static Map<String, Object> mergeAttributes(final Map<String, Object> currentAttributes, final Map<String, Object> attributesToMerge) {
-        val merger = new MultivaluedAttributeMerger();
-
-        val toModify = currentAttributes.entrySet()
-            .stream()
-            .map(entry -> Pair.of(entry.getKey(), CollectionUtils.toCollection(entry.getValue(), ArrayList.class)))
-            .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
-
-        val toMerge = attributesToMerge.entrySet()
-            .stream()
-            .map(entry -> Pair.of(entry.getKey(), CollectionUtils.toCollection(entry.getValue(), ArrayList.class)))
-            .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
-
-        LOGGER.debug("Merging current attributes [{}] with [{}]", currentAttributes, attributesToMerge);
-        val results = merger.mergeAttributes((Map) toModify, (Map) toMerge);
-        LOGGER.debug("Merged attributes with the final result as [{}]", results);
-        return results;
     }
 }

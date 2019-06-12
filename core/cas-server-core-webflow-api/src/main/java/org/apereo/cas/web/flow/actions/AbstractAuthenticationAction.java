@@ -38,7 +38,7 @@ public abstract class AbstractAuthenticationAction extends AbstractAction {
         val geoLocation = WebUtils.getHttpServletRequestGeoLocationFromRequestContext();
 
         if (geoLocation != null && StringUtils.isNotBlank(agent)
-            && !adaptiveAuthenticationPolicy.apply(requestContext, agent, geoLocation)) {
+                && !adaptiveAuthenticationPolicy.apply(requestContext, agent, geoLocation)) {
             val msg = "Adaptive authentication policy does not allow this request for " + agent + " and " + geoLocation;
             val map = CollectionUtils.<String, Throwable>wrap(UnauthorizedAuthenticationException.class.getSimpleName(), new UnauthorizedAuthenticationException(msg));
             val error = new AuthenticationException(msg, map, new HashMap<>(0));

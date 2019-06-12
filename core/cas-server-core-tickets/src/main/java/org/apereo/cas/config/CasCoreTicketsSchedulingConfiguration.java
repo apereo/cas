@@ -61,7 +61,7 @@ public class CasCoreTicketsSchedulingConfiguration {
     }
 
     @ConditionalOnMissingBean(name = "ticketRegistryCleanerScheduler")
-    @ConditionalOnProperty(prefix = "cas.ticket.registry.cleaner", name = "enabled", havingValue = "true", matchIfMissing = true)
+    @ConditionalOnProperty(prefix = "cas.ticket.registry.cleaner.schedule", name = "enabled", havingValue = "true", matchIfMissing = true)
     @Bean
     @Autowired
     @RefreshScope

@@ -12,6 +12,6 @@ public interface PersonDirectoryAttributeRepositoryPlanConfigurer {
      *
      * @param plan the plan
      */
-    default void configureAttributeRepositoryPlan(PersonDirectoryAttributeRepositoryPlan plan) {
+    default void configureAttributeRepositoryPlan(final PersonDirectoryAttributeRepositoryPlan plan) {
     }
 }

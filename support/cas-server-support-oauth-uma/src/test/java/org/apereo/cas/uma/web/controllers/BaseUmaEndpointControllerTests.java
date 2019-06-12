@@ -19,12 +19,15 @@ import org.apereo.cas.uma.web.controllers.resource.UmaFindResourceSetRegistratio
 import org.apereo.cas.uma.web.controllers.resource.UmaResourceRegistrationRequest;
 import org.apereo.cas.uma.web.controllers.resource.UmaUpdateResourceSetRegistrationEndpointController;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.Pac4jUtils;
 
 import lombok.val;
 import org.apache.commons.lang3.tuple.Triple;
 import org.apache.http.HttpHeaders;
+import org.junit.jupiter.api.Tag;
+import org.pac4j.core.context.J2EContext;
+import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.profile.CommonProfile;
+import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.springframework.web.SecurityInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -36,12 +39,11 @@ import org.springframework.test.context.TestPropertySource;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link BaseUmaEndpointControllerTests}.
@@ -49,6 +51,7 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
+@Tag("OAuth")
 @Import({CasOAuthUmaConfiguration.class, CasOAuthUmaComponentSerializationConfiguration.class})
 @TestPropertySource(properties = "cas.authn.uma.requestingPartyToken.jwksFile=classpath:uma-keystore.jwks")
 public abstract class BaseUmaEndpointControllerTests extends AbstractOAuth20Tests {
@@ -81,6 +84,10 @@ public abstract class BaseUmaEndpointControllerTests extends AbstractOAuth20Test
     protected UmaFindPolicyForResourceSetEndpointController umaFindPolicyForResourceSetEndpointController;
 
     @Autowired
+    @Qualifier("oauthDistributedSessionStore")
+    protected SessionStore oauthDistributedSessionStore;
+
+    @Autowired
     @Qualifier("umaDeletePolicyForResourceSetEndpointController")
     protected UmaDeletePolicyForResourceSetEndpointController umaDeletePolicyForResourceSetEndpointController;
 
@@ -111,7 +118,7 @@ public abstract class BaseUmaEndpointControllerTests extends AbstractOAuth20Test
     private Triple<HttpServletRequest, HttpServletResponse, String> authenticateUmaRequestWithScope(
         final String scope, final SecurityInterceptor interceptor) throws Exception {
         val service = addRegisteredService();
-        val pair = internalVerifyClientOK(service, false, scope);
+        val pair = assertClientOK(service, false, scope);
         assertNotNull(pair.getKey());
         val accessToken = pair.getKey();
 
@@ -122,11 +129,11 @@ public abstract class BaseUmaEndpointControllerTests extends AbstractOAuth20Test
         return Triple.of(mockRequest, mockResponse, accessToken);
     }
 
-    protected UmaResourceRegistrationRequest createUmaResourceRegistrationRequest() {
+    protected static UmaResourceRegistrationRequest createUmaResourceRegistrationRequest() {
         return createUmaResourceRegistrationRequest(-1);
     }
 
-    protected UmaResourceRegistrationRequest createUmaResourceRegistrationRequest(final long id) {
+    protected static UmaResourceRegistrationRequest createUmaResourceRegistrationRequest(final long id) {
         val resRequest = new UmaResourceRegistrationRequest();
         resRequest.setUri("http://rs.example.com/alice/myresource");
         resRequest.setName("my-resource");
@@ -138,11 +145,11 @@ public abstract class BaseUmaEndpointControllerTests extends AbstractOAuth20Test
         return resRequest;
     }
 
-    protected ResourceSetPolicy createUmaPolicyRegistrationRequest(final CommonProfile profile) {
+    protected static ResourceSetPolicy createUmaPolicyRegistrationRequest(final CommonProfile profile) {
         return createUmaPolicyRegistrationRequest(profile, CollectionUtils.wrapHashSet("read", "write"));
     }
 
-    protected ResourceSetPolicy createUmaPolicyRegistrationRequest(final CommonProfile profile, final Collection<String> scopes) {
+    protected static ResourceSetPolicy createUmaPolicyRegistrationRequest(final CommonProfile profile, final Collection<String> scopes) {
         val policy = new ResourceSetPolicy();
         val perm = new ResourceSetPolicyPermission();
         perm.setScopes(new HashSet<>(scopes));
@@ -152,7 +159,7 @@ public abstract class BaseUmaEndpointControllerTests extends AbstractOAuth20Test
         return policy;
     }
 
-    protected UmaPermissionRegistrationRequest createUmaPermissionRegistrationRequest(final long resourceId) {
+    protected static UmaPermissionRegistrationRequest createUmaPermissionRegistrationRequest(final long resourceId) {
         val perm = new UmaPermissionRegistrationRequest();
         perm.setResourceId(resourceId);
         perm.setScopes(CollectionUtils.wrapList("read"));
@@ -168,6 +175,8 @@ public abstract class BaseUmaEndpointControllerTests extends AbstractOAuth20Test
      * @return the current profile
      */
     protected CommonProfile getCurrentProfile(final HttpServletRequest request, final HttpServletResponse response) {
-        return (CommonProfile) Pac4jUtils.getPac4jProfileManager(request, response).get(true).get();
+        val ctx = new J2EContext(request, response, this.oauthDistributedSessionStore);
+        val manager = new ProfileManager<>(ctx, ctx.getSessionStore());
+        return manager.get(true).orElse(null);
     }
 }

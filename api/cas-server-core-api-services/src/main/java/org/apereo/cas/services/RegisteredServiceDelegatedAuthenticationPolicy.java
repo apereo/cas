@@ -12,7 +12,6 @@ import java.util.Collection;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@FunctionalInterface
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public interface RegisteredServiceDelegatedAuthenticationPolicy extends Serializable {
 
@@ -23,6 +22,23 @@ public interface RegisteredServiceDelegatedAuthenticationPolicy extends Serializ
      * @return allowed authn providers
      */
     Collection<String> getAllowedProviders();
+
+    /**
+     * Indicate whether authentication should be exclusively
+     * limited to allowed providers, disabling other forms of
+     * authentication such as username/password, etc.
+     *
+     * @return the boolean
+     */
+    boolean isExclusive();
+
+    /**
+     * If no providers are defined, indicates whether or not access strategy should
+     * authorize the request.
+     *
+     * @return the boolean
+     */
+    boolean isPermitUndefined();
 
     /**
      * Is provider allowed to process the request for this service.

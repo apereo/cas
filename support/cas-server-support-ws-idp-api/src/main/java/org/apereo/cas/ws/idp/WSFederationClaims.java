@@ -5,6 +5,7 @@ import org.apereo.cas.util.CollectionUtils;
 import lombok.Getter;
 import org.apache.commons.lang3.EnumUtils;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -136,5 +137,15 @@ public enum WSFederationClaims {
      */
     public static boolean contains(final String claimName) {
         return EnumUtils.isValidEnum(WSFederationClaims.class, claimName);
+    }
+
+    /**
+     * Contains uri boolean.
+     *
+     * @param claimUri the claim uri
+     * @return the boolean
+     */
+    public static boolean containsUri(final String claimUri) {
+        return Arrays.stream(WSFederationClaims.values()).anyMatch(c -> c.getUri().equalsIgnoreCase(claimUri));
     }
 }

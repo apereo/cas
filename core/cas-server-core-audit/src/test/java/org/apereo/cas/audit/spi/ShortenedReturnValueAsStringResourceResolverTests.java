@@ -5,9 +5,9 @@ import org.apereo.cas.audit.spi.resource.ShortenedReturnValueAsStringResourceRes
 import lombok.val;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.aspectj.lang.JoinPoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**

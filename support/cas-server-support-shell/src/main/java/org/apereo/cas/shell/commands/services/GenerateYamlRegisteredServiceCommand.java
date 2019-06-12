@@ -1,6 +1,6 @@
 package org.apereo.cas.shell.commands.services;
 
-import org.apereo.cas.services.util.DefaultRegisteredServiceJsonSerializer;
+import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.services.util.RegisteredServiceYamlSerializer;
 
 import lombok.extern.slf4j.Slf4j;
@@ -34,7 +34,7 @@ public class GenerateYamlRegisteredServiceCommand {
      * @param destination the destination
      */
     @ShellMethod(key = "generate-yaml", value = "Generate a YAML registered service definition")
-    public void generateYaml(
+    public static void generateYaml(
         @ShellOption(value = {"file"},
             help = "Path to the JSON service definition file") final String file,
         @ShellOption(value = {"destination"},
@@ -49,9 +49,9 @@ public class GenerateYamlRegisteredServiceCommand {
         generate(filePath, result);
     }
 
-    private void generate(final File filePath, final File result) {
+    private static void generate(final File filePath, final File result) {
         try {
-            val validator = new DefaultRegisteredServiceJsonSerializer();
+            val validator = new RegisteredServiceJsonSerializer();
             if (filePath.isFile() && filePath.exists() && filePath.canRead() && filePath.length() > 0) {
                 val svc = validator.from(filePath);
                 LOGGER.info("Service [{}] is valid at [{}].", svc.getName(), filePath.getCanonicalPath());
@@ -71,7 +71,7 @@ public class GenerateYamlRegisteredServiceCommand {
         } catch (final Exception e) {
             LOGGER.error("Could not understand and validate [{}]: [{}]", filePath.getPath(), e.getMessage());
         } finally {
-            LOGGER.info(StringUtils.repeat('-', SEP_LINE_LENGTH));
+            LOGGER.info("-".repeat(SEP_LINE_LENGTH));
         }
 
     }

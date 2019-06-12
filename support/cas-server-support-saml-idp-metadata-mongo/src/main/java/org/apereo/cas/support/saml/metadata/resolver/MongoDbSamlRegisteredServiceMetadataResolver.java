@@ -8,6 +8,7 @@ import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.BaseSaml
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
@@ -35,8 +36,9 @@ public class MongoDbSamlRegisteredServiceMetadataResolver extends BaseSamlRegist
     }
 
     @Override
-    public Collection<? extends MetadataResolver> resolve(final SamlRegisteredService service) {
+    public Collection<? extends MetadataResolver> resolve(final SamlRegisteredService service, final CriteriaSet criteriaSet) {
         try {
+            LOGGER.debug("Fetching metadata documents from collection [{}]", this.collectionName);
             val documents = mongoTemplate.findAll(SamlMetadataDocument.class, this.collectionName);
             return documents
                 .stream()
@@ -67,9 +69,6 @@ public class MongoDbSamlRegisteredServiceMetadataResolver extends BaseSamlRegist
 
     @Override
     public boolean isAvailable(final SamlRegisteredService service) {
-        if (supports(service)) {
-            return mongoTemplate.collectionExists(this.collectionName);
-        }
-        return false;
+        return supports(service) && mongoTemplate.collectionExists(this.collectionName);
     }
 }

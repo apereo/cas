@@ -160,7 +160,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
      * @return the boolean
      */
     protected boolean invokeAuthenticationPreProcessors(final AuthenticationTransaction transaction) {
-        LOGGER.debug("Invoking authentication pre processors for authentication transaction");
+        LOGGER.trace("Invoking authentication pre processors for authentication transaction");
         val pops = authenticationEventExecutionPlan.getAuthenticationPreProcessors(transaction);
 
         final Collection<AuthenticationPreProcessor> supported = pops.stream()
@@ -203,7 +203,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
         publishEvent(new CasAuthenticationTransactionSuccessfulEvent(this, credential));
         var principal = result.getPrincipal();
 
-        val resolverName = resolver != null ? resolver.getClass().getSimpleName() : "N/A";
+        val resolverName = resolver != null ? resolver.getName(): "N/A";
         if (resolver == null) {
             LOGGER.debug("No principal resolution is configured for [{}]. Falling back to handler principal [{}]", authenticationHandlerName, principal);
         } else {
@@ -281,7 +281,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
 
         val builder = new DefaultAuthenticationBuilder(NullPrincipal.getInstance());
         credentials.forEach(cred -> builder.addCredential(new BasicCredentialMetaData(cred)));
-
+        
         val handlerSet = this.authenticationEventExecutionPlan.getAuthenticationHandlersForTransaction(transaction);
         LOGGER.debug("Candidate resolved authentication handlers for this transaction are [{}]", handlerSet);
 
@@ -306,6 +306,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
                             val resolver = getPrincipalResolverLinkedToHandlerIfAny(handler, transaction);
                             LOGGER.debug("Attempting authentication of [{}] using [{}]", credential.getId(), handler.getName());
                             authenticateAndResolvePrincipal(builder, credential, resolver, handler);
+
                             val authnResult = builder.build();
                             AuthenticationCredentialsThreadLocalBinder.bindInProgress(authnResult);
                             val failures = evaluateAuthenticationPolicies(authnResult, transaction, handlerSet);
@@ -407,6 +408,9 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
         if (ex instanceof UndeclaredThrowableException) {
             e = ((UndeclaredThrowableException) ex).getUndeclaredThrowable();
         }
+
+        LOGGER.trace(e.getMessage(), e);
+
         val msg = new StringBuilder(StringUtils.defaultString(e.getMessage()));
         if (e.getCause() != null) {
             msg.append(" / ").append(e.getCause().getMessage());

@@ -30,8 +30,9 @@ public class AuthyAuthenticationHandler extends AbstractPreAndPostProcessingAuth
     private final AuthyClientInstance instance;
 
     public AuthyAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory,
-                                      final AuthyClientInstance instance, final boolean forceVerification) {
-        super(name, servicesManager, principalFactory, null);
+                                      final AuthyClientInstance instance, final boolean forceVerification,
+                                      final Integer order) {
+        super(name, servicesManager, principalFactory, order);
         this.instance = instance;
         this.forceVerification = forceVerification;
     }
@@ -64,8 +65,7 @@ public class AuthyAuthenticationHandler extends AbstractPreAndPostProcessingAuth
 
     @SneakyThrows
     private Token verifyAuthyToken(final AuthyTokenCredential tokenCredential, final User user, final Map<String, String> options) {
-        return this.instance.getAuthyTokens()
-            .verify(user.getId(), tokenCredential.getToken(), options);
+        return this.instance.getAuthyTokens().verify(user.getId(), tokenCredential.getToken(), options);
     }
 
     @Override

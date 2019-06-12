@@ -7,18 +7,19 @@ import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.web.support.DefaultArgumentExtractor;
 
 import lombok.val;
-import org.junit.Test;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
-import java.util.Arrays;
 import java.util.Collections;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Scott Battaglia
  * @since 3.1
  */
+@Tag("SAML")
 public class WebUtilTests {
 
     @Test
@@ -28,7 +29,7 @@ public class WebUtilTests {
         val request = new MockHttpServletRequest();
         request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, "test");
 
-        val service = HttpRequestUtils.getService(Arrays.asList(casArgumentExtractor), request);
+        val service = HttpRequestUtils.getService(Collections.singletonList(casArgumentExtractor), request);
 
         assertNotNull(service);
         assertEquals("test", service.getId());
@@ -36,7 +37,7 @@ public class WebUtilTests {
 
     @Test
     public void verifyFoundNoService() {
-        val casArgumentExtractor = new DefaultArgumentExtractor(new SamlServiceFactory(null));
+        val casArgumentExtractor = new DefaultArgumentExtractor(new SamlServiceFactory());
         val request = new MockHttpServletRequest();
         request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, "test");
         val service = HttpRequestUtils.getService(Collections.singletonList(casArgumentExtractor), request);

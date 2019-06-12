@@ -6,6 +6,7 @@ import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 
 import java.util.Collection;
+import java.util.Map;
 
 /**
  * Factory to create OAuth access tokens.
@@ -22,7 +23,28 @@ public interface AccessTokenFactory extends TicketFactory {
      * @param authentication       the authentication
      * @param ticketGrantingTicket the ticket granting ticket
      * @param scopes               the scopes
+     * @param clientId             the client id
+     * @param requestClaims        the request claims
      * @return the access token
      */
-    AccessToken create(Service service, Authentication authentication, TicketGrantingTicket ticketGrantingTicket, Collection<String> scopes);
+    AccessToken create(Service service, Authentication authentication,
+                       TicketGrantingTicket ticketGrantingTicket,
+                       Collection<String> scopes,
+                       String clientId,
+                       Map<String, Map<String, Object>> requestClaims);
+
+    /**
+     * Create access token.
+     *
+     * @param service        the service
+     * @param authentication the authentication
+     * @param scopes         the scopes
+     * @param requestClaims  the request claims
+     * @param clientId       the client id
+     * @return the access token
+     */
+    AccessToken create(Service service, Authentication authentication,
+                       Collection<String> scopes,
+                       String clientId,
+                       Map<String, Map<String, Object>> requestClaims);
 }

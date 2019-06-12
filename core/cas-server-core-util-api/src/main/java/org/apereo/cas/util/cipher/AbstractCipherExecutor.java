@@ -6,6 +6,7 @@ import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.crypto.PrivateKeyFactoryBean;
 import org.apereo.cas.util.crypto.PublicKeyFactoryBean;
 
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.SneakyThrows;
@@ -30,6 +31,7 @@ import java.security.Security;
 @Slf4j
 @Setter
 @NoArgsConstructor
+@Getter
 public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, R> {
 
     static {
@@ -101,12 +103,10 @@ public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, 
             if (ResourceUtils.doesResourceExist(signingSecretKey)) {
                 configureSigningKeyFromPrivateKeyResource(signingSecretKey);
             }
-        } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
         } finally {
             if (this.signingKey == null) {
                 setSigningKey(new AesKey(signingSecretKey.getBytes(StandardCharsets.UTF_8)));
-                LOGGER.debug("Created signing key instance [{}] based on provided secret key", this.signingKey.getClass().getSimpleName());
+                LOGGER.trace("Created signing key instance [{}] based on provided secret key", this.signingKey.getClass().getSimpleName());
             }
         }
     }
@@ -115,11 +115,10 @@ public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, 
      * Configure signing key from private key resource.
      *
      * @param signingSecretKey the signing secret key
-     * @throws Exception the exception
      */
-    protected void configureSigningKeyFromPrivateKeyResource(final String signingSecretKey) throws Exception {
+    protected void configureSigningKeyFromPrivateKeyResource(final String signingSecretKey) {
         val object = extractPrivateKeyFromResource(signingSecretKey);
-        LOGGER.debug("Located signing key resource [{}]", signingSecretKey);
+        LOGGER.trace("Located signing key resource [{}]", signingSecretKey);
         setSigningKey(object);
     }
 

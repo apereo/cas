@@ -1,11 +1,15 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.Service;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -16,6 +20,8 @@ import java.util.Map;
  */
 @Slf4j
 @Getter
+@EqualsAndHashCode(callSuper = true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class DenyAllAttributeReleasePolicy extends AbstractRegisteredServiceAttributeReleasePolicy {
 
     private static final long serialVersionUID = -6215588543966639050L;
@@ -29,7 +35,8 @@ public class DenyAllAttributeReleasePolicy extends AbstractRegisteredServiceAttr
     }
 
     @Override
-    public Map<String, Object> getAttributesInternal(final Principal principal, final Map<String, Object> attributes, final RegisteredService service) {
+    public Map<String, List<Object>> getAttributesInternal(final Principal principal, final Map<String, List<Object>> attributes,
+                                                     final RegisteredService registeredService, final Service selectedService) {
         LOGGER.trace("Ignoring all attributes given the service is designed to never receive any.");
         return new HashMap<>(0);
     }
@@ -58,7 +65,7 @@ public class DenyAllAttributeReleasePolicy extends AbstractRegisteredServiceAttr
     }
 
     @Override
-    protected Map<String, Object> returnFinalAttributesCollection(final Map<String, Object> attributesToRelease, final RegisteredService service) {
+    protected Map<String, List<Object>> returnFinalAttributesCollection(final Map<String, List<Object>> attributesToRelease, final RegisteredService service) {
         LOGGER.info("CAS will not authorize anything for release, given the service is denied access to all attributes. "
             + "If there are any default attributes set to be released to all services, "
             + "those are also skipped for [{}]", service);

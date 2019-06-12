@@ -5,8 +5,6 @@ import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.math.BigInteger;
-
 /**
  * This is {@link CouchDbSamlIdPMetadataDocument}.
  *
@@ -15,15 +13,15 @@ import java.math.BigInteger;
  */
 public class CouchDbSamlIdPMetadataDocument extends SamlIdPMetadataDocument {
     @JsonProperty("_id")
-    private String cid; //NOPMD
+    private String cid;
 
     @JsonProperty("_rev")
-    private String rev; //NOPMD
+    private String rev;
 
     @JsonCreator
-    public CouchDbSamlIdPMetadataDocument(@JsonProperty("_id") final String cid, //NOPMD
+    public CouchDbSamlIdPMetadataDocument(@JsonProperty("_id") final String cid,
                                           @JsonProperty("_rev") final String rev,
-                                          @JsonProperty("id") final BigInteger id,
+                                          @JsonProperty("id") final long id,
                                           @JsonProperty("metadata") final String metadata,
                                           @JsonProperty("signingCertificate") final String signingCertificate,
                                           @JsonProperty("signingKey") final String signingKey,

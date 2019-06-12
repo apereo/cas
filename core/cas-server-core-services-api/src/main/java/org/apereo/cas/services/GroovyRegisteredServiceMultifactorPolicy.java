@@ -1,9 +1,10 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.util.ResourceUtils;
-import org.apereo.cas.util.ScriptingUtils;
+import org.apereo.cas.util.scripting.ScriptingUtils;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,6 +25,7 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @EqualsAndHashCode
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class GroovyRegisteredServiceMultifactorPolicy implements RegisteredServiceMultifactorPolicy {
     private static final long serialVersionUID = -3075860754996106437L;
 
@@ -31,6 +33,7 @@ public class GroovyRegisteredServiceMultifactorPolicy implements RegisteredServi
 
     @JsonIgnore
     @Transient
+    @org.springframework.data.annotation.Transient
     private transient RegisteredServiceMultifactorPolicy groovyPolicyInstance;
 
     @JsonIgnore
@@ -42,7 +45,7 @@ public class GroovyRegisteredServiceMultifactorPolicy implements RegisteredServi
 
     @JsonIgnore
     @Override
-    public FailureModes getFailureMode() {
+    public RegisteredServiceMultifactorPolicyFailureModes getFailureMode() {
         buildGroovyMultifactorPolicyInstanceIfNeeded();
         return this.groovyPolicyInstance.getFailureMode();
     }

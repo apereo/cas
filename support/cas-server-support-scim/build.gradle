@@ -1,5 +1,4 @@
 description = "Apereo CAS SCIM 2 Provisioning Support"
-
 dependencies {
     api project(":api:cas-server-core-api-webflow")
 
@@ -12,6 +11,7 @@ dependencies {
     implementation project(":core:cas-server-core-webflow-api")
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-services")
+    implementation project(":core:cas-server-core-services-api")
     implementation project(":core:cas-server-core-services-authentication")
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-configuration-api")

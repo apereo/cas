@@ -11,7 +11,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This is {@link CasConfigurationMetadataRepositoryJsonBuilder}.
+ * This is {@link CasConfigurationMetadataRepositoryJsonBuilder}
+ * which is similar to {@link ConfigurationMetadataRepositoryJsonBuilder}
+ * with a different implementation for the {@link #getSource(RawConfigurationMetadata, ConfigurationMetadataItem)}.
  *
  * @author Misagh Moayyed
  * @since 6.0.0
@@ -36,9 +38,8 @@ public class CasConfigurationMetadataRepositoryJsonBuilder {
      *
      * @param inputStream the source input stream
      * @return this builder
-     * @throws IOException in case of I/O errors
      */
-    public CasConfigurationMetadataRepositoryJsonBuilder withJsonResource(final InputStream inputStream) throws IOException {
+    public CasConfigurationMetadataRepositoryJsonBuilder withJsonResource(final InputStream inputStream) {
         return withJsonResource(inputStream, this.defaultCharset);
     }
 
@@ -53,9 +54,8 @@ public class CasConfigurationMetadataRepositoryJsonBuilder {
      * @param inputStream the source input stream
      * @param charset     the charset of the input
      * @return this builder
-     * @throws IOException in case of I/O errors
      */
-    public CasConfigurationMetadataRepositoryJsonBuilder withJsonResource(final InputStream inputStream, final Charset charset) throws IOException {
+    public CasConfigurationMetadataRepositoryJsonBuilder withJsonResource(final InputStream inputStream, final Charset charset) {
         if (inputStream == null) {
             throw new IllegalArgumentException("InputStream must not be null.");
         }
@@ -86,17 +86,17 @@ public class CasConfigurationMetadataRepositoryJsonBuilder {
         }
     }
 
-    private void addValueHints(final ConfigurationMetadataProperty property, final ConfigurationMetadataHint hint) {
+    private static void addValueHints(final ConfigurationMetadataProperty property, final ConfigurationMetadataHint hint) {
         property.getHints().getValueHints().addAll(hint.getValueHints());
         property.getHints().getValueProviders().addAll(hint.getValueProviders());
     }
 
-    private void addMapHints(final ConfigurationMetadataProperty property, final ConfigurationMetadataHint hint) {
+    private static void addMapHints(final ConfigurationMetadataProperty property, final ConfigurationMetadataHint hint) {
         property.getHints().getKeyHints().addAll(hint.getValueHints());
         property.getHints().getKeyProviders().addAll(hint.getValueProviders());
     }
 
-    private ConfigurationMetadataSource getSource(final RawConfigurationMetadata metadata, final ConfigurationMetadataItem item) {
+    private static ConfigurationMetadataSource getSource(final RawConfigurationMetadata metadata, final ConfigurationMetadataItem item) {
         if (item.getSourceType() == null) {
             return null;
         }
@@ -111,7 +111,7 @@ public class CasConfigurationMetadataRepositoryJsonBuilder {
 
     }
 
-    private SimpleConfigurationMetadataRepository create(final RawConfigurationMetadata metadata) {
+    private static SimpleConfigurationMetadataRepository create(final RawConfigurationMetadata metadata) {
         val repository = new SimpleConfigurationMetadataRepository();
         repository.add(metadata.getSources());
         for (val item : metadata.getItems()) {

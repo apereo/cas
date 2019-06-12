@@ -2,6 +2,7 @@ package org.apereo.cas.adaptors.trusted.authentication.principal;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -18,7 +19,7 @@ public interface RemoteRequestPrincipalAttributesExtractor {
      * @param request the request
      * @return the attributes
      */
-    default Map<String, Object> getAttributes(final HttpServletRequest request) {
+    default Map<String, List<Object>> getAttributes(final HttpServletRequest request) {
         return new HashMap<>(0);
     }
 }

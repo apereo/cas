@@ -5,7 +5,7 @@ dependencies {
     api project(":api:cas-server-core-api-webflow")
     api project(":api:cas-server-core-api")
 
-    implementation libraries.caffein
+    
     implementation libraries.zxingbarcode
 
     implementation project(":core:cas-server-core-authentication-api")
@@ -13,7 +13,10 @@ dependencies {
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-webflow-api")
+    implementation project(":core:cas-server-core-webflow-mfa-api")
 
+    implementation project(":support:cas-server-support-otp-mfa-core")
+    
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-authentication")
     testImplementation project(":core:cas-server-core-authentication-api")
@@ -29,6 +32,7 @@ dependencies {
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core-web")
     testImplementation project(":core:cas-server-core-webflow")
+    testImplementation project(":core:cas-server-core-webflow-mfa")
     testImplementation project(":support:cas-server-support-person-directory")
 
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")

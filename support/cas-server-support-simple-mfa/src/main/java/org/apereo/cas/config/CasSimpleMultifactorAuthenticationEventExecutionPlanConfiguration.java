@@ -3,8 +3,9 @@ package org.apereo.cas.config;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
-import org.apereo.cas.authentication.MultifactorAuthenticationProviderBypass;
-import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
+import org.apereo.cas.authentication.MultifactorAuthenticationFailureModeEvaluator;
+import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
+import org.apereo.cas.authentication.bypass.MultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.authentication.handler.ByCredentialTypeAuthenticationHandlerResolver;
 import org.apereo.cas.authentication.metadata.AuthenticationContextAttributeMetaDataPopulator;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -13,7 +14,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mfa.simple.CasSimpleMultifactorAuthenticationHandler;
 import org.apereo.cas.mfa.simple.CasSimpleMultifactorAuthenticationProvider;
 import org.apereo.cas.mfa.simple.CasSimpleMultifactorTokenCredential;
-import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 
@@ -50,18 +50,22 @@ public class CasSimpleMultifactorAuthenticationEventExecutionPlanConfiguration {
     @Qualifier("ticketRegistry")
     private ObjectProvider<TicketRegistry> ticketRegistry;
 
+    @Autowired
+    @Qualifier("casSimpleMultifactorBypassEvaluator")
+    private ObjectProvider<MultifactorAuthenticationProviderBypassEvaluator> casSimpleMultifactorBypassEvaluator;
+
+    @Autowired
+    @Qualifier("failureModeEvaluator")
+    private ObjectProvider<MultifactorAuthenticationFailureModeEvaluator> failureModeEvaluator;
+
     @ConditionalOnMissingBean(name = "casSimpleMultifactorAuthenticationHandler")
     @Bean
     @RefreshScope
     public AuthenticationHandler casSimpleMultifactorAuthenticationHandler() {
-        return new CasSimpleMultifactorAuthenticationHandler(casProperties.getAuthn().getMfa().getSimple().getName(),
-            servicesManager.getIfAvailable(), casSimpleMultifactorPrincipalFactory(), ticketRegistry.getIfAvailable());
-    }
-
-    @Bean
-    @RefreshScope
-    public MultifactorAuthenticationProviderBypass casSimpleMultifactorBypassEvaluator() {
-        return MultifactorAuthenticationUtils.newMultifactorAuthenticationProviderBypass(casProperties.getAuthn().getMfa().getSimple().getBypass());
+        val props = casProperties.getAuthn().getMfa().getSimple();
+        return new CasSimpleMultifactorAuthenticationHandler(props.getName(),
+            servicesManager.getIfAvailable(), casSimpleMultifactorPrincipalFactory(),
+            ticketRegistry.getIfAvailable(), props.getOrder());
     }
 
     @Bean
@@ -69,8 +73,9 @@ public class CasSimpleMultifactorAuthenticationEventExecutionPlanConfiguration {
     public MultifactorAuthenticationProvider casSimpleMultifactorAuthenticationProvider() {
         val simple = casProperties.getAuthn().getMfa().getSimple();
         val p = new CasSimpleMultifactorAuthenticationProvider();
-        p.setBypassEvaluator(casSimpleMultifactorBypassEvaluator());
-        p.setGlobalFailureMode(casProperties.getAuthn().getMfa().getGlobalFailureMode());
+        p.setBypassEvaluator(casSimpleMultifactorBypassEvaluator.getIfAvailable());
+        p.setFailureMode(simple.getFailureMode());
+        p.setFailureModeEvaluator(failureModeEvaluator.getIfAvailable());
         p.setOrder(simple.getRank());
         p.setId(simple.getId());
         return p;
@@ -82,7 +87,7 @@ public class CasSimpleMultifactorAuthenticationEventExecutionPlanConfiguration {
         return new AuthenticationContextAttributeMetaDataPopulator(
             casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
             casSimpleMultifactorAuthenticationHandler(),
-            casSimpleMultifactorAuthenticationProvider()
+            casSimpleMultifactorAuthenticationProvider().getId()
         );
     }
 
@@ -97,7 +102,7 @@ public class CasSimpleMultifactorAuthenticationEventExecutionPlanConfiguration {
     public AuthenticationEventExecutionPlanConfigurer casSimpleMultifactorAuthenticationEventExecutionPlanConfigurer() {
         return plan -> {
             plan.registerAuthenticationHandler(casSimpleMultifactorAuthenticationHandler());
-            plan.registerMetadataPopulator(casSimpleMultifactorAuthenticationMetaDataPopulator());
+            plan.registerAuthenticationMetadataPopulator(casSimpleMultifactorAuthenticationMetaDataPopulator());
             plan.registerAuthenticationHandlerResolver(new ByCredentialTypeAuthenticationHandlerResolver(CasSimpleMultifactorTokenCredential.class));
         };
     }

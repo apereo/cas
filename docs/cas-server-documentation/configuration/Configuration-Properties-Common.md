@@ -9,6 +9,10 @@ category: Configuration
 This document describes a number of suggestions and configuration options that apply to and are common amongst a selection of CAS modules and features. 
 To see the full list of CAS properties, please [review this guide](Configuration-Properties.html).
 
+## What is `${configurationKey}`?
+
+Many CAS *sub* settings are common and applicable to a number of modules and features. For example, in dealing with database authentication there are a number of database-related modules who own an individual setting to define the database driver. These settings would typically be defined as `cas.authn.feature1.databaseDriver=xyz` and `cas.authn.feature2.databaseDriver=abc`. Rather than duplicating the shared and common `databaseDriver` setting, this page attempts to collect only what might be common CAS settings across features and modules while referring to the specific feature under the path `${configurationKey}`. Therefor, the documentation for either `feature1` or `feature2` might allow one to find common database-related settings (such as the `databaseDriver`) under `${configurationKey}.databaseDriver` where `${configurationKey}` would either be `cas.authn.feature1` or `cas.authn.feature2` depending on feature at hand. The notes and documentation for each feature that wants to inherit from a common block of settings should always advertise the appropriate value for `${configurationKey}`.
+
 ## Naming Convention
 
 - Settings and properties that are controlled by the CAS platform directly always begin with the prefix `cas`. All other settings are controlled 
@@ -53,11 +57,11 @@ in each case to learn the exact unit of measure.
 
 ## Authentication Throttling
 
-Certain functionality in CAS, such as [OAuth](OAuth-OpenId-Authentication.html) 
+Certain functionality in CAS, such as [OAuth](../installation/OAuth-OpenId-Authentication.html) 
 or [REST API](../protocol/REST-Protocol.html), allow you to throttle requests to specific endpoints in addition to the more 
 generic authentication throttling functionality applied during the login flow and authentication attempts.
 
-To fully deliver this functionality, it is expected that [authentication throttling](Configuring-Authentication-Throttling.html) is turned on.
+To fully deliver this functionality, it is expected that [authentication throttling](../installation/Configuring-Authentication-Throttling.html) is turned on.
 
 ## Authentication Credential Selection
 
@@ -117,8 +121,9 @@ The following options are supported:
 | `DEFAULT`               | Use the `DefaultPasswordEncoder` of CAS. For message-digest algorithms via `characterEncoding` and `encodingAlgorithm`.
 | `BCRYPT`                | Use the `BCryptPasswordEncoder` based on the `strength` provided and an optional `secret`.     
 | `SCRYPT`                | Use the `SCryptPasswordEncoder`.
-| `PBKDF2`                | Use the `Pbkdf2PasswordEncoder` based on the `strength` provided and an optional `secret`.  
-| `STANDARD`              | Use the `StandardPasswordEncoder` based on the `secret` provided.  
+| `PBKDF2`                | Use the `Pbkdf2PasswordEncoder` based on the `strength` provided and an optional `secret`.
+| `STANDARD`              | Use the `StandardPasswordEncoder` based on the `secret` provided.
+| `GLIBC_CRYPT`           | Use the `GlibcCryptPasswordEncoder` based on the [`encodingAlgorithm`](https://commons.apache.org/proper/commons-codec/archives/1.10/apidocs/org/apache/commons/codec/digest/Crypt.html), `strength` provided and an optional `secret`.
 | `org.example.MyEncoder` | An implementation of `PasswordEncoder` of your own choosing.
 | `file:///path/to/script.groovy` | Path to a Groovy script charged with handling password encoding operations.
 
@@ -183,7 +188,7 @@ Authentication handlers as part of principal transformation may also be provided
 def String run(final Object... args) {
     def providedUsername = args[0]
     def logger = args[1]
-    return providedUsername.concat("SomethingElse)
+    return providedUsername.concat("SomethingElse")
 }
 ```
 
@@ -210,6 +215,28 @@ The following common properties configure cookie generator support in CAS.
 # ${configurationKey}.maxAge=-1
 ```
 
+## Cassandra Configuration
+
+Control properties that are relevant to Cassandra,
+when CAS attempts to establish connections, run queries, etc.
+
+```properties
+# ${configurationKey}.keyspace=
+# ${configurationKey}.port=9042
+# ${configurationKey}.contactPoints=localhost1,localhost2
+# ${configurationKey}.localDc=
+# ${configurationKey}.protocolVersion=V1|V2|V3|V4
+# ${configurationKey}.retryPolicy=DEFAULT_RETRY_POLICY|DOWNGRADING_CONSISTENCY_RETRY_POLICY|FALLTHROUGH_RETRY_POLICY
+# ${configurationKey}.compression=LZ4|SNAPPY|NONE
+# ${configurationKey}.consistencyLevel=ANY|ONE|TWO|THREE|QUORUM|LOCAL_QUORUM|ALL|EACH_QUORUM|LOCAL_SERIAL|SERIAL|LOCAL_ONE
+# ${configurationKey}.serialConsistencyLevel=ANY|ONE|TWO|THREE|QUORUM|LOCAL_QUORUM|ALL|EACH_QUORUM|LOCAL_SERIAL|SERIAL|LOCAL_ONE
+# ${configurationKey}.maxConnections=10
+# ${configurationKey}.coreConnections=1
+# ${configurationKey}.maxRequestsPerConnection=1024
+# ${configurationKey}.connectTimeoutMillis=5000
+# ${configurationKey}.readTimeoutMillis=5000
+```
+
 ## Hibernate & JDBC
 
 Control global properties that are relevant to Hibernate,
@@ -219,6 +246,8 @@ connections and queries.
 ```properties
 # cas.jdbc.showSql=true
 # cas.jdbc.genDdl=true
+# cas.jdbc.caseInsensitive=false
+# cas.jdbc.physicalTableNames.{table-name}={new-table-name}
 ```
 
 ### Database Settings
@@ -242,6 +271,7 @@ The following options related to JPA/JDBC support in CAS apply equally to a numb
 # ${configurationKey}.defaultCatalog=
 # ${configurationKey}.defaultSchema=
 # ${configurationKey}.ddlAuto=create-drop
+# ${configurationKey}.physicalNamingStrategyClassName=org.apereo.cas.jpa.CasHibernatePhysicalNamingStrategy
 
 # ${configurationKey}.autocommit=false
 # ${configurationKey}.idleTimeout=5000
@@ -413,6 +443,8 @@ The following options related to Person Directory support in CAS when it attempt
 # ${configurationKey}.returnNull=false
 # ${configurationKey}.principalResolutionFailureFatal=false
 # ${configurationKey}.useExistingPrincipalId=false
+# ${configurationKey}.attributeResolutionEnabled=true
+# ${configurationKey}.activeAttributeRepositoryIds=StubRepository,etc
 ```
 
 ## InfluxDb Configuration
@@ -438,6 +470,8 @@ The following options related to Hazelcast support in CAS apply equally to a num
 # ${configurationKey}.cluster.members=123.456.789.000,123.456.789.001
 # ${configurationKey}.cluster.instanceName=localhost
 # ${configurationKey}.cluster.port=5701
+
+# ${configurationKey}.licenseKey=
 ```
 
 More advanced Hazelcast configuration settings are listed below, given the component's *configuration key*:
@@ -446,6 +480,7 @@ More advanced Hazelcast configuration settings are listed below, given the compo
 # ${configurationKey}.cluster.tcpipEnabled=true
 
 # ${configurationKey}.cluster.partitionMemberGroupType=HOST_AWARE|CUSTOM|PER_MEMBER|ZONE_AWARE|SPI
+# ${configurationKey}.cluster.mapMergePolicy=com.hazelcast.map.merge.PutIfAbsentMapMergePolicy
 
 # ${configurationKey}.cluster.evictionPolicy=LRU
 # ${configurationKey}.cluster.maxNoHeartbeatSeconds=300
@@ -456,6 +491,37 @@ More advanced Hazelcast configuration settings are listed below, given the compo
 # ${configurationKey}.cluster.asyncBackupCount=0
 # ${configurationKey}.cluster.maxSizePolicy=USED_HEAP_PERCENTAGE
 # ${configurationKey}.cluster.timeout=5
+
+# ${configurationKey}.cluster.localAddress=
+# ${configurationKey}.cluster.publicAddress=
+```
+
+### Management Center
+
+```properties
+# ${configurationKey}.managementCenter.url=
+# ${configurationKey}.managementCenter.enabled=false
+# ${configurationKey}.managementCenter.updateInterval=5
+```
+
+### Static WAN Replication
+
+```properties
+# ${configurationKey}.cluster.wanReplication.enabled=false
+# ${configurationKey}.cluster.wanReplication.replicationName=CAS
+
+# ${configurationKey}.cluster.wanReplication[0].groupName=
+# ${configurationKey}.cluster.wanReplication[0].groupPassword=
+# ${configurationKey}.cluster.wanReplication[0].endpoints=1.2.3.4,4.5.6.7
+# ${configurationKey}.cluster.wanReplication[0].publisherClassName=com.hazelcast.enterprise.wan.replication.WanBatchReplication
+# ${configurationKey}.cluster.wanReplication[0].queueFullBehavior=THROW_EXCEPTION
+# ${configurationKey}.cluster.wanReplication[0].acknowledgeType=ACK_ON_OPERATION_COMPLETE
+# ${configurationKey}.cluster.wanReplication[0].queueCapacity=10000
+# ${configurationKey}.cluster.wanReplication[0].batchSize=500
+# ${configurationKey}.cluster.wanReplication[0].snapshotEnabled=false
+# ${configurationKey}.cluster.wanReplication[0].batchMaximumDelayMilliseconds=1000
+# ${configurationKey}.cluster.wanReplication[0].responseTimeoutMilliseconds=60000
+# ${configurationKey}.cluster.wanReplication[0].executorThreadCount=2
 ```
 
 ### Multicast Discovery
@@ -657,26 +723,9 @@ The following options related to DynamoDb support in CAS apply equally to a numb
 ```properties
 # ${configurationKey}.dynamoDb.dropTablesOnStartup=false
 # ${configurationKey}.dynamoDb.preventTableCreationOnStartup=false
-# ${configurationKey}.dynamoDb.timeOffset=0
-
 # ${configurationKey}.dynamoDb.localInstance=false
-
-# ${configurationKey}.dynamoDb.readCapacity=10
-# ${configurationKey}.dynamoDb.writeCapacity=10
-# ${configurationKey}.dynamoDb.connectionTimeout=5000
-# ${configurationKey}.dynamoDb.requestTimeout=5000
-# ${configurationKey}.dynamoDb.socketTimeout=5000
-# ${configurationKey}.dynamoDb.useGzip=false
-# ${configurationKey}.dynamoDb.useReaper=false
-# ${configurationKey}.dynamoDb.useThrottleRetries=false
-# ${configurationKey}.dynamoDb.useTcpKeepAlive=false
-# ${configurationKey}.dynamoDb.protocol=HTTPS
-# ${configurationKey}.dynamoDb.clientExecutionTimeout=10000
-# ${configurationKey}.dynamoDb.cacheResponseMetadata=false
-# ${configurationKey}.dynamoDb.localAddress=
-# ${configurationKey}.dynamoDb.maxConnections=10
 ```
-
+    
 AWS settings for this feature are available [here](#amazon-integration-settings).
 
 ## RESTful Integrations
@@ -703,6 +752,7 @@ The following options related to Redis support in CAS apply equally to a number 
 # ${configurationKey}.redis.password=
 # ${configurationKey}.redis.timeout=2000
 # ${configurationKey}.redis.useSsl=false
+# ${configurationKey}.redis.readFrom=MASTER
 
 # ${configurationKey}.redis.pool.max-active=20
 # ${configurationKey}.redis.pool.maxIdle=8
@@ -721,9 +771,9 @@ The following options related to Redis support in CAS apply equally to a number 
 # ${configurationKey}.redis.pool.testWhileIdle=false
 
 # ${configurationKey}.redis.sentinel.master=mymaster
-# ${configurationKey}.redis.sentinel.nodes[0]=localhost:26377
-# ${configurationKey}.redis.sentinel.nodes[1]=localhost:26378
-# ${configurationKey}.redis.sentinel.nodes[2]=localhost:26379
+# ${configurationKey}.redis.sentinel.node[0]=localhost:26377
+# ${configurationKey}.redis.sentinel.node[1]=localhost:26378
+# ${configurationKey}.redis.sentinel.node[2]=localhost:26379
 ```
 
 ## DDL Configuration
@@ -751,7 +801,7 @@ please review [this guide](http://docs.spring.io/spring-framework/docs/current/j
 ## SAML2 Service Provider Integrations
 
 The settings defined for each service provider simply attempt to automate the creation of 
-a [SAML service definition](Configuring-SAML2-Authentication.html#saml-services) and nothing more. If you find the 
+a [SAML service definition](../installation/Configuring-SAML2-Authentication.html#saml-services) and nothing more. If you find the 
 applicable settings lack in certain areas, it is best to fall back onto the native configuration strategy for registering 
 SAML service providers with CAS which would depend on your service registry of choice.
 
@@ -763,7 +813,7 @@ Each SAML service provider supports the following settings:
 | `name`                | The name of the service provider registered in the service registry.
 | `description`         | The description of the service provider registered in the service registry.
 | `nameIdAttribute`     | Attribute to use when generating name ids for this service provider.
-| `nameIdFormat`        | The name of the service provider registered in the service registry.
+| `nameIdFormat`        | The forced NameID Format identifier (i.e. `urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress`).
 | `attributes`          | Attributes to release to the service provider, which may virtually be mapped and renamed.
 | `signatureLocation`   | Signature location to verify metadata.
 | `entityIds`           | List of entity ids allowed for this service provider.
@@ -787,13 +837,22 @@ The following  options apply equally to SAML2 service provider integrations, giv
 # ${configurationKey}.signAssertions=
 ```
 
+## Multifactor Authentication Providers
+
+All configurable multifactor authentication providers have these base properties available given the provider's *configuration key*:
+
+```properties
+# ${configurationKey}.rank=
+# ${configurationKey}.id=
+# ${configurationKey}.name=
+# ${configurationKey}.failureMode=UNDEFINED
+```
+
 ## Multifactor Authentication Bypass
 
 The following bypass options apply equally to multifactor authentication providers given the provider's *configuration key*:
 
 ```properties
-# ${configurationKey}.bypass.type=DEFAULT|GROOVY|REST
-
 # ${configurationKey}.bypass.principalAttributeName=bypass|skip
 # ${configurationKey}.bypass.principalAttributeValue=true|enabled.+
 
@@ -808,7 +867,7 @@ The following bypass options apply equally to multifactor authentication provide
 # ${configurationKey}.bypass.httpRequestRemoteAddress=127.+|example.*
 # ${configurationKey}.bypass.httpRequestHeaders=header-X-.+|header-Y-.+
 
-# ${configurationKey}.groovy.location=file:/etc/cas/config/mfa-bypass.groovy
+# ${configurationKey}.bypass.groovy.location=file:/etc/cas/config/mfa-bypass.groovy
 ```
 
 If multifactor authentication bypass is determined via REST, 
@@ -842,9 +901,26 @@ Amazon Web Service features, given the provider's *configuration key*:
 # ${configurationKey}.endpoint=http://localhost:8000
 # ${configurationKey}.region=US_WEST_2|US_EAST_2|EU_WEST_2|<REGION-NAME>
 # ${configurationKey}.regionOverride=
-# ${configurationKey}.serviceNameIntern=
-
 # ${configurationKey}.localAddress=
+
+# ${configurationKey}.maxErrorRetry=-1
+# ${configurationKey}.proxyHost=
+# ${configurationKey}.proxyPassword=
+# ${configurationKey}.proxyPort=-1
+
+# ${configurationKey}.readCapacity=10
+# ${configurationKey}.writeCapacity=10
+# ${configurationKey}.connectionTimeout=5000
+# ${configurationKey}.requestTimeout=5000
+# ${configurationKey}.socketTimeout=5000
+# ${configurationKey}.useGzip=false
+# ${configurationKey}.useReaper=false
+# ${configurationKey}.useThrottleRetries=false
+# ${configurationKey}.useTcpKeepAlive=false
+# ${configurationKey}.protocol=HTTPS
+# ${configurationKey}.clientExecutionTimeout=10000
+# ${configurationKey}.cacheResponseMetadata=false
+# ${configurationKey}.maxConnections=10
 ```
 
 ## Memcached Integration Settings
@@ -940,7 +1016,7 @@ The parameters passed are as follows:
 
 ## Email Notifications
 
-To learn more about this topic, [please review this guide](../installation/Sending-Email-Configuration.html).
+To learn more about this topic, [please review this guide](../notifications/Sending-Email-Configuration.html).
 
 The following options are shared and apply when CAS is configured to send email notifications, given the provider's *configuration key*:
 
@@ -950,6 +1026,10 @@ The following options are shared and apply when CAS is configured to send email 
 # ${configurationKey}.mail.subject=
 # ${configurationKey}.mail.cc=
 # ${configurationKey}.mail.bcc=
+# ${configurationKey}.mail.replyTo=
+# ${configurationKey}.mail.validateAddresses=false
+# ${configurationKey}.mail.html=false
+
 # ${configurationKey}.mail.attributeName=mail
 ```
 
@@ -976,7 +1056,7 @@ The following options are shared and apply when CAS is configured to send SMS no
 ```
 
 You will also need to ensure a provider is defined that is able to send SMS messages. To learn more about this 
-topic, [please review this guide](../installation/SMS-Messaging-Configuration.html).
+topic, [please review this guide](../notifications/SMS-Messaging-Configuration.html).
  
 ## Delegated Authentication Settings
 
@@ -1003,6 +1083,8 @@ to an external OpenID Connect provider such as Azure AD, given the provider's *c
 # ${configurationKey}.scope=
 # ${configurationKey}.useNonce=
 # ${configurationKey}.preferredJwsAlgorithm=
+# ${configurationKey}.responseMode=
+# ${configurationKey}.responseType=
 # ${configurationKey}.customParams.param1=value1
 ```
 
@@ -1020,6 +1102,9 @@ The following  options apply  to features that integrate with an LDAP server (i.
 #${configurationKey}.providerClass=org.ldaptive.provider.unboundid.UnboundIDProvider
 #${configurationKey}.connectTimeout=PT5S
 #${configurationKey}.trustCertificates=
+#${configurationKey}.trustStore=
+#${configurationKey}.trustStorePassword=
+#${configurationKey}.trustStoreType=JKS|JCEKS|PKCS12
 #${configurationKey}.keystore=
 #${configurationKey}.keystorePassword=
 #${configurationKey}.keystoreType=JKS|JCEKS|PKCS12
@@ -1037,6 +1122,9 @@ The following  options apply  to features that integrate with an LDAP server (i.
 #${configurationKey}.useStartTls=false
 #${configurationKey}.responseTimeout=PT5S
 #${configurationKey}.allowMultipleDns=false
+#${configurationKey}.allowMultipleEntries=false
+#${configurationKey}.followReferrals=false
+#${configurationKey}.binaryAttributes=objectGUID,someOtherAttribute
 #${configurationKey}.name=
 ```
 
@@ -1110,6 +1198,21 @@ The following LDAP validators can be used to test connection health status:
 #${configurationKey}.validator.dn=
 ```
 
+### LDAP SSL Hostname Verification
+
+The following LDAP validators can be used to test connection health status:
+
+| Type                    | Description
+|-------------------------|------------------------------------
+| `DEFAULT`               | Default option to enable and force hostname verification of the LDAP SSL configuration.
+| `ANY`                   | Skip and ignore the hostname verification of the LDAP SSL configuration.
+
+```properties
+#${configurationKey}.hostnameVerifier=DEFAULT|ANY
+```
+
+### LDAP Types
+
 A number of components/features in CAS allow you to explicitly indicate a `type` for the LDAP server, specially in cases where CAS needs to update an attribute, etc in LDAP (i.e. consent, password management, etc). The relevant setting would be:
 
 ```properties
@@ -1158,9 +1261,7 @@ The following authentication types are supported:
 ### LDAP Search Entry Handlers
 
 ```properties
-# ${configurationKey}.searchEntryHandlers[0].type=CASE_CHANGE|DN_ATTRIBUTE_ENTRY|MERGE| \
-#                                               OBJECT_GUID|OBJECT_SID|PRIMARY_GROUP| \
-#                                               RANGE_ENTRY|RECURSIVE_ENTRY
+# ${configurationKey}.searchEntryHandlers[0].type=
 
 # ${configurationKey}.searchEntryHandlers[0].caseChange.dnCaseChange=NONE|LOWER|UPPER
 # ${configurationKey}.searchEntryHandlers[0].caseChange.attributeNameCaseChange=NONE|LOWER|UPPER
@@ -1179,3 +1280,16 @@ The following authentication types are supported:
 # ${configurationKey}.searchEntryHandlers[0].recursive.searchAttribute=
 # ${configurationKey}.searchEntryHandlers[0].recursive.mergeAttributes=
 ```
+
+The following types are supported:
+
+| Type                    | Description                            
+|-------------------------|----------------------------------------------------------------------------------------------------
+| `CASE_CHANGE` | Provides the ability to modify the case of search entry DNs, attribute names, and attribute values.
+| `DN_ATTRIBUTE_ENTRY` | Adds the entry DN as an attribute to the result set. Provides a client side implementation of RFC 5020.
+| `MERGE` | Merges the values of one or more attributes into a single attribute.
+| `OBJECT_GUID` | Handles the `objectGUID` attribute fetching and conversion. 
+| `OBJECT_SID` | Handles the `objectSid` attribute fetching and conversion. 
+| `PRIMARY_GROUP` | Constructs the primary group SID and then searches for that group and puts it's DN in the 'memberOf' attribute of the original search entry. 
+| `RANGE_ENTRY` |  Rewrites attributes returned from Active Directory to include all values by performing additional searches.
+| `RECURSIVE_ENTRY` | This recursively searches based on a supplied attribute and merges those results into the original entry.

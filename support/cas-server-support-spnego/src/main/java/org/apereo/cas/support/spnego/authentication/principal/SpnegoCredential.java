@@ -72,7 +72,7 @@ public class SpnegoCredential implements Credential {
      *
      * @param initToken the init token
      */
-    public SpnegoCredential(@NonNull final byte[] initToken) {
+    public SpnegoCredential(final @NonNull byte[] initToken) {
         this.initToken = consumeByteSourceOrNull(ByteSource.wrap(initToken));
         this.isNtlm = isTokenNtlm(this.initToken);
     }

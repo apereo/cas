@@ -1,20 +1,21 @@
 package org.apereo.cas.services;
 
-import org.apereo.cas.category.CouchbaseCategory;
+import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CouchbaseServiceRegistryConfiguration;
-import org.apereo.cas.util.junit.ConditionalIgnore;
-import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
+import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 
-import org.junit.experimental.categories.Category;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import lombok.SneakyThrows;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
+import org.junit.jupiter.api.parallel.ResourceLock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-
-import java.util.Arrays;
-import java.util.Collection;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.event.EventListener;
 
 /**
  * This is {@link CouchbaseServiceRegistryTests}.
@@ -23,33 +24,43 @@ import java.util.Collection;
  * @since 4.2.0
  */
 @SpringBootTest(classes = {
+    CouchbaseServiceRegistryTests.CouchbaseServiceRegistryTestConfiguration.class,
     RefreshAutoConfiguration.class,
+    CasCoreServicesConfiguration.class,
     CouchbaseServiceRegistryConfiguration.class
 },
     properties = {
         "cas.serviceRegistry.couchbase.password=password",
         "cas.serviceRegistry.couchbase.bucket=testbucket"
     })
-@Category(CouchbaseCategory.class)
-@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
-@RunWith(Parameterized.class)
+@Tag("Couchbase")
+@EnabledIfContinuousIntegration
+@Execution(ExecutionMode.SAME_THREAD)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@ResourceLock("Couchbase")
 public class CouchbaseServiceRegistryTests extends AbstractServiceRegistryTests {
 
     @Autowired
     @Qualifier("couchbaseServiceRegistry")
     private ServiceRegistry serviceRegistry;
 
-    public CouchbaseServiceRegistryTests(final Class<? extends RegisteredService> registeredServiceClass) {
-        super(registeredServiceClass);
-    }
-
-    @Parameterized.Parameters
-    public static Collection<Object> getTestParameters() {
-        return Arrays.asList(RegexRegisteredService.class);
-    }
-
     @Override
     public ServiceRegistry getNewServiceRegistry() {
-        return this.serviceRegistry;
+        return serviceRegistry;
+    }
+
+    @Configuration("CouchbaseServiceRegistryTestConfiguration")
+    public static class CouchbaseServiceRegistryTestConfiguration {
+
+        @SneakyThrows
+        @EventListener
+        public void handleCouchbaseSaveEvent(final CouchbaseRegisteredServiceSavedEvent event) {
+            Thread.sleep(100);
+        }
+        @SneakyThrows
+        @EventListener
+        public void handleCouchbaseDeleteEvent(final CouchbaseRegisteredServiceDeletedEvent event) {
+            Thread.sleep(100);
+        }
     }
 }

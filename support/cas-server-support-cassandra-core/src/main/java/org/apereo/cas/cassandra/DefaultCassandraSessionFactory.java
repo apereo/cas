@@ -61,8 +61,7 @@ public class DefaultCassandraSessionFactory implements CassandraSessionFactory, 
             .setSerialConsistencyLevel(ConsistencyLevel.valueOf(cassandra.getSerialConsistencyLevel()));
 
         val retryPolicy = RetryPolicyType.valueOf(cassandra.getRetryPolicy()).getRetryPolicy();
-        val builder =
-            Cluster.builder()
+        val builder = Cluster.builder()
                 .withCredentials(cassandra.getUsername(), cassandra.getPassword())
                 .withPoolingOptions(poolingOptions)
                 .withProtocolVersion(ProtocolVersion.valueOf(cassandra.getProtocolVersion()))
@@ -71,6 +70,7 @@ public class DefaultCassandraSessionFactory implements CassandraSessionFactory, 
                 .withRetryPolicy(new LoggingRetryPolicy(retryPolicy))
                 .withCompression(ProtocolOptions.Compression.valueOf(cassandra.getCompression()))
                 .withPort(cassandra.getPort())
+                .withoutJMXReporting()
                 .withQueryOptions(queryOptions);
 
         Arrays.stream(StringUtils.split(cassandra.getContactPoints(), ','))

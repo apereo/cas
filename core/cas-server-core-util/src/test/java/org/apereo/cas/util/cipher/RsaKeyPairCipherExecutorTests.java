@@ -1,11 +1,11 @@
 package org.apereo.cas.util.cipher;
 
 import lombok.val;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.security.KeyPair;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link RsaKeyPairCipherExecutorTests}.
@@ -18,10 +18,10 @@ public class RsaKeyPairCipherExecutorTests {
     public void verifyActionOneWay() {
         val secretKeyEncryption = "classpath:keys/RSA2048Public.key";
         val secretKeySigning = "classpath:keys/RSA2048Private.key";
-        val cipher1 = new TicketGrantingCookieCipherExecutor(secretKeyEncryption, secretKeySigning);
+        val cipher1 = new TicketGrantingCookieCipherExecutor(secretKeyEncryption, secretKeySigning, 0, 0);
         assertNotNull(cipher1.encode("TestValue"));
 
-        val cipher = new ProtocolTicketCipherExecutor(secretKeyEncryption, secretKeySigning);
+        val cipher = new ProtocolTicketCipherExecutor(secretKeyEncryption, secretKeySigning, 0, 0);
         assertNotNull(cipher.encode("TestValue"));
     }
 

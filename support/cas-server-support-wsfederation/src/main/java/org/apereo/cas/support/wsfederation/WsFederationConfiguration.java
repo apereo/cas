@@ -3,7 +3,7 @@ package org.apereo.cas.support.wsfederation;
 import org.apereo.cas.support.wsfederation.attributes.WsFederationAttributeMutator;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.io.FileWatcherService;
-import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
+import org.apereo.cas.web.cookie.CasCookieBuilder;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -64,7 +64,7 @@ public class WsFederationConfiguration implements Serializable {
     private String name;
     private String id = UUID.randomUUID().toString();
 
-    private transient CookieRetrievingCookieGenerator cookieGenerator;
+    private transient CasCookieBuilder cookieGenerator;
 
     /**
      * getSigningCredential loads up an X509Credential from a file.
@@ -145,7 +145,7 @@ public class WsFederationConfiguration implements Serializable {
     public enum WsFedPrincipalResolutionAttributesType {
 
         /**
-         * Cas ws fed principal resolution attributes type.
+         * CAS ws fed principal resolution attributes type.
          */
         CAS,
         /**

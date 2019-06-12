@@ -8,18 +8,20 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.authenticator.Authenticators;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.context.Pac4jConstants;
 import org.pac4j.core.profile.CommonProfile;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -28,16 +30,15 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
+@Tag("OAuth")
 public class OAuth20PasswordGrantTypeTokenRequestValidatorTests {
     private OAuth20TokenRequestValidator validator;
     private OAuthRegisteredService supportingService;
     private OAuthRegisteredService nonSupportingService;
     private OAuthRegisteredService promiscuousService;
 
-    @Before
+    @BeforeEach
     public void before() {
-        val service = RegisteredServiceTestUtils.getService();
-
         val serviceManager = mock(ServicesManager.class);
         supportingService = RequestValidatorTestUtils.getService(
                 RegisteredServiceTestUtils.CONST_TEST_URL,
@@ -51,7 +52,7 @@ public class OAuth20PasswordGrantTypeTokenRequestValidatorTests {
                 RequestValidatorTestUtils.NON_SUPPORTING_CLIENT_ID,
                 RequestValidatorTestUtils.SHARED_SECRET,
                 CollectionUtils.wrapSet(getWrongGrantType()));
-        promiscuousService = RequestValidatorTestUtils.getPromiscousService(
+        promiscuousService = RequestValidatorTestUtils.getPromiscuousService(
                 RegisteredServiceTestUtils.CONST_TEST_URL3,
                 RequestValidatorTestUtils.PROMISCUOUS_CLIENT_ID,
                 RequestValidatorTestUtils.PROMISCUOUS_CLIENT_ID,
@@ -60,8 +61,12 @@ public class OAuth20PasswordGrantTypeTokenRequestValidatorTests {
         when(serviceManager.getAllServices()).thenReturn(CollectionUtils.wrapList(
                 supportingService, nonSupportingService, promiscuousService));
 
-        this.validator = new OAuth20PasswordGrantTypeTokenRequestValidator(new RegisteredServiceAccessStrategyAuditableEnforcer(),
-            serviceManager, new WebApplicationServiceFactory());
+        val context = OAuth20ConfigurationContext.builder()
+            .servicesManager(serviceManager)
+            .webApplicationServiceServiceFactory(new WebApplicationServiceFactory())
+            .registeredServiceAccessStrategyEnforcer(new RegisteredServiceAccessStrategyAuditableEnforcer())
+            .build();
+        this.validator = new OAuth20PasswordGrantTypeTokenRequestValidator(context);
     }
 
     @Test
@@ -76,6 +81,7 @@ public class OAuth20PasswordGrantTypeTokenRequestValidatorTests {
         profile.setClientName(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN);
         profile.setId(RequestValidatorTestUtils.SUPPORTING_CLIENT_ID);
         val session = request.getSession(true);
+        assertNotNull(session);
         session.setAttribute(Pac4jConstants.USER_PROFILES, profile);
 
         request.setParameter(OAuth20Constants.GRANT_TYPE, getGrantType().getType());

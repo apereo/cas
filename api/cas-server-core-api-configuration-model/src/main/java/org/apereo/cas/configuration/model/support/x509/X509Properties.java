@@ -215,6 +215,11 @@ public class X509Properties implements Serializable {
      */
     private String name;
     /**
+     * The order of the authentication handler in the chain.
+     */
+    private int order = Integer.MAX_VALUE;
+
+    /**
      * Whether to extract certificate from request.
      * <p>
      * The default implementation extracts certificate from header via Tomcat SSLValve parsing logic
@@ -256,7 +261,13 @@ public class X509Properties implements Serializable {
         /**
          * Create principal by common name and EDIPI.
          */
-        CN_EDIPI
+        CN_EDIPI,
+        /**
+         * Create principal from the RFC822 type name (aka email address) in the subject alternative name field.
+         * The subject alternative name field contains a list of various types of names, one type is RFC822 e-mail
+         * address. This will return the first e-mail address that is found (if there are more than one).
+         */
+        RFC822_EMAIL
     }
 
     /**
@@ -270,6 +281,12 @@ public class X509Properties implements Serializable {
      */
     @NestedConfigurationProperty
     private SubjectAltNamePrincipalResolverProperties subjectAltName = new SubjectAltNamePrincipalResolverProperties();
+
+    /**
+     * Principal resolver properties for RFC822_EMAIL resolver type.
+     */
+    @NestedConfigurationProperty
+    private Rfc822EmailPrincipalResolverProperties rfc822Email = new Rfc822EmailPrincipalResolverProperties();
 
     /**
      * Principal resolver properties for SERIAL_NO_DN resolver type.

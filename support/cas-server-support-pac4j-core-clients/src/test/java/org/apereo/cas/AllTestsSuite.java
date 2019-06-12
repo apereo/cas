@@ -1,9 +1,11 @@
 package org.apereo.cas;
 
-import org.apereo.cas.support.pac4j.authentication.handler.support.ClientAuthenticationHandlerTests;
+import org.apereo.cas.support.pac4j.authentication.DelegatedClientFactoryTests;
+import org.apereo.cas.support.pac4j.authentication.handler.support.DelegatedClientAuthenticationHandlerTests;
 
+import org.junit.platform.runner.JUnitPlatform;
+import org.junit.platform.suite.api.SelectClasses;
 import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
 
 /**
  * This is {@link AllTestsSuite}.
@@ -12,7 +14,10 @@ import org.junit.runners.Suite;
  * @since 5.1.0
  */
 
-@RunWith(Suite.class)
-@Suite.SuiteClasses(ClientAuthenticationHandlerTests.class)
+@SelectClasses({
+    DelegatedClientAuthenticationHandlerTests.class,
+    DelegatedClientFactoryTests.class
+})
+@RunWith(JUnitPlatform.class)
 public class AllTestsSuite {
 }

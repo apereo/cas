@@ -1,12 +1,14 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.ticket.TicketCatalog;
-import org.apereo.cas.ticket.TicketDefinition;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.function.Function;
 
 /**
  * This is {@link MongoDbTicketRegistryTicketCatalogConfiguration}.
@@ -16,44 +18,46 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("mongoDbTicketRegistryTicketCatalogConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class MongoDbTicketRegistryTicketCatalogConfiguration extends CasCoreTicketCatalogConfiguration {
+public class MongoDbTicketRegistryTicketCatalogConfiguration extends BaseTicketDefinitionBuilderSupportConfiguration {
 
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Override
-    protected void buildAndRegisterServiceTicketDefinition(final TicketCatalog plan, final TicketDefinition metadata) {
-        metadata.getProperties().setStorageName("serviceTicketsCollection");
-        metadata.getProperties().setStorageTimeout(casProperties.getTicket().getSt().getTimeToKillInSeconds());
-        super.buildAndRegisterServiceTicketDefinition(plan, metadata);
+    public MongoDbTicketRegistryTicketCatalogConfiguration(final CasConfigurationProperties casProperties,
+                                                           @Qualifier("mongoDbTicketCatalogConfigurationValuesProvider")
+                                                           final CasTicketCatalogConfigurationValuesProvider configProvider) {
+        super(casProperties, configProvider);
     }
 
-    @Override
-    protected void buildAndRegisterProxyTicketDefinition(final TicketCatalog plan, final TicketDefinition metadata) {
-        metadata.getProperties().setStorageName("proxyTicketsCollection");
-        metadata.getProperties().setStorageTimeout(casProperties.getTicket().getSt().getTimeToKillInSeconds());
-        super.buildAndRegisterProxyTicketDefinition(plan, metadata);
-    }
+    @Configuration("mongoDbTicketCatalogConfigValuesProviderConfiguration")
+    static class Config {
 
-    @Override
-    protected void buildAndRegisterTicketGrantingTicketDefinition(final TicketCatalog plan, final TicketDefinition metadata) {
-        metadata.getProperties().setStorageName("ticketGrantingTicketsCollection");
-        metadata.getProperties().setStorageTimeout(casProperties.getTicket().getTgt().getMaxTimeToLiveInSeconds());
-        super.buildAndRegisterTicketGrantingTicketDefinition(plan, metadata);
-    }
+        @ConditionalOnMissingBean
+        @Bean
+        public CasTicketCatalogConfigurationValuesProvider mongoDbTicketCatalogConfigurationValuesProvider() {
+            return new CasTicketCatalogConfigurationValuesProvider() {
+                @Override
+                public Function<CasConfigurationProperties, String> getServiceTicketStorageName() {
+                    return p -> "serviceTicketsCollection";
+                }
 
-    @Override
-    protected void buildAndRegisterProxyGrantingTicketDefinition(final TicketCatalog plan, final TicketDefinition metadata) {
-        metadata.getProperties().setStorageName("proxyGrantingTicketsCollection");
-        metadata.getProperties().setStorageTimeout(casProperties.getTicket().getTgt().getMaxTimeToLiveInSeconds());
-        super.buildAndRegisterProxyGrantingTicketDefinition(plan, metadata);
-    }
+                @Override
+                public Function<CasConfigurationProperties, String> getProxyTicketStorageName() {
+                    return p -> "proxyTicketsCollection";
+                }
 
-    @Override
-    protected void buildAndRegisterTransientSessionTicketDefinition(final TicketCatalog plan, final TicketDefinition metadata) {
-        metadata.getProperties().setStorageName("transientSessionTicketsCollection");
-        metadata.getProperties().setStorageTimeout(casProperties.getTicket().getTst().getTimeToKillInSeconds());
-        super.buildAndRegisterTransientSessionTicketDefinition(plan, metadata);
+                @Override
+                public Function<CasConfigurationProperties, String> getTicketGrantingTicketStorageName() {
+                    return p -> "ticketGrantingTicketsCollection";
+                }
+
+                @Override
+                public Function<CasConfigurationProperties, String> getProxyGrantingTicketStorageName() {
+                    return p -> "proxyGrantingTicketsCollection";
+                }
+
+                @Override
+                public Function<CasConfigurationProperties, String> getTransientSessionStorageName() {
+                    return p -> "transientSessionTicketsCollection";
+                }
+            };
+        }
     }
 }

@@ -14,13 +14,16 @@ import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.apache.commons.lang3.StringUtils;
 import org.opensaml.saml.common.xml.SAMLConstants;
+import org.opensaml.saml.criterion.EntityRoleCriterion;
 import org.opensaml.saml.metadata.resolver.ChainingMetadataResolver;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.metadata.resolver.filter.impl.PredicateFilter;
 import org.opensaml.saml.metadata.resolver.impl.AbstractBatchMetadataResolver;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
+import org.springframework.core.Ordered;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,7 +59,7 @@ public class SamlSPUtils {
         val service = new SamlRegisteredService();
         service.setName(sp.getName());
         service.setDescription(sp.getDescription());
-        service.setEvaluationOrder(Integer.MIN_VALUE);
+        service.setEvaluationOrder(Ordered.HIGHEST_PRECEDENCE);
         service.setMetadataLocation(sp.getMetadata());
         val attributesToRelease = new ArrayList<String>(sp.getAttributes());
         if (StringUtils.isNotBlank(sp.getNameIdAttribute())) {
@@ -104,7 +107,10 @@ public class SamlSPUtils {
                                                       final SamlRegisteredService service) {
         val entityIDList = sp.getEntityIds();
         if (entityIDList.isEmpty()) {
-            val metadataResolver = resolver.resolve(service);
+
+            val criteriaSet = new CriteriaSet();
+            criteriaSet.add(new EntityRoleCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME));
+            val metadataResolver = resolver.resolve(service, criteriaSet);
 
             val resolvers = new ArrayList<MetadataResolver>();
             if (metadataResolver instanceof ChainingMetadataResolver) {

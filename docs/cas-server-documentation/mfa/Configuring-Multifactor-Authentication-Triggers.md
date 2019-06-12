@@ -82,7 +82,7 @@ class GroovyMultifactorPolicy extends DefaultRegisteredServiceMultifactorPolicy 
     }
 
     @Override
-    RegisteredServiceMultifactorPolicy.FailureModes getFailureMode() {
+    RegisteredServiceMultifactorPolicyFailureModes getFailureMode() {
         ...
     }
 
@@ -270,7 +270,7 @@ class SampleGroovyEventResolver {
         def service = args[0]
         def registeredService = args[1]
         def authentication = args[2]
-        def requestContext = args[3]
+        def httpRequest = args[3]
         def logger = args[4]
 
         ...
@@ -287,6 +287,7 @@ The parameters passed are as follows:
 | `service`             | The object representing the incoming service provided in the request, if any.
 | `registeredService`   | The object representing the corresponding service definition in the registry.
 | `authentication`      | The object representing the established authentication event, containing the principal.
+| `httpRequest`         | The object representing the `HttpServletRequest`.
 | `logger`              | The object responsible for issuing log messages such as `logger.info(...)`.
 
 As an example, the following script triggers multifactor authentication via Duo Security, if the requesting application is `https://www.example.com` and the authenticated principal contains a `mail` attribute whose values contain `email@example.org`.
@@ -318,9 +319,11 @@ class MyExampleScript {
 ## REST
 
 MFA can be triggered based on the results of a remote REST endpoint of your design. If the endpoint is configured,
-CAS shall issue a `POST`, providing the principal and the service url.
+CAS shall issue a `POST`, providing the authenticated username as `principalId` and `serviceId` as the service 
+url in the body of the request.
 
-The body of the response in the event of a successful `200` status code is expected to be the MFA provider id which CAS should activate.
+Endpoints must be designed to accept/process `application/json`. The body of the response in 
+the event of a successful `200` status code is expected to be the MFA provider id which CAS should activate.
 
 ## Opt-In Request Parameter/Header
 
@@ -336,7 +339,7 @@ An example request that triggers an authentication flow based on a request param
 https://.../cas/login?service=...&<PARAMETER_NAME>=<MFA_PROVIDER_ID>
 ```
 
-The same strategy also applied to triggers that are based on request/session attributes, which tend to get used for internal communications between APIs and CAS components specially when designing addons and extensions.
+The same strategy also applied to triggers that are based on request/session attributes, which tend to get used for internal communications between APIs and CAS components specially when designing extensions.
 
 ## Principal Attribute Per Application
 

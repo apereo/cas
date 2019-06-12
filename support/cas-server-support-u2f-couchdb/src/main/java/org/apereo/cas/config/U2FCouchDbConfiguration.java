@@ -66,9 +66,7 @@ public class U2FCouchDbConfiguration {
     public U2FCouchDbDeviceRepository u2fDeviceRepository(
         @Qualifier("couchDbU2fDeviceRegistrationRepository") final U2FDeviceRegistrationCouchDbRepository couchDbU2fDeviceRegistrationRepository) {
         val u2f = casProperties.getAuthn().getMfa().getU2f();
-
         val couchDb = u2f.getCouchDb();
-
 
         final LoadingCache<String, String> requestStorage =
             Caffeine.newBuilder()

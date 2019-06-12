@@ -2,34 +2,31 @@ package org.apereo.cas.pm.rest;
 
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.category.RestfulApiCategory;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.pm.RestPasswordManagementConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.pm.PasswordChangeBean;
+import org.apereo.cas.pm.PasswordChangeRequest;
+import org.apereo.cas.pm.PasswordHistoryService;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.config.PasswordManagementConfiguration;
 import org.apereo.cas.util.MockWebServer;
 
 import lombok.val;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.web.client.RestTemplateAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
 import org.springframework.web.client.RestTemplate;
 
 import java.nio.charset.StandardCharsets;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link RestPasswordManagementServiceTests}.
@@ -40,18 +37,17 @@ import static org.junit.Assert.*;
 @SpringBootTest(classes = {
     RestPasswordManagementConfiguration.class,
     PasswordManagementConfiguration.class,
+    RestTemplateAutoConfiguration.class,
     CasCoreUtilConfiguration.class,
     RefreshAutoConfiguration.class
 })
-@TestPropertySource(locations = {"classpath:/rest-pm.properties"})
-@Category(RestfulApiCategory.class)
+@TestPropertySource(properties = {
+    "cas.authn.pm.rest.endpointUrlChange=http://localhost:9090",
+    "cas.authn.pm.rest.endpointUrlSecurityQuestions=http://localhost:9090",
+    "cas.authn.pm.rest.endpointUrlEmail=http://localhost:9090"
+})
+@Tag("RestfulApi")
 public class RestPasswordManagementServiceTests {
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
-
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
-
     @Autowired
     @Qualifier("passwordChangeService")
     private PasswordManagementService passwordChangeService;
@@ -59,6 +55,10 @@ public class RestPasswordManagementServiceTests {
     @Autowired
     @Qualifier("passwordManagementCipherExecutor")
     private CipherExecutor passwordManagementCipherExecutor;
+
+    @Autowired
+    @Qualifier("passwordHistoryService")
+    private PasswordHistoryService passwordHistoryService;
 
     @Test
     public void verifyEmailFound() {
@@ -90,7 +90,8 @@ public class RestPasswordManagementServiceTests {
             val passwordService = new RestPasswordManagementService(passwordManagementCipherExecutor,
                 props.getServer().getPrefix(),
                 new RestTemplate(),
-                props.getAuthn().getPm());
+                props.getAuthn().getPm(),
+                passwordHistoryService);
 
             val questions = passwordService.getSecurityQuestions("casuser");
             assertFalse(questions.isEmpty());
@@ -115,10 +116,11 @@ public class RestPasswordManagementServiceTests {
             val passwordService = new RestPasswordManagementService(passwordManagementCipherExecutor,
                 props.getServer().getPrefix(),
                 new RestTemplate(),
-                props.getAuthn().getPm());
+                props.getAuthn().getPm(),
+                passwordHistoryService);
 
             val result = passwordService.change(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(),
-                new PasswordChangeBean("123456", "123456"));
+                new PasswordChangeRequest("casuser", "123456", "123456"));
             assertTrue(result);
             webServer.stop();
         }

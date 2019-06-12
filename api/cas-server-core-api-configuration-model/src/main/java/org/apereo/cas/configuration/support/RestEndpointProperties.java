@@ -11,6 +11,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
+@RequiresModule(name = "cas-server-core-util", automated = true)
 public class RestEndpointProperties extends BaseRestEndpointProperties {
     private static final long serialVersionUID = 2687020856160473089L;
 

@@ -6,6 +6,7 @@ import com.authy.AuthyApiClient;
 import com.authy.api.Tokens;
 import com.authy.api.User;
 import com.authy.api.Users;
+import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -18,9 +19,9 @@ import java.net.URL;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Getter
 public class AuthyClientInstance {
 
-    private final AuthyApiClient authyClient;
     private final Users authyUsers;
     private final Tokens authyTokens;
 
@@ -42,10 +43,9 @@ public class AuthyClientInstance {
         val authyUrl = StringUtils.defaultIfBlank(apiUrl, AuthyApiClient.DEFAULT_API_URI);
         val url = new URL(authyUrl);
         val testFlag = url.getProtocol().equalsIgnoreCase("http");
-        this.authyClient = new AuthyApiClient(apiKey, authyUrl, testFlag);
-        this.authyUsers = this.authyClient.getUsers();
-        this.authyTokens = this.authyClient.getTokens();
-
+        val authyClient = new AuthyApiClient(apiKey, authyUrl, testFlag);
+        this.authyUsers = authyClient.getUsers();
+        this.authyTokens = authyClient.getTokens();
     }
 
     /**
@@ -70,14 +70,6 @@ public class AuthyClientInstance {
         return builder.toString();
     }
 
-    public Users getAuthyUsers() {
-        return authyUsers;
-    }
-
-    public Tokens getAuthyTokens() {
-        return authyTokens;
-    }
-
     /**
      * Gets or create user.
      *
@@ -86,14 +78,16 @@ public class AuthyClientInstance {
      */
     @SneakyThrows
     public User getOrCreateUser(final Principal principal) {
-        val email = (String) principal.getAttributes().get(this.mailAttribute);
-        if (StringUtils.isBlank(email)) {
+        val attributes = principal.getAttributes();
+        if (!attributes.containsKey(this.mailAttribute)) {
             throw new IllegalArgumentException("No email address found for " + principal.getId());
         }
-        val phone = (String) principal.getAttributes().get(this.phoneAttribute);
-        if (StringUtils.isBlank(phone)) {
+        if (!attributes.containsKey(this.phoneAttribute)) {
             throw new IllegalArgumentException("No phone number found for " + principal.getId());
         }
+
+        val email = attributes.get(this.mailAttribute).get(0).toString();
+        val phone = attributes.get(this.phoneAttribute).get(0).toString();
         return this.authyUsers.createUser(email, phone, this.countryCode);
     }
 }

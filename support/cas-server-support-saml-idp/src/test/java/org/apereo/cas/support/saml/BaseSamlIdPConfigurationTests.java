@@ -35,19 +35,21 @@ import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredSer
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectEncrypter;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
-import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSignatureValidator;
+import org.apereo.cas.support.saml.web.idp.profile.builders.enc.validate.SamlObjectSignatureValidator;
 import org.apereo.cas.validation.config.CasCoreValidationConfiguration;
 import org.apereo.cas.web.UrlValidator;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 
+import lombok.Data;
 import lombok.val;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.jasig.cas.client.authentication.AttributePrincipalImpl;
 import org.jasig.cas.client.validation.Assertion;
 import org.jasig.cas.client.validation.AssertionImpl;
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
-import org.junit.Rule;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.Issuer;
@@ -61,8 +63,9 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
+
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 
 import static org.mockito.Mockito.*;
 
@@ -108,14 +111,9 @@ import static org.mockito.Mockito.*;
     CasCoreUtilConfiguration.class
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Tag("SAML")
 public abstract class BaseSamlIdPConfigurationTests {
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
-
     protected static FileSystemResource METADATA_DIRECTORY;
-
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
 
     @Autowired
     @Qualifier("casSamlIdPMetadataResolver")
@@ -160,35 +158,44 @@ public abstract class BaseSamlIdPConfigurationTests {
     @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
     protected SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver;
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         METADATA_DIRECTORY = new FileSystemResource("src/test/resources/metadata");
     }
 
     protected static Assertion getAssertion() {
-        val casuser = new AttributePrincipalImpl("casuser", CoreAuthenticationTestUtils.getAttributes());
-        return new AssertionImpl(casuser, CoreAuthenticationTestUtils.getAttributes());
+        val attributes = new LinkedHashMap<>(CoreAuthenticationTestUtils.getAttributes());
+        val permissions = new ArrayList<>();
+        permissions.add(new PermissionSamlAttributeValue("admin", "cas-admins", "super-cas"));
+        permissions.add(new PermissionSamlAttributeValue("designer", "cas-designers", "cas-ux"));
+        attributes.put("permissions", permissions);
+        val casuser = new AttributePrincipalImpl("casuser", attributes);
+        return new AssertionImpl(casuser, attributes);
     }
 
     protected static AuthnRequest getAuthnRequestFor(final SamlRegisteredService service) {
+        return getAuthnRequestFor(service.getServiceId());
+    }
+
+    protected static AuthnRequest getAuthnRequestFor(final String service) {
         val authnRequest = mock(AuthnRequest.class);
         when(authnRequest.getID()).thenReturn("23hgbcehfgeb7843jdv1");
         val issuer = mock(Issuer.class);
-        when(issuer.getValue()).thenReturn(service.getServiceId());
+        when(issuer.getValue()).thenReturn(service);
         when(authnRequest.getIssuer()).thenReturn(issuer);
         return authnRequest;
     }
 
-    protected SamlRegisteredService getSamlRegisteredServiceForTestShib() {
+    protected static SamlRegisteredService getSamlRegisteredServiceForTestShib() {
         return getSamlRegisteredServiceForTestShib(false, false, false);
     }
 
-    protected SamlRegisteredService getSamlRegisteredServiceForTestShib(final boolean signAssertion,
+    protected static SamlRegisteredService getSamlRegisteredServiceForTestShib(final boolean signAssertion,
                                                                         final boolean signResponses) {
         return getSamlRegisteredServiceForTestShib(signAssertion, signResponses, false);
     }
 
-    protected SamlRegisteredService getSamlRegisteredServiceForTestShib(final boolean signAssertion,
+    protected static SamlRegisteredService getSamlRegisteredServiceForTestShib(final boolean signAssertion,
                                                                         final boolean signResponses,
                                                                         final boolean encryptAssertions) {
         val service = new SamlRegisteredService();
@@ -208,6 +215,22 @@ public abstract class BaseSamlIdPConfigurationTests {
         @Bean
         public SamlIdPMetadataLocator samlIdPMetadataLocator() {
             return new FileSystemSamlIdPMetadataLocator(METADATA_DIRECTORY);
+        }
+    }
+
+    @Data
+    public static class PermissionSamlAttributeValue {
+        private final String type;
+        private final String group;
+        private final String user;
+
+        @Override
+        public String toString() {
+            return new ToStringBuilder(this, ToStringStyle.NO_CLASS_NAME_STYLE)
+                .append("user", user)
+                .append("group", group)
+                .append("type", type)
+                .build();
         }
     }
 }

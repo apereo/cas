@@ -10,6 +10,7 @@ import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.BaseSaml
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.ektorp.DocumentNotFoundException;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 
@@ -26,7 +27,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class CouchDbSamlRegisteredServiceMetadataResolver extends BaseSamlRegisteredServiceMetadataResolver {
 
-    private SamlMetadataDocumentCouchDbRepository couchDb;
+    private final SamlMetadataDocumentCouchDbRepository couchDb;
 
     public CouchDbSamlRegisteredServiceMetadataResolver(final SamlIdPProperties idp, final OpenSamlConfigBean openSamlConfigBean,
                                                         final SamlMetadataDocumentCouchDbRepository couchDb) {
@@ -35,7 +36,7 @@ public class CouchDbSamlRegisteredServiceMetadataResolver extends BaseSamlRegist
     }
 
     @Override
-    public Collection<MetadataResolver> resolve(final SamlRegisteredService service) {
+    public Collection<MetadataResolver> resolve(final SamlRegisteredService service, final CriteriaSet criteriaSet) {
         try {
             return couchDb.getAll().stream().map(doc -> buildMetadataResolverFrom(service, doc)).filter(Objects::nonNull).collect(Collectors.toList());
         } catch (final DocumentNotFoundException e) {

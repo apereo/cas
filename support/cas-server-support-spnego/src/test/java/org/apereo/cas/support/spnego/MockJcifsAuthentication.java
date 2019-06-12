@@ -12,7 +12,7 @@ import java.security.Principal;
 public class MockJcifsAuthentication extends Authentication {
 
     private final Principal principal;
-    private byte[] outToken = new byte[]{4, 5, 6};
+    private final byte[] outToken = new byte[]{4, 5, 6};
 
     public MockJcifsAuthentication() {
         this.principal = new MockPrincipal("test");
@@ -30,6 +30,5 @@ public class MockJcifsAuthentication extends Authentication {
 
     @Override
     public void process(final byte[] arg0) {
-        // empty
     }
 }

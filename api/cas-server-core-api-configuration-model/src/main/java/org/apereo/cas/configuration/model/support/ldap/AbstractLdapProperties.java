@@ -1,10 +1,15 @@
 package org.apereo.cas.configuration.model.support.ldap;
 
+import org.apereo.cas.configuration.support.RequiresModule;
+
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * This is {@link AbstractLdapProperties}.
@@ -12,11 +17,13 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@RequiresModule(name = "cas-server-support-ldap-core")
 @Getter
 @Setter
 public abstract class AbstractLdapProperties implements Serializable {
 
     private static final long serialVersionUID = 2682743362616979324L;
+
     /**
      * Path of the trust certificates to use for the SSL connection.
      * Ignores keystore-related settings when activated and used.
@@ -37,6 +44,27 @@ public abstract class AbstractLdapProperties implements Serializable {
      * by the underlying Java platform.
      */
     private String keystoreType;
+
+    /**
+     * Path to the keystore used to determine which certificates or certificate authorities should be trusted.
+     * Used when connecting to an LDAP server via LDAPS or startTLS connection.
+     * If left blank, the default truststore for the Java runtime is used.
+     */
+    private String trustStore;
+
+    /**
+     * Password needed to open the truststore.
+     */
+    private String trustStorePassword;
+
+    /**
+     * The type of trust keystore that determines which certificates or certificate authorities are trusted.
+     * Types depend on underlying java platform, typically {@code PKCS12} or {@code JKS}.
+     * If left blank, defaults to the default keystore type indicated
+     * by the underlying Java platform.
+     */
+    private String trustStoreType;
+
     /**
      * Minimum LDAP connection pool size.
      * Size the pool should be initialized to and pruned to
@@ -114,7 +142,7 @@ public abstract class AbstractLdapProperties implements Serializable {
     /**
      * The LDAP url to the server. More than one may be specified, separated by space and/or comma.
      */
-    private String ldapUrl = "ldap://localhost:389";
+    private String ldapUrl;
     /**
      * If the LDAP connection should be used with SSL enabled.
      */
@@ -136,7 +164,7 @@ public abstract class AbstractLdapProperties implements Serializable {
      * that provides the LDAP implementation without modifying any code. By default the JNDI provider is used, though
      * it may be swapped out for {@code org.ldaptive.provider.unboundid.UnboundIDProvider}.
      */
-    private String providerClass;
+    private String providerClass = "org.ldaptive.provider.unboundid.UnboundIDProvider";
     /**
      * Whether search/query results are allowed to match on multiple DNs,
      * or whether a single unique DN is expected for the result.
@@ -187,9 +215,31 @@ public abstract class AbstractLdapProperties implements Serializable {
     @NestedConfigurationProperty
     private LdapValidatorProperties validator = new LdapValidatorProperties();
     /**
+     * Hostname verification options.
+     * Accepted values are {@link LdapHostnameVerifierOptions#DEFAULT} and {@link LdapHostnameVerifierOptions#ANY}.
+     */
+    private LdapHostnameVerifierOptions hostnameVerifier = LdapHostnameVerifierOptions.DEFAULT;
+
+    /**
      * Name of the authentication handler.
      */
     private String name;
+
+    /**
+     * Set if multiple Entries are allowed.
+     */
+    private boolean allowMultipleEntries;
+
+    /**
+     * Set if search referrals should be followed.
+     */
+    private boolean followReferrals = true;
+
+    /**
+     * Indicate the collection of attributes that are to be tagged and processed as binary
+     * attributes by the underlying search resolver.
+     */
+    private List<String> binaryAttributes = Stream.of("objectGUID", "objectSid").collect(Collectors.toList());
 
     /**
      * The ldap type used to handle specific ops.
@@ -258,5 +308,19 @@ public abstract class AbstractLdapProperties implements Serializable {
          * ldap urls based on DNS SRV records.
          */
         DNS_SRV
+    }
+
+    /**
+     * Describe hostname verification strategies.
+     */
+    public enum LdapHostnameVerifierOptions {
+        /**
+         * Default option, forcing verification.
+         */
+        DEFAULT,
+        /**
+         * Skip hostname verification and allow all.
+         */
+        ANY
     }
 }

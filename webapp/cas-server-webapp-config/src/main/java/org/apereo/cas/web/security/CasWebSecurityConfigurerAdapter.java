@@ -5,13 +5,17 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.monitor.ActuatorEndpointProperties;
 import org.apereo.cas.configuration.model.core.monitor.MonitorProperties;
 import org.apereo.cas.configuration.support.JpaBeans;
-import org.apereo.cas.web.security.authentication.LdapAuthenticationProvider;
+import org.apereo.cas.web.security.authentication.MonitorEndpointLdapAuthenticationProvider;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
+import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties;
 import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
+import org.springframework.boot.actuate.endpoint.web.PathMappedEndpoints;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.security.authentication.jaas.JaasAuthenticationProvider;
@@ -29,29 +33,37 @@ import java.util.stream.Collectors;
  * @since 6.0.0
  */
 @RequiredArgsConstructor
+@Slf4j
 public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
+    /**
+     * Endpoint url used for admin-level form-login of endpoints.
+     */
+    public static final String ENDPOINT_URL_ADMIN_FORM_LOGIN = "/adminlogin";
+
     private final CasConfigurationProperties casProperties;
     private final SecurityProperties securityProperties;
+    private final CasWebSecurityExpressionHandler casWebSecurityExpressionHandler;
+    private final WebEndpointProperties webEndpointProperties;
+    private final PathMappedEndpoints pathMappedEndpoints;
 
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
-        http.csrf()
-            .disable()
+        http.csrf().disable()
+            .headers().disable()
             .logout()
             .disable()
             .requiresChannel()
             .requestMatchers(r -> r.getHeader("X-Forwarded-Proto") != null)
             .requiresSecure();
 
-        val requests = http.authorizeRequests();
-        configureEndpointAccessToDenyUndefined(requests);
-        configureEndpointAccessForStaticResources(requests);
-
+        val requests = http.authorizeRequests().expressionHandler(casWebSecurityExpressionHandler);
         val endpoints = casProperties.getMonitor().getEndpoints().getEndpoint();
         endpoints.forEach(Unchecked.biConsumer((k, v) -> {
             val endpoint = EndpointRequest.to(k);
             v.getAccess().forEach(Unchecked.consumer(access -> configureEndpointAccess(http, requests, access, v, endpoint)));
         }));
+        configureEndpointAccessToDenyUndefined(http, requests);
+        configureEndpointAccessForStaticResources(requests);
     }
 
     @Override
@@ -59,21 +71,51 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
         val jaas = casProperties.getMonitor().getEndpoints().getJaas();
         if (jaas.getLoginConfig() != null) {
             configureJaasAuthenticationProvider(auth, jaas);
+        } else {
+            LOGGER.trace("No JAAS login config is defined to enable JAAS authentication");
         }
 
         val ldap = casProperties.getMonitor().getEndpoints().getLdap();
         if (StringUtils.isNotBlank(ldap.getLdapUrl()) && StringUtils.isNotBlank(ldap.getSearchFilter())) {
             configureLdapAuthenticationProvider(auth, ldap);
+        } else {
+            LOGGER.trace("No LDAP url or search filter is defined to enable LDAP authentication");
         }
 
         val jdbc = casProperties.getMonitor().getEndpoints().getJdbc();
         if (StringUtils.isNotBlank(jdbc.getQuery())) {
             configureJdbcAuthenticationProvider(auth, jdbc);
+        } else {
+            LOGGER.trace("No JDBC query is defined to enable JDBC authentication");
         }
 
         if (!auth.isConfigured()) {
             super.configure(auth);
         }
+    }
+
+    /**
+     * Configure endpoint access to deny undefined.
+     *
+     * @param http     the http
+     * @param requests the requests
+     */
+    protected void configureEndpointAccessToDenyUndefined(final HttpSecurity http,
+                                                          final ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry requests) {
+        val endpoints = casProperties.getMonitor().getEndpoints().getEndpoint().keySet();
+        val endpointDefaults = casProperties.getMonitor().getEndpoints().getDefaultEndpointProperties();
+        pathMappedEndpoints.forEach(endpoint -> {
+            val rootPath = endpoint.getRootPath();
+            if (endpoints.contains(rootPath)) {
+                LOGGER.trace("Endpoint security is defined for endpoint [{}]", rootPath);
+            } else {
+                val defaultAccessRules = endpointDefaults.getAccess();
+                LOGGER.trace("Endpoint security is NOT defined for endpoint [{}]. Using default security rules [{}]", rootPath, endpointDefaults);
+                val endpointRequest = EndpointRequest.to(rootPath).excludingLinks();
+                defaultAccessRules.forEach(Unchecked.consumer(access ->
+                    configureEndpointAccess(http, requests, access, endpointDefaults, endpointRequest)));
+            }
+        });
     }
 
     /**
@@ -99,8 +141,10 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
      */
     protected void configureLdapAuthenticationProvider(final AuthenticationManagerBuilder auth, final MonitorProperties.Endpoints.LdapSecurity ldap) {
         if (isLdapAuthorizationActive()) {
-            val p = new LdapAuthenticationProvider(ldap, securityProperties);
+            val p = new MonitorEndpointLdapAuthenticationProvider(ldap, securityProperties);
             auth.authenticationProvider(p);
+        } else {
+            LOGGER.trace("LDAP authorization is undefined, given no LDAP url, base-dn, search filter or role/group filter is configured");
         }
     }
 
@@ -121,19 +165,6 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
         auth.authenticationProvider(p);
     }
 
-
-    /**
-     * Configure endpoint access to deny undefined.
-     *
-     * @param requests the requests
-     */
-    protected void configureEndpointAccessToDenyUndefined(final ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry requests) {
-        val endpoints = casProperties.getMonitor().getEndpoints().getEndpoint().keySet();
-        val configuredEndpoints = endpoints.toArray(new String[]{});
-        requests
-            .requestMatchers(EndpointRequest.toAnyEndpoint().excluding(configuredEndpoints).excludingLinks())
-            .denyAll();
-    }
 
     /**
      * Configure endpoint access for static resources.
@@ -160,7 +191,7 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
     protected void configureEndpointAccessByFormLogin(final ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry requests) throws Exception {
         requests.and()
             .formLogin()
-            .loginPage("/adminlogin")
+            .loginPage(ENDPOINT_URL_ADMIN_FORM_LOGIN)
             .permitAll();
     }
 
@@ -220,6 +251,7 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
 
     private void configureEndpointAccessAnonymously(final ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry requests,
                                                     final EndpointRequest.EndpointRequestMatcher endpoint) {
+
         requests.requestMatchers(endpoint).anonymous();
     }
 
@@ -230,6 +262,7 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
             .stream()
             .map(address -> "hasIpAddress('" + address + "')")
             .collect(Collectors.joining(" or "));
+
         requests
             .requestMatchers(endpoint)
             .access(addresses);
@@ -247,7 +280,7 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
                                                final ActuatorEndpointProperties properties,
                                                final EndpointRequest.EndpointRequestMatcher endpoint) throws Exception {
         requests.requestMatchers(endpoint)
-            .hasAnyRole(properties.getRequiredRoles().toArray(new String[]{}))
+            .hasAnyRole(properties.getRequiredRoles().toArray(ArrayUtils.EMPTY_STRING_ARRAY))
             .and()
             .httpBasic();
     }
@@ -256,7 +289,7 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
                                                     final ActuatorEndpointProperties properties,
                                                     final EndpointRequest.EndpointRequestMatcher endpoint) throws Exception {
         requests.requestMatchers(endpoint)
-            .hasAnyAuthority(properties.getRequiredAuthorities().toArray(new String[]{}))
+            .hasAnyAuthority(properties.getRequiredAuthorities().toArray(ArrayUtils.EMPTY_STRING_ARRAY))
             .and()
             .httpBasic();
     }

@@ -56,8 +56,8 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
     }
 
     @Override
-    public <T extends Ticket> T getTicket(final String ticketId, @NonNull final Class<T> clazz) {
-        val ticket = this.getTicket(ticketId);
+    public <T extends Ticket> T getTicket(final String ticketId, final @NonNull Class<T> clazz) {
+        val ticket = getTicket(ticketId);
         if (ticket == null) {
             return null;
         }
@@ -69,8 +69,8 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
 
     @Override
     public long sessionCount() {
-        try {
-            return getTickets().stream().filter(TicketGrantingTicket.class::isInstance).count();
+        try (val tgtStream = getTickets().stream().filter(TicketGrantingTicket.class::isInstance)) {
+            return tgtStream.count();
         } catch (final Exception t) {
             LOGGER.trace("sessionCount() operation is not implemented by the ticket registry instance [{}]. "
                 + "Message is: [{}] Returning unknown as [{}]", this.getClass().getName(), t.getMessage(), Long.MIN_VALUE);
@@ -80,8 +80,8 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
 
     @Override
     public long serviceTicketCount() {
-        try {
-            return getTickets().stream().filter(ServiceTicket.class::isInstance).count();
+        try (val stStream = getTicketsStream().filter(ServiceTicket.class::isInstance)) {
+            return stStream.count();
         } catch (final Exception t) {
             LOGGER.trace("serviceTicketCount() operation is not implemented by the ticket registry instance [{}]. "
                 + "Message is: [{}] Returning unknown as [{}]", this.getClass().getName(), t.getMessage(), Long.MIN_VALUE);
@@ -91,15 +91,21 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
 
     @Override
     public int deleteTicket(final String ticketId) {
-        val count = new AtomicInteger(0);
         if (StringUtils.isBlank(ticketId)) {
-            return count.intValue();
+            LOGGER.trace("No ticket id is provided for deletion");
+            return 0;
         }
         val ticket = getTicket(ticketId);
         if (ticket == null) {
             LOGGER.debug("Ticket [{}] could not be fetched from the registry; it may have been expired and deleted.", ticketId);
-            return count.intValue();
+            return 0;
         }
+        return deleteTicket(ticket);
+    }
+
+    @Override
+    public int deleteTicket(final Ticket ticket) {
+        val count = new AtomicInteger(0);
         if (ticket instanceof TicketGrantingTicket) {
             LOGGER.debug("Removing children of ticket [{}] from the registry.", ticket.getId());
             val tgt = (TicketGrantingTicket) ticket;
@@ -111,7 +117,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
             }
         }
         LOGGER.debug("Removing ticket [{}] from the registry.", ticket);
-        if (deleteSingleTicket(ticketId)) {
+        if (deleteSingleTicket(ticket.getId())) {
             count.incrementAndGet();
         }
         return count.intValue();
@@ -138,7 +144,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
     }
 
     private void deleteLinkedProxyGrantingTickets(final AtomicInteger count, final TicketGrantingTicket tgt) {
-        val pgts = new LinkedHashSet<>(tgt.getProxyGrantingTickets().keySet());
+        val pgts = new LinkedHashSet<String>(tgt.getProxyGrantingTickets().keySet());
         val hasPgts = !pgts.isEmpty();
         count.getAndAdd(deleteTickets(pgts));
         if (hasPgts) {
@@ -149,9 +155,8 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
     }
 
     private void deleteProxyGrantingTicketFromParent(final ProxyGrantingTicket ticket) {
-        val thePgt = ticket;
-        thePgt.getTicketGrantingTicket().getProxyGrantingTickets().remove(thePgt.getId());
-        updateTicket(thePgt.getTicketGrantingTicket());
+        ticket.getTicketGrantingTicket().getProxyGrantingTickets().remove(ticket.getId());
+        updateTicket(ticket.getTicketGrantingTicket());
     }
 
     /**
@@ -261,11 +266,21 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
      * @return the set
      */
     protected Collection<Ticket> decodeTickets(final Collection<Ticket> items) {
+        return decodeTickets(items.stream()).collect(Collectors.toSet());
+    }
+
+    /**
+     * Decode tickets.
+     *
+     * @param items the items
+     * @return the set
+     */
+    protected Stream<Ticket> decodeTickets(final Stream<Ticket> items) {
         if (!isCipherExecutorEnabled()) {
             LOGGER.trace(MESSAGE);
             return items;
         }
-        return items.stream().map(this::decodeTicket).collect(Collectors.toSet());
+        return items.map(this::decodeTicket);
     }
 
     protected boolean isCipherExecutorEnabled() {

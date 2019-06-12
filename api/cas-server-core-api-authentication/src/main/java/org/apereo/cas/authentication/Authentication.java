@@ -53,7 +53,7 @@ public interface Authentication extends Serializable {
      *
      * @return the map of attributes.
      */
-    Map<String, Object> getAttributes();
+    Map<String, List<Object>> getAttributes();
 
     /**
      * Add attribute to the authentication object and update the instance.
@@ -72,6 +72,13 @@ public interface Authentication extends Serializable {
      * were presented and subsequently processed.
      */
     List<CredentialMetaData> getCredentials();
+
+    /**
+     * Get a list of authentication warnings that may be considered global
+     * and applicable to the entire authentication event.
+     * @return list of authentication attempts.
+     */
+    List<MessageDescriptor> getWarnings();
 
     /**
      * Gets a map describing successful authentications produced by {@link AuthenticationHandler} components.

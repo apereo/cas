@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml.services;
 
+import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.util.RegexUtils;
@@ -13,6 +15,7 @@ import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.springframework.context.ApplicationContext;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -32,20 +35,30 @@ public class PatternMatchingEntityIdAttributeReleasePolicy extends BaseSamlRegis
 
     private boolean fullMatch = true;
 
+    private boolean reverseMatch;
+
     @Override
-    protected Map<String, Object> getAttributesForSamlRegisteredService(final Map<String, Object> attributes,
-                                                                        final SamlRegisteredService service,
-                                                                        final ApplicationContext applicationContext,
-                                                                        final SamlRegisteredServiceCachingMetadataResolver resolver,
-                                                                        final SamlRegisteredServiceServiceProviderMetadataFacade facade,
-                                                                        final EntityDescriptor entityDescriptor) {
+    protected Map<String, List<Object>> getAttributesForSamlRegisteredService(final Map<String, List<Object>> attributes,
+                                                                              final SamlRegisteredService registeredService,
+                                                                              final ApplicationContext applicationContext,
+                                                                              final SamlRegisteredServiceCachingMetadataResolver resolver,
+                                                                              final SamlRegisteredServiceServiceProviderMetadataFacade facade,
+                                                                              final EntityDescriptor entityDescriptor,
+                                                                              final Principal principal,
+                                                                              final Service selectedService) {
         val pattern = RegexUtils.createPattern(this.entityIds);
         val entityID = entityDescriptor.getEntityID();
         val matcher = pattern.matcher(entityID);
-        val matched = fullMatch ? matcher.matches() : matcher.find();
+        var matched = fullMatch ? matcher.matches() : matcher.find();
         LOGGER.debug("Pattern [{}] matched against [{}]? [{}]", pattern.pattern(), entityID, BooleanUtils.toStringYesNo(matched));
+
+        if (reverseMatch) {
+            matched = !matched;
+            LOGGER.debug("Reversed match to be [{}]", BooleanUtils.toStringYesNo(matched));
+        }
+
         if (matched) {
-            return authorizeReleaseOfAllowedAttributes(attributes);
+            return authorizeReleaseOfAllowedAttributes(principal, attributes, registeredService, selectedService);
         }
         return new HashMap<>(0);
     }

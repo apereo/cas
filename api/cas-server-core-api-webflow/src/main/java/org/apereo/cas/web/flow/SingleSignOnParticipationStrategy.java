@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import org.springframework.core.Ordered;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
@@ -9,7 +10,7 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 5.2.0
  */
 @FunctionalInterface
-public interface SingleSignOnParticipationStrategy {
+public interface SingleSignOnParticipationStrategy extends Ordered {
 
     /**
      * Tries to determine if this request should participate in SSO.
@@ -21,4 +22,47 @@ public interface SingleSignOnParticipationStrategy {
      * @return true if authn is renewed
      */
     boolean isParticipating(RequestContext context);
+
+    /**
+     * Does strategy support this request or not?
+     *
+     * @param context the context
+     * @return the boolean
+     */
+    default boolean supports(final RequestContext context) {
+        return context != null;
+    }
+
+    @Override
+    default int getOrder() {
+        return Ordered.LOWEST_PRECEDENCE;
+    }
+
+    /**
+     * Is creating single sign on session cookie on renewed authentication?
+     *
+     * @param context the context
+     * @return the boolean
+     */
+    default boolean isCreateCookieOnRenewedAuthentication(final RequestContext context) {
+        return true;
+    }
+
+    /**
+     * Always participating single sign on participation strategy.
+     *
+     * @return the single sign on participation strategy
+     */
+    static SingleSignOnParticipationStrategy alwaysParticipating() {
+        return context -> true;
+    }
+
+    /**
+     * Never participating single sign on participation strategy.
+     *
+     * @return the single sign on participation strategy
+     */
+    static SingleSignOnParticipationStrategy neverParticipating() {
+        return context -> false;
+    }
 }

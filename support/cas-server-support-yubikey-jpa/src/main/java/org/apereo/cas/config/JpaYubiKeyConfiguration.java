@@ -77,16 +77,14 @@ public class JpaYubiKeyConfiguration {
     @Lazy
     @Bean
     public LocalContainerEntityManagerFactoryBean yubiKeyEntityManagerFactory() {
-        val bean =
-            JpaBeans.newHibernateEntityManagerFactoryBean(
-                new JpaConfigDataHolder(
-                    jpaYubiKeyVendorAdapter(),
-                    "jpaYubiKeyRegistryContext",
-                    jpaYubiKeyPackagesToScan(),
-                    dataSourceYubiKey()),
-                casProperties.getAuthn().getMfa().getYubikey().getJpa());
 
-        return bean;
+        return JpaBeans.newHibernateEntityManagerFactoryBean(
+            new JpaConfigDataHolder(
+                jpaYubiKeyVendorAdapter(),
+                "jpaYubiKeyRegistryContext",
+                jpaYubiKeyPackagesToScan(),
+                dataSourceYubiKey()),
+            casProperties.getAuthn().getMfa().getYubikey().getJpa());
     }
 
     @Bean

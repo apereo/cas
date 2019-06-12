@@ -15,6 +15,8 @@ import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.validation.ValidationContext;
 
 import javax.validation.constraints.Size;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * Credential for authenticating with a username and password.
@@ -37,13 +39,13 @@ public class UsernamePasswordCredential implements Credential {
 
     private static final long serialVersionUID = -700605081472810939L;
 
-    @Size(min = 1, message = "username.required")
-    private String username;
+    private @Size(min = 1, message = "username.required") String username;
 
-    @Size(min = 1, message = "password.required")
-    private String password;
+    private @Size(min = 1, message = "password.required") String password;
 
     private String source;
+
+    private Map<String, Object> customFields = new LinkedHashMap<>();
 
     public UsernamePasswordCredential(final String username, final String password) {
         this.username = username;
@@ -66,27 +68,14 @@ public class UsernamePasswordCredential implements Credential {
         }
 
         val messages = context.getMessageContext();
-        if (StringUtils.isBlank(username)) {
-            messages.addMessage(new MessageBuilder()
-                .error()
-                .source("username")
-                .code("username.required")
-                .build());
-        }
-        if (StringUtils.isBlank(password)) {
-            messages.addMessage(new MessageBuilder()
-                .error()
-                .source("password")
-                .code("password.required")
-                .build());
-        }
-        val casProperties = ApplicationContextProvider.getCasProperties();
-        if (StringUtils.isBlank(source) && casProperties.getAuthn().getPolicy().isSourceSelectionEnabled()) {
-            messages.addMessage(new MessageBuilder()
-                .error()
-                .source("source")
-                .code("source.required")
-                .build());
-        }
+        ApplicationContextProvider.getCasConfigurationProperties().ifPresent(props -> {
+            if (StringUtils.isBlank(source) && props.getAuthn().getPolicy().isSourceSelectionEnabled()) {
+                messages.addMessage(new MessageBuilder()
+                    .error()
+                    .source("source")
+                    .code("source.required")
+                    .build());
+            }
+        });
     }
 }

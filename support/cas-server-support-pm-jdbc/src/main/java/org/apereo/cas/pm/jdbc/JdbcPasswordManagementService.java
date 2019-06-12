@@ -6,7 +6,8 @@ import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
 import org.apereo.cas.configuration.model.support.pm.PasswordManagementProperties;
 import org.apereo.cas.pm.BasePasswordManagementService;
-import org.apereo.cas.pm.PasswordChangeBean;
+import org.apereo.cas.pm.PasswordChangeRequest;
+import org.apereo.cas.pm.PasswordHistoryService;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -35,13 +36,14 @@ public class JdbcPasswordManagementService extends BasePasswordManagementService
     public JdbcPasswordManagementService(final CipherExecutor<Serializable, String> cipherExecutor,
                                          final String issuer,
                                          final PasswordManagementProperties passwordManagementProperties,
-                                         final DataSource dataSource) {
-        super(passwordManagementProperties, cipherExecutor, issuer);
+                                         final DataSource dataSource,
+                                         final PasswordHistoryService passwordHistoryService) {
+        super(passwordManagementProperties, cipherExecutor, issuer, passwordHistoryService);
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
     @Override
-    public boolean changeInternal(final Credential credential, final PasswordChangeBean bean) {
+    public boolean changeInternal(final Credential credential, final PasswordChangeRequest bean) {
         val c = (UsernamePasswordCredential) credential;
         val encoder = PasswordEncoderUtils.newPasswordEncoder(properties.getJdbc().getPasswordEncoder());
         val password = encoder.encode(bean.getPassword());
@@ -56,10 +58,10 @@ public class JdbcPasswordManagementService extends BasePasswordManagementService
             if (StringUtils.isNotBlank(email) && EmailValidator.getInstance().isValid(email)) {
                 return email;
             }
-            LOGGER.debug("Username {} not found when searching for email", username);
+            LOGGER.debug("Username [{}] not found when searching for email", username);
             return null;
         } catch (final EmptyResultDataAccessException e) {
-            LOGGER.debug("Username {} not found when searching for email", username);
+            LOGGER.debug("Username [{}] not found when searching for email", username);
             return null;
         }
     }
@@ -71,10 +73,10 @@ public class JdbcPasswordManagementService extends BasePasswordManagementService
             if (StringUtils.isNotBlank(username)) {
                 return username;
             }
-            LOGGER.debug("Email {} not found when searching for user", email);
+            LOGGER.debug("Email [{}] not found when searching for user", email);
             return null;
         } catch (final EmptyResultDataAccessException e) {
-            LOGGER.debug("Email {} not found when searching for user", email);
+            LOGGER.debug("Email [{}] not found when searching for user", email);
             return null;
         }
     }

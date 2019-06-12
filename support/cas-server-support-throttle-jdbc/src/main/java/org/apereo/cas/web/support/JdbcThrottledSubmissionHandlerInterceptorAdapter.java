@@ -1,8 +1,5 @@
 package org.apereo.cas.web.support;
 
-import org.apereo.cas.audit.AuditTrailExecutionPlan;
-import org.apereo.cas.throttle.ThrottledRequestResponseHandler;
-
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -26,24 +23,17 @@ import java.util.stream.Collectors;
  * @since 3.3.5
  */
 public class JdbcThrottledSubmissionHandlerInterceptorAdapter extends AbstractInspektrAuditHandlerInterceptorAdapter {
-    private final DataSource dataSource;
     private final String sqlQueryAudit;
     private final JdbcTemplate jdbcTemplate;
 
-    public JdbcThrottledSubmissionHandlerInterceptorAdapter(final int failureThreshold,
-                                                            final int failureRangeInSeconds,
-                                                            final String usernameParameter,
-                                                            final AuditTrailExecutionPlan auditTrailManager,
-                                                            final DataSource dataSource, final String applicationCode,
-                                                            final String sqlQueryAudit, final String authenticationFailureCode,
-                                                            final ThrottledRequestResponseHandler throttledRequestResponseHandler) {
-        super(failureThreshold, failureRangeInSeconds, usernameParameter,
-            authenticationFailureCode, auditTrailManager, applicationCode,
-            throttledRequestResponseHandler);
-        this.dataSource = dataSource;
+    public JdbcThrottledSubmissionHandlerInterceptorAdapter(final ThrottledSubmissionHandlerConfigurationContext configurationContext,
+                                                            final DataSource dataSource,
+                                                            final String sqlQueryAudit) {
+        super(configurationContext);
         this.sqlQueryAudit = sqlQueryAudit;
-        this.jdbcTemplate = new JdbcTemplate(this.dataSource);
+        this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
+
 
     @Override
     public boolean exceedsThreshold(final HttpServletRequest request) {
@@ -55,8 +45,8 @@ public class JdbcThrottledSubmissionHandlerInterceptorAdapter extends AbstractIn
             new Object[]{
                 remoteAddress,
                 getUsernameParameterFromRequest(request),
-                getAuthenticationFailureCode(),
-                getApplicationCode(),
+                getConfigurationContext().getAuthenticationFailureCode(),
+                getConfigurationContext().getApplicationCode(),
                 getFailureInRangeCutOffDate()},
             new int[]{Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.TIMESTAMP},
             (resultSet, i) -> resultSet.getTimestamp(1));

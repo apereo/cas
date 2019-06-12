@@ -1,6 +1,7 @@
 package org.apereo.cas.validation;
 
-import lombok.NoArgsConstructor;
+import org.apereo.cas.services.ServicesManager;
+
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -14,21 +15,19 @@ import lombok.extern.slf4j.Slf4j;
  * @since 3.0.0
  */
 @Slf4j
-@NoArgsConstructor
 public class Cas20WithoutProxyingValidationSpecification extends AbstractCasProtocolValidationSpecification {
 
-    /**
-     * Instantiates a new cas20 without proxying validation specification.
-     *
-     * @param renew the renew
-     */
-    public Cas20WithoutProxyingValidationSpecification(final boolean renew) {
-        super(renew);
+    public Cas20WithoutProxyingValidationSpecification(final ServicesManager servicesManager) {
+        super(servicesManager);
+    }
+
+    public Cas20WithoutProxyingValidationSpecification(final ServicesManager servicesManager, final boolean renew) {
+        super(servicesManager, renew);
     }
 
     @Override
     protected boolean isSatisfiedByInternal(final Assertion assertion) {
-        LOGGER.debug("Number of chained authentications in the assertion [{}]", assertion.getChainedAuthentications().size());
+        LOGGER.trace("Number of chained authentications in the assertion [{}]", assertion.getChainedAuthentications().size());
         return assertion.getChainedAuthentications().size() == 1;
     }
 }

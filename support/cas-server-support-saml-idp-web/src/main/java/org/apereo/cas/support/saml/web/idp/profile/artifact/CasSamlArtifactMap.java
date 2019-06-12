@@ -3,7 +3,7 @@ package org.apereo.cas.support.saml.web.idp.profile.artifact;
 import org.apereo.cas.ticket.artifact.SamlArtifactTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.HttpRequestUtils;
-import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
+import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.support.CookieUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -24,7 +24,7 @@ public class CasSamlArtifactMap extends BasicSAMLArtifactMap {
 
     private final TicketRegistry ticketRegistry;
     private final SamlArtifactTicketFactory samlArtifactTicketFactory;
-    private final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
+    private final CasCookieBuilder ticketGrantingTicketCookieGenerator;
 
     @Override
     public void put(final String artifact, final String relyingPartyId,

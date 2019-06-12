@@ -15,6 +15,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 public abstract class BaseAlternativePrincipalResolverProperties implements Serializable {
+    private static final long serialVersionUID = 4770829035414038072L;
     /**
      * Attribute name that will be used by X509 principal resolvers if the main attribute in the
      * certificate is not present. This only applies to principal resolvers that are looking

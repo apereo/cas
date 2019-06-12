@@ -19,19 +19,16 @@ import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.SpnegoConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
-import org.apereo.cas.util.junit.ConditionalIgnoreRule;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
+import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
+import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 import org.apereo.cas.web.flow.config.SpnegoWebflowActionsConfiguration;
 
-import org.junit.ClassRule;
-import org.junit.Rule;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
 import org.springframework.webflow.execution.Action;
 
 /**
@@ -47,6 +44,7 @@ import org.springframework.webflow.execution.Action;
     CasCoreServicesConfiguration.class,
     CasPersonDirectoryConfiguration.class,
     CasCoreWebConfiguration.class,
+    CasMultifactorAuthenticationWebflowConfiguration.class,
     CasCoreConfiguration.class,
     CasCoreUtilConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
@@ -54,6 +52,7 @@ import org.springframework.webflow.execution.Action;
     CasCoreTicketCatalogConfiguration.class,
     CasCoreLogoutConfiguration.class,
     CasCookieConfiguration.class,
+    CasWebflowContextConfiguration.class,
     CasCoreWebflowConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreAuthenticationConfiguration.class,
@@ -65,15 +64,6 @@ import org.springframework.webflow.execution.Action;
     CasCoreAuthenticationHandlersConfiguration.class,
     CasCoreHttpConfiguration.class})
 public abstract class AbstractSpnegoTests {
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
-
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
-
-    @Rule
-    public final ConditionalIgnoreRule conditionalIgnoreRule = new ConditionalIgnoreRule();
-
     @Autowired
     @Qualifier("ldapSpnegoClientAction")
     protected Action ldapSpnegoClientAction;

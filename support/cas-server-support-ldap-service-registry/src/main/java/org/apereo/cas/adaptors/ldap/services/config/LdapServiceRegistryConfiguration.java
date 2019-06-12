@@ -7,15 +7,21 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryExecutionPlan;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
+import org.apereo.cas.services.ServiceRegistryListener;
 import org.apereo.cas.util.LdapUtils;
 
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.Collection;
 
 /**
  * This is {@link LdapServiceRegistryConfiguration}.
@@ -25,10 +31,17 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("ldapServiceRegistryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class LdapServiceRegistryConfiguration implements ServiceRegistryExecutionPlanConfigurer {
+public class LdapServiceRegistryConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
+
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
+
+    @Autowired
+    @Qualifier("serviceRegistryListeners")
+    private ObjectProvider<Collection<ServiceRegistryListener>> serviceRegistryListeners;
 
     @Bean
     @RefreshScope
@@ -42,11 +55,18 @@ public class LdapServiceRegistryConfiguration implements ServiceRegistryExecutio
     public ServiceRegistry ldapServiceRegistry() {
         val ldap = casProperties.getServiceRegistry().getLdap();
         val connectionFactory = LdapUtils.newLdaptivePooledConnectionFactory(ldap);
-        return new LdapServiceRegistry(connectionFactory, ldap.getBaseDn(), ldapServiceRegistryMapper(), ldap);
+        return new LdapServiceRegistry(connectionFactory, ldap.getBaseDn(), ldapServiceRegistryMapper(),
+            ldap, eventPublisher, serviceRegistryListeners.getIfAvailable());
     }
 
-    @Override
-    public void configureServiceRegistry(final ServiceRegistryExecutionPlan plan) {
-        plan.registerServiceRegistry(ldapServiceRegistry());
+    @Bean
+    @ConditionalOnMissingBean(name = "ldapServiceRegistryExecutionPlanConfigurer")
+    public ServiceRegistryExecutionPlanConfigurer ldaplServiceRegistryExecutionPlanConfigurer() {
+        return new ServiceRegistryExecutionPlanConfigurer() {
+            @Override
+            public void configureServiceRegistry(final ServiceRegistryExecutionPlan plan) {
+                plan.registerServiceRegistry(ldapServiceRegistry());
+            }
+        };
     }
 }

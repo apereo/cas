@@ -59,16 +59,14 @@ public class JpaEventsConfiguration {
     @Lazy
     @Bean
     public LocalContainerEntityManagerFactoryBean eventsEntityManagerFactory() {
-        val bean =
-            JpaBeans.newHibernateEntityManagerFactoryBean(
-                new JpaConfigDataHolder(
-                    jpaEventVendorAdapter(),
-                    "jpaEventRegistryContext",
-                    jpaEventPackagesToScan(),
-                    dataSourceEvent()),
-                casProperties.getEvents().getJpa());
 
-        return bean;
+        return JpaBeans.newHibernateEntityManagerFactoryBean(
+            new JpaConfigDataHolder(
+                jpaEventVendorAdapter(),
+                "jpaEventRegistryContext",
+                jpaEventPackagesToScan(),
+                dataSourceEvent()),
+            casProperties.getEvents().getJpa());
     }
 
     @Autowired

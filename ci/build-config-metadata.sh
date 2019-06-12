@@ -1,5 +1,15 @@
 #!/bin/bash
 
+echo -e "Checking configuration property classes for proper annotations\n"
+grep -L -rnw ./api/cas-server-core-api-configuration-model --include=*Properties.java -e '@RequiresModule' | grep -v "CasConfigurationProperties.java"
+resultVal=$?
+if [ $resultVal == 1 ]; then
+    echo -e "\nConfiguration property classes are all tagged with the correct required module"
+else
+    echo -e "\nSome configuration property classes do not have the @RequiresModule annotation"
+    exit 1
+fi
+
 prepCommand="echo 'Running command...'; "
 gradle="./gradlew $@"
 gradleBuild=""
@@ -11,8 +21,7 @@ echo -e "***********************************************"
 
 gradleBuild="$gradleBuild :api:cas-server-core-api-configuration-model:build \
      -x check -x test -x javadoc \
-     -DskipGradleLint=true -DskipSass=true \
-     -DskipNodeModulesCleanUp=true -DskipNpmCache=true  "
+     -DskipGradleLint=true "
 
 if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[show streams]"* ]]; then
     gradleBuild="$gradleBuild -DshowStandardStreams=true "

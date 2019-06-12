@@ -6,11 +6,9 @@ import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.support.WebUtils;
 
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
@@ -27,7 +25,7 @@ public abstract class AbstractPrincipalAttributeAcceptableUsagePolicyRepository 
     /**
      * Ticket registry support.
      */
-    protected final TicketRegistrySupport ticketRegistrySupport;
+    protected final transient TicketRegistrySupport ticketRegistrySupport;
 
     /**
      * Single-valued attribute in LDAP that describes whether the policy
@@ -36,17 +34,16 @@ public abstract class AbstractPrincipalAttributeAcceptableUsagePolicyRepository 
     protected final String aupAttributeName;
 
     @Override
-    public Pair<Boolean, Principal> verify(final RequestContext requestContext, final Credential credential) {
-        @NonNull
-        val principal = WebUtils.getPrincipalFromRequestContext(requestContext, this.ticketRegistrySupport);
+    public AcceptableUsagePolicyStatus verify(final RequestContext requestContext, final Credential credential) {
+        val principal = WebUtils.getAuthentication(requestContext).getPrincipal();
 
         if (isUsagePolicyAcceptedBy(principal)) {
             LOGGER.debug("Usage policy has been accepted by [{}]", principal.getId());
-            return Pair.of(Boolean.TRUE, principal);
+            return AcceptableUsagePolicyStatus.accepted(principal);
         }
 
         LOGGER.warn("Usage policy has not been accepted by [{}]", principal.getId());
-        return Pair.of(Boolean.FALSE, principal);
+        return AcceptableUsagePolicyStatus.denied(principal);
     }
 
     /**

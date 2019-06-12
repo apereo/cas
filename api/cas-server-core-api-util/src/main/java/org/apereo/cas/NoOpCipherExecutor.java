@@ -23,7 +23,6 @@ class NoOpCipherExecutor<I, O> implements CipherExecutor<I, O> {
      * @return the instance
      */
     static <I, O> CipherExecutor<I, O> getInstance() {
-        //Double-check pattern here to ensure correctness of only single instance creation in multi-threaded environments
         if (INSTANCE == null) {
             synchronized (NoOpCipherExecutor.class) {
                 if (INSTANCE == null) {

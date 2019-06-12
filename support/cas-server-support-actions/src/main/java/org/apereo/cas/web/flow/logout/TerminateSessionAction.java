@@ -2,10 +2,9 @@ package org.apereo.cas.web.flow.logout;
 
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.configuration.model.core.logout.LogoutProperties;
-import org.apereo.cas.util.Pac4jUtils;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConstants;
-import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -13,7 +12,10 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.context.Pac4jConstants;
+import org.pac4j.core.context.session.J2ESessionStore;
+import org.pac4j.core.profile.ProfileManager;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
@@ -37,15 +39,25 @@ public class TerminateSessionAction extends AbstractAction {
      */
     public static final String REQUEST_PARAM_LOGOUT_REQUEST_CONFIRMED = "LogoutRequestConfirmed";
 
-    /** The event factory. */
+    /**
+     * The event factory.
+     */
     protected final EventFactorySupport eventFactorySupport = new EventFactorySupport();
-    /** The authentication service. */
+    /**
+     * The authentication service.
+     */
     protected final CentralAuthenticationService centralAuthenticationService;
-    /** The TGT cookie generator. */
-    protected final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
-    /** The warn cookie generator. */
-    protected final CookieRetrievingCookieGenerator warnCookieGenerator;
-    /** The logout properties. */
+    /**
+     * The TGT cookie generator.
+     */
+    protected final CasCookieBuilder ticketGrantingTicketCookieGenerator;
+    /**
+     * The warn cookie generator.
+     */
+    protected final CasCookieBuilder warnCookieGenerator;
+    /**
+     * The logout properties.
+     */
     protected final LogoutProperties logoutProperties;
 
     /**
@@ -85,11 +97,11 @@ public class TerminateSessionAction extends AbstractAction {
 
         val tgtId = getTicketGrantingTicket(context);
         if (StringUtils.isNotBlank(tgtId)) {
-            LOGGER.debug("Destroying SSO session linked to ticket-granting ticket [{}]", tgtId);
+            LOGGER.trace("Destroying SSO session linked to ticket-granting ticket [{}]", tgtId);
             val logoutRequests = this.centralAuthenticationService.destroyTicketGrantingTicket(tgtId);
             WebUtils.putLogoutRequests(context, logoutRequests);
         }
-        LOGGER.debug("Removing CAS cookies");
+        LOGGER.trace("Removing CAS cookies");
         this.ticketGrantingTicketCookieGenerator.removeCookie(response);
         this.warnCookieGenerator.removeCookie(response);
 
@@ -121,15 +133,16 @@ public class TerminateSessionAction extends AbstractAction {
      * @param response the response
      */
     protected void destroyApplicationSession(final HttpServletRequest request, final HttpServletResponse response) {
-        LOGGER.debug("Destroying application session");
-        val manager = Pac4jUtils.getPac4jProfileManager(request, response);
+        LOGGER.trace("Destroying application session");
+        val context = new J2EContext(request, response, new J2ESessionStore());
+        val manager = new ProfileManager<>(context, context.getSessionStore());
         manager.logout();
 
         val session = request.getSession(false);
         if (session != null) {
             val requestedUrl = session.getAttribute(Pac4jConstants.REQUESTED_URL);
             session.invalidate();
-            if (requestedUrl != null && !requestedUrl.equals("")) {
+            if (requestedUrl != null && !requestedUrl.equals(StringUtils.EMPTY)) {
                 request.getSession(true).setAttribute(Pac4jConstants.REQUESTED_URL, requestedUrl);
             }
         }

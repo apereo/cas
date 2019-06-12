@@ -36,8 +36,8 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.val;
-import org.junit.ClassRule;
-import org.junit.Test;
+import org.apache.commons.lang3.StringUtils;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -45,11 +45,10 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
 
 import java.nio.charset.StandardCharsets;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link SurrogateRestAuthenticationServiceTests}.
@@ -90,9 +89,6 @@ import static org.junit.Assert.*;
 @TestPropertySource(properties = "cas.authn.surrogate.rest.url=http://localhost:9301")
 @Getter
 public class SurrogateRestAuthenticationServiceTests extends BaseSurrogateAuthenticationServiceTests {
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
-
     private static final ObjectMapper MAPPER = new ObjectMapper()
         .findAndRegisterModules()
         .configure(DeserializationFeature.READ_ENUMS_USING_TO_STRING, false)
@@ -107,7 +103,7 @@ public class SurrogateRestAuthenticationServiceTests extends BaseSurrogateAuthen
     @Override
     @Test
     public void verifyList() {
-        var data = "";
+        var data = StringUtils.EMPTY;
         try {
             data = MAPPER.writeValueAsString(CollectionUtils.wrapList("casuser", "otheruser"));
         } catch (final JsonProcessingException e) {
@@ -127,7 +123,7 @@ public class SurrogateRestAuthenticationServiceTests extends BaseSurrogateAuthen
     @Override
     @Test
     public void verifyProxying() {
-        var data = "";
+        var data = StringUtils.EMPTY;
         try {
             data = MAPPER.writeValueAsString(CollectionUtils.wrapList("casuser", "otheruser"));
         } catch (final JsonProcessingException e) {
@@ -144,7 +140,10 @@ public class SurrogateRestAuthenticationServiceTests extends BaseSurrogateAuthen
             val result = surrogateService.canAuthenticateAs("cassurrogate",
                 CoreAuthenticationTestUtils.getPrincipal("casuser"),
                 CoreAuthenticationTestUtils.getService());
-            // Can't use super() until the REST classes are completely refactored and don't need an actual server to connect to.
+            /*
+             * Can't use super() until the REST classes are
+             * completely refactored and don't need an actual server to connect to.
+             */
             assertTrue(result);
         } catch (final Exception e) {
             throw new AssertionError(e.getMessage(), e);

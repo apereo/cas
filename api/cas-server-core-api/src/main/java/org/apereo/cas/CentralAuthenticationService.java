@@ -3,7 +3,7 @@ package org.apereo.cas;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.logout.LogoutRequest;
+import org.apereo.cas.logout.slo.SingleLogoutRequest;
 import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.ServiceTicket;
@@ -57,7 +57,6 @@ public interface CentralAuthenticationService {
     TicketGrantingTicket createTicketGrantingTicket(AuthenticationResult authenticationResult)
         throws AuthenticationException, AbstractTicketException;
 
-
     /**
      * Updates the ticket instance in the underlying storage mechanism.
      * The properties of a given ticket, such as its authentication attributes
@@ -109,7 +108,7 @@ public interface CentralAuthenticationService {
      *
      * @param ticketId the ticket id
      */
-    default void deleteTicket(String ticketId) {
+    default void deleteTicket(final String ticketId) {
     }
 
     /**
@@ -183,7 +182,7 @@ public interface CentralAuthenticationService {
      * @param ticketGrantingTicketId the id of the ticket we want to destroy
      * @return the logout requests.
      */
-    List<LogoutRequest> destroyTicketGrantingTicket(String ticketGrantingTicketId);
+    List<SingleLogoutRequest> destroyTicketGrantingTicket(String ticketGrantingTicketId);
 
     /**
      * Delegate a TicketGrantingTicket to a Service for proxying authentication

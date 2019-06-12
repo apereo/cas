@@ -8,9 +8,11 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 
 import com.google.common.collect.Maps;
+import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
@@ -27,6 +29,7 @@ import java.security.GeneralSecurityException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -39,6 +42,7 @@ import java.util.Map;
  */
 @Slf4j
 @Setter
+@Getter
 public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
 
     /**
@@ -89,7 +93,8 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      * @param strategy         the strategy
      */
     public LdapAuthenticationHandler(final String name, final ServicesManager servicesManager,
-                                     final PrincipalFactory principalFactory, final Integer order, final Authenticator authenticator,
+                                     final PrincipalFactory principalFactory, final Integer order,
+                                     final Authenticator authenticator,
                                      final AuthenticationPasswordPolicyHandlingStrategy strategy) {
         super(name, servicesManager, principalFactory, order);
         this.authenticator = authenticator;
@@ -110,7 +115,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
             passwordPolicyHandlingStrategy.getClass().getSimpleName());
         val messageList = passwordPolicyHandlingStrategy.handle(response, getPasswordPolicyConfiguration());
         if (response.getResult()) {
-            LOGGER.debug("LDAP response returned a result. Creating the final LDAP principal");
+            LOGGER.debug("LDAP response returned a result [{}], creating the final LDAP principal", response.getLdapEntry());
             val principal = createPrincipal(upc.getUsername(), response.getLdapEntry());
             return createHandlerResult(upc, principal, messageList);
         }
@@ -159,8 +164,8 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      * @param username  the username
      * @return the map
      */
-    protected Map<String, Object> collectAttributesForLdapEntry(final LdapEntry ldapEntry, final String username) {
-        val attributeMap = Maps.<String, Object>newHashMapWithExpectedSize(this.principalAttributeMap.size());
+    protected Map<String, List<Object>> collectAttributesForLdapEntry(final LdapEntry ldapEntry, final String username) {
+        val attributeMap = Maps.<String, List<Object>>newHashMapWithExpectedSize(this.principalAttributeMap.size());
         LOGGER.debug("The following attributes are requested to be retrieved and mapped: [{}]", attributeMap.keySet());
         this.principalAttributeMap.forEach((key, attributeNames) -> {
             val attr = ldapEntry.getAttribute(key);
@@ -182,7 +187,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         });
         if (this.collectDnAttribute) {
             LOGGER.debug("Recording principal DN attribute as [{}]", this.principalDnAttributeName);
-            attributeMap.put(this.principalDnAttributeName, ldapEntry.getDn());
+            attributeMap.put(this.principalDnAttributeName, CollectionUtils.wrapList(ldapEntry.getDn()));
         }
         return attributeMap;
     }
@@ -252,7 +257,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
                 attributes.removeIf(authenticatorAttributes::contains);
             }
         }
-        this.authenticatedEntryAttributes = attributes.toArray(new String[0]);
+        this.authenticatedEntryAttributes = attributes.toArray(ArrayUtils.EMPTY_STRING_ARRAY);
         LOGGER.debug("LDAP authentication entry attributes for the authentication request are [{}]", (Object[]) this.authenticatedEntryAttributes);
     }
 }

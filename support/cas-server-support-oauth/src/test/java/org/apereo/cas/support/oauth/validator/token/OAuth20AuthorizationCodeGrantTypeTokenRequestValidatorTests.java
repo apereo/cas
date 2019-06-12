@@ -13,6 +13,7 @@ import org.apereo.cas.support.oauth.authenticator.Authenticators;
 import org.apereo.cas.support.oauth.authenticator.OAuth20CasAuthenticationBuilder;
 import org.apereo.cas.support.oauth.profile.DefaultOAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.code.DefaultOAuthCodeFactory;
 import org.apereo.cas.ticket.code.OAuthCodeExpirationPolicy;
@@ -20,17 +21,19 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.context.Pac4jConstants;
 import org.pac4j.core.profile.CommonProfile;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
+import java.util.HashMap;
 import java.util.HashSet;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -39,6 +42,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
+@Tag("OAuth")
 public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests {
     private static final String SUPPORTING_SERVICE_TICKET = "OC-SUPPORTING";
     private static final String NON_SUPPORTING_SERVICE_TICKET = "OC-NON-SUPPORTING";
@@ -56,14 +60,15 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests {
             new CasConfigurationProperties());
         val oauthCasAuthenticationBuilderService = builder.buildService(service, null, false);
         val expirationPolicy = new OAuthCodeExpirationPolicy(1, 60);
-        val oauthCode = new DefaultOAuthCodeFactory(expirationPolicy)
+        val oauthCode = new DefaultOAuthCodeFactory(expirationPolicy, mock(ServicesManager.class))
             .create(oauthCasAuthenticationBuilderService, RegisteredServiceTestUtils.getAuthentication(),
                 new MockTicketGrantingTicket("casuser"), new HashSet<>(),
-                null, null);
+                null, null, "clientid12345",
+                new HashMap<>());
         when(ticketRegistry.getTicket(eq(name), (Class<Ticket>) any())).thenReturn(oauthCode);
     }
 
-    @Before
+    @BeforeEach
     public void before() {
         val serviceManager = mock(ServicesManager.class);
         val supportingService = RequestValidatorTestUtils.getService(
@@ -78,7 +83,7 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests {
             RequestValidatorTestUtils.NON_SUPPORTING_CLIENT_ID,
             RequestValidatorTestUtils.SHARED_SECRET,
             CollectionUtils.wrapSet(OAuth20GrantTypes.PASSWORD));
-        val promiscuousService = RequestValidatorTestUtils.getPromiscousService(
+        val promiscuousService = RequestValidatorTestUtils.getPromiscuousService(
             RegisteredServiceTestUtils.CONST_TEST_URL3,
             RequestValidatorTestUtils.PROMISCUOUS_CLIENT_ID,
             RequestValidatorTestUtils.PROMISCUOUS_CLIENT_ID,
@@ -95,9 +100,15 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests {
                 supportingService,
                 nonSupportingService,
                 promiscuousService));
-        this.validator = new OAuth20AuthorizationCodeGrantTypeTokenRequestValidator(serviceManager,
-            ticketRegistry, new RegisteredServiceAccessStrategyAuditableEnforcer(),
-            new WebApplicationServiceFactory());
+
+        val context = OAuth20ConfigurationContext.builder()
+            .servicesManager(serviceManager)
+            .ticketRegistry(ticketRegistry)
+            .webApplicationServiceServiceFactory(new WebApplicationServiceFactory())
+            .registeredServiceAccessStrategyEnforcer(new RegisteredServiceAccessStrategyAuditableEnforcer())
+            .build();
+
+        this.validator = new OAuth20AuthorizationCodeGrantTypeTokenRequestValidator(context);
     }
 
     @Test
@@ -110,6 +121,7 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests {
         profile.setClientName(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN);
         profile.setId(RequestValidatorTestUtils.SUPPORTING_CLIENT_ID);
         val session = request.getSession(true);
+        assertNotNull(session);
         session.setAttribute(Pac4jConstants.USER_PROFILES, profile);
 
         request.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.getType());

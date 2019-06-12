@@ -8,6 +8,7 @@ import org.apereo.cas.services.ServicesManager;
 
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
+import org.apereo.services.persondir.IPersonAttributeDaoFilter;
 import org.pac4j.core.client.Clients;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,7 +63,7 @@ public class CasDiscoveryProfileConfiguration {
     @Bean
     public Set<String> availableAttributes() {
         val attributes = new LinkedHashSet<String>(0);
-        val possibleUserAttributeNames = attributeRepository.getIfAvailable().getPossibleUserAttributeNames();
+        val possibleUserAttributeNames = attributeRepository.getIfAvailable().getPossibleUserAttributeNames(IPersonAttributeDaoFilter.alwaysChoose());
         if (possibleUserAttributeNames != null) {
             attributes.addAll(possibleUserAttributeNames);
         }
@@ -81,7 +82,7 @@ public class CasDiscoveryProfileConfiguration {
         return attributes;
     }
 
-    private Set<String> transformAttributes(final List<String> attributes) {
+    private static Set<String> transformAttributes(final List<String> attributes) {
         val attributeSet = new LinkedHashSet<String>();
         CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(attributes)
             .values()

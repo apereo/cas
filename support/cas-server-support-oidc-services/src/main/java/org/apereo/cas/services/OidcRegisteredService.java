@@ -14,6 +14,7 @@ import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Lob;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -39,6 +40,15 @@ public class OidcRegisteredService extends OAuthRegisteredService {
     private String jwks;
 
     @Column
+    private long jwksCacheDuration;
+
+    @Column
+    private String jwksCacheTimeUnit;
+
+    @Column(name = "token_auth_method")
+    private String tokenEndpointAuthenticationMethod = "client_secret_basic";
+
+    @Column
     private boolean signIdToken = true;
 
     @Column
@@ -51,10 +61,22 @@ public class OidcRegisteredService extends OAuthRegisteredService {
     private String idTokenSigningAlg;
 
     @Column
+    private String userInfoSigningAlg;
+
+    @Column(name = "userinfo_enc_alg")
+    private String userInfoEncryptedResponseAlg;
+
+    @Column(name = "userinfo_enc_enc")
+    private String userInfoEncryptedResponseEncoding;
+
+    @Column
     private String idTokenEncryptionEncoding;
 
     @Column
     private String sectorIdentifierUri;
+
+    @Column
+    private String applicationType = "web";
 
     @Column
     private String subjectType = OidcSubjectTypes.PUBLIC.getType();
@@ -92,7 +114,7 @@ public class OidcRegisteredService extends OAuthRegisteredService {
      */
     public void setDynamicallyRegistered(final boolean dynamicallyRegistered) {
         if (dynamicallyRegistered && !this.dynamicallyRegistered && dynamicRegistrationDateTime == null) {
-            setDynamicRegistrationDateTime(ZonedDateTime.now());
+            setDynamicRegistrationDateTime(ZonedDateTime.now(ZoneOffset.UTC));
         }
         this.dynamicallyRegistered = dynamicallyRegistered;
     }

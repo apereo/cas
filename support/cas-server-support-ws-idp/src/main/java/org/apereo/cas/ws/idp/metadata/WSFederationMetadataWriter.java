@@ -2,6 +2,7 @@ package org.apereo.cas.ws.idp.metadata;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.util.CryptoUtils;
+import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.ws.idp.WSFederationClaims;
 import org.apereo.cas.ws.idp.WSFederationConstants;
 
@@ -16,7 +17,6 @@ import org.apache.wss4j.common.crypto.Crypto;
 import org.apache.wss4j.common.crypto.CryptoFactory;
 import org.apache.wss4j.common.util.DOM2Writer;
 import org.apache.xml.security.stax.impl.util.IDGenerator;
-import org.apache.xml.security.utils.Base64;
 import org.jooq.lambda.Unchecked;
 import org.w3c.dom.Document;
 
@@ -47,7 +47,8 @@ public class WSFederationMetadataWriter {
      */
     public static Document produceMetadataDocument(final CasConfigurationProperties config) {
         try {
-            val sts = config.getAuthn().getWsfedIdp().getSts();
+            val wsfedIdp = config.getAuthn().getWsfedIdp();
+            val sts = wsfedIdp.getSts();
             val prop = CryptoUtils.getSecurityProperties(sts.getRealm().getKeystoreFile(), sts.getRealm().getKeystorePassword(), sts.getRealm().getKeystoreAlias());
             val crypto = CryptoFactory.getInstance(prop);
             val writer = new W3CDOMStreamWriter();
@@ -62,15 +63,14 @@ public class WSFederationMetadataWriter {
             writer.writeNamespace("wsa", WS_ADDRESSING_NS);
             writer.writeNamespace("auth", WS_FEDERATION_NS);
             writer.writeNamespace("xsi", SCHEMA_INSTANCE_NS);
-            val stsUrl = config.getServer().getPrefix().concat(WSFederationConstants.ENDPOINT_STS).concat(config.getAuthn().getWsfedIdp().getIdp().getRealmName());
+            val stsUrl = config.getServer().getPrefix().concat(WSFederationConstants.ENDPOINT_STS).concat(wsfedIdp.getIdp().getRealmName());
             writeFederationMetadata(writer, idpEntityId, stsUrl, crypto);
             writer.writeEndElement();
             writer.writeEndDocument();
             writer.close();
             val out = DOM2Writer.nodeToString(writer.getDocument());
-            LOGGER.debug("Produced unsigned metadata");
-            LOGGER.debug(out);
-            val result = SignatureUtils.signMetaInfo(crypto, null, config.getAuthn().getWsfedIdp().getSts().getRealm().getKeyPassword(), writer.getDocument(), referenceID);
+            LOGGER.trace(out);
+            val result = SignatureUtils.signMetaInfo(crypto, null, sts.getRealm().getKeyPassword(), writer.getDocument(), referenceID);
             if (result != null) {
                 return result;
             }
@@ -92,7 +92,7 @@ public class WSFederationMetadataWriter {
 
         val keyAlias = crypto.getDefaultX509Identifier();
         val cert = CertsUtils.getX509CertificateFromCrypto(crypto, keyAlias);
-        writer.writeCharacters(Base64.encode(cert.getEncoded()));
+        writer.writeCharacters(EncodingUtils.encodeBase64(cert.getEncoded()));
 
         writer.writeEndElement();
         writer.writeEndElement();

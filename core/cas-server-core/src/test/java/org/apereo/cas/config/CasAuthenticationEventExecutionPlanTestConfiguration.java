@@ -18,11 +18,11 @@ import org.springframework.boot.test.context.TestConfiguration;
 @TestConfiguration("casTestAuthenticationEventExecutionPlanConfiguration")
 public class CasAuthenticationEventExecutionPlanTestConfiguration implements AuthenticationEventExecutionPlanConfigurer {
     @Autowired
-    @Qualifier("personDirectoryPrincipalResolver")
-    private PrincipalResolver personDirectoryPrincipalResolver;
+    @Qualifier("defaultPrincipalResolver")
+    private PrincipalResolver defaultPrincipalResolver;
 
     @Override
     public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
-        plan.registerAuthenticationHandlerWithPrincipalResolver(new SimpleTestUsernamePasswordAuthenticationHandler(), personDirectoryPrincipalResolver);
+        plan.registerAuthenticationHandlerWithPrincipalResolver(new SimpleTestUsernamePasswordAuthenticationHandler(), defaultPrincipalResolver);
     }
 }

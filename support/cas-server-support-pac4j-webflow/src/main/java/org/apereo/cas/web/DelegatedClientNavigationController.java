@@ -2,19 +2,19 @@ package org.apereo.cas.web;
 
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.ticket.Ticket;
-import org.apereo.cas.util.Pac4jUtils;
-import org.apereo.cas.web.pac4j.DelegatedSessionCookieManager;
 import org.apereo.cas.web.view.DynamicHtmlView;
 
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.jasig.cas.client.util.URIBuilder;
+import org.apache.http.client.utils.URIBuilder;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.client.IndirectClient;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.context.Pac4jConstants;
+import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.exception.HttpAction;
 import org.pac4j.core.profile.CommonProfile;
@@ -24,6 +24,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.view.RedirectView;
 
@@ -49,11 +50,13 @@ public class DelegatedClientNavigationController {
     /**
      * Endpoint path controlled by this controller that receives the response to PAC4J.
      */
-    public static final String ENDPOINT_RESPONSE = "login/{clientName}";
+    private static final String ENDPOINT_RESPONSE = "login/{clientName}";
 
     private final Clients clients;
+
     private final DelegatedClientWebflowManager delegatedClientWebflowManager;
-    private final DelegatedSessionCookieManager delegatedSessionCookieManager;
+
+    private final SessionStore sessionStore;
 
     /**
      * Redirect to provider. Receive the client name from the request and then try to determine and build the endpoint url
@@ -76,12 +79,11 @@ public class DelegatedClientNavigationController {
                 throw new UnauthorizedServiceException("No client name parameter is provided in the incoming request");
             }
             val client = (IndirectClient<Credentials, CommonProfile>) this.clients.findClient(clientName);
-            val webContext = Pac4jUtils.getPac4jJ2EContext(request, response);
+            
+            val webContext = new J2EContext(request, response, this.sessionStore);
             val ticket = delegatedClientWebflowManager.store(webContext, client);
 
-            val result = getResultingView(client, webContext, ticket);
-            this.delegatedSessionCookieManager.store(webContext);
-            return result;
+            return getResultingView(client, webContext, ticket);
         } catch (final HttpAction e) {
             if (e.getCode() == HttpStatus.UNAUTHORIZED.value()) {
                 LOGGER.debug("Authentication request was denied from the provider [{}]", clientName, e);
@@ -101,8 +103,9 @@ public class DelegatedClientNavigationController {
      * @param response   the response
      * @return the view
      */
-    @GetMapping(ENDPOINT_RESPONSE)
-    public View redirectResponseToFlow(final @PathVariable("clientName") String clientName, final HttpServletRequest request, final HttpServletResponse response) {
+    @RequestMapping(value = ENDPOINT_RESPONSE, method = {RequestMethod.GET, RequestMethod.POST})
+    public View redirectResponseToFlow(@PathVariable("clientName") final String clientName,
+                                       final HttpServletRequest request, final HttpServletResponse response) {
         return buildRedirectViewBackToFlow(clientName, request);
     }
 
@@ -113,11 +116,10 @@ public class DelegatedClientNavigationController {
      * @param request    the request
      * @return the view
      */
+    @SneakyThrows
     protected View buildRedirectViewBackToFlow(final String clientName, final HttpServletRequest request) {
-        val builder = new StringBuilder();
-        builder.append(request.getRequestURL());
 
-        val urlBuilder = new URIBuilder(builder.toString());
+        val urlBuilder = new URIBuilder(String.valueOf(request.getRequestURL()));
         request.getParameterMap().forEach((k, v) -> {
             val value = request.getParameter(k);
             urlBuilder.addParameter(k, value);
@@ -139,6 +141,7 @@ public class DelegatedClientNavigationController {
      * @param ticket     the ticket
      * @return the resulting view
      */
+    @SneakyThrows
     protected View getResultingView(final IndirectClient<Credentials, CommonProfile> client, final J2EContext webContext, final Ticket ticket) {
         val action = client.getRedirectAction(webContext);
         if (RedirectAction.RedirectType.SUCCESS.equals(action.getType())) {

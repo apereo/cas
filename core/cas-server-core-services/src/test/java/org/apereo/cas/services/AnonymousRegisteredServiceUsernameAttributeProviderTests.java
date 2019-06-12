@@ -9,12 +9,13 @@ import org.apereo.cas.util.CollectionUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -24,7 +25,7 @@ import static org.mockito.Mockito.*;
 public class AnonymousRegisteredServiceUsernameAttributeProviderTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "anonymousRegisteredServiceUsernameAttributeProvider.json");
-    private static final ObjectMapper MAPPER = new ObjectMapper();
+    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
     private static final String CASROX = "casrox";
 
     @Test
@@ -68,7 +69,7 @@ public class AnonymousRegisteredServiceUsernameAttributeProviderTests {
         gen.setAttribute("employeeId");
         val provider = new AnonymousRegisteredServiceUsernameAttributeProvider(gen);
         val result = provider.resolveUsername(CoreAuthenticationTestUtils.getPrincipal("anyuser",
-            CollectionUtils.wrap("employeeId", "T911327")),
+            CollectionUtils.wrap("employeeId", List.of("T911327"))),
             CoreAuthenticationTestUtils.getService("https://cas.example.org/app"),
             CoreAuthenticationTestUtils.getRegisteredService());
         assertEquals("ujWTRNKPPso8S+4geOvcOZtv778=", result);

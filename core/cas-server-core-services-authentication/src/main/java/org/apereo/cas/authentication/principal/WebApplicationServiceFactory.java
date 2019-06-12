@@ -54,7 +54,8 @@ public class WebApplicationServiceFactory extends AbstractServiceFactory<WebAppl
         val id = cleanupUrl(serviceToUse);
         val newService = new SimpleWebApplicationServiceImpl(id, serviceToUse, artifactId);
         determineWebApplicationFormat(request, newService);
-        val source = getSourceParameter(request, CasProtocolConstants.PARAMETER_TARGET_SERVICE, CasProtocolConstants.PARAMETER_SERVICE);
+        val source = getSourceParameter(request, CasProtocolConstants.PARAMETER_TARGET_SERVICE,
+            CasProtocolConstants.PARAMETER_SERVICE);
         newService.setSource(source);
         return newService;
     }
@@ -100,6 +101,4 @@ public class WebApplicationServiceFactory extends AbstractServiceFactory<WebAppl
     public WebApplicationService createService(final String id) {
         return newWebApplicationService(HttpRequestUtils.getHttpServletRequestFromRequestAttributes(), id);
     }
-
-
 }

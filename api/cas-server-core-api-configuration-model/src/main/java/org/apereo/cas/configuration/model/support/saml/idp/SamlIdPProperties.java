@@ -9,6 +9,7 @@ import lombok.Setter;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -51,7 +52,13 @@ public class SamlIdPProperties implements Serializable {
      * <p>
      * Example might be {@code urn:oasis:names:tc:SAML:2.0:ac:classes:SomeClassName->mfa-duo}.
      */
-    private List<String> authenticationContextClassMappings;
+    private List<String> authenticationContextClassMappings = new ArrayList<>();
+
+    /**
+     * A mapping of attribute names to their friendly names, defined globally.
+     * Example might be {@code urn:oid:1.3.6.1.4.1.5923.1.1.1.6->eduPersonPrincipalName}.
+     */
+    private List<String> attributeFriendlyNames = new ArrayList<>();
 
     /**
      * Settings related to SAML2 responses.
@@ -78,8 +85,14 @@ public class SamlIdPProperties implements Serializable {
     private SamlIdPAlgorithmsProperties algs = new SamlIdPAlgorithmsProperties();
 
     /**
-     * Settings related to naming saml cache storages.
+     * Settings related to naming saml cache storage.
      */
     @NestedConfigurationProperty
     private SamlIdPTicketProperties ticket = new SamlIdPTicketProperties();
+
+    /**
+     * Settings related to handling saml2 profiles.
+     */
+    @NestedConfigurationProperty
+    private SamlIdPProfileProperties profile = new SamlIdPProfileProperties();
 }

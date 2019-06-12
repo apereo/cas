@@ -2,16 +2,13 @@ package org.apereo.cas.discovery;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.web.BaseCasMvcEndpoint;
+import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
 import lombok.val;
-import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
-import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
+import org.springframework.boot.actuate.endpoint.web.annotation.RestControllerEndpoint;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,8 +18,8 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Endpoint(id = "discovery-profile")
-public class CasServerDiscoveryProfileEndpoint extends BaseCasMvcEndpoint {
+@RestControllerEndpoint(id = "discoveryProfile", enableByDefault = false)
+public class CasServerDiscoveryProfileEndpoint extends BaseCasActuatorEndpoint {
     private final ServicesManager servicesManager;
 
     private final CasServerProfileRegistrar casServerProfileRegistrar;
@@ -46,14 +43,11 @@ public class CasServerDiscoveryProfileEndpoint extends BaseCasMvcEndpoint {
     /**
      * Discovery.
      *
-     * @param request  the request
-     * @param response the response
      * @return the map
      */
     @GetMapping
     @ResponseBody
-    @ReadOperation
-    public Map<String, Object> discovery(final HttpServletRequest request, final HttpServletResponse response) {
+    public Map<String, Object> discovery() {
         val results = new HashMap<String, Object>();
         results.put("profile", casServerProfileRegistrar.getProfile());
         return results;

@@ -28,11 +28,9 @@ import org.ektorp.impl.StdCouchDbInstance;
 @Slf4j
 public class CouchDbConnectorFactory {
 
-    @NonNull
-    private final BaseCouchDbProperties couchDbProperties;
+    private final @NonNull BaseCouchDbProperties couchDbProperties;
 
-    @NonNull
-    private final ObjectMapperFactory objectMapperFactory;
+    private final @NonNull ObjectMapperFactory objectMapperFactory;
 
     @Getter(lazy = true)
     private final CouchDbConnector couchDbConnector = createConnector();
@@ -92,11 +90,15 @@ public class CouchDbConnectorFactory {
 
             if (couchDbProperties.getProxyPort() > 0) {
                 builder.proxyPort(couchDbProperties.getProxyPort());
-                LOGGER.info("CouchDb proxy settings enabled [{}:{}]", couchDbProperties.getProxyHost(), couchDbProperties.getProxyPort());
+                LOGGER.info("CouchDb proxy settings enabled [{}]:[{}]", couchDbProperties.getProxyHost(), couchDbProperties.getProxyPort());
             } else {
                 LOGGER.debug("Proxy port not set for host [{}] clearing proxy host.", couchDbProperties.getProxyHost());
                 builder.proxy(null);
             }
+        }
+
+        if (StringUtils.isNotBlank(couchDbProperties.getUsername())) {
+            builder.username(couchDbProperties.getUsername());
         }
 
         if (StringUtils.isNotBlank(couchDbProperties.getPassword())) {

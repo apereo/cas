@@ -1,9 +1,17 @@
 description = "Apereo CAS LDAP Service Registry Support"
+
+ext {
+    maxParallelForksForTests = 1
+}
+
 dependencies {
     api project(":api:cas-server-core-api-services")
+
+    implementation libraries.ldaptive
     
-    implementation project(":core:cas-server-core-services")
     implementation project(":support:cas-server-support-ldap-core")
+    implementation project(":core:cas-server-core-services")
+    implementation project(":core:cas-server-core-services-api")
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-services-registry")
@@ -13,11 +21,14 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
     
     testImplementation project(":core:cas-server-core-authentication-api")
-    testImplementation project(":support:cas-server-support-oauth-core")
-    testImplementation project(":support:cas-server-support-oauth-services")
-    testImplementation project(":core:cas-server-core-configuration")
-    testImplementation project(":support:cas-server-support-saml-idp-core")
     testImplementation project(":core:cas-server-core-authentication-attributes")
+    testImplementation project(":core:cas-server-core-configuration")
     testImplementation project(":core:cas-server-core-tickets")
     testImplementation project(":core:cas-server-core-logout-api")
+    testImplementation project(":support:cas-server-support-oauth-core")
+    testImplementation project(":support:cas-server-support-oauth-core-api")
+    testImplementation project(":support:cas-server-support-oauth-services")
+    testImplementation project(":support:cas-server-support-saml-idp-core")
+    testImplementation project(":support:cas-server-support-oidc-services")
+    testImplementation project(":support:cas-server-support-ws-idp-api")
 }

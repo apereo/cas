@@ -2,11 +2,16 @@ package org.apereo.cas.web.view;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
+import org.apereo.cas.authentication.support.NoOpProtocolAttributeEncoder;
+import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.validation.DefaultAssertionBuilder;
+import org.apereo.cas.web.view.attributes.NoOpProtocolAttributesRenderer;
 
 import lombok.val;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -14,7 +19,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * Unit test for {@link Cas10ResponseView} class.
@@ -27,7 +33,7 @@ public class Cas10ResponseViewTests {
 
     private Map<String, Object> model;
 
-    @Before
+    @BeforeEach
     public void initialize() {
         this.model = new HashMap<>();
         val list = new ArrayList<Authentication>();
@@ -40,8 +46,9 @@ public class Cas10ResponseViewTests {
     @Test
     public void verifySuccessView() throws Exception {
         val response = new MockHttpServletResponse();
-        val view = new Cas10ResponseView(true, null,
-            null, null);
+        val view = new Cas10ResponseView(true, new NoOpProtocolAttributeEncoder(),
+            mock(ServicesManager.class), mock(AuthenticationAttributeReleasePolicy.class), new DefaultAuthenticationServiceSelectionPlan(),
+            new NoOpProtocolAttributesRenderer());
         view.render(this.model, new MockHttpServletRequest(), response);
         assertEquals("yes\ntest\n", response.getContentAsString());
     }
@@ -49,8 +56,10 @@ public class Cas10ResponseViewTests {
     @Test
     public void verifyFailureView() throws Exception {
         val response = new MockHttpServletResponse();
-        val view = new Cas10ResponseView(false, null,
-            null, null);
+        val view = new Cas10ResponseView(false, new NoOpProtocolAttributeEncoder(),
+            mock(ServicesManager.class), mock(AuthenticationAttributeReleasePolicy.class),
+            new DefaultAuthenticationServiceSelectionPlan(),
+            new NoOpProtocolAttributesRenderer());
         view.render(this.model, new MockHttpServletRequest(), response);
         assertEquals("no\n\n", response.getContentAsString());
     }

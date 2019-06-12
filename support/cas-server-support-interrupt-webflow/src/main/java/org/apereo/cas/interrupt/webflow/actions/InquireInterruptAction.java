@@ -24,6 +24,11 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class InquireInterruptAction extends AbstractAction {
+    /**
+     * Attribute recorded in authentication to indicate interrupt is finalized.
+     */
+    public static final String AUTHENTICATION_ATTRIBUTE_FINALIZED_INTERRUPT = "finalizedInterrupt";
+
     private final List<InterruptInquirer> interruptInquirers;
 
     @Override
@@ -34,6 +39,10 @@ public class InquireInterruptAction extends AbstractAction {
         val credential = WebUtils.getCredential(requestContext);
         val eventFactorySupport = new EventFactorySupport();
 
+        if (authentication.getAttributes().containsKey(AUTHENTICATION_ATTRIBUTE_FINALIZED_INTERRUPT)) {
+            LOGGER.debug("Authentication event has already finalized interrupt. Skipping...");
+            return getInterruptSkippedEvent();
+        }
         for (val inquirer : this.interruptInquirers) {
             LOGGER.debug("Invoking interrupt inquirer using [{}]", inquirer.getName());
             val response = inquirer.inquire(authentication, registeredService, service, credential, requestContext);
@@ -45,6 +54,10 @@ public class InquireInterruptAction extends AbstractAction {
             }
         }
         LOGGER.debug("Webflow interrupt is skipped since no inquirer produced a response");
+        return getInterruptSkippedEvent();
+    }
+
+    private Event getInterruptSkippedEvent() {
         return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_INTERRUPT_SKIPPED);
     }
 }

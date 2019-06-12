@@ -1,10 +1,10 @@
 package org.apereo.cas.adaptors.jdbc;
 
-import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jpa.DatabaseProperties;
 import org.apereo.cas.configuration.support.JpaBeans;
 
+import lombok.SneakyThrows;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -15,6 +15,7 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 
 import javax.sql.DataSource;
+import java.sql.Driver;
 import java.util.Properties;
 
 /**
@@ -32,16 +33,29 @@ public class DatabaseAuthenticationTestConfiguration {
     @Value("${database.password:}")
     private String databasePassword;
 
+    @Value("${database.url:jdbc:hsqldb:mem:}")
+    private String databaseUrl;
+
     @Value("${database.name:cas-authentications}")
     private String databaseName;
 
+    @Value("${database.driverClass:org.hsqldb.jdbcDriver}")
+    private String databaseDriverClassName;
+
+    @Value("${database.dialect:org.hibernate.dialect.HSQLDialect}")
+    private String databaseDialect;
+
+    @Value("${database.hbm2ddl:create-drop}")
+    private String hbm2ddl;
+
+    @SneakyThrows
     @Bean
     public DataSource dataSource() {
         val ds = new SimpleDriverDataSource();
-        ds.setDriverClass(org.hsqldb.jdbcDriver.class);
+        ds.setDriverClass((Class<Driver>) Class.forName(databaseDriverClassName));
         ds.setUsername(databaseUser);
         ds.setPassword(databasePassword);
-        ds.setUrl("jdbc:hsqldb:mem:" + databaseName);
+        ds.setUrl(this.databaseUrl + databaseName);
         return ds;
     }
 
@@ -58,12 +72,12 @@ public class DatabaseAuthenticationTestConfiguration {
         val bean = new LocalContainerEntityManagerFactoryBean();
         bean.setPersistenceUnitName("databaseAuthnContext");
         bean.setJpaVendorAdapter(jpaVendorAdapter());
-        bean.setPackagesToScan(CentralAuthenticationService.NAMESPACE);
+        bean.setPackagesToScan("org.apereo.cas.adaptors.jdbc");
         bean.setDataSource(dataSource());
 
         val properties = new Properties();
-        properties.put("hibernate.dialect", "org.hibernate.dialect.HSQLDialect");
-        properties.put("hibernate.hbm2ddl.auto", "create-drop");
+        properties.put("hibernate.dialect", databaseDialect);
+        properties.put("hibernate.hbm2ddl.auto", this.hbm2ddl);
         properties.put("hibernate.jdbc.batch_size", 1);
         bean.setJpaProperties(properties);
         return bean;

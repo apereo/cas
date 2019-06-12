@@ -22,8 +22,8 @@ import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguratio
 import org.apereo.cas.config.support.EnvironmentConversionServiceInitializer;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.parallel.ResourceLock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -34,9 +34,6 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
-import java.util.Collection;
-
 
 /**
  * Unit test for {@link JpaTicketRegistry} class.
@@ -44,7 +41,6 @@ import java.util.Collection;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
-@RunWith(Parameterized.class)
 @SpringBootTest(classes = {
     JpaTicketRegistryTicketCatalogConfiguration.class,
     JpaTicketRegistryConfiguration.class,
@@ -71,19 +67,16 @@ import java.util.Collection;
 })
 @ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
 @Transactional(transactionManager = "ticketTransactionManager", isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
-public class JpaTicketRegistryTests extends BaseSpringRunnableTicketRegistryTests {
+@ResourceLock("jpa-tickets")
+public class JpaTicketRegistryTests extends BaseTicketRegistryTests {
 
     @Autowired
     @Qualifier("ticketRegistry")
     private TicketRegistry ticketRegistry;
 
-    public JpaTicketRegistryTests(final boolean useEncryption) {
-        super(useEncryption);
-    }
-
-    @Parameterized.Parameters
-    public static Collection<Object> getTestParameters() {
-        return Arrays.asList(false);
+    @AfterEach
+    public void cleanup() {
+        ticketRegistry.deleteAll();
     }
 
     @Override

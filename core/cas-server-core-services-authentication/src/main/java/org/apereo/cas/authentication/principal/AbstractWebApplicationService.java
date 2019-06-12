@@ -19,6 +19,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.Lob;
 import javax.persistence.Table;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -29,7 +30,8 @@ import java.util.Map;
  */
 @Entity
 @Inheritance
-@DiscriminatorColumn(name = "service_type", length = 50, discriminatorType = DiscriminatorType.STRING, columnDefinition = "VARCHAR(50) DEFAULT 'simple'")
+@DiscriminatorColumn(name = "service_type", length = 50,
+    discriminatorType = DiscriminatorType.STRING, columnDefinition = "VARCHAR(50) DEFAULT 'simple'")
 @Table(name = "WebApplicationServices")
 @ToString
 @Getter
@@ -67,7 +69,7 @@ public abstract class AbstractWebApplicationService implements WebApplicationSer
 
     @Column
     @Lob
-    private HashMap<String, Object> attributes = new HashMap<>(0);
+    private HashMap<String, List<Object>> attributes = new HashMap<>(0);
 
     /**
      * Instantiates a new abstract web application service.
@@ -84,7 +86,7 @@ public abstract class AbstractWebApplicationService implements WebApplicationSer
 
     @JsonIgnore
     @Override
-    public Map<String, Object> getAttributes() {
+    public Map<String, List<Object>> getAttributes() {
         return this.attributes;
     }
 

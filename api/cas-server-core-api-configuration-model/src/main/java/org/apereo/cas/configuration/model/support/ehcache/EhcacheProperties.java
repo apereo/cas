@@ -11,6 +11,8 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This is {@link EhcacheProperties}.
@@ -156,6 +158,12 @@ public class EhcacheProperties implements Serializable {
      * </ul>
      */
     private String persistence = "NONE";
+
+    /**
+     * Allows system properties to be set prior to ehcache.xml parsing.
+     * EhCache will interpolate system properties in the ehcache xml config file e.g. ${ehCacheMulticastAddress}.
+     */
+    private final Map<String, String> systemProps = new HashMap<>();
 
     /**
      * Crypto settings for the registry.

@@ -4,12 +4,13 @@ import org.apereo.cas.uma.ticket.resource.ResourceSetPolicy;
 import org.apereo.cas.uma.web.controllers.BaseUmaEndpointControllerTests;
 
 import lombok.val;
-import org.junit.Test;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link UmaFindPolicyForResourceSetEndpointControllerTests}.
@@ -17,6 +18,7 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
+@Tag("OAuth")
 public class UmaFindPolicyForResourceSetEndpointControllerTests extends BaseUmaEndpointControllerTests {
     @Test
     public void verifyOperation() throws Exception {

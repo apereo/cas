@@ -24,7 +24,14 @@ public interface CredentialMetaData extends Serializable {
     /**
      * Gets the type of the original credential.
      *
-     * @return Non-null credential class.
+     * @return Non -null credential class.
      */
     Class<? extends Credential> getCredentialClass();
+
+    /**
+     * Reconstruct the credential from metadata.
+     *
+     * @return the credential
+     */
+    Credential toCredential();
 }

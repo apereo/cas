@@ -2,12 +2,13 @@ package org.apereo.cas;
 
 import lombok.SneakyThrows;
 import lombok.val;
-import org.junit.Test;
+import org.apereo.services.persondir.IPersonAttributeDaoFilter;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.context.TestPropertySource;
 
 import java.sql.Statement;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link JdbcMultiRowAttributeRepositoryTests}.
@@ -28,7 +29,7 @@ public class JdbcMultiRowAttributeRepositoryTests extends BaseJdbcAttributeRepos
     @Test
     public void verifyMultiRowAttributeRepository() {
         assertNotNull(attributeRepository);
-        val person = attributeRepository.getPerson("casuser");
+        val person = attributeRepository.getPerson("casuser", IPersonAttributeDaoFilter.alwaysChoose());
         assertNotNull(person);
         assertNotNull(person.getAttributes());
         assertFalse(person.getAttributes().isEmpty());

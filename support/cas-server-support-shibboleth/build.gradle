@@ -1,15 +1,15 @@
 description = "Apereo CAS Shibboleth IdP/SP Extensions"
-
 dependencies {
 
+    implementation project(":support:cas-server-support-saml-core-api")
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-configuration-api")
-    implementation project(":support:cas-server-support-saml-core-api")
     implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-services-authentication")
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-services")
+    implementation project(":core:cas-server-core-services-api")
 
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core-services")

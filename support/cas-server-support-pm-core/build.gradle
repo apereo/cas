@@ -1,0 +1,28 @@
+description = "Apereo CAS Password Management - Core"
+dependencies {
+    api project(":api:cas-server-core-api-audit")
+    
+    implementation project(":core:cas-server-core-util-api")
+    implementation project(":core:cas-server-core-webflow")
+    implementation project(":core:cas-server-core-web-api")
+    implementation project(":core:cas-server-core-authentication-api")
+    implementation project(":core:cas-server-core-configuration-api")
+    
+    implementation libraries.jose4j
+
+    testImplementation project(":core:cas-server-core-audit")
+    testImplementation project(":core:cas-server-core-audit-api")
+    testImplementation project(":core:cas-server-core-services")
+    testImplementation project(":support:cas-server-support-person-directory")
+    testImplementation project(":core:cas-server-core-tickets")
+    testImplementation project(":core:cas-server-core-web")
+    testImplementation project(":core:cas-server-core-configuration")
+    testImplementation project(":core:cas-server-core-authentication")
+    testImplementation project(":core:cas-server-core-util")
+
+    testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-tickets", configuration: "tests")
+}

@@ -1,6 +1,7 @@
 package org.apereo.cas.clouddirectory;
 
 import org.apereo.cas.configuration.model.support.clouddirectory.CloudDirectoryProperties;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DateTimeUtils;
 
 import com.amazonaws.services.clouddirectory.AmazonCloudDirectory;
@@ -12,7 +13,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -29,7 +32,7 @@ public class DefaultCloudDirectoryRepository implements CloudDirectoryRepository
     private final CloudDirectoryProperties properties;
 
     @Override
-    public Map<String, Object> getUser(final String username) {
+    public Map<String, List<Object>> getUser(final String username) {
         val indexResult = getIndexResult(username);
         if (indexResult == null) {
             LOGGER.warn("Index result could not be found for user [{}]", username);
@@ -59,7 +62,7 @@ public class DefaultCloudDirectoryRepository implements CloudDirectoryRepository
      * @param indexResult the index result
      * @return the user info from index result
      */
-    protected Map<String, Object> getUserInfoFromIndexResult(final ListIndexResult indexResult) {
+    protected Map<String, List<Object>> getUserInfoFromIndexResult(final ListIndexResult indexResult) {
         val attachment = indexResult.getIndexAttachments().stream().findFirst().orElse(null);
         if (attachment == null) {
             LOGGER.warn("Index result has no attachments");
@@ -100,6 +103,6 @@ public class DefaultCloudDirectoryRepository implements CloudDirectoryRepository
                 return Pair.of(a.getKey().getName(), value);
             })
             .filter(p -> p.getValue() != null)
-            .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
+            .collect(Collectors.toMap(Pair::getKey, s -> CollectionUtils.toCollection(s.getValue(), ArrayList.class)));
     }
 }

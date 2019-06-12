@@ -10,6 +10,7 @@ import org.apereo.cas.util.ResourceUtils;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.opensaml.core.xml.persist.FilesystemLoadSaveManager;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.metadata.resolver.impl.AbstractMetadataResolver;
@@ -35,7 +36,7 @@ public class FileSystemResourceMetadataResolver extends BaseSamlRegisteredServic
     }
 
     @Override
-    public Collection<? extends MetadataResolver> resolve(final SamlRegisteredService service) {
+    public Collection<? extends MetadataResolver> resolve(final SamlRegisteredService service, final CriteriaSet criteriaSet) {
         try {
             val metadataLocation = service.getMetadataLocation();
             LOGGER.info("Loading SAML metadata from [{}]", metadataLocation);
@@ -66,7 +67,7 @@ public class FileSystemResourceMetadataResolver extends BaseSamlRegisteredServic
             val metadataResource = ResourceUtils.getResourceFrom(metadataLocation);
             return metadataResource instanceof FileSystemResource;
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGGER.trace(e.getMessage(), e);
         }
         return false;
     }

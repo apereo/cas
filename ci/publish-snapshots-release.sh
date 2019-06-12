@@ -4,13 +4,13 @@ source ./ci/functions.sh
 runBuild=false
 echo "Reviewing changes that might affect the Gradle build..."
 
-casVersion=$(./gradlew casVersion -q)
+casVersion=$(./gradlew casVersion --no-daemon -q)
 echo "Current CAS version is $casVersion"
 
 prepCommand="echo 'Running command...'; "
 gradle="./gradlew $@"
 gradleBuild=""
-gradleBuildOptions="--stacktrace --build-cache --configure-on-demand --no-daemon "
+gradleBuildOptions="--stacktrace --build-cache --configure-on-demand --no-daemon -Dorg.gradle.internal.http.socketTimeout=160000 -Dorg.gradle.internal.http.connectionTimeout=160000 "
 
 echo -e "***********************************************"
 echo -e "Gradle build started at `date`"
@@ -51,14 +51,13 @@ fi
 
 if [ "$publishSnapshot" = true ]; then
     echo -e "The build will deploy SNAPSHOT artifacts to Sonatype under Travis job ${TRAVIS_JOB_NUMBER}"
-    gradleBuild="$gradleBuild assemble uploadArchives -x test -x javadoc -x check \
-            -DskipNpmLint=true \
+    gradleBuild="$gradleBuild assemble publish -x test -x javadoc -x check \
             -DpublishSnapshots=true -DsonatypeUsername=${SONATYPE_USER} \
             -DsonatypePassword=${SONATYPE_PWD} --parallel "
 else
     echo -e "The build will deploy RELEASE artifacts to Sonatype under Travis job ${TRAVIS_JOB_NUMBER}"
-    gradleBuild="$gradleBuild assemble uploadArchives -x test -x javadoc -x check \
-                -DskipNpmLint=true -Dorg.gradle.project.signing.password=${GPG_PASSPHRASE}\
+    gradleBuild="$gradleBuild assemble publish -x test -x javadoc -x check \
+                -Dorg.gradle.project.signing.password=${GPG_PASSPHRASE}\
                 -Dorg.gradle.project.signing.secretKeyRingFile=/home/travis/.gnupg/secring.gpg \
                 -Dorg.gradle.project.signing.keyId=6A2EF9AA \
                 -DpublishReleases=true -DsonatypeUsername=${SONATYPE_USER} \
@@ -80,9 +79,6 @@ fi
 if [ -z "$gradleBuild" ]; then
     echo "Gradle build will be ignored since no commands are specified to run."
 else
-
-    echo -e "Installing NPM...\n"
-    ./gradlew npmInstall --stacktrace -q
 
     tasks="$gradle $gradleBuildOptions $gradleBuild"
     echo -e "***************************************************************************************"

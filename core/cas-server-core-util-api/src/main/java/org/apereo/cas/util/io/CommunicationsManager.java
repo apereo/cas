@@ -1,6 +1,7 @@
 package org.apereo.cas.util.io;
 
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.configuration.model.support.email.EmailProperties;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -35,24 +36,20 @@ public class CommunicationsManager {
     /**
      * Email boolean.
      *
-     * @param principal the principal
-     * @param attribute the email attribute
-     * @param text      the text
-     * @param from      the from
-     * @param subject   the subject
-     * @param cc        the cc
-     * @param bcc       the bcc
-     * @return true/false
+     * @param principal       the principal
+     * @param attribute       the email attribute
+     * @param emailProperties the email properties
+     * @param body            the body
+     * @return true /false
      */
     public boolean email(final Principal principal,
                          final String attribute,
-                         final String text, final String from,
-                         final String subject,
-                         final String cc, final String bcc) {
+                         final EmailProperties emailProperties,
+                         final String body) {
         if (StringUtils.isNotBlank(attribute) && principal.getAttributes().containsKey(attribute) && isMailSenderDefined()) {
             val to = getFirstAttributeByName(principal, attribute);
             if (to.isPresent()) {
-                return email(text, from, subject, to.get().toString(), cc, bcc);
+                return email(emailProperties, to.get().toString(), body);
             }
         }
         LOGGER.debug("Email attribute [{}] cannot be found or no configuration for email provider is defined", attribute);
@@ -60,36 +57,16 @@ public class CommunicationsManager {
     }
 
     /**
-     * Email boolean.
-     *
-     * @param text    the text
-     * @param from    the from
-     * @param subject the subject
-     * @param to      the to
-     * @return the boolean
-     */
-    public boolean email(final String text, final String from,
-                         final String subject, final String to) {
-        return email(text, from, subject, to, null, null);
-    }
-
-    /**
      * Email.
      *
-     * @param text    the text
-     * @param from    the from
-     * @param subject the subject
-     * @param to      the to
-     * @param cc      the cc
-     * @param bcc     the bcc
+     * @param emailProperties the email properties
+     * @param to              the to
+     * @param body            the body
      * @return the boolean
      */
-    public boolean email(final String text, final String from,
-                         final String subject, final String to,
-                         final String cc, final String bcc) {
+    public boolean email(final EmailProperties emailProperties, final String to, final String body) {
         try {
-            if (!isMailSenderDefined() || StringUtils.isBlank(text) || StringUtils.isBlank(from)
-                || StringUtils.isBlank(subject) || StringUtils.isBlank(to)) {
+            if (!isMailSenderDefined() || emailProperties.isUndefined() || StringUtils.isBlank(to)) {
                 LOGGER.warn("Could not send email to [{}] because either no from/to/subject/text is defined or email settings are not configured.", to);
                 return false;
             }
@@ -97,17 +74,21 @@ public class CommunicationsManager {
             val message = this.mailSender.createMimeMessage();
             val helper = new MimeMessageHelper(message);
             helper.setTo(to);
-            helper.setText(text);
-            helper.setSubject(subject);
-            helper.setFrom(from);
+            helper.setText(body, emailProperties.isHtml());
+            helper.setSubject(emailProperties.getSubject());
+            helper.setFrom(emailProperties.getFrom());
+            if (StringUtils.isNotBlank(emailProperties.getReplyTo())) {
+                helper.setReplyTo(emailProperties.getReplyTo());
+            }
+            helper.setValidateAddresses(emailProperties.isValidateAddresses());
             helper.setPriority(1);
 
-            if (StringUtils.isNotBlank(cc)) {
-                helper.setCc(cc);
+            if (StringUtils.isNotBlank(emailProperties.getCc())) {
+                helper.setCc(emailProperties.getCc());
             }
 
-            if (StringUtils.isNotBlank(bcc)) {
-                helper.setBcc(bcc);
+            if (StringUtils.isNotBlank(emailProperties.getBcc())) {
+                helper.setBcc(emailProperties.getBcc());
             }
             this.mailSender.send(message);
             return true;
@@ -155,7 +136,7 @@ public class CommunicationsManager {
         return this.smsSender.send(from, to, text);
     }
 
-    private Optional<Object> getFirstAttributeByName(final Principal principal, final String attribute) {
+    private static Optional<Object> getFirstAttributeByName(final Principal principal, final String attribute) {
         val value = principal.getAttributes().get(attribute);
         return CollectionUtils.firstElement(value);
     }

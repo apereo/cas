@@ -23,16 +23,16 @@ import org.springframework.context.annotation.Configuration;
 @Slf4j
 public class CasWsSecurityTokenTicketCatalogConfiguration extends BaseTicketCatalogConfigurer {
 
-
     @Autowired
     private CasConfigurationProperties casProperties;
 
     @Override
     public void configureTicketCatalog(final TicketCatalog plan) {
         LOGGER.debug("Registering core WS security token ticket definitions...");
-        val defn = buildTicketDefinition(plan, SecurityTokenTicket.PREFIX, DefaultSecurityTokenTicket.class);
-        defn.getProperties().setStorageName("wsSecurityTokenTicketsCache");
-        defn.getProperties().setStorageTimeout(casProperties.getTicket().getTgt().getMaxTimeToLiveInSeconds());
-        registerTicketDefinition(plan, defn);
+        val definition = buildTicketDefinition(plan, SecurityTokenTicket.PREFIX, DefaultSecurityTokenTicket.class);
+        val properties = definition.getProperties();
+        properties.setStorageName("wsSecurityTokenTicketsCache");
+        properties.setStorageTimeout(casProperties.getTicket().getTgt().getMaxTimeToLiveInSeconds());
+        registerTicketDefinition(plan, definition);
     }
 }

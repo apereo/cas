@@ -25,11 +25,11 @@ public class CouchDbYubiKeyAccount extends YubiKeyAccount {
     private String rev;
 
     @JsonCreator
-    public CouchDbYubiKeyAccount(@JsonProperty("_id") final String cid, //NOPMD
+    public CouchDbYubiKeyAccount(@JsonProperty("_id") final String cid,
                                  @JsonProperty("_rev") final String rev,
                                  @JsonProperty("id") final long id,
-                                 @JsonProperty("publicId") @NonNull final String publicId,
-                                 @JsonProperty("username") @NonNull final String username) {
+                                 @JsonProperty("publicId") final @NonNull String publicId,
+                                 @JsonProperty("username") final @NonNull String username) {
         super(id, publicId, username);
         this.cid = cid;
         this.rev = rev;

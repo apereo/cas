@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.cookie;
 
+import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -26,6 +27,13 @@ public class TicketGrantingCookieProperties extends CookieProperties {
     private String rememberMeMaxAge = "P14D";
 
     /**
+     * Decide if cookie paths should be automatically configured
+     * based on the application context path, when the cookie
+     * path is not configured.
+     */
+    private boolean autoConfigureCookiePath = true;
+
+    /**
      * Crypto settings that determine how the cookie should be signed and encrypted.
      */
     @NestedConfigurationProperty
@@ -33,5 +41,7 @@ public class TicketGrantingCookieProperties extends CookieProperties {
 
     public TicketGrantingCookieProperties() {
         super.setName("TGC");
+        crypto.getEncryption().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE);
+        crypto.getSigning().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_SIGNING_KEY_SIZE);
     }
 }

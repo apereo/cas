@@ -2,7 +2,10 @@ package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.TicketState;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -24,6 +27,22 @@ public interface TicketRegistrySupport {
     Authentication getAuthenticationFrom(String ticketGrantingTicketId);
 
     /**
+     * Retrieve a valid tgt object identified by the provided TGT SSO token.
+     *
+     * @param ticketGrantingTicketId an SSO token identifying the requested Authentication
+     * @return valid TGT OR <b>NULL</b> if there is no valid SSO session present identified by the provided TGT id SSO token
+     */
+    TicketGrantingTicket getTicketGrantingTicket(String ticketGrantingTicketId);
+
+    /**
+     * Retrieve a valid ticket object identified by the provided the id and transform it into a ticket state.
+     *
+     * @param ticketId the ticket id
+     * @return the ticket state
+     */
+    TicketState getTicketState(String ticketId);
+
+    /**
      * Retrieve a valid Principal object identified by the provided TGT SSO token.
      *
      * @param ticketGrantingTicketId an SSO token identifying the requested authenticated Principal
@@ -37,7 +56,7 @@ public interface TicketRegistrySupport {
      * @param ticketGrantingTicketId an SSO token identifying the requested authenticated Principal's attributes
      * @return valid Principal's attributes OR <b>NULL</b> if there is no valid SSO session present identified by the provided TGT id SSO token
      */
-    Map<String, Object> getPrincipalAttributesFrom(String ticketGrantingTicketId);
+    Map<String, List<Object>> getPrincipalAttributesFrom(String ticketGrantingTicketId);
 
     /**
      * Update authentication associated with the ticket-granting ticket

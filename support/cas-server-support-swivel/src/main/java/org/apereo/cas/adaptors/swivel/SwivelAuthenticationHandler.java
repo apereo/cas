@@ -36,7 +36,7 @@ public class SwivelAuthenticationHandler extends AbstractPreAndPostProcessingAut
     public SwivelAuthenticationHandler(final String name, final ServicesManager servicesManager,
                                        final PrincipalFactory principalFactory,
                                        final SwivelMultifactorProperties swivelProperties) {
-        super(name, servicesManager, principalFactory, null);
+        super(name, servicesManager, principalFactory, swivelProperties.getOrder());
         this.swivelProperties = swivelProperties;
     }
 

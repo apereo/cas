@@ -1,7 +1,8 @@
 package org.apereo.cas.adaptors.radius;
 
+import org.junit.platform.runner.JUnitPlatform;
+import org.junit.platform.suite.api.SelectClasses;
 import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
 
 /**
  * This is {@link AllRadiusCoreTestsSuite}.
@@ -9,11 +10,11 @@ import org.junit.runners.Suite;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
+@SelectClasses({
     BlockingRadiusServerTests.class,
     NonBlockingRadiusServerTests.class,
     RadiusUtilsTests.class
 })
+@RunWith(JUnitPlatform.class)
 public class AllRadiusCoreTestsSuite {
 }

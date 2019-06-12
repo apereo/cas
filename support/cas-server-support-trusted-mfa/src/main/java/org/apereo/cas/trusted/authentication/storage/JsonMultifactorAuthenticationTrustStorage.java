@@ -12,7 +12,6 @@ import org.hjson.JsonValue;
 import org.springframework.core.io.Resource;
 
 import java.io.InputStreamReader;
-import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
@@ -97,10 +96,9 @@ public class JsonMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
     private void readTrustedRecordsFromResource() {
         this.storage = new LinkedHashMap<>();
         if (ResourceUtils.doesResourceExist(location)) {
-            try (Reader reader = new InputStreamReader(location.getInputStream(), StandardCharsets.UTF_8)) {
-                final TypeReference<Map<String, MultifactorAuthenticationTrustRecord>> personList =
-                    new TypeReference<>() {
-                    };
+            try (val reader = new InputStreamReader(location.getInputStream(), StandardCharsets.UTF_8)) {
+                val personList = new TypeReference<Map<String, MultifactorAuthenticationTrustRecord>>() {
+                };
                 this.storage = MAPPER.readValue(JsonValue.readHjson(reader).toString(), personList);
             }
         }

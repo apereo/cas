@@ -1,18 +1,14 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.response.artifact;
 
-import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
-import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
-import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectEncrypter;
-import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
+import org.apereo.cas.support.saml.web.idp.profile.builders.response.SamlProfileSamlResponseBuilderConfigurationContext;
 import org.apereo.cas.support.saml.web.idp.profile.builders.response.soap.SamlProfileSamlSoap11ResponseBuilder;
 import org.apereo.cas.ticket.artifact.SamlArtifactTicket;
 
 import lombok.val;
-import org.apache.velocity.app.VelocityEngine;
 import org.joda.time.DateTime;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLObject;
@@ -36,13 +32,8 @@ import javax.servlet.http.HttpServletResponse;
 public class SamlProfileArtifactResponseBuilder extends SamlProfileSamlSoap11ResponseBuilder {
     private static final long serialVersionUID = -5582616946993706815L;
 
-    public SamlProfileArtifactResponseBuilder(final OpenSamlConfigBean openSamlConfigBean, final SamlIdPObjectSigner samlObjectSigner,
-                                              final VelocityEngine velocityEngineFactory,
-                                              final SamlProfileObjectBuilder<Assertion> samlProfileSamlAssertionBuilder,
-                                              final SamlProfileObjectBuilder<? extends SAMLObject> saml2ResponseBuilder,
-                                              final SamlIdPObjectEncrypter samlObjectEncrypter) {
-        super(openSamlConfigBean, samlObjectSigner, velocityEngineFactory, samlProfileSamlAssertionBuilder,
-            saml2ResponseBuilder, samlObjectEncrypter);
+    public SamlProfileArtifactResponseBuilder(final SamlProfileSamlResponseBuilderConfigurationContext samlResponseBuilderConfigurationContext) {
+        super(samlResponseBuilderConfigurationContext);
     }
 
     @Override
@@ -64,7 +55,7 @@ public class SamlProfileArtifactResponseBuilder extends SamlProfileSamlSoap11Res
         artifactResponse.setID(ticket.getId());
         artifactResponse.setStatus(newStatus(StatusCode.SUCCESS, "Success"));
 
-        val samlResponse = SamlUtils.transformSamlObject(configBean, ticket.getObject(), SAMLObject.class);
+        val samlResponse = SamlUtils.transformSamlObject(openSamlConfigBean, ticket.getObject(), SAMLObject.class);
         artifactResponse.setMessage(samlResponse);
 
         val header = newSoapObject(Header.class);
@@ -75,7 +66,7 @@ public class SamlProfileArtifactResponseBuilder extends SamlProfileSamlSoap11Res
         val envelope = newSoapObject(Envelope.class);
         envelope.setHeader(header);
         envelope.setBody(body);
-        SamlUtils.logSamlObject(this.configBean, envelope);
+        SamlUtils.logSamlObject(this.openSamlConfigBean, envelope);
         return envelope;
     }
 }

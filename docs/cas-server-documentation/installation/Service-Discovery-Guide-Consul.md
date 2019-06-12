@@ -39,7 +39,7 @@ config/application,dev/
 config/application/
 ```
 
-The most specific property source is at the top, with the least specific at the bottom. Properties is the config/application folder are applicable to all applications using consul for configuration. Properties in the `config/cas` folder are only available to the instances of the service named `cas`.
+The most specific property source is at the top, with the least specific at the bottom. Properties in the `config/application` folder are applicable to all applications using consul for configuration. Properties in the `config/cas` folder are only available to the instances of the service named `cas`.
 
 Configuration is currently read on startup of the application. Sending a HTTP POST to `/refresh` will cause the configuration to be reloaded. Watching the key value store (which Consul supports) is not currently possible, but will be a future addition to this project.
 

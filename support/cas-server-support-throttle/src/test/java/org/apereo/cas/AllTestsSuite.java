@@ -1,9 +1,11 @@
 package org.apereo.cas;
 
 import org.apereo.cas.web.support.InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapterTests;
+import org.apereo.cas.web.support.InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapterTests;
 
+import org.junit.platform.runner.JUnitPlatform;
+import org.junit.platform.suite.api.SelectClasses;
 import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
 
 /**
  * This is {@link AllTestsSuite}.
@@ -11,9 +13,10 @@ import org.junit.runners.Suite;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapterTests.class,
-    InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapterTests.class
+@SelectClasses({
+    InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapterTests.class,
+    InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapterTests.class
 })
+@RunWith(JUnitPlatform.class)
 public class AllTestsSuite {
 }

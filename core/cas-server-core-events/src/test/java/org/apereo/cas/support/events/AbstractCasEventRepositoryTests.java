@@ -6,13 +6,9 @@ import org.apereo.cas.support.events.dao.CasEvent;
 import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketCreatedEvent;
 
 import lombok.val;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link AbstractCasEventRepositoryTests}.
@@ -21,12 +17,6 @@ import static org.junit.Assert.*;
  * @since 5.0.0
  */
 public abstract class AbstractCasEventRepositoryTests {
-
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
-
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
 
     @Test
     public void verifySave() {
@@ -39,9 +29,9 @@ public abstract class AbstractCasEventRepositoryTests {
         val col = getEventRepository().load();
         assertEquals(2, col.size());
 
-        assertNotEquals("Created Event IDs are equal", dto2.getEventId(), dto1.getEventId());
+        assertNotEquals(dto2.getEventId(), dto1.getEventId(), "Created Event IDs are equal");
 
-        assertEquals("Stored event IDs are equal", 2, col.stream().map(CasEvent::getEventId).distinct().count());
+        assertEquals(2, col.stream().map(CasEvent::getEventId).distinct().count(), "Stored event IDs are equal");
         col.forEach(event -> {
             assertFalse(event.getProperties().isEmpty());
             if (event.getEventId().equals(dto1.getEventId())) {

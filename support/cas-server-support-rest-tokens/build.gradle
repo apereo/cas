@@ -1,18 +1,23 @@
 description = "Apereo CAS REST JWT Tickets Implementation"
 dependencies {
     implementation libraries.casclient
-    implementation libraries.pac4j
     
     api project(":api:cas-server-core-api")
     api project(":api:cas-server-core-api-authentication")
     
     implementation project(":support:cas-server-support-token-core")   
+    implementation project(":support:cas-server-support-token-core-api")   
     implementation project(":support:cas-server-support-rest")
+    
     implementation project(":core:cas-server-core-rest")
+    implementation project(":support:cas-server-support-rest-core")
     implementation project(":core:cas-server-core-services")
+    implementation project(":core:cas-server-core-services-api")
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-authentication-api")
+
+    testImplementation libraries.nimbus
     
     testImplementation project(":core:cas-server-core-services-authentication")
     testImplementation project(":core:cas-server-core-authentication-api")
@@ -26,6 +31,7 @@ dependencies {
     testImplementation project(":core:cas-server-core-web-api")
     testImplementation project(":core:cas-server-core-authentication")
     testImplementation project(":core:cas-server-core-configuration")
+    
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")

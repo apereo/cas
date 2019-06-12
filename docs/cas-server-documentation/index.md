@@ -5,7 +5,17 @@ title: CAS - Home
 
 # CAS Enterprise Single Sign-On
 
-* [Spring Webflow](installation/Webflow-Customization.html)/Spring Boot [Java server component](planning/Architecture.html).
+Welcome to the home of the Apereo Central Authentication Service project, more commonly referred to as CAS. CAS is an enterprise 
+multilingual single sign-on solution for the web and attempts to be a comprehensive platform for your authentication 
+and authorization needs.
+
+CAS is an open and well-documented authentication protocol. The primary implementation of the protocol is 
+an open-source Java server component by the same name hosted here, with support for a plethora of 
+additional authentication protocols and features.
+
+The following items include a summary of features and technologies presented by the CAS project:
+
+* [Spring Webflow](webflow/Webflow-Customization.html)/Spring Boot [Java server component](planning/Architecture.html).
 * [Pluggable authentication support](installation/Configuring-Authentication-Components.html) ([LDAP](installation/LDAP-Authentication.html), 
 [Database](installation/Database-Authentication.html), [X.509](installation/X509-Authentication.html), [SPNEGO](installation/SPNEGO-Authentication.html), 
 [JAAS](installation/JAAS-Authentication.html), [JWT](installation/JWT-Authentication.html), 
@@ -16,10 +26,10 @@ title: CAS - Home
 providers ([Duo Security](mfa/DuoSecurity-Authentication.html), [FIDO U2F](mfa/FIDO-U2F-Authentication.html), 
 [YubiKey](mfa/YubiKey-Authentication.html), [Google Authenticator](mfa/GoogleAuthenticator-Authentication.html), [Authy](mfa/AuthyAuthenticator-Authentication.html) etc)
 * Support for [delegated authentication](integration/Delegate-Authentication.html) to external providers such as [ADFS](integration/ADFS-Integration.html), Facebook, Twitter, SAML2 IdPs, etc.
-* Built-in support for [password management](password_management/Password-Management.html), [notifications](installation/Webflow-Customization-Interrupt.html), [terms of use](installation/Webflow-Customization-AUP.html) and [impersonation](installation/Surrogate-Authentication.html).
+* Built-in support for [password management](password_management/Password-Management.html), [notifications](webflow/Webflow-Customization-Interrupt.html), [terms of use](webflow/Webflow-Customization-AUP.html) and [impersonation](installation/Surrogate-Authentication.html).
 * Support for [attribute release](integration/Attribute-Release.html) including [user consent](integration/Attribute-Release-Consent.html).
-* [Monitor and track](installation/Monitoring-Statistics.html) application behavior, statistics and logs in real time.
-* Manage and register [client applications and services](installation/Service-Management.html) with specific authentication policies.
+* [Monitor and track](monitoring/Monitoring-Statistics.html) application behavior, statistics and logs in real time.
+* Manage and register [client applications and services](services/Service-Management.html) with specific authentication policies.
 * [Cross-platform client support](integration/CAS-Clients.html) (Java, .Net, PHP, Perl, Apache, etc).
 * Integrations with [InCommon, Box, Office365, ServiceNow, Salesforce, Workday, WebAdvisor](integration/Configuring-SAML-SP-Integrations.html), Drupal, Blackboard, Moodle, [Google Apps](integration/Google-Apps-Integration.html), etc.
 
@@ -35,6 +45,7 @@ We recommend reading the following documentation in order to plan and execute a 
 * [Getting Started](planning/Getting-Started.html)
 * [Installation Requirements](planning/Installation-Requirements.html)
 * [Installation](installation/WAR-Overlay-Installation.html)
+* [Blog](https://apereo.github.io)
 
 ## Demos
 
@@ -47,11 +58,12 @@ The following demos are provided by the Apereo CAS project:
 |-------------------------------------|----------------------|--------------------------------------------------------|---------------------------------------
 | [CAS Overlay Project Initializr](installation/WAR-Overlay-Installation.html)            | `heroku-casinitializr`   | [Link](https://casinitializr.herokuapp.com) | ![](https://heroku-badge.herokuapp.com/?app=casinitializr)
 | [CAS Web Application Server](index.html)                                                  | `heroku-caswebapp`       | [Link](https://casserver.herokuapp.com/cas) | ![](https://heroku-badge.herokuapp.com/?app=casserver&root=cas)
-| [CAS Management Server](installation/Installing-ServicesMgmt-Webapp.html)        | `heroku-mgmtwebapp` | [Link](https://casservermgmt.herokuapp.com/cas-management)  | ![](https://heroku-badge.herokuapp.com/?app=casservermgmt&root=cas-management)
-| [CAS Boot Administration Server](installation/Configuring-Monitoring-Administration.html) | `heroku-bootadminserver` | [Link](https://casbootadminserver.herokuapp.com/) | ![](https://heroku-badge.herokuapp.com/?app=casbootadminserver)
-| [CAS Zipkin Server](installation/Monitoring-Statistics.html#distributed-tracing)          | `heroku-zipkinserver`    | [Link](https://caszipkinserver.herokuapp.com/) | ![](https://heroku-badge.herokuapp.com/?app=caszipkinserver)
+| [CAS Management Server](services/Installing-ServicesMgmt-Webapp.html)        | `heroku-mgmtwebapp` | [Link](https://casservermgmt.herokuapp.com/cas-management)  | ![](https://heroku-badge.herokuapp.com/?app=casservermgmt&root=cas-management)
+| [CAS Boot Administration Server](monitoring/Configuring-Monitoring-Administration.html) | `heroku-bootadminserver` | [Link](https://casbootadminserver.herokuapp.com/) | ![](https://heroku-badge.herokuapp.com/?app=casbootadminserver)
+| [CAS Zipkin Server](monitoring/Monitoring-Statistics.html#distributed-tracing)          | `heroku-zipkinserver`    | [Link](https://caszipkinserver.herokuapp.com/) | ![](https://heroku-badge.herokuapp.com/?app=caszipkinserver)
 | [CAS Service Discovery Server](installation/Service-Discovery-Guide.html)                 | `heroku-discoveryserver` | [Link](https://caseureka.herokuapp.com/) | ![](https://heroku-badge.herokuapp.com/?app=caseureka)
 | [CAS Configuration Server](configuration/Configuration-Server-Management.html)             | `heroku-casconfigserver` | [Link](https://casconfigserver.herokuapp.com/casconfigserver/env) | ![](https://heroku-badge.herokuapp.com/?app=casconfigserver&root=casconfigserver)
+| CAS GitHub Repository Bot | `heroku-githubbot` | [Link](https://apereocas-githubbot.herokuapp.com/) | ![](https://heroku-badge.herokuapp.com/?app=apereocas-githubbot)
 
 Credentials used for the above demos, where needed, are: `casuser` / `Mellon`.
 

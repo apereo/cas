@@ -1,7 +1,7 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.util.ResourceUtils;
-import org.apereo.cas.util.ScriptingUtils;
+import org.apereo.cas.util.scripting.ScriptingUtils;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.EqualsAndHashCode;
@@ -39,6 +39,7 @@ public class GroovyRegisteredServiceAccessStrategy implements RegisteredServiceA
 
     @JsonIgnore
     @Transient
+    @org.springframework.data.annotation.Transient
     private transient RegisteredServiceAccessStrategy groovyStrategyInstance;
 
     @Override

@@ -11,7 +11,7 @@ client configuration to leverage proxy authentication features.
 
 <div class="alert alert-info"><strong>Service Configuration</strong><p>
 Note that each registered application in the registry must explicitly be configured
-to allow for proxy authentication. See <a href="Service-Management.html">this guide</a>
+to allow for proxy authentication. See <a href="../services/Service-Management.html">this guide</a>
 to learn about registering services in the registry.</p></div>
 
 Disabling proxy authentication components is recommended for deployments that wish to strategically avoid proxy
@@ -53,7 +53,7 @@ See the [CAS Protocol](../protocol/CAS-Protocol.html) for more info.
 
 By default, CAS ships with a bundled HTTP client that is partly responsible to callback the URL
 for proxy authentication. Note that this URL need also be authorized by the CAS service registry
-before the callback can be made. [See this guide](Service-Management.html) for more info.
+before the callback can be made. [See this guide](../services/Service-Management.html) for more info.
 
 If the callback URL is authorized by the service registry, and if the endpoint is under HTTPS
 and protected by an SSL certificate, CAS will also attempt to verify the validity of the endpoint's

@@ -11,10 +11,9 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.binding.expression.support.LiteralExpression;
@@ -28,7 +27,7 @@ import org.springframework.webflow.engine.support.DefaultTargetStateResolver;
 import org.springframework.webflow.engine.support.DefaultTransitionCriteria;
 import org.springframework.webflow.test.MockRequestContext;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link OidcAuthenticationContextWebflowEventResolverTests}.
@@ -36,10 +35,8 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@Tag("OIDC")
 public class OidcAuthenticationContextWebflowEventResolverTests extends AbstractOidcTests {
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
     @Autowired
     @Qualifier("oidcAuthenticationContextWebflowEventResolver")
     protected CasWebflowEventResolver resolver;
@@ -49,11 +46,8 @@ public class OidcAuthenticationContextWebflowEventResolverTests extends Abstract
 
     private MockRequestContext context;
 
-    @Before
-    @Override
-    public void initialize() {
-        super.initialize();
-
+    @BeforeEach
+    public void init() {
         this.context = new MockRequestContext();
 
         val request = new MockHttpServletRequest();
@@ -71,7 +65,7 @@ public class OidcAuthenticationContextWebflowEventResolverTests extends Abstract
             new LiteralExpression(TestMultifactorAuthenticationProvider.ID)), targetResolver);
         context.getRootFlow().getGlobalTransitionSet().add(transition);
 
-        WebUtils.putService(context, CoreAuthenticationTestUtils.getWebApplicationService());
+        WebUtils.putServiceIntoFlowScope(context, CoreAuthenticationTestUtils.getWebApplicationService());
         TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
     }

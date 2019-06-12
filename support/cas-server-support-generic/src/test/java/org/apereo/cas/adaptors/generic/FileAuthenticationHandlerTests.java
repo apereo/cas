@@ -8,10 +8,9 @@ import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 
 import lombok.val;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.apache.commons.lang3.StringUtils;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
 
 import javax.security.auth.login.AccountNotFoundException;
@@ -19,22 +18,18 @@ import javax.security.auth.login.FailedLoginException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Scott Battaglia
  * @since 3.0.0
  */
 public class FileAuthenticationHandlerTests {
-
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
     private FileAuthenticationHandler authenticationHandler;
 
-    @Before
+    @BeforeEach
     public void initialize() {
-        this.authenticationHandler = new FileAuthenticationHandler("", null, null, new ClassPathResource("authentication.txt"),
+        this.authenticationHandler = new FileAuthenticationHandler(StringUtils.EMPTY, null, null, new ClassPathResource("authentication.txt"),
             FileAuthenticationHandler.DEFAULT_SEPARATOR);
         val p = new PasswordEncoderProperties();
         p.setType(PasswordEncoderProperties.PasswordEncoderTypes.DEFAULT.name());
@@ -80,10 +75,9 @@ public class FileAuthenticationHandlerTests {
         c.setUsername("fds");
         c.setPassword("rutgers");
 
-        this.thrown.expect(AccountNotFoundException.class);
-
-
-        this.authenticationHandler.authenticate(c);
+        assertThrows(AccountNotFoundException.class, () -> {
+            this.authenticationHandler.authenticate(c);
+        });
     }
 
     @Test
@@ -91,8 +85,9 @@ public class FileAuthenticationHandlerTests {
         val c = new UsernamePasswordCredential();
         c.setUsername(null);
         c.setPassword("user");
-        this.thrown.expect(AccountNotFoundException.class);
-        this.authenticationHandler.authenticate(c);
+        assertThrows(AccountNotFoundException.class, () -> {
+            this.authenticationHandler.authenticate(c);
+        });
     }
 
     @Test
@@ -100,8 +95,9 @@ public class FileAuthenticationHandlerTests {
         val c = new UsernamePasswordCredential();
         c.setUsername(null);
         c.setPassword(null);
-        this.thrown.expect(AccountNotFoundException.class);
-        this.authenticationHandler.authenticate(c);
+        assertThrows(AccountNotFoundException.class, () -> {
+            this.authenticationHandler.authenticate(c);
+        });
     }
 
     @Test
@@ -109,14 +105,15 @@ public class FileAuthenticationHandlerTests {
         val c = new UsernamePasswordCredential();
         c.setUsername("scott");
         c.setPassword(null);
-        this.thrown.expect(FailedLoginException.class);
-        this.authenticationHandler.authenticate(c);
+        assertThrows(FailedLoginException.class, () -> {
+            this.authenticationHandler.authenticate(c);
+        });
     }
 
     @Test
     public void verifyAuthenticatesUserInFileWithCommaSeparator() throws Exception {
         val c = new UsernamePasswordCredential();
-        this.authenticationHandler = new FileAuthenticationHandler("", null, null, new ClassPathResource("authentication2.txt"), ",");
+        this.authenticationHandler = new FileAuthenticationHandler(StringUtils.EMPTY, null, null, new ClassPathResource("authentication2.txt"), ",");
         c.setUsername("scott");
         c.setPassword("rutgers");
         assertNotNull(this.authenticationHandler.authenticate(c));
@@ -126,38 +123,36 @@ public class FileAuthenticationHandlerTests {
     public void verifyFailsUserNotInFileWithCommaSeparator() throws Exception {
         val c = new UsernamePasswordCredential();
 
-        this.authenticationHandler = new FileAuthenticationHandler("", null, null, new ClassPathResource("authentication2.txt"), ",");
+        this.authenticationHandler = new FileAuthenticationHandler(StringUtils.EMPTY, null, null,
+            new ClassPathResource("authentication2.txt"), ",");
         c.setUsername("fds");
         c.setPassword("rutgers");
-        this.thrown.expect(AccountNotFoundException.class);
-
-        this.authenticationHandler.authenticate(c);
+        assertThrows(AccountNotFoundException.class, () -> {
+            this.authenticationHandler.authenticate(c);
+        });
     }
 
     @Test
-    public void verifyFailsGoodUsernameBadPassword() throws Exception {
+    public void verifyFailsGoodUsernameBadPassword() {
         val c = new UsernamePasswordCredential();
-        this.authenticationHandler = new FileAuthenticationHandler("", null, null, new ClassPathResource("authentication2.txt"), ",");
+        this.authenticationHandler = new FileAuthenticationHandler(StringUtils.EMPTY, null, null,
+            new ClassPathResource("authentication2.txt"), ",");
 
         c.setUsername("scott");
         c.setPassword("rutgers1");
 
-        this.thrown.expect(FailedLoginException.class);
-
-        this.authenticationHandler.authenticate(c);
+        assertThrows(FailedLoginException.class, () -> this.authenticationHandler.authenticate(c));
     }
 
     @Test
-    public void verifyAuthenticateNoFileName() throws Exception {
+    public void verifyAuthenticateNoFileName() {
         val c = new UsernamePasswordCredential();
-        this.authenticationHandler = new FileAuthenticationHandler("", null, null, new ClassPathResource("fff"), FileAuthenticationHandler.DEFAULT_SEPARATOR);
+        this.authenticationHandler = new FileAuthenticationHandler(StringUtils.EMPTY, null, null,
+            new ClassPathResource("fff"), FileAuthenticationHandler.DEFAULT_SEPARATOR);
 
         c.setUsername("scott");
         c.setPassword("rutgers");
 
-        this.thrown.expect(PreventedException.class);
-
-
-        this.authenticationHandler.authenticate(c);
+        assertThrows(PreventedException.class, () -> this.authenticationHandler.authenticate(c));
     }
 }

@@ -128,13 +128,15 @@
         <module name="TypeName">
             <property name="severity" value="error"/>
         </module>
+
         <module name="AvoidStarImport">
             <property name="severity" value="error"/>
             <property name="excludes"
                       value="java.io,
                       java.net,
                       java.lang.Math,
-                      org.junit.Assert,
+                      org.junit.jupiter.api.Assertions,
+                      org.junit.jupiter.api.Assumptions,
                       org.mockito.Mockito,
                       org.mockito.Matchers,
                       org.springframework.test.web.servlet.request.MockMvcRequestBuilders,
@@ -191,6 +193,11 @@
             <property name="max" value="20"/>
             <property name="severity" value="error"/>
             <property name="tokens" value="METHOD_DEF"/>
+        </module>
+        <module name="ParameterNumber">
+            <property name="max" value="15"/>
+            <property name="severity" value="error"/>
+            <property name="tokens" value="CTOR_DEF"/>
         </module>
         <module name="LineLength">
             <property name="max" value="190"/>
@@ -258,6 +265,7 @@
             <property name="severity" value="error"/>
         </module>
         <module name="Indentation">
+            <property name="forceStrictCondition" value="false" />
             <property name="severity" value="error"/>
         </module>
         <!--
@@ -370,6 +378,39 @@
             <property name="message"
                       value="Do not create a standalone instance of SecureRandom. Use RandomUtils instead."/>
         </module>
+
+        <module name="RegexpSinglelineJava">
+            <property name="id" value="codeTagJavadocs"/>
+            <metadata name="net.sf.eclipsecs.core.comment" value="Consider using {@code} Javadoc instead"/>
+            <property name="severity" value="error"/>
+            <property name="format" value="&lt;code&gt;"/>
+            <property name="message" value="Consider using '{'@code'}' tag when wrapping code elements in Javadocs"/>
+        </module>
+
+        <module name="RegexpSinglelineJava">
+            <property name="id" value="tests-suite-classname"/>
+            <metadata name="net.sf.eclipsecs.core.comment" value="Name the test suite class consistently to match the CAS codebase"/>
+            <property name="severity" value="error"/>
+            <property name="format" value="public\sclass\s\w+TestSuite\s*\{"/>
+            <property name="message" value="Test suite class names should end with TestSuite (i.e. AllAuthenticationTestsSuite)"/>
+        </module>
+
+
+        <module name="RegexpSinglelineJava">
+            <property name="id" value="zero-length-array"/>
+            <metadata name="net.sf.eclipsecs.core.comment" value="Using a zero-length array is not recommended."/>
+            <property name="severity" value="error"/>
+            <property name="format" value="new\s+(String|Object|byte|int|long|double|float|Class|char|boolean)\[(\d*)*\]\s*\{\}"/>
+            <property name="message" value="Use constants in org.apache.commons.lang3.ArrayUtils instead of declaring zero-length arrays"/>
+        </module>
+
+        <module name="RegexpSinglelineJava">
+            <property name="id" value="streamed-foreach-loop"/>
+            <metadata name="net.sf.eclipsecs.core.comment" value="Using stream().forEach() is unnecessary where forEach() can be used directly."/>
+            <property name="severity" value="error"/>
+            <property name="format" value="\.stream\(\)\.forEach\("/>
+            <property name="message" value="Simplify the Stream API. Using stream().forEach() is unnecessary where forEach() can be used directly."/>
+        </module>
         
         <module name="RegexpSinglelineJava">
             <property name="id" value="collectionsEmpty"/>
@@ -386,7 +427,7 @@
             <property name="severity" value="error"/>
             <property name="format" value="Collections\.unmodifiable(List|Set|Map)"/>
             <property name="message"
-                      value="Returning an unmodifiable collection is specially problematic for serialization tasks. To avoid future side effects try using an empty collection of size zero instead"/>
+                      value="Returning an unmodifiable collection is problematic for serialization. Try using an empty collection, of size zero, instead"/>
         </module>
 
         <module name="RegexpSinglelineJava">
@@ -399,13 +440,29 @@
         </module>
 
         <module name="RegexpSinglelineJava">
+            <property name="id" value="singlelineComment"/>
+            <metadata name="net.sf.eclipsecs.core.comment" value="Convert single-line comments into Javadocs"/>
+            <property name="severity" value="error"/>
+            <property name="format" value="//\s+.*"/>
+            <property name="message" value="Avoid single-line comments. Turn notes and explanations into public javadocs. "/>
+        </module>
+
+        <module name="RegexpSinglelineJava">
             <metadata name="net.sf.eclipsecs.core.comment" value="Parameteric log messages"/>
             <property name="severity" value="error"/>
             <property name="format" value="log\.\w+\(((\&quot;.+\&quot;\s*\+)|(.*\s*\+\s*\&quot;))"/>
             <property name="message"
                       value="Avoid string concatenation for constructing log messages. Use parametric messages instead"/>
         </module>
-        
+
+        <module name="RegexpSinglelineJava">
+            <metadata name="net.sf.eclipsecs.core.comment" value="Emoty String constants"/>
+            <property name="severity" value="error"/>
+            <property name="format" value="(?&lt;!\\)&quot;(?&lt;!\\)&quot;"/>
+            <property name="message" value="Consider using StringUtils.EMPTY instead"/>
+        </module>
+
+
         <module name="RegexpSinglelineJava">
             <metadata name="net.sf.eclipsecs.core.comment" value="JavaDoc @version tag"/>
             <property name="severity" value="error"/>
@@ -495,6 +552,13 @@
                       value="Consider not checking for logging levels. Let the logging framework handle that."/>
         </module>
         <module name="RegexpSinglelineJava">
+            <property name="id" value="usingAutowiredInApiClasses"/>
+            <metadata name="net.sf.eclipsecs.core.comment" value="Using Autowired outside configuration components"/>
+            <property name="severity" value="error"/>
+            <property name="format" value="@Autowired"/>
+            <property name="message" value="Consider injecting the reference from a @Configuration class instead."/>
+        </module>
+        <module name="RegexpSinglelineJava">
             <property name="id" value="useLombokVarForGenerics"/>
             <metadata name="net.sf.eclipsecs.core.comment" value="Using val for variable definitions"/>
             <property name="severity" value="error"/>
@@ -502,10 +566,10 @@
             <property name="message" value="Use lombok.val when declaring collections with generics"/>
         </module>
         <module name="RegexpSinglelineJava">
-            <property name="id" value="useLombokVaLForFinalVar"/>
+            <property name="id" value="useLombokValForFinalVar"/>
             <metadata name="net.sf.eclipsecs.core.comment" value="Using val for variable definitions"/>
             <property name="severity" value="error"/>
-            <property name="format" value="final\s+var\s+"/>
+            <property name="format" value="(final\s+var\s+)|(^\s*final\s*\w+\[\]\s*\w+\s*=)"/>
             <property name="message" value="Use lombok.val when declaring final variable definitions."/>
         </module>
 
@@ -534,6 +598,10 @@
             <property name="sortImportsInGroupAlphabetically" value="true"/>
             <property name="separateLineBetweenGroups" value="false"/>
         </module>
+        <module name="ImportControl">
+            <property name="file" value="${checkstyle.importcontrol.file}"/>
+            <property name="severity" value="error"/>
+        </module>
     </module>
 
     <!-- Checker module checks -->
@@ -550,9 +618,18 @@
     </module>
 
     <module name="RegexpMultiline">
+        <property name="id" value="needlessElseClause"/>
+        <property name="severity" value="error"/>
+        <property name="format" value="\s*\}\s*else\s*\{\s*return\s+.+;"/>
+        <property name="message" value="Remove the unnecessary else clause: consider using the Elvis operator"/>
+        <property name="fileExtensions" value="java" />
+    </module>
+
+    <module name="RegexpMultiline">
         <property name="id" value="useQualifier"/>
         <property name="severity" value="error"/>
-        <property name="format" value="@Autowired\s*(private|public|protected)\s+(?!.*Properties|.*Environment|FlowBuilderServices|SpringTemplateEngine|.*EventPublisher|.*ApplicationContext|ResourceLoader)\w+\s+\w+\s*;"/>
+        <property name="format"
+                  value="@Autowired\s*(private|public|protected)\s+(?!.*Properties|.*Environment|FlowBuilderServices|SpringTemplateEngine|.*EventPublisher|.*ApplicationContext|ResourceLoader)\w+\s+\w+\s*;"/>
         <property name="message" value="Use @Qualifier annotation when injecting dependencies"/>
         <property name="fileExtensions" value="java" />
     </module>
@@ -610,22 +687,10 @@
         <property name="message" value="For security purposes, use 'java.security.SecureRandom' instead"/>
     </module>
     <module name="RegexpSingleline">
-        <metadata name="net.sf.eclipsecs.core.comment" value="JUnit Assert static import"/>
-        <property name="severity" value="error"/>
-        <property name="format" value="import\s+static\s+org\.junit\.Assert\.\w+"/>
-        <property name="message" value="JUnit Assert methods MUST be imported statically with a *"/>
-    </module>
-    <module name="RegexpSingleline">
         <metadata name="net.sf.eclipsecs.core.comment" value="Arrays.asList() method call"/>
         <property name="severity" value="error"/>
         <property name="format" value="Lists\.newArrayList\(.+"/>
         <property name="message" value="Use Arrays.asList() or Collections.singletonList() instead."/>
-    </module>
-    <module name="RegexpSingleline">
-        <metadata name="net.sf.eclipsecs.core.comment" value="Mockito static import"/>
-        <property name="severity" value="error"/>
-        <property name="format" value="import\s+static\s+org\.mockito\.Mockito\.\w+"/>
-        <property name="message" value="Mockito methods MUST be imported statically with a *"/>
     </module>
     <module name="RegexpSingleline">
         <metadata name="net.sf.eclipsecs.core.comment" value="Test class is named incorrectly"/>
@@ -634,24 +699,11 @@
         <property name="message" value="Name of the test class MUST end in 'Tests'"/>
     </module>
     <module name="RegexpSingleline">
-        <metadata name="net.sf.eclipsecs.core.comment" value="Use @Rule instead of expect an exception"/>
-        <property name="severity" value="error"/>
-        <property name="format" value="@Test\(expect"/>
-        <property name="message" value="Use @Rule ExpectedException instead of expecting an exception"/>
-    </module>
-    <module name="RegexpSingleline">
-        <metadata name="net.sf.eclipsecs.core.comment" value="Use @Rule instead of expect an exception"/>
-        <property name="severity" value="error"/>
-        <property name="format" value="@RunWith\((Conditional)?SpringRunner\.class\)"/>
-        <property name="message" value="Use Spring @Rule and @ClassRule instead of the Spring test runner."/>
-    </module>
-    <module name="RegexpSingleline">
         <metadata name="net.sf.eclipsecs.core.comment" value="Use Collections.singleton instead"/>
         <property name="severity" value="info"/>
         <property name="format" value="new.*Set&lt;&gt;\((Arrays\.asList\([^,]+\)|Collections\.singletonList\(.*\))\)"/>
         <property name="message" value="Consider using Collections.singleton instead"/>
     </module>
-
 
     <module name="RegexpSingleline">
         <metadata name="net.sf.eclipsecs.core.comment" value="Use specific request annotation"/>

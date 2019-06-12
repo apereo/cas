@@ -1,7 +1,8 @@
 package org.apereo.cas;
 
+import org.junit.platform.runner.JUnitPlatform;
+import org.junit.platform.suite.api.SelectClasses;
 import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
 
 /**
  * The {@link AllCoreTestsSuite} is responsible for
@@ -10,20 +11,12 @@ import org.junit.runners.Suite;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
+@SelectClasses({
     DefaultCentralAuthenticationServiceTests.class,
     DefaultCentralAuthenticationServiceMockitoTests.class,
     DefaultCasAttributeEncoderTests.class,
-    AdaptiveMultifactorAuthenticationPolicyEventResolverTests.class,
-    DefaultPrincipalAttributesRepositoryTests.class,
-    GroovyScriptMultifactorAuthenticationPolicyEventResolverTests.class,
-    TimedMultifactorAuthenticationPolicyEventResolverTests.class,
-    MultifactorAuthenticationTests.class,
-    RequestHeaderMultifactorAuthenticationPolicyEventResolverTests.class,
-    RequestSessionAttributeMultifactorAuthenticationPolicyEventResolverTests.class,
-    AuthenticationAttributeMultifactorAuthenticationPolicyEventResolverTests.class,
-    RequestParameterMultifactorAuthenticationPolicyEventResolverTests.class
+    DefaultPrincipalAttributesRepositoryTests.class
 })
+@RunWith(JUnitPlatform.class)
 public class AllCoreTestsSuite {
 }

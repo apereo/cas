@@ -3,6 +3,7 @@ package org.apereo.cas.support.events.ticket;
 import org.apereo.cas.support.events.AbstractCasEvent;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 
+import lombok.Getter;
 import lombok.ToString;
 
 /**
@@ -13,7 +14,8 @@ import lombok.ToString;
  * @author Dmitriy Kopylenko
  * @since 4.2
  */
-@ToString
+@ToString(callSuper = true)
+@Getter
 public class CasProxyGrantingTicketCreatedEvent extends AbstractCasEvent {
 
     private static final long serialVersionUID = -1862937393590213844L;
@@ -21,7 +23,7 @@ public class CasProxyGrantingTicketCreatedEvent extends AbstractCasEvent {
     private final TicketGrantingTicket ticketGrantingTicket;
 
     /**
-     * Instantiates a new Cas sso session established event.
+     * Instantiates a new CAS sso session established event.
      *
      * @param source               the source
      * @param ticketGrantingTicket the ticket granting ticket
@@ -29,9 +31,5 @@ public class CasProxyGrantingTicketCreatedEvent extends AbstractCasEvent {
     public CasProxyGrantingTicketCreatedEvent(final Object source, final TicketGrantingTicket ticketGrantingTicket) {
         super(source);
         this.ticketGrantingTicket = ticketGrantingTicket;
-    }
-
-    public TicketGrantingTicket getTicketGrantingTicket() {
-        return this.ticketGrantingTicket;
     }
 }

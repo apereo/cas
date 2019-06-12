@@ -33,7 +33,6 @@ public class RemoteAddressWebflowConfigurer extends AbstractCasWebflowConfigurer
                 CasWebflowConstants.STATE_ID_CREATE_TICKET_GRANTING_TICKET));
             actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_ERROR, getStartState(flow).getId()));
             actionState.getExitActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_CLEAR_WEBFLOW_CREDENTIALS));
-            registerMultifactorProvidersStateTransitionsIntoWebflow(actionState);
         }
     }
 }

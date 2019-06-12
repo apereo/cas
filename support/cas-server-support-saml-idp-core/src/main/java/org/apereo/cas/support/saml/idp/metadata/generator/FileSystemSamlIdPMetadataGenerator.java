@@ -1,12 +1,9 @@
 package org.apereo.cas.support.saml.idp.metadata.generator;
 
-import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
-import org.apereo.cas.support.saml.idp.metadata.writer.SamlIdPCertificateAndKeyWriter;
-
 import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
-import org.springframework.core.io.ResourceLoader;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
@@ -19,33 +16,39 @@ import java.nio.file.Files;
  * @since 5.0.0
  */
 public class FileSystemSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGenerator {
-    public FileSystemSamlIdPMetadataGenerator(final SamlIdPMetadataLocator samlIdPMetadataLocator,
-                                              final SamlIdPCertificateAndKeyWriter samlIdPCertificateAndKeyWriter,
-                                              final String entityId, final ResourceLoader resourceLoader,
-                                              final String casServerPrefix, final String scope) {
-        super(samlIdPMetadataLocator, samlIdPCertificateAndKeyWriter, entityId, resourceLoader, casServerPrefix, scope);
+    public FileSystemSamlIdPMetadataGenerator(final SamlIdPMetadataGeneratorConfigurationContext samlIdPMetadataGeneratorConfigurationContext) {
+        super(samlIdPMetadataGeneratorConfigurationContext);
     }
 
     @Override
     @SneakyThrows
-    public void buildSelfSignedEncryptionCert() {
-        val encCert = this.samlIdPMetadataLocator.getEncryptionCertificate().getFile();
-        val encKey = this.samlIdPMetadataLocator.getEncryptionKey().getFile();
+    public Pair<String, String> buildSelfSignedEncryptionCert() {
+        val encCert = getSamlIdPMetadataGeneratorConfigurationContext().getSamlIdPMetadataLocator()
+            .getEncryptionCertificate().getFile();
+        val encKey = getSamlIdPMetadataGeneratorConfigurationContext().getSamlIdPMetadataLocator()
+            .getEncryptionKey().getFile();
         writeCertificateAndKey(encCert, encKey);
+        return Pair.of(FileUtils.readFileToString(encCert, StandardCharsets.UTF_8), FileUtils.readFileToString(encKey, StandardCharsets.UTF_8));
     }
 
     @Override
     @SneakyThrows
-    public void buildSelfSignedSigningCert() {
-        val signingCert = this.samlIdPMetadataLocator.getSigningCertificate().getFile();
-        val signingKey = this.samlIdPMetadataLocator.getSigningKey().getFile();
+    public Pair<String, String> buildSelfSignedSigningCert() {
+        val signingCert = getSamlIdPMetadataGeneratorConfigurationContext().getSamlIdPMetadataLocator()
+            .getSigningCertificate().getFile();
+        val signingKey = getSamlIdPMetadataGeneratorConfigurationContext().getSamlIdPMetadataLocator()
+            .getSigningKey().getFile();
         writeCertificateAndKey(signingCert, signingKey);
+        return Pair.of(FileUtils.readFileToString(signingCert, StandardCharsets.UTF_8),
+            FileUtils.readFileToString(signingKey, StandardCharsets.UTF_8));
     }
 
     @Override
     @SneakyThrows
-    protected void writeMetadata(final String metadata) {
-        FileUtils.write(this.samlIdPMetadataLocator.getMetadata().getFile(), metadata, StandardCharsets.UTF_8);
+    protected String writeMetadata(final String metadata) {
+        FileUtils.write(getSamlIdPMetadataGeneratorConfigurationContext().getSamlIdPMetadataLocator()
+            .getMetadata().getFile(), metadata, StandardCharsets.UTF_8);
+        return metadata;
     }
 
     @SneakyThrows
@@ -58,7 +61,8 @@ public class FileSystemSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGener
         }
         try (val keyWriter = Files.newBufferedWriter(key.toPath(), StandardCharsets.UTF_8);
              val certWriter = Files.newBufferedWriter(certificate.toPath(), StandardCharsets.UTF_8)) {
-            this.samlIdPCertificateAndKeyWriter.writeCertificateAndKey(keyWriter, certWriter);
+            getSamlIdPMetadataGeneratorConfigurationContext().getSamlIdPCertificateAndKeyWriter()
+                .writeCertificateAndKey(keyWriter, certWriter);
         }
     }
 
@@ -67,7 +71,7 @@ public class FileSystemSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGener
      */
     @SneakyThrows
     public void initialize() {
-        samlIdPMetadataLocator.initialize();
+        getSamlIdPMetadataGeneratorConfigurationContext().getSamlIdPMetadataLocator().initialize();
         generate();
     }
 }

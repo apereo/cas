@@ -3,6 +3,8 @@ package org.apereo.cas.util;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.Collection;
 import java.util.function.Predicate;
 
@@ -52,8 +54,14 @@ public class MockOnlyOneTicketRegistry implements TicketRegistry {
     }
 
     @Override
+    public int deleteTicket(final Ticket ticketId) {
+        this.ticket = null;
+        return 1;
+    }
+
+    @Override
     public long deleteAll() {
-        return deleteTicket(null);
+        return deleteTicket(StringUtils.EMPTY);
     }
 
     @Override

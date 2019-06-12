@@ -1,7 +1,6 @@
 package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.config.CasMongoAuthenticationConfiguration;
-import org.apereo.cas.category.MongoDbCategory;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -19,17 +18,13 @@ import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
-import org.apereo.cas.util.junit.ConditionalIgnore;
-import org.apereo.cas.util.junit.ConditionalIgnoreRule;
-import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
+import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 
 import lombok.val;
 import org.bson.Document;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -39,12 +34,10 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Test cases for {@link MongoDbAuthenticationHandler}.
@@ -81,20 +74,10 @@ import static org.junit.Assert.*;
     "cas.authn.mongo.passwordAttribute=password",
     "cas.authn.pac4j.typedIdUsed=false"
 })
-@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
-@Category(MongoDbCategory.class)
+@EnabledIfContinuousIntegration
+@Tag("MongoDb")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class MongoDbAuthenticationHandlerTests {
-
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
-
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
-
-    @Rule
-    public final ConditionalIgnoreRule conditionalIgnoreRule = new ConditionalIgnoreRule();
-
     @Autowired
     @Qualifier("mongoAuthenticationHandler")
     private AuthenticationHandler authenticationHandler;
@@ -102,21 +85,22 @@ public class MongoDbAuthenticationHandlerTests {
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    @Before
+    @BeforeEach
     public void initialize() {
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(new MockHttpServletRequest(), new MockHttpServletResponse()));
 
         val mongo = casProperties.getAuthn().getMongo();
-        val mongoClient = new MongoDbConnectionFactory().buildMongoDbClient(mongo);
-        mongoClient.dropDatabase(mongo.getDatabaseName());
-        val database = mongoClient.getDatabase(mongo.getDatabaseName());
-        val col = database.getCollection(mongo.getCollection());
-        val account = new Document();
-        account.append(mongo.getUsernameAttribute(), "u1");
-        account.append(mongo.getPasswordAttribute(), "p1");
-        account.append("loc", "Apereo");
-        account.append("state", "California");
-        col.insertOne(account);
+        try(val mongoClient = MongoDbConnectionFactory.buildMongoDbClient(mongo)) {
+            mongoClient.dropDatabase(mongo.getDatabaseName());
+            val database = mongoClient.getDatabase(mongo.getDatabaseName());
+            val col = database.getCollection(mongo.getCollection());
+            val account = new Document();
+            account.append(mongo.getUsernameAttribute(), "u1");
+            account.append(mongo.getPasswordAttribute(), "p1");
+            account.append("loc", "Apereo");
+            account.append("state", "California");
+            col.insertOne(account);
+        }
     }
 
     @Test

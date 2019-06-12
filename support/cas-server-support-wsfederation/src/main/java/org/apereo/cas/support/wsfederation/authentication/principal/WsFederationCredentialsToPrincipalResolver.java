@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * This class resolves the principal id regarding the WsFederation credentials.
@@ -30,9 +31,16 @@ public class WsFederationCredentialsToPrincipalResolver extends PersonDirectoryP
     private final WsFederationConfiguration configuration;
 
     public WsFederationCredentialsToPrincipalResolver(final IPersonAttributeDao attributeRepository,
-                                                      final PrincipalFactory principalFactory, final boolean returnNullIfNoAttributes,
-                                                      final String principalAttributeName, final WsFederationConfiguration configuration) {
-        super(attributeRepository, principalFactory, returnNullIfNoAttributes, principalAttributeName);
+                                                      final PrincipalFactory principalFactory,
+                                                      final boolean returnNullIfNoAttributes,
+                                                      final String principalAttributeName,
+                                                      final WsFederationConfiguration configuration,
+                                                      final boolean useCurrentPrincipalId,
+                                                      final boolean resolveAttributes,
+                                                      final Set<String> activeAttributeRepositoryIdentifiers) {
+        super(attributeRepository, principalFactory, returnNullIfNoAttributes,
+            principalAttributeName, useCurrentPrincipalId, resolveAttributes,
+            activeAttributeRepositoryIdentifiers);
         this.configuration = configuration;
     }
 
@@ -56,7 +64,7 @@ public class WsFederationCredentialsToPrincipalResolver extends PersonDirectoryP
             } else {
                 LOGGER.debug("Found principal id attribute as [{}]", idAttributeAsList);
             }
-            
+
             val result = CollectionUtils.firstElement(idAttributeAsList);
             if (result.isPresent()) {
                 val principalId = result.get().toString();

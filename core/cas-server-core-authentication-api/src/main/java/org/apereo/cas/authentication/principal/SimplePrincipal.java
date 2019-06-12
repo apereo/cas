@@ -14,6 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -48,7 +49,7 @@ public class SimplePrincipal implements Principal {
      * Principal attributes.
      **/
     @JsonSetter(nulls = Nulls.AS_EMPTY)
-    private Map<String, Object> attributes = new HashMap<>();
+    private Map<String, List<Object>> attributes = new HashMap<>();
 
     /**
      * Instantiates a new simple principal.
@@ -57,8 +58,8 @@ public class SimplePrincipal implements Principal {
      * @param attributes the attributes
      */
     @JsonCreator
-    protected SimplePrincipal(@NonNull @JsonProperty("id") final String id,
-                              @JsonProperty("attributes") final Map<String, Object> attributes) {
+    protected SimplePrincipal(@JsonProperty("id") final @NonNull String id,
+                              @JsonProperty("attributes") final Map<String, List<Object>> attributes) {
         this.id = id;
         if (attributes == null) {
             this.attributes = new HashMap<>();
@@ -71,8 +72,8 @@ public class SimplePrincipal implements Principal {
      * @return An immutable map of principal attributes
      */
     @Override
-    public Map<String, Object> getAttributes() {
-        val attrs = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+    public Map<String, List<Object>> getAttributes() {
+        val attrs = new TreeMap<String, List<Object>>(String.CASE_INSENSITIVE_ORDER);
         attrs.putAll(this.attributes);
         return attrs;
     }
@@ -98,6 +99,4 @@ public class SimplePrincipal implements Principal {
         val rhs = (SimplePrincipal) obj;
         return StringUtils.equalsIgnoreCase(this.id, rhs.getId());
     }
-
-
 }

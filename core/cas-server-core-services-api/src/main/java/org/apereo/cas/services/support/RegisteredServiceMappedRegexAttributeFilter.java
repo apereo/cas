@@ -4,6 +4,7 @@ import org.apereo.cas.services.RegisteredServiceAttributeFilter;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RegexUtils;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,6 +12,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -33,6 +35,7 @@ import java.util.stream.Collectors;
 @Setter
 @NoArgsConstructor
 @EqualsAndHashCode
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class RegisteredServiceMappedRegexAttributeFilter implements RegisteredServiceAttributeFilter {
 
     private static final long serialVersionUID = 852145306984610128L;
@@ -53,8 +56,8 @@ public class RegisteredServiceMappedRegexAttributeFilter implements RegisteredSe
     }
 
     @Override
-    public Map<String, Object> filter(final Map<String, Object> givenAttributes) {
-        val attributesToRelease = new HashMap<String, Object>();
+    public Map<String, List<Object>> filter(final Map<String, List<Object>> givenAttributes) {
+        val attributesToRelease = new HashMap<String, List<Object>>();
         givenAttributes.entrySet().stream().filter(filterProvidedGivenAttributes()).forEach(entry -> {
             val attributeName = entry.getKey();
             if (patterns.containsKey(attributeName)) {
@@ -86,13 +89,13 @@ public class RegisteredServiceMappedRegexAttributeFilter implements RegisteredSe
      * @param attributeName       the attribute name
      * @param attributeValue      the attribute value
      */
-    protected void handleUnmappedAttribute(final Map<String, Object> attributesToRelease, final String attributeName, final Object attributeValue) {
+    protected void handleUnmappedAttribute(final Map<String, List<Object>> attributesToRelease, final String attributeName, final Object attributeValue) {
         LOGGER.debug("Found attribute [{}] that is not defined in pattern definitions", attributeName);
         if (excludeUnmappedAttributes) {
             LOGGER.debug("Excluding attribute [{}] given unmatched attributes are to be excluded", attributeName);
         } else {
             LOGGER.debug("Added unmatched attribute [{}] with value(s) [{}]", attributeName, attributeValue);
-            attributesToRelease.put(attributeName, attributeValue);
+            attributesToRelease.put(attributeName, CollectionUtils.toCollection(attributeValue, ArrayList.class));
         }
     }
 
@@ -116,7 +119,7 @@ public class RegisteredServiceMappedRegexAttributeFilter implements RegisteredSe
      * @param attributeName       the attribute name
      * @param filteredValues      the filtered values
      */
-    protected void collectAttributeWithFilteredValues(final Map<String, Object> attributesToRelease, final String attributeName,
+    protected void collectAttributeWithFilteredValues(final Map<String, List<Object>> attributesToRelease, final String attributeName,
                                                       final List<Object> filteredValues) {
         attributesToRelease.put(attributeName, filteredValues);
     }
@@ -126,7 +129,7 @@ public class RegisteredServiceMappedRegexAttributeFilter implements RegisteredSe
      *
      * @return the predicate
      */
-    protected Predicate<Map.Entry<String, Object>> filterProvidedGivenAttributes() {
+    protected Predicate<Map.Entry<String, List<Object>>> filterProvidedGivenAttributes() {
         return entry -> {
             val attributeName = entry.getKey();
             val attributeValue = entry.getValue();

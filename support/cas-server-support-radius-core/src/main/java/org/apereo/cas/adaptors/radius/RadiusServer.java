@@ -35,7 +35,7 @@ public interface RadiusServer extends Serializable {
      * @return {@link CasRadiusResponse} on success, null otherwise.
      * @throws Exception On indeterminate case where authentication was prevented by a system (e.g. IO) error.
      */
-    default CasRadiusResponse authenticate(String username, String password) throws Exception {
+    default CasRadiusResponse authenticate(final String username, final String password) throws Exception {
         return authenticate(username, password, Optional.empty());
     }
 
@@ -48,6 +48,6 @@ public interface RadiusServer extends Serializable {
      * @return the radius response
      * @throws Exception the exception
      */
-    CasRadiusResponse authenticate(String username, String password, Optional<Serializable> state) throws Exception;
+    CasRadiusResponse authenticate(String username, String password, Optional state) throws Exception;
 
 }

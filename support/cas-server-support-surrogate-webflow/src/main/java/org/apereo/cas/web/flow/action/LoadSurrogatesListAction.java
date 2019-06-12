@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.webflow.action.AbstractAction;
+import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -31,22 +32,21 @@ public class LoadSurrogatesListAction extends AbstractAction {
     protected Event doExecute(final RequestContext requestContext) {
         if (WebUtils.hasRequestSurrogateAuthenticationRequest(requestContext)) {
             WebUtils.removeRequestSurrogateAuthenticationRequest(requestContext);
-            LOGGER.debug("Attempting to load surrogates...");
+            LOGGER.trace("Attempting to load surrogates...");
             if (loadSurrogates(requestContext)) {
-                return new Event(this, SurrogateWebflowConfigurer.VIEW_ID_SURROGATE_VIEW);
+                return new Event(this, SurrogateWebflowConfigurer.TRANSITION_ID_SURROGATE_VIEW);
             }
-            return error();
+            return new EventFactorySupport().event(this, SurrogateWebflowConfigurer.TRANSITION_ID_SKIP_SURROGATE);
         }
 
-        val c = WebUtils.getCredential(requestContext);
-        if (c instanceof SurrogateUsernamePasswordCredential) {
+        val currentCredential = WebUtils.getCredential(requestContext);
+        if (currentCredential instanceof SurrogateUsernamePasswordCredential) {
             val authenticationResultBuilder = WebUtils.getAuthenticationResultBuilder(requestContext);
-            val credential = (SurrogateUsernamePasswordCredential) c;
-            val result =
-                surrogatePrincipalBuilder.buildSurrogateAuthenticationResult(authenticationResultBuilder, c, credential.getSurrogateUsername());
-            if (result.isPresent()) {
-                WebUtils.putAuthenticationResultBuilder(result.get(), requestContext);
-            }
+            val credential = (SurrogateUsernamePasswordCredential) currentCredential;
+            val registeredService = WebUtils.getRegisteredService(requestContext);
+            val result = surrogatePrincipalBuilder.buildSurrogateAuthenticationResult(authenticationResultBuilder, currentCredential,
+                credential.getSurrogateUsername(), registeredService);
+            result.ifPresent(authenticationResultBuilder1 -> WebUtils.putAuthenticationResultBuilder(authenticationResultBuilder1, requestContext));
         }
         return success();
     }

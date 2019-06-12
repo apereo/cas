@@ -8,7 +8,6 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.support.WebUtils;
 
-import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
@@ -28,8 +27,9 @@ public class CasSimpleMultifactorAuthenticationHandler extends AbstractPreAndPos
     public CasSimpleMultifactorAuthenticationHandler(final String name,
                                                      final ServicesManager servicesManager,
                                                      final PrincipalFactory principalFactory,
-                                                     final TicketRegistry ticketRegistry) {
-        super(name, servicesManager, principalFactory, null);
+                                                     final TicketRegistry ticketRegistry,
+                                                     final Integer order) {
+        super(name, servicesManager, principalFactory, order);
         this.ticketRegistry = ticketRegistry;
     }
 
@@ -38,7 +38,6 @@ public class CasSimpleMultifactorAuthenticationHandler extends AbstractPreAndPos
         val tokenCredential = (CasSimpleMultifactorTokenCredential) credential;
         LOGGER.debug("Received token [{}]", tokenCredential.getId());
 
-        @NonNull
         val authentication = WebUtils.getInProgressAuthentication();
         val uid = authentication.getPrincipal().getId();
 

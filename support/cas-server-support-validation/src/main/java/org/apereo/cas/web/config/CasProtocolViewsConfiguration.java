@@ -39,7 +39,7 @@ public class CasProtocolViewsConfiguration {
     private ThymeleafProperties thymeleafProperties;
 
     /**
-     * The Cas protocol views.
+     * The CAS protocol views.
      */
     @Configuration("CasProtocolViews")
     public class CasProtocolViews {
@@ -122,6 +122,13 @@ public class CasProtocolViewsConfiguration {
         @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
         public CasProtocolView oauthDeviceCodeApprovedView() {
             return new CasProtocolView("protocol/oauth/deviceCodeApproved", applicationContext, springTemplateEngine, thymeleafProperties);
+        }
+
+        @Bean
+        @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+        public CasProtocolView oauthSessionStaleMismatchErrorView() {
+            return new CasProtocolView("protocol/oauth/sessionStaleMismatchError",
+                applicationContext, springTemplateEngine, thymeleafProperties);
         }
     }
 

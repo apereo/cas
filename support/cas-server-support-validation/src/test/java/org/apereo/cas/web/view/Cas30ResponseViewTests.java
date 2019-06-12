@@ -7,11 +7,8 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.DefaultAuthenticationAttributeReleasePolicy;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionStrategy;
-import org.apereo.cas.authentication.DefaultMultifactorAuthenticationContextValidator;
-import org.apereo.cas.authentication.DefaultMultifactorTriggerSelectionStrategy;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.authentication.support.DefaultCasProtocolAttributeEncoder;
-import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.web.view.AbstractCasView;
 import org.apereo.cas.util.CollectionUtils;
@@ -20,19 +17,21 @@ import org.apereo.cas.util.crypto.PrivateKeyFactoryBean;
 import org.apereo.cas.validation.DefaultServiceTicketValidationAuthorizersExecutionPlan;
 import org.apereo.cas.web.AbstractServiceValidateController;
 import org.apereo.cas.web.AbstractServiceValidateControllerTests;
-import org.apereo.cas.web.ServiceValidateController;
+import org.apereo.cas.web.ServiceValidateConfigurationContext;
+import org.apereo.cas.web.ServiceValidationViewFactory;
+import org.apereo.cas.web.v2.ServiceValidateController;
 import org.apereo.cas.web.view.attributes.DefaultCas30ProtocolAttributesRenderer;
 
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.StubPersonAttributeDao;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.io.ClassPathResource;
@@ -50,10 +49,10 @@ import javax.crypto.Cipher;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit tests for {@link Cas30ResponseView}.
@@ -68,42 +67,29 @@ import static org.junit.Assert.*;
 public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTests {
 
     @Autowired
+    @Qualifier("serviceValidationViewFactory")
+    protected ServiceValidationViewFactory serviceValidationViewFactory;
+
+    @Autowired
     @Qualifier("servicesManager")
     protected ServicesManager servicesManager;
 
-    @Autowired
-    @Qualifier("cas3ServiceJsonView")
-    private View cas3ServiceJsonView;
-
-    @Autowired
-    @Qualifier("cas3SuccessView")
-    private View cas3SuccessView;
-
-    @Autowired
-    @Qualifier("cas3ServiceFailureView")
-    private View cas3ServiceFailureView;
-
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
-
     @Override
     public AbstractServiceValidateController getServiceValidateControllerInstance() {
-        return new ServiceValidateController(
-            getValidationSpecification(),
-            getAuthenticationSystemSupport(),
-            getServicesManager(),
-            getCentralAuthenticationService(),
-            getProxyHandler(),
-            getArgumentExtractor(),
-            new DefaultMultifactorTriggerSelectionStrategy(new MultifactorAuthenticationProperties()),
-            new DefaultMultifactorAuthenticationContextValidator("", "OPEN", "test", applicationContext),
-            cas3ServiceJsonView,
-            cas3SuccessView,
-            cas3ServiceFailureView,
-            "authenticationContext",
-            new DefaultServiceTicketValidationAuthorizersExecutionPlan(),
-            true
-        );
+        val context = ServiceValidateConfigurationContext.builder()
+            .validationSpecifications(CollectionUtils.wrapSet(getValidationSpecification()))
+            .authenticationSystemSupport(getAuthenticationSystemSupport())
+            .servicesManager(getServicesManager())
+            .centralAuthenticationService(getCentralAuthenticationService())
+            .argumentExtractor(getArgumentExtractor())
+            .proxyHandler(getProxyHandler())
+            .requestedContextValidator((assertion, request) -> Pair.of(Boolean.TRUE, Optional.empty()))
+            .authnContextAttribute("authenticationContext")
+            .validationAuthorizers(new DefaultServiceTicketValidationAuthorizersExecutionPlan())
+            .renewEnabled(true)
+            .validationViewFactory(serviceValidationViewFactory)
+            .build();
+        return new ServiceValidateController(context);
     }
 
     protected Map<?, ?> renderView() throws Exception {
@@ -114,7 +100,7 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
         req.setAttribute(RequestContext.WEB_APPLICATION_CONTEXT_ATTRIBUTE, new GenericWebApplicationContext(req.getServletContext()));
 
         val encoder = new DefaultCasProtocolAttributeEncoder(this.servicesManager, CipherExecutor.noOpOfStringToString());
-        final View viewDelegated = new View() {
+        val viewDelegated = new View() {
             @Override
             public String getContentType() {
                 return MediaType.TEXT_HTML_VALUE;
@@ -166,7 +152,7 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
     @Test
     public void verifyProxyGrantingTicketAsAuthenticationAttributeCanDecrypt() throws Exception {
         val attributes = renderView();
-        LOGGER.warn("Attributes are [{}]", attributes.keySet());
+        LOGGER.trace("Attributes are [{}]", attributes.keySet());
         assertTrue(attributes.containsKey(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET));
 
         val encodedPgt = (String) attributes.get(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET);
@@ -175,7 +161,7 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
     }
 
     @SneakyThrows
-    private String decryptCredential(final String cred) {
+    private static String decryptCredential(final String cred) {
         val factory = new PrivateKeyFactoryBean();
         factory.setAlgorithm("RSA");
         factory.setLocation(new ClassPathResource("keys/RSA4096Private.p8"));
@@ -207,12 +193,12 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
     public static class AttributeRepositoryTestConfiguration {
         @Bean
         public IPersonAttributeDao attributeRepository() {
-            final Map<String, List<Object>> attrs =
+            val attrs =
                 CollectionUtils.wrap("uid", CollectionUtils.wrap("uid"),
                     "eduPersonAffiliation", CollectionUtils.wrap("developer"),
                     "groupMembership", CollectionUtils.wrap("adopters"),
                     "binaryAttribute", CollectionUtils.wrap("binaryAttributeValue".getBytes(StandardCharsets.UTF_8)));
-            return new StubPersonAttributeDao(attrs);
+            return new StubPersonAttributeDao((Map) attrs);
         }
     }
 }

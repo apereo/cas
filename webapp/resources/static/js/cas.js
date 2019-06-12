@@ -60,16 +60,15 @@ function preserveAnchorTagOnForm() {
     });
 }
 
-function areCookiesEnabled() {
-    if ($.cookie == undefined) {
-        return;
-    }
-
-    $.cookie('cookiesEnabled', 'true');
-    var value = $.cookie('cookiesEnabled');
-    $.removeCookie('cookiesEnabled');
-    return value != undefined;
-
+function preventFormResubmission() {
+    $('form').submit(function () {
+        $(':submit').attr('disabled', true);
+        var altText = $(':submit').attr('data-processing-text');
+        if (altText) {
+            $(':submit').attr('value', altText);
+        }
+        return true;
+    });
 }
 
 function resourceLoadedSuccessfully() {
@@ -83,13 +82,8 @@ function resourceLoadedSuccessfully() {
             $('input:visible:enabled:first').focus();
         }
 
-        if (areCookiesEnabled()) {
-            $('#cookiesDisabled').hide();
-        } else {
-            $('#cookiesDisabled').show();
-        }
-
         preserveAnchorTagOnForm();
+        preventFormResubmission();
 
         $('#capslock-on').hide();
         $('#fm1 input[name="username"],[name="password"]').trigger('input');

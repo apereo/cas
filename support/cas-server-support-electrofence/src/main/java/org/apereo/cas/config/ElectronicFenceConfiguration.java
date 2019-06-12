@@ -34,6 +34,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -69,27 +70,30 @@ public class ElectronicFenceConfiguration implements AuditTrailRecordResolutionP
     private ObjectProvider<CasEventRepository> casEventRepository;
 
     @Autowired
+    private ApplicationContext applicationContext;
+
+    @Autowired
     private CasConfigurationProperties casProperties;
 
     @ConditionalOnMissingBean(name = "authenticationRiskEmailNotifier")
     @Bean
     @RefreshScope
     public AuthenticationRiskNotifier authenticationRiskEmailNotifier() {
-        return new AuthenticationRiskEmailNotifier(communicationsManager.getIfAvailable());
+        return new AuthenticationRiskEmailNotifier(casProperties, communicationsManager.getIfAvailable());
     }
 
     @ConditionalOnMissingBean(name = "authenticationRiskSmsNotifier")
     @Bean
     @RefreshScope
     public AuthenticationRiskNotifier authenticationRiskSmsNotifier() {
-        return new AuthenticationRiskSmsNotifier(communicationsManager.getIfAvailable());
+        return new AuthenticationRiskSmsNotifier(casProperties, communicationsManager.getIfAvailable());
     }
 
     @ConditionalOnMissingBean(name = "blockAuthenticationContingencyPlan")
     @Bean
     @RefreshScope
     public AuthenticationRiskContingencyPlan blockAuthenticationContingencyPlan() {
-        val b = new BlockAuthenticationContingencyPlan();
+        val b = new BlockAuthenticationContingencyPlan(casProperties, applicationContext);
         configureContingencyPlan(b);
         return b;
     }
@@ -98,7 +102,7 @@ public class ElectronicFenceConfiguration implements AuditTrailRecordResolutionP
     @Bean
     @RefreshScope
     public AuthenticationRiskContingencyPlan multifactorAuthenticationContingencyPlan() {
-        val b = new MultifactorAuthenticationContingencyPlan();
+        val b = new MultifactorAuthenticationContingencyPlan(casProperties, applicationContext);
         configureContingencyPlan(b);
         return b;
     }
@@ -117,29 +121,29 @@ public class ElectronicFenceConfiguration implements AuditTrailRecordResolutionP
     @Bean
     @RefreshScope
     public AuthenticationRequestRiskCalculator ipAddressAuthenticationRequestRiskCalculator() {
-        return new IpAddressAuthenticationRequestRiskCalculator(casEventRepository.getIfAvailable());
+        return new IpAddressAuthenticationRequestRiskCalculator(casEventRepository.getIfAvailable(), casProperties);
     }
 
     @ConditionalOnMissingBean(name = "userAgentAuthenticationRequestRiskCalculator")
     @Bean
     @RefreshScope
     public AuthenticationRequestRiskCalculator userAgentAuthenticationRequestRiskCalculator() {
-        return new UserAgentAuthenticationRequestRiskCalculator(casEventRepository.getIfAvailable());
+        return new UserAgentAuthenticationRequestRiskCalculator(casEventRepository.getIfAvailable(), casProperties);
     }
 
     @ConditionalOnMissingBean(name = "dateTimeAuthenticationRequestRiskCalculator")
     @Bean
     @RefreshScope
     public AuthenticationRequestRiskCalculator dateTimeAuthenticationRequestRiskCalculator() {
-        return new DateTimeAuthenticationRequestRiskCalculator(casEventRepository.getIfAvailable(),
-            casProperties.getAuthn().getAdaptive().getRisk().getDateTime().getWindowInHours());
+        return new DateTimeAuthenticationRequestRiskCalculator(casEventRepository.getIfAvailable(), casProperties);
     }
 
     @ConditionalOnMissingBean(name = "geoLocationAuthenticationRequestRiskCalculator")
     @Bean
     @RefreshScope
     public AuthenticationRequestRiskCalculator geoLocationAuthenticationRequestRiskCalculator() {
-        return new GeoLocationAuthenticationRequestRiskCalculator(casEventRepository.getIfAvailable(), geoLocationService.getIfAvailable());
+        return new GeoLocationAuthenticationRequestRiskCalculator(casEventRepository.getIfAvailable(),
+            casProperties, geoLocationService.getIfAvailable());
     }
 
     @ConditionalOnMissingBean(name = "authenticationRiskEvaluator")

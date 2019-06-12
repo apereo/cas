@@ -1,11 +1,13 @@
 package org.apereo.cas.services;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.google.common.base.Predicates;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
@@ -68,6 +70,14 @@ public interface RegisteredServiceProperty extends Serializable {
          **/
         TOKEN_AS_SERVICE_TICKET_ENCRYPTION_KEY("jwtAsServiceTicketEncryptionKey", StringUtils.EMPTY),
         /**
+         * Produce a signed JWT as a response when generating access tokens using the provided signing key.
+         **/
+        ACCESS_TOKEN_AS_JWT_SIGNING_KEY("accessTokenAsJwtSigningKey", StringUtils.EMPTY),
+        /**
+         * Produce an encrypted JWT as a response when generating access tokens using the provided encryption key.
+         **/
+        ACCESS_TOKEN_AS_JWT_ENCRYPTION_KEY("accessTokenAsJwtEncryptionKey", StringUtils.EMPTY),
+        /**
          * Jwt signing secret defined for a given service.
          **/
         TOKEN_SECRET_SIGNING("jwtSigningSecret", StringUtils.EMPTY),
@@ -96,6 +106,10 @@ public interface RegisteredServiceProperty extends Serializable {
          **/
         SKIP_INTERRUPT_NOTIFICATIONS("skipInterrupt", "false"),
         /**
+         * Whether this service should skip qualification for required-service pattern checks.
+         **/
+        SKIP_REQUIRED_SERVICE_CHECK("skipRequiredServiceCheck", "false"),
+        /**
          * Whether CAS should inject cache control headers into the response when this service is in process.
          */
         HTTP_HEADER_ENABLE_CACHE_CONTROL("httpHeaderEnableCacheControl", "true"),
@@ -112,6 +126,10 @@ public interface RegisteredServiceProperty extends Serializable {
          */
         HTTP_HEADER_ENABLE_XFRAME_OPTIONS("httpHeaderEnableXFrameOptions", "true"),
         /**
+         * Whether CAS should override xframe options headers into the response when this service is in process.
+         */
+        HTTP_HEADER_XFRAME_OPTIONS("httpHeaderXFrameOptions", "DENY"),
+        /**
          * Whether CAS should inject content security policy headers into the response when this service is in process.
          */
         HTTP_HEADER_ENABLE_CONTENT_SECURITY_POLICY("httpHeaderEnableContentSecurityPolicy", "true"),
@@ -119,7 +137,6 @@ public interface RegisteredServiceProperty extends Serializable {
          * Whether CAS should inject xss protection headers into the response when this service is in process.
          */
         HTTP_HEADER_ENABLE_XSS_PROTECTION("httpHeaderEnableXSSProtection", "true");
-
 
         private final String propertyName;
         private final String defaultValue;
@@ -130,6 +147,7 @@ public interface RegisteredServiceProperty extends Serializable {
          * @param service the service
          * @return the property value
          */
+        @JsonIgnore
         public RegisteredServiceProperty getPropertyValue(final RegisteredService service) {
             if (isAssignedTo(service)) {
                 val property = service.getProperties().entrySet()
@@ -151,6 +169,7 @@ public interface RegisteredServiceProperty extends Serializable {
          * @param clazz   the clazz
          * @return the property value
          */
+        @JsonIgnore
         public <T> T getPropertyValue(final RegisteredService service, final Class<T> clazz) {
             if (isAssignedTo(service)) {
                 val prop = getPropertyValue(service);
@@ -162,11 +181,80 @@ public interface RegisteredServiceProperty extends Serializable {
         }
 
         /**
+         * Gets property integer value.
+         *
+         * @param service the service
+         * @return the property integer value
+         */
+        @JsonIgnore
+        public int getPropertyIntegerValue(final RegisteredService service) {
+            if (isAssignedTo(service)) {
+                val prop = getPropertyValue(service);
+                if (prop != null) {
+                    return Integer.parseInt(prop.getValue());
+                }
+            }
+            return Integer.MIN_VALUE;
+        }
+
+        /**
+         * Gets property long value.
+         *
+         * @param service the service
+         * @return the property long value
+         */
+        @JsonIgnore
+        public long getPropertyLongValue(final RegisteredService service) {
+            if (isAssignedTo(service)) {
+                val prop = getPropertyValue(service);
+                if (prop != null) {
+                    return Long.parseLong(prop.getValue());
+                }
+            }
+            return Long.MIN_VALUE;
+        }
+
+        /**
+         * Gets property double value.
+         *
+         * @param service the service
+         * @return the property double value
+         */
+        @JsonIgnore
+        public double getPropertyDoubleValue(final RegisteredService service) {
+            if (isAssignedTo(service)) {
+                val prop = getPropertyValue(service);
+                if (prop != null) {
+                    return Double.parseDouble(prop.getValue());
+                }
+            }
+            return Double.NaN;
+        }
+
+        /**
+         * Gets property boolean value.
+         *
+         * @param service the service
+         * @return the property boolean value
+         */
+        @JsonIgnore
+        public boolean getPropertyBooleanValue(final RegisteredService service) {
+            if (isAssignedTo(service)) {
+                val prop = getPropertyValue(service);
+                if (prop != null) {
+                    return BooleanUtils.toBoolean(prop.getValue());
+                }
+            }
+            return false;
+        }
+
+        /**
          * Check to see if the property is assigned to this service and is defined with a value.
          *
          * @param service registered service
          * @return true/false
          */
+        @JsonIgnore
         public boolean isAssignedTo(final RegisteredService service) {
             return isAssignedTo(service, Predicates.alwaysTrue());
         }
@@ -178,6 +266,7 @@ public interface RegisteredServiceProperty extends Serializable {
          * @param valueFilter the filter
          * @return true/false
          */
+        @JsonIgnore
         public boolean isAssignedTo(final RegisteredService service, final Predicate<String> valueFilter) {
             return service.getProperties().entrySet()
                 .stream()

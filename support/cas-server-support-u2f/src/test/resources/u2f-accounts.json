@@ -1,0 +1,10 @@
+{
+  "@class" : "java.util.HashMap",
+  "devices" : [ "java.util.ArrayList", [ {
+    "@class" : "org.apereo.cas.adaptors.u2f.storage.U2FDeviceRegistration",
+    "id" : 1543935429307,
+    "username" : "casuser",
+    "record" : "{\"keyHandle\":\"2_QYgDSPYcOgYBGBe8c9PVCunjigbD-3o5HcliXhu-Up_GKckYMxxVF6AgSPWubqfWy8WmJNDYQEJ1QKZe343Q\",\"publicKey\":\"BMj46cH-lHkRMovZhrusmm_fYL_sFausDPJIDZfx4pIiRqRNtasd4vU3yJyrTXXbdxyD36GZLx1WKLHGmApv7Nk\",\"counter\":-1,\"compromised\":false}",
+    "createdDate" : "2200-12-04"
+  } ] ]
+}

@@ -32,7 +32,7 @@ import org.springframework.core.Ordered;
 public class CasCoreTicketCatalogConfiguration extends BaseTicketCatalogConfigurer {
     @Override
     public final void configureTicketCatalog(final TicketCatalog plan) {
-        LOGGER.debug("Registering core CAS protocol ticket definitions...");
+        LOGGER.trace("Registering core CAS protocol ticket definitions...");
 
         buildAndRegisterProxyTicketDefinition(plan,
             buildTicketDefinition(plan, ProxyTicket.PROXY_TICKET_PREFIX,

@@ -30,7 +30,6 @@ import org.springframework.data.mongodb.MongoDbFactory;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
-import org.springframework.data.mongodb.core.convert.CustomConversions;
 import org.springframework.data.mongodb.core.convert.DefaultDbRefResolver;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.data.mongodb.core.convert.MongoCustomConversions;
@@ -81,15 +80,20 @@ public class MongoDbConnectionFactory {
         converters.add(new BaseConverters.CaffeinCacheConverter());
         converters.add(new BaseConverters.CaffeinCacheLoaderConverter());
         converters.add(new BaseConverters.CacheConverter());
+        converters.add(new BaseConverters.PatternToStringConverter());
+        converters.add(new BaseConverters.StringToPatternConverter());
         converters.add(new BaseConverters.CacheBuilderConverter());
+        converters.add(new BaseConverters.ObjectIdToLongConverter());
         converters.addAll(JodaTimeConverters.getConvertersToRegister());
         converters.addAll(Jsr310Converters.getConvertersToRegister());
         converters.add(new BaseConverters.BsonTimestampToStringConverter());
         converters.add(new BaseConverters.ZonedDateTimeToDateConverter());
         converters.add(new BaseConverters.DateToZonedDateTimeConverter());
         converters.add(new BaseConverters.BsonTimestampToDateConverter());
+        converters.add(new BaseConverters.ZonedDateTimeToStringConverter());
+        converters.add(new BaseConverters.StringToZonedDateTimeConverter());
 
-        this.customConversions = new CustomConversions(converters);
+        this.customConversions = new MongoCustomConversions(converters);
     }
 
     /**
@@ -122,12 +126,12 @@ public class MongoDbConnectionFactory {
      */
     public void createCollection(final MongoOperations mongoTemplate, final String collectionName, final boolean dropCollection) {
         if (dropCollection) {
-            LOGGER.debug("Dropping database collection: [{}]", collectionName);
+            LOGGER.trace("Dropping database collection: [{}]", collectionName);
             mongoTemplate.dropCollection(collectionName);
         }
 
         if (!mongoTemplate.collectionExists(collectionName)) {
-            LOGGER.debug("Creating database collection: [{}]", collectionName);
+            LOGGER.trace("Creating database collection: [{}]", collectionName);
             mongoTemplate.createCollection(collectionName);
         }
     }
@@ -136,7 +140,7 @@ public class MongoDbConnectionFactory {
         val mappingContext = new MongoMappingContext();
         mappingContext.setInitialEntitySet(getInitialEntitySet());
         mappingContext.setSimpleTypeHolder(this.customConversions.getSimpleTypeHolder());
-        mappingContext.setFieldNamingStrategy(this.fieldNamingStrategy());
+        mappingContext.setFieldNamingStrategy(MongoDbConnectionFactory.fieldNamingStrategy());
         return mappingContext;
     }
 
@@ -144,15 +148,15 @@ public class MongoDbConnectionFactory {
         val dbRefResolver = new DefaultDbRefResolver(mongoDbFactory);
         val converter = new MappingMongoConverter(dbRefResolver, this.mongoMappingContext());
         converter.setCustomConversions(customConversions);
+        converter.setMapKeyDotReplacement("_#_");
         converter.afterPropertiesSet();
         return converter;
     }
 
-    private MongoDbFactory mongoDbFactory(final MongoClient mongo, final BaseMongoDbProperties props) {
+    private static MongoDbFactory mongoDbFactory(final MongoClient mongo, final BaseMongoDbProperties props) {
         if (StringUtils.isNotBlank(props.getClientUri())) {
             val uri = buildMongoClientURI(props.getClientUri(), buildMongoDbClientOptions(props));
-            LOGGER.debug("Using database [{}] from the connection client URI with authentication database [{}]",
-                uri.getDatabase(), uri.getCredentials().getSource());
+            LOGGER.trace("Using database [{}] from the connection client URI", uri.getDatabase());
             return new SimpleMongoDbFactory(uri);
         }
         return new SimpleMongoDbFactory(mongo, props.getDatabaseName());
@@ -194,7 +198,7 @@ public class MongoDbConnectionFactory {
         return initialEntitySet;
     }
 
-    private FieldNamingStrategy fieldNamingStrategy() {
+    private static FieldNamingStrategy fieldNamingStrategy() {
         return PropertyNameFieldNamingStrategy.INSTANCE;
     }
 
@@ -227,7 +231,7 @@ public class MongoDbConnectionFactory {
      * @return a bean containing the MongoClientOptions object
      */
     @SneakyThrows
-    private MongoClientOptions buildMongoDbClientOptions(final BaseMongoDbProperties mongo) {
+    private static MongoClientOptions buildMongoDbClientOptions(final BaseMongoDbProperties mongo) {
 
         var clientOptions = (MongoClientOptions.Builder) null;
 
@@ -269,7 +273,7 @@ public class MongoDbConnectionFactory {
      * @param mongo the mongo
      * @return the mongo client
      */
-    public MongoClient buildMongoDbClient(final BaseMongoDbProperties mongo) {
+    public static MongoClient buildMongoDbClient(final BaseMongoDbProperties mongo) {
 
         if (StringUtils.isNotBlank(mongo.getClientUri())) {
             LOGGER.debug("Using MongoDb client URI [{}] to connect to MongoDb instance", mongo.getClientUri());
@@ -277,7 +281,7 @@ public class MongoDbConnectionFactory {
         }
 
         val serverAddresses = mongo.getHost().split(",");
-        if (serverAddresses == null || serverAddresses.length == 0) {
+        if (serverAddresses.length == 0) {
             throw new BeanCreationException("Unable to build a MongoDb client without any hosts/servers defined");
         }
 
@@ -300,22 +304,22 @@ public class MongoDbConnectionFactory {
         return new MongoClient(servers, CollectionUtils.wrap(credential), buildMongoDbClientOptions(mongo));
     }
 
-    private MongoClient buildMongoDbClient(final String clientUri, final MongoClientOptions clientOptions) {
+    private static MongoClient buildMongoDbClient(final String clientUri, final MongoClientOptions clientOptions) {
         val uri = buildMongoClientURI(clientUri, clientOptions);
         return new MongoClient(uri);
     }
 
-    private MongoCredential buildMongoCredential(final BaseMongoDbProperties mongo) {
+    private static MongoCredential buildMongoCredential(final BaseMongoDbProperties mongo) {
         val dbName = StringUtils.defaultIfBlank(mongo.getAuthenticationDatabaseName(), mongo.getDatabaseName());
         return MongoCredential.createCredential(mongo.getUserId(), dbName, mongo.getPassword().toCharArray());
     }
 
-    private MongoClientURI buildMongoClientURI(final String clientUri, final MongoClientOptions clientOptions) {
+    private static MongoClientURI buildMongoClientURI(final String clientUri, final MongoClientOptions clientOptions) {
         val builder = clientOptions != null ? MongoClientOptions.builder(clientOptions) : MongoClientOptions.builder();
         return new MongoClientURI(clientUri, builder);
     }
 
-    private MongoClientURI buildMongoClientURI(final String clientUri) {
+    private static MongoClientURI buildMongoClientURI(final String clientUri) {
         return buildMongoClientURI(clientUri, null);
     }
 

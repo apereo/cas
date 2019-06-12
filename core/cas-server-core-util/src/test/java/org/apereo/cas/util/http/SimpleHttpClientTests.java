@@ -2,17 +2,18 @@ package org.apereo.cas.util.http;
 
 import org.apereo.cas.util.CollectionUtils;
 
+import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 import java.security.cert.X509Certificate;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Test cases for {@link SimpleHttpClient}.
@@ -26,7 +27,8 @@ public class SimpleHttpClientTests {
         return new SimpleHttpClientFactoryBean().getObject();
     }
 
-    private static SSLConnectionSocketFactory getFriendlyToAllSSLSocketFactory() throws Exception {
+    @SneakyThrows
+    private static SSLConnectionSocketFactory getFriendlyToAllSSLSocketFactory() {
         val trm = new X509TrustManager() {
             @Override
             public X509Certificate[] getAcceptedIssuers() {
@@ -48,27 +50,28 @@ public class SimpleHttpClientTests {
 
     @Test
     public void verifyOkayUrl() {
-        assertTrue(this.getHttpClient().isValidEndPoint("http://www.google.com"));
+        assertTrue(getHttpClient().isValidEndPoint("http://www.google.com"));
     }
 
     @Test
     public void verifyBadUrl() {
-        assertFalse(this.getHttpClient().isValidEndPoint("https://www.abc1234.org"));
+        assertFalse(getHttpClient().isValidEndPoint("https://www.whateverabc1234.org"));
     }
 
     @Test
     public void verifyInvalidHttpsUrl() {
-        val client = this.getHttpClient();
+        val client = getHttpClient();
         assertFalse(client.isValidEndPoint("https://wrong.host.badssl.com/"));
     }
 
     @Test
-    public void verifyBypassedInvalidHttpsUrl() throws Exception {
+    public void verifyBypassedInvalidHttpsUrl() {
         val clientFactory = new SimpleHttpClientFactoryBean();
         clientFactory.setSslSocketFactory(getFriendlyToAllSSLSocketFactory());
         clientFactory.setHostnameVerifier(new NoopHostnameVerifier());
         clientFactory.setAcceptableCodes(CollectionUtils.wrapList(200, 403));
         val client = clientFactory.getObject();
+        assertNotNull(client);
         assertTrue(client.isValidEndPoint("https://wrong.host.badssl.com/"));
     }
 }

@@ -1,6 +1,5 @@
 package org.apereo.cas.support.saml.util;
 
-import org.apereo.cas.category.FileSystemCategory;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
@@ -8,9 +7,9 @@ import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.criterion.BindingCriterion;
@@ -19,7 +18,7 @@ import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.Issuer;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -28,10 +27,10 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Category(FileSystemCategory.class)
+@Tag("SAML")
 public class SamlIdPUtilsTests extends BaseSamlIdPConfigurationTests {
 
-    @Before
+    @BeforeEach
     public void before() {
         servicesManager.deleteAll();
     }
@@ -96,7 +95,7 @@ public class SamlIdPUtilsTests extends BaseSamlIdPConfigurationTests {
         when(authnRequest.getAssertionConsumerServiceURL()).thenReturn(acsUrl);
 
         val adapter = SamlRegisteredServiceServiceProviderMetadataFacade.get(samlRegisteredServiceCachingMetadataResolver, service, service.getServiceId());
-        val acs = SamlIdPUtils.determineAssertionConsumerService(authnRequest, adapter.get(), SAMLConstants.SAML2_POST_BINDING_URI);
+        val acs = SamlIdPUtils.determineEndpointForRequest(authnRequest, adapter.get(), SAMLConstants.SAML2_POST_BINDING_URI);
         assertNotNull(acs);
         assertEquals(acsUrl, acs.getLocation());
     }

@@ -50,6 +50,8 @@ public class SamlRegisteredServiceServiceProviderMetadataFacade {
 
     private final SPSSODescriptor ssoDescriptor;
     private final EntityDescriptor entityDescriptor;
+
+    @Getter
     private final MetadataResolver metadataResolver;
 
     /**
@@ -77,27 +79,27 @@ public class SamlRegisteredServiceServiceProviderMetadataFacade {
     public static Optional<SamlRegisteredServiceServiceProviderMetadataFacade> get(final SamlRegisteredServiceCachingMetadataResolver resolver,
                                                                                    final SamlRegisteredService registeredService,
                                                                                    final RequestAbstractType request) {
-        return get(resolver, registeredService, SamlIdPUtils.getIssuerFromSamlRequest(request));
+        return get(resolver, registeredService, SamlIdPUtils.getIssuerFromSamlObject(request));
     }
 
     @SneakyThrows
     private static Optional<SamlRegisteredServiceServiceProviderMetadataFacade> get(final SamlRegisteredServiceCachingMetadataResolver resolver,
                                                                                     final SamlRegisteredService registeredService,
-                                                                                    final String entityID, final CriteriaSet criterions) {
-        LOGGER.debug("Adapting SAML metadata for CAS service [{}] issued by [{}]", registeredService.getName(), entityID);
-
+                                                                                    final String entityID,
+                                                                                    final CriteriaSet criterions) {
+        LOGGER.trace("Adapting SAML metadata for CAS service [{}] issued by [{}]", registeredService.getName(), entityID);
         criterions.add(new EntityIdCriterion(entityID), true);
         LOGGER.debug("Locating metadata for entityID [{}] by attempting to run through the metadata chain...", entityID);
-        val chainingMetadataResolver = resolver.resolve(registeredService);
-        LOGGER.info("Resolved metadata chain for service [{}]. Filtering the chain by entity ID [{}]",
-            registeredService.getServiceId(), entityID);
+        val chainingMetadataResolver = resolver.resolve(registeredService, criterions);
+        LOGGER.info("Resolved metadata chain from [{}]. Filtering the chain by entity ID [{}]",
+            registeredService.getMetadataLocation(), entityID);
 
         val entityDescriptor = chainingMetadataResolver.resolveSingle(criterions);
         if (entityDescriptor == null) {
             LOGGER.warn("Cannot find entity [{}] in metadata provider Ensure the metadata is valid and has not expired.", entityID);
             return Optional.empty();
         }
-        LOGGER.debug("Located entity descriptor in metadata for [{}]", entityID);
+        LOGGER.trace("Located entity descriptor in metadata for [{}]", entityID);
 
         if (entityDescriptor.getValidUntil() != null && entityDescriptor.getValidUntil().isBeforeNow()) {
             LOGGER.warn("Entity descriptor in the metadata has expired at [{}]", entityDescriptor.getValidUntil());
@@ -219,7 +221,7 @@ public class SamlRegisteredServiceServiceProviderMetadataFacade {
      * @return the single logout service or null
      */
     public SingleLogoutService getSingleLogoutService(final String binding) {
-        return getSingleLogoutServices().stream().filter(acs -> acs.getBinding().equals(binding)).findFirst().orElse(null);
+        return getSingleLogoutServices().stream().filter(acs -> acs.getBinding().equalsIgnoreCase(binding)).findFirst().orElse(null);
     }
 
     /**
@@ -229,7 +231,7 @@ public class SamlRegisteredServiceServiceProviderMetadataFacade {
      * @return the assertion consumer service
      */
     public AssertionConsumerService getAssertionConsumerService(final String binding) {
-        return getAssertionConsumerServices().stream().filter(acs -> acs.getBinding().equals(binding)).findFirst().orElse(null);
+        return getAssertionConsumerServices().stream().filter(acs -> acs.getBinding().equalsIgnoreCase(binding)).findFirst().orElse(null);
     }
 
     /**
@@ -259,9 +261,6 @@ public class SamlRegisteredServiceServiceProviderMetadataFacade {
         return getAssertionConsumerService(SAMLConstants.SAML2_ARTIFACT_BINDING_URI);
     }
 
-    public MetadataResolver getMetadataResolver() {
-        return this.metadataResolver;
-    }
 
     /**
      * Contains assertion consumer services ?

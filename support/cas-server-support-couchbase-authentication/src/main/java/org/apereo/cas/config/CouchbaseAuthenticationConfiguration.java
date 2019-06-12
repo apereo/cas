@@ -14,6 +14,7 @@ import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlan;
 import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlanConfigurer;
 import org.apereo.cas.persondir.support.CouchbasePersonAttributeDao;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -48,8 +49,8 @@ public class CouchbaseAuthenticationConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Autowired
-    @Qualifier("personDirectoryPrincipalResolver")
-    private ObjectProvider<PrincipalResolver> personDirectoryPrincipalResolver;
+    @Qualifier("defaultPrincipalResolver")
+    private ObjectProvider<PrincipalResolver> defaultPrincipalResolver;
 
     @ConditionalOnMissingBean(name = "couchbasePrincipalFactory")
     @Bean
@@ -86,7 +87,7 @@ public class CouchbaseAuthenticationConfiguration {
         return plan -> {
             val couchbase = casProperties.getAuthn().getCouchbase();
             if (StringUtils.isNotBlank(couchbase.getPasswordAttribute()) && StringUtils.isNotBlank(couchbase.getUsernameAttribute())) {
-                plan.registerAuthenticationHandlerWithPrincipalResolver(couchbaseAuthenticationHandler(), personDirectoryPrincipalResolver.getIfAvailable());
+                plan.registerAuthenticationHandlerWithPrincipalResolver(couchbaseAuthenticationHandler(), defaultPrincipalResolver.getIfAvailable());
             } else {
                 LOGGER.debug("No couchbase username/password is defined, so couchbase authentication will not be registered in the execution plan");
             }
@@ -99,6 +100,7 @@ public class CouchbaseAuthenticationConfiguration {
         val couchbase = casProperties.getAuthn().getAttributeRepository().getCouchbase();
         val cb = new CouchbasePersonAttributeDao(couchbase, authenticationCouchbaseClientFactory());
         cb.setOrder(couchbase.getOrder());
+        FunctionUtils.doIfNotNull(couchbase.getId(), cb::setId);
         return cb;
     }
 

@@ -32,7 +32,7 @@ public class WsFederationAuthenticationConfiguration {
 
     @Autowired
     @Qualifier("shibboleth.OpenSAMLConfig")
-    private OpenSamlConfigBean configBean;
+    private ObjectProvider<OpenSamlConfigBean> configBean;
 
     @Autowired
     @Qualifier("servicesManager")
@@ -56,7 +56,7 @@ public class WsFederationAuthenticationConfiguration {
     @Bean
     @RefreshScope
     public WsFederationHelper wsFederationHelper() {
-        return new WsFederationHelper(this.configBean, servicesManager.getIfAvailable());
+        return new WsFederationHelper(configBean.getIfAvailable(), servicesManager.getIfAvailable());
     }
 
     @Bean

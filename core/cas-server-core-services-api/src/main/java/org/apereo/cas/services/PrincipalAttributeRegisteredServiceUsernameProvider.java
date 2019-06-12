@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.util.CollectionUtils;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -12,7 +13,9 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -30,6 +33,7 @@ import java.util.TreeMap;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class PrincipalAttributeRegisteredServiceUsernameProvider extends BaseRegisteredServiceUsernameAttributeProvider {
 
     private static final long serialVersionUID = -3546719400741715137L;
@@ -44,14 +48,20 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider extends BaseReg
     @Override
     public String resolveUsernameInternal(final Principal principal, final Service service, final RegisteredService registeredService) {
         var principalId = principal.getId();
-        val originalPrincipalAttributes = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+        val originalPrincipalAttributes = new TreeMap<String, Object>(String.CASE_INSENSITIVE_ORDER);
         originalPrincipalAttributes.putAll(principal.getAttributes());
         LOGGER.debug("Original principal attributes available for selection of username attribute [{}] are [{}].", this.usernameAttribute, originalPrincipalAttributes);
-        val releasePolicyAttributes = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+        val releasePolicyAttributes = new TreeMap<String, Object>(String.CASE_INSENSITIVE_ORDER);
         releasePolicyAttributes.putAll(getPrincipalAttributesFromReleasePolicy(principal, service, registeredService));
-        LOGGER.debug("Attributes resolved by the release policy available for selection of username attribute [{}] are [{}].", this.usernameAttribute, releasePolicyAttributes);
-        if (releasePolicyAttributes.containsKey(this.usernameAttribute)) {
-            LOGGER.debug("Attribute release policy for registered service [{}] contains an attribute for [{}]", registeredService.getServiceId(), this.usernameAttribute);
+        LOGGER.debug("Attributes resolved by the release policy available for selection of username attribute [{}] are [{}].",
+            this.usernameAttribute, releasePolicyAttributes);
+
+        if (StringUtils.isBlank(this.usernameAttribute)) {
+            LOGGER.warn("No username attribute is defined for service [{}]. CAS will fall back onto using the default principal id. "
+                + "This is likely a mistake in the configuration of the registered service definition.", registeredService.getName());
+        } else if (releasePolicyAttributes.containsKey(this.usernameAttribute)) {
+            LOGGER.debug("Attribute release policy for registered service [{}] contains an attribute for [{}]",
+                registeredService.getServiceId(), this.usernameAttribute);
             val value = releasePolicyAttributes.get(this.usernameAttribute);
             principalId = CollectionUtils.wrap(value).get(0).toString();
         } else if (originalPrincipalAttributes.containsKey(this.usernameAttribute)) {
@@ -83,7 +93,7 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider extends BaseReg
      * @param registeredService the registered service
      * @return the principal attributes
      */
-    protected Map<String, Object> getPrincipalAttributesFromReleasePolicy(final Principal p, final Service service, final RegisteredService registeredService) {
+    protected Map<String, List<Object>> getPrincipalAttributesFromReleasePolicy(final Principal p, final Service service, final RegisteredService registeredService) {
         if (registeredService != null && registeredService.getAccessStrategy().isServiceAccessAllowed()) {
             LOGGER.debug("Located service [{}] in the registry. Attempting to resolve attributes for [{}]", registeredService, p.getId());
             if (registeredService.getAttributeReleasePolicy() == null) {

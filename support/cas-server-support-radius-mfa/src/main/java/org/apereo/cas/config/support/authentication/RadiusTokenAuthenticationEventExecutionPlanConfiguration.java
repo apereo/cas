@@ -7,16 +7,17 @@ import org.apereo.cas.adaptors.radius.authentication.RadiusMultifactorAuthentica
 import org.apereo.cas.adaptors.radius.authentication.RadiusTokenAuthenticationHandler;
 import org.apereo.cas.adaptors.radius.authentication.RadiusTokenCredential;
 import org.apereo.cas.adaptors.radius.server.NonBlockingRadiusServer;
+import org.apereo.cas.adaptors.radius.server.RadiusServerConfigurationContext;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
-import org.apereo.cas.authentication.MultifactorAuthenticationProviderBypass;
-import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
+import org.apereo.cas.authentication.MultifactorAuthenticationFailureModeEvaluator;
+import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
+import org.apereo.cas.authentication.bypass.MultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.authentication.handler.ByCredentialTypeAuthenticationHandlerResolver;
 import org.apereo.cas.authentication.metadata.AuthenticationContextAttributeMetaDataPopulator;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.ServicesManager;
 
 import lombok.val;
@@ -50,21 +51,25 @@ public class RadiusTokenAuthenticationEventExecutionPlanConfiguration {
     @Qualifier("servicesManager")
     private ObjectProvider<ServicesManager> servicesManager;
 
-    @RefreshScope
-    @Bean
-    public MultifactorAuthenticationProvider radiusAuthenticationProvider() {
-        val p = new RadiusMultifactorAuthenticationProvider(radiusTokenServers());
-        p.setBypassEvaluator(radiusBypassEvaluator());
-        p.setGlobalFailureMode(casProperties.getAuthn().getMfa().getGlobalFailureMode());
-        p.setOrder(casProperties.getAuthn().getMfa().getRadius().getRank());
-        p.setId(casProperties.getAuthn().getMfa().getRadius().getId());
-        return p;
-    }
+    @Autowired
+    @Qualifier("radiusBypassEvaluator")
+    private ObjectProvider<MultifactorAuthenticationProviderBypassEvaluator> radiusBypassEvaluator;
 
-    @Bean
+    @Autowired
+    @Qualifier("failureModeEvaluator")
+    private ObjectProvider<MultifactorAuthenticationFailureModeEvaluator> failureModeEvaluator;
+
     @RefreshScope
-    public MultifactorAuthenticationProviderBypass radiusBypassEvaluator() {
-        return MultifactorAuthenticationUtils.newMultifactorAuthenticationProviderBypass(casProperties.getAuthn().getMfa().getRadius().getBypass());
+    @Bean
+    public MultifactorAuthenticationProvider radiusMultifactorAuthenticationProvider() {
+        val radius = casProperties.getAuthn().getMfa().getRadius();
+        val p = new RadiusMultifactorAuthenticationProvider(radiusTokenServers());
+        p.setBypassEvaluator(radiusBypassEvaluator.getIfAvailable());
+        p.setFailureMode(radius.getFailureMode());
+        p.setFailureModeEvaluator(failureModeEvaluator.getIfAvailable());
+        p.setOrder(radius.getRank());
+        p.setId(radius.getId());
+        return p;
     }
 
     @RefreshScope
@@ -79,11 +84,19 @@ public class RadiusTokenAuthenticationEventExecutionPlanConfiguration {
             client.getInetAddress(), client.getSharedSecret());
 
         val protocol = RadiusProtocol.valueOf(server.getProtocol());
-        val impl = new NonBlockingRadiusServer(protocol, factory, server.getRetries(),
-            server.getNasIpAddress(), server.getNasIpv6Address(),
-            server.getNasPort(), server.getNasPortId(),
-            server.getNasIdentifier(), server.getNasRealPort(), server.getNasPortType());
-
+        val context = RadiusServerConfigurationContext.builder()
+            .protocol(protocol)
+            .radiusClientFactory(factory)
+            .retries(server.getRetries())
+            .nasIpAddress(server.getNasIpAddress())
+            .nasIpv6Address(server.getNasIpv6Address())
+            .nasPort(server.getNasPort())
+            .nasPortId(server.getNasPortId())
+            .nasIdentifier(server.getNasIdentifier())
+            .nasRealPort(server.getNasRealPort())
+            .nasPortType(server.getNasPortType())
+            .build();
+        val impl = new NonBlockingRadiusServer(context);
         list.add(impl);
         return list;
     }
@@ -100,14 +113,19 @@ public class RadiusTokenAuthenticationEventExecutionPlanConfiguration {
         val radius = casProperties.getAuthn().getMfa().getRadius();
         return new RadiusTokenAuthenticationHandler(radius.getName(), servicesManager.getIfAvailable(),
             radiusTokenPrincipalFactory(), radiusTokenServers(),
-            radius.isFailoverOnException(), radius.isFailoverOnAuthenticationFailure());
+            radius.isFailoverOnException(),
+            radius.isFailoverOnAuthenticationFailure(),
+            radius.getOrder());
     }
 
     @Bean
     @RefreshScope
     public AuthenticationMetaDataPopulator radiusAuthenticationMetaDataPopulator() {
         val attribute = casProperties.getAuthn().getMfa().getAuthenticationContextAttribute();
-        return new AuthenticationContextAttributeMetaDataPopulator(attribute, radiusTokenAuthenticationHandler(), radiusAuthenticationProvider());
+        return new AuthenticationContextAttributeMetaDataPopulator(attribute,
+            radiusTokenAuthenticationHandler(),
+            radiusMultifactorAuthenticationProvider().getId()
+        );
     }
 
     @ConditionalOnMissingBean(name = "radiusTokenAuthenticationEventExecutionPlanConfigurer")
@@ -115,7 +133,7 @@ public class RadiusTokenAuthenticationEventExecutionPlanConfiguration {
     public AuthenticationEventExecutionPlanConfigurer radiusTokenAuthenticationEventExecutionPlanConfigurer() {
         return plan -> {
             plan.registerAuthenticationHandler(radiusTokenAuthenticationHandler());
-            plan.registerMetadataPopulator(radiusAuthenticationMetaDataPopulator());
+            plan.registerAuthenticationMetadataPopulator(radiusAuthenticationMetaDataPopulator());
             plan.registerAuthenticationHandlerResolver(new ByCredentialTypeAuthenticationHandlerResolver(RadiusTokenCredential.class));
         };
     }

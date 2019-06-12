@@ -1,7 +1,8 @@
 package org.apereo.cas.support.rest;
 
+import org.junit.platform.runner.JUnitPlatform;
+import org.junit.platform.suite.api.SelectClasses;
 import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
 
 /**
  * This is {@link AllTestsSuite}.
@@ -9,12 +10,12 @@ import org.junit.runners.Suite;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
+@SelectClasses({
     TicketGrantingTicketResourceTests.class,
     ServiceTicketResourceTests.class,
     TicketStatusResourceTests.class,
     UserAuthenticationResourceTests.class
 })
+@RunWith(JUnitPlatform.class)
 public class AllTestsSuite {
 }

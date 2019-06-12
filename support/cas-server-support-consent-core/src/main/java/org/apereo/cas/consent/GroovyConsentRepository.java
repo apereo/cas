@@ -1,9 +1,10 @@
 package org.apereo.cas.consent;
 
-import org.apereo.cas.util.ScriptingUtils;
+import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.core.io.Resource;
 
 import java.util.Set;
@@ -15,12 +16,13 @@ import java.util.Set;
  * @since 5.2.0
  */
 @Slf4j
-public class GroovyConsentRepository extends BaseConsentRepository {
+public class GroovyConsentRepository extends BaseConsentRepository implements DisposableBean {
     private static final long serialVersionUID = 3482998768083902246L;
-    private final transient Resource groovyResource;
+
+    private final transient WatchableGroovyScriptResource watchableScript;
 
     public GroovyConsentRepository(final Resource groovyResource) {
-        this.groovyResource = groovyResource;
+        this.watchableScript = new WatchableGroovyScriptResource(groovyResource);
         setConsentDecisions(readDecisionsFromGroovyResource());
     }
 
@@ -34,14 +36,19 @@ public class GroovyConsentRepository extends BaseConsentRepository {
     @Override
     public boolean deleteConsentDecision(final long decisionId, final String principal) {
         super.deleteConsentDecision(decisionId, principal);
-        return ScriptingUtils.executeGroovyScript(groovyResource, "delete", Boolean.class, decisionId, principal, LOGGER);
+        return watchableScript.execute("delete", Boolean.class, decisionId, principal, LOGGER);
     }
 
     private void writeAccountToGroovyResource(final ConsentDecision decision) {
-        ScriptingUtils.executeGroovyScript(groovyResource, "write", Boolean.class, decision, LOGGER);
+        watchableScript.execute("write", Boolean.class, decision, LOGGER);
     }
 
     private Set<ConsentDecision> readDecisionsFromGroovyResource() {
-        return ScriptingUtils.executeGroovyScript(groovyResource, "read", Set.class, getConsentDecisions(), LOGGER);
+        return watchableScript.execute("read", Set.class, getConsentDecisions(), LOGGER);
+    }
+
+    @Override
+    public void destroy() {
+        this.watchableScript.close();
     }
 }

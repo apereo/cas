@@ -3,6 +3,9 @@ package org.apereo.cas.support.events.authentication;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.support.events.AbstractCasEvent;
 
+import lombok.Getter;
+import lombok.ToString;
+
 
 /**
  * This is {@link CasAuthenticationTransactionStartedEvent}.
@@ -10,6 +13,8 @@ import org.apereo.cas.support.events.AbstractCasEvent;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@ToString(callSuper = true)
+@Getter
 public class CasAuthenticationTransactionStartedEvent extends AbstractCasEvent {
     private static final long serialVersionUID = -1862937393590213811L;
 
@@ -24,9 +29,5 @@ public class CasAuthenticationTransactionStartedEvent extends AbstractCasEvent {
     public CasAuthenticationTransactionStartedEvent(final Object source, final Credential c) {
         super(source);
         this.credential = c;
-    }
-
-    public Credential getCredential() {
-        return credential;
     }
 }

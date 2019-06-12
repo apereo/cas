@@ -28,6 +28,7 @@ import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguratio
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.rest.factory.ServiceTicketResourceEntityResponseFactory;
 import org.apereo.cas.rest.factory.TicketGrantingTicketResourceEntityResponseFactory;
+import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.CollectionUtils;
 
@@ -35,8 +36,6 @@ import org.jasig.cas.client.authentication.AttributePrincipalImpl;
 import org.jasig.cas.client.validation.AbstractUrlBasedTicketValidator;
 import org.jasig.cas.client.validation.Assertion;
 import org.jasig.cas.client.validation.AssertionImpl;
-import org.junit.ClassRule;
-import org.junit.Rule;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -44,8 +43,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import java.net.URL;
 import java.util.List;
@@ -87,12 +84,6 @@ import java.util.List;
     CasCoreTicketsConfiguration.class
 })
 public abstract class BaseTicketResourceEntityResponseFactoryTests {
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
-
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
-
     @Autowired
     @Qualifier("ticketGrantingTicketResourceEntityResponseFactory")
     protected TicketGrantingTicketResourceEntityResponseFactory ticketGrantingTicketResourceEntityResponseFactory;
@@ -118,20 +109,20 @@ public abstract class BaseTicketResourceEntityResponseFactoryTests {
 
         @Autowired
         @Qualifier("inMemoryRegisteredServices")
-        private List inMemoryRegisteredServices;
+        private List<RegisteredService> inMemoryRegisteredServices;
 
         public void init() {
             inMemoryRegisteredServices.add(RegisteredServiceTestUtils.getRegisteredService("https://cas.example.org.+"));
         }
 
         @Override
-        public void afterPropertiesSet() throws Exception {
+        public void afterPropertiesSet() {
             init();
         }
 
         @Bean
         public AbstractUrlBasedTicketValidator casClientTicketValidator() {
-            final AbstractUrlBasedTicketValidator validator = new AbstractUrlBasedTicketValidator("https://cas.example.org") {
+            return new AbstractUrlBasedTicketValidator("https://cas.example.org") {
                 @Override
                 protected String getUrlSuffix() {
                     return "/cas";
@@ -147,7 +138,6 @@ public abstract class BaseTicketResourceEntityResponseFactoryTests {
                     return "theresponse";
                 }
             };
-            return validator;
         }
     }
 }

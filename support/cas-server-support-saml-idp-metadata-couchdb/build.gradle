@@ -2,6 +2,13 @@ description = "Apereo CAS SAML Identity Provider Metadata Resolution Via CouchDb
 dependencies {
     implementation project(":core:cas-server-core-services")
     implementation project(":core:cas-server-core-web-api")
+    implementation project(":core:cas-server-core-authentication-api")
+    implementation project(":core:cas-server-core-webflow-api")
+    implementation project(":core:cas-server-core-tickets-api")
+    implementation project(":core:cas-server-core-configuration-api")
+    implementation project(":core:cas-server-core-cookie-api")
+    implementation project(":core:cas-server-core-util-api")
+    implementation project(":core:cas-server-core-services-api")
     implementation project(":support:cas-server-support-saml-core")
     implementation project(":support:cas-server-support-saml-mdui-core")
     implementation project(":support:cas-server-support-saml-idp-core")
@@ -9,18 +16,15 @@ dependencies {
     implementation project(":support:cas-server-support-saml-idp-ticket")
     implementation project(":support:cas-server-support-saml-idp")
     implementation project(":support:cas-server-support-saml-core-api")
-    implementation project(":core:cas-server-core-authentication-api")
-    implementation project(":core:cas-server-core-webflow-api")
-    implementation project(":core:cas-server-core-tickets-api")
-    implementation project(":core:cas-server-core-configuration-api")
-    implementation project(":core:cas-server-core-cookie-api")
-    implementation project(":core:cas-server-core-util-api")
     implementation project(":support:cas-server-support-couchdb-core")
 
     implementation libraries.ektorp
     implementation libraries.shibidp
-    implementation libraries.pac4j
-    implementation libraries.caffein
+    implementation libraries.shibidpjavasupport
+    implementation libraries.pac4jcore
+    implementation libraries.pac4jjwt
+    implementation libraries.nimbus
+    
 
     runtimeOnly libraries.groovy
 

@@ -4,8 +4,9 @@ import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
-import org.apereo.cas.authentication.MultifactorAuthenticationProviderBypass;
-import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
+import org.apereo.cas.authentication.MultifactorAuthenticationFailureModeEvaluator;
+import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
+import org.apereo.cas.authentication.bypass.MultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.authentication.handler.ByCredentialTypeAuthenticationHandlerResolver;
 import org.apereo.cas.authentication.metadata.AuthenticationContextAttributeMetaDataPopulator;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -24,7 +25,6 @@ import org.apereo.cas.otp.repository.token.OneTimeTokenRepository;
 import org.apereo.cas.otp.repository.token.OneTimeTokenRepositoryCleaner;
 import org.apereo.cas.otp.web.flow.OneTimeTokenAccountCheckRegistrationAction;
 import org.apereo.cas.otp.web.flow.OneTimeTokenAccountSaveRegistrationAction;
-import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.ServicesManager;
 
 import com.warrenstrange.googleauth.GoogleAuthenticator;
@@ -68,6 +68,10 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
     @Qualifier("googleAuthenticatorAccountRegistry")
     private ObjectProvider<OneTimeTokenCredentialRepository> googleAuthenticatorAccountRegistry;
 
+    @Autowired
+    @Qualifier("googleAuthenticatorBypassEvaluator")
+    private ObjectProvider<MultifactorAuthenticationProviderBypassEvaluator> googleAuthenticatorBypassEvaluator;
+
     @Lazy
     @Autowired
     @Qualifier("oneTimeTokenAuthenticatorTokenRepository")
@@ -79,6 +83,10 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
     @Autowired
     @Qualifier("servicesManager")
     private ObjectProvider<ServicesManager> servicesManager;
+
+    @Autowired
+    @Qualifier("failureModeEvaluator")
+    private ObjectProvider<MultifactorAuthenticationFailureModeEvaluator> failureModeEvaluator;
 
     @Bean
     public IGoogleAuthenticator googleAuthenticatorInstance() {
@@ -96,27 +104,24 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @RefreshScope
     public AuthenticationHandler googleAuthenticatorAuthenticationHandler() {
-        return new GoogleAuthenticatorAuthenticationHandler(casProperties.getAuthn().getMfa().getGauth().getName(),
+        val gauth = casProperties.getAuthn().getMfa().getGauth();
+        return new GoogleAuthenticatorAuthenticationHandler(gauth.getName(),
             servicesManager.getIfAvailable(),
             googlePrincipalFactory(),
             googleAuthenticatorInstance(),
             oneTimeTokenAuthenticatorTokenRepository.getIfAvailable(),
-            googleAuthenticatorAccountRegistry.getIfAvailable());
+            googleAuthenticatorAccountRegistry.getIfAvailable(),
+            gauth.getOrder());
     }
 
     @Bean
     @RefreshScope
-    public MultifactorAuthenticationProviderBypass googleBypassEvaluator() {
-        return MultifactorAuthenticationUtils.newMultifactorAuthenticationProviderBypass(casProperties.getAuthn().getMfa().getGauth().getBypass());
-    }
-
-    @Bean
-    @RefreshScope
-    public MultifactorAuthenticationProvider googleAuthenticatorAuthenticationProvider() {
+    public MultifactorAuthenticationProvider googleAuthenticatorMultifactorAuthenticationProvider() {
         val gauth = casProperties.getAuthn().getMfa().getGauth();
         val p = new GoogleAuthenticatorMultifactorAuthenticationProvider();
-        p.setBypassEvaluator(googleBypassEvaluator());
-        p.setGlobalFailureMode(casProperties.getAuthn().getMfa().getGlobalFailureMode());
+        p.setBypassEvaluator(googleAuthenticatorBypassEvaluator.getIfAvailable());
+        p.setFailureMode(gauth.getFailureMode());
+        p.setFailureModeEvaluator(failureModeEvaluator.getIfAvailable());
         p.setOrder(gauth.getRank());
         p.setId(gauth.getId());
         return p;
@@ -128,7 +133,7 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
         return new AuthenticationContextAttributeMetaDataPopulator(
             casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
             googleAuthenticatorAuthenticationHandler(),
-            googleAuthenticatorAuthenticationProvider()
+            googleAuthenticatorMultifactorAuthenticationProvider().getId()
         );
     }
 
@@ -168,7 +173,7 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @ConditionalOnEnabledEndpoint
     public GoogleAuthenticatorTokenCredentialRepositoryEndpoint googleAuthenticatorTokenCredentialRepositoryEndpoint() {
-        return new GoogleAuthenticatorTokenCredentialRepositoryEndpoint(googleAuthenticatorAccountRegistry());
+        return new GoogleAuthenticatorTokenCredentialRepositoryEndpoint(casProperties, googleAuthenticatorAccountRegistry());
     }
 
     @ConditionalOnMissingBean(name = "googleAuthenticatorAccountCipherExecutor")
@@ -181,7 +186,8 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
                 crypto.getEncryption().getKey(),
                 crypto.getSigning().getKey(),
                 crypto.getAlg(),
-                "Google Authenticator Token Account");
+                crypto.getSigning().getKeySize(),
+                crypto.getEncryption().getKeySize());
         }
         LOGGER.warn("Google Authenticator one-time token account encryption/signing is turned off. "
             + "Consider turning on encryption, signing to securely and safely store one-time token accounts.");
@@ -206,7 +212,7 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
         return plan -> {
             if (StringUtils.isNotBlank(casProperties.getAuthn().getMfa().getGauth().getIssuer())) {
                 plan.registerAuthenticationHandler(googleAuthenticatorAuthenticationHandler());
-                plan.registerMetadataPopulator(googleAuthenticatorAuthenticationMetaDataPopulator());
+                plan.registerAuthenticationMetadataPopulator(googleAuthenticatorAuthenticationMetaDataPopulator());
                 plan.registerAuthenticationHandlerResolver(new ByCredentialTypeAuthenticationHandlerResolver(GoogleAuthenticatorTokenCredential.class));
             }
         };

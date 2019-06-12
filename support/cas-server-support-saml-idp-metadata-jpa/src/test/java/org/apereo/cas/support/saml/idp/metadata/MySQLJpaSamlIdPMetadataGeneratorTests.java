@@ -1,10 +1,9 @@
 package org.apereo.cas.support.saml.idp.metadata;
 
-import org.apereo.cas.category.MySQLCategory;
-import org.apereo.cas.util.junit.ConditionalIgnore;
-import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
+import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
+import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Tag;
 import org.springframework.test.context.TestPropertySource;
 
 /**
@@ -13,8 +12,15 @@ import org.springframework.test.context.TestPropertySource;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@TestPropertySource(locations = "classpath:samlidp-mysql.properties")
-@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class, port = 3306)
-@Category(MySQLCategory.class)
+@TestPropertySource(properties = {
+    "cas.authn.samlIdp.metadata.jpa.user=root",
+    "cas.authn.samlIdp.metadata.jpa.password=password",
+    "cas.authn.samlIdp.metadata.jpa.driverClass=com.mysql.cj.jdbc.Driver",
+    "cas.authn.samlIdp.metadata.jpa.url=jdbc:mysql://localhost:3306/mysql?allowPublicKeyRetrieval=true&characterEncoding=UTF-8&useSSL=FALSE",
+    "cas.authn.samlIdp.metadata.jpa.dialect=org.hibernate.dialect.MySQL8Dialect"
+})
+@EnabledIfPortOpen(port = 3305)
+@EnabledIfContinuousIntegration
+@Tag("MySQL")
 public class MySQLJpaSamlIdPMetadataGeneratorTests extends JpaSamlIdPMetadataGeneratorTests {
 }

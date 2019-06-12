@@ -66,8 +66,8 @@ public class LdapAuthenticationConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Autowired
-    @Qualifier("personDirectoryPrincipalResolver")
-    private ObjectProvider<PrincipalResolver> personDirectoryPrincipalResolver;
+    @Qualifier("defaultPrincipalResolver")
+    private ObjectProvider<PrincipalResolver> defaultPrincipalResolver;
 
     @Autowired
     @Qualifier("servicesManager")
@@ -101,8 +101,7 @@ public class LdapAuthenticationConfiguration {
             .stream()
             .filter(ldapInstanceConfigurationPredicate())
             .forEach(l -> {
-                final Multimap<String, Object> multiMapAttributes =
-                    CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(l.getPrincipalAttributeList());
+                val multiMapAttributes = CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(l.getPrincipalAttributeList());
                 LOGGER.debug("Created and mapped principal attributes [{}] for [{}]...", multiMapAttributes, l.getLdapUrl());
 
                 LOGGER.debug("Creating LDAP authenticator for [{}] and baseDn [{}]", l.getLdapUrl(), l.getBaseDn());
@@ -115,7 +114,8 @@ public class LdapAuthenticationConfiguration {
 
                 LOGGER.debug("Creating LDAP authentication handler for [{}]", l.getLdapUrl());
                 val handler = new LdapAuthenticationHandler(l.getName(),
-                    servicesManager.getIfAvailable(), ldapPrincipalFactory(), l.getOrder(), authenticator, strategy);
+                    servicesManager.getIfAvailable(), ldapPrincipalFactory(),
+                    l.getOrder(), authenticator, strategy);
                 handler.setCollectDnAttribute(l.isCollectDnAttribute());
 
                 val additionalAttributes = l.getAdditionalAttributes();
@@ -161,7 +161,7 @@ public class LdapAuthenticationConfiguration {
         return handlers;
     }
 
-    private AuthenticationPasswordPolicyHandlingStrategy<AuthenticationResponse, PasswordPolicyConfiguration>
+    private static AuthenticationPasswordPolicyHandlingStrategy<AuthenticationResponse, PasswordPolicyConfiguration>
         createLdapPasswordPolicyHandlingStrategy(final LdapAuthenticationProperties l) {
         if (l.getPasswordPolicy().getStrategy() == LdapPasswordPolicyProperties.PasswordPolicyHandlingOptions.REJECT_RESULT_CODE) {
             LOGGER.debug("Created LDAP password policy handling strategy based on blacklisted authentication result codes");
@@ -178,11 +178,11 @@ public class LdapAuthenticationConfiguration {
         return new DefaultPasswordPolicyHandlingStrategy();
     }
 
-    private PasswordPolicyConfiguration createLdapPasswordPolicyConfiguration(final LdapPasswordPolicyProperties passwordPolicy,
-                                                                              final Authenticator authenticator,
-                                                                              final Multimap<String, Object> attributes) {
+    private static PasswordPolicyConfiguration createLdapPasswordPolicyConfiguration(final LdapPasswordPolicyProperties passwordPolicy,
+                                                                                     final Authenticator authenticator,
+                                                                                     final Multimap<String, Object> attributes) {
         val cfg = new PasswordPolicyConfiguration(passwordPolicy);
-        val handlers = new HashSet<>();
+        val handlers = new HashSet<Object>();
 
         val customPolicyClass = passwordPolicy.getCustomPolicyClass();
         if (StringUtils.isNotBlank(customPolicyClass)) {
@@ -223,7 +223,7 @@ public class LdapAuthenticationConfiguration {
                 handlers.add(new PasswordExpirationAuthenticationResponseHandler());
                 break;
         }
-        authenticator.setAuthenticationResponseHandlers((AuthenticationResponseHandler[]) handlers.toArray(new AuthenticationResponseHandler[0]));
+        authenticator.setAuthenticationResponseHandlers((AuthenticationResponseHandler[]) handlers.toArray(AuthenticationResponseHandler[]::new));
 
         LOGGER.debug("LDAP authentication response handlers configured are: [{}]", handlers);
 
@@ -253,7 +253,7 @@ public class LdapAuthenticationConfiguration {
     public AuthenticationEventExecutionPlanConfigurer ldapAuthenticationEventExecutionPlanConfigurer() {
         return plan -> ldapAuthenticationHandlers().forEach(handler -> {
             LOGGER.info("Registering LDAP authentication for [{}]", handler.getName());
-            plan.registerAuthenticationHandlerWithPrincipalResolver(handler, personDirectoryPrincipalResolver.getIfAvailable());
+            plan.registerAuthenticationHandlerWithPrincipalResolver(handler, defaultPrincipalResolver.getIfAvailable());
         });
     }
 }

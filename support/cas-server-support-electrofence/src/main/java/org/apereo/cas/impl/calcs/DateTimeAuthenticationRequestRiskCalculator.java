@@ -1,9 +1,11 @@
 package org.apereo.cas.impl.calcs;
 
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.support.events.dao.CasEvent;
+import org.apereo.cas.util.DateTimeUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -24,16 +26,15 @@ import java.util.Collection;
 @Slf4j
 public class DateTimeAuthenticationRequestRiskCalculator extends BaseAuthenticationRequestRiskCalculator {
 
-    private final int windowInHours;
-
-    public DateTimeAuthenticationRequestRiskCalculator(final CasEventRepository casEventRepository, final int windowInHours) {
-        super(casEventRepository);
-        this.windowInHours = windowInHours;
+    public DateTimeAuthenticationRequestRiskCalculator(final CasEventRepository casEventRepository,
+                                                       final CasConfigurationProperties casProperties) {
+        super(casEventRepository, casProperties);
     }
 
     @Override
     protected BigDecimal calculateScore(final HttpServletRequest request, final Authentication authentication,
                                         final RegisteredService service, final Collection<? extends CasEvent> events) {
+        val windowInHours = casProperties.getAuthn().getAdaptive().getRisk().getDateTime().getWindowInHours();
         val timestamp = ZonedDateTime.now(ZoneOffset.UTC);
         LOGGER.debug("Filtering authentication events for timestamp [{}]", timestamp);
 
@@ -43,7 +44,8 @@ public class DateTimeAuthenticationRequestRiskCalculator extends BaseAuthenticat
         val count = events
             .stream()
             .map(time -> {
-                val instant = ChronoZonedDateTime.from(time.getCreationZonedDateTime()).toInstant();
+                val dt = DateTimeUtils.convertToZonedDateTime(time.getCreationTime());
+                val instant = ChronoZonedDateTime.from(dt).toInstant();
                 val zdt = ZonedDateTime.ofInstant(instant, ZoneOffset.UTC);
                 return zdt.getHour();
             })
@@ -51,10 +53,6 @@ public class DateTimeAuthenticationRequestRiskCalculator extends BaseAuthenticat
             .count();
 
         LOGGER.debug("Total authentication events found for [{}] in a [{}]h window: [{}]", timestamp, windowInHours, count);
-        if (count == events.size()) {
-            LOGGER.debug("Principal [{}] has always authenticated from [{}]", authentication.getPrincipal(), timestamp);
-            return LOWEST_RISK_SCORE;
-        }
-        return getFinalAveragedScore(count, events.size());
+        return calculateScoreBasedOnEventsCount(authentication, events, count);
     }
 }

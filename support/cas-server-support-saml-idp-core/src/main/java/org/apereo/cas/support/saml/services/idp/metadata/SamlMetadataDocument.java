@@ -1,13 +1,14 @@
 package org.apereo.cas.support.saml.services.idp.metadata;
 
+import org.apereo.cas.util.EncodingUtils;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.index.Indexed;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -24,7 +25,6 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "SamlMetadataDocument")
-@Document
 @Getter
 @Setter
 @AllArgsConstructor
@@ -38,7 +38,6 @@ public class SamlMetadataDocument {
     private long id = -1;
 
     @JsonProperty("name")
-    @Indexed
     @Column(nullable = false)
     private String name;
 
@@ -54,5 +53,18 @@ public class SamlMetadataDocument {
 
     public SamlMetadataDocument() {
         setId(System.currentTimeMillis());
+    }
+
+    /**
+     * Gets base-64 decoded value if needed, or the value itself.
+     *
+     * @return the decoded value
+     */
+    @JsonIgnore
+    public String getDecodedValue() {
+        if (EncodingUtils.isBase64(value)) {
+            return EncodingUtils.decodeBase64ToString(value);
+        }
+        return value;
     }
 }

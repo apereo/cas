@@ -8,7 +8,8 @@ import org.apereo.cas.uma.web.controllers.BaseUmaEndpointControllerTests;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
-import org.junit.Test;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
@@ -16,7 +17,7 @@ import org.springframework.test.context.TestPropertySource;
 
 import java.util.LinkedHashMap;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link JpaResourceSetRepositoryTests}.
@@ -24,6 +25,7 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
+@Tag("OAuth")
 @Import(CasOAuthUmaJpaConfiguration.class)
 @TestPropertySource(properties = "cas.authn.uma.resourceSet.jpa.url=jdbc:hsqldb:mem:cas-uma-resourceset")
 public class JpaResourceSetRepositoryTests extends BaseUmaEndpointControllerTests {
@@ -60,7 +62,7 @@ public class JpaResourceSetRepositoryTests extends BaseUmaEndpointControllerTest
     }
 
 
-    private ResourceSet buildTestResource() {
+    private static ResourceSet buildTestResource() {
         val r = new ResourceSet();
         r.setClientId("clientid");
         r.setIconUri("https://www.example.com/icon");

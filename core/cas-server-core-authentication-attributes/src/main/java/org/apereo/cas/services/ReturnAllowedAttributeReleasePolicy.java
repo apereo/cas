@@ -1,7 +1,9 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.Service;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -31,6 +33,7 @@ import java.util.TreeMap;
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ReturnAllowedAttributeReleasePolicy extends AbstractRegisteredServiceAttributeReleasePolicy {
 
     private static final long serialVersionUID = -5771481877391140569L;
@@ -38,27 +41,33 @@ public class ReturnAllowedAttributeReleasePolicy extends AbstractRegisteredServi
     private List<String> allowedAttributes = new ArrayList<>();
 
     @Override
-    public Map<String, Object> getAttributesInternal(final Principal principal, final Map<String, Object> attrs, final RegisteredService service) {
-        return authorizeReleaseOfAllowedAttributes(attrs);
+    public Map<String, List<Object>> getAttributesInternal(final Principal principal, final Map<String, List<Object>> attrs,
+                                                           final RegisteredService registeredService, final Service selectedService) {
+        return authorizeReleaseOfAllowedAttributes(principal, attrs, registeredService, selectedService);
     }
 
     /**
      * Authorize release of allowed attributes map.
      *
-     * @param attrs the attributes
+     * @param principal         the principal
+     * @param attrs             the attributes
+     * @param registeredService the registered service
+     * @param selectedService   the selected service
      * @return the map
      */
-    protected Map<String, Object> authorizeReleaseOfAllowedAttributes(final Map<String, Object> attrs) {
-        val resolvedAttributes = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+    protected Map<String, List<Object>> authorizeReleaseOfAllowedAttributes(final Principal principal,
+                                                                            final Map<String, List<Object>> attrs,
+                                                                            final RegisteredService registeredService,
+                                                                            final Service selectedService) {
+        val resolvedAttributes = new TreeMap<String, List<Object>>(String.CASE_INSENSITIVE_ORDER);
         resolvedAttributes.putAll(attrs);
-        val attributesToRelease = new HashMap<String, Object>();
+        val attributesToRelease = new HashMap<String, List<Object>>();
         getAllowedAttributes()
             .stream()
-            .map(attr -> new Object[]{attr, resolvedAttributes.get(attr)})
-            .filter(pair -> pair[1] != null)
-            .forEach(attribute -> {
-                LOGGER.debug("Found attribute [{}] in the list of allowed attributes", attribute[0]);
-                attributesToRelease.put((String) attribute[0], attribute[1]);
+            .filter(resolvedAttributes::containsKey)
+            .forEach(attr -> {
+                LOGGER.debug("Found attribute [{}] in the list of allowed attributes", attr);
+                attributesToRelease.put(attr, resolvedAttributes.get(attr));
             });
         return attributesToRelease;
     }

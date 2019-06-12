@@ -1,13 +1,14 @@
 package org.apereo.cas.adaptors.duo;
 
-import org.apereo.cas.adaptors.duo.authn.DuoMultifactorAuthenticationProvider;
-import org.apereo.cas.services.VariegatedMultifactorAuthenticationProvider;
+import org.apereo.cas.adaptors.duo.authn.DuoSecurityMultifactorAuthenticationProvider;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.boot.actuate.health.AbstractHealthIndicator;
 import org.springframework.boot.actuate.health.Health;
+import org.springframework.context.ApplicationContext;
+
+import java.util.Objects;
 
 /**
  * This is {@link DuoSecurityHealthIndicator}.
@@ -17,23 +18,26 @@ import org.springframework.boot.actuate.health.Health;
  */
 @RequiredArgsConstructor
 public class DuoSecurityHealthIndicator extends AbstractHealthIndicator {
-    private final VariegatedMultifactorAuthenticationProvider duoMultifactorAuthenticationProvider;
+    private final ApplicationContext applicationContext;
 
-    @SuppressFBWarnings("PRMC_POSSIBLY_REDUNDANT_METHOD_CALLS")
     @Override
     protected void doHealthCheck(final Health.Builder builder) {
-        duoMultifactorAuthenticationProvider.getProviders()
+        builder.withDetail("name", getClass().getSimpleName());
+        val providers = applicationContext.getBeansOfType(DuoSecurityMultifactorAuthenticationProvider.class).values();
+        providers
             .stream()
-            .filter(DuoMultifactorAuthenticationProvider.class::isInstance)
-            .map(DuoMultifactorAuthenticationProvider.class::cast)
+            .filter(Objects::nonNull)
+            .map(DuoSecurityMultifactorAuthenticationProvider.class::cast)
             .forEach(p -> {
-                val result = p.getDuoAuthenticationService().ping();
-                val b = builder.withDetail("duoApiHost", p.getDuoAuthenticationService().getApiHost());
+                val duoService = p.getDuoAuthenticationService();
+                val result = duoService.ping();
+                val b = builder.withDetail("duoApiHost", duoService.getApiHost());
                 if (result) {
-                    b.up().build();
+                    b.up();
                 } else {
-                    b.down().build();
+                    b.down();
                 }
+                b.build();
             });
     }
 }

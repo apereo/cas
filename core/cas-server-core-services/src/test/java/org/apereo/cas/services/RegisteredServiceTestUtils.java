@@ -1,6 +1,7 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.CasProtocolConstants;
+import org.apereo.cas.authentication.AttributeMergingStrategy;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
@@ -13,22 +14,22 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
-import org.apereo.cas.authentication.principal.cache.AbstractPrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesRepository;
-import org.apereo.cas.services.RegisteredService.LogoutType;
 import org.apereo.cas.services.support.RegisteredServiceRegexAttributeFilter;
-import org.apereo.cas.util.RandomUtils;
 
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.val;
+import org.apache.commons.lang3.RandomUtils;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -90,6 +91,10 @@ public class RegisteredServiceTestUtils {
     }
 
     public static Map<String, Set<String>> getTestAttributes() {
+        return getTestAttributes("CASUser");
+    }
+
+    public static Map<String, Set<String>> getTestAttributes(final String username) {
         val attributes = new HashMap<String, Set<String>>();
         Set<String> attributeValues = new HashSet<>();
         attributeValues.add("uid");
@@ -97,7 +102,7 @@ public class RegisteredServiceTestUtils {
         attributes.put("uid", attributeValues);
 
         attributeValues = new HashSet<>();
-        attributeValues.add("CASUser");
+        attributeValues.add(username);
 
         attributes.put("givenName", attributeValues);
 
@@ -115,23 +120,27 @@ public class RegisteredServiceTestUtils {
     }
 
     @SneakyThrows
-    public static AbstractRegisteredService getRegisteredService(final String id, final Class<? extends RegisteredService> clazz) {
+    public static AbstractRegisteredService getRegisteredService(final String id, final Class<? extends RegisteredService> clazz, final boolean uniq) {
         val s = (AbstractRegisteredService) clazz.getDeclaredConstructor().newInstance();
         s.setServiceId(id);
         s.setEvaluationOrder(1);
-        s.setName("TestService" + UUID.randomUUID().toString());
+        if (uniq) {
+            s.setName("TestService" + UUID.randomUUID().toString());
+        } else {
+            s.setName(id);
+        }
         s.setDescription("Registered service description");
         s.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy("^https?://.+"));
-        s.setId(RandomUtils.getNativeInstance().nextInt());
+        s.setId(RandomUtils.nextLong());
         s.setTheme("exampleTheme");
         s.setUsernameAttributeProvider(new PrincipalAttributeRegisteredServiceUsernameProvider("uid"));
-        val accessStrategy =
-            new DefaultRegisteredServiceAccessStrategy(true, true);
+        val accessStrategy = new DefaultRegisteredServiceAccessStrategy(true, true);
         accessStrategy.setRequireAllAttributes(true);
         accessStrategy.setRequiredAttributes(getTestAttributes());
+        accessStrategy.setUnauthorizedRedirectUrl(new URI("https://www.github.com"));
         s.setAccessStrategy(accessStrategy);
         s.setLogo("https://logo.example.org/logo.png");
-        s.setLogoutType(LogoutType.BACK_CHANNEL);
+        s.setLogoutType(RegisteredServiceLogoutType.BACK_CHANNEL);
         s.setLogoutUrl("https://sys.example.org/logout.png");
         s.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy("^http.+"));
 
@@ -141,9 +150,8 @@ public class RegisteredServiceTestUtils {
         policy.setAuthorizedToReleaseCredentialPassword(true);
         policy.setAuthorizedToReleaseProxyGrantingTicket(true);
 
-        val repo =
-            new CachingPrincipalAttributesRepository(TimeUnit.SECONDS.name(), 10);
-        repo.setMergingStrategy(AbstractPrincipalAttributesRepository.MergingStrategy.ADD);
+        val repo = new CachingPrincipalAttributesRepository(TimeUnit.SECONDS.name(), 10);
+        repo.setMergingStrategy(AttributeMergingStrategy.ADD);
         policy.setPrincipalAttributesRepository(repo);
         policy.setAttributeFilter(new RegisteredServiceRegexAttributeFilter("https://.+"));
         policy.setAllowedAttributes(new ArrayList<>(getTestAttributes().keySet()));
@@ -152,9 +160,16 @@ public class RegisteredServiceTestUtils {
         return s;
     }
 
-    @SneakyThrows
+    public static AbstractRegisteredService getRegisteredService(final String id, final Class<? extends RegisteredService> clazz) {
+        return getRegisteredService(id, clazz, true);
+    }
+
     public static AbstractRegisteredService getRegisteredService(final String id) {
-        return getRegisteredService(id, RegexRegisteredService.class);
+        return getRegisteredService(id, RegexRegisteredService.class, true);
+    }
+
+    public static AbstractRegisteredService getRegisteredService(final String id, final boolean uniq) {
+        return getRegisteredService(id, RegexRegisteredService.class, uniq);
     }
 
     public static Principal getPrincipal() {
@@ -165,7 +180,7 @@ public class RegisteredServiceTestUtils {
         return getPrincipal(name, new HashMap<>(0));
     }
 
-    public static Principal getPrincipal(final String name, final Map<String, Object> attributes) {
+    public static Principal getPrincipal(final String name, final Map<String, List<Object>> attributes) {
         return PrincipalFactoryUtils.newPrincipalFactory().createPrincipal(name, attributes);
     }
 
@@ -181,7 +196,7 @@ public class RegisteredServiceTestUtils {
         return getAuthentication(principal, new HashMap<>(0));
     }
 
-    public static Authentication getAuthentication(final Principal principal, final Map<String, Object> attributes) {
+    public static Authentication getAuthentication(final Principal principal, final Map<String, List<Object>> attributes) {
         val handler = new SimpleTestUsernamePasswordAuthenticationHandler();
         val meta = new BasicCredentialMetaData(new UsernamePasswordCredential());
         return new DefaultAuthenticationBuilder(principal)

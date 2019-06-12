@@ -13,4 +13,5 @@ import lombok.Setter;
 @Getter
 @Setter
 public class CnEdipiPrincipalResolverProperties extends BaseAlternativePrincipalResolverProperties {
+    private static final long serialVersionUID = 2622326703782668141L;
 }

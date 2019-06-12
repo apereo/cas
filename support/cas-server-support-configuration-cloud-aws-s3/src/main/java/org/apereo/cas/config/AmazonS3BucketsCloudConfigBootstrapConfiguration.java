@@ -28,7 +28,10 @@ import java.util.Properties;
 @Slf4j
 @Getter
 public class AmazonS3BucketsCloudConfigBootstrapConfiguration implements PropertySourceLocator {
-    private static final String CAS_CONFIGURATION_PREFIX = "cas.spring.cloud.aws.s3";
+    /**
+     * Amazon S3 CAS configuration key prefix.
+     */
+    public static final String CAS_CONFIGURATION_PREFIX = "cas.spring.cloud.aws.s3";
 
     @Override
     public PropertySource<?> locate(final Environment environment) {
@@ -52,7 +55,7 @@ public class AmazonS3BucketsCloudConfigBootstrapConfiguration implements Propert
                         val props = new Properties();
                         props.load(is);
                         props.forEach((key, value) -> properties.put(key.toString(), value));
-                    } else if (objectKey.endsWith("yml")) {
+                    } else if (objectKey.endsWith("yml") || objectKey.endsWith("yaml")) {
                         val yamlProps = CasCoreConfigurationUtils.loadYamlProperties(new InputStreamResource(is));
                         properties.putAll(yamlProps);
                     }

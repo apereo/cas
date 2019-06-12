@@ -7,20 +7,22 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.authenticator.Authenticators;
+import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.ticket.refreshtoken.RefreshToken;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.context.Pac4jConstants;
 import org.pac4j.core.profile.CommonProfile;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -29,6 +31,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
+@Tag("OAuth")
 public class OAuth20RefreshTokenGrantTypeTokenRequestValidatorTests {
     private static final String SUPPORTING_SERVICE_TICKET = "RT-SUPPORTING";
     private static final String NON_SUPPORTING_SERVICE_TICKET = "RT-NON-SUPPORTING";
@@ -45,29 +48,29 @@ public class OAuth20RefreshTokenGrantTypeTokenRequestValidatorTests {
         when(ticketRegistry.getTicket(eq(name))).thenReturn(oauthCode);
     }
 
-    @Before
+    @BeforeEach
     public void before() {
         val servicesManager = mock(ServicesManager.class);
 
         val supportingService = RequestValidatorTestUtils.getService(
-                RegisteredServiceTestUtils.CONST_TEST_URL,
-                RequestValidatorTestUtils.SUPPORTING_CLIENT_ID,
-                RequestValidatorTestUtils.SUPPORTING_CLIENT_ID,
-                RequestValidatorTestUtils.SHARED_SECRET,
-                CollectionUtils.wrapSet(OAuth20GrantTypes.REFRESH_TOKEN));
+            RegisteredServiceTestUtils.CONST_TEST_URL,
+            RequestValidatorTestUtils.SUPPORTING_CLIENT_ID,
+            RequestValidatorTestUtils.SUPPORTING_CLIENT_ID,
+            RequestValidatorTestUtils.SHARED_SECRET,
+            CollectionUtils.wrapSet(OAuth20GrantTypes.REFRESH_TOKEN));
         val nonSupportingService = RequestValidatorTestUtils.getService(
-                RegisteredServiceTestUtils.CONST_TEST_URL2,
-                RequestValidatorTestUtils.NON_SUPPORTING_CLIENT_ID,
-                RequestValidatorTestUtils.NON_SUPPORTING_CLIENT_ID,
-                RequestValidatorTestUtils.SHARED_SECRET,
-                CollectionUtils.wrapSet(OAuth20GrantTypes.PASSWORD));
-        val promiscuousService = RequestValidatorTestUtils.getPromiscousService(
-                RegisteredServiceTestUtils.CONST_TEST_URL3,
-                RequestValidatorTestUtils.PROMISCUOUS_CLIENT_ID,
-                RequestValidatorTestUtils.PROMISCUOUS_CLIENT_ID,
-                RequestValidatorTestUtils.SHARED_SECRET);
+            RegisteredServiceTestUtils.CONST_TEST_URL2,
+            RequestValidatorTestUtils.NON_SUPPORTING_CLIENT_ID,
+            RequestValidatorTestUtils.NON_SUPPORTING_CLIENT_ID,
+            RequestValidatorTestUtils.SHARED_SECRET,
+            CollectionUtils.wrapSet(OAuth20GrantTypes.PASSWORD));
+        val promiscuousService = RequestValidatorTestUtils.getPromiscuousService(
+            RegisteredServiceTestUtils.CONST_TEST_URL3,
+            RequestValidatorTestUtils.PROMISCUOUS_CLIENT_ID,
+            RequestValidatorTestUtils.PROMISCUOUS_CLIENT_ID,
+            RequestValidatorTestUtils.SHARED_SECRET);
         when(servicesManager.getAllServices()).thenReturn(CollectionUtils.wrapList(supportingService,
-                nonSupportingService, promiscuousService));
+            nonSupportingService, promiscuousService));
 
         this.ticketRegistry = mock(TicketRegistry.class);
 
@@ -75,9 +78,13 @@ public class OAuth20RefreshTokenGrantTypeTokenRequestValidatorTests {
         registerTicket(NON_SUPPORTING_SERVICE_TICKET);
         registerTicket(PROMISCUOUS_SERVICE_TICKET);
 
-        this.validator = new OAuth20RefreshTokenGrantTypeTokenRequestValidator(
-            new RegisteredServiceAccessStrategyAuditableEnforcer(), servicesManager,
-            this.ticketRegistry, new WebApplicationServiceFactory());
+        val context = OAuth20ConfigurationContext.builder()
+            .servicesManager(servicesManager)
+            .ticketRegistry(ticketRegistry)
+            .webApplicationServiceServiceFactory(new WebApplicationServiceFactory())
+            .registeredServiceAccessStrategyEnforcer(new RegisteredServiceAccessStrategyAuditableEnforcer())
+            .build();
+        this.validator = new OAuth20RefreshTokenGrantTypeTokenRequestValidator(context);
     }
 
     @Test
@@ -88,6 +95,7 @@ public class OAuth20RefreshTokenGrantTypeTokenRequestValidatorTests {
         profile.setClientName(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN);
         profile.setId(RequestValidatorTestUtils.SUPPORTING_CLIENT_ID);
         val session = request.getSession(true);
+        assertNotNull(session);
         session.setAttribute(Pac4jConstants.USER_PROFILES, profile);
 
         val response = new MockHttpServletResponse();

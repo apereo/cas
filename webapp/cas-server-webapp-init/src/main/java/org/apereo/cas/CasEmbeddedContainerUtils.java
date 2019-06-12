@@ -49,8 +49,7 @@ public class CasEmbeddedContainerUtils {
      */
     public static Banner getCasBannerInstance() {
         val packageName = CasEmbeddedContainerUtils.class.getPackage().getName();
-        val reflections =
-            new Reflections(new ConfigurationBuilder()
+        val reflections = new Reflections(new ConfigurationBuilder()
                 .filterInputsBy(new FilterBuilder().includePackage(packageName))
                 .setUrls(ClasspathHelper.forPackage(packageName))
                 .setScanners(new SubTypesScanner(true)));

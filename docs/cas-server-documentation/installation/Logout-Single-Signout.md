@@ -7,8 +7,11 @@ category: SSO & SLO
 # Logout and Single Logout (SLO)
 
 There are potentially many active application sessions during a CAS single sign-on session, and the distinction between
-logout and single logout is based on the number of sessions that are ended upon a _logout_ operation. The scope of logout
-is determined by where the action takes place:
+logout and single logout is based on the number of sessions that are ended upon a _logout_ operation. 
+
+<div class="alert alert-info"><strong>Protocol Support</strong><p>Note that SLO described here specifically deals with the semantics of the CAS protocol. All other available protocols in CAS may offer and behave differently when it comes to handling, receiving and publishing logout requests whether CAS is acting as an identity provider or service provider. SLO support for each protocol implementation may vary and you should always verify the extent of available functionality for each protocol implementation.</p></div>
+
+The scope of logout is determined by where the action takes place:
 
 1. Application logout - ends a single application session
 2. CAS logout - ends the CAS SSO session
@@ -23,7 +26,7 @@ CAS during the SSO session. While this is a best-effort process, in many cases i
 user experience by creating symmetry between login and logout.
 
 <div class="alert alert-info"><strong>SSO Sessions</strong><p>It is possible to review the current collection of active SSO sessions,
-and determine if CAS itself maintains an active SSO session via the <a href="Monitoring-Statistics.html">CAS administration panels.</a></p></div>
+and determine if CAS itself maintains an active SSO session via the <a href="../monitoring/Monitoring-Statistics.html">CAS administration panels.</a></p></div>
 
 ## CAS Logout
 
@@ -106,7 +109,7 @@ Logout requests may be optionally routed to an external URL bypassing the CAS lo
 ### Single Logout Per Service
 
 Registered applications with CAS have the option to control single logout behavior individually via
-the [Service Management](Service-Management.html) component. Each registered service in the service registry will include configuration
+the [Service Management](../services/Service-Management.html) component. Each registered service in the service registry will include configuration
 that describes how to the logout request should be submitted. This behavior is controlled via the `logoutType` property
 which allows to specify whether the logout request should be submitted via back/front channel or turned off for this application.
 

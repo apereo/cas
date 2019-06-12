@@ -37,10 +37,9 @@ public class CassandraAuthenticationHandler extends AbstractUsernamePasswordAuth
 
     @Override
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
-                                                                                        final String originalPassword) throws GeneralSecurityException {
+                                                                                        final String originalPassword)
+        throws GeneralSecurityException {
         val username = credential.getUsername();
-        val password = credential.getPassword();
-
         val attributes = this.cassandraRepository.getUser(username);
 
         if (attributes == null || attributes.isEmpty()
@@ -51,8 +50,9 @@ public class CassandraAuthenticationHandler extends AbstractUsernamePasswordAuth
         }
 
         LOGGER.debug("Located account attributes [{}] for [{}]", attributes.keySet(), username);
-        val userPassword = attributes.get(cassandraAuthenticationProperties.getPasswordAttribute()).toString();
-        if (!password.equals(userPassword)) {
+        val entryPassword = attributes.get(cassandraAuthenticationProperties.getPasswordAttribute()).get(0).toString();
+
+        if (!getPasswordEncoder().matches(originalPassword, entryPassword)) {
             LOGGER.warn("Account password on record for [{}] does not match the given password", username);
             throw new FailedLoginException();
         }

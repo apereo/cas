@@ -1,17 +1,9 @@
 package org.apereo.cas.web.flow.resolver.impl;
 
 import org.apereo.cas.CasProtocolConstants;
-import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.audit.AuditableContext;
-import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationException;
-import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
-import org.apereo.cas.authentication.AuthenticationSystemSupport;
-import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.AbstractTicketException;
-import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
@@ -19,7 +11,6 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -34,23 +25,8 @@ import java.util.Set;
  */
 @Slf4j
 public class ServiceTicketRequestWebflowEventResolver extends AbstractCasWebflowEventResolver {
-    private final AuditableExecution registeredServiceAccessStrategyEnforcer;
-    private final CasConfigurationProperties casProperties;
-
-    public ServiceTicketRequestWebflowEventResolver(final AuthenticationSystemSupport authenticationSystemSupport,
-                                                    final CentralAuthenticationService centralAuthenticationService,
-                                                    final ServicesManager servicesManager,
-                                                    final TicketRegistrySupport ticketRegistrySupport,
-                                                    final CookieGenerator warnCookieGenerator,
-                                                    final AuthenticationServiceSelectionPlan authenticationSelectionStrategies,
-                                                    final MultifactorAuthenticationProviderSelector selector,
-                                                    final AuditableExecution registeredServiceAccessStrategyEnforcer,
-                                                    final CasConfigurationProperties casProperties) {
-        super(authenticationSystemSupport, centralAuthenticationService, servicesManager,
-            ticketRegistrySupport, warnCookieGenerator,
-            authenticationSelectionStrategies, selector);
-        this.registeredServiceAccessStrategyEnforcer = registeredServiceAccessStrategyEnforcer;
-        this.casProperties = casProperties;
+    public ServiceTicketRequestWebflowEventResolver(final CasWebflowEventResolutionConfigurationContext webflowEventResolutionConfigurationContext) {
+        super(webflowEventResolutionConfigurationContext);
     }
 
     @Override
@@ -76,13 +52,13 @@ public class ServiceTicketRequestWebflowEventResolver extends AbstractCasWebflow
         val service = WebUtils.getService(context);
         LOGGER.debug("Located service [{}] from the request context", service);
 
-        val renewParam = casProperties.getSso().isRenewAuthnEnabled()
+        val renewParam = getWebflowEventResolutionConfigurationContext().getCasProperties().getSso().isRenewAuthnEnabled()
             ? context.getRequestParameters().get(CasProtocolConstants.PARAMETER_RENEW)
             : StringUtils.EMPTY;
         LOGGER.debug("Provided value for [{}] request parameter is [{}]", CasProtocolConstants.PARAMETER_RENEW, renewParam);
 
         if (service != null && StringUtils.isNotBlank(ticketGrantingTicketId)) {
-            val authn = ticketRegistrySupport.getAuthenticationFrom(ticketGrantingTicketId);
+            val authn = getWebflowEventResolutionConfigurationContext().getTicketRegistrySupport().getAuthenticationFrom(ticketGrantingTicketId);
             if (StringUtils.isNotBlank(renewParam)) {
                 LOGGER.debug("Request identifies itself as one asking for service tickets. Checking for authentication context validity...");
                 val validAuthn = authn != null;
@@ -116,8 +92,8 @@ public class ServiceTicketRequestWebflowEventResolver extends AbstractCasWebflow
 
         try {
             val service = WebUtils.getService(context);
-            val authn = ticketRegistrySupport.getAuthenticationFrom(ticketGrantingTicketId);
-            val registeredService = this.servicesManager.findServiceBy(service);
+            val authn = getWebflowEventResolutionConfigurationContext().getTicketRegistrySupport().getAuthenticationFrom(ticketGrantingTicketId);
+            val registeredService = getWebflowEventResolutionConfigurationContext().getServicesManager().findServiceBy(service);
 
             if (authn != null && registeredService != null) {
                 LOGGER.debug("Enforcing access strategy policies for registered service [{}] and principal [{}]", registeredService, authn.getPrincipal());
@@ -127,15 +103,17 @@ public class ServiceTicketRequestWebflowEventResolver extends AbstractCasWebflow
                     .registeredService(registeredService)
                     .retrievePrincipalAttributesFromReleasePolicy(Boolean.TRUE)
                     .build();
-                val accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
+                val accessResult = getWebflowEventResolutionConfigurationContext().getRegisteredServiceAccessStrategyEnforcer().execute(audit);
                 accessResult.throwExceptionIfNeeded();
             }
 
             val authenticationResult =
-                this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, credential);
-            val serviceTicketId = this.centralAuthenticationService.grantServiceTicket(ticketGrantingTicketId, service, authenticationResult);
+                getWebflowEventResolutionConfigurationContext().getAuthenticationSystemSupport()
+                    .handleAndFinalizeSingleAuthenticationTransaction(service, credential);
+            val serviceTicketId = getWebflowEventResolutionConfigurationContext().getCentralAuthenticationService()
+                .grantServiceTicket(ticketGrantingTicketId, service, authenticationResult);
             WebUtils.putServiceTicketInRequestScope(context, serviceTicketId);
-            WebUtils.putWarnCookieIfRequestParameterPresent(this.warnCookieGenerator, context);
+            WebUtils.putWarnCookieIfRequestParameterPresent(getWebflowEventResolutionConfigurationContext().getWarnCookieGenerator(), context);
             return newEvent(CasWebflowConstants.TRANSITION_ID_WARN);
 
         } catch (final AuthenticationException | AbstractTicketException e) {

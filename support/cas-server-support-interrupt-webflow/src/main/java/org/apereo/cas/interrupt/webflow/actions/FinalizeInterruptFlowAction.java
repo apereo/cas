@@ -24,16 +24,21 @@ public class FinalizeInterruptFlowAction extends AbstractAction {
         val response = InterruptUtils.getInterruptFrom(requestContext);
 
         if (response.isBlock()) {
-            val accessUrl = registeredService.getAccessStrategy().getUnauthorizedRedirectUrl();
-            if (registeredService != null && accessUrl != null) {
+            val accessUrl = registeredService != null
+                ? registeredService.getAccessStrategy().getUnauthorizedRedirectUrl()
+                : null;
+            if (accessUrl != null) {
                 val url = accessUrl.toURL().toExternalForm();
                 val externalContext = requestContext.getExternalContext();
                 externalContext.requestExternalRedirect(url);
                 externalContext.recordResponseComplete();
-                return new EventFactorySupport().event(this, CasWebflowConstants.STATE_ID_STOP_WEBFLOW);
+                return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_STOP);
             }
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, "Denied");
         }
+        val authentication = WebUtils.getAuthentication(requestContext);
+        authentication.addAttribute(InquireInterruptAction.AUTHENTICATION_ATTRIBUTE_FINALIZED_INTERRUPT, Boolean.TRUE);
+        WebUtils.putAuthentication(authentication, requestContext);
         return success();
     }
 }

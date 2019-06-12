@@ -5,14 +5,15 @@ import org.apereo.cas.util.CompressionUtils;
 import org.apereo.cas.util.EncodingUtils;
 
 import lombok.val;
-import org.junit.Test;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.zip.DeflaterOutputStream;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Utility class to ensure authentication requests are properly encoded and decoded.
@@ -20,6 +21,7 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 4.1
  */
+@Tag("SAML")
 public class SamlAuthenticationRequestTests extends AbstractOpenSamlTests {
 
     private static String deflateViaStream(final String samlRequest) throws IOException {

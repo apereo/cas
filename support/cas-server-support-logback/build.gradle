@@ -1,0 +1,11 @@
+description = "Apereo CAS Core Logging Support for Logback"
+dependencies {
+    implementation libraries.springbootlogging
+    
+    implementation project(":core:cas-server-core-cookie-api")
+    implementation project(":core:cas-server-core-util-api")
+    implementation project(":core:cas-server-core-configuration-api")
+
+    testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
+}

@@ -7,7 +7,7 @@ category: Integration
 # Google reCAPTCHA
 
 reCAPTCHA is a [Google service](https://developers.google.com/recaptcha) that protects your CAS deployment from spam and abuse.
-It uses advanced risk analysis techniques to tell humans and bots apart.
+It uses advanced risk analysis techniques to tell humans and bots apart. CAS supports the reCAPTCHA API `v2` and `v3`.
 
 Support is enabled by including the following module in the Overlay:
 
@@ -23,4 +23,4 @@ To see the relevant list of CAS properties, please [review this guide](../config
 
 ## Internet Explorer
 
-Remember to disable Internet Explorer's "Compatibility View" mode. reCAPTCHA does not render correctly when that mode is turned on.
+Remember to disable Internet Explorer's "Compatibility View" mode. reCAPTCHA may not render correctly when that mode is turned on.

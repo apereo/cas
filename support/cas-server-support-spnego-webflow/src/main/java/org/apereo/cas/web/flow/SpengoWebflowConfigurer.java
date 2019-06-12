@@ -39,7 +39,6 @@ public class SpengoWebflowConfigurer extends AbstractCasWebflowConfigurer {
             createEvaluateSpnegoClientAction(flow);
 
             val spnego = createSpnegoActionState(flow);
-            registerMultifactorProvidersStateTransitionsIntoWebflow(spnego);
 
             augmentWebflowToStartSpnego(flow);
         }

@@ -1,6 +1,5 @@
 package org.apereo.cas.authentication;
 
-import org.apereo.cas.category.CouchbaseCategory;
 import org.apereo.cas.config.CasAuthenticationEventExecutionPlanTestConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
@@ -18,24 +17,19 @@ import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.CouchbaseAuthenticationConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
-import org.apereo.cas.util.junit.ConditionalIgnore;
-import org.apereo.cas.util.junit.ConditionalIgnoreRule;
-import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
+import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.apereo.services.persondir.IPersonAttributeDaoFilter;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link CouchbasePersonAttributeDaoTests}.
@@ -43,8 +37,8 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Category(CouchbaseCategory.class)
-@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
+@Tag("Couchbase")
+@EnabledIfContinuousIntegration
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     CouchbaseAuthenticationConfiguration.class,
@@ -67,23 +61,13 @@ import static org.junit.Assert.*;
 },
     properties = {"cas.authn.attributeRepository.couchbase.password=password", "cas.authn.attributeRepository.couchbase.bucket=testbucket"})
 public class CouchbasePersonAttributeDaoTests {
-
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
-
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
-
-    @Rule
-    public final ConditionalIgnoreRule conditionalIgnoreRule = new ConditionalIgnoreRule();
-
     @Autowired
     @Qualifier("attributeRepository")
     private IPersonAttributeDao attributeRepository;
 
     @Test
     public void verifyAttributes() {
-        val person = attributeRepository.getPerson("casuser");
+        val person = attributeRepository.getPerson("casuser", IPersonAttributeDaoFilter.alwaysChoose());
         assertNotNull(person);
         val attributes = person.getAttributes();
         assertTrue(attributes.containsKey("firstname"));

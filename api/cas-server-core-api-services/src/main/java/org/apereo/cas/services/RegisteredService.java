@@ -1,12 +1,13 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.authentication.principal.Response;
 import org.apereo.cas.authentication.principal.Service;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -82,14 +83,16 @@ public interface RegisteredService extends Serializable, Comparable<RegisteredSe
      *
      * @return the description of the service.
      */
-    String getDescription();
+    default String getDescription() {
+        return StringUtils.EMPTY;
+    }
 
     /**
      * Response determines how CAS should contact the matching service
      * typically with a ticket id. By default, the strategy is a 302 redirect.
      *
      * @return the response type
-     * @see org.apereo.cas.authentication.principal.Response.ResponseType
+     * @see Response.ResponseType
      */
     String getResponseType();
 
@@ -117,11 +120,32 @@ public interface RegisteredService extends Serializable, Comparable<RegisteredSe
     RegisteredServiceUsernameAttributeProvider getUsernameAttributeProvider();
 
     /**
-     * Gets authentication policy.
+     * Gets multifactor authentication policy.
      *
      * @return the authentication policy
      */
     RegisteredServiceMultifactorPolicy getMultifactorPolicy();
+
+    /**
+     * Gets proxy ticket expiration policy.
+     *
+     * @return the proxy ticket expiration policy
+     */
+    RegisteredServiceProxyTicketExpirationPolicy getProxyTicketExpirationPolicy();
+
+    /**
+     * Gets service ticket expiration policy.
+     *
+     * @return the service ticket expiration policy
+     */
+    RegisteredServiceServiceTicketExpirationPolicy getServiceTicketExpirationPolicy();
+
+    /**
+     * Gets SSO participation strategy.
+     *
+     * @return the service ticket expiration policy
+     */
+    RegisteredServiceSingleSignOnParticipationPolicy getSingleSignOnParticipationPolicy();
 
     /**
      * Gets the set of handler names that must successfully authenticate credentials in order to access the service.
@@ -130,6 +154,15 @@ public interface RegisteredService extends Serializable, Comparable<RegisteredSe
      * @return Non -null set of required handler names.
      */
     Set<String> getRequiredHandlers();
+
+    /**
+     * Gets the set of  names that correspond to the environment to which this service belongs.
+     * This may be used as a filter at runtime to narrow down the list of services
+     * that are applicable to a particular environment, such as test, prod, etc.
+     *
+     * @return Non -null set of environment names.
+     */
+    Set<String> getEnvironments();
 
     /**
      * Gets the access strategy that decides whether this registered
@@ -161,7 +194,7 @@ public interface RegisteredService extends Serializable, Comparable<RegisteredSe
      *
      * @return the logout type of the service.
      */
-    LogoutType getLogoutType();
+    RegisteredServiceLogoutType getLogoutType();
 
     /**
      * Gets the attribute filtering policy to determine
@@ -230,9 +263,7 @@ public interface RegisteredService extends Serializable, Comparable<RegisteredSe
      * @return map of custom metadata.
      * @since 4.2
      */
-    default Map<String, RegisteredServiceProperty> getProperties() {
-        return new LinkedHashMap<>(0);
-    }
+    Map<String, RegisteredServiceProperty> getProperties();
 
     /**
      * A list of contacts that are responsible for the clients that use
@@ -260,23 +291,5 @@ public interface RegisteredService extends Serializable, Comparable<RegisteredSe
      * values or object instances, etc.
      */
     default void initialize() {
-    }
-
-    /**
-     * The logout type.
-     */
-    enum LogoutType {
-        /**
-         * For no SLO.
-         */
-        NONE,
-        /**
-         * For back channel SLO.
-         */
-        BACK_CHANNEL,
-        /**
-         * For front channel SLO.
-         */
-        FRONT_CHANNEL
     }
 }

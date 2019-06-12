@@ -7880,6 +7880,7 @@ a {
   color: #257bb2; }
 
 .logo {
+  height: 40px;
   width: 80px;
   display: block; }
 
@@ -7894,21 +7895,8 @@ header > .navbar {
 
 #cas-resource-list {
   background-color: #f8f9fa; }
-
-#cookiesDisabled.card {
-  background-color: #ffc107;
-  color: #212529; }
-
-#staticAuthentication.card {
-  background-color: #17a2b8;
-  color: #fff; }
-
 #serviceui.alert {
   background-color: #17a2b8;
   color: #fff; }
-
-#insecureNotice.card {
-  background-color: #ffc107;
-  color: #212529; }
 
 /*# sourceMappingURL=cas.css.map */

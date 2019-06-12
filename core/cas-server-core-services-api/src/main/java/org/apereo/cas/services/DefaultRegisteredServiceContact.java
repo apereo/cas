@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -22,7 +23,8 @@ import javax.persistence.Table;
 @Getter
 @Setter
 @NoArgsConstructor
-@EqualsAndHashCode
+@EqualsAndHashCode(of = {"name", "email"})
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class DefaultRegisteredServiceContact implements RegisteredServiceContact {
 
     private static final long serialVersionUID = 1324660891900737066L;

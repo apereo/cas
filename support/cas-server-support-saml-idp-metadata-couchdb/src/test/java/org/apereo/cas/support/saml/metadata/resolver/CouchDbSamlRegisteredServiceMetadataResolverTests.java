@@ -1,6 +1,5 @@
 package org.apereo.cas.support.saml.metadata.resolver;
 
-import org.apereo.cas.category.CouchDbCategory;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -25,7 +24,7 @@ import org.apereo.cas.config.CouchDbSamlIdPFactoryConfiguration;
 import org.apereo.cas.config.CouchDbSamlIdPMetadataConfiguration;
 import org.apereo.cas.config.SamlIdPAuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.SamlIdPConfiguration;
-import org.apereo.cas.config.SamlIdPCouchDbMetadataConfiguration;
+import org.apereo.cas.config.SamlIdPCouchDbRegisteredServiceMetadataConfiguration;
 import org.apereo.cas.config.SamlIdPEndpointsConfiguration;
 import org.apereo.cas.config.SamlIdPMetadataConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
@@ -43,12 +42,10 @@ import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -57,14 +54,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link CouchDbSamlRegisteredServiceMetadataResolverTests}.
@@ -72,11 +67,11 @@ import static org.junit.Assert.*;
  * @author Timur Duehr
  * @since 6.0.0
  */
-@Category(CouchDbCategory.class)
+@Tag("CouchDb")
 @SpringBootTest(classes = {
     CouchDbSamlIdPFactoryConfiguration.class,
     CouchDbSamlIdPMetadataConfiguration.class,
-    SamlIdPCouchDbMetadataConfiguration.class,
+    SamlIdPCouchDbRegisteredServiceMetadataConfiguration.class,
     CasCouchDbCoreConfiguration.class,
     CasDefaultServiceTicketIdGeneratorsConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
@@ -113,14 +108,13 @@ import static org.junit.Assert.*;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement(proxyTargetClass = true)
 @Slf4j
-@TestPropertySource(properties = "cas.authn.samlIdp.metadata.location=classpath:")
+@TestPropertySource(properties = {
+    "cas.authn.samlIdp.metadata.location=classpath:",
+    "cas.authn.samlIdp.metadata.couchDb.dbName=saml_resolver",
+    "cas.authn.samlIdp.metadata.couchDb.username=cas",
+    "cas.authn.samlIdp.metadata.couchdb.password=password"
+})
 public class CouchDbSamlRegisteredServiceMetadataResolverTests {
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
-
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
-
     @Autowired
     @Qualifier("couchDbSamlRegisteredServiceMetadataResolver")
     private SamlRegisteredServiceMetadataResolver resolver;
@@ -133,13 +127,13 @@ public class CouchDbSamlRegisteredServiceMetadataResolverTests {
     @Qualifier("samlMetadataCouchDbFactory")
     private CouchDbConnectorFactory couchDbFactory;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         couchDbFactory.getCouchDbInstance().createDatabaseIfNotExists(couchDbFactory.getCouchDbConnector().getDatabaseName());
         couchDbRepository.initStandardDesignDocument();
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         couchDbFactory.getCouchDbInstance().deleteDatabase(couchDbFactory.getCouchDbConnector().getDatabaseName());
     }

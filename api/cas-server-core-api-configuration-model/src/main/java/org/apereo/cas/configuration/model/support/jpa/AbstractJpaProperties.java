@@ -2,10 +2,13 @@ package org.apereo.cas.configuration.model.support.jpa;
 
 import org.apereo.cas.configuration.model.support.ConnectionPoolingProperties;
 import org.apereo.cas.configuration.support.RequiredProperty;
+import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.cfg.AvailableSettings;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -19,6 +22,7 @@ import java.util.Map;
  */
 @Getter
 @Setter
+@RequiresModule(name = "cas-server-support-jdbc-drivers")
 public abstract class AbstractJpaProperties implements Serializable {
 
     private static final long serialVersionUID = 761486823496930920L;
@@ -33,7 +37,7 @@ public abstract class AbstractJpaProperties implements Serializable {
      * Hibernate feature to automatically validate and exports DDL to the schema.
      * By default, creates and drops the schema automatically when a session is starts and ends
      */
-    private String ddlAuto = "create-drop";
+    private String ddlAuto = "update";
 
     /**
      * The JDBC driver used to connect to the database.
@@ -92,13 +96,14 @@ public abstract class AbstractJpaProperties implements Serializable {
     /**
      * Additional settings provided by Hibernate in form of key-value pairs.
      *
-     * @see org.hibernate.cfg.AvailableSettings
+     * @see AvailableSettings
      */
     private Map<String, String> properties = new HashMap<>();
 
     /**
      * Database connection pooling settings.
      */
+    @NestedConfigurationProperty
     private ConnectionPoolingProperties pool = new ConnectionPoolingProperties();
 
     /**
@@ -160,4 +165,9 @@ public abstract class AbstractJpaProperties implements Serializable {
      * or returned back verbatim.
      */
     private boolean dataSourceProxy;
+
+    /**
+     * Fully-qualified name of the class that can control the physical naming strategy of hibernate.
+     */
+    private String physicalNamingStrategyClassName = "org.apereo.cas.jpa.CasHibernatePhysicalNamingStrategy";
 }

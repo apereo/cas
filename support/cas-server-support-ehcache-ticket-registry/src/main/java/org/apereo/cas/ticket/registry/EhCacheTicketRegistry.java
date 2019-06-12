@@ -168,7 +168,7 @@ public class EhCacheTicketRegistry extends AbstractTicketRegistry {
         return this.cacheManager.getCache(mapName);
     }
 
-    private Map<Object, Element> getAllExpired(final Ehcache map) {
+    private static Map<Object, Element> getAllExpired(final Ehcache map) {
         try {
             return map.getAll(map.getKeysWithExpiryCheck());
         } catch (final Exception e) {

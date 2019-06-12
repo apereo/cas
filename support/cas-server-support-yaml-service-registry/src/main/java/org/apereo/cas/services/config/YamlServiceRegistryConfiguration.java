@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryExecutionPlan;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
+import org.apereo.cas.services.ServiceRegistryListener;
 import org.apereo.cas.services.YamlServiceRegistry;
 import org.apereo.cas.services.replication.RegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.resource.RegisteredServiceResourceNamingStrategy;
@@ -13,12 +14,15 @@ import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.Collection;
 
 /**
  * This is {@link YamlServiceRegistryConfiguration}.
@@ -29,7 +33,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration("yamlServiceRegistryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnProperty(prefix = "cas.serviceRegistry.yaml", name = "location")
-public class YamlServiceRegistryConfiguration implements ServiceRegistryExecutionPlanConfigurer {
+public class YamlServiceRegistryConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -44,6 +48,10 @@ public class YamlServiceRegistryConfiguration implements ServiceRegistryExecutio
     @Qualifier("registeredServiceResourceNamingStrategy")
     private ObjectProvider<RegisteredServiceResourceNamingStrategy> resourceNamingStrategy;
 
+    @Autowired
+    @Qualifier("serviceRegistryListeners")
+    private ObjectProvider<Collection<ServiceRegistryListener>> serviceRegistryListeners;
+
     @Bean
     @RefreshScope
     @SneakyThrows
@@ -51,11 +59,20 @@ public class YamlServiceRegistryConfiguration implements ServiceRegistryExecutio
         val registry = casProperties.getServiceRegistry();
         return new YamlServiceRegistry(registry.getYaml().getLocation(),
             registry.isWatcherEnabled(), eventPublisher,
-            registeredServiceReplicationStrategy.getIfAvailable(), resourceNamingStrategy.getIfAvailable());
+            registeredServiceReplicationStrategy.getIfAvailable(),
+            resourceNamingStrategy.getIfAvailable(),
+            serviceRegistryListeners.getIfAvailable());
     }
 
-    @Override
-    public void configureServiceRegistry(final ServiceRegistryExecutionPlan plan) {
-        plan.registerServiceRegistry(yamlServiceRegistry());
+    @Bean
+    @ConditionalOnMissingBean(name = "yamlServiceRegistryExecutionPlanConfigurer")
+    public ServiceRegistryExecutionPlanConfigurer yamlServiceRegistryExecutionPlanConfigurer() {
+        return new ServiceRegistryExecutionPlanConfigurer() {
+            @Override
+            public void configureServiceRegistry(final ServiceRegistryExecutionPlan plan) {
+                plan.registerServiceRegistry(yamlServiceRegistry());
+            }
+        };
     }
+
 }

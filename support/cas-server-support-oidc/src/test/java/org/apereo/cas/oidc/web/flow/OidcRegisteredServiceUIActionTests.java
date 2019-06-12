@@ -6,12 +6,13 @@ import org.apereo.cas.web.flow.services.DefaultRegisteredServiceUserInterfaceInf
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
-import org.junit.Test;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.springframework.webflow.test.MockRequestContext;
 
 import java.io.Serializable;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link OidcRegisteredServiceUIActionTests}.
@@ -19,12 +20,13 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Tag("OIDC")
 public class OidcRegisteredServiceUIActionTests extends AbstractOidcTests {
 
     @Test
     public void verifyOidcActionWithoutMDUI() throws Exception {
         val ctx = new MockRequestContext();
-        WebUtils.putService(ctx, null);
+        WebUtils.putServiceIntoFlowScope(ctx, null);
         val event = oidcRegisteredServiceUIAction.execute(ctx);
         assertEquals("success", event.getId());
         assertNull(WebUtils.getServiceUserInterfaceMetadata(ctx, Serializable.class));
@@ -33,7 +35,7 @@ public class OidcRegisteredServiceUIActionTests extends AbstractOidcTests {
     @Test
     public void verifyOidcActionWithMDUI() throws Exception {
         val ctx = new MockRequestContext();
-        WebUtils.putService(ctx, RegisteredServiceTestUtils.getService(
+        WebUtils.putServiceIntoFlowScope(ctx, RegisteredServiceTestUtils.getService(
             "https://www.example.org?client_id=id&client_secret=secret&redirect_uri=https://oauth.example.org"));
         val event = oidcRegisteredServiceUIAction.execute(ctx);
         assertEquals("success", event.getId());

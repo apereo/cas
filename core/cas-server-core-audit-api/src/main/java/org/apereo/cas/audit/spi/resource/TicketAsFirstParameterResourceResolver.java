@@ -3,6 +3,7 @@ package org.apereo.cas.audit.spi.resource;
 import org.apereo.cas.util.AopUtils;
 
 import lombok.val;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 import org.aspectj.lang.JoinPoint;
 
@@ -25,6 +26,6 @@ public class TicketAsFirstParameterResourceResolver implements AuditResourceReso
         if (jp != null && jp.getArgs() != null) {
             return new String[]{jp.getArgs()[0].toString()};
         }
-        return new String[]{};
+        return ArrayUtils.EMPTY_STRING_ARRAY;
     }
 }

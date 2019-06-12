@@ -10,6 +10,7 @@ dependencies {
     
     implementation libraries.bouncycastle
     implementation libraries.ehcache
+    implementation libraries.ldaptive
     
     testImplementation project(":support:cas-server-support-generic")
     testImplementation project(path: ":support:cas-server-support-ldap", configuration: "tests")

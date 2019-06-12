@@ -5,8 +5,9 @@ import org.apereo.cas.support.wsfederation.WsFederationHelperTests;
 import org.apereo.cas.support.wsfederation.authentication.principal.WsFederationCredentialTests;
 import org.apereo.cas.support.wsfederation.web.WsFederationCookieManagerTests;
 
+import org.junit.platform.runner.JUnitPlatform;
+import org.junit.platform.suite.api.SelectClasses;
 import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
 
 /**
  * Test suite to run all tests.
@@ -14,12 +15,12 @@ import org.junit.runners.Suite;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
+@SelectClasses({
     WsFederationHelperTests.class,
     WsFederationCookieManagerTests.class,
     WsFederationAttributeMutatorTests.class,
     WsFederationCredentialTests.class
 })
+@RunWith(JUnitPlatform.class)
 public class AllWsFederationTestsSuite {
 }

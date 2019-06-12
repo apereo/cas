@@ -3,8 +3,7 @@ package org.apereo.cas.web.flow;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionStrategy;
 import org.apereo.cas.logout.DefaultLogoutExecutionPlan;
-import org.apereo.cas.logout.DefaultLogoutManager;
-import org.apereo.cas.logout.SamlCompliantLogoutMessageCreator;
+import org.apereo.cas.logout.DefaultSingleLogoutMessageCreator;
 import org.apereo.cas.logout.slo.DefaultSingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.logout.slo.DefaultSingleLogoutServiceMessageHandler;
 import org.apereo.cas.services.ServicesManager;
@@ -14,8 +13,8 @@ import org.apereo.cas.web.flow.logout.FrontChannelLogoutAction;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -28,7 +27,7 @@ import org.springframework.webflow.test.MockFlowExecutionKey;
 
 import java.util.ArrayList;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -38,6 +37,7 @@ import static org.mockito.Mockito.*;
 public class FrontChannelLogoutActionTests {
 
     private static final String FLOW_EXECUTION_KEY = "12234";
+
     private FrontChannelLogoutAction frontChannelLogoutAction;
 
     private RequestContext requestContext;
@@ -49,19 +49,17 @@ public class FrontChannelLogoutActionTests {
         MockitoAnnotations.initMocks(this);
     }
 
-    @Before
+    @BeforeEach
     public void onSetUp() {
         val validator = new SimpleUrlValidatorFactoryBean(false).getObject();
 
         val handler = new DefaultSingleLogoutServiceMessageHandler(new SimpleHttpClientFactoryBean().getObject(),
-            new SamlCompliantLogoutMessageCreator(), servicesManager, new DefaultSingleLogoutServiceLogoutUrlBuilder(validator), false,
+            new DefaultSingleLogoutMessageCreator(), servicesManager, new DefaultSingleLogoutServiceLogoutUrlBuilder(validator), false,
             new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()));
 
         val plan = new DefaultLogoutExecutionPlan();
         plan.registerSingleLogoutServiceMessageHandler(handler);
-        val logoutManager = new DefaultLogoutManager(new SamlCompliantLogoutMessageCreator(), false, plan);
-
-        this.frontChannelLogoutAction = new FrontChannelLogoutAction(logoutManager);
+        this.frontChannelLogoutAction = new FrontChannelLogoutAction(plan, false);
 
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -70,7 +68,7 @@ public class FrontChannelLogoutActionTests {
         when(this.requestContext.getExternalContext()).thenReturn(servletExternalContext);
         when(servletExternalContext.getNativeRequest()).thenReturn(request);
         when(servletExternalContext.getNativeResponse()).thenReturn(response);
-        val flowScope = new LocalAttributeMap();
+        val flowScope = new LocalAttributeMap<>();
         when(this.requestContext.getFlowScope()).thenReturn(flowScope);
         val mockFlowExecutionKey = new MockFlowExecutionKey(FLOW_EXECUTION_KEY);
         val mockFlowExecutionContext = new MockFlowExecutionContext();

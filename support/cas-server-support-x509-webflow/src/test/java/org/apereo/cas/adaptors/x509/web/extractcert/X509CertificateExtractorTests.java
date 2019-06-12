@@ -4,11 +4,12 @@ import org.apereo.cas.adaptors.x509.authentication.principal.AbstractX509Certifi
 import org.apereo.cas.web.extractcert.RequestHeaderX509CertificateExtractor;
 
 import lombok.val;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import java.security.cert.X509Certificate;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 
 /**
@@ -50,7 +51,7 @@ public class X509CertificateExtractorTests extends AbstractX509CertificateTests 
         "WLu8gep+XCwSn0Wb6D3eFs4DoIiMvQ6g2rS/pk7o5eWj",
         "-----END CERTIFICATE-----"};
 
-    private RequestHeaderX509CertificateExtractor extractX509CertificateFromHeader
+    private final RequestHeaderX509CertificateExtractor extractX509CertificateFromHeader
         = new RequestHeaderX509CertificateExtractor("ssl_client_cert");
 
     private static String certificateSingleLine(final String[] lines, final String separator) {
@@ -66,10 +67,10 @@ public class X509CertificateExtractorTests extends AbstractX509CertificateTests 
         return certificateSingleLine(CERTIFICATE_LINES, separator);
     }
 
-    private void assertCertificateParsed(final X509Certificate[] certificates) {
-        Assert.assertNotNull(certificates);
-        Assert.assertEquals(1, certificates.length);
-        Assert.assertNotNull(certificates[0]);
+    private static void assertCertificateParsed(final X509Certificate[] certificates) {
+        assertNotNull(certificates);
+        assertEquals(1, certificates.length);
+        assertNotNull(certificates[0]);
     }
 
     @Test
@@ -89,6 +90,6 @@ public class X509CertificateExtractorTests extends AbstractX509CertificateTests 
     @Test
     public void verifyExtractX509FromHeaderNoHeader() {
         val request = new MockHttpServletRequest();
-        Assert.assertNull(extractX509CertificateFromHeader.extract(request));
+        assertNull(extractX509CertificateFromHeader.extract(request));
     }
 }

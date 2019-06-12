@@ -4,25 +4,28 @@ import org.apereo.cas.services.JsonServiceRegistry;
 import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingStrategy;
-import org.apereo.cas.services.util.DefaultRegisteredServiceJsonSerializer;
+import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
 import org.apache.commons.io.FileUtils;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.io.ClassPathResource;
 
 import java.io.File;
+import java.util.ArrayList;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
  * @author Misagh Moayyed
  * @since 4.1
  */
+@Tag("OAuth")
 public class OAuthRegisteredServiceTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "oAuthRegisteredService.json");
@@ -33,10 +36,11 @@ public class OAuthRegisteredServiceTests {
     public OAuthRegisteredServiceTests() throws Exception {
         this.dao = new JsonServiceRegistry(RESOURCE, false,
             mock(ApplicationEventPublisher.class), new NoOpRegisteredServiceReplicationStrategy(),
-            new DefaultRegisteredServiceResourceNamingStrategy());
+            new DefaultRegisteredServiceResourceNamingStrategy(),
+            new ArrayList<>());
     }
 
-    @BeforeClass
+    @BeforeAll
     public static void prepTests() throws Exception {
         FileUtils.cleanDirectory(RESOURCE.getFile());
     }
@@ -73,7 +77,7 @@ public class OAuthRegisteredServiceTests {
         serviceWritten.setSupportedGrantTypes(CollectionUtils.wrapHashSet("something"));
         serviceWritten.setSupportedResponseTypes(CollectionUtils.wrapHashSet("something"));
 
-        val serializer = new DefaultRegisteredServiceJsonSerializer();
+        val serializer = new RegisteredServiceJsonSerializer();
         serializer.to(JSON_FILE, serviceWritten);
         val serviceRead = serializer.from(JSON_FILE);
         assertEquals(serviceWritten, serviceRead);

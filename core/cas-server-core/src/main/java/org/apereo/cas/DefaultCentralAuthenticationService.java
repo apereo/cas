@@ -14,7 +14,7 @@ import org.apereo.cas.authentication.exceptions.MixedPrincipalException;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.logout.LogoutManager;
-import org.apereo.cas.logout.LogoutRequest;
+import org.apereo.cas.logout.slo.SingleLogoutRequest;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServiceContext;
@@ -70,6 +70,8 @@ import java.util.List;
 public class DefaultCentralAuthenticationService extends AbstractCentralAuthenticationService {
     private static final long serialVersionUID = -8943828074939533986L;
 
+    private final transient Object serviceTicketValidationLock = new Object();
+
     public DefaultCentralAuthenticationService(final ApplicationEventPublisher applicationEventPublisher,
                                                final TicketRegistry ticketRegistry,
                                                final ServicesManager servicesManager,
@@ -90,7 +92,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         actionResolverName = "DESTROY_TICKET_GRANTING_TICKET_RESOLVER",
         resourceResolverName = "DESTROY_TICKET_GRANTING_TICKET_RESOURCE_RESOLVER")
     @Override
-    public List<LogoutRequest> destroyTicketGrantingTicket(final String ticketGrantingTicketId) {
+    public List<SingleLogoutRequest> destroyTicketGrantingTicket(final String ticketGrantingTicketId) {
         try {
             LOGGER.debug("Removing ticket [{}] from registry...", ticketGrantingTicketId);
             val ticket = getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
@@ -139,7 +141,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         this.ticketRegistry.updateTicket(ticketGrantingTicket);
         this.ticketRegistry.addTicket(serviceTicket);
 
-        LOGGER.info("Granted ticket [{}] for service [{}] and principal [{}]", serviceTicket.getId(), DigestUtils.abbreviate(service.getId()), principal.getId());
+        LOGGER.info("Granted service ticket [{}] for service [{}] and principal [{}]", serviceTicket.getId(), DigestUtils.abbreviate(service.getId()), principal.getId());
         doPublishEvent(new CasServiceTicketGrantedEvent(this, ticketGrantingTicket, serviceTicket));
         return serviceTicket;
     }
@@ -176,7 +178,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         this.ticketRegistry.updateTicket(proxyGrantingTicketObject);
         this.ticketRegistry.addTicket(proxyTicket);
 
-        LOGGER.info("Granted ticket [{}] for service [{}] for user [{}]",
+        LOGGER.info("Granted proxy ticket [{}] for service [{}] for user [{}]",
             proxyTicket.getId(), service.getId(), principal.getId());
 
         doPublishEvent(new CasProxyTicketGrantedEvent(this, proxyGrantingTicketObject, proxyTicket));
@@ -253,7 +255,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
              * access to critical section. The reason is that cache pulls serialized data and
              * builds new object, most likely for each pull. Is this synchronization needed here?
              */
-            synchronized (serviceTicket) {
+            synchronized (this.serviceTicketValidationLock) {
                 if (serviceTicket.isExpired()) {
                     LOGGER.info("ServiceTicket [{}] has expired.", serviceTicketId);
                     throw new InvalidTicketException(serviceTicketId);
@@ -261,7 +263,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
 
                 if (!serviceTicket.isValidFor(service)) {
                     LOGGER.error("Service ticket [{}] with service [{}] does not match supplied service [{}]",
-                        serviceTicketId, serviceTicket.getService().getId(), service);
+                        serviceTicketId, serviceTicket.getService().getId(), service.getId());
                     throw new UnrecognizableServiceForServiceTicketValidationException(serviceTicket.getService());
                 }
             }
@@ -270,7 +272,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
             LOGGER.debug("Resolved service [{}] from the authentication request", selectedService);
 
             val registeredService = this.servicesManager.findServiceBy(selectedService);
-            LOGGER.debug("Located registered service definition [{}] from [{}] to handle validation request", registeredService, selectedService);
+            LOGGER.trace("Located registered service definition [{}] from [{}] to handle validation request", registeredService, selectedService);
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(selectedService, registeredService);
 
             val root = serviceTicket.getTicketGrantingTicket().getRoot();
@@ -282,15 +284,23 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
             LOGGER.debug("Attribute policy [{}] is associated with service [{}]", attributePolicy, registeredService);
 
             val attributesToRelease = attributePolicy != null
-                ? attributePolicy.getAttributes(principal, selectedService, registeredService) : new HashMap<String, Object>();
+                ? attributePolicy.getAttributes(principal, selectedService, registeredService)
+                : new HashMap<String, List<Object>>();
 
-            LOGGER.debug("Calculated attributes for release per the release policy are [{}]", attributesToRelease.keySet());
+            LOGGER.debug("Calculated attributes for release per the release policy are [{}]",
+                attributesToRelease.keySet());
 
-            val principalId = registeredService.getUsernameAttributeProvider().resolveUsername(principal, selectedService, registeredService);
-            val modifiedPrincipal = this.principalFactory.createPrincipal(principalId, attributesToRelease);
-            val builder = DefaultAuthenticationBuilder.newInstance(authentication);
-            builder.setPrincipal(modifiedPrincipal);
-            LOGGER.debug("Principal determined for release to [{}] is [{}]", registeredService.getServiceId(), principalId);
+            val principalId = registeredService.getUsernameAttributeProvider()
+                .resolveUsername(principal, selectedService, registeredService);
+            val builder = DefaultAuthenticationBuilder.of(
+                    principal,
+                    this.principalFactory,
+                    attributesToRelease,
+                    selectedService,
+                    registeredService,
+                    authentication);
+            LOGGER.debug("Principal determined for release to [{}] is [{}]",
+                registeredService.getServiceId(), principalId);
 
             val finalAuthentication = builder.build();
 
@@ -303,8 +313,8 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
                 .with(serviceTicket.getTicketGrantingTicket().getChainedAuthentications())
                 .with(serviceTicket.isFromNewLogin())
                 .build();
-            doPublishEvent(new CasServiceTicketValidatedEvent(this, serviceTicket, assertion));
 
+            doPublishEvent(new CasServiceTicketValidatedEvent(this, serviceTicket, assertion));
             return assertion;
         } finally {
             if (serviceTicket.isExpired()) {

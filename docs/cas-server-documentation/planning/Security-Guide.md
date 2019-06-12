@@ -75,7 +75,8 @@ the principal of an SSO session since the user must verify his or her credential
 Forced authentication is suitable for services where higher security is desired or mandated. Typically forced
 authentication is configured on a per-service basis, but the [service management](#service-management) facility
 provides some support for implementing forced authentication as a matter of centralized security policy.
-Forced authentication may be combined with [multi-factor authentication](#multifactor-authentication) features to
+Forced authentication may be combined with 
+[multi-factor authentication](../configuration/Configuration-Properties.html#multifactor-authentication) features to
 implement arbitrary service-specific access control policy.
 
 
@@ -134,7 +135,7 @@ decentralized security policy model.) Some highlights of service management cont
 
 The service management facility is comprised of a service registry containing one or more registered services, each
 of which specifies the management controls above. The service registry can be controlled via static configuration files,
-a Web user interface, or both. See the [Service Management](../installation/Service-Management.html) section for more
+a Web user interface, or both. See the [Service Management](../services/Service-Management.html) section for more
 information.
 
 <div class="alert alert-warning"><strong>Authorized Services</strong><p>
@@ -177,7 +178,7 @@ Please [see this guide](../installation/Ticket-Registry-Replication-Encryption.h
 CAS provides a large variety of web interfaces that are aimed at system administrators and deployers.
 These screens along with a number of REST endpoints allow a CAS deployer to manage and reconfigure CAS behavior without resorting to
 native command-line interfaces. Needless to say, these endpoints and screens must be secured and allowed proper access only to
-authorized parties. Please [see this guide](../installation/Monitoring-Statistics.html) for more info.
+authorized parties. Please [see this guide](../monitoring/Monitoring-Statistics.html) for more info.
 
 ### Ticket Expiration Policies
 
@@ -187,7 +188,7 @@ control of some important aspects of CAS SSO session behavior:
 * SSO session duration (sliding expiration, absolute)
 * Ticket reuse
 
-See the [Configuring Ticketing Components](../installation/Configuring-Ticketing-Components.html) section for a
+See the [Configuring Ticketing Components](../ticketing/Configuring-Ticketing-Components.html) section for a
 detailed discussion of the various expiration policies and configuration instructions.
 
 ### Single Sign-Out
@@ -245,7 +246,7 @@ To see the relevant list of CAS properties and tune this behavior, please [revie
 
 As part of the CAS Security Filter, the CAS project automatically provides the necessary configuration to
 insert HTTP Security headers into the web response to prevent against HSTS, XSS, X-FRAME and other attacks.
-These settings are presently off by default.
+These settings are presently on by default.
 To see the relevant list of CAS properties and tune this behavior, please [review this guide](../configuration/Configuration-Properties.html#http-web-requests).
 
 To review and learn more about these options, please visit [this guide][cas-sec-filter].
@@ -255,7 +256,7 @@ To review and learn more about these options, please visit [this guide][cas-sec-
 The CAS project uses Spring Webflow to manage and orchestrate the authentication process. The conversational state of the
 webflow used by CAS is managed by the client which is then passed and tracked throughout various states of the authentication
 process. This state must be secured and encrypted to prevent session hijacking. While CAS provides default encryption
-settings out of the box, it is **STRONGLY** recommended that [all CAS deployments](../installation/Webflow-Customization.html) be
+settings out of the box, it is **STRONGLY** recommended that [all CAS deployments](../webflow/Webflow-Customization.html) be
 evaluated prior to production deployments and regenerate this configuration to prevent attacks.
 
 ### Long Term Authentication

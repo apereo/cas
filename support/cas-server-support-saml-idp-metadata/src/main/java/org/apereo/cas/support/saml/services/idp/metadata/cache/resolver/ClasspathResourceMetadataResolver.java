@@ -8,6 +8,7 @@ import org.apereo.cas.util.ResourceUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.metadata.resolver.impl.DOMMetadataResolver;
 import org.springframework.core.io.ClassPathResource;
@@ -29,7 +30,7 @@ public class ClasspathResourceMetadataResolver extends BaseSamlRegisteredService
     }
 
     @Override
-    public Collection<? extends MetadataResolver> resolve(final SamlRegisteredService service) {
+    public Collection<? extends MetadataResolver> resolve(final SamlRegisteredService service, final CriteriaSet criteriaSet) {
         val metadataLocation = service.getMetadataLocation();
         LOGGER.info("Loading SAML metadata from [{}]", metadataLocation);
         try (val in = ResourceUtils.getResourceFrom(metadataLocation).getInputStream()) {
@@ -53,7 +54,7 @@ public class ClasspathResourceMetadataResolver extends BaseSamlRegisteredService
             val metadataResource = ResourceUtils.getResourceFrom(metadataLocation);
             return metadataResource instanceof ClassPathResource;
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGGER.trace(e.getMessage(), e);
         }
         return false;
     }

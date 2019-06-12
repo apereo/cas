@@ -1,17 +1,37 @@
 <EntitiesDescriptor Name="urn:mace:shibboleth:testshib:two"
-    xmlns="urn:oasis:names:tc:SAML:2.0:metadata" xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
-    xmlns:mdalg="urn:oasis:names:tc:SAML:metadata:algsupport" xmlns:mdui="urn:oasis:names:tc:SAML:metadata:ui"
-    xmlns:shibmd="urn:mace:shibboleth:metadata:1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                    xmlns="urn:oasis:names:tc:SAML:2.0:metadata" xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
+                    xmlns:mdalg="urn:oasis:names:tc:SAML:metadata:algsupport" xmlns:mdui="urn:oasis:names:tc:SAML:metadata:ui">
+    
+    <EntityDescriptor entityID="https://sp.testshib.org/shibboleth-sp"
+                      xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata"
+                      xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
+                      xmlns:mdattr="urn:oasis:names:tc:SAML:metadata:attribute"
+                      xmlns:mdrpi="urn:oasis:names:tc:SAML:metadata:rpi"
+                      xmlns:mdui="urn:oasis:names:tc:SAML:metadata:ui"
+                      xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"
+                      xmlns:xrd="http://docs.oasis-open.org/ns/xri/xrd-1.0">
 
+        <Extensions>
 
-    <EntityDescriptor entityID="https://sp.testshib.org/shibboleth-sp">
+            <mdattr:EntityAttributes>
+                <saml:Attribute Name="http://macedir.org/entity-category" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+                    <saml:AttributeValue>
+                        http://id.incommon.org/category/research-and-scholarship
+                    </saml:AttributeValue>
+                </saml:Attribute>
+                <saml:Attribute Name="http://macedir.org/entity-category" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+                    <saml:AttributeValue>
+                        http://refeds.org/category/research-and-scholarship
+                    </saml:AttributeValue>
+                </saml:Attribute>
+            </mdattr:EntityAttributes>
 
-        <Extensions> 
             <mdalg:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha512"/>
+            <mdalg:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
             <mdalg:DigestMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#sha384"/>
             <mdalg:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
             <mdalg:DigestMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#sha224"/>
-            <mdalg:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
+
             <mdalg:SigningMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha512"/>
             <mdalg:SigningMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha384"/>
             <mdalg:SigningMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha256"/>
@@ -25,20 +45,21 @@
             <mdalg:SigningMethod Algorithm="http://www.w3.org/2000/09/xmldsig#dsa-sha1"/>
         </Extensions>
 
-        
+
         <!-- An SP supporting SAML 1 and 2 contains this element with protocol support as shown. -->
         <SPSSODescriptor
-            protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol urn:oasis:names:tc:SAML:1.1:protocol http://schemas.xmlsoap.org/ws/2003/07/secext">
+                protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol urn:oasis:names:tc:SAML:1.1:protocol http://schemas.xmlsoap.org/ws/2003/07/secext">
 
             <Extensions>
                 <!-- A request initiator at /Testshib that you can use to customize authentication requests issued to your IdP by TestShib. -->
                 <init:RequestInitiator xmlns:init="urn:oasis:names:tc:SAML:profiles:SSO:request-init" Binding="urn:oasis:names:tc:SAML:profiles:SSO:request-init" Location="https://sp.testshib.org/Shibboleth.sso/TestShib"/>
- 
+
                 <mdui:UIInfo>
                     <mdui:DisplayName xml:lang="en">TestShib Test SP</mdui:DisplayName>
                     <mdui:Description xml:lang="en">TestShib SP. Log into this to test your machine.
                         Once logged in check that all attributes that you expected have been
-                        released.</mdui:Description>
+                        released.
+                    </mdui:Description>
                     <mdui:Logo height="88" width="253">https://www.testshib.org/testshibtwo.jpg</mdui:Logo>
                 </mdui:UIInfo>
             </Extensions>
@@ -69,7 +90,7 @@
                             Iay/5YMU+aWP1z70h867ZQ7/7Y4HW345rdiS6EW663oH732wSYNt9kr7/0Uer3KD
                             9CuPuOidBacospDaFyfsaJruE99Kd6Eu/w5KLAGG+m0iqENCziDGzVA47TngKz2v
                             PVA+aokoOyoz3b53qeti77ijatSEoKjxheBWpO+eoJeGq/e49Um3M2ogIX/JAlMa
-                            Inh+vYSYngQB2sx9LGkR9KHaMKNIGCDehk93Xla4pWJx1w== 
+                            Inh+vYSYngQB2sx9LGkR9KHaMKNIGCDehk93Xla4pWJx1w==
                         </ds:X509Certificate>
                     </ds:X509Data>
                 </ds:KeyInfo>
@@ -87,53 +108,67 @@
             <!-- This tells IdPs that Single Logout is supported and where/how to request it. -->
 
             <SingleLogoutService Location="https://sp.testshib.org/Shibboleth.sso/SLO/SOAP"
-                Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP"/>
+                                 Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP"/>
             <SingleLogoutService Location="https://sp.testshib.org/Shibboleth.sso/SLO/Redirect"
-                Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"/>
+                                 Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"/>
             <SingleLogoutService Location="https://sp.testshib.org/Shibboleth.sso/SLO/POST"
-                Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"/>
+                                 Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"/>
             <SingleLogoutService Location="https://sp.testshib.org/Shibboleth.sso/SLO/Artifact"
-                Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Artifact"/>
+                                 Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Artifact"/>
 
 
             <!-- This tells IdPs that you only need transient identifiers. -->
             <NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</NameIDFormat>
             <NameIDFormat>urn:mace:shibboleth:1.0:nameIdentifier</NameIDFormat>
 
+            <AttributeConsumingService index="1">
+                <ServiceName xml:lang="en">Sample Service</ServiceName>
+                <ServiceDescription xml:lang="en">An example service that requires a human-readable identifier and optional name and e-mail address.</ServiceDescription>
+
+                <RequestedAttribute FriendlyName="eduPersonPrincipalName" Name="urn:mace:dir:attribute-def:eduPersonPrincipalName" NameFormat="urn:mace:shibboleth:1.0:attributeNamespace:uri"/>
+                <RequestedAttribute FriendlyName="mail" Name="urn:mace:dir:attribute-def:mail" NameFormat="urn:mace:shibboleth:1.0:attributeNamespace:uri"/>
+                <RequestedAttribute FriendlyName="displayName" Name="urn:mace:dir:attribute-def:displayName" NameFormat="urn:mace:shibboleth:1.0:attributeNamespace:uri"/>
+
+                <RequestedAttribute FriendlyName="eduPersonPrincipalName" Name="urn:oid:1.3.6.1.4.1.5923.1.1.1.6" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri"/>
+                <RequestedAttribute FriendlyName="mail" Name="urn:oid:0.9.2342.19200300.100.1.3" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri"/>
+                <RequestedAttribute FriendlyName="displayName" Name="urn:oid:2.16.840.1.113730.3.1.241" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri"/>
+
+            </AttributeConsumingService>
+
             <!--
-		This tells IdPs where and how to send authentication assertions. Mostly
-		the SP will tell the IdP what location to use in its request, but this
-		is how the IdP validates the location and also figures out which
-		SAML version/binding to use.
-		-->
+        This tells IdPs where and how to send authentication assertions. Mostly
+        the SP will tell the IdP what location to use in its request, but this
+        is how the IdP validates the location and also figures out which
+        SAML version/binding to use.
+        -->
 
             <AssertionConsumerService index="1" isDefault="true"
-                Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
-                Location="https://sp.testshib.org/Shibboleth.sso/SAML2/POST"/>
+                                      Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+                                      Location="https://sp.testshib.org/Shibboleth.sso/SAML2/POST"/>
             <AssertionConsumerService index="2"
-                Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST-SimpleSign"
-                Location="https://sp.testshib.org/Shibboleth.sso/SAML2/POST-SimpleSign"/>
+                                      Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST-SimpleSign"
+                                      Location="https://sp.testshib.org/Shibboleth.sso/SAML2/POST-SimpleSign"/>
             <AssertionConsumerService index="3"
-                Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Artifact"
-                Location="https://sp.testshib.org/Shibboleth.sso/SAML2/Artifact"/>
+                                      Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Artifact"
+                                      Location="https://sp.testshib.org/Shibboleth.sso/SAML2/Artifact"/>
             <AssertionConsumerService index="4"
-                Binding="urn:oasis:names:tc:SAML:1.0:profiles:browser-post"
-                Location="https://sp.testshib.org/Shibboleth.sso/SAML/POST"/>
+                                      Binding="urn:oasis:names:tc:SAML:1.0:profiles:browser-post"
+                                      Location="https://sp.testshib.org/Shibboleth.sso/SAML/POST"/>
             <AssertionConsumerService index="5"
-                Binding="urn:oasis:names:tc:SAML:1.0:profiles:artifact-01"
-                Location="https://sp.testshib.org/Shibboleth.sso/SAML/Artifact"/>
+                                      Binding="urn:oasis:names:tc:SAML:1.0:profiles:artifact-01"
+                                      Location="https://sp.testshib.org/Shibboleth.sso/SAML/Artifact"/>
             <AssertionConsumerService index="6"
-                Binding="http://schemas.xmlsoap.org/ws/2003/07/secext"
-                Location="https://sp.testshib.org/Shibboleth.sso/ADFS"/>
+                                      Binding="http://schemas.xmlsoap.org/ws/2003/07/secext"
+                                      Location="https://sp.testshib.org/Shibboleth.sso/ADFS"/>
 
             <!-- A couple additional assertion consumers for the registration webapp. -->
 
             <AssertionConsumerService index="7"
-                Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
-                Location="https://www.testshib.org/Shibboleth.sso/SAML2/POST"/>
+                                      Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+                                      Location="https://www.testshib.org/Shibboleth.sso/SAML2/POST"/>
             <AssertionConsumerService index="8"
-                Binding="urn:oasis:names:tc:SAML:1.0:profiles:browser-post"
-                Location="https://www.testshib.org/Shibboleth.sso/SAML/POST"/>
+                                      Binding="urn:oasis:names:tc:SAML:1.0:profiles:browser-post"
+                                      Location="https://www.testshib.org/Shibboleth.sso/SAML/POST"/>
 
         </SPSSODescriptor>
 

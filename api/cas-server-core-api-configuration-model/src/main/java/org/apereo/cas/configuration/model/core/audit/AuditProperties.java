@@ -1,10 +1,17 @@
 package org.apereo.cas.configuration.model.core.audit;
 
+import org.apereo.cas.configuration.model.support.dynamodb.AuditDynamoDbProperties;
+import org.apereo.cas.configuration.model.support.redis.AuditRedisProperties;
+import org.apereo.cas.configuration.support.RequiresModule;
+
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * This is {@link AuditProperties}.
@@ -12,6 +19,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@RequiresModule(name = "cas-server-core-audit", automated = true)
 @Getter
 @Setter
 public class AuditProperties implements Serializable {
@@ -84,6 +92,12 @@ public class AuditProperties implements Serializable {
     private AuditCouchDbProperties couchDb = new AuditCouchDbProperties();
 
     /**
+     * Family of sub-properties pertaining to Redis-based audit destinations.
+     */
+    @NestedConfigurationProperty
+    private AuditRedisProperties redis = new AuditRedisProperties();
+
+    /**
      * Family of sub-properties pertaining to rest-based audit destinations.
      */
     @NestedConfigurationProperty
@@ -100,10 +114,23 @@ public class AuditProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private AuditCouchbaseProperties couchbase = new AuditCouchbaseProperties();
+    /**
+     * Family of sub-properties pertaining to dynamodb-based audit destinations.
+     */
+    @NestedConfigurationProperty
+    private AuditDynamoDbProperties dynamoDb = new AuditDynamoDbProperties();
 
     /**
      * Indicates whether catastrophic audit failures should simply be logged
      * or whether errors should bubble up and thrown back.
      */
     private boolean ignoreAuditFailures;
+
+    /**
+     * Indicate a list of supported audit actions that should be recognized,
+     * processed and recorded by CAS audit managers. Each supported action
+     * can be treated as a regular expression to match against built-in
+     * CAS actions.
+     */
+    private List<String> supportedActions = Stream.of("*").collect(Collectors.toList());
 }

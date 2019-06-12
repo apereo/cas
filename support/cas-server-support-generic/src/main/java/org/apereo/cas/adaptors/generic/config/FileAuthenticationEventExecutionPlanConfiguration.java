@@ -43,8 +43,8 @@ public class FileAuthenticationEventExecutionPlanConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Autowired
-    @Qualifier("personDirectoryPrincipalResolver")
-    private ObjectProvider<PrincipalResolver> personDirectoryPrincipalResolver;
+    @Qualifier("defaultPrincipalResolver")
+    private ObjectProvider<PrincipalResolver> defaultPrincipalResolver;
 
     @ConditionalOnMissingBean(name = "filePrincipalFactory")
     @Bean
@@ -74,7 +74,7 @@ public class FileAuthenticationEventExecutionPlanConfiguration {
             val file = casProperties.getAuthn().getFile().getFilename();
             if (file != null) {
                 LOGGER.debug("Added file-based authentication handler for the target file [{}]", file.getDescription());
-                plan.registerAuthenticationHandlerWithPrincipalResolver(fileAuthenticationHandler(), personDirectoryPrincipalResolver.getIfAvailable());
+                plan.registerAuthenticationHandlerWithPrincipalResolver(fileAuthenticationHandler(), defaultPrincipalResolver.getIfAvailable());
             }
         };
     }

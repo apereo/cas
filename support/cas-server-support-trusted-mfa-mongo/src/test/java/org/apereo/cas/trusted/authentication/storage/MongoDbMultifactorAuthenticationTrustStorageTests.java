@@ -1,30 +1,26 @@
 package org.apereo.cas.trusted.authentication.storage;
 
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
-import org.apereo.cas.category.MongoDbCategory;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.config.MongoDbMultifactorAuthenticationTrustConfiguration;
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustConfiguration;
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustedDeviceFingerprintConfiguration;
+import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
+import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.val;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import java.time.LocalDateTime;
 
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link MongoDbMultifactorAuthenticationTrustStorageTests}.
@@ -32,13 +28,14 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Category(MongoDbCategory.class)
+@Tag("MongoDb")
 @SpringBootTest(classes = {
     MongoDbMultifactorAuthenticationTrustConfiguration.class,
     MultifactorAuthnTrustedDeviceFingerprintConfiguration.class,
     MultifactorAuthnTrustConfiguration.class,
     CasCoreAuditConfiguration.class,
-    RefreshAutoConfiguration.class})
+    RefreshAutoConfiguration.class
+})
 @TestPropertySource(properties = {
     "cas.authn.mfa.trusted.mongo.databaseName=mfa-trusted",
     "cas.authn.mfa.trusted.mongo.host=localhost",
@@ -48,14 +45,9 @@ import static org.junit.Assert.*;
     "cas.authn.mfa.trusted.mongo.authenticationDatabaseName=admin",
     "cas.authn.mfa.trusted.mongo.dropCollection=true"
     })
+@EnabledIfPortOpen(port = 27017)
+@EnabledIfContinuousIntegration
 public class MongoDbMultifactorAuthenticationTrustStorageTests {
-
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
-
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
-
     @Autowired
     @Qualifier("mfaTrustEngine")
     private MultifactorAuthenticationTrustStorage mfaTrustEngine;
@@ -75,7 +67,7 @@ public class MongoDbMultifactorAuthenticationTrustStorageTests {
         r.setRecordDate(LocalDateTime.now().minusDays(2));
         mfaTrustEngine.set(r);
 
-        assertThat(mfaTrustEngine.get(LocalDateTime.now().minusDays(30)), hasSize(1));
-        assertThat(mfaTrustEngine.get(LocalDateTime.now().minusDays(2)), hasSize(0));
+        assertEquals(1, mfaTrustEngine.get(LocalDateTime.now().minusDays(30)).size());
+        assertEquals(0, mfaTrustEngine.get(LocalDateTime.now().minusDays(2)).size());
     }
 }

@@ -45,6 +45,21 @@ Expected responses from the REST endpoint are mapped to CAS as such:
 | `428`          | Produces a `AccountPasswordMustChangeException`
 | Other          | Produces a `FailedLoginException`
 
+## Warnings
+
+The remote REST endpoint can send warnings back to the CAS server using custom headers.
+If the authentication is successful, these warnings will be shown to the user directly after the login.
+
+### `X-CAS-Warning`
+
+For each `X-CAS-Warning` header present in the response, a corresponding message will be shown to the user. The header value can either be the key for a [localized message](../ux/User-Interface-Customization-Localization.html) or the message itself.
+
+### `X-CAS-PasswordExpirationDate`
+
+If this header is present in the response and contains a RFC1123 date a special message will be shown
+to warn the user about the expiring password. If a [password management provider](../password_management/Password-Management.html) is configured,
+the user will be able to directly change the password.
+
 ## Configuration
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#rest-authentication).

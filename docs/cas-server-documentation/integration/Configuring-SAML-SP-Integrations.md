@@ -52,10 +52,7 @@ The following SAML SP integrations, as samples, are provided by CAS:
 <img src="https://cloud.githubusercontent.com/assets/1205228/22052583/4805e2c2-dd60-11e6-8150-80aaa4bbab0e.png" height="20" width="100"></a> 
 
 <a href="http://www.workday.com/">
-<img src="https://cloud.githubusercontent.com/assets/1205228/22052587/4816e04a-dd60-11e6-9ceb-6ccec1290e19.png" height="48" width="100"></a> 
-
-<a href="http://www.testshib.org">
-<img src="https://cloud.githubusercontent.com/assets/1205228/22052582/4805064a-dd60-11e6-87aa-746deacca597.jpg" height="48" width="100"></a> 
+<img src="https://cloud.githubusercontent.com/assets/1205228/22052587/4816e04a-dd60-11e6-9ceb-6ccec1290e19.png" height="48" width="100"></a>
 
 <a href="https://help.webex.com/docs/DOC-1067">
 <img src="https://cloud.githubusercontent.com/assets/1205228/22052574/47af8206-dd60-11e6-95d0-5827e0d88d73.jpg" height="48" width="100"></a>
@@ -97,16 +94,16 @@ The following SAML SP integrations, as samples, are provided by CAS:
 <img src="https://cloud.githubusercontent.com/assets/1205228/24699366/fbfbcf5a-1a08-11e7-9664-f37d6e50a5a3.png" height="48" width="120"></a>
 
 <a href="https://get.slack.help/hc/en-us/articles/205168057">
-<img src="https://cloud.githubusercontent.com/assets/1205228/24858382/5b15c512-1e01-11e7-87ac-f0b091cd7885.png" height="48" width="120"></a>
+<img src="https://cloud.githubusercontent.com/assets/1205228/24858382/5b15c512-1e01-11e7-87ac-f0b091cd7885.png" height="48" width="110"></a>
 
 <a href="https://support.zendesk.com/hc/en-us/articles/203663676-Using-SAML-for-single-sign-on-Professional-and-Enterprise-">
 <img src="https://cloud.githubusercontent.com/assets/1205228/24858342/34441006-1e01-11e7-9209-9b78081de4db.png" height="48" width="120"></a>
 
 <a href="https://www.gartner.com/">
-<img src="https://cloud.githubusercontent.com/assets/1205228/25349422/a29a98f6-28d6-11e7-9d10-e286d0080cbe.png" height="48" width="100"></a>
+<img src="https://cloud.githubusercontent.com/assets/1205228/25349422/a29a98f6-28d6-11e7-9d10-e286d0080cbe.png" height="48" width="90"></a>
 
 <a href="https://www.cherwell.com/">
-<img src="https://user-images.githubusercontent.com/1205228/30205883-84174ebc-949f-11e7-9afc-a66c2ab19f59.png" height="48" width="120"></a>
+<img src="https://user-images.githubusercontent.com/1205228/30205883-84174ebc-949f-11e7-9afc-a66c2ab19f59.png" height="48" width="110"></a>
 
 <a href="https://www.bynder.com">
 <img src="https://user-images.githubusercontent.com/1205228/30205852-69921a5e-949f-11e7-8326-ba4c00fceba4.png" height="48" width="120"></a>
@@ -148,22 +145,67 @@ The following SAML SP integrations, as samples, are provided by CAS:
 <img src="https://user-images.githubusercontent.com/1205228/34523704-d33a2054-f0ad-11e7-9fd7-444c30772a2a.png" height="58" width="120"></a>
 
 <a href="https://www.concursolutions.com/">
-<img src="https://user-images.githubusercontent.com/1205228/36302734-ca3327ae-12c6-11e8-836f-e9a1550253d2.png" height="58" width="180"></a>
+<img src="https://user-images.githubusercontent.com/1205228/36302734-ca3327ae-12c6-11e8-836f-e9a1550253d2.png" height="58" width="170"></a>
 
 <a href="https://www.polleverywhere.com/">
 <img src="https://user-images.githubusercontent.com/1205228/36302795-026f57d2-12c7-11e8-931e-0f8700df1864.png" height="58" width="180"></a>
 
 <a href="https://www.blackbaud.com/files/support/helpfiles/auth/content/auth-saml.html">
-<img src="https://user-images.githubusercontent.com/1205228/39860502-c72d1614-5452-11e8-956d-28a4b3a7a757.png" height="58" width="160"></a>
+<img src="https://user-images.githubusercontent.com/1205228/39860502-c72d1614-5452-11e8-956d-28a4b3a7a757.png" height="58" width="150"></a>
 
 <a href="https://www.givecampus.com/">
-<img src="https://user-images.githubusercontent.com/1205228/39876988-eb009f5c-5489-11e8-8b74-940f75997f41.png" height="58" width="170"></a>
+<img src="https://user-images.githubusercontent.com/1205228/39876988-eb009f5c-5489-11e8-8b74-940f75997f41.png" height="58" width="130"></a>
 
 <a href="https://www.warpwire.com/">
-<img src="https://user-images.githubusercontent.com/1205228/39861404-b73f4bca-5455-11e8-9035-e0ecf1f8dcd0.png" height="58" width="170"></a>
+<img src="https://user-images.githubusercontent.com/1205228/39861404-b73f4bca-5455-11e8-9035-e0ecf1f8dcd0.png" height="58" width="150"></a>
 
 <a href="https://rocket.chat/docs/administrator-guides/authentication/saml/">
-<img src="https://user-images.githubusercontent.com/1205228/39877039-1128c7ae-548a-11e8-8735-1abf90883df6.png" height="58" width="170"></a>
+<img src="https://user-images.githubusercontent.com/1205228/39877039-1128c7ae-548a-11e8-8735-1abf90883df6.png" height="58" width="150"></a>
+
+<a href="https://armssoftware.com/">
+<img src="https://user-images.githubusercontent.com/1205228/55328877-35e0a400-5442-11e9-8848-cda5a9efe1c5.png" height="50" width="100"></a>
+
+<a href="https://www.ahpcare.com/">
+<img src="https://user-images.githubusercontent.com/1205228/55275480-e5334480-52a3-11e9-982a-1fad518258c5.png" height="50" width="190"></a>
+
+<a href="https://www.neogov.com/">
+<img src="https://user-images.githubusercontent.com/1205228/55275543-f3359500-52a4-11e9-9407-02ba4fc21a80.png" height="38" width="120"></a>
+
+<a href="https://www.conexed.com/">
+<img src="https://user-images.githubusercontent.com/1205228/55275622-ff6e2200-52a5-11e9-833d-f48518e58d0e.png" height="58" width="170"></a>
+
+<a href="https://www.cccco.edu/">
+<img src="https://user-images.githubusercontent.com/1205228/55275721-62ac8400-52a7-11e9-89c2-121f2c494920.png" height="98" width="90"></a>
+
+<a href="https://www.zimbra.com/">
+<img src="https://user-images.githubusercontent.com/1205228/55322014-f14c0d00-542f-11e9-9355-3dd766ea56e6.png" height="68" width="160"></a>
+
+<a href="https://www.atlassian.com/software/confluence">
+<img src="https://user-images.githubusercontent.com/1205228/55322216-97981280-5430-11e9-9ea3-b3682cb67ff1.png" height="68" width="130"></a>
+
+<a href="https://www.atlassian.com/software/jira">
+<img src="https://user-images.githubusercontent.com/1205228/55322296-cb733800-5430-11e9-93e7-0f57e1a1ae89.png" height="78" width="90"></a>
+
+<a href="https://www.pagerduty.com/">
+<img src="https://user-images.githubusercontent.com/1205228/55322626-b34fe880-5431-11e9-8574-74cc9ab9643f.png" height="78" width="120"></a>
+
+<a href="https://www.crashplan.com/">
+<img src="https://user-images.githubusercontent.com/1205228/55322944-7f28f780-5432-11e9-8dd0-e999f0b6e03e.png" height="78" width="120"></a>
+
+<a href="https://www.docusign.com/">
+<img src="https://user-images.githubusercontent.com/1205228/55340232-1c972200-5459-11e9-87d2-53e1eccef8b8.png" height="78" width="150"></a>
+
+<a href="https://www.safaribooksonline.com/">
+<img src="https://user-images.githubusercontent.com/1205228/55340518-b65ecf00-5459-11e9-9941-3b0e80ceaf73.png" height="78" width="110"></a>
+
+<a href="https://www.tophat.com/">
+<img src="https://user-images.githubusercontent.com/1205228/55340927-89f78280-545a-11e9-81fb-baf0413bcbfa.png" height="48" width="140"></a>
+ 
+<a href="https://myemma.com/">
+<img src="https://user-images.githubusercontent.com/1205228/55434382-58f77a80-554c-11e9-8494-1c6a830b532c.png" height="48" width="140"></a>
+
+<a href="https://www.qualtrics.com">
+<img src="https://user-images.githubusercontent.com/1205228/55434613-d3c09580-554c-11e9-83ef-6b5805d7424e.png" height="48" width="140"></a>
 
 </div>
 

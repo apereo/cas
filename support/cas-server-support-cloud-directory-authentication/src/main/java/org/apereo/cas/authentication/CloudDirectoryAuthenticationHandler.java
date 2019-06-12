@@ -26,11 +26,12 @@ public class CloudDirectoryAuthenticationHandler extends AbstractUsernamePasswor
     private final CloudDirectoryRepository repository;
     private final CloudDirectoryProperties cloudDirectoryProperties;
 
-    public CloudDirectoryAuthenticationHandler(final String name, final ServicesManager servicesManager,
+    public CloudDirectoryAuthenticationHandler(final String name,
+                                               final ServicesManager servicesManager,
                                                final PrincipalFactory principalFactory,
                                                final CloudDirectoryRepository repository,
                                                final CloudDirectoryProperties cloudDirectoryProperties) {
-        super(name, servicesManager, principalFactory, null);
+        super(name, servicesManager, principalFactory, cloudDirectoryProperties.getOrder());
         this.repository = repository;
         this.cloudDirectoryProperties = cloudDirectoryProperties;
     }
@@ -52,12 +53,12 @@ public class CloudDirectoryAuthenticationHandler extends AbstractUsernamePasswor
 
         LOGGER.debug("Located account attributes [{}] for [{}]", attributes.keySet(), username);
 
-        val userPassword = attributes.get(cloudDirectoryProperties.getPasswordAttributeName()).toString();
+        val userPassword = attributes.get(cloudDirectoryProperties.getPasswordAttributeName()).get(0).toString();
         if (!matches(originalPassword, userPassword)) {
             LOGGER.warn("Account password on record for [{}] does not match the given/encoded password", username);
             throw new FailedLoginException();
         }
-        return createHandlerResult(credential,
-            this.principalFactory.createPrincipal(username, attributes), new ArrayList<>());
+        val principal = this.principalFactory.createPrincipal(username, attributes);
+        return createHandlerResult(credential, principal, new ArrayList<>());
     }
 }

@@ -1,6 +1,5 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
-import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.util.function.FunctionUtils;
 
@@ -22,9 +21,8 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 /**
  * Credential to principal resolver that extracts Subject Alternative Name UPN extension
@@ -46,8 +44,13 @@ public class X509SubjectAlternativeNameUPNPrincipalResolver extends AbstractX509
     public X509SubjectAlternativeNameUPNPrincipalResolver(final IPersonAttributeDao attributeRepository,
                                                           final PrincipalFactory principalFactory, final boolean returnNullIfNoAttributes,
                                                           final String principalAttributeName,
-                                                          final String alternatePrincipalAttribute) {
-        super(attributeRepository, principalFactory, returnNullIfNoAttributes, principalAttributeName, alternatePrincipalAttribute);
+                                                          final String alternatePrincipalAttribute,
+                                                          final boolean useCurrentPrincipalId,
+                                                          final boolean resolveAttributes,
+                                                          final Set<String> activeAttributeRepositoryIdentifiers) {
+        super(attributeRepository, principalFactory, returnNullIfNoAttributes,
+            principalAttributeName, alternatePrincipalAttribute, useCurrentPrincipalId,
+            resolveAttributes, activeAttributeRepositoryIdentifiers);
     }
 
     /**
@@ -58,25 +61,24 @@ public class X509SubjectAlternativeNameUPNPrincipalResolver extends AbstractX509
      * @return UPN string or null
      */
     private static String getUPNStringFromSequence(final ASN1Sequence seq) {
-        if (seq != null) {
-            // First in sequence is the object identifier, that we must check
-            val id = ASN1ObjectIdentifier.getInstance(seq.getObjectAt(0));
-            if (id != null && UPN_OBJECTID.equals(id.getId())) {
-                val obj = (ASN1TaggedObject) seq.getObjectAt(1);
-                val primitiveObj = obj.getObject();
+        if (seq == null) {
+            return null;
+        }
+        val id = ASN1ObjectIdentifier.getInstance(seq.getObjectAt(0));
+        if (id != null && UPN_OBJECTID.equals(id.getId())) {
+            val obj = (ASN1TaggedObject) seq.getObjectAt(1);
+            val primitiveObj = obj.getObject();
 
-                val func = FunctionUtils.doIf(Predicates.instanceOf(ASN1TaggedObject.class),
-                    () -> ASN1TaggedObject.getInstance(primitiveObj).getObject(),
-                    () -> primitiveObj);
-                val prim = func.apply(primitiveObj);
+            val func = FunctionUtils.doIf(Predicates.instanceOf(ASN1TaggedObject.class),
+                () -> ASN1TaggedObject.getInstance(primitiveObj).getObject(),
+                () -> primitiveObj);
+            val prim = func.apply(primitiveObj);
 
-                if (prim instanceof ASN1OctetString) {
-                    return new String(((ASN1OctetString) prim).getOctets(), StandardCharsets.UTF_8);
-                }
-                if (prim instanceof ASN1String) {
-                    return ((ASN1String) prim).getString();
-                }
-                return null;
+            if (prim instanceof ASN1OctetString) {
+                return new String(((ASN1OctetString) prim).getOctets(), StandardCharsets.UTF_8);
+            }
+            if (prim instanceof ASN1String) {
+                return ((ASN1String) prim).getString();
             }
         }
         return null;
@@ -88,7 +90,7 @@ public class X509SubjectAlternativeNameUPNPrincipalResolver extends AbstractX509
      * @param sanItem subject alternative name value encoded as a two elements List with elem(0) representing object id and elem(1)
      *                representing object (subject alternative name) itself.
      * @return ASN1Sequence abstraction representing subject alternative name or null if the passed in
-     * List doesn't contain at least to elements
+     * List doesn't contain at least two elements.
      * as expected to be returned by implementation of {@code X509Certificate.html#getSubjectAlternativeNames}
      * @see <a href="http://docs.oracle.com/javase/7/docs/api/java/security/cert/X509Certificate.html#getSubjectAlternativeNames()">
      * X509Certificate#getSubjectAlternativeNames</a>
@@ -124,13 +126,6 @@ public class X509SubjectAlternativeNameUPNPrincipalResolver extends AbstractX509
         return null;
     }
 
-    /**
-     * Retrieves Subject Alternative Name UPN extension as a principal id String.
-     *
-     * @param certificate X.509 certificate credential.
-     * @return Resolved principal ID or null if no SAN UPN extension is available in provided certificate.
-     * @see java.security.cert.X509Certificate#getSubjectAlternativeNames()
-     */
     @Override
     protected String resolvePrincipalInternal(final X509Certificate certificate) {
         LOGGER.debug("Resolving principal from Subject Alternative Name UPN for [{}]", certificate);
@@ -152,13 +147,4 @@ public class X509SubjectAlternativeNameUPNPrincipalResolver extends AbstractX509
 
         return getAlternatePrincipal(certificate);
     }
-
-    @Override
-    protected Map<String, List<Object>> retrievePersonAttributes(final String principalId, final Credential credential) {
-        val attributes = new LinkedHashMap<>(super.retrievePersonAttributes(principalId, credential));
-        val certificate = ((X509CertificateCredential) credential).getCertificate();
-        attributes.putAll(extractPersonAttributes(certificate));
-        return attributes;
-    }
-
 }

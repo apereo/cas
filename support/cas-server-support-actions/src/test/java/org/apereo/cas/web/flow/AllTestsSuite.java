@@ -1,7 +1,8 @@
 package org.apereo.cas.web.flow;
 
+import org.junit.platform.runner.JUnitPlatform;
+import org.junit.platform.suite.api.SelectClasses;
 import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
 
 /**
  * This is {@link AllTestsSuite}.
@@ -9,8 +10,7 @@ import org.junit.runners.Suite;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
+@SelectClasses({
     AuthenticationViaFormActionTests.class,
     FrontChannelLogoutActionTests.class,
     GenerateServiceTicketActionTests.class,
@@ -25,7 +25,14 @@ import org.junit.runners.Suite;
     ServiceAuthorizationCheckTests.class,
     CreateTicketGrantingTicketActionTests.class,
     TicketGrantingTicketCheckActionTests.class,
-    ServiceWarningActionTests.class
+    ServiceWarningActionTests.class,
+    TerminateSessionActionTests.class,
+    VerifyRequiredServiceActionTests.class,
+    SetServiceUnauthorizedRedirectUrlActionTests.class,
+    TerminateSessionConfirmingActionTests.class,
+    GatewayServicesManagementCheckActionTests.class,
+    ServiceAuthorizationCheckActionTests.class
 })
+@RunWith(JUnitPlatform.class)
 public class AllTestsSuite {
 }

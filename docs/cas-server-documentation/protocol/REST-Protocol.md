@@ -10,7 +10,7 @@ The REST protocol allows one to model applications as users, programmatically ac
 service tickets to authenticate to other applications. This means that other applications would be able
 to use a CAS client  to accept Service Tickets rather than to rely upon another technology such as
 client SSL certificates for application-to-application authentication of requests. This is achieved
-by exposing a way to RESTfully obtain a Ticket Granting Ticket and then use that to obtain a Service Ticket.
+by exposing a way to REST-fully obtain a Ticket Granting Ticket and then use that to obtain a Service Ticket.
 
 <div class="alert alert-warning"><strong>Usage Warning!</strong><p>The REST endpoint may
  become a tremendously convenient target for brute force dictionary attacks on CAS server. Consider
@@ -32,7 +32,7 @@ Support is enabled by including the following to the overlay:
 
 ```bash
 POST /cas/v1/tickets HTTP/1.0
-
+'Content-type': 'Application/x-www-form-urlencoded'
 username=battags&password=password&additionalParam1=paramvalue
 ```
 
@@ -97,6 +97,14 @@ POST /cas/v1/tickets/{TGT id} HTTP/1.0
 service={form encoded parameter for the service url}
 ```
 
+You may also specify a `renew` parameter to obtain a service ticket that can be accepted by a service that only wants tickets issued from the presentation of the user's primary credentials. In that case, user credentials have to be passed in the request, for example, as `username` and `password` parameters.
+
+```bash
+POST /cas/v1/tickets/{TGT id} HTTP/1.0
+
+service={form encoded parameter for the service url}&renew=true&username=battags&password=password
+```
+
 You may also submit service ticket requests using the semantics [SAML1 protocol](SAML-Protocol.html).
 
 ### Successful Response
@@ -124,7 +132,7 @@ Note that JWTs created are typically signed and encrypted by default with pre-ge
 
 ## Validate Service Ticket
 
-Service ticket validation is handled through the [CAS Protocol](Cas-Protocol.html)
+Service ticket validation is handled through the [CAS Protocol](CAS-Protocol.html)
 via any of the validation endpoints such as `/p3/serviceValidate`. 
 
 ```bash
@@ -209,6 +217,18 @@ This pattern may be of interest in cases where the internal network architecture
 the CAS server from external users behind firewall, reverse proxy, or a messaging bus and
 allows only trusted applications to connect directly to the CAS server.
 
+<div class="alert alert-warning"><strong>Usage Warning!</strong><p>The X.509 feature over REST
+using a body parameter or a http header provides a tremendously convenient target for claiming
+user identities or obtaining TGTs without proof of private key ownership.
+To securely use this feature, network configuration <strong>MUST</strong> allow connections
+to the CAS server only from trusted hosts which in turn have strict security limitations and
+logging.
+It is also recommended to make sure that the body parameter or the http header can only come
+from trusted hosts and not from the original authenticating client.</p></div>
+
+It is also possible to let the servlet container validate the TLS client key / X.509 certificate
+during TLS handshake, and have CAS server retrieve the certificate from the container.
+
 Support is enabled by including the following in your overlay:
 
 ```xml
@@ -219,19 +239,19 @@ Support is enabled by including the following in your overlay:
 </dependency>
 ```
 
-### Request a Ticket Granting Ticket (request body method)
-
-<div class="alert alert-warning"><strong>Usage Warning!</strong><p>The X.509 feature over REST
-provides a tremendously convenient target for claiming user identities. To securely use this feature, 
-network configuration <strong>MUST</strong> allow connections to the CAS server 
-only from trusted hosts which in turn have strict security limitations and logging.</p></div>
+### Request a Ticket Granting Ticket (Proxy TLS Client Authentication using a body parameter)
 
 ```bash
 POST /cas/v1/tickets HTTP/1.0
 cert=<ascii certificate>
 ```
 
-### Request a Ticket Granting Ticket (TLS Client Authentication)
+### Request a Ticket Granting Ticket (Proxy TLS Client Authentication using a http header)
+
+The cas server should be configured for X509 authentication on the login page for
+this to function properly.
+
+### Request a Ticket Granting Ticket (TLS Client Authentication from the servlet container)
 
 The cas server should be configured for X509 authentication on the login page for
 this to function properly.

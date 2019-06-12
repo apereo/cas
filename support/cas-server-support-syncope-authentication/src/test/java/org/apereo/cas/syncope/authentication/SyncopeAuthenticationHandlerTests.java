@@ -12,14 +12,14 @@ import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.SyncopeAuthenticationConfiguration;
 import org.apereo.cas.util.MockWebServer;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.Cleanup;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.syncope.common.lib.to.UserTO;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.ResourceLock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -27,10 +27,10 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import java.nio.charset.StandardCharsets;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link SyncopeAuthenticationHandlerTests}.
@@ -38,6 +38,7 @@ import java.nio.charset.StandardCharsets;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@SuppressWarnings("unused")
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     SyncopeAuthenticationConfiguration.class,
@@ -49,76 +50,55 @@ import java.nio.charset.StandardCharsets;
 })
 @TestPropertySource(properties = "cas.authn.syncope.url=http://localhost:8095")
 @Slf4j
+@ResourceLock("Syncope")
 public class SyncopeAuthenticationHandlerTests {
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
-
     private static final ObjectMapper MAPPER = new IgnoringJaxbModuleJacksonObjectMapper().findAndRegisterModules();
-
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
 
     @Autowired
     @Qualifier("syncopeAuthenticationHandler")
     private AuthenticationHandler syncopeAuthenticationHandler;
 
-    private MockWebServer webServer;
-
     @Test
     public void verifyHandlerPasses() {
-        try {
-            val user = new UserTO();
-            user.setUsername("casuser");
-            startMockSever(user);
-            syncopeAuthenticationHandler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
-        } catch (final Exception e) {
-            throw new AssertionError(e.getMessage(), e);
-        } finally {
-            this.webServer.stop();
-        }
+        val user = new UserTO();
+        user.setUsername("casuser");
+        @Cleanup("stop")
+        val webserver = startMockSever(user);
+        assertDoesNotThrow(() ->
+            syncopeAuthenticationHandler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser")));
     }
 
     @Test
     public void verifyHandlerMustChangePassword() {
-        try {
-            val user = new UserTO();
-            user.setUsername("casuser");
-            user.setMustChangePassword(true);
-            startMockSever(user);
+        val user = new UserTO();
+        user.setUsername("casuser");
+        user.setMustChangePassword(true);
+        @Cleanup("stop")
+        val webserver = startMockSever(user);
 
-            syncopeAuthenticationHandler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
-        } catch (final AccountPasswordMustChangeException e) {
-            LOGGER.debug("Passed");
-        } catch (final Exception e) {
-            throw new AssertionError(e.getMessage(), e);
-        } finally {
-            this.webServer.stop();
-        }
+        assertThrows(AccountPasswordMustChangeException.class,
+            () -> syncopeAuthenticationHandler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser")));
     }
 
     @Test
     public void verifyHandlerSuspended() {
-        try {
-            val user = new UserTO();
-            user.setUsername("casuser");
-            user.setSuspended(true);
-            startMockSever(user);
+        val user = new UserTO();
+        user.setUsername("casuser");
+        user.setSuspended(true);
+        @Cleanup("stop")
+        val webserver = startMockSever(user);
 
-            syncopeAuthenticationHandler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
-        } catch (final AccountDisabledException e) {
-            LOGGER.debug("Passed");
-        } catch (final Exception e) {
-            throw new AssertionError(e.getMessage(), e);
-        } finally {
-            this.webServer.stop();
-        }
+        assertThrows(AccountDisabledException.class,
+            () -> syncopeAuthenticationHandler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser")));
     }
 
-    private void startMockSever(final UserTO user) throws JsonProcessingException {
+    @SneakyThrows
+    private static MockWebServer startMockSever(final UserTO user) {
         val data = MAPPER.writeValueAsString(user);
-        this.webServer = new MockWebServer(8095,
+        val webServer = new MockWebServer(8095,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"),
             MediaType.APPLICATION_JSON_VALUE);
-        this.webServer.start();
+        webServer.start();
+        return webServer;
     }
 }

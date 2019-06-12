@@ -1,9 +1,8 @@
 package org.apereo.cas.web.flow;
 
-import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.configuration.model.core.logout.LogoutProperties;
-import org.apereo.cas.logout.DefaultLogoutRequest;
+import org.apereo.cas.logout.DefaultSingleLogoutRequest;
 import org.apereo.cas.logout.LogoutRequestStatus;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.DefaultServicesManager;
@@ -14,8 +13,8 @@ import org.apereo.cas.web.flow.logout.LogoutAction;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -24,16 +23,17 @@ import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.Cookie;
-import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
  * @author Scott Battaglia
  * @since 3.0.0
  */
-public class LogoutActionTests extends AbstractCentralAuthenticationServiceTests {
+public class LogoutActionTests extends AbstractWebflowActionsTests {
 
     private static final String COOKIE_TGC_ID = "CASTGC";
     private static final String TEST_SERVICE_ID = "TestService";
@@ -46,7 +46,7 @@ public class LogoutActionTests extends AbstractCentralAuthenticationServiceTests
 
     private RequestContext requestContext;
 
-    @Before
+    @BeforeEach
     public void onSetUp() {
         this.request = new MockHttpServletRequest();
         this.requestContext = mock(RequestContext.class);
@@ -56,7 +56,8 @@ public class LogoutActionTests extends AbstractCentralAuthenticationServiceTests
         when(servletExternalContext.getNativeResponse()).thenReturn(new MockHttpServletResponse());
         when(this.requestContext.getFlowScope()).thenReturn(new LocalAttributeMap());
 
-        this.serviceManager = new DefaultServicesManager(new InMemoryServiceRegistry(), mock(ApplicationEventPublisher.class));
+        val publisher = mock(ApplicationEventPublisher.class);
+        this.serviceManager = new DefaultServicesManager(new InMemoryServiceRegistry(publisher), publisher, new HashSet<>());
         this.serviceManager.load();
     }
 
@@ -121,12 +122,12 @@ public class LogoutActionTests extends AbstractCentralAuthenticationServiceTests
     public void verifyLogoutRequestBack() {
         val cookie = new Cookie(COOKIE_TGC_ID, "test");
         this.request.setCookies(cookie);
-        val logoutRequest = DefaultLogoutRequest.builder()
+        val logoutRequest = DefaultSingleLogoutRequest.builder()
             .registeredService(RegisteredServiceTestUtils.getRegisteredService())
             .ticketGrantingTicket(new MockTicketGrantingTicket("casuser"))
             .build();
         logoutRequest.setStatus(LogoutRequestStatus.SUCCESS);
-        WebUtils.putLogoutRequests(this.requestContext, Arrays.asList(logoutRequest));
+        WebUtils.putLogoutRequests(this.requestContext, Collections.singletonList(logoutRequest));
         val properties = new LogoutProperties();
         this.logoutAction = new LogoutAction(getWebApplicationServiceFactory(), this.serviceManager, properties);
         val event = this.logoutAction.doExecute(this.requestContext);
@@ -137,11 +138,11 @@ public class LogoutActionTests extends AbstractCentralAuthenticationServiceTests
     public void verifyLogoutRequestFront() {
         val cookie = new Cookie(COOKIE_TGC_ID, "test");
         this.request.setCookies(cookie);
-        val logoutRequest = DefaultLogoutRequest.builder()
+        val logoutRequest = DefaultSingleLogoutRequest.builder()
             .registeredService(RegisteredServiceTestUtils.getRegisteredService())
             .ticketGrantingTicket(new MockTicketGrantingTicket("casuser"))
             .build();
-        WebUtils.putLogoutRequests(this.requestContext, Arrays.asList(logoutRequest));
+        WebUtils.putLogoutRequests(this.requestContext, Collections.singletonList(logoutRequest));
         val properties = new LogoutProperties();
         this.logoutAction = new LogoutAction(getWebApplicationServiceFactory(), this.serviceManager, properties);
         val event = this.logoutAction.doExecute(this.requestContext);

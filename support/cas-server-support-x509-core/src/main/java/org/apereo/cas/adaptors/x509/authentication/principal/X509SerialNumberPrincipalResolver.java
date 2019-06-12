@@ -8,9 +8,10 @@ import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
 
 import java.security.cert.X509Certificate;
+import java.util.Set;
 
 /**
- * Returns a new principal based on the Sereial Number of the certificate.
+ * Returns a new principal based on the serial number of the certificate.
  *
  * @author Scott Battaglia
  * @since 3.0.0
@@ -34,14 +35,24 @@ public class X509SerialNumberPrincipalResolver extends AbstractX509PrincipalReso
 
     public X509SerialNumberPrincipalResolver(final IPersonAttributeDao attributeRepository,
                                              final PrincipalFactory principalFactory, final boolean returnNullIfNoAttributes,
-                                             final String principalAttributeName) {
-        this(attributeRepository, principalFactory, returnNullIfNoAttributes, principalAttributeName, DEFAULT_RADIX, false);
+                                             final String principalAttributeName,
+                                             final boolean useCurrentPrincipalId,
+                                             final boolean resolveAttributes,
+                                             final Set<String> activeAttributeRepositoryIdentifiers) {
+        this(attributeRepository, principalFactory, returnNullIfNoAttributes,
+            principalAttributeName, DEFAULT_RADIX, false,
+            useCurrentPrincipalId, resolveAttributes, activeAttributeRepositoryIdentifiers);
     }
 
     public X509SerialNumberPrincipalResolver(final IPersonAttributeDao attributeRepository,
                                              final PrincipalFactory principalFactory, final boolean returnNullIfNoAttributes,
-                                             final String principalAttributeName, final int radix, final boolean zeroPadding) {
-        super(attributeRepository, principalFactory, returnNullIfNoAttributes, principalAttributeName);
+                                             final String principalAttributeName, final int radix, final boolean zeroPadding,
+                                             final boolean useCurrentPrincipalId,
+                                             final boolean resolveAttributes,
+                                             final Set<String> activeAttributeRepositoryIdentifiers) {
+        super(attributeRepository, principalFactory, returnNullIfNoAttributes,
+            principalAttributeName, useCurrentPrincipalId, resolveAttributes,
+            activeAttributeRepositoryIdentifiers);
         this.radix = radix;
         this.zeroPadding = zeroPadding;
     }

@@ -30,22 +30,35 @@ files that can be used to control CAS behavior. Also note that this configuratio
 and refresh the application context as needed. Please [review this guide](Configuration-Management-Reload.html#reload-strategy) to learn more.
 
 Note that by default, all CAS settings and configuration is controlled via the embedded `application.properties` file in the CAS server
-web application. There is also an embedded `application.yml` file that allows you to override all defaults if you wish to ship the configuration
-inside the main CAS web application and not rely on externalized configuration files.
+web application. There is also an embedded `application.yml` file that allows you to override all defaults if you wish to ship the configuration inside the main CAS web application and not rely on externalized configuration files. If you prefer properties to yaml, then `application-standalone.properties` will override `application.properties` as well. 
 
 Settings found in external configuration files are and will be able to override the defaults provide by CAS. The naming of the configuration files 
 inside the CAS configuration directory follows the below pattern:
 
-- An `application.(properties|yml)` file is always loaded, if found.
-- Settings located inside `properties|yml` files whose name matches the value of `spring.application.name` are loaded (i.e `cas.properties`)
-- Settings located inside `properties|yml` files whose name matches the value of `spring.profiles.active` are loaded (i.e `ldap.properties`).
-- Profile-specific application properties outside of your packaged web application (`application-{profile}.properties|yml`)
+- An `application.(properties|yml|yaml)` file is always loaded, if found.
+- Settings located inside `properties|yml|yaml` files whose name matches the value of `spring.application.name` are loaded (i.e `cas.properties`) Note: `spring.application.name` defaults to uppercase `CAS` but the lowercase name will also be loaded.
+- Settings located inside `properties|yml|yaml` files whose name matches the value of `spring.profiles.active` are loaded (i.e `ldap.properties`).
+- Profile-specific application properties outside of your packaged web application (`application-{profile}.properties|yml|yaml`)
 This allows you to, if needed, split your settings into multiple property files and then locate them by assigning their name
 to the list of active profiles (i.e. `spring.profiles.active=standalone,testldap,stagingMfa`)
 
+Configuration files are loaded in the following order where `spring.profiles.active=standalone,profile1,profile2`. Note that the last configuration file loaded will override any duplicate properties from configuration files loaded earlier:
+
+1. `application.(properties|yml|yaml) `
+2. (lower case) `spring.application.name.(properties|yml|yaml)`  
+3. `spring.application.name.(properties|yml|yaml)`
+4. `application-standalone.(properties|yml|yaml)`
+5. `standalone.(properties|yml|yaml)`
+6. `application-profile1.(properties|yml|yaml)`
+7. `profile1.(properties|yml|yaml)`
+8. `application-profile2.(properties|yml|yaml)`
+9. `profile2.(properties|yml|yaml)`     
+
+If two configuration files with same base name and different extensions exist, they are processed in the order of `properties`, `yml` and then `yaml` and then `groovy` (last one processed wins where duplicate properties exist). These external configuration files will override files located in the classpath (e.g. files from `src/main/resources` in your CAS overlay that end up in `WEB-INF/classes`) but the internal files are loaded per the [spring boot](https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html) rules which differ from the CAS standalone configuration rules described here (e.g. <profile>.properties would not be loaded from classpath but `application-<profile>.properties` would).
+
 <div class="alert alert-warning"><strong>Remember</strong><p>You are advised to not overlay or otherwise
 modify the built in <code>application.properties</code> or <code>bootstrap.properties</code> files. This will only complicate and weaken your deployment.
-Instead try to comply with the CAS defaults and bootstrap CAS as much as possible via the defaults, override via <code>application.yml</code> or
+Instead try to comply with the CAS defaults and bootstrap CAS as much as possible via the defaults, override via <code>application.yml</code>, <code>application-standalone.properties</code> or
 use the <a href="Configuration-Management.html#overview">outlined strategies</a>. Likewise, try to instruct CAS to locate
 configuration files external to its own. Premature optimization will only lead to chaos.</p></div>
 
@@ -88,8 +101,9 @@ may load CAS settings and properties via the following order and mechanics:
 The configuration and behavior of the configuration server is also controlled by its own
 `src/main/resources/bootstrap.properties` file. By default, it runs under port `8888` at `/casconfigserver` inside
 an embedded Apache Tomcat server whose endpoints are protected with basic authentication
-where the default credentials are `casuser` and `Mellon` defined in `src/main/resources/application.properties`. Furthermore, by default it runs
-under a `native` profile described below.
+where the default credentials are `casuser` and an auto-generated password defined in `src/main/resources/application.properties`. 
+
+Furthermore, by default it runs under a `native` profile described below.
 
 The following endpoints are secured and exposed by the configuration server:
 
@@ -97,21 +111,18 @@ The following endpoints are secured and exposed by the configuration server:
 |-----------------------------------|------------------------------------------
 | `/encrypt`                        | Accepts a `POST` to encrypt CAS configuration settings.
 | `/decrypt`                        | Accepts a `POST` to decrypt CAS configuration settings.
-| `/refresh`                        | Accepts a `POST` and attempts to refresh the internal state of configuration server.
-| `/actuator/env`                   | Accepts a `GET` and describes all configuration sources of the configuration server.
-| `/cas/default`                    | Describes what the configuration server knows about the `default` settings profile.
-| `/cas/native`                     | Describes what the configuration server knows about the `native` settings profile.
-| `/bus/refresh`                    | Reload the configuration of all CAS nodes in the cluster if the cloud bus is turned on.
-| `/bus/env`                        | Sends key/values pairs to update each CAS node if the cloud bus is turned on.
+| `/actuator/refresh`                        | Accepts a `POST` and attempts to refresh the internal state of configuration server.
+| `/actuator/actuator/env`                   | Accepts a `GET` and describes all configuration sources of the configuration server.
+| `/actuator/cas/default`                    | Describes what the configuration server knows about the `default` settings profile.
+| `/actuator/cas/native`                     | Describes what the configuration server knows about the `native` settings profile.
 
-Once you have the configuration server deployed, you can observe the collection of settings via:
+Once you have the configuration server deployed and assuming the credentials used to secure the configuration server match the example below, you can observe the collection of settings via:
 
 ```bash
 curl -u casuser:Mellon http://config.server.url:8888/casconfigserver/cas/native
 ```
 
-Assuming actuator endpoints are enabled in the configuration, 
-you can also observe the collection of property sources that provide settings to the configuration server:
+Assuming actuator endpoints are enabled in the configuration, you can also observe the collection of property sources that provide settings to the configuration server:
 
 ```bash
 curl -u casuser:Mellon http://localhost:8888/casconfigserver/actuator/env
@@ -229,8 +240,7 @@ Support is provided via the following dependency in the WAR overlay:
 ```
 
 Note that to access and review the collection of CAS properties,
-you will need to use [the CAS administrative interfaces](../installation/Monitoring-Statistics.html), or you may
-also use your own native tooling for MongoDB to configure and inject settings.
+you will need to use your own native tooling for MongoDB to configure and inject settings.
 
 MongoDb documents are required to be found in the collection `MongoDbProperty`, as the following document:
 

@@ -74,7 +74,7 @@ public class HazelcastClusterProperties implements Serializable {
      * The instance name.
      */
     @RequiredProperty
-    private String instanceName = "localhost";
+    private String instanceName;
 
     /**
      * You may also want to choose to use only one port. In that case, you can disable the auto-increment feature of port.
@@ -89,6 +89,13 @@ public class HazelcastClusterProperties implements Serializable {
      */
     @RequiredProperty
     private int port = 5701;
+
+    /**
+     * Define how data items in Hazelcast maps are merged together from source to destination.
+     * Requires the fully qualified class name of the merge policy component.
+     * By default, merges map entries from source to destination if they don't exist in the destination map.
+     */
+    private String mapMergePolicy = "com.hazelcast.map.merge.PutIfAbsentMapMergePolicy";
 
     /**
      * Enables a multicast configuration using a group address and port.
@@ -221,8 +228,24 @@ public class HazelcastClusterProperties implements Serializable {
     private int multicastTimeToLive = 32;
 
     /**
+     * If this property is set, then this is the address where the server socket is bound to.
+     */
+    private String localAddress;
+
+    /**
+     * The default public address to be advertised to other cluster members and clients.
+     */
+    private String publicAddress;
+
+    /**
      * Describe discovery strategies for Hazelcast.
      */
     @NestedConfigurationProperty
     private HazelcastDiscoveryProperties discovery = new HazelcastDiscoveryProperties();
+
+    /**
+     * WAN replication settings.
+     */
+    @NestedConfigurationProperty
+    private HazelcastWANReplicationProperties wanReplication = new HazelcastWANReplicationProperties();
 }

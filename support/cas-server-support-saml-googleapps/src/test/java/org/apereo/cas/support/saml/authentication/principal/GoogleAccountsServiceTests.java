@@ -17,8 +17,9 @@ import org.apereo.cas.util.CompressionUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
@@ -31,7 +32,7 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.regex.Pattern;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -39,11 +40,12 @@ import static org.mockito.Mockito.*;
  * @since 3.1
  */
 @Import(SamlGoogleAppsConfiguration.class)
+@Tag("SAML")
 @TestPropertySource(locations = "classpath:/gapps.properties")
 @ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
 public class GoogleAccountsServiceTests extends AbstractOpenSamlTests {
     private static final File FILE = new File(FileUtils.getTempDirectoryPath(), "service.json");
-    private static final ObjectMapper MAPPER = new ObjectMapper();
+    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
     @Autowired
     @Qualifier("googleAccountsServiceFactory")
@@ -79,7 +81,7 @@ public class GoogleAccountsServiceTests extends AbstractOpenSamlTests {
         return (GoogleAccountsService) factory.createService(request);
     }
 
-    @Before
+    @BeforeEach
     public void initialize() {
         this.googleAccountsService = getGoogleAccountsService();
     }

@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.CollectionUtils;
 
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +22,7 @@ import javax.xml.bind.Marshaller;
 import java.io.StringWriter;
 import java.security.GeneralSecurityException;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Fortress authentication handler, this class will delegate the authentication to call fortress rest authentication.
@@ -38,7 +40,6 @@ public class FortressAuthenticationHandler extends AbstractUsernamePasswordAuthe
     public static final String FORTRESS_SESSION_KEY = "fortressSession";
 
     private AccessMgr accessManager;
-
     private Marshaller marshaller;
 
     public FortressAuthenticationHandler(final AccessMgr accessManager, final String name, final ServicesManager servicesManager,
@@ -50,6 +51,7 @@ public class FortressAuthenticationHandler extends AbstractUsernamePasswordAuthe
             this.marshaller = jaxbContext.createMarshaller();
         } catch (final Exception e) {
             LOGGER.error("Failed initialize fortress context", e);
+            throw new IllegalArgumentException(e);
         }
     }
 
@@ -59,7 +61,7 @@ public class FortressAuthenticationHandler extends AbstractUsernamePasswordAuthe
         val username = c.getUsername();
         val password = c.getPassword();
         try {
-            LOGGER.debug("Trying to delegate authentication for [{}] to fortress", new Object[]{username});
+            LOGGER.debug("Trying to delegate authentication for [{}] to fortress", username);
             val user = new User(username, password);
             val fortressSession = accessManager.createSession(user, false);
             if (fortressSession != null && fortressSession.isAuthenticated()) {
@@ -67,8 +69,8 @@ public class FortressAuthenticationHandler extends AbstractUsernamePasswordAuthe
                 marshaller.marshal(fortressSession, writer);
                 val fortressXmlSession = writer.toString();
                 LOGGER.debug("Fortress session result: [{}]", fortressXmlSession);
-                val attributes = new HashMap<String, Object>();
-                attributes.put(FORTRESS_SESSION_KEY, fortressXmlSession);
+                val attributes = new HashMap<String, List<Object>>();
+                attributes.put(FORTRESS_SESSION_KEY, CollectionUtils.wrapList(fortressXmlSession));
                 return createHandlerResult(c, principalFactory.createPrincipal(username, attributes));
             }
             LOGGER.warn("Could not establish a fortress session or session cannot authenticate");

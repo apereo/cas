@@ -1,17 +1,14 @@
 package org.apereo.cas.aup;
 
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.couchdb.core.CouchDbProfileDocument;
 import org.apereo.cas.couchdb.core.ProfileCouchDbRepository;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.support.WebUtils;
 
-import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.tuple.Pair;
 import org.ektorp.UpdateConflictException;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -26,7 +23,7 @@ public class CouchDbAcceptableUsagePolicyRepository extends AbstractPrincipalAtt
 
     private static final long serialVersionUID = -2391630070546362552L;
     private final transient ProfileCouchDbRepository couchDb;
-    private int conflictRetries;
+    private final int conflictRetries;
 
     public CouchDbAcceptableUsagePolicyRepository(final TicketRegistrySupport ticketRegistrySupport, final String aupAttributeName,
                                                   final ProfileCouchDbRepository couchDb, final int conflictRetries) {
@@ -36,14 +33,13 @@ public class CouchDbAcceptableUsagePolicyRepository extends AbstractPrincipalAtt
     }
 
     @Override
-    public Pair<Boolean, Principal> verify(final RequestContext requestContext, final Credential credential) {
-        @NonNull
+    public AcceptableUsagePolicyStatus verify(final RequestContext requestContext, final Credential credential) {
         val principal = WebUtils.getPrincipalFromRequestContext(requestContext, this.ticketRegistrySupport);
 
         if (principal != null) {
             if (isUsagePolicyAcceptedBy(principal)) {
                 LOGGER.debug("Usage policy has been accepted by [{}]", principal.getId());
-                return Pair.of(Boolean.TRUE, principal);
+                return AcceptableUsagePolicyStatus.accepted(principal);
             }
             LOGGER.debug("Usage policy has not been accepted by [{}] in the resolved principal", principal.getId());
         } else {
@@ -62,7 +58,7 @@ public class CouchDbAcceptableUsagePolicyRepository extends AbstractPrincipalAtt
         } else {
             LOGGER.warn("No principal found");
         }
-        return Pair.of(accepted, principal);
+        return new AcceptableUsagePolicyStatus(accepted, principal);
     }
 
     @Override
@@ -90,7 +86,7 @@ public class CouchDbAcceptableUsagePolicyRepository extends AbstractPrincipalAtt
             }
         }
         if (exception != null) {
-            LOGGER.debug("Could not update AUP acceptance for [{}].\n{}", username, exception.getMessage());
+            LOGGER.debug("Could not update AUP acceptance for [{}].\n[{}]", username, exception.getMessage());
         }
         return success;
     }

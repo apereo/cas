@@ -1,6 +1,8 @@
 package org.apereo.cas.oidc;
 
-import org.apereo.cas.category.FileSystemCategory;
+import org.apereo.cas.audit.AuditableExecution;
+import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -31,14 +33,18 @@ import org.apereo.cas.oidc.config.OidcConfiguration;
 import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettings;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeystoreGeneratorService;
 import org.apereo.cas.services.OidcRegisteredService;
+import org.apereo.cas.services.ServiceRegistryListener;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.web.config.CasThemesConfiguration;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.ticket.IdTokenGeneratorService;
-import org.apereo.cas.ticket.IdTokenSigningAndEncryptionService;
+import org.apereo.cas.ticket.OAuthTokenSigningAndEncryptionService;
+import org.apereo.cas.ticket.code.OAuthCodeFactory;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
+import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
 import com.github.benmanes.caffeine.cache.LoadingCache;
@@ -49,10 +55,7 @@ import org.jose4j.jwe.KeyManagementAlgorithmIdentifiers;
 import org.jose4j.jwk.RsaJsonWebKey;
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.NumericDate;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -60,8 +63,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
 import org.springframework.webflow.execution.Action;
 
 import java.util.Optional;
@@ -102,26 +103,32 @@ import java.util.Optional;
     CasOAuthConfiguration.class,
     CasThrottlingConfiguration.class,
     CasOAuthThrottleConfiguration.class,
+    CasMultifactorAuthenticationWebflowConfiguration.class,
     CasOAuthAuthenticationServiceSelectionStrategyConfiguration.class,
-    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class})
+    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class
+})
 @DirtiesContext
-@Category(FileSystemCategory.class)
 @TestPropertySource(properties = {
     "cas.authn.oidc.issuer=https://sso.example.org/cas/oidc",
     "cas.authn.oidc.jwksFile=classpath:keystore.jwks"
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public abstract class AbstractOidcTests {
-
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
-
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
-
     @Autowired
     @Qualifier("profileScopeToAttributesFilter")
     protected OAuth20ProfileScopeToAttributesFilter profileScopeToAttributesFilter;
+
+    @Autowired
+    @Qualifier("oidcServiceRegistryListener")
+    protected ServiceRegistryListener oidcServiceRegistryListener;
+
+    @Autowired
+    @Qualifier("defaultOAuthCodeFactory")
+    protected OAuthCodeFactory defaultOAuthCodeFactory;
+
+    @Autowired
+    @Qualifier("webApplicationServiceFactory")
+    protected ServiceFactory<WebApplicationService> webApplicationServiceFactory;
 
     @Autowired
     protected CasConfigurationProperties casProperties;
@@ -132,7 +139,7 @@ public abstract class AbstractOidcTests {
 
     @Autowired
     @Qualifier("oidcTokenSigningAndEncryptionService")
-    protected IdTokenSigningAndEncryptionService oidcTokenSigningAndEncryptionService;
+    protected OAuthTokenSigningAndEncryptionService oidcTokenSigningAndEncryptionService;
 
     @Autowired
     @Qualifier("oidcServiceJsonWebKeystoreCache")
@@ -143,12 +150,20 @@ public abstract class AbstractOidcTests {
     protected OidcJsonWebKeystoreGeneratorService oidcJsonWebKeystoreGeneratorService;
 
     @Autowired
+    @Qualifier("registeredServiceAccessStrategyEnforcer")
+    protected AuditableExecution registeredServiceAccessStrategyEnforcer;
+
+    @Autowired
     @Qualifier("oidcRegisteredServiceUIAction")
     protected Action oidcRegisteredServiceUIAction;
 
     @Autowired
     @Qualifier("oidcServerDiscoverySettingsFactory")
     protected OidcServerDiscoverySettings oidcServerDiscoverySettings;
+
+    @Autowired
+    @Qualifier("ticketRegistry")
+    protected TicketRegistry ticketRegistry;
 
     @Autowired
     @Qualifier("servicesManager")
@@ -158,22 +173,29 @@ public abstract class AbstractOidcTests {
     @Qualifier("oidcIdTokenGenerator")
     protected IdTokenGeneratorService oidcIdTokenGenerator;
 
-    @Before
+    @BeforeEach
     public void initialize() {
         servicesManager.save(getOidcRegisteredService());
     }
 
-    protected OidcRegisteredService getOidcRegisteredService() {
+    protected static OidcRegisteredService getOidcRegisteredService() {
         return getOidcRegisteredService(true, true);
     }
 
-    protected OidcRegisteredService getOidcRegisteredService(final boolean sign, final boolean encrypt) {
+    protected static OidcRegisteredService getOidcRegisteredService(final boolean sign, final boolean encrypt) {
+        return getOidcRegisteredService("clientid", "https://oauth\\.example\\.org.*", sign, encrypt);
+    }
+
+    protected static OidcRegisteredService getOidcRegisteredService(final String clientId,
+                                                                    final String redirectUri,
+                                                                    final boolean sign,
+                                                                    final boolean encrypt) {
         val svc = new OidcRegisteredService();
-        svc.setClientId("clientid");
+        svc.setClientId(clientId);
         svc.setName("oauth");
         svc.setDescription("description");
         svc.setClientSecret("secret");
-        svc.setServiceId("https://oauth\\.example\\.org.*");
+        svc.setServiceId(redirectUri);
         svc.setSignIdToken(sign);
         svc.setEncryptIdToken(encrypt);
         svc.setIdTokenEncryptionAlg(KeyManagementAlgorithmIdentifiers.RSA_OAEP_256);
@@ -184,19 +206,25 @@ public abstract class AbstractOidcTests {
         return svc;
     }
 
-    protected JwtClaims getClaims() {
+    protected static JwtClaims getClaims() {
+        val clientId = getOidcRegisteredService().getClientId();
+        return getClaims("casuser", "https://cas.example.org", clientId, clientId);
+    }
+
+    protected static JwtClaims getClaims(final String subject, final String issuer,
+                                         final String clientId, final String audience) {
         val claims = new JwtClaims();
         claims.setJwtId(RandomStringUtils.randomAlphanumeric(16));
-        claims.setIssuer("https://cas.example.org");
-        claims.setAudience(getOidcRegisteredService().getClientId());
+        claims.setIssuer(issuer);
+        claims.setAudience(audience);
 
         val expirationDate = NumericDate.now();
         expirationDate.addSeconds(120);
         claims.setExpirationTime(expirationDate);
         claims.setIssuedAtToNow();
         claims.setNotBeforeMinutesInThePast(1);
-        claims.setSubject("casuser");
-        claims.setStringClaim(OAuth20Constants.CLIENT_ID, "clientid");
+        claims.setSubject(subject);
+        claims.setStringClaim(OAuth20Constants.CLIENT_ID, clientId);
         return claims;
     }
 }

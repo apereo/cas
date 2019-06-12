@@ -2,6 +2,7 @@ package org.apereo.cas.authentication;
 
 import org.apereo.cas.cassandra.CassandraSessionFactory;
 import org.apereo.cas.configuration.model.support.cassandra.authentication.CassandraAuthenticationProperties;
+import org.apereo.cas.util.CollectionUtils;
 
 import com.datastax.driver.core.BoundStatement;
 import com.datastax.driver.core.PreparedStatement;
@@ -10,7 +11,9 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -33,18 +36,18 @@ public class DefaultCassandraRepository implements CassandraRepository {
 
     private static BoundStatement bind(final PreparedStatement statement, final Object... params) {
         val boundStatement = statement.bind(params);
-        LOGGER.debug("CQL: {} with parameters [{}]", statement.getQueryString(), StringUtils.join(params, ", "));
+        LOGGER.debug("CQL: [{}] with parameters [{}]", statement.getQueryString(), StringUtils.join(params, ", "));
         return boundStatement;
     }
 
     @Override
-    public Map<String, Object> getUser(final String uid) {
-        val attributes = new HashMap<String, Object>();
+    public Map<String, List<Object>> getUser(final String uid) {
+        val attributes = new HashMap<String, List<Object>>();
         val row = session.execute(bind(selectUserQuery, uid)).one();
         if (row != null) {
             row.getColumnDefinitions().forEach(c -> {
                 LOGGER.debug("Located attribute column [{}]", c.getName());
-                attributes.put(c.getName(), row.getObject(c.getName()));
+                attributes.put(c.getName(), CollectionUtils.toCollection(row.getObject(c.getName()), ArrayList.class));
             });
         }
         return attributes;

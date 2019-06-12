@@ -79,24 +79,27 @@ public class GraphicalUserAuthenticationConfiguration implements CasWebflowExecu
             && StringUtils.isNotBlank(ldap.getSearchFilter())
             && StringUtils.isNotBlank(ldap.getBaseDn())
             && StringUtils.isNotBlank(ldap.getImageAttribute())) {
-            return new LdapUserGraphicalAuthenticationRepository();
+            return new LdapUserGraphicalAuthenticationRepository(casProperties);
         }
         throw new BeanCreationException("A repository instance must be configured to locate user-defined graphics");
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "acceptUserGraphicsForAuthenticationAction")
+    @RefreshScope
     public Action acceptUserGraphicsForAuthenticationAction() {
         return new AcceptUserGraphicsForAuthenticationAction();
     }
 
     @Bean
+    @RefreshScope
     @ConditionalOnMissingBean(name = "displayUserGraphicsBeforeAuthenticationAction")
     public Action displayUserGraphicsBeforeAuthenticationAction() {
         return new DisplayUserGraphicsBeforeAuthenticationAction(userGraphicalAuthenticationRepository());
     }
 
     @Bean
+    @RefreshScope
     public Action initializeLoginAction() {
         return new PrepareForGraphicalAuthenticationAction(servicesManager.getIfAvailable());
     }

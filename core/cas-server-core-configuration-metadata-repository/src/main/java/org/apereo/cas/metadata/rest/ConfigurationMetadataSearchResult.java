@@ -11,6 +11,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.springframework.boot.configurationmetadata.ConfigurationMetadataProperty;
@@ -75,23 +76,23 @@ public class ConfigurationMetadataSearchResult extends ConfigurationMetadataProp
         }
     }
 
-    private String cleanUpDescription(final String propDescription) {
+    private static String cleanUpDescription(final String propDescription) {
         var description = propDescription;
-        val format = "<code>%s</code>";
+        val format = "<pre>%s</pre>";
         if (StringUtils.isNotBlank(description)) {
             var matcher = PATTERN_DESCRIPTION_CODE.matcher(description);
             if (matcher.find()) {
-                description = StringUtils.replacePattern(description, PATTERN_DESCRIPTION_CODE.pattern(), String.format(format, matcher.group(1)));
+                description = RegExUtils.replacePattern(description, PATTERN_DESCRIPTION_CODE.pattern(), String.format(format, matcher.group(1)));
             }
             matcher = PATTERN_DESCRIPTION_LINK.matcher(description);
             if (matcher.find()) {
                 val replacement = "See ".concat(String.format(format, matcher.group(1)));
-                description = StringUtils.replacePattern(description, PATTERN_DESCRIPTION_LINK.pattern(), replacement);
+                description = RegExUtils.replacePattern(description, PATTERN_DESCRIPTION_LINK.pattern(), replacement);
             }
             matcher = PATTERN_DESCRIPTION_SEE.matcher(description);
             if (matcher.find()) {
                 val replacement = "See ".concat(String.format(format, matcher.group(1)));
-                description = StringUtils.replacePattern(description, PATTERN_DESCRIPTION_SEE.pattern(), replacement);
+                description = RegExUtils.replacePattern(description, PATTERN_DESCRIPTION_SEE.pattern(), replacement);
             }
             return description;
         }

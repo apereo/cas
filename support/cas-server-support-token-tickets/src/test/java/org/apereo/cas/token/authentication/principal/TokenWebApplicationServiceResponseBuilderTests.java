@@ -27,16 +27,14 @@ import org.apereo.cas.config.TokenCoreConfiguration;
 import org.apereo.cas.config.TokenTicketsConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
-import org.apereo.cas.token.cipher.TokenTicketCipherExecutor;
+import org.apereo.cas.token.cipher.JwtTicketCipherExecutor;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 
 import com.nimbusds.jwt.JWTParser;
 import lombok.val;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -46,12 +44,10 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import java.nio.charset.StandardCharsets;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link TokenWebApplicationServiceResponseBuilderTests}.
@@ -88,17 +84,15 @@ import static org.junit.Assert.*;
 })
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @EnableScheduling
-@TestPropertySource(locations = "classpath:tokentests.properties")
+@TestPropertySource(properties = {
+    "cas.server.name=http://localhost:8281",
+    "cas.server.prefix=${cas.server.name}/cas",
+    "cas.client.validatorType=CAS10"
+})
 public class TokenWebApplicationServiceResponseBuilderTests {
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
-
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
-
     @Autowired
     @Qualifier("webApplicationServiceResponseBuilder")
-    private ResponseBuilder responseBuilder;
+    private ResponseBuilder<WebApplicationService> responseBuilder;
 
     @Autowired
     @Qualifier("webApplicationServiceFactory")
@@ -109,7 +103,7 @@ public class TokenWebApplicationServiceResponseBuilderTests {
         val signingSecret = "EihBwA3OuDQMm4gdWzkqRJ87596G7o7a_naJAJipxFoRJbXK7APRcnCA91Y30rJdh4q-C2dmpfV6eNhQT0bR5A";
         val encryptionSecret = "dJ2YpUd-r_Qd7e3nDm79WiIHkqaLT8yZt6nN5eG0YnE";
 
-        val cipher = new TokenTicketCipherExecutor(encryptionSecret, signingSecret, true);
+        val cipher = new JwtTicketCipherExecutor(encryptionSecret, signingSecret, true, 0, 0);
         val result = cipher.decode(cipher.encode("ThisIsValue"));
         assertEquals("ThisIsValue", result);
     }

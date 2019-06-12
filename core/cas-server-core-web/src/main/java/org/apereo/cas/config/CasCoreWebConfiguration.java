@@ -11,6 +11,7 @@ import org.apereo.cas.web.support.DefaultArgumentExtractor;
 import org.apereo.cas.web.view.CasReloadableMessageBundle;
 
 import lombok.val;
+import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -20,6 +21,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.HierarchicalMessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
 
@@ -61,7 +63,7 @@ public class CasCoreWebConfiguration {
             .map(resourceLoader::getResource)
             .collect(Collectors.toList());
         resourceList.add(resourceLoader.getResource("classpath:/cas_common_messages.properties"));
-        properties.setLocations(resourceList.toArray(new Resource[]{}));
+        properties.setLocations(resourceList.toArray(Resource[]::new));
         properties.setSingleton(true);
         properties.setIgnoreResourceNotFound(true);
         return properties;
@@ -77,7 +79,7 @@ public class CasCoreWebConfiguration {
         bean.setCacheSeconds(mb.getCacheSeconds());
         bean.setFallbackToSystemLocale(mb.isFallbackSystemLocale());
         bean.setUseCodeAsDefaultMessage(mb.isUseCodeMessage());
-        bean.setBasenames(mb.getBaseNames().toArray(new String[]{}));
+        bean.setBasenames(mb.getBaseNames().toArray(ArrayUtils.EMPTY_STRING_ARRAY));
         bean.setCommonMessages(casCommonMessages);
         return bean;
     }
@@ -87,10 +89,12 @@ public class CasCoreWebConfiguration {
     public ArgumentExtractor argumentExtractor(final List<ServiceFactoryConfigurer> configurers) {
         val serviceFactoryList = new ArrayList<ServiceFactory<? extends WebApplicationService>>();
         configurers.forEach(c -> serviceFactoryList.addAll(c.buildServiceFactories()));
+        AnnotationAwareOrderComparator.sortIfNecessary(configurers);
         return new DefaultArgumentExtractor(serviceFactoryList);
     }
 
     @Bean
+    @RefreshScope
     public FactoryBean<UrlValidator> urlValidator() {
         val httpClient = this.casProperties.getHttpClient();
         val allowLocalLogoutUrls = httpClient.isAllowLocalLogoutUrls();

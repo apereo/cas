@@ -29,6 +29,11 @@ public class NexmoProperties implements Serializable {
     /**
      * Nexmo API secret obtained from Nexmo.
      */
-    @RequiredProperty
     private String apiSecret;
+
+    /**
+     * Nexmo Signature secret obtained from Nexmo.
+     */
+    private String signatureSecret;
+
 }

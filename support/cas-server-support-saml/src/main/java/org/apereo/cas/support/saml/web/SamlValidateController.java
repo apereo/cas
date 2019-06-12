@@ -1,21 +1,11 @@
 package org.apereo.cas.support.saml.web;
 
-import org.apereo.cas.CentralAuthenticationService;
-import org.apereo.cas.authentication.AuthenticationContextValidator;
-import org.apereo.cas.authentication.AuthenticationSystemSupport;
-import org.apereo.cas.authentication.MultifactorTriggerSelectionStrategy;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
-import org.apereo.cas.ticket.proxy.ProxyHandler;
-import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.validation.CasProtocolValidationSpecification;
-import org.apereo.cas.validation.ServiceTicketValidationAuthorizersExecutionPlan;
 import org.apereo.cas.web.AbstractServiceValidateController;
-import org.apereo.cas.web.support.ArgumentExtractor;
+import org.apereo.cas.web.ServiceValidateConfigurationContext;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.View;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -29,22 +19,8 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class SamlValidateController extends AbstractServiceValidateController {
 
-    public SamlValidateController(final CasProtocolValidationSpecification validationSpecification,
-                                  final AuthenticationSystemSupport authenticationSystemSupport,
-                                  final ServicesManager servicesManager,
-                                  final CentralAuthenticationService centralAuthenticationService,
-                                  final ProxyHandler proxyHandler,
-                                  final ArgumentExtractor argumentExtractor,
-                                  final MultifactorTriggerSelectionStrategy multifactorTriggerSelectionStrategy,
-                                  final AuthenticationContextValidator authenticationContextValidator,
-                                  final View jsonView, final View successView, final View failureView,
-                                  final String authnContextAttribute,
-                                  final ServiceTicketValidationAuthorizersExecutionPlan validationAuthorizers,
-                                  final boolean renewEnabled) {
-        super(CollectionUtils.wrapSet(validationSpecification), validationAuthorizers,
-            authenticationSystemSupport, servicesManager, centralAuthenticationService, proxyHandler,
-            successView, failureView, argumentExtractor, multifactorTriggerSelectionStrategy,
-            authenticationContextValidator, jsonView, authnContextAttribute, renewEnabled);
+    public SamlValidateController(final ServiceValidateConfigurationContext serviceValidateConfigurationContext) {
+        super(serviceValidateConfigurationContext);
     }
 
     /**

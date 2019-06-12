@@ -73,14 +73,14 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
     }
 
     @Override
-    public void registerMetadataPopulator(final AuthenticationMetaDataPopulator populator) {
+    public void registerAuthenticationMetadataPopulator(final AuthenticationMetaDataPopulator populator) {
         LOGGER.trace("Registering metadata populator [{}] into the execution plan", populator);
         authenticationMetaDataPopulatorList.add(populator);
     }
 
     @Override
-    public void registerMetadataPopulators(final Collection<AuthenticationMetaDataPopulator> populators) {
-        populators.forEach(this::registerMetadataPopulator);
+    public void registerAuthenticationMetadataPopulators(final Collection<AuthenticationMetaDataPopulator> populators) {
+        populators.forEach(this::registerAuthenticationMetadataPopulator);
     }
 
     @Override
@@ -91,9 +91,8 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
         return list;
     }
 
-    @NonNull
     @Override
-    public Set<AuthenticationHandler> getAuthenticationHandlersForTransaction(final AuthenticationTransaction transaction) {
+    public @NonNull Set<AuthenticationHandler> getAuthenticationHandlersForTransaction(final AuthenticationTransaction transaction) {
         val handlers = getAuthenticationHandlers();
         LOGGER.debug("Candidate/Registered authentication handlers for this transaction are [{}]", handlers);
         val handlerResolvers = getAuthenticationHandlerResolvers(transaction);
@@ -122,7 +121,7 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
 
     @Override
     public Set<AuthenticationHandler> getAuthenticationHandlers() {
-        val handlers = authenticationHandlerPrincipalResolverMap.keySet().toArray(new AuthenticationHandler[]{});
+        val handlers = authenticationHandlerPrincipalResolverMap.keySet().toArray(AuthenticationHandler[]::new);
         OrderComparator.sortIfNecessary(handlers);
         return new LinkedHashSet<>(CollectionUtils.wrapList(handlers));
     }

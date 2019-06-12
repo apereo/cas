@@ -1,6 +1,5 @@
 package org.apereo.cas.gauth.credential;
 
-import org.apereo.cas.category.CouchDbCategory;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -23,14 +22,15 @@ import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguratio
 import org.apereo.cas.config.support.EnvironmentConversionServiceInitializer;
 import org.apereo.cas.config.support.authentication.GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration;
 import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
-import org.apereo.cas.couchdb.gauth.credential.OneTimeTokenAccountCouchDbRepository;
+import org.apereo.cas.couchdb.gauth.credential.GoogleAuthenticatorAccountCouchDbRepository;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
+import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 
 import lombok.Getter;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -46,38 +46,43 @@ import org.springframework.test.context.ContextConfiguration;
  * @author Timur Duehr
  * @since 6.0.0
  */
-@Category(CouchDbCategory.class)
-@SpringBootTest(
-    classes = {
-        CasCouchDbCoreConfiguration.class,
-        BaseOneTimeTokenCredentialRepositoryTests.BaseTestConfiguration.class,
-        GoogleAuthenticatorCouchDbConfiguration.class,
-        CasCoreTicketsConfiguration.class,
-        CasCoreTicketCatalogConfiguration.class,
-        CasCoreLogoutConfiguration.class,
-        CasCoreHttpConfiguration.class,
-        CasCoreServicesConfiguration.class,
-        CasWebApplicationServiceFactoryConfiguration.class,
-        CasCoreAuthenticationConfiguration.class,
-        CasCoreServicesAuthenticationConfiguration.class,
-        CasCoreAuthenticationMetadataConfiguration.class,
-        CasCoreAuthenticationPolicyConfiguration.class,
-        CasCoreAuthenticationPrincipalConfiguration.class,
-        CasCoreAuthenticationHandlersConfiguration.class,
-        CasCoreAuthenticationSupportConfiguration.class,
-        CasPersonDirectoryConfiguration.class,
-        GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration.class,
-        AopAutoConfiguration.class,
-        CasCoreConfiguration.class,
-        CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-        CasCoreUtilConfiguration.class,
-        RefreshAutoConfiguration.class,
-        CasCoreWebConfiguration.class},
-    properties = {"cas.authn.mfa.gauth.crypto.enabled=false"})
+@Tag("CouchDb")
+@SpringBootTest(classes = {
+    CasCouchDbCoreConfiguration.class,
+    BaseOneTimeTokenCredentialRepositoryTests.BaseTestConfiguration.class,
+    GoogleAuthenticatorCouchDbConfiguration.class,
+    CasCoreTicketsConfiguration.class,
+    CasCoreTicketCatalogConfiguration.class,
+    CasCoreLogoutConfiguration.class,
+    CasCoreHttpConfiguration.class,
+    CasCoreServicesConfiguration.class,
+    CasWebApplicationServiceFactoryConfiguration.class,
+    CasCoreAuthenticationConfiguration.class,
+    CasCoreServicesAuthenticationConfiguration.class,
+    CasCoreAuthenticationMetadataConfiguration.class,
+    CasCoreAuthenticationPolicyConfiguration.class,
+    CasCoreAuthenticationPrincipalConfiguration.class,
+    CasCoreAuthenticationHandlersConfiguration.class,
+    CasCoreAuthenticationSupportConfiguration.class,
+    CasPersonDirectoryConfiguration.class,
+    GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration.class,
+    AopAutoConfiguration.class,
+    CasCoreConfiguration.class,
+    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
+    CasCoreUtilConfiguration.class,
+    RefreshAutoConfiguration.class,
+    CasCoreWebConfiguration.class},
+    properties = {
+        "cas.authn.mfa.gauth.crypto.enabled=false",
+        "cas.authn.mfa.gauth.couchDb.username=cas",
+        "cas.authn.mfa.gauth.couchDb.dbName=gauth_credential",
+        "cas.authn.mfa.gauth.couchdb.password=password"
+    })
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @EnableScheduling
 @ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
 @Getter
+@EnabledIfContinuousIntegration
 public class CouchDbGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTimeTokenCredentialRepositoryTests {
 
     @Autowired
@@ -90,15 +95,15 @@ public class CouchDbGoogleAuthenticatorTokenCredentialRepositoryTests extends Ba
 
     @Autowired
     @Qualifier("couchDbOneTimeTokenAccountRepository")
-    private OneTimeTokenAccountCouchDbRepository couchDbRepository;
+    private GoogleAuthenticatorAccountCouchDbRepository couchDbRepository;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         couchDbFactory.getCouchDbInstance().createDatabaseIfNotExists(couchDbFactory.getCouchDbConnector().getDatabaseName());
         couchDbRepository.initStandardDesignDocument();
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         couchDbFactory.getCouchDbInstance().deleteDatabase(couchDbFactory.getCouchDbConnector().getDatabaseName());
     }

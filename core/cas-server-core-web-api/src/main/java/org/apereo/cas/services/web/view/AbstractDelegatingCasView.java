@@ -1,8 +1,10 @@
 package org.apereo.cas.services.web.view;
 
+import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
+import org.apereo.cas.validation.CasProtocolAttributesRenderer;
 
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -33,8 +35,11 @@ public abstract class AbstractDelegatingCasView extends AbstractCasView {
                                      final ProtocolAttributeEncoder protocolAttributeEncoder,
                                      final ServicesManager servicesManager,
                                      final View view,
-                                     final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy) {
-        super(successResponse, protocolAttributeEncoder, servicesManager, authenticationAttributeReleasePolicy);
+                                     final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
+                                     final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies,
+                                     final CasProtocolAttributesRenderer attributesRenderer) {
+        super(successResponse, protocolAttributeEncoder, servicesManager,
+            authenticationAttributeReleasePolicy, authenticationRequestServiceSelectionStrategies, attributesRenderer);
         this.view = view;
     }
 
@@ -45,7 +50,7 @@ public abstract class AbstractDelegatingCasView extends AbstractCasView {
 
         LOGGER.debug("Preparing the output model [{}] to render view [{}]", model.keySet(), getClass().getSimpleName());
         prepareMergedOutputModel(model, request, response);
-        LOGGER.debug("Prepared output model with objects [{}]. Now rendering view...", model.keySet().toArray());
+        LOGGER.trace("Prepared output model with objects [{}]. Now rendering view...", model.keySet().toArray());
 
         if (this.view != null) {
             this.view.render(model, request, response);

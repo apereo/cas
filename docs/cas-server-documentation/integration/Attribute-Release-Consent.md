@@ -21,6 +21,15 @@ Support is enabled by including the following module in the Overlay:
 </dependency>
 ```
 
+## Administrative Endpoints
+
+The following endpoints are provided by CAS:
+ 
+| Endpoint                 | Description
+|--------------------------|------------------------------------------------
+| `attributeConsent`       | Manage and control [attribute consent decisions](Attribute-Release-Consent.html). A `GET` operation produces a list of all consent decisions. A `DELETE` operation with a record key id will attempt to remove and revoke the registered device (i.e. `attributeConsent/{principal}/{id}`).
+
+
 ## Attribute Selection
 
 By default, all attributes that are marked for release do qualify for consent. To control this process, you may define a consent policy that indicates a criteria by which attribute selection for consent is carried out.
@@ -53,13 +62,6 @@ A sample definition follows:
   }
 }
 ```
-
-## Consent Review
-
-A page for users to review their consent decisions will be exposed at the `/consentReview` endpoint. 
-A link is included automatically on the login page. Users may view and delete the consent decisions they have made in the past. 
-The CAS service for the consent endpoint will be auto-registered during startup. 
-Regular [service access strategies](../installation/Configuring-Service-Access-Strategy.html) may be used to control access to the endpoint.
 
 ## Storage
 
@@ -175,6 +177,20 @@ Support is enabled by including the following module in the Overlay:
 ```
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#mongodb-attribute-consent).
+
+### Redis
+
+Support is enabled by including the following module in the Overlay:
+
+```xml
+<dependency>
+     <groupId>org.apereo.cas</groupId>
+     <artifactId>cas-server-support-consent-redis</artifactId>
+     <version>${cas.version}</version>
+</dependency>
+```
+
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#redis-attribute-consent).
 
 ### CouchDb
 

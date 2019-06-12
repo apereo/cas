@@ -2,8 +2,9 @@ package org.apereo.cas.services.support;
 
 import org.apereo.cas.services.RegisteredServiceAttributeFilter;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.ScriptingUtils;
+import org.apereo.cas.util.scripting.ScriptingUtils;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,6 +18,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -31,6 +33,7 @@ import java.util.Map;
 @Setter
 @NoArgsConstructor
 @EqualsAndHashCode
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class RegisteredServiceScriptedAttributeFilter implements RegisteredServiceAttributeFilter {
 
     private static final long serialVersionUID = 122972056984610198L;
@@ -39,23 +42,21 @@ public class RegisteredServiceScriptedAttributeFilter implements RegisteredServi
 
     private String script;
 
-    private static Map<String, Object> getGroovyAttributeValue(final String groovyScript, final Map<String, Object> resolvedAttributes) {
+    private static Map<String, List<Object>> getGroovyAttributeValue(final String groovyScript, final Map<String, List<Object>> resolvedAttributes) {
         val args = CollectionUtils.wrap("attributes", resolvedAttributes, "logger", LOGGER);
         return ScriptingUtils.executeGroovyShellScript(groovyScript, args, Map.class);
     }
 
-    private static Map<String, Object> filterInlinedGroovyAttributeValues(final Map<String, Object> resolvedAttributes, final String script) {
+    private static Map<String, List<Object>> filterInlinedGroovyAttributeValues(final Map<String, List<Object>> resolvedAttributes, final String script) {
         LOGGER.debug("Found inline groovy script to execute [{}]", script);
-        val attributesToRelease = getGroovyAttributeValue(script, resolvedAttributes);
-        return attributesToRelease;
+        return getGroovyAttributeValue(script, resolvedAttributes);
     }
 
-    private static Map<String, Object> filterFileBasedGroovyAttributeValues(final Map<String, Object> resolvedAttributes, final String scriptFile) {
+    private static Map<String, List<Object>> filterFileBasedGroovyAttributeValues(final Map<String, List<Object>> resolvedAttributes, final String scriptFile) {
         try {
             LOGGER.debug("Found groovy script file to execute [{}]", scriptFile);
             val script = FileUtils.readFileToString(new File(scriptFile), StandardCharsets.UTF_8);
-            val attributesToRelease = getGroovyAttributeValue(script, resolvedAttributes);
-            return attributesToRelease;
+            return getGroovyAttributeValue(script, resolvedAttributes);
         } catch (final IOException e) {
             LOGGER.error(e.getMessage(), e);
         }
@@ -63,7 +64,7 @@ public class RegisteredServiceScriptedAttributeFilter implements RegisteredServi
     }
 
     @Override
-    public Map<String, Object> filter(final Map<String, Object> givenAttributes) {
+    public Map<String, List<Object>> filter(final Map<String, List<Object>> givenAttributes) {
         val matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(script);
         val matcherFile = ScriptingUtils.getMatcherForExternalGroovyScript(script);
         if (matcherInline.find()) {

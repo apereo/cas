@@ -1,7 +1,8 @@
 package org.apereo.cas.consent;
 
+import org.junit.platform.runner.JUnitPlatform;
+import org.junit.platform.suite.api.SelectClasses;
 import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
 
 /**
  * This is {@link AllLdapConsentTestsSuite}.
@@ -9,9 +10,10 @@ import org.junit.runners.Suite;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({LdapContinuousIntegrationConsentRepositoryTests.class,
-    LdapEmbeddedConsentRepositoryTests.class})
+@SelectClasses({
+    LdapContinuousIntegrationConsentRepositoryTests.class,
+    LdapEmbeddedConsentRepositoryTests.class
+})
+@RunWith(JUnitPlatform.class)
 public class AllLdapConsentTestsSuite {
-
 }

@@ -11,6 +11,7 @@ import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 import org.springframework.core.env.Environment;
 
 import java.security.Security;
+import java.util.Set;
 
 /**
  * This is {@link CasConfigurationJasyptCipherExecutor}.
@@ -18,20 +19,40 @@ import java.security.Security;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-
-
 public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<String, String> {
     /**
      * Prefix inserted at the beginning of a value to indicate it's encrypted.
      */
-    public static final String ENCRYPTED_VALUE_PREFIX = "{cipher}";
+    public static final String ENCRYPTED_VALUE_PREFIX = "{cas-cipher}";
+
+    /**
+     * These algorithms don't work with Jasypt 1.9.2.
+     */
+    private static final String[] ALGORITHM_BLACKLIST = new String[]{
+        "PBEWITHHMACSHA1ANDAES_128",
+        "PBEWITHHMACSHA1ANDAES_256",
+        "PBEWITHHMACSHA224ANDAES_128",
+        "PBEWITHHMACSHA224ANDAES_256",
+        "PBEWITHHMACSHA256ANDAES_128",
+        "PBEWITHHMACSHA256ANDAES_256",
+        "PBEWITHHMACSHA384ANDAES_128",
+        "PBEWITHHMACSHA384ANDAES_256",
+        "PBEWITHHMACSHA512ANDAES_128",
+        "PBEWITHHMACSHA512ANDAES_256"
+    };
+
+    /**
+     * List version of blacklisted algorithms (due to Jasypt 1.9.2 bug).
+     */
+    public static final Set<String> ALGORITHM_BLACKLIST_SET = Set.of(ALGORITHM_BLACKLIST);
+
     /**
      * The Jasypt instance.
      */
     private final StandardPBEStringEncryptor jasyptInstance;
 
     /**
-     * Instantiates a new Cas configuration jasypt cipher executor.
+     * Instantiates a new CAS configuration jasypt cipher executor.
      *
      * @param environment the environment
      */
@@ -66,6 +87,21 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
      * @param alg the alg
      */
     public void setAlgorithm(final String alg) {
+        if (StringUtils.isNotBlank(alg)) {
+            if (ALGORITHM_BLACKLIST_SET.contains(alg)) {
+                throw new IllegalArgumentException(String.format("Configured Jasypt algorithm [%s] doesn't work for decryption due to Jasypt bug", alg));
+            }
+            LOGGER.debug("Configured Jasypt algorithm [{}]", alg);
+            jasyptInstance.setAlgorithm(alg);
+        }
+    }
+
+    /**
+     * Sets algorithm (possibly to bad algorithm, for unit test usage).
+     *
+     * @param alg the alg
+     */
+    protected void setAlgorithmForce(final String alg) {
         if (StringUtils.isNotBlank(alg)) {
             LOGGER.debug("Configured Jasypt algorithm [{}]", alg);
             jasyptInstance.setAlgorithm(alg);
@@ -214,7 +250,7 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
         /**
          * Jasypt number of iterations to use.
          */
-        ITERATIONS("cas.standalone.configurationSecurity.iteration", null),
+        ITERATIONS("cas.standalone.configurationSecurity.iterations", null),
         /**
          * Jasypt password to use.
          */

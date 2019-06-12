@@ -1,7 +1,7 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.util.ResourceUtils;
-import org.apereo.cas.util.ScriptingUtils;
+import org.apereo.cas.util.scripting.ScriptingUtils;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -30,7 +30,7 @@ public class GroovySurrogateRegisteredServiceAccessStrategy extends BaseSurrogat
     public boolean doPrincipalAttributesAllowServiceAccess(final String principal, final Map<String, Object> principalAttributes) {
         if (isSurrogateAuthenticationSession(principalAttributes)) {
             try {
-                final Object[] args = {principal, principalAttributes, LOGGER};
+                val args = new Object[]{principal, principalAttributes, LOGGER};
                 val resource = ResourceUtils.getResourceFrom(this.groovyScript);
                 return ScriptingUtils.executeGroovyScript(resource, args, Boolean.class, true);
             } catch (final Exception e) {

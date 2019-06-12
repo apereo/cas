@@ -28,6 +28,7 @@ import java.util.concurrent.TimeUnit;
 @UtilityClass
 public class DateTimeUtils {
 
+
     /**
      * Parse the given value as a local datetime.
      *
@@ -143,7 +144,6 @@ public class DateTimeUtils {
      * @param time ZonedDateTime to be copied
      * @return ZonedDateTime representing time
      */
-
     public static ZonedDateTime zonedDateTimeOf(final TemporalAccessor time) {
         return ZonedDateTime.from(time);
     }
@@ -171,7 +171,7 @@ public class DateTimeUtils {
     /**
      * Utility for creating a ZonedDateTime object from a millisecond timestamp.
      *
-     * @param time   Miliseconds since Epoch
+     * @param time   Milliseconds since Epoch
      * @param zoneId Time zone
      * @return ZonedDateTime representing time
      */
@@ -240,6 +240,16 @@ public class DateTimeUtils {
     }
 
     /**
+     * Date of local date time.
+     *
+     * @param time the time
+     * @return the date
+     */
+    public static Date dateOf(final LocalDateTime time) {
+        return dateOf(time.toInstant(ZoneOffset.UTC));
+    }
+
+    /**
      * Gets Date for Instant.
      *
      * @param time Time object to be converted.
@@ -267,6 +277,21 @@ public class DateTimeUtils {
      */
     private static Timestamp timestampOf(final Instant time) {
         return Timestamp.from(time);
+    }
+
+    /**
+     * Convert to zoned date time.
+     *
+     * @param value the value
+     * @return the zoned date time
+     */
+    public static ZonedDateTime convertToZonedDateTime(final String value) {
+        val dt = DateTimeUtils.zonedDateTimeOf(value);
+        if (dt != null) {
+            return dt;
+        }
+        val lt = DateTimeUtils.localDateTimeOf(value);
+        return DateTimeUtils.zonedDateTimeOf(lt.atZone(ZoneOffset.UTC));
     }
 
     /**

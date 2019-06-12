@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.mfa;
 
+import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.couchdb.BaseAsynchronousCouchDbProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
@@ -101,6 +102,8 @@ public class U2FMultifactorProperties extends BaseMultifactorProviderProperties 
     private EncryptionJwtSigningJwtCryptographyProperties crypto = new EncryptionJwtSigningJwtCryptographyProperties();
 
     public U2FMultifactorProperties() {
+        crypto.getEncryption().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE);
+        crypto.getSigning().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_SIGNING_KEY_SIZE);
         setId(DEFAULT_IDENTIFIER);
     }
 

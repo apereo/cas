@@ -15,9 +15,17 @@ CAS server auto-configures all the relevant Inspektr components.   All the avail
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#audits).
 
+## Administrative Endpoints
+
+The following endpoints are provided by CAS:
+ 
+| Endpoint                 | Description
+|--------------------------|------------------------------------------------
+| `auditLog`               | Provides a JSON representation of all the audit log.
+
 ## File-based Audits
 
-File-based audit logs appear in a `cas_audit.log` file defined in the [Logging](Logging.html) configuration.
+File-based audit logs appear in a `cas_audit.log` file defined in the [Logging](../logging/Logging.html) configuration.
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#audits).
 
 ### Sample Log Output
@@ -69,6 +77,20 @@ If you intend to use a MongoDb database for auditing functionality, enable the f
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#mongodb-audits).
 
+## Redis Audits
+
+If you intend to use a Redis database for auditing functionality, enable the following module in your configuration:
+
+```xml
+<dependency>
+    <groupId>org.apereo.cas</groupId>
+    <artifactId>cas-server-support-audit-redis</artifactId>
+    <version>${cas.version}</version>
+</dependency>
+```
+
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#redis-audits).
+
 ## CouchDb Audits
 
 If you intend to use a CouchDb database for auditing functionality, enable the following module in your configuration:
@@ -97,6 +119,20 @@ If you intend to use a Couchbase database for auditing functionality, enable the
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#couchbase-audits).
 
+## DynamoDb Audits
+
+If you intend to use a DynamoDb database for auditing functionality, enable the following module in your configuration:
+
+```xml
+<dependency>
+    <groupId>org.apereo.cas</groupId>
+    <artifactId>cas-server-support-audit-dynamodb</artifactId>
+    <version>${cas.version}</version>
+</dependency>
+```
+
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#dynamodb-audits).
+
 ## REST Audits
 
 Audit events may also be `POST`ed to an endpoint of your choosing. To activate this feature, enable the following module in your configuration:
@@ -124,15 +160,18 @@ The following events are tracked and recorded in the audit log:
 | `PROXY_TICKET`                        | `CREATED`, `NOT_CREATED`
 | `AUTHENTICATION`                      | `SUCCESS`, `FAILED`
 | `AUTHENTICATION_EVENT`                | `TRIGGERED`
+| `AUP_VERIFY`                          | `TRIGGERED`
+| `AUP_SUBMIT`                          | `TRIGGERED`
 | `EVALUATE_RISKY_AUTHENTICATION`       | N/A
 | `MITIGATE_RISKY_AUTHENTICATION`       | N/A
+| `MFA_BYPASS`                          | N/A
 | `SAVE_SERVICE`                        | `SUCCESS`, `FAILURE`
 | `SAVE_CONSENT`                        | `SUCCESS`, `FAILURE`
 | `CHANGE_PASSWORD`                     | `SUCCESS`, `FAILURE`
 | `DELETE_SERVICE`                      | `SUCCESS`, `FAILURE`
 | `SAML2_RESPONSE`                      | `CREATED`, `FAILED`
 | `SAML2_REQUEST`                       | `CREATED`, `FAILED`
-| `OAUTH2_USER_PROFILE_DATA`            | `CREATED`, `FAILED`
+| `OAUTH2_USER_PROFILE`                 | `CREATED`, `FAILED`
 | `OAUTH2_ACCESS_TOKEN_REQUEST`         | `CREATED`, `FAILED`
 | `OAUTH2_ACCESS_TOKEN_RESPONSE`        | `CREATED`, `FAILED`
 | `REST_API_TICKET_GRANTING_TICKET`     | `CREATED`, `FAILED`

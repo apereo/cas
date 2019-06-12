@@ -39,7 +39,7 @@ import java.util.stream.Collectors;
 /**
  * An abstract implementation of the {@link CentralAuthenticationService} that provides access to
  * the needed scaffolding and services that are necessary to CAS, such as ticket registry, service registry, etc.
- * The intention here is to allow extensions to easily benefit these already-configured components
+ * The intention here is to allow extensions to easily benefit from these already-configured components
  * without having to to duplicate them again.
  *
  * @author Misagh Moayyed
@@ -117,7 +117,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
 
     @Transactional(transactionManager = "ticketTransactionManager", noRollbackFor = InvalidTicketException.class)
     @Override
-    public Ticket getTicket(@NonNull final String ticketId) throws InvalidTicketException {
+    public Ticket getTicket(final @NonNull String ticketId) throws InvalidTicketException {
         val ticket = this.ticketRegistry.getTicket(ticketId);
         verifyTicketState(ticket, ticketId, null);
         return ticket;
@@ -133,7 +133,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
      */
     @Transactional(transactionManager = "ticketTransactionManager", noRollbackFor = InvalidTicketException.class)
     @Override
-    public <T extends Ticket> T getTicket(@NonNull final String ticketId, final Class<T> clazz) throws InvalidTicketException {
+    public <T extends Ticket> T getTicket(final @NonNull String ticketId, final Class<T> clazz) throws InvalidTicketException {
         val ticket = this.ticketRegistry.getTicket(ticketId, clazz);
         verifyTicketState(ticket, ticketId, clazz);
         return (T) ticket;
@@ -142,7 +142,9 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
     @Transactional(transactionManager = "ticketTransactionManager")
     @Override
     public Collection<Ticket> getTickets(final Predicate<Ticket> predicate) {
-        return this.ticketRegistry.getTickets().stream().filter(predicate).collect(Collectors.toSet());
+        try (val ticketsStream = this.ticketRegistry.getTicketsStream().filter(predicate)) {
+            return ticketsStream.collect(Collectors.toSet());
+        }
     }
 
     @Transactional(transactionManager = "ticketTransactionManager")
@@ -244,7 +246,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
      */
     protected boolean isTicketAuthenticityVerified(final String ticketId) {
         if (this.cipherExecutor != null) {
-            LOGGER.debug("Attempting to decode service ticket [{}] to verify authenticity", ticketId);
+            LOGGER.trace("Attempting to decode service ticket [{}] to verify authenticity", ticketId);
             return !StringUtils.isEmpty(this.cipherExecutor.decode(ticketId));
         }
         return !StringUtils.isEmpty(ticketId);

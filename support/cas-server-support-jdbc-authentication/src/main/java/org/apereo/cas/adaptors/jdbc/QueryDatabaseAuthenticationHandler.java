@@ -25,6 +25,7 @@ import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -80,15 +81,17 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
                 + "No SQL statement or JDBC template is found.");
         }
 
-        val attributes = Maps.<String, Object>newHashMapWithExpectedSize(this.principalAttributeMap.size());
+        val attributes = Maps.<String, List<Object>>newHashMapWithExpectedSize(this.principalAttributeMap.size());
         val username = credential.getUsername();
         val password = credential.getPassword();
         try {
             val dbFields = query(credential);
             if (dbFields.containsKey(this.fieldPassword)) {
                 val dbPassword = (String) dbFields.get(this.fieldPassword);
-                if ((StringUtils.isNotBlank(originalPassword) && !matches(originalPassword, dbPassword))
-                    || (StringUtils.isBlank(originalPassword) && !StringUtils.equals(password, dbPassword))) {
+
+                val originalPasswordMatchFails = StringUtils.isNotBlank(originalPassword) && !matches(originalPassword, dbPassword);
+                val originalPasswordEquals = StringUtils.isBlank(originalPassword) && !StringUtils.equals(password, dbPassword);
+                if (originalPasswordMatchFails || originalPasswordEquals) {
                     throw new FailedLoginException("Password does not match value on record.");
                 }
             } else {
@@ -143,7 +146,7 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
         return getNamedJdbcTemplate().queryForMap(this.sql, parameters);
     }
 
-    private void collectPrincipalAttributes(final Map<String, Object> attributes, final Map<String, Object> dbFields) {
+    private void collectPrincipalAttributes(final Map<String, List<Object>> attributes, final Map<String, Object> dbFields) {
         this.principalAttributeMap.forEach((key, names) -> {
             val attribute = dbFields.get(key);
             if (attribute != null) {

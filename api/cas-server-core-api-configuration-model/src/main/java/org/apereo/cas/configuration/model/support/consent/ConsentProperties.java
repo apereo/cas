@@ -1,10 +1,12 @@
 package org.apereo.cas.configuration.model.support.consent;
 
+import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.couchdb.BaseCouchDbProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapSearchProperties;
 import org.apereo.cas.configuration.model.support.mongo.SingleCollectionMongoDbProperties;
+import org.apereo.cas.configuration.model.support.redis.BaseRedisProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.SpringResourceProperties;
 
@@ -61,6 +63,11 @@ public class ConsentProperties implements Serializable {
     private Json json = new Json();
 
     /**
+     *  Keep consent decisions stored via Redis.
+     */
+    private Redis redis = new Redis();
+
+    /**
      * Keep consent decisions stored via a Groovy resource.
      */
     private Groovy groovy = new Groovy();
@@ -80,7 +87,12 @@ public class ConsentProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private EncryptionJwtSigningJwtCryptographyProperties crypto = new EncryptionJwtSigningJwtCryptographyProperties();
-    
+
+    public ConsentProperties() {
+        crypto.getEncryption().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE);
+        crypto.getSigning().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_SIGNING_KEY_SIZE);
+    }
+
     @RequiresModule(name = "cas-server-support-consent-couchdb")
     @Getter
     @Setter
@@ -157,5 +169,12 @@ public class ConsentProperties implements Serializable {
          * REST endpoint to use to which consent decision records will be submitted.
          */
         private String endpoint;
+    }
+
+    @RequiresModule(name = "cas-server-support-consent-redis")
+    @Getter
+    @Setter
+    public static class Redis extends BaseRedisProperties {
+        private static final long serialVersionUID = -1347683393318585262L;
     }
 }

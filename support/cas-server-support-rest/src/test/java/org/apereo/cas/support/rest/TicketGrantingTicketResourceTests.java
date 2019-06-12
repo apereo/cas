@@ -17,21 +17,22 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 
 import lombok.val;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.support.GenericWebApplicationContext;
 
 import javax.security.auth.login.LoginException;
 import java.util.HashMap;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -42,7 +43,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @author Dmitriy Kopylenko
  * @since 4.0.0
  */
-@RunWith(MockitoJUnitRunner.Silent.class)
+@ExtendWith(MockitoExtension.class)
 public class TicketGrantingTicketResourceTests {
 
     private static final String TICKETS_RESOURCE_URL = "/cas/v1/tickets";
@@ -62,17 +63,18 @@ public class TicketGrantingTicketResourceTests {
 
     private MockMvc mockMvc;
 
-    @Before
+    @BeforeEach
     public void initialize() {
         val publisher = mock(ApplicationEventPublisher.class);
         val manager = mock(AuthenticationManager.class);
-        when(manager.authenticate(any(AuthenticationTransaction.class))).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
-        when(ticketSupport.getAuthenticationFrom(anyString())).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
+        lenient().when(manager.authenticate(any(AuthenticationTransaction.class))).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
+        lenient().when(ticketSupport.getAuthenticationFrom(anyString())).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
 
         this.ticketGrantingTicketResourceUnderTest = new TicketGrantingTicketResource(
             new DefaultAuthenticationSystemSupport(new DefaultAuthenticationTransactionManager(publisher, manager),
                 new DefaultPrincipalElectionStrategy()), new UsernamePasswordRestHttpRequestCredentialFactory(),
-            casMock, new WebApplicationServiceFactory(), new DefaultTicketGrantingTicketResourceEntityResponseFactory());
+            casMock, new WebApplicationServiceFactory(), new DefaultTicketGrantingTicketResourceEntityResponseFactory(),
+            new GenericWebApplicationContext());
 
         this.mockMvc = MockMvcBuilders.standaloneSetup(this.ticketGrantingTicketResourceUnderTest)
             .defaultRequest(get("/")
@@ -205,6 +207,6 @@ public class TicketGrantingTicketResourceTests {
     }
 
     private void configureCasMockTGTCreationToThrow(final Exception e) {
-        when(this.casMock.createTicketGrantingTicket(any(AuthenticationResult.class))).thenThrow(e);
+        lenient().when(this.casMock.createTicketGrantingTicket(any(AuthenticationResult.class))).thenThrow(e);
     }
 }

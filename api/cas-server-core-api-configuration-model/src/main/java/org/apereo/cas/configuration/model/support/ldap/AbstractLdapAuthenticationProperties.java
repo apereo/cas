@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.ldap;
 
 import org.apereo.cas.configuration.support.RequiredProperty;
+import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -14,6 +15,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@RequiresModule(name = "cas-server-support-ldap-core")
 @Getter
 @Setter
 public abstract class AbstractLdapAuthenticationProperties extends AbstractLdapSearchProperties {
@@ -34,7 +36,7 @@ public abstract class AbstractLdapAuthenticationProperties extends AbstractLdapS
      * </ul>
      */
     @RequiredProperty
-    private AuthenticationTypes type;
+    private AuthenticationTypes type = AuthenticationTypes.AUTHENTICATED;
     /**
      * If principalAttributePassword is empty then a user simple bind is done to validate credentials
      * otherwise the given attribute is compared with the given principalAttributePassword

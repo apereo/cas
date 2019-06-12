@@ -2,7 +2,6 @@ package org.apereo.cas.audit;
 
 import org.apereo.cas.audit.spi.BaseAuditConfigurationTests;
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
-import org.apereo.cas.category.CouchDbCategory;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasCouchDbCoreConfiguration;
@@ -13,9 +12,9 @@ import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
 
 import lombok.Getter;
 import org.apereo.inspektr.audit.AuditTrailManager;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -27,18 +26,21 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
  * @author Timur Duehr
  * @since 6.0.0
  */
-@SpringBootTest(
-    classes = {
-        CasCoreAuditConfiguration.class,
-        CasSupportCouchDbAuditConfiguration.class,
-        CasCouchDbCoreConfiguration.class,
-        CasCoreUtilConfiguration.class,
-        CasWebApplicationServiceFactoryConfiguration.class,
-        RefreshAutoConfiguration.class,
-        CasCoreWebConfiguration.class
-    },
-    properties = {"cas.audit.couchDb.asynchronous=false"})
-@Category(CouchDbCategory.class)
+@SpringBootTest(classes = {
+    CasCoreAuditConfiguration.class,
+    CasSupportCouchDbAuditConfiguration.class,
+    CasCouchDbCoreConfiguration.class,
+    CasCoreUtilConfiguration.class,
+    CasWebApplicationServiceFactoryConfiguration.class,
+    RefreshAutoConfiguration.class,
+    CasCoreWebConfiguration.class
+},
+    properties = {
+        "cas.audit.couchDb.asynchronous=false",
+        "cas.audit.couchDb.username=cas",
+        "cas.audit.couchdb.password=password"
+    })
+@Tag("CouchDb")
 @Getter
 public class CouchDbAuditTrailManagerTests extends BaseAuditConfigurationTests {
 
@@ -54,13 +56,13 @@ public class CouchDbAuditTrailManagerTests extends BaseAuditConfigurationTests {
     @Qualifier("auditCouchDbFactory")
     private CouchDbConnectorFactory auditCouchDbFactory;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         auditCouchDbFactory.getCouchDbInstance().createDatabaseIfNotExists(auditCouchDbFactory.getCouchDbConnector().getDatabaseName());
         couchDbRepository.initStandardDesignDocument();
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         auditCouchDbFactory.getCouchDbInstance().deleteDatabase(auditCouchDbFactory.getCouchDbConnector().getDatabaseName());
     }

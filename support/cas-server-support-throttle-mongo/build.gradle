@@ -8,6 +8,7 @@ dependencies {
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-authentication-throttle")
     implementation project(":support:cas-server-support-throttle")
+    implementation project(":support:cas-server-support-throttle-core")
     implementation project(":support:cas-server-support-audit-mongo")
     implementation project(":support:cas-server-support-mongo-core")
     
@@ -16,6 +17,7 @@ dependencies {
     testImplementation project(path: ":support:cas-server-support-throttle", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")

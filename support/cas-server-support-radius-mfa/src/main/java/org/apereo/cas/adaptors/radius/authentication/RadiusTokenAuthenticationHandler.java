@@ -3,14 +3,18 @@ package org.apereo.cas.adaptors.radius.authentication;
 import org.apereo.cas.adaptors.radius.RadiusServer;
 import org.apereo.cas.adaptors.radius.RadiusUtils;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
+import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import net.jradius.dictionary.Attr_State;
+import net.jradius.packet.attribute.value.AttributeValue;
 
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
@@ -36,8 +40,9 @@ public class RadiusTokenAuthenticationHandler extends AbstractPreAndPostProcessi
                                             final PrincipalFactory principalFactory,
                                             final List<RadiusServer> servers,
                                             final boolean failoverOnException,
-                                            final boolean failoverOnAuthenticationFailure) {
-        super(name, servicesManager, principalFactory, null);
+                                            final boolean failoverOnAuthenticationFailure,
+                                            final Integer order) {
+        super(name, servicesManager, principalFactory, order);
         this.servers = servers;
         this.failoverOnException = failoverOnException;
         this.failoverOnAuthenticationFailure = failoverOnAuthenticationFailure;
@@ -68,10 +73,22 @@ public class RadiusTokenAuthenticationHandler extends AbstractPreAndPostProcessi
             val principal = authentication.getPrincipal();
             val username = principal.getId();
 
+            var state = Optional.empty();
+            val attributes = principal.getAttributes();
+            if (attributes.containsKey(Attr_State.NAME)) {
+                LOGGER.debug("Found state attribute in principal attributes for multifactor authentication");
+                val stateValue = CollectionUtils.firstElement(attributes.get(Attr_State.NAME));
+                if (stateValue.isPresent()) {
+                    val stateAttr = AttributeValue.class.cast(stateValue.get());
+                    state = Optional.of(stateAttr.getValueObject());
+                }
+            }
+
             val result = RadiusUtils.authenticate(username, password, this.servers,
-                this.failoverOnAuthenticationFailure, this.failoverOnException, Optional.empty());
+                this.failoverOnAuthenticationFailure, this.failoverOnException, state);
             if (result.getKey()) {
-                val finalPrincipal = this.principalFactory.createPrincipal(username, result.getValue().get());
+                val radiusAttributes = CoreAuthenticationUtils.convertAttributeValuesToMultiValuedObjects(result.getValue().get());
+                val finalPrincipal = this.principalFactory.createPrincipal(username, radiusAttributes);
                 return createHandlerResult(credential, finalPrincipal, new ArrayList<>());
             }
             throw new FailedLoginException("Radius authentication failed for user " + username);

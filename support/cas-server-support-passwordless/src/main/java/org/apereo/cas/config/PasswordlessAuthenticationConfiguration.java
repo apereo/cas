@@ -123,7 +123,7 @@ public class PasswordlessAuthenticationConfiguration implements CasWebflowExecut
             return new RestfulPasswordlessUserAccountStore(accounts.getRest());
         }
 
-        final Map simple = accounts.getSimple()
+        var simple = accounts.getSimple()
             .entrySet()
             .stream()
             .collect(Collectors.toMap(Map.Entry::getKey, entry -> {
@@ -137,7 +137,7 @@ public class PasswordlessAuthenticationConfiguration implements CasWebflowExecut
                 }
                 return account;
             }));
-        return new SimplePasswordlessUserAccountStore(simple);
+        return new SimplePasswordlessUserAccountStore((Map) simple);
     }
 
     @Bean
@@ -150,7 +150,9 @@ public class PasswordlessAuthenticationConfiguration implements CasWebflowExecut
             return new PasswordlessTokenCipherExecutor(
                 crypto.getEncryption().getKey(),
                 crypto.getSigning().getKey(),
-                crypto.getAlg());
+                crypto.getAlg(),
+                crypto.getSigning().getKeySize(),
+                crypto.getEncryption().getKeySize());
         }
         return CipherExecutor.noOpOfSerializableToString();
     }
@@ -168,6 +170,7 @@ public class PasswordlessAuthenticationConfiguration implements CasWebflowExecut
 
     @Bean
     @ConditionalOnMissingBean(name = "acceptPasswordlessAuthenticationAction")
+    @RefreshScope
     public Action acceptPasswordlessAuthenticationAction() {
         return new AcceptPasswordlessAuthenticationAction(initialAuthenticationAttemptWebflowEventResolver.getIfAvailable(),
             serviceTicketRequestWebflowEventResolver.getIfAvailable(),
@@ -179,6 +182,7 @@ public class PasswordlessAuthenticationConfiguration implements CasWebflowExecut
 
     @Bean
     @ConditionalOnMissingBean(name = "displayBeforePasswordlessAuthenticationAction")
+    @RefreshScope
     public Action displayBeforePasswordlessAuthenticationAction() {
         return new DisplayBeforePasswordlessAuthenticationAction(passwordlessTokenRepository(),
             passwordlessUserAccountStore(), communicationsManager.getIfAvailable(), casProperties.getAuthn().getPasswordless());

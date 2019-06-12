@@ -4,23 +4,28 @@ import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.DefaultAuthenticationAttributeReleasePolicy;
+import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.RememberMeCredential;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.support.DefaultCasProtocolAttributeEncoder;
+import org.apereo.cas.authentication.support.NoOpProtocolAttributeEncoder;
 import org.apereo.cas.services.DefaultServicesManager;
 import org.apereo.cas.services.InMemoryServiceRegistry;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.saml.AbstractOpenSamlTests;
 import org.apereo.cas.support.saml.authentication.SamlAuthenticationMetaDataPopulator;
+import org.apereo.cas.support.saml.authentication.SamlResponseBuilder;
 import org.apereo.cas.support.saml.authentication.principal.SamlServiceFactory;
 import org.apereo.cas.support.saml.util.Saml10ObjectBuilder;
 import org.apereo.cas.validation.DefaultAssertionBuilder;
 import org.apereo.cas.web.support.DefaultArgumentExtractor;
+import org.apereo.cas.web.view.attributes.NoOpProtocolAttributesRenderer;
 
 import lombok.val;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -30,8 +35,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -41,6 +48,7 @@ import static org.mockito.Mockito.*;
  * @author Marvin S. Addison
  * @since 3.1
  */
+@Tag("SAML")
 public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
 
     private static final String TEST_VALUE = "testValue";
@@ -49,41 +57,44 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
 
     private Saml10SuccessResponseView response;
 
-    @Before
+    @BeforeEach
     public void initialize() {
         val list = new ArrayList<RegisteredService>();
         list.add(RegisteredServiceTestUtils.getRegisteredService("https://.+"));
-        val dao = new InMemoryServiceRegistry();
-        dao.setRegisteredServices(list);
+        val dao = new InMemoryServiceRegistry(mock(ApplicationEventPublisher.class), list, new ArrayList<>());
 
-        val mgmr = new DefaultServicesManager(dao, mock(ApplicationEventPublisher.class));
+        val mgmr = new DefaultServicesManager(dao, mock(ApplicationEventPublisher.class), new HashSet<>());
         mgmr.load();
 
-        this.response = new Saml10SuccessResponseView(new DefaultCasProtocolAttributeEncoder(mgmr, CipherExecutor.noOpOfStringToString()),
-            mgmr, 
-            new Saml10ObjectBuilder(configBean),
-            new DefaultArgumentExtractor(new SamlServiceFactory(new Saml10ObjectBuilder(configBean))),
-            StandardCharsets.UTF_8.name(), 1000, 30,
-            "testIssuer",
-            "whatever",
-            new DefaultAuthenticationAttributeReleasePolicy("attribute"));
+        val protocolAttributeEncoder = new DefaultCasProtocolAttributeEncoder(mgmr, CipherExecutor.noOpOfStringToString());
+        val builder = new Saml10ObjectBuilder(configBean);
+        val samlResponseBuilder = new SamlResponseBuilder(builder, "testIssuer", "whatever", 1000, 30,
+            new NoOpProtocolAttributeEncoder(), mgmr);
+        this.response = new Saml10SuccessResponseView(protocolAttributeEncoder,
+            mgmr,
+            new DefaultArgumentExtractor(new SamlServiceFactory()),
+            StandardCharsets.UTF_8.name(),
+            new DefaultAuthenticationAttributeReleasePolicy("attribute"),
+            new DefaultAuthenticationServiceSelectionPlan(),
+            new NoOpProtocolAttributesRenderer(),
+            samlResponseBuilder);
     }
 
     @Test
     public void verifyResponse() throws Exception {
         val model = new HashMap<String, Object>();
 
-        val attributes = new HashMap<String, Object>();
-        attributes.put(TEST_ATTRIBUTE, TEST_VALUE);
+        val attributes = new HashMap<String, List<Object>>();
+        attributes.put(TEST_ATTRIBUTE, List.of(TEST_VALUE));
         attributes.put("testEmptyCollection", new ArrayList<>(0));
         attributes.put("testAttributeCollection", Arrays.asList("tac1", "tac2"));
         val principal = new DefaultPrincipalFactory().createPrincipal(PRINCIPAL_ID, attributes);
 
-        val authAttributes = new HashMap<String, Object>();
+        val authAttributes = new HashMap<String, List<Object>>();
         authAttributes.put(
             SamlAuthenticationMetaDataPopulator.ATTRIBUTE_AUTHENTICATION_METHOD,
-            SamlAuthenticationMetaDataPopulator.AUTHN_METHOD_SSL_TLS_CLIENT);
-        authAttributes.put("testSamlAttribute", "value");
+            List.of(SamlAuthenticationMetaDataPopulator.AUTHN_METHOD_SSL_TLS_CLIENT));
+        authAttributes.put("testSamlAttribute", List.of("value"));
 
         val primary = CoreAuthenticationTestUtils.getAuthentication(principal, authAttributes);
         val assertion = new DefaultAssertionBuilder(primary).with(Collections.singletonList(primary)).with(
@@ -116,11 +127,11 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
 
         val principal = new DefaultPrincipalFactory().createPrincipal(PRINCIPAL_ID);
 
-        val authAttributes = new HashMap<String, Object>();
+        val authAttributes = new HashMap<String, List<Object>>();
         authAttributes.put(
             SamlAuthenticationMetaDataPopulator.ATTRIBUTE_AUTHENTICATION_METHOD,
-            SamlAuthenticationMetaDataPopulator.AUTHN_METHOD_SSL_TLS_CLIENT);
-        authAttributes.put("testSamlAttribute", "value");
+            List.of(SamlAuthenticationMetaDataPopulator.AUTHN_METHOD_SSL_TLS_CLIENT));
+        authAttributes.put("testSamlAttribute", List.of("value"));
 
         val primary = CoreAuthenticationTestUtils.getAuthentication(principal, authAttributes);
         val assertion = new DefaultAssertionBuilder(primary)
@@ -145,14 +156,14 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
     public void verifyResponseWithoutAuthMethod() throws Exception {
         val model = new HashMap<String, Object>();
 
-        val attributes = new HashMap<String, Object>();
-        attributes.put(TEST_ATTRIBUTE, TEST_VALUE);
+        val attributes = new HashMap<String, List<Object>>();
+        attributes.put(TEST_ATTRIBUTE, List.of(TEST_VALUE));
         val principal = new DefaultPrincipalFactory().createPrincipal(PRINCIPAL_ID, attributes);
 
-        val authnAttributes = new HashMap<String, Object>();
-        authnAttributes.put("authnAttribute1", "authnAttrbuteV1");
-        authnAttributes.put("authnAttribute2", "authnAttrbuteV2");
-        authnAttributes.put(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME, Boolean.TRUE);
+        val authnAttributes = new HashMap<String, List<Object>>();
+        authnAttributes.put("authnAttribute1", List.of("authnAttrbuteV1"));
+        authnAttributes.put("authnAttribute2", List.of("authnAttrbuteV2"));
+        authnAttributes.put(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME, List.of(Boolean.TRUE));
 
         val primary = CoreAuthenticationTestUtils.getAuthentication(principal, authnAttributes);
 

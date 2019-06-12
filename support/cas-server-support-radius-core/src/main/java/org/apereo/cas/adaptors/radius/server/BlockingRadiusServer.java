@@ -26,18 +26,20 @@ public class BlockingRadiusServer extends AbstractRadiusServer {
     private static final long serialVersionUID = -2567137135937670129L;
 
     public BlockingRadiusServer(final RadiusProtocol protocol, final RadiusClientFactory radiusClientFactory) {
-        super(protocol, radiusClientFactory, 1, null,
-            null, -1, -1, null, -1, -1);
+        super(RadiusServerConfigurationContext.builder()
+            .protocol(protocol)
+            .radiusClientFactory(radiusClientFactory)
+            .retries(1)
+            .build()
+        );
     }
 
-    public BlockingRadiusServer(final RadiusProtocol protocol, final RadiusClientFactory clientFactory, final int retries,
-                                final String nasIpAddress, final String nasIpv6Address, final long nasPort,
-                                final long nasPortId, final String nasIdentifier, final long nasRealPort, final long nasPortType) {
-        super(protocol, clientFactory, retries, nasIpAddress, nasIpv6Address, nasPort, nasPortId, nasIdentifier, nasRealPort, nasPortType);
+    public BlockingRadiusServer(final RadiusServerConfigurationContext radiusServerConfigurationContext) {
+        super(radiusServerConfigurationContext);
     }
 
     @Override
     protected RadiusResponse authenticateRequest(final RadiusClient client, final AccessRequest accessRequest) throws Exception {
-        return client.authenticate(accessRequest, getRadiusAuthenticator(), getRetries());
+        return client.authenticate(accessRequest, getRadiusAuthenticator(), getRadiusServerConfigurationContext().getRetries());
     }
 }

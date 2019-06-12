@@ -1,4 +1,9 @@
 description = "Apereo CAS Apache Cassandra Authentication Support"
+
+ext {
+    maxParallelForksForTests = 1
+}
+
 dependencies {
     api project(":api:cas-server-core-api")
 
@@ -28,5 +33,4 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
     
     implementation libraries.cassandra
-    
 }

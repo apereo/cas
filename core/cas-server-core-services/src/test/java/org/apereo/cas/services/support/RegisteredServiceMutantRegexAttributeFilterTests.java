@@ -8,8 +8,8 @@ import org.apereo.cas.util.serialization.SerializationUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -19,9 +19,10 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -40,9 +41,9 @@ public class RegisteredServiceMutantRegexAttributeFilterTests {
     @Mock
     private RegisteredService registeredService;
 
-    private Map<String, Object> givenAttributesMap;
+    private Map<String, List<Object>> givenAttributesMap;
 
-    @Before
+    @BeforeEach
     public void initialize() {
         MockitoAnnotations.initMocks(this);
         when(this.registeredService.getName()).thenReturn("sample test service");
@@ -50,7 +51,7 @@ public class RegisteredServiceMutantRegexAttributeFilterTests {
         this.filter = new RegisteredServiceMutantRegexAttributeFilter();
 
         this.givenAttributesMap = new HashMap<>();
-        this.givenAttributesMap.put("employeeId", "E1234");
+        this.givenAttributesMap.put("employeeId", List.of("E1234"));
         this.givenAttributesMap.put("memberOf", Arrays.asList("math101", "science", "chemistry", "marathon101"));
     }
 

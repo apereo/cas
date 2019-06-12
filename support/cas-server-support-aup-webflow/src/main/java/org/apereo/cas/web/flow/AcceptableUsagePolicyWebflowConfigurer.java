@@ -36,7 +36,6 @@ public class AcceptableUsagePolicyWebflowConfigurer extends AbstractCasWebflowCo
     @Override
     protected void doInitialize() {
         val flow = getLoginFlow();
-
         if (flow != null) {
             createVerifyActionState(flow);
             createAcceptableUsagePolicyView(flow);
@@ -102,7 +101,7 @@ public class AcceptableUsagePolicyWebflowConfigurer extends AbstractCasWebflowCo
         transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_AUP_MUST_ACCEPT, VIEW_ID_ACCEPTABLE_USAGE_POLICY_VIEW));
 
         val ticketCreateState = getState(flow, CasWebflowConstants.STATE_ID_CREATE_TICKET_GRANTING_TICKET, ActionState.class);
-        prependActionsToActionStateExecutionList(flow, ticketCreateState, AUP_VERIFY_ACTION);
+        createEvaluateActionForExistingActionState(flow, ticketCreateState.getId(), AUP_VERIFY_ACTION);
         createTransitionForState(ticketCreateState, CasWebflowConstants.TRANSITION_ID_AUP_MUST_ACCEPT, VIEW_ID_ACCEPTABLE_USAGE_POLICY_VIEW);
     }
 }

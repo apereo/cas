@@ -7,6 +7,7 @@ import org.apereo.cas.services.ServicesManager;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.val;
 import org.springframework.util.StringUtils;
 
@@ -23,6 +24,7 @@ import java.util.Map;
  */
 @EqualsAndHashCode(callSuper = true)
 @Getter
+@Setter
 public class WebApplicationServiceResponseBuilder extends AbstractWebApplicationServiceResponseBuilder {
 
     private static final long serialVersionUID = -851233878780818494L;
@@ -64,10 +66,5 @@ public class WebApplicationServiceResponseBuilder extends AbstractWebApplication
      */
     protected WebApplicationService buildInternal(final WebApplicationService service, final Map<String, String> parameters) {
         return service;
-    }
-
-    @Override
-    public boolean supports(final WebApplicationService service) {
-        return true;
     }
 }

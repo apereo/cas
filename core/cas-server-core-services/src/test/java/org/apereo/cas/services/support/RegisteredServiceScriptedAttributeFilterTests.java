@@ -2,16 +2,17 @@ package org.apereo.cas.services.support;
 
 import lombok.val;
 import org.apache.commons.io.FileUtils;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
 
 import java.io.File;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link RegisteredServiceScriptedAttributeFilterTests}.
@@ -21,12 +22,12 @@ import static org.junit.Assert.*;
  */
 public class RegisteredServiceScriptedAttributeFilterTests {
 
-    private Map<String, Object> givenAttributesMap;
+    private Map<String, List<Object>> givenAttributesMap;
 
-    @Before
+    @BeforeEach
     public void initialize() {
         this.givenAttributesMap = new HashMap<>();
-        this.givenAttributesMap.put("employeeId", "E1234");
+        this.givenAttributesMap.put("employeeId", List.of("E1234"));
         this.givenAttributesMap.put("memberOf", Arrays.asList("math101", "science", "chemistry", "marathon101"));
     }
 

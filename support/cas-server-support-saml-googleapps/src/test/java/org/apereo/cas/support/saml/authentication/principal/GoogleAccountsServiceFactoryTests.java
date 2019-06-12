@@ -10,15 +10,16 @@ import org.apereo.cas.util.CompressionUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import lombok.val;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.TestPropertySource;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Test cases for {@link GoogleAccountsServiceFactory}.
@@ -28,6 +29,7 @@ import static org.junit.Assert.*;
  */
 @Import(SamlGoogleAppsConfiguration.class)
 @TestPropertySource(locations = "classpath:/gapps.properties")
+@Tag("SAML")
 public class GoogleAccountsServiceFactoryTests extends AbstractOpenSamlTests {
     @Autowired
     @Qualifier("googleAccountsServiceFactory")
@@ -44,7 +46,7 @@ public class GoogleAccountsServiceFactoryTests extends AbstractOpenSamlTests {
         return CompressionUtils.deflate(xmlString);
     }
 
-    @Before
+    @BeforeEach
     public void init() {
         this.applicationContextProvider.setApplicationContext(this.applicationContext);
     }

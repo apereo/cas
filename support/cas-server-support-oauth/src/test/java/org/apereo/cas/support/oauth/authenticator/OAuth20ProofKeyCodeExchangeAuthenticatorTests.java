@@ -10,7 +10,9 @@ import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.EncodingUtils;
 
 import lombok.val;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.exception.CredentialsException;
@@ -19,8 +21,9 @@ import org.springframework.mock.web.MockHttpServletResponse;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link OAuth20ProofKeyCodeExchangeAuthenticatorTests}.
@@ -28,12 +31,12 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
+@Tag("OAuth")
 public class OAuth20ProofKeyCodeExchangeAuthenticatorTests extends BaseOAuth20AuthenticatorTests {
     protected OAuth20ProofKeyCodeExchangeAuthenticator authenticator;
 
-    @Override
-    public void initialize() {
-        super.initialize();
+    @BeforeEach
+    public void init() {
         authenticator = new OAuth20ProofKeyCodeExchangeAuthenticator(servicesManager, serviceFactory,
             new RegisteredServiceAccessStrategyAuditableEnforcer(), ticketRegistry);
     }
@@ -43,7 +46,10 @@ public class OAuth20ProofKeyCodeExchangeAuthenticatorTests extends BaseOAuth20Au
         val credentials = new UsernamePasswordCredentials("client", "ABCD123");
         val request = new MockHttpServletRequest();
         ticketRegistry.addTicket(new OAuthCodeImpl("CODE-1234567890", RegisteredServiceTestUtils.getService(), RegisteredServiceTestUtils.getAuthentication(),
-            new HardTimeoutExpirationPolicy(10), new MockTicketGrantingTicket("casuser"), new ArrayList<>(), "ABCD123", "plain"));
+            new HardTimeoutExpirationPolicy(10),
+            new MockTicketGrantingTicket("casuser"),
+            new ArrayList<>(), "ABCD123",
+            "plain", "clientid12345", new HashMap<>()));
         request.addParameter(OAuth20Constants.CODE, "CODE-1234567890");
         val ctx = new J2EContext(request, new MockHttpServletResponse());
         authenticator.validate(credentials, ctx);
@@ -56,9 +62,11 @@ public class OAuth20ProofKeyCodeExchangeAuthenticatorTests extends BaseOAuth20Au
         val hash = EncodingUtils.encodeUrlSafeBase64(DigestUtils.sha256("ABCD1234").getBytes(StandardCharsets.UTF_8));
         val credentials = new UsernamePasswordCredentials("client", "ABCD1234");
         val request = new MockHttpServletRequest();
-        val ticket = new OAuthCodeImpl("CODE-1234567890", RegisteredServiceTestUtils.getService(), RegisteredServiceTestUtils.getAuthentication(),
-            new HardTimeoutExpirationPolicy(10), new MockTicketGrantingTicket("casuser"),
-            new ArrayList<>(), hash, "s256");
+        val ticket = new OAuthCodeImpl("CODE-1234567890",
+            RegisteredServiceTestUtils.getService(), RegisteredServiceTestUtils.getAuthentication(),
+            new HardTimeoutExpirationPolicy(10),
+            new MockTicketGrantingTicket("casuser"),
+            new ArrayList<>(), hash, "s256", "clientid12345", new HashMap<>());
         ticketRegistry.addTicket(ticket);
         request.addParameter(OAuth20Constants.CODE, ticket.getId());
         val ctx = new J2EContext(request, new MockHttpServletResponse());
@@ -71,13 +79,15 @@ public class OAuth20ProofKeyCodeExchangeAuthenticatorTests extends BaseOAuth20Au
     public void verifyAuthenticationNotHashedCorrectly() {
         val credentials = new UsernamePasswordCredentials("client", "ABCD1234");
         val request = new MockHttpServletRequest();
-        val ticket = new OAuthCodeImpl("CODE-1234567890", RegisteredServiceTestUtils.getService(), RegisteredServiceTestUtils.getAuthentication(),
-            new HardTimeoutExpirationPolicy(10), new MockTicketGrantingTicket("casuser"),
-            new ArrayList<>(), "something-else", "s256");
+        val ticket = new OAuthCodeImpl("CODE-1234567890",
+            RegisteredServiceTestUtils.getService(), RegisteredServiceTestUtils.getAuthentication(),
+            new HardTimeoutExpirationPolicy(10),
+            new MockTicketGrantingTicket("casuser"),
+            new ArrayList<>(),
+            "something-else", "s256", "clientid12345", new HashMap<>());
         ticketRegistry.addTicket(ticket);
         request.addParameter(OAuth20Constants.CODE, ticket.getId());
         val ctx = new J2EContext(request, new MockHttpServletResponse());
-        thrown.expect(CredentialsException.class);
-        authenticator.validate(credentials, ctx);
+        assertThrows(CredentialsException.class, () -> authenticator.validate(credentials, ctx));
     }
 }

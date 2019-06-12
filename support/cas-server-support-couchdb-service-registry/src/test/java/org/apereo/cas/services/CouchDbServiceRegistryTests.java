@@ -1,20 +1,16 @@
 package org.apereo.cas.services;
 
-import org.apereo.cas.category.CouchDbCategory;
+import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCouchDbCoreConfiguration;
 import org.apereo.cas.config.CouchDbServiceRegistryConfiguration;
 import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
 import org.apereo.cas.couchdb.services.RegisteredServiceCouchDbRepository;
 
-import org.junit.experimental.categories.Category;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-
-import java.util.Arrays;
-import java.util.Collection;
 
 /**
  * This is {@link CouchDbServiceRegistryTests}.
@@ -22,19 +18,18 @@ import java.util.Collection;
  * @author Timur Duehr
  * @since 5.3.0
  */
-@RunWith(Parameterized.class)
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    CasCouchDbCoreConfiguration.class,
+    CasCoreServicesConfiguration.class,
     CouchDbServiceRegistryConfiguration.class
 },
     properties = {
-        "org.ektorp.support.AutoUpdateViewOnChange=true",
-        "cas.serviceRegistry.couchDb.username=",
-        "cas.serviceRegistry.couchDb.password="
+        "cas.serviceRegistry.couchDb.username=cas",
+        "cas.serviceRegistry.couchDb.password=password"
     })
-@Category(CouchDbCategory.class)
+@Tag("CouchDb")
 public class CouchDbServiceRegistryTests extends AbstractServiceRegistryTests {
-
 
     @Autowired
     @Qualifier("couchDbServiceRegistry")
@@ -47,28 +42,6 @@ public class CouchDbServiceRegistryTests extends AbstractServiceRegistryTests {
     @Autowired
     @Qualifier("serviceRegistryCouchDbRepository")
     private RegisteredServiceCouchDbRepository registeredServiceRepository;
-
-    public CouchDbServiceRegistryTests(final Class<? extends RegisteredService> registeredServiceClass) {
-        super(registeredServiceClass);
-    }
-
-    @Parameterized.Parameters
-    public static Collection<Object> getTestParameters() {
-        return Arrays.asList(RegexRegisteredService.class);
-    }
-
-    @Override
-    public void initializeServiceRegistry() {
-        couchDbFactory.getCouchDbInstance().createDatabaseIfNotExists(couchDbFactory.getCouchDbConnector().getDatabaseName());
-        registeredServiceRepository.initStandardDesignDocument();
-        super.initializeServiceRegistry();
-    }
-
-    @Override
-    public void tearDownServiceRegistry() {
-        couchDbFactory.getCouchDbInstance().deleteDatabase(couchDbFactory.getCouchDbConnector().getDatabaseName());
-        super.tearDownServiceRegistry();
-    }
 
     @Override
     public ServiceRegistry getNewServiceRegistry() {

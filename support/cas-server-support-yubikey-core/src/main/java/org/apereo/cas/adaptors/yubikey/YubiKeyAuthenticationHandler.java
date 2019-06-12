@@ -12,6 +12,7 @@ import com.yubico.client.v2.ResponseStatus;
 import com.yubico.client.v2.YubicoClient;
 import com.yubico.client.v2.exceptions.YubicoValidationFailure;
 import com.yubico.client.v2.exceptions.YubicoVerificationException;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -32,34 +33,24 @@ import java.security.GeneralSecurityException;
  * @since 4.1
  */
 @Slf4j
+@Getter
 public class YubiKeyAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
     private final YubiKeyAccountRegistry registry;
     private final YubicoClient client;
 
-    /**
-     * Prepares the Yubico client with the received clientId and secretKey. If you wish to
-     * limit the usage of this handler only to a particular set of yubikey accounts for a special
-     * group of users, you may verify an compliant implementation of {@link YubiKeyAccountRegistry}.
-     * By default, all accounts are allowed.
-     *
-     * @param name             the name
-     * @param servicesManager  the services manager
-     * @param principalFactory the principal factory
-     * @param client           the client
-     * @param registry         the account registry which holds registrations.
-     */
     public YubiKeyAuthenticationHandler(final String name, final ServicesManager servicesManager,
                                         final PrincipalFactory principalFactory,
                                         final YubicoClient client,
-                                        final YubiKeyAccountRegistry registry) {
-        super(name, servicesManager, principalFactory, null);
+                                        final YubiKeyAccountRegistry registry,
+                                        final Integer order) {
+        super(name, servicesManager, principalFactory, order);
         this.registry = registry;
         this.client = client;
     }
 
     public YubiKeyAuthenticationHandler(final YubicoClient client) {
         this(StringUtils.EMPTY, null, null,
-            client, new OpenYubiKeyAccountRegistry(new AcceptAllYubiKeyAccountValidator()));
+            client, new OpenYubiKeyAccountRegistry(new AcceptAllYubiKeyAccountValidator()), null);
     }
 
     @Override
@@ -97,14 +88,6 @@ public class YubiKeyAuthenticationHandler extends AbstractPreAndPostProcessingAu
             LOGGER.error(e.getMessage(), e);
             throw new FailedLoginException("YubiKey validation failed: " + e.getMessage());
         }
-    }
-
-    public YubiKeyAccountRegistry getRegistry() {
-        return this.registry;
-    }
-
-    public YubicoClient getClient() {
-        return this.client;
     }
 
     @Override

@@ -3,25 +3,27 @@ package org.apereo.cas.ticket.accesstoken;
 import org.apereo.cas.ticket.BaseOAuthExpirationPolicyTests;
 
 import lombok.val;
-import org.junit.Test;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.context.TestPropertySource;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Misagh Moayyed
  * @since 5.0.0
  */
 @TestPropertySource(properties = "cas.logout.removeDescendantTickets=true")
+@Tag("OAuth")
 public class OAuthAccessTokenExpirationPolicyTests extends BaseOAuthExpirationPolicyTests {
     @Test
     public void verifyAccessTokenExpiryWhenTgtIsExpired() {
         val tgt = newTicketGrantingTicket();
         val at = newAccessToken(tgt);
 
-        assertFalse("Access token should not be expired", at.isExpired());
+        assertFalse(at.isExpired(), "Access token should not be expired");
         tgt.markTicketExpired();
-        assertTrue("Access token should not be expired when TGT is expired", at.isExpired());
+        assertTrue(at.isExpired(), "Access token should not be expired when TGT is expired");
     }
 
     @Test

@@ -1,6 +1,5 @@
 package org.apereo.cas.gauth.token;
 
-import org.apereo.cas.category.MongoDbCategory;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -24,10 +23,11 @@ import org.apereo.cas.config.support.authentication.GoogleAuthenticatorAuthentic
 import org.apereo.cas.gauth.credential.MongoDbGoogleAuthenticatorTokenCredentialRepositoryTests;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.util.SchedulingUtils;
+import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 
 import lombok.Getter;
-import org.junit.Before;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -47,32 +47,31 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Category(MongoDbCategory.class)
-@SpringBootTest(
-    classes = {
-        MongoDbGoogleAuthenticatorTokenCredentialRepositoryTests.MongoTestConfiguration.class,
-        GoogleAuthenticatorMongoDbConfiguration.class,
-        CasCoreTicketsConfiguration.class,
-        CasCoreTicketCatalogConfiguration.class,
-        CasCoreLogoutConfiguration.class,
-        CasCoreHttpConfiguration.class,
-        CasCoreServicesConfiguration.class,
-        CasWebApplicationServiceFactoryConfiguration.class,
-        CasCoreAuthenticationConfiguration.class,
-        CasCoreServicesAuthenticationConfiguration.class,
-        CasCoreAuthenticationMetadataConfiguration.class,
-        CasCoreAuthenticationPolicyConfiguration.class,
-        CasCoreAuthenticationPrincipalConfiguration.class,
-        CasCoreAuthenticationHandlersConfiguration.class,
-        CasCoreAuthenticationSupportConfiguration.class,
-        CasPersonDirectoryConfiguration.class,
-        GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration.class,
-        AopAutoConfiguration.class,
-        CasCoreConfiguration.class,
-        CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-        CasCoreUtilConfiguration.class,
-        RefreshAutoConfiguration.class,
-        CasCoreWebConfiguration.class})
+@Tag("MongoDb")
+@SpringBootTest(classes = {
+    MongoDbGoogleAuthenticatorTokenCredentialRepositoryTests.MongoTestConfiguration.class,
+    GoogleAuthenticatorMongoDbConfiguration.class,
+    CasCoreTicketsConfiguration.class,
+    CasCoreTicketCatalogConfiguration.class,
+    CasCoreLogoutConfiguration.class,
+    CasCoreHttpConfiguration.class,
+    CasCoreServicesConfiguration.class,
+    CasWebApplicationServiceFactoryConfiguration.class,
+    CasCoreAuthenticationConfiguration.class,
+    CasCoreServicesAuthenticationConfiguration.class,
+    CasCoreAuthenticationMetadataConfiguration.class,
+    CasCoreAuthenticationPolicyConfiguration.class,
+    CasCoreAuthenticationPrincipalConfiguration.class,
+    CasCoreAuthenticationHandlersConfiguration.class,
+    CasCoreAuthenticationSupportConfiguration.class,
+    CasPersonDirectoryConfiguration.class,
+    GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration.class,
+    AopAutoConfiguration.class,
+    CasCoreConfiguration.class,
+    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
+    CasCoreUtilConfiguration.class,
+    RefreshAutoConfiguration.class,
+    CasCoreWebConfiguration.class})
 @EnableTransactionManagement(proxyTargetClass = true)
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @TestPropertySource(properties = {
@@ -84,15 +83,16 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
     "cas.authn.mfa.gauth.mongo.dropCollection=true",
     "cas.authn.mfa.gauth.mongo.databaseName=gauth-token",
     "cas.authn.mfa.gauth.crypto.enabled=false"
-    })
+})
 @EnableScheduling
 @ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
 @Getter
+@EnabledIfContinuousIntegration
 public class GoogleAuthenticatorMongoDbTokenRepositoryTests extends BaseOneTimeTokenRepositoryTests {
 
-    @Before
+    @BeforeEach
     public void initialize() {
-        repository.removeAll();
+        oneTimeTokenAuthenticatorTokenRepository.removeAll();
     }
 
     @TestConfiguration

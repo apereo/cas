@@ -4,5 +4,9 @@ dependencies {
     implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-util-api")
     implementation project(":support:cas-server-support-pac4j-core")
-    implementation libraries.pac4j
+    implementation project(":support:cas-server-support-pac4j-api")
+
+    implementation libraries.nimbus
+    implementation libraries.pac4jcore
+
 }

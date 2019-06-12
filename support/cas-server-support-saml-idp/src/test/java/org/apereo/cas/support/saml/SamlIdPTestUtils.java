@@ -5,6 +5,7 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -31,7 +32,7 @@ public class SamlIdPTestUtils {
 
         val request = new MockHttpServletRequest();
         request.addParameter(SamlProtocolConstants.PARAMETER_ENTITY_ID, registeredService.getServiceId());
-        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
+        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request, new MockHttpServletResponse()));
         return registeredService;
     }
 }

@@ -6,10 +6,11 @@ import org.apereo.cas.impl.calcs.BaseAuthenticationRequestRiskCalculatorTests;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.context.TestPropertySource;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * This is {@link AuthenticationRiskSmsNotifierTests}.
@@ -23,7 +24,7 @@ public class AuthenticationRiskSmsNotifierTests extends BaseAuthenticationReques
     public void verifyOperation() {
         try {
             authenticationRiskSmsNotifier.setRegisteredService(CoreAuthenticationTestUtils.getRegisteredService());
-            val principal = CoreAuthenticationTestUtils.getPrincipal(CollectionUtils.wrap("phone", "3487244312"));
+            val principal = CoreAuthenticationTestUtils.getPrincipal(CollectionUtils.wrap("phone", List.of("3487244312")));
             val authentication = CoreAuthenticationTestUtils.getAuthentication(principal);
             authenticationRiskSmsNotifier.setAuthentication(authentication);
             authenticationRiskSmsNotifier.setAuthenticationRiskScore(new AuthenticationRiskScore(BigDecimal.ONE));

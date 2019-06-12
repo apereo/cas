@@ -3,10 +3,11 @@ package org.apereo.cas.ticket.refreshtoken;
 import org.apereo.cas.ticket.BaseOAuthExpirationPolicyTests;
 
 import lombok.val;
-import org.junit.Test;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.context.TestPropertySource;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link OAuthRefreshTokenExpirationPolicyTests}.
@@ -14,6 +15,7 @@ import static org.junit.Assert.*;
  * @since 5.3.0
  */
 @TestPropertySource(properties = "cas.logout.removeDescendantTickets=true")
+@Tag("OAuth")
 public class OAuthRefreshTokenExpirationPolicyTests extends BaseOAuthExpirationPolicyTests {
     @Test
     public void verifyRefreshTokenExpiryWhenTgtIsExpired() {
@@ -21,9 +23,9 @@ public class OAuthRefreshTokenExpirationPolicyTests extends BaseOAuthExpirationP
         val at = newAccessToken(tgt);
         val rt = newRefreshToken(at);
 
-        assertFalse("Refresh token should not be expired", rt.isExpired());
+        assertFalse(rt.isExpired(), "Refresh token should not be expired");
         tgt.markTicketExpired();
-        assertTrue("Refresh token should not be expired when TGT is expired", rt.isExpired());
+        assertTrue(rt.isExpired(), "Refresh token should not be expired when TGT is expired");
     }
 
     @Test

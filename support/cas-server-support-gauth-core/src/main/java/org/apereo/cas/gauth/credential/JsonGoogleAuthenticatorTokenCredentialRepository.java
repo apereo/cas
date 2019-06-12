@@ -149,14 +149,14 @@ public class JsonGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
             LOGGER.debug("Read [{}] accounts from JSON repository file at [{}]", accounts.size(), this.location.getFile());
             return accounts;
         }
-        return new HashMap<String, OneTimeTokenAccount>(0);
+        return new HashMap<>(0);
     }
 
     private static class OneTimeAccountSerializer extends AbstractJacksonBackedStringSerializer<Map<String, OneTimeTokenAccount>> {
         private static final long serialVersionUID = 1466569521275630254L;
 
         @Override
-        protected Class getTypeToSerialize() {
+        public Class getTypeToSerialize() {
             return HashMap.class;
         }
     }

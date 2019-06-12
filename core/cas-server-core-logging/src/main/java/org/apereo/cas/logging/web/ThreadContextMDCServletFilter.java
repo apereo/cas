@@ -1,7 +1,7 @@
 package org.apereo.cas.logging.web;
 
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
-import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
+import org.apereo.cas.web.cookie.CasCookieBuilder;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -30,7 +30,7 @@ import java.util.TimeZone;
 public class ThreadContextMDCServletFilter implements Filter {
 
     private final TicketRegistrySupport ticketRegistrySupport;
-    private final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
+    private final CasCookieBuilder ticketGrantingTicketCookieGenerator;
 
     private static void addContextAttribute(final String attributeName, final Object value) {
         val result = value != null ? value.toString() : null;

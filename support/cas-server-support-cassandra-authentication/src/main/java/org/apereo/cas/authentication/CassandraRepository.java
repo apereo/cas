@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -17,5 +18,5 @@ public interface CassandraRepository {
      * @param uid the uid
      * @return the user
      */
-    Map<String, Object> getUser(String uid);
+    Map<String, List<Object>> getUser(String uid);
 }

@@ -155,7 +155,7 @@ public interface ServicesManager {
      * @param domain the domain name
      * @return list of services
      */
-    default Collection<RegisteredService> getServicesForDomain(String domain) {
+    default Collection<RegisteredService> getServicesForDomain(final String domain) {
         return getAllServices();
     }
 
@@ -167,5 +167,4 @@ public interface ServicesManager {
     default Collection<String> getDomains() {
         return Stream.of("default").collect(Collectors.toList());
     }
-
 }

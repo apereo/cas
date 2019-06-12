@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import lombok.val;
 
 import java.time.ZoneOffset;
@@ -24,6 +25,7 @@ import java.time.temporal.ChronoUnit;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 public class HardTimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
 
     /**
@@ -48,8 +50,11 @@ public class HardTimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
 
     @Override
     public boolean isExpired(final TicketState ticketState) {
+        if (ticketState == null) {
+            return true;
+        }
         val expiringTime = ticketState.getCreationTime().plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);
-        val expired = ticketState == null || expiringTime.isBefore(ZonedDateTime.now(ZoneOffset.UTC));
+        val expired = expiringTime.isBefore(ZonedDateTime.now(ZoneOffset.UTC));
         if (!expired) {
             return super.isExpired(ticketState);
         }

@@ -6,6 +6,7 @@ import org.apereo.cas.validation.Assertion;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.ArrayUtils;
 import org.aspectj.lang.JoinPoint;
 
 import java.io.StringWriter;
@@ -42,7 +43,7 @@ public class TicketValidationResourceResolver extends TicketAsFirstParameterReso
             try (val writer = new StringWriter()) {
                 val objectWriter = mapper.writer();
 
-                val results = new LinkedHashMap<>();
+                val results = new LinkedHashMap<String, Object>();
                 results.put("principal", authn.getPrincipal().getId());
 
                 val attributes = new HashMap<String, Object>(authn.getAttributes());
@@ -55,6 +56,6 @@ public class TicketValidationResourceResolver extends TicketAsFirstParameterReso
                 LOGGER.error(e.getMessage(), e);
             }
         }
-        return auditResourceResults.toArray(new String[]{});
+        return auditResourceResults.toArray(ArrayUtils.EMPTY_STRING_ARRAY);
     }
 }

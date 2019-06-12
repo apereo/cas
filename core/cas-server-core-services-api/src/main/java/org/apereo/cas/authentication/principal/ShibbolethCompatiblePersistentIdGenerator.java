@@ -18,6 +18,8 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Generates PersistentIds based on the Shibboleth algorithm.
@@ -40,7 +42,7 @@ public class ShibbolethCompatiblePersistentIdGenerator implements PersistentIdGe
 
     private static final int CONST_DEFAULT_SALT_COUNT = 16;
 
-    private static final int CONST_SALT_ABBREV_LENGTH = 6;
+    private static final int CONST_SALT_ABBREV_LENGTH = 4;
 
     @JsonProperty
     private String salt;
@@ -74,7 +76,20 @@ public class ShibbolethCompatiblePersistentIdGenerator implements PersistentIdGe
         val attributes = principal.getAttributes();
         LOGGER.debug("Found principal attributes [{}] to use when generating persistent identifiers", attributes);
 
-        val principalId = FunctionUtils.doIf(
+        val principalId = determinePrincipalIdFromAttributes(principal.getId(), attributes);
+        return generate(principalId, service != null ? service.getId() : null);
+
+    }
+
+    /**
+     * Determine principal id from attributes.
+     *
+     * @param defaultId  the default id
+     * @param attributes the attributes
+     * @return the string
+     */
+    public String determinePrincipalIdFromAttributes(final String defaultId, final Map<String, List<Object>> attributes) {
+        return FunctionUtils.doIf(
             StringUtils.isNotBlank(this.attribute) && attributes.containsKey(this.attribute),
             () -> {
                 val attributeValue = attributes.get(this.attribute);
@@ -82,12 +97,10 @@ public class ShibbolethCompatiblePersistentIdGenerator implements PersistentIdGe
                 return CollectionUtils.firstElement(attributeValue).get().toString();
             },
             () -> {
-                LOGGER.debug("Using principal id [{}] to generate persistent identifier", principal.getId());
-                return principal.getId();
+                LOGGER.debug("Using principal id [{}] to generate persistent identifier", defaultId);
+                return defaultId;
             }
         ).get();
-        return generate(principalId, service != null ? service.getId() : null);
-
     }
 
     /**
@@ -110,7 +123,7 @@ public class ShibbolethCompatiblePersistentIdGenerator implements PersistentIdGe
      * @return the message digest
      * @throws NoSuchAlgorithmException the no such algorithm exception
      */
-    protected MessageDigest prepareMessageDigest(final String principal, final String service) throws NoSuchAlgorithmException {
+    protected static MessageDigest prepareMessageDigest(final String principal, final String service) throws NoSuchAlgorithmException {
         val md = MessageDigest.getInstance("SHA");
         if (StringUtils.isNotBlank(service)) {
             md.update(service.getBytes(StandardCharsets.UTF_8));

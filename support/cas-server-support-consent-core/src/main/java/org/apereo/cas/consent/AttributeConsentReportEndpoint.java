@@ -1,6 +1,8 @@
 package org.apereo.cas.consent;
 
-import lombok.RequiredArgsConstructor;
+import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.web.BaseCasActuatorEndpoint;
+
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.boot.actuate.endpoint.annotation.DeleteOperation;
@@ -20,11 +22,18 @@ import java.util.Map;
  * @since 5.3.0
  */
 @Slf4j
-@Endpoint(id = "attribute-consent", enableByDefault = false)
-@RequiredArgsConstructor
-public class AttributeConsentReportEndpoint {
+@Endpoint(id = "attributeConsent", enableByDefault = false)
+public class AttributeConsentReportEndpoint extends BaseCasActuatorEndpoint {
     private final ConsentRepository consentRepository;
     private final ConsentEngine consentEngine;
+
+    public AttributeConsentReportEndpoint(final CasConfigurationProperties casProperties,
+                                          final ConsentRepository consentRepository,
+                                          final ConsentEngine consentEngine) {
+        super(casProperties);
+        this.consentRepository = consentRepository;
+        this.consentEngine = consentEngine;
+    }
 
     /**
      * Consent decisions collection.
@@ -37,7 +46,7 @@ public class AttributeConsentReportEndpoint {
         val result = new HashSet<Map<String, Object>>();
         LOGGER.debug("Fetching consent decisions for principal [{}]", principal);
         val consentDecisions = this.consentRepository.findConsentDecisions(principal);
-        LOGGER.debug("Resolved consent decisions for principal [{}]: {}", principal, consentDecisions);
+        LOGGER.debug("Resolved consent decisions for principal [{}]: [{}]", principal, consentDecisions);
 
         consentDecisions.forEach(d -> {
             val map = new HashMap<String, Object>();

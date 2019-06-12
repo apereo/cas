@@ -13,4 +13,5 @@ import lombok.Setter;
 @Getter
 @Setter
 public class SubjectAltNamePrincipalResolverProperties extends BaseAlternativePrincipalResolverProperties {
+    private static final long serialVersionUID = -8696449609399074305L;
 }

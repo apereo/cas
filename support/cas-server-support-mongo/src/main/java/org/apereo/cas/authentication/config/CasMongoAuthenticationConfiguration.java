@@ -45,8 +45,8 @@ public class CasMongoAuthenticationConfiguration {
     private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
-    @Qualifier("personDirectoryPrincipalResolver")
-    private ObjectProvider<PrincipalResolver> personDirectoryPrincipalResolver;
+    @Qualifier("defaultPrincipalResolver")
+    private ObjectProvider<PrincipalResolver> defaultPrincipalResolver;
 
     @ConditionalOnMissingBean(name = "mongoPrincipalFactory")
     @Bean
@@ -67,16 +67,14 @@ public class CasMongoAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "mongoAuthenticationEventExecutionPlanConfigurer")
     @Bean
     public AuthenticationEventExecutionPlanConfigurer mongoAuthenticationEventExecutionPlanConfigurer() {
-        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(mongoAuthenticationHandler(), personDirectoryPrincipalResolver.getIfAvailable());
+        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(mongoAuthenticationHandler(), defaultPrincipalResolver.getIfAvailable());
     }
 
     @ConditionalOnMissingBean(name = "mongoAuthenticatorProfileService")
     @Bean
     public MongoProfileService mongoAuthenticatorProfileService() {
         val mongo = casProperties.getAuthn().getMongo();
-
-        val factory = new MongoDbConnectionFactory();
-        val client = factory.buildMongoDbClient(mongo);
+        val client = MongoDbConnectionFactory.buildMongoDbClient(mongo);
         LOGGER.info("Connected to MongoDb instance using mongo client [{}]", client.toString());
 
         val encoder = new SpringSecurityPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(mongo.getPasswordEncoder()));

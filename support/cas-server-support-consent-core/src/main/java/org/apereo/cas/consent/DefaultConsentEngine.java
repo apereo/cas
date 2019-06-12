@@ -5,15 +5,16 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.function.FunctionUtils;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.inspektr.audit.annotation.Audit;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -24,6 +25,7 @@ import java.util.Map;
  */
 @Slf4j
 @RequiredArgsConstructor
+@Getter
 public class DefaultConsentEngine implements ConsentEngine {
     private static final long serialVersionUID = -617809298856160625L;
 
@@ -31,28 +33,28 @@ public class DefaultConsentEngine implements ConsentEngine {
     private final ConsentDecisionBuilder consentDecisionBuilder;
 
     @Override
-    public Pair<Boolean, ConsentDecision> isConsentRequiredFor(final Service service,
+    public ConsentQueryResult isConsentRequiredFor(final Service service,
                                                                final RegisteredService registeredService,
                                                                final Authentication authentication) {
         val attributes = resolveConsentableAttributesFrom(authentication, service, registeredService);
 
         if (attributes == null || attributes.isEmpty()) {
             LOGGER.debug("Consent is conditionally ignored for service [{}] given no consentable attributes are found", registeredService.getName());
-            return Pair.of(Boolean.FALSE, null);
+            return ConsentQueryResult.ignored();
         }
 
         LOGGER.debug("Locating consent decision for service [{}]", service);
         val decision = findConsentDecision(service, registeredService, authentication);
         if (decision == null) {
             LOGGER.debug("No consent decision found; thus attribute consent is required");
-            return Pair.of(Boolean.TRUE, null);
+            return ConsentQueryResult.required();
         }
 
         LOGGER.debug("Located consentable attributes for release [{}]", attributes.keySet());
         if (consentDecisionBuilder.doesAttributeReleaseRequireConsent(decision, attributes)) {
             LOGGER.debug("Consent is required based on past decision [{}] and attribute release policy for [{}]",
                 decision, registeredService.getName());
-            return Pair.of(Boolean.TRUE, decision);
+            return ConsentQueryResult.required(decision);
         }
 
         LOGGER.debug("Consent is not required yet for [{}]; checking for reminder options", service);
@@ -63,11 +65,11 @@ public class DefaultConsentEngine implements ConsentEngine {
         LOGGER.debug("Reminder threshold date/time is calculated as [{}]", dt);
         if (now.isAfter(dt)) {
             LOGGER.debug("Consent is required based on reminder options given now at [{}] is after [{}]", now, dt);
-            return Pair.of(Boolean.TRUE, decision);
+            return ConsentQueryResult.required(decision);
         }
 
         LOGGER.debug("Consent is not required for service [{}]", service);
-        return Pair.of(Boolean.FALSE, null);
+        return ConsentQueryResult.ignored();
     }
 
     @Audit(action = "SAVE_CONSENT",
@@ -108,16 +110,16 @@ public class DefaultConsentEngine implements ConsentEngine {
     }
 
     @Override
-    public Map<String, Object> resolveConsentableAttributesFrom(final ConsentDecision decision) {
+    public Map<String, List<Object>> resolveConsentableAttributesFrom(final ConsentDecision decision) {
         LOGGER.debug("Retrieving consentable attributes from existing decision made by [{}] for [{}]",
             decision.getPrincipal(), decision.getService());
         return this.consentDecisionBuilder.getConsentableAttributesFrom(decision);
     }
 
     @Override
-    public Map<String, Object> resolveConsentableAttributesFrom(final Authentication authentication,
-                                                                final Service service,
-                                                                final RegisteredService registeredService) {
+    public Map<String, List<Object>> resolveConsentableAttributesFrom(final Authentication authentication,
+                                                                      final Service service,
+                                                                      final RegisteredService registeredService) {
         LOGGER.debug("Retrieving consentable attributes for [{}]", registeredService);
         val policy = registeredService.getAttributeReleasePolicy();
         if (policy != null) {

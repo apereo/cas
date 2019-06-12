@@ -10,10 +10,11 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.NamedStubPersonAttributeDao;
 import org.springframework.scheduling.concurrent.ThreadPoolExecutorFactoryBean;
+import org.springframework.util.StringUtils;
 
 import java.time.Duration;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,7 +37,8 @@ public class Beans {
      * @return the thread pool executor factory bean
      */
     public static ThreadPoolExecutorFactoryBean newThreadPoolExecutorFactoryBean(final ConnectionPoolingProperties config) {
-        val bean = newThreadPoolExecutorFactoryBean(config.getMaxSize(), config.getMaxSize());
+        val bean = new ThreadPoolExecutorFactoryBean();
+        bean.setMaxPoolSize(config.getMaxSize());
         bean.setCorePoolSize(config.getMinSize());
         return bean;
     }
@@ -65,12 +67,16 @@ public class Beans {
     @SneakyThrows
     public static IPersonAttributeDao newStubAttributeRepository(final PrincipalAttributesProperties p) {
         val dao = new NamedStubPersonAttributeDao();
-        val pdirMap = new HashMap<String, List<Object>>();
-        p.getStub().getAttributes().forEach((key, value) -> {
-            val vals = org.springframework.util.StringUtils.commaDelimitedListToStringArray(value);
+        val pdirMap = new LinkedHashMap<String, List<Object>>();
+        val stub = p.getStub();
+        stub.getAttributes().forEach((key, value) -> {
+            val vals = StringUtils.commaDelimitedListToStringArray(value);
             pdirMap.put(key, Arrays.stream(vals).collect(Collectors.toList()));
         });
         dao.setBackingMap(pdirMap);
+        if (StringUtils.hasText(stub.getId())) {
+            dao.setId(stub.getId());
+        }
         return dao;
     }
 

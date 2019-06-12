@@ -1,5 +1,6 @@
 package org.apereo.cas.support.events.service;
 
+import lombok.Getter;
 import lombok.ToString;
 
 /**
@@ -8,7 +9,8 @@ import lombok.ToString;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@ToString
+@ToString(callSuper = true)
+@Getter
 public class CasRegisteredServicesDeletedEvent extends BaseCasRegisteredServiceEvent {
     private static final long serialVersionUID = -8963214046458085393L;
 

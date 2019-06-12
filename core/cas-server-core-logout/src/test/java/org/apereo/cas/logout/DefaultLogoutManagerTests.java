@@ -3,14 +3,14 @@ package org.apereo.cas.logout;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.principal.AbstractWebApplicationService;
-import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.logout.slo.DefaultSingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.logout.slo.DefaultSingleLogoutServiceMessageHandler;
+import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.RegexMatchingRegisteredServiceProxyPolicy;
 import org.apereo.cas.services.RegexRegisteredService;
-import org.apereo.cas.services.RegisteredService.LogoutType;
+import org.apereo.cas.services.RegisteredServiceLogoutType;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.RandomUtils;
@@ -20,16 +20,15 @@ import org.apereo.cas.web.SimpleUrlValidatorFactoryBean;
 
 import lombok.SneakyThrows;
 import lombok.val;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import java.net.URL;
-import java.util.HashMap;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -40,9 +39,8 @@ public class DefaultLogoutManagerTests {
     private static final String ID = "id";
     private static final String URL = "http://www.github.com";
 
-    private DefaultLogoutManager logoutManager;
+    private LogoutManager logoutManager;
 
-    @Mock
     private TicketGrantingTicket tgt;
 
     private AbstractWebApplicationService simpleWebApplicationServiceImpl;
@@ -72,14 +70,17 @@ public class DefaultLogoutManagerTests {
         return s;
     }
 
+
     public static AbstractWebApplicationService getService(final String url) {
         val request = new MockHttpServletRequest();
         request.addParameter("service", url);
         return (AbstractWebApplicationService) new WebApplicationServiceFactory().createService(request);
     }
 
-    @Before
+    @BeforeEach
     public void initialize() {
+        tgt = new MockTicketGrantingTicket("casuser");
+
         when(client.isValidEndPoint(any(String.class))).thenReturn(true);
         when(client.isValidEndPoint(any(URL.class))).thenReturn(true);
         when(client.sendMessageToEndPoint(any(HttpMessage.class))).thenReturn(true);
@@ -87,19 +88,17 @@ public class DefaultLogoutManagerTests {
         val validator = new SimpleUrlValidatorFactoryBean(true).getObject();
 
         singleLogoutServiceMessageHandler = new DefaultSingleLogoutServiceMessageHandler(client,
-            new SamlCompliantLogoutMessageCreator(), servicesManager,
+            new DefaultSingleLogoutMessageCreator(), servicesManager,
             new DefaultSingleLogoutServiceLogoutUrlBuilder(validator), true,
             new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()));
-
-        val services = new HashMap<String, Service>();
+        
         this.simpleWebApplicationServiceImpl = getService(URL);
-        services.put(ID, this.simpleWebApplicationServiceImpl);
-        when(this.tgt.getServices()).thenReturn(services);
+        tgt.getServices().put(ID, this.simpleWebApplicationServiceImpl);
 
         val plan = new DefaultLogoutExecutionPlan();
         plan.registerSingleLogoutServiceMessageHandler(singleLogoutServiceMessageHandler);
 
-        this.logoutManager = new DefaultLogoutManager(new SamlCompliantLogoutMessageCreator(), false, plan);
+        this.logoutManager = new DefaultLogoutManager(false, plan);
         this.registeredService = getRegisteredService(URL);
         when(servicesManager.findServiceBy(this.simpleWebApplicationServiceImpl)).thenReturn(this.registeredService);
     }
@@ -116,7 +115,7 @@ public class DefaultLogoutManagerTests {
     public void verifyLogoutDisabled() {
         val plan = new DefaultLogoutExecutionPlan();
         plan.registerSingleLogoutServiceMessageHandler(singleLogoutServiceMessageHandler);
-        this.logoutManager = new DefaultLogoutManager(new SamlCompliantLogoutMessageCreator(), true, plan);
+        this.logoutManager = new DefaultLogoutManager(true, plan);
 
         val logoutRequests = this.logoutManager.performLogout(tgt);
         assertEquals(0, logoutRequests.size());
@@ -141,7 +140,7 @@ public class DefaultLogoutManagerTests {
 
     @Test
     public void verifyLogoutTypeBack() {
-        this.registeredService.setLogoutType(LogoutType.BACK_CHANNEL);
+        this.registeredService.setLogoutType(RegisteredServiceLogoutType.BACK_CHANNEL);
         val logoutRequests = this.logoutManager.performLogout(tgt);
         assertEquals(1, logoutRequests.size());
         val logoutRequest = logoutRequests.iterator().next();
@@ -152,7 +151,7 @@ public class DefaultLogoutManagerTests {
 
     @Test
     public void verifyLogoutTypeNone() {
-        this.registeredService.setLogoutType(LogoutType.NONE);
+        this.registeredService.setLogoutType(RegisteredServiceLogoutType.NONE);
         val logoutRequests = this.logoutManager.performLogout(tgt);
         assertEquals(0, logoutRequests.size());
     }
@@ -168,7 +167,7 @@ public class DefaultLogoutManagerTests {
 
     @Test
     public void verifyLogoutTypeFront() {
-        this.registeredService.setLogoutType(LogoutType.FRONT_CHANNEL);
+        this.registeredService.setLogoutType(RegisteredServiceLogoutType.FRONT_CHANNEL);
         val logoutRequests = this.logoutManager.performLogout(tgt);
         assertEquals(1, logoutRequests.size());
         val logoutRequest = logoutRequests.iterator().next();
@@ -179,7 +178,7 @@ public class DefaultLogoutManagerTests {
 
     @Test
     public void verifyAsynchronousLogout() {
-        this.registeredService.setLogoutType(LogoutType.BACK_CHANNEL);
+        this.registeredService.setLogoutType(RegisteredServiceLogoutType.BACK_CHANNEL);
         val logoutRequests = this.logoutManager.performLogout(tgt);
         assertEquals(1, logoutRequests.size());
     }

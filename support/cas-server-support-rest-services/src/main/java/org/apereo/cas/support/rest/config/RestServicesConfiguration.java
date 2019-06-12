@@ -4,7 +4,7 @@ import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.services.util.DefaultRegisteredServiceJsonSerializer;
+import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.support.rest.RegisteredServiceResource;
 
 import lombok.val;
@@ -45,7 +45,7 @@ public class RestServicesConfiguration {
 
     @Bean
     public MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter() {
-        val serializer = new DefaultRegisteredServiceJsonSerializer();
+        val serializer = new RegisteredServiceJsonSerializer();
         return new MappingJackson2HttpMessageConverter(serializer.getObjectMapper());
     }
 

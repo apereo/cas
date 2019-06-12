@@ -1,23 +1,27 @@
 package org.apereo.cas.ticket.support;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.DefaultAuthenticationResultBuilder;
+import org.apereo.cas.authentication.DefaultPrincipalElectionStrategy;
 import org.apereo.cas.authentication.RememberMeCredential;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
+import org.apereo.cas.util.CollectionUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
+import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Tests for RememberMeDelegatingExpirationPolicy.
@@ -38,14 +42,14 @@ public class RememberMeDelegatingExpirationPolicyTests {
      **/
     protected PrincipalFactory principalFactory = new DefaultPrincipalFactory();
 
-    private RememberMeDelegatingExpirationPolicy p;
+    private RememberMeDelegatingExpirationPolicy expirationPolicy;
 
-    @Before
+    @BeforeEach
     public void initialize() {
         val rememberMe = new MultiTimeUseOrTimeoutExpirationPolicy(1, REMEMBER_ME_TTL);
-        p = new RememberMeDelegatingExpirationPolicy(rememberMe);
-        p.addPolicy(RememberMeDelegatingExpirationPolicy.PolicyTypes.REMEMBER_ME, rememberMe);
-        p.addPolicy(RememberMeDelegatingExpirationPolicy.PolicyTypes.DEFAULT,
+        expirationPolicy = new RememberMeDelegatingExpirationPolicy();
+        expirationPolicy.addPolicy(RememberMeDelegatingExpirationPolicy.POLICY_NAME_REMEMBER_ME, rememberMe);
+        expirationPolicy.addPolicy(RememberMeDelegatingExpirationPolicy.POLICY_NAME_DEFAULT,
             new MultiTimeUseOrTimeoutExpirationPolicy(5, DEFAULT_TTL));
     }
 
@@ -53,20 +57,35 @@ public class RememberMeDelegatingExpirationPolicyTests {
     public void verifyTicketExpirationWithRememberMe() {
         val authentication = CoreAuthenticationTestUtils.getAuthentication(
             this.principalFactory.createPrincipal("test"),
-            Collections.singletonMap(
-                RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME, true));
-        val t = new TicketGrantingTicketImpl("111", authentication, this.p);
+            Collections.singletonMap(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME, List.of(true)));
+        val t = new TicketGrantingTicketImpl("111", authentication, this.expirationPolicy);
         assertFalse(t.isExpired());
-        t.grantServiceTicket("55", RegisteredServiceTestUtils.getService(), this.p, false, true);
+        t.grantServiceTicket("55", RegisteredServiceTestUtils.getService(), this.expirationPolicy, false, true);
+        assertTrue(t.isExpired());
+    }
+
+    @Test
+    public void verifyTicketExpirationWithRememberMeBuiltAuthn() {
+        val builder = new DefaultAuthenticationResultBuilder();
+        val p1 = CoreAuthenticationTestUtils.getPrincipal("casuser", CollectionUtils.wrap("uid", "casuser"));
+        val authn1 = CoreAuthenticationTestUtils.getAuthentication(p1, CollectionUtils.wrap(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME, true));
+        val result = builder.collect(authn1).build(new DefaultPrincipalElectionStrategy());
+
+        val authentication = result.getAuthentication();
+        assertNotNull(authentication);
+
+        val t = new TicketGrantingTicketImpl("111", authentication, this.expirationPolicy);
+        assertFalse(t.isExpired());
+        t.grantServiceTicket("55", RegisteredServiceTestUtils.getService(), this.expirationPolicy, false, true);
         assertTrue(t.isExpired());
     }
 
     @Test
     public void verifyTicketExpirationWithoutRememberMe() {
         val authentication = CoreAuthenticationTestUtils.getAuthentication();
-        val t = new TicketGrantingTicketImpl("111", authentication, this.p);
+        val t = new TicketGrantingTicketImpl("111", authentication, this.expirationPolicy);
         assertFalse(t.isExpired());
-        t.grantServiceTicket("55", RegisteredServiceTestUtils.getService(), this.p, false, true);
+        t.grantServiceTicket("55", RegisteredServiceTestUtils.getService(), this.expirationPolicy, false, true);
         assertFalse(t.isExpired());
     }
 
@@ -75,22 +94,22 @@ public class RememberMeDelegatingExpirationPolicyTests {
         val authentication = CoreAuthenticationTestUtils.getAuthentication(
             this.principalFactory.createPrincipal("test"),
             Collections.singletonMap(
-                RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME, true));
-        val t = new TicketGrantingTicketImpl("111", authentication, this.p);
-        assertEquals(REMEMBER_ME_TTL, p.getTimeToLive(t));
+                RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME, List.of(true)));
+        val t = new TicketGrantingTicketImpl("111", authentication, this.expirationPolicy);
+        assertEquals(REMEMBER_ME_TTL, expirationPolicy.getTimeToLive(t));
     }
 
     @Test
     public void verifyTicketTTLWithoutRememberMe() {
         val authentication = CoreAuthenticationTestUtils.getAuthentication();
-        val t = new TicketGrantingTicketImpl("111", authentication, this.p);
-        assertEquals(DEFAULT_TTL, p.getTimeToLive(t));
+        val t = new TicketGrantingTicketImpl("111", authentication, this.expirationPolicy);
+        assertEquals(DEFAULT_TTL, expirationPolicy.getTimeToLive(t));
     }
 
     @Test
     public void verifySerializeATimeoutExpirationPolicyToJson() throws IOException {
-        MAPPER.writeValue(JSON_FILE, p);
+        MAPPER.writeValue(JSON_FILE, expirationPolicy);
         val policyRead = MAPPER.readValue(JSON_FILE, RememberMeDelegatingExpirationPolicy.class);
-        assertEquals(p, policyRead);
+        assertEquals(expirationPolicy, policyRead);
     }
 }

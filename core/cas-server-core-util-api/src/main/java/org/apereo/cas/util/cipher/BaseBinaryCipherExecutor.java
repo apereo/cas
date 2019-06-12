@@ -1,6 +1,7 @@
 package org.apereo.cas.util.cipher;
 
 import org.apereo.cas.util.EncodingUtils;
+import org.apereo.cas.util.crypto.DecryptionException;
 import org.apereo.cas.util.gen.Base64RandomStringGenerator;
 
 import lombok.Getter;
@@ -8,11 +9,14 @@ import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.OctJwkGenerator;
 
+import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 
@@ -30,18 +34,20 @@ import java.nio.charset.StandardCharsets;
 @Getter
 @Setter
 public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<byte[], byte[]> {
+    private static final String CIPHER_ALGORITHM = "AES";
 
     /**
      * Name of the cipher/component whose keys are generated here.
      */
     protected final String cipherName;
+    
     private final SecretKeySpec encryptionKey;
-    private final Cipher aesCipher;
     /**
      * Secret key IV algorithm. Default is {@code AES}.
      */
     private String secretKeyAlgorithm = "AES";
     private byte[] encryptionSecretKey;
+
 
     /**
      * Instantiates a new cryptic ticket cipher executor.
@@ -52,17 +58,14 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
      * @param encryptionKeySize   the encryption key size
      * @param cipherName          the cipher name
      */
-    @SneakyThrows
     public BaseBinaryCipherExecutor(final String encryptionSecretKey, final String signingSecretKey,
                                     final int signingKeySize, final int encryptionKeySize, final String cipherName) {
         this.cipherName = cipherName;
         ensureSigningKeyExists(signingSecretKey, signingKeySize);
         ensureEncryptionKeyExists(encryptionSecretKey, encryptionKeySize);
         this.encryptionKey = new SecretKeySpec(this.encryptionSecretKey, this.secretKeyAlgorithm);
-        this.aesCipher = Cipher.getInstance("AES");
     }
 
-    @SneakyThrows
     private static String generateOctetJsonWebKeyOfSize(final int size) {
         val octetKey = OctJwkGenerator.generateJwk(size);
         val params = octetKey.toParams(JsonWebKey.OutputControlLevel.INCLUDE_SYMMETRIC);
@@ -72,8 +75,9 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
     @Override
     @SneakyThrows
     public byte[] encode(final byte[] value, final Object[] parameters) {
-        this.aesCipher.init(Cipher.ENCRYPT_MODE, this.encryptionKey);
-        val result = this.aesCipher.doFinal(value);
+        val aesCipher = Cipher.getInstance(CIPHER_ALGORITHM);
+        aesCipher.init(Cipher.ENCRYPT_MODE, this.encryptionKey);
+        val result = aesCipher.doFinal(value);
         return sign(result);
     }
 
@@ -81,9 +85,16 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
     @SneakyThrows
     public byte[] decode(final byte[] value, final Object[] parameters) {
         val verifiedValue = verifySignature(value);
-        this.aesCipher.init(Cipher.DECRYPT_MODE, this.encryptionKey);
-        val bytePlainText = aesCipher.doFinal(verifiedValue);
-        return bytePlainText;
+        val aesCipher = Cipher.getInstance(CIPHER_ALGORITHM);
+        aesCipher.init(Cipher.DECRYPT_MODE, this.encryptionKey);
+        try {
+            return aesCipher.doFinal(verifiedValue);
+        } catch (final IllegalBlockSizeException | BadPaddingException e) {
+            if (LOGGER.isTraceEnabled()) {
+                throw new DecryptionException(e);
+            }
+            throw new DecryptionException();
+        }
     }
 
     /**
@@ -111,7 +122,7 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
             genEncryptionKey = EncodingUtils.decodeBase64(key);
         } else {
             val base64 = EncodingUtils.isBase64(encryptionSecretKey);
-            val key = base64 ? EncodingUtils.decodeBase64(encryptionSecretKey) : new byte[0];
+            val key = base64 ? EncodingUtils.decodeBase64(encryptionSecretKey) : ArrayUtils.EMPTY_BYTE_ARRAY;
             if (base64 && key.length == encryptionKeySize) {
                 LOGGER.trace("Secret key for encryption defined under [{}] is Base64 encoded.", getEncryptionKeySetting());
                 genEncryptionKey = key;

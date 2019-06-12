@@ -6,15 +6,12 @@ category: Multifactor Authentication
 
 # Multifactor Authentication (MFA)
 
-CAS provides support for a variety of multifactor authentication providers and options, while allowing one to design their own. The secondary authentication factor always kicks in *after* the primary step and existing authentication sessions will be asked to step-up to the needed multifactor authentication factor, should be the request or trigger require it. The satisfied authentication context is communicated back to the application as well to denote a successful multifactor authentication event.
+CAS provides support for a variety of multifactor authentication providers and options, while allowing one to design their own. The secondary authentication factor always kicks in *after* the primary step and existing authentication sessions will be asked to step-up to the needed multifactor authentication factor, should the request or trigger require it. The satisfied authentication context is communicated back to the application as well to denote a successful multifactor authentication event.
 
 At a minimum, you need answer the following questions:
 
 - Which provider(s) are we using for multifactor authentication?
 - How and for whom are we triggering multifactor authentication?
-
-<div class="alert alert-info"><strong>Remember</strong><p>CAS itself is not a multifactor authentication provider. It simply lends itself to support services and products in the wild that already do so. If you do not have a provider selected, your best choices might be to perhaps experiment with the likes of Google Authenticator, or simply design your own.</p></div>
-
 
 ## Supported Providers
 
@@ -24,6 +21,7 @@ The following multifactor providers are supported by CAS.
 |-----------------------|-----------------|----------------------------------------------------------
 | Duo Security          | `mfa-duo`       | [See this guide](DuoSecurity-Authentication.html).
 | Authy Authenticator   | `mfa-authy`     | [See this guide](AuthyAuthenticator-Authentication.html).
+| Acceptto              | `mfa-acceptto`  | [See this guide](Acceptto-Authentication.html).
 | YubiKey               | `mfa-yubikey`   | [See this guide](YubiKey-Authentication.html).
 | RSA/RADIUS            | `mfa-radius`    | [See this guide](RADIUS-Authentication.html).
 | WiKID                 | `mfa-radius`    | [See this guide](RADIUS-Authentication.html).
@@ -49,6 +47,30 @@ provider available to CAS and the provider cannot be reached, authentication wil
 will be displayed. You can of course change this behavior so that authentication proceeds without exercising the provider
 functionality, if that provider cannot respond.
 
+The following failure modes are supported:
+
+| Field                | Description
+|----------------------|----------------------------------
+| `CLOSED`             | Authentication is blocked if the provider cannot be reached.
+| `OPEN`               | Authentication proceeds yet requested MFA is NOT communicated to the client if provider is unavailable.
+| `PHANTOM`            | Authentication proceeds and requested MFA is communicated to the client if provider is unavailable.
+| `NONE`               | Do not contact the provider at all to check for availability. Assume the provider is available.
+
+### Failure Mode Selection
+
+CAS will consult the current configuration in the event that the provider being requested is unreachable to determine how to proceed.  
+The failure mode can be configured at these locations and CAS will use the first defined failure mode in this order:
+
+- Registered Service Multifactor Authentication Policy
+- Multifactor Authentication Provider Configuration
+- Global Multifactor Authentication Configuration  
+
+If no actionable failure mode is encountered the user will be shown a generic "Authentication Failed" message.
+
+### Failure Mode by Registered Service
+
+Set as part of the "multifactorPolicy".  This location will override a failure a mode set at any other location.
+
 ```json
 {
   "@class" : "org.apereo.cas.services.RegexRegisteredService",
@@ -62,23 +84,24 @@ functionality, if that provider cannot respond.
 }
 ```
 
-The following failure modes are supported:
+### Failure Mode by Multifactor Authentication Provider
 
-| Field                | Description
-|----------------------|----------------------------------
-| `CLOSED`             | Authentication is blocked if the provider cannot be reached.
-| `OPEN`               | Authentication proceeds yet requested MFA is NOT communicated to the client if provider is unavailable.
-| `PHANTOM`            | Authentication proceeds and requested MFA is communicated to the client if provider is unavailable.
-| `NONE`               | Do not contact the provider at all to check for availability. Assume the provider is available.
+Each defined multifactor authentication provider can set its own failure mode policy. Failure modes set at this location will override the global failure mode, but defer to any failure mode set by the registered service.
 
-A default failure mode can also be specified globally via CAS properties and may be overridden individually by CAS registered services.
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties-Common.html#multifactor-authentication-providers).
+
+### Global Failure Mode
+
+A default failure mode can be specified globally via CAS properties and will be used in the case where no failure mode is set in either the provider or the registered service.
+
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#multifactor-authentication).
 
 ## Multiple Provider Selection
 
 In the event that multiple multifactor authentication providers are determined for a multifactor authentication transaction, by default CAS will attempt to sort the collection of providers based on their rank and will pick one with the highest priority. This use case may arise if multiple triggers are defined where each decides on a different multifactor authentication provider, or the same provider instance is configured multiple times with many instances.
 
-Provider selection may also be carried out using Groovy scripting strategies more dynamically. The following example should serve as an outline of how to select multifactor providers based on a Groovy script:
+Provider selection may also be carried out using Groovy scripting strategies more dynamically. 
+The following example should serve as an outline of how to select multifactor providers based on a Groovy script:
 
 ```groovy
 import java.util.*
@@ -105,7 +128,8 @@ The parameters passed are as follows:
 | `logger`              | The object responsible for issuing log messages such as `logger.info(...)`.
 
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#multifactor-authentication).
+To see the relevant list of CAS properties, 
+please [review this guide](../configuration/Configuration-Properties.html#multifactor-authentication).
 
 ## Ranking Providers
 
@@ -125,6 +149,14 @@ authentication level now satisfied.
 Ranking of authentication methods is done per provider via specific properties for each in CAS settings. Note that
 the higher the rank value is, the higher on the security scale it remains. A provider that ranks higher with a larger weight value trumps
 and override others with a lower value.
+
+## Provider Selection Menu
+
+If more than one multifactor authentication provider qualifies for the authentication request, CAS may be configured to
+present all choices to the user, allowing them to select a provider that makes the most sense at a given time. This approach
+is an alternative strategy to ranking providers. 
+
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#multifactor-authentication).
 
 ## Trusted Devices/Browsers
 

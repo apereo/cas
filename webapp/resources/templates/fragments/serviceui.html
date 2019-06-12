@@ -35,8 +35,10 @@
                     <h2 th:text="${serviceUIMetadata.displayName}">serviceUIMetadata.displayName</h2>
                     <p th:text="${serviceUIMetadata.description}">serviceUIMetadata.description</p>
 
-                    <p th:if="${serviceUIMetadata.informationURL}" th:utext="#{screen.mdui.infolink.text(${serviceUIMetadata.informationURL})}">screen.mdui.infolink.text</p>
-                    <p th:if="${serviceUIMetadata.privacyStatementURL}" th:utext="#{screen.mdui.privacylink.text(${serviceUIMetadata.privacyStatementURL})}">serviceUIMetadata.privacyStatementURL</p>
+                    <p th:if="${serviceUIMetadata.informationURL}"
+                       th:utext="#{screen.mdui.infolink.text(${serviceUIMetadata.informationURL})}">screen.mdui.infolink.text</p>
+                    <p th:if="${serviceUIMetadata.privacyStatementURL}"
+                       th:utext="#{screen.mdui.privacylink.text(${serviceUIMetadata.privacyStatementURL})}">serviceUIMetadata.privacyStatementURL</p>
                 </td>
             </tr>
         </table>
@@ -45,13 +47,13 @@
     <div th:unless="${serviceUIMetadata}">
         <table>
             <tr>
+                <td>
+                    <img th:src="${registeredService.logo}" th:if="${registeredService.logo}" style="padding-right: 10px;"/>
+                    <img th:src="@{images/webapp.png}" th:unless="${registeredService.logo}" style="padding-right: 10px;"/>
+                </td>
                 <td id="servicedesc">
                     <h5 th:text="${registeredService.name}">Registered Service Name</h5>
                     <p th:text="${registeredService.description}">Registered Service Description</p>
-                </td>
-                <td>
-                    <img th:src="${registeredService.logo}" th:if="${registeredService.logo}"/>
-                    <img th:src="@{images/webapp.png}" th:unless="${registeredService.logo}"/>
                 </td>
             </tr>
         </table>

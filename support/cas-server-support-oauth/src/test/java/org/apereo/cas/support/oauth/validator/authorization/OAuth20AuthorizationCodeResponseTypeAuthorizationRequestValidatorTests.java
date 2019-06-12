@@ -10,7 +10,8 @@ import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
-import org.junit.Test;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.pac4j.core.context.J2EContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -18,7 +19,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -27,6 +28,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@Tag("OAuth")
 public class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidatorTests {
     @Test
     public void verifyValidator() {

@@ -46,7 +46,7 @@ public class DefaultTicketGrantingTicketResourceEntityResponseFactory implements
         return entity;
     }
 
-    private String getResponse(final TicketGrantingTicket ticketGrantingTicket, final HttpServletRequest request, final URI ticketReference, final HttpHeaders headers) {
+    private static String getResponse(final TicketGrantingTicket ticketGrantingTicket, final HttpServletRequest request, final URI ticketReference, final HttpHeaders headers) {
         if (isDefaultContentType(request)) {
             headers.setContentType(MediaType.TEXT_HTML);
             val tgtUrl = ticketReference.toString();
@@ -59,7 +59,7 @@ public class DefaultTicketGrantingTicketResourceEntityResponseFactory implements
         return ticketGrantingTicket.getId();
     }
 
-    private boolean isDefaultContentType(final HttpServletRequest request) {
+    private static boolean isDefaultContentType(final HttpServletRequest request) {
         val header = request.getHeader(HttpHeaders.ACCEPT);
         val accept = StringUtils.defaultString(header);
         return StringUtils.isBlank(accept) || accept.startsWith(MediaType.ALL_VALUE) || accept.startsWith(MediaType.TEXT_HTML_VALUE);

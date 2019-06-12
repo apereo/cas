@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml.services;
 
+import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.util.CollectionUtils;
@@ -16,6 +18,7 @@ import org.springframework.context.ApplicationContext;
 
 import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -41,18 +44,25 @@ public class MetadataEntityAttributesAttributeReleasePolicy extends BaseSamlRegi
     private Set<String> entityAttributeValues = new LinkedHashSet<>();
 
     @Override
-    protected Map<String, Object> getAttributesForSamlRegisteredService(final Map<String, Object> attributes,
-                                                                        final SamlRegisteredService service, final ApplicationContext applicationContext,
-                                                                        final SamlRegisteredServiceCachingMetadataResolver resolver,
-                                                                        final SamlRegisteredServiceServiceProviderMetadataFacade facade,
-                                                                        final EntityDescriptor entityDescriptor) {
-        val attr = new EntityAttributesPredicate.Candidate(this.entityAttribute, this.entityAttributeFormat);
-        attr.setValues(this.entityAttributeValues);
-        LOGGER.debug("Loading entity attribute predicate filter for candidate [{}] with values [{}]", attr.getName(), attr.getValues());
+    protected Map<String, List<Object>> getAttributesForSamlRegisteredService(final Map<String, List<Object>> attributes,
+                                                                              final SamlRegisteredService registeredService,
+                                                                              final ApplicationContext applicationContext,
+                                                                              final SamlRegisteredServiceCachingMetadataResolver resolver,
+                                                                              final SamlRegisteredServiceServiceProviderMetadataFacade facade,
+                                                                              final EntityDescriptor entityDescriptor,
+                                                                              final Principal principal,
+                                                                              final Service selectedService) {
+        val attr = new EntityAttributesPredicate.Candidate(getEntityAttribute(), getEntityAttributeFormat());
+        attr.setValues(getEntityAttributeValues());
+        LOGGER.trace("Loading entity attribute predicate filter for candidate [{}] with values [{}]", attr.getName(), attr.getValues());
         val predicate = new EntityAttributesPredicate(CollectionUtils.wrap(attr), true);
         if (predicate.apply(entityDescriptor)) {
-            return authorizeReleaseOfAllowedAttributes(attributes);
+            LOGGER.debug("Authorizing release of allowed attributes [{}] for entity id [{}]",
+                attributes, entityDescriptor.getEntityID());
+            return authorizeReleaseOfAllowedAttributes(principal, attributes, registeredService, selectedService);
         }
+        LOGGER.debug("Unable to authorize attribute release for entity attribute category [{}] and value(s) [{}] to entity id [{}]",
+            getEntityAttribute(), getEntityAttributeValues(), entityDescriptor.getEntityID());
         return new HashMap<>(0);
     }
 }

@@ -32,6 +32,7 @@ import java.security.PublicKey;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
+import java.util.stream.Stream;
 
 /**
  * Builds the google accounts service response.
@@ -83,7 +84,7 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
         val service = (GoogleAccountsService) webApplicationService;
         val parameters = new HashMap<String, String>();
         val samlResponse = constructSamlResponse(service, authentication);
-        val signedResponse = this.samlObjectBuilder.signSamlResponse(samlResponse, this.privateKey, this.publicKey);
+        val signedResponse = GoogleSaml20ObjectBuilder.signSamlResponse(samlResponse, this.privateKey, this.publicKey);
         parameters.put(SamlProtocolConstants.PARAMETER_SAML_RESPONSE, signedResponse);
         parameters.put(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, service.getRelayState());
         return buildPost(service, parameters);
@@ -114,7 +115,7 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
             this.samlObjectBuilder.generateSecureRandomId(), currentDateTime, null, service);
         response.setStatus(this.samlObjectBuilder.newStatus(StatusCode.SUCCESS, null));
 
-        val sessionIndex = '_' + String.valueOf(RandomUtils.getNativeInstance().nextLong());
+        val sessionIndex = '_' + String.valueOf(RandomUtils.nextLong());
         val authnStatement = this.samlObjectBuilder.newAuthnStatement(AuthnContext.PASSWORD_AUTHN_CTX, currentDateTime, sessionIndex);
         val assertion = this.samlObjectBuilder.newAssertion(authnStatement, casServerPrefix,
             notBeforeIssueInstant, this.samlObjectBuilder.generateSecureRandomId());
@@ -129,7 +130,7 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
 
         response.getAssertions().add(assertion);
 
-        val result = SamlUtils.transformSamlObject(this.samlObjectBuilder.getConfigBean(), response, true).toString();
+        val result = SamlUtils.transformSamlObject(this.samlObjectBuilder.getOpenSamlConfigBean(), response, true).toString();
         LOGGER.debug("Generated Google SAML response: [{}]", result);
         return result;
     }
@@ -192,9 +193,7 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
     }
 
     private boolean isValidConfiguration() {
-        return StringUtils.isNotBlank(this.privateKeyLocation)
-            || StringUtils.isNotBlank(this.publicKeyLocation)
-            || StringUtils.isNotBlank(this.keyAlgorithm);
+        return Stream.of(this.privateKeyLocation, this.publicKeyLocation, this.keyAlgorithm).anyMatch(StringUtils::isNotBlank);
     }
 
     @Override

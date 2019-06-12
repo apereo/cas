@@ -63,6 +63,15 @@ public interface TicketRegistry {
     int deleteTicket(String ticketId);
 
     /**
+     * Remove a specific ticket from the registry.
+     * If ticket to delete is TGT then related service tickets, etc are removed as well.
+     *
+     * @param ticketId The id of the ticket to delete.
+     * @return the number of tickets deleted including children.
+     */
+    int deleteTicket(Ticket ticketId);
+
+    /**
      * Delete all tickets from the registry.
      *
      * @return the number of tickets deleted.
@@ -78,6 +87,9 @@ public interface TicketRegistry {
 
     /**
      * Gets tickets as a stream having applied a predicate.
+     *
+     * The returning stream may be bound to an IO channel (such as database connection),
+     * so it should be properly closed after usage.
      *
      * @param predicate the predicate
      * @return the tickets
@@ -110,6 +122,9 @@ public interface TicketRegistry {
 
     /**
      * Gets tickets stream.
+     *
+     * The returning stream may be bound to an IO channel (such as database connection),
+     * so it should be properly closed after usage.
      *
      * @return the tickets stream
      */
