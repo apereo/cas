@@ -155,7 +155,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         final HttpServletResponse response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
 
-        if (singleSignOnSessionExists(context)) {
+        if (!isLogoutRequest(request) && singleSignOnSessionExists(context)) {
             final String tgt = WebUtils.getTicketGrantingTicketId(context);
             final Optional<Authentication> authnResult = getSingleSignOnAuthenticationFrom(context);
 
@@ -510,6 +510,11 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         }
         throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, "Service unauthorized");
     }
+	
+	
+    private boolean isLogoutRequest(final HttpServletRequest request) {
+        return request.getParameter(SAML2ServiceProviderMetadataResolver.LOGOUT_ENDPOINT_PARAMETER) != null;
+	}
 
     private boolean singleSignOnSessionExists(final RequestContext requestContext) {
         final String tgtId = WebUtils.getTicketGrantingTicketId(requestContext);
