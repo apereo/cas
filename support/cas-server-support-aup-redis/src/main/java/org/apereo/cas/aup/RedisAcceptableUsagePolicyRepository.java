@@ -20,12 +20,12 @@ import org.springframework.webflow.execution.RequestContext;
  */
 @Slf4j
 public class RedisAcceptableUsagePolicyRepository extends AbstractPrincipalAttributeAcceptableUsagePolicyRepository {
-    private static final long serialVersionUID = 1600024683199961892L;
-
     /**
      * Redis key prefix.
      */
     public static final String CAS_AUP_PREFIX = RedisAcceptableUsagePolicyRepository.class.getSimpleName() + ':';
+
+    private static final long serialVersionUID = 1600024683199961892L;
 
     private final transient RedisTemplate redisTemplate;
 
