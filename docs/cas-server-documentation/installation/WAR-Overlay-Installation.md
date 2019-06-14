@@ -20,7 +20,8 @@ overlays allow you to download a pre-built vanilla CAS web application server pr
 At build time, the build installation process will attempt to download the provided binary artifact first. Then the tool will locate your configuration files and settings made available inside the same project directory and will merge those into the downloaded artifact in order to produce
 one wholesome archive (i.e. `cas.war`) . Overridden artifacts may include resources, java classes, images, CSS and javascript files. In order for the merge
 process to successfully execute, the location and names of the overridden artifacts locally must **EXACTLY** match that of those provided by the project
-inside the originally downloaded archive.
+inside the originally downloaded archive. Java code in the overlay project's src/main/java folder and resources in src/main/resources will end up in the WEB-INF\classes 
+folder of cas.war and they will be loaded by the classloader instead of resources with the same names in jar files inside WEB-INF\lib.  
 
 It goes without saying that while up-front ramp-up time could be slightly complicated, there are significant advantages to this approach:
 
@@ -37,9 +38,9 @@ CAS by adding third-party components that implement CAS APIs as Java source file
 The process of working with an overlay can be summarized in the following steps:
 
 - Start with and build the provided basic vanilla build/deployment.
-- Identify the artifacts from the produced build that need changes. These artifacts are generally produced by the build in the `build` directory for Gradle.
-- Copy the identified artifacts from the identified above directories over to the `src` directory.
-1. Create the `src` directory and all of its children, if they don't already exist.
+- Identify the artifacts from the produced build that need changes. These artifacts are generally produced by the build in the `build` directory for Gradle. Use the gradle `explodeWar` task.
+- Copy the identified artifacts from the identified above directories over to the `src/main/resources` directory.
+1. Create the `src/main/resources` directories, if they don't already exist.
 2. Copied paths and file names **MUST EXACTLY MATCH** their build counterparts, or the change won't take effect. See the table below to understand how to map folders and files from the build to `src`.
 - After changes, rebuild and repeat the process as many times as possible.
 - Double check your changes inside the built binary artifact to make sure the overlay process is working.
@@ -57,7 +58,9 @@ use <code>git branch -a</code> to see available branches, and then <code>git che
 
 | Project                                                               | Build Directory                               | Source Directory
 |-----------------------------------------------------------------------|-----------------------------------------------|-----------------------
-| [CAS WAR Overlay](https://github.com/apereo/cas-overlay-template) | `cas/build/libs/cas.war!WEB-INF/classes/`     | `src/main/resources`
+| [CAS WAR Overlay](https://github.com/apereo/cas-overlay-template) | `cas/build/cas-resources`     | `src/main/resources`
+
+The `cas/build/cas-resources` files are unzipped from `cas.war!WEB-INF\lib\cas-server-webapp-resources-<version>.jar` via `gradle explodeWar` in the overlay. 
 
 To construct the overlay project, you need to copy directories and files *that you need to customize* in the build directory over to the source directory.
 
