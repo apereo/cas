@@ -510,11 +510,11 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         }
         throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, "Service unauthorized");
     }
-	
-	
+    
+    
     private boolean isLogoutRequest(final HttpServletRequest request) {
         return request.getParameter(SAML2ServiceProviderMetadataResolver.LOGOUT_ENDPOINT_PARAMETER) != null;
-	}
+    }
 
     private boolean singleSignOnSessionExists(final RequestContext requestContext) {
         final String tgtId = WebUtils.getTicketGrantingTicketId(requestContext);
