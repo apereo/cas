@@ -356,6 +356,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
     }
 
     @RefreshScope
+    @ConditionalOnMissingBean(name = "oidcIdTokenGenerator")
     @Bean
     public IdTokenGeneratorService oidcIdTokenGenerator() {
         val context = buildConfigurationContext();
@@ -363,6 +364,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
         return new OidcIdTokenGeneratorService(context);
     }
 
+    @ConditionalOnMissingBean(name = "oidcAccessTokenResponseGenerator")
     @Bean
     @RefreshScope
     public OAuth20AccessTokenResponseGenerator oidcAccessTokenResponseGenerator() {
