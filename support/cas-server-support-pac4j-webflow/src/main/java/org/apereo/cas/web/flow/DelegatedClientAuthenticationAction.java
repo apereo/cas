@@ -247,7 +247,13 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         return request.getParameter(SAML2ServiceProviderMetadataResolver.LOGOUT_ENDPOINT_PARAMETER) != null;
     }
 
-    private boolean singleSignOnSessionExists(final RequestContext requestContext) {
+    /**
+     * Is there a current SSO session?
+     *
+     * @param requestContext the request context
+     * @return whether there is a current SSO session
+     */
+    protected boolean singleSignOnSessionExists(final RequestContext requestContext) {
         val tgtId = WebUtils.getTicketGrantingTicketId(requestContext);
         if (StringUtils.isBlank(tgtId)) {
             LOGGER.trace("No ticket-granting ticket could be located in the webflow context");
