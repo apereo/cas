@@ -76,7 +76,7 @@
         <AsyncLogger name="org.springframework.boot.context.embedded" level="info" />
         <AsyncLogger name="org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration" level="${sys:spring.security.log.level}" />
         <AsyncLogger name="org.springframework.boot.autoconfigure.security" level="${sys:spring.security.log.level}" />
-        <AsyncLogger name="org.springframework.boot.devtools" level="off" />
+        <AsyncLogger name="org.springframework.boot.devtools" level="debug" />
 
         <AsyncLogger name="org.springframework" level="warn" includeLocation="true" />
         <AsyncLogger name="org.springframework.webflow" level="${sys:spring.webflow.log.level}" includeLocation="true"/>
@@ -117,7 +117,7 @@
         <AsyncLogger name="org.apache.cxf" level="warn" includeLocation="true"/>
         <AsyncLogger name="org.apache.http" level="warn" includeLocation="true"/>
 
-        <AsyncRoot level="error">
+        <AsyncRoot level="warn">
             <AppenderRef ref="casFile"/>
             <AppenderRef ref="casConsole"/>
         </AsyncRoot>

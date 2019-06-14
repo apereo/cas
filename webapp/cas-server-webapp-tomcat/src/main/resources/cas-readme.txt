@@ -1,0 +1,2 @@
+The CAS resources formerly located in the WEB-INF\classes folder are now in WEB-INF\lib\cas-server-webapp-resources-*.jar.
+Override them in the CAS overlay project by putting them under src/main/resources.
