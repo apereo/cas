@@ -51,13 +51,13 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishReleases && !rootP
         if (Os.isFamily(Os.FAMILY_WINDOWS)) {
             dependsOn pathingJar
             doFirst {
-                classpath = files("$buildDir/classes/main", "$buildDir/resources/main", pathingJar.archivePath)
+                classpath = files("$buildDir/classes/main", "$buildDir/resources/main", "${project(":webapp").getProjectDir()}/cas-server-webapp-resources/src/main/resources/", pathingJar.archivePath)
             }
         }
 
         sourceResources sourceSets.bootRun
         systemProperties = System.properties
-        
+
         def list = []
         list.add("-XX:TieredStopAtLevel=1")
         list.add("-Xverify:none")
@@ -87,7 +87,12 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishReleases && !rootP
                 list.add("-Xrunjdwp:transport=dt_socket,address=${port},server=y,suspend=${rootProject.remoteDebuggingSuspend}")
             }
         }
+
         jvmArgs = list
+
+        def appArgList = []
+        appArgList.add("--spring.thymeleaf.cache=false")
+        args = appArgList
     }
 } else {
     logger.info """
