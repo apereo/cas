@@ -91,7 +91,7 @@ public enum CasLabels {
     LABEL_REFACTORING_CODE_CLEANUP("Refactoring & Code CleanUp", "refactor|NPE|cleanup"),
     LABEL_REMEMBER_ME("Remember-Me", "long-term|rememberme"),
     LABEL_SAML_CORE("SAML Core", "saml"),
-    LABEL_SAML_MDUI("SAML MDUI"),
+    LABEL_SAML_MDUI("SAML MDUI", mdui),
     LABEL_SAML1_PROTOCOL("SAML1 Protocol", "saml1|samlValidate"),
     LABEL_SAML2_ECP("SAML2 ECP", "ecp"),
     LABEL_SAML2_GOOGLE_APPS("SAML2 Google Apps", "googleapps"),
