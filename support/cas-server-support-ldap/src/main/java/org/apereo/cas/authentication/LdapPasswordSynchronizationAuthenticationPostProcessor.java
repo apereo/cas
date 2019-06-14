@@ -47,7 +47,7 @@ public class LdapPasswordSynchronizationAuthenticationPostProcessor implements A
                 LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME, Collections.singletonList(credential.getUsername()));
             LOGGER.trace("Constructed LDAP filter [{}] to locate user and update password", filter);
 
-            val response = LdapUtils.executeSearchOperation(searchFactory, ldapProperties.getBaseDn(), filter);
+            val response = LdapUtils.executeSearchOperation(searchFactory, ldapProperties.getBaseDn(), filter, this.ldapProperties.getPageSize());
             LOGGER.debug("LDAP response is [{}]", response);
 
             if (LdapUtils.containsResultEntry(response)) {

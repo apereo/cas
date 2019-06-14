@@ -52,7 +52,9 @@ public class LdapUserGraphicalAuthenticationRepository implements UserGraphicalA
             CollectionUtils.wrap(id));
         return LdapUtils.executeSearchOperation(
             LdapUtils.newLdaptiveConnectionFactory(gua.getLdap()),
-            gua.getLdap().getBaseDn(), filter,
+            gua.getLdap().getBaseDn(),
+            filter,
+            0,
             new String[]{gua.getLdap().getImageAttribute()},
             ReturnAttributes.ALL_USER.value());
     }

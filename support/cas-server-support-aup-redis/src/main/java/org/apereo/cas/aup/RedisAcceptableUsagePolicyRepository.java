@@ -20,6 +20,7 @@ import org.springframework.webflow.execution.RequestContext;
  */
 @Slf4j
 public class RedisAcceptableUsagePolicyRepository extends AbstractPrincipalAttributeAcceptableUsagePolicyRepository {
+
     /**
      * Redis key prefix.
      */

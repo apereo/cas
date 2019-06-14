@@ -29,7 +29,6 @@ public class RedisConsentRepository implements ConsentRepository {
     public static final String CAS_CONSENT_DECISION_PREFIX = ConsentDecision.class.getSimpleName() + ':';
 
     private static final long serialVersionUID = 1234168609139907616L;
-
     private final transient RedisTemplate redisTemplate;
 
     @Override

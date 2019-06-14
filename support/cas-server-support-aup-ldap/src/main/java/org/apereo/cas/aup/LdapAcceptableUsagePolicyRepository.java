@@ -71,6 +71,6 @@ public class LdapAcceptableUsagePolicyRepository extends AbstractPrincipalAttrib
         val filter = LdapUtils.newLdaptiveSearchFilter(this.searchFilter,
             LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
             CollectionUtils.wrap(id));
-        return LdapUtils.executeSearchOperation(this.connectionFactory, this.baseDn, filter);
+        return LdapUtils.executeSearchOperation(this.connectionFactory, this.baseDn, filter, 0);
     }
 }

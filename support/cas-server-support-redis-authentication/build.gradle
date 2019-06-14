@@ -1,4 +1,4 @@
-description = "Apereo CAS Redis Ticket Registry"
+description = "Apereo CAS Redis Authentication"
 ext {
     maxParallelForksForTests = 1
 }
@@ -9,8 +9,11 @@ dependencies {
     
     implementation project(":core:cas-server-core-logging")
     implementation project(":core:cas-server-core-tickets-api")
-    implementation project(":core:cas-server-core-services")
-    implementation project(":core:cas-server-core-configuration-api")
+    implementation project(":core:cas-server-core-services-api")
+    implementation project(":core:cas-server-core-services-api")
+    implementation project(":core:cas-server-core-util-api")
+    implementation project(":core:cas-server-core-authentication-api")
+    implementation project(":core:cas-server-core-authentication-mfa-api")
     implementation project(":support:cas-server-support-redis-core")
 
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
@@ -18,6 +21,7 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-tickets", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-authentication-mfa-api", configuration: "tests")
     
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core-authentication-api")
