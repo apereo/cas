@@ -2947,7 +2947,7 @@ ext.libraries = [
                 dependencies.create("org.webjars:d3js:$d3jsVersion") {
                     force = true
                 },
-                dependencies.create("org.webjars.bower:bootstrap-select:$bootstrapSelectVersion") {
+                dependencies.create("org.webjars:bootstrap-select:$bootstrapSelectVersion") {
                     force = true
                 },
                 dependencies.create("org.webjars.npm:angular:$angularJsVersion") {
@@ -2966,7 +2966,7 @@ ext.libraries = [
                 dependencies.create("org.webjars:lodash:$lodashVersion") {
                     force = true
                 },
-                dependencies.create("org.webjars.bower:ng-table:$ngtableVersion") {
+                dependencies.create("org.webjars:ng-table:$ngtableVersion") {
                     exclude(group: "org.webjars.bower", module: "angular")
                     force = true
                 },
