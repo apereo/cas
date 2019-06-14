@@ -99,6 +99,11 @@ public class WebApplicationServiceFactory extends AbstractServiceFactory<WebAppl
 
     @Override
     public WebApplicationService createService(final String id) {
-        return newWebApplicationService(HttpRequestUtils.getHttpServletRequestFromRequestAttributes(), id);
+        val request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
+        if (request != null) {
+            return newWebApplicationService(request, id);
+        }
+        LOGGER.trace("Could not locate current http request to create service for [{}]", id);
+        return null;
     }
 }

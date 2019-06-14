@@ -1,5 +1,6 @@
 package org.apereo.cas.consent;
 
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasConsentRestConfiguration;
 import org.apereo.cas.util.CollectionUtils;
 
@@ -19,7 +20,8 @@ import java.util.Map;
 import java.util.function.Function;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.test.web.client.ExpectedCount.*;
+import static org.springframework.test.web.client.ExpectedCount.manyTimes;
+import static org.springframework.test.web.client.ExpectedCount.once;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.*;
 
@@ -55,7 +57,6 @@ public class RestConsentRepositoryTests extends BaseConsentRepositoryTests {
     @Test
     @Override
     public void verifyConsentDecisionIsNotFound() {
-
         val decision = BUILDER.build(SVC, REG_SVC, "casuser", CollectionUtils.wrap("attribute", "value"));
         val body = HANDLER.apply(decision);
         val repo = getRepository("verifyConsentDecisionIsNotFound");
@@ -65,16 +66,17 @@ public class RestConsentRepositoryTests extends BaseConsentRepositoryTests {
             .andRespond(withSuccess(body, MediaType.APPLICATION_JSON));
         val exp = server.expect(manyTimes(), requestTo(CONSENT));
         assertNotNull(exp);
-        exp.andExpect(method(HttpMethod.GET))
-            .andRespond(withServerError());
-        super.verifyConsentDecisionIsNotFound();
+        exp.andExpect(method(HttpMethod.GET)).andRespond(withServerError());
+
+        decision.setId(1);
+        repo.storeConsentDecision(decision);
+        assertNull(repo.findConsentDecision(SVC, REG_SVC, CoreAuthenticationTestUtils.getAuthentication()));
         server.verify();
     }
 
     @Test
     @Override
     public void verifyConsentDecisionIsFound() {
-
         val decision = BUILDER.build(SVC, REG_SVC, "casuser2", CollectionUtils.wrap("attribute", "value"));
         decision.setId(100);
         val body = HANDLER.apply(decision);
