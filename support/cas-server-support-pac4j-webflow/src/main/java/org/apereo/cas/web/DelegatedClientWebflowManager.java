@@ -93,7 +93,6 @@ public class DelegatedClientWebflowManager {
         if (client instanceof OidcClient) {
             final OidcClient oidcClient = (OidcClient) client;
             final OidcConfiguration config = oidcClient.getConfiguration();
-            config.setCustomParams(CollectionUtils.wrap(PARAMETER_CLIENT_ID, ticketId));
             config.setWithState(true);
             config.setStateData(ticketId);
         }
