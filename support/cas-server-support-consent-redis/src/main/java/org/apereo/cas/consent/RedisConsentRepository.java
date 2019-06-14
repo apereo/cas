@@ -23,12 +23,12 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 public class RedisConsentRepository implements ConsentRepository {
-    private static final long serialVersionUID = 1234168609139907616L;
     /**
      * Redis key prefix.
      */
     public static final String CAS_CONSENT_DECISION_PREFIX = ConsentDecision.class.getSimpleName() + ':';
 
+    private static final long serialVersionUID = 1234168609139907616L;
     private final transient RedisTemplate redisTemplate;
 
     @Override
@@ -47,7 +47,7 @@ public class RedisConsentRepository implements ConsentRepository {
     @Override
     public Collection<? extends ConsentDecision> findConsentDecisions(final String principal) {
         try {
-            val redisKeys = this.redisTemplate.keys(CAS_CONSENT_DECISION_PREFIX  + principal + ":*");
+            val redisKeys = this.redisTemplate.keys(CAS_CONSENT_DECISION_PREFIX + principal + ":*");
             if (redisKeys != null) {
                 return (Collection) redisKeys
                     .stream()
