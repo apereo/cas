@@ -6,7 +6,11 @@ category: User Interface
 
 # Views
 
-The views are found at `src/main/resources/templates` which is a location within the CAS web application itself. 
+The views are found inside the CAS web application in the WEB-INF\lib\cas-server-webapp-resources-<cas.version>.jar in the 
+templates folder. Add any views that require customization to the `src/main/resources/templates` folder in the CAS overlay project.  
+Any files found in the cas-server-webapp-resources-<cas.version>.jar can be overridden by putting them in the same location under
+src/main/resources in the CAS overlay project. The Gradle build script for the overlay has tasks that help get resources 
+from the CAS web application to the correct location in the CAS overlay.  
 Views also may be externalized outside the web application conditionally and individually, provided the external path 
 via CAS settings. If a view template file is not found at the externalized path, the default one that ships with CAS will be used as the fallback.
 
