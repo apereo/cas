@@ -212,11 +212,7 @@ public class ScriptingUtils {
             return AccessController.doPrivileged((PrivilegedAction<T>) () -> getGroovyResult(groovyScript, methodName, args, clazz, failOnError));
         } catch (final Exception e) {
             var cause = (Throwable) null;
-            if (e instanceof PrivilegedActionException) {
-                cause = PrivilegedActionException.class.cast(e).getException();
-            } else {
-                cause = e;
-            }
+            cause = e instanceof PrivilegedActionException ? PrivilegedActionException.class.cast(e).getException() : e;
 
             if (failOnError) {
                 throw cause;
@@ -253,11 +249,7 @@ public class ScriptingUtils {
             }
         } catch (final Exception e) {
             var cause = (Throwable) null;
-            if (e instanceof InvokerInvocationException) {
-                cause = e.getCause();
-            } else {
-                cause = e;
-            }
+            cause = e instanceof InvokerInvocationException ? e.getCause() : e;
             if (failOnError) {
                 throw cause;
             }

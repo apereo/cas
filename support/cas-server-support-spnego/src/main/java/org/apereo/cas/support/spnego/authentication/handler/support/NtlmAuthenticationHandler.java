@@ -57,11 +57,7 @@ public class NtlmAuthenticationHandler extends AbstractPreAndPostProcessingAuthe
                                      final Integer order) {
         super(name, servicesManager, principalFactory, order);
         this.loadBalance = loadBalance;
-        if (StringUtils.isBlank(domainController)) {
-            this.domainController = DEFAULT_DOMAIN_CONTROLLER;
-        } else {
-            this.domainController = domainController;
-        }
+        this.domainController = StringUtils.isBlank(domainController) ? DEFAULT_DOMAIN_CONTROLLER : domainController;
         this.includePattern = includePattern;
     }
 
