@@ -478,7 +478,13 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         return Optional.empty();
     }
 
-    private boolean singleSignOnSessionExists(final RequestContext requestContext) {
+    /**
+     * Is there a current SSO session?
+     *
+     * @param requestContext the request context
+     * @return whether there is a current SSO session
+     */
+    protected boolean singleSignOnSessionExists(final RequestContext requestContext) {
         try {
             val authn = getSingleSignOnAuthenticationFrom(requestContext);
             if (authn.isPresent()) {
