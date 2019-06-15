@@ -94,7 +94,8 @@ public class ShibbolethCompatiblePersistentIdGenerator implements PersistentIdGe
             () -> {
                 val attributeValue = attributes.get(this.attribute);
                 LOGGER.debug("Using attribute [{}] to establish principal id", this.attribute);
-                return CollectionUtils.firstElement(attributeValue).get().toString();
+                val element = CollectionUtils.firstElement(attributeValue);
+                return element.map(Object::toString).orElse(null);
             },
             () -> {
                 LOGGER.debug("Using principal id [{}] to generate persistent identifier", defaultId);

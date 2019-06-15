@@ -54,14 +54,17 @@ public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticati
         val result = family
             .stream()
             .filter(l -> l.getName().equalsIgnoreCase(alg))
-            .findFirst()
-            .get();
-        if (!clazz.isAssignableFrom(result.getClass())) {
-            throw new ClassCastException("Result [" + result
-                + " is of type " + result.getClass()
-                + " when we were expecting " + clazz);
+            .findFirst();
+        if (result.isPresent()) {
+            val algorithm = result.get();
+            if (!clazz.isAssignableFrom(algorithm.getClass())) {
+                throw new ClassCastException("Result [" + algorithm
+                    + " is of type " + algorithm.getClass()
+                    + " when we were expecting " + clazz);
+            }
+            return (T) algorithm;
         }
-        return (T) result;
+        throw new IllegalArgumentException("Unable to find algorithm " + alg);
     }
 
     @Override
