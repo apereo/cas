@@ -1862,6 +1862,20 @@ Common configuration settings for this feature are available [here](Configuratio
 # cas.authn.couchDb.order=
 ```
 
+## Redis Authentication
+
+To learn more about this topic, [please review this guide](../installation/Redis-Authentication.html).
+
+Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.redis`. Password encoding  settings for this feature are available [here](Configuration-Properties-Common.html#password-encoding) under the configuration key `cas.authn.redis`.
+
+Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#redis-configuration) 
+under the configuration key `cas.authn`.
+
+```properties
+# cas.authn.redis.name=
+# cas.authn.redis.order=
+```
+
 ## MongoDb Authentication
 
 To learn more about this topic, [please review this guide](../installation/MongoDb-Authentication.html). 

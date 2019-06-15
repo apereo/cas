@@ -28,6 +28,7 @@ import org.apereo.cas.configuration.model.support.pac4j.Pac4jDelegatedAuthentica
 import org.apereo.cas.configuration.model.support.passwordless.PasswordlessAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.pm.PasswordManagementProperties;
 import org.apereo.cas.configuration.model.support.radius.RadiusProperties;
+import org.apereo.cas.configuration.model.support.redis.RedisAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.rest.RestAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.configuration.model.support.saml.shibboleth.ShibbolethIdPProperties;
@@ -94,6 +95,12 @@ public class AuthenticationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private CouchbaseAuthenticationProperties couchbase = new CouchbaseAuthenticationProperties();
+
+    /**
+     * Redis authentication settings.
+     */
+    @NestedConfigurationProperty
+    private RedisAuthenticationProperties redis = new RedisAuthenticationProperties();
 
     /**
      * Cassandra authentication settings.

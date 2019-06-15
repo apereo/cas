@@ -73,7 +73,6 @@ public class WebApplicationServiceFactoryTests {
     @Test
     public void verifyServiceCreationNoRequest() {
         val factory = new WebApplicationServiceFactory();
-
         val service = factory.createService("testservice");
         assertNotNull(service);
     }
