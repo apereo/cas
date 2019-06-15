@@ -63,7 +63,8 @@ import static org.junit.jupiter.api.Assertions.*;
     CasPersonDirectoryConfiguration.class,
     CasCoreWebConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
-    RefreshAutoConfiguration.class})
+    RefreshAutoConfiguration.class
+})
 @EnableScheduling
 @TestPropertySource(properties = {
     "cas.authn.mongo.collection=users",

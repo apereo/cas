@@ -58,6 +58,7 @@ layout: null
         *   [Basic](/$version/installation/Basic-Authentication.html)
         *   [Digest](/$version/installation/Digest-Authentication.html)
         *   [MongoDb](/$version/installation/MongoDb-Authentication.html)
+        *   [Redis](/$version/installation/Redis-Authentication.html)
         *   [Pac4J](/$version/installation/Pac4j-Authentication.html)
         *   [Whitelist](/$version/installation/Whitelist-Authentication.html)
         *   [Blacklist](/$version/installation/Blacklist-Authentication.html)
