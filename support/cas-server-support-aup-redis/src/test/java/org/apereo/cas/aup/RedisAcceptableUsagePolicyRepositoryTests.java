@@ -26,9 +26,7 @@ import org.springframework.test.context.TestPropertySource;
 })
 @Getter
 public class RedisAcceptableUsagePolicyRepositoryTests extends BaseAcceptableUsagePolicyRepositoryTests {
-
     @Autowired
     @Qualifier("acceptableUsagePolicyRepository")
     protected AcceptableUsagePolicyRepository acceptableUsagePolicyRepository;
-
 }
