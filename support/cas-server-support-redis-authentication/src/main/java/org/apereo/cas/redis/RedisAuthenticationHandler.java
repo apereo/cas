@@ -60,8 +60,7 @@ public class RedisAuthenticationHandler extends AbstractUsernamePasswordAuthenti
             default:
                 LOGGER.debug("Account status is OK");
         }
-        return createHandlerResult(credential,
-            principalFactory.createPrincipal(account.getUsername(), account.getAttributes()),
-            new ArrayList<>());
+        val principal = principalFactory.createPrincipal(account.getUsername(), account.getAttributes());
+        return createHandlerResult(credential, principal, new ArrayList<>());
     }
 }
