@@ -1,6 +1,5 @@
 package org.apereo.cas.util;
 
-import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -54,29 +53,32 @@ public class CasVersion {
      *
      * @return the date/time
      */
-    @SneakyThrows
     public static ZonedDateTime getDateTime() {
         val clazz = CasVersion.class;
         val resource = clazz.getResource(clazz.getSimpleName() + ".class");
-        if ("file".equals(resource.getProtocol())) {
-            return DateTimeUtils.zonedDateTimeOf(new File(resource.toURI()).lastModified());
-        }
-        if ("jar".equals(resource.getProtocol())) {
-            val path = resource.getPath();
-            val file = new File(path.substring(JAR_PROTOCOL_STARTING_INDEX, path.indexOf('!')));
-            return DateTimeUtils.zonedDateTimeOf(file.lastModified());
-        }
-        if ( "vfs".equals( resource.getProtocol() ) ) {
-            Object content = resource.openConnection().getContent();
-            Class<?> virtualFile = Thread.currentThread().getContextClassLoader()
-                    .loadClass( "org.jboss.vfs.VirtualFile" );
-            if ( virtualFile.isAssignableFrom( content.getClass() ) ) {
-                final File file = new VfsResource(
-                        resource.openConnection().getContent( new Class[] { virtualFile } ) ).getFile();
-                return DateTimeUtils.zonedDateTimeOf( file.lastModified() );
-            } else {
-                return ZonedDateTime.now(ZoneOffset.UTC);
+        try {
+            if ("file".equals(resource.getProtocol())) {
+                return DateTimeUtils.zonedDateTimeOf(new File(resource.toURI()).lastModified());
             }
+            if ("jar".equals(resource.getProtocol())) {
+                val path = resource.getPath();
+                val file = new File(path.substring(JAR_PROTOCOL_STARTING_INDEX, path.indexOf('!')));
+                return DateTimeUtils.zonedDateTimeOf(file.lastModified());
+            }
+            if ( "vfs".equals( resource.getProtocol() ) ) {
+                Object content = resource.openConnection().getContent();
+                Class<?> virtualFile = Thread.currentThread().getContextClassLoader()
+                        .loadClass( "org.jboss.vfs.VirtualFile" );
+                if ( virtualFile.isAssignableFrom( content.getClass() ) ) {
+                    final File file = new VfsResource(
+                            resource.openConnection().getContent( new Class[] { virtualFile } ) ).getFile();
+                    return DateTimeUtils.zonedDateTimeOf( file.lastModified() );
+                } else {
+                    return ZonedDateTime.now(ZoneOffset.UTC);
+                }
+            }
+        } catch (final Exception e) {
+            LOGGER.warn(e.getMessage(), e);
         }
         LOGGER.warn("Unhandled url protocol: [{}] resource: [{}]", resource.getProtocol(), resource);
         return ZonedDateTime.now(ZoneOffset.UTC);
