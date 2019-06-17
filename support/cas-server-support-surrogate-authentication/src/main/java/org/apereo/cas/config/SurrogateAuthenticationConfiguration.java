@@ -5,6 +5,7 @@ import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationPostProcessor;
 import org.apereo.cas.authentication.PrincipalElectionStrategy;
+import org.apereo.cas.authentication.SurrogateAuthenticationExceptionHandlerAction;
 import org.apereo.cas.authentication.SurrogateAuthenticationPostProcessor;
 import org.apereo.cas.authentication.SurrogatePrincipalBuilder;
 import org.apereo.cas.authentication.SurrogatePrincipalElectionStrategy;
@@ -19,6 +20,7 @@ import org.apereo.cas.authentication.surrogate.JsonResourceSurrogateAuthenticati
 import org.apereo.cas.authentication.surrogate.SimpleSurrogateAuthenticationService;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.core.web.MessageBundleProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.support.HardTimeoutExpirationPolicy;
@@ -39,10 +41,12 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
+import org.springframework.webflow.execution.Action;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 /**
  * This is {@link SurrogateAuthenticationConfiguration}.
@@ -117,6 +121,12 @@ public class SurrogateAuthenticationConfiguration {
         su.getSimple().getSurrogates().forEach((k, v) -> accounts.put(k, new ArrayList<>(StringUtils.commaDelimitedListToSet(v))));
         LOGGER.debug("Using accounts [{}] for surrogate authentication", accounts);
         return new SimpleSurrogateAuthenticationService(accounts, servicesManager.getIfAvailable());
+    }
+
+    @Bean
+    public Action authenticationExceptionHandler(Set<Class<? extends Throwable>> handledAuthenticationExceptions) {
+        return new SurrogateAuthenticationExceptionHandlerAction(handledAuthenticationExceptions,
+            MessageBundleProperties.DEFAULT_BUNDLE_PREFIX_AUTHN_FAILURE);
     }
 
     @ConditionalOnMissingBean(name = "surrogateAuthenticationPostProcessor")
