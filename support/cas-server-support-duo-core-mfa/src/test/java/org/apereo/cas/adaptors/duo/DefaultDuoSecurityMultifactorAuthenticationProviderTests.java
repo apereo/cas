@@ -8,12 +8,12 @@ import org.apereo.cas.authentication.BaseAbstractMultifactorAuthenticationProvid
 import static org.mockito.Mockito.*;
 
 /**
- * This is {@link DefaultDuoMultifactorAuthenticationProviderTests}.
+ * This is {@link DefaultDuoSecurityMultifactorAuthenticationProviderTests}.
  *
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-public class DefaultDuoMultifactorAuthenticationProviderTests extends BaseAbstractMultifactorAuthenticationProviderTests {
+public class DefaultDuoSecurityMultifactorAuthenticationProviderTests extends BaseAbstractMultifactorAuthenticationProviderTests {
     @Override
     public AbstractMultifactorAuthenticationProvider getMultifactorAuthenticationProvider() {
         return new DefaultDuoSecurityMultifactorAuthenticationProvider("https://www.example.org",

@@ -39,9 +39,7 @@ public class LdapServiceRegistry extends AbstractServiceRegistry {
 
     private final String baseDn;
 
-    private final String searchFilter;
-
-    private final String loadFilter;
+    private final LdapServiceRegistryProperties ldapProperties;
 
     public LdapServiceRegistry(final ConnectionFactory connectionFactory,
                                final String baseDn,
@@ -52,14 +50,9 @@ public class LdapServiceRegistry extends AbstractServiceRegistry {
         super(eventPublisher, serviceRegistryListeners);
         this.connectionFactory = connectionFactory;
         this.baseDn = baseDn;
-        if (ldapServiceMapper == null) {
-            this.ldapServiceMapper = new DefaultLdapRegisteredServiceMapper(ldapProperties);
-        } else {
-            this.ldapServiceMapper = ldapServiceMapper;
-        }
-        this.loadFilter = ldapProperties.getLoadFilter();
-        this.searchFilter = ldapProperties.getSearchFilter();
-        LOGGER.debug("Configured search filter to [{}] and load filter to [{}]", this.searchFilter, this.loadFilter);
+        this.ldapProperties = ldapProperties;
+        this.ldapServiceMapper = Objects.requireNonNullElseGet(ldapServiceMapper, () -> new DefaultLdapRegisteredServiceMapper(ldapProperties));
+        LOGGER.debug("Configured search filter to [{}] and load filter to [{}]", ldapProperties.getSearchFilter(), ldapProperties.getLoadFilter());
     }
 
     @Override
@@ -183,7 +176,8 @@ public class LdapServiceRegistry extends AbstractServiceRegistry {
     }
 
     private Response<SearchResult> getSearchResultResponse() throws LdapException {
-        return LdapUtils.executeSearchOperation(this.connectionFactory, this.baseDn, LdapUtils.newLdaptiveSearchFilter(this.loadFilter));
+        val filter = LdapUtils.newLdaptiveSearchFilter(ldapProperties.getLoadFilter());
+        return LdapUtils.executeSearchOperation(this.connectionFactory, this.baseDn, filter, ldapProperties.getPageSize());
     }
 
     @Override
@@ -212,8 +206,8 @@ public class LdapServiceRegistry extends AbstractServiceRegistry {
      * @throws LdapException the ldap exception
      */
     private Response<SearchResult> searchForServiceById(final Long id) throws LdapException {
-        val filter = LdapUtils.newLdaptiveSearchFilter(this.searchFilter,
+        val filter = LdapUtils.newLdaptiveSearchFilter(ldapProperties.getSearchFilter(),
             LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME, CollectionUtils.wrap(id.toString()));
-        return LdapUtils.executeSearchOperation(this.connectionFactory, this.baseDn, filter);
+        return LdapUtils.executeSearchOperation(this.connectionFactory, this.baseDn, filter, ldapProperties.getPageSize());
     }
 }

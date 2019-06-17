@@ -59,7 +59,10 @@ import static org.junit.jupiter.api.Assertions.*;
     CasDefaultServiceTicketIdGeneratorsConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class
 },
-    properties = {"cas.authn.attributeRepository.couchbase.password=password", "cas.authn.attributeRepository.couchbase.bucket=testbucket"})
+    properties = {
+        "cas.authn.attributeRepository.couchbase.password=password",
+        "cas.authn.attributeRepository.couchbase.bucket=testbucket"
+    })
 public class CouchbasePersonAttributeDaoTests {
     @Autowired
     @Qualifier("attributeRepository")

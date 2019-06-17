@@ -1130,6 +1130,20 @@ This option will fetch attributes from a Couchbase database for a given CAS prin
 # cas.authn.attributeRepository.couchbase.id=
 ```
 
+### Redis
+
+This option will fetch attributes from a Redis database for a given CAS principal. 
+
+To learn more about this topic, [please review this guide](../installation/Redis-Authentication.html).
+
+Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#redis-configuration) 
+under the configuration key `cas.authn.attributeRepository.redis`.
+
+```properties
+# cas.authn.attributeRepository.redis.order=0
+# cas.authn.attributeRepository.redis.id=
+```
+
 ### Shibboleth Integrations
 
 To learn more about this topic, [please review this guide](../integration/Shibboleth.html).
@@ -1860,6 +1874,20 @@ Common configuration settings for this feature are available [here](Configuratio
 # cas.authn.couchDb.passwordAttribute=password
 # cas.authn.couchDb.name=
 # cas.authn.couchDb.order=
+```
+
+## Redis Authentication
+
+To learn more about this topic, [please review this guide](../installation/Redis-Authentication.html).
+
+Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.redis`. Password encoding  settings for this feature are available [here](Configuration-Properties-Common.html#password-encoding) under the configuration key `cas.authn.redis`.
+
+Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#redis-configuration) 
+under the configuration key `cas.authn`.
+
+```properties
+# cas.authn.redis.name=
+# cas.authn.redis.order=
 ```
 
 ## MongoDb Authentication

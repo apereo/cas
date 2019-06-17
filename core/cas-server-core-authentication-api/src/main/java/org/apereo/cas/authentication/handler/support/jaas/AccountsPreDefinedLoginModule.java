@@ -45,7 +45,7 @@ public class AccountsPreDefinedLoginModule implements LoginModule {
         this.sharedState = sharedState;
         this.options = options;
 
-        this.accounts = new LinkedHashMap();
+        this.accounts = new LinkedHashMap<>();
 
         val providedAccounts = options.containsKey("accounts") ? options.get("accounts").toString() : null;
         if (StringUtils.isNotBlank(providedAccounts)) {
