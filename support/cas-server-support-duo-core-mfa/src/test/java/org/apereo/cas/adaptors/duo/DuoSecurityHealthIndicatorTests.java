@@ -17,13 +17,13 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
- * This is {@link DuoHealthIndicatorTests}.
+ * This is {@link DuoSecurityHealthIndicatorTests}.
  *
  * @author Misagh Moayyed
  * @since 6.1.0
  */
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
-public class DuoHealthIndicatorTests {
+public class DuoSecurityHealthIndicatorTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 

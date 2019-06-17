@@ -12,8 +12,8 @@ import org.junit.runner.RunWith;
  */
 
 @SelectClasses({
-    DefaultDuoMultifactorAuthenticationProviderTests.class,
-    DuoHealthIndicatorTests.class
+    DefaultDuoSecurityMultifactorAuthenticationProviderTests.class,
+    DuoSecurityHealthIndicatorTests.class
 })
 @RunWith(JUnitPlatform.class)
 public class AllDuoSecurityTestsSuite {
