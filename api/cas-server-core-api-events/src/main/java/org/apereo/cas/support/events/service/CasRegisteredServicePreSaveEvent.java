@@ -16,7 +16,7 @@ import lombok.ToString;
 @Getter
 public class CasRegisteredServicePreSaveEvent extends BaseCasRegisteredServiceEvent {
 
-    private static final long serialVersionUID = 290988299766263298L;
+    private static final long serialVersionUID = 291988299766263298L;
 
     private final RegisteredService registeredService;
 

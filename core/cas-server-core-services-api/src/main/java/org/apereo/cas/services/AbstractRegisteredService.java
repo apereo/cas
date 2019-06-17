@@ -168,9 +168,9 @@ public abstract class AbstractRegisteredService implements RegisteredService {
         this.requiredHandlers = ObjectUtils.defaultIfNull(this.requiredHandlers, new HashSet<>());
         this.accessStrategy = ObjectUtils.defaultIfNull(this.accessStrategy, new DefaultRegisteredServiceAccessStrategy());
         this.multifactorPolicy = ObjectUtils.defaultIfNull(this.multifactorPolicy, new DefaultRegisteredServiceMultifactorPolicy());
-        this.properties = ObjectUtils.defaultIfNull(this.properties, new LinkedHashMap());
+        this.properties = ObjectUtils.defaultIfNull(this.properties, new LinkedHashMap<>());
         this.attributeReleasePolicy = ObjectUtils.defaultIfNull(this.attributeReleasePolicy, new ReturnAllowedAttributeReleasePolicy());
-        this.contacts = ObjectUtils.defaultIfNull(this.contacts, new ArrayList());
+        this.contacts = ObjectUtils.defaultIfNull(this.contacts, new ArrayList<>());
         this.expirationPolicy = ObjectUtils.defaultIfNull(this.expirationPolicy, new DefaultRegisteredServiceExpirationPolicy());
     }
 

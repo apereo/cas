@@ -1,10 +1,8 @@
-package org.apereo.cas.persondir.support;
+package org.apereo.cas.redis;
 
-import org.apereo.cas.configuration.model.core.authentication.CouchbasePrincipalAttributesProperties;
-import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
 import org.apereo.cas.util.CollectionUtils;
 
-import com.couchbase.client.java.document.json.JsonObject;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -15,10 +13,9 @@ import org.apereo.services.persondir.support.BasePersonAttributeDao;
 import org.apereo.services.persondir.support.CaseInsensitiveNamedPersonImpl;
 import org.apereo.services.persondir.support.IUsernameAttributeProvider;
 import org.apereo.services.persondir.support.SimpleUsernameAttributeProvider;
+import org.springframework.data.redis.core.RedisTemplate;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -26,17 +23,17 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * This is {@link CouchbasePersonAttributeDao}.
+ * This is {@link RedisPersonAttributeDao}.
  *
  * @author Misagh Moayyed
- * @since 5.3.0
+ * @since 6.1.0
  */
 @RequiredArgsConstructor
 @Slf4j
-public class CouchbasePersonAttributeDao extends BasePersonAttributeDao {
+@Getter
+public class RedisPersonAttributeDao extends BasePersonAttributeDao {
     private final IUsernameAttributeProvider usernameAttributeProvider = new SimpleUsernameAttributeProvider();
-    private final CouchbasePrincipalAttributesProperties couchbaseProperties;
-    private final CouchbaseClientFactory couchbase;
+    private final RedisTemplate redisTemplate;
 
     private static Map<String, List<Object>> stuffAttributesIntoList(final Map<String, ?> personAttributesMap) {
         val entries = (Set<? extends Map.Entry<String, ?>>) personAttributesMap.entrySet();
@@ -47,24 +44,7 @@ public class CouchbasePersonAttributeDao extends BasePersonAttributeDao {
     @Override
     @SneakyThrows
     public IPersonAttributes getPerson(final String uid, final IPersonAttributeDaoFilter filter) {
-        val result = couchbase.query(couchbaseProperties.getUsernameAttribute(), uid);
-        val attributes = new LinkedHashMap<String, Object>();
-        if (result.allRows().isEmpty()) {
-            LOGGER.debug("Couchbase query did not return any results/rows.");
-        } else {
-            val bucketName = couchbase.getBucket().name();
-            attributes.putAll(result.allRows()
-                .stream()
-                .filter(row -> row.value().containsKey(bucketName))
-                .filter(row -> {
-                    val value = (JsonObject) row.value().get(bucketName);
-                    return value.containsKey(couchbaseProperties.getUsernameAttribute());
-                })
-                .map(row -> (JsonObject) row.value().get(bucketName))
-                .map(entity -> couchbase.collectAttributesFromEntity(entity, s -> !s.equals(couchbaseProperties.getUsernameAttribute())).entrySet())
-                .flatMap(Collection::stream)
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
-        }
+        val attributes = redisTemplate.opsForHash().entries(uid);
         return new CaseInsensitiveNamedPersonImpl(uid, stuffAttributesIntoList(attributes));
     }
 
@@ -74,14 +54,14 @@ public class CouchbasePersonAttributeDao extends BasePersonAttributeDao {
     }
 
     @Override
-    public Set<IPersonAttributes> getPeopleWithMultivaluedAttributes(final Map<String, List<Object>> map, final IPersonAttributeDaoFilter filter) {
+    public Set<IPersonAttributes> getPeopleWithMultivaluedAttributes(final Map<String, List<Object>> map,
+                                                                     final IPersonAttributeDaoFilter filter) {
         val people = new LinkedHashSet<IPersonAttributes>();
         val username = this.usernameAttributeProvider.getUsernameFromQuery(map);
         val person = this.getPerson(username, filter);
         if (person != null) {
             people.add(person);
         }
-
         return people;
     }
 
@@ -95,3 +75,4 @@ public class CouchbasePersonAttributeDao extends BasePersonAttributeDao {
         return new LinkedHashSet<>(0);
     }
 }
+

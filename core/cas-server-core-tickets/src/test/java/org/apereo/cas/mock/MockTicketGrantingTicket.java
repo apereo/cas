@@ -68,7 +68,7 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket, TicketSta
     }
 
     public MockTicketGrantingTicket(final String principal) {
-        this(principal, new HashMap());
+        this(principal, new HashMap<>());
     }
 
     public MockTicketGrantingTicket(final String principal, final Map attributes) {

@@ -105,7 +105,7 @@ public class CasWebAppConfiguration implements WebMvcConfigurer {
         mapping.setOrder(1);
         mapping.setAlwaysUseFullPath(true);
         mapping.setRootHandler(root);
-        val urls = new HashMap();
+        val urls = new HashMap<String, Object>();
         urls.put("/", root);
 
         mapping.setUrlMap(urls);

@@ -448,6 +448,50 @@
         <cve>CVE-2016-6325</cve>
     </suppress>
     <suppress>
+        <cve>CVE-2014-2296</cve>
+    </suppress>
+
+    <suppress>
+        <cve>CVE-2018-1000844</cve>
+    </suppress>
+
+    <suppress>
+        <cve>CVE-2019-3772</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2013-7285</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2016-10750</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2018-10054</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2019-3888</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2018-19362</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2018-19361</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2018-19360</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2018-14718</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2018-14719</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2018-14721</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2018-14720</cve>
+    </suppress>
+    <suppress>
         <cve>CVE-2017-7297</cve>
     </suppress>
     <suppress>
@@ -692,7 +736,7 @@
     </suppress>
     <suppress>
         <notes><![CDATA[ file name: jackson-databind and jetty embedded in ehcache ]]></notes>
-        <filePath regex="true" >.*/ehcache-2.10.5.jar/rest-management-private-classpath/.*</filePath>
+        <filePath regex="true">.*/ehcache-2.10.5.jar/rest-management-private-classpath/.*</filePath>
         <cve>CVE-2017-15095</cve>
         <cve>CVE-2017-7525</cve>
         <cve>CVE-2018-7489</cve>

@@ -93,17 +93,22 @@ public class PrincipalAttributesProperties implements Serializable {
     /**
      * Retrieve attributes from multiple Groovy scripts.
      */
-    private List<GroovyPrincipalAttributesProperties> groovy = new ArrayList();
+    private List<GroovyPrincipalAttributesProperties> groovy = new ArrayList<>();
 
     /**
      * Retrieve attributes from multiple LDAP servers.
      */
-    private List<LdapPrincipalAttributesProperties> ldap = new ArrayList();
+    private List<LdapPrincipalAttributesProperties> ldap = new ArrayList<>();
 
     /**
      * Retrieve attributes from multiple JSON file repositories.
      */
-    private List<JsonPrincipalAttributesProperties> json = new ArrayList();
+    private List<JsonPrincipalAttributesProperties> json = new ArrayList<>();
+
+    /**
+     * Retrieve attributes from redis repositories.
+     */
+    private List<RedisPrincipalAttributesProperties> redis = new ArrayList<>();
 
     /**
      * Retrieve attributes from Couchbase repositories.

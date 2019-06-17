@@ -1130,6 +1130,20 @@ This option will fetch attributes from a Couchbase database for a given CAS prin
 # cas.authn.attributeRepository.couchbase.id=
 ```
 
+### Redis
+
+This option will fetch attributes from a Redis database for a given CAS principal. 
+
+To learn more about this topic, [please review this guide](../installation/Redis-Authentication.html).
+
+Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#redis-configuration) 
+under the configuration key `cas.authn.attributeRepository.redis`.
+
+```properties
+# cas.authn.attributeRepository.redis.order=0
+# cas.authn.attributeRepository.redis.id=
+```
+
 ### Shibboleth Integrations
 
 To learn more about this topic, [please review this guide](../integration/Shibboleth.html).
