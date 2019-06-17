@@ -11,7 +11,7 @@ import org.springframework.webflow.execution.RequestContext;
 
 public class SurrogateAuthenticationExceptionHandlerAction extends AuthenticationExceptionHandlerAction {
 
-    public SurrogateAuthenticationExceptionHandlerAction(final Set<Class<? extends Throwable>> errors, String messageBundlePrefix) {
+    public SurrogateAuthenticationExceptionHandlerAction(final Set<Class<? extends Throwable>> errors, final String messageBundlePrefix) {
         super(errors, messageBundlePrefix);
     }
 
