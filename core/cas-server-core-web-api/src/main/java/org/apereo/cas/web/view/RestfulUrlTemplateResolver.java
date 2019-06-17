@@ -34,13 +34,16 @@ public class RestfulUrlTemplateResolver extends ThemeFileTemplateResolver {
     }
 
     @Override
-    protected ITemplateResource computeTemplateResource(final IEngineConfiguration configuration, final String ownerTemplate,
-                                                        final String template, final String resourceName, final String characterEncoding,
+    protected ITemplateResource computeTemplateResource(final IEngineConfiguration configuration,
+                                                        final String ownerTemplate,
+                                                        final String template,
+                                                        final String resourceName,
+                                                        final String characterEncoding,
                                                         final Map<String, Object> templateResolutionAttributes) {
         val rest = casProperties.getView().getRest();
         val themeName = getCurrentTheme();
 
-        val headers = new LinkedHashMap();
+        val headers = new LinkedHashMap<String, Object>();
         headers.put("owner", ownerTemplate);
         headers.put("template", template);
         headers.put("resource", resourceName);
@@ -58,7 +61,7 @@ public class RestfulUrlTemplateResolver extends ThemeFileTemplateResolver {
         try {
             response = HttpUtils.execute(rest.getUrl(), rest.getMethod(), rest.getBasicAuthUsername(), rest.getBasicAuthPassword(), headers);
             val statusCode = response.getStatusLine().getStatusCode();
-            if (response != null && HttpStatus.valueOf(statusCode).is2xxSuccessful()) {
+            if (HttpStatus.valueOf(statusCode).is2xxSuccessful()) {
                 val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
                 return new StringTemplateResource(result);
             }

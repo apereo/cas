@@ -61,12 +61,26 @@ public class RedisObjectFactory {
      * @return the redis connection factory
      */
     public static RedisConnectionFactory newRedisConnectionFactory(final BaseRedisProperties redis) {
+        return newRedisConnectionFactory(redis, false);
+    }
+
+    /**
+     * New redis connection factory.
+     *
+     * @param redis      the redis
+     * @param initialize the initialize
+     * @return the redis connection factory
+     */
+    public static RedisConnectionFactory newRedisConnectionFactory(final BaseRedisProperties redis,
+                                                                   final boolean initialize) {
         val redisConfiguration = redis.getSentinel() == null
             ? (RedisConfiguration) getStandaloneConfig(redis)
             : getSentinelConfig(redis);
 
         val factory = new LettuceConnectionFactory(redisConfiguration, getRedisPoolConfig(redis));
-
+        if (initialize) {
+            factory.afterPropertiesSet();
+        }
         return factory;
     }
 

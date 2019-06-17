@@ -27,3 +27,10 @@ User accounts are mapped to a `username` field as the key. The user account reco
 
 To see the relevant list of CAS properties,
 please [review this guide](../configuration/Configuration-Properties.html#redis-authentication).
+
+## Redis Principal Attributes
+
+The above dependency may also be used, in the event that principal attributes need to be fetched from a 
+Redis database without necessarily authenticating credentials against Couchbase. 
+
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#couchbase).
