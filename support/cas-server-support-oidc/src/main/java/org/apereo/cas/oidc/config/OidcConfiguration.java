@@ -475,6 +475,7 @@ public class OidcConfiguration implements WebMvcConfigurer, CasWebflowExecutionP
     }
 
     @RefreshScope
+    @ConditionalOnMissingBean(name = "oidcProfileController")
     @Bean
     public OidcUserProfileEndpointController oidcProfileController() {
         return new OidcUserProfileEndpointController(servicesManager.getIfAvailable(),

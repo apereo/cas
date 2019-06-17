@@ -74,7 +74,7 @@ public class OAuth20UserProfileEndpointController extends BaseOAuth20Controller 
      * @param code the code
      * @return the response entity
      */
-    private static ResponseEntity buildUnauthorizedResponseEntity(final String code) {
+    protected static ResponseEntity buildUnauthorizedResponseEntity(final String code) {
         val map = new LinkedMultiValueMap<String, String>(1);
         map.add(OAuth20Constants.ERROR, code);
         val value = OAuth20Utils.toJson(map);
@@ -128,7 +128,12 @@ public class OAuth20UserProfileEndpointController extends BaseOAuth20Controller 
         return new ResponseEntity<>(value, HttpStatus.OK);
     }
 
-    private void updateAccessTokenUsage(final AccessToken accessTokenTicket) {
+    /**
+     * Update the access token in the registry.
+     *
+     * @param accessTokenTicket the access token
+     */
+    protected void updateAccessTokenUsage(final AccessToken accessTokenTicket) {
         val accessTokenState = TicketState.class.cast(accessTokenTicket);
         accessTokenState.update();
         if (accessTokenTicket.isExpired()) {
