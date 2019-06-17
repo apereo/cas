@@ -48,7 +48,7 @@ public class CasRegisteredServicesTestConfiguration {
     @Bean
     @SneakyThrows
     public List inMemoryRegisteredServices() {
-        val l = new ArrayList();
+        val l = new ArrayList<>();
 
         val svc = RegisteredServiceTestUtils.getRegisteredService("testencryption$");
         val policy = new ReturnAllowedAttributeReleasePolicy();
