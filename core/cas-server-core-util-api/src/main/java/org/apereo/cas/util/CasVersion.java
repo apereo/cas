@@ -75,7 +75,7 @@ public class CasVersion {
                         resource.openConnection().getContent( new Class[] { virtualFile } ) ).getFile();
                 return DateTimeUtils.zonedDateTimeOf( file.lastModified() );
             } else {
-                return ZonedDateTime.now();
+                return ZonedDateTime.now(ZoneOffset.UTC);
             }
         }
         LOGGER.warn("Unhandled url protocol: [{}] resource: [{}]", resource.getProtocol(), resource);
