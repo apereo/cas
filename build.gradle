@@ -76,6 +76,7 @@ buildscript {
         classpath "org.owasp:dependency-check-gradle:$gradleDependencyCheckVersion"
         classpath "gradle.plugin.com.github.spotbugs:spotbugs-gradle-plugin:$gradleSpotbugsVersion"
         classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:$gradleSonarqubeVersion"
+        classpath "net.rdrei.android.buildtimetracker:gradle-plugin:$gradleTimeTrackerVersion"
     }
 }
 
@@ -83,6 +84,18 @@ if (rootProject.continuousIntegrationBuild) {
     buildScan {
         termsOfServiceUrl = 'https://gradle.com/terms-of-service'
         termsOfServiceAgree = 'yes'
+    }
+
+    apply plugin: "build-time-tracker"
+    buildtimetracker {
+        reporters {
+            summary {
+                ordered false
+                threshold 50
+                barstyle "unicode"
+                shortenTaskNames false
+            }
+        }
     }
 }
 
@@ -130,7 +143,6 @@ allprojects {
     apply plugin: "eclipse"
     apply plugin: "jacoco"
     apply plugin: "java"
-
     
     project.ext["forceBootifulArtifact"] = null
 
@@ -139,14 +151,10 @@ allprojects {
         gradleLint.rules = ["dependency-parentheses", "dependency-tuple"]
     }
 
-
-
     jacoco {
         toolVersion = "$gradleJacocoVersion"
     }
-
     
-
     idea {
         module {
             downloadSources = false
