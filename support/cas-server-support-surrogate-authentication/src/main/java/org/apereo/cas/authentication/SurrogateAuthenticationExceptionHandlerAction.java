@@ -11,18 +11,18 @@ import org.springframework.webflow.execution.RequestContext;
 
 public class SurrogateAuthenticationExceptionHandlerAction extends AuthenticationExceptionHandlerAction {
 
-    public SurrogateAuthenticationExceptionHandlerAction(Set<Class<? extends Throwable>> errors, String messageBundlePrefix) {
+    public SurrogateAuthenticationExceptionHandlerAction(final Set<Class<? extends Throwable>> errors, String messageBundlePrefix) {
         super(errors, messageBundlePrefix);
     }
 
     @Override
-    protected String handleAuthenticationException(AuthenticationException e, RequestContext requestContext) {
+    protected String handleAuthenticationException(final AuthenticationException e, final RequestContext requestContext) {
         String handlerErrorName = super.handleAuthenticationException(e, requestContext);
         revertSurrogateCredential(requestContext);
         return handlerErrorName;
     }
 
-    private void revertSurrogateCredential(RequestContext requestContext) {
+    private void revertSurrogateCredential(final RequestContext requestContext) {
         Credential credential = WebUtils.getCredential(requestContext);
         if (nonNull(credential) && credential instanceof SurrogateUsernamePasswordCredential) {
             SurrogateUsernamePasswordCredential surrogateCred = (SurrogateUsernamePasswordCredential) credential;

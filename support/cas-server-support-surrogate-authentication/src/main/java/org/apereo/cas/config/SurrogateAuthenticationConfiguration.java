@@ -124,7 +124,7 @@ public class SurrogateAuthenticationConfiguration {
     }
 
     @Bean
-    public Action authenticationExceptionHandler(Set<Class<? extends Throwable>> handledAuthenticationExceptions) {
+    public Action authenticationExceptionHandler(final Set<Class<? extends Throwable>> handledAuthenticationExceptions) {
         return new SurrogateAuthenticationExceptionHandlerAction(handledAuthenticationExceptions,
             MessageBundleProperties.DEFAULT_BUNDLE_PREFIX_AUTHN_FAILURE);
     }
