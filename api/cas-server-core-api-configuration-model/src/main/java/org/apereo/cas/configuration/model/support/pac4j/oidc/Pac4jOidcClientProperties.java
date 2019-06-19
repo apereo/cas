@@ -40,7 +40,7 @@ public class Pac4jOidcClientProperties implements Serializable {
     private Pac4jKeyCloakOidcClientProperties keycloak = new Pac4jKeyCloakOidcClientProperties();
 
     /**
-     * Settings specific to delegating authentication to keycloak.
+     * Settings specific to delegating authentication to generic oidc.
      */
     @NestedConfigurationProperty
     private Pac4jGenericOidcClientProperties generic = new Pac4jGenericOidcClientProperties();
