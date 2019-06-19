@@ -514,10 +514,12 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
     }
 
     private void prepareRequestContextForSingleSignOn(final RequestContext context, final J2EContext webContext) {
-        val resolvedService = resolveServiceFromRequestContext(context);
-        WebUtils.putServiceIntoFlowScope(context, resolvedService);
-        val registeredService = servicesManager.findServiceBy(resolvedService);
-        WebUtils.putRegisteredService(context, registeredService);
+        if (WebUtils.getService(context) == null) {
+            val resolvedService = resolveServiceFromRequestContext(context);
+            WebUtils.putServiceIntoFlowScope(context, resolvedService);
+            val registeredService = servicesManager.findServiceBy(resolvedService);
+            WebUtils.putRegisteredService(context, registeredService);
+        }
     }
 
     private boolean isDelegatedClientAuthorizedForService(final Client<Credentials, CommonProfile> client,
