@@ -64,7 +64,6 @@ public class SamlMetadataUIWebflowConfiguration implements CasWebflowExecutionPl
     private ObjectProvider<MetadataResolverAdapter> chainingSamlMetadataUIMetadataResolverAdapter;
 
     @ConditionalOnMissingBean(name = "samlMetadataUIWebConfigurer")
-    @ConditionalOnBean(name = "defaultWebflowConfigurer")
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer samlMetadataUIWebConfigurer() {

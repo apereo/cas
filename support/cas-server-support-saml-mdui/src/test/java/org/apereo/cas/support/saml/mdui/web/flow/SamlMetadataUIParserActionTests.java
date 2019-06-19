@@ -7,6 +7,8 @@ import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.mdui.SamlMetadataUIInfo;
 import org.apereo.cas.support.saml.mdui.config.SamlMetadataUIConfiguration;
 import org.apereo.cas.support.saml.mdui.config.SamlMetadataUIWebflowConfiguration;
+import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
+import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
@@ -30,7 +32,10 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-@Import({SamlMetadataUIConfiguration.class, SamlMetadataUIWebflowConfiguration.class})
+@Import({CasCoreWebflowConfiguration.class,
+    CasWebflowContextConfiguration.class,
+    SamlMetadataUIConfiguration.class, 
+    SamlMetadataUIWebflowConfiguration.class})
 @TestPropertySource(properties = {"cas.samlMetadataUi.resources=classpath:sample-metadata.xml::classpath:inc-md-pub.pem"})
 public class SamlMetadataUIParserActionTests extends AbstractOpenSamlTests {
     @Autowired
