@@ -15,7 +15,7 @@
         </RollingFile>
     </Appenders>
     <Loggers>
-        <Logger name="com.esotericsoftware" level="trace">
+        <Logger name="com.esotericsoftware" level="error">
             <AppenderRef ref="console"/>
         </Logger>
         <Root level="off">

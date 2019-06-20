@@ -10,11 +10,7 @@ echo -e "Gradle build started at `date`"
 echo -e "***********************************************"
 
 gradleBuild="$gradleBuild test jacocoRootReport --parallel -x javadoc -x check \
-    -DskipGradleLint=true -DskipNestedConfigMetadataGen=true "
-
-if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[show streams]"* ]]; then
-   gradleBuild="$gradleBuild -DshowStandardStreams=true "
-fi
+    -DskipGradleLint=true -DskipNestedConfigMetadataGen=true -DshowStandardStreams=true "
 
 if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[rerun tasks]"* ]]; then
     gradleBuild="$gradleBuild --rerun-tasks "
