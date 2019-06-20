@@ -486,6 +486,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
     }
 
     @RefreshScope
+    @ConditionalOnMissingBean(name = "oidcProfileController")
     @Bean
     public OidcUserProfileEndpointController oidcProfileController() {
         val context = buildConfigurationContext();
