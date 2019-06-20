@@ -71,6 +71,13 @@ public class GroovyRegisteredServiceMultifactorPolicy implements RegisteredServi
         return this.groovyPolicyInstance.isBypassEnabled();
     }
 
+    @JsonIgnore
+    @Override
+    public boolean isForceExecution() {
+        buildGroovyMultifactorPolicyInstanceIfNeeded();
+        return this.groovyPolicyInstance.isForceExecution();
+    }
+
     @SneakyThrows
     private void buildGroovyMultifactorPolicyInstanceIfNeeded() {
         if (this.groovyPolicyInstance == null) {

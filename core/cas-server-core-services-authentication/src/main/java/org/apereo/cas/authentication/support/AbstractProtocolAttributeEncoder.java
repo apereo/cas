@@ -40,7 +40,8 @@ public abstract class AbstractProtocolAttributeEncoder implements ProtocolAttrib
         val cachedAttributesToEncode = initialize(newEncodedAttributes);
         if (registeredService != null && registeredService.getAccessStrategy().isServiceAccessAllowed()) {
             encodeAttributesInternal(newEncodedAttributes, cachedAttributesToEncode, this.cipherExecutor, registeredService);
-            LOGGER.debug("[{}] encoded attributes are available for release to [{}]: [{}]", newEncodedAttributes.size(), registeredService, newEncodedAttributes.keySet());
+            LOGGER.debug("[{}] encoded attributes are available for release to [{}]: [{}]",
+                newEncodedAttributes.size(), registeredService.getName(), newEncodedAttributes.keySet());
         } else {
             LOGGER.debug("Service is not found/enabled in the service registry so no encoding has taken place.");
         }

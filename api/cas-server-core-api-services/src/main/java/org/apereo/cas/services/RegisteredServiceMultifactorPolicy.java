@@ -50,4 +50,10 @@ public interface RegisteredServiceMultifactorPolicy extends Serializable {
      */
     boolean isBypassEnabled();
 
+    /**
+     * Whether multifactor authentication should forcefully trigger,
+     * even if the existing authentication context can be satisfied without MFA.
+     * @return true/false
+     */
+    boolean isForceExecution();
 }
