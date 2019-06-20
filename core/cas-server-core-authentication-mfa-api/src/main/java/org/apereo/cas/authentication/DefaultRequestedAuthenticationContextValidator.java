@@ -55,9 +55,6 @@ public class DefaultRequestedAuthenticationContextValidator implements Requested
                     bypassEvaluator.rememberBypass(authentication, provider);
                     return Pair.of(Boolean.TRUE, Optional.empty());
                 }
-                /**
-                 * Not Sure this should be here.  Could result in MFA bypass in one service bypasses all other sso services.
-                 */
                 if (bypassEvaluator.isMultifactorAuthenticationBypassed(authentication, providerId)) {
                     LOGGER.debug("Authentication attempt indicates that MFA is bypassed for this request for [{}]", requestedContext);
                     bypassEvaluator.rememberBypass(authentication, provider);
