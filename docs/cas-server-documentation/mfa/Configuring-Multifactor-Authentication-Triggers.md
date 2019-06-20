@@ -37,7 +37,7 @@ MFA can be triggered for all applications and users regardless of individual set
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#multifactor-authentication).
 
-## Applications
+## Per Application
 
 MFA can be triggered for a specific application registered inside the CAS service registry.
 
@@ -49,10 +49,22 @@ MFA can be triggered for a specific application registered inside the CAS servic
   "name": "test",
   "multifactorPolicy" : {
     "@class" : "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
-    "multifactorAuthenticationProviders" : [ "java.util.LinkedHashSet", [ "mfa-duo" ] ]
+    "multifactorAuthenticationProviders" : [ "java.util.LinkedHashSet", [ "mfa-duo" ] ],
+    "bypassEnabled": false,
+    "forceExecution": true
   }
 }
 ```
+
+The following fields are accepted by the policy definition
+
+| Field                 | Description
+|-----------------------|----------------------------------------------------------------------------------------
+| `multifactorAuthenticationProviders` | Set of multifactor provider ids that should trigger for this application.
+| `bypassEnabled`           | Whether multifactor authentication should be [bypassed](Configuring-Multifactor-Authentication-Bypass.md) for this service.
+| `forceExecution`          | Whether multifactor authentication should forcefully trigger, even if the existing authentication context can be satisfied without MFA.
+
+### Groovy Per Application
 
 Additionally, you may determine the multifactor authentication policy for a registered service using a Groovy script:
 
@@ -98,6 +110,11 @@ class GroovyMultifactorPolicy extends DefaultRegisteredServiceMultifactorPolicy 
 
     @Override
     boolean isBypassEnabled() {
+        ...
+    }
+
+    @Override
+    boolean isForceExecution() {
         ...
     }
 }

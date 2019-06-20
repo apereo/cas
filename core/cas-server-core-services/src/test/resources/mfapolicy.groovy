@@ -25,4 +25,9 @@ class GroovyMultifactorPolicy extends DefaultRegisteredServiceMultifactorPolicy 
     boolean isBypassEnabled() {
         true
     }
+
+    @Override
+    boolean isForceExecution() {
+        false
+    }
 }
