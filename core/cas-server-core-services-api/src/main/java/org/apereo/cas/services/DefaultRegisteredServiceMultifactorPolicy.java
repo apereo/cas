@@ -37,4 +37,6 @@ public class DefaultRegisteredServiceMultifactorPolicy implements RegisteredServ
     private boolean bypassEnabled;
 
     private boolean forceExecution;
+
+    private boolean bypassTrustedDeviceEnabled;
 }

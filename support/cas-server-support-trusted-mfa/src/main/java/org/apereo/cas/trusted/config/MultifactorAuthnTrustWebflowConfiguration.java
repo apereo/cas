@@ -1,7 +1,10 @@
 package org.apereo.cas.trusted.config;
 
+import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
+import org.apereo.cas.trusted.web.flow.MultifactorAuthenticationPrepareTrustDeviceViewAction;
 import org.apereo.cas.trusted.web.flow.MultifactorAuthenticationSetTrustAction;
 import org.apereo.cas.trusted.web.flow.MultifactorAuthenticationVerifyTrustAction;
 import org.apereo.cas.trusted.web.flow.fingerprint.DeviceFingerprintStrategy;
@@ -37,17 +40,36 @@ public class MultifactorAuthnTrustWebflowConfiguration {
     @Qualifier("mfaTrustEngine")
     private ObjectProvider<MultifactorAuthenticationTrustStorage> mfaTrustEngine;
 
+    @Autowired
+    @Qualifier("registeredServiceAccessStrategyEnforcer")
+    private ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer;
+
+    @Autowired
+    @Qualifier("servicesManager")
+    private ObjectProvider<ServicesManager> servicesManager;
+
     @Bean
     public Action mfaSetTrustAction() {
         return new MultifactorAuthenticationSetTrustAction(mfaTrustEngine.getIfAvailable(),
             deviceFingerprintStrategy.getIfAvailable(),
-            casProperties.getAuthn().getMfa().getTrusted());
+            casProperties.getAuthn().getMfa().getTrusted(),
+            registeredServiceAccessStrategyEnforcer.getIfAvailable());
     }
 
     @Bean
     public Action mfaVerifyTrustAction() {
         return new MultifactorAuthenticationVerifyTrustAction(mfaTrustEngine.getIfAvailable(),
             deviceFingerprintStrategy.getIfAvailable(),
-            casProperties.getAuthn().getMfa().getTrusted());
+            casProperties.getAuthn().getMfa().getTrusted(),
+            registeredServiceAccessStrategyEnforcer.getIfAvailable());
+    }
+
+    @Bean
+    public Action mfaPrepareTrustDeviceViewAction() {
+        return new MultifactorAuthenticationPrepareTrustDeviceViewAction(mfaTrustEngine.getIfAvailable(),
+            deviceFingerprintStrategy.getIfAvailable(),
+            casProperties.getAuthn().getMfa().getTrusted(),
+            registeredServiceAccessStrategyEnforcer.getIfAvailable(),
+            servicesManager.getIfAvailable());
     }
 }

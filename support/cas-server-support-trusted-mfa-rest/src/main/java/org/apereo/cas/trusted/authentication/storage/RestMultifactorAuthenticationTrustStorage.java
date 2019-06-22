@@ -41,11 +41,20 @@ public class RestMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
     }
 
     @Override
+    public MultifactorAuthenticationTrustRecord get(final long id) {
+        val results = getResults(getEndpointUrl(String.valueOf(id)));
+        return results.stream()
+            .filter(entry -> entry.getId() == id)
+            .sorted()
+            .findFirst()
+            .orElse(null);
+    }
+
+    @Override
     public void expire(final LocalDateTime onOrBefore) {
         val entity = getHttpEntity(onOrBefore);
         restTemplate.exchange(getEndpointUrl(null), HttpMethod.POST, entity, Object.class);
     }
-
 
     @Override
     public void expire(final String key) {

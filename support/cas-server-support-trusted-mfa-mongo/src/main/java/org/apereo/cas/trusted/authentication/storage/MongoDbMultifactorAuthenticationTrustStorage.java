@@ -69,9 +69,15 @@ public class MongoDbMultifactorAuthenticationTrustStorage extends BaseMultifacto
     public Set<? extends MultifactorAuthenticationTrustRecord> get(final String principal) {
         val query = new Query();
         query.addCriteria(Criteria.where("principal").is(principal));
-        val results =
-            this.mongoTemplate.find(query, MultifactorAuthenticationTrustRecord.class, this.collectionName);
+        val results = mongoTemplate.find(query, MultifactorAuthenticationTrustRecord.class, this.collectionName);
         return new HashSet<>(results);
+    }
+
+    @Override
+    public MultifactorAuthenticationTrustRecord get(final long id) {
+        val query = new Query();
+        query.addCriteria(Criteria.where("id").is(id));
+        return mongoTemplate.findOne(query, MultifactorAuthenticationTrustRecord.class, this.collectionName);
     }
 
     @Override

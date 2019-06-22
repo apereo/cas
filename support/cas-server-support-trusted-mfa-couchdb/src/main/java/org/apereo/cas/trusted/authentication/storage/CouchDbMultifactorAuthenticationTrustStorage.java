@@ -39,9 +39,15 @@ public class CouchDbMultifactorAuthenticationTrustStorage extends BaseMultifacto
         couchDb.findOnOrBeforeDate(onOrBefore).forEach(couchDb::deleteRecord);
     }
 
+
     @Override
     public void expire(final String key) {
         couchDb.deleteRecord(couchDb.findByRecordKey(key));
+    }
+
+    @Override
+    public MultifactorAuthenticationTrustRecord get(final long id) {
+        return couchDb.findById(id);
     }
 
     @Override

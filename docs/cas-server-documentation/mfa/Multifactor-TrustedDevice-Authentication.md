@@ -64,6 +64,24 @@ calculate the device fingerprint.
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#trusted-device-fingerprint).
 
+## Bypass
+
+Users are allowed to optionally opt out of registering a trusted device with CAS as part of the MFA workflow. Furthermore, 
+trusted device workflow for MFA can be bypassed on a per application basis:
+
+```json
+{
+  "@class": "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId": "^(https|imaps)://app.example.org",
+  "name": "Example",
+  "id": 1,
+  "multifactorPolicy" : {
+    "@class" : "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
+    "bypassTrustedDeviceEnabled" : true
+  }
+}
+
+```
 ## Storage
 
 User decisions must be remembered and processed later on subsequent requests.  A background *cleaner* process is also automatically scheduled to scan the chosen repository/database/registry periodically and remove expired records based on configured threshold parameters.

@@ -49,10 +49,24 @@ public class JpaMultifactorAuthenticationTrustStorage extends BaseMultifactorAut
                 .executeUpdate();
             LOGGER.info("Found and removed [{}] records", count);
         } catch (final NoResultException e) {
-            LOGGER.info("No trusted authentication records could be found");
+            LOGGER.debug("No trusted authentication records could be found");
         }
     }
 
+    @Override
+    public MultifactorAuthenticationTrustRecord get(final long id) {
+        try {
+            val query = this.entityManager
+                .createQuery("SELECT r FROM " + TABLE_NAME + " r where r.id >= :id", MultifactorAuthenticationTrustRecord.class)
+                .setParameter("id", id)
+                .setMaxResults(1);
+            return query.getSingleResult();
+        } catch (final NoResultException e) {
+            LOGGER.debug("No trusted authentication records could be found for [{}]", id);
+        }
+        return null;
+    }
+    
     @Override
     public Set<? extends MultifactorAuthenticationTrustRecord> get(final LocalDateTime onOrAfterDate) {
         try {
@@ -62,7 +76,7 @@ public class JpaMultifactorAuthenticationTrustStorage extends BaseMultifactorAut
             val results = query.getResultList();
             return new HashSet<>(results);
         } catch (final NoResultException e) {
-            LOGGER.info("No trusted authentication records could be found for [{}]", onOrAfterDate);
+            LOGGER.debug("No trusted authentication records could be found for [{}]", onOrAfterDate);
         }
         return new HashSet<>(0);
     }
@@ -76,7 +90,7 @@ public class JpaMultifactorAuthenticationTrustStorage extends BaseMultifactorAut
             val results = query.getResultList();
             return new HashSet<>(results);
         } catch (final NoResultException e) {
-            LOGGER.info("No trusted authentication records could be found for [{}]", principal);
+            LOGGER.debug("No trusted authentication records could be found for [{}]", principal);
         }
         return new HashSet<>(0);
     }

@@ -39,7 +39,7 @@ public class InMemoryMultifactorAuthenticationTrustStorage extends BaseMultifact
             .sorted()
             .collect(Collectors.toCollection(LinkedHashSet::new));
 
-        LOGGER.info("Found [{}] expired records", results.size());
+        LOGGER.info("Found [{}] expired trusted-device records", results.size());
         if (!results.isEmpty()) {
             results.forEach(entry -> storage.invalidate(entry.getRecordKey()));
             LOGGER.info("Invalidated and removed [{}] expired records", results.size());
@@ -65,6 +65,17 @@ public class InMemoryMultifactorAuthenticationTrustStorage extends BaseMultifact
             .filter(entry -> entry.getPrincipal().equalsIgnoreCase(principal))
             .sorted()
             .collect(Collectors.toCollection(LinkedHashSet::new));
+    }
+
+    @Override
+    public MultifactorAuthenticationTrustRecord get(final long id) {
+        return storage.asMap()
+            .values()
+            .stream()
+            .filter(entry -> entry.getId() == id)
+            .sorted()
+            .findFirst()
+            .orElse(null);
     }
 
     @Override

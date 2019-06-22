@@ -19,6 +19,7 @@ import java.util.Set;
 public class DynamoDbMultifactorAuthenticationTrustStorage extends BaseMultifactorAuthenticationTrustStorage {
     private final DynamoDbMultifactorTrustEngineFacilitator dynamoDbFacilitator;
 
+
     @Override
     protected MultifactorAuthenticationTrustRecord setInternal(final MultifactorAuthenticationTrustRecord record) {
         dynamoDbFacilitator.save(record);
@@ -43,5 +44,10 @@ public class DynamoDbMultifactorAuthenticationTrustStorage extends BaseMultifact
     @Override
     public Set<? extends MultifactorAuthenticationTrustRecord> get(final String principal) {
         return dynamoDbFacilitator.getRecordForPrincipal(principal);
+    }
+
+    @Override
+    public MultifactorAuthenticationTrustRecord get(final long id) {
+        return dynamoDbFacilitator.getRecordForId(id);
     }
 }

@@ -56,4 +56,11 @@ public interface RegisteredServiceMultifactorPolicy extends Serializable {
      * @return true/false
      */
     boolean isForceExecution();
+
+    /**
+     * Whether multifactor authentication should bypass trusted device registration,
+     * and check for device records and/or skip prompt for registration.
+     * @return true/false
+     */
+    boolean isBypassTrustedDeviceEnabled();
 }
