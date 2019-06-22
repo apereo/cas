@@ -204,6 +204,21 @@ public class DynamoDbMultifactorTrustEngineFacilitator {
     }
 
     /**
+     * Gets record for id.
+     *
+     * @param id the id
+     * @return the record for id
+     */
+    public MultifactorAuthenticationTrustRecord getRecordForId(final long id) {
+        val keys = new HashMap<String, AttributeValue>();
+        keys.put(ColumnNames.ID.getColumnName(), new AttributeValue(String.valueOf(id)));
+        val records = getRecordsByKeys(keys, ComparisonOperator.EQ);
+        return records.stream()
+            .findFirst()
+            .orElse(null);
+    }
+
+    /**
      * Column names for tables holding records.
      */
     @Getter

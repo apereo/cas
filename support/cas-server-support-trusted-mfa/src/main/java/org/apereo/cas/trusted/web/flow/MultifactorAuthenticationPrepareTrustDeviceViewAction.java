@@ -3,10 +3,9 @@ package org.apereo.cas.trusted.web.flow;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.configuration.model.support.mfa.TrustedDevicesMultifactorProperties;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
-import org.apereo.cas.trusted.util.MultifactorAuthenticationTrustUtils;
 import org.apereo.cas.trusted.web.flow.fingerprint.DeviceFingerprintStrategy;
-import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -17,30 +16,25 @@ import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
-import java.time.LocalDateTime;
-
 /**
- * This is {@link MultifactorAuthenticationVerifyTrustAction}.
+ * This is {@link MultifactorAuthenticationPrepareTrustDeviceViewAction}.
  *
  * @author Misagh Moayyed
- * @since 5.0.0
+ * @since 6.1.0
  */
 @Slf4j
 @RequiredArgsConstructor
-public class MultifactorAuthenticationVerifyTrustAction extends AbstractAction {
+public class MultifactorAuthenticationPrepareTrustDeviceViewAction extends AbstractAction {
 
     private final MultifactorAuthenticationTrustStorage storage;
     private final DeviceFingerprintStrategy deviceFingerprintStrategy;
     private final TrustedDevicesMultifactorProperties trustedProperties;
     private final AuditableExecution registeredServiceAccessStrategyEnforcer;
+    private final ServicesManager servicesManager;
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
+    public Event doExecute(final RequestContext requestContext) throws Exception {
         val authn = WebUtils.getAuthentication(requestContext);
-        if (authn == null) {
-            LOGGER.warn("Could not determine authentication from the request context");
-            return no();
-        }
         val registeredService = WebUtils.getRegisteredService(requestContext);
         val service = WebUtils.getService(requestContext);
         val audit = AuditableContext.builder()
@@ -57,27 +51,7 @@ public class MultifactorAuthenticationVerifyTrustAction extends AbstractAction {
             LOGGER.debug("Trusted device registration is disabled for [{}]", registeredService);
             return result(CasWebflowConstants.TRANSITION_ID_SKIP);
         }
-        val principal = authn.getPrincipal().getId();
-        val unit = DateTimeUtils.toChronoUnit(trustedProperties.getTimeUnit());
-        val onOrAfter = LocalDateTime.now().minus(trustedProperties.getExpiration(), unit);
-        LOGGER.trace("Retrieving trusted authentication records for [{}] that are on/after [{}]", principal, onOrAfter);
-        val results = storage.get(principal, onOrAfter);
-        if (results.isEmpty()) {
-            LOGGER.debug("No valid trusted authentication records could be found for [{}]", principal);
-            return no();
-        }
-        val fingerprint = deviceFingerprintStrategy.determineFingerprint(principal, requestContext, false);
-        LOGGER.trace("Retrieving authentication records for [{}] that matches [{}]", principal, fingerprint);
-        if (results.stream().noneMatch(entry -> entry.getDeviceFingerprint().equals(fingerprint))) {
-            LOGGER.debug("No trusted authentication records could be found for [{}] to match the current device fingerprint", principal);
-            return no();
-        }
 
-        LOGGER.debug("Trusted authentication records found for [{}] that matches the current device fingerprint", principal);
-        MultifactorAuthenticationTrustUtils.setMultifactorAuthenticationTrustedInScope(requestContext);
-        MultifactorAuthenticationTrustUtils.trackTrustedMultifactorAuthenticationAttribute(
-            authn,
-            trustedProperties.getAuthenticationContextAttribute());
-        return yes();
+        return result(CasWebflowConstants.TRANSITION_ID_REGISTER);
     }
 }

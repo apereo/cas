@@ -39,7 +39,7 @@ public class JsonMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
         this.location = location;
         readTrustedRecordsFromResource();
     }
-
+    
     @Override
     public void expire(final String key) {
         storage.keySet().removeIf(k -> k.equalsIgnoreCase(key));
@@ -55,7 +55,7 @@ public class JsonMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
             .sorted()
             .collect(Collectors.toCollection(LinkedHashSet::new));
 
-        LOGGER.info("Found [{}] expired records", results.size());
+        LOGGER.info("Found [{}] expired trusted-device records", results.size());
         if (!results.isEmpty()) {
             results.forEach(entry -> storage.remove(entry.getRecordKey()));
             LOGGER.info("Invalidated and removed [{}] expired records", results.size());
@@ -63,6 +63,17 @@ public class JsonMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
         }
     }
 
+    @Override
+    public MultifactorAuthenticationTrustRecord get(final long id) {
+        return storage
+            .values()
+            .stream()
+            .filter(entry -> entry.getId() == id)
+            .sorted()
+            .findFirst()
+            .orElse(null);
+    }
+    
     @Override
     public Set<? extends MultifactorAuthenticationTrustRecord> get(final LocalDateTime onOrAfterDate) {
         expire(onOrAfterDate);
