@@ -1,5 +1,7 @@
 package org.apereo.cas.trusted.web.flow;
 
+import org.apereo.cas.audit.AuditableContext;
+import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationCredentialsThreadLocalBinder;
 import org.apereo.cas.configuration.model.support.mfa.TrustedDevicesMultifactorProperties;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
@@ -30,17 +32,35 @@ public class MultifactorAuthenticationSetTrustAction extends AbstractAction {
     private final MultifactorAuthenticationTrustStorage storage;
     private final DeviceFingerprintStrategy deviceFingerprintStrategy;
     private final TrustedDevicesMultifactorProperties trustedProperties;
-
+    private final AuditableExecution registeredServiceAccessStrategyEnforcer;
+    
     @Override
     public Event doExecute(final RequestContext requestContext) {
-        val c = WebUtils.getAuthentication(requestContext);
-        if (c == null) {
+        val authn = WebUtils.getAuthentication(requestContext);
+        if (authn == null) {
             LOGGER.error("Could not determine authentication from the request context");
             return error();
         }
-        AuthenticationCredentialsThreadLocalBinder.bindCurrent(c);
+        val registeredService = WebUtils.getRegisteredService(requestContext);
+        val service = WebUtils.getService(requestContext);
+        val audit = AuditableContext.builder()
+            .service(service)
+            .authentication(authn)
+            .registeredService(registeredService)
+            .retrievePrincipalAttributesFromReleasePolicy(Boolean.FALSE)
+            .build();
+        val accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
+        accessResult.throwExceptionIfNeeded();
+        
+        AuthenticationCredentialsThreadLocalBinder.bindCurrent(authn);
 
-        val principal = c.getPrincipal().getId();
+        val mfaPolicy = registeredService.getMultifactorPolicy();
+        if (mfaPolicy != null && mfaPolicy.isBypassTrustedDeviceEnabled()) {
+            LOGGER.debug("Trusted device registration is disabled for [{}]", registeredService);
+            return success();
+        }
+
+        val principal = authn.getPrincipal().getId();
         val deviceName = requestContext.getRequestParameters().get(PARAM_NAME_DEVICE_NAME, StringUtils.EMPTY);
         val providedDeviceName = StringUtils.isNotBlank(deviceName);
         if (providedDeviceName) {
@@ -55,7 +75,7 @@ public class MultifactorAuthenticationSetTrustAction extends AbstractAction {
             }
             LOGGER.debug("Trusted authentication session exists for [{}]", principal);
             MultifactorAuthenticationTrustUtils.trackTrustedMultifactorAuthenticationAttribute(
-                c,
+                authn,
                 trustedProperties.getAuthenticationContextAttribute());
         } else {
             LOGGER.debug("No device name is provided. Trusted authentication record is not stored and tracked for the session");

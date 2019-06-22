@@ -68,6 +68,22 @@ public class MultifactorAuthenticationTrustRecordCouchDbRepository extends Couch
     }
 
     /**
+     * Find by id.
+     *
+     * @param id the id
+     * @return the list
+     */
+    @View(name = "by_id",
+        map = "function(doc) { if (doc.principal && doc.deviceFingerprint && doc.recordDate) { emit(doc.id, doc) } }")
+    public CouchDbMultifactorAuthenticationTrustRecord findById(final long id) {
+        val view = createQuery("by_id").key(id);
+        return db.queryView(view, CouchDbMultifactorAuthenticationTrustRecord.class)
+            .stream()
+            .findFirst()
+            .orElse(null);
+    }
+
+    /**
      * Find by principal on or after date.
      * @param principal Principal to search for
      * @param onOrAfterDate start date for search
@@ -77,7 +93,8 @@ public class MultifactorAuthenticationTrustRecordCouchDbRepository extends Couch
         map = "function(doc) { if (doc.recordKey && doc.principal && doc.deviceFingerprint && doc.recordDate) { emit([doc.principal, doc.recordDate], doc) } }")
     public List<CouchDbMultifactorAuthenticationTrustRecord> findByPrincipalAfterDate(final String principal, final LocalDateTime onOrAfterDate) {
         val view = createQuery("by_principal_date")
-            .startKey(ComplexKey.of(principal, onOrAfterDate)).endKey(ComplexKey.of(principal, "999999"));
+            .startKey(ComplexKey.of(principal, onOrAfterDate))
+            .endKey(ComplexKey.of(principal, Long.MAX_VALUE));
 
         return db.queryView(view, CouchDbMultifactorAuthenticationTrustRecord.class);
     }

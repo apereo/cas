@@ -30,4 +30,9 @@ class GroovyMultifactorPolicy extends DefaultRegisteredServiceMultifactorPolicy 
     boolean isForceExecution() {
         false
     }
+
+    @Override
+    boolean isBypassTrustedDeviceEnabled() {
+        true
+    }
 }

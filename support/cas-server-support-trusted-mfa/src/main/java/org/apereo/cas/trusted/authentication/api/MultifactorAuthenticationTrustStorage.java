@@ -42,6 +42,14 @@ public interface MultifactorAuthenticationTrustStorage {
     Set<? extends MultifactorAuthenticationTrustRecord> get(String principal);
 
     /**
+     * Get record.
+     *
+     * @param id the id
+     * @return the records
+     */
+    MultifactorAuthenticationTrustRecord get(long id);
+
+    /**
      * Get record by date.
      *
      * @param principal     the principal id

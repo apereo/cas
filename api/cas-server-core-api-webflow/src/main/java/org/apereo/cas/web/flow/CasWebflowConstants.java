@@ -227,6 +227,10 @@ public interface CasWebflowConstants {
      * The state id 'registerTrustedDevice'.
      */
     String STATE_ID_REGISTER_TRUSTED_DEVICE = "registerTrustedDevice";
+    /**
+     * The state id 'prepareRegisterTrustedDevice'.
+     */
+    String STATE_ID_PREPARE_REGISTER_TRUSTED_DEVICE = "prepareRegisterTrustedDevice";
 
     /**
      * The state 'realSubmit'.
