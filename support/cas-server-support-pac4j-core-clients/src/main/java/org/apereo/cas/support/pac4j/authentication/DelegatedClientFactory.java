@@ -398,6 +398,8 @@ public class DelegatedClientFactory {
                 cfg.setForceAuth(saml.isForceAuth());
                 cfg.setPassive(saml.isPassive());
                 cfg.setSignMetadata(saml.isSignServiceProviderMetadata());
+                cfg.setAuthnRequestSigned(saml.isSignAuthnRequest());
+                cfg.setSpLogoutRequestSigned(saml.isSignServiceProviderLogoutRequest());
                 cfg.setAcceptedSkew(saml.getAcceptedSkew());
 
                 if (StringUtils.isNotBlank(saml.getPrincipalIdAttribute())) {
@@ -426,6 +428,19 @@ public class DelegatedClientFactory {
                         .map(attribute -> new SAML2ServiceProvicerRequestedAttribute(attribute.getName(), attribute.getFriendlyName(),
                             attribute.getNameFormat(), attribute.isRequired()))
                         .forEach(attribute -> cfg.getRequestedServiceProviderAttributes().add(attribute));
+                }
+
+                if (!saml.getBlackListedSignatureSigningAlgorithms().isEmpty()) {
+                    cfg.setBlackListedSignatureSigningAlgorithms(saml.getBlackListedSignatureSigningAlgorithms());
+                }
+                if (!saml.getSignatureAlgorithms().isEmpty()) {
+                    cfg.setSignatureAlgorithms(saml.getSignatureAlgorithms());
+                }
+                if (!saml.getSignatureReferenceDigestMethods().isEmpty()){
+                    cfg.setSignatureReferenceDigestMethods(saml.getSignatureReferenceDigestMethods());
+                }
+                if (!StringUtils.isNotBlank(saml.getSignatureCanonicalizationAlgorithm())) {
+                    cfg.setSignatureCanonicalizationAlgorithm(saml.getSignatureCanonicalizationAlgorithm());
                 }
 
                 val mappedAttributes = saml.getMappedAttributes();
