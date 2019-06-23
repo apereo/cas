@@ -3345,6 +3345,14 @@ prefixes for the `keystorePath` or `identityProviderMetadataPath` property).
 # cas.authn.pac4j.saml[0].attributeConsumingServiceIndex=
 # cas.authn.pac4j.saml[0].assertionConsumerServiceIndex=-1
 
+# properties to configure how signing AuthnRequest
+# cas.authn.pac4j.saml[0].signAuthnRequest=false
+# cas.authn.pac4j.saml[0].signServiceProviderLogoutRequest=false
+# cas.authn.pac4j.saml[0].blackListedSignatureSigningAlgorithms[0]=
+# cas.authn.pac4j.saml[0].signatureAlgorithms[0]=
+# cas.authn.pac4j.saml[0].signatureReferenceDigestMethods[0]=
+# cas.authn.pac4j.saml[0].signatureCanonicalizationAlgorithm=
+
 # cas.authn.pac4j.saml[0].requestedAttributes[0].name=
 # cas.authn.pac4j.saml[0].requestedAttributes[0].friendlyName=
 # cas.authn.pac4j.saml[0].requestedAttributes[0].nameFormat=urn:oasis:names:tc:SAML:2.0:attrname-format:uri
