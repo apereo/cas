@@ -66,8 +66,13 @@ public class CasVersion {
                 return DateTimeUtils.zonedDateTimeOf(file.lastModified());
             }
             if ("vfs".equals(resource.getProtocol())) {
-                val file = new VfsResource(resource.openConnection().getContent()).getFile();
-                return DateTimeUtils.zonedDateTimeOf(file.lastModified());
+                val content = resource.openConnection().getContent();
+                val virtualFile = Thread.currentThread().getContextClassLoader().loadClass("org.jboss.vfs.VirtualFile");
+                if (virtualFile.isAssignableFrom(content.getClass())) {
+                    val file = new VfsResource(resource.openConnection().getContent(new Class[] {virtualFile})).getFile();
+                    return DateTimeUtils.zonedDateTimeOf(file.lastModified());
+                }
+                return ZonedDateTime.now(ZoneOffset.UTC);
             }
         } catch (final Exception e) {
             LOGGER.warn(e.getMessage(), e);
