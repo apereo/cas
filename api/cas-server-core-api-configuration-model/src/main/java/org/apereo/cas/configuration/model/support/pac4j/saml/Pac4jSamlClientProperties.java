@@ -170,10 +170,39 @@ public class Pac4jSamlClientProperties extends Pac4jBaseClientProperties {
     private boolean signServiceProviderMetadata;
 
     /**
+     * Whether or not the authnRequest should be signed.
+     */
+    private boolean signAuthnRequest;
+
+    /**
+     * Whether or not the Logout Request sent from the SP should be signed.
+     */
+    private boolean signServiceProviderLogoutRequest;
+
+    /**
      * List of attributes requested by the service provider
      * that would be put into the service provider metadata.
      */
     private List<ServiceProviderRequestedAttribute> requestedAttributes = new ArrayList<>();
+
+    /**
+     * Collection of signing signature blacklisted algorithms, if any, to override the global defaults.
+     */
+    private List<String> blackListedSignatureSigningAlgorithms = new ArrayList<>();
+
+    /**
+     * Collection of signing signature algorithms, if any, to override the global defaults.
+     */
+    private List<String> signatureAlgorithms = new ArrayList<>();
+
+    /**
+     * Collection of signing signature reference digest methods, if any, to override the global defaults.
+     */
+    private List<String> signatureReferenceDigestMethods = new ArrayList<>();
+    /**
+     * The signing signature canonicalization algorithm, if any, to override the global defaults.
+     */
+    private String signatureCanonicalizationAlgorithm;
 
     @RequiresModule(name = "cas-server-support-pac4j-webflow")
     @Getter

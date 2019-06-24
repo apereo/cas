@@ -1,7 +1,10 @@
 package org.apereo.cas.web.flow.resolver.impl;
 
+import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.MultifactorAuthenticationContextValidator;
+import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
+import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
@@ -88,20 +91,27 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolver extends
 
         LOGGER.trace("Validating authentication context for event [{}] and service [{}]", id, service);
         val result = this.authenticationContextValidator.validate(authentication, id, service);
+        val value = result.getValue();
 
         if (result.getKey()) {
+            if (service.getMultifactorPolicy().isForceExecution() && value.isPresent()) {
+                val provider = value.get();
+                LOGGER.trace("Multifactor authentication policy for [{}] is set to force execution for [{}]", service, provider);
+                return buildEventForMultifactorProvider(context, service, authentication, id, provider);
+            }
             LOGGER.debug("Authentication context is successfully validated by [{}] for service [{}]", id, service);
             return resumeFlow();
         }
 
-        val value = result.getValue();
         if (value.isPresent()) {
-            val attributeMap = MultifactorAuthenticationUtils.buildEventAttributeMap(authentication.getPrincipal(), Optional.of(service), value.get());
-            return CollectionUtils.wrapSet(MultifactorAuthenticationUtils.validateEventIdForMatchingTransitionInContext(id, Optional.of(context), attributeMap));
+            val provider = value.get();
+            return buildEventForMultifactorProvider(context, service, authentication, id, provider);
         }
+
         LOGGER.warn("The authentication context cannot be satisfied and the requested event [{}] is unrecognized", id);
         return CollectionUtils.wrapSet(new Event(this, CasWebflowConstants.TRANSITION_ID_ERROR));
     }
+
 
     @Audit(action = "AUTHENTICATION_EVENT",
         actionResolverName = "AUTHENTICATION_EVENT_ACTION_RESOLVER",
@@ -113,6 +123,17 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolver extends
 
     private Set<Event> resumeFlow() {
         return CollectionUtils.wrapSet(new EventFactorySupport().success(this));
+    }
+
+    private static Set<Event> buildEventForMultifactorProvider(final RequestContext context, final RegisteredService service,
+                                                               final Authentication authentication,
+                                                               final String id,
+                                                               final MultifactorAuthenticationProvider provider) {
+        val attributeMap = MultifactorAuthenticationUtils.buildEventAttributeMap(authentication.getPrincipal(), Optional.of(service), provider);
+        LOGGER.trace("Event attribute map for [{}] is [{}]", id, attributeMap);
+        val resultEvent = MultifactorAuthenticationUtils.validateEventIdForMatchingTransitionInContext(id, Optional.of(context), attributeMap);
+        LOGGER.trace("Finalized event for multifactor provider  [{}] is [{}]", id, resultEvent);
+        return CollectionUtils.wrapSet(resultEvent);
     }
 
     @Override

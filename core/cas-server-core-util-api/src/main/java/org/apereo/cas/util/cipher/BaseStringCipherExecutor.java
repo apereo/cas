@@ -145,7 +145,8 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
                 setSecretKeyEncryptionKey(EncodingUtils.generateJsonWebKey(secretKeyToUse));
             }
             setContentEncryptionAlgorithmIdentifier(contentEncryptionAlgorithmIdentifier);
-            LOGGER.trace("Initialized cipher encryption sequence via content encryption [{}] and algorithm [{}]", this.contentEncryptionAlgorithmIdentifier, this.encryptionAlgorithm);
+            LOGGER.trace("Initialized cipher encryption sequence via content encryption [{}] and algorithm [{}]",
+                this.contentEncryptionAlgorithmIdentifier, this.encryptionAlgorithm);
         }
     }
 

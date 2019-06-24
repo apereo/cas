@@ -35,4 +35,6 @@ public class DefaultRegisteredServiceMultifactorPolicy implements RegisteredServ
     private String principalAttributeValueToMatch;
 
     private boolean bypassEnabled;
+
+    private boolean forceExecution;
 }

@@ -15,7 +15,8 @@ sourceSets {
      */
     bootRun {
         resources {
-            srcDirs new File("//etc/cas/templates/"), new File("${project(":webapp").getProjectDir()}/cas-server-webapp-resources/src/main/resources/")
+            srcDirs new File("//etc/cas/templates/"),
+                    new File("${project(":webapp").getProjectDir()}/cas-server-webapp-resources/src/main/resources/")
         }
     }
 }
