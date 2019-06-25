@@ -50,4 +50,9 @@ echo "Home directory: $HOME"
 echo "Gradle Home directory:"
 ./gradlew gradleHome --no-daemon
 
+rvm install 2.6.3
+rvm use 2.1.1
+ruby -v
+which ruby
+
 echo -e "Configured build environment\n"
