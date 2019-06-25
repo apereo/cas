@@ -20,7 +20,8 @@ public class ClientIpDeviceFingerprintComponentExtractor implements DeviceFinger
     private int order = LOWEST_PRECEDENCE;
 
     @Override
-    public Optional<String> extractComponent(final String principal, final RequestContext context,
+    public Optional<String> extractComponent(final String principal,
+                                             final RequestContext context,
                                              final boolean isNew) {
         return Optional.ofNullable(ClientInfoHolder.getClientInfo()).map(ClientInfo::getClientIpAddress);
     }

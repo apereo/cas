@@ -3,6 +3,8 @@ package org.apereo.cas.trusted.config;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.trusted.authentication.DefaultMultifactorAuthenticationTrustedDeviceBypassEvaluator;
+import org.apereo.cas.trusted.authentication.MultifactorAuthenticationTrustedDeviceBypassEvaluator;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.web.flow.MultifactorAuthenticationPrepareTrustDeviceViewAction;
 import org.apereo.cas.trusted.web.flow.MultifactorAuthenticationSetTrustAction;
@@ -12,6 +14,7 @@ import org.apereo.cas.trusted.web.flow.fingerprint.DeviceFingerprintStrategy;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -48,28 +51,40 @@ public class MultifactorAuthnTrustWebflowConfiguration {
     @Qualifier("servicesManager")
     private ObjectProvider<ServicesManager> servicesManager;
 
+    @ConditionalOnMissingBean(name = "mfaTrustedDeviceBypassEvaluator")
+    @Bean
+    public MultifactorAuthenticationTrustedDeviceBypassEvaluator mfaTrustedDeviceBypassEvaluator() {
+        return new DefaultMultifactorAuthenticationTrustedDeviceBypassEvaluator(registeredServiceAccessStrategyEnforcer.getIfAvailable());
+    }
+    
+    @ConditionalOnMissingBean(name = "mfaSetTrustAction")
     @Bean
     public Action mfaSetTrustAction() {
         return new MultifactorAuthenticationSetTrustAction(mfaTrustEngine.getIfAvailable(),
             deviceFingerprintStrategy.getIfAvailable(),
             casProperties.getAuthn().getMfa().getTrusted(),
-            registeredServiceAccessStrategyEnforcer.getIfAvailable());
+            registeredServiceAccessStrategyEnforcer.getIfAvailable(),
+            mfaTrustedDeviceBypassEvaluator());
     }
 
+    @ConditionalOnMissingBean(name = "mfaVerifyTrustAction")
     @Bean
     public Action mfaVerifyTrustAction() {
         return new MultifactorAuthenticationVerifyTrustAction(mfaTrustEngine.getIfAvailable(),
             deviceFingerprintStrategy.getIfAvailable(),
             casProperties.getAuthn().getMfa().getTrusted(),
-            registeredServiceAccessStrategyEnforcer.getIfAvailable());
+            registeredServiceAccessStrategyEnforcer.getIfAvailable(),
+            mfaTrustedDeviceBypassEvaluator());
     }
 
+    @ConditionalOnMissingBean(name = "mfaPrepareTrustDeviceViewAction")
     @Bean
     public Action mfaPrepareTrustDeviceViewAction() {
         return new MultifactorAuthenticationPrepareTrustDeviceViewAction(mfaTrustEngine.getIfAvailable(),
             deviceFingerprintStrategy.getIfAvailable(),
             casProperties.getAuthn().getMfa().getTrusted(),
             registeredServiceAccessStrategyEnforcer.getIfAvailable(),
-            servicesManager.getIfAvailable());
+            servicesManager.getIfAvailable(),
+            mfaTrustedDeviceBypassEvaluator());
     }
 }

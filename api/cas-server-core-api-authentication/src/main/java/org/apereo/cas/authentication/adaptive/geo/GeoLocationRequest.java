@@ -7,6 +7,8 @@ import lombok.Setter;
 import lombok.ToString;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.Serializable;
+
 /**
  * This is {@link GeoLocationRequest}.
  *
@@ -18,7 +20,9 @@ import org.apache.commons.lang3.StringUtils;
 @NoArgsConstructor
 @Setter
 @EqualsAndHashCode(exclude = {"accuracy", "timestamp"})
-public class GeoLocationRequest {
+public class GeoLocationRequest implements Serializable {
+
+    private static final long serialVersionUID = -3330957747025206526L;
 
     private String latitude;
 

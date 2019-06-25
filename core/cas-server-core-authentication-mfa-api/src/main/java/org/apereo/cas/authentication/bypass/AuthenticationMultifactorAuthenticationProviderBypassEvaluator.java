@@ -31,9 +31,9 @@ public class AuthenticationMultifactorAuthenticationProviderBypassEvaluator exte
 
     @Override
     public boolean shouldMultifactorAuthenticationProviderExecuteInternal(final Authentication authentication,
-                                                                  final RegisteredService registeredService,
-                                                                  final MultifactorAuthenticationProvider provider,
-                                                                  final HttpServletRequest request) {
+                                                                          final RegisteredService registeredService,
+                                                                          final MultifactorAuthenticationProvider provider,
+                                                                          final HttpServletRequest request) {
         val principal = authentication.getPrincipal();
         val bypassByAuthn = locateMatchingAttributeBasedOnAuthenticationAttributes(bypassProperties, authentication);
         if (bypassByAuthn) {
