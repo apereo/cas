@@ -238,11 +238,24 @@ Identical to inline groovy attribute definitions, except the groovy script can a
     "@class" : "org.apereo.cas.services.ReturnMappedAttributeReleasePolicy",
     "allowedAttributes" : {
       "@class" : "java.util.TreeMap",
-      "uid" : "file:/etc/cas/uid-for-sample-service.groovy"
+      "uid" : "file:/etc/cas/sample.groovy"
     }
   }
 }
 ```
+
+The `sample.groovy` script itself may have the following outline:
+
+```groovy
+import java.util.*
+
+def run(final Object... args) {
+    def attributes = args[0]
+    def logger = args[1]
+    logger.debug("Current attributes are {}", attributes)
+    return []
+}
+```         
 
 ### Groovy Script
 
@@ -286,12 +299,22 @@ The following parameters are passed to the script:
 | `principal`           | The object representing the authenticated principal.
 | `service`             | The object representing the corresponding service definition in the registry.
 
-### Javascript/Python/Groovy Script
+### Script Engines
 
-Let an external javascript, groovy or python script decide how principal attributes should be released.
-This approach takes advantage of scripting functionality built into the Java platform.
-While Javascript and Groovy should be natively supported by CAS, Python scripts may need
-to massage the CAS configuration to include the [Python modules](http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22jython-standalone%22).
+Use alternative script engine implementations and other programming languages to configure attribute release policies. This approach 
+takes advantage of scripting functionality built into the Java platform via additional libraries and drivers. While Groovy should be 
+natively supported by CAS, the following module is required in the overlay to include support for additional languages
+such as Python or Ruby, etc.
+
+```xml
+<dependency>
+    <groupId>org.apereo.cas</groupId>
+    <artifactId>cas-server-support-script-engines</artifactId>
+    <version>${cas.version}</version>
+</dependency>
+```  
+
+The service definition then may be designed as:
 
 ```json
 {
@@ -301,15 +324,14 @@ to massage the CAS configuration to include the [Python modules](http://search.m
   "id" : 300,
   "attributeReleasePolicy" : {
     "@class" : "org.apereo.cas.services.ScriptedRegisteredServiceAttributeReleasePolicy",
-    "scriptFile" : "classpath:/script.[py|js|groovy]"
+    "scriptFile" : "classpath:/script.[py|js|groovy|rb]"
   }
 }
 ```
 
-The scripts need to design a `run` function
-that receives a list of parameters. The collection of current attributes in process
-as well as a logger object are passed to this function. The result must produce a
-map whose `key`s are attributes names and whose `value`s are a list of attribute values.
+The scripts need to design a `run` function that receives a list of parameters. The collection of current attributes in process
+as well as a logger object are passed to this function. The result must produce a map whose `key`s are attributes names 
+and whose `value`s are a list of attribute values.
 
 As an example, the script itself may be designed in Groovy as:
 
@@ -323,6 +345,27 @@ def Map<String, List<Object>> run(final Object... args) {
     logger.debug("Current attributes received are {}", currentAttributes)
     return[username:["something"], likes:["cheese", "food"], id:[1234,2,3,4,5], another:"attribute"]
 }
+```
+
+Here's the same script written in Python:
+
+```python
+def run(*Params):
+  Attributes = Params[0]
+  Logger = Params[1]
+  // Calculate attributes and return a new dictionary of attributes...
+  return ...
+```
+
+Here's the same script written in Ruby:
+
+```ruby
+def run(*params)
+    attributes = params[0]
+    logger = params[1]    
+    // Calculate attributes and return a new map of attributes...
+    return ...
+end
 ```
 
 You are also allowed to stuff inlined groovy scripts into the `scriptFile` attribute. The script

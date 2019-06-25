@@ -4,21 +4,26 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.ResourceUtils;
+import org.apereo.cas.util.scripting.ExecutableCompiledGroovyScript;
+import org.apereo.cas.util.scripting.GroovyShellScript;
 import org.apereo.cas.util.scripting.ScriptingUtils;
+import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.Map;
+import javax.persistence.PostLoad;
+import javax.persistence.Transient;
 
 /**
  * Resolves the username for the service to be the default principal id.
@@ -38,60 +43,54 @@ public class GroovyRegisteredServiceUsernameProvider extends BaseRegisteredServi
 
     private String groovyScript;
 
-    private static Object getGroovyAttributeValue(final Principal principal, final Service service, final String script) {
-        val args = CollectionUtils.wrap("attributes", principal.getAttributes(),
-            "id", principal.getId(),
-            "service", service,
-            "logger", LOGGER);
-        return ScriptingUtils.executeGroovyShellScript(script, (Map) args, Object.class);
+    @JsonIgnore
+    @Transient
+    @org.springframework.data.annotation.Transient
+    private transient ExecutableCompiledGroovyScript executableScript;
+
+    @JsonCreator
+    public GroovyRegisteredServiceUsernameProvider(@JsonProperty("groovyScript") final String script) {
+        this.groovyScript = script;
+        initializeWatchableScriptIfNeeded();
+    }
+
+    @PostLoad
+    @SneakyThrows
+    private void initializeWatchableScriptIfNeeded() {
+        if (this.executableScript == null) {
+            val matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(groovyScript);
+            val matcherFile = ScriptingUtils.getMatcherForExternalGroovyScript(groovyScript);
+
+            if (matcherFile.find()) {
+                val resource = ResourceUtils.getRawResourceFrom(matcherFile.group(1));
+                this.executableScript = new WatchableGroovyScriptResource(resource);
+            } else if (matcherInline.find()) {
+                this.executableScript = new GroovyShellScript(matcherInline.group(1));
+            }
+        }
     }
 
     @Override
     public String resolveUsernameInternal(final Principal principal, final Service service, final RegisteredService registeredService) {
         if (StringUtils.isNotBlank(this.groovyScript)) {
-            val matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(this.groovyScript);
-            val matcherFile = ScriptingUtils.getMatcherForExternalGroovyScript(this.groovyScript);
-            if (matcherInline.find()) {
-                return resolveUsernameFromInlineGroovyScript(principal, service, matcherInline.group(1));
-            }
-            if (matcherFile.find()) {
-                return resolveUsernameFromExternalGroovyScript(principal, service, matcherFile.group(1));
+            initializeWatchableScriptIfNeeded();
+            val result = getGroovyAttributeValue(principal, service);
+            if (result != null) {
+                LOGGER.debug("Found username [{}] from script", result);
+                return result.toString();
             }
         }
         LOGGER.warn("Groovy script [{}] is not valid. CAS will switch to use the default principal identifier [{}]", this.groovyScript, principal.getId());
         return principal.getId();
     }
 
-    private String resolveUsernameFromExternalGroovyScript(final Principal principal, final Service service, final String scriptFile) {
-        try {
-            LOGGER.debug("Found groovy script to execute");
-            val resourceFrom = ResourceUtils.getResourceFrom(scriptFile);
-            val script = IOUtils.toString(resourceFrom.getInputStream(), StandardCharsets.UTF_8);
-            val result = getGroovyAttributeValue(principal, service, script);
-            if (result != null) {
-                LOGGER.debug("Found username [{}] from script [{}]", result, scriptFile);
-                return result.toString();
-            }
-        } catch (final IOException e) {
-            LOGGER.error(e.getMessage(), e);
-        }
-        LOGGER.warn("Groovy script [{}] returned no value for username attribute. Fallback to default [{}]", this.groovyScript, principal.getId());
-        return principal.getId();
-    }
-
-    private String resolveUsernameFromInlineGroovyScript(final Principal principal, final Service service, final String script) {
-        try {
-            LOGGER.trace("Found groovy script to execute [{}]", this.groovyScript);
-            val result = getGroovyAttributeValue(principal, service, script);
-            if (result != null) {
-                LOGGER.debug("Found username [{}] from script [{}]", result, this.groovyScript);
-                return result.toString();
-            }
-        } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
-        }
-        LOGGER.warn("Groovy script [{}] returned no value for username attribute. Fallback to default [{}]", this.groovyScript, principal.getId());
-        return principal.getId();
+    private Object getGroovyAttributeValue(final Principal principal, final Service service) {
+        val args = CollectionUtils.<String, Object>wrap("attributes", principal.getAttributes(),
+            "id", principal.getId(),
+            "service", service,
+            "logger", LOGGER);
+        executableScript.setBinding(args);
+        return executableScript.execute(args.values().toArray(), Object.class);
     }
 
 }

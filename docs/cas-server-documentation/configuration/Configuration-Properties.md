@@ -3332,7 +3332,7 @@ prefixes for the `keystorePath` or `identityProviderMetadataPath` property).
 # Path/URL to delegated IdP metadata
 # cas.authn.pac4j.saml[0].identityProviderMetadataPath=
 
-# cas.authn.pac4j.saml[0].authnContextClassRef=
+# cas.authn.pac4j.saml[0].authnContextClassRef[0]=
 # cas.authn.pac4j.saml[0].authnContextComparisonType=
 # cas.authn.pac4j.saml[0].nameIdPolicyFormat=
 # cas.authn.pac4j.saml[0].forceAuth=false

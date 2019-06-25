@@ -3,9 +3,16 @@ package org.apereo.cas.services;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.ResourceUtils;
+import org.apereo.cas.util.scripting.ExecutableCompiledGroovyScript;
+import org.apereo.cas.util.scripting.GroovyShellScript;
 import org.apereo.cas.util.scripting.ScriptingUtils;
+import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -13,17 +20,15 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.io.FileUtils;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
+import javax.persistence.PostLoad;
+import javax.persistence.Transient;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.regex.Matcher;
 
 /**
  * Return a collection of allowed attributes for the principal, but additionally,
@@ -45,67 +50,15 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
 
     private Map<String, Object> allowedAttributes = new TreeMap<>();
 
-    private static void mapSingleAttributeDefinition(final String attributeName, final String mappedAttributeName,
-                                                     final Object attributeValue, final Map<String, List<Object>> resolvedAttributes,
-                                                     final Map<String, List<Object>> attributesToRelease) {
-        val matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(mappedAttributeName);
-        val matcherFile = ScriptingUtils.getMatcherForExternalGroovyScript(mappedAttributeName);
-        if (matcherInline.find()) {
-            LOGGER.debug("Mapped attribute [{}] is an inlined groovy script", mappedAttributeName);
-            processInlineGroovyAttribute(resolvedAttributes, attributesToRelease, matcherInline, attributeName);
-        } else if (matcherFile.find()) {
-            LOGGER.debug("Mapped attribute [{}] is an external groovy script", mappedAttributeName);
-            processFileBasedGroovyAttributes(resolvedAttributes, attributesToRelease, matcherFile, attributeName);
-        } else {
-            if (attributeValue != null) {
-                LOGGER.debug("Found attribute [{}] in the list of allowed attributes, mapped to the name [{}]",
-                    attributeName, mappedAttributeName);
-                attributesToRelease.put(mappedAttributeName, CollectionUtils.toCollection(attributeValue, ArrayList.class));
-            } else {
-                LOGGER.warn("Could not find value for mapped attribute [{}] that is based off of [{}] in the allowed attributes list. "
-                        + "Ensure the original attribute [{}] is retrieved and contains at least a single value. Attribute [{}] "
-                        + "will and can not be released without the presence of a value.", mappedAttributeName, attributeName,
-                    attributeName, mappedAttributeName);
-            }
-        }
-    }
+    @JsonIgnore
+    @Transient
+    @org.springframework.data.annotation.Transient
+    private transient Map<String, ExecutableCompiledGroovyScript> attributeScriptCache = new LinkedHashMap<>();
 
-    private static void processFileBasedGroovyAttributes(final Map<String, List<Object>> resolvedAttributes,
-                                                         final Map<String, List<Object>> attributesToRelease,
-                                                         final Matcher matcherFile, final String key) {
-        try {
-            LOGGER.trace("Found groovy script to execute for attribute mapping [{}]", key);
-            val file = new File(matcherFile.group(2));
-            val script = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
-            val result = getGroovyAttributeValue(script, resolvedAttributes);
-            if (result != null) {
-                LOGGER.debug("Mapped attribute [{}] to [{}] from script", key, result);
-                val converted = CollectionUtils.toCollection(result, ArrayList.class);
-                attributesToRelease.put(key, converted);
-            } else {
-                LOGGER.warn("Groovy-scripted attribute returned no value for [{}]", key);
-            }
-        } catch (final IOException e) {
-            LOGGER.error(e.getMessage(), e);
-        }
-    }
-
-    private static void processInlineGroovyAttribute(final Map<String, List<Object>> resolvedAttributes,
-                                                     final Map<String, List<Object>> attributesToRelease,
-                                                     final Matcher matcherInline, final String attributeName) {
-        LOGGER.trace("Found inline groovy script to execute for attribute mapping [{}]", attributeName);
-        val result = getGroovyAttributeValue(matcherInline.group(1), resolvedAttributes);
-        if (result != null) {
-            LOGGER.debug("Mapped attribute [{}] to [{}] from script", attributeName, result);
-            attributesToRelease.put(attributeName, CollectionUtils.wrapList(result));
-        } else {
-            LOGGER.warn("Groovy-scripted attribute returned no value for [{}]", attributeName);
-        }
-    }
-
-    private static Object getGroovyAttributeValue(final String groovyScript, final Map<String, List<Object>> resolvedAttributes) {
-        val args = CollectionUtils.wrap("attributes", resolvedAttributes, "logger", LOGGER);
-        return ScriptingUtils.executeGroovyShellScript(groovyScript, args, Object.class);
+    @JsonCreator
+    public ReturnMappedAttributeReleasePolicy(@JsonProperty("allowedAttributes") final Map<String, Object> attributes) {
+        this.allowedAttributes = attributes;
+        initializeWatchableScriptIfNeeded();
     }
 
     /**
@@ -117,9 +70,36 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
         return new TreeMap<>(this.allowedAttributes);
     }
 
+
+    @PostLoad
+    private void initializeWatchableScriptIfNeeded() {
+        getAllowedAttributes().forEach((attributeName, value) -> {
+            val mappedAttributes = CollectionUtils.wrap(value);
+            mappedAttributes.forEach(mapped -> {
+                val mappedAttributeName = mapped.toString();
+                if (!attributeScriptCache.containsKey(mappedAttributeName)) {
+                    val matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(mappedAttributeName);
+                    val matcherFile = ScriptingUtils.getMatcherForExternalGroovyScript(mappedAttributeName);
+                    if (matcherInline.find()) {
+                        attributeScriptCache.put(mappedAttributeName, new GroovyShellScript(matcherInline.group(1)));
+                    } else if (matcherFile.find()) {
+                        try {
+                            val resource = ResourceUtils.getRawResourceFrom(matcherFile.group(2));
+                            attributeScriptCache.put(mappedAttributeName, new WatchableGroovyScriptResource(resource));
+                        } catch (final Exception e) {
+                            LOGGER.error(e.getMessage(), e);
+                        }
+                    }
+                }
+            });
+        });
+    }
+
     @Override
-    public Map<String, List<Object>> getAttributesInternal(final Principal principal, final Map<String, List<Object>> attrs,
-                                                           final RegisteredService registeredService, final Service selectedService) {
+    public Map<String, List<Object>> getAttributesInternal(final Principal principal,
+                                                           final Map<String, List<Object>> attrs,
+                                                           final RegisteredService registeredService,
+                                                           final Service selectedService) {
         return authorizeReleaseOfAllowedAttributes(principal, attrs, registeredService, selectedService);
     }
 
@@ -136,6 +116,8 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
                                                                             final Map<String, List<Object>> attrs,
                                                                             final RegisteredService registeredService,
                                                                             final Service selectedService) {
+        initializeWatchableScriptIfNeeded();
+
         val resolvedAttributes = new TreeMap<String, List<Object>>(String.CASE_INSENSITIVE_ORDER);
         resolvedAttributes.putAll(attrs);
         val attributesToRelease = new HashMap<String, List<Object>>();
@@ -156,5 +138,43 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
             });
         });
         return attributesToRelease;
+    }
+
+    private void mapSingleAttributeDefinition(final String attributeName,
+                                              final String mappedAttributeName,
+                                              final Object attributeValue,
+                                              final Map<String, List<Object>> resolvedAttributes,
+                                              final Map<String, List<Object>> attributesToRelease) {
+        if (attributeScriptCache.containsKey(mappedAttributeName)) {
+            val script = attributeScriptCache.get(mappedAttributeName);
+            val args = CollectionUtils.wrap("attributes", resolvedAttributes, "logger", LOGGER);
+            script.setBinding(args);
+            val result = script.execute(args.values().toArray(), Object.class);
+            if (result != null) {
+                LOGGER.debug("Mapped attribute [{}] to [{}] from script", attributeName, result);
+                attributesToRelease.put(attributeName, CollectionUtils.wrapList(result));
+            } else {
+                LOGGER.warn("Groovy-scripted attribute returned no value for [{}]", attributeName);
+            }
+        } else {
+            mapSimpleSingleAttributeDefinition(attributeName, mappedAttributeName, attributeValue, attributesToRelease);
+        }
+    }
+
+    private static void mapSimpleSingleAttributeDefinition(final String attributeName,
+                                                           final String mappedAttributeName,
+                                                           final Object attributeValue,
+                                                           final Map<String, List<Object>> attributesToRelease) {
+        if (attributeValue != null) {
+            LOGGER.debug("Found attribute [{}] in the list of allowed attributes, mapped to the name [{}]",
+                attributeName, mappedAttributeName);
+            val values = CollectionUtils.toCollection(attributeValue, ArrayList.class);
+            attributesToRelease.put(mappedAttributeName, values);
+        } else {
+            LOGGER.warn("Could not find value for mapped attribute [{}] that is based off of [{}] in the allowed attributes list. "
+                    + "Ensure the original attribute [{}] is retrieved and contains at least a single value. Attribute [{}] "
+                    + "will and can not be released without the presence of a value.", mappedAttributeName, attributeName,
+                attributeName, mappedAttributeName);
+        }
     }
 }

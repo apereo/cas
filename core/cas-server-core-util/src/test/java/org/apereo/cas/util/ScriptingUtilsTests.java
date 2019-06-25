@@ -33,7 +33,8 @@ public class ScriptingUtilsTests {
 
     @Test
     public void verifyGroovyScriptShellExecution() {
-        val result = ScriptingUtils.executeGroovyShellScript("return name", CollectionUtils.wrap("name", "casuser"), String.class);
+        val script = ScriptingUtils.parseGroovyShellScript("return name");
+        val result = ScriptingUtils.executeGroovyShellScript(script, CollectionUtils.wrap("name", "casuser"), String.class);
         assertEquals("casuser", result);
     }
 

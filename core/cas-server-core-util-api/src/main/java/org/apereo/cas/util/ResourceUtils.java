@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.Objects;
 import java.util.jar.JarFile;
 
 import static org.springframework.util.ResourceUtils.CLASSPATH_URL_PREFIX;
@@ -107,7 +108,8 @@ public class ResourceUtils {
      */
     public static boolean doesResourceExist(final String location) {
         try {
-            return getResourceFrom(location) != null;
+            getResourceFrom(location);
+            return true;
         } catch (final Exception e) {
             LOGGER.trace(e.getMessage(), e);
         }
@@ -172,7 +174,7 @@ public class ResourceUtils {
         val file = org.springframework.util.ResourceUtils.getFile(url);
 
         val casDirectory = new File(FileUtils.getTempDirectory(), "cas");
-        val destination = new File(casDirectory, resource.getFilename());
+        val destination = new File(casDirectory, Objects.requireNonNull(resource.getFilename()));
         if (isDirectory) {
             LOGGER.trace("Creating resource directory [{}]", destination);
             FileUtils.forceMkdir(destination);
@@ -229,5 +231,21 @@ public class ResourceUtils {
      */
     public static boolean isFile(final String resource) {
         return StringUtils.isNotBlank(resource) && resource.startsWith(FILE_URL_PREFIX);
+    }
+
+    /**
+     * Is file boolean.
+     *
+     * @param resource the resource
+     * @return the boolean
+     */
+    public static boolean isFile(final Resource resource) {
+        try {
+            resource.getFile();
+            return true;
+        } catch (final Exception e) {
+            LOGGER.trace(e.getMessage());
+        }
+        return false;
     }
 }

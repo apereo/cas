@@ -7,7 +7,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ArrayListMultimap;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
+import org.springframework.core.io.ClassPathResource;
 
 import java.io.File;
 import java.io.IOException;
@@ -104,7 +106,8 @@ public class ReturnMappedAttributeReleasePolicyTests {
     @Test
     public void verifyExternalGroovyAttributes() throws Exception {
         val file = new File(FileUtils.getTempDirectoryPath(), "script.groovy");
-        FileUtils.write(file, "logger.debug('Running'); return ['DOMAIN\\\\' + attributes['uid'][0], 'testing']", StandardCharsets.UTF_8);
+        val script = IOUtils.toString(new ClassPathResource("GroovyMappedAttribute.groovy").getInputStream(), StandardCharsets.UTF_8);
+        FileUtils.write(file, script, StandardCharsets.UTF_8);
         val allowedAttributes = ArrayListMultimap.<String, Object>create();
         allowedAttributes.put("attr1", "file:" + file.getCanonicalPath());
         val wrap = CollectionUtils.<String, Object>wrap(allowedAttributes);
