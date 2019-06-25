@@ -1,6 +1,7 @@
 package org.apereo.cas.trusted.config;
 
 import org.apereo.cas.CipherExecutor;
+import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.trusted.util.cipher.CookieDeviceFingerprintComponentCipherExecutor;
 import org.apereo.cas.trusted.web.flow.fingerprint.ClientIpDeviceFingerprintComponentExtractor;
@@ -8,6 +9,7 @@ import org.apereo.cas.trusted.web.flow.fingerprint.CookieDeviceFingerprintCompon
 import org.apereo.cas.trusted.web.flow.fingerprint.DefaultDeviceFingerprintStrategy;
 import org.apereo.cas.trusted.web.flow.fingerprint.DeviceFingerprintComponentExtractor;
 import org.apereo.cas.trusted.web.flow.fingerprint.DeviceFingerprintStrategy;
+import org.apereo.cas.trusted.web.flow.fingerprint.GeoLocationDeviceFingerprintComponentExtractor;
 import org.apereo.cas.trusted.web.flow.fingerprint.UserAgentDeviceFingerprintComponentExtractor;
 import org.apereo.cas.trusted.web.support.TrustedDeviceCookieRetrievingCookieGenerator;
 import org.apereo.cas.util.gen.Base64RandomStringGenerator;
@@ -20,8 +22,11 @@ import org.apereo.cas.web.support.mgmr.EncryptedCookieValueManager;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -47,48 +52,54 @@ public class MultifactorAuthnTrustedDeviceFingerprintConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
+    @Autowired
+    @Qualifier("geoLocationService")
+    private ObjectProvider<GeoLocationService> geoLocationService;
+    
+    @ConditionalOnProperty(prefix = "cas.authn.mfa.trusted.deviceFingerprint.clientIp", name = "enabled", havingValue = "true")
     @Bean
     @RefreshScope
-    public DeviceFingerprintComponentExtractor deviceFingerprintClientIpComponent() {
+    @ConditionalOnMissingBean(name = "deviceFingerprintClientIpComponentExtractor")
+    public DeviceFingerprintComponentExtractor deviceFingerprintClientIpComponentExtractor() {
         val properties = casProperties.getAuthn().getMfa().getTrusted().getDeviceFingerprint().getClientIp();
-        if (properties.isEnabled()) {
-            val component = new ClientIpDeviceFingerprintComponentExtractor();
-            component.setOrder(properties.getOrder());
-            return component;
-        }
-
-        LOGGER.info("The client ip is not being included when creating MFA Trusted Device Fingerprints");
-        return DeviceFingerprintComponentExtractor.noOp();
+        val component = new ClientIpDeviceFingerprintComponentExtractor();
+        component.setOrder(properties.getOrder());
+        return component;
     }
 
     @Bean
     @RefreshScope
-    public DeviceFingerprintComponentExtractor deviceFingerprintCookieComponent() {
+    @ConditionalOnMissingBean(name = "deviceFingerprintGeoLocationComponentExtractor")
+    @ConditionalOnProperty(prefix = "cas.authn.mfa.trusted.deviceFingerprint.geolocation", name = "enabled", havingValue = "true")
+    public DeviceFingerprintComponentExtractor deviceFingerprintGeoLocationComponentExtractor() {
+        val properties = casProperties.getAuthn().getMfa().getTrusted().getDeviceFingerprint().getGeolocation();
+        val component = new GeoLocationDeviceFingerprintComponentExtractor(geoLocationService.getIfAvailable());
+        component.setOrder(properties.getOrder());
+        return component;
+    }
+
+    @ConditionalOnProperty(prefix = "cas.authn.mfa.trusted.deviceFingerprint.cookie", name = "enabled", havingValue = "true")
+    @Bean
+    @RefreshScope
+    @ConditionalOnMissingBean(name = "deviceFingerprintCookieComponentExtractor")
+    public DeviceFingerprintComponentExtractor deviceFingerprintCookieComponentExtractor() {
         val properties = casProperties.getAuthn().getMfa().getTrusted().getDeviceFingerprint().getCookie();
-        if (properties.isEnabled()) {
-            val component = new CookieDeviceFingerprintComponentExtractor(
-                deviceFingerprintCookieGenerator(),
-                deviceFingerprintCookieRandomStringGenerator());
-            component.setOrder(properties.getOrder());
-            return component;
-        }
-
-        LOGGER.info("A persistent cookie is not being generated when creating MFA Trusted Device Fingerprints");
-        return DeviceFingerprintComponentExtractor.noOp();
+        val component = new CookieDeviceFingerprintComponentExtractor(
+            deviceFingerprintCookieGenerator(),
+            deviceFingerprintCookieRandomStringGenerator());
+        component.setOrder(properties.getOrder());
+        return component;
     }
 
+    @ConditionalOnProperty(prefix = "cas.authn.mfa.trusted.deviceFingerprint.userAgent", name = "enabled", havingValue = "true")
     @Bean
     @RefreshScope
-    public DeviceFingerprintComponentExtractor deviceFingerprintUserAgentComponent() {
+    @ConditionalOnMissingBean(name = "deviceFingerprintUserAgentComponentExtractor")
+    public DeviceFingerprintComponentExtractor deviceFingerprintUserAgentComponentExtractor() {
         val properties = casProperties.getAuthn().getMfa().getTrusted().getDeviceFingerprint().getUserAgent();
-        if (properties.isEnabled()) {
-            val component = new UserAgentDeviceFingerprintComponentExtractor();
-            component.setOrder(properties.getOrder());
-            return component;
-        }
-
-        LOGGER.info("User-Agent is not being included when creating MFA Trusted Device Fingerprints");
-        return DeviceFingerprintComponentExtractor.noOp();
+        val component = new UserAgentDeviceFingerprintComponentExtractor();
+        component.setOrder(properties.getOrder());
+        return component;
     }
 
     @ConditionalOnMissingBean(name = BEAN_DEVICE_FINGERPRINT_STRATEGY)
@@ -117,6 +128,7 @@ public class MultifactorAuthnTrustedDeviceFingerprintConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "deviceFingerprintCookieValueManager")
     public CookieValueManager deviceFingerprintCookieValueManager() {
         return new EncryptedCookieValueManager(deviceFingerprintCookieCipherExecutor());
     }

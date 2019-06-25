@@ -36,16 +36,22 @@ public abstract class AbstractGeoLocationService implements GeoLocationService {
 
     @Override
     public GeoLocationResponse locate(final String clientIp, final GeoLocationRequest location) {
-        LOGGER.debug("Attempting to find geolocation for [{}]", clientIp);
+        LOGGER.trace("Attempting to find geolocation for [{}]", clientIp);
         val loc = locate(clientIp);
 
         if (loc == null && location != null) {
-            LOGGER.debug("Attempting to find geolocation for [{}]", location);
+            LOGGER.trace("Attempting to find geolocation for [{}]", location);
             if (StringUtils.isNotBlank(location.getLatitude()) && StringUtils.isNotBlank(location.getLongitude())) {
                 return locate(Double.valueOf(location.getLatitude()), Double.valueOf(location.getLongitude()));
             }
         }
         return loc;
+    }
+
+    @Override
+    public GeoLocationResponse locate(final GeoLocationRequest request) {
+        return locate(Double.parseDouble(request.getLatitude()),
+            Double.parseDouble(request.getLongitude()));
     }
 
     @Override
@@ -59,7 +65,7 @@ public abstract class AbstractGeoLocationService implements GeoLocationService {
             return null;
         } catch (final Exception e) {
             if (StringUtils.isNotBlank(ipStackAccessKey)) {
-                val url = String.format("http://api.ipstack.com/%s?access_key=%s", address, ipStackAccessKey);
+                val url = String.format("https://api.ipstack.com/%s?access_key=%s", address, ipStackAccessKey);
                 HttpResponse response = null;
                 try {
                     response = HttpUtils.executeGet(url);

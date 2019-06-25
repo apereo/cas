@@ -2587,13 +2587,16 @@ under the configuration key `cas.authn.mfa.trusted.dynamoDb`.
 #### Trusted Device Fingerprint
 
 ```properties
-# cas.authn.mfa.trusted.deviceFingerprint.componentSeparator=@
+# cas.authn.mfa.trusted.deviceFingerprint.componentSeparator=@  
+
 # cas.authn.mfa.trusted.deviceFingerprint.cookie.enabled=true
 # cas.authn.mfa.trusted.deviceFingerprint.cookie.order=1
+
 # cas.authn.mfa.trusted.deviceFingerprint.clientIp.enabled=true
 # cas.authn.mfa.trusted.deviceFingerprint.clientIp.order=2
-# cas.authn.mfa.trusted.deviceFingerprint.userAgent.enabled=false
-# cas.authn.mfa.trusted.deviceFingerprint.userAgent.order=3
+
+# cas.authn.mfa.trusted.deviceFingerprint.geolocation.enabled=false
+# cas.authn.mfa.trusted.deviceFingerprint.geolocation.order=4
 ```
 
 The device fingerprint cookie component can be configured with the common cookie properties found [here](Configuration-Properties-Common.html#cookie-properties) under the configuration key `cas.authn.mfa.trusted.deviceFingerprint.cookie`.
