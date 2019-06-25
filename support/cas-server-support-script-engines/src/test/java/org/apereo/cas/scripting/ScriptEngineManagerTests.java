@@ -52,7 +52,7 @@ public class ScriptEngineManagerTests {
         runAttributeFilterInternallyFor("classpath:attributefilter.rb");
     }
 
-    private void runAttributeFilterInternallyFor(final String s) {
+    private static void runAttributeFilterInternallyFor(final String s) {
         val filter = new ScriptedRegisteredServiceAttributeReleasePolicy(s);
         val principal = CoreAuthenticationTestUtils.getPrincipal("cas", Collections.singletonMap("attribute", List.of("value")));
         val attrs = filter.getAttributes(principal,
@@ -61,7 +61,7 @@ public class ScriptEngineManagerTests {
         assertEquals(attrs.size(), principal.getAttributes().size());
     }
     
-    private ScriptEngine getEngineNameFor(final String name) {
+    private static ScriptEngine getEngineNameFor(final String name) {
         val engineName = ScriptingUtils.getScriptEngineName(name);
         assertNotNull(engineName);
         return new ScriptEngineManager().getEngineByName(engineName);
