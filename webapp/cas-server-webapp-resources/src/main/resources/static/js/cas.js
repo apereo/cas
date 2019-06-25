@@ -5,33 +5,35 @@
 function requestGeoPosition() {
     // console.log('Requesting GeoLocation data from the browser...');
     if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(showGeoPosition, logGeoLocationError,
-            {maximumAge: 600000, timeout: 5000, enableHighAccuracy: true});
+        navigator.geolocation.watchPosition(showGeoPosition, logGeoLocationError,
+            {maximumAge: 600000, timeout: 8000, enableHighAccuracy: true});
     } else {
-        // console.log('Browser does not support Geo Location');
+        console.log('Browser does not support Geo Location');
     }
 }
 
 function logGeoLocationError(error) {
     switch (error.code) {
     case error.PERMISSION_DENIED:
-        // console.log('User denied the request for GeoLocation.');
+        console.log('User denied the request for GeoLocation.');
         break;
     case error.POSITION_UNAVAILABLE:
-        // console.log('Location information is unavailable.');
+        console.log('Location information is unavailable.');
         break;
     case error.TIMEOUT:
-        // console.log('The request to get user location timed out.');
+        console.log('The request to get user location timed out.');
         break;
     default:
-        // console.log('An unknown error occurred.');
+        console.log('An unknown error occurred.');
         break;
     }
 }
 
 function showGeoPosition(position) {
-    $('[name="geolocation"]').val(position.coords.latitude + ','
-        + position.coords.longitude + ',' + position.coords.accuracy + ',' + position.timestamp);
+    let loc = position.coords.latitude + ',' + position.coords.longitude
+        + ',' + position.coords.accuracy + ',' + position.timestamp;
+    console.log("Tracking geolocation for " + loc);
+    $('[name="geolocation"]').val(loc);
 }
 
 

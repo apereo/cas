@@ -44,6 +44,11 @@ public class DeviceFingerprintProperties implements Serializable {
      */
     private UserAgent userAgent = new UserAgent();
 
+    /**
+     * Configure usage of geo-location within trusted device fingerprints.
+     */
+    private GeoLocation geolocation = new GeoLocation();
+
     @Getter
     @Setter
     @RequiresModule(name = "cas-server-support-trusted-mfa")
@@ -104,6 +109,22 @@ public class DeviceFingerprintProperties implements Serializable {
         private static final int DEFAULT_ORDER = 3;
 
         public UserAgent() {
+            setEnabled(false);
+            setOrder(DEFAULT_ORDER);
+        }
+    }
+
+    @Getter
+    @Setter
+    @RequiresModule(name = "cas-server-support-trusted-mfa")
+    public static class GeoLocation extends BaseDeviceFingerprintComponentProperties {
+        private static final long serialVersionUID = -4125531035180836136L;
+        /**
+         * Default Order for GeoLocation component.
+         */
+        private static final int DEFAULT_ORDER = 4;
+
+        public GeoLocation() {
             setEnabled(false);
             setOrder(DEFAULT_ORDER);
         }

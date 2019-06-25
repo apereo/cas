@@ -60,9 +60,10 @@ public class MultifactorAuthenticationSetTrustAction extends AbstractAction {
         if (providedDeviceName) {
             if (!MultifactorAuthenticationTrustUtils.isMultifactorAuthenticationTrustedInScope(requestContext)) {
                 LOGGER.debug("Attempt to store trusted authentication record for [{}] as device [{}]", principal, deviceName);
+                val fingerprint = deviceFingerprintStrategy.determineFingerprint(principal, requestContext, true);
                 val record = MultifactorAuthenticationTrustRecord.newInstance(principal,
                     MultifactorAuthenticationTrustUtils.generateGeography(),
-                    deviceFingerprintStrategy.determineFingerprint(principal, requestContext, true));
+                    fingerprint);
                 record.setName(deviceName);
                 storage.set(record);
                 LOGGER.debug("Saved trusted authentication record for [{}] under [{}]", principal, record.getName());
