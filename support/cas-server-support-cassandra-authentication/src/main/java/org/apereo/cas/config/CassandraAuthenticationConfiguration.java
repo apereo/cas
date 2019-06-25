@@ -11,6 +11,7 @@ import org.apereo.cas.authentication.principal.PrincipalNameTransformerUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
 import org.apereo.cas.cassandra.CassandraSessionFactory;
+import org.apereo.cas.cassandra.DefaultCassandraSessionFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 
@@ -36,10 +37,6 @@ import org.springframework.context.annotation.Configuration;
 public class CassandraAuthenticationConfiguration {
 
     @Autowired
-    @Qualifier("cassandraSessionFactory")
-    private ObjectProvider<CassandraSessionFactory> cassandraSessionFactory;
-
-    @Autowired
     @Qualifier("servicesManager")
     private ObjectProvider<ServicesManager> servicesManager;
 
@@ -57,9 +54,17 @@ public class CassandraAuthenticationConfiguration {
 
     @Bean
     @RefreshScope
+    @ConditionalOnMissingBean(name = "cassandraAuthnSessionFactory")
+    public CassandraSessionFactory cassandraAuthnSessionFactory() {
+        val cassandra = casProperties.getAuthn().getCassandra();
+        return new DefaultCassandraSessionFactory(cassandra);
+    }
+
+    @Bean
+    @RefreshScope
     public CassandraRepository cassandraRepository() {
         val cassandra = casProperties.getAuthn().getCassandra();
-        return new DefaultCassandraRepository(cassandra, cassandraSessionFactory.getIfAvailable());
+        return new DefaultCassandraRepository(cassandra, cassandraAuthnSessionFactory());
     }
 
     @Bean
