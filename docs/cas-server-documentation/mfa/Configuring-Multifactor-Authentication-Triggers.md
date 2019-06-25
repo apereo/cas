@@ -61,7 +61,7 @@ The following fields are accepted by the policy definition
 | Field                 | Description
 |-----------------------|----------------------------------------------------------------------------------------
 | `multifactorAuthenticationProviders` | Set of multifactor provider ids that should trigger for this application.
-| `bypassEnabled`           | Whether multifactor authentication should be [bypassed](Configuring-Multifactor-Authentication-Bypass.md) for this service.
+| `bypassEnabled`           | Whether multifactor authentication should be [bypassed](Configuring-Multifactor-Authentication-Bypass.html) for this service.
 | `forceExecution`          | Whether multifactor authentication should forcefully trigger, even if the existing authentication context can be satisfied without MFA.
 
 ### Groovy Per Application
@@ -383,6 +383,7 @@ value can be an arbitrary regex pattern. See below to learn about how to configu
 
 In situations where authentication is delegated to CAS, most commonly via a [Shibboleth Identity Provider](https://shibboleth.net/products/identity-provider.html),  the entity id may be passed as a request parameter to CAS to be treated as a CAS registered service.
 This allows one to activate multifactor authentication policies based on the entity id that is registered
+This allows one to [activate multifactor authentication policies](#Per Application) based on the entity id that is registered
 in the CAS service registry. As a side benefit, the entity id can take advantage of all other CAS features
 such as access strategies and authorization rules simply because it's just another service definition known to CAS.
 

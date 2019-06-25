@@ -14,11 +14,13 @@ public enum ConsentReminderOptions {
      */
     ALWAYS(0),
     /**
-     * Always ask for consent.
+     * Ask for consent when there is modification in one of the attribute names or
+     * if consent is expired.
      */
     ATTRIBUTE_NAME(1),
     /**
-     * Always ask for consent.
+     * Ask for consent when there is modification in one of the attribute names,
+     * the values contain inside the attributes or if consent is expired.
      */
     ATTRIBUTE_VALUE(2);
 
