@@ -1,0 +1,21 @@
+description = "Apereo CAS Scripting Engine Drivers"
+dependencies {
+    implementation project(":core:cas-server-core-util-api")
+    implementation project(":core:cas-server-core-web-api")
+    implementation project(":core:cas-server-core-services-api")
+    implementation project(":core:cas-server-core-authentication-api")
+    implementation project(":core:cas-server-core-configuration-api")
+
+    implementation("org.python:jython-standalone:$jythonVersion") {
+        force = true
+    }
+    implementation("org.jruby:jruby-complete:$jrubyVersion") {
+        force = true
+    }
+
+    testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
+}
+
+
+

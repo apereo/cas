@@ -83,7 +83,7 @@ public class CasCoreAuthenticationPolicyConfiguration {
                 plan.registerAuthenticationPolicy(new UniquePrincipalAuthenticationPolicy(ticketRegistry.getIfAvailable()));
             } else if (!police.getGroovy().isEmpty()) {
                 LOGGER.trace("Activating authentication policy [{}]", GroovyScriptAuthenticationPolicy.class.getSimpleName());
-                police.getGroovy().forEach(groovy -> plan.registerAuthenticationPolicy(new GroovyScriptAuthenticationPolicy(resourceLoader, groovy.getScript())));
+                police.getGroovy().forEach(groovy -> plan.registerAuthenticationPolicy(new GroovyScriptAuthenticationPolicy(groovy.getScript())));
             } else if (!police.getRest().isEmpty()) {
                 LOGGER.trace("Activating authentication policy [{}]", RestfulAuthenticationPolicy.class.getSimpleName());
                 police.getRest().forEach(r -> plan.registerAuthenticationPolicy(new RestfulAuthenticationPolicy(new RestTemplate(), r.getEndpoint())));

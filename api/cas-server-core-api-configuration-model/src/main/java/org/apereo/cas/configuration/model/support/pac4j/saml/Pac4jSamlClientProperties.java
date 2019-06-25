@@ -102,7 +102,7 @@ public class Pac4jSamlClientProperties extends Pac4jBaseClientProperties {
     /**
      * Requested authentication context class in authn requests.
      */
-    private String authnContextClassRef;
+    private List<String> authnContextClassRef = new ArrayList<>();
 
     /**
      * Specifies the comparison rule that should be used to evaluate the specified authentication methods.
