@@ -1,0 +1,69 @@
+package org.apereo.cas.scripting;
+
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.services.ScriptedRegisteredServiceAttributeReleasePolicy;
+import org.apereo.cas.util.scripting.ScriptingUtils;
+
+import lombok.val;
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+
+import java.util.Collections;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+/**
+ * This is {@link ScriptEngineManagerTests}.
+ *
+ * @author Misagh Moayyed
+ * @since 6.1.0
+ */
+@SpringBootTest(classes = {
+    RefreshAutoConfiguration.class,
+    AopAutoConfiguration.class
+})
+public class ScriptEngineManagerTests {
+    @Test
+    public void verifyEngineNames() {
+        assertNotNull(getEngineNameFor("script.py"));
+        assertNotNull(getEngineNameFor("script.groovy"));
+        assertNotNull(getEngineNameFor("script.js"));
+        assertNotNull(getEngineNameFor("script.rb"));
+    }
+
+    @Test
+    public void verifyPythonAttributeFilter() {
+        runAttributeFilterInternallyFor("classpath:attributefilter.py");
+    }
+    
+    @Test
+    public void verifyGroovyAttributeFilter() {
+        runAttributeFilterInternallyFor("classpath:attributefilter.groovy");
+    }
+
+    @Test
+    public void verifyRubyAttributeFilter() {
+        runAttributeFilterInternallyFor("classpath:attributefilter.rb");
+    }
+
+    private void runAttributeFilterInternallyFor(final String s) {
+        val filter = new ScriptedRegisteredServiceAttributeReleasePolicy(s);
+        val principal = CoreAuthenticationTestUtils.getPrincipal("cas", Collections.singletonMap("attribute", List.of("value")));
+        val attrs = filter.getAttributes(principal,
+            CoreAuthenticationTestUtils.getService(),
+            CoreAuthenticationTestUtils.getRegisteredService());
+        assertEquals(attrs.size(), principal.getAttributes().size());
+    }
+    
+    private ScriptEngine getEngineNameFor(final String name) {
+        val engineName = ScriptingUtils.getScriptEngineName(name);
+        assertNotNull(engineName);
+        return new ScriptEngineManager().getEngineByName(engineName);
+    }
+}

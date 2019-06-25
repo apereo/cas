@@ -233,9 +233,15 @@ The outline of the script may be as follows:
 
 ```groovy
 import java.util.*
-logger.info "Attributes currently resolved: ${attributes}"
-def map =...
-return map
+
+def run(final Object... args) {
+    def attributes = args[0]
+    def logger = args[1]
+
+    logger.info "Attributes currently resolved: ${attributes}"
+    def map =...
+    return map
+}
 ```
 
 The parameters passed are as follows:

@@ -412,9 +412,9 @@ public class DelegatedClientFactory {
                 if (saml.getAssertionConsumerServiceIndex() >= 0) {
                     cfg.setAssertionConsumerServiceIndex(saml.getAssertionConsumerServiceIndex());
                 }
-                if (StringUtils.isNotBlank(saml.getAuthnContextClassRef())) {
+                if (!saml.getAuthnContextClassRef().isEmpty()) {
                     cfg.setComparisonType(saml.getAuthnContextComparisonType().toUpperCase());
-                    cfg.setAuthnContextClassRef(saml.getAuthnContextClassRef());
+                    cfg.setAuthnContextClassRefs(saml.getAuthnContextClassRef());
                 }
                 if (StringUtils.isNotBlank(saml.getKeystoreAlias())) {
                     cfg.setKeystoreAlias(saml.getKeystoreAlias());

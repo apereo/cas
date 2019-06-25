@@ -6,10 +6,8 @@ import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.core.io.ResourceLoader;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
@@ -27,16 +25,13 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Groovy")
 @SpringBootTest(classes = {RefreshAutoConfiguration.class})
 public class GroovyScriptAuthenticationPolicyTests {
-    @Autowired
-    private ResourceLoader resourceLoader;
-
     @Test
     public void verifyActionInlinedScriptPasses() throws Exception {
         val script = "groovy {"
             + " logger.info(principal.id)\n"
             + " return Optional.empty()\n"
             + '}';
-        val p = new GroovyScriptAuthenticationPolicy(resourceLoader, script);
+        val p = new GroovyScriptAuthenticationPolicy(script);
         assertTrue(p.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication(), new LinkedHashSet<>()));
     }
 
@@ -47,8 +42,9 @@ public class GroovyScriptAuthenticationPolicyTests {
             + " logger.info(principal.id)\n"
             + " return Optional.of(new AuthenticationException())\n"
             + '}';
-        val p = new GroovyScriptAuthenticationPolicy(resourceLoader, script);
-        assertThrows(GeneralSecurityException.class, () -> p.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication(), new LinkedHashSet<>()));
+        val p = new GroovyScriptAuthenticationPolicy(script);
+        assertThrows(GeneralSecurityException.class,
+            () -> p.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication(), new LinkedHashSet<>()));
     }
 
     @Test
@@ -62,7 +58,8 @@ public class GroovyScriptAuthenticationPolicyTests {
 
         val scriptFile = new File(FileUtils.getTempDirectoryPath(), "script.groovy");
         FileUtils.write(scriptFile, script, StandardCharsets.UTF_8);
-        val p = new GroovyScriptAuthenticationPolicy(resourceLoader, "file:" + scriptFile.getCanonicalPath());
-        assertThrows(GeneralSecurityException.class, () -> p.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication(), new LinkedHashSet<>()));
+        val p = new GroovyScriptAuthenticationPolicy("file:" + scriptFile.getCanonicalPath());
+        assertThrows(GeneralSecurityException.class,
+            () -> p.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication(), new LinkedHashSet<>()));
     }
 }

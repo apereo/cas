@@ -17,7 +17,7 @@ import org.springframework.core.io.Resource;
  */
 @Slf4j
 @Getter
-public class WatchableGroovyScriptResource implements AutoCloseable {
+public class WatchableGroovyScriptResource implements AutoCloseable, ExecutableCompiledGroovyScript {
     private transient FileWatcherService watcherService;
     private transient GroovyObject groovyScript;
     private final transient Resource resource;
@@ -27,18 +27,21 @@ public class WatchableGroovyScriptResource implements AutoCloseable {
         this.resource = script;
 
         if (ResourceUtils.doesResourceExist(script)) {
-            this.watcherService = new FileWatcherService(script.getFile(), file -> {
-                try {
-                    LOGGER.debug("Reloading script at [{}]", file);
-                    compileScriptResource(script);
-                } catch (final Exception e) {
-                    LOGGER.error(e.getMessage(), e);
-                }
-            });
-            this.watcherService.start(script.getFilename());
-            compileScriptResource(script);
+            if (ResourceUtils.isFile(script)) {
+                this.watcherService = new FileWatcherService(script.getFile(), file -> {
+                    try {
+                        LOGGER.debug("Reloading script at [{}]", file);
+                        compileScriptResource(script);
+                    } catch (final Exception e) {
+                        LOGGER.error(e.getMessage(), e);
+                    }
+                });
+                this.watcherService.start(script.getFilename());
+                compileScriptResource(script);
+            }
         }
     }
+
 
     private void compileScriptResource(final Resource script) {
         this.groovyScript = ScriptingUtils.parseGroovyScript(script, true);
@@ -52,6 +55,7 @@ public class WatchableGroovyScriptResource implements AutoCloseable {
      * @param clazz the clazz
      * @return the result
      */
+    @Override
     public <T> T execute(final Object[] args, final Class<T> clazz) {
         return execute(args, clazz, true);
     }
@@ -61,6 +65,7 @@ public class WatchableGroovyScriptResource implements AutoCloseable {
      *
      * @param args the args
      */
+    @Override
     public void execute(final Object[] args) {
         execute(args, Void.class, true);
     }
@@ -74,6 +79,7 @@ public class WatchableGroovyScriptResource implements AutoCloseable {
      * @param failOnError the fail on error
      * @return the t
      */
+    @Override
     public <T> T execute(final Object[] args, final Class<T> clazz, final boolean failOnError) {
         if (this.groovyScript != null) {
             return ScriptingUtils.executeGroovyScript(this.groovyScript, args, clazz, failOnError);
@@ -113,6 +119,8 @@ public class WatchableGroovyScriptResource implements AutoCloseable {
 
     @Override
     public void close() {
-        this.watcherService.close();
+        if (watcherService != null) {
+            this.watcherService.close();
+        }
     }
 }

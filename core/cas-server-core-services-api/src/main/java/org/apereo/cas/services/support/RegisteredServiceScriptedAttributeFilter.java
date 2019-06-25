@@ -2,22 +2,27 @@ package org.apereo.cas.services.support;
 
 import org.apereo.cas.services.RegisteredServiceAttributeFilter;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.ResourceUtils;
+import org.apereo.cas.util.scripting.ExecutableCompiledGroovyScript;
+import org.apereo.cas.util.scripting.GroovyShellScript;
 import org.apereo.cas.util.scripting.ScriptingUtils;
+import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.SneakyThrows;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.io.FileUtils;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
+import javax.persistence.PostLoad;
+import javax.persistence.Transient;
 import java.util.List;
 import java.util.Map;
 
@@ -42,38 +47,47 @@ public class RegisteredServiceScriptedAttributeFilter implements RegisteredServi
 
     private String script;
 
-    private static Map<String, List<Object>> getGroovyAttributeValue(final String groovyScript, final Map<String, List<Object>> resolvedAttributes) {
-        val args = CollectionUtils.wrap("attributes", resolvedAttributes, "logger", LOGGER);
-        return ScriptingUtils.executeGroovyShellScript(groovyScript, args, Map.class);
+    @JsonIgnore
+    @Transient
+    @org.springframework.data.annotation.Transient
+    private transient ExecutableCompiledGroovyScript executableScript;
+
+    @JsonCreator
+    public RegisteredServiceScriptedAttributeFilter(@JsonProperty("order") final int order,
+                                                    @JsonProperty("script") final String script) {
+        this.order = order;
+        this.script = script;
+
+        initializeWatchableScriptIfNeeded();
     }
 
-    private static Map<String, List<Object>> filterInlinedGroovyAttributeValues(final Map<String, List<Object>> resolvedAttributes, final String script) {
-        LOGGER.debug("Found inline groovy script to execute [{}]", script);
-        return getGroovyAttributeValue(script, resolvedAttributes);
-    }
+    @PostLoad
+    @SneakyThrows
+    private void initializeWatchableScriptIfNeeded() {
+        if (this.executableScript == null) {
+            val matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(script);
+            val matcherFile = ScriptingUtils.getMatcherForExternalGroovyScript(script);
 
-    private static Map<String, List<Object>> filterFileBasedGroovyAttributeValues(final Map<String, List<Object>> resolvedAttributes, final String scriptFile) {
-        try {
-            LOGGER.debug("Found groovy script file to execute [{}]", scriptFile);
-            val script = FileUtils.readFileToString(new File(scriptFile), StandardCharsets.UTF_8);
-            return getGroovyAttributeValue(script, resolvedAttributes);
-        } catch (final IOException e) {
-            LOGGER.error(e.getMessage(), e);
+            if (matcherFile.find()) {
+                val resource = ResourceUtils.getRawResourceFrom(matcherFile.group(2));
+                this.executableScript = new WatchableGroovyScriptResource(resource);
+            } else if (matcherInline.find()) {
+                this.executableScript = new GroovyShellScript(matcherInline.group(1));
+            }
         }
-        return new HashMap<>(0);
+    }
+
+    @SneakyThrows
+    private Map<String, List<Object>> getGroovyAttributeValue(final Map<String, List<Object>> resolvedAttributes) {
+        val args = CollectionUtils.wrap("attributes", resolvedAttributes, "logger", LOGGER);
+        executableScript.setBinding(args);
+        return executableScript.execute(args.values().toArray(), Map.class);
     }
 
     @Override
     public Map<String, List<Object>> filter(final Map<String, List<Object>> givenAttributes) {
-        val matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(script);
-        val matcherFile = ScriptingUtils.getMatcherForExternalGroovyScript(script);
-        if (matcherInline.find()) {
-            return filterInlinedGroovyAttributeValues(givenAttributes, matcherInline.group(1));
-        }
-        if (matcherFile.find()) {
-            return filterFileBasedGroovyAttributeValues(givenAttributes, matcherFile.group(2));
-        }
-        return givenAttributes;
+        initializeWatchableScriptIfNeeded();
+        return getGroovyAttributeValue(givenAttributes);
     }
 
 }

@@ -7,6 +7,7 @@ import groovy.lang.Binding;
 import groovy.lang.GroovyClassLoader;
 import groovy.lang.GroovyObject;
 import groovy.lang.GroovyShell;
+import groovy.lang.Script;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +27,7 @@ import java.nio.file.Files;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.security.PrivilegedActionException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -94,27 +96,40 @@ public class ScriptingUtils {
     /**
      * Execute groovy shell script t.
      *
+     * @param <T>    the type parameter
+     * @param script the script
+     * @param clazz  the clazz
+     * @return the t
+     */
+    public static <T> T executeGroovyShellScript(final Script script,
+                                                 final Class<T> clazz) {
+        return executeGroovyShellScript(script, new HashMap<>(), clazz);
+    }
+
+    /**
+     * Execute groovy shell script t.
+     *
      * @param <T>       the type parameter
      * @param script    the script
      * @param variables the variables
      * @param clazz     the clazz
      * @return the t
      */
-    public static <T> T executeGroovyShellScript(final String script,
+    public static <T> T executeGroovyShellScript(final Script script,
                                                  final Map<String, Object> variables,
                                                  final Class<T> clazz) {
         try {
-            val binding = new Binding();
-            val shell = new GroovyShell(binding);
-            if (variables != null && !variables.isEmpty()) {
-                variables.forEach(binding::setVariable);
-            }
+            val binding = script.getBinding();
             if (!binding.hasVariable("logger")) {
                 binding.setVariable("logger", LOGGER);
             }
+            if (variables != null && !variables.isEmpty()) {
+                variables.forEach(binding::setVariable);
+            }
+            script.setBinding(binding);
             LOGGER.debug("Executing groovy script [{}] with variables [{}]", script, binding.getVariables());
 
-            val result = shell.evaluate(script);
+            val result = script.run();
             return getGroovyScriptExecutionResultOrThrow(clazz, result);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
@@ -243,6 +258,48 @@ public class ScriptingUtils {
             LOGGER.trace("Executing groovy script's [{}] method, with parameters [{}]", methodName, args);
             val result = groovyObject.invokeMethod(methodName, args);
             LOGGER.trace("Results returned by the groovy script are [{}]", result);
+            if (!clazz.equals(Void.class)) {
+                return getGroovyScriptExecutionResultOrThrow(clazz, result);
+            }
+        } catch (final Exception e) {
+            var cause = (Throwable) null;
+            cause = e instanceof InvokerInvocationException ? e.getCause() : e;
+            if (failOnError) {
+                throw cause;
+            }
+            LOGGER.error(cause.getMessage(), cause);
+        }
+        return null;
+    }
+
+    /**
+     * Execute groovy script t.
+     *
+     * @param <T>          the type parameter
+     * @param groovyObject the groovy object
+     * @param args         the args
+     * @param clazz        the clazz
+     * @param failOnError  the fail on error
+     * @return the t
+     */
+    @SneakyThrows
+    public static <T> T executeGroovyScript(final Script groovyObject,
+                                            final Map<String, Object> args,
+                                            final Class<T> clazz,
+                                            final boolean failOnError) {
+        try {
+            LOGGER.trace("Executing groovy script with bindings [{}]", args);
+
+            val binding = new Binding();
+            if (args != null && !args.isEmpty()) {
+                args.forEach(binding::setVariable);
+            }
+            if (!binding.hasVariable("logger")) {
+                binding.setVariable("logger", LOGGER);
+            }
+            groovyObject.setBinding(binding);
+            val result = groovyObject.run();
+            LOGGER.trace("Results returned by the groovy script are [{}]", result);
 
             if (!clazz.equals(Void.class)) {
                 return getGroovyScriptExecutionResultOrThrow(clazz, result);
@@ -259,6 +316,23 @@ public class ScriptingUtils {
     }
 
     /**
+     * Parse groovy shell script script.
+     *
+     * @param script the script
+     * @return the script
+     */
+    public static Script parseGroovyShellScript(final String script) {
+        try {
+            val shell = new GroovyShell();
+            LOGGER.debug("Parsing groovy script [{}]", script);
+            return shell.parse(script);
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return null;
+    }
+
+    /**
      * Parse groovy script groovy object.
      *
      * @param groovyScript the groovy script
@@ -270,13 +344,17 @@ public class ScriptingUtils {
         return AccessController.doPrivileged((PrivilegedAction<GroovyObject>) () -> {
             val parent = ScriptingUtils.class.getClassLoader();
             try (val loader = new GroovyClassLoader(parent)) {
-                val groovyFile = groovyScript.getFile();
-                if (groovyFile.exists()) {
-                    val groovyClass = loader.parseClass(groovyFile);
-                    LOGGER.trace("Creating groovy object instance from class [{}]", groovyFile.getCanonicalPath());
-                    return (GroovyObject) groovyClass.getDeclaredConstructor().newInstance();
+
+                if (ResourceUtils.isFile(groovyScript)) {
+                    val groovyFile = groovyScript.getFile();
+                    if (groovyFile.exists()) {
+                        val groovyClass = loader.parseClass(groovyFile);
+                        LOGGER.trace("Creating groovy object instance from class [{}]", groovyFile.getCanonicalPath());
+                        return (GroovyObject) groovyClass.getDeclaredConstructor().newInstance();
+                    }
+                    LOGGER.trace("Groovy script at [{}] does not exist", groovyScript);
+                    return null;
                 }
-                LOGGER.trace("Groovy script at [{}] does not exist", groovyScript);
             } catch (final Exception e) {
                 if (failOnError) {
                     throw new RuntimeException(e);
@@ -329,8 +407,12 @@ public class ScriptingUtils {
     public static <T> T executeScriptEngine(final String scriptFile, final Object[] args, final Class<T> clazz) {
         try {
             val engineName = getScriptEngineName(scriptFile);
+            if (StringUtils.isBlank(engineName)) {
+                LOGGER.warn("Script engine name can not be determined for [{}]", engineName);
+                return null;
+            }
             val engine = new ScriptEngineManager().getEngineByName(engineName);
-            if (engine == null || StringUtils.isBlank(engineName)) {
+            if (engine == null) {
                 LOGGER.warn("Script engine is not available for [{}]", engineName);
                 return null;
             }
@@ -446,7 +528,13 @@ public class ScriptingUtils {
         return null;
     }
 
-    private static String getScriptEngineName(final String scriptFile) {
+    /**
+     * Gets script engine name.
+     *
+     * @param scriptFile the script file
+     * @return the script engine name
+     */
+    public static String getScriptEngineName(final String scriptFile) {
         if (scriptFile.endsWith(".py")) {
             return "python";
         }
@@ -455,6 +543,9 @@ public class ScriptingUtils {
         }
         if (scriptFile.endsWith(".groovy")) {
             return "groovy";
+        }
+        if (scriptFile.endsWith(".rb")) {
+            return "ruby";
         }
         return null;
     }
