@@ -6,7 +6,6 @@ import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CassandraAuthenticationConfiguration;
-import org.apereo.cas.config.CassandraCoreConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 
@@ -38,7 +37,6 @@ import static org.junit.jupiter.api.Assertions.*;
     CasPersonDirectoryTestConfiguration.class,
     CasCoreUtilConfiguration.class,
     CasCoreHttpConfiguration.class,
-    CassandraCoreConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class,
     CassandraAuthenticationConfiguration.class
 })
