@@ -1,8 +1,8 @@
 package org.apereo.cas.trusted.web.flow;
 
-import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.configuration.model.support.mfa.TrustedDevicesMultifactorProperties;
+import org.apereo.cas.trusted.authentication.MultifactorAuthenticationTrustedDeviceBypassEvaluator;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.util.MultifactorAuthenticationTrustUtils;
 import org.apereo.cas.trusted.web.flow.fingerprint.DeviceFingerprintStrategy;
@@ -10,6 +10,7 @@ import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -27,12 +28,14 @@ import java.time.LocalDateTime;
  */
 @Slf4j
 @RequiredArgsConstructor
+@Getter
 public class MultifactorAuthenticationVerifyTrustAction extends AbstractAction {
 
     private final MultifactorAuthenticationTrustStorage storage;
     private final DeviceFingerprintStrategy deviceFingerprintStrategy;
     private final TrustedDevicesMultifactorProperties trustedProperties;
     private final AuditableExecution registeredServiceAccessStrategyEnforcer;
+    private final MultifactorAuthenticationTrustedDeviceBypassEvaluator bypassEvaluator;
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
@@ -43,17 +46,7 @@ public class MultifactorAuthenticationVerifyTrustAction extends AbstractAction {
         }
         val registeredService = WebUtils.getRegisteredService(requestContext);
         val service = WebUtils.getService(requestContext);
-        val audit = AuditableContext.builder()
-            .service(service)
-            .authentication(authn)
-            .registeredService(registeredService)
-            .retrievePrincipalAttributesFromReleasePolicy(Boolean.FALSE)
-            .build();
-        val accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
-        accessResult.throwExceptionIfNeeded();
-
-        val mfaPolicy = registeredService.getMultifactorPolicy();
-        if (mfaPolicy != null && mfaPolicy.isBypassTrustedDeviceEnabled()) {
+        if (bypassEvaluator.shouldBypassTrustedDevice(registeredService, service, authn)) {
             LOGGER.debug("Trusted device registration is disabled for [{}]", registeredService);
             return result(CasWebflowConstants.TRANSITION_ID_SKIP);
         }

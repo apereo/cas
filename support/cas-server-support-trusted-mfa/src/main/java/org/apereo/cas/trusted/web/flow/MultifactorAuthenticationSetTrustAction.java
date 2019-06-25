@@ -1,15 +1,16 @@
 package org.apereo.cas.trusted.web.flow;
 
-import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationCredentialsThreadLocalBinder;
 import org.apereo.cas.configuration.model.support.mfa.TrustedDevicesMultifactorProperties;
+import org.apereo.cas.trusted.authentication.MultifactorAuthenticationTrustedDeviceBypassEvaluator;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.util.MultifactorAuthenticationTrustUtils;
 import org.apereo.cas.trusted.web.flow.fingerprint.DeviceFingerprintStrategy;
 import org.apereo.cas.web.support.WebUtils;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -26,6 +27,7 @@ import org.springframework.webflow.execution.RequestContext;
  */
 @Slf4j
 @RequiredArgsConstructor
+@Getter
 public class MultifactorAuthenticationSetTrustAction extends AbstractAction {
     private static final String PARAM_NAME_DEVICE_NAME = "deviceName";
 
@@ -33,7 +35,8 @@ public class MultifactorAuthenticationSetTrustAction extends AbstractAction {
     private final DeviceFingerprintStrategy deviceFingerprintStrategy;
     private final TrustedDevicesMultifactorProperties trustedProperties;
     private final AuditableExecution registeredServiceAccessStrategyEnforcer;
-    
+    private final MultifactorAuthenticationTrustedDeviceBypassEvaluator bypassEvaluator;
+
     @Override
     public Event doExecute(final RequestContext requestContext) {
         val authn = WebUtils.getAuthentication(requestContext);
@@ -41,25 +44,16 @@ public class MultifactorAuthenticationSetTrustAction extends AbstractAction {
             LOGGER.error("Could not determine authentication from the request context");
             return error();
         }
+
         val registeredService = WebUtils.getRegisteredService(requestContext);
         val service = WebUtils.getService(requestContext);
-        val audit = AuditableContext.builder()
-            .service(service)
-            .authentication(authn)
-            .registeredService(registeredService)
-            .retrievePrincipalAttributesFromReleasePolicy(Boolean.FALSE)
-            .build();
-        val accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
-        accessResult.throwExceptionIfNeeded();
         
-        AuthenticationCredentialsThreadLocalBinder.bindCurrent(authn);
-
-        val mfaPolicy = registeredService.getMultifactorPolicy();
-        if (mfaPolicy != null && mfaPolicy.isBypassTrustedDeviceEnabled()) {
+        if (bypassEvaluator.shouldBypassTrustedDevice(registeredService, service, authn)) {
             LOGGER.debug("Trusted device registration is disabled for [{}]", registeredService);
             return success();
         }
 
+        AuthenticationCredentialsThreadLocalBinder.bindCurrent(authn);
         val principal = authn.getPrincipal().getId();
         val deviceName = requestContext.getRequestParameters().get(PARAM_NAME_DEVICE_NAME, StringUtils.EMPTY);
         val providedDeviceName = StringUtils.isNotBlank(deviceName);
