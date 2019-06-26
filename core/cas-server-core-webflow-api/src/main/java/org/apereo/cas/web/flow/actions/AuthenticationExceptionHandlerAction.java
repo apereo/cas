@@ -6,6 +6,7 @@ import org.apereo.cas.services.UnauthorizedServiceForPrincipalException;
 import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
+import org.apereo.cas.web.flow.PlaceholderCapableException;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +16,8 @@ import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
+import org.springframework.util.CollectionUtils;
+
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -120,7 +123,17 @@ public class AuthenticationExceptionHandlerAction extends AbstractAction {
 
         val messageContext = requestContext.getMessageContext();
         val messageCode = this.messageBundlePrefix + handlerErrorName;
-        messageContext.addMessage(new MessageBuilder().error().code(messageCode).build());
+        MessageBuilder messageBuilder = new MessageBuilder().error().code(messageCode);
+        if (!handlerErrorName.equals(UNKNOWN) && !CollectionUtils.isEmpty(values)) {
+            Class clazz = values.stream().filter(n -> handlerErrorName.equals(n.getSimpleName())).findFirst().orElse(null);
+            Throwable throwable = e.getHandlerErrors().values().stream().filter(n -> clazz.isInstance(n)).findFirst().orElse(null);
+            if (throwable instanceof PlaceholderCapableException) {
+                // Need replace placeholder
+                PlaceholderCapableException placeholderCapableException = (PlaceholderCapableException) throwable;
+                messageBuilder.args(placeholderCapableException.getArgs());
+            }
+        }
+        messageContext.addMessage(messageBuilder.build());
         return handlerErrorName;
     }
 
@@ -139,8 +152,14 @@ public class AuthenticationExceptionHandlerAction extends AbstractAction {
         val match = this.errors.stream()
             .filter(c -> c.isInstance(e)).map(Class::getSimpleName)
             .findFirst();
-
-        match.ifPresent(s -> messageContext.addMessage(new MessageBuilder().error().code(e.getCode()).build()));
+        if (match.isPresent()) {
+            MessageBuilder messageBuilder = new MessageBuilder().error().code(e.getCode());
+            if (e instanceof PlaceholderCapableException) {
+                PlaceholderCapableException placeholderCapableException = (PlaceholderCapableException) e;
+                messageBuilder.args(placeholderCapableException.getArgs());
+            }
+            messageContext.addMessage(messageBuilder.build());
+        }
         return match.orElse(UNKNOWN);
     }
 
