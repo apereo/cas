@@ -11,6 +11,7 @@ import org.apereo.cas.web.support.WebUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -43,6 +44,8 @@ public class SurrogateInitialAuthenticationAction extends InitialAuthenticationA
         if (up.getUsername().contains(this.separator)) {
             LOGGER.debug("Credential username includes the separator [{}]. Converting to surrogate...", this.separator);
             convertToSurrogateCredential(context, up);
+        } else {
+            convertToUsernamePasswordCredential(context, up);
         }
         return super.doPreExecute(context);
     }
@@ -73,5 +76,14 @@ public class SurrogateInitialAuthenticationAction extends InitialAuthenticationA
         WebUtils.putRequestSurrogateAuthentication(context, Boolean.FALSE);
         LOGGER.debug("Converted credential to surrogate for username [{}] and assigned it to webflow", realUsername);
         WebUtils.putCredential(context, sc);
+    }
+
+    private static void convertToUsernamePasswordCredential(final RequestContext context,
+                                                            final UsernamePasswordCredential up) throws Exception {
+        if (up instanceof SurrogateUsernamePasswordCredential) {
+            val sc = new UsernamePasswordCredential();
+            BeanUtils.copyProperties(sc, up);
+            WebUtils.putCredential(context, sc);
+        }
     }
 }

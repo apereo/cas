@@ -94,7 +94,7 @@ public class MultifactorAuthenticationTrustRecordCouchDbRepository extends Couch
     public List<CouchDbMultifactorAuthenticationTrustRecord> findByPrincipalAfterDate(final String principal, final LocalDateTime onOrAfterDate) {
         val view = createQuery("by_principal_date")
             .startKey(ComplexKey.of(principal, onOrAfterDate))
-            .endKey(ComplexKey.of(principal, Long.MAX_VALUE));
+            .endKey(ComplexKey.of(principal, String.valueOf(Long.MAX_VALUE)));
 
         return db.queryView(view, CouchDbMultifactorAuthenticationTrustRecord.class);
     }
