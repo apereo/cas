@@ -2,6 +2,7 @@ package org.apereo.cas.web.flow.action;
 
 import org.apereo.cas.authentication.SurrogateUsernamePasswordCredential;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
@@ -66,7 +67,30 @@ public class SurrogateInitialAuthenticationActionTests extends BaseSurrogateInit
             c.setPassword("Mellon");
             WebUtils.putCredential(context, c);
             context.setExternalContext(new ServletExternalContext(new MockServletContext(), new MockHttpServletRequest(), new MockHttpServletResponse()));
-            assertEquals("success", authenticationViaFormAction.execute(context).getId());
+            assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, authenticationViaFormAction.execute(context).getId());
+            assertTrue(WebUtils.getCredential(context) instanceof UsernamePasswordCredential);
+        } catch (final Exception e) {
+            throw new AssertionError(e);
+        }
+    }
+
+    @Test
+    public void verifyUsernamePasswordCredentialsBadPasswordAndCancelled() {
+        try {
+            val context = new MockRequestContext();
+            var c = new UsernamePasswordCredential();
+            c.setUsername("cassurrogate+casuser");
+            c.setPassword("badpassword");
+            WebUtils.putCredential(context, c);
+            context.setExternalContext(new ServletExternalContext(new MockServletContext(), new MockHttpServletRequest(), new MockHttpServletResponse()));
+            assertEquals(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, authenticationViaFormAction.execute(context).getId());
+            assertTrue(WebUtils.getCredential(context) instanceof SurrogateUsernamePasswordCredential);
+
+            val sc = WebUtils.getCredential(context, SurrogateUsernamePasswordCredential.class);
+            sc.setUsername("casuser");
+            sc.setPassword("Mellon");
+            WebUtils.putCredential(context, sc);
+            assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, authenticationViaFormAction.execute(context).getId());
             assertTrue(WebUtils.getCredential(context) instanceof UsernamePasswordCredential);
         } catch (final Exception e) {
             throw new AssertionError(e);
