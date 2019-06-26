@@ -120,7 +120,16 @@ public class AuthenticationExceptionHandlerAction extends AbstractAction {
 
         val messageContext = requestContext.getMessageContext();
         val messageCode = this.messageBundlePrefix + handlerErrorName;
-        messageContext.addMessage(new MessageBuilder().error().code(messageCode).build());
+        val messageBuilder = new MessageBuilder().error().code(messageCode);
+        if (!handlerErrorName.equals(UNKNOWN) && !CollectionUtils.isEmpty(values)) {
+            val clazz = values.stream().filter(n -> handlerErrorName.equals(n.getSimpleName())).findFirst().orElse(null);
+            val throwable = e.getHandlerErrors().values().stream().filter(n -> clazz.isInstance(n)).findFirst().orElse(null);
+            if (throwable instanceof PlaceholderCapableException) {
+                val placeholderCapableException = (PlaceholderCapableException) throwable;
+                messageBuilder.args(placeholderCapableException.getArgs());
+            }
+        }
+        messageContext.addMessage(messageBuilder.build());
         return handlerErrorName;
     }
 
@@ -139,8 +148,14 @@ public class AuthenticationExceptionHandlerAction extends AbstractAction {
         val match = this.errors.stream()
             .filter(c -> c.isInstance(e)).map(Class::getSimpleName)
             .findFirst();
-
-        match.ifPresent(s -> messageContext.addMessage(new MessageBuilder().error().code(e.getCode()).build()));
+        if (match.isPresent()) {
+            val messageBuilder = new MessageBuilder().error().code(e.getCode());
+            if (e instanceof PlaceholderCapableException) {
+                val placeholderCapableException = (PlaceholderCapableException) e;
+                messageBuilder.args(placeholderCapableException.getArgs());
+            }
+            messageContext.addMessage(messageBuilder.build());
+        }
         return match.orElse(UNKNOWN);
     }
 
