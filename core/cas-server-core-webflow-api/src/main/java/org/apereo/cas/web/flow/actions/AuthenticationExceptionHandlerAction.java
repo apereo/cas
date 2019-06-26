@@ -5,19 +5,18 @@ import org.apereo.cas.configuration.model.core.web.MessageBundleProperties;
 import org.apereo.cas.services.UnauthorizedServiceForPrincipalException;
 import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.web.flow.CasWebflowConstants;
-import org.apereo.cas.web.support.WebUtils;
 import org.apereo.cas.web.flow.PlaceholderCapableException;
+import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.binding.message.MessageBuilder;
+import org.springframework.util.CollectionUtils;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-import org.springframework.util.CollectionUtils;
-
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -123,13 +122,12 @@ public class AuthenticationExceptionHandlerAction extends AbstractAction {
 
         val messageContext = requestContext.getMessageContext();
         val messageCode = this.messageBundlePrefix + handlerErrorName;
-        MessageBuilder messageBuilder = new MessageBuilder().error().code(messageCode);
+        val messageBuilder = new MessageBuilder().error().code(messageCode);
         if (!handlerErrorName.equals(UNKNOWN) && !CollectionUtils.isEmpty(values)) {
-            Class clazz = values.stream().filter(n -> handlerErrorName.equals(n.getSimpleName())).findFirst().orElse(null);
-            Throwable throwable = e.getHandlerErrors().values().stream().filter(n -> clazz.isInstance(n)).findFirst().orElse(null);
+            val clazz = values.stream().filter(n -> handlerErrorName.equals(n.getSimpleName())).findFirst().orElse(null);
+            val throwable = e.getHandlerErrors().values().stream().filter(n -> clazz.isInstance(n)).findFirst().orElse(null);
             if (throwable instanceof PlaceholderCapableException) {
-                // Need replace placeholder
-                PlaceholderCapableException placeholderCapableException = (PlaceholderCapableException) throwable;
+                val placeholderCapableException = (PlaceholderCapableException) throwable;
                 messageBuilder.args(placeholderCapableException.getArgs());
             }
         }
@@ -153,9 +151,9 @@ public class AuthenticationExceptionHandlerAction extends AbstractAction {
             .filter(c -> c.isInstance(e)).map(Class::getSimpleName)
             .findFirst();
         if (match.isPresent()) {
-            MessageBuilder messageBuilder = new MessageBuilder().error().code(e.getCode());
+            val messageBuilder = new MessageBuilder().error().code(e.getCode());
             if (e instanceof PlaceholderCapableException) {
-                PlaceholderCapableException placeholderCapableException = (PlaceholderCapableException) e;
+                val placeholderCapableException = (PlaceholderCapableException) e;
                 messageBuilder.args(placeholderCapableException.getArgs());
             }
             messageContext.addMessage(messageBuilder.build());
