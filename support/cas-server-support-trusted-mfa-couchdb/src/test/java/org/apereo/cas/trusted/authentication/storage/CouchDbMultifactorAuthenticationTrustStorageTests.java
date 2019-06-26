@@ -10,6 +10,7 @@ import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustS
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustConfiguration;
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustWebflowConfiguration;
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustedDeviceFingerprintConfiguration;
+import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 
 import lombok.Getter;
 import org.junit.jupiter.api.AfterEach;
@@ -41,6 +42,7 @@ import org.springframework.test.context.TestPropertySource;
     "cas.authn.mfa.trusted.couchdb.password=password"
 })
 @Getter
+@EnabledIfContinuousIntegration
 public class CouchDbMultifactorAuthenticationTrustStorageTests extends AbstractMultifactorAuthenticationTrustStorageTests {
 
     @Autowired

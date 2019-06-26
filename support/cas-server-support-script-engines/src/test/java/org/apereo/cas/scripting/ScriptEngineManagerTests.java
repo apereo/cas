@@ -2,6 +2,7 @@ package org.apereo.cas.scripting;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.services.ScriptedRegisteredServiceAttributeReleasePolicy;
+import org.apereo.cas.util.junit.DisabledIfContinuousIntegration;
 import org.apereo.cas.util.scripting.ScriptingUtils;
 
 import lombok.val;
@@ -28,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class,
     AopAutoConfiguration.class
 })
+@DisabledIfContinuousIntegration
 public class ScriptEngineManagerTests {
     @Test
     public void verifyEngineNames() {
