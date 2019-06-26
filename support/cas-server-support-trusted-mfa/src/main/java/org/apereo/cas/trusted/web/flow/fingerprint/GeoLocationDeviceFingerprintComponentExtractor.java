@@ -10,7 +10,6 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.util.Optional;
