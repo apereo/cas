@@ -78,10 +78,10 @@ public class SurrogateInitialAuthenticationActionTests extends BaseSurrogateInit
     public void verifyUsernamePasswordCredentialsBadPasswordAndCancelled() {
         try {
             val context = new MockRequestContext();
-            var c = new UsernamePasswordCredential();
-            c.setUsername("cassurrogate+casuser");
-            c.setPassword("badpassword");
-            WebUtils.putCredential(context, c);
+            var credential = new UsernamePasswordCredential();
+            credential.setUsername("cassurrogate+casuser");
+            credential.setPassword("badpassword");
+            WebUtils.putCredential(context, credential);
             context.setExternalContext(new ServletExternalContext(new MockServletContext(), new MockHttpServletRequest(), new MockHttpServletResponse()));
             assertEquals(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, authenticationViaFormAction.execute(context).getId());
             assertTrue(WebUtils.getCredential(context) instanceof SurrogateUsernamePasswordCredential);
