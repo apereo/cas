@@ -54,7 +54,10 @@ to consider authentication requests from unknown browsers suspicious for the use
 
 This calculator looks into past authentication events that contain geolocation data, and compares those with the current geolocation.
 If current geolocation data is unavailable, it will attempt to geocode the location based on the current client ip address. This feature
-mostly depends on whether or not geodata is made available to CAS via the client browser.   The story here is:
+mostly depends on whether or not geodata is made available to CAS via the client browser and 
+requires [geotracking of authentication requests](GeoTracking-Authentication-Requests.html).
+
+The story here is:
 
 > Find all past authentication events that match the current client location and calculate an average score.
 

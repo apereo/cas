@@ -59,11 +59,36 @@ mode and yet don't receive confirmation of it in the response given the authenti
 
 In order to distinguish trusted devices from each other we need to calculate a device fingerprint that uniquely
 identifies individual devices. Calculation of this device fingerprint can utilize a combination of multiple components
-from the request. The default behavior is to use a combination of a randomly generated cookie and the client ip to
-calculate the device fingerprint.
+from the request. 
+
+Device fingerprint can be calculated using the following ways:
+
+- Client IP address
+- Randomly generated cookie plus the client IP (default)
+- [GeoLocation address](../installation/GeoTracking-Authentication-Requests.html). You do need to ensure CAS is 
+allowed to [ask and process geodata](../installation/Configuring-Authentication-Events.html) provided by the browser.
+- User-agent header
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#trusted-device-fingerprint).
 
+## Bypass
+
+Users are allowed to optionally opt out of registering a trusted device with CAS as part of the MFA workflow. Furthermore, 
+trusted device workflow for MFA can be bypassed on a per application basis:
+
+```json
+{
+  "@class": "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId": "^(https|imaps)://app.example.org",
+  "name": "Example",
+  "id": 1,
+  "multifactorPolicy" : {
+    "@class" : "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
+    "bypassTrustedDeviceEnabled" : true
+  }
+}
+
+```
 ## Storage
 
 User decisions must be remembered and processed later on subsequent requests.  A background *cleaner* process is also automatically scheduled to scan the chosen repository/database/registry periodically and remove expired records based on configured threshold parameters.
