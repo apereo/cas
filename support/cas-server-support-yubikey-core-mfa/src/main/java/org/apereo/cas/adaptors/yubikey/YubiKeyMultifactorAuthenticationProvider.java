@@ -7,7 +7,8 @@ import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.http.HttpClient;
 
 import com.yubico.client.v2.YubicoClient;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -21,13 +22,14 @@ import java.net.URL;
  * @since 5.0.0
  */
 @Slf4j
-@RequiredArgsConstructor
+@AllArgsConstructor
+@NoArgsConstructor
 public class YubiKeyMultifactorAuthenticationProvider extends AbstractMultifactorAuthenticationProvider {
 
     private static final long serialVersionUID = 4789727148634156909L;
 
-    private final transient YubicoClient client;
-    private final transient HttpClient httpClient;
+    private transient YubicoClient client;
+    private transient HttpClient httpClient;
 
     @Override
     public boolean isAvailable(final RegisteredService service) {
