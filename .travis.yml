@@ -50,6 +50,7 @@ env:
 jdk:
   - openjdk11
 before_install:
+  - rvm install 2.6.3
   - unset _JAVA_OPTIONS
   - ./ci/init-travis-build.sh
 install: true
