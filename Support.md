@@ -7,8 +7,19 @@ pdf: true
 # Support
 
 CAS is open source software supported primarily by an open and friendly community.
-Our premier support channel is community discussion mediated primarily via
+Our premier *free* support channel is community discussion mediated primarily via
 [Mailing Lists](Mailing-Lists.html).
+
+## Apereo Foundation Membership
+
+The Apereo Foundation is a New Jersey non-stock, non-profit corporation, with members drawn from all walks of life and industry sectors on four continents. **It’s mission is to help educational organizations deliver their mission, by developing and sustaining open source software**. By becoming an Apereo Foundation member, you –
+
+- **Ensure support for software you rely on**. Your membership dues work to ensure effective licensing, IPR management practices, infrastructure support, community coordination, outreach, and more.
+- **Give your institution a say in the way Apereo is run, and how it sets priorities**. Your institution has a vote in elections for the Apereo Foundation Board, which provides strategic leadership for the foundation.
+- **Are able to access programs such as the Apereo Incubation Program**. Have a software project you believe meets a higher education need? Apereo is the place to find partners and learn from others who've grown communities to sustain software.
+- **Become part of a community of peers** - a global network of educational institutions working together to address common issues and solve common problems - with many opportunities to participate.
+
+For more information about *organizational* membership dues and fees, [please see this page](https://www.apereo.org/content/apereo-membership). For information about *individual* membership programs, see [Friends of Apereo](https://www.apereo.org/friends).
 
 ## Paid/Commercial Support
 
