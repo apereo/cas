@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.context.session.J2ESessionStore;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
@@ -25,6 +26,7 @@ import java.util.HashMap;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
+@Transactional(transactionManager = "ticketTransactionManager")
 @RequiredArgsConstructor
 @Slf4j
 public class DistributedJ2ESessionStore extends J2ESessionStore implements HttpSessionListener, LogoutPostProcessor {

@@ -28,6 +28,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -39,6 +40,7 @@ import java.util.LinkedHashSet;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Transactional(transactionManager = "ticketTransactionManager")
 @Slf4j
 @RequiredArgsConstructor
 public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
