@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow.actions;
 
+import org.apereo.cas.web.flow.CasDefaultFlowUrlHandler;
+
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
