@@ -67,7 +67,11 @@ This option is most useful during development, testing and demos.
     "ssoEnabled" : false,
     "interrupt" : true,
     "autoRedirect" : false,
-    "autoRedirectAfterSeconds" : -1
+    "autoRedirectAfterSeconds" : -1,
+    "data" : {
+      "field1" : [ "value1", "value2" ],
+      "field2" : [ "value3", "value4" ]
+    }
   }
 }
 ```
@@ -144,12 +148,10 @@ package org.apereo.cas.support.interrupt;
 @Configuration("myInterruptConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class MyInterruptConfiguration {
-
     @Bean
     public InterruptInquirer interruptInquirer() {
       ...
     }
-
 }
 ```
 
