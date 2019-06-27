@@ -32,6 +32,10 @@ import org.apereo.cas.web.flow.actions.ClearWebflowCredentialAction;
 import org.apereo.cas.web.flow.actions.InjectResponseHeadersAction;
 import org.apereo.cas.web.flow.actions.RedirectToServiceAction;
 import org.apereo.cas.web.flow.actions.RenewAuthenticationRequestCheckAction;
+import org.apereo.cas.web.flow.authentication.CasWebflowExceptionHandler;
+import org.apereo.cas.web.flow.authentication.DefaultCasWebflowAbstractTicketExceptionHandler;
+import org.apereo.cas.web.flow.authentication.DefaultCasWebflowAuthenticationExceptionHandler;
+import org.apereo.cas.web.flow.authentication.GenericCasWebflowExceptionHandler;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
 import org.apereo.cas.web.flow.resolver.impl.ServiceTicketRequestWebflowEventResolver;
@@ -216,13 +220,25 @@ public class CasCoreWebflowConfiguration {
 
     @ConditionalOnMissingBean(name = "authenticationExceptionHandler")
     @Bean
+    @RefreshScope
     public Action authenticationExceptionHandler() {
-        return new AuthenticationExceptionHandlerAction(handledAuthenticationExceptions(),
-            MessageBundleProperties.DEFAULT_BUNDLE_PREFIX_AUTHN_FAILURE);
+        val beans = applicationContext.getBeansOfType(CasWebflowExceptionHandler.class, false, true);
+
+        val handlers = new ArrayList<CasWebflowExceptionHandler>(beans.values());
+        handlers.add(new DefaultCasWebflowAuthenticationExceptionHandler(
+            handledAuthenticationExceptions(), MessageBundleProperties.DEFAULT_BUNDLE_PREFIX_AUTHN_FAILURE));
+        handlers.add(new DefaultCasWebflowAbstractTicketExceptionHandler(
+            handledAuthenticationExceptions(), MessageBundleProperties.DEFAULT_BUNDLE_PREFIX_AUTHN_FAILURE));
+        handlers.add(new GenericCasWebflowExceptionHandler(
+            handledAuthenticationExceptions(), MessageBundleProperties.DEFAULT_BUNDLE_PREFIX_AUTHN_FAILURE));
+        
+        AnnotationAwareOrderComparator.sort(handlers);
+        return new AuthenticationExceptionHandlerAction(handlers);
     }
 
     @RefreshScope
     @Bean
+    @ConditionalOnMissingBean(name = "handledAuthenticationExceptions")
     public Set<Class<? extends Throwable>> handledAuthenticationExceptions() {
         /*
          * Order is important here; We want the account policy exceptions to be handled

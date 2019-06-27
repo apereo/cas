@@ -1,4 +1,4 @@
-package org.apereo.cas.web.flow.actions;
+package org.apereo.cas.web.flow;
 
 import org.springframework.binding.convert.service.DefaultConversionService;
 
