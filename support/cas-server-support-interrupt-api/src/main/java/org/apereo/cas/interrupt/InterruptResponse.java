@@ -7,6 +7,7 @@ import lombok.ToString;
 
 import java.io.Serializable;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -40,6 +41,8 @@ public class InterruptResponse implements Serializable {
     private boolean autoRedirect;
 
     private long autoRedirectAfterSeconds = -1;
+
+    private Map<String, List<String>> data = new LinkedHashMap<>();
 
     public InterruptResponse(final boolean interrupt) {
         this.interrupt = interrupt;

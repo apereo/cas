@@ -128,6 +128,7 @@ public class InitialFlowSetupAction extends AbstractAction {
     }
 
     private void configureWebflowForSsoParticipation(final RequestContext context, final String ticketGrantingTicketId) {
+
         val ssoParticipation = this.renewalStrategy.supports(context) && this.renewalStrategy.isParticipating(context);
         if (!ssoParticipation && StringUtils.isNotBlank(ticketGrantingTicketId)) {
             val auth = this.ticketRegistrySupport.getAuthenticationFrom(ticketGrantingTicketId);

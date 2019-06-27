@@ -24,4 +24,9 @@ public class InterruptSingleSignOnParticipationStrategy implements SingleSignOnP
         val response = InterruptUtils.getInterruptFrom(ctx);
         return response != null && response.isSsoEnabled();
     }
+
+    @Override
+    public boolean isCreateCookieOnRenewedAuthentication(final RequestContext context) {
+        return false;
+    }
 }

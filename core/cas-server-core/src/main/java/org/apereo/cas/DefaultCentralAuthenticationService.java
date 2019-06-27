@@ -141,7 +141,8 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         this.ticketRegistry.updateTicket(ticketGrantingTicket);
         this.ticketRegistry.addTicket(serviceTicket);
 
-        LOGGER.info("Granted service ticket [{}] for service [{}] and principal [{}]", serviceTicket.getId(), DigestUtils.abbreviate(service.getId()), principal.getId());
+        LOGGER.info("Granted service ticket [{}] for service [{}] and principal [{}]",
+            serviceTicket.getId(), DigestUtils.abbreviate(service.getId()), principal.getId());
         doPublishEvent(new CasServiceTicketGrantedEvent(this, ticketGrantingTicket, serviceTicket));
         return serviceTicket;
     }
@@ -340,9 +341,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         if (service != null) {
             val selectedService = resolveServiceFromAuthenticationRequest(service);
             LOGGER.debug("Resolved service [{}] from the authentication request", selectedService);
-
             val registeredService = this.servicesManager.findServiceBy(selectedService);
-
             enforceRegisteredServiceAccess(authentication, service, registeredService);
         }
 

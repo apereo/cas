@@ -78,7 +78,7 @@ public class MultifactorAuthnTrustedDeviceFingerprintConfiguration {
         return component;
     }
 
-    @ConditionalOnProperty(prefix = "cas.authn.mfa.trusted.deviceFingerprint.cookie", name = "enabled", havingValue = "true")
+    @ConditionalOnProperty(prefix = "cas.authn.mfa.trusted.deviceFingerprint.cookie", name = "enabled", havingValue = "true", matchIfMissing = true)
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "deviceFingerprintCookieComponentExtractor")
@@ -89,6 +89,18 @@ public class MultifactorAuthnTrustedDeviceFingerprintConfiguration {
             deviceFingerprintCookieRandomStringGenerator());
         component.setOrder(properties.getOrder());
         return component;
+    }
+
+    @ConditionalOnProperty(prefix = "cas.authn.mfa.trusted.deviceFingerprint.cookie", name = "enabled", havingValue = "true", matchIfMissing = true)
+    @ConditionalOnMissingBean(name = BEAN_DEVICE_FINGERPRINT_COOKIE_GENERATOR)
+    @Bean(BEAN_DEVICE_FINGERPRINT_COOKIE_GENERATOR)
+    @RefreshScope
+    public CasCookieBuilder deviceFingerprintCookieGenerator() {
+        val cookie = casProperties.getAuthn().getMfa().getTrusted().getDeviceFingerprint().getCookie();
+        return new TrustedDeviceCookieRetrievingCookieGenerator(
+            CookieUtils.buildCookieGenerationContext(cookie),
+            deviceFingerprintCookieValueManager()
+        );
     }
 
     @ConditionalOnProperty(prefix = "cas.authn.mfa.trusted.deviceFingerprint.userAgent", name = "enabled", havingValue = "true")
@@ -110,16 +122,7 @@ public class MultifactorAuthnTrustedDeviceFingerprintConfiguration {
         return new DefaultDeviceFingerprintStrategy(extractors, properties.getComponentSeparator());
     }
 
-    @ConditionalOnMissingBean(name = BEAN_DEVICE_FINGERPRINT_COOKIE_GENERATOR)
-    @Bean(BEAN_DEVICE_FINGERPRINT_COOKIE_GENERATOR)
-    @RefreshScope
-    public CasCookieBuilder deviceFingerprintCookieGenerator() {
-        val cookie = casProperties.getAuthn().getMfa().getTrusted().getDeviceFingerprint().getCookie();
-        return new TrustedDeviceCookieRetrievingCookieGenerator(
-            CookieUtils.buildCookieGenerationContext(cookie),
-            deviceFingerprintCookieValueManager()
-        );
-    }
+
 
     @ConditionalOnMissingBean(name = BEAN_DEVICE_FINGERPRINT_COOKIE_RANDOM_STRING_GENERATOR)
     @Bean(BEAN_DEVICE_FINGERPRINT_COOKIE_RANDOM_STRING_GENERATOR)

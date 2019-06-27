@@ -62,18 +62,21 @@ public class CasInterruptWebflowConfiguration implements CasWebflowExecutionPlan
 
     @ConditionalOnMissingBean(name = "inquireInterruptAction")
     @Bean
+    @RefreshScope
     public Action inquireInterruptAction() {
         return new InquireInterruptAction(interruptInquirer.getIfAvailable().getInterruptInquirers());
     }
 
     @ConditionalOnMissingBean(name = "prepareInterruptViewAction")
     @Bean
+    @RefreshScope
     public Action prepareInterruptViewAction() {
         return new PrepareInterruptViewAction();
     }
 
     @ConditionalOnMissingBean(name = "finalizeInterruptFlowAction")
     @Bean
+    @RefreshScope
     public Action finalizeInterruptFlowAction() {
         return new FinalizeInterruptFlowAction();
     }
@@ -87,6 +90,7 @@ public class CasInterruptWebflowConfiguration implements CasWebflowExecutionPlan
 
     @Bean
     @ConditionalOnMissingBean(name = "interruptSingleSignOnParticipationStrategyConfigurer")
+    @RefreshScope
     public SingleSignOnParticipationStrategyConfigurer interruptSingleSignOnParticipationStrategyConfigurer() {
         return chain -> chain.addStrategy(interruptSingleSignOnParticipationStrategy());
     }
