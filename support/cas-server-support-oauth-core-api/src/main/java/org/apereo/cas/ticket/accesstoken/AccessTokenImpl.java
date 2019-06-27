@@ -31,7 +31,7 @@ public class AccessTokenImpl extends OAuthCodeImpl implements AccessToken {
 
     private static final long serialVersionUID = 2339545346159721563L;
 
-    @Column
+    @Column(length = 2048)
     private String idToken;
 
     public AccessTokenImpl(final String id, final Service service,
