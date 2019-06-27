@@ -25,7 +25,7 @@ import java.util.Map;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
-@ToString(exclude = {"password"})
+@ToString(exclude = "password")
 @Getter
 @Setter
 @NoArgsConstructor

@@ -39,9 +39,9 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
     AopAutoConfiguration.class,
     RefreshAutoConfiguration.class,
     CasCoreUtilConfiguration.class
-}, properties = {
+}, properties =
     "cas.authn.mfa.gauth.rest.endpointUrl=http://example.com"
-})
+)
 @Tag("RestfulApi")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Getter

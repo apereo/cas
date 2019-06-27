@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.*;
     SamlMetadataUIWebflowConfiguration.class
 })
 @Tag("SAML")
-@TestPropertySource(properties = {"cas.samlMetadataUi.resources=classpath:sample-metadata.xml::classpath:inc-md-pub.pem"})
+@TestPropertySource(properties = "cas.samlMetadataUi.resources=classpath:sample-metadata.xml::classpath:inc-md-pub.pem")
 public class SamlMetadataUIParserActionTests extends AbstractOpenSamlTests {
     @Autowired
     @Qualifier("samlMetadataUIParserAction")

@@ -36,7 +36,7 @@ import org.springframework.test.context.TestPropertySource;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
-@TestPropertySource(properties = {"cas.authn.throttle.usernameParameter=username"})
+@TestPropertySource(properties = "cas.authn.throttle.usernameParameter=username")
 @EnableScheduling
 @SpringBootTest(classes = {
     CasThrottlingConfiguration.class,

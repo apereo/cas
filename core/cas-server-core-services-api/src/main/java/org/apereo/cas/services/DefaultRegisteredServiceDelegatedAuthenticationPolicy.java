@@ -23,7 +23,7 @@ import java.util.LinkedHashSet;
 @ToString
 @Getter
 @Setter
-@EqualsAndHashCode(exclude = {"allowedProviders"})
+@EqualsAndHashCode(exclude = "allowedProviders")
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)

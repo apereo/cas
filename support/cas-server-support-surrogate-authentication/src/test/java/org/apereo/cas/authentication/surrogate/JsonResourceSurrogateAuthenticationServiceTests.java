@@ -15,9 +15,9 @@ import org.springframework.core.io.ClassPathResource;
  * @since 5.3.0
  */
 @Getter
-@SpringBootTest(classes = {
+@SpringBootTest(classes =
     RefreshAutoConfiguration.class
-})
+)
 public class JsonResourceSurrogateAuthenticationServiceTests extends BaseSurrogateAuthenticationServiceTests {
 
     private SurrogateAuthenticationService service;

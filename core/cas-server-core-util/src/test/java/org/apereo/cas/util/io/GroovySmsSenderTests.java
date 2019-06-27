@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
     MailSenderValidatorAutoConfiguration.class
 })
 @Tag("Groovy")
-@TestPropertySource(properties = {"cas.smsProvider.groovy.location=classpath:/GroovySmsSender.groovy"})
+@TestPropertySource(properties = "cas.smsProvider.groovy.location=classpath:/GroovySmsSender.groovy")
 public class GroovySmsSenderTests {
     @Autowired
     @Qualifier("communicationsManager")

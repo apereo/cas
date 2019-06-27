@@ -50,7 +50,7 @@ public class SSOSamlPostProfileHandlerController extends AbstractSamlProfileHand
      * @param response the response
      * @param request  the request
      */
-    @RequestMapping(path = SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_REDIRECT, method = {RequestMethod.HEAD})
+    @RequestMapping(path = SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_REDIRECT, method = RequestMethod.HEAD)
     public void handleSaml2ProfileSsoRedirectHeadRequest(final HttpServletResponse response,
                                                          final HttpServletRequest request) {
         LOGGER.info("Endpoint [{}] called with HTTP HEAD returning 400 Bad Request", SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_REDIRECT);

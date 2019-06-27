@@ -92,7 +92,7 @@ import java.util.Collection;
     "cas.authn.wsfed[0].autoRedirect=false",
     "cas.authn.wsfed[0].name=Test ADFS1"
 })
-@ContextConfiguration(locations = {"classpath:/applicationContext.xml"})
+@ContextConfiguration(locations = "classpath:/applicationContext.xml")
 public class AbstractWsFederationTests extends AbstractOpenSamlTests {
     @Autowired
     @Qualifier("wsFederationConfigurations")

@@ -40,7 +40,7 @@ import java.io.File;
     CasCoreConfiguration.class,
     CasCoreUtilConfiguration.class
     },
-    properties = {"cas.authn.mfa.gauth.json.location=classpath:/repository.json"})
+    properties = "cas.authn.mfa.gauth.json.location=classpath:/repository.json")
 @Getter
 public class JsonGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTimeTokenCredentialRepositoryTests {
 

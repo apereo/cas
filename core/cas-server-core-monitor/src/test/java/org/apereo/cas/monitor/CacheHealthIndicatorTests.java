@@ -7,6 +7,7 @@ import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.health.Status;
+import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
@@ -21,7 +22,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 3.5.1
  */
 @SpringBootTest(classes = {
-    RefreshAutoConfiguration.class
+    RefreshAutoConfiguration.class,
+    AopAutoConfiguration.class
 })
 @ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)

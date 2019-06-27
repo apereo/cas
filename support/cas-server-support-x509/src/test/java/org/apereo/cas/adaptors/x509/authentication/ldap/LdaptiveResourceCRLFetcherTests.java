@@ -63,7 +63,7 @@ import org.springframework.test.context.TestPropertySource;
     CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreServicesAuthenticationConfiguration.class,
     CasCoreServicesConfiguration.class})
-@TestPropertySource(locations = {"classpath:/x509.properties"})
+@TestPropertySource(locations = "classpath:/x509.properties")
 @EnableScheduling
 public class LdaptiveResourceCRLFetcherTests extends AbstractX509LdapTests implements InitializingBean {
     private static final int LDAP_PORT = 1389;

@@ -70,7 +70,7 @@ import org.springframework.test.context.TestPropertySource;
     CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class
 })
-@TestPropertySource(properties = {"cas.authn.surrogate.simple.surrogates.casuser=cassurrogate"})
+@TestPropertySource(properties = "cas.authn.surrogate.simple.surrogates.casuser=cassurrogate")
 public class BaseSurrogateInitialAuthenticationActionTests {
     @TestConfiguration
     public static class TestAuthenticationConfiguration implements AuthenticationEventExecutionPlanConfigurer {

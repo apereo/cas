@@ -3,6 +3,7 @@ package org.apereo.cas.authentication.surrogate;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.Getter;
+import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
@@ -14,7 +15,8 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
  */
 @Getter
 @SpringBootTest(classes = {
-    RefreshAutoConfiguration.class
+    RefreshAutoConfiguration.class,
+    AopAutoConfiguration.class
 })
 public class SimpleSurrogateAuthenticationServiceTests extends BaseSurrogateAuthenticationServiceTests {
     private final SurrogateAuthenticationService service = new SimpleSurrogateAuthenticationService(

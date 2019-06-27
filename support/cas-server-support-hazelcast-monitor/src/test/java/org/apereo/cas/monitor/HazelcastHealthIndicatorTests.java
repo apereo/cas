@@ -68,7 +68,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreWebConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class
 })
-@TestPropertySource(properties = {"cas.ticket.registry.hazelcast.cluster.instanceName=testlocalmonitor"})
+@TestPropertySource(properties = "cas.ticket.registry.hazelcast.cluster.instanceName=testlocalmonitor")
 public class HazelcastHealthIndicatorTests {
     @Autowired
     @Qualifier("hazelcastHealthIndicator")

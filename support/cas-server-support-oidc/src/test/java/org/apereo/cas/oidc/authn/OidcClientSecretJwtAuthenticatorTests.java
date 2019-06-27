@@ -31,9 +31,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @Tag("OIDC")
-@TestPropertySource(properties = {
+@TestPropertySource(properties =
     "cas.authn.oauth.code.timeToKillInSeconds=60"
-})
+)
 public class OidcClientSecretJwtAuthenticatorTests extends AbstractOidcTests {
 
     @Test

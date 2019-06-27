@@ -40,7 +40,7 @@ import java.time.ZonedDateTime;
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class)
 @JsonIgnoreProperties(ignoreUnknown = true)
 @NoArgsConstructor
-@EqualsAndHashCode(of = {"id"})
+@EqualsAndHashCode(of = "id")
 @Setter
 @Slf4j
 public abstract class AbstractTicket implements Ticket, TicketState {

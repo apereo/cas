@@ -34,7 +34,7 @@ public class SwivelTuringImageGeneratorController {
      * @param request  the request
      * @throws Exception the exception
      */
-    @GetMapping(path = {"/swivel/turingImage"})
+    @GetMapping(path = "/swivel/turingImage")
     public void generate(final HttpServletResponse response, final HttpServletRequest request) throws Exception {
         response.setContentType("image/png");
         val principal = request.getParameter("principal");

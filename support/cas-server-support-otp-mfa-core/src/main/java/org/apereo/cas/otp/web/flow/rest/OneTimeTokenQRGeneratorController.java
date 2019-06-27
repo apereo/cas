@@ -25,7 +25,7 @@ public class OneTimeTokenQRGeneratorController {
      * @param request  the request
      * @throws Exception the exception
      */
-    @GetMapping(path = {"/otp/qrgen"})
+    @GetMapping(path = "/otp/qrgen")
     public void generate(final HttpServletResponse response, final HttpServletRequest request) throws Exception {
         response.setContentType("image/png");
         val key = request.getParameter("key");

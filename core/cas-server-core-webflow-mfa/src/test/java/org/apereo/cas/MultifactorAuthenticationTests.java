@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
-@TestPropertySource(locations = {"classpath:/core.properties"},
+@TestPropertySource(locations = "classpath:/core.properties",
     properties = "cas.authn.policy.requiredHandlerAuthenticationPolicyEnabled=true")
 @Import(CasMultifactorTestAuthenticationEventExecutionPlanConfiguration.class)
 public class MultifactorAuthenticationTests extends BaseCasWebflowMultifactorAuthenticationTests {

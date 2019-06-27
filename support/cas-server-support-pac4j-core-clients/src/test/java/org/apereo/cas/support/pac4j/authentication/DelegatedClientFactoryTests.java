@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@SpringBootTest(classes = {RefreshAutoConfiguration.class})
+@SpringBootTest(classes = RefreshAutoConfiguration.class)
 public class DelegatedClientFactoryTests {
 
     @Test

@@ -27,7 +27,7 @@ import java.time.ZonedDateTime;
  */
 @Getter
 @Setter
-@EqualsAndHashCode(of = {"id"})
+@EqualsAndHashCode(of = "id")
 public class MockServiceTicket implements ServiceTicket, TicketState {
 
     private static final long serialVersionUID = 8203377063087967768L;

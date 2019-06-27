@@ -708,7 +708,7 @@
     <module name="RegexpSingleline">
         <metadata name="net.sf.eclipsecs.core.comment" value="Use specific request annotation"/>
         <property name="severity" value="error"/>
-        <property name="format" value="method = RequestMethod\."/>
+        <property name="format" value="method = RequestMethod\.(GET|POST|DELETE|PUT)"/>
         <property name="fileExtensions" value="java"/>
         <property name="message" value="Use specific request annotation from org.springframework.web.bind.annotation package"/>
     </module>

@@ -14,7 +14,7 @@ import java.io.Serializable;
  */
 @Getter
 @Builder
-@ToString(of = {"payload"})
+@ToString(of = "payload")
 public class SingleLogoutMessage<T> implements Serializable {
     private static final long serialVersionUID = -7763669015027355811L;
 

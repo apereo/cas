@@ -57,7 +57,7 @@ import org.springframework.test.context.TestPropertySource;
     CasCoreWebConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class
 })
-@TestPropertySource(properties = {"cas.ticket.registry.hazelcast.cluster.instanceName=testlocalhostinstance"})
+@TestPropertySource(properties = "cas.ticket.registry.hazelcast.cluster.instanceName=testlocalhostinstance")
 public class HazelcastTicketRegistryTests extends BaseTicketRegistryTests {
 
     @Autowired
