@@ -42,7 +42,7 @@ import static org.mockito.Mockito.*;
     CasCoreTicketCatalogConfiguration.class,
     CasCoreHttpConfiguration.class
 })
-@TestPropertySource(properties = {"cas.authn.surrogate.simple.surrogates.casuser=cassurrogate"})
+@TestPropertySource(properties = "cas.authn.surrogate.simple.surrogates.casuser=cassurrogate")
 public class SurrogateAuthenticationPostProcessorTests {
     @Autowired
     @Qualifier("surrogateAuthenticationPostProcessor")

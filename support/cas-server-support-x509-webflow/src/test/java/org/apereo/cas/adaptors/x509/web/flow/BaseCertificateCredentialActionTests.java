@@ -21,7 +21,7 @@ import org.springframework.webflow.execution.Action;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@TestPropertySource(locations = {"classpath:/x509.properties"})
+@TestPropertySource(locations = "classpath:/x509.properties")
 @Import(value = {
     X509AuthenticationWebflowConfiguration.class,
     CasMultifactorAuthenticationWebflowConfiguration.class,

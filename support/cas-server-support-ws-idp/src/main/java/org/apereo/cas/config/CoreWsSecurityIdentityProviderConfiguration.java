@@ -54,7 +54,7 @@ import java.util.HashSet;
  */
 @Configuration("coreWsSecurityIdentityProviderConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ImportResource(locations = {"classpath:META-INF/cxf/cxf.xml"})
+@ImportResource(locations = "classpath:META-INF/cxf/cxf.xml")
 @Slf4j
 public class CoreWsSecurityIdentityProviderConfiguration implements AuthenticationServiceSelectionStrategyConfigurer {
 

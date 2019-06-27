@@ -21,9 +21,9 @@ import org.springframework.test.context.TestPropertySource;
     RefreshAutoConfiguration.class,
     CasCoreAuditConfiguration.class
 })
-@TestPropertySource(properties = {
+@TestPropertySource(properties =
     "cas.consent.json.location=classpath:/ConsentRepository.json"
-})
+)
 @Getter
 public class JsonConsentRepositoryTests extends BaseConsentRepositoryTests {
 

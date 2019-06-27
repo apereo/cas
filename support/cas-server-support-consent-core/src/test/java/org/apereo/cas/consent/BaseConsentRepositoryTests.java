@@ -10,6 +10,7 @@ import org.apereo.cas.util.CollectionUtils;
 import lombok.Getter;
 import lombok.val;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.annotation.DirtiesContext;
@@ -26,7 +27,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.0.0
  */
 @SpringBootTest(classes = {
-    RefreshAutoConfiguration.class
+    RefreshAutoConfiguration.class,
+    AopAutoConfiguration.class
 })
 @Getter
 @DirtiesContext

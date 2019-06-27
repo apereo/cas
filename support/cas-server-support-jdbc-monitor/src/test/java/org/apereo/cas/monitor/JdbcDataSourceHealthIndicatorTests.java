@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Marvin S. Addison
  * @since 3.5.1
  */
-@SpringBootTest(classes = {RefreshAutoConfiguration.class})
+@SpringBootTest(classes = RefreshAutoConfiguration.class)
 @ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class JdbcDataSourceHealthIndicatorTests {

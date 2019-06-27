@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.opensaml.saml.ext.saml2mdui.Description;
 import org.opensaml.saml.ext.saml2mdui.DisplayName;
 import org.opensaml.saml.ext.saml2mdui.UIInfo;
+import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.annotation.DirtiesContext;
@@ -23,7 +24,8 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @SpringBootTest(classes = {
-    RefreshAutoConfiguration.class
+    RefreshAutoConfiguration.class,
+    AopAutoConfiguration.class
 })
 @DirtiesContext
 @Tag("SAML")

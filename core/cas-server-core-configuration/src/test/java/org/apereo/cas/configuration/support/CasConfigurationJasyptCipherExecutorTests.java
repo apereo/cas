@@ -8,6 +8,7 @@ import org.jasypt.registry.AlgorithmRegistry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.env.Environment;
@@ -23,7 +24,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.2.0
  */
 @SpringBootTest(classes = {
-    RefreshAutoConfiguration.class
+    RefreshAutoConfiguration.class,
+    AopAutoConfiguration.class
 })
 @Slf4j
 public class CasConfigurationJasyptCipherExecutorTests {

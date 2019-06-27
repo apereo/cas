@@ -42,19 +42,19 @@ public class GenerateSamlIdPMetadataCommand {
      */
     @ShellMethod(key = "generate-idp-metadata", value = "Generate SAML2 IdP Metadata")
     public void generate(
-        @ShellOption(value = {"metadataLocation"},
+        @ShellOption(value = "metadataLocation",
             help = "Directory location to hold metadata and relevant keys/certificates",
             defaultValue = "/etc/cas/saml") final String metadataLocation,
-        @ShellOption(value = {"entityId"},
+        @ShellOption(value = "entityId",
             help = "Entity ID to use for the generated metadata",
             defaultValue = "cas.example.org") final String entityId,
-        @ShellOption(value = {"hostName"},
+        @ShellOption(value = "hostName",
             help = "CAS server prefix to be used at the IdP host name when generating metadata",
             defaultValue = "https://cas.example.org/cas") final String serverPrefix,
-        @ShellOption(value = {"scope"},
+        @ShellOption(value = "scope",
             help = "Scope to use when generating metadata",
             defaultValue = "example.org") final String scope,
-        @ShellOption(value = {"force"},
+        @ShellOption(value = "force",
             help = "Force metadata generation, disregarding anything that might already be available at the specified location") final boolean force) {
 
         val locator = new FileSystemSamlIdPMetadataLocator(new File(metadataLocation));

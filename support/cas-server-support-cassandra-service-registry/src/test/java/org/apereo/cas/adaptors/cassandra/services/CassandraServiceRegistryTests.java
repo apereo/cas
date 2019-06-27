@@ -29,7 +29,7 @@ import org.springframework.test.context.TestPropertySource;
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
-@TestPropertySource(properties = {"cas.serviceRegistry.cassandra.keyspace=cas"})
+@TestPropertySource(properties = "cas.serviceRegistry.cassandra.keyspace=cas")
 @Tag("Cassandra")
 @EnabledIfContinuousIntegration
 public class CassandraServiceRegistryTests extends AbstractServiceRegistryTests {

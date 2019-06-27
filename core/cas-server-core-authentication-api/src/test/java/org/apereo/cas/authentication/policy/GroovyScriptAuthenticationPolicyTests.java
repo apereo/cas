@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("Groovy")
-@SpringBootTest(classes = {RefreshAutoConfiguration.class})
+@SpringBootTest(classes = RefreshAutoConfiguration.class)
 public class GroovyScriptAuthenticationPolicyTests {
     @Test
     public void verifyActionInlinedScriptPasses() throws Exception {

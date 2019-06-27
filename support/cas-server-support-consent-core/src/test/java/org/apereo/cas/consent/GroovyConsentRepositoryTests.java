@@ -22,9 +22,9 @@ import org.springframework.test.context.TestPropertySource;
     RefreshAutoConfiguration.class,
     CasCoreAuditConfiguration.class
 })
-@TestPropertySource(properties = {
+@TestPropertySource(properties =
     "cas.consent.groovy.location=classpath:/ConsentRepository.groovy"
-})
+)
 @Getter
 @Tag("Groovy")
 public class GroovyConsentRepositoryTests extends BaseConsentRepositoryTests {

@@ -31,9 +31,9 @@ import java.io.File;
     CasCoreAuthenticationMetadataConfiguration.class,
     RefreshAutoConfiguration.class})
 @Slf4j
-@TestPropertySource(properties = {
+@TestPropertySource(properties =
     "cas.serviceRegistry.git.repositoryUrl=file:/tmp/cas-sample-data.git"
-})
+)
 @Tag("FileSystem")
 public class GitServiceRegistryTests extends AbstractServiceRegistryTests {
 

@@ -32,7 +32,7 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
  * @since 5.2.0
  */
 @Tag("RestfulApi")
-@SpringBootTest(classes = {CasConsentRestConfiguration.class})
+@SpringBootTest(classes = CasConsentRestConfiguration.class)
 public class RestConsentRepositoryTests extends BaseConsentRepositoryTests {
     private static final String CONSENT = "/consent";
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();

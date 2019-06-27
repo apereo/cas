@@ -9,7 +9,6 @@ import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
 
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -38,7 +37,7 @@ public class SurrogatePrincipalBuilder {
         if (registeredService != null) {
             repositories.addAll(registeredService.getAttributeReleasePolicy().getPrincipalAttributesRepository().getAttributeRepositoryIds());
         }
-        val attributes = (Map) CoreAuthenticationUtils.retrieveAttributesFromAttributeRepository(attributeRepository, surrogate, repositories);
+        val attributes = CoreAuthenticationUtils.retrieveAttributesFromAttributeRepository(attributeRepository, surrogate, repositories);
         val principal = principalFactory.createPrincipal(surrogate, attributes);
         return new SurrogatePrincipal(primaryPrincipal, principal);
     }

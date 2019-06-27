@@ -27,10 +27,10 @@ import java.time.ZonedDateTime;
  * @since 4.2
  */
 @Slf4j
-@ToString(of = {"id"})
+@ToString(of = "id")
 @Getter
 @NoArgsConstructor
-@EqualsAndHashCode(of = {"id"})
+@EqualsAndHashCode(of = "id")
 @AllArgsConstructor
 public class EncodedTicket implements Ticket {
 

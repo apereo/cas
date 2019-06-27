@@ -84,7 +84,7 @@ import java.util.Map;
  */
 @Configuration("coreWsSecuritySecurityTokenServiceConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ImportResource(locations = {"classpath:jaxws-realms.xml"})
+@ImportResource(locations = "classpath:jaxws-realms.xml")
 public class CoreWsSecuritySecurityTokenServiceConfiguration {
 
     @Autowired

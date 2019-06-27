@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
     MailSenderValidatorAutoConfiguration.class
 })
 @Tag("RestfulApi")
-@TestPropertySource(properties = {"cas.smsProvider.rest.url=http://localhost:8132"})
+@TestPropertySource(properties = "cas.smsProvider.rest.url=http://localhost:8132")
 public class RestfulSmsSenderTests {
     @Autowired
     @Qualifier("communicationsManager")

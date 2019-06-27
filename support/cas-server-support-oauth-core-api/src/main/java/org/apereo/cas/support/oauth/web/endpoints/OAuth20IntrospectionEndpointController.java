@@ -53,7 +53,7 @@ public class OAuth20IntrospectionEndpointController extends BaseOAuth20Controlle
      */
     @GetMapping(consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
         produces = MediaType.APPLICATION_JSON_VALUE,
-        value = {'/' + OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.INTROSPECTION_URL})
+        value = '/' + OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.INTROSPECTION_URL)
     public ResponseEntity<OAuth20IntrospectionAccessTokenResponse> handleRequest(final HttpServletRequest request,
                                                                                  final HttpServletResponse response) {
         return handlePostRequest(request, response);
@@ -68,7 +68,7 @@ public class OAuth20IntrospectionEndpointController extends BaseOAuth20Controlle
      */
     @PostMapping(consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
         produces = MediaType.APPLICATION_JSON_VALUE,
-        value = {'/' + OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.INTROSPECTION_URL})
+        value = '/' + OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.INTROSPECTION_URL)
     public ResponseEntity<OAuth20IntrospectionAccessTokenResponse> handlePostRequest(final HttpServletRequest request,
                                                                                      final HttpServletResponse response) {
         ResponseEntity<OAuth20IntrospectionAccessTokenResponse> result;
