@@ -22,7 +22,7 @@ import lombok.ToString;
  */
 @Getter
 @EqualsAndHashCode(callSuper = true)
-@ToString(callSuper = true, exclude = {"password"})
+@ToString(callSuper = true, exclude = "password")
 public class OneTimePasswordCredential extends BasicIdentifiableCredential {
 
     /**
