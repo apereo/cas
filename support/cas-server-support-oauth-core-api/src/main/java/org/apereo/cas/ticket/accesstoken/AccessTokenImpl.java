@@ -13,6 +13,7 @@ import lombok.Setter;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.Lob;
 import java.util.Collection;
 import java.util.Map;
 
@@ -31,6 +32,7 @@ public class AccessTokenImpl extends OAuthCodeImpl implements AccessToken {
 
     private static final long serialVersionUID = 2339545346159721563L;
 
+    @Lob
     @Column
     private String idToken;
 
