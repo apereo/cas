@@ -51,7 +51,7 @@ import java.util.Map;
 @ToString
 @Getter
 @Setter
-@EqualsAndHashCode(exclude = {"id"})
+@EqualsAndHashCode(exclude = "id")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public abstract class AbstractRegisteredService implements RegisteredService {
 
