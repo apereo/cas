@@ -212,6 +212,14 @@ Push your changes from the *local* branch to a *remote* branch of your own fork:
 git push github-username my-topic-branch-which-fixes-something
 ```
 
-### Submit pull request
+### Submit Pull Request
 
 Follow the [guide here](https://help.github.com/articles/about-pull-requests/) to create a pull request based on your branch to the CAS project. In this particular case, the *target* branch is the `master` branch because your own branch was created off of the `master` branch.
+
+### Destination Branch
+
+The CAS codebase dedicates specific branches to feature and major releases of the software (i.e. `5.3.x`, `6.0.x`, etc). These branches will continue to live on in maintenance mode until the release is declared EOL and form the basis of follow-up patch releases and maintenance cycles. When you are preparing a pull request, please be sure to select the appropriate target branch for the patch to ensure your change can be included in the coming maintenance release as scheduled.
+
+<div class="alert alert-success">
+  <strong>Port Forward</strong><br/>Once more, please remember that changes applied to previous branches that target CAS versions in maintenance mode <b>MUST</b> be ported forward to the master branch as well, via a separate pull request.
+</div>
