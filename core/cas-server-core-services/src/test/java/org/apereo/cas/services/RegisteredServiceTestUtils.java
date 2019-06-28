@@ -120,7 +120,17 @@ public class RegisteredServiceTestUtils {
     }
 
     @SneakyThrows
-    public static AbstractRegisteredService getRegisteredService(final String id, final Class<? extends RegisteredService> clazz, final boolean uniq) {
+    public static AbstractRegisteredService getRegisteredService(final String id,
+                                                                 final Class<? extends RegisteredService> clazz,
+                                                                 final boolean uniq) {
+         return getRegisteredService(id, clazz, uniq, getTestAttributes());
+    }
+
+    @SneakyThrows
+    public static AbstractRegisteredService getRegisteredService(final String id,
+                                                                 final Class<? extends RegisteredService> clazz,
+                                                                 final boolean uniq,
+                                                                 final Map requiredAttributes) {
         val s = (AbstractRegisteredService) clazz.getDeclaredConstructor().newInstance();
         s.setServiceId(id);
         s.setEvaluationOrder(1);
@@ -136,7 +146,7 @@ public class RegisteredServiceTestUtils {
         s.setUsernameAttributeProvider(new PrincipalAttributeRegisteredServiceUsernameProvider("uid"));
         val accessStrategy = new DefaultRegisteredServiceAccessStrategy(true, true);
         accessStrategy.setRequireAllAttributes(true);
-        accessStrategy.setRequiredAttributes(getTestAttributes());
+        accessStrategy.setRequiredAttributes(requiredAttributes);
         accessStrategy.setUnauthorizedRedirectUrl(new URI("https://www.github.com"));
         s.setAccessStrategy(accessStrategy);
         s.setLogo("https://logo.example.org/logo.png");
@@ -170,6 +180,10 @@ public class RegisteredServiceTestUtils {
 
     public static AbstractRegisteredService getRegisteredService(final String id, final boolean uniq) {
         return getRegisteredService(id, RegexRegisteredService.class, uniq);
+    }
+
+    public static AbstractRegisteredService getRegisteredService(final String id, final Map requiredAttributes) {
+        return getRegisteredService(id, RegexRegisteredService.class, true, requiredAttributes);
     }
 
     public static Principal getPrincipal() {
