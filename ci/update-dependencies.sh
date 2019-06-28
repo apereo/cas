@@ -23,6 +23,8 @@ echo -e "Build started at `date`"
 echo -e "***********************************************"
 
 echo -e "Installing renovate-bot...\n"
+npm install npm@latest -g
+npm -v
 npm install -g renovate
 
 waitloop="while sleep 9m; do echo -e '\n=====[ Build is still running ]====='; done &"
