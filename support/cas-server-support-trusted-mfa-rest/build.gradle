@@ -1,6 +1,7 @@
 description = "Apereo CAS Trusted MFA Browser/Device REST Support"
 dependencies {
     implementation project(":support:cas-server-support-trusted-mfa")
+    implementation project(":support:cas-server-support-trusted-mfa-core")
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-services-api")
@@ -13,6 +14,7 @@ dependencies {
     testImplementation project(":core:cas-server-core-audit-api")
     testImplementation project(":core:cas-server-core-authentication")
     testImplementation project(":core:cas-server-core-configuration")
+
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")

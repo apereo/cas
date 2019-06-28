@@ -9,11 +9,13 @@ dependencies {
     implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-util-api")
+
+    implementation project(":support:cas-server-support-trusted-mfa-core")
     implementation project(":support:cas-server-support-yubikey-core-mfa")
 
     api project(":api:cas-server-core-api")
     api project(":api:cas-server-core-api-webflow")
-    
+
     implementation libraries.yubicoapi
 
     testImplementation project(":core:cas-server-core-web")
@@ -29,6 +31,4 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")
-    
-    compileOnly project(":support:cas-server-support-trusted-mfa")
 }

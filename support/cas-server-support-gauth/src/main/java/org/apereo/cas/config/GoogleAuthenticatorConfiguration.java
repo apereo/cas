@@ -3,7 +3,6 @@ package org.apereo.cas.config;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.gauth.web.flow.GoogleAuthenticatorMultifactorTrustWebflowConfigurer;
 import org.apereo.cas.gauth.web.flow.GoogleAuthenticatorMultifactorWebflowConfigurer;
-import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
@@ -13,7 +12,7 @@ import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -74,7 +73,7 @@ public class GoogleAuthenticatorConfiguration implements CasWebflowExecutionPlan
     /**
      * The google authenticator multifactor trust configuration.
      */
-    @ConditionalOnClass(value = MultifactorAuthenticationTrustStorage.class)
+    @ConditionalOnBean(name = "mfaTrustEngine")
     @ConditionalOnProperty(prefix = "cas.authn.mfa.gauth", name = "trustedDeviceEnabled", havingValue = "true", matchIfMissing = true)
     @Configuration("gauthMultifactorTrustConfiguration")
     public class GoogleAuthenticatorMultifactorTrustConfiguration implements CasWebflowExecutionPlanConfigurer {

@@ -15,7 +15,8 @@ dependencies {
     implementation project(":core:cas-server-core-validation-api")
     implementation project(":core:cas-server-core-cookie-api")
 
-    compileOnly project(":support:cas-server-support-trusted-mfa")
+    implementation project(":support:cas-server-support-trusted-mfa-core")
+
     compileOnly project(":core:cas-server-core-events")
     compileOnly project(":support:cas-server-support-discovery-profile")
     
