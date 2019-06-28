@@ -56,7 +56,8 @@ public class MultifactorAuthenticationVerifyTrustActionTests extends AbstractMul
         val context = new MockRequestContext();
         WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
         WebUtils.putRegisteredService(context, RegisteredServiceTestUtils.getRegisteredService("sample-service", Collections.EMPTY_MAP));
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), new MockHttpServletRequest(), new MockHttpServletResponse()));
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(),
+            new MockHttpServletRequest(), new MockHttpServletResponse()));
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(r.getPrincipal()), context);
         assertEquals("no", mfaVerifyTrustAction.execute(context).getId());
     }
