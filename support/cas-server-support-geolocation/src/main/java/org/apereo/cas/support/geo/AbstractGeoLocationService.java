@@ -50,8 +50,7 @@ public abstract class AbstractGeoLocationService implements GeoLocationService {
 
     @Override
     public GeoLocationResponse locate(final GeoLocationRequest request) {
-        return locate(Double.parseDouble(request.getLatitude()),
-            Double.parseDouble(request.getLongitude()));
+        return locate(Double.valueOf(request.getLatitude()), Double.valueOf(request.getLongitude()));
     }
 
     @Override
@@ -76,10 +75,10 @@ public abstract class AbstractGeoLocationService implements GeoLocationService {
                         geoResponse.setLatitude((double) infos.getOrDefault("latitude", 0D));
                         geoResponse.setLongitude((double) infos.getOrDefault("longitude", 0D));
                         geoResponse
-                                .addAddress((String) infos.getOrDefault("city", StringUtils.EMPTY))
-                                .addAddress((String) infos.getOrDefault("region_name", StringUtils.EMPTY))
-                                .addAddress((String) infos.getOrDefault("region_code", StringUtils.EMPTY))
-                                .addAddress((String) infos.getOrDefault("county_name", StringUtils.EMPTY));
+                            .addAddress((String) infos.getOrDefault("city", StringUtils.EMPTY))
+                            .addAddress((String) infos.getOrDefault("region_name", StringUtils.EMPTY))
+                            .addAddress((String) infos.getOrDefault("region_code", StringUtils.EMPTY))
+                            .addAddress((String) infos.getOrDefault("county_name", StringUtils.EMPTY));
                         return geoResponse;
                     }
                 } finally {
