@@ -55,7 +55,7 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractJdbcU
             LOGGER.debug("Executing SQL query [{}]", sql);
 
             val count = getJdbcTemplate().queryForObject(sql, Integer.class, username, credential.getPassword());
-            if (count == 0) {
+            if (count == null || count == 0) {
                 throw new FailedLoginException(username + " not found with SQL query.");
             }
             return createHandlerResult(credential, this.principalFactory.createPrincipal(username), new ArrayList<>(0));

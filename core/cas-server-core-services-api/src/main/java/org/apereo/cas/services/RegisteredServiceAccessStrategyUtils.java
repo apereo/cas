@@ -139,8 +139,8 @@ public class RegisteredServiceAccessStrategyUtils {
                                                          final Authentication authentication,
                                                          final boolean retrievePrincipalAttributesFromReleasePolicy)
         throws UnauthorizedServiceException, PrincipalException {
-        ensureServiceAccessIsAllowed(service, registeredService);
 
+        ensureServiceAccessIsAllowed(service, registeredService);
         val principal = authentication.getPrincipal();
         val principalAttrs =
             retrievePrincipalAttributesFromReleasePolicy && registeredService != null && registeredService.getAttributeReleasePolicy() != null
