@@ -64,8 +64,32 @@ public class RememberMeDelegatingExpirationPolicyTests {
     }
 
     @Test
+    public void verifyTicketExpirationWithOldRememberMe() {
+        final Authentication authentication = CoreAuthenticationTestUtils.getAuthentication(
+                this.principalFactory.createPrincipal("test"),
+                Collections.singletonMap(
+                        RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME, true));
+        final TicketGrantingTicketImpl t = new TicketGrantingTicketImpl("111", authentication, this.p);
+        assertFalse(t.isExpired());
+        t.grantServiceTicket("55", RegisteredServiceTestUtils.getService(), this.p, false, true);
+        assertTrue(t.isExpired());
+    }
+
+    @Test
     public void verifyTicketExpirationWithoutRememberMe() {
         final Authentication authentication = CoreAuthenticationTestUtils.getAuthentication();
+        final TicketGrantingTicketImpl t = new TicketGrantingTicketImpl("111", authentication, this.p);
+        assertFalse(t.isExpired());
+        t.grantServiceTicket("55", RegisteredServiceTestUtils.getService(), this.p, false, true);
+        assertFalse(t.isExpired());
+    }
+
+    @Test
+    public void verifyTicketExpirationWithoutOldRememberMe() {
+        final Authentication authentication = CoreAuthenticationTestUtils.getAuthentication(
+                this.principalFactory.createPrincipal("test"),
+                Collections.singletonMap(
+                        RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME, false));
         final TicketGrantingTicketImpl t = new TicketGrantingTicketImpl("111", authentication, this.p);
         assertFalse(t.isExpired());
         t.grantServiceTicket("55", RegisteredServiceTestUtils.getService(), this.p, false, true);
