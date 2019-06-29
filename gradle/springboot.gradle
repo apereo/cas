@@ -32,7 +32,7 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishReleases && !rootP
                         "Implementation-Vendor": project.group,
                         "Created-By": project.group,
                         "Implementation-Date": java.time.ZonedDateTime.now(),
-                        "Specification-Version": rootProject.currentRevision,
+                        "Specification-Version": "${-> project.ext.has("gitProps") ? project.ext.gitProps['git.commit.id'] : 'N/A'}",
                         "Implementation-Version": project.version)
             }
             from "${buildDir}/resources/main", { into "WEB-INF/classes" }
