@@ -25,6 +25,13 @@ echo -e "***********************************************"
 echo -e "Installing renovate-bot...\n"
 npm install npm@latest -g
 npm -v
+
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | bash
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+nvm install 12.5.0
+node -v
+
 npm install -g renovate
 
 waitloop="while sleep 9m; do echo -e '\n=====[ Build is still running ]====='; done &"
