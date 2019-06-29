@@ -56,6 +56,24 @@ ext.libraries = [
                     force = true
                 }
         ],
+        webauthn                    : [
+                dependencies.create("com.yubico:webauthn-server-core:$yubicoWebauthnVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.apache.httpcomponents", module: "httpclient")
+                    exclude(group: "org.apache.commons", module: "commons-lang3")
+                    exclude(group: "com.google.guava", module: "guava")
+                    exclude(group: "org.bouncycastle", module: "bcpkix-jdk15on")
+                    force = true
+                },
+                dependencies.create("com.yubico:webauthn-server-attestation:$yubicoWebauthnVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.apache.httpcomponents", module: "httpclient")
+                    exclude(group: "org.apache.commons", module: "commons-lang3")
+                    exclude(group: "com.google.guava", module: "guava")
+                    exclude(group: "org.bouncycastle", module: "bcpkix-jdk15on")
+                    force = true
+                }
+        ],
         semver                  : [
                 dependencies.create("com.vdurmont:semver4j:$semverVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
