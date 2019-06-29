@@ -3,6 +3,33 @@ import java.util.concurrent.ConcurrentHashMap
 description = "Apereo Central Authentication Service $version"
 defaultTasks "clean", "build"
 
+buildscript {
+    repositories {
+        mavenLocal()
+        jcenter()
+        maven { url "https://maven.eveoh.nl/content/repositories/releases" }
+        maven { url "https://plugins.gradle.org/m2/" }
+        maven { url "https://repo.spring.io/plugins-release" }
+        maven { url "https://repo.spring.io/libs-milestone" }
+    }
+
+    dependencies {
+        classpath "com.gradle:build-scan-plugin:2.3"
+        classpath "gradle.plugin.com.ewerk.gradle.plugins:jaxb2-plugin:1.0.9"
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
+        classpath "com.netflix.nebula:gradle-lint-plugin:$gradleLintVersion"
+        classpath "io.franzbecker:gradle-lombok:$gradleLombokVersion"
+        classpath "com.github.ben-manes:gradle-versions-plugin:$gradleDependencyVersionsVersion"
+        classpath "io.spring.gradle:propdeps-plugin:$gradlePropDepsVersion"
+        classpath "org.ajoberstar:grgit:$gradleGitVersion"
+        classpath "net.ltgt.gradle:gradle-errorprone-javacplugin-plugin:$gradleErrorProneVersion"
+        classpath "org.owasp:dependency-check-gradle:$gradleDependencyCheckVersion"
+        classpath "gradle.plugin.com.github.spotbugs:spotbugs-gradle-plugin:$gradleSpotbugsVersion"
+        classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:$gradleSonarqubeVersion"
+        classpath "net.rdrei.android.buildtimetracker:gradle-plugin:$gradleTimeTrackerVersion"
+    }
+}
+
 ext {
     srcTagMap = new ConcurrentHashMap<File, Set<String>>()
 
@@ -51,33 +78,6 @@ if (project.ext.continuousIntegrationBuild) {
 
 if (!Boolean.getBoolean("skipSonarqube")) {
     apply plugin: "org.sonarqube"
-}
-
-buildscript {
-    repositories {
-        mavenLocal()
-        jcenter()
-        maven { url "https://maven.eveoh.nl/content/repositories/releases" }
-        maven { url "https://plugins.gradle.org/m2/" }
-        maven { url "https://repo.spring.io/plugins-release" }
-        maven { url "https://repo.spring.io/libs-milestone" }
-    }
-
-    dependencies {
-        classpath "com.gradle:build-scan-plugin:2.3"
-        classpath "gradle.plugin.com.ewerk.gradle.plugins:jaxb2-plugin:1.0.9"
-        classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
-        classpath "com.netflix.nebula:gradle-lint-plugin:$gradleLintVersion"
-        classpath "io.franzbecker:gradle-lombok:$gradleLombokVersion"
-        classpath "com.github.ben-manes:gradle-versions-plugin:$gradleDependencyVersionsVersion"
-        classpath "io.spring.gradle:propdeps-plugin:$gradlePropDepsVersion"
-        classpath "org.ajoberstar:grgit:$gradleGitVersion"
-        classpath "net.ltgt.gradle:gradle-errorprone-javacplugin-plugin:$gradleErrorProneVersion"
-        classpath "org.owasp:dependency-check-gradle:$gradleDependencyCheckVersion"
-        classpath "gradle.plugin.com.github.spotbugs:spotbugs-gradle-plugin:$gradleSpotbugsVersion"
-        classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:$gradleSonarqubeVersion"
-        classpath "net.rdrei.android.buildtimetracker:gradle-plugin:$gradleTimeTrackerVersion"
-    }
 }
 
 if (rootProject.continuousIntegrationBuild) {
