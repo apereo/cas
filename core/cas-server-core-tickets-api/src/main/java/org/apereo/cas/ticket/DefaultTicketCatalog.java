@@ -44,7 +44,7 @@ public class DefaultTicketCatalog implements TicketCatalog {
     }
 
     @Override
-    public Collection<TicketDefinition> find(final Class<Ticket> ticketClass) {
+    public Collection<TicketDefinition> find(final Class<? extends Ticket> ticketClass) {
         val list = ticketMetadataMap.values().stream()
             .filter(t -> t.getImplementationClass().isAssignableFrom(ticketClass))
             .collect(Collectors.toList());
