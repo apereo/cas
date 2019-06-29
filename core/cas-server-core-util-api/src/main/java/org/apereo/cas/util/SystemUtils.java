@@ -10,13 +10,17 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.SpringBootVersion;
+import org.springframework.boot.info.GitProperties;
 import org.springframework.core.SpringVersion;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.support.PropertiesLoaderUtils;
 
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 /**
  * This is {@link SystemUtils}.
@@ -31,6 +35,27 @@ public class SystemUtils {
     private static final int SYSTEM_INFO_DEFAULT_SIZE = 20;
     private static final String UPDATE_CHECK_MAVEN_URL = "https://search.maven.org/solrsearch/select?q=g:%22org.apereo.cas%22%20AND%20a:%22cas-server%22";
 
+    private static final GitProperties GIT_PROPERTIES;
+
+    static {
+        var properties = new Properties();
+        try {
+            val resource = new ClassPathResource("git.properties");
+            if (ResourceUtils.doesResourceExist(resource)) {
+                val loaded = PropertiesLoaderUtils.loadProperties(resource);
+                for (val key : loaded.stringPropertyNames()) {
+                    if (key.startsWith("git.")) {
+                        properties.put(key.substring("git.".length()), loaded.get(key));
+                    }
+                }
+            }
+        } catch (final Exception e) {
+            LOGGER.trace(e.getMessage(), e);
+        } finally {
+            GIT_PROPERTIES = new GitProperties(properties);
+        }
+    }
+
     /**
      * Gets system info.
      *
@@ -42,7 +67,8 @@ public class SystemUtils {
         val info = new LinkedHashMap<String, Object>(SYSTEM_INFO_DEFAULT_SIZE);
 
         info.put("CAS Version", StringUtils.defaultString(CasVersion.getVersion(), "Not Available"));
-        info.put("CAS Commit Id", StringUtils.defaultString(CasVersion.getSpecificationVersion(), "Not Available"));
+        info.put("CAS Branch", StringUtils.defaultString(GIT_PROPERTIES.getBranch(), "Not Available"));
+        info.put("CAS Commit Id", StringUtils.defaultString(GIT_PROPERTIES.getCommitId(), "Not Available"));
         info.put("CAS Build Date/Time", CasVersion.getDateTime());
         info.put("Spring Boot Version", SpringBootVersion.getVersion());
         info.put("Spring Version", SpringVersion.getVersion());

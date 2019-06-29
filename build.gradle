@@ -18,10 +18,10 @@ buildscript {
         classpath "gradle.plugin.com.ewerk.gradle.plugins:jaxb2-plugin:1.0.9"
         classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
         classpath "com.netflix.nebula:gradle-lint-plugin:$gradleLintVersion"
+        classpath "gradle.plugin.com.gorylenko.gradle-git-properties:gradle-git-properties:$gradleGitVersion"
         classpath "io.franzbecker:gradle-lombok:$gradleLombokVersion"
         classpath "com.github.ben-manes:gradle-versions-plugin:$gradleDependencyVersionsVersion"
         classpath "io.spring.gradle:propdeps-plugin:$gradlePropDepsVersion"
-        classpath "org.ajoberstar:grgit:$gradleGitVersion"
         classpath "net.ltgt.gradle:gradle-errorprone-javacplugin-plugin:$gradleErrorProneVersion"
         classpath "org.owasp:dependency-check-gradle:$gradleDependencyCheckVersion"
         classpath "gradle.plugin.com.github.spotbugs:spotbugs-gradle-plugin:$gradleSpotbugsVersion"
@@ -41,7 +41,7 @@ ext {
 
     if ((publishSnapshots || publishReleases) && (sonatypeUsername == null || sonatypePassword == null)) {
         throw new GradleException("No credentials are configured to publish releases or snapshots")
-    }                          
+    }
 
     testCategoryType = System.getProperty("testCategoryType")
     skipBootifulArtifact = System.getProperty("skipBootifulArtifact")
@@ -51,17 +51,9 @@ ext {
 
     enableRemoteDebugging = Boolean.getBoolean("enableRemoteDebugging")
     remoteDebuggingSuspend = Boolean.getBoolean("remoteDebuggingSuspend") ? "y" : "n"
+    generateGitProperties = Boolean.getBoolean("generateGitProperties")
 
     continuousIntegrationBuild = Boolean.getBoolean("CI") || Boolean.getBoolean("TRAVIS") || Boolean.getBoolean("CONTINUOUS_INTEGRATION")
-    /*
-        Open the project git repository in the current directory.
-        Get commit id of HEAD.
-     */
-    git = org.ajoberstar.grgit.Grgit.open(dir: file('.').canonicalPath)
-    def gitHead = git.head()
-    currentRevision = gitHead.id
-    currentAbbreviatedRevision = gitHead.abbreviatedId
-    git.close()
 }
 
 def isArtifactSigningRequired = {
@@ -109,11 +101,11 @@ dependencyCheck {
     failBuildOnCVSS = 8
     skipTestGroups = true
     skipConfigurations = ['jacocoAgent', 'jacocoAnt', 'optional', 'provided', 'providedCompile', 'providedRuntime',
-                          'signatures', 'spotbugs','spotbugsPlugins', 'checkstyle', 'errorprone', 'errorproneJavac',
+                          'signatures', 'spotbugs', 'spotbugsPlugins', 'checkstyle', 'errorprone', 'errorproneJavac',
                           'annotationProcessor', 'archives', 'developmentOnly', 'compileOnly',
                           'tests', 'testRuntimeOnly', 'testRuntimeClasspath', 'testRuntime', 'testImplementation',
-                          'testCompileOnly', 'testCompileClasspath', 'testCompile', 'testAnnotationProcessor' ,
-                          'bootArchives', 'bootRunAnnotationProcessor' ]
+                          'testCompileOnly', 'testCompileClasspath', 'testCompile', 'testAnnotationProcessor',
+                          'bootArchives', 'bootRunAnnotationProcessor']
     cveValidForHours = 24
     suppressionFile = file("$rootProject.projectDir/style/dependency-check-suppressions.xml")
     analyzers {
@@ -144,6 +136,15 @@ allprojects {
     apply plugin: "jacoco"
     apply plugin: "java"
     
+    if (rootProject.publishReleases || rootProject.publishSnapshots || rootProject.generateGitProperties) {
+        apply plugin: "com.gorylenko.gradle-git-properties"
+        gitProperties {
+            extProperty = "gitProps"
+            keys = ["git.branch", "git.build.time", "git.build.user.name",
+                    "git.build.version", "git.commit.id", "git.remote.origin.url"]
+        }
+    }
+
     project.ext["forceBootifulArtifact"] = null
 
     if (!rootProject.publishSnapshots && !Boolean.getBoolean("skipGradleLint")) {
@@ -154,7 +155,7 @@ allprojects {
     jacoco {
         toolVersion = "$gradleJacocoVersion"
     }
-    
+
     idea {
         module {
             downloadSources = false
@@ -165,8 +166,7 @@ allprojects {
             }
         }
     }
-
-
+    
     repositories {
         mavenLocal()
         mavenCentral()
@@ -203,13 +203,13 @@ subprojects {
     if (!rootProject.skipErrorProneCompiler) {
         apply plugin: "net.ltgt.errorprone-javacplugin"
     }
-    
+
     apply plugin: "propdeps"
     apply plugin: "propdeps-maven"
     apply plugin: "propdeps-idea"
     apply plugin: "propdeps-eclipse"
-    
-    
+
+
     apply from: rootProject.file("gradle/tasks.gradle")
     apply from: rootProject.file("gradle/tests.gradle")
 
@@ -221,7 +221,6 @@ subprojects {
             required = isArtifactSigningRequired
             sign publishing.publications
         }
-        //signArchives.enabled = rootProject.publishReleases || rootProject.publishSnapshots
     }
 
     ext.libraries = rootProject.ext.libraries
@@ -246,7 +245,7 @@ subprojects {
     configurations {
         tests
         developmentOnly
-        
+
         runtimeClasspath {
             extendsFrom developmentOnly
         }
@@ -255,7 +254,7 @@ subprojects {
     configurations.all {
         resolutionStrategy {
             if (!Boolean.getBoolean("skipVersionConflict")) {
-               failOnVersionConflict()
+                failOnVersionConflict()
             }
             preferProjectModules()
             cacheDynamicVersionsFor 1, "days"
@@ -354,7 +353,7 @@ subprojects {
                     "Implementation-Title": project.name,
                     "Implementation-Vendor": project.group,
                     "Created-By": project.group,
-                    "Specification-Version": rootProject.currentRevision,
+                    "Specification-Version": "${-> project.ext.has("gitProps") ? project.ext.gitProps['git.commit.id'] : 'N/A'}",
                     "Implementation-Version": project.version)
         }
     }
@@ -364,7 +363,7 @@ subprojects {
         apply plugin: "checkstyle"
         checkstyle {
             configProperties = [
-                    "checkstyle.suppressions.file": new File(rootDir, "style/checkstyle-suppressions.xml"),
+                    "checkstyle.suppressions.file" : new File(rootDir, "style/checkstyle-suppressions.xml"),
                     "checkstyle.importcontrol.file": new File(rootDir, "style/import-control.xml")]
             configFile = new File(rootDir, "style/checkstyle-rules.xml")
             ignoreFailures false
