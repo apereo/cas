@@ -99,9 +99,6 @@ levels:
 ...
 ```
 
-
-Monitors allow you to watch the internal state of a given CAS component. ````See [this guide](Configuring-Monitoring.html) for more info.
-
 ## Distributed Tracing
 
 Support for distributed tracing of requests is enabled by including the following dependency in the WAR overlay:
