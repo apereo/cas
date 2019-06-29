@@ -46,7 +46,7 @@ public interface TicketCatalog {
      * @param ticketClass the ticket class
      * @return the collection
      */
-    Collection<TicketDefinition> find(Class<Ticket> ticketClass);
+    Collection<TicketDefinition> find(Class<? extends Ticket> ticketClass);
 
     /**
      * Find ticket definition.
