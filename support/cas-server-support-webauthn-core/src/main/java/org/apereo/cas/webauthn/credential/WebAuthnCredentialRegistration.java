@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.yubico.webauthn.RegisteredCredential;
 import com.yubico.webauthn.attestation.Attestation;
 import com.yubico.webauthn.data.UserIdentity;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -13,9 +14,10 @@ import lombok.Setter;
 import lombok.experimental.Wither;
 
 import java.time.Instant;
+import java.util.Optional;
 
 /**
- * This is {@link CredentialRegistrationRequest}.
+ * This is {@link WebAuthnCredentialRegistration}.
  *
  * @author Misagh Moayyed
  * @since 6.1.0
@@ -26,19 +28,20 @@ import java.time.Instant;
 @NoArgsConstructor
 @Builder
 @Wither
-public class CredentialRegistrationRequest {
+@AllArgsConstructor
+public class WebAuthnCredentialRegistration {
     private long signatureCount;
 
     private UserIdentity userIdentity;
 
-    private String credentialNickname;
+    private Optional<String> credentialNickname;
 
     @JsonIgnore
     private Instant registrationTime;
 
     private RegisteredCredential credential;
 
-    private Attestation attestationMetadata;
+    private Optional<Attestation> attestationMetadata;
 
     @JsonProperty("registrationTime")
     public String getRegistrationTimestamp() {

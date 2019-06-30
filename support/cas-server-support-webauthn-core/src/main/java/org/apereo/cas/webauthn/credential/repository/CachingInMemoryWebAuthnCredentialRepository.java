@@ -1,4 +1,6 @@
-package org.apereo.cas.webauthn.credential;
+package org.apereo.cas.webauthn.credential.repository;
+
+import org.apereo.cas.webauthn.credential.WebAuthnCredentialRegistration;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
@@ -20,21 +22,23 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
- * This is {@link InMemoryCachingWebAuthnCredentialRepository}.
+ * This is {@link CachingInMemoryWebAuthnCredentialRepository}.
  *
  * @author Misagh Moayyed
  * @since 6.1.0
  */
 @Slf4j
-public class InMemoryCachingWebAuthnCredentialRepository implements WebAuthnCredentialRepository {
+public class CachingInMemoryWebAuthnCredentialRepository implements WebAuthnCredentialRepository {
+    private static final int CACHE_MAX_SIZE = 10_000;
+    private static final int CACHE_EXPIRE_DAYS = 30;
 
-    private final Cache<String, Set<CredentialRegistrationRequest>> storage = CacheBuilder.newBuilder()
-        .maximumSize(1000)
-        .expireAfterAccess(30, TimeUnit.DAYS)
+    private final Cache<String, Set<WebAuthnCredentialRegistration>> storage = CacheBuilder.newBuilder()
+        .maximumSize(CACHE_MAX_SIZE)
+        .expireAfterAccess(CACHE_EXPIRE_DAYS, TimeUnit.DAYS)
         .build();
 
     @Override
-    public boolean addRegistrationByUsername(final String username, final CredentialRegistrationRequest reg) {
+    public boolean addRegistrationByUsername(final String username, final WebAuthnCredentialRegistration reg) {
         try {
             return storage.get(username, HashSet::new).add(reg);
         } catch (final ExecutionException e) {
@@ -54,7 +58,7 @@ public class InMemoryCachingWebAuthnCredentialRepository implements WebAuthnCred
     }
 
     @Override
-    public Collection<CredentialRegistrationRequest> getRegistrationsByUsername(final String username) {
+    public Collection<WebAuthnCredentialRegistration> getRegistrationsByUsername(final String username) {
         try {
             return storage.get(username, HashSet::new);
         } catch (final ExecutionException e) {
@@ -64,7 +68,7 @@ public class InMemoryCachingWebAuthnCredentialRepository implements WebAuthnCred
     }
 
     @Override
-    public Collection<CredentialRegistrationRequest> getRegistrationsByUserHandle(final ByteArray userHandle) {
+    public Collection<WebAuthnCredentialRegistration> getRegistrationsByUserHandle(final ByteArray userHandle) {
         return storage.asMap().values().stream()
             .flatMap(Collection::stream)
             .filter(request -> userHandle.equals(request.getUserIdentity().getId())
@@ -76,7 +80,7 @@ public class InMemoryCachingWebAuthnCredentialRepository implements WebAuthnCred
     public Optional<String> getUsernameForUserHandle(final ByteArray userHandle) {
         return getRegistrationsByUserHandle(userHandle).stream()
             .findAny()
-            .map(CredentialRegistrationRequest::getUsername);
+            .map(WebAuthnCredentialRegistration::getUsername);
     }
 
     @Override
@@ -102,8 +106,8 @@ public class InMemoryCachingWebAuthnCredentialRepository implements WebAuthnCred
     }
 
     @Override
-    public Optional<CredentialRegistrationRequest> getRegistrationByUsernameAndCredentialId(final String username,
-                                                                                            final ByteArray id) {
+    public Optional<WebAuthnCredentialRegistration> getRegistrationByUsernameAndCredentialId(final String username,
+                                                                                             final ByteArray id) {
         try {
             return storage.get(username, HashSet::new)
                 .stream()
@@ -117,7 +121,7 @@ public class InMemoryCachingWebAuthnCredentialRepository implements WebAuthnCred
 
     @Override
     public boolean removeRegistrationByUsername(final String username,
-                                                final CredentialRegistrationRequest request) {
+                                                final WebAuthnCredentialRegistration request) {
         try {
             return storage.get(username, HashSet::new).remove(request);
         } catch (final ExecutionException e) {
