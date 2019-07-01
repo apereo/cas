@@ -1,9 +1,14 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.authentication.MultifactorAuthenticationFailureModeEvaluator;
+import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
+import org.apereo.cas.authentication.bypass.MultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.ResourceUtils;
+import org.apereo.cas.webauthn.WebAuthnMultifactorAuthenticationProvider;
 import org.apereo.cas.webauthn.WebAuthnOperations;
+import org.apereo.cas.webauthn.WebAuthnRestController;
 import org.apereo.cas.webauthn.attestation.DefaultAttestationCertificateTrustResolver;
 import org.apereo.cas.webauthn.credential.repository.CachingInMemoryWebAuthnCredentialRepository;
 import org.apereo.cas.webauthn.credential.repository.WebAuthnCredentialRepository;
@@ -29,7 +34,9 @@ import com.yubico.webauthn.extension.appid.AppId;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -37,6 +44,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.net.URL;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -62,11 +70,38 @@ public class WebAuthnConfiguration {
     @Autowired
     private ApplicationContext applicationContext;
 
+    @Autowired
+    @Qualifier("failureModeEvaluator")
+    private ObjectProvider<MultifactorAuthenticationFailureModeEvaluator> failureModeEvaluator;
+
+    @Autowired
+    @Qualifier("webAuthnBypassEvaluator")
+    private ObjectProvider<MultifactorAuthenticationProviderBypassEvaluator> webAuthnBypassEvaluator;
+
+    @Bean
+    public WebAuthnRestController webAuthnRestController() throws Exception {
+        return new WebAuthnRestController(webAuthnOperations(), casProperties);
+    }
+
     @ConditionalOnMissingBean(name = "webAuthnCredentialRepository")
     @Bean
     @RefreshScope
     public WebAuthnCredentialRepository webAuthnCredentialRepository() {
         return new CachingInMemoryWebAuthnCredentialRepository();
+    }
+
+    @ConditionalOnMissingBean(name = "webAuthnMultifactorAuthenticationProvider")
+    @Bean
+    @RefreshScope
+    public MultifactorAuthenticationProvider webAuthnMultifactorAuthenticationProvider() {
+        val u2f = casProperties.getAuthn().getMfa().getWebAuthn();
+        val p = new WebAuthnMultifactorAuthenticationProvider();
+        p.setBypassEvaluator(webAuthnBypassEvaluator.getIfAvailable());
+        p.setFailureMode(u2f.getFailureMode());
+        p.setFailureModeEvaluator(failureModeEvaluator.getIfAvailable());
+        p.setOrder(u2f.getRank());
+        p.setId(u2f.getId());
+        return p;
     }
 
     @Bean
@@ -110,8 +145,8 @@ public class WebAuthnConfiguration {
         val appId = new AppId(StringUtils.defaultString(webAuthn.getApplicationId(), casProperties.getServer().getName()));
         val defaultRelyingPartyId = RelyingPartyIdentity
             .builder()
-            .id(StringUtils.defaultString(webAuthn.getRelyingPartyId(), casProperties.getServer().getName()))
-            .name(StringUtils.defaultString(webAuthn.getRelyingPartyName(), casProperties.getServer().getName()))
+            .id(StringUtils.defaultString(webAuthn.getRelyingPartyId(), new URL(casProperties.getServer().getName()).getHost()))
+            .name(StringUtils.defaultString(webAuthn.getRelyingPartyName(), "CAS"))
             .build();
 
         val origins = new LinkedHashSet<String>();

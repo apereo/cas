@@ -1,9 +1,12 @@
 package org.apereo.cas.webauthn.web.flow;
 
+import org.apereo.cas.web.support.WebUtils;
 import org.apereo.cas.webauthn.credential.repository.WebAuthnCredentialRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.val;
 import org.springframework.webflow.action.AbstractAction;
+import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -19,6 +22,12 @@ public class WebAuthnAccountCheckRegistrationAction extends AbstractAction {
 
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {
-        return null;
+        val authentication = WebUtils.getAuthentication(requestContext);
+        val principal = authentication.getPrincipal();
+        val registrations = webAuthnCredentialRepository.getRegistrationsByUsername(principal.getId());
+        if (!registrations.isEmpty()) {
+            return success();
+        }
+        return new EventFactorySupport().event(this, "register");
     }
 }

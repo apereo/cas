@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+
+    <title>Web AuthN Registration View</title>
+    <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag"/>
+    <script th:src="@{/js/u2f/u2f-api.js}"></script>
+
+    <script type="text/javascript" th:src="@{/webjars/text-encoding/0.6.4/lib/encoding.js}"></script>
+    <script type="text/javascript" th:src="@{/webjars/text-encoding/0.6.4/lib/encoding-indexes.js}"></script>
+    <script type="text/javascript" th:src="@{/webjars/whatwg-fetch/3.0.0/fetch.js}"></script>
+    <script type="text/javascript" th:src="@{/webjars/base64-js/1.3.0/base64js.min.js}"></script>
+    
+    <script th:src="@{/js/webauthn/base64url.js}"></script>
+    <script th:src="@{/js/webauthn/webauthn.js}"></script>
+    <script th:src="@{/js/webauthn/webauthnhelper.js}"></script>
+
+</head>
+
+<body>
+<main role="main" class="container mt-3 mb-3">
+    <div layout:fragment="content" id="login">
+
+        <p id="status"></p>
+        <div id="messages"></div>
+
+        <div id="device-info">
+            <img id="device-icon"/>
+            <b>Device: </b><span id="device-name"></span>
+            <b>Nickname: </b><span id="device-nickname"></span>
+        </div>
+
+        Server response: <pre id="server-response"></pre>
+        Authenticator response: <pre id="authenticator-response"></pre>
+        Request: <pre id="request"></pre>
+
+        <button type="button" onClick="register()">
+            Register new account
+        </button>
+        
+        <div class="alert alert-info">
+            <form method="POST" id="form">
+                <input type="hidden" name="tokenResponse" id="tokenResponse"/>
+                <input type="hidden" name="_eventId" value="submit"/>
+                <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+            </form>
+        </div>
+    </div>
+</main>
+</body>
+</html>
