@@ -7,7 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * This is {@link JsonPrincipalAttributesProperties}.
+ * This is {@link org.apereo.cas.configuration.model.support.generic.JsonPrincipalAttributesProperties}.
  * <p>
  * If you wish to directly and separately retrieve attributes from a static JSON source.
  * The resource syntax must be as such:

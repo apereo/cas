@@ -1,6 +1,7 @@
 package org.apereo.cas;
 
 import org.apereo.cas.adaptors.generic.FileAuthenticationHandlerTests;
+import org.apereo.cas.adaptors.generic.GroovyAuthenticationHandlerTests;
 import org.apereo.cas.adaptors.generic.JsonResourceAuthenticationHandlerTests;
 import org.apereo.cas.adaptors.generic.RejectUsersAuthenticationHandlerTests;
 
@@ -17,6 +18,7 @@ import org.junit.runner.RunWith;
 @SelectClasses({
     FileAuthenticationHandlerTests.class,
     RejectUsersAuthenticationHandlerTests.class,
+    GroovyAuthenticationHandlerTests.class,
     JsonResourceAuthenticationHandlerTests.class
 })
 @RunWith(JUnitPlatform.class)
