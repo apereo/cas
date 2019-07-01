@@ -41,7 +41,6 @@ import java.nio.charset.StandardCharsets;
 import java.security.PublicKey;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 /**
  * This is {@link AccepttoMultifactorFetchChannelActionTests}.

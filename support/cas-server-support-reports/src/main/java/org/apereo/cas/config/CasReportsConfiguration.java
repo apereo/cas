@@ -26,7 +26,7 @@ import org.apereo.cas.web.report.StatusEndpoint;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnEnabledEndpoint;
+import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.actuate.autoconfigure.jdbc.DataSourceHealthIndicatorAutoConfiguration;
 import org.springframework.boot.actuate.health.HealthEndpoint;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -91,25 +91,25 @@ public class CasReportsConfiguration {
     private ObjectProvider<PrincipalFactory> principalFactory;
 
     @Bean
-    @ConditionalOnEnabledEndpoint
+    @ConditionalOnAvailableEndpoint
     public SpringWebflowEndpoint springWebflowEndpoint() {
         return new SpringWebflowEndpoint(casProperties, applicationContext);
     }
 
     @Bean
-    @ConditionalOnEnabledEndpoint
+    @ConditionalOnAvailableEndpoint
     public AuditLogEndpoint auditLogEndpoint() {
         return new AuditLogEndpoint(auditTrailExecutionPlan.getIfAvailable(), casProperties);
     }
 
     @Bean
-    @ConditionalOnEnabledEndpoint
+    @ConditionalOnAvailableEndpoint
     public RegisteredServicesEndpoint registeredServicesReportEndpoint() {
         return new RegisteredServicesEndpoint(casProperties, servicesManager.getIfAvailable());
     }
 
     @Bean
-    @ConditionalOnEnabledEndpoint
+    @ConditionalOnAvailableEndpoint
     public ExportRegisteredServicesEndpoint exportRegisteredServicesEndpoint() {
         return new ExportRegisteredServicesEndpoint(casProperties, servicesManager.getIfAvailable());
     }
@@ -120,31 +120,31 @@ public class CasReportsConfiguration {
     }
 
     @Bean
-    @ConditionalOnEnabledEndpoint
+    @ConditionalOnAvailableEndpoint
     public SingleSignOnSessionsEndpoint singleSignOnSessionsEndpoint() {
         return new SingleSignOnSessionsEndpoint(centralAuthenticationService.getIfAvailable(), casProperties);
     }
 
     @Bean
-    @ConditionalOnEnabledEndpoint
+    @ConditionalOnAvailableEndpoint
     public SingleSignOnSessionStatusEndpoint singleSignOnSessionStatusEndpoint() {
         return new SingleSignOnSessionStatusEndpoint(ticketGrantingTicketCookieGenerator.getIfAvailable(), ticketRegistrySupport.getIfAvailable());
     }
 
     @Bean
-    @ConditionalOnEnabledEndpoint
+    @ConditionalOnAvailableEndpoint
     public StatisticsEndpoint statisticsReportEndpoint() {
         return new StatisticsEndpoint(centralAuthenticationService.getIfAvailable(), casProperties);
     }
 
     @Bean
-    @ConditionalOnEnabledEndpoint
+    @ConditionalOnAvailableEndpoint
     public CasResolveAttributesReportEndpoint resolveAttributesReportEndpoint() {
         return new CasResolveAttributesReportEndpoint(casProperties, defaultPrincipalResolver.getIfAvailable());
     }
 
     @Bean
-    @ConditionalOnEnabledEndpoint
+    @ConditionalOnAvailableEndpoint
     public CasReleaseAttributesReportEndpoint releaseAttributesReportEndpoint() {
         return new CasReleaseAttributesReportEndpoint(casProperties,
             servicesManager.getIfAvailable(),
@@ -181,7 +181,7 @@ public class CasReportsConfiguration {
         private ObjectProvider<HealthEndpoint> healthEndpoint;
 
         @Bean
-        @ConditionalOnEnabledEndpoint
+        @ConditionalOnAvailableEndpoint
         public StatusEndpoint statusEndpoint() {
             return new StatusEndpoint(casProperties, healthEndpoint.getIfAvailable());
         }
