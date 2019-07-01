@@ -3,7 +3,6 @@ package org.apereo.cas.webauthn;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.webauthn.attestation.AttestationCertInfo;
-import org.apereo.cas.webauthn.attestation.DefaultAttestationCertificateTrustResolver;
 import org.apereo.cas.webauthn.authentication.AssertionRequestWrapper;
 import org.apereo.cas.webauthn.authentication.AssertionResponse;
 import org.apereo.cas.webauthn.authentication.AuthenticatedAction;
@@ -20,8 +19,6 @@ import org.apereo.cas.webauthn.util.Either;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.collect.ArrayListMultimap;
 import com.yubico.internal.util.CertificateParser;
 import com.yubico.internal.util.ExceptionUtil;
 import com.yubico.internal.util.WebAuthnCodecs;
@@ -34,23 +31,13 @@ import com.yubico.webauthn.StartAssertionOptions;
 import com.yubico.webauthn.StartRegistrationOptions;
 import com.yubico.webauthn.WebAuthnVerifier;
 import com.yubico.webauthn.attestation.Attestation;
-import com.yubico.webauthn.attestation.AttestationResolver;
-import com.yubico.webauthn.attestation.MetadataObject;
 import com.yubico.webauthn.attestation.MetadataService;
-import com.yubico.webauthn.attestation.StandardMetadataService;
-import com.yubico.webauthn.attestation.TrustResolver;
-import com.yubico.webauthn.attestation.resolver.CompositeAttestationResolver;
-import com.yubico.webauthn.attestation.resolver.CompositeTrustResolver;
-import com.yubico.webauthn.attestation.resolver.SimpleAttestationResolver;
-import com.yubico.webauthn.attestation.resolver.SimpleTrustResolver;
-import com.yubico.webauthn.data.AttestationConveyancePreference;
 import com.yubico.webauthn.data.AuthenticatorSelectionCriteria;
 import com.yubico.webauthn.data.ByteArray;
 import com.yubico.webauthn.data.PublicKeyCredentialDescriptor;
-import com.yubico.webauthn.data.RelyingPartyIdentity;
 import com.yubico.webauthn.data.UserIdentity;
 import com.yubico.webauthn.exception.AssertionFailedException;
-import com.yubico.webauthn.extension.appid.AppId;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
@@ -60,113 +47,37 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
- * This is {@link WebAuthn}.
+ * This is {@link WebAuthnOperations}.
  *
  * @author Misagh Moayyed
  * @since 6.1.0
  */
 @Slf4j
-public class WebAuthn {
-    private static final String PREVIEW_METADATA_PATH = "/preview-metadata.json";
+@RequiredArgsConstructor
+public class WebAuthnOperations {
+
     private static final int RANDOM_KEY_LENGTH = 32;
-    private static final int CACHE_MAX_SIZE = 10_000;
 
-    private final Cache<ByteArray, AssertionRequestWrapper> assertRequestStorage;
-    private final Cache<ByteArray, WebAuthnRegistrationRequest> registerRequestStorage;
-    private final Cache<AssertionRequestWrapper, AuthenticatedAction> authenticatedActions = newCache();
 
-    private final TrustResolver trustResolver = new CompositeTrustResolver(Arrays.asList(
-        StandardMetadataService.createDefaultTrustResolver(),
-        createExtraTrustResolver()
-    ));
-
-    private final MetadataService metadataService = new StandardMetadataService(
-        new CompositeAttestationResolver(Arrays.asList(
-            StandardMetadataService.createDefaultAttestationResolver(trustResolver),
-            createExtraMetadataResolver(trustResolver)
-        ))
-    );
-
-    private final ObjectMapper jsonMapper = WebAuthnCodecs.json().findAndRegisterModules();
+    private static final ObjectMapper MAPPER = WebAuthnCodecs.json().findAndRegisterModules();
 
     private final WebAuthnCredentialRepository userStorage;
+    private final Cache<ByteArray, WebAuthnRegistrationRequest> registerRequestStorage;
+    private final Cache<ByteArray, AssertionRequestWrapper> assertRequestStorage;
+    private final Cache<AssertionRequestWrapper, AuthenticatedAction> authenticatedActions;
     private final RelyingParty relyingParty;
-
-    public WebAuthn(final WebAuthnCredentialRepository userStorage,
-                          final Cache<ByteArray, WebAuthnRegistrationRequest> registerRequestStorage,
-                          final Cache<ByteArray, AssertionRequestWrapper> assertRequestStorage,
-                          final RelyingPartyIdentity rpIdentity,
-                          final Set<String> origins,
-                          final Optional<AppId> appId) throws Exception {
-        this.userStorage = userStorage;
-        this.registerRequestStorage = registerRequestStorage;
-        this.assertRequestStorage = assertRequestStorage;
-
-        relyingParty = RelyingParty.builder()
-            .identity(rpIdentity)
-            .credentialRepository(this.userStorage)
-            .origins(origins)
-            .attestationConveyancePreference(Optional.of(AttestationConveyancePreference.DIRECT))
-            .metadataService(Optional.of(metadataService))
-            .allowUnrequestedExtensions(true)
-            .allowUntrustedAttestation(true)
-            .validateSignatureCounter(true)
-            .appId(appId)
-            .build();
-    }
-
-    private static <K, V> Cache<K, V> newCache() {
-        return CacheBuilder.newBuilder()
-            .maximumSize(CACHE_MAX_SIZE)
-            .expireAfterAccess(1, TimeUnit.MINUTES)
-            .build();
-    }
+    private final MetadataService metadataService;
 
     private static ByteArray generateRandom() {
         val bytes = new byte[RANDOM_KEY_LENGTH];
         RandomUtils.getNativeInstance().nextBytes(bytes);
         return new ByteArray(bytes);
-    }
-
-    private MetadataObject readPreviewMetadata() {
-        try (val is = WebAuthn.class.getResourceAsStream(PREVIEW_METADATA_PATH)) {
-            return jsonMapper.readValue(is, MetadataObject.class);
-        } catch (final IOException e) {
-            throw ExceptionUtil.wrapAndLog(LOGGER, "Failed to read metadata from " + PREVIEW_METADATA_PATH, e);
-        }
-    }
-
-    private AttestationResolver createExtraMetadataResolver(final TrustResolver trustResolver) {
-        try {
-            val metadata = readPreviewMetadata();
-            return new SimpleAttestationResolver(CollectionUtils.wrapList(metadata), trustResolver);
-        } catch (final CertificateException e) {
-            throw ExceptionUtil.wrapAndLog(LOGGER, "Failed to read trusted certificate(s)", e);
-        }
-    }
-
-    private TrustResolver createExtraTrustResolver() {
-        try {
-            val metadata = readPreviewMetadata();
-            val trustedCertificates = metadata.getParsedTrustedCertificates();
-            val resolver = new SimpleTrustResolver(trustedCertificates);
-            val trustedCerts = ArrayListMultimap.<String, X509Certificate>create();
-            for (val cert : trustedCertificates) {
-                trustedCerts.put(cert.getSubjectDN().getName(), cert);
-            }
-            return new DefaultAttestationCertificateTrustResolver(resolver, trustedCerts);
-        } catch (final CertificateException e) {
-            throw ExceptionUtil.wrapAndLog(LOGGER, "Failed to read trusted certificate(s)", e);
-        }
     }
 
     public Either<String, WebAuthnRegistrationRequest> startRegistration(final String username, final String displayName,
@@ -239,7 +150,7 @@ public class WebAuthn {
 
     public Either<List<String>, WebAuthnSuccessfulRegistrationResult> finishRegistration(final String responseJson) {
         try {
-            val response = jsonMapper.readValue(responseJson, WebAuthnRegistrationResponse.class);
+            val response = MAPPER.readValue(responseJson, WebAuthnRegistrationResponse.class);
             val request = registerRequestStorage.getIfPresent(response.getRequestId());
             registerRequestStorage.invalidate(response.getRequestId());
 
@@ -275,7 +186,7 @@ public class WebAuthn {
     public Either<List<String>, WebAuthnSuccessfulU2fRegistrationResult> finishU2fRegistration(final String responseJson) {
         var response = (WebAuthnCredentialRegistrationResponse) null;
         try {
-            response = jsonMapper.readValue(responseJson, WebAuthnCredentialRegistrationResponse.class);
+            response = MAPPER.readValue(responseJson, WebAuthnCredentialRegistrationResponse.class);
         } catch (final IOException e) {
             LOGGER.error("JSON error in finishU2fRegistration; responseJson: {}", responseJson, e);
             return Either.left(CollectionUtils.wrapList("Failed to decode response object.", e.getMessage()));
@@ -354,7 +265,7 @@ public class WebAuthn {
     public Either<List<String>, SuccessfulAuthenticationResult> finishAuthentication(final String responseJson) {
         var response = (AssertionResponse) null;
         try {
-            response = jsonMapper.readValue(responseJson, AssertionResponse.class);
+            response = MAPPER.readValue(responseJson, AssertionResponse.class);
         } catch (final IOException e) {
             LOGGER.debug("Failed to decode response object", e);
             return Either.left(CollectionUtils.wrapList("Failed to decode response object.", e.getMessage()));
@@ -439,8 +350,7 @@ public class WebAuthn {
         }
 
         AuthenticatedAction<T> action = (SuccessfulAuthenticationResult result) -> {
-            Optional<WebAuthnCredentialRegistration> credReg = userStorage.getRegistrationByUsernameAndCredentialId(username, credentialId);
-
+            val credReg = userStorage.getRegistrationByUsernameAndCredentialId(username, credentialId);
             if (credReg.isPresent()) {
                 userStorage.removeRegistrationByUsername(username, credReg.get());
                 return Either.right(resultMapper.apply(credReg.get()));
