@@ -360,7 +360,7 @@ public class CasOAuthConfiguration {
     @ConditionalOnMissingBean(name = "defaultDeviceTokenFactory")
     public DeviceTokenFactory defaultDeviceTokenFactory() {
         return new DefaultDeviceTokenFactory(deviceTokenIdGenerator(), deviceTokenExpirationPolicy(),
-            casProperties.getAuthn().getOauth().getDeviceToken().getUserCodeLength(),
+            casProperties.getAuthn().getOauth().getDeviceUserCode().getUserCodeLength(),
             servicesManager.getIfAvailable());
     }
 
