@@ -75,11 +75,6 @@ public class JpaServiceRegistry extends AbstractServiceRegistry {
     }
 
     @Override
-    public RegisteredService findServiceById(final String id) {
-        return load().stream().filter(r -> r.matches(id)).findFirst().orElse(null);
-    }
-
-    @Override
     public long size() {
         val query = String.format("select count(r) from %s r", ENTITY_NAME);
         return this.entityManager.createQuery(query, Long.class).getSingleResult();
