@@ -155,7 +155,7 @@ public class WebAuthnOperations {
             registerRequestStorage.invalidate(response.getRequestId());
 
             if (request == null) {
-                return Either.left(CollectionUtils.wrapList("Registration failed!", "No such registration in progress."));
+                return Either.left(CollectionUtils.wrapList("No such registration in progress."));
             }
             var finishedRegistration = FinishRegistrationOptions.builder()
                 .request(request.getPublicKeyCredentialCreationOptions())

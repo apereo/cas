@@ -19,6 +19,7 @@ public class WebAuthnAccountSaveRegistrationAction extends AbstractAction {
 
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {
-        return null;
+
+        return success();
     }
 }
