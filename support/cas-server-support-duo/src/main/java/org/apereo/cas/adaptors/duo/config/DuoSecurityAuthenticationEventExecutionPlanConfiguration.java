@@ -37,7 +37,7 @@ import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnEnabledEndpoint;
+import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.actuate.autoconfigure.health.ConditionalOnEnabledHealthIndicator;
 import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -194,13 +194,13 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration implements
     }
 
     @Bean
-    @ConditionalOnEnabledEndpoint
+    @ConditionalOnAvailableEndpoint
     public DuoSecurityPingEndpoint duoPingEndpoint() {
         return new DuoSecurityPingEndpoint(casProperties, applicationContext);
     }
 
     @Bean
-    @ConditionalOnEnabledEndpoint
+    @ConditionalOnAvailableEndpoint
     public DuoSecurityUserAccountStatusEndpoint duoAccountStatusEndpoint() {
         return new DuoSecurityUserAccountStatusEndpoint(casProperties, applicationContext);
     }

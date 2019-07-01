@@ -19,7 +19,7 @@ import org.jasig.cas.client.validation.AbstractUrlBasedTicketValidator;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnEnabledEndpoint;
+import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -106,7 +106,7 @@ public class TokenCoreConfiguration {
     }
 
     @Bean
-    @ConditionalOnEnabledEndpoint
+    @ConditionalOnAvailableEndpoint
     public JwtTokenCipherSigningPublicKeyEndpoint jwtTokenCipherSigningPublicKeyEndpoint() {
         return new JwtTokenCipherSigningPublicKeyEndpoint(casProperties, tokenCipherExecutor(), this.servicesManager.getIfAvailable());
     }
