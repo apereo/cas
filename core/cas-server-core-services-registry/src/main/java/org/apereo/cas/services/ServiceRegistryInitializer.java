@@ -48,12 +48,7 @@ public class ServiceRegistryInitializer {
     }
 
     private boolean findExistingMatchForService(final RegisteredService r) {
-        RegisteredService match = this.serviceRegistry.findServiceById(r.getServiceId());
-        if (match != null) {
-            LOGGER.warn("Skipping [{}] JSON service definition as a matching service [{}] is found in the registry", r.getName(), match.getName());
-            return true;
-        }
-        match = this.serviceRegistry.findServiceByExactServiceId(r.getServiceId());
+        RegisteredService match = this.serviceRegistry.findServiceByExactServiceId(r.getServiceId());
         if (match != null) {
             LOGGER.warn("Skipping [{}] JSON service definition as a matching service [{}] is found in the registry", r.getName(), match.getName());
             return true;
