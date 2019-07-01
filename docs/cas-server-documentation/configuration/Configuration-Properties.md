@@ -3448,8 +3448,10 @@ To learn more about this topic, [please review this guide](../installation/OAuth
 # cas.authn.oauth.accessToken.maxTimeToLiveInSeconds=28800
 
 # cas.authn.oauth.deviceToken.timeToKillInSeconds=2592000
-# cas.authn.oauth.deviceToken.refreshInterval=PT15S
-# cas.authn.oauth.deviceToken.userCodeLength=8
+# cas.authn.oauth.deviceToken.refreshInterval=PT15S 
+
+# cas.authn.oauth.deviceUserCode.timeToKillInSeconds=2592000
+# cas.authn.oauth.deviceUserCode.userCodeLength=8
 
 # cas.authn.oauth.grants.resourceOwner.requireServiceHeader=true
 
