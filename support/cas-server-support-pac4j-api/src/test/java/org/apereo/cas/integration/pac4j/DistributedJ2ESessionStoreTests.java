@@ -71,7 +71,7 @@ public class DistributedJ2ESessionStoreTests {
         assertEquals("test2", value);
 
         store.set(context, "attribute", null);
-        store.set(context, "attribute2", "test3"); // make sure session has not been deleted
+        store.set(context, "attribute2", "test3"); 
         assertNull(store.get(context, "attribute"));
         value = store.get(context, "attribute2");
         assertEquals("test3", value);
