@@ -54,14 +54,9 @@ public class ServiceRegistryInitializer {
 
     private boolean findExistingMatchForService(final RegisteredService r) {
         if (StringUtils.isNotBlank(r.getServiceId())) {
-            val match = this.serviceRegistry.findServiceById(r.getServiceId());
+            val match = this.serviceRegistry.findServiceByExactServiceId(r.getServiceId());
             if (match != null) {
                 LOGGER.warn("Skipping [{}] JSON service definition as a matching service [{}] is found in the registry", r.getName(), match.getName());
-                return true;
-            }
-            val match2 = this.serviceRegistry.findServiceByExactServiceId(r.getServiceId());
-            if (match2 != null) {
-                LOGGER.warn("Skipping [{}] JSON service definition as a matching service [{}] is found in the registry", r.getName(), match2.getName());
                 return true;
             }
         }
