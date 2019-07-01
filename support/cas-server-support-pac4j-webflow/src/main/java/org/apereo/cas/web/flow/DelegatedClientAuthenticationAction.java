@@ -243,7 +243,13 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         }
     }
 
-    private boolean isLogoutRequest(final HttpServletRequest request) {
+    /**
+     * Is this a SAML logout request?
+     *
+     * @param request the HTTP request
+     * @return whether it is a SAML logout request
+     */
+    protected boolean isLogoutRequest(final HttpServletRequest request) {
         return request.getParameter(SAML2ServiceProviderMetadataResolver.LOGOUT_ENDPOINT_PARAMETER) != null;
     }
 
