@@ -1737,6 +1737,15 @@ Password encoding  settings for this feature are available [here](Configuration-
 # cas.authn.file.name=
 ```
 
+## Groovy Authentication
+
+To learn more about this topic, [please review this guide](../installation/Groovy-Authentication.html).
+
+```properties
+# cas.authn.groovy.order=0
+# cas.authn.groovy.name=
+```
+
 ## JSON (Whitelist) Authentication
 
 To learn more about this topic, [please review this guide](../installation/Whitelist-Authentication.html).
