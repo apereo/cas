@@ -35,7 +35,8 @@ public class U2FStartAuthenticationAction extends AbstractAction {
 
         if (!requestData.getSignRequests().isEmpty()) {
             val req = requestData.getSignRequests().get(0);
-            requestContext.getFlowScope().put("u2fAuth", new U2FAuthentication(req.getChallenge(), req.getAppId(), req.getKeyHandle()));
+            val auth = new U2FAuthentication(req.getChallenge(), req.getAppId(), req.getKeyHandle());
+            requestContext.getFlowScope().put("u2fAuth", auth);
             return success();
         }
         return error();

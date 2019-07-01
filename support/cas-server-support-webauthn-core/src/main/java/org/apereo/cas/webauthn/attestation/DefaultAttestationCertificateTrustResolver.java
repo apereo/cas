@@ -1,6 +1,5 @@
 package org.apereo.cas.webauthn.attestation;
 
-import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import com.yubico.webauthn.attestation.TrustResolver;
 import com.yubico.webauthn.attestation.resolver.SimpleTrustResolver;

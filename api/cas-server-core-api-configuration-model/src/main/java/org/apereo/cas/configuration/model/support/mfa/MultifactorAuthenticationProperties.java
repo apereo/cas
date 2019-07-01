@@ -189,6 +189,12 @@ public class MultifactorAuthenticationProperties implements Serializable {
     private YubiKeyMultifactorProperties yubikey = new YubiKeyMultifactorProperties();
 
     /**
+     * Activate and configure a multifactor authentication provider via WebAuthN.
+     */
+    @NestedConfigurationProperty
+    private WebAuthnMultifactorProperties webAuthn = new WebAuthnMultifactorProperties();
+
+    /**
      * Activate and configure a multifactor authentication provider via RADIUS.
      */
     @NestedConfigurationProperty

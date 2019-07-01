@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.springframework.org/schema/webflow
+                          http://www.springframework.org/schema/webflow/spring-webflow.xsd">
+
+    <var name="credential" class="org.apereo.cas.webauthn.credential.WebAuthnCredential" />
+
+    <on-start>
+        <evaluate expression="initialFlowSetupAction" />
+    </on-start>
+
+    <action-state id="initializeLoginForm">
+        <evaluate expression="initializeLoginAction" />
+        <transition on="success" to="accountRegistrationCheck"/>
+    </action-state>
+
+    <action-state id="accountRegistrationCheck">
+        <evaluate expression="webAuthnCheckAccountRegistrationAction" />
+        <transition on="register" to="viewRegistrationWebAuthn"/>
+        <transition on="success" to="viewLoginForm"/>
+    </action-state>
+    
+    <view-state id="viewRegistrationWebAuthn" view="casWebAuthnRegistrationView">
+        <on-entry>
+            <evaluate expression="webAuthnStartRegistrationAction" />
+            <set name="viewScope.principal" value="conversationScope.authentication.principal" />
+        </on-entry>
+        <transition on="submit" to="saveRegistration"/>
+    </view-state>
+
+    <action-state id="saveRegistration">
+        <evaluate expression="webAuthnSaveAccountRegistrationAction" />
+        <transition on="success" to="viewLoginForm"/>
+    </action-state>
+
+    <view-state id="viewLoginForm" view="casWebAuthnLoginView" model="credential">
+        <binder>
+            <binding property="token" required="true"/>
+        </binder>
+        <on-entry>
+            <evaluate expression="webAuthnStartAuthenticationAction" />
+            <set name="viewScope.principal" value="conversationScope.authentication.principal" />
+        </on-entry>
+        <transition on="submit" bind="true" validate="true" to="realSubmit"/>
+    </view-state>
+    
+    <action-state id="realSubmit">
+        <evaluate expression="webAuthnAuthenticationWebflowAction" />
+        <transition on="success" to="success" />
+        <transition on="error" to="initializeLoginForm" />
+    </action-state>
+
+    <end-state id="success" />
+
+</flow>

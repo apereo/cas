@@ -363,8 +363,9 @@ subprojects {
         apply plugin: "checkstyle"
         checkstyle {
             configProperties = [
-                    "checkstyle.suppressions.file" : new File(rootDir, "style/checkstyle-suppressions.xml"),
-                    "checkstyle.importcontrol.file": new File(rootDir, "style/import-control.xml")]
+                "checkstyle.suppressions.file" : new File(rootDir, "style/checkstyle-suppressions.xml"),
+                "checkstyle.importcontrol.file": new File(rootDir, "style/import-control.xml")
+            ]
             configFile = new File(rootDir, "style/checkstyle-rules.xml")
             ignoreFailures false
             showViolations true

@@ -11,7 +11,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.experimental.Wither;
 
 import java.time.Instant;
 import java.util.Optional;
@@ -27,7 +26,6 @@ import java.util.Optional;
 @EqualsAndHashCode
 @NoArgsConstructor
 @Builder
-@Wither
 @AllArgsConstructor
 public class WebAuthnCredentialRegistration {
     private long signatureCount;

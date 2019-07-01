@@ -20,6 +20,7 @@ import org.apereo.cas.mfa.accepto.web.flow.AccepttoMultifactorAuthenticationWebf
 import org.apereo.cas.mfa.accepto.web.flow.AccepttoMultifactorDetermineUserAccountStatusAction;
 import org.apereo.cas.mfa.accepto.web.flow.AccepttoMultifactorFetchChannelAction;
 import org.apereo.cas.mfa.accepto.web.flow.AccepttoMultifactorFinalizeAuthenticationWebflowAction;
+import org.apereo.cas.mfa.accepto.web.flow.AccepttoMultifactorTrustWebflowConfigurer;
 import org.apereo.cas.mfa.accepto.web.flow.AccepttoMultifactorValidateChannelAction;
 import org.apereo.cas.mfa.accepto.web.flow.AccepttoMultifactorValidateUserDeviceRegistrationAction;
 import org.apereo.cas.mfa.accepto.web.flow.AccepttoMultifactorWebflowConfigurer;
@@ -47,7 +48,9 @@ import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationEventPublisher;
@@ -275,10 +278,34 @@ public class AccepttoMultifactorAuthenticationConfiguration {
     @Bean
     public AuthenticationEventExecutionPlanConfigurer casAccepttoAuthenticationQRCodeEventExecutionPlanConfigurer() {
         return plan -> {
-            plan.registerAuthenticationHandlerWithPrincipalResolver(casAccepttoQRCodeAuthenticationHandler(), defaultPrincipalResolver.getIfAvailable());
+            plan.registerAuthenticationHandlerWithPrincipalResolver(casAccepttoQRCodeAuthenticationHandler(),
+                defaultPrincipalResolver.getIfAvailable());
             plan.registerAuthenticationMetadataPopulator(casAccepttoQRCodeAuthenticationMetaDataPopulator());
             plan.registerAuthenticationHandlerResolver(new ByCredentialTypeAuthenticationHandlerResolver(AccepttoEmailCredential.class));
         };
     }
 
+    /**
+     * The Acceptto multifactor trust configuration.
+     */
+    @ConditionalOnBean(name = "mfaTrustEngine")
+    @ConditionalOnProperty(prefix = "cas.authn.mfa.acceptto", name = "trustedDeviceEnabled", havingValue = "true", matchIfMissing = true)
+    @Configuration("accepttoMultifactorTrustConfiguration")
+    public class AccepttoMultifactorTrustConfiguration implements CasWebflowExecutionPlanConfigurer {
+
+        @ConditionalOnMissingBean(name = "accepttoMultifactorTrustWebflowConfigurer")
+        @Bean
+        @DependsOn("defaultWebflowConfigurer")
+        public CasWebflowConfigurer accepttoMultifactorTrustWebflowConfigurer() {
+            val deviceRegistrationEnabled = casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled();
+            return new AccepttoMultifactorTrustWebflowConfigurer(flowBuilderServices,
+                deviceRegistrationEnabled, loginFlowDefinitionRegistry.getIfAvailable(),
+                applicationContext, casProperties);
+        }
+
+        @Override
+        public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
+            plan.registerWebflowConfigurer(accepttoMultifactorTrustWebflowConfigurer());
+        }
+    }
 }

@@ -1,4 +1,6 @@
-package org.apereo.cas.webauthn.credential;
+package org.apereo.cas.webauthn.credential.repository;
+
+import org.apereo.cas.webauthn.credential.WebAuthnCredentialRegistration;
 
 import com.yubico.webauthn.AssertionResult;
 import com.yubico.webauthn.CredentialRepository;
@@ -14,15 +16,15 @@ import java.util.Optional;
  * @since 6.1.0
  */
 public interface WebAuthnCredentialRepository extends CredentialRepository {
-    boolean addRegistrationByUsername(String username, CredentialRegistration reg);
+    boolean addRegistrationByUsername(String username, WebAuthnCredentialRegistration reg);
 
-    Collection<CredentialRegistration> getRegistrationsByUsername(String username);
+    Collection<WebAuthnCredentialRegistration> getRegistrationsByUsername(String username);
 
-    Optional<CredentialRegistration> getRegistrationByUsernameAndCredentialId(String username, ByteArray userHandle);
+    Optional<WebAuthnCredentialRegistration> getRegistrationByUsernameAndCredentialId(String username, ByteArray userHandle);
 
-    Collection<CredentialRegistration> getRegistrationsByUserHandle(ByteArray userHandle);
+    Collection<WebAuthnCredentialRegistration> getRegistrationsByUserHandle(ByteArray userHandle);
 
-    boolean removeRegistrationByUsername(String username, CredentialRegistration credentialRegistration);
+    boolean removeRegistrationByUsername(String username, WebAuthnCredentialRegistration credentialRegistration);
 
     boolean removeAllRegistrations(String username);
 

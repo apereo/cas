@@ -101,7 +101,8 @@ public class CachingInMemoryWebAuthnCredentialRepository implements WebAuthnCred
         val regs = storage.getIfPresent(result.getUsername());
         if (regs != null) {
             regs.remove(registration);
-            regs.add(registration.withSignatureCount(result.getSignatureCount()));
+            registration.setSignatureCount(result.getSignatureCount());
+            regs.add(registration);
         }
     }
 

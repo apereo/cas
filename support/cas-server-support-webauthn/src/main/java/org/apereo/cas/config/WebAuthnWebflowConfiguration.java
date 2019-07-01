@@ -1,15 +1,6 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.CentralAuthenticationService;
-import org.apereo.cas.adaptors.u2f.storage.U2FDeviceRepository;
-import org.apereo.cas.adaptors.u2f.web.flow.U2FAccountCheckRegistrationAction;
-import org.apereo.cas.adaptors.u2f.web.flow.U2FAccountSaveRegistrationAction;
-import org.apereo.cas.adaptors.u2f.web.flow.U2FAuthenticationWebflowAction;
-import org.apereo.cas.adaptors.u2f.web.flow.U2FAuthenticationWebflowEventResolver;
-import org.apereo.cas.adaptors.u2f.web.flow.U2FMultifactorTrustWebflowConfigurer;
-import org.apereo.cas.adaptors.u2f.web.flow.U2FMultifactorWebflowConfigurer;
-import org.apereo.cas.adaptors.u2f.web.flow.U2FStartAuthenticationAction;
-import org.apereo.cas.adaptors.u2f.web.flow.U2FStartRegistrationAction;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
@@ -23,7 +14,17 @@ import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
+import org.apereo.cas.webauthn.credential.repository.WebAuthnCredentialRepository;
+import org.apereo.cas.webauthn.web.flow.WebAuthnAccountCheckRegistrationAction;
+import org.apereo.cas.webauthn.web.flow.WebAuthnAccountSaveRegistrationAction;
+import org.apereo.cas.webauthn.web.flow.WebAuthnAuthenticationWebflowAction;
+import org.apereo.cas.webauthn.web.flow.WebAuthnAuthenticationWebflowEventResolver;
+import org.apereo.cas.webauthn.web.flow.WebAuthnMultifactorTrustWebflowConfigurer;
+import org.apereo.cas.webauthn.web.flow.WebAuthnMultifactorWebflowConfigurer;
+import org.apereo.cas.webauthn.web.flow.WebAuthnStartAuthenticationAction;
+import org.apereo.cas.webauthn.web.flow.WebAuthnStartRegistrationAction;
 
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,15 +44,15 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
 
 /**
- * This is {@link U2FWebflowConfiguration}.
+ * This is {@link WebAuthnWebflowConfiguration}.
  *
  * @author Misagh Moayyed
- * @since 5.1.0
+ * @since 6.1.0
  */
-@Configuration("u2FWebflowConfiguration")
+@Configuration("webAuthnWebflowConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class U2FWebflowConfiguration implements CasWebflowExecutionPlanConfigurer {
-
+@Slf4j
+public class WebAuthnWebflowConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -63,8 +64,8 @@ public class U2FWebflowConfiguration implements CasWebflowExecutionPlanConfigure
     private FlowBuilderServices flowBuilderServices;
 
     @Autowired
-    @Qualifier("u2fDeviceRepository")
-    private ObjectProvider<U2FDeviceRepository> u2fDeviceRepository;
+    @Qualifier("webAuthnCredentialRepository")
+    private ObjectProvider<WebAuthnCredentialRepository> webAuthnCredentialRepository;
 
     @Autowired
     private ConfigurableApplicationContext applicationContext;
@@ -101,54 +102,55 @@ public class U2FWebflowConfiguration implements CasWebflowExecutionPlanConfigure
     private ObjectProvider<CasCookieBuilder> warnCookieGenerator;
 
     @Bean
-    public FlowDefinitionRegistry u2fFlowRegistry() {
+    public FlowDefinitionRegistry webAuthnFlowRegistry() {
         val builder = new FlowDefinitionRegistryBuilder(this.applicationContext, this.flowBuilderServices);
         builder.setBasePath(CasWebflowConstants.BASE_CLASSPATH_WEBFLOW);
-        builder.addFlowLocationPattern("/mfa-u2f/*-webflow.xml");
+        builder.addFlowLocationPattern("/mfa-webauthn/*-webflow.xml");
         return builder.build();
     }
 
-    @ConditionalOnMissingBean(name = "u2fAuthenticationWebflowAction")
+    @ConditionalOnMissingBean(name = "webAuthnAuthenticationWebflowAction")
     @Bean
-    public Action u2fAuthenticationWebflowAction() {
-        return new U2FAuthenticationWebflowAction(u2fAuthenticationWebflowEventResolver());
+    public Action webAuthnAuthenticationWebflowAction() {
+        return new WebAuthnAuthenticationWebflowAction(webAuthnAuthenticationWebflowEventResolver());
     }
 
-    @ConditionalOnMissingBean(name = "u2fMultifactorWebflowConfigurer")
+    @ConditionalOnMissingBean(name = "webAuthnMultifactorWebflowConfigurer")
     @Bean
     @DependsOn("defaultWebflowConfigurer")
-    public CasWebflowConfigurer u2fMultifactorWebflowConfigurer() {
-        return new U2FMultifactorWebflowConfigurer(flowBuilderServices,
-            loginFlowDefinitionRegistry.getIfAvailable(), u2fFlowRegistry(), applicationContext, casProperties);
+    public CasWebflowConfigurer webAuthnMultifactorWebflowConfigurer() {
+        return new WebAuthnMultifactorWebflowConfigurer(flowBuilderServices,
+            loginFlowDefinitionRegistry.getIfAvailable(), webAuthnFlowRegistry(),
+            applicationContext, casProperties);
     }
 
-    @ConditionalOnMissingBean(name = "u2fStartAuthenticationAction")
+    @ConditionalOnMissingBean(name = "webAuthnStartAuthenticationAction")
     @Bean
-    public Action u2fStartAuthenticationAction() {
-        return new U2FStartAuthenticationAction(casProperties.getServer().getName(), u2fDeviceRepository.getIfAvailable());
+    public Action webAuthnStartAuthenticationAction() {
+        return new WebAuthnStartAuthenticationAction(webAuthnCredentialRepository.getIfAvailable());
     }
 
-    @ConditionalOnMissingBean(name = "u2fStartRegistrationAction")
+    @ConditionalOnMissingBean(name = "webAuthnStartRegistrationAction")
     @Bean
-    public Action u2fStartRegistrationAction() {
-        return new U2FStartRegistrationAction(casProperties.getServer().getName(), u2fDeviceRepository.getIfAvailable());
+    public Action webAuthnStartRegistrationAction() {
+        return new WebAuthnStartRegistrationAction(webAuthnCredentialRepository.getIfAvailable());
     }
 
-    @ConditionalOnMissingBean(name = "u2fCheckAccountRegistrationAction")
+    @ConditionalOnMissingBean(name = "webAuthnCheckAccountRegistrationAction")
     @Bean
-    public Action u2fCheckAccountRegistrationAction() {
-        return new U2FAccountCheckRegistrationAction(u2fDeviceRepository.getIfAvailable());
+    public Action webAuthnCheckAccountRegistrationAction() {
+        return new WebAuthnAccountCheckRegistrationAction(webAuthnCredentialRepository.getIfAvailable());
     }
 
-    @ConditionalOnMissingBean(name = "u2fSaveAccountRegistrationAction")
+    @ConditionalOnMissingBean(name = "webAuthnSaveAccountRegistrationAction")
     @Bean
-    public Action u2fSaveAccountRegistrationAction() {
-        return new U2FAccountSaveRegistrationAction(u2fDeviceRepository.getIfAvailable());
+    public Action webAuthnSaveAccountRegistrationAction() {
+        return new WebAuthnAccountSaveRegistrationAction(webAuthnCredentialRepository.getIfAvailable());
     }
 
-    @ConditionalOnMissingBean(name = "u2fAuthenticationWebflowEventResolver")
+    @ConditionalOnMissingBean(name = "webAuthnAuthenticationWebflowEventResolver")
     @Bean
-    public CasWebflowEventResolver u2fAuthenticationWebflowEventResolver() {
+    public CasWebflowEventResolver webAuthnAuthenticationWebflowEventResolver() {
         val context = CasWebflowEventResolutionConfigurationContext.builder()
             .authenticationSystemSupport(authenticationSystemSupport.getIfAvailable())
             .centralAuthenticationService(centralAuthenticationService.getIfAvailable())
@@ -162,35 +164,40 @@ public class U2FWebflowConfiguration implements CasWebflowExecutionPlanConfigure
             .applicationContext(applicationContext)
             .build();
 
-        return new U2FAuthenticationWebflowEventResolver(context);
+        return new WebAuthnAuthenticationWebflowEventResolver(context);
     }
 
-    @Override
-    public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-        plan.registerWebflowConfigurer(u2fMultifactorWebflowConfigurer());
+    @Bean
+    public CasWebflowExecutionPlanConfigurer webAuthnCasWebflowExecutionPlanConfigurer() {
+        return new CasWebflowExecutionPlanConfigurer() {
+            @Override
+            public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
+                plan.registerWebflowConfigurer(webAuthnMultifactorWebflowConfigurer());
+            }
+        };
     }
 
     /**
-     * The U2F multifactor trust configuration.
+     * The WebAuthN multifactor trust configuration.
      */
     @ConditionalOnBean(name = "mfaTrustEngine")
-    @ConditionalOnProperty(prefix = "cas.authn.mfa.u2f", name = "trustedDeviceEnabled", havingValue = "true", matchIfMissing = true)
-    @Configuration("u2fMultifactorTrustConfiguration")
-    public class U2FMultifactorTrustConfiguration implements CasWebflowExecutionPlanConfigurer {
+    @ConditionalOnProperty(prefix = "cas.authn.mfa.webAuthn", name = "trustedDeviceEnabled", havingValue = "true", matchIfMissing = true)
+    @Configuration("accepttoMultifactorTrustConfiguration")
+    public class WebAuthnMultifactorTrustConfiguration implements CasWebflowExecutionPlanConfigurer {
 
-        @ConditionalOnMissingBean(name = "u2fMultifactorTrustWebflowConfigurer")
+        @ConditionalOnMissingBean(name = "webAuthnMultifactorTrustWebflowConfigurer")
         @Bean
         @DependsOn("defaultWebflowConfigurer")
-        public CasWebflowConfigurer u2fMultifactorTrustWebflowConfigurer() {
+        public CasWebflowConfigurer webAuthnMultifactorTrustWebflowConfigurer() {
             val deviceRegistrationEnabled = casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled();
-            return new U2FMultifactorTrustWebflowConfigurer(flowBuilderServices,
+            return new WebAuthnMultifactorTrustWebflowConfigurer(flowBuilderServices,
                 deviceRegistrationEnabled, loginFlowDefinitionRegistry.getIfAvailable(),
                 applicationContext, casProperties);
         }
 
         @Override
         public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-            plan.registerWebflowConfigurer(u2fMultifactorTrustWebflowConfigurer());
+            plan.registerWebflowConfigurer(webAuthnMultifactorTrustWebflowConfigurer());
         }
     }
 }
