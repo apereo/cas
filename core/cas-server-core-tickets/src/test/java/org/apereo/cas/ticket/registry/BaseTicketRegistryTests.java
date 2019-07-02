@@ -286,26 +286,26 @@ public abstract class BaseTicketRegistryTests {
 
         val service = RegisteredServiceTestUtils.getService("TGT_DELETE_TEST");
 
-        val st1 = tgt.grantServiceTicket("ST11", service, new NeverExpiresExpirationPolicy(), false, false);
-        val st2 = tgt.grantServiceTicket("ST21", service, new NeverExpiresExpirationPolicy(), false, false);
-        val st3 = tgt.grantServiceTicket("ST31", service, new NeverExpiresExpirationPolicy(), false, false);
+        val st1 = tgt.grantServiceTicket("ST-11", service, new NeverExpiresExpirationPolicy(), false, false);
+        val st2 = tgt.grantServiceTicket("ST-21", service, new NeverExpiresExpirationPolicy(), false, false);
+        val st3 = tgt.grantServiceTicket("ST-31", service, new NeverExpiresExpirationPolicy(), false, false);
 
         ticketRegistry.addTicket(st1);
         ticketRegistry.addTicket(st2);
         ticketRegistry.addTicket(st3);
 
         assertNotNull(ticketRegistry.getTicket(ticketGrantingTicketId + '1', TicketGrantingTicket.class));
-        assertNotNull(ticketRegistry.getTicket("ST11", ServiceTicket.class));
-        assertNotNull(ticketRegistry.getTicket("ST21", ServiceTicket.class));
-        assertNotNull(ticketRegistry.getTicket("ST31", ServiceTicket.class));
+        assertNotNull(ticketRegistry.getTicket("ST-11", ServiceTicket.class));
+        assertNotNull(ticketRegistry.getTicket("ST-21", ServiceTicket.class));
+        assertNotNull(ticketRegistry.getTicket("ST-31", ServiceTicket.class));
 
         ticketRegistry.updateTicket(tgt);
         assertSame(4, ticketRegistry.deleteTicket(tgt.getId()));
 
         assertNull(ticketRegistry.getTicket(ticketGrantingTicketId + '1', TicketGrantingTicket.class));
-        assertNull(ticketRegistry.getTicket("ST11", ServiceTicket.class));
-        assertNull(ticketRegistry.getTicket("ST21", ServiceTicket.class));
-        assertNull(ticketRegistry.getTicket("ST31", ServiceTicket.class));
+        assertNull(ticketRegistry.getTicket("ST-11", ServiceTicket.class));
+        assertNull(ticketRegistry.getTicket("ST-21", ServiceTicket.class));
+        assertNull(ticketRegistry.getTicket("ST-31", ServiceTicket.class));
     }
 
     @RepeatedTest(2)

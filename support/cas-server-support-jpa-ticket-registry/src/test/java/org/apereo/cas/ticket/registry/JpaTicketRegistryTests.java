@@ -29,7 +29,6 @@ import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 
 import lombok.val;
-import org.apache.cxf.ws.security.tokenstore.SecurityToken;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.parallel.ResourceLock;
@@ -42,6 +41,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.nio.charset.StandardCharsets;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -95,7 +96,7 @@ public class JpaTicketRegistryTests extends BaseTicketRegistryTests {
         return this.ticketRegistry;
     }
 
-    @RepeatedTest(1)
+    @RepeatedTest(2)
     public void verifySecurityTokenTicket() {
         val securityTokenTicketFactory = new DefaultSecurityTokenTicketFactory(
             new DefaultUniqueTicketIdGenerator(),
@@ -106,7 +107,7 @@ public class JpaTicketRegistryTests extends BaseTicketRegistryTests {
             originalAuthn, new NeverExpiresExpirationPolicy());
         this.ticketRegistry.addTicket(tgt);
 
-        val token = securityTokenTicketFactory.create(tgt, new SecurityToken("testing"));
+        val token = securityTokenTicketFactory.create(tgt, "dummy-token".getBytes(StandardCharsets.UTF_8));
         this.ticketRegistry.addTicket(token);
 
         assertNotNull(this.ticketRegistry.getTicket(token.getId()));
