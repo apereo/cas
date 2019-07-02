@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import org.apereo.cas.ticket.DefaultTicketCatalogTests;
 import org.apereo.cas.ticket.InvalidTicketExceptionTests;
 import org.apereo.cas.ticket.ServiceTicketImplTests;
 import org.apereo.cas.ticket.TicketGrantingTicketImplTests;
@@ -59,7 +60,8 @@ import org.junit.runner.RunWith;
     NeverExpiresExpirationPolicyTests.class,
     DefaultTicketRegistryCleanerTests.class,
     TicketSerializersTests.class,
-    Cas20ProxyHandlerTests.class
+    Cas20ProxyHandlerTests.class,
+    DefaultTicketCatalogTests.class
 })
 @RunWith(JUnitPlatform.class)
 public class AllTestsSuite {
