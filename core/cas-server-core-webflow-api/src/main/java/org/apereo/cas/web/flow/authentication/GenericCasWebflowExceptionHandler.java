@@ -6,6 +6,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.binding.message.MessageBuilder;
+import org.springframework.binding.message.MessageResolver;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -39,9 +40,24 @@ public class GenericCasWebflowExceptionHandler implements CasWebflowExceptionHan
     public Event handle(final Exception exception, final RequestContext requestContext) {
         val messageContext = requestContext.getMessageContext();
         LOGGER.trace("Unable to translate errors of the authentication exception [{}]. Returning [{}]", exception, CasWebflowExceptionHandler.UNKNOWN);
-        val messageCode = this.messageBundlePrefix + CasWebflowExceptionHandler.UNKNOWN;
-        messageContext.addMessage(new MessageBuilder().error().code(messageCode).build());
+        val message = buildErrorMessageResolver(exception, requestContext);
+        messageContext.addMessage(message);
         return new EventFactorySupport().event(this, CasWebflowExceptionHandler.UNKNOWN);
+    }
+
+    /**
+     * Build error message resolver.
+     *
+     * @param exception      the exception
+     * @param requestContext the request context
+     * @return the message resolver
+     */
+    protected MessageResolver buildErrorMessageResolver(final Exception exception, final RequestContext requestContext) {
+        val messageCode = this.messageBundlePrefix + CasWebflowExceptionHandler.UNKNOWN;
+        return new MessageBuilder()
+            .error()
+            .code(messageCode)
+            .build();
     }
 
     @Override

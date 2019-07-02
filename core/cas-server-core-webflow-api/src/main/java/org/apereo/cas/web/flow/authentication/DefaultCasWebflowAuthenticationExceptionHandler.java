@@ -84,7 +84,12 @@ public class DefaultCasWebflowAuthenticationExceptionHandler implements CasWebfl
 
         val messageContext = requestContext.getMessageContext();
         val messageCode = this.messageBundlePrefix + handlerErrorName;
-        messageContext.addMessage(new MessageBuilder().error().code(messageCode).build());
+        val message = new MessageBuilder()
+            .error()
+            .code(messageCode)
+            .args(e.getArgs())
+            .build();
+        messageContext.addMessage(message);
         return handlerErrorName;
     }
 }

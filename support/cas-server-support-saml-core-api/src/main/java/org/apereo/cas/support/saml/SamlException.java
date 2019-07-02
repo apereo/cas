@@ -2,6 +2,7 @@ package org.apereo.cas.support.saml;
 
 import org.apereo.cas.authentication.RootCasException;
 
+import java.util.List;
 
 /**
  * Represents the root SAML exception.
@@ -17,22 +18,19 @@ public class SamlException extends RootCasException {
 
     private static final long serialVersionUID = 801270467754480446L;
 
-    /**
-     * Instantiates a new Saml exception.
-     *
-     * @param msg the msg
-     */
     public SamlException(final String msg) {
         super(CODE, msg);
     }
 
-    /**
-     * Instantiates a new Saml exception.
-     *
-     * @param msg       the msg
-     * @param throwable the throwable
-     */
     public SamlException(final String msg, final Throwable throwable) {
         super(msg, throwable);
+    }
+
+    public SamlException(final String code, final String msg, final List<Object> args) {
+        super(code, msg, args);
+    }
+
+    public SamlException(final String code, final Throwable throwable, final List<Object> args) {
+        super(code, throwable, args);
     }
 }

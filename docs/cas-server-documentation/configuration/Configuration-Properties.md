@@ -4566,7 +4566,7 @@ Map custom authentication exceptions in the CAS webflow and link them to custom 
 To learn more about this topic, [please review this guide](../webflow/Webflow-Customization-Exceptions.html).
 
 ```properties
-# cas.authn.exceptions.exceptions=value1,value2,...
+# cas.authn.errors.exceptions=value1,value2,...
 ```
 
 ### Authentication Interrupt

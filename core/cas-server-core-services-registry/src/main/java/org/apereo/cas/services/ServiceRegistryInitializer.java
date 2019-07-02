@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.Comparator;
 import java.util.stream.Collectors;
 
 
@@ -38,9 +39,12 @@ public class ServiceRegistryInitializer {
             + "and explicitly register definitions in the services registry.", this.serviceRegistry.getName());
 
         val servicesLoaded = this.jsonServiceRegistry.load();
-        LOGGER.debug("Loaded JSON services are [{}]", servicesLoaded.stream().map(RegisteredService::getName).collect(Collectors.joining(",")));
+        val servicesList = servicesLoaded.stream().map(RegisteredService::getName).collect(Collectors.joining(","));
+        LOGGER.debug("Loaded JSON services are [{}]", servicesList);
 
         servicesLoaded
+            .stream()
+            .sorted(Comparator.naturalOrder())
             .forEach(r -> {
                 if (!findExistingMatchForService(r)) {
                     LOGGER.debug("Initializing service registry with the [{}] JSON service definition...", r.getName());
@@ -49,7 +53,6 @@ public class ServiceRegistryInitializer {
             });
         this.servicesManager.load();
         LOGGER.info("Service registry [{}] contains [{}] service definitions", this.serviceRegistry.getName(), this.servicesManager.count());
-
     }
 
     private boolean findExistingMatchForService(final RegisteredService r) {
