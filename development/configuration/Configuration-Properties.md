@@ -568,6 +568,11 @@ To learn more about this topic, [please review this guide](../monitoring/Monitor
 # management.endpoints.web.base-path=/actuator
 
 # management.endpoints.web.exposure.include=info,health,status,configurationMetadata
+# management.endpoints.web.exposure.exclude=
+
+# management.endpoints.jmx.exposure.exclude=*
+# management.endpoints.jmx.exposure.include=
+
 # management.server.add-application-context-header=false
 ```
 
@@ -1735,6 +1740,15 @@ Password encoding  settings for this feature are available [here](Configuration-
 # cas.authn.file.separator=::
 # cas.authn.file.filename=file:///path/to/users/file
 # cas.authn.file.name=
+```
+
+## Groovy Authentication
+
+To learn more about this topic, [please review this guide](../installation/Groovy-Authentication.html).
+
+```properties
+# cas.authn.groovy.order=0
+# cas.authn.groovy.name=
 ```
 
 ## JSON (Whitelist) Authentication
@@ -3448,8 +3462,10 @@ To learn more about this topic, [please review this guide](../installation/OAuth
 # cas.authn.oauth.accessToken.maxTimeToLiveInSeconds=28800
 
 # cas.authn.oauth.deviceToken.timeToKillInSeconds=2592000
-# cas.authn.oauth.deviceToken.refreshInterval=PT15S
-# cas.authn.oauth.deviceToken.userCodeLength=8
+# cas.authn.oauth.deviceToken.refreshInterval=PT15S 
+
+# cas.authn.oauth.deviceUserCode.timeToKillInSeconds=2592000
+# cas.authn.oauth.deviceUserCode.userCodeLength=8
 
 # cas.authn.oauth.grants.resourceOwner.requireServiceHeader=true
 
