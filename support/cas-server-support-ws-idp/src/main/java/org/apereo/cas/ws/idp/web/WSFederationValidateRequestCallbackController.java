@@ -11,6 +11,7 @@ import org.apereo.cas.ws.idp.WSFederationConstants;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.cxf.ws.security.tokenstore.SecurityToken;
@@ -108,7 +109,9 @@ public class WSFederationValidateRequestCallbackController extends BaseWSFederat
         LOGGER.trace("Creating security token as a ticket to CAS ticket registry...");
         val tgt = CookieUtils.getTicketGrantingTicketFromRequest(getWsFederationRequestConfigurationContext().getTicketGrantingTicketCookieGenerator(),
             getWsFederationRequestConfigurationContext().getTicketRegistry(), request);
-        val ticket = getWsFederationRequestConfigurationContext().getSecurityTokenTicketFactory().create(tgt, securityToken);
+
+        val serializedToken = SerializationUtils.serialize(securityToken);
+        val ticket = getWsFederationRequestConfigurationContext().getSecurityTokenTicketFactory().create(tgt, serializedToken);
         LOGGER.trace("Created security token ticket [{}]", ticket);
         getWsFederationRequestConfigurationContext().getTicketRegistry().addTicket(ticket);
         LOGGER.trace("Added security token as a ticket to CAS ticket registry...");
