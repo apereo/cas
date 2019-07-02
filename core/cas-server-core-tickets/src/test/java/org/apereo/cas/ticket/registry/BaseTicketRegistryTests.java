@@ -287,6 +287,39 @@ public abstract class BaseTicketRegistryTests {
     }
 
     @Test
+    public void verifyTicketCountsEqualToTicketsAdded() {
+        Assume.assumeTrue(isIterableRegistry());
+        final Collection<Ticket> tgts = new ArrayList<>();
+        final Collection<Ticket> sts = new ArrayList<>();
+
+        for (int i = 0; i < TICKETS_IN_REGISTRY; i++) {
+            final Authentication a = CoreAuthenticationTestUtils.getAuthentication();
+            final Service s = RegisteredServiceTestUtils.getService();
+            final TicketGrantingTicket ticketGrantingTicket = new TicketGrantingTicketImpl(TicketGrantingTicket.PREFIX + i,
+                    a, new NeverExpiresExpirationPolicy());
+            final ServiceTicket st = ticketGrantingTicket.grantServiceTicket("ST" + i,
+                    s,
+                    new NeverExpiresExpirationPolicy(), false, true);
+            tgts.add(ticketGrantingTicket);
+            sts.add(st);
+            this.ticketRegistry.addTicket(ticketGrantingTicket);
+            this.ticketRegistry.addTicket(st);
+        }
+
+        try {
+            final long sessionCount = this.ticketRegistry.sessionCount();
+            assertEquals("The sessionCount is not the same as the collection.",
+                    tgts.size(), sessionCount);
+
+            final long ticketCount = this.ticketRegistry.serviceTicketCount();
+            assertEquals("The serviceTicketCount is not the same as the collection.",
+                    sts.size(), ticketCount);
+        } catch (final Exception e) {
+            throw new AssertionError(EXCEPTION_CAUGHT_NONE_EXPECTED + e.getMessage(), e);
+        }
+    }
+
+    @Test
     @Transactional
     public void verifyDeleteTicketWithChildren() {
         try {

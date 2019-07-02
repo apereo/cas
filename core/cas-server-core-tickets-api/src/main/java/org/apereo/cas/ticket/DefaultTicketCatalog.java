@@ -41,7 +41,7 @@ public class DefaultTicketCatalog implements TicketCatalog {
 
     @Override
     public Collection<TicketDefinition> find(final Class<? extends Ticket> ticketClass) {
-        final List list = ticketMetadataMap.values().stream().filter(t -> t.getImplementationClass().isAssignableFrom(ticketClass)).collect(Collectors.toList());
+        final List list = ticketMetadataMap.values().stream().filter(t -> ticketClass.isAssignableFrom(t.getImplementationClass())).collect(Collectors.toList());
         OrderComparator.sort(list);
         LOGGER.debug("Located all registered and known sorted ticket definitions [{}] that match [{}]", list, ticketClass);
         return list;
