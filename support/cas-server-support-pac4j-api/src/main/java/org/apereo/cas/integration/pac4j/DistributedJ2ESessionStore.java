@@ -57,7 +57,8 @@ public class DistributedJ2ESessionStore extends J2ESessionStore implements HttpS
 
         var ticket = getTransientSessionTicketForSession(context);
         if (value == null && ticket != null) {
-            this.ticketRegistry.deleteTicket(ticket);
+            ticket.getProperties().remove(key);
+            this.ticketRegistry.updateTicket(ticket);
         } else if (ticket == null) {
             ticket = transientFactory.create(id, properties);
             this.ticketRegistry.addTicket(ticket);
