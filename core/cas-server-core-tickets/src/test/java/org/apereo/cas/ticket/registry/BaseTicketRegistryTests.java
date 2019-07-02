@@ -60,10 +60,10 @@ public abstract class BaseTicketRegistryTests {
 
     protected boolean useEncryption;
 
-    private String ticketGrantingTicketId;
-    private String serviceTicketId;
-    private String transientSessionTicketId;
-    private String proxyGrantingTicketId;
+    protected String ticketGrantingTicketId;
+    protected String serviceTicketId;
+    protected String transientSessionTicketId;
+    protected String proxyGrantingTicketId;
 
     private TicketRegistry ticketRegistry;
 

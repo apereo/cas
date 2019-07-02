@@ -84,7 +84,9 @@ public class DefaultUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
      *                              uniqueness across JVMs.
      * @since 4.1.0
      */
-    public DefaultUniqueTicketIdGenerator(final NumericGenerator numericGenerator, final RandomStringGenerator randomStringGenerator, final String suffix) {
+    public DefaultUniqueTicketIdGenerator(final NumericGenerator numericGenerator,
+                                          final RandomStringGenerator randomStringGenerator,
+                                          final String suffix) {
         this.randomStringGenerator = randomStringGenerator;
         this.numericGenerator = numericGenerator;
         setSuffix(suffix);
@@ -102,10 +104,10 @@ public class DefaultUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
     @Override
     public String getNewTicketId(final String prefix) {
         val number = this.numericGenerator.getNextNumberAsString();
-        val ticketBody = this.randomStringGenerator.getNewString().replace('_', '-');
+        val ticketBody = this.randomStringGenerator.getNewString().replace("_", SEPARATOR);
         val origSuffix = StringUtils.defaultString(this.suffix);
-        val finalizedSuffix = StringUtils.isEmpty(origSuffix) ? origSuffix : '-' + origSuffix;
-        return prefix + '-' + number + '-' + ticketBody + finalizedSuffix;
+        val finalizedSuffix = StringUtils.isEmpty(origSuffix) ? origSuffix : SEPARATOR + origSuffix;
+        return prefix + SEPARATOR + number + SEPARATOR + ticketBody + finalizedSuffix;
     }
 
     /**

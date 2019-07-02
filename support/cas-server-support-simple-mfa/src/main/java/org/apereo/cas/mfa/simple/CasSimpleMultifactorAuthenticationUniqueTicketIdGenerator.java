@@ -15,6 +15,6 @@ public class CasSimpleMultifactorAuthenticationUniqueTicketIdGenerator implement
 
     @Override
     public String getNewTicketId(final String prefix) {
-        return prefix + '-' + RandomStringUtils.randomNumeric(TOKEN_LENGTH);
+        return prefix + SEPARATOR + RandomStringUtils.randomNumeric(TOKEN_LENGTH);
     }
 }
