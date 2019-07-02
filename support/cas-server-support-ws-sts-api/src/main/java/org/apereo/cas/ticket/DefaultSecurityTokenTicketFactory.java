@@ -4,8 +4,6 @@ import org.apereo.cas.util.EncodingUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.apache.commons.lang3.SerializationUtils;
-import org.apache.cxf.ws.security.tokenstore.SecurityToken;
 
 /**
  * This is {@link DefaultSecurityTokenTicketFactory}.
@@ -25,8 +23,8 @@ public class DefaultSecurityTokenTicketFactory implements SecurityTokenTicketFac
     }
 
     @Override
-    public SecurityTokenTicket create(final TicketGrantingTicket ticket, final SecurityToken securityToken) {
-        val token = EncodingUtils.encodeBase64(SerializationUtils.serialize(securityToken));
+    public SecurityTokenTicket create(final TicketGrantingTicket ticket, final byte[] securityTokenSerialized) {
+        val token = EncodingUtils.encodeBase64(securityTokenSerialized);
         val id = ticketUniqueTicketIdGenerator.getNewTicketId(SecurityTokenTicket.PREFIX);
         val stt = new DefaultSecurityTokenTicket(id, ticket, this.expirationPolicy, token);
         ticket.getDescendantTickets().add(stt.getId());
