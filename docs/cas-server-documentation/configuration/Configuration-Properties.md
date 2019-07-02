@@ -568,6 +568,11 @@ To learn more about this topic, [please review this guide](../monitoring/Monitor
 # management.endpoints.web.base-path=/actuator
 
 # management.endpoints.web.exposure.include=info,health,status,configurationMetadata
+# management.endpoints.web.exposure.exclude=
+
+# management.endpoints.jmx.exposure.exclude=*
+# management.endpoints.jmx.exposure.include=
+
 # management.server.add-application-context-header=false
 ```
 
@@ -4561,7 +4566,7 @@ Map custom authentication exceptions in the CAS webflow and link them to custom 
 To learn more about this topic, [please review this guide](../webflow/Webflow-Customization-Exceptions.html).
 
 ```properties
-# cas.authn.exceptions.exceptions=value1,value2,...
+# cas.authn.errors.exceptions=value1,value2,...
 ```
 
 ### Authentication Interrupt

@@ -197,7 +197,7 @@ public class AuthenticationProperties implements Serializable {
      * Customization of authentication errors and exceptions.
      */
     @NestedConfigurationProperty
-    private AuthenticationExceptionsProperties exceptions = new AuthenticationExceptionsProperties();
+    private AuthenticationExceptionsProperties errors = new AuthenticationExceptionsProperties();
 
     /**
      * Customization of authentication engine and pre/post processing.
