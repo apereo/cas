@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.Comparator;
 import java.util.stream.Collectors;
 
 
@@ -38,9 +39,12 @@ public class ServiceRegistryInitializer {
             + "and explicitly register definitions in the services registry.", this.serviceRegistry.getName());
 
         val servicesLoaded = this.jsonServiceRegistry.load();
-        LOGGER.debug("Loaded JSON services are [{}]", servicesLoaded.stream().map(RegisteredService::getName).collect(Collectors.joining(",")));
+        val servicesList = servicesLoaded.stream().map(RegisteredService::getName).collect(Collectors.joining(","));
+        LOGGER.debug("Loaded JSON services are [{}]", servicesList);
 
         servicesLoaded
+            .stream()
+            .sorted(Comparator.naturalOrder())
             .forEach(r -> {
                 if (!findExistingMatchForService(r)) {
                     LOGGER.debug("Initializing service registry with the [{}] JSON service definition...", r.getName());
@@ -49,19 +53,13 @@ public class ServiceRegistryInitializer {
             });
         this.servicesManager.load();
         LOGGER.info("Service registry [{}] contains [{}] service definitions", this.serviceRegistry.getName(), this.servicesManager.count());
-
     }
 
     private boolean findExistingMatchForService(final RegisteredService r) {
         if (StringUtils.isNotBlank(r.getServiceId())) {
-            val match = this.serviceRegistry.findServiceById(r.getServiceId());
-            if (match != null && match.getClass().equals(r.getClass())) {
+            val match = this.serviceRegistry.findServiceByExactServiceId(r.getServiceId());
+            if (match != null) {
                 LOGGER.warn("Skipping [{}] JSON service definition as a matching service [{}] is found in the registry", r.getName(), match.getName());
-                return true;
-            }
-            val match2 = this.serviceRegistry.findServiceByExactServiceId(r.getServiceId());
-            if (match2 != null) {
-                LOGGER.warn("Skipping [{}] JSON service definition as a matching service [{}] is found in the registry", r.getName(), match2.getName());
                 return true;
             }
         }

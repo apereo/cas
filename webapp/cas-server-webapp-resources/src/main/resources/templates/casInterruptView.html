@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
 
     <title th:text="#{cas.login.pagetitle}">CAS Interrupt View</title>
-    <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag" />
+    <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag"/>
 
     <script th:inline="javascript" th:if="${interrupt.autoRedirect}">
         /*<![CDATA[*/
@@ -35,16 +35,34 @@
         <p th:utext="#{screen.interrupt.message(${principal.id})}">The authentication flow has been interrupted. CAS has
             not yet established a single sign-on session for <strong>{0}</strong>.</p>
 
-        <div th:if="${interrupt.message}" class="alert alert-info">
-            <p th:utext="${interrupt.message}">interrupt.message</p>
-            <br/>
+        <div th:if="${interrupt.message}">
+            <div class="alert alert-info">
+                <p th:utext="${interrupt.message}">interrupt.message</p>
+                <br/>
 
-            <div th:if="${interrupt.links}">
-                <a class="btn btn-success"
-                   th:each="link : ${interrupt.links}"
-                   th:text="${link.key}"
-                   th:href="${link.value}">link.key</a>
+                <div th:if="${interrupt.links}">
+                    <a class="btn btn-success"
+                       style="margin-right: 10px;"
+                       th:each="link : ${interrupt.links}"
+                       th:text="${link.key}"
+                       th:href="${link.value}">link.key</a>
+                </div>
             </div>
+            <table id="attributesTable" th:if="${interrupt.data} and ${#maps.size(interrupt.data) > 0}"
+                   class="display table table-striped table-bordered">
+                <thead>
+                <tr>
+                    <th>Field</th>
+                    <th>Value</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="attribute : ${interrupt.data}">
+                    <td class="col-auto"><code><span th:utext="${attribute.key}"/></code></td>
+                    <td class="col-auto"><code><span th:utext="${attribute.value}"/></code></td>
+                </tr>
+                </tbody>
+            </table>
         </div>
 
 

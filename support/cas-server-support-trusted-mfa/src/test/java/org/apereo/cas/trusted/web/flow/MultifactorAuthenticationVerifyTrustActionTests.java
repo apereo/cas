@@ -2,6 +2,7 @@ package org.apereo.cas.trusted.web.flow;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.trusted.AbstractMultifactorAuthenticationTrustStorageTests;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.util.MultifactorAuthenticationTrustUtils;
@@ -23,6 +24,7 @@ import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -38,7 +40,6 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @Getter
 public class MultifactorAuthenticationVerifyTrustActionTests extends AbstractMultifactorAuthenticationTrustStorageTests {
-
     @Autowired
     @Qualifier("mfaTrustEngine")
     protected MultifactorAuthenticationTrustStorage mfaTrustEngine;
@@ -53,7 +54,10 @@ public class MultifactorAuthenticationVerifyTrustActionTests extends AbstractMul
         getMfaTrustEngine().set(r);
 
         val context = new MockRequestContext();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), new MockHttpServletRequest(), new MockHttpServletResponse()));
+        WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
+        WebUtils.putRegisteredService(context, RegisteredServiceTestUtils.getRegisteredService("sample-service", Collections.EMPTY_MAP));
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(),
+            new MockHttpServletRequest(), new MockHttpServletResponse()));
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(r.getPrincipal()), context);
         assertEquals("no", mfaVerifyTrustAction.execute(context).getId());
     }
@@ -61,6 +65,8 @@ public class MultifactorAuthenticationVerifyTrustActionTests extends AbstractMul
     @Test
     public void verifyDeviceTrusted() throws Exception {
         val context = new MockRequestContext();
+        WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
+        WebUtils.putRegisteredService(context, RegisteredServiceTestUtils.getRegisteredService("sample-service", Collections.EMPTY_MAP));
 
         val request = new MockHttpServletRequest();
         request.setRemoteAddr("123.456.789.000");
@@ -71,16 +77,17 @@ public class MultifactorAuthenticationVerifyTrustActionTests extends AbstractMul
         val response = new MockHttpServletResponse();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
 
-        val r = getMultifactorAuthenticationTrustRecord();
-        r.setRecordDate(LocalDateTime.now().minusSeconds(5));
-        r.setDeviceFingerprint(deviceFingerprintStrategy.determineFingerprint(r.getPrincipal(), context, true));
-        mfaTrustEngine.set(r);
+        val record = getMultifactorAuthenticationTrustRecord();
+        record.setRecordDate(LocalDateTime.now().minusSeconds(5));
+        val deviceFingerprint = deviceFingerprintStrategy.determineFingerprint(record.getPrincipal(), context, true);
+        record.setDeviceFingerprint(deviceFingerprint);
+        mfaTrustEngine.set(record);
 
         assertNotNull(response.getCookies());
         assertTrue(response.getCookies().length == 1);
         request.setCookies(response.getCookies());
 
-        val authn = CoreAuthenticationTestUtils.getAuthentication(r.getPrincipal());
+        val authn = RegisteredServiceTestUtils.getAuthentication(record.getPrincipal());
         WebUtils.putAuthentication(authn, context);
         assertEquals("yes", mfaVerifyTrustAction.execute(context).getId());
 

@@ -25,9 +25,12 @@ public class DefaultTicketCatalog implements TicketCatalog {
 
     @Override
     public TicketDefinition find(final String ticketId) {
+        var index = ticketId.indexOf(UniqueTicketIdGenerator.SEPARATOR);
+        val prefix = index != -1 ? ticketId.substring(0, index) : ticketId;
+        
         val defn = ticketMetadataMap.values()
             .stream()
-            .filter(md -> ticketId.startsWith(md.getPrefix()))
+            .filter(md -> prefix.equalsIgnoreCase(md.getPrefix()))
             .findFirst()
             .orElse(null);
         if (defn == null) {
@@ -44,7 +47,7 @@ public class DefaultTicketCatalog implements TicketCatalog {
     }
 
     @Override
-    public Collection<TicketDefinition> find(final Class<Ticket> ticketClass) {
+    public Collection<TicketDefinition> find(final Class<? extends Ticket> ticketClass) {
         val list = ticketMetadataMap.values().stream()
             .filter(t -> t.getImplementationClass().isAssignableFrom(ticketClass))
             .collect(Collectors.toList());

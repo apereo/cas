@@ -1,8 +1,12 @@
 package org.apereo.cas.authentication;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.val;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Generic CAS exception that sits at the top of the exception hierarchy. Provides
@@ -14,37 +18,33 @@ import lombok.val;
  */
 @ToString(callSuper = true)
 @RequiredArgsConstructor
+@Getter
 public abstract class RootCasException extends RuntimeException {
 
     private static final long serialVersionUID = -2384466176716541689L;
 
-    /**
-     * The code description of the exception.
-     */
     private final String code;
 
-    /**
-     * Constructs a new exception with the code identifying the exception
-     * and the error message.
-     *
-     * @param code the code to describe what type of exception this is.
-     * @param msg  The error message associated with this exception for additional logging purposes.
-     */
+    private final List<Object> args = new ArrayList<>();
+    
     public RootCasException(final String code, final String msg) {
         super(msg);
         this.code = code;
     }
 
-    /**
-     * Constructs a new exception with the code identifying the exception
-     * and the original throwable.
-     *
-     * @param code      the code to describe what type of exception this is.
-     * @param throwable the original exception we are chaining.
-     */
+    public RootCasException(final String code, final String msg, final List<Object> args) {
+        this(code, msg);
+        this.args.addAll(args);
+    }
+
     public RootCasException(final String code, final Throwable throwable) {
         super(throwable);
         this.code = code;
+    }
+
+    public RootCasException(final String code, final Throwable throwable, final List<Object> args) {
+        this(code, throwable);
+        this.args.addAll(args);
     }
 
     /**

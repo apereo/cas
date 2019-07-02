@@ -40,8 +40,10 @@ public class RestEndpointInterruptInquirer extends BaseInterruptInquirer {
     private final InterruptProperties.Rest restProperties;
 
     @Override
-    public InterruptResponse inquireInternal(final Authentication authentication, final RegisteredService registeredService,
-                                             final Service service, final Credential credential,
+    public InterruptResponse inquireInternal(final Authentication authentication,
+                                             final RegisteredService registeredService,
+                                             final Service service,
+                                             final Credential credential,
                                              final RequestContext requestContext) {
         HttpResponse response = null;
         try {

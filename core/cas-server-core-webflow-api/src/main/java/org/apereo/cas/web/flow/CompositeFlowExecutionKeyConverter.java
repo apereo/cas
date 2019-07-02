@@ -1,4 +1,4 @@
-package org.apereo.cas.web.flow.actions;
+package org.apereo.cas.web.flow;
 
 import org.springframework.binding.convert.converters.Converter;
 import org.springframework.webflow.execution.repository.support.CompositeFlowExecutionKey;

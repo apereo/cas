@@ -16,7 +16,8 @@ dependencies {
     implementation project(":core:cas-server-core-webflow-mfa-api")
 
     implementation project(":support:cas-server-support-otp-mfa-core")
-    
+    implementation project(":support:cas-server-support-trusted-mfa-core")
+
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-authentication")
     testImplementation project(":core:cas-server-core-authentication-api")
@@ -39,5 +40,4 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
 
-    compileOnly project(":support:cas-server-support-trusted-mfa")
 }

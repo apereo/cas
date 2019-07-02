@@ -124,7 +124,7 @@ import org.pac4j.http.client.direct.HeaderClient;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnEnabledEndpoint;
+import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -360,7 +360,7 @@ public class CasOAuthConfiguration {
     @ConditionalOnMissingBean(name = "defaultDeviceTokenFactory")
     public DeviceTokenFactory defaultDeviceTokenFactory() {
         return new DefaultDeviceTokenFactory(deviceTokenIdGenerator(), deviceTokenExpirationPolicy(),
-            casProperties.getAuthn().getOauth().getDeviceToken().getUserCodeLength(),
+            casProperties.getAuthn().getOauth().getDeviceUserCode().getUserCodeLength(),
             servicesManager.getIfAvailable());
     }
 
@@ -752,7 +752,7 @@ public class CasOAuthConfiguration {
     }
 
     @Bean
-    @ConditionalOnEnabledEndpoint
+    @ConditionalOnAvailableEndpoint
     public OAuth20TokenManagementEndpoint oAuth20TokenManagementEndpoint() {
         return new OAuth20TokenManagementEndpoint(casProperties, ticketRegistry.getIfAvailable());
     }

@@ -51,6 +51,12 @@ public class OAuthProperties implements Serializable {
      * Settings related to oauth device tokens.
      */
     private OAuthDeviceTokenProperties deviceToken = new OAuthDeviceTokenProperties();
+
+    /**
+     * Settings related to oauth device user codes.
+     */
+    private OAuthDeviceUserCodeProperties deviceUserCode = new OAuthDeviceUserCodeProperties();
+
     /**
      * User profile view type determines how the final user profile should be rendered
      * once an access token is "validated".

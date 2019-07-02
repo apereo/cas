@@ -36,7 +36,8 @@ public class ScriptedRegisteredServiceUsernameProvider extends BaseRegisteredSer
     protected String resolveUsernameInternal(final Principal principal, final Service service, final RegisteredService registeredService) {
         try {
             LOGGER.debug("Found groovy script to execute");
-            val result = ScriptingUtils.executeScriptEngine(this.script, new Object[]{principal.getAttributes(), principal.getId(), LOGGER}, Object.class);
+            var args = new Object[]{principal.getAttributes(), principal.getId(), LOGGER};
+            val result = ScriptingUtils.executeScriptEngine(this.script, args, Object.class);
             if (result != null) {
                 LOGGER.debug("Found username [{}] from script [{}]", result, this.script);
                 return result.toString();
