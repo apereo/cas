@@ -223,7 +223,6 @@ public class CasCoreWebflowConfiguration {
     @RefreshScope
     public Action authenticationExceptionHandler() {
         val beans = applicationContext.getBeansOfType(CasWebflowExceptionHandler.class, false, true);
-
         val handlers = new ArrayList<CasWebflowExceptionHandler>(beans.values());
         handlers.add(new DefaultCasWebflowAuthenticationExceptionHandler(
             handledAuthenticationExceptions(), MessageBundleProperties.DEFAULT_BUNDLE_PREFIX_AUTHN_FAILURE));
@@ -231,7 +230,7 @@ public class CasCoreWebflowConfiguration {
             handledAuthenticationExceptions(), MessageBundleProperties.DEFAULT_BUNDLE_PREFIX_AUTHN_FAILURE));
         handlers.add(new GenericCasWebflowExceptionHandler(
             handledAuthenticationExceptions(), MessageBundleProperties.DEFAULT_BUNDLE_PREFIX_AUTHN_FAILURE));
-        
+
         AnnotationAwareOrderComparator.sort(handlers);
         return new AuthenticationExceptionHandlerAction(handlers);
     }
@@ -264,8 +263,7 @@ public class CasCoreWebflowConfiguration {
         errors.add(UnauthorizedAuthenticationException.class);
         errors.add(MultifactorAuthenticationProviderAbsentException.class);
 
-        errors.addAll(casProperties.getAuthn().getExceptions().getExceptions());
-
+        errors.addAll(casProperties.getAuthn().getErrors().getExceptions());
         return errors;
     }
 }

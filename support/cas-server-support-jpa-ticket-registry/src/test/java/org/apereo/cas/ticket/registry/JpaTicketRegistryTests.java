@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -16,13 +17,20 @@ import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
+import org.apereo.cas.config.CasWsSecurityTokenTicketCatalogConfiguration;
 import org.apereo.cas.config.JpaTicketRegistryConfiguration;
 import org.apereo.cas.config.JpaTicketRegistryTicketCatalogConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.support.EnvironmentConversionServiceInitializer;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
+import org.apereo.cas.ticket.DefaultSecurityTokenTicketFactory;
+import org.apereo.cas.ticket.TicketGrantingTicketImpl;
+import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
+import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 
+import lombok.val;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.parallel.ResourceLock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -34,6 +42,9 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.nio.charset.StandardCharsets;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit test for {@link JpaTicketRegistry} class.
@@ -63,7 +74,8 @@ import org.springframework.transaction.annotation.Transactional;
     CasCoreTicketsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
     CasCoreWebConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class
+    CasWebApplicationServiceFactoryConfiguration.class,
+    CasWsSecurityTokenTicketCatalogConfiguration.class
 })
 @ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
 @Transactional(transactionManager = "ticketTransactionManager", isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
@@ -82,5 +94,24 @@ public class JpaTicketRegistryTests extends BaseTicketRegistryTests {
     @Override
     protected TicketRegistry getNewTicketRegistry() {
         return this.ticketRegistry;
+    }
+
+    @RepeatedTest(2)
+    public void verifySecurityTokenTicket() {
+        val securityTokenTicketFactory = new DefaultSecurityTokenTicketFactory(
+            new DefaultUniqueTicketIdGenerator(),
+            new NeverExpiresExpirationPolicy());
+
+        val originalAuthn = CoreAuthenticationTestUtils.getAuthentication();
+        val tgt = new TicketGrantingTicketImpl(ticketGrantingTicketId,
+            originalAuthn, new NeverExpiresExpirationPolicy());
+        this.ticketRegistry.addTicket(tgt);
+
+        val token = securityTokenTicketFactory.create(tgt, "dummy-token".getBytes(StandardCharsets.UTF_8));
+        this.ticketRegistry.addTicket(token);
+
+        assertNotNull(this.ticketRegistry.getTicket(token.getId()));
+        this.ticketRegistry.deleteTicket(token);
+        assertNull(this.ticketRegistry.getTicket(token.getId()));
     }
 }
