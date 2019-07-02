@@ -70,6 +70,12 @@ public class DistributedJ2ESessionStoreTests {
         assertNotNull(value);
         assertEquals("test2", value);
 
+        store.set(context, "attribute", null);
+        store.set(context, "attribute2", "test3"); 
+        assertNull(store.get(context, "attribute"));
+        value = store.get(context, "attribute2");
+        assertEquals("test3", value);
+
         store.sessionDestroyed(new HttpSessionEvent(request.getSession()));
         store.handle(new MockTicketGrantingTicket("casuser"));
         value = store.get(context, "attribute");
