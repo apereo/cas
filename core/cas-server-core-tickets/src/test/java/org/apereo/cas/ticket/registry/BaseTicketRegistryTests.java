@@ -278,6 +278,36 @@ public abstract class BaseTicketRegistryTests {
     }
 
     @RepeatedTest(2)
+    public void verifyTicketCountsEqualToTicketsAdded() {
+        assumeTrue(isIterableRegistry());
+        val tgts = new ArrayList<Ticket>();
+        val sts = new ArrayList<Ticket>();
+
+        for (int i = 0; i < TICKETS_IN_REGISTRY; i++) {
+            val a = CoreAuthenticationTestUtils.getAuthentication();
+            val s = RegisteredServiceTestUtils.getService();
+            val ticketGrantingTicket = new TicketGrantingTicketImpl(TicketGrantingTicket.PREFIX + i,
+                    a, new NeverExpiresExpirationPolicy());
+            val st = ticketGrantingTicket.grantServiceTicket("ST" + i,
+                    s,
+                    new NeverExpiresExpirationPolicy(), false, true);
+            tgts.add(ticketGrantingTicket);
+            sts.add(st);
+            ticketRegistry.addTicket(ticketGrantingTicket);
+            ticketRegistry.addTicket(st);
+        }
+
+        val sessionCount = this.ticketRegistry.sessionCount();
+        assertEquals(tgts.size(), sessionCount,
+                "The sessionCount is not the same as the collection.");
+
+        val ticketCount = this.ticketRegistry.serviceTicketCount();
+        assertEquals(sts.size(), ticketCount,
+                "The serviceTicketCount is not the same as the collection.");
+    }
+
+
+    @RepeatedTest(2)
     @Transactional
     public void verifyDeleteTicketWithChildren() {
         ticketRegistry.addTicket(new TicketGrantingTicketImpl(ticketGrantingTicketId + '1', CoreAuthenticationTestUtils.getAuthentication(),
