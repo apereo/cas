@@ -117,7 +117,7 @@ public enum CasLabels {
     LABEL_SURROGATE_AUTHENTICATION("Surrogate Authentication", "surrogate|impersonation"),
     LABEL_TICKET_EXPIRATION_POLICY("Ticket Expiration Policy", "expiration policy"),
     LABEL_TICKET_VALIDATION("Ticket Validation"),
-    LABEL_TICKETS_REGISTRIES("Tickets & Registries", "ticket registry|ticket id|ticketid"),
+    LABEL_TICKETS_REGISTRIES("Tickets & Registries", "ticket registry|ticket id|ticketid|ticket catalog|TicketCatalog"),
     LABEL_UNIT_INTEGRATION_TESTS("Unit/Integration Tests", "\\btest\\b|junit|coverage|tests|mockito|suite|\\bunit test\\b|junit5"),
     LABEL_USER_INTERFACE_THEMES("User Interface & Themes", "\\bIE\\b|jquery|ux|thymeleaf|\\bhtml\\b|views|screen|page|gulp|javascript|js|sass|css|themes|\\btheme\\b"),
     LABEL_WS_FED_PROTOCOL("WS-FED Protocol", "WSSecurity"),
