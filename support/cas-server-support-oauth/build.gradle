@@ -47,9 +47,6 @@ dependencies {
     testImplementation project(":core:cas-server-core-cookie")
     testImplementation project(":core:cas-server-core-cookie-api")
 
-    testImplementation project(":support:cas-server-support-jdbc-drivers")
-    testImplementation project(":support:cas-server-support-jpa-ticket-registry")
-
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")

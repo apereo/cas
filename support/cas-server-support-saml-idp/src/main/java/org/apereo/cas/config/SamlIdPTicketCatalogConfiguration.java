@@ -7,9 +7,9 @@ import org.apereo.cas.ticket.TicketDefinition;
 import org.apereo.cas.ticket.artifact.SamlArtifactTicket;
 import org.apereo.cas.ticket.artifact.SamlArtifactTicketImpl;
 import org.apereo.cas.ticket.query.SamlAttributeQueryTicket;
+import org.apereo.cas.ticket.query.SamlAttributeQueryTicketImpl;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.ticket.query.SamlAttributeQueryTicketImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
