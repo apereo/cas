@@ -80,12 +80,7 @@ public class RestfulServiceRegistry extends AbstractServiceRegistry {
 
     @Override
     public RegisteredService findServiceById(final long id) {
-        return findServiceById(String.valueOf(id));
-    }
-
-    @Override
-    public RegisteredService findServiceById(final String id) {
-        val completeUrl = StringUtils.appendIfMissing(this.url, "/").concat(id);
+        val completeUrl = StringUtils.appendIfMissing(this.url, "/").concat(Long.toString(id));
         val responseEntity = restTemplate.exchange(completeUrl, HttpMethod.GET,
             new HttpEntity<>(id, this.headers), RegisteredService.class);
         if (responseEntity.getStatusCode().is2xxSuccessful()) {
