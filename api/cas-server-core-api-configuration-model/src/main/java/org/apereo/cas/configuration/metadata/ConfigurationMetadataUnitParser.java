@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.metadata;
 
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -34,6 +35,7 @@ public class ConfigurationMetadataUnitParser {
      * @param indexNameWithBrackets the index name with brackets
      */
     @SneakyThrows
+    @SuppressFBWarnings("PRMC_POSSIBLY_REDUNDANT_METHOD_CALLS")
     public void parseCompilationUnit(final Set<ConfigurationMetadataProperty> collectedProps,
                                      final Set<ConfigurationMetadataProperty> collectedGroups,
                                      final ConfigurationMetadataProperty p,
@@ -50,10 +52,11 @@ public class ConfigurationMetadataUnitParser {
                     val parentType = decl.getExtendedTypes().get(i);
                     val instance = ConfigurationMetadataClassSourceLocator.getInstance();
                     val parentClazz = instance.locatePropertiesClassForType(parentType);
-                    val parentTypePath = ConfigurationMetadataClassSourceLocator.buildTypeSourcePath(this.sourcePath, parentClazz.getName());
+                    val parentClassName = parentClazz.getName();
+                    val parentTypePath = ConfigurationMetadataClassSourceLocator.buildTypeSourcePath(this.sourcePath, parentClassName);
 
                     parseCompilationUnit(collectedProps, collectedGroups, p,
-                        parentTypePath, parentClazz.getName(), indexNameWithBrackets);
+                        parentTypePath, parentClassName, indexNameWithBrackets);
                 }
             }
         }
