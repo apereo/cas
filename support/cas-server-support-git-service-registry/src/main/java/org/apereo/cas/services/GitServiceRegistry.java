@@ -127,11 +127,6 @@ public class GitServiceRegistry extends AbstractServiceRegistry {
         return this.registeredServices.stream().filter(r -> r.getId() == id).findFirst().orElse(null);
     }
 
-    @Override
-    public RegisteredService findServiceById(final String id) {
-        return this.registeredServices.stream().filter(r -> r.matches(id)).findFirst().orElse(null);
-    }
-
     private List<RegisteredService> parseGitObjectContentIntoRegisteredService(final GitRepository.GitObject obj) {
         return this.registeredServiceSerializers
             .stream()
