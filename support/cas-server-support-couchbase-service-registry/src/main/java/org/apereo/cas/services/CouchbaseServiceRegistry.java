@@ -139,12 +139,6 @@ public class CouchbaseServiceRegistry extends AbstractServiceRegistry implements
         return null;
     }
 
-    @Override
-    public RegisteredService findServiceById(final String id) {
-        LOGGER.debug("Lookup for service string: [{}]", id);
-        return load().stream().filter(r -> r.matches(id)).findFirst().orElse(null);
-    }
-
     /**
      * Stops the couchbase client and cancels the initialization task if uncompleted.
      */

@@ -117,11 +117,6 @@ public class CassandraServiceRegistry extends AbstractServiceRegistry implements
     }
 
     @Override
-    public RegisteredService findServiceById(final String id) {
-        return load().stream().filter(r -> r.matches(id)).findFirst().orElse(null);
-    }
-
-    @Override
     public void destroy() {
         this.cassandraSession.close();
     }

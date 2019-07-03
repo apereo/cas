@@ -113,13 +113,6 @@ public class RedisServiceRegistry extends AbstractServiceRegistry {
         return null;
     }
 
-    @Override
-    public RegisteredService findServiceById(final String id) {
-        val registeredService = load().stream().filter(r -> r.matches(id)).findFirst().orElse(null);
-        LOGGER.trace("Registered service by identifier [{}] is [{}]", id, registeredService);
-        return registeredService;
-    }
-
     private static String getRegisteredServiceRedisKey(final RegisteredService registeredService) {
         return getRegisteredServiceRedisKey(registeredService.getId());
     }
