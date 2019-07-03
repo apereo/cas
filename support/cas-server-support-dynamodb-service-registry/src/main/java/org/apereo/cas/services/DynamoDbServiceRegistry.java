@@ -54,11 +54,6 @@ public class DynamoDbServiceRegistry extends AbstractServiceRegistry {
     }
 
     @Override
-    public RegisteredService findServiceById(final String id) {
-        return dbTableService.get(id);
-    }
-
-    @Override
     public long size() {
         return dbTableService.count();
     }
