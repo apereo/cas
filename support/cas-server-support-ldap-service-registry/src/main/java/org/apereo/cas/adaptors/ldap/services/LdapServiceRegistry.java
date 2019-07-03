@@ -193,11 +193,6 @@ public class LdapServiceRegistry extends AbstractServiceRegistry {
         return null;
     }
 
-    @Override
-    public RegisteredService findServiceById(final String id) {
-        return load().stream().filter(r -> r.matches(id)).findFirst().orElse(null);
-    }
-
     /**
      * Search for service by id.
      *

@@ -46,14 +46,6 @@ public interface ServiceRegistry {
     RegisteredService findServiceById(long id);
 
     /**
-     * Find service by the service id.
-     *
-     * @param id the id
-     * @return the registered service
-     */
-    RegisteredService findServiceById(String id);
-
-    /**
      * Find a service by an exact match of the service id.
      *
      * @param id the id

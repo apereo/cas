@@ -84,15 +84,6 @@ public class ChainingServiceRegistry extends AbstractServiceRegistry {
     }
 
     @Override
-    public RegisteredService findServiceById(final String id) {
-        return serviceRegistries.stream()
-            .map(registry -> registry.findServiceById(id))
-            .filter(Objects::nonNull)
-            .findFirst()
-            .orElse(null);
-    }
-
-    @Override
     public RegisteredService findServiceByExactServiceId(final String id) {
         return serviceRegistries.stream()
             .map(registry -> registry.findServiceByExactServiceId(id))

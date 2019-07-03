@@ -12,7 +12,6 @@ import org.springframework.data.mongodb.core.query.Query;
 
 import java.util.Collection;
 import java.util.Objects;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -54,12 +53,6 @@ public class MongoDbServiceRegistry extends AbstractServiceRegistry {
     @Override
     public RegisteredService findServiceById(final long svcId) {
         return this.mongoTemplate.findOne(new Query(Criteria.where("id").is(svcId)), RegisteredService.class, this.collectionName);
-    }
-
-    @Override
-    public RegisteredService findServiceById(final String id) {
-        val pattern = Pattern.compile(id, Pattern.CASE_INSENSITIVE);
-        return this.mongoTemplate.findOne(new Query(Criteria.where("serviceId").regex(pattern)), RegisteredService.class, this.collectionName);
     }
 
     @Override

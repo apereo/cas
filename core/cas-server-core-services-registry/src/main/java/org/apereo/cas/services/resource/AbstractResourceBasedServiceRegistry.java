@@ -191,12 +191,6 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
     }
 
     @Override
-    public RegisteredService findServiceById(final String id) {
-        val service = this.serviceMap.values().stream().filter(r -> r.matches(id)).findFirst().orElse(null);
-        return this.registeredServiceReplicationStrategy.getRegisteredServiceFromCacheIfAny(service, id, this);
-    }
-
-    @Override
     @SneakyThrows
     public synchronized boolean delete(final RegisteredService service) {
 
