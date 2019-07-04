@@ -25,19 +25,19 @@ public class DefaultTicketCatalog implements TicketCatalog {
 
     @Override
     public TicketDefinition find(final String ticketId) {
-        var index = ticketId.indexOf(UniqueTicketIdGenerator.SEPARATOR);
+        val index = ticketId.indexOf(UniqueTicketIdGenerator.SEPARATOR);
         val prefix = index != -1 ? ticketId.substring(0, index) : ticketId;
         
-        val defn = ticketMetadataMap.values()
+        val definition = ticketMetadataMap.values()
             .stream()
             .filter(md -> prefix.equalsIgnoreCase(md.getPrefix()))
             .findFirst()
             .orElse(null);
-        if (defn == null) {
+        if (definition == null) {
             LOGGER.error("Ticket definition for [{}] cannot be found in the ticket catalog "
                 + "which only contains the following ticket types: [{}]", ticketId, ticketMetadataMap.keySet());
         }
-        return defn;
+        return definition;
     }
 
     @Override
@@ -49,7 +49,7 @@ public class DefaultTicketCatalog implements TicketCatalog {
     @Override
     public Collection<TicketDefinition> find(final Class<? extends Ticket> ticketClass) {
         val list = ticketMetadataMap.values().stream()
-            .filter(t -> t.getImplementationClass().isAssignableFrom(ticketClass))
+            .filter(t -> ticketClass.isAssignableFrom(t.getImplementationClass()))
             .collect(Collectors.toList());
         OrderComparator.sort(list);
         LOGGER.trace("Located all registered and known sorted ticket definitions [{}] that match [{}]", list, ticketClass);

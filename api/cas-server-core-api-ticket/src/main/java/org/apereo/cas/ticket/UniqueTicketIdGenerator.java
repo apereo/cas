@@ -13,7 +13,7 @@ public interface UniqueTicketIdGenerator {
      * Separator character that separates prefix from
      * the rest of the ticket id.
      */
-    String SEPARATOR = "-";
+    char SEPARATOR = '-';
 
     /**
      * Default ticket size 24 bytes raw, 32 bytes once encoded to base64.
