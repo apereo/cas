@@ -20,7 +20,8 @@
                 </div>
                 <div class="card-body">
                     <form method="post" id="fm1" th:object="${credential}" action="login">
-                        <div class="alert alert-danger" th:if="${#fields.hasErrors('*')}">
+                        <div class="alert alert-danger alert-dismissible fade show" th:if="${#fields.hasErrors('*')}">
+                            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
                             <span th:each="err : ${#fields.errors('*')}" th:utext="${err + ' '}">Example error</span>
                         </div>
 
