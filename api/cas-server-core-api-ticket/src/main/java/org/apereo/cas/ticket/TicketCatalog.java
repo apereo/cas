@@ -41,10 +41,10 @@ public interface TicketCatalog {
     TicketDefinition find(String ticketId);
 
     /**
-     * Find collection.
+     * Find all ticket definitions that implement the given ticketClass.
      *
      * @param ticketClass the ticket class
-     * @return the collection
+     * @return the matching ticket definitions
      */
     Collection<TicketDefinition> find(Class<? extends Ticket> ticketClass);
 
