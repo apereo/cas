@@ -37,8 +37,6 @@ public class PasswordChangeAction extends AbstractAction {
     private static final String PASSWORD_VALIDATION_FAILURE_CODE = "pm.validationFailure";
     private static final String DEFAULT_MESSAGE = "Could not update the account password";
 
-    private static final MessageBuilder ERROR_MSG_BUILDER = new MessageBuilder().error();
-
     private final PasswordManagementService passwordManagementService;
     private final PasswordValidationService passwordValidationService;
     private final CommunicationsManager communicationsManager;
@@ -70,7 +68,7 @@ public class PasswordChangeAction extends AbstractAction {
     }
 
     private Event getErrorEvent(final RequestContext ctx, final String code, final String message, final Object... params) {
-        ctx.getMessageContext().addMessage(ERROR_MSG_BUILDER.code(code).defaultText(message).args(params).build());
+        ctx.getMessageContext().addMessage(new MessageBuilder().error().code(code).defaultText(message).args(params).build());
         return error();
     }
 }
