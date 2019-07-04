@@ -7,7 +7,8 @@
 
 <body id="cas">
 <div layout:fragment="content">
-    <div class="alert alert-danger">
+    <div class="alert alert-danger alert-dismissible fade show">
+        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
         <h2 th:utext="#{cas.oauth.error.header}">Unable to Proceed</h2>
         <p th:if="${rootCauseException != null and rootCauseException.code != null}"
            th:utext="#{${rootCauseException.code}}">rootCauseException.code</p>
