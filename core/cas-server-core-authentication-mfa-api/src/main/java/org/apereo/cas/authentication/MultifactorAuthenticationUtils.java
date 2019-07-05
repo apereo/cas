@@ -101,7 +101,7 @@ public class MultifactorAuthenticationUtils {
                 try {
                     if (predicate.test(value)) {
                         val id = provider.getId();
-                        val event = validateEventIdForMatchingTransitionInContext(id, context, buildEventAttributeMap(principal, Optional.of(service), provider));
+                        val event = validateEventIdForMatchingTransitionInContext(id, context, buildEventAttributeMap(principal, Optional.ofNullable(service), provider));
                         events.add(event);
                     }
                 } catch (final Exception e) {
