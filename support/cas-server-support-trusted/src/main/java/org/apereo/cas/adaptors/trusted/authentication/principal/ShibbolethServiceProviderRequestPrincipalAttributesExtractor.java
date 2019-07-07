@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
  */
 public class ShibbolethServiceProviderRequestPrincipalAttributesExtractor implements RemoteRequestPrincipalAttributesExtractor {
     private static final String PREFIX = "AJP_";
+    private static final Pattern PATTERN_SHIBBOLETH_HEADER = Pattern.compile("(?<!\\\\);");
 
     @Override
     public Map<String, List<Object>> getAttributes(final HttpServletRequest request) {
@@ -30,6 +32,6 @@ public class ShibbolethServiceProviderRequestPrincipalAttributesExtractor implem
             .filter(t -> StringUtils.isNotBlank(request.getHeader(t)))
             .map(t -> RegExUtils.removeAll(t, PREFIX))
             .collect(Collectors.toMap(Function.identity(),
-                t -> CollectionUtils.wrap(request.getHeader(PREFIX + t).split("(?<!\\\\);"))));
+                t -> CollectionUtils.wrap(PATTERN_SHIBBOLETH_HEADER.split(request.getHeader(PREFIX + t)))));
     }
 }
