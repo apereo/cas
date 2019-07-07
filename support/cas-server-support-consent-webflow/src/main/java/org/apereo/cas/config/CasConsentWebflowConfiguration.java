@@ -34,7 +34,7 @@ import org.springframework.webflow.execution.Action;
 @Configuration("casConsentWebflowConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnBean(name = "consentRepository")
-public class CasConsentWebflowConfiguration implements CasWebflowExecutionPlanConfigurer {
+public class CasConsentWebflowConfiguration {
 
     @Autowired
     @Qualifier("loginFlowRegistry")
@@ -84,9 +84,16 @@ public class CasConsentWebflowConfiguration implements CasWebflowExecutionPlanCo
             applicationContext, casProperties);
     }
 
-    @Override
-    public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-        plan.registerWebflowConfigurer(consentWebflowConfigurer());
+    @Bean
+    @ConditionalOnMissingBean(name = "consentCasWebflowExecutionPlanConfigurer")
+    public CasWebflowExecutionPlanConfigurer consentCasWebflowExecutionPlanConfigurer() {
+        return new CasWebflowExecutionPlanConfigurer() {
+
+            @Override
+            public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
+                plan.registerWebflowConfigurer(consentWebflowConfigurer());
+            }
+        };
     }
 
 }

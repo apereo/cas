@@ -34,7 +34,7 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 @Configuration("googleAuthenticatorConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
-public class GoogleAuthenticatorConfiguration implements CasWebflowExecutionPlanConfigurer {
+public class GoogleAuthenticatorConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -65,11 +65,17 @@ public class GoogleAuthenticatorConfiguration implements CasWebflowExecutionPlan
             googleAuthenticatorFlowRegistry(), applicationContext, casProperties);
     }
 
-    @Override
-    public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-        plan.registerWebflowConfigurer(googleAuthenticatorMultifactorWebflowConfigurer());
+    @Bean
+    @ConditionalOnMissingBean(name = "googleCasWebflowExecutionPlanConfigurer")
+    public CasWebflowExecutionPlanConfigurer googleCasWebflowExecutionPlanConfigurer() {
+        return new CasWebflowExecutionPlanConfigurer() {
+            @Override
+            public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
+                plan.registerWebflowConfigurer(googleAuthenticatorMultifactorWebflowConfigurer());
+            }
+        };
     }
-
+    
     /**
      * The google authenticator multifactor trust configuration.
      */

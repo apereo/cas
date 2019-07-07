@@ -47,7 +47,7 @@ import org.springframework.webflow.execution.Action;
  */
 @Configuration("radiusMfaConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class RadiusMultifactorConfiguration implements CasWebflowExecutionPlanConfigurer {
+public class RadiusMultifactorConfiguration {
 
     @Autowired
     @Qualifier("registeredServiceAccessStrategyEnforcer")
@@ -140,9 +140,15 @@ public class RadiusMultifactorConfiguration implements CasWebflowExecutionPlanCo
             casProperties);
     }
 
-    @Override
-    public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-        plan.registerWebflowConfigurer(radiusMultifactorWebflowConfigurer());
+    @Bean
+    @ConditionalOnMissingBean(name = "radiusMultifactorCasWebflowExecutionPlanConfigurer")
+    public CasWebflowExecutionPlanConfigurer radiusMultifactorCasWebflowExecutionPlanConfigurer() {
+        return new CasWebflowExecutionPlanConfigurer() {
+            @Override
+            public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
+                plan.registerWebflowConfigurer(radiusMultifactorWebflowConfigurer());
+            }
+        };
     }
 
     /**

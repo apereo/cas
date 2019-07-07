@@ -35,7 +35,7 @@ import org.springframework.webflow.execution.Action;
  */
 @Configuration("digestAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class DigestAuthenticationConfiguration implements CasWebflowExecutionPlanConfigurer {
+public class DigestAuthenticationConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -88,8 +88,14 @@ public class DigestAuthenticationConfiguration implements CasWebflowExecutionPla
         return new DefaultDigestHashedCredentialRetriever(digest.getUsers());
     }
 
-    @Override
-    public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-        plan.registerWebflowConfigurer(digestAuthenticationWebflowConfigurer());
+    @Bean
+    @ConditionalOnMissingBean(name = "digestAuthenticationCasWebflowExecutionPlanConfigurer")
+    public CasWebflowExecutionPlanConfigurer digestAuthenticationCasWebflowExecutionPlanConfigurer() {
+        return new CasWebflowExecutionPlanConfigurer() {
+            @Override
+            public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
+                plan.registerWebflowConfigurer(digestAuthenticationWebflowConfigurer());
+            }
+        };
     }
 }

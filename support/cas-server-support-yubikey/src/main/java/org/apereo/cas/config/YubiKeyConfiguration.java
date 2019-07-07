@@ -51,7 +51,7 @@ import org.springframework.webflow.execution.Action;
 @Configuration("yubikeyConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-public class YubiKeyConfiguration implements CasWebflowExecutionPlanConfigurer {
+public class YubiKeyConfiguration {
 
     @Autowired
     @Qualifier("loginFlowRegistry")
@@ -136,10 +136,16 @@ public class YubiKeyConfiguration implements CasWebflowExecutionPlanConfigurer {
 
         return new YubiKeyAuthenticationWebflowEventResolver(context);
     }
-
-    @Override
-    public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-        plan.registerWebflowConfigurer(yubikeyMultifactorWebflowConfigurer());
+    
+    @Bean
+    @ConditionalOnMissingBean(name = "yubikeyCasWebflowExecutionPlanConfigurer")
+    public CasWebflowExecutionPlanConfigurer yubikeyCasWebflowExecutionPlanConfigurer() {
+        return new CasWebflowExecutionPlanConfigurer() {
+            @Override
+            public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
+                plan.registerWebflowConfigurer(yubikeyMultifactorWebflowConfigurer());
+            }
+        };
     }
 
     @Bean
@@ -160,8 +166,7 @@ public class YubiKeyConfiguration implements CasWebflowExecutionPlanConfigurer {
             + "YubiKey accounts for MFA");
         return CipherExecutor.noOp();
     }
-
-
+    
     /**
      * The Yubikey multifactor trust configuration.
      */

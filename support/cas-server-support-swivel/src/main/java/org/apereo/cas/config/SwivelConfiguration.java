@@ -46,7 +46,7 @@ import org.springframework.webflow.execution.Action;
  */
 @Configuration("swivelConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class SwivelConfiguration implements CasWebflowExecutionPlanConfigurer {
+public class SwivelConfiguration {
 
     @Autowired
     @Qualifier("loginFlowRegistry")
@@ -132,9 +132,15 @@ public class SwivelConfiguration implements CasWebflowExecutionPlanConfigurer {
         return new SwivelTuringImageGeneratorController(swivel);
     }
 
-    @Override
-    public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-        plan.registerWebflowConfigurer(swivelMultifactorWebflowConfigurer());
+    @Bean
+    @ConditionalOnMissingBean(name = "swivelCasWebflowExecutionPlanConfigurer")
+    public CasWebflowExecutionPlanConfigurer swivelCasWebflowExecutionPlanConfigurer() {
+        return new CasWebflowExecutionPlanConfigurer() {
+            @Override
+            public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
+                plan.registerWebflowConfigurer(swivelMultifactorWebflowConfigurer());
+            }
+        };
     }
 
     @Bean

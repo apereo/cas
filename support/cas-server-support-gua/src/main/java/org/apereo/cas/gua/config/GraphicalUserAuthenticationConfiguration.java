@@ -38,7 +38,7 @@ import org.springframework.webflow.execution.Action;
  */
 @Configuration("graphicalUserAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class GraphicalUserAuthenticationConfiguration implements CasWebflowExecutionPlanConfigurer {
+public class GraphicalUserAuthenticationConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -104,8 +104,14 @@ public class GraphicalUserAuthenticationConfiguration implements CasWebflowExecu
         return new PrepareForGraphicalAuthenticationAction(servicesManager.getIfAvailable());
     }
 
-    @Override
-    public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-        plan.registerWebflowConfigurer(graphicalUserAuthenticationWebflowConfigurer());
+    @Bean
+    @ConditionalOnMissingBean(name = "graphicalUserAuthenticationCasWebflowExecutionPlanConfigurer")
+    public CasWebflowExecutionPlanConfigurer graphicalUserAuthenticationCasWebflowExecutionPlanConfigurer() {
+        return new CasWebflowExecutionPlanConfigurer() {
+            @Override
+            public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
+                plan.registerWebflowConfigurer(graphicalUserAuthenticationWebflowConfigurer());
+            }
+        };
     }
 }

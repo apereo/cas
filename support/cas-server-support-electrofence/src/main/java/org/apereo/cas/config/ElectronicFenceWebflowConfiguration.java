@@ -44,7 +44,7 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 @Configuration("electronicFenceWebflowConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
-public class ElectronicFenceWebflowConfiguration implements CasWebflowExecutionPlanConfigurer {
+public class ElectronicFenceWebflowConfiguration {
 
     @Autowired
     @Qualifier("authenticationRiskMitigator")
@@ -137,8 +137,14 @@ public class ElectronicFenceWebflowConfiguration implements CasWebflowExecutionP
             casProperties);
     }
 
-    @Override
-    public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-        plan.registerWebflowConfigurer(riskAwareAuthenticationWebflowConfigurer());
+    @Bean
+    @ConditionalOnMissingBean(name = "riskAwareCasWebflowExecutionPlanConfigurer")
+    public CasWebflowExecutionPlanConfigurer riskAwareCasWebflowExecutionPlanConfigurer() {
+        return new CasWebflowExecutionPlanConfigurer() {
+            @Override
+            public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
+                plan.registerWebflowConfigurer(riskAwareAuthenticationWebflowConfigurer());
+            }
+        };
     }
 }

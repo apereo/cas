@@ -42,7 +42,7 @@ import org.springframework.webflow.execution.Action;
 @Configuration("casAcceptableUsagePolicyWebflowConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnProperty(prefix = "cas.acceptableUsagePolicy", name = "enabled", havingValue = "true", matchIfMissing = true)
-public class CasAcceptableUsagePolicyWebflowConfiguration implements CasWebflowExecutionPlanConfigurer {
+public class CasAcceptableUsagePolicyWebflowConfiguration {
 
     @Autowired
     @Qualifier("loginFlowRegistry")

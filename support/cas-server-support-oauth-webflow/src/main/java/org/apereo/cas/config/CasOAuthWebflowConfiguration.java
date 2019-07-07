@@ -31,7 +31,7 @@ import org.springframework.webflow.execution.Action;
  */
 @Configuration("casOAuthWebflowConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class CasOAuthWebflowConfiguration implements CasWebflowExecutionPlanConfigurer {
+public class CasOAuthWebflowConfiguration {
 
     @Autowired
     @Qualifier("servicesManager")
@@ -74,8 +74,14 @@ public class CasOAuthWebflowConfiguration implements CasWebflowExecutionPlanConf
         return new OAuth20RegisteredServiceUIAction(servicesManager.getIfAvailable(), oauth20AuthenticationServiceSelectionStrategy.getIfAvailable());
     }
 
-    @Override
-    public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-        plan.registerWebflowConfigurer(oauth20LogoutWebflowConfigurer());
+    @Bean
+    @ConditionalOnMissingBean(name = "oauth20CasWebflowExecutionPlanConfigurer")
+    public CasWebflowExecutionPlanConfigurer oauth20CasWebflowExecutionPlanConfigurer() {
+        return new CasWebflowExecutionPlanConfigurer() {
+            @Override
+            public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
+                plan.registerWebflowConfigurer(oauth20LogoutWebflowConfigurer());
+            }
+        };
     }
 }
