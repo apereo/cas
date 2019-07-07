@@ -17,6 +17,8 @@ import lombok.val;
 import org.apache.commons.lang3.ClassUtils;
 import org.jooq.lambda.Unchecked;
 
+import java.util.regex.Pattern;
+
 /**
  * This is {@link JasigRegisteredServiceDeserializationProblemHandler}
  * that attempts load JSON definitions assigned to the `org.jasig`
@@ -30,6 +32,7 @@ class JasigRegisteredServiceDeserializationProblemHandler extends Deserializatio
 
     private static final int TOKEN_COUNT_DURATION = 6;
     private static final int TOKEN_COUNT_EXPIRATION = 3;
+    private static final Pattern PATTERN_JASIG_NAMESPACE = Pattern.compile("jasig");
 
     @SneakyThrows
     @Override
@@ -39,7 +42,7 @@ class JasigRegisteredServiceDeserializationProblemHandler extends Deserializatio
                                         final String failureMsg) {
 
         if (subTypeId.contains("org.jasig.")) {
-            val newTypeName = subTypeId.replaceAll("jasig", "apereo");
+            val newTypeName = PATTERN_JASIG_NAMESPACE.matcher(subTypeId).replaceAll("apereo");
             LOGGER.warn("Found legacy CAS JSON definition type identified as [{}]. "
                     + "While CAS will attempt to convert the legacy definition to [{}] for the time being, "
                     + "the definition SHOULD manually be upgraded to the new supported syntax",
