@@ -46,7 +46,7 @@ import org.springframework.webflow.execution.Action;
  */
 @Configuration("authyConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class AuthyConfiguration implements CasWebflowExecutionPlanConfigurer {
+public class AuthyConfiguration {
 
     @Autowired
     @Qualifier("servicesManager")
@@ -133,9 +133,16 @@ public class AuthyConfiguration implements CasWebflowExecutionPlanConfigurer {
         return new AuthyAuthenticationWebflowAction(authyAuthenticationWebflowEventResolver());
     }
 
-    @Override
-    public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-        plan.registerWebflowConfigurer(authyMultifactorWebflowConfigurer());
+    @Bean
+    @ConditionalOnMissingBean(name = "authyCasWebflowExecutionPlanConfigurer")
+    public CasWebflowExecutionPlanConfigurer authyCasWebflowExecutionPlanConfigurer() {
+        return new CasWebflowExecutionPlanConfigurer() {
+
+            @Override
+            public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
+                plan.registerWebflowConfigurer(authyMultifactorWebflowConfigurer());
+            }
+        };
     }
 
     /**

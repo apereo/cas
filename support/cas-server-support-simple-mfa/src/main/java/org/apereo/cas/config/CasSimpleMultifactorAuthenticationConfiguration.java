@@ -45,7 +45,7 @@ import java.util.Objects;
 @Configuration("casSimpleMultifactorAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
-public class CasSimpleMultifactorAuthenticationConfiguration implements CasWebflowExecutionPlanConfigurer {
+public class CasSimpleMultifactorAuthenticationConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -83,10 +83,15 @@ public class CasSimpleMultifactorAuthenticationConfiguration implements CasWebfl
             mfaSimpleAuthenticatorFlowRegistry(), applicationContext, casProperties);
     }
 
-
-    @Override
-    public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-        plan.registerWebflowConfigurer(mfaSimpleMultifactorWebflowConfigurer());
+    @Bean
+    @ConditionalOnMissingBean(name = "mfaSimpleCasWebflowExecutionPlanConfigurer")
+    public CasWebflowExecutionPlanConfigurer mfaSimpleCasWebflowExecutionPlanConfigurer() {
+        return new CasWebflowExecutionPlanConfigurer() {
+            @Override
+            public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
+                plan.registerWebflowConfigurer(mfaSimpleMultifactorWebflowConfigurer());
+            }
+        };
     }
 
     @ConditionalOnMissingBean(name = "mfaSimpleMultifactorSendTokenAction")

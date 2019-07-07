@@ -26,7 +26,7 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
  */
 @Configuration("openIdWebflowConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class OpenIdWebflowConfiguration implements CasWebflowExecutionPlanConfigurer {
+public class OpenIdWebflowConfiguration {
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -48,8 +48,14 @@ public class OpenIdWebflowConfiguration implements CasWebflowExecutionPlanConfig
         return new OpenIdWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry.getIfAvailable(), applicationContext, casProperties);
     }
 
-    @Override
-    public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-        plan.registerWebflowConfigurer(openidWebflowConfigurer());
+    @Bean
+    @ConditionalOnMissingBean(name = "openidCasWebflowExecutionPlanConfigurer")
+    public CasWebflowExecutionPlanConfigurer openidCasWebflowExecutionPlanConfigurer() {
+        return new CasWebflowExecutionPlanConfigurer() {
+            @Override
+            public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
+                plan.registerWebflowConfigurer(openidWebflowConfigurer());
+            }
+        };
     }
 }

@@ -57,7 +57,7 @@ import java.util.ArrayList;
  */
 @Configuration("delegatedAuthenticationWebflowConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class DelegatedAuthenticationWebflowConfiguration implements CasWebflowExecutionPlanConfigurer {
+public class DelegatedAuthenticationWebflowConfiguration {
 
     @Autowired
     @Qualifier("singleSignOnParticipationStrategy")
@@ -220,11 +220,16 @@ public class DelegatedAuthenticationWebflowConfiguration implements CasWebflowEx
             delegatedClientDistributedSessionStore.getIfAvailable());
     }
 
-    @Override
-    public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-        plan.registerWebflowConfigurer(delegatedAuthenticationWebflowConfigurer());
+    @Bean
+    @ConditionalOnMissingBean(name = "delegatedCasWebflowExecutionPlanConfigurer")
+    public CasWebflowExecutionPlanConfigurer delegatedCasWebflowExecutionPlanConfigurer() {
+        return new CasWebflowExecutionPlanConfigurer() {
+            @Override
+            public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
+                plan.registerWebflowConfigurer(delegatedAuthenticationWebflowConfigurer());
+            }
+        };
     }
-
 
     @Bean
     @RefreshScope

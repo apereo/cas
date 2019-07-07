@@ -35,7 +35,7 @@ import org.springframework.webflow.execution.Action;
  */
 @Configuration("casInterruptWebflowConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class CasInterruptWebflowConfiguration implements CasWebflowExecutionPlanConfigurer {
+public class CasInterruptWebflowConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -95,8 +95,14 @@ public class CasInterruptWebflowConfiguration implements CasWebflowExecutionPlan
         return chain -> chain.addStrategy(interruptSingleSignOnParticipationStrategy());
     }
 
-    @Override
-    public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-        plan.registerWebflowConfigurer(interruptWebflowConfigurer());
+    @Bean
+    @ConditionalOnMissingBean(name = "interruptCasWebflowExecutionPlanConfigurer")
+    public CasWebflowExecutionPlanConfigurer interruptCasWebflowExecutionPlanConfigurer() {
+        return new CasWebflowExecutionPlanConfigurer() {
+            @Override
+            public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
+                plan.registerWebflowConfigurer(interruptWebflowConfigurer());
+            }
+        };
     }
 }

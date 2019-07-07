@@ -33,7 +33,7 @@ import org.springframework.webflow.execution.Action;
  */
 @Configuration("casBasicAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class CasBasicAuthenticationConfiguration implements CasWebflowExecutionPlanConfigurer {
+public class CasBasicAuthenticationConfiguration {
 
     @Autowired
     @Qualifier("adaptiveAuthenticationPolicy")
@@ -80,8 +80,15 @@ public class CasBasicAuthenticationConfiguration implements CasWebflowExecutionP
         return PrincipalFactoryUtils.newPrincipalFactory();
     }
 
-    @Override
-    public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-        plan.registerWebflowConfigurer(basicAuthenticationWebflowConfigurer());
+    @Bean
+    @ConditionalOnMissingBean(name = "basicCasWebflowExecutionPlanConfigurer")
+    public CasWebflowExecutionPlanConfigurer basicCasWebflowExecutionPlanConfigurer() {
+        return new CasWebflowExecutionPlanConfigurer() {
+
+            @Override
+            public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
+                plan.registerWebflowConfigurer(basicAuthenticationWebflowConfigurer());
+            }
+        };
     }
 }

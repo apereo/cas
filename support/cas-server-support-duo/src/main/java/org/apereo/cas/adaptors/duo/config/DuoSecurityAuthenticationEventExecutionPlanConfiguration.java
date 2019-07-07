@@ -64,7 +64,7 @@ import java.util.stream.Collectors;
 @Configuration("duoSecurityAuthenticationEventExecutionPlanConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-public class DuoSecurityAuthenticationEventExecutionPlanConfiguration implements CasWebflowExecutionPlanConfigurer {
+public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
     @Autowired
     private GenericWebApplicationContext applicationContext;
 
@@ -182,11 +182,17 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration implements
         };
     }
 
-    @Override
-    public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-        plan.registerWebflowConfigurer(duoMultifactorWebflowConfigurer());
+    @Bean
+    @ConditionalOnMissingBean(name = "duoSecurityCasWebflowExecutionPlanConfigurer")
+    public CasWebflowExecutionPlanConfigurer duoSecurityCasWebflowExecutionPlanConfigurer() {
+        return new CasWebflowExecutionPlanConfigurer() {
+            @Override
+            public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
+                plan.registerWebflowConfigurer(duoMultifactorWebflowConfigurer());
+            }
+        };
     }
-
+    
     @Bean
     @ConditionalOnEnabledHealthIndicator("duoSecurityHealthIndicator")
     public HealthIndicator duoSecurityHealthIndicator() {

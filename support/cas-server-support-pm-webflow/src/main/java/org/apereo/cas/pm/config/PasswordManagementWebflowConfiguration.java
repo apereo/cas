@@ -51,7 +51,7 @@ import org.springframework.webflow.mvc.servlet.FlowHandlerAdapter;
 @Configuration("passwordManagementWebflowConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-public class PasswordManagementWebflowConfiguration implements CasWebflowExecutionPlanConfigurer {
+public class PasswordManagementWebflowConfiguration {
     @Autowired
     private ApplicationContext applicationContext;
 
@@ -181,9 +181,15 @@ public class PasswordManagementWebflowConfiguration implements CasWebflowExecuti
             applicationContext, casProperties, initPasswordChangeAction());
     }
 
-    @Override
-    public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-        plan.registerWebflowConfigurer(passwordManagementWebflowConfigurer());
+    @Bean
+    @ConditionalOnMissingBean(name = "passwordManagementCasWebflowExecutionPlanConfigurer")
+    public CasWebflowExecutionPlanConfigurer passwordManagementCasWebflowExecutionPlanConfigurer() {
+        return new CasWebflowExecutionPlanConfigurer() {
+            @Override
+            public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
+                plan.registerWebflowConfigurer(passwordManagementWebflowConfigurer());
+            }
+        };
     }
 }
 
