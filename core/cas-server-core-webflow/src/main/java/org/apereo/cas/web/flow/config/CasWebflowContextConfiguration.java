@@ -32,6 +32,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.core.Ordered;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.core.annotation.Order;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.web.servlet.HandlerAdapter;
@@ -82,6 +83,10 @@ public class CasWebflowContextConfiguration {
     private ObjectProvider<ViewResolver> registeredServiceViewResolver;
 
     @Autowired
+    @Qualifier("thymeleafViewResolver")
+    private ObjectProvider<ViewResolver> thymeleafViewResolver;
+
+    @Autowired
     private ApplicationContext applicationContext;
 
     @Autowired
@@ -108,8 +113,16 @@ public class CasWebflowContextConfiguration {
     @Bean
     @Lazy(false)
     public ViewFactoryCreator viewFactoryCreator() {
+        val viewResolver = registeredServiceViewResolver.getIfAvailable();
         val resolver = new MvcViewFactoryCreator();
-        resolver.setViewResolvers(CollectionUtils.wrap(this.registeredServiceViewResolver.getIfAvailable()));
+        if (viewResolver != null) {
+            resolver.setViewResolvers(CollectionUtils.wrap(viewResolver));
+        } else {
+            val resolverBeans = applicationContext.getBeansOfType(ViewResolver.class, false, true);
+            val resolvers = new ArrayList<>(resolverBeans.values());
+            AnnotationAwareOrderComparator.sort(resolvers);
+            resolver.setViewResolvers(resolvers);
+        }
         return resolver;
     }
 

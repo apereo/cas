@@ -14,6 +14,7 @@ import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.FlowExecutionExceptionResolver;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.GatewayServicesManagementCheckAction;
 import org.apereo.cas.web.flow.GenerateServiceTicketAction;
 import org.apereo.cas.web.flow.ServiceAuthorizationCheckAction;
@@ -198,7 +199,7 @@ public class CasSupportActionsConfiguration {
         return new SetServiceUnauthorizedRedirectUrlAction(servicesManager.getIfAvailable());
     }
 
-    @ConditionalOnMissingBean(name = "renderLoginFormAction")
+    @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_RENDER_LOGIN_FORM)
     @Bean
     @RefreshScope
     public Action renderLoginFormAction() {
@@ -208,7 +209,7 @@ public class CasSupportActionsConfiguration {
     @RefreshScope
     @Bean
     @Autowired
-    @ConditionalOnMissingBean(name = "initialFlowSetupAction")
+    @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_INIT_FLOW_SETUP)
     public Action initialFlowSetupAction(@Qualifier("argumentExtractor") final ArgumentExtractor argumentExtractor) {
         return new InitialFlowSetupAction(CollectionUtils.wrap(argumentExtractor),
             servicesManager.getIfAvailable(),
