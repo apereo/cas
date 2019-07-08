@@ -35,7 +35,7 @@ import javax.sql.DataSource;
  * @since 5.0.0
  */
 @Configuration("casJdbcAuditConfiguration")
-@EnableAspectJAutoProxy
+@EnableAspectJAutoProxy(proxyTargetClass = true)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement(proxyTargetClass = true)
 public class CasSupportJdbcAuditConfiguration {

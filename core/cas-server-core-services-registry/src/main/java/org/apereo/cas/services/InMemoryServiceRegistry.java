@@ -11,6 +11,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 /**
  * Default In Memory Service Registry Dao for test/demonstration purposes.
@@ -84,5 +85,10 @@ public class InMemoryServiceRegistry extends AbstractServiceRegistry {
     @Override
     public long size() {
         return registeredServices.size();
+    }
+
+    @Override
+    public Stream<? extends RegisteredService> getServicesStream() {
+        return this.registeredServices.stream();
     }
 }

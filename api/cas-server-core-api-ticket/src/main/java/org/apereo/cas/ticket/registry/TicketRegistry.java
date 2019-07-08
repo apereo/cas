@@ -87,7 +87,7 @@ public interface TicketRegistry {
 
     /**
      * Gets tickets as a stream having applied a predicate.
-     *
+     * <p>
      * The returning stream may be bound to an IO channel (such as database connection),
      * so it should be properly closed after usage.
      *
@@ -122,7 +122,7 @@ public interface TicketRegistry {
 
     /**
      * Gets tickets stream.
-     *
+     * <p>
      * The returning stream may be bound to an IO channel (such as database connection),
      * so it should be properly closed after usage.
      *

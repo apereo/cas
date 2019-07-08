@@ -45,8 +45,7 @@ public interface ServicesManager {
      * @return the registered service that was deleted, null if there was none.
      */
     RegisteredService delete(long id);
-
-
+    
     /**
      * Delete the entry for this RegisteredService.
      *
@@ -110,29 +109,26 @@ public interface ServicesManager {
     /**
      * Retrieve the collection of all registered services.
      * Services that are returned are valid, non-expired, etc.
-     *
+     * Operation should perform no reloads, and must return a cached
+     * copy of services that are already loaded.
      * @return the collection of all services.
      */
     Collection<RegisteredService> getAllServices();
 
     /**
-     * Convenience method to let one know if a service exists in the data store.
+     * Gets services stream.
+     * <p>
+     * The returning stream may be bound to an IO channel (such as database connection),
+     * so it should be properly closed after usage.
      *
-     * @param service the service to check.
-     * @return true if it exists, false otherwise.
+     * @return the services stream
      */
-    boolean matchesExistingService(Service service);
+    default Stream<? extends RegisteredService> getAllServicesStream() {
+        return getAllServices().stream();
+    }
 
     /**
-     * Convenience method to let one know if a service exists in the data store.
-     *
-     * @param service the service to check.
-     * @return true if it exists, false otherwise.
-     */
-    boolean matchesExistingService(String service);
-
-    /**
-     * Inform the ServicesManager to reload its list of services if its cached
+     * Inform the ServicesManager to load or reload its list of services if its cached
      * them. Note that this is a suggestion and that ServicesManagers are free
      * to reload whenever they want.
      *
