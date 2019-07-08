@@ -8,6 +8,16 @@ category: Authentication
 
 Authentication requests can be mapped and translated to physical locations.
 
+Support is enabled by including the following dependency in the WAR overlay:
+
+```xml
+<dependency>
+  <groupId>org.apereo.cas</groupId>
+  <artifactId>cas-server-support-geolication</artifactId>
+  <version>${cas.version}</version>
+</dependency>
+```
+
 ## Google Maps
 
 Uses the [Google Maps Geocoding API](https://developers.google.com/maps/documentation/geocoding/start) to translate

@@ -41,6 +41,16 @@ reasonable basis for throttling policy. Regardless of policy care should be take
 overly restrictive policies may prevent legitimate authentication attempts.
 
 
+Enable the following module in your configuration overlay:
+
+```xml
+<dependency>
+    <groupId>org.apereo.cas</groupId>
+    <artifactId>cas-server-support-throttle</artifactId>
+    <version>${cas.version}</version>
+</dependency>
+```
+
 ### IP Address
 
 Uses a memory map to prevent successive failed login attempts from the same IP address.

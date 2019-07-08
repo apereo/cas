@@ -7,7 +7,11 @@ category: Monitoring & Statistics
 # Monitoring / Statistics
 
 Actuator endpoints used to monitor and diagnose the internal configuration of the CAS server are typically
-exposed over the endpoint `/actuator`. The following endpoints are secured and available by 
+exposed over the endpoint `/actuator`.
+
+## Spring Boot Endpoints
+
+The following endpoints are secured and available by 
 [Spring Boot actuators](http://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-endpoints.html):
 
 | Endpoint                  | Description
@@ -34,19 +38,31 @@ exposed over the endpoint `/actuator`. The following endpoints are secured and a
 
 <div class="alert alert-info"><strong>Exposed Endpoints</strong><p>
 Note that by default the only endpoints exposed over the web are <code>info</code>, <code>status</code>, <code>health</code> and <code>configurationMetadata</code>.
-Other endpoints need to be explicitly enabled and then exposed over the web in CAS settings in order to allow access.
+Other endpoints need to be explicitly <strong>enabled and then exposed over the web</strong> in CAS settings in order to allow access.
 </p></div>
-
-Note that certain CAS features present actuator endpoints of their own, and such endpoints only become active
-once the feature is turned on and made available to CAS at runtime. For more information, refer to the specific
-documentation page for the feature in question to learn more about administrative endpoints, etc.
 
 Actuator endpoints provided by Spring Boot can also be visually managed and monitored
  via the [Spring Boot Administration Server](Configuring-Monitoring-Administration.html).
 <div class="alert alert-info"><strong>Obtaining Health Info</strong><p>Note that <code>/status</code> endpoint is kept mostly 
 as a legacy endpoint. If you wish to obtain health status of each monitor in detail, we recommend the <code>/actuator/health</code> endpoint instead.</p></div>
 
-### Metrics
+## CAS Endpoints
+
+The default set of CAS actuator endpoints can be turned in by including the following dependency in the WAR overlay:
+                                                           
+```xml
+<dependency>
+    <groupId>org.apereo.cas</groupId>
+    <artifactId>cas-server-support-reports</artifactId>
+    <version>${cas.version}</version>
+</dependency>
+```                                       
+
+Note that certain CAS features present actuator endpoints of their own, and such endpoints only become active
+once the feature is turned on and made available to CAS at runtime. For more information, refer to the specific
+documentation page for the feature in question to learn more about administrative endpoints, etc.
+
+## Metrics
 
 Navigating to `/actuator/metrics` displays a list of available meter names. You can drill down to view information about a 
 particular meter by providing its name as a selector, e.g. `/actuator/metrics/jvm.memory.max`.  The name you use here should match 
