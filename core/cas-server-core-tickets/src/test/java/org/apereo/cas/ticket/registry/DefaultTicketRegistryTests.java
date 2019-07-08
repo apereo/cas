@@ -1,6 +1,8 @@
 package org.apereo.cas.ticket.registry;
 
-import org.apereo.cas.CipherExecutor;
+import org.apereo.cas.util.crypto.CipherExecutor;
+
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Test case to test the DefaultTicketRegistry based on test cases to test all
@@ -13,6 +15,6 @@ public class DefaultTicketRegistryTests extends BaseTicketRegistryTests {
 
     @Override
     public TicketRegistry getNewTicketRegistry() {
-        return new DefaultTicketRegistry(10, 10, 5, CipherExecutor.noOp());
+        return new DefaultTicketRegistry(new ConcurrentHashMap<>(10, 10, 5), CipherExecutor.noOp());
     }
 }

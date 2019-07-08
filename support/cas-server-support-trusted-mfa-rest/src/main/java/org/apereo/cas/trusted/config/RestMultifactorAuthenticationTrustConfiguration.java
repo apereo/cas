@@ -1,9 +1,9 @@
 package org.apereo.cas.trusted.config;
 
-import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.authentication.storage.RestMultifactorAuthenticationTrustStorage;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;

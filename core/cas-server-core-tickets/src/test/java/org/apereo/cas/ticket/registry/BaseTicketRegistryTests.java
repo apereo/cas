@@ -1,6 +1,5 @@
 package org.apereo.cas.ticket.registry;
 
-import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
@@ -23,6 +22,7 @@ import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.util.ProxyGrantingTicketIdGenerator;
 import org.apereo.cas.util.ServiceTicketIdGenerator;
 import org.apereo.cas.util.TicketGrantingTicketIdGenerator;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -287,10 +287,10 @@ public abstract class BaseTicketRegistryTests {
             val a = CoreAuthenticationTestUtils.getAuthentication();
             val s = RegisteredServiceTestUtils.getService();
             val ticketGrantingTicket = new TicketGrantingTicketImpl(TicketGrantingTicket.PREFIX + i,
-                    a, new NeverExpiresExpirationPolicy());
+                a, new NeverExpiresExpirationPolicy());
             val st = ticketGrantingTicket.grantServiceTicket("ST" + i,
-                    s,
-                    new NeverExpiresExpirationPolicy(), false, true);
+                s,
+                new NeverExpiresExpirationPolicy(), false, true);
             tgts.add(ticketGrantingTicket);
             sts.add(st);
             ticketRegistry.addTicket(ticketGrantingTicket);
@@ -299,11 +299,11 @@ public abstract class BaseTicketRegistryTests {
 
         val sessionCount = this.ticketRegistry.sessionCount();
         assertEquals(tgts.size(), sessionCount,
-                "The sessionCount is not the same as the collection.");
+            "The sessionCount is not the same as the collection.");
 
         val ticketCount = this.ticketRegistry.serviceTicketCount();
         assertEquals(sts.size(), ticketCount,
-                "The serviceTicketCount is not the same as the collection.");
+            "The serviceTicketCount is not the same as the collection.");
     }
 
 

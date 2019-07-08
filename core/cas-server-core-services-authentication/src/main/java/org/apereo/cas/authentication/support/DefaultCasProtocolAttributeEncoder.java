@@ -1,7 +1,6 @@
 package org.apereo.cas.authentication.support;
 
 import org.apereo.cas.CasViewConstants;
-import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
@@ -9,6 +8,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.util.RegisteredServicePublicKeyCipherExecutor;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
 import com.google.common.base.Predicates;
 import lombok.extern.slf4j.Slf4j;

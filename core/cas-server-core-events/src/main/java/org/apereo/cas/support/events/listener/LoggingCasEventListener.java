@@ -10,7 +10,6 @@ import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketDestroyedEven
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
 import org.springframework.context.event.EventListener;
 
 import static org.apereo.cas.util.serialization.TicketIdSanitizationUtils.sanitize;
@@ -26,22 +25,22 @@ import static org.apereo.cas.util.serialization.TicketIdSanitizationUtils.saniti
 public class LoggingCasEventListener {
 
     private static final String GRANTED_TGT_MSG = "Established SSO session at [{}]\nTGT: [{}], With TimeToLive: [{}], TimeToIdle: [{}]\n"
-            + "For principal: [{}]";
+        + "For principal: [{}]";
 
     private static final String AUTHN_TX_FAIL_MSG = "Authentication transaction failed for credential: [{}]\nFailure(s): [{}]";
 
     private static final String PRINCIPAL_RESOLVED_MSG = "Principal [{}] resolved\nWith attributes: [{}]";
 
     private static final String DESTROYED_TGT_MSG = "SSO session ended\nTGT creation time: [{}] TGT: [{}], With TimeToLive: [{}], TimeToIdle: [{}]\n"
-            + "For principal: [{}]\nInitiator source: [{}]";
+        + "For principal: [{}]\nInitiator source: [{}]";
 
     private static final String GRANTED_PT_MSG = "Proxy ticket granted at: [{}]\nPT: [{}], With TimeToLive: [{}], TimeToIdle: [{}]\n"
-            + "By PGT: [{}], For service: [{}]\nProxied by: [{}]\nFor principal: [{}]";
+        + "By PGT: [{}], For service: [{}]\nProxied by: [{}]\nFor principal: [{}]";
 
     private static final String CREATED_ST_MSG = "Service ticket created at [{}]\nST: [{}]\nFor service: [{}]\nFor principal: [{}]";
 
     private static final String VALIDATED_ST_MSG = "Service ticket validated at [{}]\nST: [{}]\nFor service: [{}]\n"
-            + "For principal: [{}]\nWith released attributes: [{}]";
+        + "For principal: [{}]\nWith released attributes: [{}]";
 
     /**
      * Log {@link CasTicketGrantingTicketCreatedEvent} at debug level.
@@ -52,11 +51,11 @@ public class LoggingCasEventListener {
     public void logTicketGrantingTicketCreatedEvent(final CasTicketGrantingTicketCreatedEvent e) {
         val tgtId = sanitize(e.getTgtId());
         LOGGER.debug(GRANTED_TGT_MSG,
-                e.getTgtCreationTime(),
-                tgtId,
-                e.getTimeToLive(),
-                e.getTimeToIdle(),
-                e.getPrincipalId());
+            e.getTgtCreationTime(),
+            tgtId,
+            e.getTimeToLive(),
+            e.getTimeToIdle(),
+            e.getPrincipalId());
     }
 
     /**
@@ -88,12 +87,12 @@ public class LoggingCasEventListener {
     public void logTicketGrantingTicketDestroyedEvent(final CasTicketGrantingTicketDestroyedEvent e) {
         val tgtId = sanitize(e.getTgtId());
         LOGGER.debug(DESTROYED_TGT_MSG,
-                e.getTgtCreationTime(),
-                tgtId,
-                e.getTimeToLive(),
-                e.getTimeToIdle(),
-                e.getPrincipalId(),
-                e.getSource().getClass().getName());
+            e.getTgtCreationTime(),
+            tgtId,
+            e.getTimeToLive(),
+            e.getTimeToIdle(),
+            e.getPrincipalId(),
+            e.getSource().getClass().getName());
     }
 
     /**
@@ -109,14 +108,14 @@ public class LoggingCasEventListener {
         val ptId = sanitize(pt.getId());
         val principal = pgt.getAuthentication().getPrincipal().getId();
         LOGGER.debug(GRANTED_PT_MSG,
-                pt.getCreationTime(),
-                ptId,
-                pt.getExpirationPolicy().getTimeToLive(),
-                pt.getExpirationPolicy().getTimeToIdle(),
-                pgtId,
-                pt.getService().getId(),
-                pgt.getProxiedBy().getId(),
-                principal);
+            pt.getCreationTime(),
+            ptId,
+            pt.getExpirationPolicy().getTimeToLive(),
+            pt.getExpirationPolicy().getTimeToIdle(),
+            pgtId,
+            pt.getService().getId(),
+            pgt.getProxiedBy().getId(),
+            principal);
     }
 
     /**
@@ -126,11 +125,12 @@ public class LoggingCasEventListener {
      */
     @EventListener
     public void logServiceTicketGrantedEvent(final CasServiceTicketGrantedEvent e) {
+        val serviceTicket = e.getServiceTicket();
         LOGGER.debug(CREATED_ST_MSG,
-                e.getServiceTicket().getCreationTime(),
-                e.getServiceTicket().getId(),
-                e.getServiceTicket().getService().getId(),
-                e.getTicketGrantingTicket().getAuthentication().getPrincipal().getId());
+            serviceTicket.getCreationTime(),
+            serviceTicket.getId(),
+            serviceTicket.getService().getId(),
+            e.getTicketGrantingTicket().getAuthentication().getPrincipal().getId());
     }
 
     /**
@@ -140,12 +140,13 @@ public class LoggingCasEventListener {
      */
     @EventListener
     public void logServiceTicketValidatedEvent(final CasServiceTicketValidatedEvent e) {
-        val principal = e.getServiceTicket().getTicketGrantingTicket().getAuthentication().getPrincipal();
+        val serviceTicket = e.getServiceTicket();
+        val principal = serviceTicket.getTicketGrantingTicket().getAuthentication().getPrincipal();
         LOGGER.debug(VALIDATED_ST_MSG,
-                e.getServiceTicket().getCreationTime(),
-                e.getServiceTicket().getId(),
-                e.getServiceTicket().getService().getId(),
-                principal.getId(),
-                principal.getAttributes());
+            serviceTicket.getCreationTime(),
+            serviceTicket.getId(),
+            serviceTicket.getService().getId(),
+            principal.getId(),
+            principal.getAttributes());
     }
 }

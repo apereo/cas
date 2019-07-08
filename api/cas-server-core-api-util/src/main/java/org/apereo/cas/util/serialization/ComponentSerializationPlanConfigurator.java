@@ -1,4 +1,4 @@
-package org.apereo.cas;
+package org.apereo.cas.util.serialization;
 
 /**
  * This is {@link ComponentSerializationPlanConfigurator}, to be implemented

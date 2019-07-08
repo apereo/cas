@@ -1,8 +1,8 @@
 package org.apereo.cas.util;
 
-import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
 import org.apereo.cas.util.cipher.DefaultTicketCipherExecutor;
+import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.experimental.UtilityClass;

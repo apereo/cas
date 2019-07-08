@@ -1,7 +1,7 @@
 package org.apereo.cas.shell.commands.cipher;
 
-import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.util.cipher.BaseStringCipherExecutor;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;

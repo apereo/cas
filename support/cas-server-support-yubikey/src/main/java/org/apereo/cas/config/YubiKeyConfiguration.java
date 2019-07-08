@@ -1,7 +1,6 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.CentralAuthenticationService;
-import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.adaptors.yubikey.YubikeyAccountCipherExecutor;
 import org.apereo.cas.adaptors.yubikey.web.flow.YubiKeyAuthenticationWebflowAction;
 import org.apereo.cas.adaptors.yubikey.web.flow.YubiKeyAuthenticationWebflowEventResolver;
@@ -13,6 +12,7 @@ import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -136,7 +136,7 @@ public class YubiKeyConfiguration {
 
         return new YubiKeyAuthenticationWebflowEventResolver(context);
     }
-    
+
     @Bean
     @ConditionalOnMissingBean(name = "yubikeyCasWebflowExecutionPlanConfigurer")
     public CasWebflowExecutionPlanConfigurer yubikeyCasWebflowExecutionPlanConfigurer() {
@@ -166,7 +166,7 @@ public class YubiKeyConfiguration {
             + "YubiKey accounts for MFA");
         return CipherExecutor.noOp();
     }
-    
+
     /**
      * The Yubikey multifactor trust configuration.
      */

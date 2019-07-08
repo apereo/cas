@@ -1,4 +1,4 @@
-package org.apereo.cas;
+package org.apereo.cas.util.crypto;
 
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
