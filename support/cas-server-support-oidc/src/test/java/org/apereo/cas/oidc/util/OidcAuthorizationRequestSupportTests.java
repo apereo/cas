@@ -8,6 +8,8 @@ import org.pac4j.core.context.WebContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.profile.CommonProfile;
 
+import java.net.URISyntaxException;
+
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
@@ -58,4 +60,23 @@ public class OidcAuthorizationRequestSupportTests {
         when(context.getRequestAttribute(anyString())).thenReturn(new CommonProfile());
         assertTrue(OidcAuthorizationRequestSupport.isAuthenticationProfileAvailable(context).isPresent());
     }
+
+    @Test
+    public void verifyUrlAfterOidcPromptQueryParameterDeletion() throws URISyntaxException {
+        val baseUrl = "https://tralala.whapi.com/something";
+        val urlOnlyPrompt = baseUrl + "?" + OidcConstants.PROMPT + "=" + OidcConstants.PROMPT_LOGIN;
+        var newUrlOnlyPrompt = OidcAuthorizationRequestSupport.removeOidcPromptFromAuthorizationRequest(urlOnlyPrompt, OidcConstants.PROMPT_LOGIN);
+        assertEquals(baseUrl, newUrlOnlyPrompt);
+
+        val otherOneParameter = "otherOne=value";
+        val urlWithOthers = baseUrl + "?" + otherOneParameter + "&" + OidcConstants.PROMPT + "=" + OidcConstants.PROMPT_LOGIN;
+        val urlWithOthersExpected = baseUrl + "?" + otherOneParameter;
+        var newUrlWithOthers = OidcAuthorizationRequestSupport.removeOidcPromptFromAuthorizationRequest(urlWithOthers, OidcConstants.PROMPT_LOGIN);
+        assertEquals(urlWithOthersExpected, newUrlWithOthers);
+
+        val urlWithOthersFirst = baseUrl + "?" + OidcConstants.PROMPT + "=" + OidcConstants.PROMPT_LOGIN + "&" + otherOneParameter;
+        var newUrlWithOthersFirst = OidcAuthorizationRequestSupport.removeOidcPromptFromAuthorizationRequest(urlWithOthersFirst, OidcConstants.PROMPT_LOGIN);
+        assertEquals(urlWithOthersExpected, newUrlWithOthersFirst);
+    }
+
 }
