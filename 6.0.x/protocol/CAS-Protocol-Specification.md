@@ -492,6 +492,7 @@ case sensitive and MUST all be handled by `/validate`.
 On ticket validation success:
 
 yes&lt;LF&gt;
+username&lt;LF&gt;
 
 On ticket validation failure:
 
