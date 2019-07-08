@@ -1,11 +1,11 @@
 package org.apereo.cas.consent;
 
-import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.EncodingUtils;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
 import com.fasterxml.jackson.core.util.MinimalPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;

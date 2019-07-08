@@ -1,9 +1,9 @@
 package org.apereo.cas.token;
 
-import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
 import com.nimbusds.jose.JOSEObjectType;
 import com.nimbusds.jose.PlainHeader;

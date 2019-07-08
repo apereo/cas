@@ -1,9 +1,9 @@
 package org.apereo.cas.adaptors.yubikey;
 
-import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.adaptors.yubikey.registry.WhitelistYubiKeyAccountRegistry;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
+import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.web.support.WebUtils;
 
 import com.yubico.client.v2.YubicoClient;

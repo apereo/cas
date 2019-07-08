@@ -1,11 +1,11 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountRegistry;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
 import org.apereo.cas.adaptors.yubikey.dao.MongoDbYubiKeyAccountRegistry;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;

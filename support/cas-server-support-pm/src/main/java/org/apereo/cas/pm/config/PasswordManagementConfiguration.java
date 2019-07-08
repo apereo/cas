@@ -1,6 +1,5 @@
 package org.apereo.cas.pm.config;
 
-import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.audit.AuditTrailConstants;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlan;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
@@ -16,6 +15,7 @@ import org.apereo.cas.pm.impl.NoOpPasswordManagementService;
 import org.apereo.cas.pm.impl.history.AmnesiacPasswordHistoryService;
 import org.apereo.cas.pm.impl.history.GroovyPasswordHistoryService;
 import org.apereo.cas.pm.impl.history.InMemoryPasswordHistoryService;
+import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.io.CommunicationsManager;
 
 import lombok.extern.slf4j.Slf4j;

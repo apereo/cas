@@ -1,6 +1,5 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
@@ -36,6 +35,7 @@ import org.apereo.cas.support.saml.web.idp.metadata.SamlRegisteredServiceCachedM
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.sso.SSOSamlPostProfileHandlerEndpoint;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.http.HttpClient;
 
 import lombok.SneakyThrows;

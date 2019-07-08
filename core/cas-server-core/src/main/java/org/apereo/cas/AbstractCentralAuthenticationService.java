@@ -18,6 +18,7 @@ import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.UnsatisfiedAuthenticationPolicyException;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.AllArgsConstructor;
 import lombok.NonNull;

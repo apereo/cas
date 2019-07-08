@@ -1,6 +1,6 @@
 package org.apereo.cas.configuration.support;
 
-import org.apereo.cas.CipherExecutor;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.Getter;
 import lombok.val;

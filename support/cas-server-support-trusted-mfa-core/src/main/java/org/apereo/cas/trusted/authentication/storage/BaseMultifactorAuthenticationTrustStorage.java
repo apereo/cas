@@ -1,9 +1,9 @@
 package org.apereo.cas.trusted.authentication.storage;
 
-import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.util.MultifactorAuthenticationTrustUtils;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.Setter;
 import lombok.ToString;

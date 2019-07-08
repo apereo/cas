@@ -1,10 +1,10 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.adaptors.u2f.storage.U2FDeviceRepository;
 import org.apereo.cas.adaptors.u2f.storage.U2FMongoDbDeviceRepository;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;

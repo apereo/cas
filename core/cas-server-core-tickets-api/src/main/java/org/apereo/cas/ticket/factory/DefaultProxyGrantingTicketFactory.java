@@ -1,6 +1,5 @@
 package org.apereo.cas.ticket.factory;
 
-import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.ticket.ExpirationPolicy;
@@ -11,6 +10,7 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicketFactory;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

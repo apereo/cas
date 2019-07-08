@@ -1,6 +1,5 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlan;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -14,6 +13,7 @@ import org.apereo.cas.consent.DefaultConsentEngine;
 import org.apereo.cas.consent.GroovyConsentRepository;
 import org.apereo.cas.consent.InMemoryConsentRepository;
 import org.apereo.cas.consent.JsonConsentRepository;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;

@@ -1,9 +1,9 @@
 package org.apereo.cas.gauth.credential;
 
-import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;

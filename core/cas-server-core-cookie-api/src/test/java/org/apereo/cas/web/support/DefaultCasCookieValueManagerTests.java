@@ -1,7 +1,7 @@
 package org.apereo.cas.web.support;
 
-import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.model.support.cookie.TicketGrantingCookieProperties;
+import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.web.support.mgmr.DefaultCasCookieValueManager;
 
 import lombok.val;

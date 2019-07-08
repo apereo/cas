@@ -1,7 +1,5 @@
 package org.apereo.cas.ticket.registry;
 
-import org.apereo.cas.ComponentSerializationPlan;
-import org.apereo.cas.ComponentSerializationPlanConfigurator;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
@@ -18,6 +16,8 @@ import org.apereo.cas.ticket.code.OAuthCode;
 import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
+import org.apereo.cas.util.serialization.ComponentSerializationPlan;
+import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurator;
 
 import lombok.val;
 import org.junit.jupiter.api.RepeatedTest;

@@ -1,8 +1,8 @@
 package org.apereo.cas.gauth.credential;
 
-import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;

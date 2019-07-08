@@ -1,6 +1,5 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.ComponentSerializationPlan;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.memcached.MemcachedPooledClientConnectionFactory;
 import org.apereo.cas.memcached.MemcachedUtils;
@@ -9,6 +8,7 @@ import org.apereo.cas.ticket.registry.NoOpTicketRegistryCleaner;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistryCleaner;
 import org.apereo.cas.util.CoreTicketUtils;
+import org.apereo.cas.util.serialization.ComponentSerializationPlan;
 
 import lombok.val;
 import net.spy.memcached.transcoders.Transcoder;

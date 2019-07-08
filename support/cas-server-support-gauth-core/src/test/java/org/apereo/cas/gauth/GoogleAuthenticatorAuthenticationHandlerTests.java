@@ -1,6 +1,5 @@
 package org.apereo.cas.gauth;
 
-import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.OneTimeToken;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.gauth.credential.GoogleAuthenticatorTokenCredential;
@@ -8,6 +7,7 @@ import org.apereo.cas.gauth.credential.InMemoryGoogleAuthenticatorTokenCredentia
 import org.apereo.cas.otp.repository.token.CachingOneTimeTokenRepository;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.web.support.WebUtils;
 
 import com.github.benmanes.caffeine.cache.Caffeine;

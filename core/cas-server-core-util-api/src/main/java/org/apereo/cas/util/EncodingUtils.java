@@ -1,6 +1,6 @@
 package org.apereo.cas.util;
 
-import org.apereo.cas.CipherExecutor;
+import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.crypto.DecryptionException;
 
 import lombok.SneakyThrows;

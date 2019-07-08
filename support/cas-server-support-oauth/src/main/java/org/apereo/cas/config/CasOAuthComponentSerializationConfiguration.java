@@ -1,7 +1,5 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.ComponentSerializationPlan;
-import org.apereo.cas.ComponentSerializationPlanConfigurator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthAccessTokenExpirationPolicy;
 import org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthCodeExpirationPolicy;
@@ -15,6 +13,8 @@ import org.apereo.cas.ticket.device.DeviceTokenImpl;
 import org.apereo.cas.ticket.device.DeviceUserCodeImpl;
 import org.apereo.cas.ticket.refreshtoken.OAuthRefreshTokenExpirationPolicy;
 import org.apereo.cas.ticket.refreshtoken.RefreshTokenImpl;
+import org.apereo.cas.util.serialization.ComponentSerializationPlan;
+import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurator;
 
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;

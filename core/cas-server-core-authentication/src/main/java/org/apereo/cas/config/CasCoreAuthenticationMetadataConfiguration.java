@@ -1,6 +1,5 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.metadata.AuthenticationCredentialTypeMetaDataPopulator;
@@ -9,6 +8,7 @@ import org.apereo.cas.authentication.metadata.CacheCredentialsMetaDataPopulator;
 import org.apereo.cas.authentication.metadata.RememberMeAuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.metadata.SuccessfulHandlerMetaDataPopulator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;

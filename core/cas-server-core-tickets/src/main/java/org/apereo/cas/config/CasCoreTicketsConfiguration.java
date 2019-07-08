@@ -1,6 +1,5 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.PseudoPlatformTransactionManager;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.CasJavaClientProperties;
@@ -51,6 +50,7 @@ import org.apereo.cas.util.ProxyGrantingTicketIdGenerator;
 import org.apereo.cas.util.ProxyTicketIdGenerator;
 import org.apereo.cas.util.TicketGrantingTicketIdGenerator;
 import org.apereo.cas.util.cipher.ProtocolTicketCipherExecutor;
+import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.http.HttpClient;
 
 import lombok.extern.slf4j.Slf4j;
@@ -87,6 +87,7 @@ import java.net.HttpURLConnection;
 import java.net.URLConnection;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * This is {@link CasCoreTicketsConfiguration}.
@@ -286,7 +287,7 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
             val logoutManager = applicationContext.getBean("logoutManager", LogoutManager.class);
             return new CachingTicketRegistry(cipher, logoutManager);
         }
-        return new DefaultTicketRegistry(mem.getInitialCapacity(), mem.getLoadFactor(), mem.getConcurrency(), cipher);
+        return new DefaultTicketRegistry(new ConcurrentHashMap<>(mem.getInitialCapacity(), mem.getLoadFactor(), mem.getConcurrency()), cipher);
     }
 
     @ConditionalOnMissingBean(name = "defaultTicketRegistrySupport")

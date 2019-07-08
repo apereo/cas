@@ -1,9 +1,9 @@
 package org.apereo.cas.gauth.credential;
 
-import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.configuration.model.support.mfa.GoogleAuthenticatorMultifactorProperties;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import lombok.Getter;

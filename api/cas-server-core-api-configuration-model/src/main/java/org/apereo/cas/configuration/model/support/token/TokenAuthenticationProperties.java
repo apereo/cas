@@ -1,9 +1,9 @@
 package org.apereo.cas.configuration.model.support.token;
 
-import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.apereo.cas.configuration.model.core.util.EncryptionOptionalSigningOptionalJwtCryptographyProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.Getter;
 import lombok.Setter;

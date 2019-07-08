@@ -1,8 +1,8 @@
 package org.apereo.cas.support.saml.idp.metadata;
 
-import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.support.saml.idp.metadata.locator.AbstractSamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;

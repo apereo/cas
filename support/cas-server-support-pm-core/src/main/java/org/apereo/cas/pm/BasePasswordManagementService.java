@@ -1,8 +1,8 @@
 package org.apereo.cas.pm;
 
-import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.configuration.model.support.pm.PasswordManagementProperties;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

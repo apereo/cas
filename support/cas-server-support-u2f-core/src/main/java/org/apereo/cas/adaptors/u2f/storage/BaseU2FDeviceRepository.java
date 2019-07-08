@@ -1,6 +1,6 @@
 package org.apereo.cas.adaptors.u2f.storage;
 
-import org.apereo.cas.CipherExecutor;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import lombok.Getter;

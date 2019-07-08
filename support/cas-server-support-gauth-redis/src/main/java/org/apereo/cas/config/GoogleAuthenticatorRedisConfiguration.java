@@ -1,12 +1,12 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.gauth.credential.RedisGoogleAuthenticatorTokenCredentialRepository;
 import org.apereo.cas.gauth.token.GoogleAuthenticatorRedisTokenRepository;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.otp.repository.token.OneTimeTokenRepository;
 import org.apereo.cas.redis.core.RedisObjectFactory;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import lombok.val;

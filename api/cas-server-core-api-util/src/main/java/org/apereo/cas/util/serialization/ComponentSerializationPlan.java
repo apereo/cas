@@ -1,4 +1,4 @@
-package org.apereo.cas;
+package org.apereo.cas.util.serialization;
 
 import java.util.Collection;
 

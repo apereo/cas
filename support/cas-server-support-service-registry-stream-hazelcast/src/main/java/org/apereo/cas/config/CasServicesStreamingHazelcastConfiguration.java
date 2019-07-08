@@ -1,6 +1,5 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.DistributedCacheManager;
 import org.apereo.cas.StringBean;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
@@ -10,6 +9,7 @@ import org.apereo.cas.services.publisher.CasRegisteredServiceHazelcastStreamPubl
 import org.apereo.cas.services.publisher.CasRegisteredServiceStreamPublisher;
 import org.apereo.cas.services.replication.DefaultRegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.replication.RegisteredServiceReplicationStrategy;
+import org.apereo.cas.util.cache.DistributedCacheManager;
 
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;

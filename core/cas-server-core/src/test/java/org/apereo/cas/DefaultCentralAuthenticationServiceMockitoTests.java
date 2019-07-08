@@ -42,6 +42,7 @@ import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyTicket;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
