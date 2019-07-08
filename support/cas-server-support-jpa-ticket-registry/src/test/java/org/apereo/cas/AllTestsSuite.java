@@ -3,6 +3,8 @@ package org.apereo.cas;
 import org.apereo.cas.monitor.SessionHealthIndicatorJpaTests;
 import org.apereo.cas.ticket.registry.JpaTicketRegistryCleanerTests;
 import org.apereo.cas.ticket.registry.JpaTicketRegistryTests;
+import org.apereo.cas.ticket.registry.OauthJpaTicketRegistryCleanerTests;
+import org.apereo.cas.ticket.registry.PostgresOauthJpaTicketRegistryCleanerTests;
 import org.apereo.cas.ticket.registry.support.JpaLockingStrategyTests;
 
 import org.junit.platform.runner.JUnitPlatform;
@@ -19,7 +21,9 @@ import org.junit.runner.RunWith;
     SessionHealthIndicatorJpaTests.class,
     JpaTicketRegistryTests.class,
     JpaLockingStrategyTests.class,
-    JpaTicketRegistryCleanerTests.class
+    JpaTicketRegistryCleanerTests.class,
+    OauthJpaTicketRegistryCleanerTests.class,
+    PostgresOauthJpaTicketRegistryCleanerTests.class
 })
 @RunWith(JUnitPlatform.class)
 public class AllTestsSuite {

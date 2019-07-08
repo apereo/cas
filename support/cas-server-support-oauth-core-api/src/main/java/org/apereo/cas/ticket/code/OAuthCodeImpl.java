@@ -61,7 +61,7 @@ public class OAuthCodeImpl extends AbstractTicket implements OAuthCode {
      * The service this ticket is valid for.
      */
     @Lob
-    @Column(name = "SERVICE", nullable = false)
+    @Column(name = "SERVICE", nullable = false, length = Integer.MAX_VALUE)
     private Service service;
 
     /**
