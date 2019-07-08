@@ -40,7 +40,17 @@ In the event that the [standalone configuration profile](Configuration-Server-Ma
 is used to control and direct settings and Spring Cloud configuration server is disabled,
 CAS will begin to automatically watch and monitor the configuration files indicated by the profile and will auto-reload the state of the runtime
 application context automatically. You may also attempt to [refresh settings manually](../monitoring/Monitoring-Statistics.html)
-via the CAS admin screens.
+via the CAS admin endpoints.
+
+Support is enabled by including the following dependency in the WAR overlay:
+
+```xml
+<dependency>
+  <groupId>org.apereo.cas</groupId>
+  <artifactId>cas-server-core-events-configuration</artifactId>
+  <version>${cas.version}</version>
+</dependency>
+```
 
 ### Spring Cloud
 
