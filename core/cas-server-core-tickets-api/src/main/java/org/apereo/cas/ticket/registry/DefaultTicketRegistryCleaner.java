@@ -74,7 +74,7 @@ public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner, Seri
             LOGGER.debug("Cleaning up expired ticket-granting ticket [{}]", ticket.getId());
             logoutManager.performLogout((TicketGrantingTicket) ticket);
         }
-        LOGGER.debug("Cleaning up expired service ticket [{}]", ticket.getId());
+        LOGGER.debug("Cleaning up expired ticket [{}]", ticket.getId());
         return ticketRegistry.deleteTicket(ticket);
     }
 
