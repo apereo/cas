@@ -12,7 +12,15 @@ Additionally, while audit data may be used for reporting and monitoring, events 
 in a historical fashion to assess authentication requests, evaluate risk associated with them and take further action upon them. Events are primarily
 designed to be consumed by the developer and subsequent CAS modules, while audit data is targeted at deployers for end-user functionality and reporting.
 
-By default, no events are recorded by this functionality.
+Support is enabled by including the following dependency in the WAR overlay:
+
+```xml
+<dependency>
+  <groupId>org.apereo.cas</groupId>
+  <artifactId>cas-server-core-events</artifactId>
+  <version>${cas.version}</version>
+</dependency>
+```
 
 ## Recorded Data
 
