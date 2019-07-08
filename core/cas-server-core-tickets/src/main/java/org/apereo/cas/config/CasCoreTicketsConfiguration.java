@@ -73,6 +73,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -99,6 +100,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
 @EnableAsync
+@EnableAspectJAutoProxy(proxyTargetClass=true)
 @EnableTransactionManagement(proxyTargetClass = true)
 @AutoConfigureAfter(value = {CasCoreUtilConfiguration.class, CasCoreTicketIdGeneratorsConfiguration.class})
 @Slf4j
@@ -277,6 +279,7 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
 
     @ConditionalOnMissingBean(name = "ticketRegistry")
     @Bean
+    @RefreshScope
     public TicketRegistry ticketRegistry() {
         LOGGER.warn("Runtime memory is used as the persistence storage for retrieving and managing tickets. "
             + "Tickets that are issued during runtime will be LOST when the web server is restarted. This MAY impact SSO functionality.");

@@ -53,6 +53,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
@@ -75,6 +76,7 @@ import java.util.stream.Collectors;
 @Configuration("casCoreServicesConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
+@EnableAspectJAutoProxy(proxyTargetClass=true)
 public class CasCoreServicesConfiguration {
     @Autowired
     @Qualifier("communicationsManager")
@@ -217,12 +219,19 @@ public class CasCoreServicesConfiguration {
             LOGGER.warn("Runtime memory is used as the persistence storage for retrieving and persisting service definitions. "
                 + "Changes that are made to service definitions during runtime WILL be LOST when the CAS server is restarted. "
                 + "Ideally for production, you should choose a storage option (JSON, JDBC, MongoDb, etc) to track service definitions.");
-            val services = getInMemoryRegisteredServices().orElseGet(ArrayList::new);
-            chainingRegistry.addServiceRegistry(new InMemoryServiceRegistry(eventPublisher, services, serviceRegistryListeners()));
+            chainingRegistry.addServiceRegistry(inMemoryServiceRegistry());
         }
 
         chainingRegistry.addServiceRegistries(plan.getServiceRegistries());
         return chainingRegistry;
+    }
+
+    @Bean
+    //@RefreshScope
+    @ConditionalOnMissingBean(name = "inMemoryServiceRegistry")
+    public ServiceRegistry inMemoryServiceRegistry() {
+        val services = getInMemoryRegisteredServices().orElseGet(ArrayList::new);
+        return new InMemoryServiceRegistry(eventPublisher, services, serviceRegistryListeners());
     }
 
     /**

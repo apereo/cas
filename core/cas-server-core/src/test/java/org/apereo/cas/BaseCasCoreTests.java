@@ -77,7 +77,7 @@ import org.springframework.test.annotation.DirtiesContext;
     CasCoreWebflowConfiguration.class,
     CasCoreValidationConfiguration.class
 })
-@EnableAspectJAutoProxy
+@EnableAspectJAutoProxy(proxyTargetClass = true)
 @DirtiesContext
 @EnableScheduling
 @EnableConfigurationProperties(CasConfigurationProperties.class)

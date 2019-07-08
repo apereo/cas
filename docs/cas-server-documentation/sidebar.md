@@ -45,7 +45,7 @@ layout: null
         *   [Remote Address](/$version/installation/Remote-Address-Authentication.html)
         *   [Trusted](/$version/installation/Trusted-Authentication.html)
         *   [Apache Cassandra](/$version/installation/Cassandra-Authentication.html)
-        *   [Apache Fortress](/$version/integration/Configuring-Fortress-Integration.html)
+        *   [Apache Fortress](/$version/integration/Configuring-Fortress-Authentication.html)
         *   [Apache Shiro](/$version/installation/Shiro-Authentication.html)
         *   [Apache Syncope](/$version/installation/Syncope-Authentication.html)
         *   [JWT](#jwtauthn)
@@ -239,6 +239,7 @@ layout: null
     *   [SCIM Provisioning](/$version/integration/SCIM-Integration.html)
     *   [CAS Clients](/$version/integration/CAS-Clients.html)
     *   [Swagger API](/$version/integration/Swagger-Integration.html)
+    *   [JMX](/$version/integration/JMX-Integration.html)
     *   [Shibboleth Identity Provider](/$version/integration/Shibboleth.html)
 
 * [Developer](#developer)

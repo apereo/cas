@@ -188,10 +188,10 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
     @Override
     public Stream<Ticket> getTicketsStream() {
         return ticketCatalog.findAll().stream()
-                .map(this::getTicketCollectionInstanceByMetadata)
-                .map(map -> mongoTemplate.stream(new Query(), TicketHolder.class, map))
-                .flatMap(StreamUtils::createStreamFromIterator)
-                .map(ticket -> decodeTicket(deserializeTicketFromMongoDocument(ticket)));
+            .map(this::getTicketCollectionInstanceByMetadata)
+            .map(map -> mongoTemplate.stream(new Query(), TicketHolder.class, map))
+            .flatMap(StreamUtils::createStreamFromIterator)
+            .map(ticket -> decodeTicket(deserializeTicketFromMongoDocument(ticket)));
     }
 
     @Override
@@ -207,9 +207,9 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
     private long countTicketsByTicketType(final Class<? extends Ticket> ticketType) {
         val ticketDefinitions = ticketCatalog.find(ticketType);
         return ticketDefinitions.stream()
-                .map(this::getTicketCollectionInstanceByMetadata)
-                .mapToLong(map -> mongoTemplate.count(new Query(), map))
-                .sum();
+            .map(this::getTicketCollectionInstanceByMetadata)
+            .mapToLong(map -> mongoTemplate.count(new Query(), map))
+            .sum();
     }
 
     private TicketHolder buildTicketAsDocument(final Ticket ticket) {

@@ -59,7 +59,7 @@ import java.util.Map;
  * @since 5.0.0
  */
 @Configuration("casCoreAuditConfiguration")
-@EnableAspectJAutoProxy
+@EnableAspectJAutoProxy(proxyTargetClass = true)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class CasCoreAuditConfiguration implements AuditTrailExecutionPlanConfigurer, AuditTrailRecordResolutionPlanConfigurer {
