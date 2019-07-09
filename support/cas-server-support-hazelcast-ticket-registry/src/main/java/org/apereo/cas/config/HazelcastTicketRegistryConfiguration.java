@@ -47,20 +47,20 @@ public class HazelcastTicketRegistryConfiguration {
     @Qualifier("ticketCatalog")
     private ObjectProvider<TicketCatalog> ticketCatalog;
 
-
     @Bean
     public TicketRegistry ticketRegistry() {
         val hz = casProperties.getTicket().getRegistry().getHazelcast();
         val factory = new HazelcastConfigurationFactory();
         val hazelcastInstance = casTicketRegistryHazelcastInstance();
-        ticketCatalog.getIfAvailable().findAll()
+        var catalog = ticketCatalog.getObject();
+        catalog.findAll()
             .stream()
             .map(TicketDefinition::getProperties)
             .peek(p -> LOGGER.debug("Created Hazelcast map configuration for [{}]", p))
             .map(p -> factory.buildMapConfig(hz, p.getStorageName(), p.getStorageTimeout()))
             .forEach(m -> hazelcastInstance.getConfig().addMapConfig(m));
         val r = new HazelcastTicketRegistry(hazelcastInstance,
-            ticketCatalog.getIfAvailable(),
+            catalog,
             hz.getPageSize());
         r.setCipherExecutor(CoreTicketUtils.newTicketRegistryCipherExecutor(hz.getCrypto(), "hazelcast"));
         return r;
