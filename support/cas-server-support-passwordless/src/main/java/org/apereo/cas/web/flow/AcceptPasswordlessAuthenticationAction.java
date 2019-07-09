@@ -2,10 +2,10 @@ package org.apereo.cas.web.flow;
 
 import org.apereo.cas.api.PasswordlessTokenRepository;
 import org.apereo.cas.api.PasswordlessUserAccountStore;
+import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.credential.OneTimePasswordCredential;
-import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.web.flow.actions.AbstractAuthenticationAction;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
@@ -13,7 +13,6 @@ import org.apereo.cas.web.support.WebUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
@@ -50,7 +49,7 @@ public class AcceptPasswordlessAuthenticationAction extends AbstractAuthenticati
         try {
             val currentToken = passwordlessTokenRepository.findToken(username);
 
-            if (currentToken.isPresent()) {
+            if (!currentToken.isPresent()) {
                 val credential = new OneTimePasswordCredential(username, password);
                 val service = WebUtils.getService(requestContext);
                 val authenticationResult = authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, credential);
@@ -72,6 +71,9 @@ public class AcceptPasswordlessAuthenticationAction extends AbstractAuthenticati
                 return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, attributes);
             }
         }
-        throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
+        LOGGER.error("Unable to locate token for user [{}]", username);
+        val attributes = new LocalAttributeMap<>();
+        attributes.put("error", new AuthenticationException("Invalid token"));
+        return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, attributes);
     }
 }
