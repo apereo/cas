@@ -15,7 +15,7 @@ import org.apereo.cas.support.validation.CipheredCredentialsValidator;
 import org.apereo.cas.support.validation.SecurityTokenServiceCredentialCipherExecutor;
 import org.apereo.cas.support.x509.X509TokenDelegationHandler;
 import org.apereo.cas.ticket.DefaultSecurityTokenTicketFactory;
-import org.apereo.cas.ticket.ExpirationPolicy;
+import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.SecurityTokenTicketFactory;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.util.CollectionUtils;
@@ -89,7 +89,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
 
     @Autowired
     @Qualifier("grantingTicketExpirationPolicy")
-    private ObjectProvider<ExpirationPolicy> grantingTicketExpirationPolicy;
+    private ObjectProvider<ExpirationPolicyBuilder> grantingTicketExpirationPolicy;
 
     @Autowired
     @Qualifier("wsFederationAuthenticationServiceSelectionStrategy")

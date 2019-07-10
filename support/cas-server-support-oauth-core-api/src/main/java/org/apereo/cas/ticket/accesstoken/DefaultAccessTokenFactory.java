@@ -7,6 +7,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.ticket.ExpirationPolicy;
+import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -43,7 +44,7 @@ public class DefaultAccessTokenFactory implements AccessTokenFactory {
     /**
      * ExpirationPolicy for refresh tokens.
      */
-    protected final ExpirationPolicy expirationPolicy;
+    protected final ExpirationPolicyBuilder<AccessToken> expirationPolicy;
 
     /**
      * JWT builder instance.
@@ -55,7 +56,7 @@ public class DefaultAccessTokenFactory implements AccessTokenFactory {
      */
     protected final ServicesManager servicesManager;
 
-    public DefaultAccessTokenFactory(final ExpirationPolicy expirationPolicy,
+    public DefaultAccessTokenFactory(final ExpirationPolicyBuilder<AccessToken> expirationPolicy,
                                      final JwtBuilder jwtBuilder,
                                      final ServicesManager servicesManager) {
         this(new DefaultUniqueTicketIdGenerator(), expirationPolicy, jwtBuilder, servicesManager);
@@ -120,6 +121,6 @@ public class DefaultAccessTokenFactory implements AccessTokenFactory {
                     Beans.newDuration(ttl).getSeconds());
             }
         }
-        return this.expirationPolicy;
+        return this.expirationPolicy.buildTicketExpirationPolicy();
     }
 }

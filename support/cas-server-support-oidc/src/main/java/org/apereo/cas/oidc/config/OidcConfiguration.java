@@ -86,7 +86,7 @@ import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationRe
 import org.apereo.cas.support.oauth.web.views.ConsentApprovalViewResolver;
 import org.apereo.cas.support.oauth.web.views.OAuth20CallbackAuthorizeViewResolver;
 import org.apereo.cas.support.oauth.web.views.OAuth20UserProfileViewRenderer;
-import org.apereo.cas.ticket.ExpirationPolicy;
+import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.IdTokenGeneratorService;
 import org.apereo.cas.ticket.OAuthTokenSigningAndEncryptionService;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
@@ -186,7 +186,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
 
     @Autowired
     @Qualifier("grantingTicketExpirationPolicy")
-    private ObjectProvider<ExpirationPolicy> grantingTicketExpirationPolicy;
+    private ObjectProvider<ExpirationPolicyBuilder> grantingTicketExpirationPolicy;
 
     @Autowired
     @Qualifier("oauthTokenGenerator")
@@ -202,11 +202,11 @@ public class OidcConfiguration implements WebMvcConfigurer {
 
     @Autowired
     @Qualifier("accessTokenExpirationPolicy")
-    private ObjectProvider<ExpirationPolicy> accessTokenExpirationPolicy;
+    private ObjectProvider<ExpirationPolicyBuilder> accessTokenExpirationPolicy;
 
     @Autowired
     @Qualifier("deviceTokenExpirationPolicy")
-    private ObjectProvider<ExpirationPolicy> deviceTokenExpirationPolicy;
+    private ObjectProvider<ExpirationPolicyBuilder> deviceTokenExpirationPolicy;
 
     @Autowired
     @Qualifier("requiresAuthenticationAccessTokenInterceptor")

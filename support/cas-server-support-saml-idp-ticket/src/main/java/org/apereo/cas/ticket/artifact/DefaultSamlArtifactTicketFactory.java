@@ -5,7 +5,7 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlUtils;
-import org.apereo.cas.ticket.ExpirationPolicy;
+import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -25,9 +25,9 @@ import org.opensaml.saml.common.SAMLObject;
 public class DefaultSamlArtifactTicketFactory implements SamlArtifactTicketFactory {
 
     /**
-     * ExpirationPolicy for refresh tokens.
+     * ExpirationPolicy for tokens.
      */
-    protected final ExpirationPolicy expirationPolicy;
+    protected final ExpirationPolicyBuilder<SamlArtifactTicket> expirationPolicy;
 
     /**
      * The opensaml config bean.
@@ -50,7 +50,7 @@ public class DefaultSamlArtifactTicketFactory implements SamlArtifactTicketFacto
 
             val service = this.webApplicationServiceFactory.createService(relyingParty);
             val at = new SamlArtifactTicketImpl(codeId, service, authentication,
-                this.expirationPolicy, ticketGrantingTicket, issuer, relyingParty, w.toString());
+                this.expirationPolicy.buildTicketExpirationPolicy(), ticketGrantingTicket, issuer, relyingParty, w.toString());
             if (ticketGrantingTicket != null) {
                 ticketGrantingTicket.getDescendantTickets().add(at.getId());
             }

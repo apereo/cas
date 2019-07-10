@@ -2,7 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.ticket.ExpirationPolicy;
+import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.token.JwtTokenCipherSigningPublicKeyEndpoint;
 import org.apereo.cas.token.JwtTokenTicketBuilder;
@@ -52,7 +52,7 @@ public class TokenCoreConfiguration {
 
     @Autowired
     @Qualifier("grantingTicketExpirationPolicy")
-    private ObjectProvider<ExpirationPolicy> grantingTicketExpirationPolicy;
+    private ObjectProvider<ExpirationPolicyBuilder> grantingTicketExpirationPolicy;
 
     @Bean
     @RefreshScope

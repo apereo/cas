@@ -4,7 +4,7 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlUtils;
-import org.apereo.cas.ticket.ExpirationPolicy;
+import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -25,9 +25,9 @@ import org.opensaml.saml.common.SAMLObject;
 public class DefaultSamlAttributeQueryTicketFactory implements SamlAttributeQueryTicketFactory {
 
     /**
-     * ExpirationPolicy for refresh tokens.
+     * ExpirationPolicy for tokens.
      */
-    protected final ExpirationPolicy expirationPolicy;
+    protected final ExpirationPolicyBuilder expirationPolicy;
 
     /**
      * The Web application service factory.
@@ -46,7 +46,8 @@ public class DefaultSamlAttributeQueryTicketFactory implements SamlAttributeQuer
         try (val w = SamlUtils.transformSamlObject(this.configBean, samlObject)) {
             val codeId = createTicketIdFor(id);
             val service = this.webApplicationServiceFactory.createService(relyingParty);
-            val at = new SamlAttributeQueryTicketImpl(codeId, service, this.expirationPolicy,
+            val at = new SamlAttributeQueryTicketImpl(codeId, service,
+                this.expirationPolicy.buildTicketExpirationPolicy(),
                 relyingParty, w.toString(), ticketGrantingTicket);
             if (ticketGrantingTicket != null) {
                 ticketGrantingTicket.getDescendantTickets().add(at.getId());
