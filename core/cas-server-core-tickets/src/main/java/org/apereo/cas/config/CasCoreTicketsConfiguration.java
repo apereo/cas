@@ -158,17 +158,6 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
         return validator;
     }
 
-    private AbstractUrlBasedTicketValidator buildCasClientTicketValidator(final String prefix) {
-        val validatorType = casProperties.getClient().getValidatorType();
-        if (validatorType == CasJavaClientProperties.ClientTicketValidatorTypes.CAS10) {
-            return new Cas10TicketValidator(prefix);
-        }
-        if (validatorType == CasJavaClientProperties.ClientTicketValidatorTypes.CAS20) {
-            return new Cas20ServiceTicketValidator(prefix);
-        }
-        return new Cas30ServiceTicketValidator(prefix);
-    }
-
     @ConditionalOnMissingBean(name = "defaultProxyGrantingTicketFactory")
     @Bean
     public ProxyGrantingTicketFactory defaultProxyGrantingTicketFactory() {
@@ -427,5 +416,16 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
             c.configureTicketCatalog(plan);
         });
         return plan;
+    }
+
+    private AbstractUrlBasedTicketValidator buildCasClientTicketValidator(final String prefix) {
+        val validatorType = casProperties.getClient().getValidatorType();
+        if (validatorType == CasJavaClientProperties.ClientTicketValidatorTypes.CAS10) {
+            return new Cas10TicketValidator(prefix);
+        }
+        if (validatorType == CasJavaClientProperties.ClientTicketValidatorTypes.CAS20) {
+            return new Cas20ServiceTicketValidator(prefix);
+        }
+        return new Cas30ServiceTicketValidator(prefix);
     }
 }
