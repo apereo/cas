@@ -11,7 +11,6 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.DecisionState;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
-import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -25,17 +24,13 @@ import org.springframework.webflow.execution.RequestContext;
 public class DelegatedAuthenticationWebflowConfigurer extends AbstractCasWebflowConfigurer {
     private static final String DECISION_STATE_CHECK_DELEGATED_AUTHN_FAILURE = "checkDelegatedAuthnFailureDecision";
 
-    private final Action saml2ClientLogoutAction;
-
     public DelegatedAuthenticationWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
                                                     final FlowDefinitionRegistry loginFlowDefinitionRegistry,
                                                     final FlowDefinitionRegistry logoutFlowDefinitionRegistry,
-                                                    final Action saml2ClientLogoutAction,
                                                     final ApplicationContext applicationContext,
                                                     final CasConfigurationProperties casProperties) {
         super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
         setLogoutFlowDefinitionRegistry(logoutFlowDefinitionRegistry);
-        this.saml2ClientLogoutAction = saml2ClientLogoutAction;
     }
 
     @Override
@@ -51,7 +46,7 @@ public class DelegatedAuthenticationWebflowConfigurer extends AbstractCasWebflow
     private void createSaml2ClientLogoutAction() {
         val logoutFlow = getLogoutFlow();
         val state = getState(logoutFlow, CasWebflowConstants.STATE_ID_FINISH_LOGOUT, DecisionState.class);
-        state.getEntryActionList().add(saml2ClientLogoutAction);
+        state.getEntryActionList().add(createEvaluateAction("saml2ClientLogoutAction"));
     }
 
     private void createClientActionActionState(final Flow flow) {

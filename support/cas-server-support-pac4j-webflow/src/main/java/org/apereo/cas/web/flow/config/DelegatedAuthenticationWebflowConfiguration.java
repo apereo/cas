@@ -121,10 +121,6 @@ public class DelegatedAuthenticationWebflowConfiguration {
     private ObjectProvider<ArgumentExtractor> argumentExtractor;
 
     @Autowired
-    @Qualifier("saml2ClientLogoutAction")
-    private ObjectProvider<Action> saml2ClientLogoutAction;
-
-    @Autowired
     @Qualifier("adaptiveAuthenticationPolicy")
     private ObjectProvider<AdaptiveAuthenticationPolicy> adaptiveAuthenticationPolicy;
 
@@ -190,7 +186,6 @@ public class DelegatedAuthenticationWebflowConfiguration {
             flowBuilderServices.getIfAvailable(),
             loginFlowDefinitionRegistry.getIfAvailable(),
             logoutFlowDefinitionRegistry.getIfAvailable(),
-            saml2ClientLogoutAction.getIfAvailable(),
             applicationContext,
             casProperties);
     }
