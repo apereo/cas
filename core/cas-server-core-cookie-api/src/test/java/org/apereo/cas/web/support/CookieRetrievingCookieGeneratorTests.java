@@ -45,17 +45,38 @@ public class CookieRetrievingCookieGeneratorTests {
     }
 
     @Test
-    public void verifyCookieForRememberMeByRequestContext() {
-        val gen = new CookieRetrievingCookieGenerator("cas", "/", 1000, true, "example.org", true);
+    public void verifyCookieForRememberMeByRequestContextLegacyAttribute() {
+        val rememberMeMaxAge = 99999;
+        val gen = new CookieRetrievingCookieGenerator("cas", "/", 1000, true, "example.org", new NoOpCookieValueManager(), rememberMeMaxAge, true);
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val authn = CoreAuthenticationTestUtils.getAuthentication("casuser",
-            CollectionUtils.wrap(RememberMeCredential.REQUEST_PARAMETER_REMEMBER_ME, "true"));
+            CollectionUtils.wrap(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME, Boolean.TRUE));
         WebUtils.putAuthentication(authn, context);
         WebUtils.putRememberMeAuthenticationEnabled(context, Boolean.TRUE);
         val response = new MockHttpServletResponse();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
         gen.addCookie(context, "CAS-Cookie-Value");
-        assertTrue(response.getCookies().length > 0);
+        val cookie = response.getCookie("cas");
+        assertNotNull(cookie);
+        assertEquals(rememberMeMaxAge, cookie.getMaxAge());
+    }
+
+    @Test
+    public void verifyCookieForRememberMeByRequestContext() {
+        val rememberMeMaxAge = 99999;
+        val gen = new CookieRetrievingCookieGenerator("cas", "/", 1000, true, "example.org", new NoOpCookieValueManager(), rememberMeMaxAge, true);
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+        val authn = CoreAuthenticationTestUtils.getAuthentication("casuser",
+                CollectionUtils.wrap(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME, CollectionUtils.wrap(Boolean.TRUE)));
+        WebUtils.putAuthentication(authn, context);
+        WebUtils.putRememberMeAuthenticationEnabled(context, Boolean.TRUE);
+        val response = new MockHttpServletResponse();
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+        gen.addCookie(context, "CAS-Cookie-Value");
+        val cookie = response.getCookie("cas");
+        assertNotNull(cookie);
+        assertEquals(rememberMeMaxAge, cookie.getMaxAge());
     }
 }
