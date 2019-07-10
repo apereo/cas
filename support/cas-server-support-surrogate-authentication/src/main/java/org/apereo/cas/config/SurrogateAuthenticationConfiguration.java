@@ -83,8 +83,8 @@ public class SurrogateAuthenticationConfiguration {
     private ObjectProvider<AuditableExecution> surrogateEligibilityAuditableExecution;
 
     @Autowired
-    @Qualifier("ticketGrantingTicketExpirationPolicy")
-    private ObjectProvider<ExpirationPolicy> ticketGrantingTicketExpirationPolicy;
+    @Qualifier("grantingTicketExpirationPolicy")
+    private ObjectProvider<ExpirationPolicy> grantingTicketExpirationPolicy;
 
     @Bean
     public ExpirationPolicy grantingTicketExpirationPolicy() {
@@ -92,7 +92,7 @@ public class SurrogateAuthenticationConfiguration {
         val surrogatePolicy = new HardTimeoutExpirationPolicy(su.getTgt().getTimeToKillInSeconds());
         val policy = new SurrogateSessionExpirationPolicy();
         policy.addPolicy(SurrogateSessionExpirationPolicy.POLICY_NAME_SURROGATE, surrogatePolicy);
-        policy.addPolicy(SurrogateSessionExpirationPolicy.POLICY_NAME_DEFAULT, ticketGrantingTicketExpirationPolicy.getIfAvailable());
+        policy.addPolicy(SurrogateSessionExpirationPolicy.POLICY_NAME_DEFAULT, grantingTicketExpirationPolicy.getIfAvailable());
         return policy;
     }
 
