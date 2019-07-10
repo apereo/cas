@@ -51,6 +51,16 @@ public class MongoDbServiceRegistry extends AbstractServiceRegistry {
     }
 
     @Override
+    public RegisteredService findServiceByExactServiceId(final String id) {
+        return this.mongoTemplate.findOne(new Query(Criteria.where("serviceId").is(id)), RegisteredService.class, this.collectionName);
+    }
+
+    @Override
+    public RegisteredService findServiceByExactServiceName(final String name) {
+        return this.mongoTemplate.findOne(new Query(Criteria.where("name").is(name)), RegisteredService.class, this.collectionName);
+    }
+
+    @Override
     public List<RegisteredService> load() {
         final List<RegisteredService> list = this.mongoTemplate.findAll(RegisteredService.class, this.collectionName);
         list.forEach(s -> publishEvent(new CasRegisteredServiceLoadedEvent(this, s)));

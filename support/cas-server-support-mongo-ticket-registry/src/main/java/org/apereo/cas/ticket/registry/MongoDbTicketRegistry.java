@@ -10,9 +10,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
 import org.apereo.cas.ticket.BaseTicketSerializers;
+import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
+import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketState;
 import org.hjson.JsonValue;
 import org.hjson.Stringify;
@@ -20,11 +22,13 @@ import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.data.util.StreamUtils;
 
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * A Ticket Registry storage backend based on MongoDB.
@@ -222,6 +226,33 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
                     mongoTemplate.remove(SELECT_ALL_NAMES_QUERY, collectionName);
                     return countTickets;
                 })
+                .sum();
+    }
+
+    @Override
+    public Stream<Ticket> getTicketsStream() {
+        return ticketCatalog.findAll().stream()
+                .map(this::getTicketCollectionInstanceByMetadata)
+                .map(map -> mongoTemplate.stream(new Query(), TicketHolder.class, map))
+                .flatMap(StreamUtils::createStreamFromIterator)
+                .map(ticket -> decodeTicket(deserializeTicketFromMongoDocument(ticket)));
+    }
+
+    @Override
+    public long serviceTicketCount() {
+        return countTicketsByTicketType(ServiceTicket.class);
+    }
+
+    @Override
+    public long sessionCount() {
+        return countTicketsByTicketType(TicketGrantingTicket.class);
+    }
+
+    private long countTicketsByTicketType(final Class<? extends Ticket> ticketType) {
+        final Collection<TicketDefinition> ticketDefinitions = ticketCatalog.find(ticketType);
+        return ticketDefinitions.stream()
+                .map(this::getTicketCollectionInstanceByMetadata)
+                .mapToLong(map -> mongoTemplate.count(new Query(), map))
                 .sum();
     }
 
