@@ -8,8 +8,8 @@ import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketState;
+import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
-import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

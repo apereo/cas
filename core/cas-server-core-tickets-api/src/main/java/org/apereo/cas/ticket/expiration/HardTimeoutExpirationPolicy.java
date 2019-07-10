@@ -1,10 +1,9 @@
-package org.apereo.cas.ticket.support;
+package org.apereo.cas.ticket.expiration;
 
 import org.apereo.cas.ticket.TicketState;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.EqualsAndHashCode;
@@ -17,26 +16,22 @@ import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 
 /**
- * Expiration policy that is based on a certain time period for a ticket to
- * exist.
- * <p>
- * The expiration policy defined by this class is one of inactivity.  If you are inactive for the specified
- * amount of time, the ticket will be expired.
+ * Ticket expiration policy based on a hard timeout from ticket creation time rather than the
+ * "idle" timeout provided by {@link TimeoutExpirationPolicy}.
  *
- * @author Scott Battaglia
- * @since 3.0.0
+ * @author Andrew Feller
+ * @since 3.1.2
  */
-@JsonIgnoreProperties(ignoreUnknown = true)
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class TimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
+public class HardTimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
 
     /**
      * Serialization support.
      */
-    private static final long serialVersionUID = -7636642464326939536L;
+    private static final long serialVersionUID = 6728077010285422290L;
 
     /**
      * The time to kill in seconds.
@@ -44,40 +39,37 @@ public class TimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
     private long timeToKillInSeconds;
 
     /**
-     * Instantiates a new timeout expiration policy.
+     * Instantiates a new hard timeout expiration policy.
      *
      * @param timeToKillInSeconds the time to kill in seconds
      */
     @JsonCreator
-    public TimeoutExpirationPolicy(@JsonProperty("timeToIdle") final long timeToKillInSeconds) {
+    public HardTimeoutExpirationPolicy(@JsonProperty("timeToLive") final long timeToKillInSeconds) {
         this.timeToKillInSeconds = timeToKillInSeconds;
     }
-
 
     @Override
     public boolean isExpired(final TicketState ticketState) {
         if (ticketState == null) {
             return true;
         }
-        val now = ZonedDateTime.now(ZoneOffset.UTC);
-        val expirationTime = ticketState.getLastTimeUsed().plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);
-        val expired = now.isAfter(expirationTime);
+        val expiringTime = ticketState.getCreationTime().plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);
+        val expired = expiringTime.isBefore(ZonedDateTime.now(ZoneOffset.UTC));
         if (!expired) {
             return super.isExpired(ticketState);
         }
         return expired;
     }
 
-    @JsonIgnore
     @Override
     public Long getTimeToLive() {
-        return Long.MAX_VALUE;
-    }
-
-    @Override
-    public Long getTimeToIdle() {
         return this.timeToKillInSeconds;
     }
 
+    @JsonIgnore
+    @Override
+    public Long getTimeToIdle() {
+        return 0L;
+    }
 
 }

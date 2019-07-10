@@ -6,9 +6,9 @@ import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
+import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.registry.DefaultTicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.ticket.support.HardTimeoutExpirationPolicy;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 
 import lombok.val;

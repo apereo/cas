@@ -8,7 +8,7 @@ import org.apereo.cas.authentication.SurrogatePrincipalResolverTests;
 import org.apereo.cas.authentication.audit.SurrogateAuditPrincipalIdProviderTests;
 import org.apereo.cas.authentication.surrogate.JsonResourceSurrogateAuthenticationServiceTests;
 import org.apereo.cas.authentication.surrogate.SimpleSurrogateAuthenticationServiceTests;
-import org.apereo.cas.ticket.support.SurrogateSessionExpirationPolicyJsonSerializerTests;
+import org.apereo.cas.ticket.expiration.SurrogateSessionExpirationPolicyJsonSerializerTests;
 
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;

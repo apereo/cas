@@ -8,5 +8,5 @@
  *
  * @since 3.0
  */
-package org.apereo.cas.ticket.support;
+package org.apereo.cas.ticket.expiration;
 

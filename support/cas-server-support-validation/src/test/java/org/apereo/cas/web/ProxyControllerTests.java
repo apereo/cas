@@ -16,7 +16,7 @@ import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.ticket.ProxyGrantingTicketImpl;
-import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
+import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.config.CasProtocolViewsConfiguration;
 import org.apereo.cas.web.config.CasValidationConfiguration;

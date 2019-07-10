@@ -4,7 +4,7 @@ import org.apereo.cas.StringBean;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
-import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
+import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 
 import lombok.val;
 import org.junit.jupiter.api.Test;

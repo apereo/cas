@@ -41,7 +41,6 @@ import org.apereo.cas.ticket.factory.DefaultTransientSessionTicketFactory;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyTicket;
 import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.val;
@@ -199,12 +198,14 @@ public class DefaultCentralAuthenticationServiceMockitoTests extends BaseCasCore
             new DefaultTicketGrantingTicketFactory(null,
                 null, CipherExecutor.noOpOfSerializableToString()));
         factory.addTicketFactory(ServiceTicket.class,
-            new DefaultServiceTicketFactory(new NeverExpiresExpirationPolicy(), new HashMap<>(0), false, CipherExecutor.noOpOfStringToString(), mock(ServicesManager.class)));
+            new DefaultServiceTicketFactory(neverExpiresExpirationPolicyBuilder(),
+                new HashMap<>(0), false,
+                CipherExecutor.noOpOfStringToString(), mock(ServicesManager.class)));
         factory.addTicketFactory(ProxyTicket.class,
             new DefaultProxyTicketFactory(null, new HashMap<>(0),
                 CipherExecutor.noOpOfStringToString(), true, mock(ServicesManager.class)));
         factory.addTicketFactory(TransientSessionTicket.class,
-            new DefaultTransientSessionTicketFactory(new NeverExpiresExpirationPolicy()));
+            new DefaultTransientSessionTicketFactory(neverExpiresExpirationPolicyBuilder()));
         return factory;
     }
 
