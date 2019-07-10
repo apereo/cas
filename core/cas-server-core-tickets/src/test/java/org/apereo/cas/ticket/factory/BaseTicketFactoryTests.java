@@ -50,7 +50,7 @@ public abstract class BaseTicketFactoryTests {
     @Qualifier("defaultTicketFactory")
     protected TicketFactory ticketFactory;
 
-    @TestConfiguration
+    @TestConfiguration("TicketFactoryTestConfiguration")
     public static class TicketFactoryTestConfiguration {
         @Bean
         public List inMemoryRegisteredServices() {

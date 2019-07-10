@@ -95,7 +95,7 @@ public class InitialFlowSetupActionSsoTests {
         assertThrows(NoSuchFlowExecutionException.class, () -> this.action.execute(context));
     }
 
-    @TestConfiguration
+    @TestConfiguration("CasTestConfiguration")
     public static class CasTestConfiguration implements InitializingBean {
         @Autowired
         protected ApplicationContext applicationContext;

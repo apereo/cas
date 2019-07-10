@@ -103,7 +103,7 @@ public class GrouperMultifactorAuthenticationPolicyEventResolverTests {
         assertEquals(TestMultifactorAuthenticationProvider.ID, event.iterator().next().getId());
     }
 
-    @TestConfiguration
+    @TestConfiguration("GrouperTestConfiguration")
     public static class GrouperTestConfiguration {
         @Bean
         public GrouperFacade grouperFacade() {

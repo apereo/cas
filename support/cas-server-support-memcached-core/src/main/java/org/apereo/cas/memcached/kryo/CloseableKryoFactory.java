@@ -24,6 +24,7 @@ import org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesR
 import org.apereo.cas.authentication.support.password.PasswordExpiringWarningMessageDescriptor;
 import org.apereo.cas.memcached.kryo.serial.ImmutableNativeJavaListSerializer;
 import org.apereo.cas.memcached.kryo.serial.ImmutableNativeJavaSetSerializer;
+import org.apereo.cas.memcached.kryo.serial.RefreshScopeSerializer;
 import org.apereo.cas.memcached.kryo.serial.RegisteredServiceSerializer;
 import org.apereo.cas.memcached.kryo.serial.SimpleWebApplicationServiceSerializer;
 import org.apereo.cas.memcached.kryo.serial.ThrowableSerializer;
@@ -114,6 +115,7 @@ import lombok.val;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDateTime;
 import org.objenesis.strategy.StdInstantiatorStrategy;
+import org.springframework.cloud.context.scope.refresh.RefreshScope;
 
 import javax.security.auth.login.AccountExpiredException;
 import javax.security.auth.login.AccountLockedException;
@@ -353,6 +355,7 @@ public class CloseableKryoFactory implements KryoFactory {
         kryo.register(DateTime.class, new JodaDateTimeSerializer());
         kryo.register(LocalDateTime.class, new JodaLocalDateTimeSerializer());
         kryo.register(EnumSet.class, new EnumSetSerializer());
+        kryo.register(RefreshScope.class, new RefreshScopeSerializer());
     }
 
     private static void registerExpirationPoliciesWithKryo(final Kryo kryo) {
