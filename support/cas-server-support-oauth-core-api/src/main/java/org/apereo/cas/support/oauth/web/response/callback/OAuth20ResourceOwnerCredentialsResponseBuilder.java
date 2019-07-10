@@ -8,7 +8,8 @@ import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGenerat
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestDataHolder;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseGenerator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseResult;
-import org.apereo.cas.ticket.ExpirationPolicy;
+import org.apereo.cas.ticket.ExpirationPolicyBuilder;
+import org.apereo.cas.ticket.accesstoken.AccessToken;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -25,17 +26,18 @@ import org.springframework.web.servlet.ModelAndView;
 public class OAuth20ResourceOwnerCredentialsResponseBuilder implements OAuth20AuthorizationResponseBuilder {
     private final OAuth20AccessTokenResponseGenerator accessTokenResponseGenerator;
     private final OAuth20TokenGenerator accessTokenGenerator;
-    private final ExpirationPolicy accessTokenExpirationPolicy;
+    private final ExpirationPolicyBuilder<AccessToken> accessTokenExpirationPolicy;
     private final CasConfigurationProperties casProperties;
 
     @Override
     public ModelAndView build(final J2EContext context, final String clientId,
                               final AccessTokenRequestDataHolder holder) {
         val accessTokenResult = accessTokenGenerator.generate(holder);
+        val expirationPolicy = accessTokenExpirationPolicy.buildTicketExpirationPolicy();
         val result = OAuth20AccessTokenResponseResult.builder()
             .registeredService(holder.getRegisteredService())
             .service(holder.getService())
-            .accessTokenTimeout(accessTokenExpirationPolicy.getTimeToLive())
+            .accessTokenTimeout(expirationPolicy.getTimeToLive())
             .responseType(OAuth20Utils.getResponseType(context))
             .casProperties(casProperties)
             .generatedToken(accessTokenResult)

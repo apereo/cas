@@ -5,7 +5,7 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGenerator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestDataHolder;
-import org.apereo.cas.ticket.ExpirationPolicy;
+import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.refreshtoken.RefreshToken;
 import org.apereo.cas.util.EncodingUtils;
@@ -34,7 +34,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class OAuth20TokenAuthorizationResponseBuilder implements OAuth20AuthorizationResponseBuilder {
     private final OAuth20TokenGenerator accessTokenGenerator;
-    private final ExpirationPolicy accessTokenExpirationPolicy;
+    private final ExpirationPolicyBuilder<AccessToken> accessTokenExpirationPolicy;
     private final ServicesManager servicesManager;
 
     @Override
@@ -79,7 +79,8 @@ public class OAuth20TokenAuthorizationResponseBuilder implements OAuth20Authoriz
         val builder = new URIBuilder(redirectUri);
         val stringBuilder = new StringBuilder();
 
-        val timeToLive = accessTokenExpirationPolicy.getTimeToLive();
+        val expiration = accessTokenExpirationPolicy.buildTicketExpirationPolicy();
+        val timeToLive = expiration.getTimeToLive();
         stringBuilder.append(OAuth20Constants.ACCESS_TOKEN)
             .append('=')
             .append(accessToken.getId())

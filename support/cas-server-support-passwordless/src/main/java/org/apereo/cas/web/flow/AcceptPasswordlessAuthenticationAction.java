@@ -49,7 +49,7 @@ public class AcceptPasswordlessAuthenticationAction extends AbstractAuthenticati
         try {
             val currentToken = passwordlessTokenRepository.findToken(username);
 
-            if (!currentToken.isPresent()) {
+            if (currentToken.isPresent()) {
                 val credential = new OneTimePasswordCredential(username, password);
                 val service = WebUtils.getService(requestContext);
                 val authenticationResult = authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, credential);

@@ -119,12 +119,14 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
 
         val deviceRefreshInterval = Beans.newDuration(getOAuthConfigurationContext().getCasProperties()
             .getAuthn().getOauth().getDeviceToken().getRefreshInterval()).getSeconds();
+        val atPolicy = getOAuthConfigurationContext().getAccessTokenExpirationPolicy();
+        val dtPolicy = getOAuthConfigurationContext().getDeviceTokenExpirationPolicy();
         val tokenResult = OAuth20AccessTokenResponseResult.builder()
             .registeredService(requestHolder.getRegisteredService())
             .service(requestHolder.getService())
-            .accessTokenTimeout(getOAuthConfigurationContext().getAccessTokenExpirationPolicy().getTimeToLive())
+            .accessTokenTimeout(atPolicy.buildTicketExpirationPolicy().getTimeToLive())
             .deviceRefreshInterval(deviceRefreshInterval)
-            .deviceTokenTimeout(getOAuthConfigurationContext().getDeviceTokenExpirationPolicy().getTimeToLive())
+            .deviceTokenTimeout(dtPolicy.buildTicketExpirationPolicy().getTimeToLive())
             .responseType(result.getResponseType().isPresent() ? result.getResponseType().get() : OAuth20ResponseTypes.NONE)
             .casProperties(getOAuthConfigurationContext().getCasProperties())
             .generatedToken(result)

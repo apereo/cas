@@ -1,7 +1,7 @@
 package org.apereo.cas.mfa.simple;
 
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.ticket.ExpirationPolicy;
+import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TransientSessionTicket;
@@ -23,7 +23,7 @@ import java.util.Map;
  */
 @RequiredArgsConstructor
 public class CasSimpleMultifactorAuthenticationTicketFactory implements TransientSessionTicketFactory {
-    private final ExpirationPolicy expirationPolicy;
+    private final ExpirationPolicyBuilder expirationPolicy;
     private final UniqueTicketIdGenerator ticketIdGenerator = new CasSimpleMultifactorAuthenticationUniqueTicketIdGenerator();
 
     /**
@@ -36,12 +36,13 @@ public class CasSimpleMultifactorAuthenticationTicketFactory implements Transien
     @Override
     public TransientSessionTicket create(final Service service, final Map<String, Serializable> properties) {
         val id = ticketIdGenerator.getNewTicketId("CAS");
-        return new TransientSessionTicketImpl(id, expirationPolicy, service, properties);
+        return new TransientSessionTicketImpl(id, expirationPolicy.buildTicketExpirationPolicy(), service, properties);
     }
 
     @Override
     public TransientSessionTicket create(final String id, final Map<String, Serializable> properties) {
-        return new TransientSessionTicketImpl(TransientSessionTicketFactory.normalizeTicketId(id), expirationPolicy, null, properties);
+        return new TransientSessionTicketImpl(TransientSessionTicketFactory.normalizeTicketId(id),
+            expirationPolicy.buildTicketExpirationPolicy(), null, properties);
     }
 
     @Override

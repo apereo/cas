@@ -8,7 +8,7 @@ import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGenerator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestDataHolder;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20TokenAuthorizationResponseBuilder;
-import org.apereo.cas.ticket.ExpirationPolicy;
+import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.IdTokenGeneratorService;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.refreshtoken.RefreshToken;
@@ -32,12 +32,12 @@ import java.util.List;
 public class OidcImplicitIdTokenAndTokenAuthorizationResponseBuilder extends OAuth20TokenAuthorizationResponseBuilder {
 
     private final IdTokenGeneratorService idTokenGenerator;
-    private final ExpirationPolicy idTokenExpirationPolicy;
+    private final ExpirationPolicyBuilder idTokenExpirationPolicy;
 
     public OidcImplicitIdTokenAndTokenAuthorizationResponseBuilder(final IdTokenGeneratorService idTokenGenerator,
                                                                    final OAuth20TokenGenerator accessTokenGenerator,
-                                                                   final ExpirationPolicy accessTokenExpirationPolicy,
-                                                                   final ExpirationPolicy idTokenExpirationPolicy,
+                                                                   final ExpirationPolicyBuilder<AccessToken> accessTokenExpirationPolicy,
+                                                                   final ExpirationPolicyBuilder idTokenExpirationPolicy,
                                                                    final ServicesManager servicesManager) {
         super(accessTokenGenerator, accessTokenExpirationPolicy, servicesManager);
         this.idTokenGenerator = idTokenGenerator;
@@ -52,7 +52,7 @@ public class OidcImplicitIdTokenAndTokenAuthorizationResponseBuilder extends OAu
                                                         final J2EContext context) throws Exception {
 
         val idToken = this.idTokenGenerator.generate(context.getRequest(),
-            context.getResponse(), accessToken, idTokenExpirationPolicy.getTimeToLive(),
+            context.getResponse(), accessToken, idTokenExpirationPolicy.buildTicketExpirationPolicy().getTimeToLive(),
             OAuth20ResponseTypes.IDTOKEN_TOKEN, holder.getRegisteredService());
         LOGGER.debug("Generated id token [{}]", idToken);
         params.add(new BasicNameValuePair(OidcConstants.ID_TOKEN, idToken));
