@@ -28,9 +28,9 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
+import org.apereo.cas.ticket.expiration.builder.TransientSessionTicketExpirationPolicyBuilder;
 import org.apereo.cas.ticket.factory.DefaultTransientSessionTicketFactory;
 import org.apereo.cas.ticket.registry.DefaultTicketRegistry;
-import org.apereo.cas.ticket.support.HardTimeoutExpirationPolicy;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.DelegatedClientNavigationController;
 import org.apereo.cas.web.DelegatedClientWebflowManager;
@@ -130,7 +130,7 @@ public class DelegatedClientAuthenticationActionTests {
 
         val ticketRegistry = new DefaultTicketRegistry();
         val manager = new DelegatedClientWebflowManager(ticketRegistry,
-            new DefaultTransientSessionTicketFactory(new HardTimeoutExpirationPolicy(60)),
+            new DefaultTransientSessionTicketFactory(getExpirationPolicyBuilder()),
             new CasConfigurationProperties(),
             new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()),
             new DefaultArgumentExtractor(new WebApplicationServiceFactory()));
@@ -183,6 +183,12 @@ public class DelegatedClientAuthenticationActionTests {
                 assertEquals(1, testLocale.size());
                 assertTrue(testLocale.contains(locale));
             });
+    }
+
+    private TransientSessionTicketExpirationPolicyBuilder getExpirationPolicyBuilder() {
+        val props = new CasConfigurationProperties();
+        props.getTicket().getTst().setTimeToKillInSeconds(60);
+        return new TransientSessionTicketExpirationPolicyBuilder(props);
     }
 
     @Test
@@ -301,7 +307,7 @@ public class DelegatedClientAuthenticationActionTests {
         when(enforcer.execute(any())).thenReturn(new AuditableExecutionResult());
         val ticketRegistry = new DefaultTicketRegistry();
         val manager = new DelegatedClientWebflowManager(ticketRegistry,
-            new DefaultTransientSessionTicketFactory(new HardTimeoutExpirationPolicy(60)),
+            new DefaultTransientSessionTicketFactory(getExpirationPolicyBuilder()),
             new CasConfigurationProperties(),
             new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()),
             new DefaultArgumentExtractor(new WebApplicationServiceFactory()));

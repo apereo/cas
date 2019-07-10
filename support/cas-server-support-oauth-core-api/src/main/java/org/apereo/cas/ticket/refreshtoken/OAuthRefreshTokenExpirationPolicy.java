@@ -1,7 +1,7 @@
 package org.apereo.cas.ticket.refreshtoken;
 
 import org.apereo.cas.ticket.TicketState;
-import org.apereo.cas.ticket.support.AbstractCasExpirationPolicy;
+import org.apereo.cas.ticket.expiration.AbstractCasExpirationPolicy;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;

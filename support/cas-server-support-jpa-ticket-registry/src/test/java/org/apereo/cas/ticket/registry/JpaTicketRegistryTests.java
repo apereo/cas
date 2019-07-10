@@ -25,7 +25,7 @@ import org.apereo.cas.config.support.EnvironmentConversionServiceInitializer;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.ticket.DefaultSecurityTokenTicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
-import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
+import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 
 import lombok.val;
@@ -100,7 +100,7 @@ public class JpaTicketRegistryTests extends BaseTicketRegistryTests {
     public void verifySecurityTokenTicket() {
         val securityTokenTicketFactory = new DefaultSecurityTokenTicketFactory(
             new DefaultUniqueTicketIdGenerator(),
-            new NeverExpiresExpirationPolicy());
+            neverExpiresExpirationPolicyBuilder());
 
         val originalAuthn = CoreAuthenticationTestUtils.getAuthentication();
         val tgt = new TicketGrantingTicketImpl(ticketGrantingTicketId,

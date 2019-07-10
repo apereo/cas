@@ -24,7 +24,6 @@ import org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesR
 import org.apereo.cas.authentication.support.password.PasswordExpiringWarningMessageDescriptor;
 import org.apereo.cas.memcached.kryo.serial.ImmutableNativeJavaListSerializer;
 import org.apereo.cas.memcached.kryo.serial.ImmutableNativeJavaSetSerializer;
-import org.apereo.cas.memcached.kryo.serial.RefreshScopeSerializer;
 import org.apereo.cas.memcached.kryo.serial.RegisteredServiceSerializer;
 import org.apereo.cas.memcached.kryo.serial.SimpleWebApplicationServiceSerializer;
 import org.apereo.cas.memcached.kryo.serial.ThrowableSerializer;
@@ -74,16 +73,16 @@ import org.apereo.cas.ticket.ProxyTicketImpl;
 import org.apereo.cas.ticket.ServiceTicketImpl;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.TransientSessionTicketImpl;
+import org.apereo.cas.ticket.expiration.AlwaysExpiresExpirationPolicy;
+import org.apereo.cas.ticket.expiration.BaseDelegatingExpirationPolicy;
+import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
+import org.apereo.cas.ticket.expiration.MultiTimeUseOrTimeoutExpirationPolicy;
+import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
+import org.apereo.cas.ticket.expiration.RememberMeDelegatingExpirationPolicy;
+import org.apereo.cas.ticket.expiration.ThrottledUseAndTimeoutExpirationPolicy;
+import org.apereo.cas.ticket.expiration.TicketGrantingTicketExpirationPolicy;
+import org.apereo.cas.ticket.expiration.TimeoutExpirationPolicy;
 import org.apereo.cas.ticket.registry.EncodedTicket;
-import org.apereo.cas.ticket.support.AlwaysExpiresExpirationPolicy;
-import org.apereo.cas.ticket.support.BaseDelegatingExpirationPolicy;
-import org.apereo.cas.ticket.support.HardTimeoutExpirationPolicy;
-import org.apereo.cas.ticket.support.MultiTimeUseOrTimeoutExpirationPolicy;
-import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
-import org.apereo.cas.ticket.support.RememberMeDelegatingExpirationPolicy;
-import org.apereo.cas.ticket.support.ThrottledUseAndTimeoutExpirationPolicy;
-import org.apereo.cas.ticket.support.TicketGrantingTicketExpirationPolicy;
-import org.apereo.cas.ticket.support.TimeoutExpirationPolicy;
 import org.apereo.cas.util.crypto.PublicKeyFactoryBean;
 
 import com.esotericsoftware.kryo.Kryo;
@@ -115,7 +114,6 @@ import lombok.val;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDateTime;
 import org.objenesis.strategy.StdInstantiatorStrategy;
-import org.springframework.cloud.context.scope.refresh.RefreshScope;
 
 import javax.security.auth.login.AccountExpiredException;
 import javax.security.auth.login.AccountLockedException;
@@ -355,7 +353,6 @@ public class CloseableKryoFactory implements KryoFactory {
         kryo.register(DateTime.class, new JodaDateTimeSerializer());
         kryo.register(LocalDateTime.class, new JodaLocalDateTimeSerializer());
         kryo.register(EnumSet.class, new EnumSetSerializer());
-        kryo.register(RefreshScope.class, new RefreshScopeSerializer());
     }
 
     private static void registerExpirationPoliciesWithKryo(final Kryo kryo) {

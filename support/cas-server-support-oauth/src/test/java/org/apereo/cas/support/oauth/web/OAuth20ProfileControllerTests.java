@@ -15,7 +15,6 @@ import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20Jwt
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20RegisteredServiceJwtAccessTokenCipherExecutor;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.accesstoken.DefaultAccessTokenFactory;
-import org.apereo.cas.ticket.support.AlwaysExpiresExpirationPolicy;
 import org.apereo.cas.token.JwtBuilder;
 
 import lombok.val;
@@ -102,7 +101,7 @@ public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
             new OAuth20JwtAccessTokenCipherExecutor(), servicesManager,
             new OAuth20RegisteredServiceJwtAccessTokenCipherExecutor());
         val expiringAccessTokenFactory = new DefaultAccessTokenFactory(
-            new AlwaysExpiresExpirationPolicy(), jwtBuilder, servicesManager);
+            alwaysExpiresExpirationPolicyBuilder(), jwtBuilder, servicesManager);
         val accessToken = expiringAccessTokenFactory.create(RegisteredServiceTestUtils.getService(), authentication,
             new MockTicketGrantingTicket("casuser"), new ArrayList<>(), null, new HashMap<>());
         this.ticketRegistry.addTicket(accessToken);

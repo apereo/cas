@@ -1,4 +1,4 @@
-package org.apereo.cas.ticket.support;
+package org.apereo.cas.ticket.expiration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
@@ -12,18 +12,18 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Misagh Moayyed
- * @since 3.0
+ * @since 4.1
  */
-public class AlwaysExpiresExpirationPolicyTests {
+public class HardTimeoutExpirationPolicyTests {
 
-    private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "alwaysExpiresExpirationPolicy.json");
+    private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "hardTimeoutExpirationPolicy.json");
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
     @Test
-    public void verifySerializeAnAlwaysExpiresExpirationPolicyToJson() throws IOException {
-        val policyWritten = new AlwaysExpiresExpirationPolicy();
+    public void verifySerializeANeverExpiresExpirationPolicyToJson() throws IOException {
+        val policyWritten = new HardTimeoutExpirationPolicy();
         MAPPER.writeValue(JSON_FILE, policyWritten);
-        val policyRead = MAPPER.readValue(JSON_FILE, AlwaysExpiresExpirationPolicy.class);
+        val policyRead = MAPPER.readValue(JSON_FILE, HardTimeoutExpirationPolicy.class);
         assertEquals(policyWritten, policyRead);
     }
 }

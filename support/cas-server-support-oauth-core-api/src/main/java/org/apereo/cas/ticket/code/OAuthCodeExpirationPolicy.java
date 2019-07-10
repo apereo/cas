@@ -1,6 +1,6 @@
 package org.apereo.cas.ticket.code;
 
-import org.apereo.cas.ticket.support.MultiTimeUseOrTimeoutExpirationPolicy;
+import org.apereo.cas.ticket.expiration.MultiTimeUseOrTimeoutExpirationPolicy;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;

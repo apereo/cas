@@ -2,7 +2,7 @@ package org.apereo.cas.ticket.factory;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.ticket.AbstractTicketException;
-import org.apereo.cas.ticket.ExpirationPolicy;
+import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketFactory;
@@ -35,7 +35,7 @@ public class DefaultProxyGrantingTicketFactory implements ProxyGrantingTicketFac
     /**
      * Expiration policy for ticket granting tickets.
      */
-    protected final ExpirationPolicy ticketGrantingTicketExpirationPolicy;
+    protected final ExpirationPolicyBuilder<ProxyGrantingTicket> ticketGrantingTicketExpirationPolicy;
 
     /**
      * The ticket cipher.
@@ -61,8 +61,8 @@ public class DefaultProxyGrantingTicketFactory implements ProxyGrantingTicketFac
      */
     protected <T extends ProxyGrantingTicket> T produceTicket(final ServiceTicket serviceTicket, final Authentication authentication,
                                                               final String pgtId, final Class<T> clazz) {
-        val result = serviceTicket.grantProxyGrantingTicket(pgtId,
-            authentication, this.ticketGrantingTicketExpirationPolicy);
+        val result = serviceTicket.grantProxyGrantingTicket(pgtId, authentication,
+            this.ticketGrantingTicketExpirationPolicy.buildTicketExpirationPolicy());
 
         if (result == null) {
             throw new IllegalArgumentException("Unable to create the proxy-granting ticket object for identifier " + pgtId);

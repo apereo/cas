@@ -1,4 +1,4 @@
-package org.apereo.cas.ticket.support;
+package org.apereo.cas.ticket.expiration;
 
 import org.apereo.cas.ticket.TicketState;
 
