@@ -125,7 +125,7 @@ public class MongoDbGoogleAuthenticatorTokenCredentialRepositoryTests {
         assertEquals("newSecret", s2.getSecretKey());
     }
 
-    @TestConfiguration
+    @TestConfiguration("MongoTestConfiguration")
     public static class MongoTestConfiguration implements InitializingBean {
         @Autowired
         protected ApplicationContext applicationContext;

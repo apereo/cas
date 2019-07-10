@@ -85,7 +85,7 @@ public class JpaGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOn
         this.getRegistry().deleteAll();
     }
 
-    @TestConfiguration
+    @TestConfiguration("JpaTestConfiguration")
     public static class JpaTestConfiguration implements InitializingBean {
         @Autowired
         protected ApplicationContext applicationContext;

@@ -386,7 +386,7 @@ public abstract class AbstractOAuth20Tests {
         return Pair.of(accessToken, refreshToken);
     }
 
-    @TestConfiguration
+    @TestConfiguration("OAuthTestConfiguration")
     public static class OAuthTestConfiguration implements ComponentSerializationPlanConfigurator, InitializingBean {
         @Autowired
         protected ApplicationContext applicationContext;
