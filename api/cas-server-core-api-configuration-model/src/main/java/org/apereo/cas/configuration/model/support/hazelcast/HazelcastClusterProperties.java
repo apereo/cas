@@ -169,7 +169,8 @@ public class HazelcastClusterProperties implements Serializable {
     /**
      * Hazelcast supports both synchronous and asynchronous backups. By default, backup operations are synchronous.
      * In this case, backup operations block operations until backups are successfully copied to backup members
-     * (or deleted from backup members in case of remove) and acknowledgements are received. Therefore, backups are updated before a put operation
+     * (or deleted from backup members in case of remove) and acknowledgements are received.
+     * Therefore, backups are updated before a put operation
      * is completed, provided that the cluster is stable.
      * Asynchronous backups, on the other hand, do not block operations. They are
      * fire and forget and do not require acknowledgements; the backup operations are performed at some point in time.
