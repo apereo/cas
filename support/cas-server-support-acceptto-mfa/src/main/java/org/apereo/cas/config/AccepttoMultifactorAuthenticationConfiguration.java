@@ -172,12 +172,14 @@ public class AccepttoMultifactorAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "mfaAccepttoMultifactorFetchChannelAction")
     @Bean
+    @RefreshScope
     public Action mfaAccepttoMultifactorFetchChannelAction() throws Exception {
         return new AccepttoMultifactorFetchChannelAction(casProperties, mfaAccepttoDistributedSessionStore(), mfaAccepttoApiPublicKey());
     }
 
     @ConditionalOnMissingBean(name = "mfaAccepttoMultifactorValidateChannelAction")
     @Bean
+    @RefreshScope
     public Action mfaAccepttoMultifactorValidateChannelAction() {
         return new AccepttoMultifactorValidateChannelAction(mfaAccepttoDistributedSessionStore(),
             authenticationSystemSupport.getIfAvailable());
@@ -191,11 +193,13 @@ public class AccepttoMultifactorAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "mfaAccepttoMultifactorDetermineUserAccountStatusAction")
     @Bean
+    @RefreshScope
     public Action mfaAccepttoMultifactorDetermineUserAccountStatusAction() throws Exception {
         return new AccepttoMultifactorDetermineUserAccountStatusAction(casProperties, mfaAccepttoApiPublicKey());
     }
 
     @Bean
+    @RefreshScope
     public PublicKey mfaAccepttoApiPublicKey() throws Exception {
         val props = casProperties.getAuthn().getMfa().getAcceptto();
         val location = props.getRegistrationApiPublicKey().getLocation();
@@ -212,6 +216,7 @@ public class AccepttoMultifactorAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "mfaAccepttoMultifactorValidateUserDeviceRegistrationAction")
     @Bean
+    @RefreshScope
     public Action mfaAccepttoMultifactorValidateUserDeviceRegistrationAction() {
         return new AccepttoMultifactorValidateUserDeviceRegistrationAction(casProperties, authenticationSystemSupport.getIfAvailable());
     }
@@ -263,6 +268,7 @@ public class AccepttoMultifactorAuthenticationConfiguration {
     }
 
     @Bean
+    @RefreshScope
     public AuthenticationMetaDataPopulator casAccepttoQRCodeAuthenticationMetaDataPopulator() {
         return new AuthenticationContextAttributeMetaDataPopulator(
             casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
