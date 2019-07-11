@@ -82,12 +82,6 @@ The following commandline boolean flags are supported by the build and can be pa
 
 Available build tasks can be found using the command `./gradlew tasks`.
 
-### Sass Compilation
-
-The build is automatically wired to compile `.scss` files into `.css` via a [Gulp](http://gulpjs.com/).
-To let this step successfully pass, you may need to install `gulp` and `npm`, which the build should automatically do.
-See the **Build** section for more info.
-
 ## IDE Setup
 
 CAS development may be carried out using any modern IDE that supports Gradle. 
