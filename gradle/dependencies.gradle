@@ -1428,7 +1428,7 @@ ext.libraries = [
                 }
         ],
         jackson                 : [
-                dependencies.create("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion") {
+                dependencies.create("com.fasterxml.jackson.core:jackson-databind:$jacksonCoreVersion") {
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
                     force = true
                 },
