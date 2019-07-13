@@ -14,6 +14,7 @@ import org.springframework.webflow.execution.RequestContext;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -118,9 +119,9 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator {
                 final Map<String, Object> attributes = auth.getAttributes();
                 LOGGER.debug("Located authentication attributes [{}]", attributes);
                 if (attributes.containsKey(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME)) {
-                    final boolean rememberMeValue = (boolean) attributes.getOrDefault(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME, Boolean.FALSE);
+                    final List<Object> rememberMeValue = CollectionUtils.wrap(attributes.get(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME));
                     LOGGER.debug("Located remember-me authentication attribute [{}]", rememberMeValue);
-                    isRememberMe = CollectionUtils.wrapSet(rememberMeValue).contains(Boolean.TRUE);
+                    isRememberMe = rememberMeValue.contains(Boolean.TRUE);
                 }
             }
         }
