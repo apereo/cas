@@ -15,12 +15,13 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.client.Clients;
-import org.pac4j.core.context.J2EContext;
+import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.session.SessionStore;
-import org.pac4j.core.exception.HttpAction;
-import org.pac4j.core.profile.UserProfile;
+import org.pac4j.core.exception.http.HttpAction;
+import org.pac4j.core.profile.CommonProfile;
 
 import java.security.GeneralSecurityException;
+import java.util.Optional;
 
 /**
  * Pac4j authentication handler which gets the credentials and then the user profile
@@ -34,15 +35,16 @@ public class DelegatedClientAuthenticationHandler extends AbstractPac4jAuthentic
 
     private final Clients clients;
     private final DelegatedClientUserProfileProvisioner profileProvisioner;
-    private final SessionStore sessionStore;
+    private final SessionStore<JEEContext> sessionStore;
 
     public DelegatedClientAuthenticationHandler(final String name,
+                                                final Integer order,
                                                 final ServicesManager servicesManager,
                                                 final PrincipalFactory principalFactory,
                                                 final Clients clients,
                                                 final DelegatedClientUserProfileProvisioner profileProvisioner,
-                                                final SessionStore sessionStore) {
-        super(name, servicesManager, principalFactory, null);
+                                                final SessionStore<JEEContext> sessionStore) {
+        super(name, servicesManager, principalFactory, order);
         this.clients = clients;
         this.profileProvisioner = profileProvisioner;
         this.sessionStore = sessionStore;
@@ -62,22 +64,27 @@ public class DelegatedClientAuthenticationHandler extends AbstractPac4jAuthentic
             val credentials = clientCredentials.getCredentials();
             LOGGER.trace("Client name: [{}]", clientCredentials.getClientName());
 
-            val client = (BaseClient) this.clients.findClient(clientCredentials.getClientName());
-            LOGGER.trace("Delegated client is: [{}]", client);
-
-            if (client == null) {
+            val clientResult = clients.findClient(clientCredentials.getClientName());
+            if (clientResult.isEmpty()) {
                 throw new IllegalArgumentException("Unable to determine client based on client name " + clientCredentials.getClientName());
             }
-
+            val client = BaseClient.class.cast(clientResult.get());
+            LOGGER.trace("Delegated client is: [{}]", client);
+            
             val request = WebUtils.getHttpServletRequestFromExternalWebflowContext();
             val response = WebUtils.getHttpServletResponseFromExternalWebflowContext();
-            val webContext = new J2EContext(request, response, this.sessionStore);
+            val webContext = new JEEContext(request, response, this.sessionStore);
 
-            var userProfile = clientCredentials.getUserProfile();
-            if (userProfile == null) {
-                userProfile = client.getUserProfile(credentials, webContext);
+            var userProfileResult = Optional.ofNullable(clientCredentials.getUserProfile());
+            if (userProfileResult.isEmpty()) {
+                userProfileResult = client.getUserProfile(credentials, webContext);
             }
+            if (userProfileResult.isEmpty()) {
+                throw new PreventedException("Unable to fetch user profile from client " + client.getName());
+            }
+            val userProfile = userProfileResult.get();
             LOGGER.debug("Final user profile is: [{}]", userProfile);
+            storeUserProfile(webContext, userProfile);
             return createResult(clientCredentials, userProfile, client);
         } catch (final HttpAction e) {
             throw new PreventedException(e);
@@ -86,7 +93,7 @@ public class DelegatedClientAuthenticationHandler extends AbstractPac4jAuthentic
 
     @Override
     protected void preFinalizeAuthenticationHandlerResult(final ClientCredential credentials, final Principal principal,
-                                                          final UserProfile profile, final BaseClient client) {
+                                                          final CommonProfile profile, final BaseClient client) {
         profileProvisioner.execute(principal, profile, client);
     }
 }

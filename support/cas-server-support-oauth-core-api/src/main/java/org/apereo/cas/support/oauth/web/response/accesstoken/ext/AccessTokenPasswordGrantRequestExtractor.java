@@ -11,7 +11,8 @@ import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.pac4j.core.context.J2EContext;
+import org.pac4j.core.context.JEEContext;
+import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.core.profile.ProfileManager;
 
 import javax.servlet.http.HttpServletRequest;
@@ -38,8 +39,8 @@ public class AccessTokenPasswordGrantRequestExtractor extends BaseAccessTokenGra
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(getOAuthConfigurationContext().getServicesManager(), clientId);
         LOGGER.debug("Located OAuth registered service [{}]", registeredService);
 
-        val context = new J2EContext(request, response, getOAuthConfigurationContext().getSessionStore());
-        val manager = new ProfileManager<>(context, context.getSessionStore());
+        val context = new JEEContext(request, response, getOAuthConfigurationContext().getSessionStore());
+        val manager = new ProfileManager<CommonProfile>(context, context.getSessionStore());
         val profile = manager.get(true);
         if (profile.isEmpty()) {
             throw new UnauthorizedServiceException("OAuth user profile cannot be determined");

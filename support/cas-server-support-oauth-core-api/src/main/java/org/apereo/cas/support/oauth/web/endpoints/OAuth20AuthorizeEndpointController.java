@@ -17,7 +17,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.pac4j.core.context.J2EContext;
+import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.core.profile.ProfileManager;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -40,7 +40,7 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
         super(oAuthConfigurationContext);
     }
 
-    private static boolean isRequestAuthenticated(final ProfileManager manager, final J2EContext context) {
+    private static boolean isRequestAuthenticated(final ProfileManager manager, final JEEContext context) {
         val opt = manager.get(true);
         return opt.isPresent();
     }
@@ -56,8 +56,8 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
     @GetMapping(path = OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.AUTHORIZE_URL)
     public ModelAndView handleRequest(final HttpServletRequest request,
                                       final HttpServletResponse response) throws Exception {
-        val context = new J2EContext(request, response, getOAuthConfigurationContext().getSessionStore());
-        val manager = new ProfileManager<>(context, context.getSessionStore());
+        val context = new JEEContext(request, response, getOAuthConfigurationContext().getSessionStore());
+        val manager = new ProfileManager<CommonProfile>(context, context.getSessionStore());
 
         if (!verifyAuthorizeRequest(context) || !isRequestAuthenticated(manager, context)) {
             LOGGER.error("Authorize request verification failed. Authorization request is missing required parameters, "
@@ -65,7 +65,7 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
             return OAuth20Utils.produceUnauthorizedErrorView();
         }
 
-        val clientId = context.getRequestParameter(OAuth20Constants.CLIENT_ID);
+        val clientId = context.getRequestParameter(OAuth20Constants.CLIENT_ID).map(String::valueOf).orElse(StringUtils.EMPTY);
         val registeredService = getRegisteredServiceByClientId(clientId);
         try {
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(clientId, registeredService);
@@ -117,14 +117,14 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
      */
     protected ModelAndView redirectToCallbackRedirectUrl(final ProfileManager<CommonProfile> manager,
                                                          final OAuthRegisteredService registeredService,
-                                                         final J2EContext context,
+                                                         final JEEContext context,
                                                          final String clientId) {
-        val profile = manager.get(true).orElse(null);
-        if (profile == null) {
+        val profileResult = manager.get(true);
+        if (profileResult.isEmpty()) {
             LOGGER.error("Unexpected null profile from profile manager. Request is not fully authenticated.");
             return OAuth20Utils.produceUnauthorizedErrorView();
         }
-
+        val profile = profileResult.get();
         val service = getOAuthConfigurationContext().getAuthenticationBuilder()
             .buildService(registeredService, context, false);
         LOGGER.debug("Created service [{}] based on registered service [{}]", service, registeredService);
@@ -167,7 +167,7 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
      */
     @SneakyThrows
     protected ModelAndView buildAuthorizationForRequest(final OAuthRegisteredService registeredService,
-                                                        final J2EContext context,
+                                                        final JEEContext context,
                                                         final String clientId,
                                                         final Service service,
                                                         final Authentication authentication) {
@@ -179,14 +179,19 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
 
         val ticketGrantingTicket = CookieUtils.getTicketGrantingTicketFromRequest(
             getOAuthConfigurationContext().getTicketGrantingTicketCookieGenerator(),
-            getOAuthConfigurationContext().getTicketRegistry(), context.getRequest());
+            getOAuthConfigurationContext().getTicketRegistry(), context.getNativeRequest());
 
-        val grantType = StringUtils.defaultIfEmpty(context.getRequestParameter(OAuth20Constants.GRANT_TYPE),
-            OAuth20GrantTypes.AUTHORIZATION_CODE.getType()).toUpperCase();
+        val grantType = context.getRequestParameter(OAuth20Constants.GRANT_TYPE)
+            .map(String::valueOf).orElse(OAuth20GrantTypes.AUTHORIZATION_CODE.getType())
+            .toUpperCase();
+
         val scopes = OAuth20Utils.parseRequestScopes(context);
-        val codeChallenge = context.getRequestParameter(OAuth20Constants.CODE_CHALLENGE);
-        val codeChallengeMethod = StringUtils.defaultIfEmpty(context.getRequestParameter(OAuth20Constants.CODE_CHALLENGE_METHOD),
-            OAuth20GrantTypes.AUTHORIZATION_CODE.getType()).toUpperCase();
+        val codeChallenge = context.getRequestParameter(OAuth20Constants.CODE_CHALLENGE)
+            .map(String::valueOf).orElse(StringUtils.EMPTY);
+        val codeChallengeMethod = context.getRequestParameter(OAuth20Constants.CODE_CHALLENGE_METHOD)
+            .map(String::valueOf).orElse(StringUtils.EMPTY)
+            .toUpperCase();
+
         val claims = OAuth20Utils.parseRequestClaims(context);
 
         val holder = AccessTokenRequestDataHolder.builder()
@@ -213,7 +218,7 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
      * @param context the context
      * @return whether the authorize request is valid
      */
-    private boolean verifyAuthorizeRequest(final J2EContext context) {
+    private boolean verifyAuthorizeRequest(final JEEContext context) {
         val validator = getOAuthConfigurationContext().getOauthRequestValidators()
             .stream()
             .filter(b -> b.supports(context))

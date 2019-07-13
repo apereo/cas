@@ -12,7 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jose4j.keys.AesKey;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.pac4j.core.context.J2EContext;
+import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -44,7 +44,7 @@ public class OidcClientSecretJwtAuthenticatorTests extends AbstractOidcTests {
 
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
-        val context = new J2EContext(request, response);
+        val context = new JEEContext(request, response);
 
         val audience = casProperties.getServer().getPrefix().concat('/'
             + OidcConstants.BASE_OIDC_URL + '/' + OAuth20Constants.ACCESS_TOKEN_URL);

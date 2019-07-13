@@ -281,7 +281,7 @@ import org.pac4j.cas.client.rest.CasRestFormClient;
 import org.pac4j.cas.config.CasConfiguration;
 import org.pac4j.cas.credentials.authenticator.CasRestAuthenticator;
 import org.pac4j.cas.profile.CasProfile;
-import org.pac4j.core.context.J2EContext;
+import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.credentials.TokenCredentials;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
@@ -305,7 +305,7 @@ public class RestTestClient {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final MockHttpServletResponse response = new MockHttpServletResponse();
 
-        final WebContext webContext = new J2EContext(request, response);
+        final WebContext webContext = new JEEContext(request, response);
         casConfiguration.init(webContext);
         UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(username,password,"testclient");
         CasRestAuthenticator restAuthenticator = new CasRestAuthenticator(casConfiguration);

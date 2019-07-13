@@ -11,7 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.pac4j.core.client.Clients;
-import org.pac4j.core.context.session.J2ESessionStore;
+import org.pac4j.core.context.session.JEESessionStore;
 import org.pac4j.oauth.client.FacebookClient;
 import org.pac4j.oauth.credentials.OAuth20Credentials;
 import org.pac4j.oauth.profile.facebook.FacebookProfile;
@@ -25,6 +25,7 @@ import org.springframework.webflow.context.servlet.ServletExternalContext;
 
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -49,9 +50,9 @@ public class DelegatedClientAuthenticationHandlerTests {
     public void initialize() {
         this.fbClient = new FacebookClient();
         val clients = new Clients(CALLBACK_URL, fbClient);
-        this.handler = new DelegatedClientAuthenticationHandler(StringUtils.EMPTY,
+        this.handler = new DelegatedClientAuthenticationHandler(StringUtils.EMPTY, 0,
             mock(ServicesManager.class), PrincipalFactoryUtils.newPrincipalFactory(), clients,
-            DelegatedClientUserProfileProvisioner.noOp(), new J2ESessionStore());
+            DelegatedClientUserProfileProvisioner.noOp(), new JEESessionStore());
         this.handler.setTypedIdUsed(true);
 
         val credentials = new OAuth20Credentials(null);
@@ -65,7 +66,7 @@ public class DelegatedClientAuthenticationHandlerTests {
     public void verifyOk() throws GeneralSecurityException, PreventedException {
         val facebookProfile = new FacebookProfile();
         facebookProfile.setId(ID);
-        this.fbClient.setProfileCreator((oAuth20Credentials, webContext) -> facebookProfile);
+        this.fbClient.setProfileCreator((oAuth20Credentials, webContext) -> Optional.of(facebookProfile));
         val result = this.handler.authenticate(this.clientCredential);
         val principal = result.getPrincipal();
         assertEquals(FacebookProfile.class.getName() + '#' + ID, principal.getId());
@@ -77,7 +78,7 @@ public class DelegatedClientAuthenticationHandlerTests {
 
         val facebookProfile = new FacebookProfile();
         facebookProfile.setId(ID);
-        this.fbClient.setProfileCreator((oAuth20Credentials, webContext) -> facebookProfile);
+        this.fbClient.setProfileCreator((oAuth20Credentials, webContext) -> Optional.of(facebookProfile));
         val result = this.handler.authenticate(this.clientCredential);
         val principal = result.getPrincipal();
         assertEquals(ID, principal.getId());

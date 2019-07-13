@@ -3228,6 +3228,8 @@ To learn more about this topic, [please review this guide](../integration/Delega
 # cas.authn.pac4j.typedIdUsed=false
 # cas.authn.pac4j.principalAttributeId=
 # cas.authn.pac4j.name=
+# cas.authn.pac4j.order=
+# cas.authn.pac4j.lazyInit=true
 ```
 
 The following external identity providers share [common blocks of settings](Configuration-Properties-Common.html#delegated-authentication-settings) under the listed configuration keys listed below:
@@ -3320,6 +3322,11 @@ The following settings specifically apply to this provider:
 
 Common settings for this identity provider are available [here](Configuration-Properties-Common.html#delegated-authentication-openid-connect-settings) 
 under the configuration key `cas.authn.pac4j.oidc[0].keycloak`.
+
+```properties
+# cas.authn.pac4j.oidc[0].keycloak.realm=
+# cas.authn.pac4j.oidc[0].keycloak.baseUri=
+```                                     
 
 #### Generic
 
@@ -4930,7 +4937,7 @@ Common configuration settings for this feature are available [here](Configuratio
 
 ## Apache Fortress Authentication
 
-To learn more about this topic, [please review this guide](../integration/Configuring-Fortress-Authentication.html).
+To learn more about this topic, [please review this guide](../installation/Configuring-Fortress-Authentication.html).
 
 ```properties
 # cas.authn.fortress.rbaccontext=HOME

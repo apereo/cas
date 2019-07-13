@@ -18,8 +18,8 @@ import org.ldaptive.auth.AuthenticationRequest;
 import org.pac4j.core.authorization.authorizer.RequireAnyRoleAuthorizer;
 import org.pac4j.core.authorization.generator.AuthorizationGenerator;
 import org.pac4j.core.authorization.generator.DefaultRolesPermissionsAuthorizationGenerator;
-import org.pac4j.core.context.J2EContext;
-import org.pac4j.core.context.session.J2ESessionStore;
+import org.pac4j.core.context.JEEContext;
+import org.pac4j.core.context.session.JEESessionStore;
 import org.pac4j.core.profile.CommonProfile;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -78,9 +78,9 @@ public class MonitorEndpointLdapAuthenticationProvider implements Authentication
 
                 LOGGER.debug("Collected user profile [{}]", profile);
 
-                val context = new J2EContext(HttpRequestUtils.getHttpServletRequestFromRequestAttributes(),
+                val context = new JEEContext(HttpRequestUtils.getHttpServletRequestFromRequestAttributes(),
                     HttpRequestUtils.getHttpServletResponseFromRequestAttributes(),
-                    new J2ESessionStore());
+                    new JEESessionStore());
                 val authZGen = buildAuthorizationGenerator();
                 authZGen.generate(context, profile);
                 LOGGER.debug("Assembled user profile with roles after generating authorization claims [{}]", profile);
@@ -120,7 +120,7 @@ public class MonitorEndpointLdapAuthenticationProvider implements Authentication
         return UsernamePasswordAuthenticationToken.class.isAssignableFrom(aClass);
     }
 
-    private AuthorizationGenerator<CommonProfile> buildAuthorizationGenerator() {
+    private AuthorizationGenerator buildAuthorizationGenerator() {
         val ldapAuthz = this.ldapProperties.getLdapAuthz();
         val connectionFactory = LdapUtils.newLdaptivePooledConnectionFactory(this.ldapProperties);
 
@@ -143,7 +143,7 @@ public class MonitorEndpointLdapAuthenticationProvider implements Authentication
         }
         val roles = securityProperties.getUser().getRoles();
         LOGGER.info("Could not determine authorization generator based on users or groups. Authorization will generate static roles based on [{}]", roles);
-        return new DefaultRolesPermissionsAuthorizationGenerator<>(roles, new ArrayList<>());
+        return new DefaultRolesPermissionsAuthorizationGenerator(roles, new ArrayList<>());
     }
 
     private boolean isGroupBasedAuthorization() {

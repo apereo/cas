@@ -16,7 +16,7 @@ import com.google.common.base.Supplier;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.pac4j.core.context.J2EContext;
+import org.pac4j.core.context.JEEContext;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -67,7 +67,7 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
         try {
             val requestHolder = examineAndExtractAccessTokenGrantRequest(request, response);
             LOGGER.debug("Creating access token for [{}]", requestHolder);
-            val context = new J2EContext(request, response, getOAuthConfigurationContext().getSessionStore());
+            val context = new JEEContext(request, response, getOAuthConfigurationContext().getSessionStore());
             val tokenResult = getOAuthConfigurationContext().getAccessTokenGenerator().generate(requestHolder);
             LOGGER.debug("Access token generated result is: [{}]", tokenResult);
             return generateAccessTokenResponse(request, response, requestHolder, context, tokenResult);
@@ -113,7 +113,7 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
     protected ModelAndView generateAccessTokenResponse(final HttpServletRequest request,
                                                        final HttpServletResponse response,
                                                        final AccessTokenRequestDataHolder requestHolder,
-                                                       final J2EContext context,
+                                                       final JEEContext context,
                                                        final OAuth20TokenGeneratedResult result) {
         LOGGER.debug("Generating access token response for [{}]", result);
 
@@ -161,7 +161,7 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
             LOGGER.warn("No validators are defined to examine the access token request for eligibility");
             return false;
         }
-        val context = new J2EContext(request, response);
+        val context = new JEEContext(request, response);
         return validators.stream()
             .filter(ext -> ext.supports(context))
             .findFirst()

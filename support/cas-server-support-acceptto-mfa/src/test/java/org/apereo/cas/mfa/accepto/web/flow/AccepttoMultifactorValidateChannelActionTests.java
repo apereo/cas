@@ -28,7 +28,7 @@ import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.pac4j.core.context.J2EContext;
+import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -91,7 +91,7 @@ public class AccepttoMultifactorValidateChannelActionTests {
 
     @Autowired
     @Qualifier("mfaAccepttoDistributedSessionStore")
-    private SessionStore<J2EContext> mfaAccepttoDistributedSessionStore;
+    private SessionStore<JEEContext> mfaAccepttoDistributedSessionStore;
 
     @Test
     public void verifyOperation() throws Exception {
@@ -109,7 +109,7 @@ public class AccepttoMultifactorValidateChannelActionTests {
             val context = new MockRequestContext();
             val request = new MockHttpServletRequest();
             val response = new MockHttpServletResponse();
-            val webContext = new J2EContext(request, response, mfaAccepttoDistributedSessionStore);
+            val webContext = new JEEContext(request, response, mfaAccepttoDistributedSessionStore);
             context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
             val authn = CoreAuthenticationTestUtils.getAuthentication("casuser");
             WebUtils.putAuthentication(authn, context);

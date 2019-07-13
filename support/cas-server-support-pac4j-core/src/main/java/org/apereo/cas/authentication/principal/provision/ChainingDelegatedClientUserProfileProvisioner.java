@@ -4,7 +4,7 @@ import org.apereo.cas.authentication.principal.Principal;
 
 import lombok.extern.slf4j.Slf4j;
 import org.pac4j.core.client.BaseClient;
-import org.pac4j.core.profile.UserProfile;
+import org.pac4j.core.profile.CommonProfile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +20,7 @@ public class ChainingDelegatedClientUserProfileProvisioner extends BaseDelegated
     private final List<DelegatedClientUserProfileProvisioner> provisioners = new ArrayList<>();
 
     @Override
-    public void execute(final Principal principal, final UserProfile profile, final BaseClient client) {
+    public void execute(final Principal principal, final CommonProfile profile, final BaseClient client) {
         provisioners.forEach(provisioner -> provisioner.execute(principal, profile, client));
     }
 

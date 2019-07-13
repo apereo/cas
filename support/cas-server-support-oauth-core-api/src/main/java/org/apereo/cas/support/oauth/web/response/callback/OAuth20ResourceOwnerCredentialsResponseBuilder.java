@@ -13,7 +13,8 @@ import org.apereo.cas.ticket.accesstoken.AccessToken;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.pac4j.core.context.J2EContext;
+import org.apache.commons.lang3.StringUtils;
+import org.pac4j.core.context.JEEContext;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -30,7 +31,7 @@ public class OAuth20ResourceOwnerCredentialsResponseBuilder implements OAuth20Au
     private final CasConfigurationProperties casProperties;
 
     @Override
-    public ModelAndView build(final J2EContext context, final String clientId,
+    public ModelAndView build(final JEEContext context, final String clientId,
                               final AccessTokenRequestDataHolder holder) {
         val accessTokenResult = accessTokenGenerator.generate(holder);
         val expirationPolicy = accessTokenExpirationPolicy.buildTicketExpirationPolicy();
@@ -42,13 +43,14 @@ public class OAuth20ResourceOwnerCredentialsResponseBuilder implements OAuth20Au
             .casProperties(casProperties)
             .generatedToken(accessTokenResult)
             .build();
-        accessTokenResponseGenerator.generate(context.getRequest(), context.getResponse(), result);
+        accessTokenResponseGenerator.generate(context.getNativeRequest(), context.getNativeResponse(), result);
         return new ModelAndView();
     }
 
     @Override
-    public boolean supports(final J2EContext context) {
-        val grantType = context.getRequestParameter(OAuth20Constants.GRANT_TYPE);
+    public boolean supports(final JEEContext context) {
+        val grantType = context.getRequestParameter(OAuth20Constants.GRANT_TYPE)
+            .map(String::valueOf).orElse(StringUtils.EMPTY);
         return OAuth20Utils.isGrantType(grantType, OAuth20GrantTypes.PASSWORD);
     }
 }

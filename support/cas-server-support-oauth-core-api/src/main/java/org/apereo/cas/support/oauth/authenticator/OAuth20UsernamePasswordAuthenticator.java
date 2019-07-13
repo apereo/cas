@@ -53,7 +53,8 @@ public class OAuth20UsernamePasswordAuthenticator implements Authenticator<Usern
                 throw new CredentialsException("Bad secret for client identifier: " + clientId);
             }
 
-            val redirectUri = context.getRequestParameter(OAuth20Constants.REDIRECT_URI);
+            val redirectUri = context.getRequestParameter(OAuth20Constants.REDIRECT_URI)
+                .map(String::valueOf).orElse(StringUtils.EMPTY);
             val service = StringUtils.isNotBlank(redirectUri)
                 ? this.webApplicationServiceFactory.createService(redirectUri)
                 : null;
@@ -87,12 +88,15 @@ public class OAuth20UsernamePasswordAuthenticator implements Authenticator<Usern
      */
     protected Pair<String, String> getClientIdAndClientSecret(final WebContext context) {
         val extractor = new BasicAuthExtractor();
-        val upc = extractor.extract(context);
-        if (upc != null) {
+        val upcResult = extractor.extract(context);
+        if (upcResult.isPresent()) {
+            val upc = upcResult.get();
             return Pair.of(upc.getUsername(), upc.getPassword());
         }
-        val clientId = context.getRequestParameter(OAuth20Constants.CLIENT_ID);
-        val clientSecret = context.getRequestParameter(OAuth20Constants.CLIENT_SECRET);
+        val clientId = context.getRequestParameter(OAuth20Constants.CLIENT_ID)
+            .map(String::valueOf).orElse(StringUtils.EMPTY);
+        val clientSecret = context.getRequestParameter(OAuth20Constants.CLIENT_SECRET)
+            .map(String::valueOf).orElse(StringUtils.EMPTY);
         return Pair.of(clientId, clientSecret);
     }
 }

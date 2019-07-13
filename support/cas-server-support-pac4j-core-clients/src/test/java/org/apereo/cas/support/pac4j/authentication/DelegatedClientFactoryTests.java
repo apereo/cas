@@ -1,5 +1,6 @@
 package org.apereo.cas.support.pac4j.authentication;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jDelegatedAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jIdentifiableClientProperties;
 import org.apereo.cas.configuration.model.support.pac4j.cas.Pac4jCasClientProperties;
@@ -13,6 +14,8 @@ import org.junit.jupiter.api.Test;
 import org.pac4j.cas.config.CasProtocol;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+
+import java.io.File;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -43,7 +46,9 @@ public class DelegatedClientFactoryTests {
         configureIdentifiableClient(props.getYahoo());
         configureIdentifiableClient(props.getHiOrgServer());
 
-        val factory = new DelegatedClientFactory(props);
+        val casSettings = new CasConfigurationProperties();
+        casSettings.getAuthn().setPac4j(props);
+        val factory = new DelegatedClientFactory(casSettings);
         val clients = factory.build();
         assertEquals(14, clients.size());
     }
@@ -56,22 +61,29 @@ public class DelegatedClientFactoryTests {
         cas.setProtocol(CasProtocol.SAML.name());
         props.getCas().add(cas);
 
-        val factory = new DelegatedClientFactory(props);
+        val casSettings = new CasConfigurationProperties();
+        casSettings.getAuthn().setPac4j(props);
+        val factory = new DelegatedClientFactory(casSettings);
         val clients = factory.build();
         assertEquals(1, clients.size());
     }
 
     @Test
-    public void verifyFactoryForSamlClients() {
+    public void verifyFactoryForSamlClients() throws Exception {
         val props = new Pac4jDelegatedAuthenticationProperties();
         val saml = new Pac4jSamlClientProperties();
-        saml.setKeystorePath(FileUtils.getTempDirectoryPath());
-        saml.setIdentityProviderMetadataPath(FileUtils.getTempDirectoryPath());
-        saml.setServiceProviderMetadataPath(FileUtils.getTempDirectoryPath());
+        saml.setKeystorePath(new File(FileUtils.getTempDirectoryPath(), "keystore.jks").getCanonicalPath());
+        saml.setKeystorePassword("1234567890");
+        saml.setPrivateKeyPassword("1234567890");
+        saml.setIdentityProviderMetadataPath("classpath:idp-metadata.xml");
+        saml.setServiceProviderMetadataPath(new File(FileUtils.getTempDirectoryPath(), "sp.xml").getCanonicalPath());
         saml.setServiceProviderEntityId("test-entityid");
+        saml.setForceKeystoreGeneration(true);
         props.getSaml().add(saml);
 
-        val factory = new DelegatedClientFactory(props);
+        val casSettings = new CasConfigurationProperties();
+        casSettings.getAuthn().setPac4j(props);
+        val factory = new DelegatedClientFactory(casSettings);
         val clients = factory.build();
         assertEquals(1, clients.size());
     }
@@ -83,7 +95,9 @@ public class DelegatedClientFactoryTests {
         configureIdentifiableClient(oauth);
         props.getOauth2().add(oauth);
 
-        val factory = new DelegatedClientFactory(props);
+        val casSettings = new CasConfigurationProperties();
+        casSettings.getAuthn().setPac4j(props);
+        val factory = new DelegatedClientFactory(casSettings);
         val clients = factory.build();
         assertEquals(1, clients.size());
     }
@@ -94,6 +108,7 @@ public class DelegatedClientFactoryTests {
 
         val oidc1 = new Pac4jOidcClientProperties();
         configureIdentifiableClient(oidc1.getGeneric());
+        oidc1.getGeneric().setDiscoveryUri("https://dev-425954.oktapreview.com/.well-known/openid-configuration");
         props.getOidc().add(oidc1);
 
         val oidc2 = new Pac4jOidcClientProperties();
@@ -108,9 +123,13 @@ public class DelegatedClientFactoryTests {
 
         val oidc4 = new Pac4jOidcClientProperties();
         configureIdentifiableClient(oidc4.getKeycloak());
+        oidc4.getKeycloak().setRealm("master");
+        oidc4.getKeycloak().setBaseUri("https://dev-425954.oktapreview.com/");
         props.getOidc().add(oidc4);
 
-        val factory = new DelegatedClientFactory(props);
+        val casSettings = new CasConfigurationProperties();
+        casSettings.getAuthn().setPac4j(props);
+        val factory = new DelegatedClientFactory(casSettings);
         val clients = factory.build();
         assertEquals(4, clients.size());
     }

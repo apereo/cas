@@ -15,7 +15,7 @@ import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.pac4j.core.context.J2EContext;
+import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.Pac4jConstants;
 import org.pac4j.core.profile.CommonProfile;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -75,7 +75,7 @@ public class OAuth20PasswordGrantTypeTokenRequestValidatorTests {
         val response = new MockHttpServletResponse();
 
         request.setParameter(OAuth20Constants.GRANT_TYPE, "unsupported");
-        assertFalse(this.validator.validate(new J2EContext(request, response)));
+        assertFalse(this.validator.validate(new JEEContext(request, response)));
 
         val profile = new CommonProfile();
         profile.setClientName(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN);
@@ -86,17 +86,17 @@ public class OAuth20PasswordGrantTypeTokenRequestValidatorTests {
 
         request.setParameter(OAuth20Constants.GRANT_TYPE, getGrantType().getType());
         request.setParameter(OAuth20Constants.CLIENT_ID, supportingService.getClientId());
-        assertTrue(this.validator.validate(new J2EContext(request, response)));
+        assertTrue(this.validator.validate(new JEEContext(request, response)));
 
         request.setParameter(OAuth20Constants.CLIENT_ID, nonSupportingService.getClientId());
         profile.setId(RequestValidatorTestUtils.NON_SUPPORTING_CLIENT_ID);
         session.setAttribute(Pac4jConstants.USER_PROFILES, profile);
-        assertFalse(this.validator.validate(new J2EContext(request, response)));
+        assertFalse(this.validator.validate(new JEEContext(request, response)));
 
         request.setParameter(OAuth20Constants.CLIENT_ID, promiscuousService.getClientId());
         profile.setId(RequestValidatorTestUtils.PROMISCUOUS_CLIENT_ID);
         session.setAttribute(Pac4jConstants.USER_PROFILES, profile);
-        assertTrue(this.validator.validate(new J2EContext(request, response)));
+        assertTrue(this.validator.validate(new JEEContext(request, response)));
     }
 
     protected OAuth20GrantTypes getGrantType() {

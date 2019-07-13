@@ -9,9 +9,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jose4j.jwt.JwtClaims;
-import org.pac4j.core.context.J2EContext;
-import org.pac4j.core.profile.CommonProfile;
+import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.profile.ProfileManager;
+import org.pac4j.core.profile.UserProfile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -35,8 +35,8 @@ public abstract class BaseIdTokenGeneratorService implements IdTokenGeneratorSer
      * @param response the response
      * @return the authenticated profile
      */
-    protected CommonProfile getAuthenticatedProfile(final HttpServletRequest request, final HttpServletResponse response) {
-        val context = new J2EContext(request, response, getConfigurationContext().getSessionStore());
+    protected UserProfile getAuthenticatedProfile(final HttpServletRequest request, final HttpServletResponse response) {
+        val context = new JEEContext(request, response, getConfigurationContext().getSessionStore());
         val manager = new ProfileManager<>(context, context.getSessionStore());
         val profile = manager.get(true);
 

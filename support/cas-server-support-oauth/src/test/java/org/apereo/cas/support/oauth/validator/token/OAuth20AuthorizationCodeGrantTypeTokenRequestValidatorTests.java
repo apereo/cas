@@ -27,7 +27,7 @@ import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.pac4j.core.context.J2EContext;
+import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.Pac4jConstants;
 import org.pac4j.core.profile.CommonProfile;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -144,25 +144,25 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests {
         request.setParameter(OAuth20Constants.REDIRECT_URI, RegisteredServiceTestUtils.CONST_TEST_URL);
 
         request.setParameter(OAuth20Constants.CODE, SUPPORTING_SERVICE_TICKET);
-        assertTrue(this.validator.validate(new J2EContext(request, response)));
+        assertTrue(this.validator.validate(new JEEContext(request, response)));
 
         request.setParameter(OAuth20Constants.GRANT_TYPE, "unsupported");
-        assertFalse(this.validator.validate(new J2EContext(request, response)));
+        assertFalse(this.validator.validate(new JEEContext(request, response)));
 
         request.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.PASSWORD.getType());
-        assertFalse(this.validator.validate(new J2EContext(request, response)));
+        assertFalse(this.validator.validate(new JEEContext(request, response)));
         request.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.getType());
 
         request.setParameter(OAuth20Constants.CODE, NON_SUPPORTING_SERVICE_TICKET);
         request.setParameter(OAuth20Constants.REDIRECT_URI, RegisteredServiceTestUtils.CONST_TEST_URL2);
         profile.setId(RequestValidatorTestUtils.NON_SUPPORTING_CLIENT_ID);
         session.setAttribute(Pac4jConstants.USER_PROFILES, profile);
-        assertFalse(this.validator.validate(new J2EContext(request, response)));
+        assertFalse(this.validator.validate(new JEEContext(request, response)));
 
         request.setParameter(OAuth20Constants.CODE, PROMISCUOUS_SERVICE_TICKET);
         profile.setId(RequestValidatorTestUtils.PROMISCUOUS_CLIENT_ID);
         request.setParameter(OAuth20Constants.REDIRECT_URI, RegisteredServiceTestUtils.CONST_TEST_URL3);
         session.setAttribute(Pac4jConstants.USER_PROFILES, profile);
-        assertTrue(this.validator.validate(new J2EContext(request, response)));
+        assertTrue(this.validator.validate(new JEEContext(request, response)));
     }
 }

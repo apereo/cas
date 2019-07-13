@@ -45,7 +45,7 @@ layout: null
         *   [Remote Address](/$version/installation/Remote-Address-Authentication.html)
         *   [Trusted](/$version/installation/Trusted-Authentication.html)
         *   [Apache Cassandra](/$version/installation/Cassandra-Authentication.html)
-        *   [Apache Fortress](/$version/integration/Configuring-Fortress-Authentication.html)
+        *   [Apache Fortress](/$version/installation/Configuring-Fortress-Authentication.html)
         *   [Apache Shiro](/$version/installation/Shiro-Authentication.html)
         *   [Apache Syncope](/$version/installation/Syncope-Authentication.html)
         *   [JWT](#jwtauthn)

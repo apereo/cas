@@ -13,7 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.audit.annotation.Audit;
-import org.pac4j.core.context.J2EContext;
+import org.pac4j.core.context.JEEContext;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -43,7 +43,7 @@ public class DefaultOAuth20UserProfileDataCreator implements OAuth20UserProfileD
     @Audit(action = "OAUTH2_USER_PROFILE",
         actionResolverName = "OAUTH2_USER_PROFILE_ACTION_RESOLVER",
         resourceResolverName = "OAUTH2_USER_PROFILE_RESOURCE_RESOLVER")
-    public Map<String, Object> createFrom(final AccessToken accessToken, final J2EContext context) {
+    public Map<String, Object> createFrom(final AccessToken accessToken, final JEEContext context) {
         val service = accessToken.getService();
         val registeredService = this.servicesManager.findServiceBy(service);
 
@@ -66,7 +66,7 @@ public class DefaultOAuth20UserProfileDataCreator implements OAuth20UserProfileD
      * @return the access token authentication principal
      */
     protected Principal getAccessTokenAuthenticationPrincipal(final AccessToken accessToken,
-                                                              final J2EContext context,
+                                                              final JEEContext context,
                                                               final RegisteredService registeredService) {
         val currentPrincipal = accessToken.getAuthentication().getPrincipal();
         LOGGER.debug("Preparing user profile response based on CAS principal [{}]", currentPrincipal);

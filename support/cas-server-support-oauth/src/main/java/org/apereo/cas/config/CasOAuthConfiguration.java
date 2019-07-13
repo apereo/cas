@@ -109,8 +109,8 @@ import org.pac4j.cas.client.CasClient;
 import org.pac4j.cas.config.CasConfiguration;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.config.Config;
-import org.pac4j.core.context.J2EContext;
-import org.pac4j.core.context.session.J2ESessionStore;
+import org.pac4j.core.context.JEEContext;
+import org.pac4j.core.context.session.JEESessionStore;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.credentials.TokenCredentials;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
@@ -229,7 +229,7 @@ public class CasOAuthConfiguration {
         val clientList = oauthSecConfigClients();
         val config = new Config(OAuth20Utils.casOAuthCallbackUrl(casProperties.getServer().getPrefix()), clientList);
         config.setSessionStore(oauthDistributedSessionStore());
-        config.setProfileManagerFactory(webContext ->
+        config.setProfileManagerFactory("CASOAuthSecurityProfileManager", webContext ->
             new OAuth20ClientIdAwareProfileManager(webContext, config.getSessionStore(), servicesManager.getIfAvailable()));
         return config;
     }
@@ -241,7 +241,7 @@ public class CasOAuthConfiguration {
         cfg.setDefaultTicketValidator(new CasServerApiBasedTicketValidator(centralAuthenticationService.getIfAvailable()));
 
         val oauthCasClient = new CasClient(cfg);
-        oauthCasClient.setRedirectActionBuilder(webContext ->
+        oauthCasClient.setRedirectionActionBuilder(webContext ->
             oauthCasClientRedirectActionBuilder().build(oauthCasClient, webContext));
         oauthCasClient.setName(Authenticators.CAS_OAUTH_CLIENT);
         oauthCasClient.setUrlResolver(casCallbackUrlResolver());
@@ -774,12 +774,12 @@ public class CasOAuthConfiguration {
 
     @ConditionalOnMissingBean(name = "oauthDistributedSessionStore")
     @Bean
-    public SessionStore<J2EContext> oauthDistributedSessionStore() {
+    public SessionStore<JEEContext> oauthDistributedSessionStore() {
         val replicate = casProperties.getAuthn().getOauth().isReplicateSessions();
         if (replicate) {
             return new DistributedJ2ESessionStore(ticketRegistry.getIfAvailable(), ticketFactory.getIfAvailable());
         }
-        return new J2ESessionStore();
+        return new JEESessionStore();
     }
 
     private OAuth20ConfigurationContext.OAuth20ConfigurationContextBuilder buildConfigurationContext() {

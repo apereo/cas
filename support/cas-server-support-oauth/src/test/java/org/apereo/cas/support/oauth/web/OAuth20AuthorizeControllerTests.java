@@ -14,9 +14,9 @@ import org.apache.http.client.utils.URIBuilder;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.cas.profile.CasProfile;
-import org.pac4j.core.context.J2EContext;
+import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.Pac4jConstants;
-import org.pac4j.core.context.session.J2ESessionStore;
+import org.pac4j.core.context.session.JEESessionStore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpMethod;
@@ -188,7 +188,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
         val session = new MockHttpSession();
         mockRequest.setSession(session);
         oAuth20AuthorizeEndpointController.getOAuthConfigurationContext().getSessionStore()
-            .set(new J2EContext(mockRequest, mockResponse, new J2ESessionStore()), Pac4jConstants.USER_PROFILES, profile);
+            .set(new JEEContext(mockRequest, mockResponse, new JEESessionStore()), Pac4jConstants.USER_PROFILES, profile);
 
         val modelAndView = oAuth20AuthorizeEndpointController.handleRequest(mockRequest, mockResponse);
         val view = modelAndView.getView();
@@ -239,7 +239,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
         val session = new MockHttpSession();
         mockRequest.setSession(session);
         oAuth20AuthorizeEndpointController.getOAuthConfigurationContext().getSessionStore()
-            .set(new J2EContext(mockRequest, mockResponse, new J2ESessionStore()), Pac4jConstants.USER_PROFILES, profile);
+            .set(new JEEContext(mockRequest, mockResponse, new JEESessionStore()), Pac4jConstants.USER_PROFILES, profile);
 
         val modelAndView = oAuth20AuthorizeEndpointController.handleRequest(mockRequest, mockResponse);
         val view = modelAndView.getView();
@@ -287,7 +287,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
         val session = new MockHttpSession();
         mockRequest.setSession(session);
         oAuth20AuthorizeEndpointController.getOAuthConfigurationContext().getSessionStore()
-            .set(new J2EContext(mockRequest, mockResponse, new J2ESessionStore()), Pac4jConstants.USER_PROFILES, profile);
+            .set(new JEEContext(mockRequest, mockResponse, new JEESessionStore()), Pac4jConstants.USER_PROFILES, profile);
 
         val modelAndView = oAuth20AuthorizeEndpointController.handleRequest(mockRequest, mockResponse);
         val view = modelAndView.getView();
@@ -342,7 +342,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
         val session = new MockHttpSession();
         mockRequest.setSession(session);
         oAuth20AuthorizeEndpointController.getOAuthConfigurationContext().getSessionStore()
-            .set(new J2EContext(mockRequest, mockResponse, new J2ESessionStore()), Pac4jConstants.USER_PROFILES, profile);
+            .set(new JEEContext(mockRequest, mockResponse, new JEESessionStore()), Pac4jConstants.USER_PROFILES, profile);
 
         val modelAndView = oAuth20AuthorizeEndpointController.handleRequest(mockRequest, mockResponse);
         val view = modelAndView.getView();
@@ -391,7 +391,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
 
         val session = new MockHttpSession();
         mockRequest.setSession(session);
-        val context = new J2EContext(mockRequest, mockResponse, new J2ESessionStore());
+        val context = new JEEContext(mockRequest, mockResponse, new JEESessionStore());
         oAuth20AuthorizeEndpointController.getOAuthConfigurationContext().getSessionStore()
             .set(context, Pac4jConstants.USER_PROFILES, profile);
         oAuth20AuthorizeEndpointController.getOAuthConfigurationContext().getSessionStore()
@@ -447,7 +447,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
 
         val session = new MockHttpSession();
         mockRequest.setSession(session);
-        val context = new J2EContext(mockRequest, mockResponse, new J2ESessionStore());
+        val context = new JEEContext(mockRequest, mockResponse, new JEESessionStore());
         oAuth20AuthorizeEndpointController.getOAuthConfigurationContext().getSessionStore()
             .set(context, Pac4jConstants.USER_PROFILES, profile);
         oAuth20AuthorizeEndpointController.getOAuthConfigurationContext().getSessionStore()
@@ -498,7 +498,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
 
         val session = new MockHttpSession();
         mockRequest.setSession(session);
-        val context = new J2EContext(mockRequest, mockResponse, new J2ESessionStore());
+        val context = new JEEContext(mockRequest, mockResponse, new JEESessionStore());
         oAuth20AuthorizeEndpointController.getOAuthConfigurationContext().getSessionStore()
             .set(context, Pac4jConstants.USER_PROFILES, profile);
 

@@ -17,7 +17,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.pac4j.core.context.J2EContext;
+import org.pac4j.core.context.JEEContext;
 import org.springframework.core.Ordered;
 
 import java.util.stream.Stream;
@@ -49,8 +49,8 @@ public class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator i
     private int order = Ordered.LOWEST_PRECEDENCE;
 
     @Override
-    public boolean validate(final J2EContext context) {
-        val request = context.getRequest();
+    public boolean validate(final JEEContext context) {
+        val request = context.getNativeRequest();
         val checkParameterExist = Stream.of(OAuth20Constants.CLIENT_ID, OAuth20Constants.REDIRECT_URI, OAuth20Constants.RESPONSE_TYPE)
             .allMatch(s -> HttpRequestUtils.doesParameterExist(request, s));
 
@@ -105,9 +105,9 @@ public class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator i
     }
 
     @Override
-    public boolean supports(final J2EContext context) {
-        val grantType = context.getRequestParameter(OAuth20Constants.RESPONSE_TYPE);
-        return OAuth20Utils.isResponseType(grantType, getResponseType());
+    public boolean supports(final JEEContext context) {
+        val responseType = context.getRequestParameter(OAuth20Constants.RESPONSE_TYPE);
+        return OAuth20Utils.isResponseType(responseType.map(String::valueOf).orElse(StringUtils.EMPTY), getResponseType());
     }
 
     /**

@@ -10,7 +10,8 @@ import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 
 import lombok.val;
-import org.pac4j.core.context.J2EContext;
+import org.apache.commons.lang3.StringUtils;
+import org.pac4j.core.context.JEEContext;
 
 /**
  * This is {@link OAuth20ClientCredentialsResponseBuilder}.
@@ -28,8 +29,8 @@ public class OAuth20ClientCredentialsResponseBuilder extends OAuth20ResourceOwne
     }
 
     @Override
-    public boolean supports(final J2EContext context) {
-        val grantType = context.getRequestParameter(OAuth20Constants.GRANT_TYPE);
+    public boolean supports(final JEEContext context) {
+        val grantType = context.getRequestParameter(OAuth20Constants.GRANT_TYPE).map(String::valueOf).orElse(StringUtils.EMPTY);
         return OAuth20Utils.isGrantType(grantType, OAuth20GrantTypes.CLIENT_CREDENTIALS);
     }
 }

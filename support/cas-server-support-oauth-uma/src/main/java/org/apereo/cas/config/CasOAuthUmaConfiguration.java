@@ -41,7 +41,7 @@ import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 
 import lombok.val;
 import org.pac4j.core.config.Config;
-import org.pac4j.core.context.session.J2ESessionStore;
+import org.pac4j.core.context.session.JEESessionStore;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.pac4j.http.client.direct.HeaderClient;
@@ -234,7 +234,7 @@ public class CasOAuthUmaConfiguration implements WebMvcConfigurer {
         headerClient.setName(clientName);
         val clients = Stream.of(headerClient.getName()).collect(Collectors.joining(","));
         val config = new Config(OAuth20Utils.casOAuthCallbackUrl(casProperties.getServer().getPrefix()), headerClient);
-        config.setSessionStore(new J2ESessionStore());
+        config.setSessionStore(new JEESessionStore());
         return new SecurityInterceptor(config, clients);
     }
 
