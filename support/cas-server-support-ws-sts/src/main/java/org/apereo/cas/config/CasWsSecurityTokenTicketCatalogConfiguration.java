@@ -11,6 +11,7 @@ import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 
 /**
  * This is {@link CasWsSecurityTokenTicketCatalogConfiguration}.
@@ -30,7 +31,7 @@ public class CasWsSecurityTokenTicketCatalogConfiguration extends BaseTicketCata
     @Override
     public void configureTicketCatalog(final TicketCatalog plan) {
         LOGGER.debug("Registering core WS security token ticket definitions...");
-        val definition = buildTicketDefinition(plan, SecurityTokenTicket.PREFIX, DefaultSecurityTokenTicket.class);
+        val definition = buildTicketDefinition(plan, SecurityTokenTicket.PREFIX, DefaultSecurityTokenTicket.class, Ordered.HIGHEST_PRECEDENCE);
         definition.getProperties().setStorageName("wsSecurityTokenTicketsCache");
         definition.getProperties().setStorageTimeout(casProperties.getTicket().getTgt().getMaxTimeToLiveInSeconds());
         registerTicketDefinition(plan, definition);
