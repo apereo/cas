@@ -11,6 +11,7 @@ import org.apereo.cas.ticket.query.SamlAttributeQueryTicket;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 
 /**
  * This is {@link SamlIdPTicketCatalogConfiguration}.
@@ -28,8 +29,10 @@ public class SamlIdPTicketCatalogConfiguration extends BaseTicketCatalogConfigur
     @Override
     public void configureTicketCatalog(final TicketCatalog plan) {
         LOGGER.debug("Registering SAML2 protocol ticket definitions...");
-        buildAndRegisterSamlArtifactDefinition(plan, buildTicketDefinition(plan, SamlArtifactTicket.PREFIX, SamlArtifactTicketImpl.class));
-        buildAndRegisterSamlAttributeQueryDefinition(plan, buildTicketDefinition(plan, SamlAttributeQueryTicket.PREFIX, SamlArtifactTicketImpl.class));
+        buildAndRegisterSamlArtifactDefinition(plan, buildTicketDefinition(plan,
+            SamlArtifactTicket.PREFIX, SamlArtifactTicketImpl.class, Ordered.HIGHEST_PRECEDENCE));
+        buildAndRegisterSamlAttributeQueryDefinition(plan, buildTicketDefinition(plan,
+            SamlAttributeQueryTicket.PREFIX, SamlArtifactTicketImpl.class, Ordered.HIGHEST_PRECEDENCE));
     }
 
     protected void buildAndRegisterSamlArtifactDefinition(final TicketCatalog plan, final TicketDefinition metadata) {

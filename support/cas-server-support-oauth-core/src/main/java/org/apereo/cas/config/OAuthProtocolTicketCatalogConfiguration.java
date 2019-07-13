@@ -15,6 +15,7 @@ import org.apereo.cas.ticket.refreshtoken.RefreshTokenImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 
 /**
  * This is {@link OAuthProtocolTicketCatalogConfiguration}.
@@ -33,9 +34,9 @@ public class OAuthProtocolTicketCatalogConfiguration extends BaseTicketCatalogCo
     public void configureTicketCatalog(final TicketCatalog plan) {
         LOGGER.debug("Registering core OAuth protocol ticket definitions...");
 
-        buildAndRegisterOAuthCodeDefinition(plan, buildTicketDefinition(plan, OAuthCode.PREFIX, OAuthCodeImpl.class));
-        buildAndRegisterAccessTokenDefinition(plan, buildTicketDefinition(plan, AccessToken.PREFIX, AccessTokenImpl.class));
-        buildAndRegisterRefreshTokenDefinition(plan, buildTicketDefinition(plan, RefreshToken.PREFIX, RefreshTokenImpl.class));
+        buildAndRegisterOAuthCodeDefinition(plan, buildTicketDefinition(plan, OAuthCode.PREFIX, OAuthCodeImpl.class, Ordered.HIGHEST_PRECEDENCE));
+        buildAndRegisterAccessTokenDefinition(plan, buildTicketDefinition(plan, AccessToken.PREFIX, AccessTokenImpl.class, Ordered.HIGHEST_PRECEDENCE));
+        buildAndRegisterRefreshTokenDefinition(plan, buildTicketDefinition(plan, RefreshToken.PREFIX, RefreshTokenImpl.class, Ordered.HIGHEST_PRECEDENCE));
     }
 
     protected void buildAndRegisterAccessTokenDefinition(final TicketCatalog plan, final TicketDefinition metadata) {

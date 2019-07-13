@@ -57,7 +57,7 @@ import java.io.Serializable;
  * @since 5.0.0
  */
 @ConditionalOnMissingBean
-@ConfigurationProperties(value = "cas", ignoreUnknownFields = false)
+@ConfigurationProperties(value = "cas", ignoreUnknownFields = true, ignoreInvalidFields = true)
 @Getter
 @Setter
 public class CasConfigurationProperties implements Serializable {
