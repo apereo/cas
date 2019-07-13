@@ -126,9 +126,9 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
         val attributes = auth.getAttributes();
         LOGGER.trace("Located authentication attributes [{}]", attributes);
         if (attributes.containsKey(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME)) {
-            val rememberMeValue = attributes.getOrDefault(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME, Boolean.FALSE);
+            val rememberMeValue = CollectionUtils.wrap(attributes.get(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME));
             LOGGER.debug("Located remember-me authentication attribute [{}]", rememberMeValue);
-            return CollectionUtils.wrapSet(rememberMeValue).contains(Boolean.TRUE);
+            return rememberMeValue.contains(Boolean.TRUE);
         }
         return Boolean.FALSE;
     }
