@@ -40,6 +40,12 @@ public class Pac4jDelegatedAuthenticationProperties implements Serializable {
     private String principalAttributeId;
 
     /**
+     * Whether initialization of delegated identity providers should be done
+     * eagerly typically during startup. 
+     */
+    private boolean lazyInit = true;
+
+    /**
      * Handle provisioning ops when establishing profiles
      * from external identity providers.
      */
@@ -141,7 +147,12 @@ public class Pac4jDelegatedAuthenticationProperties implements Serializable {
      * The name of the authentication handler in CAS used for delegation.
      */
     private String name;
-    
+
+    /**
+     * Order of the authentication handler in the chain.
+     */
+    private Integer order;
+
     @RequiresModule(name = "cas-server-support-pac4j-webflow")
     @Getter
     @Setter

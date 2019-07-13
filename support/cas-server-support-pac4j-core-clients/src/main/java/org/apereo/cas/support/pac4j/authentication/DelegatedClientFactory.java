@@ -1,8 +1,8 @@
 package org.apereo.cas.support.pac4j.authentication;
 
 import org.apereo.cas.authentication.principal.ClientCustomPropertyConstants;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jBaseClientProperties;
-import org.apereo.cas.configuration.model.support.pac4j.Pac4jDelegatedAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.pac4j.oidc.BasePac4jOidcClientProperties;
 import org.apereo.cas.configuration.model.support.pac4j.oidc.Pac4jOidcClientProperties;
 import org.apereo.cas.configuration.model.support.pac4j.saml.Pac4jSamlClientProperties;
@@ -20,7 +20,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.cas.config.CasConfiguration;
 import org.pac4j.cas.config.CasProtocol;
-import org.pac4j.core.client.BaseClient;
+import org.pac4j.core.client.IndirectClient;
 import org.pac4j.core.http.callback.PathParameterCallbackUrlResolver;
 import org.pac4j.core.logout.handler.LogoutHandler;
 import org.pac4j.oauth.client.BitbucketClient;
@@ -65,18 +65,15 @@ import java.util.stream.Collectors;
 @Slf4j
 @Getter
 public class DelegatedClientFactory {
-    /**
-     * The Pac 4 j properties.
-     */
-    private final Pac4jDelegatedAuthenticationProperties pac4jProperties;
+    private final CasConfigurationProperties casProperties;
 
     /**
      * The pac4j specific logout handler for the CAS server.
      */
     private final LogoutHandler casServerSpecificLogoutHandler;
 
-    public DelegatedClientFactory(final Pac4jDelegatedAuthenticationProperties pac4jProperties) {
-        this(pac4jProperties, new CasServerSpecificLogoutHandler());
+    public DelegatedClientFactory(final CasConfigurationProperties casProperties) {
+        this(casProperties, new CasServerSpecificLogoutHandler());
     }
 
     /**
@@ -84,7 +81,8 @@ public class DelegatedClientFactory {
      *
      * @param properties the properties
      */
-    protected void configureGitHubClient(final Collection<BaseClient> properties) {
+    protected void configureGitHubClient(final Collection<IndirectClient> properties) {
+        val pac4jProperties = casProperties.getAuthn().getPac4j();
         val github = pac4jProperties.getGithub();
         if (StringUtils.isNotBlank(github.getId()) && StringUtils.isNotBlank(github.getSecret())) {
             val client = new GitHubClient(github.getId(), github.getSecret());
@@ -100,7 +98,8 @@ public class DelegatedClientFactory {
      *
      * @param properties the properties
      */
-    protected void configureDropBoxClient(final Collection<BaseClient> properties) {
+    protected void configureDropBoxClient(final Collection<IndirectClient> properties) {
+        val pac4jProperties = casProperties.getAuthn().getPac4j();
         val db = pac4jProperties.getDropbox();
         if (StringUtils.isNotBlank(db.getId()) && StringUtils.isNotBlank(db.getSecret())) {
             val client = new DropBoxClient(db.getId(), db.getSecret());
@@ -115,7 +114,8 @@ public class DelegatedClientFactory {
      *
      * @param properties the properties
      */
-    protected void configureOrcidClient(final Collection<BaseClient> properties) {
+    protected void configureOrcidClient(final Collection<IndirectClient> properties) {
+        val pac4jProperties = casProperties.getAuthn().getPac4j();
         val db = pac4jProperties.getOrcid();
         if (StringUtils.isNotBlank(db.getId()) && StringUtils.isNotBlank(db.getSecret())) {
             val client = new OrcidClient(db.getId(), db.getSecret());
@@ -131,7 +131,8 @@ public class DelegatedClientFactory {
      *
      * @param properties the properties
      */
-    protected void configureWindowsLiveClient(final Collection<BaseClient> properties) {
+    protected void configureWindowsLiveClient(final Collection<IndirectClient> properties) {
+        val pac4jProperties = casProperties.getAuthn().getPac4j();
         val live = pac4jProperties.getWindowsLive();
         if (StringUtils.isNotBlank(live.getId()) && StringUtils.isNotBlank(live.getSecret())) {
             val client = new WindowsLiveClient(live.getId(), live.getSecret());
@@ -147,7 +148,8 @@ public class DelegatedClientFactory {
      *
      * @param properties the properties
      */
-    protected void configureYahooClient(final Collection<BaseClient> properties) {
+    protected void configureYahooClient(final Collection<IndirectClient> properties) {
+        val pac4jProperties = casProperties.getAuthn().getPac4j();
         val yahoo = pac4jProperties.getYahoo();
         if (StringUtils.isNotBlank(yahoo.getId()) && StringUtils.isNotBlank(yahoo.getSecret())) {
             val client = new YahooClient(yahoo.getId(), yahoo.getSecret());
@@ -163,7 +165,8 @@ public class DelegatedClientFactory {
      *
      * @param properties the properties
      */
-    protected void configureFoursquareClient(final Collection<BaseClient> properties) {
+    protected void configureFoursquareClient(final Collection<IndirectClient> properties) {
+        val pac4jProperties = casProperties.getAuthn().getPac4j();
         val foursquare = pac4jProperties.getFoursquare();
         if (StringUtils.isNotBlank(foursquare.getId()) && StringUtils.isNotBlank(foursquare.getSecret())) {
             val client = new FoursquareClient(foursquare.getId(), foursquare.getSecret());
@@ -179,7 +182,8 @@ public class DelegatedClientFactory {
      *
      * @param properties the properties
      */
-    protected void configureGoogleClient(final Collection<BaseClient> properties) {
+    protected void configureGoogleClient(final Collection<IndirectClient> properties) {
+        val pac4jProperties = casProperties.getAuthn().getPac4j();
         val google = pac4jProperties.getGoogle();
         val client = new Google2Client(google.getId(), google.getSecret());
         if (StringUtils.isNotBlank(google.getId()) && StringUtils.isNotBlank(google.getSecret())) {
@@ -198,7 +202,8 @@ public class DelegatedClientFactory {
      *
      * @param properties the properties
      */
-    protected void configureFacebookClient(final Collection<BaseClient> properties) {
+    protected void configureFacebookClient(final Collection<IndirectClient> properties) {
+        val pac4jProperties = casProperties.getAuthn().getPac4j();
         val fb = pac4jProperties.getFacebook();
         if (StringUtils.isNotBlank(fb.getId()) && StringUtils.isNotBlank(fb.getSecret())) {
             val client = new FacebookClient(fb.getId(), fb.getSecret());
@@ -221,7 +226,8 @@ public class DelegatedClientFactory {
      *
      * @param properties the properties
      */
-    protected void configureLinkedInClient(final Collection<BaseClient> properties) {
+    protected void configureLinkedInClient(final Collection<IndirectClient> properties) {
+        val pac4jProperties = casProperties.getAuthn().getPac4j();
         val ln = pac4jProperties.getLinkedIn();
         if (StringUtils.isNotBlank(ln.getId()) && StringUtils.isNotBlank(ln.getSecret())) {
             val client = new LinkedIn2Client(ln.getId(), ln.getSecret());
@@ -244,7 +250,8 @@ public class DelegatedClientFactory {
      *
      * @param properties the properties
      */
-    protected void configureHiOrgServerClient(final Collection<BaseClient> properties) {
+    protected void configureHiOrgServerClient(final Collection<IndirectClient> properties) {
+        val pac4jProperties = casProperties.getAuthn().getPac4j();
         val hiOrgServer = pac4jProperties.getHiOrgServer();
         if (StringUtils.isNotBlank(hiOrgServer.getId()) && StringUtils.isNotBlank(hiOrgServer.getSecret())) {
             val client = new HiOrgServerClient(hiOrgServer.getId(), hiOrgServer.getSecret());
@@ -262,7 +269,8 @@ public class DelegatedClientFactory {
      *
      * @param properties the properties
      */
-    protected void configureTwitterClient(final Collection<BaseClient> properties) {
+    protected void configureTwitterClient(final Collection<IndirectClient> properties) {
+        val pac4jProperties = casProperties.getAuthn().getPac4j();
         val twitter = pac4jProperties.getTwitter();
         if (StringUtils.isNotBlank(twitter.getId()) && StringUtils.isNotBlank(twitter.getSecret())) {
             val client = new TwitterClient(twitter.getId(), twitter.getSecret(), twitter.isIncludeEmail());
@@ -278,7 +286,8 @@ public class DelegatedClientFactory {
      *
      * @param properties the properties
      */
-    protected void configureWordPressClient(final Collection<BaseClient> properties) {
+    protected void configureWordPressClient(final Collection<IndirectClient> properties) {
+        val pac4jProperties = casProperties.getAuthn().getPac4j();
         val wp = pac4jProperties.getWordpress();
         if (StringUtils.isNotBlank(wp.getId()) && StringUtils.isNotBlank(wp.getSecret())) {
             val client = new WordPressClient(wp.getId(), wp.getSecret());
@@ -294,7 +303,8 @@ public class DelegatedClientFactory {
      *
      * @param properties the properties
      */
-    protected void configureBitBucketClient(final Collection<BaseClient> properties) {
+    protected void configureBitBucketClient(final Collection<IndirectClient> properties) {
+        val pac4jProperties = casProperties.getAuthn().getPac4j();
         val bb = pac4jProperties.getBitbucket();
         if (StringUtils.isNotBlank(bb.getId()) && StringUtils.isNotBlank(bb.getSecret())) {
             val client = new BitbucketClient(bb.getId(), bb.getSecret());
@@ -310,7 +320,8 @@ public class DelegatedClientFactory {
      *
      * @param properties the properties
      */
-    protected void configurePayPalClient(final Collection<BaseClient> properties) {
+    protected void configurePayPalClient(final Collection<IndirectClient> properties) {
+        val pac4jProperties = casProperties.getAuthn().getPac4j();
         val paypal = pac4jProperties.getPaypal();
         if (StringUtils.isNotBlank(paypal.getId()) && StringUtils.isNotBlank(paypal.getSecret())) {
             val client = new PayPalClient(paypal.getId(), paypal.getSecret());
@@ -327,7 +338,7 @@ public class DelegatedClientFactory {
      * @param client the client
      * @param props  the props
      */
-    protected void configureClient(final BaseClient client, final Pac4jBaseClientProperties props) {
+    protected void configureClient(final IndirectClient client, final Pac4jBaseClientProperties props) {
         val cname = props.getClientName();
         if (StringUtils.isNotBlank(cname)) {
             client.setName(cname);
@@ -343,6 +354,11 @@ public class DelegatedClientFactory {
         if (StringUtils.isNotBlank(props.getPrincipalAttributeId())) {
             customProperties.put(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_PRINCIPAL_ATTRIBUTE_ID, props.getPrincipalAttributeId());
         }
+        client.setCallbackUrl(casProperties.getServer().getLoginUrl());
+
+        if (!casProperties.getAuthn().getPac4j().isLazyInit()) {
+            client.init();
+        }
     }
 
     /**
@@ -350,13 +366,16 @@ public class DelegatedClientFactory {
      *
      * @param properties the properties
      */
-    protected void configureCasClient(final Collection<BaseClient> properties) {
+    protected void configureCasClient(final Collection<IndirectClient> properties) {
+        val pac4jProperties = casProperties.getAuthn().getPac4j();
         val index = new AtomicInteger();
         pac4jProperties.getCas()
             .stream()
             .filter(cas -> StringUtils.isNotBlank(cas.getLoginUrl()))
             .forEach(cas -> {
                 val cfg = new CasConfiguration(cas.getLoginUrl(), CasProtocol.valueOf(cas.getProtocol()));
+                var prefix = StringUtils.remove(cas.getLoginUrl(), "/login");
+                cfg.setPrefixUrl(StringUtils.appendIfMissing(prefix, "/"));
                 cfg.setLogoutHandler(casServerSpecificLogoutHandler);
                 val client = new CasClient(cfg);
 
@@ -378,7 +397,8 @@ public class DelegatedClientFactory {
      *
      * @param properties the properties
      */
-    protected void configureSamlClient(final Collection<BaseClient> properties) {
+    protected void configureSamlClient(final Collection<IndirectClient> properties) {
+        val pac4jProperties = casProperties.getAuthn().getPac4j();
         val index = new AtomicInteger();
         pac4jProperties.getSaml()
             .stream()
@@ -390,6 +410,8 @@ public class DelegatedClientFactory {
                 val cfg = new SAML2Configuration(saml.getKeystorePath(),
                     saml.getKeystorePassword(),
                     saml.getPrivateKeyPassword(), saml.getIdentityProviderMetadataPath());
+
+                cfg.setForceKeystoreGeneration(saml.isForceKeystoreGeneration());
                 cfg.setCertificateNameToAppend(StringUtils.defaultIfBlank(saml.getCertificateNameToAppend(), saml.getClientName()));
                 cfg.setMaximumAuthenticationLifetime(saml.getMaximumAuthenticationLifetime());
                 cfg.setServiceProviderEntityId(saml.getServiceProviderEntityId());
@@ -436,7 +458,7 @@ public class DelegatedClientFactory {
                 if (!saml.getSignatureAlgorithms().isEmpty()) {
                     cfg.setSignatureAlgorithms(saml.getSignatureAlgorithms());
                 }
-                if (!saml.getSignatureReferenceDigestMethods().isEmpty()){
+                if (!saml.getSignatureReferenceDigestMethods().isEmpty()) {
                     cfg.setSignatureReferenceDigestMethods(saml.getSignatureReferenceDigestMethods());
                 }
                 if (!StringUtils.isNotBlank(saml.getSignatureCanonicalizationAlgorithm())) {
@@ -471,7 +493,8 @@ public class DelegatedClientFactory {
      *
      * @param properties the properties
      */
-    protected void configureOAuth20Client(final Collection<BaseClient> properties) {
+    protected void configureOAuth20Client(final Collection<IndirectClient> properties) {
+        val pac4jProperties = casProperties.getAuthn().getPac4j();
         val index = new AtomicInteger();
         pac4jProperties.getOauth2()
             .stream()
@@ -505,7 +528,8 @@ public class DelegatedClientFactory {
      *
      * @param properties the properties
      */
-    protected void configureOidcClient(final Collection<BaseClient> properties) {
+    protected void configureOidcClient(final Collection<IndirectClient> properties) {
+        val pac4jProperties = casProperties.getAuthn().getPac4j();
         pac4jProperties.getOidc()
             .forEach(oidc -> {
                 val client = getOidcClientFrom(oidc);
@@ -534,6 +558,8 @@ public class DelegatedClientFactory {
         if (StringUtils.isNotBlank(oidc.getKeycloak().getId())) {
             LOGGER.debug("Building OpenID Connect client for KeyCloak...");
             val cfg = getOidcConfigurationForClient(oidc.getKeycloak(), KeycloakOidcConfiguration.class);
+            cfg.setRealm(oidc.getKeycloak().getRealm());
+            cfg.setBaseUri(oidc.getKeycloak().getBaseUri());
             val kc = new KeycloakOidcClient(cfg);
             configureClient(kc, oidc.getKeycloak());
             return kc;
@@ -563,7 +589,7 @@ public class DelegatedClientFactory {
         cfg.setDiscoveryURI(oidc.getDiscoveryUri());
         cfg.setCustomParams(oidc.getCustomParams());
         cfg.setLogoutUrl(oidc.getLogoutUrl());
-        
+
         if (StringUtils.isNotBlank(oidc.getResponseMode())) {
             cfg.setResponseMode(oidc.getResponseMode());
         }
@@ -578,8 +604,8 @@ public class DelegatedClientFactory {
      *
      * @return the set
      */
-    public Set<BaseClient> build() {
-        val clients = new LinkedHashSet<BaseClient>();
+    public Set<IndirectClient> build() {
+        val clients = new LinkedHashSet<IndirectClient>();
 
         configureCasClient(clients);
         configureFacebookClient(clients);

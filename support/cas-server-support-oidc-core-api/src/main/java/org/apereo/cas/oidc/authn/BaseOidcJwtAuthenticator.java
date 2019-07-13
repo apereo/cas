@@ -84,7 +84,8 @@ public abstract class BaseOidcJwtAuthenticator implements Authenticator<Username
             return null;
         }
 
-        val code = webContext.getRequestParameter(OAuth20Constants.CODE);
+        val code = webContext.getRequestParameter(OAuth20Constants.CODE)
+            .map(String::valueOf).orElse(StringUtils.EMPTY);
         val oauthCode = ticketRegistry.getTicket(code, OAuthCode.class);
         if (oauthCode == null || oauthCode.isExpired()) {
             LOGGER.error("Provided code [{}] is either not found in the ticket registry or has expired", code);

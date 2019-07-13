@@ -12,7 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.NumericDate;
-import org.pac4j.core.context.J2EContext;
+import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.profile.UserProfile;
 
 import javax.servlet.http.HttpServletRequest;
@@ -40,7 +40,7 @@ public class UmaIdTokenGeneratorService extends BaseIdTokenGeneratorService {
                            final OAuth20ResponseTypes responseType,
                            final OAuthRegisteredService registeredService) {
 
-        val context = new J2EContext(request, response, getConfigurationContext().getSessionStore());
+        val context = new JEEContext(request, response, getConfigurationContext().getSessionStore());
         LOGGER.debug("Attempting to produce claims for the rpt access token [{}]", accessToken);
         val authenticatedProfile = getAuthenticatedProfile(request, response);
         val claims = buildJwtClaims(request, accessToken, timeoutInSeconds,
@@ -66,7 +66,7 @@ public class UmaIdTokenGeneratorService extends BaseIdTokenGeneratorService {
                                        final long timeoutInSeconds,
                                        final OAuthRegisteredService service,
                                        final UserProfile profile,
-                                       final J2EContext context,
+                                       final JEEContext context,
                                        final OAuth20ResponseTypes responseType) {
 
         val permissionTicket = (UmaPermissionTicket) request.getAttribute(UmaPermissionTicket.class.getName());

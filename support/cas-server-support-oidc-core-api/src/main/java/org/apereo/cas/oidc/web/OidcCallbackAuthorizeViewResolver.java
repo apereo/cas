@@ -7,7 +7,7 @@ import org.apereo.cas.support.oauth.web.views.OAuth20CallbackAuthorizeViewResolv
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.pac4j.core.context.J2EContext;
+import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
@@ -24,7 +24,7 @@ import java.util.HashMap;
 @RequiredArgsConstructor
 public class OidcCallbackAuthorizeViewResolver implements OAuth20CallbackAuthorizeViewResolver {
     @Override
-    public ModelAndView resolve(final J2EContext ctx, final ProfileManager manager, final String url) {
+    public ModelAndView resolve(final JEEContext ctx, final ProfileManager manager, final String url) {
         val prompt = OidcAuthorizationRequestSupport.getOidcPromptFromAuthorizationRequest(url);
         if (prompt.contains(OidcConstants.PROMPT_NONE)) {
             val result = manager.get(true);

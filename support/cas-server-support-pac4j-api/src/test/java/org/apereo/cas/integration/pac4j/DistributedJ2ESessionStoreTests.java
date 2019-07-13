@@ -13,7 +13,7 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 
 import lombok.val;
 import org.junit.jupiter.api.Test;
-import org.pac4j.core.context.J2EContext;
+import org.pac4j.core.context.JEEContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -56,7 +56,7 @@ public class DistributedJ2ESessionStoreTests {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         val store = new DistributedJ2ESessionStore(this.ticketRegistry, this.ticketFactory);
-        val context = new J2EContext(request, response, store);
+        val context = new JEEContext(request, response, store);
 
         assertNotNull(request.getSession());
 

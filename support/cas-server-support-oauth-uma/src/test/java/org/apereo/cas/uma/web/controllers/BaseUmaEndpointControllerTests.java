@@ -20,11 +20,12 @@ import org.apereo.cas.uma.web.controllers.resource.UmaResourceRegistrationReques
 import org.apereo.cas.uma.web.controllers.resource.UmaUpdateResourceSetRegistrationEndpointController;
 import org.apereo.cas.util.CollectionUtils;
 
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.tuple.Triple;
 import org.apache.http.HttpHeaders;
 import org.junit.jupiter.api.Tag;
-import org.pac4j.core.context.J2EContext;
+import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.core.profile.ProfileManager;
@@ -54,6 +55,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("OAuth")
 @Import({CasOAuthUmaConfiguration.class, CasOAuthUmaComponentSerializationConfiguration.class})
 @TestPropertySource(properties = "cas.authn.uma.requestingPartyToken.jwksFile=classpath:uma-keystore.jwks")
+@Slf4j
 public abstract class BaseUmaEndpointControllerTests extends AbstractOAuth20Tests {
     @Autowired
     @Qualifier("umaPermissionRegistrationEndpointController")
@@ -175,8 +177,13 @@ public abstract class BaseUmaEndpointControllerTests extends AbstractOAuth20Test
      * @return the current profile
      */
     protected CommonProfile getCurrentProfile(final HttpServletRequest request, final HttpServletResponse response) {
-        val ctx = new J2EContext(request, response, this.oauthDistributedSessionStore);
-        val manager = new ProfileManager<>(ctx, ctx.getSessionStore());
-        return manager.get(true).orElse(null);
+        val ctx = new JEEContext(request, response, this.oauthDistributedSessionStore);
+        val manager = new ProfileManager<CommonProfile>(ctx, ctx.getSessionStore());
+        val userProfileResult = manager.get(true);
+        if (userProfileResult.isEmpty()) {
+            LOGGER.info("Unable to determine the user profile from the context");
+            return null;
+        }
+        return userProfileResult.get();
     }
 }
