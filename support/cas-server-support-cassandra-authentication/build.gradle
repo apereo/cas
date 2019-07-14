@@ -5,6 +5,8 @@ ext {
 }
 
 dependencies {
+    implementation libraries.cassandra
+
     api project(":api:cas-server-core-api")
 
     implementation project(":core:cas-server-core-authentication-api")
@@ -18,6 +20,8 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
+
     testImplementation project(":core:cas-server-core-cookie")
     testImplementation project(":core:cas-server-core-configuration")
     testImplementation project(":core:cas-server-core-authentication")
@@ -30,7 +34,5 @@ dependencies {
     testImplementation project(":core:cas-server-core-validation")
     testImplementation project(":core:cas-server-core-validation-api")
     testImplementation project(":core:cas-server-core")
-    testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
-    
-    implementation libraries.cassandra
+
 }

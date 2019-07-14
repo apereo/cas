@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.model.support.couchdb.BaseAsynchronousCouchD
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.mongo.SingleCollectionMongoDbProperties;
 import org.apereo.cas.configuration.model.support.quartz.ScheduledJobProperties;
+import org.apereo.cas.configuration.model.support.redis.BaseRedisProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.RestEndpointProperties;
 import org.apereo.cas.configuration.support.SpringResourceProperties;
@@ -63,6 +64,11 @@ public class U2FMultifactorProperties extends BaseMultifactorProviderProperties 
      * Store device registration records inside a MongoDb resource.
      */
     private MongoDb mongo = new MongoDb();
+
+    /**
+     * Store device registration records inside a redis resource.
+     */
+    private Redis redis = new Redis();
 
     /**
      * Store device registration records inside a static JSON resource.
@@ -157,5 +163,12 @@ public class U2FMultifactorProperties extends BaseMultifactorProviderProperties 
     public static class Groovy extends SpringResourceProperties {
 
         private static final long serialVersionUID = 8079027843747126083L;
+    }
+
+    @RequiresModule(name = "cas-server-support-u2f-redis")
+    @Getter
+    @Setter
+    public static class Redis extends BaseRedisProperties {
+        private static final long serialVersionUID = -1261683393319585262L;
     }
 }
