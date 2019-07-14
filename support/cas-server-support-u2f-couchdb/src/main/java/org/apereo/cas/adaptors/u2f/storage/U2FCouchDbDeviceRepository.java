@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Getter
 @Setter
-public class U2FCouchDbDeviceRepository extends BaseU2FDeviceRepository{
+public class U2FCouchDbDeviceRepository extends BaseU2FDeviceRepository {
 
     private final U2FDeviceRegistrationCouchDbRepository couchDb;
     private final long expirationTime;
@@ -92,6 +92,15 @@ public class U2FCouchDbDeviceRepository extends BaseU2FDeviceRepository{
             this.executorService.execute(() -> couchDb.findByDateBefore(expirationDate).forEach(couchDb::deleteRecord));
         } else {
             couchDb.findByDateBefore(expirationDate).forEach(couchDb::deleteRecord);
+        }
+    }
+
+    @Override
+    public void removeAll() {
+        if (asynchronous) {
+            this.executorService.execute(() -> couchDb.deleteAll());
+        } else {
+            couchDb.deleteAll();
         }
     }
 }

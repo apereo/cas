@@ -57,6 +57,7 @@ public class U2FCouchDbConfiguration {
         @Qualifier("u2fCouchDbFactory") final CouchDbConnectorFactory u2fCouchDbFactory) {
         final U2FMultifactorProperties.CouchDb couchDb = casProperties.getAuthn().getMfa().getU2f().getCouchDb();
         return new U2FDeviceRegistrationCouchDbRepository(u2fCouchDbFactory.getCouchDbConnector(),
+            u2fCouchDbFactory.getCouchDbInstance(),
             couchDb.isCreateIfNotExists());
     }
 

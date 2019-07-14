@@ -118,6 +118,14 @@ public class U2FRedisDeviceRepository extends BaseU2FDeviceRepository {
         }
     }
 
+    @Override
+    public void removeAll() {
+        val keys = (Set<String>) this.redisTemplate.keys(getRedisKeys());
+        if (keys != null) {
+            this.redisTemplate.delete(keys);
+        }
+    }
+
     private static String getPatternRedisKey() {
         return CAS_U2F_PREFIX + '*';
     }

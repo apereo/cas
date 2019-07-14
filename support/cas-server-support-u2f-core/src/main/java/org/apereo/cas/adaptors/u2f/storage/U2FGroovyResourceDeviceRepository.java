@@ -36,4 +36,10 @@ public class U2FGroovyResourceDeviceRepository extends BaseResourceU2FDeviceRepo
         ScriptingUtils.executeGroovyScript(this.groovyScript, "write", new Object[]{list, LOGGER}, Boolean.class, true);
         LOGGER.debug("Saved [{}] device(s) into repository [{}]", list.size(), groovyScript);
     }
+
+    @Override
+    public void removeAll() {
+        ScriptingUtils.executeGroovyScript(this.groovyScript, "removeAll", new Object[]{LOGGER}, Void.class, true);
+        LOGGER.debug("Removed all device records from repository");
+    }
 }
