@@ -3167,6 +3167,7 @@ Allow CAS to become an OpenID Connect provider (OP). To learn more about this to
 
 # cas.authn.oidc.jwksFile=file:/etc/cas/config/keystore.jwks
 # cas.authn.oidc.jwksCacheInMinutes=60
+# cas.authn.oidc.jwksKeySize=2048
 
 # cas.authn.oidc.dynamicClientRegistrationMode=OPEN|PROTECTED
 
