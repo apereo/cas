@@ -79,4 +79,18 @@ public class U2FRestResourceDeviceRepository extends BaseResourceU2FDeviceReposi
             HttpUtils.close(response);
         }
     }
+
+    @Override
+    public void removeAll() {
+        HttpResponse response = null;
+        try {
+            response = HttpUtils.executeDelete(restProperties.getUrl(),
+                restProperties.getBasicAuthUsername(),
+                restProperties.getBasicAuthPassword());
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        } finally {
+            HttpUtils.close(response);
+        }
+    }
 }
