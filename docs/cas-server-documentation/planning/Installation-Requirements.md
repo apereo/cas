@@ -18,8 +18,7 @@ CAS at its heart is a Java-based web application. Prior to deployment,
 you will need to have [JDK](https://openjdk.java.net/projects/jdk/11/) `11` installed.
 
 <div class="alert alert-danger"><strong>Oracle JDK License</strong><p>
-Oracle has updated the license terms on which Oracle JDK is offered. The new Oracle Technology Network License Agreement for Oracle Java SE is substantially different from the licenses under which previous versions of the JDK were offered. <b>Please review</b> the new terms carefully before downloading and using this product.</div>
-</p></div>
+Oracle has updated the license terms on which Oracle JDK is offered. The new Oracle Technology Network License Agreement for Oracle Java SE is substantially different from the licenses under which previous versions of the JDK were offered. <b>Please review</b> the new terms carefully before downloading and using this product.</p></div>
   
 The key part of the license is as follows:
 
