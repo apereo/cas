@@ -103,6 +103,20 @@ Device registrations may be kept inside a MongoDb instance by including the foll
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#fido-u2f-mongodb).
 
+### Redis
+
+Device registrations may be kept inside a Redis instance by including the following module in the WAR overlay:
+
+```xml
+<dependency>
+     <groupId>org.apereo.cas</groupId>
+     <artifactId>cas-server-support-u2f-redis</artifactId>
+     <version>${cas.version}</version>
+</dependency>
+```
+
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#fido-u2f-redis).
+
 ### CouchDb
 
 Device registrations may be kept inside a CouchDb instance by including the following module in the WAR overlay:

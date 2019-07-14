@@ -2848,6 +2848,11 @@ Common configuration settings for this feature are available [here](Configuratio
 
 Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.authn.mfa.u2f`.
 
+### FIDO U2F Redis
+
+Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#redis-configuration)
+under the configuration key `cas.authn.mfa.u2f`.
+
 ### FIDO U2F JPA
 
 Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.authn.mfa.u2f.jpa`.
