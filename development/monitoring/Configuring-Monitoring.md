@@ -10,7 +10,18 @@ CAS monitors may be defined to report back the health status of the ticket regis
 
 ## Default
 
-The default monitors report back brief memory and ticket stats. There is nothing more for you to do.
+The default monitors report back brief memory and ticket stats.
+
+Support is enabled by including the following dependency in the WAR overlay:
+
+```xml
+<dependency>
+  <groupId>org.apereo.cas</groupId>
+  <artifactId>cas-server-core-monitor</artifactId>
+  <version>${cas.version}</version>
+</dependency>
+```
+
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#monitoring)
 and [this guide](../configuration/Configuration-Properties.html#memory).
 

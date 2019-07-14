@@ -4930,7 +4930,7 @@ Common configuration settings for this feature are available [here](Configuratio
 
 ## Apache Fortress Authentication
 
-To learn more about this topic, [please review this guide](../integration/Configuring-Fortress-Integration.html).
+To learn more about this topic, [please review this guide](../installation/Configuring-Fortress-Authentication.html).
 
 ```properties
 # cas.authn.fortress.rbaccontext=HOME

@@ -45,7 +45,7 @@ layout: null
         *   [Remote Address](/$version/installation/Remote-Address-Authentication.html)
         *   [Trusted](/$version/installation/Trusted-Authentication.html)
         *   [Apache Cassandra](/$version/installation/Cassandra-Authentication.html)
-        *   [Apache Fortress](/$version/integration/Configuring-Fortress-Integration.html)
+        *   [Apache Fortress](/$version/integration/Configuring-Fortress-Authentication.html)
         *   [Apache Shiro](/$version/installation/Shiro-Authentication.html)
         *   [Apache Syncope](/$version/installation/Syncope-Authentication.html)
         *   [JWT](#jwtauthn)
@@ -68,6 +68,7 @@ layout: null
     *   [Delegation](/$version/integration/Delegate-Authentication.html)
         *   [ADFS](/$version/integration/ADFS-Integration.html)
     *   [Throttling](/$version/installation/Configuring-Authentication-Throttling.html)
+    *   [GeoLocation Tracking](/$version/installation/GeoTracking-Authentication-Requests.html).
     *   [Proxying](/$version/installation/Configuring-Proxy-Authentication.html)
     *   [Events](/$version/installation/Configuring-Authentication-Events.html)
     *   [Surrogacy & Impersonation](/$version/installation/Surrogate-Authentication.html)
@@ -239,6 +240,7 @@ layout: null
     *   [SCIM Provisioning](/$version/integration/SCIM-Integration.html)
     *   [CAS Clients](/$version/integration/CAS-Clients.html)
     *   [Swagger API](/$version/integration/Swagger-Integration.html)
+    *   [JMX](/$version/integration/JMX-Integration.html)
     *   [Shibboleth Identity Provider](/$version/integration/Shibboleth.html)
 
 * [Developer](#developer)
