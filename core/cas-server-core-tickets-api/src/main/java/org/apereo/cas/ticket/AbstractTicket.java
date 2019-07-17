@@ -137,7 +137,10 @@ public abstract class AbstractTicket implements Ticket, TicketState {
 
     @Override
     public Authentication getAuthentication() {
-        return getTicketGrantingTicket().getAuthentication();
+        final TicketGrantingTicket ticketGrantingTicket = getTicketGrantingTicket();
+        return ticketGrantingTicket != null
+                ? ticketGrantingTicket.getAuthentication()
+                : null;
     }
 
     @Override

@@ -68,6 +68,16 @@ public abstract class BaseTicketSerializers {
             }
         };
 
+    private static final StringSerializer<TransientSessionTicket> TRANSIENT_SESSION_TICKET_SERIALIZER
+        = new AbstractJacksonBackedStringSerializer<TransientSessionTicket>(MINIMAL_PRETTY_PRINTER) {
+            private static final long serialVersionUID = 8718240197743167534L;
+
+            @Override
+            protected Class<TransientSessionTicket> getTypeToSerialize() {
+                return TransientSessionTicket.class;
+            }
+        };
+
     private static final StringSerializer<EncodedTicket> ENCODED_TICKET_SERIALIZER
         = new AbstractJacksonBackedStringSerializer<EncodedTicket>(MINIMAL_PRETTY_PRINTER) {
             private static final long serialVersionUID = 8959835299162115085L;
@@ -114,6 +124,15 @@ public abstract class BaseTicketSerializers {
         return SERVICE_TICKET_SERIALIZER;
     }
 
+    /**
+     * Gets transient session ticket serializer.
+     *
+     * @return the service ticket serializer
+     */
+    public static StringSerializer<TransientSessionTicket> getTransientSessionTicketSerializer() {
+        return TRANSIENT_SESSION_TICKET_SERIALIZER;
+    }
+
     public static StringSerializer<EncodedTicket> getEncodedTicketSerializer() {
         return ENCODED_TICKET_SERIALIZER;
     }
@@ -134,6 +153,8 @@ public abstract class BaseTicketSerializers {
             getTicketGrantingTicketSerializer().to(writer, TicketGrantingTicket.class.cast(ticket));
         } else if (ticket instanceof ServiceTicket) {
             getServiceTicketSerializer().to(writer, ServiceTicket.class.cast(ticket));
+        } else if (ticket instanceof TransientSessionTicket) {
+            getTransientSessionTicketSerializer().to(writer, (TransientSessionTicket) ticket);
         } else if (ticket instanceof EncodedTicket) {
             getEncodedTicketSerializer().to(writer, EncodedTicket.class.cast(ticket));
         } else {
@@ -178,6 +199,8 @@ public abstract class BaseTicketSerializers {
             ticket = getTicketGrantingTicketSerializer().from(ticketContent);
         } else if (ServiceTicket.class.isAssignableFrom(clazz)) {
             ticket = getServiceTicketSerializer().from(ticketContent);
+        } else if (TransientSessionTicket.class.isAssignableFrom(clazz)) {
+            ticket = getTransientSessionTicketSerializer().from(ticketContent);
         } else if (EncodedTicket.class.isAssignableFrom(clazz)) {
             ticket = getEncodedTicketSerializer().from(ticketContent);
         }
