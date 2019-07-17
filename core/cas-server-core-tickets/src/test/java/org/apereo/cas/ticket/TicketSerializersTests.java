@@ -25,6 +25,8 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.junit4.rules.SpringClassRule;
 import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
+import java.util.Map;
+
 import static org.junit.Assert.*;
 
 /**
@@ -103,6 +105,17 @@ public class TicketSerializersTests {
         val pt = ptFactory.create(pgt, st.getService(), ProxyTicket.class);
 
         verifySerialization(pt);
+    }
+
+    @Test
+    public void verifyTransientSessionTicketSerialization() {
+        val factory = (TransientSessionTicketFactory) this.defaultTicketFactory.get(TransientSessionTicket.class);
+        val ticket = factory.create(RegisteredServiceTestUtils.getService(), Map.of("a", "b"));
+        val serialized = BaseTicketSerializers.serializeTicket(ticket);
+        assertNotNull(serialized);
+        val deserialized = BaseTicketSerializers.deserializeTicket(serialized, ticket.getClass());
+        assertNotNull(deserialized);
+        assertEquals("b", deserialized.getProperties().get("a"));
     }
 
     private static void verifySerialization(final Ticket ticket) {
