@@ -4,6 +4,9 @@
         <cve>CVE-2019-10102</cve>
     </suppress>
     <suppress>
+        <cve>CVE-2018-11307</cve>
+    </suppress>
+    <suppress>
         <cve>CVE-2019-10103</cve>
     </suppress>
     <suppress>
