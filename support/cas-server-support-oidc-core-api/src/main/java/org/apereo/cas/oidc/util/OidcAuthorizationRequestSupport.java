@@ -95,6 +95,22 @@ public class OidcAuthorizationRequestSupport {
         return manager.get(true);
     }
 
+    @SneakyThrows
+    public static String removeOidcPromptFromAuthorizationRequest(final String url, final String prompt) {
+        val uriBuilder = new URIBuilder(url);
+        val newParams = uriBuilder.getQueryParams()
+            .stream()
+            .filter(p -> !OidcConstants.PROMPT.equals(p.getName()) || !p.getValue().equalsIgnoreCase(prompt))
+            .collect(Collectors.toList());
+        if (!newParams.isEmpty()) {
+            return uriBuilder.removeQuery()
+                .addParameters(newParams)
+                .build()
+                .toASCIIString();
+        }
+        return url;
+    }
+
     /**
      * Is cas authentication available?
      *
