@@ -837,6 +837,8 @@ To learn more about this topic, [please review this guide](../logging/Logging.ht
 ```properties
 # logging.config=file:/etc/cas/log4j2.xml
 # server.servlet.contextParameters.isLog4jAutoInitializationDisabled=true
+       
+# cas.logging.mdcEnabled=true
 
 # Control log levels via properties
 # logging.level.org.apereo.cas=DEBUG
@@ -3865,6 +3867,8 @@ configuration settings for this feature are available [here](Configuration-Prope
 Control how CAS should respond and validate incoming HTTP requests.
 
 ```properties
+# cas.httpWebRequest.header.enabled=true
+
 # cas.httpWebRequest.header.xframe=true
 # cas.httpWebRequest.header.xframeOptions=DENY
 
