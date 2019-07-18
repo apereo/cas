@@ -83,6 +83,7 @@ public class DelegatedClientNavigationController {
                 throw new UnauthorizedServiceException("Unable to locate client " + clientName);
             }
             val client = IndirectClient.class.cast(clientResult.get());
+            client.init();
             val webContext = new JEEContext(request, response, this.sessionStore);
             val ticket = delegatedClientWebflowManager.store(webContext, client);
 
@@ -108,7 +109,8 @@ public class DelegatedClientNavigationController {
      */
     @RequestMapping(value = ENDPOINT_RESPONSE, method = {RequestMethod.GET, RequestMethod.POST})
     public View redirectResponseToFlow(@PathVariable("clientName") final String clientName,
-                                       final HttpServletRequest request, final HttpServletResponse response) {
+                                       final HttpServletRequest request,
+                                       final HttpServletResponse response) {
         return buildRedirectViewBackToFlow(clientName, request);
     }
 
@@ -146,6 +148,7 @@ public class DelegatedClientNavigationController {
      */
     @SneakyThrows
     protected View getResultingView(final IndirectClient<Credentials> client, final JEEContext webContext, final Ticket ticket) {
+        client.init();
         val actionResult = client.getRedirectionActionBuilder().redirect(webContext);
         if (actionResult.isPresent()) {
             val action = actionResult.get();
