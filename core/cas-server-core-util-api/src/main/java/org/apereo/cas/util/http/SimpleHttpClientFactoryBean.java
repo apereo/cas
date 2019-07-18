@@ -14,6 +14,7 @@ import org.apache.http.client.RedirectStrategy;
 import org.apache.http.client.ServiceUnavailableRetryStrategy;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.config.RegistryBuilder;
+import org.apache.http.conn.ConnectionKeepAliveStrategy;
 import org.apache.http.conn.routing.HttpRoute;
 import org.apache.http.conn.socket.ConnectionSocketFactory;
 import org.apache.http.conn.socket.PlainConnectionSocketFactory;
@@ -22,6 +23,7 @@ import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.impl.DefaultConnectionReuseStrategy;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.DefaultBackoffStrategy;
+import org.apache.http.impl.client.DefaultConnectionKeepAliveStrategy;
 import org.apache.http.impl.client.DefaultRedirectStrategy;
 import org.apache.http.impl.client.DefaultServiceUnavailableRetryStrategy;
 import org.apache.http.impl.client.FutureRequestExecutionService;
@@ -137,6 +139,11 @@ public class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttpClient
     private ConnectionReuseStrategy connectionReuseStrategy = new DefaultConnectionReuseStrategy();
 
     /**
+     * Interface for deciding how long a connection can remain idle before being reused.
+     */
+    private ConnectionKeepAliveStrategy connectionKeepAliveStrategy = new DefaultConnectionKeepAliveStrategy();
+
+    /**
      * When managing a dynamic number of connections for a given route, this strategy assesses whether a
      * given request execution outcome should result in a backoff
      * signal or not, based on either examining the Throwable that resulted or by examining
@@ -238,6 +245,7 @@ public class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttpClient
             .setDefaultCredentialsProvider(this.credentialsProvider)
             .setDefaultCookieStore(this.cookieStore)
             .setConnectionReuseStrategy(this.connectionReuseStrategy)
+            .setKeepAliveStrategy(this.connectionKeepAliveStrategy)
             .setConnectionBackoffStrategy(this.connectionBackoffStrategy)
             .setServiceUnavailableRetryStrategy(this.serviceUnavailableRetryStrategy)
             .setProxyAuthenticationStrategy(this.proxyAuthenticationStrategy)
