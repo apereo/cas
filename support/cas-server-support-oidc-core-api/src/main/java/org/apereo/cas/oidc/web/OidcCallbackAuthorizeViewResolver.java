@@ -6,6 +6,7 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.web.views.OAuth20CallbackAuthorizeViewResolver;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.profile.ProfileManager;
@@ -22,6 +23,7 @@ import java.util.HashMap;
  * @since 5.1.0
  */
 @RequiredArgsConstructor
+@Slf4j
 public class OidcCallbackAuthorizeViewResolver implements OAuth20CallbackAuthorizeViewResolver {
     @Override
     public ModelAndView resolve(final JEEContext ctx, final ProfileManager manager, final String url) {
@@ -29,12 +31,21 @@ public class OidcCallbackAuthorizeViewResolver implements OAuth20CallbackAuthori
         if (prompt.contains(OidcConstants.PROMPT_NONE)) {
             val result = manager.get(true);
             if (result.isPresent()) {
+                LOGGER.trace("Redirecting to URL [{}] without prompting for login", url);
                 return new ModelAndView(url);
             }
+            LOGGER.warn("Unable to detect an authenticated user profile for prompt-less login attempts");
             val model = new HashMap<String, String>();
             model.put(OAuth20Constants.ERROR, OidcConstants.LOGIN_REQUIRED);
             return new ModelAndView(new MappingJackson2JsonView(), model);
         }
+        if (prompt.contains(OidcConstants.PROMPT_LOGIN)) {
+            LOGGER.trace("Removing login prompt from URL [{}]", url);
+            val newUrl = OidcAuthorizationRequestSupport.removeOidcPromptFromAuthorizationRequest(url, OidcConstants.PROMPT_LOGIN);
+            LOGGER.trace("Redirecting to URL [{}]", newUrl);
+            return new ModelAndView(new RedirectView(newUrl));
+        }
+        LOGGER.trace("Redirecting to URL [{}]", url);
         return new ModelAndView(new RedirectView(url));
     }
 
