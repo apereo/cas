@@ -32,7 +32,9 @@ public abstract class BaseTicketSerializers {
     private static final Map<String, Class> TICKET_TYPE_CACHE = new ConcurrentHashMap<>();
     private static final PrettyPrinter MINIMAL_PRETTY_PRINTER = new MinimalPrettyPrinter();
 
-    private static final StringSerializer<ProxyGrantingTicket> PROXY_GRANTING_TICKET_SERIALIZER = new AbstractJacksonBackedStringSerializer<>(MINIMAL_PRETTY_PRINTER) {
+    private static final StringSerializer<ProxyGrantingTicket> PROXY_GRANTING_TICKET_SERIALIZER = 
+        new AbstractJacksonBackedStringSerializer<>(MINIMAL_PRETTY_PRINTER) {
+        
         private static final long serialVersionUID = 7089208351327601379L;
 
         @Override
@@ -41,7 +43,9 @@ public abstract class BaseTicketSerializers {
         }
     };
 
-    private static final StringSerializer<ProxyTicket> PROXY_TICKET_SERIALIZER = new AbstractJacksonBackedStringSerializer<>(MINIMAL_PRETTY_PRINTER) {
+    private static final StringSerializer<ProxyTicket> PROXY_TICKET_SERIALIZER = 
+        new AbstractJacksonBackedStringSerializer<>(MINIMAL_PRETTY_PRINTER) {
+        
         private static final long serialVersionUID = -6343596853082798477L;
 
         @Override
@@ -50,7 +54,9 @@ public abstract class BaseTicketSerializers {
         }
     };
 
-    private static final StringSerializer<TicketGrantingTicket> TICKET_GRANTING_TICKET_SERIALIZER = new AbstractJacksonBackedStringSerializer<>(MINIMAL_PRETTY_PRINTER) {
+    private static final StringSerializer<TicketGrantingTicket> TICKET_GRANTING_TICKET_SERIALIZER = 
+        new AbstractJacksonBackedStringSerializer<>(MINIMAL_PRETTY_PRINTER) {
+        
         private static final long serialVersionUID = 1527874389457723545L;
 
         @Override
@@ -59,7 +65,9 @@ public abstract class BaseTicketSerializers {
         }
     };
 
-    private static final StringSerializer<ServiceTicket> SERVICE_TICKET_SERIALIZER = new AbstractJacksonBackedStringSerializer<>(MINIMAL_PRETTY_PRINTER) {
+    private static final StringSerializer<ServiceTicket> SERVICE_TICKET_SERIALIZER = 
+        new AbstractJacksonBackedStringSerializer<>(MINIMAL_PRETTY_PRINTER) {
+        
         private static final long serialVersionUID = 8959617299162115085L;
 
         @Override
@@ -68,7 +76,9 @@ public abstract class BaseTicketSerializers {
         }
     };
 
-    private static final StringSerializer<TransientSessionTicket> TRANSIENT_SESSION_TICKET_SERIALIZER = new AbstractJacksonBackedStringSerializer<TransientSessionTicket>(MINIMAL_PRETTY_PRINTER) {
+    private static final StringSerializer<TransientSessionTicket> TRANSIENT_SESSION_TICKET_SERIALIZER = 
+        new AbstractJacksonBackedStringSerializer<TransientSessionTicket>(MINIMAL_PRETTY_PRINTER) {
+        
         private static final long serialVersionUID = 8718240197743167534L;
 
         @Override
