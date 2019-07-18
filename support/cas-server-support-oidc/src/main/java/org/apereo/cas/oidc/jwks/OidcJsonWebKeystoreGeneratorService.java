@@ -12,9 +12,11 @@ import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.JsonWebKeySet;
 import org.jose4j.jwk.RsaJwkGenerator;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.FileUrlResource;
 import org.springframework.core.io.Resource;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -60,13 +62,22 @@ public class OidcJsonWebKeystoreGeneratorService {
             val rsaJsonWebKey = RsaJwkGenerator.generateJwk(bits);
             val jsonWebKeySet = new JsonWebKeySet(rsaJsonWebKey);
             val data = jsonWebKeySet.toJson(JsonWebKey.OutputControlLevel.INCLUDE_PRIVATE);
-            val location = file instanceof FileSystemResource
-                ? FileSystemResource.class.cast(file).getFile()
-                : DEFAULT_JWKS_LOCATION;
+            val location = resolveLocation(file);
+
             FileUtils.write(location, data, StandardCharsets.UTF_8);
             LOGGER.debug("Generated JSON web keystore at [{}]", location);
         } else {
             LOGGER.debug("Located JSON web keystore at [{}]", file);
         }
+    }
+
+    private File resolveLocation(final Resource file) throws IOException {
+        if (file instanceof FileSystemResource) {
+            return file.getFile();
+        } else if (file instanceof FileUrlResource) {
+            return file.getFile();
+        }
+
+        return DEFAULT_JWKS_LOCATION;
     }
 }
