@@ -32,7 +32,9 @@ public abstract class BaseTicketSerializers {
     private static final Map<String, Class> TICKET_TYPE_CACHE = new ConcurrentHashMap<>();
     private static final PrettyPrinter MINIMAL_PRETTY_PRINTER = new MinimalPrettyPrinter();
 
-    private static final StringSerializer<ProxyGrantingTicket> PROXY_GRANTING_TICKET_SERIALIZER = new AbstractJacksonBackedStringSerializer<>(MINIMAL_PRETTY_PRINTER) {
+    private static final StringSerializer<ProxyGrantingTicket> PROXY_GRANTING_TICKET_SERIALIZER = 
+        new AbstractJacksonBackedStringSerializer<>(MINIMAL_PRETTY_PRINTER) {
+        
         private static final long serialVersionUID = 7089208351327601379L;
 
         @Override
@@ -41,7 +43,9 @@ public abstract class BaseTicketSerializers {
         }
     };
 
-    private static final StringSerializer<ProxyTicket> PROXY_TICKET_SERIALIZER = new AbstractJacksonBackedStringSerializer<>(MINIMAL_PRETTY_PRINTER) {
+    private static final StringSerializer<ProxyTicket> PROXY_TICKET_SERIALIZER = 
+        new AbstractJacksonBackedStringSerializer<>(MINIMAL_PRETTY_PRINTER) {
+        
         private static final long serialVersionUID = -6343596853082798477L;
 
         @Override
@@ -50,7 +54,9 @@ public abstract class BaseTicketSerializers {
         }
     };
 
-    private static final StringSerializer<TicketGrantingTicket> TICKET_GRANTING_TICKET_SERIALIZER = new AbstractJacksonBackedStringSerializer<>(MINIMAL_PRETTY_PRINTER) {
+    private static final StringSerializer<TicketGrantingTicket> TICKET_GRANTING_TICKET_SERIALIZER = 
+        new AbstractJacksonBackedStringSerializer<>(MINIMAL_PRETTY_PRINTER) {
+        
         private static final long serialVersionUID = 1527874389457723545L;
 
         @Override
@@ -59,12 +65,25 @@ public abstract class BaseTicketSerializers {
         }
     };
 
-    private static final StringSerializer<ServiceTicket> SERVICE_TICKET_SERIALIZER = new AbstractJacksonBackedStringSerializer<>(MINIMAL_PRETTY_PRINTER) {
+    private static final StringSerializer<ServiceTicket> SERVICE_TICKET_SERIALIZER = 
+        new AbstractJacksonBackedStringSerializer<>(MINIMAL_PRETTY_PRINTER) {
+        
         private static final long serialVersionUID = 8959617299162115085L;
 
         @Override
         protected Class<ServiceTicket> getTypeToSerialize() {
             return ServiceTicket.class;
+        }
+    };
+
+    private static final StringSerializer<TransientSessionTicket> TRANSIENT_SESSION_TICKET_SERIALIZER = 
+        new AbstractJacksonBackedStringSerializer<TransientSessionTicket>(MINIMAL_PRETTY_PRINTER) {
+        
+        private static final long serialVersionUID = 8718240197743167534L;
+
+        @Override
+        protected Class<TransientSessionTicket> getTypeToSerialize() {
+            return TransientSessionTicket.class;
         }
     };
 
@@ -113,6 +132,16 @@ public abstract class BaseTicketSerializers {
         return SERVICE_TICKET_SERIALIZER;
     }
 
+    /**
+     * Gets transient session ticket serializer.
+     *
+     * @return the service ticket serializer
+     */
+    public static StringSerializer<TransientSessionTicket> getTransientSessionTicketSerializer() {
+        return TRANSIENT_SESSION_TICKET_SERIALIZER;
+    }
+
+
     public static StringSerializer<EncodedTicket> getEncodedTicketSerializer() {
         return ENCODED_TICKET_SERIALIZER;
     }
@@ -133,6 +162,8 @@ public abstract class BaseTicketSerializers {
             getTicketGrantingTicketSerializer().to(writer, TicketGrantingTicket.class.cast(ticket));
         } else if (ticket instanceof ServiceTicket) {
             getServiceTicketSerializer().to(writer, ServiceTicket.class.cast(ticket));
+        } else if (ticket instanceof TransientSessionTicket) {
+            getTransientSessionTicketSerializer().to(writer, (TransientSessionTicket) ticket);
         } else if (ticket instanceof EncodedTicket) {
             getEncodedTicketSerializer().to(writer, EncodedTicket.class.cast(ticket));
         } else {
@@ -192,6 +223,9 @@ public abstract class BaseTicketSerializers {
         }
         if (ServiceTicket.class.isAssignableFrom(clazz)) {
             return getServiceTicketSerializer();
+        }
+        if (TransientSessionTicket.class.isAssignableFrom(clazz)) {
+            return getTransientSessionTicketSerializer();
         }
         if (EncodedTicket.class.isAssignableFrom(clazz)) {
             return getEncodedTicketSerializer();
