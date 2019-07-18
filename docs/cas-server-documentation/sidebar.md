@@ -68,7 +68,7 @@ layout: null
     *   [Delegation](/$version/integration/Delegate-Authentication.html)
         *   [ADFS](/$version/integration/ADFS-Integration.html)
     *   [Throttling](/$version/installation/Configuring-Authentication-Throttling.html)
-    *   [GeoLocation Tracking](/$version/installation/GeoTracking-Authentication-Requests.html).
+    *   [GeoLocation Tracking](/$version/installation/GeoTracking-Authentication-Requests.html)
     *   [Proxying](/$version/installation/Configuring-Proxy-Authentication.html)
     *   [Events](/$version/installation/Configuring-Authentication-Events.html)
     *   [Surrogacy & Impersonation](/$version/installation/Surrogate-Authentication.html)
