@@ -97,6 +97,7 @@ public class CasSimpleMultifactorAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "mfaSimpleMultifactorSendTokenAction")
     @Bean
+    @RefreshScope
     public Action mfaSimpleMultifactorSendTokenAction() {
         val simple = casProperties.getAuthn().getMfa().getSimple();
         if (!Objects.requireNonNull(communicationsManager.getIfAvailable()).validate()) {

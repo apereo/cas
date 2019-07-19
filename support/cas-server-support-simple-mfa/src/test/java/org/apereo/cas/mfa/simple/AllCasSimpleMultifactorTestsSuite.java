@@ -1,5 +1,7 @@
 package org.apereo.cas.mfa.simple;
 
+import org.apereo.cas.mfa.simple.web.flow.CasSimpleSendTokenActionTests;
+
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
 import org.junit.runner.RunWith;
@@ -12,7 +14,8 @@ import org.junit.runner.RunWith;
  */
 @SelectClasses({
     CasSimpleMultifactorAuthenticationProviderTests.class,
-    CasSimpleMultifactorAuthenticationUniqueTicketIdGeneratorTests.class
+    CasSimpleMultifactorAuthenticationUniqueTicketIdGeneratorTests.class,
+    CasSimpleSendTokenActionTests.class
 })
 @RunWith(JUnitPlatform.class)
 public class AllCasSimpleMultifactorTestsSuite {

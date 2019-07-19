@@ -37,6 +37,7 @@ public abstract class BaseOneTimeTokenRepositoryTests {
         assertTrue(oneTimeTokenAuthenticatorTokenRepository.exists(CASUSER, 1234));
         token = oneTimeTokenAuthenticatorTokenRepository.get(CASUSER, 1234);
         assertTrue(token.getId() > 0);
+        oneTimeTokenAuthenticatorTokenRepository.clean();
     }
 
     @Test
@@ -47,8 +48,8 @@ public abstract class BaseOneTimeTokenRepositoryTests {
         val token2 = new GoogleAuthenticatorToken(5678, CASUSER);
         oneTimeTokenAuthenticatorTokenRepository.store(token2);
 
-        val t1 = oneTimeTokenAuthenticatorTokenRepository.get(CASUSER, 1111);
-        val t2 = oneTimeTokenAuthenticatorTokenRepository.get(CASUSER, 5678);
+        val t1 = oneTimeTokenAuthenticatorTokenRepository.get(CASUSER, token.getToken());
+        val t2 = oneTimeTokenAuthenticatorTokenRepository.get(CASUSER, token2.getToken());
 
         assertTrue(t1.getId() > 0);
         assertTrue(t2.getId() > 0);
@@ -60,11 +61,23 @@ public abstract class BaseOneTimeTokenRepositoryTests {
     public void verifyRemoveByUserAndCode() {
         val token = new GoogleAuthenticatorToken(1984, CASUSER);
         oneTimeTokenAuthenticatorTokenRepository.store(token);
-        var newToken = oneTimeTokenAuthenticatorTokenRepository.get(CASUSER, 1984);
+        var newToken = oneTimeTokenAuthenticatorTokenRepository.get(CASUSER, token.getToken());
         assertNotNull(newToken);
         assertTrue(newToken.getId() > 0);
         oneTimeTokenAuthenticatorTokenRepository.remove(CASUSER, 1984);
         newToken = oneTimeTokenAuthenticatorTokenRepository.get(CASUSER, 1984);
+        assertNull(newToken);
+    }
+
+    @Test
+    public void verifyRemoveByUser() {
+        val token = new GoogleAuthenticatorToken(61984, CASUSER);
+        oneTimeTokenAuthenticatorTokenRepository.store(token);
+        var newToken = oneTimeTokenAuthenticatorTokenRepository.get(CASUSER, token.getToken());
+        assertNotNull(newToken);
+        assertTrue(newToken.getId() > 0);
+        oneTimeTokenAuthenticatorTokenRepository.remove(CASUSER);
+        newToken = oneTimeTokenAuthenticatorTokenRepository.get(CASUSER, token.getToken());
         assertNull(newToken);
     }
 
