@@ -37,4 +37,5 @@ public class CasWebflowEventResolutionConfigurationContext {
     private final ConfigurableApplicationContext applicationContext;
     private final AuditableExecution registeredServiceAccessStrategyEnforcer;
     private final CasConfigurationProperties casProperties;
+    private final CasCookieBuilder ticketGrantingTicketCookieGenerator;
 }

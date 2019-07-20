@@ -51,6 +51,17 @@ public class DefaultCasDelegatingWebflowEventResolver extends AbstractCasWebflow
         try {
             val credential = getCredentialFromContext(context);
             val service = WebUtils.getService(context);
+
+            val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
+            val ticketGrantingTicketId = getWebflowEventResolutionConfigurationContext().getTicketGrantingTicketCookieGenerator().retrieveCookieValue(request);
+            val ticket = getWebflowEventResolutionConfigurationContext().getTicketRegistrySupport().getTicketGrantingTicket(ticketGrantingTicketId);
+            if (ticket != null) {
+                WebUtils.putTicketGrantingTicketInScopes(context, ticket.getId());
+                WebUtils.putAuthentication(ticket.getAuthentication(), context);
+                val event = newEvent(CasWebflowConstants.TRANSITION_ID_TICKET_GRANTING_TICKET_VALID);
+                return CollectionUtils.wrapSet(event);
+            }
+
             if (credential != null) {
                 val builder = getWebflowEventResolutionConfigurationContext().getAuthenticationSystemSupport()
                     .handleInitialAuthenticationTransaction(service, credential);
