@@ -3547,6 +3547,8 @@ To learn more about this topic, [please review this guide](../ux/User-Interface-
 # cas.locale.defaultValue=en
 ```
 
+If the user changes the language, a special cookie is created by CAS to contain the selected language. Cookie settings for this feature are available [here](Configuration-Properties-Common.html#cookie-settings) under the configuration key `cas.locale.cookie`.
+
 ## Global SSO Behavior
 
 ```properties
@@ -3559,28 +3561,20 @@ To learn more about this topic, [please review this guide](../ux/User-Interface-
 
 ## Warning Cookie
 
-Created by CAS if and when users are to be warned when accessing CAS protected services.
+Created by CAS if and when users are to be warned when accessing CAS protected services. Cookie settings for this feature are available [here](Configuration-Properties-Common.html#cookie-settings) under the configuration key `cas.warningCookie`.
 
 ```properties
-# cas.warningCookie.path=
-# cas.warningCookie.maxAge=-1
-# cas.warningCookie.domain=
-# cas.warningCookie.name=CASPRIVACY
-# cas.warningCookie.secure=true
-# cas.warningCookie.httpOnly=true
+# cas.warningCookie.autoConfigureCookiePath=true
 ```
 
 ## Ticket Granting Cookie
 
+Cookie settings for this feature are available [here](Configuration-Properties-Common.html#cookie-settings) under the configuration key `cas.tgc`.
+
 ```properties
-# cas.tgc.path=
-# cas.tgc.maxAge=-1
-# cas.tgc.domain=
-# cas.tgc.name=TGC
-# cas.tgc.secure=true
-# cas.tgc.httpOnly=true
-# cas.tgc.rememberMeMaxAge=1209600
 # cas.tgc.pinToSession=true
+# cas.tgc.rememberMeMaxAge=P14D
+# cas.tgc.autoConfigureCookiePath=true
 ```
 
 ### Signing & Encryption
