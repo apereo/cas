@@ -55,6 +55,17 @@ should support the duration syntax for full clarity on unit of measure:
 The native numeric syntax is still supported though you will have to refer to the docs
 in each case to learn the exact unit of measure.
 
+## Cookie Settings
+
+```properties
+# ${configurationKey}.path=
+# ${configurationKey}.maxAge=-1
+# ${configurationKey}.domain=
+# ${configurationKey}.name=
+# ${configurationKey}.secure=true
+# ${configurationKey}.httpOnly=true
+```                               
+
 ## Authentication Throttling
 
 Certain functionality in CAS, such as [OAuth](../installation/OAuth-OpenId-Authentication.html) 

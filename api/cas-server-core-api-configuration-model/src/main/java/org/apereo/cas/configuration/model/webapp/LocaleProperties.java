@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.webapp;
 
+import org.apereo.cas.configuration.model.support.cookie.CookieProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
@@ -29,4 +30,16 @@ public class LocaleProperties implements Serializable {
      * Default locale.
      */
     private String defaultValue = "en";
+
+    /**
+     * Control the properties of the cookie created to hold language changes.
+     */
+    private LocaleCookieProperties cookie = new LocaleCookieProperties();
+    
+    @RequiresModule(name = "cas-server-core-web")
+    @Getter
+    @Setter
+    public static class LocaleCookieProperties extends CookieProperties implements Serializable {
+        private static final long serialVersionUID = 158577966798914031L;
+    }
 }

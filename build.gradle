@@ -258,7 +258,7 @@ subprojects {
                 failOnVersionConflict()
             }
             preferProjectModules()
-            cacheDynamicVersionsFor 1, "days"
+            cacheDynamicVersionsFor 5, "days"
             cacheChangingModulesFor 5, "days"
 
             /**
