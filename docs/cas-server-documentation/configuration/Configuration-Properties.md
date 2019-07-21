@@ -153,8 +153,7 @@ Tokens are the core method for authentication within Vault. Token authentication
 
 #### AppID Authentication
 
-Vault supports AppId authentication that consists of two hard to guess tokens. The AppId defaults to `spring.application.name` that is statically configured. The second token is the 
-UserId which is a part determined by the application, usually related to the runtime environment. Spring Cloud Vault Config supports IP address, Mac address and static 
+Vault supports AppId authentication that consists of two hard to guess tokens. The AppId defaults to `spring.application.name` that is statically configured. The second token is the UserId which is a part determined by the application, usually related to the runtime environment. Spring Cloud Vault Config supports IP address, Mac address and static 
 UserId’s (e.g. supplied via System properties). The IP and Mac address are represented as Hex-encoded SHA256 hash.
 
 Using IP addresses:
@@ -503,6 +502,32 @@ Enable basic authentication for the embedded Apache Tomcat.
 # cas.server.tomcat.basicAuthn.securityRoles[0]=admin
 # cas.server.tomcat.basicAuthn.authRoles[0]=admin
 # cas.server.tomcat.basicAuthn.patterns[0]=/*
+```
+
+#### Apache Portable Runtime (APR)
+
+Tomcat can use the [Apache Portable Runtime](https://tomcat.apache.org/tomcat-9.0-doc/apr.html) to provide superior scalability, performance, and better integration with native server technologies.
+
+```properties
+# cas.server.tomcat.apr.enabled=false
+
+# cas.server.tomcat.apr.sslProtocol=
+# cas.server.tomcat.apr.sslVerifyDepth=10
+# cas.server.tomcat.apr.sslVerifyClient=require
+# cas.server.tomcat.apr.sslCipherSuite=
+# cas.server.tomcat.apr.sslDisableCompression=false
+# cas.server.tomcat.apr.sslHonorCipherOrder=false
+
+# cas.server.tomcat.apr.sslCertificateChainFile=
+# cas.server.tomcat.apr.sslCaCertificateFile=
+# cas.server.tomcat.apr.sslCertificateKeyFile=
+# cas.server.tomcat.apr.sslCertificateFile=
+```
+
+Enabling APR requires the following JVM system property that indicates the location of the APR library binaries (i.e. `usr/local/opt/tomcat-native/lib`):
+
+```bash
+-Djava.library.path=/path/to/tomcat-native/lib
 ```
 
 #### Session Clustering & Replication

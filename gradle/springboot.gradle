@@ -57,7 +57,8 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishReleases && !rootP
 
         sourceResources sourceSets.bootRun
         systemProperties = System.properties
-
+        systemProperties.put("java.library.path", "/usr/local/opt/tomcat-native/lib")
+        
         def list = []
         list.add("-XX:TieredStopAtLevel=1")
         list.add("-Xverify:none")

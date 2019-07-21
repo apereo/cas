@@ -44,6 +44,12 @@ public class CasEmbeddedApacheTomcatProperties implements Serializable {
     private CasEmbeddedApacheTomcatClusteringProperties clustering = new CasEmbeddedApacheTomcatClusteringProperties();
 
     /**
+     * Embedded container tomcat APR options.
+     */
+    @NestedConfigurationProperty
+    private CasEmbeddedApacheTomcatApachePortableRuntimeProperties apr = new CasEmbeddedApacheTomcatApachePortableRuntimeProperties();
+    
+    /**
      * Http proxy configuration properties.
      * In the event that you decide to run CAS without any SSL configuration in the embedded Tomcat container and on a non-secure
      * port yet wish to customize the connector configuration that is linked to the running port (i.e. 8080), this setting may apply.
