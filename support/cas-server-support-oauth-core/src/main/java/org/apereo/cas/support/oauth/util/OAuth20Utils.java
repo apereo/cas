@@ -11,6 +11,7 @@ import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.NonNull;
 import lombok.SneakyThrows;
@@ -51,7 +52,9 @@ import static org.apereo.cas.support.oauth.OAuth20Constants.BASE_OAUTH20_URL;
 @Slf4j
 @UtilityClass
 public class OAuth20Utils {
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+    private static final ObjectMapper MAPPER = new ObjectMapper()
+        .findAndRegisterModules()
+        .configure(SerializationFeature.WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED, true);
 
     /**
      * Write to the output this error.
