@@ -2412,6 +2412,8 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "jul-to-slf4j")
                     exclude(group: "com.google.guava", module: "guava")
                     exclude(group: "commons-lang", module: "commons-lang")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-web")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-actuator")
                     force = true
                 }
         ],
