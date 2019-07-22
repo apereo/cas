@@ -19,6 +19,7 @@ import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.UserProfile;
 
+import java.net.URISyntaxException;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.Optional;
@@ -177,5 +178,29 @@ public class OidcAuthorizationRequestSupport {
         }
         val dt = ZonedDateTime.parse(authTime.toString());
         return isCasAuthenticationOldForMaxAgeAuthorizationRequest(context, dt);
+    }
+
+    /**
+     * Removes prompt parameter and returne new url.
+     *
+     * @param url the url to update
+     * @param prompt the query parameters to remove
+     * @return String
+     * @throws URISyntaxException uri syntax exception
+     */
+    public static String removeOidcPromptFromAuthorizationRequest(final String url, final String prompt) throws URISyntaxException {
+        val uriBuilder = new URIBuilder(url);
+        val currentQueryParams = uriBuilder.getQueryParams();
+        val newParams = currentQueryParams
+            .stream()
+            .filter(p -> !OidcConstants.PROMPT.equals(p.getName()) || !p.getValue().equalsIgnoreCase(prompt))
+            .collect(Collectors.toList());
+        if (newParams.size() != currentQueryParams.size()) {
+            return uriBuilder.removeQuery()
+                .addParameters(newParams)
+                .build()
+                .toASCIIString();
+        }
+        return url;
     }
 }
