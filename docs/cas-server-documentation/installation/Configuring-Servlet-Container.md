@@ -107,7 +107,7 @@ of Tomcat's internal components such as valves, etc.
 ```properties
 handlers = java.util.logging.ConsoleHandler
 .level = ALL
-java.util.logging.ConsoleHandler.level = DEBUG
+java.util.logging.ConsoleHandler.level = FINER
 java.util.logging.ConsoleHandler.formatter = java.util.logging.SimpleFormatter
 ```
 
