@@ -54,8 +54,8 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 /**
  * Unit test for {@link JpaTicketRegistry} class in context of OAuth 2.0.
  *
- * @author Marvin S. Addison
- * @since 3.0.0
+ * @author mtritschler
+ * @since 6.1.0
  */
 @SpringBootTest(classes = {
     JpaTicketRegistryTicketCatalogConfiguration.class,
