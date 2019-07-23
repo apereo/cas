@@ -13,6 +13,7 @@ import org.apereo.cas.ticket.OAuthToken;
 import org.apereo.cas.util.CollectionUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.NonNull;
 import lombok.SneakyThrows;
@@ -51,7 +52,9 @@ import java.util.stream.Stream;
 @Slf4j
 @UtilityClass
 public class OAuth20Utils {
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+    private static final ObjectMapper MAPPER = new ObjectMapper()
+        .findAndRegisterModules()
+        .configure(SerializationFeature.WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED, true);
 
     /**
      * Write to the output this error.
@@ -119,7 +122,8 @@ public class OAuth20Utils {
      * @return the attributes
      */
     public static Map<String, Object> getRequestParameters(final Collection<String> attributes, final HttpServletRequest context) {
-        return attributes.stream()
+        return attributes
+            .stream()
             .filter(a -> StringUtils.isNotBlank(context.getParameter(a)))
             .map(m -> {
                 val values = context.getParameterValues(m);

@@ -1,4 +1,4 @@
-package org.apereo.cas.client;
+package org.apereo.cas.support.oauth.profile;
 
 import org.apereo.cas.CentralAuthenticationService;
 

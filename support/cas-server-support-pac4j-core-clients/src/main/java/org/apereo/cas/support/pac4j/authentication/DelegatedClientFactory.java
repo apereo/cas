@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.model.support.pac4j.Pac4jBaseClientPropertie
 import org.apereo.cas.configuration.model.support.pac4j.oidc.BasePac4jOidcClientProperties;
 import org.apereo.cas.configuration.model.support.pac4j.oidc.Pac4jOidcClientProperties;
 import org.apereo.cas.configuration.model.support.pac4j.saml.Pac4jSamlClientProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.support.pac4j.logout.CasServerSpecificLogoutHandler;
 
 import com.github.scribejava.core.model.Verb;
@@ -559,7 +560,8 @@ public class DelegatedClientFactory {
         cfg.setUseNonce(oidc.isUseNonce());
         cfg.setSecret(oidc.getSecret());
         cfg.setClientId(oidc.getId());
-
+        cfg.setReadTimeout((int) Beans.newDuration(oidc.getReadTimeout()).toMillis());
+        cfg.setConnectTimeout((int) Beans.newDuration(oidc.getConnectTimeout()).toMillis());
         if (StringUtils.isNotBlank(oidc.getPreferredJwsAlgorithm())) {
             cfg.setPreferredJwsAlgorithm(JWSAlgorithm.parse(oidc.getPreferredJwsAlgorithm().toUpperCase()));
         }
@@ -567,6 +569,11 @@ public class DelegatedClientFactory {
         cfg.setDiscoveryURI(oidc.getDiscoveryUri());
         cfg.setCustomParams(oidc.getCustomParams());
         cfg.setLogoutUrl(oidc.getLogoutUrl());
+
+        cfg.setExpireSessionWithToken(oidc.isExpireSessionWithToken());
+        if (StringUtils.isNotBlank(oidc.getTokenExpirationAdvance())) {
+            cfg.setTokenExpirationAdvance((int) Beans.newDuration(oidc.getTokenExpirationAdvance()).toSeconds());
+        }
 
         if (StringUtils.isNotBlank(oidc.getResponseMode())) {
             cfg.setResponseMode(oidc.getResponseMode());
