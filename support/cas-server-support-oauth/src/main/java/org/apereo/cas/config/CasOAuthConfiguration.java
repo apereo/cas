@@ -8,7 +8,6 @@ import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.ServiceFactory;
-import org.apereo.cas.client.CasServerApiBasedTicketValidator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.integration.pac4j.DistributedJ2ESessionStore;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
@@ -22,6 +21,7 @@ import org.apereo.cas.support.oauth.authenticator.OAuth20ClientIdClientSecretAut
 import org.apereo.cas.support.oauth.authenticator.OAuth20ProofKeyCodeExchangeAuthenticator;
 import org.apereo.cas.support.oauth.authenticator.OAuth20UsernamePasswordAuthenticator;
 import org.apereo.cas.support.oauth.authenticator.OAuthAuthenticationClientProvider;
+import org.apereo.cas.support.oauth.profile.CasServerApiBasedTicketValidator;
 import org.apereo.cas.support.oauth.profile.DefaultOAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.profile.DefaultOAuth20UserProfileDataCreator;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
@@ -84,6 +84,7 @@ import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.accesstoken.AccessTokenExpirationPolicyBuilder;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.accesstoken.DefaultAccessTokenFactory;
+import org.apereo.cas.ticket.accesstoken.OAuth20JwtBuilder;
 import org.apereo.cas.ticket.code.DefaultOAuthCodeFactory;
 import org.apereo.cas.ticket.code.OAuthCodeExpirationPolicyBuilder;
 import org.apereo.cas.ticket.code.OAuthCodeFactory;
@@ -201,7 +202,7 @@ public class CasOAuthConfiguration {
     @ConditionalOnMissingBean(name = "accessTokenJwtBuilder")
     @Bean
     public JwtBuilder accessTokenJwtBuilder() {
-        return new JwtBuilder(casProperties.getServer().getPrefix(),
+        return new OAuth20JwtBuilder(casProperties.getServer().getPrefix(),
             oauthAccessTokenJwtCipherExecutor(),
             servicesManager.getIfAvailable(),
             oauthRegisteredServiceJwtAccessTokenCipherExecutor());
