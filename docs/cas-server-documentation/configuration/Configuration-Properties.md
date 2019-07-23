@@ -678,6 +678,7 @@ The following health indicator names are available, given the presence of the ap
 | Health Indicator          | Description
 |----------------------|------------------------------------------------------------------------------------------
 | `memoryHealthIndicator`   | Reports back on the health status of CAS JVM memory usage, etc.
+| `systemHealthIndicator`   | Reports back on the health of the system of the CAS server.(Load, Uptime, Heap, CPU etc.)
 | `sessionHealthIndicator`   | Reports back on the health status of CAS tickets and SSO session usage.
 | `duoSecurityHealthIndicator`   | Reports back on the health status of Duo Security APIs.
 | `ehcacheHealthIndicator`   | Reports back on the health status of Ehcache caches.
@@ -3746,6 +3747,13 @@ Decide how CAS should monitor the generation of STs.
 ```properties
 # cas.monitor.st.warn.threshold=10
 # cas.monitor.st.warn.evictionThreshold=0
+```
+### Load 
+
+Decide how CAS should monitor system load of a CAS Server.  
+
+```properties
+# cas.monitor.load.warn.threshold=25
 ```
 
 ### Cache Monitors
