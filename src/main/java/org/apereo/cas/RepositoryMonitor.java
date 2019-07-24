@@ -46,7 +46,7 @@ class RepositoryMonitor {
         this.pullRequestListeners = pullRequestListeners;
     }
 
-    @Scheduled(fixedRate = 2 * 60 * 1000)
+    @Scheduled(fixedRate = 60 * 1000)
     void monitor() {
         log.info("Monitoring {}/{}", this.repository.getOrganization(), this.repository.getName());
         try {
