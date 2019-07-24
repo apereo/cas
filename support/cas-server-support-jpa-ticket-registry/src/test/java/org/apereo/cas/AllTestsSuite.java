@@ -4,6 +4,7 @@ import org.apereo.cas.monitor.SessionHealthIndicatorJpaTests;
 import org.apereo.cas.ticket.registry.JpaTicketRegistryCleanerTests;
 import org.apereo.cas.ticket.registry.JpaTicketRegistryTests;
 import org.apereo.cas.ticket.registry.OauthJpaTicketRegistryCleanerTests;
+import org.apereo.cas.ticket.registry.OauthJpaTicketRegistryTests;
 import org.apereo.cas.ticket.registry.PostgresOauthJpaTicketRegistryCleanerTests;
 import org.apereo.cas.ticket.registry.support.JpaLockingStrategyTests;
 
@@ -23,6 +24,7 @@ import org.junit.runner.RunWith;
     JpaLockingStrategyTests.class,
     JpaTicketRegistryCleanerTests.class,
     OauthJpaTicketRegistryCleanerTests.class,
+    OauthJpaTicketRegistryTests.class,
     PostgresOauthJpaTicketRegistryCleanerTests.class
 })
 @RunWith(JUnitPlatform.class)
