@@ -106,13 +106,7 @@ public class OAuthCodeImpl extends AbstractTicket implements OAuthCode {
     public boolean isFromNewLogin() {
         return true;
     }
-
-    @Override
-    public boolean isValidFor(final Service serviceToValidate) {
-        update();
-        return serviceToValidate.matches(this.service);
-    }
-
+    
     @Override
     public ProxyGrantingTicket grantProxyGrantingTicket(final String id,
                                                         final Authentication authentication,

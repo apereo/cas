@@ -62,11 +62,6 @@ public class MockServiceTicket implements ServiceTicket, TicketState {
     }
 
     @Override
-    public boolean isValidFor(final Service service) {
-        return this.service.equals(service);
-    }
-
-    @Override
     public ProxyGrantingTicket grantProxyGrantingTicket(final String id, final Authentication authentication, final ExpirationPolicy expirationPolicy) {
         val pgt = new ProxyGrantingTicketImpl(id, this.service, this.getTicketGrantingTicket(), authentication, expirationPolicy);
         getTicketGrantingTicket().getProxyGrantingTickets().put(pgt.getId(), this.service);
