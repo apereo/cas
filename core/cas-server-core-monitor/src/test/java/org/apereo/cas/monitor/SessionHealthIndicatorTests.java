@@ -32,7 +32,7 @@ public class SessionHealthIndicatorTests {
     private static final ExpirationPolicy TEST_EXP_POLICY = new HardTimeoutExpirationPolicy(10000);
     private static final UniqueTicketIdGenerator GENERATOR = new DefaultUniqueTicketIdGenerator();
 
-    private DefaultTicketRegistry defaultRegistry;
+    private TicketRegistry defaultRegistry;
 
     private static void addTicketsToRegistry(final TicketRegistry registry, final int tgtCount, final int stCount) {
         val ticket = new TicketGrantingTicketImpl[]{null};

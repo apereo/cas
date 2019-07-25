@@ -98,12 +98,6 @@ public class SamlArtifactTicketImpl extends AbstractTicket implements SamlArtifa
     }
 
     @Override
-    public boolean isValidFor(final Service serviceToValidate) {
-        update();
-        return serviceToValidate.matches(this.service);
-    }
-
-    @Override
     public ProxyGrantingTicket grantProxyGrantingTicket(final String id, final Authentication authentication, final ExpirationPolicy expirationPolicy) {
         throw new UnsupportedOperationException("No proxy-granting ticket is available");
     }

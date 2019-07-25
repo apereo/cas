@@ -1,11 +1,7 @@
 package org.apereo.cas.authentication.principal;
 
-import lombok.val;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 
 /**
  * Marker interface for Services. Services are generally either remote
@@ -26,24 +22,5 @@ public interface Service extends Principal {
      * @param principal the new principal
      */
     default void setPrincipal(final String principal) {
-    }
-
-    /**
-     * Whether the services matches another.
-     *
-     * @param service the service
-     * @return true, if successful
-     */
-    default boolean matches(final Service service) {
-        try {
-            val thisUrl = URLDecoder.decode(getId(), StandardCharsets.UTF_8.name());
-            val serviceUrl = URLDecoder.decode(service.getId(), StandardCharsets.UTF_8.name());
-
-            LOGGER.trace("Decoded urls and comparing [{}] with [{}]", thisUrl, serviceUrl);
-            return thisUrl.equalsIgnoreCase(serviceUrl);
-        } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
-        }
-        return false;
     }
 }

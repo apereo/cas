@@ -38,7 +38,6 @@ public class MultifactorAuthenticationTestUtils {
     public static Service getService(final String id) {
         val svc = mock(Service.class);
         when(svc.getId()).thenReturn(id);
-        when(svc.matches(any(Service.class))).thenReturn(true);
         return svc;
     }
 

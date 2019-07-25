@@ -12,6 +12,7 @@ import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionStrate
 import org.apereo.cas.authentication.metadata.BasicCredentialMetaData;
 import org.apereo.cas.authentication.policy.AcceptAnyAuthenticationPolicyFactory;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
+import org.apereo.cas.authentication.principal.DefaultServiceMatchingStrategy;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.logout.LogoutManager;
@@ -101,7 +102,6 @@ public class DefaultCentralAuthenticationServiceMockitoTests extends BaseCasCore
         val stMock = mock(ServiceTicket.class);
         when(stMock.getService()).thenReturn(svc);
         when(stMock.getId()).thenReturn(id);
-        when(stMock.isValidFor(svc)).thenReturn(true);
         return stMock;
     }
 
@@ -185,7 +185,8 @@ public class DefaultCentralAuthenticationServiceMockitoTests extends BaseCasCore
             new AcceptAnyAuthenticationPolicyFactory(),
             new DefaultPrincipalFactory(),
             CipherExecutor.noOpOfStringToString(),
-            enforcer);
+            enforcer,
+            new DefaultServiceMatchingStrategy(smMock));
         this.cas.setApplicationEventPublisher(mock(ApplicationEventPublisher.class));
     }
 

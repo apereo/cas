@@ -81,7 +81,6 @@ public class DistributedTicketRegistryTests {
         this.ticketRegistry.addTicket(s);
         val s2 = (ServiceTicket) this.ticketRegistry.getTicket("test2");
         assertNotNull(s2.grantProxyGrantingTicket("ff", CoreAuthenticationTestUtils.getAuthentication(), new NeverExpiresExpirationPolicy()));
-        assertTrue(s2.isValidFor(RegisteredServiceTestUtils.getService()));
         assertTrue(this.wasTicketUpdated);
         returned.markTicketExpired();
         assertTrue(t.isExpired());
