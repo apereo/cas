@@ -280,8 +280,8 @@ public class EncodingUtils {
         val verified = jws.verifySignature();
         if (verified) {
             val payload = jws.getEncodedPayload();
-            LOGGER.trace("Successfully decoded value. Result in Base64-encoding is [{}]", payload);
-            return EncodingUtils.decodeBase64(payload);
+            LOGGER.trace("Successfully decoded value. Result in Base64url-encoding is [{}]", payload);
+            return EncodingUtils.decodeUrlSafeBase64(payload);
         }
         return null;
     }
@@ -370,7 +370,7 @@ public class EncodingUtils {
      */
     @SneakyThrows
     public static byte[] signJws(final Key key, final byte[] value, final String algHeaderValue) {
-        val base64 = EncodingUtils.encodeBase64(value);
+        val base64 = EncodingUtils.encodeUrlSafeBase64(value);
         val jws = new JsonWebSignature();
         jws.setEncodedPayload(base64);
         jws.setAlgorithmHeaderValue(algHeaderValue);
