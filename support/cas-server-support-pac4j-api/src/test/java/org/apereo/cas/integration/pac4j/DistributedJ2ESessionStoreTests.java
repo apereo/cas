@@ -62,23 +62,24 @@ public class DistributedJ2ESessionStoreTests {
 
         store.set(context, "attribute", "test");
         var value = store.get(context, "attribute");
-        assertNotNull(value);
-        assertEquals("test", value);
+        assertTrue(value.isPresent());
+        assertEquals("test", value.get());
 
         store.set(context, "attribute", "test2");
         value = store.get(context, "attribute");
-        assertNotNull(value);
-        assertEquals("test2", value);
+        assertTrue(value.isPresent());
+        assertEquals("test2", value.get());
 
         store.set(context, "attribute", null);
         store.set(context, "attribute2", "test3"); 
-        assertNull(store.get(context, "attribute"));
+        assertFalse(store.get(context, "attribute").isPresent());
         value = store.get(context, "attribute2");
-        assertEquals("test3", value);
+        assertTrue(value.isPresent());
+        assertEquals("test3", value.get());
 
         store.sessionDestroyed(new HttpSessionEvent(request.getSession()));
         store.handle(new MockTicketGrantingTicket("casuser"));
         value = store.get(context, "attribute");
-        assertNull(value);
+        assertTrue(value.isEmpty());
     }
 }
