@@ -23,7 +23,6 @@ import org.springframework.mock.web.MockServletContext;
 import org.springframework.webflow.context.ExternalContextHolder;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 
-import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
 import java.util.Optional;
 
@@ -85,9 +84,9 @@ public class DelegatedClientAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyNoProfile() throws GeneralSecurityException, PreventedException {
-        assertThrows(FailedLoginException.class, () -> {
-            this.fbClient.setProfileCreator((oAuth20Credentials, webContext) -> null);
+    public void verifyNoProfile() {
+        assertThrows(PreventedException.class, () -> {
+            this.fbClient.setProfileCreator((oAuth20Credentials, webContext) -> Optional.empty());
             this.handler.authenticate(this.clientCredential);
         });
     }
