@@ -57,9 +57,9 @@ public class DelegatedClientNavigationController {
 
     private final SessionStore<J2EContext> sessionStore;
 
-    public DelegatedClientNavigationController(Clients clients,
-                                               DelegatedClientWebflowManager delegatedClientWebflowManager,
-                                               @Qualifier("delegatedClientDistributedSessionStore") SessionStore<J2EContext> sessionStore) {
+    public DelegatedClientNavigationController(final Clients clients,
+                                               final DelegatedClientWebflowManager delegatedClientWebflowManager,
+                                               @Qualifier("delegatedClientDistributedSessionStore") final SessionStore<J2EContext> sessionStore) {
         this.clients = clients;
         this.delegatedClientWebflowManager = delegatedClientWebflowManager;
         this.sessionStore = sessionStore;
