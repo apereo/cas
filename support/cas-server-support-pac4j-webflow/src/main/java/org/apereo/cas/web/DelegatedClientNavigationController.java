@@ -4,7 +4,6 @@ import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.web.view.DynamicHtmlView;
 
-import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -41,7 +40,6 @@ import javax.servlet.http.HttpServletResponse;
 @Controller("delegatedClientNavigationController")
 @RequestMapping
 @Slf4j
-@RequiredArgsConstructor
 public class DelegatedClientNavigationController {
     /**
      * Endpoint path controlled by this controller to make the redirect.
@@ -57,8 +55,15 @@ public class DelegatedClientNavigationController {
 
     private final DelegatedClientWebflowManager delegatedClientWebflowManager;
 
-    @Qualifier("delegatedClientDistributedSessionStore")
     private final SessionStore<J2EContext> sessionStore;
+
+    public DelegatedClientNavigationController(Clients clients,
+                                               DelegatedClientWebflowManager delegatedClientWebflowManager,
+                                               @Qualifier("delegatedClientDistributedSessionStore") SessionStore<J2EContext> sessionStore) {
+        this.clients = clients;
+        this.delegatedClientWebflowManager = delegatedClientWebflowManager;
+        this.sessionStore = sessionStore;
+    }
 
     /**
      * Redirect to provider. Receive the client name from the request and then try to determine and build the endpoint url
