@@ -56,6 +56,7 @@ public class DelegatedClientNavigationController {
 
     private final DelegatedClientWebflowManager delegatedClientWebflowManager;
 
+    @Qualifier("delegatedClientDistributedSessionStore")
     private final SessionStore sessionStore;
 
     /**

@@ -772,7 +772,7 @@ public class CasOAuthConfiguration {
         return CipherExecutor.noOp();
     }
 
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(name = "oauthDistributedSessionStore")
     @Bean
     public SessionStore<J2EContext> oauthDistributedSessionStore() {
         val replicate = casProperties.getAuthn().getOauth().isReplicateSessions();
