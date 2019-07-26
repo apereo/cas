@@ -19,6 +19,7 @@ import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.exception.HttpAction;
 import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.core.redirect.RedirectAction;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -57,7 +58,7 @@ public class DelegatedClientNavigationController {
     private final DelegatedClientWebflowManager delegatedClientWebflowManager;
 
     @Qualifier("delegatedClientDistributedSessionStore")
-    private final SessionStore sessionStore;
+    private final SessionStore<J2EContext> sessionStore;
 
     /**
      * Redirect to provider. Receive the client name from the request and then try to determine and build the endpoint url
