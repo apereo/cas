@@ -83,9 +83,9 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration implements Audit
         return new DelegatedClientFactory(casProperties.getAuthn().getPac4j());
     }
 
-    @ConditionalOnMissingBean(name = "delegatedClientDistributedSessionStore")
+    @ConditionalOnMissingBean
     @Bean
-    public SessionStore delegatedClientDistributedSessionStore() {
+    public SessionStore<J2EContext> delegatedClientDistributedSessionStore() {
         return getDistributedSessionStore();
     }
 
