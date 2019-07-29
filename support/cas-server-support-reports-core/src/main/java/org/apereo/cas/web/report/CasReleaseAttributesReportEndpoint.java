@@ -11,11 +11,13 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.validation.DefaultAssertionBuilder;
+import org.apereo.cas.validation.ImmutableAssertion;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
 import lombok.val;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
+import org.springframework.boot.actuate.endpoint.annotation.WriteOperation;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -88,5 +90,23 @@ public class CasReleaseAttributesReportEndpoint extends BaseCasActuatorEndpoint 
         resValidation.put("registeredService", registeredService);
 
         return resValidation;
+    }
+
+    /**
+     * Method that accepts a JSON body through a POST method to receive user credentials and only returns a
+     * map of attributes released for the authenticated user.
+     *
+     * @param username - the username
+     * @param password - the password
+     * @param service - the service id
+     * @return - the map
+     */
+    @WriteOperation
+    public Map<String, Object> releaseAttributes(final String username,
+                                                 final String password,
+                                                 final String service) {
+        val map = releasePrincipalAttributes(username, password, service);
+        val assertion = (ImmutableAssertion) map.get("assertion");
+        return Map.of("uid", username, "attributes", assertion.getPrimaryAuthentication().getPrincipal().getAttributes());
     }
 }
