@@ -53,6 +53,10 @@ public class MonitorProperties implements Serializable {
 
     /**
      * Options for monitoring the Load on a production server.
+     * Load averages are "system load averages" that show the running thread
+     * (task) demand on the system as an average number of running plus waiting
+     * threads. This measures demand, which can be greater than what the system
+     * is currently processing.
      */
     private Load load = new Load();
 

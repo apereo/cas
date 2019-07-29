@@ -11,11 +11,13 @@ import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.actuate.autoconfigure.health.ConditionalOnEnabledHealthIndicator;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.boot.actuate.metrics.MetricsEndpoint;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -70,6 +72,7 @@ public class CasCoreMonitorConfiguration {
     @ConditionalOnMissingBean(name = "systemHealthIndicator")
     @Bean
     @ConditionalOnEnabledHealthIndicator("systemHealthIndicator")
+    @ConditionalOnAvailableEndpoint(endpoint = MetricsEndpoint.class)
     public HealthIndicator systemHealthIndicator() {
         val warnLoad = casProperties.getMonitor().getLoad().getWarn();
         return new SystemMonitorHealthIndicator(metricsEndpoint.getIfAvailable(), warnLoad.getThreshold());

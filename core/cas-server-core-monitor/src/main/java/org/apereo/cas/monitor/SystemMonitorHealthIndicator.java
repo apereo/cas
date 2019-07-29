@@ -23,32 +23,41 @@ public class SystemMonitorHealthIndicator extends AbstractHealthIndicator {
 
     @Override
     protected void doHealthCheck(final Health.Builder builder) {
-        val systemUsage = metrics.metric("system.cpu.usage", null).getMeasurements().get(0).getValue();
-        val systemLoad = metrics.metric("system.load.average.1m", null).getMeasurements().get(0).getValue();
-        val processUsage = metrics.metric("process.cpu.usage", null).getMeasurements().get(0).getValue();
-        val jvmUsed = metrics.metric("jvm.memory.used", null).getMeasurements().get(0).getValue();
-        val jvmCommitted = metrics.metric("jvm.memory.committed", null).getMeasurements().get(0).getValue();
-        val heapUsed = metrics.metric("jvm.memory.used", List.of("area:heap")).getMeasurements().get(0).getValue();
-        val heapCommitted = metrics.metric("jvm.memory.committed", List.of("area:heap")).getMeasurements().get(0).getValue();
-        val uptime = metrics.metric("process.uptime", null).getMeasurements().get(0).getValue();
-        val reqs = metrics.metric("http.server.requests", null);
+        val systemLoad = getMetricsFor("system.load.average.1m");
 
         builder
-                .withDetail("systemUsage", systemUsage)
-                .withDetail("systemLoad", systemLoad)
-                .withDetail("processUsage", processUsage)
-                .withDetail("jvmUsed", jvmUsed)
-                .withDetail("jvmCommitted", jvmCommitted)
-                .withDetail("heapUsed", heapUsed)
-                .withDetail("heapCommitted", heapCommitted)
-                .withDetail("uptime", uptime)
-                .withDetail("requests", reqs != null ? reqs.getMeasurements().get(0).getValue() : 0)
-                .withDetail("maxRequest", reqs != null ? reqs.getMeasurements().get(2).getValue() : 0);
+                .withDetail("systemUsage", getMetricsFor("system.cpu.usage"))
+                .withDetail("systemLoad", getMetricsFor("system.load.average.1m"))
+                .withDetail("processUsage", getMetricsFor("process.cpu.usage"))
+                .withDetail("jvmUsed", getMetricsFor("jvm.memory.used"))
+                .withDetail("jvmCommitted", getMetricsFor("jvm.memory.committed"))
+                .withDetail("heapUsed", getMetricsFor("jvm.memory.used", List.of("area:heap")))
+                .withDetail("heapCommitted", getMetricsFor("jvm.memory.committed", List.of("area:heap")))
+                .withDetail("uptime", getMetricsFor("process.uptime"))
+                .withDetail("requests", getMetricsFor("http.server.requests"))
+                .withDetail("maxRequest", getMetricsFor("http.server.requests", 2));
 
         if (systemLoad > threshold) {
             builder.status("WARN");
         } else {
             builder.status(Status.UP);
         }
+    }
+
+    private double getMetricsFor(final String key) {
+        return getMetricsFor(key, null, 0);
+    }
+
+    private double getMetricsFor(final String key, final int measure) {
+        return getMetricsFor(key, null, measure);
+    }
+
+    private double getMetricsFor(final String key, final List<String> tag) {
+        return getMetricsFor(key, tag, 0);
+    }
+
+    private double getMetricsFor(final String key, final List<String> tag, final int measure) {
+        val measures = metrics.metric(key, tag).getMeasurements();
+        return measures != null ? measures.get(measure).getValue() : 0;
     }
 }
