@@ -8,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.catalina.authenticator.BasicAuthenticator;
 import org.apache.catalina.connector.Connector;
-import org.apache.catalina.core.AprLifecycleListener;
 import org.apache.catalina.valves.ExtendedAccessLogValve;
 import org.apache.catalina.valves.SSLValve;
 import org.apache.catalina.valves.rewrite.RewriteValve;
@@ -70,7 +69,30 @@ public class CasTomcatServletWebServerFactoryCustomizer extends ServletWebServer
     }
 
     private void finalizeConnectors(final TomcatServletWebServerFactory tomcat) {
-        tomcat.addConnectorCustomizers(connector -> connector.setAttribute("Server", casProperties.getServer().getTomcat().getServerName()));
+        tomcat.addConnectorCustomizers(connector -> {
+            val tc = casProperties.getServer().getTomcat();
+            connector.setProperty("Server", tc.getServerName());
+
+            val socket = tc.getSocket();
+            if (socket.getBufferPool() > 0) {
+                connector.setProperty("socket.bufferPool", String.valueOf(socket.getBufferPool()));
+            }
+            if (socket.getAppReadBufSize() > 0) {
+                connector.setProperty("socket.appReadBufSize", String.valueOf(socket.getAppReadBufSize()));
+            }
+            if (socket.getAppWriteBufSize() > 0) {
+                connector.setProperty("socket.appWriteBufSize", String.valueOf(socket.getAppWriteBufSize()));
+            }
+            if (socket.getPerformanceBandwidth() >= 0) {
+                connector.setProperty("socket.performanceBandwidth", String.valueOf(socket.getPerformanceBandwidth()));
+            }
+            if (socket.getPerformanceConnectionTime() >= 0) {
+                connector.setProperty("socket.performanceConnectionTime", String.valueOf(socket.getPerformanceConnectionTime()));
+            }
+            if (socket.getPerformanceLatency() >= 0) {
+                connector.setProperty("socket.performanceLatency", String.valueOf(socket.getPerformanceLatency()));
+            }
+        });
     }
 
     private void configureBasicAuthn(final TomcatServletWebServerFactory tomcat) {

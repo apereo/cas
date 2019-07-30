@@ -530,6 +530,17 @@ Enabling APR requires the following JVM system property that indicates the locat
 -Djava.library.path=/path/to/tomcat-native/lib
 ```
 
+#### Connector IO
+
+```properties
+# cas.server.tomcat.socket.appReadBufSize=0
+# cas.server.tomcat.socket.appWriteBufSize=0
+# cas.server.tomcat.socket.bufferPool=0
+# cas.server.tomcat.socket.performanceConnectionTime=-1
+# cas.server.tomcat.socket.performanceLatency=-1
+# cas.server.tomcat.socket.performanceBandwidth=-1
+```
+
 #### Session Clustering & Replication
 
 Enable session replication to replicate web application session deltas.
