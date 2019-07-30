@@ -26,6 +26,14 @@ public class CasEmbeddedApacheTomcatProperties implements Serializable {
     private String serverName = "Apereo CAS";
 
     /**
+     * Embedded container socket settings.
+     * The NIO and NIO2 implementation support the Java TCP socket
+     * attributes in addition to the common Connector and HTTP attributes.
+     */
+    @NestedConfigurationProperty
+    private CasEmbeddedApacheTomcatSocketProperties socket = new CasEmbeddedApacheTomcatSocketProperties();
+
+    /**
      * Embedded container AJP settings.
      */
     @NestedConfigurationProperty
@@ -48,7 +56,7 @@ public class CasEmbeddedApacheTomcatProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private CasEmbeddedApacheTomcatApachePortableRuntimeProperties apr = new CasEmbeddedApacheTomcatApachePortableRuntimeProperties();
-    
+
     /**
      * Http proxy configuration properties.
      * In the event that you decide to run CAS without any SSL configuration in the embedded Tomcat container and on a non-secure

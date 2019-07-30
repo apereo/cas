@@ -66,6 +66,7 @@ public class CasTomcatServletWebServerFactory extends TomcatServletWebServerFact
             setProtocol(Http11AprProtocol.class.getName());
             addContextLifecycleListeners(arpLifecycle);
 
+
             addConnectorCustomizers(c -> {
                 if (c.getPort() == getPort()) {
                     LOGGER.debug("Enabling APR on connector port [{}]", c.getPort());
