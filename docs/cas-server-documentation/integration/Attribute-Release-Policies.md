@@ -40,6 +40,9 @@ Supported parameters are the following:
 | `password`                | The password to use for authentication.
 | `service`                 | Service to which attributes should be released.
 
+The parameters above can either be added as segments of the path navigation (i.e `/releaseAttributes/USERNAME/PASSWORD/SERVICE`) or passed
+as a JSON object with POST call to `/releaseAttributes`
+
 ## Authentication Attributes
 
 During the authentication process, a number of attributes get captured and collected by CAS
