@@ -19,7 +19,7 @@ To see the relevant list of CAS properties, please [review this guide](../config
 
 ### How Do I Choose?
 
-There are is a wide range of ticket registries on the menu. The selection criteria is outlined below:
+There is a wide range of ticket registries on the menu. The selection criteria are outlined below:
 
 - Choose a technology that you are most familiar with and have the skills and patience to troubleshoot, tune and scale for the win. 
 - Choose a technology that does not force your CAS configuration to be tied to any individual servers/nodes in the cluster, as this will present auto-scaling issues and manual effort.
