@@ -138,14 +138,9 @@ The following options are supported:
 | `org.example.MyEncoder` | An implementation of `PasswordEncoder` of your own choosing.
 | `file:///path/to/script.groovy` | Path to a Groovy script charged with handling password encoding operations.
 
-In cases where you plan to design your own password encoder or write scripts to do so, you may also need to ensure the overlay has the following modules available at runtime:
-
-```xml
-<dependency>
-    <groupId>org.springframework.security</groupId>
-    <artifactId>spring-security-core</artifactId>
-</dependency>
-```
+In cases where you plan to design your own password encoder or write scripts to do so, 
+you may also need to ensure the overlay has access to `org.springframework.security:spring-security-core` at runtime. Make sure the artifact is marked as `provided`
+or `compileOnly` to avoid conflicts.
 
 If you need to design your own password encoding scheme where the type is specified as a fully qualified Java class name, the structure of the class would be
  similar to the following:
