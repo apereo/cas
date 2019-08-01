@@ -14,7 +14,17 @@ import java.io.Serializable;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public interface ExpirationPolicyBuilder<T extends Ticket> extends Serializable {
 
+    /**
+     * Method build ticket expiration policy.
+     *
+     * @return - the policy
+     */
     ExpirationPolicy buildTicketExpirationPolicy();
 
+    /**
+     * Returns the implementation class of the ticket.
+     *
+     * @return - class implementing the ticket
+     */
     Class<T> getTicketType();
 }
