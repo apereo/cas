@@ -52,6 +52,15 @@ public class MonitorProperties implements Serializable {
     private St st = new St();
 
     /**
+     * Options for monitoring the Load on a production server.
+     * Load averages are "system load averages" that show the running thread
+     * (task) demand on the system as an average number of running plus waiting
+     * threads. This measures demand, which can be greater than what the system
+     * is currently processing.
+     */
+    private Load load = new Load();
+
+    /**
      * Warning options that generally deal with cache-based resources, etc.
      */
     @NestedConfigurationProperty
@@ -108,6 +117,20 @@ public class MonitorProperties implements Serializable {
          */
         @NestedConfigurationProperty
         private MonitorWarningProperties warn = new MonitorWarningProperties(10000);
+    }
+
+    @RequiresModule(name = "cas-server-core-monitor", automated = true)
+    @Getter
+    @Setter
+    public static class Load implements Serializable {
+
+        private static final long serialVersionUID = 5504478373010611957L;
+
+        /**
+         * Warning settings for this monitor.
+         */
+        @NestedConfigurationProperty
+        private MonitorWarningProperties warn = new MonitorWarningProperties(25);
     }
 
     @RequiresModule(name = "cas-server-core-monitor", automated = true)
