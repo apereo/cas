@@ -29,6 +29,7 @@ public abstract class AbstractU2FDeviceRepositoryTests {
             registerDevices(deviceRepository);
             val devs = deviceRepository.getRegisteredDevices("casuser");
             verifyDevicesAvailable(devs);
+            deviceRepository.clean();
         } catch (final Exception e) {
             throw new AssertionError(e.getMessage(), e);
         }

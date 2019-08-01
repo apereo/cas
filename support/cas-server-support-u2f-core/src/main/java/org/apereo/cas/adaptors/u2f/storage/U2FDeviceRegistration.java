@@ -14,6 +14,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.Table;
+import java.io.Serializable;
 import java.time.LocalDate;
 
 /**
@@ -28,7 +29,8 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @AllArgsConstructor
-public class U2FDeviceRegistration {
+public class U2FDeviceRegistration implements Serializable {
+    private static final long serialVersionUID = 7258490070277856614L;
 
     @org.springframework.data.annotation.Id
     @Id
@@ -48,6 +50,6 @@ public class U2FDeviceRegistration {
     private LocalDate createdDate;
 
     public U2FDeviceRegistration() {
-        setId(System.currentTimeMillis());
+        setId(System.nanoTime());
     }
 }

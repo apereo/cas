@@ -38,9 +38,11 @@ public class OAuth20ProofKeyCodeExchangeAuthenticator extends OAuth20ClientIdCli
     }
 
     @Override
-    protected void validateCredentials(final UsernamePasswordCredentials credentials, final OAuthRegisteredService registeredService, final WebContext context) {
+    protected void validateCredentials(final UsernamePasswordCredentials credentials,
+                                       final OAuthRegisteredService registeredService, final WebContext context) {
         val codeVerifier = credentials.getPassword();
-        val code = context.getRequestParameter(OAuth20Constants.CODE);
+        val code = context.getRequestParameter(OAuth20Constants.CODE)
+            .map(String::valueOf).orElse(StringUtils.EMPTY);
 
         val token = this.ticketRegistry.getTicket(code, OAuthCode.class);
         if (token == null || token.isExpired()) {

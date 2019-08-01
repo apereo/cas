@@ -10,7 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.utils.URIBuilder;
-import org.pac4j.core.context.J2EContext;
+import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.action.EventFactorySupport;
@@ -30,14 +30,14 @@ import java.security.PublicKey;
 @RequiredArgsConstructor
 public class AccepttoMultifactorFetchChannelAction extends AbstractAction {
     private final CasConfigurationProperties casProperties;
-    private final SessionStore<J2EContext> sessionStore;
+    private final SessionStore<JEEContext> sessionStore;
     private final PublicKey apiPublicKey;
 
     @Override
     public Event doExecute(final RequestContext requestContext) throws Exception {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
-        val webContext = new J2EContext(request, response, this.sessionStore);
+        val webContext = new JEEContext(request, response, this.sessionStore);
 
         val channel = authenticateAndFetchChannel(requestContext);
         LOGGER.debug("Storing channel [{}] in session", channel);

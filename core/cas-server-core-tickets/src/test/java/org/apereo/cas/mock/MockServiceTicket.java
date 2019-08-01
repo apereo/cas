@@ -37,7 +37,7 @@ public class MockServiceTicket implements ServiceTicket, TicketState {
     private final ZonedDateTime creationTime;
 
     private final Service service;
-    private final TicketGrantingTicket ticketGrantingTicket;
+    private TicketGrantingTicket ticketGrantingTicket;
     private ExpirationPolicy expirationPolicy;
     private boolean expired;
 
@@ -59,11 +59,6 @@ public class MockServiceTicket implements ServiceTicket, TicketState {
     @Override
     public boolean isFromNewLogin() {
         return false;
-    }
-
-    @Override
-    public boolean isValidFor(final Service service) {
-        return this.service.equals(service);
     }
 
     @Override

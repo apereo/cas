@@ -71,17 +71,17 @@ public interface CasWebflowConstants {
     /**
      * TGT does not exist event ID={@value}.
      **/
-    String TRANSITION_ID_TGT_NOT_EXISTS = "notExists";
+    String TRANSITION_ID_TICKET_GRANTING_TICKET_NOT_EXISTS = "notExists";
 
     /**
      * TGT invalid event ID={@value}.
      **/
-    String TRANSITION_ID_TGT_INVALID = "invalid";
+    String TRANSITION_ID_TICKET_GRANTING_TICKET_INVALID = "invalid";
 
     /**
      * TGT valid event ID={@value}.
      **/
-    String TRANSITION_ID_TGT_VALID = "valid";
+    String TRANSITION_ID_TICKET_GRANTING_TICKET_VALID = "valid";
 
     /**
      * The transition state 'interruptSkipped'.

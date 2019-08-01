@@ -62,17 +62,29 @@ public class CasWebAppConfiguration implements WebMvcConfigurer {
     @Bean
     @Lazy
     public LocaleResolver localeResolver() {
-        return new CookieLocaleResolver() {
+        val localeProps = casProperties.getLocale();
+        val localeCookie = localeProps.getCookie();
+
+        val resolver = new CookieLocaleResolver() {
             @Override
             protected Locale determineDefaultLocale(final HttpServletRequest request) {
                 val locale = request.getLocale();
-                if (StringUtils.isBlank(casProperties.getLocale().getDefaultValue())
-                    || !locale.getLanguage().equals(casProperties.getLocale().getDefaultValue())) {
+                if (StringUtils.isBlank(localeProps.getDefaultValue())
+                    || !locale.getLanguage().equals(localeProps.getDefaultValue())) {
                     return locale;
                 }
-                return new Locale(casProperties.getLocale().getDefaultValue());
+                return new Locale(localeProps.getDefaultValue());
             }
         };
+        resolver.setCookieDomain(localeCookie.getDomain());
+        resolver.setCookiePath(StringUtils.defaultIfBlank(localeCookie.getPath(), CookieLocaleResolver.DEFAULT_COOKIE_PATH));
+        resolver.setCookieHttpOnly(localeCookie.isHttpOnly());
+        resolver.setCookieSecure(localeCookie.isSecure());
+        resolver.setCookieName(StringUtils.defaultIfBlank(localeCookie.getName(), CookieLocaleResolver.DEFAULT_COOKIE_NAME));
+        resolver.setCookieMaxAge(localeCookie.getMaxAge());
+        resolver.setLanguageTagCompliant(true);
+        resolver.setRejectInvalidCookies(true);
+        return resolver;
     }
 
     @Bean

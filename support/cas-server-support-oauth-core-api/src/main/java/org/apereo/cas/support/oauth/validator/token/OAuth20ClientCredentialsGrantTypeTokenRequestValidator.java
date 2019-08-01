@@ -5,7 +5,9 @@ import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 
-import org.pac4j.core.context.J2EContext;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
+import org.pac4j.core.context.JEEContext;
 
 /**
  * This is {@link OAuth20ClientCredentialsGrantTypeTokenRequestValidator}.
@@ -19,8 +21,9 @@ public class OAuth20ClientCredentialsGrantTypeTokenRequestValidator extends OAut
     }
 
     @Override
-    public boolean supports(final J2EContext context) {
-        return OAuth20Utils.isGrantType(context.getRequestParameter(OAuth20Constants.GRANT_TYPE), OAuth20GrantTypes.CLIENT_CREDENTIALS);
+    public boolean supports(final JEEContext context) {
+        val grantType = context.getRequestParameter(OAuth20Constants.GRANT_TYPE).map(String::valueOf).orElse(StringUtils.EMPTY);
+        return OAuth20Utils.isGrantType(grantType, OAuth20GrantTypes.CLIENT_CREDENTIALS);
     }
 
     @Override

@@ -13,7 +13,7 @@ import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.pac4j.core.context.J2EContext;
+import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.exception.CredentialsException;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -51,7 +51,7 @@ public class OAuth20ProofKeyCodeExchangeAuthenticatorTests extends BaseOAuth20Au
             new ArrayList<>(), "ABCD123",
             "plain", "clientid12345", new HashMap<>()));
         request.addParameter(OAuth20Constants.CODE, "CODE-1234567890");
-        val ctx = new J2EContext(request, new MockHttpServletResponse());
+        val ctx = new JEEContext(request, new MockHttpServletResponse());
         authenticator.validate(credentials, ctx);
         assertNotNull(credentials.getUserProfile());
         assertEquals("client", credentials.getUserProfile().getId());
@@ -69,7 +69,7 @@ public class OAuth20ProofKeyCodeExchangeAuthenticatorTests extends BaseOAuth20Au
             new ArrayList<>(), hash, "s256", "clientid12345", new HashMap<>());
         ticketRegistry.addTicket(ticket);
         request.addParameter(OAuth20Constants.CODE, ticket.getId());
-        val ctx = new J2EContext(request, new MockHttpServletResponse());
+        val ctx = new JEEContext(request, new MockHttpServletResponse());
         authenticator.validate(credentials, ctx);
         assertNotNull(credentials.getUserProfile());
         assertEquals("client", credentials.getUserProfile().getId());
@@ -87,7 +87,7 @@ public class OAuth20ProofKeyCodeExchangeAuthenticatorTests extends BaseOAuth20Au
             "something-else", "s256", "clientid12345", new HashMap<>());
         ticketRegistry.addTicket(ticket);
         request.addParameter(OAuth20Constants.CODE, ticket.getId());
-        val ctx = new J2EContext(request, new MockHttpServletResponse());
+        val ctx = new JEEContext(request, new MockHttpServletResponse());
         assertThrows(CredentialsException.class, () -> authenticator.validate(credentials, ctx));
     }
 }

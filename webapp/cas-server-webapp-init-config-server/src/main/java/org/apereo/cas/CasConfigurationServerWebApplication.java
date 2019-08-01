@@ -24,6 +24,7 @@ import org.springframework.boot.autoconfigure.jersey.JerseyAutoConfiguration;
 import org.springframework.boot.autoconfigure.jmx.JmxAutoConfiguration;
 import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -31,6 +32,7 @@ import org.springframework.cloud.config.server.EnableConfigServer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.event.EventListener;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
 /**
@@ -94,12 +96,13 @@ public class CasConfigurationServerWebApplication {
     @Bean
     public WebSecurityConfigurerAdapter casConfigurationServerWebSecurityConfigurerAdapter(final ServerProperties serverProperties) {
         return new WebSecurityConfigurerAdapter() {
+
             @Override
             protected void configure(final HttpSecurity http) throws Exception {
-                super.configure(http);
                 val path = serverProperties.getServlet().getContextPath();
                 http.authorizeRequests().antMatchers(path + "/decrypt/**").authenticated().and().csrf().disable();
                 http.authorizeRequests().antMatchers(path + "/encrypt/**").authenticated().and().csrf().disable();
+                super.configure(http);
             }
         };
     }

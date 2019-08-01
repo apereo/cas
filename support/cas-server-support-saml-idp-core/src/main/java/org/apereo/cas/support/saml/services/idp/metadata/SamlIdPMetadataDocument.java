@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.services.idp.metadata;
 
+import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerator;
 import org.apereo.cas.util.EncodingUtils;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -7,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
@@ -117,7 +119,8 @@ public class SamlIdPMetadataDocument {
     @JsonIgnore
     public String getSigningCertificateDecoded() {
         if (EncodingUtils.isBase64(signingCertificate)) {
-            return EncodingUtils.decodeBase64ToString(signingCertificate);
+            val cert = SamlIdPMetadataGenerator.cleanCertificate(signingCertificate);
+            return EncodingUtils.decodeBase64ToString(cert);
         }
         return signingCertificate;
     }
@@ -130,7 +133,8 @@ public class SamlIdPMetadataDocument {
     @JsonIgnore
     public String getEncryptionCertificateDecoded() {
         if (EncodingUtils.isBase64(encryptionCertificate)) {
-            return EncodingUtils.decodeBase64ToString(encryptionCertificate);
+            val cert = SamlIdPMetadataGenerator.cleanCertificate(encryptionCertificate);
+            return EncodingUtils.decodeBase64ToString(cert);
         }
         return encryptionCertificate;
     }
