@@ -10,6 +10,7 @@ import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPri
 import org.apereo.cas.configuration.model.core.config.cloud.SpringCloudConfigurationProperties;
 import org.apereo.cas.configuration.model.core.config.standalone.StandaloneConfigurationProperties;
 import org.apereo.cas.configuration.model.core.events.EventsProperties;
+import org.apereo.cas.configuration.model.core.logging.LoggingProperties;
 import org.apereo.cas.configuration.model.core.logout.LogoutProperties;
 import org.apereo.cas.configuration.model.core.monitor.MonitorProperties;
 import org.apereo.cas.configuration.model.core.rest.RestProperties;
@@ -66,6 +67,12 @@ public class CasConfigurationProperties implements Serializable {
 
     private static final long serialVersionUID = -8620267783496071683L;
 
+    /**
+     * Logging functionality.
+     */
+    @NestedConfigurationProperty
+    private LoggingProperties logging = new LoggingProperties();
+    
     /**
      * Interrupt/notification functionality.
      */

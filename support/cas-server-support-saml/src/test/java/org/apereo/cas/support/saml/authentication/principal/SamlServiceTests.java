@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml.authentication.principal;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.principal.DefaultServiceMatchingStrategy;
 import org.apereo.cas.authentication.principal.Response;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.config.SamlConfiguration;
@@ -8,6 +9,7 @@ import org.apereo.cas.config.authentication.support.SamlAuthenticationEventExecu
 import org.apereo.cas.config.authentication.support.SamlServiceFactoryConfiguration;
 import org.apereo.cas.services.DefaultServicesManager;
 import org.apereo.cas.services.ServiceRegistry;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.AbstractOpenSamlTests;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.web.support.DefaultArgumentExtractor;
@@ -46,7 +48,6 @@ import static org.mockito.Mockito.*;
 public class SamlServiceTests extends AbstractOpenSamlTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "samlService.json");
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
-
 
     @Autowired
     @Qualifier("samlServiceFactory")
@@ -111,7 +112,8 @@ public class SamlServiceTests extends AbstractOpenSamlTests {
 
         val service = new DefaultArgumentExtractor(samlServiceFactory).extractService(request);
         val impl = new DefaultArgumentExtractor(samlServiceFactory).extractService(request);
-        assertTrue(impl.matches(service));
+        val manager = mock(ServicesManager.class);
+        assertTrue(new DefaultServiceMatchingStrategy(manager).matches(impl, service));
     }
 
     @Test
@@ -123,7 +125,8 @@ public class SamlServiceTests extends AbstractOpenSamlTests {
         val request2 = new MockHttpServletRequest();
         request2.setParameter(SamlProtocolConstants.CONST_PARAM_TARGET, "https://some.SERVICE.edu");
         val service = new DefaultArgumentExtractor(samlServiceFactory).extractService(request2);
-        assertFalse(impl.matches(service));
+        val manager = mock(ServicesManager.class);
+        assertFalse(new DefaultServiceMatchingStrategy(manager).matches(impl, service));
     }
 
     @Test

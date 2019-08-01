@@ -120,6 +120,7 @@ import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.credentials.TokenCredentials;
 import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.pac4j.core.credentials.extractor.BearerAuthExtractor;
+import org.pac4j.core.http.adapter.JEEHttpActionAdapter;
 import org.pac4j.http.client.direct.DirectFormClient;
 import org.pac4j.http.client.direct.HeaderClient;
 import org.pac4j.springframework.web.SecurityInterceptor;
@@ -334,20 +335,28 @@ public class OidcConfiguration implements WebMvcConfigurer {
             Authenticators.CAS_OAUTH_CLIENT_ACCESS_TOKEN_AUTHN,
             Authenticators.CAS_OAUTH_CLIENT_DIRECT_FORM,
             Authenticators.CAS_OAUTH_CLIENT_USER_FORM);
-        return new SecurityInterceptor(oauthSecConfig.getIfAvailable(), clients);
+        val interceptor = new SecurityInterceptor(oauthSecConfig.getIfAvailable(), clients, JEEHttpActionAdapter.INSTANCE);
+        interceptor.setAuthorizers(StringUtils.EMPTY);
+        return interceptor;
     }
 
     @Bean
     public HandlerInterceptorAdapter requiresAuthenticationClientConfigurationInterceptor() {
         val clients = String.join(",", OidcConstants.CAS_OAUTH_CLIENT_CONFIG_ACCESS_TOKEN_AUTHN);
-        return new SecurityInterceptor(oauthSecConfig.getIfAvailable(), clients);
+        val interceptor = new SecurityInterceptor(oauthSecConfig.getIfAvailable(), clients, JEEHttpActionAdapter.INSTANCE);
+        interceptor.setAuthorizers(StringUtils.EMPTY);
+        return interceptor;
     }
 
     @Bean
     public HandlerInterceptorAdapter requiresAuthenticationAuthorizeInterceptor() {
-        val name = Objects.requireNonNull(oauthSecConfig.getIfAvailable()).getClients().findClient(CasClient.class).getName();
-        return new OidcSecurityInterceptor(oauthSecConfig.getIfAvailable(), name, oidcAuthorizationRequestSupport(),
+        val name = oauthSecConfig.getObject().getClients()
+            .findClient(CasClient.class).get().getName();
+        val interceptor = new OidcSecurityInterceptor(oauthSecConfig.getIfAvailable(), name,
+            oidcAuthorizationRequestSupport(),
             oauthDistributedSessionStore.getIfAvailable());
+
+        return interceptor;
     }
 
     @Bean
@@ -383,12 +392,14 @@ public class OidcConfiguration implements WebMvcConfigurer {
     }
 
     @Bean
+    @RefreshScope
     public OidcAttributeToScopeClaimMapper oidcAttributeToScopeClaimMapper() {
         val mappings = casProperties.getAuthn().getOidc().getClaimsMap();
         return new DefaultOidcAttributeToScopeClaimMapper(mappings);
     }
 
     @Bean
+    @RefreshScope
     public OAuth20ProfileScopeToAttributesFilter profileScopeToAttributesFilter() {
         return new OidcProfileScopeToAttributesFilter(oidcPrincipalFactory(),
             casProperties, userDefinedScopeBasedAttributeReleasePolicies());

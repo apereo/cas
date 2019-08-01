@@ -15,9 +15,10 @@ import org.apereo.cas.ticket.refreshtoken.RefreshToken;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
-import org.pac4j.core.context.J2EContext;
+import org.pac4j.core.context.JEEContext;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
@@ -49,10 +50,10 @@ public class OidcImplicitIdTokenAndTokenAuthorizationResponseBuilder extends OAu
                                                         final String redirectUri, final AccessToken accessToken,
                                                         final List<NameValuePair> params,
                                                         final RefreshToken refreshToken,
-                                                        final J2EContext context) throws Exception {
+                                                        final JEEContext context) throws Exception {
 
-        val idToken = this.idTokenGenerator.generate(context.getRequest(),
-            context.getResponse(), accessToken, idTokenExpirationPolicy.buildTicketExpirationPolicy().getTimeToLive(),
+        val idToken = this.idTokenGenerator.generate(context.getNativeRequest(),
+            context.getNativeResponse(), accessToken, idTokenExpirationPolicy.buildTicketExpirationPolicy().getTimeToLive(),
             OAuth20ResponseTypes.IDTOKEN_TOKEN, holder.getRegisteredService());
         LOGGER.debug("Generated id token [{}]", idToken);
         params.add(new BasicNameValuePair(OidcConstants.ID_TOKEN, idToken));
@@ -60,8 +61,9 @@ public class OidcImplicitIdTokenAndTokenAuthorizationResponseBuilder extends OAu
     }
 
     @Override
-    public boolean supports(final J2EContext context) {
-        val responseType = context.getRequestParameter(OAuth20Constants.RESPONSE_TYPE);
+    public boolean supports(final JEEContext context) {
+        val responseType = context.getRequestParameter(OAuth20Constants.RESPONSE_TYPE)
+            .map(String::valueOf).orElse(StringUtils.EMPTY);
         return OAuth20Utils.isResponseType(responseType, OAuth20ResponseTypes.IDTOKEN_TOKEN);
     }
 }

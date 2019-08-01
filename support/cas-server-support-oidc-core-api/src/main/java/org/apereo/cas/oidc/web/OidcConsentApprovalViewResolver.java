@@ -9,7 +9,7 @@ import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.views.OAuth20ConsentApprovalViewResolver;
 
 import lombok.val;
-import org.pac4j.core.context.J2EContext;
+import org.pac4j.core.context.JEEContext;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -27,7 +27,7 @@ public class OidcConsentApprovalViewResolver extends OAuth20ConsentApprovalViewR
     }
 
     @Override
-    protected boolean isConsentApprovalBypassed(final J2EContext context, final OAuthRegisteredService service) {
+    protected boolean isConsentApprovalBypassed(final JEEContext context, final OAuthRegisteredService service) {
         if (service instanceof OidcRegisteredService) {
             val url = context.getFullRequestURL();
             val prompts = OidcAuthorizationRequestSupport.getOidcPromptFromAuthorizationRequest(url);
@@ -45,7 +45,7 @@ public class OidcConsentApprovalViewResolver extends OAuth20ConsentApprovalViewR
 
     @Override
     protected void prepareApprovalViewModel(final Map<String, Object> model,
-                                            final J2EContext ctx,
+                                            final JEEContext ctx,
                                             final OAuthRegisteredService svc) throws Exception {
         super.prepareApprovalViewModel(model, ctx, svc);
         if (svc instanceof OidcRegisteredService) {

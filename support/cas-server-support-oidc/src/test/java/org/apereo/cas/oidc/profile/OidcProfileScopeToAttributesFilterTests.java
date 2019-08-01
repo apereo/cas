@@ -10,7 +10,7 @@ import org.apereo.cas.util.CollectionUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.pac4j.core.context.J2EContext;
+import org.pac4j.core.context.JEEContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -30,7 +30,7 @@ public class OidcProfileScopeToAttributesFilterTests extends AbstractOidcTests {
     public void verifyOperationFilterWithoutOpenId() {
         val service = getOidcRegisteredService();
         val accessToken = mock(AccessToken.class);
-        val context = new J2EContext(new MockHttpServletRequest(), new MockHttpServletResponse());
+        val context = new JEEContext(new MockHttpServletRequest(), new MockHttpServletResponse());
         val original = CoreAuthenticationTestUtils.getPrincipal();
         val principal = profileScopeToAttributesFilter.filter(CoreAuthenticationTestUtils.getService(),
             original, service, context, accessToken);
@@ -53,7 +53,7 @@ public class OidcProfileScopeToAttributesFilterTests extends AbstractOidcTests {
         service.getScopes().add(OidcConstants.StandardScopes.ADDRESS.getScope());
         service.getScopes().add(OidcConstants.StandardScopes.PHONE.getScope());
         service.getScopes().add(OidcConstants.StandardScopes.PROFILE.getScope());
-        val context = new J2EContext(new MockHttpServletRequest(), new MockHttpServletResponse());
+        val context = new JEEContext(new MockHttpServletRequest(), new MockHttpServletResponse());
         val original = CoreAuthenticationTestUtils.getPrincipal(
             CollectionUtils.wrap("email", "casuser@example.org", "address", "1234 Main Street",
                 "phone", "123445677", "name", "CAS", "gender", "male"));

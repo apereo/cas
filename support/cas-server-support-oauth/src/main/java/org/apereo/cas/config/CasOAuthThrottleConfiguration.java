@@ -9,15 +9,18 @@ import org.apereo.cas.throttle.AuthenticationThrottlingExecutionPlan;
 import org.apereo.cas.throttle.AuthenticationThrottlingExecutionPlanConfigurer;
 
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.client.DirectClient;
 import org.pac4j.core.config.Config;
+import org.pac4j.core.http.adapter.JEEHttpActionAdapter;
 import org.pac4j.springframework.web.SecurityInterceptor;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -51,7 +54,10 @@ public class CasOAuthThrottleConfiguration implements AuthenticationThrottlingEx
     @ConditionalOnMissingBean(name = "requiresAuthenticationAuthorizeInterceptor")
     @Bean
     public SecurityInterceptor requiresAuthenticationAuthorizeInterceptor() {
-        return new SecurityInterceptor(oauthSecConfig.getIfAvailable(), Authenticators.CAS_OAUTH_CLIENT);
+        val interceptor = new SecurityInterceptor(oauthSecConfig.getIfAvailable(),
+            Authenticators.CAS_OAUTH_CLIENT, JEEHttpActionAdapter.INSTANCE);
+        interceptor.setAuthorizers(StringUtils.EMPTY);
+        return interceptor;
     }
 
     @ConditionalOnMissingBean(name = "requiresAuthenticationAccessTokenInterceptor")
@@ -64,11 +70,14 @@ public class CasOAuthThrottleConfiguration implements AuthenticationThrottlingEx
             .filter(client -> client instanceof DirectClient)
             .map(Client::getName)
             .collect(Collectors.joining(","));
-        return new SecurityInterceptor(oauthSecConfig.getIfAvailable(), clients);
+        val interceptor = new SecurityInterceptor(oauthSecConfig.getIfAvailable(), clients, JEEHttpActionAdapter.INSTANCE);
+        interceptor.setAuthorizers(StringUtils.EMPTY);
+        return interceptor;
     }
 
     @ConditionalOnMissingBean(name = "oauthHandlerInterceptorAdapter")
     @Bean
+    @RefreshScope
     public HandlerInterceptor oauthHandlerInterceptorAdapter() {
         return new OAuth20HandlerInterceptorAdapter(
             requiresAuthenticationAccessTokenInterceptor(),

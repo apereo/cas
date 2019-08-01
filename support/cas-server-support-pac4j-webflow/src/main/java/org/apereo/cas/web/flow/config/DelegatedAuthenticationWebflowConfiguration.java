@@ -19,8 +19,8 @@ import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
+import org.apereo.cas.web.flow.DelegatedAuthenticationClientLogoutAction;
 import org.apereo.cas.web.flow.DelegatedAuthenticationErrorViewResolver;
-import org.apereo.cas.web.flow.DelegatedAuthenticationSAML2ClientLogoutAction;
 import org.apereo.cas.web.flow.DelegatedAuthenticationWebflowConfigurer;
 import org.apereo.cas.web.flow.DelegatedClientAuthenticationAction;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
@@ -147,12 +147,12 @@ public class DelegatedAuthenticationWebflowConfiguration {
         return new DelegatedAuthenticationErrorViewResolver(conventionErrorViewResolver.getIfAvailable());
     }
 
-    @ConditionalOnMissingBean(name = "saml2ClientLogoutAction")
+    @ConditionalOnMissingBean(name = "delegatedAuthenticationClientLogoutAction")
     @Bean
     @Lazy
     @RefreshScope
-    public Action saml2ClientLogoutAction() {
-        return new DelegatedAuthenticationSAML2ClientLogoutAction(builtClients.getIfAvailable(),
+    public Action delegatedAuthenticationClientLogoutAction() {
+        return new DelegatedAuthenticationClientLogoutAction(builtClients.getIfAvailable(),
             delegatedClientDistributedSessionStore.getIfAvailable());
     }
 
@@ -180,7 +180,7 @@ public class DelegatedAuthenticationWebflowConfiguration {
 
     @ConditionalOnMissingBean(name = "delegatedAuthenticationWebflowConfigurer")
     @Bean
-    @DependsOn("defaultWebflowConfigurer")
+    @DependsOn({"defaultWebflowConfigurer", "defaultLogoutWebflowConfigurer"})
     public CasWebflowConfigurer delegatedAuthenticationWebflowConfigurer() {
         return new DelegatedAuthenticationWebflowConfigurer(
             flowBuilderServices.getIfAvailable(),

@@ -9,7 +9,7 @@ import org.apereo.cas.util.HttpRequestUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.pac4j.core.context.J2EContext;
+import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.credentials.extractor.BasicAuthExtractor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,11 +42,12 @@ public class OidcRevocationEndpointController extends BaseOAuth20Controller {
                                                         final HttpServletResponse response) {
         try {
             val authExtractor = new BasicAuthExtractor();
-            val credentials = authExtractor.extract(new J2EContext(request, response, getOAuthConfigurationContext().getSessionStore()));
-            if (credentials == null) {
+            val credentialsResult = authExtractor.extract(new JEEContext(request, response, getOAuthConfigurationContext().getSessionStore()));
+            if (credentialsResult.isEmpty()) {
                 throw new IllegalArgumentException("No credentials are provided to verify revocation of the token");
             }
 
+            val credentials = credentialsResult.get();
             val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(
                 getOAuthConfigurationContext().getServicesManager(),
                 credentials.getUsername());

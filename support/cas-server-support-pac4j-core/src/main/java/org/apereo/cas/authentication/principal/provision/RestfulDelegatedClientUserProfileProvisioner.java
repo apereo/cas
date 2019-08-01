@@ -9,7 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.http.HttpResponse;
 import org.pac4j.core.client.BaseClient;
-import org.pac4j.core.profile.UserProfile;
+import org.pac4j.core.profile.CommonProfile;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 
@@ -27,7 +27,7 @@ public class RestfulDelegatedClientUserProfileProvisioner extends BaseDelegatedC
     private final RestEndpointProperties restProperties;
 
     @Override
-    public void execute(final Principal principal, final UserProfile profile, final BaseClient client) {
+    public void execute(final Principal principal, final CommonProfile profile, final BaseClient client) {
         HttpResponse response = null;
         try {
             val headers = new HashMap<String, Object>();

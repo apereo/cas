@@ -37,4 +37,10 @@ public class Pac4jBaseClientProperties implements Serializable {
      * The attribute to use as the principal identifier built during and upon a successful authentication attempt.
      */
     private String principalAttributeId;
+
+    /**
+     * Whether the client/external identity provider should be considered
+     * active and enabled for integration purposes.
+     */
+    private boolean enabled = true;
 }

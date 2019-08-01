@@ -55,6 +55,17 @@ should support the duration syntax for full clarity on unit of measure:
 The native numeric syntax is still supported though you will have to refer to the docs
 in each case to learn the exact unit of measure.
 
+## Cookie Settings
+
+```properties
+# ${configurationKey}.path=
+# ${configurationKey}.maxAge=-1
+# ${configurationKey}.domain=
+# ${configurationKey}.name=
+# ${configurationKey}.secure=true
+# ${configurationKey}.httpOnly=true
+```                               
+
 ## Authentication Throttling
 
 Certain functionality in CAS, such as [OAuth](../installation/OAuth-OpenId-Authentication.html) 
@@ -1069,6 +1080,7 @@ to an external provider such as Yahoo, given the provider's *configuration key*:
 # ${configurationKey}.clientName=My Provider
 # ${configurationKey}.autoRedirect=false
 # ${configurationKey}.principalAttributeId=
+# ${configurationKey}.enabled=true
 ```
 
 ### Delegated Authentication OpenID Connect Settings
@@ -1086,6 +1098,10 @@ to an external OpenID Connect provider such as Azure AD, given the provider's *c
 # ${configurationKey}.responseMode=
 # ${configurationKey}.responseType=
 # ${configurationKey}.customParams.param1=value1
+# ${configurationKey}.readTimeout=PT5S
+# ${configurationKey}.connectTimeout=PT5S
+# ${configurationKey}.expireSessionWithToken=false
+# ${configurationKey}.tokenExpirationAdvance=0
 ```
 
 ## LDAP Connection Settings
