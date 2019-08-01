@@ -43,10 +43,10 @@ import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.client.Clients;
-import org.pac4j.core.context.J2EContext;
+import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.Pac4jConstants;
 import org.pac4j.core.context.WebContext;
-import org.pac4j.core.context.session.J2ESessionStore;
+import org.pac4j.core.context.session.JEESessionStore;
 import org.pac4j.oauth.client.FacebookClient;
 import org.pac4j.oauth.client.TwitterClient;
 import org.pac4j.oauth.credentials.OAuth20Credentials;
@@ -64,6 +64,7 @@ import org.springframework.webflow.test.MockRequestContext;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -135,7 +136,7 @@ public class DelegatedClientAuthenticationActionTests {
             new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()),
             new DefaultArgumentExtractor(new WebApplicationServiceFactory()));
 
-        val webContext = new J2EContext(mockRequest, new MockHttpServletResponse(), new J2ESessionStore());
+        val webContext = new JEEContext(mockRequest, new MockHttpServletResponse(), new JEESessionStore());
         val ticket = manager.store(webContext, facebookClient);
 
         mockRequest.addParameter(DelegatedClientWebflowManager.PARAMETER_CLIENT_ID, ticket.getId());
@@ -207,8 +208,8 @@ public class DelegatedClientAuthenticationActionTests {
 
         val facebookClient = new FacebookClient() {
             @Override
-            protected OAuth20Credentials retrieveCredentials(final WebContext context) {
-                return new OAuth20Credentials("fakeVerifier");
+            protected Optional<OAuth20Credentials> retrieveCredentials(final WebContext context) {
+                return Optional.of(new OAuth20Credentials("fakeVerifier"));
             }
         };
         facebookClient.setName(FacebookClient.class.getSimpleName());
@@ -242,8 +243,8 @@ public class DelegatedClientAuthenticationActionTests {
 
         val facebookClient = new FacebookClient() {
             @Override
-            protected OAuth20Credentials retrieveCredentials(final WebContext context) {
-                return new OAuth20Credentials("fakeVerifier");
+            protected Optional<OAuth20Credentials> retrieveCredentials(final WebContext context) {
+                return Optional.of(new OAuth20Credentials("fakeVerifier"));
             }
         };
         facebookClient.setName(FacebookClient.class.getSimpleName());
@@ -311,7 +312,7 @@ public class DelegatedClientAuthenticationActionTests {
             new CasConfigurationProperties(),
             new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()),
             new DefaultArgumentExtractor(new WebApplicationServiceFactory()));
-        val webContext = new J2EContext(mockRequest, new MockHttpServletResponse(), new J2ESessionStore());
+        val webContext = new JEEContext(mockRequest, new MockHttpServletResponse(), new JEESessionStore());
         val ticket = manager.store(webContext, client);
 
         mockRequest.addParameter(DelegatedClientWebflowManager.PARAMETER_CLIENT_ID, ticket.getId());
@@ -332,6 +333,6 @@ public class DelegatedClientAuthenticationActionTests {
             new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()),
             mock(CentralAuthenticationService.class),
             SingleSignOnParticipationStrategy.alwaysParticipating(),
-            new J2ESessionStore());
+            new JEESessionStore());
     }
 }

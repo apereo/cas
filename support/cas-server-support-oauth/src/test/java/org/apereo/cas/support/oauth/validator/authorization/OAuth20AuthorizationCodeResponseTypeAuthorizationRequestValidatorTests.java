@@ -12,7 +12,7 @@ import org.apereo.cas.util.CollectionUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.pac4j.core.context.J2EContext;
+import org.pac4j.core.context.JEEContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -41,31 +41,31 @@ public class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidatorTe
 
         when(serviceManager.getAllServices()).thenReturn((Collection) CollectionUtils.toCollection(service));
         val v = new OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator(serviceManager, new WebApplicationServiceFactory(),
-                new RegisteredServiceAccessStrategyAuditableEnforcer());
+            new RegisteredServiceAccessStrategyAuditableEnforcer());
 
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
-        assertFalse(v.validate(new J2EContext(request, response)));
+        assertFalse(v.validate(new JEEContext(request, response)));
 
         request.addParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.getType());
-        assertFalse(v.validate(new J2EContext(request, response)));
+        assertFalse(v.validate(new JEEContext(request, response)));
 
         request.addParameter(OAuth20Constants.CLIENT_ID, "client");
-        assertFalse(v.validate(new J2EContext(request, response)));
+        assertFalse(v.validate(new JEEContext(request, response)));
 
         request.addParameter(OAuth20Constants.REDIRECT_URI, service.getServiceId());
-        assertFalse(v.validate(new J2EContext(request, response)));
+        assertFalse(v.validate(new JEEContext(request, response)));
 
         request.addParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.CODE.getType());
         service.setSupportedResponseTypes(new LinkedHashSet<>());
-        assertTrue(v.validate(new J2EContext(request, response)));
+        assertTrue(v.validate(new JEEContext(request, response)));
 
         service.setSupportedResponseTypes(CollectionUtils.wrapHashSet(OAuth20ResponseTypes.CODE.getType()));
-        assertTrue(v.validate(new J2EContext(request, response)));
+        assertTrue(v.validate(new JEEContext(request, response)));
 
         service.setSupportedResponseTypes(CollectionUtils.wrapHashSet(OAuth20ResponseTypes.TOKEN.getType()));
-        assertFalse(v.validate(new J2EContext(request, response)));
+        assertFalse(v.validate(new JEEContext(request, response)));
 
-        assertTrue(v.supports(new J2EContext(request, response)));
+        assertTrue(v.supports(new JEEContext(request, response)));
     }
 }

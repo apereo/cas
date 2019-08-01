@@ -13,6 +13,7 @@ import org.apereo.cas.ticket.OAuthToken;
 import org.apereo.cas.util.CollectionUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.NonNull;
 import lombok.SneakyThrows;
@@ -21,7 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.pac4j.core.context.J2EContext;
+import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.profile.CommonProfile;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.ModelAndView;
@@ -51,7 +52,9 @@ import java.util.stream.Stream;
 @Slf4j
 @UtilityClass
 public class OAuth20Utils {
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+    private static final ObjectMapper MAPPER = new ObjectMapper()
+        .findAndRegisterModules()
+        .configure(SerializationFeature.WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED, true);
 
     /**
      * Write to the output this error.
@@ -119,7 +122,8 @@ public class OAuth20Utils {
      * @return the attributes
      */
     public static Map<String, Object> getRequestParameters(final Collection<String> attributes, final HttpServletRequest context) {
-        return attributes.stream()
+        return attributes
+            .stream()
             .filter(a -> StringUtils.isNotBlank(context.getParameter(a)))
             .map(m -> {
                 val values = context.getParameterValues(m);
@@ -138,8 +142,8 @@ public class OAuth20Utils {
      * @param context the context
      * @return the requested scopes
      */
-    public static Collection<String> getRequestedScopes(final J2EContext context) {
-        return getRequestedScopes(context.getRequest());
+    public static Collection<String> getRequestedScopes(final JEEContext context) {
+        return getRequestedScopes(context.getNativeRequest());
     }
 
     /**
@@ -213,8 +217,9 @@ public class OAuth20Utils {
      * @param context the context
      * @return the response type
      */
-    public static OAuth20ResponseTypes getResponseType(final J2EContext context) {
-        val responseType = context.getRequestParameter(OAuth20Constants.RESPONSE_TYPE);
+    public static OAuth20ResponseTypes getResponseType(final JEEContext context) {
+        val responseType = context.getRequestParameter(OAuth20Constants.RESPONSE_TYPE)
+            .map(String::valueOf).orElse(StringUtils.EMPTY);
         val type = Arrays.stream(OAuth20ResponseTypes.values())
             .filter(t -> t.getType().equalsIgnoreCase(responseType))
             .findFirst()
@@ -229,8 +234,9 @@ public class OAuth20Utils {
      * @param context the context
      * @return the response type
      */
-    public static OAuth20ResponseModeTypes getResponseModeType(final J2EContext context) {
-        val responseType = context.getRequestParameter(OAuth20Constants.RESPONSE_MODE);
+    public static OAuth20ResponseModeTypes getResponseModeType(final JEEContext context) {
+        val responseType = context.getRequestParameter(OAuth20Constants.RESPONSE_MODE)
+            .map(String::valueOf).orElse(StringUtils.EMPTY);
         val type = Arrays.stream(OAuth20ResponseModeTypes.values())
             .filter(t -> t.getType().equalsIgnoreCase(responseType))
             .findFirst()
@@ -279,8 +285,9 @@ public class OAuth20Utils {
      * @param registeredService the registered service
      * @return the boolean
      */
-    public static boolean isAuthorizedResponseTypeForService(final J2EContext context, final OAuthRegisteredService registeredService) {
-        val responseType = context.getRequestParameter(OAuth20Constants.RESPONSE_TYPE);
+    public static boolean isAuthorizedResponseTypeForService(final JEEContext context, final OAuthRegisteredService registeredService) {
+        val responseType = context.getRequestParameter(OAuth20Constants.RESPONSE_TYPE).map(String::valueOf).orElse(StringUtils.EMPTY);
+
         if (registeredService.getSupportedResponseTypes() != null && !registeredService.getSupportedResponseTypes().isEmpty()) {
             LOGGER.debug("Checking response type [{}] against supported response types [{}]", responseType, registeredService.getSupportedResponseTypes());
             return registeredService.getSupportedResponseTypes().stream().anyMatch(s -> s.equalsIgnoreCase(responseType));
@@ -319,9 +326,9 @@ public class OAuth20Utils {
      * @param registeredService the registered service
      * @return true/false
      */
-    public static boolean isAuthorizedGrantTypeForService(final J2EContext context, final OAuthRegisteredService registeredService) {
+    public static boolean isAuthorizedGrantTypeForService(final JEEContext context, final OAuthRegisteredService registeredService) {
         return isAuthorizedGrantTypeForService(
-            context.getRequestParameter(OAuth20Constants.GRANT_TYPE),
+            context.getRequestParameter(OAuth20Constants.GRANT_TYPE).map(String::valueOf).orElse(StringUtils.EMPTY),
             registeredService);
     }
 
@@ -331,8 +338,8 @@ public class OAuth20Utils {
      * @param context the context
      * @return the set
      */
-    public static Set<String> parseRequestScopes(final J2EContext context) {
-        return parseRequestScopes(context.getRequest());
+    public static Set<String> parseRequestScopes(final JEEContext context) {
+        return parseRequestScopes(context.getNativeRequest());
     }
 
     /**
@@ -374,6 +381,7 @@ public class OAuth20Utils {
      * @return whether the callback url is valid
      */
     public static boolean checkCallbackValid(final @NonNull RegisteredService registeredService, final String redirectUri) {
+
         val registeredServiceId = registeredService.getServiceId();
         LOGGER.debug("Found: [{}] vs redirectUri: [{}]", registeredService, redirectUri);
         if (!redirectUri.matches(registeredServiceId)) {
@@ -443,8 +451,8 @@ public class OAuth20Utils {
      * @return the map
      * @throws Exception the exception
      */
-    public static Map<String, Map<String, Object>> parseRequestClaims(final J2EContext context) throws Exception {
-        val claims = context.getRequestParameter(OAuth20Constants.CLAIMS);
+    public static Map<String, Map<String, Object>> parseRequestClaims(final JEEContext context) throws Exception {
+        val claims = context.getRequestParameter(OAuth20Constants.CLAIMS).map(String::valueOf).orElse(StringUtils.EMPTY);
         if (StringUtils.isBlank(claims)) {
             return new HashMap<>();
         }
@@ -468,7 +476,7 @@ public class OAuth20Utils {
      * @return the set
      * @throws Exception the exception
      */
-    public static Set<String> parseUserInfoRequestClaims(final J2EContext context) throws Exception {
+    public static Set<String> parseUserInfoRequestClaims(final JEEContext context) throws Exception {
         val requestedClaims = parseRequestClaims(context);
         return requestedClaims.getOrDefault("userinfo", new HashMap<>()).keySet();
     }

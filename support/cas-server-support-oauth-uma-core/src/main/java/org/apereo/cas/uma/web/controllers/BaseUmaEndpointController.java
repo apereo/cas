@@ -11,7 +11,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.pac4j.core.context.J2EContext;
+import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.core.profile.ProfileManager;
 import org.springframework.http.HttpStatus;
@@ -47,12 +47,13 @@ public abstract class BaseUmaEndpointController {
     protected CommonProfile getAuthenticatedProfile(final HttpServletRequest request,
                                                     final HttpServletResponse response,
                                                     final String requiredPermission) {
-        val context = new J2EContext(request, response, getUmaConfigurationContext().getSessionStore());
-        val manager = new ProfileManager<>(context, context.getSessionStore());
-        val profile = manager.get(true).orElse(null);
-        if (profile == null) {
+        val context = new JEEContext(request, response, getUmaConfigurationContext().getSessionStore());
+        val manager = new ProfileManager<CommonProfile>(context, context.getSessionStore());
+        val profileResult = manager.get(true);
+        if (profileResult.isEmpty()) {
             throw new AuthenticationException("Unable to locate authenticated profile");
         }
+        val profile = profileResult.get();
         if (!profile.getPermissions().contains(requiredPermission)) {
             throw new AuthenticationException("Authenticated profile does not carry the UMA protection scope");
         }

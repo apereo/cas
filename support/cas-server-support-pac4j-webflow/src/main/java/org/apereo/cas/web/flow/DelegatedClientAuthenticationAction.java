@@ -35,12 +35,11 @@ import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.client.IndirectClient;
-import org.pac4j.core.context.J2EContext;
+import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.Pac4jConstants;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.credentials.Credentials;
-import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.saml.metadata.SAML2ServiceProviderMetadataResolver;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.ModelAndView;
@@ -120,7 +119,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
 
     private final SingleSignOnParticipationStrategy singleSignOnParticipationStrategy;
 
-    private final SessionStore sessionStore;
+    private final SessionStore<JEEContext> sessionStore;
 
     private final DelegatedAuthenticationAccessStrategyHelper delegatedAuthenticationAccessStrategyHelper;
 
@@ -137,7 +136,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
                                                final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies,
                                                final CentralAuthenticationService centralAuthenticationService,
                                                final SingleSignOnParticipationStrategy singleSignOnParticipationStrategy,
-                                               final SessionStore sessionStore) {
+                                               final SessionStore<JEEContext> sessionStore) {
         super(initialAuthenticationAttemptWebflowEventResolver, serviceTicketRequestWebflowEventResolver, adaptiveAuthenticationPolicy);
         this.clients = clients;
         this.servicesManager = servicesManager;
@@ -158,7 +157,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
     public Event doExecute(final RequestContext context) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
-        val webContext = new J2EContext(request, response, this.sessionStore);
+        val webContext = new JEEContext(request, response, this.sessionStore);
 
         if (!isLogoutRequest(request) && singleSignOnSessionExists(context)) {
             LOGGER.trace("Found existing single sign-on session");
@@ -219,10 +218,10 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
      * @param e          the thrown exception
      * @return the event to trigger
      */
-    protected Event handleException(final J2EContext webContext, final BaseClient<Credentials, CommonProfile> client, final Exception e) {
+    protected Event handleException(final JEEContext webContext, final BaseClient<Credentials> client, final Exception e) {
         if (e instanceof RequestSloException) {
             try {
-                webContext.getResponse().sendRedirect("logout");
+                webContext.getNativeResponse().sendRedirect("logout");
             } catch (final IOException ioe) {
                 throw new IllegalArgumentException("Unable to call logout", ioe);
             }
@@ -241,13 +240,13 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
      * @param client     the client
      * @return the credentials from delegated client
      */
-    protected Credentials getCredentialsFromDelegatedClient(final J2EContext webContext, final BaseClient<Credentials, CommonProfile> client) {
+    protected Credentials getCredentialsFromDelegatedClient(final JEEContext webContext, final BaseClient<Credentials> client) {
         val credentials = client.getCredentials(webContext);
         LOGGER.debug("Retrieved credentials from client as [{}]", credentials);
-        if (credentials == null) {
+        if (credentials.isEmpty()) {
             throw new IllegalArgumentException("Unable to determine credentials from the context with client " + client.getName());
         }
-        return credentials;
+        return credentials.get();
     }
 
     /**
@@ -258,9 +257,14 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
      * @param service    the service
      * @return the base client
      */
-    protected BaseClient<Credentials, CommonProfile> findDelegatedClientByName(final HttpServletRequest request,
-                                                                               final String clientName, final Service service) {
-        val client = (BaseClient<Credentials, CommonProfile>) this.clients.findClient(clientName);
+    protected BaseClient<Credentials> findDelegatedClientByName(final HttpServletRequest request,
+                                                                final String clientName, final Service service) {
+        val clientResult = clients.findClient(clientName);
+        if (clientResult.isEmpty()) {
+            LOGGER.warn("Delegated client [{}] can not be located", clientName);
+            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
+        }
+        val client = BaseClient.class.cast(clientResult.get());
         LOGGER.debug("Delegated authentication client is [{}] with service [{}]", client, service);
         if (service != null) {
             request.setAttribute(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
@@ -269,6 +273,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
                 throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
             }
         }
+        client.init();
         return client;
     }
 
@@ -283,7 +288,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
 
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
-        val webContext = new J2EContext(request, response, this.sessionStore);
+        val webContext = new JEEContext(request, response, this.sessionStore);
 
         val urls = new LinkedHashSet<DelegatedClientIdentityProviderConfiguration>();
         this.clients
@@ -293,6 +298,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
             .map(IndirectClient.class::cast)
             .forEach(client -> {
                 try {
+                    client.init();
                     val provider = buildProviderConfiguration(client, webContext, currentService);
                     provider.ifPresent(p -> {
                         urls.add(p);
@@ -338,15 +344,18 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
             }
         }
 
-        val methodParam = webContext.getRequestParameter(CasProtocolConstants.PARAMETER_METHOD);
+        val methodParam = webContext.getRequestParameter(CasProtocolConstants.PARAMETER_METHOD)
+            .map(String::valueOf).orElse(StringUtils.EMPTY);
         if (StringUtils.isNotBlank(methodParam)) {
             uriBuilder.queryParam(CasProtocolConstants.PARAMETER_METHOD, methodParam);
         }
-        val localeParam = webContext.getRequestParameter(this.localeParamName);
+        val localeParam = webContext.getRequestParameter(this.localeParamName)
+            .map(String::valueOf).orElse(StringUtils.EMPTY);
         if (StringUtils.isNotBlank(localeParam)) {
             uriBuilder.queryParam(this.localeParamName, localeParam);
         }
-        val themeParam = webContext.getRequestParameter(this.themeParamName);
+        val themeParam = webContext.getRequestParameter(this.themeParamName)
+            .map(String::valueOf).orElse(StringUtils.EMPTY);
         if (StringUtils.isNotBlank(themeParam)) {
             uriBuilder.queryParam(this.themeParamName, themeParam);
         }
@@ -399,19 +408,22 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
      * @return the service
      */
     protected Service restoreAuthenticationRequestInContext(final RequestContext requestContext,
-                                                            final J2EContext webContext,
+                                                            final JEEContext webContext,
                                                             final String clientName) {
-        val logoutEndpoint = isLogoutRequest(webContext.getRequest());
+        val logoutEndpoint = isLogoutRequest(webContext.getNativeRequest());
         if (logoutEndpoint) {
             return null;
         } else {
             try {
-                val client = (BaseClient<Credentials, CommonProfile>) this.clients.findClient(clientName);
-                return delegatedClientWebflowManager.retrieve(requestContext, webContext, client);
+                val clientResult = this.clients.findClient(clientName);
+                if (clientResult.isPresent()) {
+                    return delegatedClientWebflowManager.retrieve(requestContext, webContext, BaseClient.class.cast(clientResult.get()));
+                }
+                LOGGER.warn("Unable to locate client [{}] in the collection of registered clients", clientName);
             } catch (final Exception e) {
                 LOGGER.error(e.getMessage(), e);
             }
-            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, "Service unauthorized");
+            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, "Service Unauthorized");
         }
     }
 
@@ -519,14 +531,14 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         return false;
     }
 
-    private void prepareRequestContextForSingleSignOn(final RequestContext context, final J2EContext webContext) {
+    private void prepareRequestContextForSingleSignOn(final RequestContext context, final JEEContext webContext) {
         val resolvedService = resolveServiceFromRequestContext(context);
         WebUtils.putServiceIntoFlowScope(context, resolvedService);
         val registeredService = servicesManager.findServiceBy(resolvedService);
         WebUtils.putRegisteredService(context, registeredService);
     }
 
-    private boolean isDelegatedClientAuthorizedForService(final Client<Credentials, CommonProfile> client,
+    private boolean isDelegatedClientAuthorizedForService(final Client<Credentials> client,
                                                           final Service service) {
         return delegatedAuthenticationAccessStrategyHelper.isDelegatedClientAuthorizedForService(client, service);
     }

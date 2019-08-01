@@ -3,6 +3,7 @@ package org.apereo.cas.adaptors.u2f.storage;
 import org.apereo.cas.config.U2FConfiguration;
 import org.apereo.cas.config.U2FMongoDbConfiguration;
 
+import lombok.Getter;
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -32,13 +33,9 @@ import org.springframework.test.context.TestPropertySource;
     "cas.authn.mfa.u2f.mongo.authenticationDatabaseName=admin",
     "cas.authn.mfa.u2f.mongo.dropCollection=true"
     })
+@Getter
 public class U2FMongoDbDeviceRepositoryTests extends AbstractU2FDeviceRepositoryTests {
     @Autowired
     @Qualifier("u2fDeviceRepository")
-    private U2FDeviceRepository u2fDeviceRepository;
-
-    @Override
-    protected U2FDeviceRepository getDeviceRepository() {
-        return this.u2fDeviceRepository;
-    }
+    private U2FDeviceRepository deviceRepository;
 }
