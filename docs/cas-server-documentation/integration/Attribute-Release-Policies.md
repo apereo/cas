@@ -40,8 +40,15 @@ Supported parameters are the following:
 | `password`                | The password to use for authentication.
 | `service`                 | Service to which attributes should be released.
 
-The parameters above can either be added as segments of the path navigation (i.e `/releaseAttributes/USERNAME/PASSWORD/SERVICE`) or passed
-as a JSON object with POST call to `/releaseAttributes`
+The parameters above can either be added as query string parameters or as a JSON object submitted with a POST:
+
+```code
+{ 
+  "username": USERNAME,
+  "password": PASSWORD,
+  "service": SERVICE_URL
+}
+```
 
 ## Authentication Attributes
 
