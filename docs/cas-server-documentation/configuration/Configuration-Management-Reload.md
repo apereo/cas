@@ -12,7 +12,7 @@ changes to the underlying property sources automatically, but has no way to broa
 to its own clients, such as the CAS server itself, which would act as *a client of the configuration
 server* expecting change notifications to quietly reload its configuration.
 
-Therefor, in order to broadcast such `change` events CAS
+Therefore, in order to broadcast such `change` events CAS
 presents [various endpoints](../monitoring/Monitoring-Statistics.html) that allow the adopter
 to **refresh** the configuration as needed. This means that an adopter would simply
 change a required CAS settings and then would submit
