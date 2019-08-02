@@ -65,22 +65,6 @@ public class AuditLogEndpoint extends BaseCasActuatorEndpoint {
     }
 
     /**
-     * Gets Audit logs entries for the passed interval subtracted from current time and entries that
-     * match the passed actionPerformed string.
-     *
-     * @param interval - Interval subtracted from current time
-     * @param actionPerformed - actionPerformed that was logged
-     * @return - the audit log
-     */
-    @ReadOperation
-    public Set<AuditActionContext> getAuditLog(final @Selector String interval,
-                                               final @Selector String actionPerformed) {
-        return getAuditLog(interval).stream()
-                .filter(e -> e.getActionPerformed().matches(actionPerformed))
-                .collect(Collectors.toSet());
-    }
-
-    /**
      * Gets Audit logs for the passed interval subtracted from current time.  Entries are then filtered to those
      * that match the reqular expressions passed in the json body.
      *
