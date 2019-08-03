@@ -136,8 +136,8 @@ public class RegisteredServiceResponseHeadersEnforcementFilter extends ResponseH
     /**
      * Check if the service is configured to include/not include the specified header.
      * 
-     * @param request
-     * @param property
+     * @param request the http request
+     * @param property the registered service property
      * @return Optional(true/false value of property); empty() if property not set
      */
     private Optional<Boolean> shouldHttpHeaderBeInjectedIntoResponse(final HttpServletRequest request,
