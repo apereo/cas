@@ -11,11 +11,12 @@ import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.pac4j.core.context.J2EContext;
+import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.WebContext;
-import org.pac4j.core.context.session.J2ESessionStore;
+import org.pac4j.core.context.session.JEESessionStore;
 import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.credentials.authenticator.Authenticator;
+import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.core.profile.creator.AuthenticatorProfileCreator;
 import org.pac4j.core.profile.creator.ProfileCreator;
 import org.pac4j.core.util.InitializableObject;
@@ -38,7 +39,7 @@ public abstract class AbstractWrapperAuthenticationHandler<I extends Credential,
     /**
      * The pac4j profile creator used for authentication.
      */
-    protected @NonNull ProfileCreator profileCreator = AuthenticatorProfileCreator.INSTANCE;
+    protected @NonNull ProfileCreator<C> profileCreator = AuthenticatorProfileCreator.INSTANCE;
 
     public AbstractWrapperAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory, final Integer order) {
         super(name, servicesManager, principalFactory, order);
@@ -50,9 +51,9 @@ public abstract class AbstractWrapperAuthenticationHandler<I extends Credential,
      * @return the web context
      */
     protected static WebContext getWebContext() {
-        return new J2EContext(HttpRequestUtils.getHttpServletRequestFromRequestAttributes(),
+        return new JEEContext(HttpRequestUtils.getHttpServletRequestFromRequestAttributes(),
             HttpRequestUtils.getHttpServletResponseFromRequestAttributes(),
-            new J2ESessionStore());
+            new JEESessionStore());
     }
 
     @Override
@@ -63,17 +64,26 @@ public abstract class AbstractWrapperAuthenticationHandler<I extends Credential,
     @Override
     protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws GeneralSecurityException {
         val credentials = convertToPac4jCredentials((I) credential);
-        LOGGER.trace("credentials: [{}]", credentials);
+        LOGGER.trace("Credentials converted to [{}]", credentials);
         try {
             val authenticator = getAuthenticator(credential);
             if (authenticator instanceof InitializableObject) {
+                LOGGER.trace("Initializing authenticator [{}]", authenticator);
                 ((InitializableObject) authenticator).init();
             }
             val webContext = getWebContext();
+            LOGGER.trace("Validating credentials [{}] using authenticator [{}]", credentials, authenticator);
             authenticator.validate(credentials, webContext);
-            val profile = this.profileCreator.create(credentials, webContext);
+
+            LOGGER.trace("Creating user profile result for [{}]", credentials);
+            val profileResult = this.profileCreator.create(credentials, webContext);
+            if (profileResult.isEmpty()) {
+                throw new FailedLoginException("Unable to create common profile instance for credential " + credential);
+            }
+            val profile = CommonProfile.class.cast(profileResult.get());
             LOGGER.debug("Authenticated profile: [{}]", profile);
-            return createResult(new ClientCredential(credentials, authenticator.getClass().getSimpleName()), profile, null);
+            val clientCredential = new ClientCredential(credentials, authenticator.getClass().getSimpleName());
+            return createResult(clientCredential, profile, null);
         } catch (final Exception e) {
             LOGGER.error("Failed to validate credentials", e);
             throw new FailedLoginException("Failed to validate credentials: " + e.getMessage());
@@ -103,5 +113,5 @@ public abstract class AbstractWrapperAuthenticationHandler<I extends Credential,
      * @param credential the credential
      * @return the authenticator
      */
-    protected abstract Authenticator getAuthenticator(Credential credential);
+    protected abstract Authenticator<C> getAuthenticator(Credential credential);
 }

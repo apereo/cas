@@ -22,7 +22,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.NumericDate;
-import org.pac4j.core.context.J2EContext;
+import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.profile.UserProfile;
 
 import javax.servlet.http.HttpServletRequest;
@@ -58,7 +58,7 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService {
         }
 
         val oidcRegisteredService = (OidcRegisteredService) registeredService;
-        val context = new J2EContext(request, response, getConfigurationContext().getSessionStore());
+        val context = new JEEContext(request, response, getConfigurationContext().getSessionStore());
         LOGGER.trace("Attempting to produce claims for the id token [{}]", accessToken);
         val authenticatedProfile = getAuthenticatedProfile(request, response);
         val claims = buildJwtClaims(request, accessToken, timeoutInSeconds,
@@ -85,7 +85,7 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService {
                                        final long timeoutInSeconds,
                                        final OidcRegisteredService service,
                                        final UserProfile profile,
-                                       final J2EContext context,
+                                       final JEEContext context,
                                        final OAuth20ResponseTypes responseType) {
         val authentication = accessTokenId.getAuthentication();
         val principal = authentication.getPrincipal();

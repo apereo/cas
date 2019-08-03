@@ -110,6 +110,10 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
     private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
+    @Qualifier("ticketGrantingTicketCookieGenerator")
+    private ObjectProvider<CasCookieBuilder> ticketGrantingTicketCookieGenerator;
+
+    @Autowired
     @Qualifier("warnCookieGenerator")
     private ObjectProvider<CasCookieBuilder> warnCookieGenerator;
 
@@ -450,6 +454,7 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
             .casProperties(casProperties)
             .eventPublisher(applicationEventPublisher)
             .applicationContext(applicationContext)
+            .ticketGrantingTicketCookieGenerator(ticketGrantingTicketCookieGenerator.getIfAvailable())
             .build();
     }
 }

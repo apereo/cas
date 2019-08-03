@@ -42,10 +42,8 @@ public class Saml2ClientMetadataController {
     @GetMapping("/sp/metadata")
     public ResponseEntity<String> getFirstServiceProviderMetadata() {
         val saml2Client = builtClients.findClient(SAML2Client.class);
-        if (saml2Client != null) {
-            return getSaml2ClientServiceProviderMetadataResponseEntity(saml2Client);
-        }
-        return getNotAcceptableResponseEntity();
+        return saml2Client.map(Saml2ClientMetadataController::getSaml2ClientServiceProviderMetadataResponseEntity)
+            .orElseGet(Saml2ClientMetadataController::getNotAcceptableResponseEntity);
     }
 
     /**
@@ -56,10 +54,8 @@ public class Saml2ClientMetadataController {
     @GetMapping("/sp/idp/metadata")
     public ResponseEntity<String> getFirstIdentityProviderMetadata() {
         val saml2Client = builtClients.findClient(SAML2Client.class);
-        if (saml2Client != null) {
-            return getSaml2ClientIdentityProviderMetadataResponseEntity(saml2Client);
-        }
-        return getNotAcceptableResponseEntity();
+        return saml2Client.map(this::getSaml2ClientIdentityProviderMetadataResponseEntity)
+            .orElseGet(Saml2ClientMetadataController::getNotAcceptableResponseEntity);
     }
 
     /**
@@ -70,11 +66,9 @@ public class Saml2ClientMetadataController {
      */
     @GetMapping("/sp/{client}/metadata")
     public ResponseEntity<String> getServiceProviderMetadataByName(@PathVariable("client") final String client) {
-        val saml2Client = (SAML2Client) builtClients.findClient(client);
-        if (saml2Client != null) {
-            return getSaml2ClientServiceProviderMetadataResponseEntity(saml2Client);
-        }
-        return getNotAcceptableResponseEntity();
+        val saml2Client = builtClients.findClient(client);
+        return saml2Client.map(value -> getSaml2ClientServiceProviderMetadataResponseEntity(SAML2Client.class.cast(value)))
+            .orElseGet(Saml2ClientMetadataController::getNotAcceptableResponseEntity);
     }
 
     /**
@@ -85,11 +79,9 @@ public class Saml2ClientMetadataController {
      */
     @GetMapping("/sp/{client}/idp/metadata")
     public ResponseEntity<String> getIdentityProviderMetadataByName(@PathVariable("client") final String client) {
-        val saml2Client = (SAML2Client) builtClients.findClient(client);
-        if (saml2Client != null) {
-            return getSaml2ClientIdentityProviderMetadataResponseEntity(saml2Client);
-        }
-        return getNotAcceptableResponseEntity();
+        val saml2Client = builtClients.findClient(client);
+        return saml2Client.map(value -> getSaml2ClientIdentityProviderMetadataResponseEntity(SAML2Client.class.cast(value)))
+            .orElseGet(Saml2ClientMetadataController::getNotAcceptableResponseEntity);
     }
 
     @SneakyThrows

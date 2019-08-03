@@ -8,7 +8,10 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.core.context.WebContext;
-import org.pac4j.core.redirect.RedirectAction;
+import org.pac4j.core.exception.http.FoundAction;
+import org.pac4j.core.exception.http.RedirectionAction;
+
+import java.util.Optional;
 
 /**
  * This is {@link OAuth20DefaultCasClientRedirectActionBuilder}.
@@ -19,9 +22,8 @@ import org.pac4j.core.redirect.RedirectAction;
 @Slf4j
 public class OAuth20DefaultCasClientRedirectActionBuilder implements OAuth20CasClientRedirectActionBuilder {
 
-
     @Override
-    public RedirectAction build(final CasClient casClient, final WebContext context) {
+    public Optional<RedirectionAction> build(final CasClient casClient, final WebContext context) {
         val casConfiguration = casClient.getConfiguration();
         return build(casClient, context, casConfiguration.isRenew(), casConfiguration.isGateway());
     }
@@ -35,7 +37,7 @@ public class OAuth20DefaultCasClientRedirectActionBuilder implements OAuth20CasC
      * @param gateway   skip asking for credentials
      * @return the redirect action
      */
-    protected RedirectAction build(final CasClient casClient, final WebContext context, final boolean renew, final boolean gateway) {
+    protected Optional<RedirectionAction> build(final CasClient casClient, final WebContext context, final boolean renew, final boolean gateway) {
         val serviceUrl = casClient.computeFinalCallbackUrl(context);
         val casServerLoginUrl = casClient.getConfiguration().getLoginUrl();
         val redirectionUrl = casServerLoginUrl + (casServerLoginUrl.contains("?") ? "&" : "?")
@@ -43,6 +45,6 @@ public class OAuth20DefaultCasClientRedirectActionBuilder implements OAuth20CasC
             + (renew ? '&' + CasProtocolConstants.PARAMETER_RENEW + "=true" : StringUtils.EMPTY)
             + (gateway ? '&' + CasProtocolConstants.PARAMETER_GATEWAY + "=true" : StringUtils.EMPTY);
         LOGGER.debug("Final redirect url is [{}]", redirectionUrl);
-        return RedirectAction.redirect(redirectionUrl);
+        return Optional.of(new FoundAction(redirectionUrl));
     }
 }

@@ -11,11 +11,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.utils.URIBuilder;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.client.IndirectClient;
-import org.pac4j.core.context.J2EContext;
+import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.Pac4jConstants;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.exception.HttpAction;
+import org.pac4j.core.exception.http.HttpAction;
+import org.pac4j.core.exception.http.WithContentAction;
+import org.pac4j.core.exception.http.WithLocationAction;
 import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.core.redirect.RedirectAction;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -55,11 +58,11 @@ public class DelegatedClientNavigationController {
 
     private final DelegatedClientWebflowManager delegatedClientWebflowManager;
 
-    private final SessionStore<J2EContext> sessionStore;
+    private final SessionStore<JEEContext> sessionStore;
 
     public DelegatedClientNavigationController(final Clients clients,
                                                final DelegatedClientWebflowManager delegatedClientWebflowManager,
-                                               @Qualifier("delegatedClientDistributedSessionStore") final SessionStore<J2EContext> sessionStore) {
+                                               @Qualifier("delegatedClientDistributedSessionStore") final SessionStore<JEEContext> sessionStore) {
         this.clients = clients;
         this.delegatedClientWebflowManager = delegatedClientWebflowManager;
         this.sessionStore = sessionStore;
@@ -85,9 +88,13 @@ public class DelegatedClientNavigationController {
             if (StringUtils.isBlank(clientName)) {
                 throw new UnauthorizedServiceException("No client name parameter is provided in the incoming request");
             }
-            val client = (IndirectClient<Credentials, CommonProfile>) this.clients.findClient(clientName);
-            
-            val webContext = new J2EContext(request, response, this.sessionStore);
+            val clientResult = this.clients.findClient(clientName);
+            if (clientResult.isEmpty()) {
+                throw new UnauthorizedServiceException("Unable to locate client " + clientName);
+            }
+            val client = IndirectClient.class.cast(clientResult.get());
+            client.init();
+            val webContext = new JEEContext(request, response, this.sessionStore);
             val ticket = delegatedClientWebflowManager.store(webContext, client);
 
             return getResultingView(client, webContext, ticket);
@@ -112,7 +119,8 @@ public class DelegatedClientNavigationController {
      */
     @RequestMapping(value = ENDPOINT_RESPONSE, method = {RequestMethod.GET, RequestMethod.POST})
     public View redirectResponseToFlow(@PathVariable("clientName") final String clientName,
-                                       final HttpServletRequest request, final HttpServletResponse response) {
+                                       final HttpServletRequest request,
+                                       final HttpServletResponse response) {
         return buildRedirectViewBackToFlow(clientName, request);
     }
 
@@ -149,14 +157,26 @@ public class DelegatedClientNavigationController {
      * @return the resulting view
      */
     @SneakyThrows
-    protected View getResultingView(final IndirectClient<Credentials, CommonProfile> client, final J2EContext webContext, final Ticket ticket) {
-        val action = client.getRedirectAction(webContext);
-        if (RedirectAction.RedirectType.SUCCESS.equals(action.getType())) {
-            return new DynamicHtmlView(action.getContent());
+    protected View getResultingView(final IndirectClient<Credentials> client, final JEEContext webContext, final Ticket ticket) {
+        client.init();
+        val actionResult = client.getRedirectionActionBuilder().redirect(webContext);
+        if (actionResult.isPresent()) {
+            val action = actionResult.get();
+            LOGGER.debug("Determined final redirect action for client [{}] as [{}]", client, action);
+
+            if (action instanceof WithLocationAction) {
+                val foundAction = WithLocationAction.class.cast(action);
+                val builder = new URIBuilder(foundAction.getLocation());
+                val url = builder.toString();
+                LOGGER.debug("Redirecting client [{}] to [{}] based on identifier [{}]", client.getName(), url, ticket.getId());
+                return new RedirectView(url);
+            }
+            if (action instanceof WithContentAction) {
+                val seeOtherAction = WithContentAction.class.cast(action);
+                return new DynamicHtmlView(seeOtherAction.getContent());
+            }
         }
-        val builder = new URIBuilder(action.getLocation());
-        val url = builder.toString();
-        LOGGER.debug("Redirecting client [{}] to [{}] based on identifier [{}]", client.getName(), url, ticket.getId());
-        return new RedirectView(url);
+        LOGGER.warn("Unable to determine redirect action for client [{}]", client);
+        return null;
     }
 }

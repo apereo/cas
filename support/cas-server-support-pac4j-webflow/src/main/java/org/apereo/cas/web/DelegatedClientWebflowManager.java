@@ -19,7 +19,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.core.client.BaseClient;
-import org.pac4j.core.context.J2EContext;
+import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.state.StaticOrRandomStateGenerator;
 import org.pac4j.oauth.client.OAuth10Client;
@@ -64,10 +64,10 @@ public class DelegatedClientWebflowManager {
      * @param client     the client
      * @return the ticket
      */
-    public Ticket store(final J2EContext webContext, final BaseClient client) {
+    public Ticket store(final JEEContext webContext, final BaseClient client) {
         val properties = buildTicketProperties(webContext);
 
-        val originalService = argumentExtractor.extractService(webContext.getRequest());
+        val originalService = argumentExtractor.extractService(webContext.getNativeRequest());
         val service = authenticationRequestServiceSelectionStrategies.resolveService(originalService);
         properties.put(CasProtocolConstants.PARAMETER_SERVICE, originalService);
         properties.put(CasProtocolConstants.PARAMETER_TARGET_SERVICE, service);
@@ -113,16 +113,19 @@ public class DelegatedClientWebflowManager {
      * @param webContext the web context
      * @return the ticket properties
      */
-    protected Map<String, Serializable> buildTicketProperties(final J2EContext webContext) {
+    protected Map<String, Serializable> buildTicketProperties(final JEEContext webContext) {
         val properties = new HashMap<String, Serializable>();
 
         val themeParamName = casProperties.getTheme().getParamName();
         val localParamName = casProperties.getLocale().getParamName();
 
-        properties.put(themeParamName, StringUtils.defaultString(webContext.getRequestParameter(themeParamName)));
-        properties.put(localParamName, StringUtils.defaultString(webContext.getRequestParameter(localParamName)));
+        properties.put(themeParamName, webContext.getRequestParameter(themeParamName)
+            .map(String::valueOf).orElse(StringUtils.EMPTY));
+        properties.put(localParamName, webContext.getRequestParameter(localParamName)
+            .map(String::valueOf).orElse(StringUtils.EMPTY));
         properties.put(CasProtocolConstants.PARAMETER_METHOD,
-            StringUtils.defaultString(webContext.getRequestParameter(CasProtocolConstants.PARAMETER_METHOD)));
+            webContext.getRequestParameter(CasProtocolConstants.PARAMETER_METHOD)
+                .map(String::valueOf).orElse(StringUtils.EMPTY));
 
         return properties;
     }
@@ -203,7 +206,7 @@ public class DelegatedClientWebflowManager {
      */
     protected String getDelegatedClientId(final WebContext webContext, final BaseClient client) {
         var clientId = webContext.getRequestParameter(PARAMETER_CLIENT_ID);
-        if (StringUtils.isBlank(clientId)) {
+        if (clientId.isEmpty()) {
             if (client instanceof SAML2Client) {
                 LOGGER.debug("Client identifier could not found as part of the request parameters. Looking at relay-state for the SAML2 client");
                 clientId = webContext.getRequestParameter("RelayState");
@@ -215,11 +218,11 @@ public class DelegatedClientWebflowManager {
             if (client instanceof OAuth10Client) {
                 LOGGER.debug("Client identifier could not be found as part of request parameters. Looking at state for the OAuth1 client");
                 val sessionStore = webContext.getSessionStore();
-                clientId = (String) sessionStore.get(webContext, OAUTH10_CLIENT_ID_SESSION_KEY);
+                clientId = sessionStore.get(webContext, OAUTH10_CLIENT_ID_SESSION_KEY);
                 sessionStore.set(webContext, OAUTH10_CLIENT_ID_SESSION_KEY, null);
             }
         }
         LOGGER.debug("Located delegated client identifier for this request as [{}]", clientId);
-        return clientId;
+        return clientId.map(String::valueOf).orElse(StringUtils.EMPTY);
     }
 }

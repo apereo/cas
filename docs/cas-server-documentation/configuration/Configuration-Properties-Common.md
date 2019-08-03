@@ -55,6 +55,17 @@ should support the duration syntax for full clarity on unit of measure:
 The native numeric syntax is still supported though you will have to refer to the docs
 in each case to learn the exact unit of measure.
 
+## Cookie Settings
+
+```properties
+# ${configurationKey}.path=
+# ${configurationKey}.maxAge=-1
+# ${configurationKey}.domain=
+# ${configurationKey}.name=
+# ${configurationKey}.secure=true
+# ${configurationKey}.httpOnly=true
+```                               
+
 ## Authentication Throttling
 
 Certain functionality in CAS, such as [OAuth](../installation/OAuth-OpenId-Authentication.html) 
@@ -127,14 +138,9 @@ The following options are supported:
 | `org.example.MyEncoder` | An implementation of `PasswordEncoder` of your own choosing.
 | `file:///path/to/script.groovy` | Path to a Groovy script charged with handling password encoding operations.
 
-In cases where you plan to design your own password encoder or write scripts to do so, you may also need to ensure the overlay has the following modules available at runtime:
-
-```xml
-<dependency>
-    <groupId>org.springframework.security</groupId>
-    <artifactId>spring-security-core</artifactId>
-</dependency>
-```
+In cases where you plan to design your own password encoder or write scripts to do so, 
+you may also need to ensure the overlay has access to `org.springframework.security:spring-security-core` at runtime. Make sure the artifact is marked as `provided`
+or `compileOnly` to avoid conflicts.
 
 If you need to design your own password encoding scheme where the type is specified as a fully qualified Java class name, the structure of the class would be
  similar to the following:
@@ -1069,6 +1075,7 @@ to an external provider such as Yahoo, given the provider's *configuration key*:
 # ${configurationKey}.clientName=My Provider
 # ${configurationKey}.autoRedirect=false
 # ${configurationKey}.principalAttributeId=
+# ${configurationKey}.enabled=true
 ```
 
 ### Delegated Authentication OpenID Connect Settings
@@ -1086,6 +1093,10 @@ to an external OpenID Connect provider such as Azure AD, given the provider's *c
 # ${configurationKey}.responseMode=
 # ${configurationKey}.responseType=
 # ${configurationKey}.customParams.param1=value1
+# ${configurationKey}.readTimeout=PT5S
+# ${configurationKey}.connectTimeout=PT5S
+# ${configurationKey}.expireSessionWithToken=false
+# ${configurationKey}.tokenExpirationAdvance=0
 ```
 
 ## LDAP Connection Settings

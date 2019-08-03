@@ -52,6 +52,12 @@ public class OidcProperties implements Serializable {
     private transient Resource jwksFile = new FileSystemResource("/etc/cas/config/keystore.jwks");
 
     /**
+     * The key size for the generated jwks. This is an algorithm-specific metric,
+     * such as modulus length, specified in number of bits.
+     */
+    private int jwksKeySize = 2048;
+
+    /**
      * Whether dynamic registration operates in {@code OPEN} or {@code PROTECTED} mode.
      */
     private String dynamicClientRegistrationMode;
