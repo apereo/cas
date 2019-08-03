@@ -27,10 +27,12 @@ The following individuals act as release engineers for the CAS project and its v
   - Key id: `E69C2A48`
   - Fingerprint: `4769 49E0 250D DB34 20B1  E13A D991 771D F57B 3053`
 
+
 - [Hal Deadman](https://github.com/hdeadman)
 
   - Key id: `F57B3053`
   - Fingerprint: `C01D 5D0C 8303 0006 9CB7  5E88 F727 5086 E69C 2A48`
+
 
 - [Misagh Moayyed](https://github.com/mmoayyed)
 
