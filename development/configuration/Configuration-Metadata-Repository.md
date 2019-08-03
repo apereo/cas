@@ -29,7 +29,7 @@ The following endpoints are provided by CAS:
  
 | Endpoint                 | Description
 |--------------------------|------------------------------------------------
-| `configurationMetadata`       | Exposes [CAS configuration metadata](Configuration-Metadata-Repository.html) that can be used to query settings. The default endpoint present a list of all settings recognized by CAS, with the added capability to search for a specific CAS setting by its partial `name` as a selector. This interface ships with CAS by default and you need not do anything special to enable it.
+| `configurationMetadata`       | Exposes [CAS configuration metadata](Configuration-Metadata-Repository.html) that can be used to query settings. The default endpoint presents a list of all settings recognized by CAS, with the added capability to search for a specific CAS setting by its partial `name` as a selector. This interface ships with CAS by default and you need not do anything special to enable it.
 
 ## Metadata via Commandline
 
