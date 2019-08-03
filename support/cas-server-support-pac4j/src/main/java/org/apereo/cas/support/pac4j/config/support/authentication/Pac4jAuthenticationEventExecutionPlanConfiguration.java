@@ -30,7 +30,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.spi.AuditActionResolver;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 import org.pac4j.core.client.Clients;
-import org.pac4j.core.context.J2EContext;
+import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,7 +86,7 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration implements Audit
 
     @ConditionalOnMissingBean(name = "delegatedClientDistributedSessionStore")
     @Bean
-    public SessionStore<J2EContext> delegatedClientDistributedSessionStore() {
+    public SessionStore<JEEContext> delegatedClientDistributedSessionStore() {
         return getDistributedSessionStore();
     }
 
