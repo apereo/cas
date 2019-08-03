@@ -86,7 +86,7 @@
             </div>
         </form>
         <p th:unless="${passwordManagementEnabled}"
-           th:utext="${expiredPass} ? #{screen.expiredpass.message} : #{screen.mustchangepass.message}">Expired/Must
+           th:utext="${expiredPass} ? #{screen.expiredpass.message('https://pwd.example.org')} : #{screen.mustchangepass.message('https://pwd.example.org')}">Expired/Must
             Change Password text</p>
     </div>
 </main>
