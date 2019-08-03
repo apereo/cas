@@ -40,6 +40,16 @@ Supported parameters are the following:
 | `password`                | The password to use for authentication.
 | `service`                 | Service to which attributes should be released.
 
+The parameters above can either be added as query string parameters or as a JSON object submitted with a POST:
+
+```code
+{ 
+  "username": USERNAME,
+  "password": PASSWORD,
+  "service": SERVICE_URL
+}
+```
+
 ## Authentication Attributes
 
 During the authentication process, a number of attributes get captured and collected by CAS
