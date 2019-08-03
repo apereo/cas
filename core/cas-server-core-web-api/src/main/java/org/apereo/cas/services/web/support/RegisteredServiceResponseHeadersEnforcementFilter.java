@@ -8,8 +8,8 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.support.ArgumentExtractor;
 
 import lombok.RequiredArgsConstructor;
-import lombok.val;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
 import org.apache.commons.lang3.BooleanUtils;
 
@@ -101,7 +101,7 @@ public class RegisteredServiceResponseHeadersEnforcementFilter extends ResponseH
             } else {
                 LOGGER.debug("EnableCacheControl header disabled by service definition");
             }
-       } else {
+        } else {
             super.decideInsertCacheControlHeader(httpServletResponse, httpServletRequest);
         }
     }
@@ -111,11 +111,11 @@ public class RegisteredServiceResponseHeadersEnforcementFilter extends ResponseH
         val shouldInject = shouldHttpHeaderBeInjectedIntoResponse(httpServletRequest, RegisteredServiceProperties.HTTP_HEADER_ENABLE_STRICT_TRANSPORT_SECURITY);
         if (shouldInject.isPresent()) {
             if (shouldInject.get()) {
-               super.insertStrictTransportSecurityHeader(httpServletResponse, httpServletRequest);
+                super.insertStrictTransportSecurityHeader(httpServletResponse, httpServletRequest);
             } else {
                 LOGGER.debug("StrictTransportSecurity header disabled by service definition");
             }
-       } else {
+        } else {
             super.decideInsertStrictTransportSecurityHeader(httpServletResponse, httpServletRequest);
         }
     }
