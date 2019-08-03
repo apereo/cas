@@ -26,13 +26,13 @@ You may instruct CAS to use this setting via the methods [outlined here](Configu
 There also exists a `cas.standalone.configurationFile` which can be used to directly feed a collection of properties to CAS in form of a file or classpath resource. 
 
 Similar to the Spring Cloud external configuration server, the contents of this directory include `(cas|application).(yml|properties)`
-files that can be used to control CAS behavior. Also note that this configuration directory can be monitored by CAS to auto-pick up changes
+files that can be used to control CAS behavior. Also, note that this configuration directory can be monitored by CAS to auto-pick up changes
 and refresh the application context as needed. Please [review this guide](Configuration-Management-Reload.html#reload-strategy) to learn more.
 
 Note that by default, all CAS settings and configuration is controlled via the embedded `application.properties` file in the CAS server
 web application. There is also an embedded `application.yml` file that allows you to override all defaults if you wish to ship the configuration inside the main CAS web application and not rely on externalized configuration files. If you prefer properties to yaml, then `application-standalone.properties` will override `application.properties` as well. 
 
-Settings found in external configuration files are and will be able to override the defaults provide by CAS. The naming of the configuration files 
+Settings found in external configuration files are and will be able to override the defaults provided by CAS. The naming of the configuration files 
 inside the CAS configuration directory follows the below pattern:
 
 - An `application.(properties|yml|yaml)` file is always loaded, if found.
