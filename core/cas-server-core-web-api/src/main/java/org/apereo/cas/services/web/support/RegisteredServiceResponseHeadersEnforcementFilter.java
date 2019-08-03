@@ -40,7 +40,7 @@ public class RegisteredServiceResponseHeadersEnforcementFilter extends ResponseH
             if (shouldInject.get()) {
                 super.insertContentSecurityPolicyHeader(httpServletResponse, httpServletRequest);
             } else {
-                LOGGER.debug("ContentSecurityPolicy header disabled by service definition");
+                LOGGER.trace("ContentSecurityPolicy header disabled by service definition");
             }
         } else {
             super.decideInsertContentSecurityPolicyHeader(httpServletResponse, httpServletRequest);
@@ -54,7 +54,7 @@ public class RegisteredServiceResponseHeadersEnforcementFilter extends ResponseH
             if (shouldInject.get()) {
                 super.insertXSSProtectionHeader(httpServletResponse, httpServletRequest);
             } else {
-                LOGGER.debug("XSSProtection header disabled by service definition");
+                LOGGER.trace("XSSProtection header disabled by service definition");
             }
         } else {
             super.decideInsertXSSProtectionHeader(httpServletResponse, httpServletRequest);
@@ -71,7 +71,7 @@ public class RegisteredServiceResponseHeadersEnforcementFilter extends ResponseH
                 val xFrameOptions = getStringProperty(httpServletRequest, RegisteredServiceProperties.HTTP_HEADER_XFRAME_OPTIONS);
                 super.insertXFrameOptionsHeader(httpServletResponse, httpServletRequest, xFrameOptions);    
             } else {
-                LOGGER.debug("XFrameOptions header disabled by service definition");
+                LOGGER.trace("XFrameOptions header disabled by service definition");
             }
         } else {
             super.decideInsertXFrameOptionsHeader(httpServletResponse, httpServletRequest);
@@ -85,7 +85,7 @@ public class RegisteredServiceResponseHeadersEnforcementFilter extends ResponseH
             if (shouldInject.get()) {
                 super.insertXContentTypeOptionsHeader(httpServletResponse, httpServletRequest);
             } else {
-                LOGGER.debug("XContentOptions header disabled by service definition");
+                LOGGER.trace("XContentOptions header disabled by service definition");
             }
         } else {
             super.decideInsertXContentTypeOptionsHeader(httpServletResponse, httpServletRequest);
@@ -99,7 +99,7 @@ public class RegisteredServiceResponseHeadersEnforcementFilter extends ResponseH
             if (shouldInject.get()) {
                 super.insertCacheControlHeader(httpServletResponse, httpServletRequest);
             } else {
-                LOGGER.debug("EnableCacheControl header disabled by service definition");
+                LOGGER.trace("EnableCacheControl header disabled by service definition");
             }
         } else {
             super.decideInsertCacheControlHeader(httpServletResponse, httpServletRequest);
@@ -113,7 +113,7 @@ public class RegisteredServiceResponseHeadersEnforcementFilter extends ResponseH
             if (shouldInject.get()) {
                 super.insertStrictTransportSecurityHeader(httpServletResponse, httpServletRequest);
             } else {
-                LOGGER.debug("StrictTransportSecurity header disabled by service definition");
+                LOGGER.trace("StrictTransportSecurity header disabled by service definition");
             }
         } else {
             super.decideInsertStrictTransportSecurityHeader(httpServletResponse, httpServletRequest);
