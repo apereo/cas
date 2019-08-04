@@ -29,7 +29,7 @@ import org.springframework.test.context.TestPropertySource;
 })
 @TestPropertySource(properties = {
     "cas.authn.mfa.u2f.redis.host=localhost",
-    "cas.authn.mfa.u2f.redis.port=6379",
+    "cas.authn.mfa.u2f.redis.port=6379"
 })
 @Tag("Redis")
 @Getter
