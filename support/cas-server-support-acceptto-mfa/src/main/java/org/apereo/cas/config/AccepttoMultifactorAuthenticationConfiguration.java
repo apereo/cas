@@ -107,6 +107,10 @@ public class AccepttoMultifactorAuthenticationConfiguration {
     private ObjectProvider<FlowDefinitionRegistry> loginFlowDefinitionRegistry;
 
     @Autowired
+    @Qualifier("ticketRegistry")
+    private ObjectProvider<TicketRegistry> ticketRegistry;
+
+    @Autowired
     @Qualifier("authenticationServiceSelectionPlan")
     private ObjectProvider<AuthenticationServiceSelectionPlan> authenticationRequestServiceSelectionStrategies;
 
@@ -123,10 +127,6 @@ public class AccepttoMultifactorAuthenticationConfiguration {
     @Autowired
     @Qualifier("defaultTicketFactory")
     private ObjectProvider<TicketFactory> ticketFactory;
-
-    @Autowired
-    @Qualifier("ticketRegistry")
-    private ObjectProvider<TicketRegistry> ticketRegistry;
 
     @Autowired
     @Qualifier("defaultPrincipalResolver")
@@ -233,6 +233,7 @@ public class AccepttoMultifactorAuthenticationConfiguration {
             .authenticationRequestServiceSelectionStrategies(authenticationRequestServiceSelectionStrategies.getIfAvailable())
             .registeredServiceAccessStrategyEnforcer(registeredServiceAccessStrategyEnforcer.getIfAvailable())
             .casProperties(casProperties)
+            .ticketRegistry(ticketRegistry.getIfAvailable())
             .eventPublisher(applicationEventPublisher)
             .applicationContext(applicationContext)
             .build();
@@ -273,7 +274,7 @@ public class AccepttoMultifactorAuthenticationConfiguration {
         return new AuthenticationContextAttributeMetaDataPopulator(
             casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
             casAccepttoQRCodeAuthenticationHandler(),
-            casAccepttoMultifactorAuthenticationProvider.getIfAvailable().getId()
+            casAccepttoMultifactorAuthenticationProvider.getObject().getId()
         );
     }
 

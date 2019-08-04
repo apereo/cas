@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 
@@ -31,6 +32,7 @@ public class CasWebflowEventResolutionConfigurationContext {
     private final CentralAuthenticationService centralAuthenticationService;
     private final ServicesManager servicesManager;
     private final TicketRegistrySupport ticketRegistrySupport;
+    private final TicketRegistry ticketRegistry;
     private final CasCookieBuilder warnCookieGenerator;
     private final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
     private final ApplicationEventPublisher eventPublisher;
