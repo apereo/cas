@@ -6,6 +6,7 @@ import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.AnonymousAWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.auth.ClasspathPropertiesFileCredentialsProvider;
+import com.amazonaws.auth.EC2ContainerCredentialsProviderWrapper;
 import com.amazonaws.auth.EnvironmentVariableCredentialsProvider;
 import com.amazonaws.auth.InstanceProfileCredentialsProvider;
 import com.amazonaws.auth.PropertiesFileCredentialsProvider;
@@ -111,6 +112,11 @@ public class ChainingAWSCredentialsProvider implements AWSCredentialsProvider {
         });
 
         addProviderToChain(nothing -> {
+            chain.add(new EnvironmentVariableCredentialsProvider());
+            return null;
+        });
+
+        addProviderToChain(nothing -> {
             chain.add(new ClasspathPropertiesFileCredentialsProvider("awscredentials.properties"));
             return null;
         });
@@ -123,6 +129,11 @@ public class ChainingAWSCredentialsProvider implements AWSCredentialsProvider {
             });
         }
 
+        addProviderToChain(nothing -> {
+            chain.add(new EC2ContainerCredentialsProviderWrapper());
+            return null;
+        });
+
         LOGGER.debug("AWS chained credential providers are configured as [{}]", chain);
         return new ChainingAWSCredentialsProvider(chain);
     }
@@ -133,6 +144,16 @@ public class ChainingAWSCredentialsProvider implements AWSCredentialsProvider {
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
+    }
+
+    private static AWSCredentials getCredentialsFromProvider(final AWSCredentialsProvider p) {
+        try {
+            LOGGER.debug("Calling credential provider [{}] to fetch credentials...", p.getClass().getSimpleName());
+            return p.getCredentials();
+        } catch (final Throwable e) {
+            LOGGER.trace(e.getMessage(), e);
+        }
+        return null;
     }
 
     @Override
@@ -149,16 +170,6 @@ public class ChainingAWSCredentialsProvider implements AWSCredentialsProvider {
         return new AnonymousAWSCredentials();
     }
 
-    private static AWSCredentials getCredentialsFromProvider(final AWSCredentialsProvider p) {
-        try {
-            LOGGER.debug("Calling credential provider [{}] to fetch credentials...", p.getClass().getSimpleName());
-            return p.getCredentials();
-        } catch (final Throwable e) {
-            LOGGER.trace(e.getMessage(), e);
-        }
-        return null;
-    }
-
     @Override
     public void refresh() {
         for (val p : this.chain) {
@@ -169,4 +180,6 @@ public class ChainingAWSCredentialsProvider implements AWSCredentialsProvider {
             }
         }
     }
+
+
 }
