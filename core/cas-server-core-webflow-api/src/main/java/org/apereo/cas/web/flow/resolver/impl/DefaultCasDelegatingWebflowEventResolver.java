@@ -52,16 +52,6 @@ public class DefaultCasDelegatingWebflowEventResolver extends AbstractCasWebflow
             val credential = getCredentialFromContext(context);
             val service = WebUtils.getService(context);
 
-            val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
-            val ticketGrantingTicketId = getWebflowEventResolutionConfigurationContext().getTicketGrantingTicketCookieGenerator().retrieveCookieValue(request);
-            val ticket = getWebflowEventResolutionConfigurationContext().getTicketRegistrySupport().getTicketGrantingTicket(ticketGrantingTicketId);
-            if (ticket != null) {
-                WebUtils.putTicketGrantingTicketInScopes(context, ticket.getId());
-                WebUtils.putAuthentication(ticket.getAuthentication(), context);
-                val event = newEvent(CasWebflowConstants.TRANSITION_ID_TICKET_GRANTING_TICKET_VALID);
-                return CollectionUtils.wrapSet(event);
-            }
-
             if (credential != null) {
                 val builder = getWebflowEventResolutionConfigurationContext().getAuthenticationSystemSupport()
                     .handleInitialAuthenticationTransaction(service, credential);
@@ -74,8 +64,7 @@ public class DefaultCasDelegatingWebflowEventResolver extends AbstractCasWebflow
             LOGGER.trace("Attempting to resolve candidate authentication events for service [{}]", service);
             val resolvedEvents = resolveCandidateAuthenticationEvents(context, service, registeredService);
             if (!resolvedEvents.isEmpty()) {
-                LOGGER.trace("The set of authentication events resolved for [{}] are [{}]. Beginning to select the final event...",
-                    service, resolvedEvents);
+                LOGGER.trace("The set of authentication events resolved for [{}] are [{}]. Beginning to select the final event...", service, resolvedEvents);
                 putResolvedEventsAsAttribute(context, resolvedEvents);
                 val finalResolvedEvent = this.selectiveResolver.resolveSingle(context);
                 LOGGER.debug("The final authentication event resolved for [{}] is [{}]", service, finalResolvedEvent);
