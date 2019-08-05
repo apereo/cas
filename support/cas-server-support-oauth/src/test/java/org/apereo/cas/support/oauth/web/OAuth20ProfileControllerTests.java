@@ -147,7 +147,7 @@ public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
         val expectedAttributes = expectedObj.get(ATTRIBUTES_PARAM);
         val receivedAttributes = receivedObj.get(ATTRIBUTES_PARAM);
 
-        assertEquals(expectedAttributes.findValue(NAME).asText(), receivedAttributes.findValue(NAME).get(0).asText());
+        assertEquals(expectedAttributes.findValue(NAME).asText(), receivedAttributes.findValue(NAME).asText());
         assertEquals(expectedAttributes.findValues(NAME2), receivedAttributes.findValues(NAME2));
     }
 
@@ -189,7 +189,7 @@ public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
         val expectedAttributes = expectedObj.get(ATTRIBUTES_PARAM);
         val receivedAttributes = receivedObj.get(ATTRIBUTES_PARAM);
 
-        assertEquals(expectedAttributes.findValue(NAME).asText(), receivedAttributes.findValue(NAME).get(0).asText());
+        assertEquals(expectedAttributes.findValue(NAME).asText(), receivedAttributes.findValue(NAME).asText());
         assertEquals(expectedAttributes.findValues(NAME2), receivedAttributes.findValues(NAME2));
     }
 
@@ -222,7 +222,7 @@ public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
         val expectedAttributes = expectedObj.get(ATTRIBUTES_PARAM);
         val receivedAttributes = receivedObj.get(ATTRIBUTES_PARAM);
 
-        assertEquals(expectedAttributes.findValue(NAME).asText(), receivedAttributes.findValue(NAME).get(0).asText());
+        assertEquals(expectedAttributes.findValue(NAME).asText(), receivedAttributes.findValue(NAME).asText());
         assertEquals(expectedAttributes.findValues(NAME2), receivedAttributes.findValues(NAME2));
     }
 }
