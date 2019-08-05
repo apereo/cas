@@ -32,7 +32,8 @@ public abstract class BaseUmaEndpointController {
     /**
      * Json object mapper instance.
      */
-    protected static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+    protected static final ObjectMapper MAPPER = new ObjectMapper()
+        .findAndRegisterModules();
 
     private final UmaConfigurationContext umaConfigurationContext;
 

@@ -5,7 +5,9 @@ import org.apereo.cas.uma.ticket.resource.ResourceSet;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
+import lombok.SneakyThrows;
 import lombok.val;
 import org.pac4j.core.profile.CommonProfile;
 
@@ -22,6 +24,9 @@ import java.util.LinkedHashSet;
  */
 @Data
 public class UmaResourceRegistrationRequest implements Serializable {
+    private static final ObjectMapper MAPPER = new ObjectMapper()
+        .findAndRegisterModules();
+
     private static final long serialVersionUID = 3614209506339611242L;
 
     @JsonProperty("_id")
@@ -68,7 +73,8 @@ public class UmaResourceRegistrationRequest implements Serializable {
      * @return the string
      */
     @JsonIgnore
+    @SneakyThrows
     public String toJson() {
-        return OAuth20Utils.toJson(this);
+        return MAPPER.writeValueAsString(this);
     }
 }
