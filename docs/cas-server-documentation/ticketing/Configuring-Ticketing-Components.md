@@ -27,7 +27,7 @@ There are a wide range of ticket registries on the menu. The selection criteria 
 - Choose a technology that shows promising results under *your expected load*, having run [performance and stress tests](../high_availability/High-Availability-Performance-Testing.html).
 - Choose a technology that does not depend on outside processes and systems as much as possible, is self-reliant and self contained.
 
-The above simply outlines suggestions and guidelines you may wish to consider. Any option and decision present various pros and cons and in the end, you must decide which drawbacks or advantages provide you with the best experience.
+The above simply outlines suggestions and guidelines you may wish to consider. Each option presents various pros and cons and in the end, you must decide which drawbacks or advantages provide you with the best experience.
 
 ### Cache-Based Ticket Registries
 
