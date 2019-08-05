@@ -1,10 +1,10 @@
 package org.apereo.cas.uma.web.controllers.authz;
 
-import org.apereo.cas.support.oauth.util.OAuth20Utils;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
+import lombok.SneakyThrows;
 
 import java.io.Serializable;
 
@@ -16,6 +16,9 @@ import java.io.Serializable;
  */
 @Data
 public class UmaAuthorizationRequest implements Serializable {
+    private static final ObjectMapper MAPPER = new ObjectMapper()
+        .findAndRegisterModules();
+
     private static final long serialVersionUID = -5359723510084259980L;
 
     @JsonProperty
@@ -39,7 +42,8 @@ public class UmaAuthorizationRequest implements Serializable {
      * @return the string
      */
     @JsonIgnore
+    @SneakyThrows
     public String toJson() {
-        return OAuth20Utils.toJson(this);
+        return MAPPER.writeValueAsString(this);
     }
 }
