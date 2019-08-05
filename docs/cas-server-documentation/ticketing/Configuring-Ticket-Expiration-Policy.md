@@ -14,12 +14,12 @@ tickets (`TGT`), proxy-granting tickets (`PGT`), service tickets (`ST`) and prox
 ## Ticket-Granting Ticket Policies
 
 TGT expiration policy governs the time span during which an authenticated user may grant STs with a valid (non-expired) TGT without
-having to re-authenticate. An attempt to grant a ST with an expired TGT would require the user to re-authenticate
+having to re-authenticate. An attempt to grant an ST with an expired TGT would require the user to re-authenticate
 to obtain a new (valid) TGT.
 
 ### Default
 
-This is default option, which provides a hard-time out as well as a sliding window.
+This is the default option, which provides a hard-time out as well as a sliding window.
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#tgt-expiration-policy).
 
@@ -52,7 +52,7 @@ To see the relevant list of CAS properties, please [review this guide](../config
 The never expires policy allows tickets to exist indefinitely. 
 
 <div class="alert alert-warning"><strong>Usage Warning!</strong><p>Use of this policy has significant consequences to overall
-security policy and should be enabled only after thorough review by a qualified security team. There are also implications to
+security policy and should be enabled only after a thorough review by a qualified security team. There are also implications to
 server resource usage for the ticket registries backed by filesystem storage. Since disk storage for tickets can never be reclaimed
 for those registries with this policy in effect, use of this policy with those ticket registry implementations
 is strongly discouraged.</p></div>
