@@ -140,7 +140,7 @@ public class AcceptableUsagePolicyProperties implements Serializable {
         private String aupColumn;
         
         /**
-         * The column to idetify the principal.
+         * The column to identify the principal.
          * SQL query can be further customized by setting {@link #sqlUpdateAUP}.
          */
         private String principalIdColumn = "username";

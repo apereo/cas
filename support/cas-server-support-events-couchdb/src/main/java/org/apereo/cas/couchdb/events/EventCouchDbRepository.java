@@ -62,12 +62,12 @@ public class EventCouchDbRepository extends CouchDbRepositorySupport<CouchDbCasE
      * Find by type and principal id.
      * @param type event type
      * @param principalId principal to search for
-     * @param localDeateTime time to search after
+     * @param localDateTime time to search after
      * @return events of requested type and principal since given time
      */
     @View(name = "by_type_for_principal_id_since", map = "function(doc) { emit([doc.type, doc.principal, doc.creationTime], doc) }")
-    public Collection<CouchDbCasEvent> findByTypeForPrincipalSince(final String type, final String principalId, final LocalDateTime localDeateTime) {
-        val view = createQuery("by_type_for_principal_id_since").startKey(ComplexKey.of(type, principalId, localDeateTime))
+    public Collection<CouchDbCasEvent> findByTypeForPrincipalSince(final String type, final String principalId, final LocalDateTime localDateTime) {
+        val view = createQuery("by_type_for_principal_id_since").startKey(ComplexKey.of(type, principalId, localDateTime))
             .endKey(ComplexKey.of(type, principalId, LocalDateTime.now()));
         return db.queryView(view, CouchDbCasEvent.class);
     }

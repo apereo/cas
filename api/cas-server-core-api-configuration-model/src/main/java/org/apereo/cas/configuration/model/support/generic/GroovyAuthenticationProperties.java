@@ -20,7 +20,7 @@ public class GroovyAuthenticationProperties extends SpringResourceProperties {
     private static final long serialVersionUID = 2179027841236526083L;
 
     /**
-     * Authentication hanler name used to verify credentials in the file.
+     * Authentication handler name used to verify credentials in the file.
      */
     private String name;
 

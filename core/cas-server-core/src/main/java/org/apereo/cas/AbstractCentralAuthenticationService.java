@@ -59,7 +59,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
     protected ApplicationEventPublisher applicationEventPublisher;
 
     /**
-     * {@link TicketRegistry}  for storing and retrieving tickets as needed.
+     * {@link TicketRegistry} for storing and retrieving tickets as needed.
      */
     protected final TicketRegistry ticketRegistry;
 
