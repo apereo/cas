@@ -23,6 +23,26 @@ The following endpoints are provided by CAS:
 |--------------------------|------------------------------------------------
 | `auditLog`               | Provides a JSON representation of all the audit log.
 
+Navigating to `/actuator/auditLog` displays the complete audit for the past number of days determined by `cas.audit.numberOfDaysInHistory`(default is 30 days);
+
+You can specify an interval of log entries to return by adding a Duration Syntax to the navigated path.  This interval will be subtracted from the current 
+date and time when the query is executed.  For instance `/actuator/auditLog/PT1H` will return only entries for the past our.  
+
+`/actuator/auditLog` can also accept a JSON object through a POST method containing criteria to filter log entries by.
+
+The following filters that can be applied:
+
+| Key                       | Value
+|---------------------------|-----------------------------------------------
+| `interval`                | `PT1H`, `PT10M`, `P1D`
+| `actionPerformed`         | `TICKET_GRANTING_TICKET_CREATED`, `SERVICE_TICK.*`
+| `clientIpAddress`         | `111.111.111.111`, `111.111.*` 
+| `username`                | `casuser`, `cas.*`
+| `resourceOperatedOn`      | `ST-1.*`, `TGT-1-.*`
+
+Each filter other than `interval` can accept a regular expression to match against.
+
+
 ## File-based Audits
 
 File-based audit logs appear in a `cas_audit.log` file defined in the [Logging](../logging/Logging.html) configuration.
