@@ -11,6 +11,7 @@ import org.apereo.cas.authentication.principal.ClientCredential;
 import org.apereo.cas.authentication.principal.ClientCustomPropertyConstants;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.pac4j.logout.RequestSloException;
@@ -103,16 +104,6 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
      */
     protected final AuthenticationSystemSupport authenticationSystemSupport;
 
-    /**
-     * The Locale param name.
-     */
-    protected final String localeParamName;
-
-    /**
-     * The Theme param name.
-     */
-    protected final String themeParamName;
-
     private final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
 
     private final CentralAuthenticationService centralAuthenticationService;
@@ -123,6 +114,8 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
 
     private final DelegatedAuthenticationAccessStrategyHelper delegatedAuthenticationAccessStrategyHelper;
 
+    private final CasConfigurationProperties casProperties;
+
     public DelegatedClientAuthenticationAction(final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
                                                final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
                                                final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy,
@@ -131,8 +124,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
                                                final AuditableExecution delegatedAuthenticationPolicyEnforcer,
                                                final DelegatedClientWebflowManager delegatedClientWebflowManager,
                                                final AuthenticationSystemSupport authenticationSystemSupport,
-                                               final String localeParamName,
-                                               final String themeParamName,
+                                               final CasConfigurationProperties casProperties,
                                                final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies,
                                                final CentralAuthenticationService centralAuthenticationService,
                                                final SingleSignOnParticipationStrategy singleSignOnParticipationStrategy,
@@ -143,12 +135,11 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         this.delegatedAuthenticationPolicyEnforcer = delegatedAuthenticationPolicyEnforcer;
         this.delegatedClientWebflowManager = delegatedClientWebflowManager;
         this.authenticationSystemSupport = authenticationSystemSupport;
-        this.localeParamName = localeParamName;
-        this.themeParamName = themeParamName;
         this.authenticationRequestServiceSelectionStrategies = authenticationRequestServiceSelectionStrategies;
         this.centralAuthenticationService = centralAuthenticationService;
         this.singleSignOnParticipationStrategy = singleSignOnParticipationStrategy;
         this.sessionStore = sessionStore;
+        this.casProperties = casProperties;
         this.delegatedAuthenticationAccessStrategyHelper =
             new DelegatedAuthenticationAccessStrategyHelper(this.servicesManager, delegatedAuthenticationPolicyEnforcer);
     }
@@ -349,15 +340,15 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         if (StringUtils.isNotBlank(methodParam)) {
             uriBuilder.queryParam(CasProtocolConstants.PARAMETER_METHOD, methodParam);
         }
-        val localeParam = webContext.getRequestParameter(this.localeParamName)
+        val localeParam = webContext.getRequestParameter(casProperties.getLocale().getParamName())
             .map(String::valueOf).orElse(StringUtils.EMPTY);
         if (StringUtils.isNotBlank(localeParam)) {
-            uriBuilder.queryParam(this.localeParamName, localeParam);
+            uriBuilder.queryParam(casProperties.getLocale().getParamName(), localeParam);
         }
-        val themeParam = webContext.getRequestParameter(this.themeParamName)
+        val themeParam = webContext.getRequestParameter(casProperties.getTheme().getParamName())
             .map(String::valueOf).orElse(StringUtils.EMPTY);
         if (StringUtils.isNotBlank(themeParam)) {
-            uriBuilder.queryParam(this.themeParamName, themeParam);
+            uriBuilder.queryParam(casProperties.getTheme().getParamName(), themeParam);
         }
         val redirectUrl = uriBuilder.toUriString();
         val autoRedirect = (Boolean) client.getCustomProperties().getOrDefault(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_AUTO_REDIRECT, Boolean.FALSE);
