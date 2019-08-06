@@ -1,8 +1,8 @@
 package org.apereo.cas.web.flow.executor;
 
-import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.model.webapp.WebflowProperties;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;

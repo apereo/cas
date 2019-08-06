@@ -13,8 +13,8 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.pac4j.core.context.HttpConstants;
-import org.pac4j.core.context.J2EContext;
-import org.pac4j.core.context.session.J2ESessionStore;
+import org.pac4j.core.context.JEEContext;
+import org.pac4j.core.context.session.JEESessionStore;
 import org.pac4j.http.credentials.extractor.DigestAuthExtractor;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -52,16 +52,17 @@ public class DigestAuthenticationAction extends AbstractNonInteractiveCredential
             val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
 
             val extractor = new DigestAuthExtractor();
-            val webContext = new J2EContext(request, response, new J2ESessionStore());
+            val webContext = new JEEContext(request, response, new JEESessionStore());
 
-            val credentials = extractor.extract(webContext);
-            if (credentials == null) {
+            val credentialsResult = extractor.extract(webContext);
+            if (credentialsResult.isEmpty()) {
                 response.addHeader(HttpConstants.AUTHENTICATE_HEADER,
                     DigestAuthenticationUtils.createAuthenticateHeader(this.realm, this.authenticationMethod, this.nonce));
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 return null;
             }
 
+            val credentials = credentialsResult.get();
             LOGGER.debug("Received digest authentication request from credentials [{}] ", credentials);
             val serverResponse = credentials.calculateServerDigest(true,
                 this.credentialRetriever.findCredential(credentials.getUsername(), this.realm));

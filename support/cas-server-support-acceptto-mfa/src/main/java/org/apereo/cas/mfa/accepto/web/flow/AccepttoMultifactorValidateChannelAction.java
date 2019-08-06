@@ -9,7 +9,7 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.pac4j.core.context.J2EContext;
+import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.action.EventFactorySupport;
@@ -26,7 +26,7 @@ import org.springframework.webflow.execution.RequestContext;
 @Slf4j
 @RequiredArgsConstructor
 public class AccepttoMultifactorValidateChannelAction extends AbstractAction {
-    private final SessionStore<J2EContext> sessionStore;
+    private final SessionStore<JEEContext> sessionStore;
     private final AuthenticationSystemSupport authenticationSystemSupport;
 
     @Override
@@ -35,7 +35,7 @@ public class AccepttoMultifactorValidateChannelAction extends AbstractAction {
         try {
             val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
             val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
-            val webContext = new J2EContext(request, response, this.sessionStore);
+            val webContext = new JEEContext(request, response, this.sessionStore);
 
             val channel = AccepttoWebflowUtils.getChannel(webContext);
             if (channel == null) {

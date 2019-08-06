@@ -1,14 +1,14 @@
 package org.apereo.cas.ticket.factory;
 
-import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.ticket.ExpirationPolicy;
+import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,7 +34,7 @@ public class DefaultTicketGrantingTicketFactory implements TicketGrantingTicketF
     /**
      * Expiration policy for ticket granting tickets.
      */
-    protected final ExpirationPolicy ticketGrantingTicketExpirationPolicy;
+    protected final ExpirationPolicyBuilder<TicketGrantingTicket> ticketGrantingTicketExpirationPolicy;
 
     /**
      * The ticket cipher, if any.
@@ -63,7 +63,8 @@ public class DefaultTicketGrantingTicketFactory implements TicketGrantingTicketF
      */
     protected <T extends TicketGrantingTicket> T produceTicket(final Authentication authentication,
                                                                final String tgtId, final Class<T> clazz) {
-        val result = new TicketGrantingTicketImpl(tgtId, authentication, this.ticketGrantingTicketExpirationPolicy);
+        val result = new TicketGrantingTicketImpl(tgtId, authentication,
+            this.ticketGrantingTicketExpirationPolicy.buildTicketExpirationPolicy());
         if (!clazz.isAssignableFrom(result.getClass())) {
             throw new ClassCastException("Result [" + result
                 + " is of type " + result.getClass()

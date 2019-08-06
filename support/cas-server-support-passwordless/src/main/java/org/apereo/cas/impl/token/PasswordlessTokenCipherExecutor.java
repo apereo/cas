@@ -19,7 +19,7 @@ public class PasswordlessTokenCipherExecutor extends BaseStringCipherExecutor {
 
     @Override
     protected String getEncryptionKeySetting() {
-        return "cas.consent.crypto.encryption.key";
+        return "cas.authn.passwordless.tokens.crypto.encryption.key";
     }
 
     @Override

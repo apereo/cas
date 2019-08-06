@@ -39,14 +39,6 @@ public interface ServiceTicket extends Ticket {
     boolean isFromNewLogin();
 
     /**
-     * Attempts to ensure that the service specified matches the service associated with the ticket.
-     *
-     * @param service The incoming service to match this service ticket against.
-     * @return true, if the match is successful.
-     */
-    boolean isValidFor(Service service);
-
-    /**
      * Method to grant a TicketGrantingTicket from this service to the
      * authentication. Analogous to the ProxyGrantingTicket.
      *

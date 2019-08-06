@@ -95,7 +95,7 @@ public class GoogleAuthenticatorMongoDbTokenRepositoryTests extends BaseOneTimeT
         oneTimeTokenAuthenticatorTokenRepository.removeAll();
     }
 
-    @TestConfiguration
+    @TestConfiguration("MongoTestConfiguration")
     public static class MongoTestConfiguration implements InitializingBean {
         @Autowired
         protected ApplicationContext applicationContext;

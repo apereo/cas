@@ -34,7 +34,7 @@ import org.springframework.webflow.execution.Action;
 @Configuration("coreWsSecurityIdentityProviderWebflowConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @AutoConfigureAfter(CasCoreWebflowConfiguration.class)
-public class CoreWsSecurityIdentityProviderWebflowConfiguration implements CasWebflowExecutionPlanConfigurer {
+public class CoreWsSecurityIdentityProviderWebflowConfiguration {
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -71,8 +71,14 @@ public class CoreWsSecurityIdentityProviderWebflowConfiguration implements CasWe
             loginFlowDefinitionRegistry.getIfAvailable(), wsFederationMetadataUIAction(), applicationContext, casProperties);
     }
 
-    @Override
-    public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-        plan.registerWebflowConfigurer(wsFederationWebflowConfigurer());
+    @Bean
+    @ConditionalOnMissingBean(name = "wsFederationCasWebflowExecutionPlanConfigurer")
+    public CasWebflowExecutionPlanConfigurer wsFederationCasWebflowExecutionPlanConfigurer() {
+        return new CasWebflowExecutionPlanConfigurer() {
+            @Override
+            public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
+                plan.registerWebflowConfigurer(wsFederationWebflowConfigurer());
+            }
+        };
     }
 }

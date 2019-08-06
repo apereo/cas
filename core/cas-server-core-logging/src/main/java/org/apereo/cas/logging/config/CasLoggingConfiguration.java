@@ -14,9 +14,10 @@ import org.apache.logging.log4j.web.Log4jServletContextListener;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnEnabledEndpoint;
+import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
@@ -47,13 +48,15 @@ public class CasLoggingConfiguration {
     @Qualifier("defaultTicketRegistrySupport")
     private ObjectProvider<TicketRegistrySupport> ticketRegistrySupport;
 
-
     @ConditionalOnBean(value = TicketRegistry.class)
+    @ConditionalOnProperty(prefix = "cas.logging", name = "mdcEnabled", havingValue = "true", matchIfMissing = true)
     @Bean
     public FilterRegistrationBean threadContextMDCServletFilter() {
+        val filter = new ThreadContextMDCServletFilter(ticketRegistrySupport.getIfAvailable(),
+            this.ticketGrantingTicketCookieGenerator.getIfAvailable());
         val initParams = new HashMap<String, String>();
         val bean = new FilterRegistrationBean<ThreadContextMDCServletFilter>();
-        bean.setFilter(new ThreadContextMDCServletFilter(ticketRegistrySupport.getIfAvailable(), this.ticketGrantingTicketCookieGenerator.getIfAvailable()));
+        bean.setFilter(filter);
         bean.setUrlPatterns(CollectionUtils.wrap("/*"));
         bean.setInitParameters(initParams);
         bean.setName("threadContextMDCServletFilter");
@@ -77,7 +80,7 @@ public class CasLoggingConfiguration {
         private Environment environment;
 
         @Bean
-        @ConditionalOnEnabledEndpoint
+        @ConditionalOnAvailableEndpoint
         public LoggingConfigurationEndpoint loggingConfigurationEndpoint() {
             return new LoggingConfigurationEndpoint(casProperties, resourceLoader, environment);
         }

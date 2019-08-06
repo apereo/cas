@@ -139,7 +139,7 @@ public abstract class AbstractOpenSamlTests {
         assertNotNull(this.parserPool.getBuilder());
     }
 
-    @TestConfiguration
+    @TestConfiguration("SamlTestConfiguration")
     public static class SamlTestConfiguration implements InitializingBean {
         @Autowired
         protected ApplicationContext applicationContext;

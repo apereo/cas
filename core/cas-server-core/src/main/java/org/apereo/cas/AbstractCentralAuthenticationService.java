@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.ContextualAuthenticationPolicyFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.authentication.principal.ServiceMatchingStrategy;
 import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServiceContext;
@@ -18,6 +19,7 @@ import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.UnsatisfiedAuthenticationPolicyException;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
@@ -57,7 +59,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
     protected ApplicationEventPublisher applicationEventPublisher;
 
     /**
-     * {@link TicketRegistry}  for storing and retrieving tickets as needed.
+     * {@link TicketRegistry} for storing and retrieving tickets as needed.
      */
     protected final TicketRegistry ticketRegistry;
 
@@ -102,6 +104,12 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
      * since the access strategy is not usually managed as a Spring bean.
      */
     protected final AuditableExecution registeredServiceAccessStrategyEnforcer;
+
+    /**
+     * Service matching strategy to ensure, primarily, that service tickets
+     * can be validated for services that owns them.
+     */
+    protected final ServiceMatchingStrategy serviceMatchingStrategy;
 
     /**
      * Publish CAS events.

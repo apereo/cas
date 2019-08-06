@@ -1,7 +1,6 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.CentralAuthenticationService;
-import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.adaptors.yubikey.YubikeyAccountCipherExecutor;
 import org.apereo.cas.adaptors.yubikey.web.flow.YubiKeyAuthenticationWebflowAction;
 import org.apereo.cas.adaptors.yubikey.web.flow.YubiKeyAuthenticationWebflowEventResolver;
@@ -12,7 +11,9 @@ import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -51,7 +52,7 @@ import org.springframework.webflow.execution.Action;
 @Configuration("yubikeyConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-public class YubiKeyConfiguration implements CasWebflowExecutionPlanConfigurer {
+public class YubiKeyConfiguration {
 
     @Autowired
     @Qualifier("loginFlowRegistry")
@@ -80,6 +81,10 @@ public class YubiKeyConfiguration implements CasWebflowExecutionPlanConfigurer {
     @Autowired
     @Qualifier("defaultAuthenticationSystemSupport")
     private ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport;
+
+    @Autowired
+    @Qualifier("ticketRegistry")
+    private ObjectProvider<TicketRegistry> ticketRegistry;
 
     @Autowired
     @Qualifier("defaultTicketRegistrySupport")
@@ -130,6 +135,7 @@ public class YubiKeyConfiguration implements CasWebflowExecutionPlanConfigurer {
             .authenticationRequestServiceSelectionStrategies(authenticationRequestServiceSelectionStrategies.getIfAvailable())
             .registeredServiceAccessStrategyEnforcer(registeredServiceAccessStrategyEnforcer.getIfAvailable())
             .casProperties(casProperties)
+            .ticketRegistry(ticketRegistry.getIfAvailable())
             .eventPublisher(applicationEventPublisher)
             .applicationContext(applicationContext)
             .build();
@@ -137,9 +143,15 @@ public class YubiKeyConfiguration implements CasWebflowExecutionPlanConfigurer {
         return new YubiKeyAuthenticationWebflowEventResolver(context);
     }
 
-    @Override
-    public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-        plan.registerWebflowConfigurer(yubikeyMultifactorWebflowConfigurer());
+    @Bean
+    @ConditionalOnMissingBean(name = "yubikeyCasWebflowExecutionPlanConfigurer")
+    public CasWebflowExecutionPlanConfigurer yubikeyCasWebflowExecutionPlanConfigurer() {
+        return new CasWebflowExecutionPlanConfigurer() {
+            @Override
+            public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
+                plan.registerWebflowConfigurer(yubikeyMultifactorWebflowConfigurer());
+            }
+        };
     }
 
     @Bean
@@ -160,7 +172,6 @@ public class YubiKeyConfiguration implements CasWebflowExecutionPlanConfigurer {
             + "YubiKey accounts for MFA");
         return CipherExecutor.noOp();
     }
-
 
     /**
      * The Yubikey multifactor trust configuration.

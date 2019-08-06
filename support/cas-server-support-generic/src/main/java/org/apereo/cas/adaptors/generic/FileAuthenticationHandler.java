@@ -71,7 +71,8 @@ public class FileAuthenticationHandler extends AbstractUsernamePasswordAuthentic
                 throw new AccountNotFoundException(username + " not found in backing file.");
             }
             if (matches(originalPassword, passwordOnRecord)) {
-                return createHandlerResult(transformedCredential, this.principalFactory.createPrincipal(username), new ArrayList<>(0));
+                val principal = this.principalFactory.createPrincipal(username);
+                return createHandlerResult(transformedCredential, principal, new ArrayList<>(0));
             }
         } catch (final IOException e) {
             throw new PreventedException("IO error reading backing file", e);

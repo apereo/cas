@@ -13,6 +13,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.apache.commons.lang3.ObjectUtils;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
@@ -54,6 +56,7 @@ public class OAuthCodeImpl extends AbstractTicket implements OAuthCode {
      * The {@link TicketGrantingTicket} this is associated with.
      */
     @ManyToOne(targetEntity = TicketGrantingTicketImpl.class)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonProperty("ticketGrantingTicket")
     private TicketGrantingTicket ticketGrantingTicket;
 
@@ -61,7 +64,7 @@ public class OAuthCodeImpl extends AbstractTicket implements OAuthCode {
      * The service this ticket is valid for.
      */
     @Lob
-    @Column(name = "SERVICE", nullable = false)
+    @Column(name = "SERVICE", nullable = false, length = Integer.MAX_VALUE)
     private Service service;
 
     /**
@@ -106,13 +109,7 @@ public class OAuthCodeImpl extends AbstractTicket implements OAuthCode {
     public boolean isFromNewLogin() {
         return true;
     }
-
-    @Override
-    public boolean isValidFor(final Service serviceToValidate) {
-        update();
-        return serviceToValidate.matches(this.service);
-    }
-
+    
     @Override
     public ProxyGrantingTicket grantProxyGrantingTicket(final String id,
                                                         final Authentication authentication,

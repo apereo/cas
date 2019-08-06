@@ -30,8 +30,7 @@ public abstract class BaseResourceU2FDeviceRepository extends BaseU2FDeviceRepos
      * Key in the map that indicates list of devices.
      */
     public static final String MAP_KEY_DEVICES = "devices";
-
-
+    
     private final long expirationTime;
     private final TimeUnit expirationTimeUnit;
 

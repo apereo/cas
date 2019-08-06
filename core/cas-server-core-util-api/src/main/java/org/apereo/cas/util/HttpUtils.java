@@ -394,6 +394,75 @@ public class HttpUtils {
         return null;
     }
 
+
+    /**
+     * Execute delete http response.
+     *
+     * @param url               the url
+     * @param basicAuthUsername the basic auth username
+     * @param basicAuthPassword the basic auth password
+     * @param entity            the entity
+     * @param parameters        the parameters
+     * @param headers           the headers
+     * @return the http response
+     */
+    public static HttpResponse executeDelete(final String url,
+                                             final String basicAuthUsername,
+                                             final String basicAuthPassword,
+                                             final String entity,
+                                             final Map<String, Object> parameters,
+                                             final Map<String, Object> headers) {
+        try {
+            return execute(url, HttpMethod.DELETE.name(), basicAuthUsername, basicAuthPassword, parameters, headers, entity);
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return null;
+    }
+
+    /**
+     * Execute delete http response.
+     *
+     * @param url               the url
+     * @param basicAuthUsername the basic auth username
+     * @param basicAuthPassword the basic auth password
+     * @param parameters        the parameters
+     * @param headers           the headers
+     * @return the http response
+     */
+    public static HttpResponse executeDelete(final String url,
+                                             final String basicAuthUsername,
+                                             final String basicAuthPassword,
+                                             final Map<String, Object> parameters,
+                                             final Map<String, Object> headers) {
+        try {
+            return executeDelete(url, basicAuthUsername, basicAuthPassword, null, parameters, headers);
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return null;
+    }
+
+    /**
+     * Execute delete http response.
+     *
+     * @param url               the url
+     * @param basicAuthUsername the basic auth username
+     * @param basicAuthPassword the basic auth password
+     * @return the http response
+     */
+    public static HttpResponse executeDelete(final String url,
+                                             final String basicAuthUsername,
+                                             final String basicAuthPassword) {
+        try {
+            return executeDelete(url, basicAuthUsername, basicAuthPassword, null, null, null);
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return null;
+    }
+
+
     /**
      * Prepare http request. Tries to set the authorization header
      * in cases where the URL endpoint does not actually produce the header

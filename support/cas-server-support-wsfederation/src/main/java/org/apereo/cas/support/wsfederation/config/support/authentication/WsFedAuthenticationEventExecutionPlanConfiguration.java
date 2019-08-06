@@ -1,6 +1,5 @@
 package org.apereo.cas.support.wsfederation.config.support.authentication;
 
-import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
@@ -16,6 +15,7 @@ import org.apereo.cas.support.wsfederation.authentication.handler.support.WsFede
 import org.apereo.cas.support.wsfederation.authentication.principal.WsFederationCredentialsToPrincipalResolver;
 import org.apereo.cas.support.wsfederation.web.WsFederationCookieCipherExecutor;
 import org.apereo.cas.support.wsfederation.web.WsFederationCookieGenerator;
+import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.support.mgmr.DefaultCasCookieValueManager;
 

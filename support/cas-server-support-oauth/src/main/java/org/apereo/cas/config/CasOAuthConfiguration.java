@@ -1,7 +1,6 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.CentralAuthenticationService;
-import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.audit.AuditTrailConstants;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.audit.AuditableExecution;
@@ -9,9 +8,7 @@ import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.ServiceFactory;
-import org.apereo.cas.client.CasServerApiBasedTicketValidator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.integration.pac4j.DistributedJ2ESessionStore;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.ServicesManager;
@@ -24,6 +21,7 @@ import org.apereo.cas.support.oauth.authenticator.OAuth20ClientIdClientSecretAut
 import org.apereo.cas.support.oauth.authenticator.OAuth20ProofKeyCodeExchangeAuthenticator;
 import org.apereo.cas.support.oauth.authenticator.OAuth20UsernamePasswordAuthenticator;
 import org.apereo.cas.support.oauth.authenticator.OAuthAuthenticationClientProvider;
+import org.apereo.cas.support.oauth.profile.CasServerApiBasedTicketValidator;
 import org.apereo.cas.support.oauth.profile.DefaultOAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.profile.DefaultOAuth20UserProfileDataCreator;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
@@ -80,25 +78,27 @@ import org.apereo.cas.support.oauth.web.views.OAuth20CallbackAuthorizeViewResolv
 import org.apereo.cas.support.oauth.web.views.OAuth20ConsentApprovalViewResolver;
 import org.apereo.cas.support.oauth.web.views.OAuth20DefaultUserProfileViewRenderer;
 import org.apereo.cas.support.oauth.web.views.OAuth20UserProfileViewRenderer;
-import org.apereo.cas.ticket.ExpirationPolicy;
+import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
+import org.apereo.cas.ticket.accesstoken.AccessTokenExpirationPolicyBuilder;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.accesstoken.DefaultAccessTokenFactory;
-import org.apereo.cas.ticket.accesstoken.OAuthAccessTokenExpirationPolicy;
+import org.apereo.cas.ticket.accesstoken.OAuth20JwtBuilder;
 import org.apereo.cas.ticket.code.DefaultOAuthCodeFactory;
-import org.apereo.cas.ticket.code.OAuthCodeExpirationPolicy;
+import org.apereo.cas.ticket.code.OAuthCodeExpirationPolicyBuilder;
 import org.apereo.cas.ticket.code.OAuthCodeFactory;
 import org.apereo.cas.ticket.device.DefaultDeviceTokenFactory;
-import org.apereo.cas.ticket.device.DeviceTokenExpirationPolicy;
+import org.apereo.cas.ticket.device.DeviceTokenExpirationPolicyBuilder;
 import org.apereo.cas.ticket.device.DeviceTokenFactory;
 import org.apereo.cas.ticket.refreshtoken.DefaultRefreshTokenFactory;
-import org.apereo.cas.ticket.refreshtoken.OAuthRefreshTokenExpirationPolicy;
+import org.apereo.cas.ticket.refreshtoken.RefreshTokenExpirationPolicyBuilder;
 import org.apereo.cas.ticket.refreshtoken.RefreshTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
+import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 
@@ -110,8 +110,8 @@ import org.pac4j.cas.client.CasClient;
 import org.pac4j.cas.config.CasConfiguration;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.config.Config;
-import org.pac4j.core.context.J2EContext;
-import org.pac4j.core.context.session.J2ESessionStore;
+import org.pac4j.core.context.JEEContext;
+import org.pac4j.core.context.session.JEESessionStore;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.credentials.TokenCredentials;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
@@ -124,7 +124,7 @@ import org.pac4j.http.client.direct.HeaderClient;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnEnabledEndpoint;
+import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -152,8 +152,6 @@ import java.util.Set;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class CasOAuthConfiguration {
-
-
     @Autowired
     private ResourceLoader resourceLoader;
 
@@ -204,7 +202,7 @@ public class CasOAuthConfiguration {
     @ConditionalOnMissingBean(name = "accessTokenJwtBuilder")
     @Bean
     public JwtBuilder accessTokenJwtBuilder() {
-        return new JwtBuilder(casProperties.getServer().getPrefix(),
+        return new OAuth20JwtBuilder(casProperties.getServer().getPrefix(),
             oauthAccessTokenJwtCipherExecutor(),
             servicesManager.getIfAvailable(),
             oauthRegisteredServiceJwtAccessTokenCipherExecutor());
@@ -232,7 +230,7 @@ public class CasOAuthConfiguration {
         val clientList = oauthSecConfigClients();
         val config = new Config(OAuth20Utils.casOAuthCallbackUrl(casProperties.getServer().getPrefix()), clientList);
         config.setSessionStore(oauthDistributedSessionStore());
-        config.setProfileManagerFactory(webContext ->
+        config.setProfileManagerFactory("CASOAuthSecurityProfileManager", webContext ->
             new OAuth20ClientIdAwareProfileManager(webContext, config.getSessionStore(), servicesManager.getIfAvailable()));
         return config;
     }
@@ -244,7 +242,7 @@ public class CasOAuthConfiguration {
         cfg.setDefaultTicketValidator(new CasServerApiBasedTicketValidator(centralAuthenticationService.getIfAvailable()));
 
         val oauthCasClient = new CasClient(cfg);
-        oauthCasClient.setRedirectActionBuilder(webContext ->
+        oauthCasClient.setRedirectionActionBuilder(webContext ->
             oauthCasClientRedirectActionBuilder().build(oauthCasClient, webContext));
         oauthCasClient.setName(Authenticators.CAS_OAUTH_CLIENT);
         oauthCasClient.setUrlResolver(casCallbackUrlResolver());
@@ -360,37 +358,28 @@ public class CasOAuthConfiguration {
     @ConditionalOnMissingBean(name = "defaultDeviceTokenFactory")
     public DeviceTokenFactory defaultDeviceTokenFactory() {
         return new DefaultDeviceTokenFactory(deviceTokenIdGenerator(), deviceTokenExpirationPolicy(),
-            casProperties.getAuthn().getOauth().getDeviceToken().getUserCodeLength(),
+            casProperties.getAuthn().getOauth().getDeviceUserCode().getUserCodeLength(),
             servicesManager.getIfAvailable());
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "accessTokenExpirationPolicy")
-    public ExpirationPolicy accessTokenExpirationPolicy() {
-        val oauth = casProperties.getAuthn().getOauth().getAccessToken();
-        if (casProperties.getLogout().isRemoveDescendantTickets()) {
-            return new OAuthAccessTokenExpirationPolicy(
-                Beans.newDuration(oauth.getMaxTimeToLiveInSeconds()).getSeconds(),
-                Beans.newDuration(oauth.getTimeToKillInSeconds()).getSeconds()
-            );
-        }
-        return new OAuthAccessTokenExpirationPolicy.OAuthAccessTokenSovereignExpirationPolicy(
-            Beans.newDuration(oauth.getMaxTimeToLiveInSeconds()).getSeconds(),
-            Beans.newDuration(oauth.getTimeToKillInSeconds()).getSeconds()
-        );
+    @RefreshScope
+    public ExpirationPolicyBuilder accessTokenExpirationPolicy() {
+        return new AccessTokenExpirationPolicyBuilder(casProperties);
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "deviceTokenExpirationPolicy")
-    public ExpirationPolicy deviceTokenExpirationPolicy() {
-        val oauth = casProperties.getAuthn().getOauth().getDeviceToken();
-        return new DeviceTokenExpirationPolicy(Beans.newDuration(oauth.getMaxTimeToLiveInSeconds()).getSeconds());
+    @RefreshScope
+    public ExpirationPolicyBuilder deviceTokenExpirationPolicy() {
+        return new DeviceTokenExpirationPolicyBuilder(casProperties);
     }
 
-    private ExpirationPolicy oAuthCodeExpirationPolicy() {
-        val oauth = casProperties.getAuthn().getOauth();
-        return new OAuthCodeExpirationPolicy(oauth.getCode().getNumberOfUses(),
-            oauth.getCode().getTimeToKillInSeconds());
+    @Bean
+    @RefreshScope
+    public ExpirationPolicyBuilder oAuthCodeExpirationPolicy() {
+        return new OAuthCodeExpirationPolicyBuilder(casProperties);
     }
 
     @Bean
@@ -697,13 +686,10 @@ public class CasOAuthConfiguration {
             refreshTokenExpirationPolicy(), servicesManager.getIfAvailable());
     }
 
-    private ExpirationPolicy refreshTokenExpirationPolicy() {
-        val rtProps = casProperties.getAuthn().getOauth().getRefreshToken();
-        val timeout = Beans.newDuration(rtProps.getTimeToKillInSeconds()).getSeconds();
-        if (casProperties.getLogout().isRemoveDescendantTickets()) {
-            return new OAuthRefreshTokenExpirationPolicy(timeout);
-        }
-        return new OAuthRefreshTokenExpirationPolicy.OAuthRefreshTokenStandaloneExpirationPolicy(timeout);
+    @Bean
+    @RefreshScope
+    public ExpirationPolicyBuilder refreshTokenExpirationPolicy() {
+        return new RefreshTokenExpirationPolicyBuilder(casProperties);
     }
 
     @ConditionalOnMissingBean(name = "oauthCasAuthenticationBuilder")
@@ -752,7 +738,7 @@ public class CasOAuthConfiguration {
     }
 
     @Bean
-    @ConditionalOnEnabledEndpoint
+    @ConditionalOnAvailableEndpoint
     public OAuth20TokenManagementEndpoint oAuth20TokenManagementEndpoint() {
         return new OAuth20TokenManagementEndpoint(casProperties, ticketRegistry.getIfAvailable());
     }
@@ -789,12 +775,12 @@ public class CasOAuthConfiguration {
 
     @ConditionalOnMissingBean(name = "oauthDistributedSessionStore")
     @Bean
-    public SessionStore<J2EContext> oauthDistributedSessionStore() {
+    public SessionStore<JEEContext> oauthDistributedSessionStore() {
         val replicate = casProperties.getAuthn().getOauth().isReplicateSessions();
         if (replicate) {
             return new DistributedJ2ESessionStore(ticketRegistry.getIfAvailable(), ticketFactory.getIfAvailable());
         }
-        return new J2ESessionStore();
+        return new JEESessionStore();
     }
 
     private OAuth20ConfigurationContext.OAuth20ConfigurationContextBuilder buildConfigurationContext() {

@@ -15,6 +15,7 @@ import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
@@ -50,7 +51,7 @@ import org.springframework.webflow.execution.Action;
  */
 @Configuration("u2FWebflowConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class U2FWebflowConfiguration implements CasWebflowExecutionPlanConfigurer {
+public class U2FWebflowConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -99,6 +100,10 @@ public class U2FWebflowConfiguration implements CasWebflowExecutionPlanConfigure
     @Autowired
     @Qualifier("warnCookieGenerator")
     private ObjectProvider<CasCookieBuilder> warnCookieGenerator;
+
+    @Autowired
+    @Qualifier("ticketRegistry")
+    private ObjectProvider<TicketRegistry> ticketRegistry;
 
     @Bean
     public FlowDefinitionRegistry u2fFlowRegistry() {
@@ -158,6 +163,7 @@ public class U2FWebflowConfiguration implements CasWebflowExecutionPlanConfigure
             .authenticationRequestServiceSelectionStrategies(authenticationRequestServiceSelectionStrategies.getIfAvailable())
             .registeredServiceAccessStrategyEnforcer(registeredServiceAccessStrategyEnforcer.getIfAvailable())
             .casProperties(casProperties)
+            .ticketRegistry(ticketRegistry.getIfAvailable())
             .eventPublisher(applicationEventPublisher)
             .applicationContext(applicationContext)
             .build();
@@ -165,9 +171,15 @@ public class U2FWebflowConfiguration implements CasWebflowExecutionPlanConfigure
         return new U2FAuthenticationWebflowEventResolver(context);
     }
 
-    @Override
-    public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-        plan.registerWebflowConfigurer(u2fMultifactorWebflowConfigurer());
+    @Bean
+    @ConditionalOnMissingBean(name = "u2fCasWebflowExecutionPlanConfigurer")
+    public CasWebflowExecutionPlanConfigurer u2fCasWebflowExecutionPlanConfigurer() {
+        return new CasWebflowExecutionPlanConfigurer() {
+            @Override
+            public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
+                plan.registerWebflowConfigurer(u2fMultifactorWebflowConfigurer());
+            }
+        };
     }
 
     /**

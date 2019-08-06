@@ -11,14 +11,15 @@ import org.apereo.cas.util.HttpRequestUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.pac4j.core.context.J2EContext;
-import org.pac4j.core.context.session.J2ESessionStore;
+import org.pac4j.core.context.JEEContext;
+import org.pac4j.core.context.session.JEESessionStore;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.Optional;
 
 /**
  * This is {@link DistributedJ2ESessionStore}.
@@ -29,21 +30,21 @@ import java.util.HashMap;
 @Transactional(transactionManager = "ticketTransactionManager")
 @RequiredArgsConstructor
 @Slf4j
-public class DistributedJ2ESessionStore extends J2ESessionStore implements HttpSessionListener, LogoutPostProcessor {
+public class DistributedJ2ESessionStore extends JEESessionStore implements HttpSessionListener, LogoutPostProcessor {
     private final TicketRegistry ticketRegistry;
     private final TicketFactory ticketFactory;
 
     @Override
-    public Object get(final J2EContext context, final String key) {
+    public Optional get(final JEEContext context, final String key) {
         val ticket = getTransientSessionTicketForSession(context);
         if (ticket == null) {
-            return null;
+            return Optional.empty();
         }
-        return ticket.getProperties().get(key);
+        return Optional.ofNullable(ticket.getProperties().get(key));
     }
 
     @Override
-    public void set(final J2EContext context, final String key, final Object value) {
+    public void set(final JEEContext context, final String key, final Object value) {
         val transientFactory = (TransientSessionTicketFactory) this.ticketFactory.get(TransientSessionTicket.class);
         val id = getOrCreateSessionId(context);
 
@@ -57,7 +58,8 @@ public class DistributedJ2ESessionStore extends J2ESessionStore implements HttpS
 
         var ticket = getTransientSessionTicketForSession(context);
         if (value == null && ticket != null) {
-            this.ticketRegistry.deleteTicket(ticket);
+            ticket.getProperties().remove(key);
+            this.ticketRegistry.updateTicket(ticket);
         } else if (ticket == null) {
             ticket = transientFactory.create(id, properties);
             this.ticketRegistry.addTicket(ticket);
@@ -67,7 +69,7 @@ public class DistributedJ2ESessionStore extends J2ESessionStore implements HttpS
         }
     }
 
-    private TransientSessionTicket getTransientSessionTicketForSession(final J2EContext context) {
+    private TransientSessionTicket getTransientSessionTicketForSession(final JEEContext context) {
         val id = getOrCreateSessionId(context);
         LOGGER.trace("Session identifier is set to [{}]", id);
         val ticketId = TransientSessionTicketFactory.normalizeTicketId(id);
@@ -102,7 +104,7 @@ public class DistributedJ2ESessionStore extends J2ESessionStore implements HttpS
         try {
             val request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
             val response = HttpRequestUtils.getHttpServletResponseFromRequestAttributes();
-            val id = getOrCreateSessionId(new J2EContext(request, response, this));
+            val id = getOrCreateSessionId(new JEEContext(request, response, this));
             removeSessionTicket(id);
         } catch (final Exception e) {
             LOGGER.trace(e.getMessage(), e);

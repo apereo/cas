@@ -8,10 +8,8 @@ import lombok.val;
 import org.springframework.context.ApplicationContext;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
-import org.springframework.webflow.engine.DecisionState;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
-import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -25,17 +23,13 @@ import org.springframework.webflow.execution.RequestContext;
 public class DelegatedAuthenticationWebflowConfigurer extends AbstractCasWebflowConfigurer {
     private static final String DECISION_STATE_CHECK_DELEGATED_AUTHN_FAILURE = "checkDelegatedAuthnFailureDecision";
 
-    private final Action saml2ClientLogoutAction;
-
     public DelegatedAuthenticationWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
                                                     final FlowDefinitionRegistry loginFlowDefinitionRegistry,
                                                     final FlowDefinitionRegistry logoutFlowDefinitionRegistry,
-                                                    final Action saml2ClientLogoutAction,
                                                     final ApplicationContext applicationContext,
                                                     final CasConfigurationProperties casProperties) {
         super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
         setLogoutFlowDefinitionRegistry(logoutFlowDefinitionRegistry);
-        this.saml2ClientLogoutAction = saml2ClientLogoutAction;
     }
 
     @Override
@@ -48,13 +42,13 @@ public class DelegatedAuthenticationWebflowConfigurer extends AbstractCasWebflow
         }
     }
 
-    private void createSaml2ClientLogoutAction() {
+    protected void createSaml2ClientLogoutAction() {
         val logoutFlow = getLogoutFlow();
-        val state = getState(logoutFlow, CasWebflowConstants.STATE_ID_FINISH_LOGOUT, DecisionState.class);
-        state.getEntryActionList().add(saml2ClientLogoutAction);
+        val state = getState(logoutFlow, CasWebflowConstants.STATE_ID_TERMINATE_SESSION);
+        state.getEntryActionList().add(createEvaluateAction("delegatedAuthenticationClientLogoutAction"));
     }
 
-    private void createClientActionActionState(final Flow flow) {
+    protected void createClientActionActionState(final Flow flow) {
         val actionState = createActionState(flow, CasWebflowConstants.STATE_ID_DELEGATED_AUTHENTICATION,
             createEvaluateAction(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION));
         actionState.getExitActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_CLEAR_WEBFLOW_CREDENTIALS));
@@ -71,7 +65,7 @@ public class DelegatedAuthenticationWebflowConfigurer extends AbstractCasWebflow
         setStartState(flow, actionState);
     }
 
-    private void createStopWebflowViewState(final Flow flow) {
+    protected void createStopWebflowViewState(final Flow flow) {
         createDecisionState(flow, DECISION_STATE_CHECK_DELEGATED_AUTHN_FAILURE, "flowScope.unauthorizedRedirectUrl != null",
             CasWebflowConstants.STATE_ID_SERVICE_UNAUTHZ_CHECK, CasWebflowConstants.STATE_ID_STOP_WEBFLOW);
 

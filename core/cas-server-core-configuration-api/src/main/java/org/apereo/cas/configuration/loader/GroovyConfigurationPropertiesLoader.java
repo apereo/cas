@@ -1,7 +1,7 @@
 package org.apereo.cas.configuration.loader;
 
-import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
 import groovy.util.ConfigSlurper;
 import lombok.extern.slf4j.Slf4j;

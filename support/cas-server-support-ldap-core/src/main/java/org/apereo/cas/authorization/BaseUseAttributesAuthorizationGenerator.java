@@ -15,7 +15,9 @@ import org.ldaptive.SearchExecutor;
 import org.pac4j.core.authorization.generator.AuthorizationGenerator;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.exception.AccountNotFoundException;
-import org.pac4j.core.profile.CommonProfile;
+import org.pac4j.core.profile.UserProfile;
+
+import java.util.Optional;
 
 /**
  * This is {@link BaseUseAttributesAuthorizationGenerator}.
@@ -26,7 +28,7 @@ import org.pac4j.core.profile.CommonProfile;
 @Slf4j
 @RequiredArgsConstructor
 @Getter
-public abstract class BaseUseAttributesAuthorizationGenerator implements AuthorizationGenerator<CommonProfile> {
+public abstract class BaseUseAttributesAuthorizationGenerator implements AuthorizationGenerator {
     /**
      * Search connection factory.
      */
@@ -44,7 +46,7 @@ public abstract class BaseUseAttributesAuthorizationGenerator implements Authori
      * @param attribute the attribute
      * @param prefix    the prefix
      */
-    protected void addProfileRoles(final LdapEntry userEntry, final CommonProfile profile,
+    protected void addProfileRoles(final LdapEntry userEntry, final UserProfile profile,
                                    final LdapAttribute attribute, final String prefix) {
         addProfileRolesFromAttributes(profile, attribute, prefix);
     }
@@ -56,14 +58,14 @@ public abstract class BaseUseAttributesAuthorizationGenerator implements Authori
      * @param ldapAttribute the ldap attribute
      * @param prefix        the prefix
      */
-    protected void addProfileRolesFromAttributes(final CommonProfile profile,
+    protected void addProfileRolesFromAttributes(final UserProfile profile,
                                                  final LdapAttribute ldapAttribute,
                                                  final String prefix) {
         ldapAttribute.getStringValues().forEach(value -> profile.addRole(prefix.concat(value.toUpperCase())));
     }
 
     @Override
-    public CommonProfile generate(final WebContext context, final CommonProfile profile) {
+    public Optional<UserProfile> generate(final WebContext context, final UserProfile profile) {
         val username = profile.getId();
 
         try {
@@ -95,7 +97,7 @@ public abstract class BaseUseAttributesAuthorizationGenerator implements Authori
      * @param userEntry the user entry
      * @return the common profile
      */
-    protected CommonProfile generateAuthorizationForLdapEntry(final CommonProfile profile, final LdapEntry userEntry) {
-        return profile;
+    protected Optional<UserProfile> generateAuthorizationForLdapEntry(final UserProfile profile, final LdapEntry userEntry) {
+        return Optional.ofNullable(profile);
     }
 }

@@ -1,9 +1,10 @@
 package org.apereo.cas.token;
 
-import org.apereo.cas.CipherExecutor;
+import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
 import com.nimbusds.jose.JOSEObjectType;
 import com.nimbusds.jose.PlainHeader;
@@ -64,7 +65,7 @@ public class JwtBuilder {
         LOGGER.debug("Generated JWT [{}]", JsonValue.readJSON(jwtJson).toString(Stringify.FORMATTED));
 
         LOGGER.trace("Locating service [{}] in service registry", serviceAudience);
-        val registeredService = this.servicesManager.findServiceBy(serviceAudience);
+        val registeredService = locateRegisteredService(serviceAudience);
         RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
 
         LOGGER.trace("Locating service specific signing and encryption keys for [{}] in service registry", serviceAudience);
@@ -83,6 +84,16 @@ public class JwtBuilder {
         val token = new PlainJWT(header, claimsSet).serialize();
         LOGGER.trace("Generating plain JWT as the ticket: [{}]", token);
         return token;
+    }
+
+    /**
+     * Locate registered service.
+     *
+     * @param serviceAudience the service audience
+     * @return the registered service
+     */
+    protected RegisteredService locateRegisteredService(final String serviceAudience) {
+        return this.servicesManager.findServiceBy(serviceAudience);
     }
 
     /**

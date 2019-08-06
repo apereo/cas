@@ -40,7 +40,7 @@ import java.util.Collection;
  */
 @Configuration("wsFederationAuthenticationWebflowConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class WsFederationAuthenticationWebflowConfiguration implements CasWebflowExecutionPlanConfigurer {
+public class WsFederationAuthenticationWebflowConfiguration {
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -118,8 +118,14 @@ public class WsFederationAuthenticationWebflowConfiguration implements CasWebflo
             wsFederationCookieManager.getIfAvailable());
     }
 
-    @Override
-    public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-        plan.registerWebflowConfigurer(wsFederationWebflowConfigurer());
+    @Bean
+    @ConditionalOnMissingBean(name = "wsFederationCasWebflowExecutionPlanConfigurer")
+    public CasWebflowExecutionPlanConfigurer wsFederationCasWebflowExecutionPlanConfigurer() {
+        return new CasWebflowExecutionPlanConfigurer() {
+            @Override
+            public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
+                plan.registerWebflowConfigurer(wsFederationWebflowConfigurer());
+            }
+        };
     }
 }

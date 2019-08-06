@@ -1,11 +1,11 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.adaptors.u2f.storage.U2FCouchDbDeviceRepository;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.U2FMultifactorProperties;
 import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
 import org.apereo.cas.couchdb.u2f.U2FDeviceRegistrationCouchDbRepository;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
@@ -57,6 +57,7 @@ public class U2FCouchDbConfiguration {
         @Qualifier("u2fCouchDbFactory") final CouchDbConnectorFactory u2fCouchDbFactory) {
         final U2FMultifactorProperties.CouchDb couchDb = casProperties.getAuthn().getMfa().getU2f().getCouchDb();
         return new U2FDeviceRegistrationCouchDbRepository(u2fCouchDbFactory.getCouchDbConnector(),
+            u2fCouchDbFactory.getCouchDbInstance(),
             couchDb.isCreateIfNotExists());
     }
 

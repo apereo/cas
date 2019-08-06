@@ -8,7 +8,7 @@
  * <p>Successful authentication generates a Principal object wrapped in an
  * Authentication object. All these objects must be serializable, and the
  * Authentication becomes part of the TGT in the ticket cache.</p>
- * <p>Unsucessful authentication must throw an AuthenticationException. The
+ * <p>Unsuccessful authentication must throw an AuthenticationException. The
  * AuthenticationManager may not return null to signal a failure.</p>
  *
  * @since 3.0

@@ -1,7 +1,5 @@
 package org.apereo.cas.util.serialization;
 
-import org.apereo.cas.ComponentSerializationPlan;
-
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 

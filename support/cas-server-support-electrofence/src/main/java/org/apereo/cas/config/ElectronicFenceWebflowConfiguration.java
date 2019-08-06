@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
@@ -44,7 +45,7 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 @Configuration("electronicFenceWebflowConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
-public class ElectronicFenceWebflowConfiguration implements CasWebflowExecutionPlanConfigurer {
+public class ElectronicFenceWebflowConfiguration {
 
     @Autowired
     @Qualifier("authenticationRiskMitigator")
@@ -65,6 +66,10 @@ public class ElectronicFenceWebflowConfiguration implements CasWebflowExecutionP
     @Autowired
     @Qualifier("servicesManager")
     private ObjectProvider<ServicesManager> servicesManager;
+
+    @Autowired
+    @Qualifier("ticketRegistry")
+    private ObjectProvider<TicketRegistry> ticketRegistry;
 
     @Autowired
     @Qualifier("warnCookieGenerator")
@@ -115,6 +120,7 @@ public class ElectronicFenceWebflowConfiguration implements CasWebflowExecutionP
             .authenticationRequestServiceSelectionStrategies(authenticationRequestServiceSelectionStrategies.getIfAvailable())
             .registeredServiceAccessStrategyEnforcer(registeredServiceAccessStrategyEnforcer.getIfAvailable())
             .casProperties(casProperties)
+            .ticketRegistry(ticketRegistry.getIfAvailable())
             .eventPublisher(applicationEventPublisher)
             .applicationContext(applicationContext)
             .build();
@@ -137,8 +143,14 @@ public class ElectronicFenceWebflowConfiguration implements CasWebflowExecutionP
             casProperties);
     }
 
-    @Override
-    public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-        plan.registerWebflowConfigurer(riskAwareAuthenticationWebflowConfigurer());
+    @Bean
+    @ConditionalOnMissingBean(name = "riskAwareCasWebflowExecutionPlanConfigurer")
+    public CasWebflowExecutionPlanConfigurer riskAwareCasWebflowExecutionPlanConfigurer() {
+        return new CasWebflowExecutionPlanConfigurer() {
+            @Override
+            public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
+                plan.registerWebflowConfigurer(riskAwareAuthenticationWebflowConfigurer());
+            }
+        };
     }
 }

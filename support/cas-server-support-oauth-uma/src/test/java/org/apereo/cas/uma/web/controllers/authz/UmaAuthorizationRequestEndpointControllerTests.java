@@ -34,7 +34,8 @@ public class UmaAuthorizationRequestEndpointControllerTests extends BaseUmaEndpo
         val profile = getCurrentProfile(results.getLeft(), results.getMiddle());
         body = createUmaPolicyRegistrationRequest(profile).toJson();
 
-        response = umaCreatePolicyForResourceSetEndpointController.createPolicyForResourceSet(resourceId, body, results.getLeft(), results.getMiddle());
+        response = umaCreatePolicyForResourceSetEndpointController.createPolicyForResourceSet(resourceId,
+            body, results.getLeft(), results.getMiddle());
         assertEquals(HttpStatus.OK, response.getStatusCode());
 
         body = createUmaPermissionRegistrationRequest(resourceId).toJson();

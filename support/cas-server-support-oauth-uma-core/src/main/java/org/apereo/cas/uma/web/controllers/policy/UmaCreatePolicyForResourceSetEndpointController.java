@@ -75,5 +75,4 @@ public class UmaCreatePolicyForResourceSetEndpointController extends BaseUmaEndp
         }
         return new ResponseEntity("Unable to save policy for resource-set.", HttpStatus.BAD_REQUEST);
     }
-
 }

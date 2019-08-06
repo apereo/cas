@@ -29,7 +29,8 @@
         <h3 th:utext="${expiredPass} ? #{screen.expiredpass.heading} : #{screen.mustchangepass.heading}">Change Password
             Heading</h3>
         <form id="passwordManagementForm" th:if="${passwordManagementEnabled}" method="post" th:object="${password}">
-            <div class="alert alert-danger" th:if="${#fields.hasErrors('*')}">
+            <div class="alert alert-danger alert-dismissible fade show" th:if="${#fields.hasErrors('*')}">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
                 <span th:each="err : ${#fields.errors('*')}" th:utext="${err}">Error text</span>
             </div>
 
@@ -55,11 +56,13 @@
                 </div>
             </div>
             <div class="form-group" id="password-strength-notes">
-                <div id="password-policy-violation-msg" class="alert alert-danger" role="alert" style="display: none;">
+                <div id="password-policy-violation-msg" class="alert alert-danger alert-dismissible fade show" role="alert" style="display: none;">
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
                     <span class="fas fa-exclamation-circle" aria-hidden="true"></span>&nbsp;
                     <strong th:text="#{screen.pm.password.policyViolation}">Password does not match the password policy requirement.</strong>
                 </div>
-                <div id="password-confirm-mismatch-msg" class="alert alert-danger" role="alert" style="display: none;">
+                <div id="password-confirm-mismatch-msg" class="alert alert-danger alert-dismissible fade show" role="alert" style="display: none;">
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
                     <span class="fas fa-exclamation-circle" aria-hidden="true"></span>&nbsp;
                     <strong th:text="#{screen.pm.password.confirmMismatch}">Passwords do not match.</strong>
                 </div>
@@ -83,7 +86,7 @@
             </div>
         </form>
         <p th:unless="${passwordManagementEnabled}"
-           th:utext="${expiredPass} ? #{screen.expiredpass.message} : #{screen.mustchangepass.message}">Expired/Must
+           th:utext="${expiredPass} ? #{screen.expiredpass.message('https://pwd.example.org')} : #{screen.mustchangepass.message('https://pwd.example.org')}">Expired/Must
             Change Password text</p>
     </div>
 </main>

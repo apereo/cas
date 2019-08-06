@@ -1,7 +1,7 @@
 package org.apereo.cas.otp.repository.credentials;
 
-import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.OneTimeTokenAccount;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;

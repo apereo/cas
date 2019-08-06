@@ -13,6 +13,7 @@ import org.apereo.cas.authentication.PrincipalException;
 import org.apereo.cas.authentication.exceptions.MixedPrincipalException;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.authentication.principal.ServiceMatchingStrategy;
 import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.logout.slo.SingleLogoutRequest;
 import org.apereo.cas.services.RegisteredService;
@@ -34,6 +35,7 @@ import org.apereo.cas.ticket.ServiceTicketFactory;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketFactory;
+import org.apereo.cas.ticket.TicketState;
 import org.apereo.cas.ticket.UnrecognizableServiceForServiceTicketValidationException;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicketFactory;
@@ -41,6 +43,7 @@ import org.apereo.cas.ticket.proxy.ProxyTicket;
 import org.apereo.cas.ticket.proxy.ProxyTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.DigestUtils;
+import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.validation.Assertion;
 import org.apereo.cas.validation.DefaultAssertionBuilder;
 
@@ -81,10 +84,12 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
                                                final ContextualAuthenticationPolicyFactory<ServiceContext> serviceContextAuthenticationPolicyFactory,
                                                final PrincipalFactory principalFactory,
                                                final CipherExecutor<String, String> cipherExecutor,
-                                               final AuditableExecution registeredServiceAccessStrategyEnforcer) {
+                                               final AuditableExecution registeredServiceAccessStrategyEnforcer,
+                                               final ServiceMatchingStrategy serviceMatchingStrategy) {
         super(applicationEventPublisher, ticketRegistry, servicesManager, logoutManager, ticketFactory,
             authenticationRequestServiceSelectionStrategies, serviceContextAuthenticationPolicyFactory,
-            principalFactory, cipherExecutor, registeredServiceAccessStrategyEnforcer);
+            principalFactory, cipherExecutor, registeredServiceAccessStrategyEnforcer,
+            serviceMatchingStrategy);
     }
 
     @Audit(
@@ -262,11 +267,13 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
                     throw new InvalidTicketException(serviceTicketId);
                 }
 
-                if (!serviceTicket.isValidFor(service)) {
+                if (!this.serviceMatchingStrategy.matches(serviceTicket.getService(), service)) {
                     LOGGER.error("Service ticket [{}] with service [{}] does not match supplied service [{}]",
                         serviceTicketId, serviceTicket.getService().getId(), service.getId());
                     throw new UnrecognizableServiceForServiceTicketValidationException(serviceTicket.getService());
                 }
+                val ticketState = TicketState.class.cast(serviceTicket);
+                ticketState.update();
             }
 
             val selectedService = resolveServiceFromAuthenticationRequest(serviceTicket.getService());

@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -37,7 +36,6 @@ public class CasCoreBootstrapStandaloneWatchConfiguration {
     private ObjectProvider<CasConfigurationPropertiesEnvironmentManager> configurationPropertiesEnvironmentManager;
 
     @ConditionalOnProperty(value = "cas.events.trackConfigurationModifications", havingValue = "true")
-    @RefreshScope
     @Bean
     public CasConfigurationWatchService casConfigurationWatchService() {
         return new CasConfigurationWatchService(configurationPropertiesEnvironmentManager.getIfAvailable(), eventPublisher);

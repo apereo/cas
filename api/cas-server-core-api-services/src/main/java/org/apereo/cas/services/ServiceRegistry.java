@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.Collection;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 /**
  * Registry of all RegisteredServices.
@@ -38,20 +39,24 @@ public interface ServiceRegistry {
     Collection<RegisteredService> load();
 
     /**
+     * Gets services stream.
+     * <p>
+     * The returning stream may be bound to an IO channel (such as database connection),
+     * so it should be properly closed after usage.
+     *
+     * @return the services stream
+     */
+    default Stream<? extends RegisteredService> getServicesStream() {
+        return load().stream();
+    }
+
+    /**
      * Find service by the numeric id.
      *
      * @param id the id
      * @return the registered service
      */
     RegisteredService findServiceById(long id);
-
-    /**
-     * Find service by the service id.
-     *
-     * @param id the id
-     * @return the registered service
-     */
-    RegisteredService findServiceById(String id);
 
     /**
      * Find a service by an exact match of the service id.

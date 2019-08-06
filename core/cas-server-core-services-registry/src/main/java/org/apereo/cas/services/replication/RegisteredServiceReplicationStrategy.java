@@ -1,8 +1,8 @@
 package org.apereo.cas.services.replication;
 
-import org.apereo.cas.DistributedCacheObject;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServiceRegistry;
+import org.apereo.cas.util.cache.DistributedCacheObject;
 
 import java.util.List;
 import java.util.function.Predicate;

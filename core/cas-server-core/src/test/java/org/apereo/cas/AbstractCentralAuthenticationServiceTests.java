@@ -68,7 +68,7 @@ public abstract class AbstractCentralAuthenticationServiceTests extends BaseCasC
     @Qualifier("defaultAuthenticationSystemSupport")
     private AuthenticationSystemSupport authenticationSystemSupport;
 
-    @TestConfiguration
+    @TestConfiguration("CasTestConfiguration")
     public static class CasTestConfiguration implements InitializingBean {
 
         @Autowired

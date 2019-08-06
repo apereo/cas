@@ -39,7 +39,7 @@ import org.springframework.webflow.execution.Action;
 @Configuration("casScimConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
-public class CasScimConfiguration implements CasWebflowExecutionPlanConfigurer {
+public class CasScimConfiguration {
     @Autowired
     @Qualifier("loginFlowRegistry")
     private ObjectProvider<FlowDefinitionRegistry> loginFlowDefinitionRegistry;
@@ -102,8 +102,14 @@ public class CasScimConfiguration implements CasWebflowExecutionPlanConfigurer {
         return new PrincipalScimProvisionerAction(scimProvisioner());
     }
 
-    @Override
-    public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-        plan.registerWebflowConfigurer(scimWebflowConfigurer());
+    @Bean
+    @ConditionalOnMissingBean(name = "scimCasWebflowExecutionPlanConfigurer")
+    public CasWebflowExecutionPlanConfigurer scimCasWebflowExecutionPlanConfigurer() {
+        return new CasWebflowExecutionPlanConfigurer() {
+            @Override
+            public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
+                plan.registerWebflowConfigurer(scimWebflowConfigurer());
+            }
+        };
     }
 }

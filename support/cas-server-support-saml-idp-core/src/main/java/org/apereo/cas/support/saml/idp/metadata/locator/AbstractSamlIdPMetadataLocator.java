@@ -1,7 +1,7 @@
 package org.apereo.cas.support.saml.idp.metadata.locator;
 
-import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;

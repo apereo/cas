@@ -1,6 +1,6 @@
 package org.apereo.cas.support.validation;
 
-import org.apereo.cas.CipherExecutor;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;

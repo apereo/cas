@@ -2,7 +2,7 @@ package org.apereo.cas.token;
 
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.ticket.ExpirationPolicy;
+import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -30,7 +30,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class JwtTokenTicketBuilder implements TokenTicketBuilder {
     private final TicketValidator ticketValidator;
-    private final ExpirationPolicy expirationPolicy;
+    private final ExpirationPolicyBuilder expirationPolicy;
     private final JwtBuilder jwtBuilder;
 
     @Override
@@ -44,7 +44,7 @@ public class JwtTokenTicketBuilder implements TokenTicketBuilder {
             assertion.getValidUntilDate() != null,
             assertion::getValidUntilDate,
             () -> {
-                val dt = ZonedDateTime.now(ZoneOffset.UTC).plusSeconds(expirationPolicy.getTimeToLive());
+                val dt = ZonedDateTime.now(ZoneOffset.UTC).plusSeconds(expirationPolicy.buildTicketExpirationPolicy().getTimeToLive());
                 return DateTimeUtils.dateOf(dt);
             })
             .get();
@@ -68,7 +68,7 @@ public class JwtTokenTicketBuilder implements TokenTicketBuilder {
         val attributes = new HashMap<String, List<Object>>(authentication.getAttributes());
         attributes.putAll(authentication.getPrincipal().getAttributes());
 
-        val dt = ZonedDateTime.now(ZoneOffset.UTC).plusSeconds(expirationPolicy.getTimeToLive());
+        val dt = ZonedDateTime.now(ZoneOffset.UTC).plusSeconds(expirationPolicy.buildTicketExpirationPolicy().getTimeToLive());
         val validUntilDate = DateTimeUtils.dateOf(dt);
 
         val builder = JwtBuilder.JwtRequest.builder();

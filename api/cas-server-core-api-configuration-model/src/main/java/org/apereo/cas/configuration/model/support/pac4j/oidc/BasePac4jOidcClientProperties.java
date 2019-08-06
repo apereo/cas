@@ -74,4 +74,24 @@ public abstract class BasePac4jOidcClientProperties extends Pac4jIdentifiableCli
      * Possibles values includes "code", "token" or "id_token".     
      */
     private String responseType;
+
+    /**
+     * Read timeout of the OIDC client.
+     */
+    private String connectTimeout = "PT5S";
+    /**
+     * Connect timeout of the OIDC client.
+     */
+    private String readTimeout= "PT5S";
+
+    /**
+     * Checks if sessions expire with token expiration.
+     */
+    private boolean expireSessionWithToken;
+
+    /**
+     * Default time period advance (in seconds) for considering an access token expired.
+     */
+    private String tokenExpirationAdvance;
+
 }

@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.ticket.ExpirationPolicy;
+import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -36,14 +37,14 @@ public class DefaultRefreshTokenFactory implements RefreshTokenFactory {
     /**
      * ExpirationPolicy for refresh tokens.
      */
-    protected final ExpirationPolicy expirationPolicy;
+    protected final ExpirationPolicyBuilder<RefreshToken> expirationPolicy;
 
     /**
      * Services manager.
      */
     protected final ServicesManager servicesManager;
 
-    public DefaultRefreshTokenFactory(final ExpirationPolicy expirationPolicy, final ServicesManager servicesManager) {
+    public DefaultRefreshTokenFactory(final ExpirationPolicyBuilder<RefreshToken> expirationPolicy, final ServicesManager servicesManager) {
         this(new DefaultUniqueTicketIdGenerator(), expirationPolicy, servicesManager);
     }
 
@@ -79,6 +80,6 @@ public class DefaultRefreshTokenFactory implements RefreshTokenFactory {
                 return new OAuthRefreshTokenExpirationPolicy(Beans.newDuration(timeToKill).getSeconds());
             }
         }
-        return this.expirationPolicy;
+        return this.expirationPolicy.buildTicketExpirationPolicy();
     }
 }

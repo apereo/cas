@@ -61,17 +61,21 @@ Device registrations may be managed via an external Groovy script. The script ma
 import java.util.*
 import org.apereo.cas.adaptors.u2f.storage.*
 
-def Map<String, List<U2FDeviceRegistration>> read(final Object... args) {
+Map<String, List<U2FDeviceRegistration>> read(final Object... args) {
     def logger = args[0]
     ...
     return null;
 }
 
-def Boolean write(final Object... args) {
+Boolean write(final Object... args) {
     List<U2FDeviceRegistration> list = args[0]
     def logger = args[1]
     ...
     return true;
+}
+
+void removeAll(final Object... args) {
+    def logger = args[0]
 }
 ```
 
@@ -103,6 +107,20 @@ Device registrations may be kept inside a MongoDb instance by including the foll
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#fido-u2f-mongodb).
 
+### Redis
+
+Device registrations may be kept inside a Redis instance by including the following module in the WAR overlay:
+
+```xml
+<dependency>
+     <groupId>org.apereo.cas</groupId>
+     <artifactId>cas-server-support-u2f-redis</artifactId>
+     <version>${cas.version}</version>
+</dependency>
+```
+
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#fido-u2f-redis).
+
 ### CouchDb
 
 Device registrations may be kept inside a CouchDb instance by including the following module in the WAR overlay:
@@ -127,6 +145,6 @@ The following parameters are passed:
 |------------------|-----------------|-----------------------------------------------------------------------
 | `GET`            | N/A             | Retrieve all registered devices.     | `200` status code Collection of registered devices as JSON in the body of the response.
 | `POST`           | Collection of registered devices as JSON | Store registered devices. | `200`.
-
+| `DELETE`           | N/A | Delete all device records | `200`.
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#fido-u2f-rest).

@@ -1,6 +1,5 @@
 package org.apereo.cas.config.support.authentication;
 
-import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.adaptors.yubikey.DefaultYubiKeyAccountValidator;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountRegistry;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
@@ -25,6 +24,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.http.HttpClient;
 
 import com.yubico.client.v2.YubicoClient;
@@ -35,7 +35,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnEnabledEndpoint;
+import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -179,7 +179,7 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
     }
 
     @Bean
-    @ConditionalOnEnabledEndpoint
+    @ConditionalOnAvailableEndpoint
     public YubiKeyAccountRegistryEndpoint yubiKeyAccountRegistryEndpoint() {
         return new YubiKeyAccountRegistryEndpoint(casProperties, yubiKeyAccountRegistry());
     }

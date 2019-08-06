@@ -23,7 +23,7 @@ Support is enabled by including the following dependency in the overlay:
 
 This registry is very much an extension of the [default ticket registry](Default-Ticket-Registry.html). 
 The difference is that ticket operations applied to the registry are broadcasted using a messaging queue 
-to other listening CAS nodes on the queue. Each nodes keeps copies of ticket state on its own and only 
+to other listening CAS nodes on the queue. Each node keeps copies of ticket state on its own and only 
 instructs others to keep their copy accurate by broadcasting messages and data associated with each. 
 Each message and ticket registry instance running inside a CAS node in the cluster is tagged with a unique 
 identifier in order to avoid endless looping behavior and recursive needless inbound operations.
@@ -70,7 +70,7 @@ Artemis configuration is controlled by external configuration properties in [CAS
 ## JNDI
 
 If you are [running CAS in an application server](../installation/Configuring-Servlet-Container.html), 
-CAS will attempt to locate a JMS connection using JNDI. By default the locations 
+CAS will attempt to locate a JMS connection using JNDI. By default, the locations 
 `java:/JmsXA` and `java:/XAConnectionFactory` will be checked. Of course, alternative locations may be 
 specified using [CAS settings](../configuration/Configuration-Properties.html#jms-ticket-registry).
 

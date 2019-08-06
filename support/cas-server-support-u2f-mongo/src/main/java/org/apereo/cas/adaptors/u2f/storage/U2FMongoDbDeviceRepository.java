@@ -100,4 +100,15 @@ public class U2FMongoDbDeviceRepository extends BaseU2FDeviceRepository {
             LOGGER.error(e.getMessage(), e);
         }
     }
+
+    @Override
+    public void removeAll() {
+        try {
+            val query = new Query();
+            query.addCriteria(Criteria.where("createdDate").exists(true));
+            this.mongoTemplate.remove(query, U2FDeviceRegistration.class, this.collectionName);
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+    }
 }

@@ -13,7 +13,7 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 
 import lombok.val;
 import org.junit.jupiter.api.Test;
-import org.pac4j.core.context.J2EContext;
+import org.pac4j.core.context.JEEContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -56,23 +56,30 @@ public class DistributedJ2ESessionStoreTests {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         val store = new DistributedJ2ESessionStore(this.ticketRegistry, this.ticketFactory);
-        val context = new J2EContext(request, response, store);
+        val context = new JEEContext(request, response, store);
 
         assertNotNull(request.getSession());
 
         store.set(context, "attribute", "test");
         var value = store.get(context, "attribute");
-        assertNotNull(value);
-        assertEquals("test", value);
+        assertTrue(value.isPresent());
+        assertEquals("test", value.get());
 
         store.set(context, "attribute", "test2");
         value = store.get(context, "attribute");
-        assertNotNull(value);
-        assertEquals("test2", value);
+        assertTrue(value.isPresent());
+        assertEquals("test2", value.get());
+
+        store.set(context, "attribute", null);
+        store.set(context, "attribute2", "test3"); 
+        assertFalse(store.get(context, "attribute").isPresent());
+        value = store.get(context, "attribute2");
+        assertTrue(value.isPresent());
+        assertEquals("test3", value.get());
 
         store.sessionDestroyed(new HttpSessionEvent(request.getSession()));
         store.handle(new MockTicketGrantingTicket("casuser"));
         value = store.get(context, "attribute");
-        assertNull(value);
+        assertTrue(value.isEmpty());
     }
 }

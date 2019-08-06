@@ -4,6 +4,8 @@ import org.apereo.cas.authentication.principal.Service;
 
 import lombok.Getter;
 
+import java.util.List;
+
 /**
  * Exception to alert that there was an error validating the ticket.
  *
@@ -17,9 +19,6 @@ public abstract class AbstractTicketValidationException extends AbstractTicketEx
      */
     protected static final String CODE = "INVALID_TICKET";
 
-    /**
-     * Unique Serial ID.
-     */
     private static final long serialVersionUID = 3257004341537093175L;
 
     private final Service service;
@@ -34,15 +33,20 @@ public abstract class AbstractTicketValidationException extends AbstractTicketEx
         this(CODE, service);
     }
 
-    /**
-     * Instantiates a new Ticket validation exception.
-     *
-     * @param code    the code
-     * @param service the service
-     * @since 4.1
-     */
     public AbstractTicketValidationException(final String code, final Service service) {
         super(code);
+        this.service = service;
+    }
+
+    public AbstractTicketValidationException(final String code, final String msg,
+                                             final List<Object> args, final Service service) {
+        super(code, msg, args);
+        this.service = service;
+    }
+
+    public AbstractTicketValidationException(final String code, final Throwable throwable,
+                                             final List<Object> args, final Service service) {
+        super(code, throwable, args);
         this.service = service;
     }
 }

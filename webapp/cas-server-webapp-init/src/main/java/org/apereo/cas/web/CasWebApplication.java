@@ -2,9 +2,13 @@ package org.apereo.cas.web;
 
 import org.apereo.cas.CasEmbeddedContainerUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.util.AsciiArtUtils;
+import org.apereo.cas.util.DateTimeUtils;
 
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.actuate.autoconfigure.jdbc.DataSourceHealthIndicatorAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -20,8 +24,11 @@ import org.springframework.boot.autoconfigure.jmx.JmxAutoConfiguration;
 import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -49,9 +56,11 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableAsync
+@EnableAspectJAutoProxy(proxyTargetClass=true)
 @EnableTransactionManagement(proxyTargetClass = true)
 @EnableScheduling
 @NoArgsConstructor
+@Slf4j
 public class CasWebApplication {
 
     /**
@@ -69,5 +78,16 @@ public class CasWebApplication {
             .logStartupInfo(true)
             .contextClass(CasWebApplicationContext.class)
             .run(args);
+    }
+
+    /**
+     * Handle application ready event.
+     *
+     * @param event the event
+     */
+    @EventListener
+    public void handleApplicationReadyEvent(final ApplicationReadyEvent event) {
+        AsciiArtUtils.printAsciiArtInfo(LOGGER, "READY", StringUtils.EMPTY);
+        LOGGER.info("Ready to process requests @ [{}]", DateTimeUtils.zonedDateTimeOf(event.getTimestamp()));
     }
 }

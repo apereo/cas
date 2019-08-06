@@ -1,7 +1,7 @@
 package org.apereo.cas.ticket.registry;
 
-import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.NoArgsConstructor;
 import lombok.NonNull;

@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @SpringBootTest(classes = {
-    DefaultCasEventListenerTests.TestEventConfiguration.class,
+    DefaultCasEventListenerTests.EventTestConfiguration.class,
     CasCoreEventsConfiguration.class,
     RefreshAutoConfiguration.class
 })
@@ -99,8 +99,8 @@ public class DefaultCasEventListenerTests {
         assertFalse(casEventRepository.load().isEmpty());
     }
 
-    @TestConfiguration
-    public static class TestEventConfiguration {
+    @TestConfiguration("EventTestConfiguration")
+    public static class EventTestConfiguration {
         @Bean
         public CasEventRepository casEventRepository() {
             return new AbstractCasEventRepository() {

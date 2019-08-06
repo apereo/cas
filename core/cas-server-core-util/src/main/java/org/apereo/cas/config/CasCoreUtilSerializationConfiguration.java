@@ -1,7 +1,7 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.ComponentSerializationPlan;
-import org.apereo.cas.ComponentSerializationPlanConfigurator;
+import org.apereo.cas.util.serialization.ComponentSerializationPlan;
+import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurator;
 import org.apereo.cas.util.serialization.DefaultComponentSerializationPlan;
 
 import lombok.extern.slf4j.Slf4j;

@@ -130,18 +130,6 @@ public class CosmosDbServiceRegistry extends AbstractServiceRegistry {
         return null;
     }
 
-    @Override
-    public RegisteredService findServiceById(final String id) {
-        val query = String.format("SELECT * FROM %s c WHERE CONTAINS(c.body,'%s')", this.collectionName, id);
-        val results = queryDocuments(query);
-        val it = results.getQueryIterator();
-        if (it.hasNext()) {
-            val doc = it.next();
-            return getRegisteredServiceFromDocumentBody(doc);
-        }
-        return null;
-    }
-
     private FeedResponse<Document> queryDocuments(final String query) {
         val sql = new SqlQuerySpec(query);
         val feed = new FeedOptions();

@@ -19,10 +19,12 @@ import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationRe
 import org.apereo.cas.support.oauth.web.views.ConsentApprovalViewResolver;
 import org.apereo.cas.support.oauth.web.views.OAuth20CallbackAuthorizeViewResolver;
 import org.apereo.cas.support.oauth.web.views.OAuth20UserProfileViewRenderer;
-import org.apereo.cas.ticket.ExpirationPolicy;
+import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.OAuthTokenSigningAndEncryptionService;
+import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.code.OAuthCodeFactory;
+import org.apereo.cas.ticket.device.DeviceToken;
 import org.apereo.cas.ticket.device.DeviceTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.gen.RandomStringGenerator;
@@ -34,7 +36,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.pac4j.core.config.Config;
-import org.pac4j.core.context.J2EContext;
+import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.springframework.core.io.ResourceLoader;
 
@@ -72,11 +74,11 @@ public class OAuth20ConfigurationContext {
 
     private final OAuth20AccessTokenResponseGenerator accessTokenResponseGenerator;
 
-    private final ExpirationPolicy accessTokenExpirationPolicy;
+    private final ExpirationPolicyBuilder<AccessToken> accessTokenExpirationPolicy;
 
     private final Collection<OAuth20TokenRequestValidator> accessTokenGrantRequestValidators;
 
-    private final ExpirationPolicy deviceTokenExpirationPolicy;
+    private final ExpirationPolicyBuilder<DeviceToken> deviceTokenExpirationPolicy;
 
     private AuditableExecution accessTokenGrantAuditableRequestExtractor;
 
@@ -116,5 +118,5 @@ public class OAuth20ConfigurationContext {
 
     private final SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder;
 
-    private final SessionStore<J2EContext> sessionStore;
+    private final SessionStore<JEEContext> sessionStore;
 }

@@ -1,12 +1,12 @@
 package org.apereo.cas.uma.ticket.resource;
 
-import org.apereo.cas.support.oauth.util.OAuth20Utils;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.SneakyThrows;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.Column;
@@ -32,7 +32,9 @@ import java.util.HashSet;
 @EqualsAndHashCode(of = "id")
 @NoArgsConstructor
 public class ResourceSetPolicy implements Serializable {
-
+    private static final ObjectMapper MAPPER = new ObjectMapper()
+        .findAndRegisterModules();
+    
     private static final long serialVersionUID = 1664113523427391736L;
 
     @org.springframework.data.annotation.Id
@@ -51,7 +53,8 @@ public class ResourceSetPolicy implements Serializable {
      * @return the string
      */
     @JsonIgnore
+    @SneakyThrows
     public String toJson() {
-        return OAuth20Utils.toJson(this);
+        return MAPPER.writeValueAsString(this);
     }
 }

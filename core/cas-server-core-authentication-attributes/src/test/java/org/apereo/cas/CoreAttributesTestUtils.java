@@ -31,7 +31,6 @@ public class CoreAttributesTestUtils {
     public static Service getService() {
         val svc = mock(Service.class);
         when(svc.getId()).thenReturn(CONST_TEST_URL);
-        when(svc.matches(any(Service.class))).thenReturn(true);
         return svc;
     }
 

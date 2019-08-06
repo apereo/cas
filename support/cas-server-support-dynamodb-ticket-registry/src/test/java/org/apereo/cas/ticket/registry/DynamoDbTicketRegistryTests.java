@@ -1,6 +1,5 @@
 package org.apereo.cas.ticket.registry;
 
-import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -29,9 +28,9 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.accesstoken.DefaultAccessTokenFactory;
 import org.apereo.cas.ticket.code.DefaultOAuthCodeFactory;
 import org.apereo.cas.ticket.refreshtoken.DefaultRefreshTokenFactory;
-import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
@@ -108,7 +107,7 @@ public class DynamoDbTicketRegistryTests extends BaseTicketRegistryTests {
 
     @RepeatedTest(2)
     public void verifyOAuthCodeCanBeAdded() {
-        val code = new DefaultOAuthCodeFactory(new NeverExpiresExpirationPolicy(), servicesManager)
+        val code = new DefaultOAuthCodeFactory(neverExpiresExpirationPolicyBuilder(), servicesManager)
             .create(RegisteredServiceTestUtils.getService(),
             RegisteredServiceTestUtils.getAuthentication(), new MockTicketGrantingTicket("casuser"),
             CollectionUtils.wrapSet("1", "2"), "code-challenge", "code-challenge-method", "clientId1234567", new HashMap<>());
@@ -121,7 +120,7 @@ public class DynamoDbTicketRegistryTests extends BaseTicketRegistryTests {
     public void verifyAccessTokenCanBeAdded() {
         val jwtBuilder = new JwtBuilder("cas-prefix", CipherExecutor.noOpOfSerializableToString(),
             servicesManager, RegisteredServiceCipherExecutor.noOp());
-        val token = new DefaultAccessTokenFactory(new NeverExpiresExpirationPolicy(), jwtBuilder, servicesManager)
+        val token = new DefaultAccessTokenFactory(neverExpiresExpirationPolicyBuilder(), jwtBuilder, servicesManager)
             .create(RegisteredServiceTestUtils.getService(),
                 RegisteredServiceTestUtils.getAuthentication(), new MockTicketGrantingTicket("casuser"),
                 CollectionUtils.wrapSet("1", "2"), "clientId1234567", new HashMap<>());
@@ -132,7 +131,7 @@ public class DynamoDbTicketRegistryTests extends BaseTicketRegistryTests {
 
     @RepeatedTest(2)
     public void verifyRefreshTokenCanBeAdded() {
-        val token = new DefaultRefreshTokenFactory(new NeverExpiresExpirationPolicy(), servicesManager)
+        val token = new DefaultRefreshTokenFactory(neverExpiresExpirationPolicyBuilder(), servicesManager)
             .create(RegisteredServiceTestUtils.getService(),
                 RegisteredServiceTestUtils.getAuthentication(), new MockTicketGrantingTicket("casuser"),
                 CollectionUtils.wrapSet("1", "2"), "clientId1234567", new HashMap<>());

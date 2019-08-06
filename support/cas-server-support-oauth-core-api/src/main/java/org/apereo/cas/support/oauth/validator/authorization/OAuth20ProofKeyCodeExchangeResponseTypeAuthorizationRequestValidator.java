@@ -9,7 +9,7 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.pac4j.core.context.J2EContext;
+import org.pac4j.core.context.JEEContext;
 
 /**
  * This is {@link OAuth20ProofKeyCodeExchangeResponseTypeAuthorizationRequestValidator}.
@@ -27,8 +27,8 @@ public class OAuth20ProofKeyCodeExchangeResponseTypeAuthorizationRequestValidato
     }
 
     @Override
-    public boolean supports(final J2EContext context) {
-        val challenge = context.getRequestParameter(OAuth20Constants.CODE_VERIFIER);
+    public boolean supports(final JEEContext context) {
+        val challenge = context.getRequestParameter(OAuth20Constants.CODE_VERIFIER).map(String::valueOf).orElse(StringUtils.EMPTY);
         return StringUtils.isNotBlank(challenge) && super.supports(context);
     }
 }

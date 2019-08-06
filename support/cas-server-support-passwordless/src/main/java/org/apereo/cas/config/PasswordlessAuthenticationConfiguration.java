@@ -1,6 +1,5 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.api.PasswordlessTokenRepository;
 import org.apereo.cas.api.PasswordlessUserAccount;
 import org.apereo.cas.api.PasswordlessUserAccountStore;
@@ -11,6 +10,7 @@ import org.apereo.cas.authentication.PasswordlessTokenAuthenticationHandler;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.impl.account.GroovyPasswordlessUserAccountStore;
 import org.apereo.cas.impl.account.RestfulPasswordlessUserAccountStore;
@@ -19,6 +19,7 @@ import org.apereo.cas.impl.token.InMemoryPasswordlessTokenRepository;
 import org.apereo.cas.impl.token.PasswordlessTokenCipherExecutor;
 import org.apereo.cas.impl.token.RestfulPasswordlessTokenRepository;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.io.CommunicationsManager;
 import org.apereo.cas.web.flow.AcceptPasswordlessAuthenticationAction;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
@@ -27,6 +28,7 @@ import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.DisplayBeforePasswordlessAuthenticationAction;
 import org.apereo.cas.web.flow.PasswordlessAuthenticationWebflowConfigurer;
 import org.apereo.cas.web.flow.PrepareForPasswordlessAuthenticationAction;
+import org.apereo.cas.web.flow.VerifyPasswordlessAccountAuthenticationAction;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 
@@ -58,10 +60,14 @@ import java.util.stream.Collectors;
  */
 @Configuration("passwordlessAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class PasswordlessAuthenticationConfiguration implements CasWebflowExecutionPlanConfigurer {
+public class PasswordlessAuthenticationConfiguration {
     @Autowired
     @Qualifier("communicationsManager")
     private ObjectProvider<CommunicationsManager> communicationsManager;
+
+    @Autowired
+    @Qualifier("defaultPrincipalResolver")
+    private ObjectProvider<PrincipalResolver> defaultPrincipalResolver;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -169,6 +175,15 @@ public class PasswordlessAuthenticationConfiguration implements CasWebflowExecut
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "verifyPasswordlessAccountAuthenticationAction")
+    @RefreshScope
+    public Action verifyPasswordlessAccountAuthenticationAction() {
+        return new VerifyPasswordlessAccountAuthenticationAction(
+            passwordlessTokenRepository(),
+            passwordlessUserAccountStore());
+    }
+
+    @Bean
     @ConditionalOnMissingBean(name = "acceptPasswordlessAuthenticationAction")
     @RefreshScope
     public Action acceptPasswordlessAuthenticationAction() {
@@ -204,11 +219,18 @@ public class PasswordlessAuthenticationConfiguration implements CasWebflowExecut
     @ConditionalOnMissingBean(name = "passwordlessAuthenticationEventExecutionPlanConfigurer")
     @Bean
     public AuthenticationEventExecutionPlanConfigurer passwordlessAuthenticationEventExecutionPlanConfigurer() {
-        return plan -> plan.registerAuthenticationHandler(passwordlessTokenAuthenticationHandler());
+        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(
+            passwordlessTokenAuthenticationHandler(), defaultPrincipalResolver.getIfAvailable());
     }
 
-    @Override
-    public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-        plan.registerWebflowConfigurer(passwordlessAuthenticationWebflowConfigurer());
+    @ConditionalOnMissingBean(name = "passwordlessCasWebflowExecutionPlanConfigurer")
+    @Bean
+    public CasWebflowExecutionPlanConfigurer passwordlessCasWebflowExecutionPlanConfigurer() {
+        return new CasWebflowExecutionPlanConfigurer() {
+            @Override
+            public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
+                plan.registerWebflowConfigurer(passwordlessAuthenticationWebflowConfigurer());
+            }
+        };
     }
 }

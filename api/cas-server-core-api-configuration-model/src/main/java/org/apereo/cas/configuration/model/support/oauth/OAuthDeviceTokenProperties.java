@@ -31,9 +31,4 @@ public class OAuthDeviceTokenProperties implements Serializable {
      * by POSTing to the access token endpoint on the server.
      */
     private String refreshInterval = "PT15S";
-
-    /**
-     * Length of the generated user code.
-     */
-    private int userCodeLength = 8;
 }

@@ -1,8 +1,8 @@
 package org.apereo.cas.web.support.mgmr;
 
-import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.model.support.cookie.CookieProperties;
 import org.apereo.cas.util.HttpRequestUtils;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
 import com.google.common.base.Splitter;
 import lombok.extern.slf4j.Slf4j;

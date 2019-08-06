@@ -4,9 +4,11 @@ import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.util.OidcAuthorizationRequestSupport;
 
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.config.Config;
-import org.pac4j.core.context.J2EContext;
+import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.session.SessionStore;
+import org.pac4j.core.http.adapter.JEEHttpActionAdapter;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.springframework.web.SecurityInterceptor;
 
@@ -22,20 +24,23 @@ import javax.servlet.http.HttpServletResponse;
 public class OidcSecurityInterceptor extends SecurityInterceptor {
 
     private final OidcAuthorizationRequestSupport authorizationRequestSupport;
-    private final SessionStore sessionStore;
+    private final SessionStore<JEEContext> sessionStore;
 
-    public OidcSecurityInterceptor(final Config config, final String name, final OidcAuthorizationRequestSupport support,
-                                   final SessionStore sessionStore) {
-        super(config, name);
-        authorizationRequestSupport = support;
+    public OidcSecurityInterceptor(final Config config, final String name,
+                                   final OidcAuthorizationRequestSupport support,
+                                   final SessionStore<JEEContext> sessionStore) {
+        super(config, name, JEEHttpActionAdapter.INSTANCE);
+        this.authorizationRequestSupport = support;
         this.sessionStore = sessionStore;
+
+        setAuthorizers(StringUtils.EMPTY);
     }
 
     @Override
     public boolean preHandle(final HttpServletRequest request,
                              final HttpServletResponse response,
                              final Object handler) throws Exception {
-        val ctx = new J2EContext(request, response, this.sessionStore);
+        val ctx = new JEEContext(request, response, this.sessionStore);
         val manager = new ProfileManager<>(ctx, ctx.getSessionStore());
 
         var clearCreds = false;

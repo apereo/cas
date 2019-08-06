@@ -64,7 +64,12 @@ public class DefaultCasWebflowAbstractTicketExceptionHandler implements CasWebfl
             .filter(c -> c.isInstance(e)).map(Class::getSimpleName)
             .findFirst();
 
-        match.ifPresent(s -> messageContext.addMessage(new MessageBuilder().error().code(e.getCode()).build()));
+        val msg = new MessageBuilder()
+            .error()
+            .code(e.getCode())
+            .args(e.getArgs().toArray())
+            .build();
+        match.ifPresent(s -> messageContext.addMessage(msg));
         return match.orElse(CasWebflowExceptionHandler.UNKNOWN);
     }
 }

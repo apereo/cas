@@ -1,6 +1,7 @@
 package org.apereo.cas.couchdb.u2f;
 
 import org.ektorp.CouchDbConnector;
+import org.ektorp.CouchDbInstance;
 import org.ektorp.support.CouchDbRepositorySupport;
 import org.ektorp.support.GenerateView;
 import org.ektorp.support.UpdateHandler;
@@ -16,13 +17,18 @@ import java.util.List;
  * @since 6.0.0
  */
 public class U2FDeviceRegistrationCouchDbRepository extends CouchDbRepositorySupport<CouchDbU2FDeviceRegistration> {
+    private final CouchDbInstance couchDbInstance;
 
-    public U2FDeviceRegistrationCouchDbRepository(final CouchDbConnector couchDb, final boolean createIfNotExists) {
-        super(CouchDbU2FDeviceRegistration.class, couchDb, createIfNotExists);
+    public U2FDeviceRegistrationCouchDbRepository(final CouchDbConnector couchDbConnector,
+                                                  final CouchDbInstance couchDbInstance,
+                                                  final boolean createIfNotExists) {
+        super(CouchDbU2FDeviceRegistration.class, couchDbConnector, createIfNotExists);
+        this.couchDbInstance = couchDbInstance;
     }
 
     /**
      * Find by username.
+     *
      * @param username name to search for
      * @return registrations for user
      */
@@ -33,6 +39,7 @@ public class U2FDeviceRegistrationCouchDbRepository extends CouchDbRepositorySup
 
     /**
      * Find expired records.
+     *
      * @param expirationDate date to search until
      * @return expired records
      */
@@ -43,10 +50,20 @@ public class U2FDeviceRegistrationCouchDbRepository extends CouchDbRepositorySup
 
     /**
      * Delete a record without revision checks.
+     *
      * @param record record to be deleted
      */
     @UpdateHandler(name = "delete_record", file = "delete.js")
     public void deleteRecord(final CouchDbU2FDeviceRegistration record) {
         db.callUpdateHandler(stdDesignDocumentId, "delete_record", record.getCid(), null);
+    }
+
+    /**
+     * Delete all records without revision checks.
+     */
+    public void deleteAll() {
+        this.couchDbInstance.deleteDatabase(db.getDatabaseName());
+        this.couchDbInstance.createDatabaseIfNotExists(db.getDatabaseName());
+        initStandardDesignDocument();
     }
 }

@@ -10,8 +10,11 @@ import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.AbstractOAuth20Tests;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGeneratedResult;
+import org.apereo.cas.ticket.ExpirationPolicy;
+import org.apereo.cas.ticket.ExpirationPolicyBuilder;
+import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.accesstoken.DefaultAccessTokenFactory;
-import org.apereo.cas.ticket.support.HardTimeoutExpirationPolicy;
+import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
 import org.apereo.cas.token.JwtBuilder;
 
 import com.nimbusds.jwt.JWTParser;
@@ -107,8 +110,20 @@ public class OAuth20DefaultAccessTokenResponseGeneratorTests extends AbstractOAu
         val mockResponse = new MockHttpServletResponse();
 
         val service = RegisteredServiceTestUtils.getService("example");
+        val expirationPolicy = new ExpirationPolicyBuilder() {
+            private static final long serialVersionUID = 3911344031977989503L;
 
-        val factory = new DefaultAccessTokenFactory(new HardTimeoutExpirationPolicy(30),
+            @Override
+            public ExpirationPolicy buildTicketExpirationPolicy() {
+                return new HardTimeoutExpirationPolicy(30);
+            }
+
+            @Override
+            public Class getTicketType() {
+                return AccessToken.class;
+            }
+        };
+        val factory = new DefaultAccessTokenFactory(expirationPolicy,
             new JwtBuilder("cas.example.org", new OAuth20JwtAccessTokenCipherExecutor(), servicesManager,
                 new OAuth20RegisteredServiceJwtAccessTokenCipherExecutor()), servicesManager);
 

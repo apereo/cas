@@ -1,7 +1,5 @@
 package org.apereo.cas.support.oauth.web;
 
-import org.apereo.cas.ComponentSerializationPlan;
-import org.apereo.cas.ComponentSerializationPlanConfigurator;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
@@ -50,18 +48,25 @@ import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AccessTokenEndpointController;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20DeviceUserCodeApprovalEndpointController;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseGenerator;
+import org.apereo.cas.ticket.ExpirationPolicy;
+import org.apereo.cas.ticket.ExpirationPolicyBuilder;
+import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.code.OAuthCode;
 import org.apereo.cas.ticket.code.OAuthCodeFactory;
+import org.apereo.cas.ticket.expiration.AlwaysExpiresExpirationPolicy;
 import org.apereo.cas.ticket.refreshtoken.RefreshToken;
 import org.apereo.cas.ticket.refreshtoken.RefreshTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.SchedulingUtils;
+import org.apereo.cas.util.serialization.ComponentSerializationPlan;
+import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurator;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -147,7 +152,10 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnableTransactionManagement(proxyTargetClass = true)
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 public abstract class AbstractOAuth20Tests {
-    public static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+
+    public static final ObjectMapper MAPPER = new ObjectMapper()
+        .findAndRegisterModules()
+        .configure(SerializationFeature.WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED, true);;
 
     public static final String CONTEXT = OAuth20Constants.BASE_OAUTH20_URL + '/';
     public static final String CLIENT_ID = "1";
@@ -386,7 +394,22 @@ public abstract class AbstractOAuth20Tests {
         return Pair.of(accessToken, refreshToken);
     }
 
-    @TestConfiguration
+    public static ExpirationPolicyBuilder alwaysExpiresExpirationPolicyBuilder() {
+        return new ExpirationPolicyBuilder() {
+            private static final long serialVersionUID = -9043565995104313970L;
+            @Override
+            public ExpirationPolicy buildTicketExpirationPolicy() {
+                return new AlwaysExpiresExpirationPolicy();
+            }
+
+            @Override
+            public Class<Ticket> getTicketType() {
+                return null;
+            }
+        };
+    }
+
+    @TestConfiguration("OAuthTestConfiguration")
     public static class OAuthTestConfiguration implements ComponentSerializationPlanConfigurator, InitializingBean {
         @Autowired
         protected ApplicationContext applicationContext;

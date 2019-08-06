@@ -79,7 +79,7 @@ import org.springframework.test.annotation.DirtiesContext;
     CasCoreValidationConfiguration.class,
     AdaptiveMultifactorAuthenticationPolicyEventResolverTests.GeoLocationServiceTestConfiguration.class
 })
-@EnableAspectJAutoProxy
+@EnableAspectJAutoProxy(proxyTargetClass = true)
 @DirtiesContext
 @EnableScheduling
 public abstract class BaseCasWebflowMultifactorAuthenticationTests {

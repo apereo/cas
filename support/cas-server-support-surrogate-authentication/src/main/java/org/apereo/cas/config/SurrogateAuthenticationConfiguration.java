@@ -5,6 +5,7 @@ import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationPostProcessor;
 import org.apereo.cas.authentication.PrincipalElectionStrategy;
+import org.apereo.cas.authentication.SurrogateAuthenticationExpirationPolicyBuilder;
 import org.apereo.cas.authentication.SurrogateAuthenticationPostProcessor;
 import org.apereo.cas.authentication.SurrogatePrincipalBuilder;
 import org.apereo.cas.authentication.SurrogatePrincipalElectionStrategy;
@@ -20,9 +21,7 @@ import org.apereo.cas.authentication.surrogate.SimpleSurrogateAuthenticationServ
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.ticket.ExpirationPolicy;
-import org.apereo.cas.ticket.support.HardTimeoutExpirationPolicy;
-import org.apereo.cas.ticket.support.SurrogateSessionExpirationPolicy;
+import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.util.io.CommunicationsManager;
 
 import lombok.SneakyThrows;
@@ -83,17 +82,13 @@ public class SurrogateAuthenticationConfiguration {
     private ObjectProvider<AuditableExecution> surrogateEligibilityAuditableExecution;
 
     @Autowired
-    @Qualifier("ticketGrantingTicketExpirationPolicy")
-    private ObjectProvider<ExpirationPolicy> ticketGrantingTicketExpirationPolicy;
+    @Qualifier("grantingTicketExpirationPolicy")
+    private ObjectProvider<ExpirationPolicyBuilder> grantingTicketExpirationPolicy;
 
     @Bean
-    public ExpirationPolicy grantingTicketExpirationPolicy() {
-        val su = casProperties.getAuthn().getSurrogate();
-        val surrogatePolicy = new HardTimeoutExpirationPolicy(su.getTgt().getTimeToKillInSeconds());
-        val policy = new SurrogateSessionExpirationPolicy();
-        policy.addPolicy(SurrogateSessionExpirationPolicy.POLICY_NAME_SURROGATE, surrogatePolicy);
-        policy.addPolicy(SurrogateSessionExpirationPolicy.POLICY_NAME_DEFAULT, ticketGrantingTicketExpirationPolicy.getIfAvailable());
-        return policy;
+    @RefreshScope
+    public ExpirationPolicyBuilder grantingTicketExpirationPolicy() {
+        return new SurrogateAuthenticationExpirationPolicyBuilder(grantingTicketExpirationPolicy.getIfAvailable(), casProperties);
     }
 
     @ConditionalOnMissingBean(name = "surrogatePrincipalFactory")

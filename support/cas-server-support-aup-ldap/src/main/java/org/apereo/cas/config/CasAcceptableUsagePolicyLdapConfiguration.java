@@ -41,6 +41,6 @@ public class CasAcceptableUsagePolicyLdapConfiguration {
         val connectionFactory = LdapUtils.newLdaptivePooledConnectionFactory(ldap);
         return new LdapAcceptableUsagePolicyRepository(ticketRegistrySupport.getIfAvailable(),
             casProperties.getAcceptableUsagePolicy().getAupAttributeName(),
-            connectionFactory, ldap.getSearchFilter(), ldap.getBaseDn());
+            connectionFactory, ldap);
     }
 }

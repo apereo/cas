@@ -95,19 +95,6 @@ public class CouchDbServiceRegistry extends AbstractServiceRegistry {
     }
 
     @Override
-    public RegisteredService findServiceById(final String id) {
-        try {
-            val doc = dbClient.get(id);
-            if (doc != null) {
-                return doc.getService();
-            }
-        } catch (final DocumentNotFoundException e) {
-            LOGGER.info(e.getMessage());
-        }
-        return null;
-    }
-
-    @Override
     public RegisteredService findServiceByExactServiceId(final String id) {
         val doc = dbClient.findByServiceId(id);
         if (doc == null) {

@@ -101,7 +101,7 @@ public class HazelcastJCloudsDiscoveryProperties implements Serializable {
     private String credential;
 
     /**
-     * Defines the endpoint for a gneric API such as OpenStack or CloudStack (optional).
+     * Defines the endpoint for a generic API such as OpenStack or CloudStack (optional).
      */
     private String endpoint;
 
