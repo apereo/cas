@@ -4,7 +4,7 @@
  * contains the PasswordEncoders which are used by implementations of the AuthenticationHandler
  * to provide conversion from plain text to whatever the password is encoded as in the data
  * store.
- * The package also contains a well-defined exception heirarchy to allow fine-grained error
+ * The package also contains a well-defined exception hierarchy to allow fine-grained error
  * messages to be displayed.
  * Examples of AuthenticationHandlers implementations:
  * <ul>

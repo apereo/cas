@@ -71,7 +71,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @EnabledIfPortOpen(port = 4572)
 @EnabledIfContinuousIntegration
-@Tag("AmazonWebServicesS3")
+@Tag("AmazonWebServices")
 public class AmazonS3SamlIdPMetadataGeneratorTests {
     @Autowired
     @Qualifier("samlIdPMetadataLocator")

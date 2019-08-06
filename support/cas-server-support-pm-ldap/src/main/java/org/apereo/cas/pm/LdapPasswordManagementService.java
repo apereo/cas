@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.EmailValidator;
+import org.ldaptive.ConnectionFactory;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -24,11 +25,14 @@ import java.util.Map;
  */
 @Slf4j
 public class LdapPasswordManagementService extends BasePasswordManagementService {
+    private final ConnectionFactory ldapConnectionFactory;
+
     public LdapPasswordManagementService(final CipherExecutor<Serializable, String> cipherExecutor,
                                          final String issuer,
                                          final PasswordManagementProperties passwordManagementProperties,
                                          final PasswordHistoryService passwordHistoryService) {
         super(passwordManagementProperties, cipherExecutor, issuer, passwordHistoryService);
+        this.ldapConnectionFactory = LdapUtils.newLdaptivePooledConnectionFactory(passwordManagementProperties.getLdap());
     }
 
     @Override
@@ -40,8 +44,7 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
                 CollectionUtils.wrap(email));
             LOGGER.debug("Constructed LDAP filter [{}] to locate user account", filter);
 
-            val factory = LdapUtils.newLdaptivePooledConnectionFactory(ldap);
-            val response = LdapUtils.executeSearchOperation(factory, ldap.getBaseDn(), filter, 0);
+            val response = LdapUtils.executeSearchOperation(this.ldapConnectionFactory, ldap.getBaseDn(), filter, ldap.getPageSize());
             LOGGER.debug("LDAP response to locate user account is [{}]", response);
 
             if (LdapUtils.containsResultEntry(response)) {
@@ -65,8 +68,7 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
         }
         return null;
     }
-
-
+    
     @Override
     public String findEmail(final String username) {
         try {
@@ -76,8 +78,7 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
                 CollectionUtils.wrap(username));
             LOGGER.debug("Constructed LDAP filter [{}] to locate account email", filter);
 
-            val factory = LdapUtils.newLdaptivePooledConnectionFactory(ldap);
-            val response = LdapUtils.executeSearchOperation(factory, ldap.getBaseDn(), filter, 0);
+            val response = LdapUtils.executeSearchOperation(this.ldapConnectionFactory, ldap.getBaseDn(), filter, ldap.getPageSize());
             LOGGER.debug("LDAP response to locate account email is [{}]", response);
 
             if (LdapUtils.containsResultEntry(response)) {
@@ -118,14 +119,14 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
                 CollectionUtils.wrap(c.getId()));
             LOGGER.debug("Constructed LDAP filter [{}] to update account password", filter);
 
-            val factory = LdapUtils.newLdaptivePooledConnectionFactory(ldap);
-            val response = LdapUtils.executeSearchOperation(factory, ldap.getBaseDn(), filter, 0);
+
+            val response = LdapUtils.executeSearchOperation(this.ldapConnectionFactory, ldap.getBaseDn(), filter, ldap.getPageSize());
             LOGGER.debug("LDAP response to update password is [{}]", response);
 
             if (LdapUtils.containsResultEntry(response)) {
                 val dn = response.getResult().getEntry().getDn();
                 LOGGER.debug("Updating account password for [{}]", dn);
-                if (LdapUtils.executePasswordModifyOperation(dn, factory, c.getPassword(), bean.getPassword(),
+                if (LdapUtils.executePasswordModifyOperation(dn, this.ldapConnectionFactory, c.getPassword(), bean.getPassword(),
                     properties.getLdap().getType())) {
                     LOGGER.debug("Successfully updated the account password for [{}]", dn);
                     return true;
@@ -150,8 +151,7 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
                 CollectionUtils.wrap(username));
             LOGGER.debug("Constructed LDAP filter [{}] to locate security questions", filter);
 
-            val factory = LdapUtils.newLdaptivePooledConnectionFactory(ldap);
-            val response = LdapUtils.executeSearchOperation(factory, ldap.getBaseDn(), filter, 0);
+            val response = LdapUtils.executeSearchOperation(this.ldapConnectionFactory, ldap.getBaseDn(), filter, ldap.getPageSize());
             LOGGER.debug("LDAP response for security questions [{}]", response);
 
             if (LdapUtils.containsResultEntry(response)) {

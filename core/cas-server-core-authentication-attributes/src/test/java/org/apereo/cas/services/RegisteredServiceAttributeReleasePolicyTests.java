@@ -3,6 +3,7 @@ package org.apereo.cas.services;
 import org.apereo.cas.CoreAttributesTestUtils;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesRepository;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.util.CollectionUtils;
@@ -25,6 +26,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -252,5 +254,27 @@ public class RegisteredServiceAttributeReleasePolicyTests {
         policy.setPrincipalAttributesRepository(repository);
         attr = policy.getAttributes(p, CoreAttributesTestUtils.getService(), CoreAttributesTestUtils.getRegisteredService());
         assertEquals(1, attr.size());
+    }
+
+    @Test
+    public void verifyDefaults() {
+        val policy = new RegisteredServiceAttributeReleasePolicy() {
+            private static final long serialVersionUID = 6118477243447737445L;
+
+            @Override
+            public Map<String, List<Object>> getAttributes(final Principal p, final Service selectedService, final RegisteredService service) {
+                return p.getAttributes();
+            }
+        };
+        assertNull(policy.getConsentPolicy());
+        assertNull(policy.getPrincipalAttributesRepository());
+        assertTrue(policy.isAuthorizedToReleaseAuthenticationAttributes());
+        assertFalse(policy.isAuthorizedToReleaseCredentialPassword());
+        assertFalse(policy.isAuthorizedToReleaseProxyGrantingTicket());
+
+        val p = new DefaultPrincipalFactory().createPrincipal("uid", Collections.singletonMap("mail", List.of("final@example.com")));
+        val attrs = policy.getConsentableAttributes(p, CoreAttributesTestUtils.getService(), CoreAttributesTestUtils.getRegisteredService());
+        assertEquals(p.getAttributes(), attrs);
+
     }
 }

@@ -19,7 +19,7 @@ To see the relevant list of CAS properties, please [review this guide](../config
 
 ### How Do I Choose?
 
-There is a wide range of ticket registries on the menu. The selection criteria are outlined below:
+There are a wide range of ticket registries on the menu. The selection criteria are outlined below:
 
 - Choose a technology that you are most familiar with and have the skills and patience to troubleshoot, tune and scale for the win. 
 - Choose a technology that does not force your CAS configuration to be tied to any individual servers/nodes in the cluster, as this will present auto-scaling issues and manual effort.
@@ -27,7 +27,7 @@ There is a wide range of ticket registries on the menu. The selection criteria a
 - Choose a technology that shows promising results under *your expected load*, having run [performance and stress tests](../high_availability/High-Availability-Performance-Testing.html).
 - Choose a technology that does not depend on outside processes and systems as much as possible, is self-reliant and self contained.
 
-The above simply outlines suggestions and guidelines you may wish to consider. Any option and decision presents various pros and cons and in the end, you must decide which drawbacks or advantages provide you with the best experience.
+The above simply outlines suggestions and guidelines you may wish to consider. Each option presents various pros and cons and in the end, you must decide which drawbacks or advantages provide you with the best experience.
 
 ### Cache-Based Ticket Registries
 
