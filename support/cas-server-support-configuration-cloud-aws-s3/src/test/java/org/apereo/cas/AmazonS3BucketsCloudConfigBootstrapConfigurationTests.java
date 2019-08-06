@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @EnabledIfPortOpen(port = 4572)
 @EnabledIfContinuousIntegration
-@Tag("AmazonWebServicesS3")
+@Tag("AmazonWebServices")
 @TestPropertySource(properties = {
     "cas.spring.cloud.aws.s3.bucketName=" + AmazonS3BucketsCloudConfigBootstrapConfigurationTests.BUCKET_NAME,
     "cas.spring.cloud.aws.s3.endpoint=" + AmazonS3BucketsCloudConfigBootstrapConfigurationTests.ENDPOINT,

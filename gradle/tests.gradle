@@ -16,11 +16,11 @@ if (hasTestsOfCategory(project, "CosmosDb")) {
     }
 }
 
-if (hasTestsOfCategory(project, "AmazonWebServicesS3")) {
+if (hasTestsOfCategory(project, "AmazonWebServices")) {
     task testAWSS3(type: Test) {
-        enabled = shouldTest(project, "AmazonWebServicesS3")
+        enabled = shouldTest(project, "AmazonWebServices")
         useJUnitPlatform {
-            includeTags "AmazonWebServicesS3"
+            includeTags "AmazonWebServices"
         }
     }
 }
@@ -227,7 +227,7 @@ test {
                 "FileSystem", "Ignite", "InfluxDb", "CouchDb",
                 "Ldap", "Mail", "MariaDb", "Memcached",
                 "MongoDb", "MsSqlServer", "MySQL", "Postgres", "Redis",
-                "Radius", "AmazonWebServicesS3", "RestfulApi", "Groovy",
+                "Radius", "AmazonWebServices", "RestfulApi", "Groovy",
                 "OAuth", "OIDC", "SAML"
     }
     enabled = "SIMPLE".equalsIgnoreCase(rootProject.testCategoryType) && !Boolean.getBoolean("skipTests")
