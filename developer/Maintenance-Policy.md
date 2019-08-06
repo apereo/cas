@@ -16,6 +16,14 @@ In particular, the following questions are addressed:
 
 The project release schedule is [available here](https://github.com/apereo/cas/milestones). 
 
+<div class="alert alert-info"><strong>Which version is more stable?</strong><p>CAS releases are strictly time-based releases; they 
+are not scheduled or based on specific benchmarks, statistics or completion of features or bug fixes. To gain confidence in a 
+release, you should start early by experimenting with release candidates and/or follow-up snapshots.
+In terms of stabillity, all versions of the Apereo CAS software are loosely based on the <i>Schrödinger's Cat</i> theory: there are no guarantees 
+until you open the box. Software distributed under the project license is distributed on an "AS IS" basis without warranties or conditions 
+of any kind, either express or implied. See the project license file for the specific language.
+</p></div>
+
 ## Policy
 
 - CAS adopters MAY expect a CAS release to be maintained for **six months**, starting from the [original release date](https://github.com/apereo/cas/releases).
