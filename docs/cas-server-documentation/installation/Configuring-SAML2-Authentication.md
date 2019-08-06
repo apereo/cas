@@ -222,48 +222,6 @@ In addition to the more traditional means of managing service provider metadata 
 provides support for a number of other strategies to fetch metadata more dynamically with the likes of MDQ and more.
 To learn more, please [review this guide](Configuring-SAML2-DynamicMetadata.html).
 
-### Attribute Name Formats
-
-Attribute name formats can be specified per relying party in the service registry.
-
-```json
-{
-  "@class": "org.apereo.cas.support.saml.services.SamlRegisteredService",
-  "serviceId" : "the-entity-id-of-the-sp",
-  "name": "SAML Service",
-  "metadataLocation" : "../../sp-metadata.xml",
-  "id": 100001,
-  "attributeNameFormats": {
-    "@class": "java.util.HashMap",
-    "attributeName": "basic|uri|unspecified|custom-format-etc"
-  }
-}
-```
-
-You may also have the option to define attributes and their relevant name format globally
-via CAS properties. To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#saml-idp).
-
-### Attribute Friendly Names
-
-Attribute friendly names can be specified per relying party in the service registry, as well as globally via CAS settings. 
-If there is no friendly name defined for the attribute, the 
-attribute name will be used instead in its place. Note that the name of the attribute is one that is designed to be released to the service provider,
-specially if the original attribute is *mapped* to a different name.
-
-```json
-{
-  "@class": "org.apereo.cas.support.saml.services.SamlRegisteredService",
-  "serviceId" : "the-entity-id-of-the-sp",
-  "name": "SAML Service",
-  "metadataLocation" : "../../sp-metadata.xml",
-  "id": 100001,
-  "attributeFriendlyNames": {
-    "@class": "java.util.HashMap",
-    "urn:oid:2.5.4.42": "friendly-name-to-use"
-  }
-}
-```
-
 ### Security Configuration
 
 There are several levels of configuration that control the security configuration of objects that are signed, encrypted, etc. These configurations include things 
@@ -391,46 +349,6 @@ The following example demonstrates how to configure CAS to use `SHA-256` signing
       "http://www.w3.org/2001/04/xmlenc#sha256"
     ]
   ]
-}
-```
-
-### Attribute Value Types
-
-By default, attribute value blocks that are created in the final SAML2 response do not carry any type information in the encoded XML.
-You can, if necessary, enforce a particular type for an attribute value per the requirements of the SAML2 service provider, if any.
-An example of an attribute that is encoded with specific type information would be:
-
-```xml
-<saml2:Attribute FriendlyName="givenName" Name="givenName" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
-    <saml2:AttributeValue xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xsd:string">HelloWorld</saml2:AttributeValue>
-</saml2:Attribute>
-```
-
-The following attribute value types are supported:
-
-| Type              | Description
-|-------------------|---------------------------------------------------------------------------------------
-| `XSString`        | Mark the attribute value type as `string`.
-| `XSURI`           | Mark the attribute value type as `uri`.
-| `XSBoolean`       | Mark the attribute value type as `boolean`.
-| `XSInteger`       | Mark the attribute value type as `integer`.
-| `XSDateTime`      | Mark the attribute value type as `datetime` .
-| `XSBase64Binary`  | Mark the attribute value type as `base64Binary`.
-| `XSObject`        | Skip the attribute value type and serialize the value as a complex XML object/POJO.
-
-...where the types for each attribute would be defined as such:
- 
-```json
-{
-  "@class": "org.apereo.cas.support.saml.services.SamlRegisteredService",
-  "serviceId" : "the-entity-id-of-the-sp",
-  "name": "SAML Service",
-  "metadataLocation" : "../../sp-metadata.xml",
-  "id": 1,
-  "attributeValueTypes": {
-    "@class": "java.util.HashMap",
-    "<attribute-name>": "<attribute-value-type>"
-  }
 }
 ```
 

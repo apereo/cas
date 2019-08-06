@@ -48,7 +48,9 @@ public class CookieRetrievingCookieGeneratorTests {
         val response = new MockHttpServletResponse();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
         gen.addCookie(context, "CAS-Cookie-Value");
-        assertTrue(response.getCookies().length > 0);
+        val cookie = response.getCookie(ctx.getName());
+        assertNotNull(cookie);
+        assertEquals(ctx.getRememberMeMaxAge(), cookie.getMaxAge());
     }
 
     @Test
@@ -59,13 +61,15 @@ public class CookieRetrievingCookieGeneratorTests {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val authn = CoreAuthenticationTestUtils.getAuthentication("casuser",
-            CollectionUtils.wrap(RememberMeCredential.REQUEST_PARAMETER_REMEMBER_ME, "true"));
+            CollectionUtils.wrap(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME, CollectionUtils.wrap(Boolean.TRUE)));
         WebUtils.putAuthentication(authn, context);
         WebUtils.putRememberMeAuthenticationEnabled(context, Boolean.TRUE);
         val response = new MockHttpServletResponse();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
         gen.addCookie(context, "CAS-Cookie-Value");
-        assertTrue(response.getCookies().length > 0);
+        val cookie = response.getCookie(ctx.getName());
+        assertNotNull(cookie);
+        assertEquals(ctx.getRememberMeMaxAge(), cookie.getMaxAge());
     }
 
     private static CookieGenerationContext getCookieGenerationContext() {

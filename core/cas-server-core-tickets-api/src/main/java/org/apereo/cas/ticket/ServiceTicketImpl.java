@@ -90,20 +90,6 @@ public class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
         this.fromNewLogin = credentialProvided || ticket.getCountOfUses() == 0;
     }
 
-    /**
-     * {@inheritDoc}
-     * <p>The state of the ticket is affected by this operation and the
-     * ticket will be considered used regardless of the match result.
-     * The state update subsequently may impact the ticket expiration
-     * policy in that, depending on the policy configuration, the ticket
-     * may be considered expired.
-     */
-    @Override
-    public boolean isValidFor(final Service serviceToValidate) {
-        updateTicketState();
-        return serviceToValidate.matches(this.service);
-    }
-
     @Override
     public ProxyGrantingTicket grantProxyGrantingTicket(final @NonNull String id, final @NonNull Authentication authentication,
                                                         final ExpirationPolicy expirationPolicy) throws AbstractTicketException {

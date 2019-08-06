@@ -46,9 +46,8 @@ public class FlowExecutionExceptionResolver implements HandlerExceptionResolver 
                                          final HttpServletResponse response, final Object handler,
                                          final Exception exception) {
 
-
         if (!(exception instanceof FlowExecutionRepositoryException) || exception instanceof BadlyFormattedFlowExecutionKeyException) {
-            LOGGER.debug("Ignoring the received exception due to a type mismatch", exception);
+            LOGGER.debug("Ignoring the received exception [{}] due to a type mismatch with handler [{}]", exception, handler);
             return null;
         }
 

@@ -6,7 +6,7 @@ import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequ
 import org.apereo.cas.web.flow.CasWebflowConstants;
 
 import lombok.val;
-import org.pac4j.core.context.J2EContext;
+import org.pac4j.core.context.JEEContext;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
@@ -32,7 +32,7 @@ public interface OAuth20AuthorizationResponseBuilder {
      * @param holder   the holder
      * @return the view response
      */
-    ModelAndView build(J2EContext context,
+    ModelAndView build(JEEContext context,
                        String clientId,
                        AccessTokenRequestDataHolder holder);
 
@@ -42,7 +42,7 @@ public interface OAuth20AuthorizationResponseBuilder {
      * @param context the context
      * @return the boolean
      */
-    boolean supports(J2EContext context);
+    boolean supports(JEEContext context);
 
     /**
      * Build response model and view.
@@ -54,7 +54,7 @@ public interface OAuth20AuthorizationResponseBuilder {
      * @param parameters      the parameters
      * @return the model and view
      */
-    default ModelAndView buildResponseModelAndView(final J2EContext context, final ServicesManager servicesManager,
+    default ModelAndView buildResponseModelAndView(final JEEContext context, final ServicesManager servicesManager,
                                                    final String clientId, final String redirectUrl,
                                                    final Map<String, String> parameters) {
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, clientId);

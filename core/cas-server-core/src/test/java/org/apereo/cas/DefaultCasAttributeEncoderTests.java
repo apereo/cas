@@ -3,6 +3,7 @@ package org.apereo.cas;
 import org.apereo.cas.authentication.support.DefaultCasProtocolAttributeEncoder;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;

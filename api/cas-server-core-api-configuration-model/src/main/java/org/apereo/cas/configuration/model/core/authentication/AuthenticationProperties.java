@@ -10,6 +10,7 @@ import org.apereo.cas.configuration.model.support.digest.DigestProperties;
 import org.apereo.cas.configuration.model.support.fortress.FortressAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.generic.AcceptAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.generic.FileAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.generic.GroovyAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.generic.JsonResourceAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.generic.RejectAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.generic.RemoteAddressAuthenticationProperties;
@@ -83,6 +84,12 @@ public class AuthenticationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private JsonResourceAuthenticationProperties json = new JsonResourceAuthenticationProperties();
+
+    /**
+     * Groovy authentication settings.
+     */
+    @NestedConfigurationProperty
+    private GroovyAuthenticationProperties groovy = new GroovyAuthenticationProperties();
 
     /**
      * Syncope authentication settings.
@@ -190,7 +197,7 @@ public class AuthenticationProperties implements Serializable {
      * Customization of authentication errors and exceptions.
      */
     @NestedConfigurationProperty
-    private AuthenticationExceptionsProperties exceptions = new AuthenticationExceptionsProperties();
+    private AuthenticationExceptionsProperties errors = new AuthenticationExceptionsProperties();
 
     /**
      * Customization of authentication engine and pre/post processing.

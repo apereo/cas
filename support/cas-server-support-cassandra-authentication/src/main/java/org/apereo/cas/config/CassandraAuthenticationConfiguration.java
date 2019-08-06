@@ -48,6 +48,7 @@ public class CassandraAuthenticationConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Bean
+    @RefreshScope
     public PrincipalFactory cassandraPrincipalFactory() {
         return PrincipalFactoryUtils.newPrincipalFactory();
     }

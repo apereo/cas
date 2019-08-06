@@ -1,9 +1,9 @@
 package org.apereo.cas.ticket.registry;
 
-import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
 import com.google.common.base.Predicates;
 import lombok.extern.slf4j.Slf4j;

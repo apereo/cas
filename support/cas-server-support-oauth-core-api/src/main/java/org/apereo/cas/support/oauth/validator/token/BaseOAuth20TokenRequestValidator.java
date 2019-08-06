@@ -11,7 +11,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.pac4j.core.context.J2EContext;
+import org.apache.commons.lang3.StringUtils;
+import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
 import org.springframework.core.Ordered;
@@ -72,9 +73,9 @@ public abstract class BaseOAuth20TokenRequestValidator implements OAuth20TokenRe
     }
 
     @Override
-    public boolean validate(final J2EContext ctx) {
-        val request = ctx.getRequest();
-        val response = ctx.getResponse();
+    public boolean validate(final JEEContext ctx) {
+        val request = ctx.getNativeRequest();
+        val response = ctx.getNativeResponse();
 
         val grantType = request.getParameter(OAuth20Constants.GRANT_TYPE);
         if (!isGrantTypeSupported(grantType, OAuth20GrantTypes.values())) {
@@ -82,7 +83,7 @@ public abstract class BaseOAuth20TokenRequestValidator implements OAuth20TokenRe
             return false;
         }
 
-        val context = new J2EContext(request, response, getConfigurationContext().getSessionStore());
+        val context = new JEEContext(request, response, getConfigurationContext().getSessionStore());
         val manager = new ProfileManager<>(context, context.getSessionStore());
         val profile = manager.get(true);
         if (profile.isEmpty()) {
@@ -103,7 +104,8 @@ public abstract class BaseOAuth20TokenRequestValidator implements OAuth20TokenRe
      * @param userProfile the profile
      * @return true/false
      */
-    protected boolean validateInternal(final J2EContext context, final String grantType, final ProfileManager manager,
+    protected boolean validateInternal(final JEEContext context, final String grantType,
+                                       final ProfileManager manager,
                                        final UserProfile userProfile) {
         return false;
     }
@@ -116,8 +118,8 @@ public abstract class BaseOAuth20TokenRequestValidator implements OAuth20TokenRe
     protected abstract OAuth20GrantTypes getGrantType();
 
     @Override
-    public boolean supports(final J2EContext context) {
+    public boolean supports(final JEEContext context) {
         val grantType = context.getRequestParameter(OAuth20Constants.GRANT_TYPE);
-        return OAuth20Utils.isGrantType(grantType, getGrantType());
+        return OAuth20Utils.isGrantType(grantType.map(String::valueOf).orElse(StringUtils.EMPTY), getGrantType());
     }
 }

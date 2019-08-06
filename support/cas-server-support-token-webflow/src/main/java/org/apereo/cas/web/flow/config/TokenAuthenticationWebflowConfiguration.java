@@ -34,7 +34,7 @@ import org.springframework.webflow.execution.Action;
  */
 @Configuration("tokenAuthenticationWebflowConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class TokenAuthenticationWebflowConfiguration implements CasWebflowExecutionPlanConfigurer {
+public class TokenAuthenticationWebflowConfiguration {
 
     @Autowired
     @Qualifier("loginFlowRegistry")
@@ -88,8 +88,14 @@ public class TokenAuthenticationWebflowConfiguration implements CasWebflowExecut
             servicesManager.getIfAvailable());
     }
 
-    @Override
-    public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-        plan.registerWebflowConfigurer(tokenWebflowConfigurer());
+    @Bean
+    @ConditionalOnMissingBean(name = "tokenCasWebflowExecutionPlanConfigurer")
+    public CasWebflowExecutionPlanConfigurer tokenCasWebflowExecutionPlanConfigurer() {
+        return new CasWebflowExecutionPlanConfigurer() {
+            @Override
+            public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
+                plan.registerWebflowConfigurer(tokenWebflowConfigurer());
+            }
+        };
     }
 }

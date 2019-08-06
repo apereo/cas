@@ -1,8 +1,8 @@
 package org.apereo.cas.support.saml.idp.metadata.generator;
 
-import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.idp.metadata.writer.SamlIdPCertificateAndKeyWriter;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.Builder;
 import lombok.Getter;

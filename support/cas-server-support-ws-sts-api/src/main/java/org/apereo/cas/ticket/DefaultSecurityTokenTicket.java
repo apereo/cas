@@ -35,10 +35,11 @@ public class DefaultSecurityTokenTicket extends AbstractTicket implements Securi
     @Getter
     private TicketGrantingTicket ticketGrantingTicket;
 
-    @Column(name = "SECURITY_TOKEN")
+    @Column(name = "SECURITY_TOKEN", length = 4096)
     private String securityToken;
 
-    public DefaultSecurityTokenTicket(final String id, final TicketGrantingTicket ticketGrantingTicket, final ExpirationPolicy expirationPolicy, final String securityToken) {
+    public DefaultSecurityTokenTicket(final String id, final TicketGrantingTicket ticketGrantingTicket,
+                                      final ExpirationPolicy expirationPolicy, final String securityToken) {
         super(id, expirationPolicy);
         this.ticketGrantingTicket = ticketGrantingTicket;
         this.securityToken = securityToken;

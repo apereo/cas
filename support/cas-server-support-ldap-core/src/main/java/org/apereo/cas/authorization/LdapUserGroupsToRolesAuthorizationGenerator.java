@@ -9,7 +9,9 @@ import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.SearchExecutor;
 import org.pac4j.core.authorization.generator.AuthorizationGenerator;
-import org.pac4j.core.profile.CommonProfile;
+import org.pac4j.core.profile.UserProfile;
+
+import java.util.Optional;
 
 /**
  * Provides a simple {@link AuthorizationGenerator} implementation that obtains user roles from an LDAP search.
@@ -57,7 +59,7 @@ public class LdapUserGroupsToRolesAuthorizationGenerator extends BaseUseAttribut
     }
 
     @Override
-    protected CommonProfile generateAuthorizationForLdapEntry(final CommonProfile profile, final LdapEntry userEntry) {
+    protected Optional<UserProfile> generateAuthorizationForLdapEntry(final UserProfile profile, final LdapEntry userEntry) {
         try {
             LOGGER.debug("Attempting to get roles for user [{}].", userEntry.getDn());
             val response = this.groupSearchExecutor.search(
@@ -78,6 +80,6 @@ public class LdapUserGroupsToRolesAuthorizationGenerator extends BaseUseAttribut
         } catch (final Exception e) {
             throw new IllegalArgumentException("LDAP error fetching roles for user.", e);
         }
-        return profile;
+        return Optional.ofNullable(profile);
     }
 }

@@ -16,7 +16,7 @@ import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.pac4j.core.context.J2EContext;
+import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.Pac4jConstants;
 import org.pac4j.core.profile.CommonProfile;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -104,20 +104,20 @@ public class OAuth20RefreshTokenGrantTypeTokenRequestValidatorTests {
         request.setParameter(OAuth20Constants.CLIENT_SECRET, RequestValidatorTestUtils.SHARED_SECRET);
         request.setParameter(OAuth20Constants.REFRESH_TOKEN, SUPPORTING_SERVICE_TICKET);
 
-        assertTrue(this.validator.validate(new J2EContext(request, response)));
+        assertTrue(this.validator.validate(new JEEContext(request, response)));
 
         profile.setId(RequestValidatorTestUtils.NON_SUPPORTING_CLIENT_ID);
         session.setAttribute(Pac4jConstants.USER_PROFILES, profile);
         request.setParameter(OAuth20Constants.CLIENT_ID, RequestValidatorTestUtils.NON_SUPPORTING_CLIENT_ID);
         request.setParameter(OAuth20Constants.CLIENT_SECRET, RequestValidatorTestUtils.SHARED_SECRET);
         request.setParameter(OAuth20Constants.REFRESH_TOKEN, NON_SUPPORTING_SERVICE_TICKET);
-        assertFalse(this.validator.validate(new J2EContext(request, response)));
+        assertFalse(this.validator.validate(new JEEContext(request, response)));
 
         profile.setId(RequestValidatorTestUtils.PROMISCUOUS_CLIENT_ID);
         session.setAttribute(Pac4jConstants.USER_PROFILES, profile);
         request.setParameter(OAuth20Constants.CLIENT_ID, RequestValidatorTestUtils.PROMISCUOUS_CLIENT_ID);
         request.setParameter(OAuth20Constants.CLIENT_SECRET, RequestValidatorTestUtils.SHARED_SECRET);
         request.setParameter(OAuth20Constants.REFRESH_TOKEN, PROMISCUOUS_SERVICE_TICKET);
-        assertTrue(this.validator.validate(new J2EContext(request, response)));
+        assertTrue(this.validator.validate(new JEEContext(request, response)));
     }
 }

@@ -1,23 +1,22 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGenerator;
-import org.apereo.cas.ticket.ExpirationPolicy;
+import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.IdTokenGeneratorService;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.ticket.support.HardTimeoutExpirationPolicy;
 import org.apereo.cas.uma.UmaConfigurationContext;
 import org.apereo.cas.uma.claim.DefaultUmaResourceSetClaimPermissionExaminer;
 import org.apereo.cas.uma.claim.UmaResourceSetClaimPermissionExaminer;
 import org.apereo.cas.uma.discovery.UmaServerDiscoverySettings;
 import org.apereo.cas.uma.discovery.UmaServerDiscoverySettingsFactory;
 import org.apereo.cas.uma.ticket.permission.DefaultUmaPermissionTicketFactory;
+import org.apereo.cas.uma.ticket.permission.UmaPermissionTicketExpirationPolicyBuilder;
 import org.apereo.cas.uma.ticket.permission.UmaPermissionTicketFactory;
 import org.apereo.cas.uma.ticket.resource.repository.ResourceSetRepository;
 import org.apereo.cas.uma.ticket.resource.repository.impl.DefaultResourceSetRepository;
@@ -41,10 +40,11 @@ import org.apereo.cas.uma.web.controllers.rpt.UmaRequestingPartyTokenJwksEndpoin
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.config.Config;
-import org.pac4j.core.context.session.J2ESessionStore;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.credentials.authenticator.Authenticator;
+import org.pac4j.core.http.adapter.JEEHttpActionAdapter;
 import org.pac4j.http.client.direct.HeaderClient;
 import org.pac4j.springframework.web.SecurityInterceptor;
 import org.springframework.beans.factory.FactoryBean;
@@ -205,10 +205,10 @@ public class CasOAuthUmaConfiguration implements WebMvcConfigurer {
     }
 
     @Bean
+    @RefreshScope
     @ConditionalOnMissingBean(name = "umaPermissionTicketExpirationPolicy")
-    public ExpirationPolicy umaPermissionTicketExpirationPolicy() {
-        val uma = casProperties.getAuthn().getUma();
-        return new HardTimeoutExpirationPolicy(Beans.newDuration(uma.getPermissionTicket().getMaxTimeToLiveInSeconds()).getSeconds());
+    public ExpirationPolicyBuilder umaPermissionTicketExpirationPolicy() {
+        return new UmaPermissionTicketExpirationPolicyBuilder(casProperties);
     }
 
     @Bean
@@ -235,8 +235,10 @@ public class CasOAuthUmaConfiguration implements WebMvcConfigurer {
         headerClient.setName(clientName);
         val clients = Stream.of(headerClient.getName()).collect(Collectors.joining(","));
         val config = new Config(OAuth20Utils.casOAuthCallbackUrl(casProperties.getServer().getPrefix()), headerClient);
-        config.setSessionStore(new J2ESessionStore());
-        return new SecurityInterceptor(config, clients);
+        config.setSessionStore(oauthDistributedSessionStore.getIfAvailable());
+        val interceptor = new SecurityInterceptor(config, clients, JEEHttpActionAdapter.INSTANCE);
+        interceptor.setAuthorizers(StringUtils.EMPTY);
+        return interceptor;
     }
 
     @Override

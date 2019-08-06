@@ -10,6 +10,7 @@ import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
@@ -46,7 +47,7 @@ import org.springframework.webflow.execution.Action;
  */
 @Configuration("authyConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class AuthyConfiguration implements CasWebflowExecutionPlanConfigurer {
+public class AuthyConfiguration {
 
     @Autowired
     @Qualifier("servicesManager")
@@ -73,6 +74,10 @@ public class AuthyConfiguration implements CasWebflowExecutionPlanConfigurer {
     @Autowired
     @Qualifier("defaultAuthenticationSystemSupport")
     private ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport;
+
+    @Autowired
+    @Qualifier("ticketRegistry")
+    private ObjectProvider<TicketRegistry> ticketRegistry;
 
     @Autowired
     @Qualifier("defaultTicketRegistrySupport")
@@ -112,6 +117,7 @@ public class AuthyConfiguration implements CasWebflowExecutionPlanConfigurer {
             .authenticationRequestServiceSelectionStrategies(authenticationRequestServiceSelectionStrategies.getIfAvailable())
             .registeredServiceAccessStrategyEnforcer(registeredServiceAccessStrategyEnforcer.getIfAvailable())
             .casProperties(casProperties)
+            .ticketRegistry(ticketRegistry.getIfAvailable())
             .eventPublisher(applicationEventPublisher)
             .applicationContext(applicationContext)
             .build();
@@ -133,9 +139,16 @@ public class AuthyConfiguration implements CasWebflowExecutionPlanConfigurer {
         return new AuthyAuthenticationWebflowAction(authyAuthenticationWebflowEventResolver());
     }
 
-    @Override
-    public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-        plan.registerWebflowConfigurer(authyMultifactorWebflowConfigurer());
+    @Bean
+    @ConditionalOnMissingBean(name = "authyCasWebflowExecutionPlanConfigurer")
+    public CasWebflowExecutionPlanConfigurer authyCasWebflowExecutionPlanConfigurer() {
+        return new CasWebflowExecutionPlanConfigurer() {
+
+            @Override
+            public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
+                plan.registerWebflowConfigurer(authyMultifactorWebflowConfigurer());
+            }
+        };
     }
 
     /**

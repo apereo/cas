@@ -1,10 +1,10 @@
 package org.apereo.cas.uma.web.controllers.permission;
 
-import org.apereo.cas.support.oauth.util.OAuth20Utils;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
+import lombok.SneakyThrows;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -20,6 +20,9 @@ import java.util.Map;
  */
 @Data
 public class UmaPermissionRegistrationRequest implements Serializable {
+    private static final ObjectMapper MAPPER = new ObjectMapper()
+        .findAndRegisterModules();
+
     private static final long serialVersionUID = 3614209506339611242L;
 
     @JsonProperty("resource_id")
@@ -37,7 +40,8 @@ public class UmaPermissionRegistrationRequest implements Serializable {
      * @return the string
      */
     @JsonIgnore
+    @SneakyThrows
     public String toJson() {
-        return OAuth20Utils.toJson(this);
+        return MAPPER.writeValueAsString(this);
     }
 }

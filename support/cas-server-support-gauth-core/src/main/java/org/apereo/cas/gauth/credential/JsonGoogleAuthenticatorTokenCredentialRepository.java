@@ -1,7 +1,7 @@
 package org.apereo.cas.gauth.credential;
 
-import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.OneTimeTokenAccount;
+import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.serialization.AbstractJacksonBackedStringSerializer;
 import org.apereo.cas.util.serialization.StringSerializer;
 

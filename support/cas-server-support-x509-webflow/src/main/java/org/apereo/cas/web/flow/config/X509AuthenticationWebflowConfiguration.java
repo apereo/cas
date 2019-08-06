@@ -34,7 +34,7 @@ import org.springframework.webflow.execution.Action;
  */
 @Configuration("x509AuthenticationWebflowConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class X509AuthenticationWebflowConfiguration implements CasWebflowExecutionPlanConfigurer {
+public class X509AuthenticationWebflowConfiguration {
 
     @Autowired
     @Qualifier("adaptiveAuthenticationPolicy")
@@ -88,8 +88,14 @@ public class X509AuthenticationWebflowConfiguration implements CasWebflowExecuti
             adaptiveAuthenticationPolicy.getIfAvailable());
     }
 
-    @Override
-    public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-        plan.registerWebflowConfigurer(x509WebflowConfigurer());
+    @Bean
+    @ConditionalOnMissingBean(name = "x509CasWebflowExecutionPlanConfigurer")
+    public CasWebflowExecutionPlanConfigurer x509CasWebflowExecutionPlanConfigurer() {
+        return new CasWebflowExecutionPlanConfigurer() {
+            @Override
+            public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
+                plan.registerWebflowConfigurer(x509WebflowConfigurer());
+            }
+        };
     }
 }

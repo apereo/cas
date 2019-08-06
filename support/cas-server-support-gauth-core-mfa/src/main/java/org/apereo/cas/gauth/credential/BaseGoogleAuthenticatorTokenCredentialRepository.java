@@ -1,8 +1,8 @@
 package org.apereo.cas.gauth.credential;
 
-import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.otp.repository.credentials.BaseOneTimeTokenCredentialRepository;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import lombok.Getter;

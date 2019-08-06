@@ -21,8 +21,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.pac4j.core.context.J2EContext;
-import org.pac4j.core.profile.UserProfile;
+import org.pac4j.core.context.JEEContext;
+import org.pac4j.core.profile.CommonProfile;
 
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -67,10 +67,10 @@ public class OAuth20CasAuthenticationBuilder {
      * @param useServiceHeader  the use service header
      * @return the service
      */
-    public Service buildService(final OAuthRegisteredService registeredService, final J2EContext context, final boolean useServiceHeader) {
+    public Service buildService(final OAuthRegisteredService registeredService, final JEEContext context, final boolean useServiceHeader) {
         var id = StringUtils.EMPTY;
         if (useServiceHeader) {
-            id = OAuth20Utils.getServiceRequestHeaderIfAny(context.getRequest());
+            id = OAuth20Utils.getServiceRequestHeaderIfAny(context.getNativeRequest());
             LOGGER.debug("Located service based on request header is [{}]", id);
         }
         if (StringUtils.isBlank(id)) {
@@ -88,9 +88,9 @@ public class OAuth20CasAuthenticationBuilder {
      * @param service           the service
      * @return the built authentication
      */
-    public Authentication build(final UserProfile profile,
+    public Authentication build(final CommonProfile profile,
                                 final OAuthRegisteredService registeredService,
-                                final J2EContext context,
+                                final JEEContext context,
                                 final Service service) {
 
         val profileAttributes = CoreAuthenticationUtils.convertAttributeValuesToMultiValuedObjects(profile.getAttributes());
@@ -100,10 +100,10 @@ public class OAuth20CasAuthenticationBuilder {
         val authenticator = profile.getClass().getCanonicalName();
         val metadata = new BasicCredentialMetaData(new BasicIdentifiableCredential(profile.getId()));
         val handlerResult = new DefaultAuthenticationHandlerExecutionResult(authenticator, metadata, newPrincipal, new ArrayList<>());
-        val scopes = CollectionUtils.toCollection(context.getRequest().getParameterValues(OAuth20Constants.SCOPE));
+        val scopes = CollectionUtils.toCollection(context.getNativeRequest().getParameterValues(OAuth20Constants.SCOPE));
 
-        val state = StringUtils.defaultIfBlank(context.getRequestParameter(OAuth20Constants.STATE), StringUtils.EMPTY);
-        val nonce = StringUtils.defaultIfBlank(context.getRequestParameter(OAuth20Constants.NONCE), StringUtils.EMPTY);
+        val state = context.getRequestParameter(OAuth20Constants.STATE).map(String::valueOf).orElse(StringUtils.EMPTY);
+        val nonce = context.getRequestParameter(OAuth20Constants.NONCE).map(String::valueOf).orElse(StringUtils.EMPTY);
         LOGGER.debug("OAuth [{}] is [{}], and [{}] is [{}]", OAuth20Constants.STATE, state, OAuth20Constants.NONCE, nonce);
 
         /*

@@ -1458,7 +1458,7 @@ ext.libraries = [
                 }
         ],
         jackson                 : [
-                dependencies.create("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion") {
+                dependencies.create("com.fasterxml.jackson.core:jackson-databind:$jacksonCoreVersion") {
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
                     force = true
                 },
@@ -2442,6 +2442,8 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "jul-to-slf4j")
                     exclude(group: "com.google.guava", module: "guava")
                     exclude(group: "commons-lang", module: "commons-lang")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-web")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-actuator")
                     force = true
                 }
         ],
@@ -3178,6 +3180,8 @@ ext.libraries = [
                 dependencies.create("org.springframework.cloud:spring-cloud-config-server:$springCloudConfigVersion") {
                     exclude(group: "org.springframework", module: "spring-web")
                     exclude(group: "org.springframework.security", module: "spring-security-crypto")
+                    exclude(group: "org.springframework.security", module: "spring-security-core")
+                    exclude(group: "org.springframework.security", module: "spring-security-web")
                     exclude(group: "org.springframework", module: "spring-webmvc")
                     exclude(group: "org.springframework", module: "spring-core")
                     exclude(group: "org.springframework", module: "spring-context")

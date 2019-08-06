@@ -104,7 +104,7 @@ public class CasFiltersConfiguration {
         return bean;
     }
 
-
+    @ConditionalOnProperty(prefix = "cas.httpWebRequest.header", name = "enabled", havingValue = "true", matchIfMissing = true)
     @RefreshScope
     @Bean
     public FilterRegistrationBean responseHeadersSecurityFilter() {

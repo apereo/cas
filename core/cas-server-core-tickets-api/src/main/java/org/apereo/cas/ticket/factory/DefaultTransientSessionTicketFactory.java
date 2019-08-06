@@ -1,7 +1,7 @@
 package org.apereo.cas.ticket.factory;
 
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.ticket.ExpirationPolicy;
+import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TransientSessionTicket;
@@ -24,7 +24,7 @@ import java.util.Map;
  */
 @RequiredArgsConstructor
 public class DefaultTransientSessionTicketFactory implements TransientSessionTicketFactory {
-    private final ExpirationPolicy expirationPolicy;
+    private final ExpirationPolicyBuilder<TransientSessionTicket> expirationPolicy;
     private final UniqueTicketIdGenerator ticketIdGenerator = new DefaultUniqueTicketIdGenerator();
 
     /**
@@ -37,13 +37,13 @@ public class DefaultTransientSessionTicketFactory implements TransientSessionTic
     @Override
     public TransientSessionTicket create(final Service service, final Map<String, Serializable> properties) {
         val id = ticketIdGenerator.getNewTicketId(TransientSessionTicket.PREFIX);
-        return new TransientSessionTicketImpl(id, expirationPolicy, service, properties);
+        return new TransientSessionTicketImpl(id, expirationPolicy.buildTicketExpirationPolicy(), service, properties);
     }
 
     @Override
     public TransientSessionTicket create(final String id, final Map<String, Serializable> properties) {
         return new TransientSessionTicketImpl(TransientSessionTicketFactory.normalizeTicketId(id),
-            expirationPolicy, null, properties);
+            expirationPolicy.buildTicketExpirationPolicy(), null, properties);
     }
 
     @Override

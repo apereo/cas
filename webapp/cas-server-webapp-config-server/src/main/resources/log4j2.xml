@@ -26,7 +26,7 @@
             <AppenderRef ref="casConsole"/>
             <AppenderRef ref="casFile"/>
         </AsyncLogger>
-        <AsyncLogger name="org.springframework.cloud.server" level="info" additivity="false">
+        <AsyncLogger name="org.springframework.cloud.server" level="debug" additivity="false">
             <AppenderRef ref="casConsole"/>
             <AppenderRef ref="casFile"/>
         </AsyncLogger>
@@ -38,11 +38,11 @@
             <AppenderRef ref="casConsole"/>
             <AppenderRef ref="casFile"/>
         </AsyncLogger>
-        <AsyncLogger name="org.springframework.security" level="warn" additivity="false">
+        <AsyncLogger name="org.springframework.security" level="debug" additivity="false">
             <AppenderRef ref="casConsole"/>
             <AppenderRef ref="casFile"/>
         </AsyncLogger>
-        <AsyncLogger name="org.springframework.boot" level="warn" additivity="false">
+        <AsyncLogger name="org.springframework.boot" level="info" additivity="false">
             <AppenderRef ref="casConsole"/>
             <AppenderRef ref="casFile"/>
         </AsyncLogger>

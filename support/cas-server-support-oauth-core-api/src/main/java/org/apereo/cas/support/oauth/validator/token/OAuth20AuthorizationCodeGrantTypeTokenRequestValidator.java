@@ -10,7 +10,8 @@ import org.apereo.cas.util.HttpRequestUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.pac4j.core.context.J2EContext;
+import org.apache.commons.lang3.StringUtils;
+import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
 
@@ -32,9 +33,9 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidator extends Base
     }
 
     @Override
-    protected boolean validateInternal(final J2EContext context, final String grantType,
+    protected boolean validateInternal(final JEEContext context, final String grantType,
                                        final ProfileManager manager, final UserProfile uProfile) {
-        val request = context.getRequest();
+        val request = context.getNativeRequest();
         val clientId = uProfile.getId();
         val redirectUri = request.getParameter(OAuth20Constants.REDIRECT_URI);
         val clientRegisteredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(
@@ -46,7 +47,8 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidator extends Base
             && OAuth20Utils.checkCallbackValid(clientRegisteredService, redirectUri);
 
         if (valid) {
-            val code = context.getRequestParameter(OAuth20Constants.CODE);
+            val code = context.getRequestParameter(OAuth20Constants.CODE)
+                .map(String::valueOf).orElse(StringUtils.EMPTY);
             val token = getConfigurationContext().getTicketRegistry().getTicket(code, OAuthCode.class);
             if (token == null || token.isExpired()) {
                 LOGGER.warn("Request OAuth code [{}] is not found or has expired", code);

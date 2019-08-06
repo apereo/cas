@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.model.support.mfa.CasSimpleMultifactorProper
 import org.apereo.cas.ticket.TransientSessionTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.io.CommunicationsManager;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -12,6 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.webflow.action.AbstractAction;
+import org.springframework.webflow.action.EventFactorySupport;
+import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -42,19 +45,17 @@ public class CasSimpleSendTokenAction extends AbstractAction {
             ? String.format(smsProperties.getText(), token.getId())
             : token.getId();
 
-        if (communicationsManager.sms(principal, smsProperties.getAttributeName(), text, smsProperties.getFrom())) {
-            ticketRegistry.addTicket(token);
-            LOGGER.debug("Successfully submitted token via SMS to [{}]", principal.getId());
-            return success();
-        }
-
         val emailProperties = properties.getMail();
         val body = emailProperties.getFormattedBody(token.getId());
 
-        if (communicationsManager.email(principal, emailProperties.getAttributeName(), emailProperties, body)) {
+        val smsSent = communicationsManager.sms(principal, smsProperties.getAttributeName(), text, smsProperties.getFrom());
+        val emailSent = communicationsManager.email(principal, emailProperties.getAttributeName(), emailProperties, body);
+
+        if (smsSent || emailSent) {
             ticketRegistry.addTicket(token);
-            LOGGER.debug("Successfully submitted token via SMS to [{}]", principal.getId());
-            return success();
+            LOGGER.debug("Successfully submitted token via SMS and/or email to [{}]", principal.getId());
+            val attributes = new LocalAttributeMap("token", token.getId());
+            return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_SUCCESS, attributes);
         }
         throw new UnauthorizedAuthenticationException("Both email and SMS communication strategies failed to submit token to user");
     }

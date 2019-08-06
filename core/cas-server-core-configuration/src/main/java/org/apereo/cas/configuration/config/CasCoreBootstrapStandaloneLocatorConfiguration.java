@@ -1,11 +1,11 @@
 package org.apereo.cas.configuration.config;
 
-import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.CasConfigurationPropertiesEnvironmentManager;
 import org.apereo.cas.configuration.DefaultCasConfigurationPropertiesSourceLocator;
 import org.apereo.cas.configuration.api.CasConfigurationPropertiesSourceLocator;
 import org.apereo.cas.configuration.loader.ConfigurationPropertiesLoaderFactory;
 import org.apereo.cas.configuration.support.CasConfigurationJasyptCipherExecutor;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;

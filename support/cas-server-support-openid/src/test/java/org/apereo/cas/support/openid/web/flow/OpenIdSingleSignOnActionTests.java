@@ -5,8 +5,8 @@ import org.apereo.cas.support.openid.AbstractOpenIdTests;
 import org.apereo.cas.support.openid.OpenIdProtocolConstants;
 import org.apereo.cas.support.openid.authentication.principal.OpenIdServiceFactory;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
+import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;

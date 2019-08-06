@@ -14,7 +14,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.http.client.utils.URIBuilder;
-import org.pac4j.core.context.J2EContext;
+import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.core.profile.ProfileManager;
@@ -90,9 +90,25 @@ public class OidcAuthorizationRequestSupport {
      * @param context the context
      * @return the optional user profile
      */
-    public static Optional<CommonProfile> isAuthenticationProfileAvailable(final J2EContext context) {
-        val manager = new ProfileManager<>(context, context.getSessionStore());
+    public static Optional<CommonProfile> isAuthenticationProfileAvailable(final JEEContext context) {
+        val manager = new ProfileManager<CommonProfile>(context, context.getSessionStore());
         return manager.get(true);
+    }
+
+    @SneakyThrows
+    public static String removeOidcPromptFromAuthorizationRequest(final String url, final String prompt) {
+        val uriBuilder = new URIBuilder(url);
+        val newParams = uriBuilder.getQueryParams()
+            .stream()
+            .filter(p -> !OidcConstants.PROMPT.equals(p.getName()) || !p.getValue().equalsIgnoreCase(prompt))
+            .collect(Collectors.toList());
+        if (!newParams.isEmpty()) {
+            return uriBuilder.removeQuery()
+                .addParameters(newParams)
+                .build()
+                .toASCIIString();
+        }
+        return url;
     }
 
     /**
@@ -102,9 +118,9 @@ public class OidcAuthorizationRequestSupport {
      * @return the optional authn
      */
     public Optional<Authentication> isCasAuthenticationAvailable(final WebContext context) {
-        val j2EContext = (J2EContext) context;
-        if (j2EContext != null) {
-            val tgtId = ticketGrantingTicketCookieGenerator.retrieveCookieValue(j2EContext.getRequest());
+        val webContext = (JEEContext) context;
+        if (webContext != null) {
+            val tgtId = ticketGrantingTicketCookieGenerator.retrieveCookieValue(webContext.getNativeRequest());
 
             if (StringUtils.isNotBlank(tgtId)) {
                 val authentication = ticketRegistrySupport.getAuthenticationFrom(tgtId);

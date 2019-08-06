@@ -1,6 +1,6 @@
 package org.apereo.cas.web.flow.executor;
 
-import org.apereo.cas.CipherExecutor;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.RequiredArgsConstructor;
 import org.cryptacular.bean.CipherBean;

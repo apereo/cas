@@ -1,18 +1,19 @@
 package org.apereo.cas.ticket.factory;
 
-import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.ExpirationPolicy;
+import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.ServiceTicketFactory;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
-import org.apereo.cas.ticket.support.MultiTimeUseOrTimeoutExpirationPolicy;
+import org.apereo.cas.ticket.expiration.MultiTimeUseOrTimeoutExpirationPolicy;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +32,7 @@ import java.util.Map;
 @Slf4j
 @RequiredArgsConstructor
 public class DefaultServiceTicketFactory implements ServiceTicketFactory {
-    private final ExpirationPolicy serviceTicketExpirationPolicy;
+    private final ExpirationPolicyBuilder<ServiceTicket> serviceTicketExpirationPolicy;
     private final Map<String, UniqueTicketIdGenerator> uniqueTicketIdGeneratorsForService;
     private final boolean trackMostRecentSession;
     private final CipherExecutor<String, String> cipherExecutor;
@@ -97,7 +98,7 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
                     count, Beans.newDuration(ttl).getSeconds());
             }
         }
-        return this.serviceTicketExpirationPolicy;
+        return this.serviceTicketExpirationPolicy.buildTicketExpirationPolicy();
     }
 
     /**

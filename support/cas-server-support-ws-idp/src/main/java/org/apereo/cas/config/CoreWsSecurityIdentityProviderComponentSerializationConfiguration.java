@@ -1,8 +1,8 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.ComponentSerializationPlan;
-import org.apereo.cas.ComponentSerializationPlanConfigurator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.util.serialization.ComponentSerializationPlan;
+import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurator;
 import org.apereo.cas.ws.idp.services.CustomNamespaceWSFederationClaimsReleasePolicy;
 import org.apereo.cas.ws.idp.services.WSFederationClaimsReleasePolicy;
 import org.apereo.cas.ws.idp.services.WSFederationRegisteredService;

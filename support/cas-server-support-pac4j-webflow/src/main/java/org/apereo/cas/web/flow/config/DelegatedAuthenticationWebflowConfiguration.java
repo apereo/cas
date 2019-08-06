@@ -19,8 +19,8 @@ import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
+import org.apereo.cas.web.flow.DelegatedAuthenticationClientLogoutAction;
 import org.apereo.cas.web.flow.DelegatedAuthenticationErrorViewResolver;
-import org.apereo.cas.web.flow.DelegatedAuthenticationSAML2ClientLogoutAction;
 import org.apereo.cas.web.flow.DelegatedAuthenticationWebflowConfigurer;
 import org.apereo.cas.web.flow.DelegatedClientAuthenticationAction;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
@@ -57,7 +57,7 @@ import java.util.ArrayList;
  */
 @Configuration("delegatedAuthenticationWebflowConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class DelegatedAuthenticationWebflowConfiguration implements CasWebflowExecutionPlanConfigurer {
+public class DelegatedAuthenticationWebflowConfiguration {
 
     @Autowired
     @Qualifier("singleSignOnParticipationStrategy")
@@ -121,10 +121,6 @@ public class DelegatedAuthenticationWebflowConfiguration implements CasWebflowEx
     private ObjectProvider<ArgumentExtractor> argumentExtractor;
 
     @Autowired
-    @Qualifier("saml2ClientLogoutAction")
-    private ObjectProvider<Action> saml2ClientLogoutAction;
-
-    @Autowired
     @Qualifier("adaptiveAuthenticationPolicy")
     private ObjectProvider<AdaptiveAuthenticationPolicy> adaptiveAuthenticationPolicy;
 
@@ -151,12 +147,12 @@ public class DelegatedAuthenticationWebflowConfiguration implements CasWebflowEx
         return new DelegatedAuthenticationErrorViewResolver(conventionErrorViewResolver.getIfAvailable());
     }
 
-    @ConditionalOnMissingBean(name = "saml2ClientLogoutAction")
+    @ConditionalOnMissingBean(name = "delegatedAuthenticationClientLogoutAction")
     @Bean
     @Lazy
     @RefreshScope
-    public Action saml2ClientLogoutAction() {
-        return new DelegatedAuthenticationSAML2ClientLogoutAction(builtClients.getIfAvailable(),
+    public Action delegatedAuthenticationClientLogoutAction() {
+        return new DelegatedAuthenticationClientLogoutAction(builtClients.getIfAvailable(),
             delegatedClientDistributedSessionStore.getIfAvailable());
     }
 
@@ -174,8 +170,7 @@ public class DelegatedAuthenticationWebflowConfiguration implements CasWebflowEx
             registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer.getIfAvailable(),
             delegatedClientWebflowManager(),
             authenticationSystemSupport.getIfAvailable(),
-            casProperties.getLocale().getParamName(),
-            casProperties.getTheme().getParamName(),
+            casProperties,
             authenticationRequestServiceSelectionStrategies.getIfAvailable(),
             centralAuthenticationService.getIfAvailable(),
             webflowSingleSignOnParticipationStrategy.getIfAvailable(),
@@ -184,13 +179,12 @@ public class DelegatedAuthenticationWebflowConfiguration implements CasWebflowEx
 
     @ConditionalOnMissingBean(name = "delegatedAuthenticationWebflowConfigurer")
     @Bean
-    @DependsOn("defaultWebflowConfigurer")
+    @DependsOn({"defaultWebflowConfigurer", "defaultLogoutWebflowConfigurer"})
     public CasWebflowConfigurer delegatedAuthenticationWebflowConfigurer() {
         return new DelegatedAuthenticationWebflowConfigurer(
             flowBuilderServices.getIfAvailable(),
             loginFlowDefinitionRegistry.getIfAvailable(),
             logoutFlowDefinitionRegistry.getIfAvailable(),
-            saml2ClientLogoutAction.getIfAvailable(),
             applicationContext,
             casProperties);
     }
@@ -220,11 +214,16 @@ public class DelegatedAuthenticationWebflowConfiguration implements CasWebflowEx
             delegatedClientDistributedSessionStore.getIfAvailable());
     }
 
-    @Override
-    public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-        plan.registerWebflowConfigurer(delegatedAuthenticationWebflowConfigurer());
+    @Bean
+    @ConditionalOnMissingBean(name = "delegatedCasWebflowExecutionPlanConfigurer")
+    public CasWebflowExecutionPlanConfigurer delegatedCasWebflowExecutionPlanConfigurer() {
+        return new CasWebflowExecutionPlanConfigurer() {
+            @Override
+            public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
+                plan.registerWebflowConfigurer(delegatedAuthenticationWebflowConfigurer());
+            }
+        };
     }
-
 
     @Bean
     @RefreshScope

@@ -9,11 +9,9 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.client.Clients;
-import org.pac4j.core.context.J2EContext;
+import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.Pac4jConstants;
 import org.pac4j.core.context.session.SessionStore;
-import org.pac4j.core.credentials.Credentials;
-import org.pac4j.core.profile.CommonProfile;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -28,7 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 public class DelegatedAuthenticationWebApplicationServiceFactory extends WebApplicationServiceFactory {
     private final Clients clients;
     private final DelegatedClientWebflowManager delegatedClientWebflowManager;
-    private final SessionStore sessionStore;
+    private final SessionStore<JEEContext> sessionStore;
 
     @Override
     protected String getRequestedService(final HttpServletRequest request) {
@@ -45,12 +43,17 @@ public class DelegatedAuthenticationWebApplicationServiceFactory extends WebAppl
             return null;
         }
 
-        val client = (BaseClient<Credentials, CommonProfile>) this.clients.findClient(clientName);
+        val clientResult = this.clients.findClient(clientName);
+        if (clientResult.isEmpty()) {
+            LOGGER.warn("No client could be located for [{}]", clientName);
+            return null;
+        }
 
-        val webContext = new J2EContext(request,
+        val webContext = new JEEContext(request,
             HttpRequestUtils.getHttpServletResponseFromRequestAttributes(),
             this.sessionStore);
 
+        val client = BaseClient.class.cast(clientResult.get());
         val clientId = delegatedClientWebflowManager.getDelegatedClientId(webContext, client);
         if (StringUtils.isNotBlank(clientId)) {
             val ticket = delegatedClientWebflowManager.retrieveSessionTicketViaClientId(webContext, clientId);

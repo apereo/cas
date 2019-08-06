@@ -68,7 +68,7 @@ public class SamlCompliantUniqueTicketIdGenerator implements UniqueTicketIdGener
     @Override
     public String getNewTicketId(final String prefix) {
         val artifact = getSAMLArtifactType();
-        return prefix + '-' + artifact.base64Encode();
+        return prefix + SEPARATOR + artifact.base64Encode();
     }
 
     private AbstractSAMLArtifact getSAMLArtifactType() {

@@ -122,16 +122,6 @@ public abstract class AbstractServicesManager implements ServicesManager {
         return services.size();
     }
 
-    @Override
-    public boolean matchesExistingService(final Service service) {
-        return matchesExistingService(service.getId());
-    }
-
-    @Override
-    public boolean matchesExistingService(final String service) {
-        return findServiceBy(service) != null;
-    }
-
     @Audit(action = "DELETE_SERVICE",
         actionResolverName = "DELETE_SERVICE_ACTION_RESOLVER",
         resourceResolverName = "DELETE_SERVICE_RESOURCE_RESOLVER")

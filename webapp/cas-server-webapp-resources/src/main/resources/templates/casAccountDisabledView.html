@@ -12,7 +12,8 @@
 <body>
 <main role="main" class="container mt-3 mb-3">
     <div layout:fragment="content">
-        <div class="alert alert-danger">
+        <div class="alert alert-danger alert-dismissible fade show">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
             <h2 th:utext="#{screen.accountdisabled.heading}">This account has been disabled.</h2>
             <p th:utext="#{screen.accountdisabled.message}">Please contact the system administrator to regain
                 access.</p>

@@ -13,7 +13,8 @@
 <body>
 <main role="main" class="container mt-3 mb-3">
     <div layout:fragment="content">
-        <div class="alert alert-danger">
+        <div class="alert alert-danger alert-dismissible fade show">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
             <h2 th:utext="#{screen.error.page.authdenied}">Authorization Denied</h2>
             <p th:utext="#{screen.error.page.permissiondenied}">You do not have permission to view this page.</p>
             <a class="btn btn-submit" th:href="@{/login}" th:utext="#{screen.error.page.loginagain}">Login Again</a>

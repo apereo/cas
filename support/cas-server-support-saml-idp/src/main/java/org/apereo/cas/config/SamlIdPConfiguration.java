@@ -44,12 +44,12 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.subject.SamlProfileS
 import org.apereo.cas.support.saml.web.idp.profile.slo.SamlIdPSingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.slo.SamlIdPSingleLogoutServiceMessageHandler;
 import org.apereo.cas.support.saml.web.idp.profile.slo.SamlProfileSingleLogoutMessageCreator;
-import org.apereo.cas.ticket.ExpirationPolicy;
+import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.artifact.DefaultSamlArtifactTicketFactory;
-import org.apereo.cas.ticket.artifact.SamlArtifactTicketExpirationPolicy;
+import org.apereo.cas.ticket.artifact.SamlArtifactTicketExpirationPolicyBuilder;
 import org.apereo.cas.ticket.artifact.SamlArtifactTicketFactory;
 import org.apereo.cas.ticket.query.DefaultSamlAttributeQueryTicketFactory;
-import org.apereo.cas.ticket.query.SamlAttributeQueryTicketExpirationPolicy;
+import org.apereo.cas.ticket.query.SamlAttributeQueryTicketExpirationPolicyBuilder;
 import org.apereo.cas.ticket.query.SamlAttributeQueryTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.http.HttpClient;
@@ -194,8 +194,9 @@ public class SamlIdPConfiguration implements AuditTrailRecordResolutionPlanConfi
 
     @ConditionalOnMissingBean(name = "samlArtifactTicketExpirationPolicy")
     @Bean
-    public ExpirationPolicy samlArtifactTicketExpirationPolicy() {
-        return new SamlArtifactTicketExpirationPolicy(casProperties.getTicket().getSt().getTimeToKillInSeconds());
+    @RefreshScope
+    public ExpirationPolicyBuilder samlArtifactTicketExpirationPolicy() {
+        return new SamlArtifactTicketExpirationPolicyBuilder(casProperties);
     }
 
     @Bean(initMethod = "initialize", destroyMethod = "destroy")
@@ -204,7 +205,8 @@ public class SamlIdPConfiguration implements AuditTrailRecordResolutionPlanConfi
         val map = new CasSamlArtifactMap(ticketRegistry.getIfAvailable(),
             samlArtifactTicketFactory(),
             ticketGrantingTicketCookieGenerator.getIfAvailable());
-        map.setArtifactLifetime(TimeUnit.SECONDS.toMillis(samlArtifactTicketExpirationPolicy().getTimeToLive()));
+        val expirationPolicy = samlArtifactTicketExpirationPolicy().buildTicketExpirationPolicy();
+        map.setArtifactLifetime(TimeUnit.SECONDS.toMillis(expirationPolicy.getTimeToLive()));
         return map;
     }
 
@@ -369,8 +371,9 @@ public class SamlIdPConfiguration implements AuditTrailRecordResolutionPlanConfi
 
     @ConditionalOnMissingBean(name = "samlAttributeQueryTicketExpirationPolicy")
     @Bean
-    public ExpirationPolicy samlAttributeQueryTicketExpirationPolicy() {
-        return new SamlAttributeQueryTicketExpirationPolicy(casProperties.getTicket().getSt().getTimeToKillInSeconds());
+    @RefreshScope
+    public ExpirationPolicyBuilder samlAttributeQueryTicketExpirationPolicy() {
+        return new SamlAttributeQueryTicketExpirationPolicyBuilder(casProperties);
     }
 
     @Bean

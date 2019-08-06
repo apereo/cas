@@ -5,7 +5,7 @@ import org.apereo.cas.oidc.OidcConstants;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.pac4j.core.context.J2EContext;
+import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.Pac4jConstants;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.context.session.SessionStore;
@@ -62,7 +62,7 @@ public class OidcAuthorizationRequestSupportTests {
         val request = new MockHttpServletRequest();
         request.setRequestURI("https://www.example.org");
         request.setQueryString("param=value");
-        val context = new J2EContext(request, new MockHttpServletResponse(), mock(SessionStore.class));
+        val context = new JEEContext(request, new MockHttpServletResponse(), mock(SessionStore.class));
         context.setRequestAttribute(Pac4jConstants.USER_PROFILES, new CommonProfile());
         assertTrue(OidcAuthorizationRequestSupport.isAuthenticationProfileAvailable(context).isPresent());
     }

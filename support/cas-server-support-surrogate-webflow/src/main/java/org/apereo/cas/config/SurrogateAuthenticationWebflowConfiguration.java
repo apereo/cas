@@ -44,7 +44,7 @@ import java.util.Set;
  */
 @Configuration("surrogateAuthenticationWebflowConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class SurrogateAuthenticationWebflowConfiguration implements CasWebflowExecutionPlanConfigurer, InitializingBean {
+public class SurrogateAuthenticationWebflowConfiguration implements InitializingBean {
 
     @Autowired
     @Qualifier("surrogatePrincipalBuilder")
@@ -115,13 +115,15 @@ public class SurrogateAuthenticationWebflowConfiguration implements CasWebflowEx
     @ConditionalOnMissingBean(name = "surrogateAuthorizationCheck")
     @Bean
     public Action surrogateAuthorizationCheck() {
-        return new SurrogateAuthorizationAction(servicesManager.getIfAvailable(), registeredServiceAccessStrategyEnforcer.getIfAvailable());
+        return new SurrogateAuthorizationAction(servicesManager.getIfAvailable(),
+            registeredServiceAccessStrategyEnforcer.getIfAvailable());
     }
 
     @ConditionalOnMissingBean(name = "loadSurrogatesListAction")
     @Bean
     public Action loadSurrogatesListAction() {
-        return new LoadSurrogatesListAction(surrogateAuthenticationService.getIfAvailable(), surrogatePrincipalBuilder.getIfAvailable());
+        return new LoadSurrogatesListAction(surrogateAuthenticationService.getIfAvailable(),
+            surrogatePrincipalBuilder.getIfAvailable());
     }
 
     @Override
@@ -129,8 +131,14 @@ public class SurrogateAuthenticationWebflowConfiguration implements CasWebflowEx
         this.handledAuthenticationExceptions.add(SurrogateAuthenticationException.class);
     }
 
-    @Override
-    public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-        plan.registerWebflowConfigurer(surrogateWebflowConfigurer());
+    @Bean
+    @ConditionalOnMissingBean(name = "surrogateCasWebflowExecutionPlanConfigurer")
+    public CasWebflowExecutionPlanConfigurer surrogateCasWebflowExecutionPlanConfigurer() {
+        return new CasWebflowExecutionPlanConfigurer() {
+            @Override
+            public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
+                plan.registerWebflowConfigurer(surrogateWebflowConfigurer());
+            }
+        };
     }
 }

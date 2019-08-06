@@ -1,8 +1,8 @@
 package org.apereo.cas.util.cipher;
 
-import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.ResourceUtils;
+import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.crypto.PrivateKeyFactoryBean;
 import org.apereo.cas.util.crypto.PublicKeyFactoryBean;
 

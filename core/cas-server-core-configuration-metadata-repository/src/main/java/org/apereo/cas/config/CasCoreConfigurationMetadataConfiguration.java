@@ -5,7 +5,7 @@ import org.apereo.cas.metadata.CasConfigurationMetadataRepository;
 import org.apereo.cas.metadata.rest.CasConfigurationMetadataServerEndpoint;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnEnabledEndpoint;
+import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,7 +23,7 @@ public class CasCoreConfigurationMetadataConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Bean
-    @ConditionalOnEnabledEndpoint
+    @ConditionalOnAvailableEndpoint
     public CasConfigurationMetadataServerEndpoint configurationMetadataServerEndpoint() {
         return new CasConfigurationMetadataServerEndpoint(casProperties, casConfigurationMetadataRepository());
     }

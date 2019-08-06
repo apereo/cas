@@ -1,6 +1,6 @@
 package org.apereo.cas.util.cipher;
 
-import org.apereo.cas.CipherExecutor;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;

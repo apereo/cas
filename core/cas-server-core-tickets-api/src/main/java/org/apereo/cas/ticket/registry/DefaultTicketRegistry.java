@@ -1,7 +1,7 @@
 package org.apereo.cas.ticket.registry;
 
-import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.Getter;
 
@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Implementation of the TicketRegistry that is backed by a ConcurrentHashMap.
+ * Implementation of the ticket registry that is backed by a map.
  *
  * @author Scott Battaglia
  * @since 3.0.0
@@ -31,9 +31,8 @@ public class DefaultTicketRegistry extends AbstractMapBasedTicketRegistry {
         this.mapInstance = new ConcurrentHashMap<>();
     }
 
-    public DefaultTicketRegistry(final int initialCapacity, final int loadFactor, final int concurrencyLevel, final CipherExecutor cipherExecutor) {
+    public DefaultTicketRegistry(final Map<String, Ticket> storageMap, final CipherExecutor cipherExecutor) {
         super(cipherExecutor);
-        this.mapInstance = new ConcurrentHashMap<>(initialCapacity, loadFactor, concurrencyLevel);
+        this.mapInstance = storageMap;
     }
-
 }

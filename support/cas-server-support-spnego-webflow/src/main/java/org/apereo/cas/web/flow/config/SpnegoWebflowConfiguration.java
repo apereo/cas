@@ -26,7 +26,7 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
  */
 @Configuration("spnegoWebflowConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class SpnegoWebflowConfiguration implements CasWebflowExecutionPlanConfigurer {
+public class SpnegoWebflowConfiguration {
     @Autowired
     private ApplicationContext applicationContext;
 
@@ -45,11 +45,18 @@ public class SpnegoWebflowConfiguration implements CasWebflowExecutionPlanConfig
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer spnegoWebflowConfigurer() {
-        return new SpengoWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry.getIfAvailable(), applicationContext, casProperties);
+        return new SpengoWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry.getIfAvailable(),
+            applicationContext, casProperties);
     }
 
-    @Override
-    public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-        plan.registerWebflowConfigurer(spnegoWebflowConfigurer());
+    @Bean
+    @ConditionalOnMissingBean(name = "spnegoCasWebflowExecutionPlanConfigurer")
+    public CasWebflowExecutionPlanConfigurer spnegoCasWebflowExecutionPlanConfigurer() {
+        return new CasWebflowExecutionPlanConfigurer() {
+            @Override
+            public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
+                plan.registerWebflowConfigurer(spnegoWebflowConfigurer());
+            }
+        };
     }
 }

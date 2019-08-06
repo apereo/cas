@@ -1,6 +1,6 @@
 package org.apereo.cas.adaptors.yubikey;
 
-import org.apereo.cas.CipherExecutor;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
 import java.io.Serializable;
 import java.util.Collection;

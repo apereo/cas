@@ -116,7 +116,12 @@ public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCa
                                                                     final FlowDefinitionRegistry mfaProviderFlowRegistry,
                                                                     final String providerId) {
         if (!mfaProviderFlowRegistry.containsFlowDefinition(subflowId)) {
-            LOGGER.warn("Could not locate flow id [{}]", subflowId);
+            LOGGER.error("Could not locate flow id [{}]", subflowId);
+            return;
+        }
+
+        if (flow == null) {
+            LOGGER.error("Unable to locate parent flow definition to register provider [{}]", providerId);
             return;
         }
 
@@ -194,17 +199,19 @@ public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCa
     }
 
     private void registerMultifactorProviderFailureAction(final Flow flow, final Flow mfaFlow) {
-        val failureAction = createActionState(mfaFlow, CasWebflowConstants.TRANSITION_ID_MFA_FAILURE, createEvaluateAction(MFA_CHECK_FAILURE_BEAN_ID));
-        createTransitionForState(failureAction, CasWebflowConstants.TRANSITION_ID_UNAVAILABLE, CasWebflowConstants.TRANSITION_ID_UNAVAILABLE);
-        createTransitionForState(failureAction, CasWebflowConstants.TRANSITION_ID_BYPASS, CasWebflowConstants.TRANSITION_ID_SUCCESS);
+        if (flow != null) {
+            val failureAction = createActionState(mfaFlow, CasWebflowConstants.TRANSITION_ID_MFA_FAILURE, createEvaluateAction(MFA_CHECK_FAILURE_BEAN_ID));
+            createTransitionForState(failureAction, CasWebflowConstants.TRANSITION_ID_UNAVAILABLE, CasWebflowConstants.TRANSITION_ID_UNAVAILABLE);
+            createTransitionForState(failureAction, CasWebflowConstants.TRANSITION_ID_BYPASS, CasWebflowConstants.TRANSITION_ID_SUCCESS);
 
-        LOGGER.trace("Adding end state [{}] with transition to [{}] to flow [{}] for MFA",
-            CasWebflowConstants.STATE_ID_MFA_UNAVAILABLE, CasWebflowConstants.VIEW_ID_MFA_UNAVAILABLE, flow.getId());
-        createEndState(flow, CasWebflowConstants.STATE_ID_MFA_UNAVAILABLE, CasWebflowConstants.VIEW_ID_MFA_UNAVAILABLE);
+            LOGGER.trace("Adding end state [{}] with transition to [{}] to flow [{}] for MFA",
+                CasWebflowConstants.STATE_ID_MFA_UNAVAILABLE, CasWebflowConstants.VIEW_ID_MFA_UNAVAILABLE, flow.getId());
+            createEndState(flow, CasWebflowConstants.STATE_ID_MFA_UNAVAILABLE, CasWebflowConstants.VIEW_ID_MFA_UNAVAILABLE);
 
-        LOGGER.trace("Adding end state [{}] with transition to [{}] to flow [{}] for MFA",
-            CasWebflowConstants.STATE_ID_MFA_DENIED, CasWebflowConstants.VIEW_ID_MFA_DENIED, flow.getId());
-        createEndState(flow, CasWebflowConstants.STATE_ID_MFA_DENIED, CasWebflowConstants.VIEW_ID_MFA_DENIED);
+            LOGGER.trace("Adding end state [{}] with transition to [{}] to flow [{}] for MFA",
+                CasWebflowConstants.STATE_ID_MFA_DENIED, CasWebflowConstants.VIEW_ID_MFA_DENIED, flow.getId());
+            createEndState(flow, CasWebflowConstants.STATE_ID_MFA_DENIED, CasWebflowConstants.VIEW_ID_MFA_DENIED);
+        }
     }
 
     private void registerMultifactorProviderAvailableAction(final Flow mfaFlow, final String targetStateId) {

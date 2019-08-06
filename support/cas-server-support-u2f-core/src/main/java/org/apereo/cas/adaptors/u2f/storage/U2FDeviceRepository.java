@@ -84,4 +84,11 @@ public interface U2FDeviceRepository {
      * Clean up repository to remove expired records.
      */
     void clean();
+
+    /**
+     * Clean up repository to remove all records.
+     *
+     * @throws Exception the exception
+     */
+    void removeAll() throws Exception;
 }

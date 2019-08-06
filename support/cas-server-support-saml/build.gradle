@@ -5,7 +5,7 @@ dependencies {
     
     implementation project(":support:cas-server-support-saml-core")
     implementation project(":support:cas-server-support-saml-core-api")
-    implementation project(":support:cas-server-support-validation")
+    implementation project(":support:cas-server-support-validation-core")
     
     implementation project(":core:cas-server-core-services")
     implementation project(":core:cas-server-core-services-api")
@@ -34,6 +34,7 @@ dependencies {
     testImplementation project(":core:cas-server-core-cookie")
     testImplementation project(":core:cas-server-core-cookie-api")
     testImplementation project(":core:cas-server-core-tickets")
+    testImplementation project(":support:cas-server-support-validation")
     testImplementation project(":support:cas-server-support-person-directory")
 
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")

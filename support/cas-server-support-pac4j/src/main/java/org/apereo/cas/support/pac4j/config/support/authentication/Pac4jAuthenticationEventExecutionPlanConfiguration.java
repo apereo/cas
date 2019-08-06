@@ -80,7 +80,7 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration implements Audit
     @ConditionalOnMissingBean(name = "pac4jDelegatedClientFactory")
     @RefreshScope
     public DelegatedClientFactory pac4jDelegatedClientFactory() {
-        return new DelegatedClientFactory(casProperties.getAuthn().getPac4j());
+        return new DelegatedClientFactory(casProperties);
     }
 
     @ConditionalOnMissingBean(name = "delegatedClientDistributedSessionStore")
@@ -121,6 +121,7 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration implements Audit
     public AuthenticationHandler clientAuthenticationHandler() {
         val pac4j = casProperties.getAuthn().getPac4j();
         val h = new DelegatedClientAuthenticationHandler(pac4j.getName(),
+            pac4j.getOrder(),
             servicesManager.getIfAvailable(),
             clientPrincipalFactory(),
             builtClients(),

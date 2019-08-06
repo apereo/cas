@@ -1,7 +1,5 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.ComponentSerializationPlan;
-import org.apereo.cas.ComponentSerializationPlanConfigurator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.saml.services.EduPersonTargetedIdAttributeReleasePolicy;
 import org.apereo.cas.support.saml.services.GroovySamlRegisteredServiceAttributeReleasePolicy;
@@ -11,6 +9,8 @@ import org.apereo.cas.support.saml.services.PatternMatchingEntityIdAttributeRele
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.ticket.artifact.SamlArtifactTicketExpirationPolicy;
 import org.apereo.cas.ticket.query.SamlAttributeQueryTicketExpirationPolicy;
+import org.apereo.cas.util.serialization.ComponentSerializationPlan;
+import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurator;
 
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;

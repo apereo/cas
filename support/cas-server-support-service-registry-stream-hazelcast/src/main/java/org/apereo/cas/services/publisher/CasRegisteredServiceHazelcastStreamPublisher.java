@@ -1,9 +1,9 @@
 package org.apereo.cas.services.publisher;
 
-import org.apereo.cas.DistributedCacheManager;
-import org.apereo.cas.DistributedCacheObject;
 import org.apereo.cas.StringBean;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.util.cache.DistributedCacheManager;
+import org.apereo.cas.util.cache.DistributedCacheObject;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;

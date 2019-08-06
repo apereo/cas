@@ -27,7 +27,7 @@ Examples of reported items include:
 - Multifactor Authentication Provider  types (Authy, Duo Security, etc)
 - ...
 
-<div class="alert alert-info"><strong>Docs Grow Old</strong><p>To examine the latest collection of reported metadata, turn on the endpoint and observe the behavior in action. The metadata will continue to grow and improve per every CAS release to accomodate fancier discovery attempts.</p></div>
+<div class="alert alert-info"><strong>Docs Grow Old</strong><p>To examine the latest collection of reported metadata, turn on the endpoint and observe the behavior in action. The metadata will continue to grow and improve per every CAS release to accommodate fancier discovery attempts.</p></div>
 
 Note that this capability and endpoint is turned off by default and its access is controlled similar to all other CAS administrative endpoints. Once the endpoint is turned on, you will need to ensure proper access is granted only to authorized parties via appropriate [security options provided by CAS](../monitoring/Monitoring-Statistics.html).
 

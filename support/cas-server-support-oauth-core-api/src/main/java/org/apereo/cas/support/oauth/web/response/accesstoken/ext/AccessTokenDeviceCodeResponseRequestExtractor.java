@@ -10,7 +10,7 @@ import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.pac4j.core.context.J2EContext;
+import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.profile.AnonymousProfile;
 
 import javax.servlet.http.HttpServletRequest;
@@ -38,7 +38,7 @@ public class AccessTokenDeviceCodeResponseRequestExtractor extends BaseAccessTok
 
         val deviceCode = request.getParameter(OAuth20Constants.CODE);
 
-        val context = new J2EContext(request, response, getOAuthConfigurationContext().getSessionStore());
+        val context = new JEEContext(request, response, getOAuthConfigurationContext().getSessionStore());
         val service = getOAuthConfigurationContext().getAuthenticationBuilder().buildService(registeredService, context, false);
 
         LOGGER.debug("Authenticating the OAuth request indicated by [{}]", service);

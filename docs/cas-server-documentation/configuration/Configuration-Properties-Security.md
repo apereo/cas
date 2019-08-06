@@ -82,7 +82,7 @@ cas.something.sensitive={cipher}FKSAJDFGYOS8F7GLHAKERGFHLSAJ
 You can also store sensitive settings inside [Vault](https://www.vaultproject.io/).
 Vault can store your existing secrets, or it can dynamically generate new secrets
 to control access to third-party resources or provide time-limited credentials for your infrastructure.
-To lean more about Vault and its installation process, please visit the project website.
+To learn more about Vault and its installation process, please visit the project website.
 
 Once vault is accessible and configured inside CAS, support is provided via the following dependency:
 
@@ -120,8 +120,8 @@ vault read secret/cas/native
 ```
 
 All settings and secrets that are stored inside Vault may be reloaded at any given time.
-To lean more about how CAS allows you to reload configuration changes, please [review this guide](Configuration-Management-Reload.html).
-To lean more about how configuration is managed and profiled by CAS, please [review this guide](Configuration-Management.html).
+To learn more about how CAS allows you to reload configuration changes, please [review this guide](Configuration-Management-Reload.html).
+To learn more about how configuration is managed and profiled by CAS, please [review this guide](Configuration-Management.html).
 
 ### Troubleshooting
 

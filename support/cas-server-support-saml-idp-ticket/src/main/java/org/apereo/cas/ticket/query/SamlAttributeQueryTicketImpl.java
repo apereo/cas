@@ -85,12 +85,6 @@ public class SamlAttributeQueryTicketImpl extends AbstractTicket implements Saml
     }
 
     @Override
-    public boolean isValidFor(final Service serviceToValidate) {
-        update();
-        return serviceToValidate.matches(this.service);
-    }
-
-    @Override
     public ProxyGrantingTicket grantProxyGrantingTicket(final String id, final Authentication authentication, final ExpirationPolicy expirationPolicy) {
         throw new UnsupportedOperationException("No PGT grant is available");
     }

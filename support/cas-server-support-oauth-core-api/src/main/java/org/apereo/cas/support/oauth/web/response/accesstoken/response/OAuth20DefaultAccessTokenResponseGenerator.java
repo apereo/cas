@@ -19,8 +19,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import static java.util.stream.Collectors.joining;
-
 /**
  * This is {@link OAuth20DefaultAccessTokenResponseGenerator}.
  *
@@ -126,7 +124,7 @@ public class OAuth20DefaultAccessTokenResponseGenerator implements OAuth20Access
         val generatedToken = result.getGeneratedToken();
         generatedToken.getAccessToken().ifPresent(t -> {
             model.put(OAuth20Constants.ACCESS_TOKEN, encodeAccessToken(t, result));
-            model.put(OAuth20Constants.SCOPE, t.getScopes().stream().collect(joining(" ")));
+            model.put(OAuth20Constants.SCOPE, String.join(" ", t.getScopes()));
         });
         generatedToken.getRefreshToken().ifPresent(t -> model.put(OAuth20Constants.REFRESH_TOKEN, t.getId()));
         model.put(OAuth20Constants.TOKEN_TYPE, OAuth20Constants.TOKEN_TYPE_BEARER);

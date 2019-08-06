@@ -165,8 +165,7 @@ public class CasThemesConfiguration {
     private ThymeleafViewResolver nonCachingThymeleafViewResolver() {
         val r = new ThymeleafViewResolver();
 
-        val thymeleafResolver = this.thymeleafViewResolver.getIfAvailable();
-
+        val thymeleafResolver = this.thymeleafViewResolver.getObject();
         r.setAlwaysProcessRedirectAndForward(thymeleafResolver.getAlwaysProcessRedirectAndForward());
         r.setApplicationContext(thymeleafResolver.getApplicationContext());
         r.setCacheUnresolved(thymeleafResolver.isCacheUnresolved());

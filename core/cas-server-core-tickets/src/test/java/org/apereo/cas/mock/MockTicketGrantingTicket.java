@@ -15,7 +15,7 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketState;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
-import org.apereo.cas.ticket.support.TicketGrantingTicketExpirationPolicy;
+import org.apereo.cas.ticket.expiration.TicketGrantingTicketExpirationPolicy;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 
 import lombok.EqualsAndHashCode;

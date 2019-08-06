@@ -14,7 +14,7 @@ import org.apereo.cas.util.HttpRequestUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.pac4j.core.context.J2EContext;
+import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.credentials.extractor.BasicAuthExtractor;
 import org.springframework.http.HttpHeaders;
@@ -75,32 +75,40 @@ public class OAuth20IntrospectionEndpointController extends BaseOAuth20Controlle
         try {
             val authExtractor = new BasicAuthExtractor();
 
-            val context = new J2EContext(request, response, getOAuthConfigurationContext().getSessionStore());
-            val credentials = authExtractor.extract(context);
-            if (credentials == null) {
-                result = buildUnauthorizedResponseEntity(OAuth20Constants.INVALID_CLIENT, true);
-            } else {
-                val service = OAuth20Utils.getRegisteredOAuthServiceByClientId(
-                    getOAuthConfigurationContext().getServicesManager(), credentials.getUsername());
-                val validationError = validateIntrospectionRequest(service, credentials, request);
-                if (validationError.isPresent()) {
-                    result = validationError.get();
-                } else {
-                    val accessToken = StringUtils.defaultIfBlank(request.getParameter(OAuth20Constants.TOKEN),
-                        request.getParameter(OAuth20Constants.ACCESS_TOKEN));
+            val context = new JEEContext(request, response, getOAuthConfigurationContext().getSessionStore());
+            val credentialsResult = authExtractor.extract(context);
 
-                    LOGGER.debug("Located access token [{}] in the request", accessToken);
-                    var ticket = (AccessToken) null;
-                    try {
-                        ticket = getOAuthConfigurationContext().getCentralAuthenticationService().getTicket(accessToken, AccessToken.class);
-                    } catch (final InvalidTicketException e) {
-                        LOGGER.info("Unable to fetch access token [{}]: [{}]", accessToken, e.getMessage());
-                    }
-                    val introspect = createIntrospectionValidResponse(service, ticket);
-                    result = new ResponseEntity<>(introspect, HttpStatus.OK);
-                }
+            if (credentialsResult.isEmpty()) {
+                return buildUnauthorizedResponseEntity(OAuth20Constants.INVALID_CLIENT, true);
             }
 
+            val credentials = credentialsResult.get();
+            val service = OAuth20Utils.getRegisteredOAuthServiceByClientId(
+                getOAuthConfigurationContext().getServicesManager(), credentials.getUsername());
+            val validationError = validateIntrospectionRequest(service, credentials, request);
+            if (validationError.isPresent()) {
+                result = validationError.get();
+            } else {
+                val accessToken = StringUtils.defaultIfBlank(request.getParameter(OAuth20Constants.TOKEN),
+                    request.getParameter(OAuth20Constants.ACCESS_TOKEN));
+
+                LOGGER.debug("Located access token [{}] in the request", accessToken);
+                var ticket = (AccessToken) null;
+                try {
+                    ticket = getOAuthConfigurationContext().getCentralAuthenticationService().getTicket(accessToken, AccessToken.class);
+                } catch (final InvalidTicketException e) {
+                    LOGGER.trace(e.getMessage(), e);
+                    LOGGER.info("Unable to fetch access token [{}]: [{}]", accessToken, e.getMessage());
+                }
+
+                if (service == null) {
+                    LOGGER.error("Unable to determine service");
+                    return buildUnauthorizedResponseEntity(OAuth20Constants.INVALID_CLIENT, true);
+                }
+
+                val introspect = createIntrospectionValidResponse(service, ticket);
+                result = new ResponseEntity<>(introspect, HttpStatus.OK);
+            }
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
             result = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

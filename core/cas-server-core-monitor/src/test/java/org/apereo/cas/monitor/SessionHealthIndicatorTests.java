@@ -6,9 +6,9 @@ import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
+import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.registry.DefaultTicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.ticket.support.HardTimeoutExpirationPolicy;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 
 import lombok.val;
@@ -32,7 +32,7 @@ public class SessionHealthIndicatorTests {
     private static final ExpirationPolicy TEST_EXP_POLICY = new HardTimeoutExpirationPolicy(10000);
     private static final UniqueTicketIdGenerator GENERATOR = new DefaultUniqueTicketIdGenerator();
 
-    private DefaultTicketRegistry defaultRegistry;
+    private TicketRegistry defaultRegistry;
 
     private static void addTicketsToRegistry(final TicketRegistry registry, final int tgtCount, final int stCount) {
         val ticket = new TicketGrantingTicketImpl[]{null};

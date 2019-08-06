@@ -33,6 +33,11 @@ public class U2FInMemoryDeviceRepository extends BaseU2FDeviceRepository {
     }
 
     @Override
+    public void removeAll() {
+        userStorage.invalidateAll();
+    }
+
+    @Override
     @SneakyThrows
     public Collection<? extends DeviceRegistration> getRegisteredDevices(final String username) {
         return userStorage.get(username).values()

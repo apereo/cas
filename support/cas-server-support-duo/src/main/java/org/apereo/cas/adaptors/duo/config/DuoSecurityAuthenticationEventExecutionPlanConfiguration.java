@@ -37,7 +37,7 @@ import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnEnabledEndpoint;
+import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.actuate.autoconfigure.health.ConditionalOnEnabledHealthIndicator;
 import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -64,7 +64,7 @@ import java.util.stream.Collectors;
 @Configuration("duoSecurityAuthenticationEventExecutionPlanConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-public class DuoSecurityAuthenticationEventExecutionPlanConfiguration implements CasWebflowExecutionPlanConfigurer {
+public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
     @Autowired
     private GenericWebApplicationContext applicationContext;
 
@@ -182,11 +182,17 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration implements
         };
     }
 
-    @Override
-    public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-        plan.registerWebflowConfigurer(duoMultifactorWebflowConfigurer());
+    @Bean
+    @ConditionalOnMissingBean(name = "duoSecurityCasWebflowExecutionPlanConfigurer")
+    public CasWebflowExecutionPlanConfigurer duoSecurityCasWebflowExecutionPlanConfigurer() {
+        return new CasWebflowExecutionPlanConfigurer() {
+            @Override
+            public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
+                plan.registerWebflowConfigurer(duoMultifactorWebflowConfigurer());
+            }
+        };
     }
-
+    
     @Bean
     @ConditionalOnEnabledHealthIndicator("duoSecurityHealthIndicator")
     public HealthIndicator duoSecurityHealthIndicator() {
@@ -194,13 +200,13 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration implements
     }
 
     @Bean
-    @ConditionalOnEnabledEndpoint
+    @ConditionalOnAvailableEndpoint
     public DuoSecurityPingEndpoint duoPingEndpoint() {
         return new DuoSecurityPingEndpoint(casProperties, applicationContext);
     }
 
     @Bean
-    @ConditionalOnEnabledEndpoint
+    @ConditionalOnAvailableEndpoint
     public DuoSecurityUserAccountStatusEndpoint duoAccountStatusEndpoint() {
         return new DuoSecurityUserAccountStatusEndpoint(casProperties, applicationContext);
     }

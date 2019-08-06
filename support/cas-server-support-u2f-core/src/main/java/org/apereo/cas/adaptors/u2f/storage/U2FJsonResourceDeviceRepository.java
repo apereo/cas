@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.core.io.Resource;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -60,5 +61,13 @@ public class U2FJsonResourceDeviceRepository extends BaseResourceU2FDeviceReposi
         newDevices.put(MAP_KEY_DEVICES, list);
         MAPPER.writerWithDefaultPrettyPrinter().writeValue(jsonResource.getFile(), newDevices);
         LOGGER.debug("Saved [{}] device(s) into repository [{}]", list.size(), jsonResource);
+    }
+
+    @Override
+    public void removeAll() throws Exception {
+        val newDevices = new HashMap<String, List<U2FDeviceRegistration>>();
+        newDevices.put(MAP_KEY_DEVICES, new ArrayList<>());
+        MAPPER.writerWithDefaultPrettyPrinter().writeValue(jsonResource.getFile(), newDevices);
+        LOGGER.debug("Removed all device(s) from repository [{}]", jsonResource);
     }
 }

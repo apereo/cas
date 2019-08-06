@@ -11,6 +11,8 @@ import org.apereo.cas.ticket.code.OAuthCode;
 import org.apereo.cas.ticket.code.OAuthCodeImpl;
 import org.apereo.cas.ticket.device.DeviceToken;
 import org.apereo.cas.ticket.device.DeviceTokenImpl;
+import org.apereo.cas.ticket.device.DeviceUserCode;
+import org.apereo.cas.ticket.device.DeviceUserCodeImpl;
 import org.apereo.cas.ticket.refreshtoken.RefreshToken;
 import org.apereo.cas.ticket.refreshtoken.RefreshTokenImpl;
 
@@ -19,6 +21,7 @@ import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 
 /**
  * This is {@link OAuthProtocolTicketCatalogConfiguration}.
@@ -37,15 +40,23 @@ public class OAuthProtocolTicketCatalogConfiguration extends BaseTicketCatalogCo
     public void configureTicketCatalog(final TicketCatalog plan) {
         LOGGER.trace("Registering core OAuth protocol ticket definitions...");
 
-        buildAndRegisterOAuthCodeDefinition(plan, buildTicketDefinition(plan, OAuthCode.PREFIX, OAuthCodeImpl.class));
-        buildAndRegisterAccessTokenDefinition(plan, buildTicketDefinition(plan, AccessToken.PREFIX, AccessTokenImpl.class));
-        buildAndRegisterRefreshTokenDefinition(plan, buildTicketDefinition(plan, RefreshToken.PREFIX, RefreshTokenImpl.class));
+        buildAndRegisterOAuthCodeDefinition(plan, buildTicketDefinition(plan, OAuthCode.PREFIX, OAuthCodeImpl.class, Ordered.HIGHEST_PRECEDENCE));
+        buildAndRegisterAccessTokenDefinition(plan, buildTicketDefinition(plan, AccessToken.PREFIX, AccessTokenImpl.class, Ordered.HIGHEST_PRECEDENCE));
+        buildAndRegisterRefreshTokenDefinition(plan, buildTicketDefinition(plan, RefreshToken.PREFIX, RefreshTokenImpl.class, Ordered.HIGHEST_PRECEDENCE));
         buildAndRegisterDeviceTokenDefinition(plan, buildTicketDefinition(plan, DeviceToken.PREFIX, DeviceTokenImpl.class));
+        buildAndRegisterDeviceUserCodeDefinition(plan, buildTicketDefinition(plan, DeviceUserCode.PREFIX, DeviceUserCodeImpl.class));
     }
 
     private void buildAndRegisterDeviceTokenDefinition(final TicketCatalog plan, final TicketDefinition metadata) {
         metadata.getProperties().setStorageName("oauthDeviceTokensCache");
         val timeout = Beans.newDuration(casProperties.getAuthn().getOauth().getDeviceToken().getMaxTimeToLiveInSeconds()).getSeconds();
+        metadata.getProperties().setStorageTimeout(timeout);
+        registerTicketDefinition(plan, metadata);
+    }
+
+    private void buildAndRegisterDeviceUserCodeDefinition(final TicketCatalog plan, final TicketDefinition metadata) {
+        metadata.getProperties().setStorageName("oauthDeviceUserCodesCache");
+        val timeout = Beans.newDuration(casProperties.getAuthn().getOauth().getDeviceUserCode().getMaxTimeToLiveInSeconds()).getSeconds();
         metadata.getProperties().setStorageTimeout(timeout);
         registerTicketDefinition(plan, metadata);
     }

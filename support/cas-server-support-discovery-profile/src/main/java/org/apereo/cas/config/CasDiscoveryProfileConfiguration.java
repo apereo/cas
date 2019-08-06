@@ -13,7 +13,7 @@ import org.pac4j.core.client.Clients;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnEnabledEndpoint;
+import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -55,7 +55,7 @@ public class CasDiscoveryProfileConfiguration {
     }
 
     @Bean
-    @ConditionalOnEnabledEndpoint
+    @ConditionalOnAvailableEndpoint
     public CasServerDiscoveryProfileEndpoint discoveryProfileEndpoint() {
         return new CasServerDiscoveryProfileEndpoint(casProperties, servicesManager.getIfAvailable(), casServerProfileRegistrar());
     }

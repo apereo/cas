@@ -1,7 +1,6 @@
 package org.apereo.cas.web.flow.config;
 
 import org.apereo.cas.CentralAuthenticationService;
-import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
@@ -18,8 +17,10 @@ import org.apereo.cas.configuration.model.core.web.MessageBundleProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceForPrincipalException;
 import org.apereo.cas.ticket.UnsatisfiedAuthenticationPolicyException;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.cipher.WebflowConversationStateCipherExecutor;
+import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.ChainingSingleSignOnParticipationStrategy;
@@ -117,6 +118,10 @@ public class CasCoreWebflowConfiguration {
     @Qualifier("registeredServiceAccessStrategyEnforcer")
     private ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer;
 
+    @Autowired
+    @Qualifier("ticketRegistry")
+    private ObjectProvider<TicketRegistry> ticketRegistry;
+
     @ConditionalOnMissingBean(name = "serviceTicketRequestWebflowEventResolver")
     @Bean
     @RefreshScope
@@ -130,6 +135,7 @@ public class CasCoreWebflowConfiguration {
             .authenticationRequestServiceSelectionStrategies(authenticationServiceSelectionPlan.getIfAvailable())
             .registeredServiceAccessStrategyEnforcer(registeredServiceAccessStrategyEnforcer.getIfAvailable())
             .casProperties(casProperties)
+            .ticketRegistry(ticketRegistry.getIfAvailable())
             .eventPublisher(applicationEventPublisher)
             .applicationContext(applicationContext)
             .build();
@@ -223,7 +229,6 @@ public class CasCoreWebflowConfiguration {
     @RefreshScope
     public Action authenticationExceptionHandler() {
         val beans = applicationContext.getBeansOfType(CasWebflowExceptionHandler.class, false, true);
-
         val handlers = new ArrayList<CasWebflowExceptionHandler>(beans.values());
         handlers.add(new DefaultCasWebflowAuthenticationExceptionHandler(
             handledAuthenticationExceptions(), MessageBundleProperties.DEFAULT_BUNDLE_PREFIX_AUTHN_FAILURE));
@@ -231,7 +236,7 @@ public class CasCoreWebflowConfiguration {
             handledAuthenticationExceptions(), MessageBundleProperties.DEFAULT_BUNDLE_PREFIX_AUTHN_FAILURE));
         handlers.add(new GenericCasWebflowExceptionHandler(
             handledAuthenticationExceptions(), MessageBundleProperties.DEFAULT_BUNDLE_PREFIX_AUTHN_FAILURE));
-        
+
         AnnotationAwareOrderComparator.sort(handlers);
         return new AuthenticationExceptionHandlerAction(handlers);
     }
@@ -264,8 +269,7 @@ public class CasCoreWebflowConfiguration {
         errors.add(UnauthorizedAuthenticationException.class);
         errors.add(MultifactorAuthenticationProviderAbsentException.class);
 
-        errors.addAll(casProperties.getAuthn().getExceptions().getExceptions());
-
+        errors.addAll(casProperties.getAuthn().getErrors().getExceptions());
         return errors;
     }
 }

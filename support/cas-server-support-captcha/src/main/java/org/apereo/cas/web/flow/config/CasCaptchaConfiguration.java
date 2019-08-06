@@ -31,7 +31,7 @@ import org.springframework.webflow.execution.Action;
 @Configuration("casCaptchaConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnProperty(prefix = "cas.googleRecaptcha", name = "enabled", havingValue = "true", matchIfMissing = true)
-public class CasCaptchaConfiguration implements CasWebflowExecutionPlanConfigurer {
+public class CasCaptchaConfiguration {
 
     @Autowired
     @Qualifier("loginFlowRegistry")
@@ -50,7 +50,8 @@ public class CasCaptchaConfiguration implements CasWebflowExecutionPlanConfigure
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer captchaWebflowConfigurer() {
-        return new CasCaptchaWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry.getIfAvailable(), applicationContext, casProperties);
+        return new CasCaptchaWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry.getIfAvailable(),
+            applicationContext, casProperties);
     }
 
     @RefreshScope
@@ -59,8 +60,14 @@ public class CasCaptchaConfiguration implements CasWebflowExecutionPlanConfigure
         return new ValidateCaptchaAction(casProperties.getGoogleRecaptcha());
     }
 
-    @Override
-    public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-        plan.registerWebflowConfigurer(captchaWebflowConfigurer());
+    @Bean
+    @ConditionalOnMissingBean(name = "captchaCasWebflowExecutionPlanConfigurer")
+    public CasWebflowExecutionPlanConfigurer captchaCasWebflowExecutionPlanConfigurer() {
+        return new CasWebflowExecutionPlanConfigurer() {
+            @Override
+            public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
+                plan.registerWebflowConfigurer(captchaWebflowConfigurer());
+            }
+        };
     }
 }

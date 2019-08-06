@@ -5,7 +5,7 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGenerator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestDataHolder;
-import org.apereo.cas.ticket.ExpirationPolicy;
+import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.refreshtoken.RefreshToken;
 import org.apereo.cas.util.EncodingUtils;
@@ -17,7 +17,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URIBuilder;
-import org.pac4j.core.context.J2EContext;
+import org.pac4j.core.context.JEEContext;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.ArrayList;
@@ -34,16 +34,17 @@ import java.util.List;
 @RequiredArgsConstructor
 public class OAuth20TokenAuthorizationResponseBuilder implements OAuth20AuthorizationResponseBuilder {
     private final OAuth20TokenGenerator accessTokenGenerator;
-    private final ExpirationPolicy accessTokenExpirationPolicy;
+    private final ExpirationPolicyBuilder<AccessToken> accessTokenExpirationPolicy;
     private final ServicesManager servicesManager;
 
     @Override
     @SneakyThrows
-    public ModelAndView build(final J2EContext context,
+    public ModelAndView build(final JEEContext context,
                               final String clientId,
                               final AccessTokenRequestDataHolder holder) {
 
-        val redirectUri = context.getRequestParameter(OAuth20Constants.REDIRECT_URI);
+        val redirectUri = context.getRequestParameter(OAuth20Constants.REDIRECT_URI)
+            .map(String::valueOf).orElse(StringUtils.EMPTY);
         LOGGER.debug("Authorize request verification successful for client [{}] with redirect uri [{}]", clientId, redirectUri);
         val result = accessTokenGenerator.generate(holder);
         val accessToken = result.getAccessToken().orElse(null);
@@ -71,7 +72,7 @@ public class OAuth20TokenAuthorizationResponseBuilder implements OAuth20Authoriz
                                                         final AccessToken accessToken,
                                                         final List<NameValuePair> params,
                                                         final RefreshToken refreshToken,
-                                                        final J2EContext context) throws Exception {
+                                                        final JEEContext context) throws Exception {
         val attributes = holder.getAuthentication().getAttributes();
         val state = attributes.get(OAuth20Constants.STATE).get(0).toString();
         val nonce = attributes.get(OAuth20Constants.NONCE).get(0).toString();
@@ -79,7 +80,8 @@ public class OAuth20TokenAuthorizationResponseBuilder implements OAuth20Authoriz
         val builder = new URIBuilder(redirectUri);
         val stringBuilder = new StringBuilder();
 
-        val timeToLive = accessTokenExpirationPolicy.getTimeToLive();
+        val expiration = accessTokenExpirationPolicy.buildTicketExpirationPolicy();
+        val timeToLive = expiration.getTimeToLive();
         stringBuilder.append(OAuth20Constants.ACCESS_TOKEN)
             .append('=')
             .append(accessToken.getId())
@@ -133,8 +135,9 @@ public class OAuth20TokenAuthorizationResponseBuilder implements OAuth20Authoriz
     }
 
     @Override
-    public boolean supports(final J2EContext context) {
-        val responseType = context.getRequestParameter(OAuth20Constants.RESPONSE_TYPE);
+    public boolean supports(final JEEContext context) {
+        val responseType = context.getRequestParameter(OAuth20Constants.RESPONSE_TYPE)
+            .map(String::valueOf).orElse(StringUtils.EMPTY);
         return StringUtils.equalsIgnoreCase(responseType, OAuth20ResponseTypes.TOKEN.getType());
     }
 }

@@ -38,6 +38,22 @@ public interface RegisteredServiceProperty extends Serializable {
      */
     String getValue();
 
+
+    /**
+     * Gets property value.
+     *
+     * @param <T>   the type parameter
+     * @param clazz the clazz
+     * @return the property value
+     */
+    default <T> T getValue(final Class<T> clazz) {
+        val value = getValue();
+        if (StringUtils.isNotBlank(value)) {
+            return clazz.cast(value);
+        }
+        return null;
+    }
+
     /**
      * Contains elements?
      *
@@ -47,14 +63,28 @@ public interface RegisteredServiceProperty extends Serializable {
     boolean contains(String value);
 
     /**
-     * Collection of supported properties that control various functionality in CAS.
+     * Gets property value.
+     *
+     * @return the property value
+     */
+    default boolean getBooleanValue() {
+        val value = getValue();
+        if (StringUtils.isNotBlank(value)) {
+            return BooleanUtils.toBoolean(value);
+        }
+        return false;
+    }
+
+    /**
+     * Collection of supported properties that
+     * control various functionality in CAS.
      */
     @JsonFormat(shape = JsonFormat.Shape.OBJECT)
     @Getter
     @RequiredArgsConstructor
     enum RegisteredServiceProperties {
         /**
-         * using when delegating authentication to ADFS to indicate the relying party identifier.
+         * used when delegating authentication to ADFS to indicate the relying party identifier.
          */
         WSFED_RELYING_PARTY_ID("wsfed.relyingPartyIdentifier", StringUtils.EMPTY),
         /**

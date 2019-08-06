@@ -1,8 +1,8 @@
 package org.apereo.cas.impl.token;
 
-import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.model.support.passwordless.PasswordlessAuthenticationProperties;
 import org.apereo.cas.util.HttpUtils;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;

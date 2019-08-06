@@ -16,7 +16,8 @@
         <div th:utext="#{screen.pm.forgotusername.instructions}">Please provide your email address. You will receive an email with your username.</div>
         <p/>
 
-        <div class="alert alert-danger" th:if="${flowRequestContext.messageContext.hasErrorMessages()}">
+        <div class="alert alert-danger alert-dismissible fade show" th:if="${flowRequestContext.messageContext.hasErrorMessages()}">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
             <p th:each="message : ${flowRequestContext.messageContext.allMessages}" th:utext="#{${message.text}}">Message Text</p>
         </div>
 

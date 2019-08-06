@@ -9,6 +9,7 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.PrincipalException;
 import org.apereo.cas.authentication.exceptions.MixedPrincipalException;
 import org.apereo.cas.authentication.principal.AbstractWebApplicationService;
+import org.apereo.cas.authentication.principal.DefaultServiceMatchingStrategy;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
@@ -24,6 +25,7 @@ import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyTicket;
 import org.apereo.cas.util.MockOnlyOneTicketRegistry;
+import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.validation.Cas20WithoutProxyingValidationSpecification;
 
 import lombok.val;
@@ -418,17 +420,19 @@ public class DefaultCentralAuthenticationServiceTests extends AbstractCentralAut
                 return null;
             });
         registry.addTicket(tgt);
+        val servicesManager = mock(ServicesManager.class);
         val cas = new DefaultCentralAuthenticationService(
             mock(ApplicationEventPublisher.class),
             registry,
-            mock(ServicesManager.class),
+            servicesManager,
             logoutManager,
             null,
             null,
             null,
             PrincipalFactoryUtils.newPrincipalFactory(),
             CipherExecutor.noOpOfStringToString(),
-            mock(AuditableExecution.class));
+            mock(AuditableExecution.class),
+            new DefaultServiceMatchingStrategy(servicesManager));
         cas.destroyTicketGrantingTicket(tgt.getId());
     }
 }

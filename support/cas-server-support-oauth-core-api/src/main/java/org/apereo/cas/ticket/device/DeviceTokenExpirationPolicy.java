@@ -1,6 +1,6 @@
 package org.apereo.cas.ticket.device;
 
-import org.apereo.cas.ticket.support.HardTimeoutExpirationPolicy;
+import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;

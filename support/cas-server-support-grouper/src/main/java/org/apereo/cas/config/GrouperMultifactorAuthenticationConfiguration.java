@@ -10,6 +10,7 @@ import org.apereo.cas.authentication.MultifactorAuthenticationTrigger;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.grouper.GrouperFacade;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.GrouperMultifactorAuthenticationTrigger;
@@ -58,6 +59,10 @@ public class GrouperMultifactorAuthenticationConfiguration {
     @Autowired
     @Qualifier("servicesManager")
     private ObjectProvider<ServicesManager> servicesManager;
+
+    @Autowired
+    @Qualifier("ticketRegistry")
+    private ObjectProvider<TicketRegistry> ticketRegistry;
 
     @Autowired
     @Qualifier("warnCookieGenerator")
@@ -117,6 +122,7 @@ public class GrouperMultifactorAuthenticationConfiguration {
             .authenticationRequestServiceSelectionStrategies(authenticationRequestServiceSelectionStrategies.getIfAvailable())
             .registeredServiceAccessStrategyEnforcer(registeredServiceAccessStrategyEnforcer.getIfAvailable())
             .casProperties(casProperties)
+            .ticketRegistry(ticketRegistry.getIfAvailable())
             .eventPublisher(applicationEventPublisher)
             .applicationContext(applicationContext)
             .build();

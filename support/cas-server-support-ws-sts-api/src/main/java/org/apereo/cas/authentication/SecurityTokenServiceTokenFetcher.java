@@ -1,9 +1,9 @@
 package org.apereo.cas.authentication;
 
-import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedSsoServiceException;
+import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.ws.idp.services.WSFederationRegisteredService;
 
 import lombok.RequiredArgsConstructor;

@@ -8,7 +8,6 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.StringWriter;
@@ -24,8 +23,6 @@ import java.nio.charset.StandardCharsets;
 @RequiredArgsConstructor
 @Getter
 public abstract class BaseSamlIdPMetadataGenerator implements SamlIdPMetadataGenerator {
-    private static final String BEGIN_CERTIFICATE = "-----BEGIN CERTIFICATE-----";
-    private static final String END_CERTIFICATE = "-----END CERTIFICATE-----";
 
     private final SamlIdPMetadataGeneratorConfigurationContext samlIdPMetadataGeneratorConfigurationContext;
 
@@ -96,14 +93,8 @@ public abstract class BaseSamlIdPMetadataGenerator implements SamlIdPMetadataGen
     @SneakyThrows
     private String buildMetadataGeneratorParameters(final Pair<String, String> signing, final Pair<String, String> encryption) {
         val template = samlIdPMetadataGeneratorConfigurationContext.getResourceLoader().getResource("classpath:/template-idp-metadata.xml");
-
-        var signingCert = signing.getKey();
-        signingCert = StringUtils.remove(signingCert, BEGIN_CERTIFICATE);
-        signingCert = StringUtils.remove(signingCert, END_CERTIFICATE).trim();
-
-        var encryptionCert = encryption.getKey();
-        encryptionCert = StringUtils.remove(encryptionCert, BEGIN_CERTIFICATE);
-        encryptionCert = StringUtils.remove(encryptionCert, END_CERTIFICATE).trim();
+        val signingCert = SamlIdPMetadataGenerator.cleanCertificate(signing.getKey());
+        val encryptionCert = SamlIdPMetadataGenerator.cleanCertificate(encryption.getKey());
 
         try (val writer = new StringWriter()) {
             IOUtils.copy(template.getInputStream(), writer, StandardCharsets.UTF_8);

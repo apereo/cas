@@ -153,8 +153,7 @@ Tokens are the core method for authentication within Vault. Token authentication
 
 #### AppID Authentication
 
-Vault supports AppId authentication that consists of two hard to guess tokens. The AppId defaults to `spring.application.name` that is statically configured. The second token is the 
-UserId which is a part determined by the application, usually related to the runtime environment. Spring Cloud Vault Config supports IP address, Mac address and static 
+Vault supports AppId authentication that consists of two hard to guess tokens. The AppId defaults to `spring.application.name` that is statically configured. The second token is the UserId which is a part determined by the application, usually related to the runtime environment. Spring Cloud Vault Config supports IP address, Mac address and static 
 UserId’s (e.g. supplied via System properties). The IP and Mac address are represented as Hex-encoded SHA256 hash.
 
 Using IP addresses:
@@ -505,6 +504,43 @@ Enable basic authentication for the embedded Apache Tomcat.
 # cas.server.tomcat.basicAuthn.patterns[0]=/*
 ```
 
+#### Apache Portable Runtime (APR)
+
+Tomcat can use the [Apache Portable Runtime](https://tomcat.apache.org/tomcat-9.0-doc/apr.html) to provide superior scalability, performance, and better integration with native server technologies.
+
+```properties
+# cas.server.tomcat.apr.enabled=false
+
+# cas.server.tomcat.apr.sslProtocol=
+# cas.server.tomcat.apr.sslVerifyDepth=10
+# cas.server.tomcat.apr.sslVerifyClient=require
+# cas.server.tomcat.apr.sslCipherSuite=
+# cas.server.tomcat.apr.sslDisableCompression=false
+# cas.server.tomcat.apr.sslHonorCipherOrder=false
+
+# cas.server.tomcat.apr.sslCertificateChainFile=
+# cas.server.tomcat.apr.sslCaCertificateFile=
+# cas.server.tomcat.apr.sslCertificateKeyFile=
+# cas.server.tomcat.apr.sslCertificateFile=
+```
+
+Enabling APR requires the following JVM system property that indicates the location of the APR library binaries (i.e. `usr/local/opt/tomcat-native/lib`):
+
+```bash
+-Djava.library.path=/path/to/tomcat-native/lib
+```
+
+#### Connector IO
+
+```properties
+# cas.server.tomcat.socket.appReadBufSize=0
+# cas.server.tomcat.socket.appWriteBufSize=0
+# cas.server.tomcat.socket.bufferPool=0
+# cas.server.tomcat.socket.performanceConnectionTime=-1
+# cas.server.tomcat.socket.performanceLatency=-1
+# cas.server.tomcat.socket.performanceBandwidth=-1
+```
+
 #### Session Clustering & Replication
 
 Enable session replication to replicate web application session deltas.
@@ -568,6 +604,11 @@ To learn more about this topic, [please review this guide](../monitoring/Monitor
 # management.endpoints.web.base-path=/actuator
 
 # management.endpoints.web.exposure.include=info,health,status,configurationMetadata
+# management.endpoints.web.exposure.exclude=
+
+# management.endpoints.jmx.exposure.exclude=*
+# management.endpoints.jmx.exposure.include=
+
 # management.server.add-application-context-header=false
 ```
 
@@ -673,6 +714,7 @@ The following health indicator names are available, given the presence of the ap
 | Health Indicator          | Description
 |----------------------|------------------------------------------------------------------------------------------
 | `memoryHealthIndicator`   | Reports back on the health status of CAS JVM memory usage, etc.
+| `systemHealthIndicator`   | Reports back on the health of the system of the CAS server.(Load, Uptime, Heap, CPU etc.)
 | `sessionHealthIndicator`   | Reports back on the health status of CAS tickets and SSO session usage.
 | `duoSecurityHealthIndicator`   | Reports back on the health status of Duo Security APIs.
 | `ehcacheHealthIndicator`   | Reports back on the health status of Ehcache caches.
@@ -832,6 +874,8 @@ To learn more about this topic, [please review this guide](../logging/Logging.ht
 ```properties
 # logging.config=file:/etc/cas/log4j2.xml
 # server.servlet.contextParameters.isLog4jAutoInitializationDisabled=true
+       
+# cas.logging.mdcEnabled=true
 
 # Control log levels via properties
 # logging.level.org.apereo.cas=DEBUG
@@ -1735,6 +1779,15 @@ Password encoding  settings for this feature are available [here](Configuration-
 # cas.authn.file.separator=::
 # cas.authn.file.filename=file:///path/to/users/file
 # cas.authn.file.name=
+```
+
+## Groovy Authentication
+
+To learn more about this topic, [please review this guide](../installation/Groovy-Authentication.html).
+
+```properties
+# cas.authn.groovy.order=0
+# cas.authn.groovy.name=
 ```
 
 ## JSON (Whitelist) Authentication
@@ -2834,6 +2887,11 @@ Common configuration settings for this feature are available [here](Configuratio
 
 Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.authn.mfa.u2f`.
 
+### FIDO U2F Redis
+
+Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#redis-configuration)
+under the configuration key `cas.authn.mfa.u2f`.
+
 ### FIDO U2F JPA
 
 Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.authn.mfa.u2f.jpa`.
@@ -3153,6 +3211,7 @@ Allow CAS to become an OpenID Connect provider (OP). To learn more about this to
 
 # cas.authn.oidc.jwksFile=file:/etc/cas/config/keystore.jwks
 # cas.authn.oidc.jwksCacheInMinutes=60
+# cas.authn.oidc.jwksKeySize=2048
 
 # cas.authn.oidc.dynamicClientRegistrationMode=OPEN|PROTECTED
 
@@ -3214,6 +3273,8 @@ To learn more about this topic, [please review this guide](../integration/Delega
 # cas.authn.pac4j.typedIdUsed=false
 # cas.authn.pac4j.principalAttributeId=
 # cas.authn.pac4j.name=
+# cas.authn.pac4j.order=
+# cas.authn.pac4j.lazyInit=true
 ```
 
 The following external identity providers share [common blocks of settings](Configuration-Properties-Common.html#delegated-authentication-settings) under the listed configuration keys listed below:
@@ -3306,6 +3367,11 @@ The following settings specifically apply to this provider:
 
 Common settings for this identity provider are available [here](Configuration-Properties-Common.html#delegated-authentication-openid-connect-settings) 
 under the configuration key `cas.authn.pac4j.oidc[0].keycloak`.
+
+```properties
+# cas.authn.pac4j.oidc[0].keycloak.realm=
+# cas.authn.pac4j.oidc[0].keycloak.baseUri=
+```                                     
 
 #### Generic
 
@@ -3448,8 +3514,10 @@ To learn more about this topic, [please review this guide](../installation/OAuth
 # cas.authn.oauth.accessToken.maxTimeToLiveInSeconds=28800
 
 # cas.authn.oauth.deviceToken.timeToKillInSeconds=2592000
-# cas.authn.oauth.deviceToken.refreshInterval=PT15S
-# cas.authn.oauth.deviceToken.userCodeLength=8
+# cas.authn.oauth.deviceToken.refreshInterval=PT15S 
+
+# cas.authn.oauth.deviceUserCode.timeToKillInSeconds=2592000
+# cas.authn.oauth.deviceUserCode.userCodeLength=8
 
 # cas.authn.oauth.grants.resourceOwner.requireServiceHeader=true
 
@@ -3491,6 +3559,8 @@ To learn more about this topic, [please review this guide](../ux/User-Interface-
 # cas.locale.defaultValue=en
 ```
 
+If the user changes the language, a special cookie is created by CAS to contain the selected language. Cookie settings for this feature are available [here](Configuration-Properties-Common.html#cookie-settings) under the configuration key `cas.locale.cookie`.
+
 ## Global SSO Behavior
 
 ```properties
@@ -3503,28 +3573,20 @@ To learn more about this topic, [please review this guide](../ux/User-Interface-
 
 ## Warning Cookie
 
-Created by CAS if and when users are to be warned when accessing CAS protected services.
+Created by CAS if and when users are to be warned when accessing CAS protected services. Cookie settings for this feature are available [here](Configuration-Properties-Common.html#cookie-settings) under the configuration key `cas.warningCookie`.
 
 ```properties
-# cas.warningCookie.path=
-# cas.warningCookie.maxAge=-1
-# cas.warningCookie.domain=
-# cas.warningCookie.name=CASPRIVACY
-# cas.warningCookie.secure=true
-# cas.warningCookie.httpOnly=true
+# cas.warningCookie.autoConfigureCookiePath=true
 ```
 
 ## Ticket Granting Cookie
 
+Cookie settings for this feature are available [here](Configuration-Properties-Common.html#cookie-settings) under the configuration key `cas.tgc`.
+
 ```properties
-# cas.tgc.path=
-# cas.tgc.maxAge=-1
-# cas.tgc.domain=
-# cas.tgc.name=TGC
-# cas.tgc.secure=true
-# cas.tgc.httpOnly=true
-# cas.tgc.rememberMeMaxAge=1209600
 # cas.tgc.pinToSession=true
+# cas.tgc.rememberMeMaxAge=P14D
+# cas.tgc.autoConfigureCookiePath=true
 ```
 
 ### Signing & Encryption
@@ -3731,6 +3793,13 @@ Decide how CAS should monitor the generation of STs.
 # cas.monitor.st.warn.threshold=10
 # cas.monitor.st.warn.evictionThreshold=0
 ```
+### Load 
+
+Decide how CAS should monitor system load of a CAS Server.  
+
+```properties
+# cas.monitor.load.warn.threshold=25
+```
 
 ### Cache Monitors
 
@@ -3836,6 +3905,8 @@ configuration settings for this feature are available [here](Configuration-Prope
 Control how CAS should respond and validate incoming HTTP requests.
 
 ```properties
+# cas.httpWebRequest.header.enabled=true
+
 # cas.httpWebRequest.header.xframe=true
 # cas.httpWebRequest.header.xframeOptions=DENY
 
@@ -4550,7 +4621,7 @@ Map custom authentication exceptions in the CAS webflow and link them to custom 
 To learn more about this topic, [please review this guide](../webflow/Webflow-Customization-Exceptions.html).
 
 ```properties
-# cas.authn.exceptions.exceptions=value1,value2,...
+# cas.authn.errors.exceptions=value1,value2,...
 ```
 
 ### Authentication Interrupt
@@ -4914,7 +4985,7 @@ Common configuration settings for this feature are available [here](Configuratio
 
 ## Apache Fortress Authentication
 
-To learn more about this topic, [please review this guide](../integration/Configuring-Fortress-Integration.html).
+To learn more about this topic, [please review this guide](../installation/Configuring-Fortress-Authentication.html).
 
 ```properties
 # cas.authn.fortress.rbaccontext=HOME

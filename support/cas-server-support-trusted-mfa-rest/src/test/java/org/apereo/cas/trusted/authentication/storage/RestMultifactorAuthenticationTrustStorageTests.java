@@ -1,6 +1,5 @@
 package org.apereo.cas.trusted.authentication.storage;
 
-import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
@@ -10,6 +9,7 @@ import org.apereo.cas.trusted.config.MultifactorAuthnTrustedDeviceFingerprintCon
 import org.apereo.cas.trusted.config.RestMultifactorAuthenticationTrustConfiguration;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockWebServer;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;

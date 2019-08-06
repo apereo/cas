@@ -28,9 +28,9 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
+import org.apereo.cas.ticket.expiration.builder.TransientSessionTicketExpirationPolicyBuilder;
 import org.apereo.cas.ticket.factory.DefaultTransientSessionTicketFactory;
 import org.apereo.cas.ticket.registry.DefaultTicketRegistry;
-import org.apereo.cas.ticket.support.HardTimeoutExpirationPolicy;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.DelegatedClientNavigationController;
 import org.apereo.cas.web.DelegatedClientWebflowManager;
@@ -43,10 +43,10 @@ import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.client.Clients;
-import org.pac4j.core.context.J2EContext;
+import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.Pac4jConstants;
 import org.pac4j.core.context.WebContext;
-import org.pac4j.core.context.session.J2ESessionStore;
+import org.pac4j.core.context.session.JEESessionStore;
 import org.pac4j.oauth.client.FacebookClient;
 import org.pac4j.oauth.client.TwitterClient;
 import org.pac4j.oauth.credentials.OAuth20Credentials;
@@ -64,6 +64,7 @@ import org.springframework.webflow.test.MockRequestContext;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -130,12 +131,12 @@ public class DelegatedClientAuthenticationActionTests {
 
         val ticketRegistry = new DefaultTicketRegistry();
         val manager = new DelegatedClientWebflowManager(ticketRegistry,
-            new DefaultTransientSessionTicketFactory(new HardTimeoutExpirationPolicy(60)),
+            new DefaultTransientSessionTicketFactory(getExpirationPolicyBuilder()),
             new CasConfigurationProperties(),
             new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()),
             new DefaultArgumentExtractor(new WebApplicationServiceFactory()));
 
-        val webContext = new J2EContext(mockRequest, new MockHttpServletResponse(), new J2ESessionStore());
+        val webContext = new JEEContext(mockRequest, new MockHttpServletResponse(), new JEESessionStore());
         val ticket = manager.store(webContext, facebookClient);
 
         mockRequest.addParameter(DelegatedClientWebflowManager.PARAMETER_CLIENT_ID, ticket.getId());
@@ -185,6 +186,12 @@ public class DelegatedClientAuthenticationActionTests {
             });
     }
 
+    private TransientSessionTicketExpirationPolicyBuilder getExpirationPolicyBuilder() {
+        val props = new CasConfigurationProperties();
+        props.getTicket().getTst().setTimeToKillInSeconds(60);
+        return new TransientSessionTicketExpirationPolicyBuilder(props);
+    }
+
     @Test
     public void verifyFinishAuthenticationAuthzFailure() {
         val mockRequest = new MockHttpServletRequest();
@@ -201,8 +208,8 @@ public class DelegatedClientAuthenticationActionTests {
 
         val facebookClient = new FacebookClient() {
             @Override
-            protected OAuth20Credentials retrieveCredentials(final WebContext context) {
-                return new OAuth20Credentials("fakeVerifier");
+            protected Optional<OAuth20Credentials> retrieveCredentials(final WebContext context) {
+                return Optional.of(new OAuth20Credentials("fakeVerifier"));
             }
         };
         facebookClient.setName(FacebookClient.class.getSimpleName());
@@ -236,8 +243,8 @@ public class DelegatedClientAuthenticationActionTests {
 
         val facebookClient = new FacebookClient() {
             @Override
-            protected OAuth20Credentials retrieveCredentials(final WebContext context) {
-                return new OAuth20Credentials("fakeVerifier");
+            protected Optional<OAuth20Credentials> retrieveCredentials(final WebContext context) {
+                return Optional.of(new OAuth20Credentials("fakeVerifier"));
             }
         };
         facebookClient.setName(FacebookClient.class.getSimpleName());
@@ -301,11 +308,11 @@ public class DelegatedClientAuthenticationActionTests {
         when(enforcer.execute(any())).thenReturn(new AuditableExecutionResult());
         val ticketRegistry = new DefaultTicketRegistry();
         val manager = new DelegatedClientWebflowManager(ticketRegistry,
-            new DefaultTransientSessionTicketFactory(new HardTimeoutExpirationPolicy(60)),
+            new DefaultTransientSessionTicketFactory(getExpirationPolicyBuilder()),
             new CasConfigurationProperties(),
             new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()),
             new DefaultArgumentExtractor(new WebApplicationServiceFactory()));
-        val webContext = new J2EContext(mockRequest, new MockHttpServletResponse(), new J2ESessionStore());
+        val webContext = new JEEContext(mockRequest, new MockHttpServletResponse(), new JEESessionStore());
         val ticket = manager.store(webContext, client);
 
         mockRequest.addParameter(DelegatedClientWebflowManager.PARAMETER_CLIENT_ID, ticket.getId());
@@ -321,11 +328,10 @@ public class DelegatedClientAuthenticationActionTests {
             enforcer,
             manager,
             support,
-            LocaleChangeInterceptor.DEFAULT_PARAM_NAME,
-            ThemeChangeInterceptor.DEFAULT_PARAM_NAME,
+            new CasConfigurationProperties(),
             new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()),
             mock(CentralAuthenticationService.class),
             SingleSignOnParticipationStrategy.alwaysParticipating(),
-            new J2ESessionStore());
+            new JEESessionStore());
     }
 }

@@ -1,6 +1,6 @@
 package org.apereo.cas.uma.ticket.permission;
 
-import org.apereo.cas.ticket.ExpirationPolicy;
+import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
@@ -29,16 +29,16 @@ public class DefaultUmaPermissionTicketFactory implements UmaPermissionTicketFac
     /**
      * ExpirationPolicy for refresh tokens.
      */
-    protected final ExpirationPolicy expirationPolicy;
+    protected final ExpirationPolicyBuilder expirationPolicy;
 
-    public DefaultUmaPermissionTicketFactory(final ExpirationPolicy expirationPolicy) {
+    public DefaultUmaPermissionTicketFactory(final ExpirationPolicyBuilder expirationPolicy) {
         this(new DefaultUniqueTicketIdGenerator(), expirationPolicy);
     }
 
     @Override
     public UmaPermissionTicket create(final ResourceSet resourceSet, final Collection<String> scopes, final Map<String, Object> claims) {
         val codeId = this.idGenerator.getNewTicketId(UmaPermissionTicket.PREFIX);
-        return new DefaultUmaPermissionTicket(codeId, resourceSet, this.expirationPolicy, scopes, claims);
+        return new DefaultUmaPermissionTicket(codeId, resourceSet, this.expirationPolicy.buildTicketExpirationPolicy(), scopes, claims);
     }
 
     @Override

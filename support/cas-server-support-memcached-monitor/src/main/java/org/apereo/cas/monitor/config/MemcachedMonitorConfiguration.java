@@ -1,10 +1,10 @@
 package org.apereo.cas.monitor.config;
 
-import org.apereo.cas.ComponentSerializationPlan;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.memcached.MemcachedPooledClientConnectionFactory;
 import org.apereo.cas.memcached.MemcachedUtils;
 import org.apereo.cas.monitor.MemcachedHealthIndicator;
+import org.apereo.cas.util.serialization.ComponentSerializationPlan;
 
 import lombok.val;
 import net.spy.memcached.MemcachedClientIF;

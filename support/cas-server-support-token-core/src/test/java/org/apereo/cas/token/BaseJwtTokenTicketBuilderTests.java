@@ -1,6 +1,5 @@
 package org.apereo.cas.token;
 
-import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
@@ -15,6 +14,7 @@ import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.val;
 import org.jasig.cas.client.authentication.AttributePrincipalImpl;

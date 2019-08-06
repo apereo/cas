@@ -1,9 +1,11 @@
 package org.apereo.cas.ticket.registry;
 
-import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.logout.LogoutManager;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
 import org.junit.jupiter.api.RepeatedTest;
+
+import java.util.concurrent.ConcurrentHashMap;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -24,6 +26,6 @@ public class CachingTicketRegistryTests extends BaseTicketRegistryTests {
 
     @RepeatedTest(1)
     public void verifyOtherConstructor() {
-        assertNotNull(new DefaultTicketRegistry(10, 10, 5, CipherExecutor.noOp()));
+        assertNotNull(new DefaultTicketRegistry(new ConcurrentHashMap<>(10, 10, 5), CipherExecutor.noOp()));
     }
 }

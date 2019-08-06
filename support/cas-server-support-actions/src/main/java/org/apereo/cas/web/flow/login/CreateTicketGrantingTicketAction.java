@@ -1,15 +1,13 @@
 package org.apereo.cas.web.flow.login;
 
-import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationResult;
-import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.MessageDescriptor;
 import org.apereo.cas.authentication.PrincipalException;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.TicketGrantingTicket;
-import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.flow.CasWebflowConstants;
+import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -40,10 +38,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
 public class CreateTicketGrantingTicketAction extends AbstractAction {
-
-    private final CentralAuthenticationService centralAuthenticationService;
-    private final AuthenticationSystemSupport authenticationSystemSupport;
-    private final TicketRegistrySupport ticketRegistrySupport;
+    private final CasWebflowEventResolutionConfigurationContext webflowEventResolutionConfigurationContext;
 
     /**
      * Add warning messages to message context if needed.
@@ -84,6 +79,19 @@ public class CreateTicketGrantingTicketAction extends AbstractAction {
         context.addMessage(builder.build());
     }
 
+    private static boolean areAuthenticationsEssentiallyEqual(final Authentication auth1, final Authentication auth2) {
+        if (auth1 == null || auth2 == null) {
+            return false;
+        }
+
+        val builder = new EqualsBuilder();
+        builder.append(auth1.getPrincipal(), auth2.getPrincipal());
+        builder.append(auth1.getCredentials(), auth2.getCredentials());
+        builder.append(auth1.getSuccesses(), auth2.getSuccesses());
+        builder.append(auth1.getAttributes(), auth2.getAttributes());
+        return builder.isEquals();
+    }
+
     @Override
     public Event doExecute(final RequestContext context) {
         val service = WebUtils.getService(context);
@@ -91,10 +99,11 @@ public class CreateTicketGrantingTicketAction extends AbstractAction {
         val authenticationResultBuilder = WebUtils.getAuthenticationResultBuilder(context);
 
         LOGGER.trace("Finalizing authentication transactions and issuing ticket-granting ticket");
-        val authenticationResult = this.authenticationSystemSupport.finalizeAllAuthenticationTransactions(authenticationResultBuilder, service);
+        val authenticationResult = webflowEventResolutionConfigurationContext.getAuthenticationSystemSupport()
+            .finalizeAllAuthenticationTransactions(authenticationResultBuilder, service);
         LOGGER.trace("Finalizing authentication event...");
         val authentication = buildFinalAuthentication(authenticationResult);
-        val ticketGrantingTicket = WebUtils.getTicketGrantingTicketId(context);
+        val ticketGrantingTicket = determineTicketGrantingTicketId(context);
         LOGGER.debug("Creating ticket-granting ticket, potentially based on [{}]", ticketGrantingTicket);
         val tgt = createOrUpdateTicketGrantingTicket(authenticationResult, authentication, ticketGrantingTicket);
 
@@ -112,6 +121,15 @@ public class CreateTicketGrantingTicketAction extends AbstractAction {
             return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_SUCCESS_WITH_WARNINGS, attributes);
         }
         return success();
+    }
+
+    private String determineTicketGrantingTicketId(final RequestContext context) {
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
+        val ticketGrantingTicketId = webflowEventResolutionConfigurationContext.getTicketGrantingTicketCookieGenerator().retrieveCookieValue(request);
+        if (StringUtils.isBlank(ticketGrantingTicketId)) {
+            return WebUtils.getTicketGrantingTicketId(context);
+        }
+        return ticketGrantingTicketId;
     }
 
     /**
@@ -136,13 +154,18 @@ public class CreateTicketGrantingTicketAction extends AbstractAction {
                                                                       final Authentication authentication, final String ticketGrantingTicket) {
         try {
             if (shouldIssueTicketGrantingTicket(authentication, ticketGrantingTicket)) {
-                LOGGER.debug("Attempting to issue a new ticket-granting ticket...");
-                return this.centralAuthenticationService.createTicketGrantingTicket(authenticationResult);
+                if (StringUtils.isNotBlank(ticketGrantingTicket)) {
+                    LOGGER.trace("Removing existing ticket-granting ticket [{}]", ticketGrantingTicket);
+                    webflowEventResolutionConfigurationContext.getTicketRegistry().deleteTicket(ticketGrantingTicket);
+                }
+
+                LOGGER.trace("Attempting to issue a new ticket-granting ticket...");
+                return webflowEventResolutionConfigurationContext.getCentralAuthenticationService().createTicketGrantingTicket(authenticationResult);
             }
             LOGGER.debug("Updating the existing ticket-granting ticket [{}]...", ticketGrantingTicket);
-            val tgt = this.centralAuthenticationService.getTicket(ticketGrantingTicket, TicketGrantingTicket.class);
+            val tgt = webflowEventResolutionConfigurationContext.getCentralAuthenticationService().getTicket(ticketGrantingTicket, TicketGrantingTicket.class);
             tgt.getAuthentication().update(authentication);
-            this.centralAuthenticationService.updateTicket(tgt);
+            webflowEventResolutionConfigurationContext.getCentralAuthenticationService().updateTicket(tgt);
             return tgt;
         } catch (final PrincipalException e) {
             LOGGER.error(e.getMessage(), e);
@@ -158,11 +181,11 @@ public class CreateTicketGrantingTicketAction extends AbstractAction {
             return true;
         }
         LOGGER.debug("Located ticket-granting ticket in the context. Retrieving associated authentication");
-        val authenticationFromTgt = this.ticketRegistrySupport.getAuthenticationFrom(ticketGrantingTicket);
+        val authenticationFromTgt = webflowEventResolutionConfigurationContext.getTicketRegistrySupport().getAuthenticationFrom(ticketGrantingTicket);
 
         if (authenticationFromTgt == null) {
             LOGGER.debug("Authentication session associated with [{}] is no longer valid", ticketGrantingTicket);
-            this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicket);
+            webflowEventResolutionConfigurationContext.getCentralAuthenticationService().destroyTicketGrantingTicket(ticketGrantingTicket);
             return true;
         }
 
@@ -172,24 +195,5 @@ public class CreateTicketGrantingTicketAction extends AbstractAction {
         }
         LOGGER.debug("Resulting authentication is different from the context");
         return true;
-    }
-
-    private static boolean areAuthenticationsEssentiallyEqual(final Authentication auth1, final Authentication auth2) {
-        if (auth1 == null && auth2 == null) {
-            return false;
-        }
-        if (auth1 == null && auth2 != null) {
-            return false;
-        }
-        if (auth1 != null && auth2 == null) {
-            return false;
-        }
-
-        val builder = new EqualsBuilder();
-        builder.append(auth1.getPrincipal(), auth2.getPrincipal());
-        builder.append(auth1.getCredentials(), auth2.getCredentials());
-        builder.append(auth1.getSuccesses(), auth2.getSuccesses());
-        builder.append(auth1.getAttributes(), auth2.getAttributes());
-        return builder.isEquals();
     }
 }

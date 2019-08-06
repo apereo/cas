@@ -21,6 +21,12 @@ public class HttpHeadersRequestProperties implements Serializable {
     private static final long serialVersionUID = 5993704062519851359L;
 
     /**
+     * Allow CAS to inject and enforce http security headers via an http filter
+     * that are outlined here for caching, HSTS, etc.
+     */
+    private boolean enabled = true;
+
+    /**
      * When true, will inject the following headers into the response for non-static resources.
      * <pre>
      * Cache-Control: no-cache, no-store, max-age=0, must-revalidate

@@ -7,7 +7,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * This is {@link JsonPrincipalAttributesProperties}.
  * <p>
  * If you wish to directly and separately retrieve attributes from a static JSON source.
  * The resource syntax must be as such:

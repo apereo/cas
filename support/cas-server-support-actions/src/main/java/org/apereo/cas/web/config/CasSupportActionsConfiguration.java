@@ -1,6 +1,7 @@
 package org.apereo.cas.web.config;
 
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
@@ -10,10 +11,12 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.LogoutExecutionPlan;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.FlowExecutionExceptionResolver;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.GatewayServicesManagementCheckAction;
 import org.apereo.cas.web.flow.GenerateServiceTicketAction;
 import org.apereo.cas.web.flow.ServiceAuthorizationCheckAction;
@@ -37,15 +40,18 @@ import org.apereo.cas.web.flow.logout.LogoutViewSetupAction;
 import org.apereo.cas.web.flow.logout.TerminateSessionAction;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
+import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
 import org.apereo.cas.web.support.ArgumentExtractor;
 
+import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ResourceLoader;
@@ -65,7 +71,10 @@ import org.springframework.webflow.execution.Action;
 public class CasSupportActionsConfiguration {
 
     @Autowired
-    private ApplicationContext applicationContext;
+    private ApplicationEventPublisher applicationEventPublisher;
+
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
 
     @Autowired
     private ResourceLoader resourceLoader;
@@ -98,8 +107,16 @@ public class CasSupportActionsConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Autowired
+    @Qualifier("authenticationServiceSelectionPlan")
+    private ObjectProvider<AuthenticationServiceSelectionPlan> authenticationServiceSelectionPlan;
+
+    @Autowired
     @Qualifier("webApplicationServiceFactory")
     private ObjectProvider<ServiceFactory> webApplicationServiceFactory;
+
+    @Autowired
+    @Qualifier("registeredServiceAccessStrategyEnforcer")
+    private ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer;
 
     @Autowired
     @Qualifier("adaptiveAuthenticationPolicy")
@@ -112,6 +129,10 @@ public class CasSupportActionsConfiguration {
     @Autowired
     @Qualifier("defaultAuthenticationSystemSupport")
     private ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport;
+
+    @Autowired
+    @Qualifier("ticketRegistry")
+    private ObjectProvider<TicketRegistry> ticketRegistry;
 
     @Autowired
     @Qualifier("defaultTicketRegistrySupport")
@@ -170,9 +191,21 @@ public class CasSupportActionsConfiguration {
     @ConditionalOnMissingBean(name = "createTicketGrantingTicketAction")
     @Bean
     public Action createTicketGrantingTicketAction() {
-        return new CreateTicketGrantingTicketAction(centralAuthenticationService.getIfAvailable(),
-            authenticationSystemSupport.getIfAvailable(),
-            ticketRegistrySupport.getIfAvailable());
+        val context = CasWebflowEventResolutionConfigurationContext.builder()
+            .authenticationSystemSupport(authenticationSystemSupport.getIfAvailable())
+            .centralAuthenticationService(centralAuthenticationService.getIfAvailable())
+            .servicesManager(servicesManager.getIfAvailable())
+            .ticketRegistrySupport(ticketRegistrySupport.getIfAvailable())
+            .warnCookieGenerator(warnCookieGenerator.getIfAvailable())
+            .ticketGrantingTicketCookieGenerator(ticketGrantingTicketCookieGenerator.getIfAvailable())
+            .authenticationRequestServiceSelectionStrategies(authenticationServiceSelectionPlan.getIfAvailable())
+            .registeredServiceAccessStrategyEnforcer(registeredServiceAccessStrategyEnforcer.getIfAvailable())
+            .casProperties(casProperties)
+            .ticketRegistry(ticketRegistry.getIfAvailable())
+            .eventPublisher(applicationEventPublisher)
+            .applicationContext(applicationContext)
+            .build();
+        return new CreateTicketGrantingTicketAction(context);
     }
 
     @RefreshScope
@@ -198,7 +231,7 @@ public class CasSupportActionsConfiguration {
         return new SetServiceUnauthorizedRedirectUrlAction(servicesManager.getIfAvailable());
     }
 
-    @ConditionalOnMissingBean(name = "renderLoginFormAction")
+    @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_RENDER_LOGIN_FORM)
     @Bean
     @RefreshScope
     public Action renderLoginFormAction() {
@@ -208,7 +241,7 @@ public class CasSupportActionsConfiguration {
     @RefreshScope
     @Bean
     @Autowired
-    @ConditionalOnMissingBean(name = "initialFlowSetupAction")
+    @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_INIT_FLOW_SETUP)
     public Action initialFlowSetupAction(@Qualifier("argumentExtractor") final ArgumentExtractor argumentExtractor) {
         return new InitialFlowSetupAction(CollectionUtils.wrap(argumentExtractor),
             servicesManager.getIfAvailable(),

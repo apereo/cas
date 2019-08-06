@@ -41,7 +41,7 @@ import org.springframework.webflow.execution.Action;
  */
 @Configuration("casRemoteAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class CasRemoteAuthenticationConfiguration implements CasWebflowExecutionPlanConfigurer {
+public class CasRemoteAuthenticationConfiguration {
 
     @Autowired
     @Qualifier("servicesManager")
@@ -114,8 +114,14 @@ public class CasRemoteAuthenticationConfiguration implements CasWebflowExecution
         return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(remoteAddressAuthenticationHandler(), defaultPrincipalResolver.getIfAvailable());
     }
 
-    @Override
-    public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-        plan.registerWebflowConfigurer(remoteAddressWebflowConfigurer());
+    @Bean
+    @ConditionalOnMissingBean(name = "remoteCasWebflowExecutionPlanConfigurer")
+    public CasWebflowExecutionPlanConfigurer remoteCasWebflowExecutionPlanConfigurer() {
+        return new CasWebflowExecutionPlanConfigurer() {
+            @Override
+            public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
+                plan.registerWebflowConfigurer(remoteAddressWebflowConfigurer());
+            }
+        };
     }
 }

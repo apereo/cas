@@ -13,7 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.pac4j.core.context.J2EContext;
+import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.util.CommonHelper;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -38,7 +38,7 @@ public class OAuth20AuthorizationCodeAuthorizationResponseBuilder implements OAu
     private final ServicesManager servicesManager;
 
     @Override
-    public ModelAndView build(final J2EContext context, final String clientId,
+    public ModelAndView build(final JEEContext context, final String clientId,
                               final AccessTokenRequestDataHolder holder) {
         val authentication = holder.getAuthentication();
         val code = oAuthCodeFactory.create(holder.getService(), authentication,
@@ -52,8 +52,9 @@ public class OAuth20AuthorizationCodeAuthorizationResponseBuilder implements OAu
     }
 
     @Override
-    public boolean supports(final J2EContext context) {
-        val responseType = context.getRequestParameter(OAuth20Constants.RESPONSE_TYPE);
+    public boolean supports(final JEEContext context) {
+        val responseType = context.getRequestParameter(OAuth20Constants.RESPONSE_TYPE)
+            .map(String::valueOf).orElse(StringUtils.EMPTY);
         return StringUtils.equalsIgnoreCase(responseType, OAuth20ResponseTypes.CODE.getType());
     }
 
@@ -66,14 +67,15 @@ public class OAuth20AuthorizationCodeAuthorizationResponseBuilder implements OAu
      * @param code           the code
      * @return the model and view
      */
-    protected ModelAndView buildCallbackViewViaRedirectUri(final J2EContext context, final String clientId,
+    protected ModelAndView buildCallbackViewViaRedirectUri(final JEEContext context, final String clientId,
                                                            final Authentication authentication,
                                                            final OAuthCode code) {
         val attributes = authentication.getAttributes();
         val state = attributes.get(OAuth20Constants.STATE).get(0).toString();
         val nonce = attributes.get(OAuth20Constants.NONCE).get(0).toString();
 
-        val redirectUri = context.getRequestParameter(OAuth20Constants.REDIRECT_URI);
+        val redirectUri = context.getRequestParameter(OAuth20Constants.REDIRECT_URI)
+            .map(String::valueOf).orElse(StringUtils.EMPTY);
         LOGGER.debug("Authorize request successful for client [{}] with redirect uri [{}]", clientId, redirectUri);
 
         var callbackUrl = redirectUri;

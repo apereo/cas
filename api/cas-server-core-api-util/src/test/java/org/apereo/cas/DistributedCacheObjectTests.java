@@ -1,5 +1,7 @@
 package org.apereo.cas;
 
+import org.apereo.cas.util.cache.DistributedCacheObject;
+
 import lombok.val;
 import org.junit.jupiter.api.Test;
 

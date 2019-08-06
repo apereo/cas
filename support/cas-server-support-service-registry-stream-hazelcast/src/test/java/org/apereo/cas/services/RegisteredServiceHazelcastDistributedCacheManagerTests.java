@@ -1,6 +1,5 @@
 package org.apereo.cas.services;
 
-import org.apereo.cas.DistributedCacheObject;
 import org.apereo.cas.StringBean;
 import org.apereo.cas.configuration.model.support.hazelcast.BaseHazelcastProperties;
 import org.apereo.cas.hz.HazelcastConfigurationFactory;
@@ -8,6 +7,7 @@ import org.apereo.cas.services.publisher.CasRegisteredServiceHazelcastStreamPubl
 import org.apereo.cas.support.events.service.CasRegisteredServiceDeletedEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServiceSavedEvent;
+import org.apereo.cas.util.cache.DistributedCacheObject;
 
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;

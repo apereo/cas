@@ -29,12 +29,12 @@ import java.util.stream.Collectors;
 @Transactional(transactionManager = "transactionManagerU2f")
 @Slf4j
 public class U2FJpaDeviceRepository extends BaseU2FDeviceRepository {
-
-
     private static final String DELETE_QUERY = "DELETE from U2FDeviceRegistration r ";
     private static final String SELECT_QUERY = "SELECT r from U2FDeviceRegistration r ";
+
     private final long expirationTime;
     private final TimeUnit expirationTimeUnit;
+
     @PersistenceContext(unitName = "u2fEntityManagerFactory")
     private transient EntityManager entityManager;
 
@@ -101,6 +101,15 @@ public class U2FJpaDeviceRepository extends BaseU2FDeviceRepository {
                 DELETE_QUERY.concat("where r.createdDate <= :expdate"))
                 .setParameter("expdate", expirationDate)
                 .executeUpdate();
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public void removeAll() {
+        try {
+            this.entityManager.createQuery(DELETE_QUERY).executeUpdate();
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }

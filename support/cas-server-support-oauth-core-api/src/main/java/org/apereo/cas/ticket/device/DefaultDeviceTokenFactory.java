@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.ticket.ExpirationPolicy;
+import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
@@ -33,7 +34,7 @@ public class DefaultDeviceTokenFactory implements DeviceTokenFactory {
     /**
      * ExpirationPolicy for refresh tokens.
      */
-    protected final ExpirationPolicy expirationPolicy;
+    protected final ExpirationPolicyBuilder<DeviceToken> expirationPolicy;
 
     /**
      * Length of the generated user code.
@@ -47,7 +48,7 @@ public class DefaultDeviceTokenFactory implements DeviceTokenFactory {
     protected final ServicesManager servicesManager;
 
 
-    public DefaultDeviceTokenFactory(final ExpirationPolicy expirationPolicy,
+    public DefaultDeviceTokenFactory(final ExpirationPolicyBuilder<DeviceToken> expirationPolicy,
                                      final ServicesManager servicesManager) {
         this(new DefaultUniqueTicketIdGenerator(), expirationPolicy, USER_CODE_LENGTH, servicesManager);
     }
@@ -85,7 +86,7 @@ public class DefaultDeviceTokenFactory implements DeviceTokenFactory {
     private ExpirationPolicy determineExpirationPolicyForService(final Service service) {
         val registeredService = this.servicesManager.findServiceBy(service);
         if (!(registeredService instanceof OAuthRegisteredService)) {
-            return this.expirationPolicy;
+            return this.expirationPolicy.buildTicketExpirationPolicy();
         }
         val oauthService = OAuthRegisteredService.class.cast(registeredService);
         if (oauthService.getDeviceTokenExpirationPolicy() != null) {
@@ -95,6 +96,6 @@ public class DefaultDeviceTokenFactory implements DeviceTokenFactory {
                 return new DeviceTokenExpirationPolicy(Beans.newDuration(ttl).getSeconds());
             }
         }
-        return this.expirationPolicy;
+        return this.expirationPolicy.buildTicketExpirationPolicy();
     }
 }

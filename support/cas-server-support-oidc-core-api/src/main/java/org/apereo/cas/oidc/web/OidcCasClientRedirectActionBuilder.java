@@ -9,7 +9,9 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.core.context.WebContext;
-import org.pac4j.core.redirect.RedirectAction;
+import org.pac4j.core.exception.http.RedirectionAction;
+
+import java.util.Optional;
 
 /**
  * This is {@link OidcCasClientRedirectActionBuilder}.
@@ -23,7 +25,7 @@ public class OidcCasClientRedirectActionBuilder extends OAuth20DefaultCasClientR
     private final OidcAuthorizationRequestSupport oidcAuthorizationRequestSupport;
 
     @Override
-    public RedirectAction build(final CasClient casClient, final WebContext context) {
+    public Optional<RedirectionAction> build(final CasClient casClient, final WebContext context) {
         var renew = casClient.getConfiguration().isRenew();
         var gateway = casClient.getConfiguration().isGateway();
 

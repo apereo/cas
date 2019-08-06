@@ -44,6 +44,7 @@ import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * This is {@link AbstractResourceBasedServiceRegistry}.
@@ -69,7 +70,8 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
     /**
      * Map of service ID to registered service.
      */
-    private Map<Long, RegisteredService> serviceMap = new ConcurrentHashMap<>();
+    @Getter
+    protected Map<Long, RegisteredService> services = new ConcurrentHashMap<>();
 
     /**
      * The Registered service json serializers.
@@ -181,18 +183,12 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
 
     @Override
     public long size() {
-        return this.serviceMap.size();
+        return this.services.size();
     }
 
     @Override
     public RegisteredService findServiceById(final long id) {
-        val service = this.serviceMap.get(id);
-        return this.registeredServiceReplicationStrategy.getRegisteredServiceFromCacheIfAny(service, id, this);
-    }
-
-    @Override
-    public RegisteredService findServiceById(final String id) {
-        val service = this.serviceMap.values().stream().filter(r -> r.matches(id)).findFirst().orElse(null);
+        val service = this.services.get(id);
         return this.registeredServiceReplicationStrategy.getRegisteredServiceFromCacheIfAny(service, id, this);
     }
 
@@ -219,7 +215,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
      * @param service the service
      */
     protected void removeRegisteredService(final RegisteredService service) {
-        this.serviceMap.remove(service.getId());
+        this.services.remove(service.getId());
     }
 
     @Override
@@ -228,7 +224,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
         val files = FileUtils.listFiles(this.serviceRegistryDirectory.toFile(), getExtensions(), true);
         LOGGER.trace("Located [{}] files from [{}] are [{}]", getExtensions(), this.serviceRegistryDirectory, files);
 
-        this.serviceMap = files
+        this.services = files
             .stream()
             .map(this::load)
             .filter(Objects::nonNull)
@@ -236,8 +232,8 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
             .sorted()
             .collect(Collectors.toMap(RegisteredService::getId, Function.identity(),
                 LOG_DUPLICATE_AND_RETURN_FIRST_ONE, LinkedHashMap::new));
-        val services = new ArrayList<RegisteredService>(this.serviceMap.values());
-        val results = this.registeredServiceReplicationStrategy.updateLoadedRegisteredServicesFromCache(services, this);
+        val listedServices = new ArrayList<RegisteredService>(this.services.values());
+        val results = this.registeredServiceReplicationStrategy.updateLoadedRegisteredServicesFromCache(listedServices, this);
         results.forEach(service -> publishEvent(new CasRegisteredServiceLoadedEvent(this, service)));
         return results;
     }
@@ -313,10 +309,10 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
             if (!result) {
                 throw new IOException("The service definition file could not be saved at " + f.getCanonicalPath());
             }
-            if (this.serviceMap.containsKey(service.getId())) {
+            if (this.services.containsKey(service.getId())) {
                 LOGGER.debug("Found existing service definition by id [{}]. Saving...", service.getId());
             }
-            this.serviceMap.put(service.getId(), service);
+            this.services.put(service.getId(), service);
             LOGGER.debug("Saved service to [{}]", f.getCanonicalPath());
         } catch (final IOException e) {
             throw new IllegalArgumentException("IO error opening file stream.", e);
@@ -326,7 +322,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
 
     @Override
     public void update(final RegisteredService service) {
-        this.serviceMap.put(service.getId(), service);
+        this.services.put(service.getId(), service);
     }
 
     /**
@@ -376,6 +372,11 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
         LOGGER.debug("Using [{}] as the service definition file", svcFile.getCanonicalPath());
         return svcFile;
 
+    }
+
+    @Override
+    public Stream<? extends RegisteredService> getServicesStream() {
+        return this.services.values().stream();
     }
 
     /**

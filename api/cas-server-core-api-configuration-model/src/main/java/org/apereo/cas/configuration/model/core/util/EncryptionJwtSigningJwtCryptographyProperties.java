@@ -1,7 +1,7 @@
 package org.apereo.cas.configuration.model.core.util;
 
-import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.support.RequiresModule;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.Getter;
 import lombok.Setter;

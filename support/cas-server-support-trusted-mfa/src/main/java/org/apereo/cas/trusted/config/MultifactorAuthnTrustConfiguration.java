@@ -1,6 +1,5 @@
 package org.apereo.cas.trusted.config;
 
-import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlan;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.authentication.PseudoPlatformTransactionManager;
@@ -13,6 +12,7 @@ import org.apereo.cas.trusted.authentication.storage.InMemoryMultifactorAuthenti
 import org.apereo.cas.trusted.authentication.storage.JsonMultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.authentication.storage.MultifactorAuthenticationTrustStorageCleaner;
 import org.apereo.cas.trusted.web.MultifactorTrustedDevicesReportEndpoint;
+import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
@@ -24,7 +24,7 @@ import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnEnabledEndpoint;
+import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -125,7 +125,7 @@ public class MultifactorAuthnTrustConfiguration implements AuditTrailRecordResol
     }
 
     @Bean
-    @ConditionalOnEnabledEndpoint
+    @ConditionalOnAvailableEndpoint
     public MultifactorTrustedDevicesReportEndpoint mfaTrustedDevicesReportEndpoint() {
         return new MultifactorTrustedDevicesReportEndpoint(casProperties, mfaTrustEngine());
     }

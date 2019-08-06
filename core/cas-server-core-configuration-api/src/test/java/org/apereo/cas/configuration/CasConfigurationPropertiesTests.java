@@ -33,7 +33,7 @@ public class CasConfigurationPropertiesTests {
         assertNotNull(props);
     }
 
-    @TestConfiguration
+    @TestConfiguration("CasPropertiesTestConfiguration")
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasPropertiesTestConfiguration {
         

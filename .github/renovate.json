@@ -154,6 +154,12 @@
       ]
     },
     {
+      "groupName": "ApacheCassandra",
+      "packagePatterns": [
+        "^com.datastax.cassandra:"
+      ]
+    },
+    {
       "groupName": "Pac4j",
       "packagePatterns": [
         "^org.pac4j:"

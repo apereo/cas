@@ -41,7 +41,7 @@ suggesting the change to the project and have it be maintained directly.</p></di
 
 CAS by default is configured to hot reload changes to the Spring webflow configuration.
 
-### Extending Webflow
+## Extending Webflow
 
 If you want to learn how to modify and extend the CAS authentication flows, [please see this guide](Webflow-Customization-Extensions.html).
 
@@ -53,7 +53,7 @@ The following endpoints are provided by CAS:
 |--------------------------|------------------------------------------------
 | `springWebflow`          | Provides a JSON representation of the CAS authentication webflows. The endpoint can accept a `flowId` parameter as part of a `GET` operation to only present the flow body of the requested flow id.
 
-### Webflow Decorations
+## Webflow Decorations
 
 Learn how to fetch and display data dynamically from external data sources and endpoints and pass those along to the webflow by [reviewing this guide](Webflow-Customization-Extensions.html).
 
@@ -84,4 +84,15 @@ See [this guide](Webflow-Customization-Exceptions.html) for more info.
 All webflow components and CAS views have access to the entire bundle of CAS settings defined from a variety of configuration sources. This allows one to extend and modify any CAS view or webflow component using the variable `casProperties` to gain access to a specific setting. Remember that this syntax only allowed access to settings that are *owned* by CAS, noted by its very own prefix.
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#custom-settings).
+
+## Troubleshooting
+
+To enable additional logging, modify the logging configuration file to add the following:
+
+```xml
+<AsyncLogger name="org.springframework.webflow" level="debug" additivity="false">
+    <AppenderRef ref="casConsole"/>
+    <AppenderRef ref="casFile"/>
+</AsyncLogger>
+```
 

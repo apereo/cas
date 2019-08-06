@@ -1,7 +1,7 @@
 package org.apereo.cas.trusted.util.cipher;
 
-import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.util.cipher.BaseStringCipherExecutor;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
 /**
  * {@link CipherExecutor} for a Device Fingerprint cookie.

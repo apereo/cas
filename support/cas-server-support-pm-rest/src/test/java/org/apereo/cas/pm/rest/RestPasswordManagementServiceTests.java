@@ -1,6 +1,5 @@
 package org.apereo.cas.pm.rest;
 
-import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.pm.RestPasswordManagementConfiguration;
@@ -10,6 +9,7 @@ import org.apereo.cas.pm.PasswordHistoryService;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.config.PasswordManagementConfiguration;
 import org.apereo.cas.util.MockWebServer;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;

@@ -1,7 +1,6 @@
 package org.apereo.cas.support.saml.web.view;
 
 import org.apereo.cas.CasProtocolConstants;
-import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.DefaultAuthenticationAttributeReleasePolicy;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
@@ -18,6 +17,7 @@ import org.apereo.cas.support.saml.authentication.SamlAuthenticationMetaDataPopu
 import org.apereo.cas.support.saml.authentication.SamlResponseBuilder;
 import org.apereo.cas.support.saml.authentication.principal.SamlServiceFactory;
 import org.apereo.cas.support.saml.util.Saml10ObjectBuilder;
+import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.validation.DefaultAssertionBuilder;
 import org.apereo.cas.web.support.DefaultArgumentExtractor;
 import org.apereo.cas.web.view.attributes.NoOpProtocolAttributesRenderer;

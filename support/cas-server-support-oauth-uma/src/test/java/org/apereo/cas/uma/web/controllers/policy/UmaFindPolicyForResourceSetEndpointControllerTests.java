@@ -36,7 +36,8 @@ public class UmaFindPolicyForResourceSetEndpointControllerTests extends BaseUmaE
         model = (Map) response.getBody();
         val policyId = ((Collection<ResourceSetPolicy>) model.get("entity")).iterator().next().getId();
 
-        response = umaFindPolicyForResourceSetEndpointController.getPolicyForResourceSet(resourceId, policyId, results.getLeft(), results.getMiddle());
+        response = umaFindPolicyForResourceSetEndpointController.getPolicyForResourceSet(resourceId,
+            policyId, results.getLeft(), results.getMiddle());
         model = (Map) response.getBody();
         assertTrue(model.containsKey("code"));
         assertTrue(model.containsKey("entity"));

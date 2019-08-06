@@ -31,7 +31,7 @@ import org.springframework.webflow.execution.Action;
  */
 @Configuration("samlIdPWebflowConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class SamlIdPWebflowConfiguration implements CasWebflowExecutionPlanConfigurer {
+public class SamlIdPWebflowConfiguration {
 
     @Autowired
     @Qualifier("servicesManager")
@@ -77,8 +77,14 @@ public class SamlIdPWebflowConfiguration implements CasWebflowExecutionPlanConfi
             selectionStrategies.getIfAvailable());
     }
 
-    @Override
-    public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-        plan.registerWebflowConfigurer(samlIdPMetadataUIWebConfigurer());
+    @Bean
+    @ConditionalOnMissingBean(name = "samlIdPCasWebflowExecutionPlanConfigurer")
+    public CasWebflowExecutionPlanConfigurer samlIdPCasWebflowExecutionPlanConfigurer() {
+        return new CasWebflowExecutionPlanConfigurer() {
+            @Override
+            public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
+                plan.registerWebflowConfigurer(samlIdPMetadataUIWebConfigurer());
+            }
+        };
     }
 }

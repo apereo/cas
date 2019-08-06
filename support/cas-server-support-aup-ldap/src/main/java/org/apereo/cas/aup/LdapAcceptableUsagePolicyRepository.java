@@ -1,6 +1,7 @@
 package org.apereo.cas.aup;
 
 import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.configuration.model.support.aup.AcceptableUsagePolicyProperties;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapUtils;
@@ -30,17 +31,15 @@ public class LdapAcceptableUsagePolicyRepository extends AbstractPrincipalAttrib
     private static final long serialVersionUID = 1600024683199961892L;
 
     private final transient ConnectionFactory connectionFactory;
-    private final String searchFilter;
-    private final String baseDn;
+    private final AcceptableUsagePolicyProperties.Ldap ldapProperties;
 
     public LdapAcceptableUsagePolicyRepository(final TicketRegistrySupport ticketRegistrySupport,
                                                final String aupAttributeName,
                                                final ConnectionFactory connectionFactory,
-                                               final String searchFilter, final String baseDn) {
+                                               final AcceptableUsagePolicyProperties.Ldap ldapProperties) {
         super(ticketRegistrySupport, aupAttributeName);
         this.connectionFactory = connectionFactory;
-        this.searchFilter = searchFilter;
-        this.baseDn = baseDn;
+        this.ldapProperties = ldapProperties;
     }
 
     @Override
@@ -50,7 +49,7 @@ public class LdapAcceptableUsagePolicyRepository extends AbstractPrincipalAttrib
             if (LdapUtils.containsResultEntry(response)) {
                 val currentDn = response.getResult().getEntry().getDn();
                 LOGGER.debug("Updating [{}]", currentDn);
-                val attributes =CollectionUtils.<String, Set<String>>wrap(this.aupAttributeName,
+                val attributes = CollectionUtils.<String, Set<String>>wrap(this.aupAttributeName,
                     CollectionUtils.wrapSet(Boolean.TRUE.toString().toUpperCase()));
                 return LdapUtils.executeModifyOperation(currentDn, this.connectionFactory, attributes);
             }
@@ -68,9 +67,9 @@ public class LdapAcceptableUsagePolicyRepository extends AbstractPrincipalAttrib
      * @throws LdapException the ldap exception
      */
     private Response<SearchResult> searchForId(final String id) throws LdapException {
-        val filter = LdapUtils.newLdaptiveSearchFilter(this.searchFilter,
+        val filter = LdapUtils.newLdaptiveSearchFilter(ldapProperties.getSearchFilter(),
             LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
             CollectionUtils.wrap(id));
-        return LdapUtils.executeSearchOperation(this.connectionFactory, this.baseDn, filter, 0);
+        return LdapUtils.executeSearchOperation(this.connectionFactory, ldapProperties.getBaseDn(), filter, ldapProperties.getPageSize());
     }
 }

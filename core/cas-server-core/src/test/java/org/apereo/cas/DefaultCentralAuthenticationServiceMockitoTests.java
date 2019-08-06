@@ -12,9 +12,11 @@ import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionStrate
 import org.apereo.cas.authentication.metadata.BasicCredentialMetaData;
 import org.apereo.cas.authentication.policy.AcceptAnyAuthenticationPolicyFactory;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
+import org.apereo.cas.authentication.principal.DefaultServiceMatchingStrategy;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.logout.LogoutManager;
+import org.apereo.cas.mock.MockServiceTicket;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.DefaultRegisteredServiceUsernameProvider;
 import org.apereo.cas.services.RefuseRegisteredServiceProxyPolicy;
@@ -41,7 +43,7 @@ import org.apereo.cas.ticket.factory.DefaultTransientSessionTicketFactory;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyTicket;
 import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
@@ -97,12 +99,8 @@ public class DefaultCentralAuthenticationServiceMockitoTests extends BaseCasCore
         return smMock;
     }
 
-    private static ServiceTicket createMockServiceTicket(final String id, final Service svc) {
-        val stMock = mock(ServiceTicket.class);
-        when(stMock.getService()).thenReturn(svc);
-        when(stMock.getId()).thenReturn(id);
-        when(stMock.isValidFor(svc)).thenReturn(true);
-        return stMock;
+    private static MockServiceTicket createMockServiceTicket(final String id, final Service svc) {
+        return new MockServiceTicket(id, svc, null);
     }
 
     private static RegisteredServiceProxyPolicy getServiceProxyPolicy(final boolean canProxy) {
@@ -143,14 +141,14 @@ public class DefaultCentralAuthenticationServiceMockitoTests extends BaseCasCore
         when(this.authentication.getSuccesses()).thenReturn(successes);
         when(this.authentication.getPrincipal()).thenReturn(new DefaultPrincipalFactory().createPrincipal(PRINCIPAL));
 
+        val tgtRootMock = createRootTicketGrantingTicket();
         val service1 = getService(SVC1_ID);
         val stMock = createMockServiceTicket(ST_ID, service1);
-
-        val tgtRootMock = createRootTicketGrantingTicket();
-
         val tgtMock = createMockTicketGrantingTicket(TGT_ID, stMock, false,
             tgtRootMock, new ArrayList<>());
         when(tgtMock.getProxiedBy()).thenReturn(getService("proxiedBy"));
+        stMock.setTicketGrantingTicket(tgtMock);
+
 
         val authnListMock = mock(List.class);
         /*
@@ -161,12 +159,12 @@ public class DefaultCentralAuthenticationServiceMockitoTests extends BaseCasCore
         when(authnListMock.toArray()).thenReturn(new Object[]{this.authentication, this.authentication});
         when(authnListMock.get(anyInt())).thenReturn(this.authentication);
         when(tgtMock.getChainedAuthentications()).thenReturn(authnListMock);
-        when(stMock.getTicketGrantingTicket()).thenReturn(tgtMock);
 
         val service2 = getService(SVC2_ID);
         val stMock2 = createMockServiceTicket(ST2_ID, service2);
-
         val tgtMock2 = createMockTicketGrantingTicket(TGT2_ID, stMock2, false, tgtRootMock, authnListMock);
+        stMock2.setTicketGrantingTicket(tgtMock2);
+
 
         mockTicketRegistry(stMock, tgtMock, stMock2, tgtMock2);
         val smMock = getServicesManager(service1, service2);
@@ -185,7 +183,8 @@ public class DefaultCentralAuthenticationServiceMockitoTests extends BaseCasCore
             new AcceptAnyAuthenticationPolicyFactory(),
             new DefaultPrincipalFactory(),
             CipherExecutor.noOpOfStringToString(),
-            enforcer);
+            enforcer,
+            new DefaultServiceMatchingStrategy(smMock));
         this.cas.setApplicationEventPublisher(mock(ApplicationEventPublisher.class));
     }
 
@@ -198,12 +197,14 @@ public class DefaultCentralAuthenticationServiceMockitoTests extends BaseCasCore
             new DefaultTicketGrantingTicketFactory(null,
                 null, CipherExecutor.noOpOfSerializableToString()));
         factory.addTicketFactory(ServiceTicket.class,
-            new DefaultServiceTicketFactory(new NeverExpiresExpirationPolicy(), new HashMap<>(0), false, CipherExecutor.noOpOfStringToString(), mock(ServicesManager.class)));
+            new DefaultServiceTicketFactory(neverExpiresExpirationPolicyBuilder(),
+                new HashMap<>(0), false,
+                CipherExecutor.noOpOfStringToString(), mock(ServicesManager.class)));
         factory.addTicketFactory(ProxyTicket.class,
             new DefaultProxyTicketFactory(null, new HashMap<>(0),
                 CipherExecutor.noOpOfStringToString(), true, mock(ServicesManager.class)));
         factory.addTicketFactory(TransientSessionTicket.class,
-            new DefaultTransientSessionTicketFactory(new NeverExpiresExpirationPolicy()));
+            new DefaultTransientSessionTicketFactory(neverExpiresExpirationPolicyBuilder()));
         return factory;
     }
 
@@ -291,7 +292,6 @@ public class DefaultCentralAuthenticationServiceMockitoTests extends BaseCasCore
         when(tgtMock.getRoot()).thenReturn(root);
         when(tgtMock.getChainedAuthentications()).thenReturn(chainedAuthnList);
         when(tgtMock.getAuthentication()).thenReturn(this.authentication);
-        when(svcTicket.getTicketGrantingTicket()).thenReturn(tgtMock);
 
         return tgtMock;
     }

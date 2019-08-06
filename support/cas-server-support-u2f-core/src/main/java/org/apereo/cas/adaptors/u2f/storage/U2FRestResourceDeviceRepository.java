@@ -17,6 +17,7 @@ import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -48,7 +49,7 @@ public class U2FRestResourceDeviceRepository extends BaseResourceU2FDeviceReposi
         try {
             response = HttpUtils.executeGet(restProperties.getUrl(),
                 restProperties.getBasicAuthUsername(), restProperties.getBasicAuthPassword());
-            if (response.getStatusLine().getStatusCode() == HttpStatus.OK.value()) {
+            if (Objects.requireNonNull(response).getStatusLine().getStatusCode() == HttpStatus.OK.value()) {
                 return mapper.readValue(response.getEntity().getContent(),
                     new TypeReference<Map<String, List<U2FDeviceRegistration>>>() {
                     });
@@ -72,6 +73,20 @@ public class U2FRestResourceDeviceRepository extends BaseResourceU2FDeviceReposi
                 restProperties.getBasicAuthUsername(),
                 restProperties.getBasicAuthPassword(),
                 writer.toString());
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        } finally {
+            HttpUtils.close(response);
+        }
+    }
+
+    @Override
+    public void removeAll() {
+        HttpResponse response = null;
+        try {
+            response = HttpUtils.executeDelete(restProperties.getUrl(),
+                restProperties.getBasicAuthUsername(),
+                restProperties.getBasicAuthPassword());
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         } finally {

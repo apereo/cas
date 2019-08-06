@@ -94,12 +94,13 @@ public class CasConfigurationServerWebApplication {
     @Bean
     public WebSecurityConfigurerAdapter casConfigurationServerWebSecurityConfigurerAdapter(final ServerProperties serverProperties) {
         return new WebSecurityConfigurerAdapter() {
+
             @Override
             protected void configure(final HttpSecurity http) throws Exception {
-                super.configure(http);
                 val path = serverProperties.getServlet().getContextPath();
                 http.authorizeRequests().antMatchers(path + "/decrypt/**").authenticated().and().csrf().disable();
                 http.authorizeRequests().antMatchers(path + "/encrypt/**").authenticated().and().csrf().disable();
+                super.configure(http);
             }
         };
     }

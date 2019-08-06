@@ -7,7 +7,6 @@ import org.apereo.cas.support.events.authentication.CasAuthenticationTransaction
 import org.apereo.cas.support.events.authentication.adaptive.CasRiskyAuthenticationDetectedEvent;
 import org.apereo.cas.support.events.dao.CasEvent;
 import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketCreatedEvent;
-import org.apereo.cas.util.AsciiArtUtils;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.serialization.TicketIdSanitizationUtils;
 import org.apereo.cas.web.support.WebUtils;
@@ -16,9 +15,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 
 /**
@@ -52,17 +49,6 @@ public class DefaultCasEventListener {
             dto.putGeoLocation(location);
         }
         return dto;
-    }
-
-    /**
-     * Handle application ready event.
-     *
-     * @param event the event
-     */
-    @EventListener
-    public void handleApplicationReadyEvent(final ApplicationReadyEvent event) {
-        AsciiArtUtils.printAsciiArtInfo(LOGGER, "READY", StringUtils.EMPTY);
-        LOGGER.info("Ready to process requests @ [{}]", DateTimeUtils.zonedDateTimeOf(event.getTimestamp()));
     }
 
     /**

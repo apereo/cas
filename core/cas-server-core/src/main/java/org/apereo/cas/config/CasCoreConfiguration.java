@@ -1,7 +1,6 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.CentralAuthenticationService;
-import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.DefaultCentralAuthenticationService;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
@@ -10,13 +9,16 @@ import org.apereo.cas.authentication.ContextualAuthenticationPolicyFactory;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.policy.AcceptAnyAuthenticationPolicyFactory;
 import org.apereo.cas.authentication.policy.RequiredHandlerAuthenticationPolicyFactory;
+import org.apereo.cas.authentication.principal.DefaultServiceMatchingStrategy;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.ServiceMatchingStrategy;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.services.ServiceContext;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -104,6 +106,12 @@ public class CasCoreConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "serviceMatchingStrategy")
+    public ServiceMatchingStrategy serviceMatchingStrategy() {
+        return new DefaultServiceMatchingStrategy(servicesManager.getIfAvailable());
+    }
+    
+    @Bean
     @Autowired
     @ConditionalOnMissingBean(name = "centralAuthenticationService")
     public CentralAuthenticationService centralAuthenticationService(
@@ -117,6 +125,7 @@ public class CasCoreConfiguration {
             authenticationPolicyFactory(),
             principalFactory.getIfAvailable(),
             cipherExecutor.getIfAvailable(),
-            registeredServiceAccessStrategyEnforcer.getIfAvailable());
+            registeredServiceAccessStrategyEnforcer.getIfAvailable(),
+            serviceMatchingStrategy());
     }
 }

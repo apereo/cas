@@ -35,7 +35,7 @@ import org.springframework.webflow.execution.Action;
  */
 @Configuration("samlMetadataUIWebflowConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class SamlMetadataUIWebflowConfiguration implements CasWebflowExecutionPlanConfigurer {
+public class SamlMetadataUIWebflowConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -78,8 +78,14 @@ public class SamlMetadataUIWebflowConfiguration implements CasWebflowExecutionPl
         return new SamlMetadataUIParserAction(parameter, chainingSamlMetadataUIMetadataResolverAdapter.getIfAvailable(), serviceFactory, servicesManager.getIfAvailable());
     }
 
-    @Override
-    public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-        plan.registerWebflowConfigurer(samlMetadataUIWebConfigurer());
+    @Bean
+    @ConditionalOnMissingBean(name = "samlMetadataUICasWebflowExecutionPlanConfigurer")
+    public CasWebflowExecutionPlanConfigurer samlMetadataUICasWebflowExecutionPlanConfigurer() {
+        return new CasWebflowExecutionPlanConfigurer() {
+            @Override
+            public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
+                plan.registerWebflowConfigurer(samlMetadataUIWebConfigurer());
+            }
+        };
     }
 }

@@ -26,6 +26,7 @@ import org.apereo.cas.authentication.trigger.RestEndpointMultifactorAuthenticati
 import org.apereo.cas.authentication.trigger.TimedMultifactorAuthenticationTrigger;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
@@ -83,6 +84,10 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
     private ObjectProvider<FlowDefinitionRegistry> loginFlowDefinitionRegistry;
 
     @Autowired
+    @Qualifier("ticketRegistry")
+    private ObjectProvider<TicketRegistry> ticketRegistry;
+
+    @Autowired
     private FlowBuilderServices flowBuilderServices;
 
     @Autowired
@@ -108,6 +113,10 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
     @Autowired
     @Qualifier("servicesManager")
     private ObjectProvider<ServicesManager> servicesManager;
+
+    @Autowired
+    @Qualifier("ticketGrantingTicketCookieGenerator")
+    private ObjectProvider<CasCookieBuilder> ticketGrantingTicketCookieGenerator;
 
     @Autowired
     @Qualifier("warnCookieGenerator")
@@ -448,8 +457,10 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
             .authenticationRequestServiceSelectionStrategies(authenticationServiceSelectionPlan.getIfAvailable())
             .registeredServiceAccessStrategyEnforcer(registeredServiceAccessStrategyEnforcer.getIfAvailable())
             .casProperties(casProperties)
+            .ticketRegistry(ticketRegistry.getIfAvailable())
             .eventPublisher(applicationEventPublisher)
             .applicationContext(applicationContext)
+            .ticketGrantingTicketCookieGenerator(ticketGrantingTicketCookieGenerator.getIfAvailable())
             .build();
     }
 }

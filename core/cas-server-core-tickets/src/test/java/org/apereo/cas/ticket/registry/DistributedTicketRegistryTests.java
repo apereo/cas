@@ -7,8 +7,8 @@ import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
+import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
-import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
 
 import lombok.Setter;
 import lombok.val;
@@ -81,7 +81,6 @@ public class DistributedTicketRegistryTests {
         this.ticketRegistry.addTicket(s);
         val s2 = (ServiceTicket) this.ticketRegistry.getTicket("test2");
         assertNotNull(s2.grantProxyGrantingTicket("ff", CoreAuthenticationTestUtils.getAuthentication(), new NeverExpiresExpirationPolicy()));
-        assertTrue(s2.isValidFor(RegisteredServiceTestUtils.getService()));
         assertTrue(this.wasTicketUpdated);
         returned.markTicketExpired();
         assertTrue(t.isExpired());

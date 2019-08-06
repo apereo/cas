@@ -27,7 +27,7 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
  */
 @Configuration("trustedAuthenticationWebflowConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class TrustedAuthenticationWebflowConfiguration implements CasWebflowExecutionPlanConfigurer {
+public class TrustedAuthenticationWebflowConfiguration {
     @Autowired
     private ApplicationContext applicationContext;
 
@@ -50,8 +50,14 @@ public class TrustedAuthenticationWebflowConfiguration implements CasWebflowExec
             applicationContext, casProperties);
     }
 
-    @Override
-    public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-        plan.registerWebflowConfigurer(trustedWebflowConfigurer());
+    @Bean
+    @ConditionalOnMissingBean(name = "trustedCasWebflowExecutionPlanConfigurer")
+    public CasWebflowExecutionPlanConfigurer trustedCasWebflowExecutionPlanConfigurer() {
+        return new CasWebflowExecutionPlanConfigurer() {
+            @Override
+            public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
+                plan.registerWebflowConfigurer(trustedWebflowConfigurer());
+            }
+        };
     }
 }

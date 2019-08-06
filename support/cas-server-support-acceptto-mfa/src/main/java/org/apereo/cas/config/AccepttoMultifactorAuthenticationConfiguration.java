@@ -42,7 +42,7 @@ import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurat
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.pac4j.core.context.J2EContext;
+import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.ObjectProvider;
@@ -110,6 +110,10 @@ public class AccepttoMultifactorAuthenticationConfiguration {
     private ObjectProvider<FlowDefinitionRegistry> loginFlowDefinitionRegistry;
 
     @Autowired
+    @Qualifier("ticketRegistry")
+    private ObjectProvider<TicketRegistry> ticketRegistry;
+
+    @Autowired
     @Qualifier("authenticationServiceSelectionPlan")
     private ObjectProvider<AuthenticationServiceSelectionPlan> authenticationRequestServiceSelectionStrategies;
 
@@ -126,10 +130,6 @@ public class AccepttoMultifactorAuthenticationConfiguration {
     @Autowired
     @Qualifier("defaultTicketFactory")
     private ObjectProvider<TicketFactory> ticketFactory;
-
-    @Autowired
-    @Qualifier("ticketRegistry")
-    private ObjectProvider<TicketRegistry> ticketRegistry;
 
     @Autowired
     @Qualifier("defaultPrincipalResolver")
@@ -169,18 +169,20 @@ public class AccepttoMultifactorAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "mfaAccepttoDistributedSessionStore")
     @Bean
-    public SessionStore<J2EContext> mfaAccepttoDistributedSessionStore() {
+    public SessionStore<JEEContext> mfaAccepttoDistributedSessionStore() {
         return new DistributedJ2ESessionStore(ticketRegistry.getIfAvailable(), ticketFactory.getIfAvailable());
     }
 
     @ConditionalOnMissingBean(name = "mfaAccepttoMultifactorFetchChannelAction")
     @Bean
+    @RefreshScope
     public Action mfaAccepttoMultifactorFetchChannelAction() throws Exception {
         return new AccepttoMultifactorFetchChannelAction(casProperties, mfaAccepttoDistributedSessionStore(), mfaAccepttoApiPublicKey());
     }
 
     @ConditionalOnMissingBean(name = "mfaAccepttoMultifactorValidateChannelAction")
     @Bean
+    @RefreshScope
     public Action mfaAccepttoMultifactorValidateChannelAction() {
         return new AccepttoMultifactorValidateChannelAction(mfaAccepttoDistributedSessionStore(),
             authenticationSystemSupport.getIfAvailable());
@@ -194,11 +196,13 @@ public class AccepttoMultifactorAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "mfaAccepttoMultifactorDetermineUserAccountStatusAction")
     @Bean
+    @RefreshScope
     public Action mfaAccepttoMultifactorDetermineUserAccountStatusAction() throws Exception {
         return new AccepttoMultifactorDetermineUserAccountStatusAction(casProperties, mfaAccepttoApiPublicKey());
     }
 
     @Bean
+    @RefreshScope
     public PublicKey mfaAccepttoApiPublicKey() throws Exception {
         val props = casProperties.getAuthn().getMfa().getAcceptto();
         val location = props.getRegistrationApiPublicKey().getLocation();
@@ -215,6 +219,7 @@ public class AccepttoMultifactorAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "mfaAccepttoMultifactorValidateUserDeviceRegistrationAction")
     @Bean
+    @RefreshScope
     public Action mfaAccepttoMultifactorValidateUserDeviceRegistrationAction() {
         return new AccepttoMultifactorValidateUserDeviceRegistrationAction(casProperties, authenticationSystemSupport.getIfAvailable());
     }
@@ -231,6 +236,7 @@ public class AccepttoMultifactorAuthenticationConfiguration {
             .authenticationRequestServiceSelectionStrategies(authenticationRequestServiceSelectionStrategies.getIfAvailable())
             .registeredServiceAccessStrategyEnforcer(registeredServiceAccessStrategyEnforcer.getIfAvailable())
             .casProperties(casProperties)
+            .ticketRegistry(ticketRegistry.getIfAvailable())
             .eventPublisher(applicationEventPublisher)
             .applicationContext(applicationContext)
             .build();
@@ -266,11 +272,12 @@ public class AccepttoMultifactorAuthenticationConfiguration {
     }
 
     @Bean
+    @RefreshScope
     public AuthenticationMetaDataPopulator casAccepttoQRCodeAuthenticationMetaDataPopulator() {
         return new AuthenticationContextAttributeMetaDataPopulator(
             casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
             casAccepttoQRCodeAuthenticationHandler(),
-            casAccepttoMultifactorAuthenticationProvider.getIfAvailable().getId()
+            casAccepttoMultifactorAuthenticationProvider.getObject().getId()
         );
     }
 
