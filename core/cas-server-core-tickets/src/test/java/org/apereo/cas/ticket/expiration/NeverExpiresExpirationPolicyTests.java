@@ -21,7 +21,7 @@ public class NeverExpiresExpirationPolicyTests {
 
     @Test
     public void verifySerializeANeverExpiresExpirationPolicyToJson() throws IOException {
-        val policyWritten = new NeverExpiresExpirationPolicy();
+        val policyWritten = NeverExpiresExpirationPolicy.INSTANCE;
 
         MAPPER.writeValue(JSON_FILE, policyWritten);
 

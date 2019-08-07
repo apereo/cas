@@ -21,7 +21,6 @@ import org.apereo.cas.config.CasWsSecurityTokenTicketCatalogConfiguration;
 import org.apereo.cas.config.JpaTicketRegistryConfiguration;
 import org.apereo.cas.config.JpaTicketRegistryTicketCatalogConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
-import org.apereo.cas.config.support.EnvironmentConversionServiceInitializer;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.ticket.DefaultSecurityTokenTicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
@@ -37,7 +36,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -77,7 +75,6 @@ import static org.junit.jupiter.api.Assertions.*;
     CasWebApplicationServiceFactoryConfiguration.class,
     CasWsSecurityTokenTicketCatalogConfiguration.class
 })
-@ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
 @Transactional(transactionManager = "ticketTransactionManager", isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
 @ResourceLock("jpa-tickets")
 public class JpaTicketRegistryTests extends BaseTicketRegistryTests {
@@ -104,7 +101,7 @@ public class JpaTicketRegistryTests extends BaseTicketRegistryTests {
 
         val originalAuthn = CoreAuthenticationTestUtils.getAuthentication();
         val tgt = new TicketGrantingTicketImpl(ticketGrantingTicketId,
-            originalAuthn, new NeverExpiresExpirationPolicy());
+            originalAuthn, NeverExpiresExpirationPolicy.INSTANCE);
         this.ticketRegistry.addTicket(tgt);
 
         val token = securityTokenTicketFactory.create(tgt, "dummy-token".getBytes(StandardCharsets.UTF_8));

@@ -13,6 +13,11 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class NoOpCookieValueManager implements CookieValueManager {
 
+    /**
+     * Static instance.
+     */
+    public static final CookieValueManager INSTANCE = new NoOpCookieValueManager();
+
     private static final long serialVersionUID = -8464839674747772197L;
 
     @Override
