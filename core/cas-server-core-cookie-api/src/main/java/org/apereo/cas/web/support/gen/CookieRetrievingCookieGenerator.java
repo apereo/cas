@@ -43,7 +43,7 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
     private final CookieGenerationContext cookieGenerationContext;
 
     public CookieRetrievingCookieGenerator(final CookieGenerationContext context) {
-        this(context, new NoOpCookieValueManager());
+        this(context, NoOpCookieValueManager.INSTANCE);
     }
 
     public CookieRetrievingCookieGenerator(final CookieGenerationContext context,

@@ -31,7 +31,7 @@ public class ServiceTicketImplTests {
     private static final String ID = "test";
 
     private final TicketGrantingTicketImpl tgt = new TicketGrantingTicketImpl(ID,
-        CoreAuthenticationTestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
+        CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);
     private final DefaultUniqueTicketIdGenerator idGenerator = new DefaultUniqueTicketIdGenerator();
     private ObjectMapper mapper;
 
@@ -46,7 +46,7 @@ public class ServiceTicketImplTests {
 
     @Test
     public void verifySerializeToJson() throws IOException {
-        val stWritten = new ServiceTicketImpl(ST_ID, tgt, RegisteredServiceTestUtils.getService(), true, new NeverExpiresExpirationPolicy());
+        val stWritten = new ServiceTicketImpl(ST_ID, tgt, RegisteredServiceTestUtils.getService(), true, NeverExpiresExpirationPolicy.INSTANCE);
 
         mapper.writeValue(ST_JSON_FILE, stWritten);
         val stRead = mapper.readValue(ST_JSON_FILE, ServiceTicketImpl.class);
@@ -55,49 +55,49 @@ public class ServiceTicketImplTests {
 
     @Test
     public void verifyNoService() {
-        assertThrows(Exception.class, () -> new ServiceTicketImpl(ST_ID, tgt, null, false, new NeverExpiresExpirationPolicy()));
+        assertThrows(Exception.class, () -> new ServiceTicketImpl(ST_ID, tgt, null, false, NeverExpiresExpirationPolicy.INSTANCE));
     }
 
     @Test
     public void verifyNoTicket() {
         assertThrows(NullPointerException.class,
-            () -> new ServiceTicketImpl(ST_ID, null, CoreAuthenticationTestUtils.getService(), false, new NeverExpiresExpirationPolicy()));
+            () -> new ServiceTicketImpl(ST_ID, null, CoreAuthenticationTestUtils.getService(), false, NeverExpiresExpirationPolicy.INSTANCE));
     }
 
     @Test
     public void verifyIsFromNewLoginTrue() {
-        val s = new ServiceTicketImpl(ST_ID, tgt, CoreAuthenticationTestUtils.getService(), true, new NeverExpiresExpirationPolicy());
+        val s = new ServiceTicketImpl(ST_ID, tgt, CoreAuthenticationTestUtils.getService(), true, NeverExpiresExpirationPolicy.INSTANCE);
 
         assertTrue(s.isFromNewLogin());
     }
 
     @Test
     public void verifyIsFromNewLoginFalse() {
-        val s = tgt.grantServiceTicket(ST_ID, CoreAuthenticationTestUtils.getService(), new NeverExpiresExpirationPolicy(), false, false);
+        val s = tgt.grantServiceTicket(ST_ID, CoreAuthenticationTestUtils.getService(), NeverExpiresExpirationPolicy.INSTANCE, false, false);
         assertTrue(s.isFromNewLogin());
-        val s1 = tgt.grantServiceTicket(ST_ID, CoreAuthenticationTestUtils.getService(), new NeverExpiresExpirationPolicy(), false, false);
+        val s1 = tgt.grantServiceTicket(ST_ID, CoreAuthenticationTestUtils.getService(), NeverExpiresExpirationPolicy.INSTANCE, false, false);
         assertFalse(s1.isFromNewLogin());
     }
 
     @Test
     public void verifyGetService() {
         val simpleService = CoreAuthenticationTestUtils.getService();
-        val s = new ServiceTicketImpl(ST_ID, tgt, simpleService, false, new NeverExpiresExpirationPolicy());
+        val s = new ServiceTicketImpl(ST_ID, tgt, simpleService, false, NeverExpiresExpirationPolicy.INSTANCE);
         assertEquals(simpleService, s.getService());
     }
 
     @Test
     public void verifyGetTicket() {
         val simpleService = CoreAuthenticationTestUtils.getService();
-        val s = new ServiceTicketImpl(ST_ID, tgt, simpleService, false, new NeverExpiresExpirationPolicy());
+        val s = new ServiceTicketImpl(ST_ID, tgt, simpleService, false, NeverExpiresExpirationPolicy.INSTANCE);
         assertEquals(tgt, s.getTicketGrantingTicket());
     }
 
     @Test
     public void verifyTicketNeverExpires() {
-        val t = new TicketGrantingTicketImpl(ID, CoreAuthenticationTestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
+        val t = new TicketGrantingTicketImpl(ID, CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);
         val s = t.grantServiceTicket(idGenerator.getNewTicketId(ServiceTicket.PREFIX),
-            CoreAuthenticationTestUtils.getService(), new NeverExpiresExpirationPolicy(),
+            CoreAuthenticationTestUtils.getService(), NeverExpiresExpirationPolicy.INSTANCE,
             false, true);
         t.markTicketExpired();
         assertFalse(s.isExpired());
@@ -105,7 +105,7 @@ public class ServiceTicketImplTests {
 
     @Test
     public void verifyIsExpiredFalse() {
-        val t = new TicketGrantingTicketImpl(ID, CoreAuthenticationTestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
+        val t = new TicketGrantingTicketImpl(ID, CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);
         val s = t.grantServiceTicket(idGenerator.getNewTicketId(ServiceTicket.PREFIX), CoreAuthenticationTestUtils.getService(),
             new MultiTimeUseOrTimeoutExpirationPolicy(1, 5000), false, true);
 
@@ -115,11 +115,11 @@ public class ServiceTicketImplTests {
     @Test
     public void verifyTicketGrantingTicket() throws AbstractTicketException {
         val a = CoreAuthenticationTestUtils.getAuthentication();
-        val t = new TicketGrantingTicketImpl(ID, CoreAuthenticationTestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
+        val t = new TicketGrantingTicketImpl(ID, CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);
         val s = t.grantServiceTicket(idGenerator.getNewTicketId(ServiceTicket.PREFIX), CoreAuthenticationTestUtils.getService(),
             new MultiTimeUseOrTimeoutExpirationPolicy(1, 5000), false, true);
         val t1 = s.grantProxyGrantingTicket(idGenerator.getNewTicketId(TicketGrantingTicket.PREFIX), a,
-            new NeverExpiresExpirationPolicy());
+            NeverExpiresExpirationPolicy.INSTANCE);
 
         assertEquals(a, t1.getAuthentication());
     }
@@ -127,12 +127,12 @@ public class ServiceTicketImplTests {
     @Test
     public void verifyTicketGrantingTicketGrantedTwice() throws AbstractTicketException {
         val a = CoreAuthenticationTestUtils.getAuthentication();
-        val t = new TicketGrantingTicketImpl(ID, CoreAuthenticationTestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
+        val t = new TicketGrantingTicketImpl(ID, CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);
         val s = t.grantServiceTicket(idGenerator.getNewTicketId(ServiceTicket.PREFIX), CoreAuthenticationTestUtils.getService(),
             new MultiTimeUseOrTimeoutExpirationPolicy(1, 5000), false, true);
-        s.grantProxyGrantingTicket(idGenerator.getNewTicketId(TicketGrantingTicket.PREFIX), a, new NeverExpiresExpirationPolicy());
+        s.grantProxyGrantingTicket(idGenerator.getNewTicketId(TicketGrantingTicket.PREFIX), a, NeverExpiresExpirationPolicy.INSTANCE);
 
         assertThrows(Exception.class,
-            () -> s.grantProxyGrantingTicket(idGenerator.getNewTicketId(TicketGrantingTicket.PREFIX), a, new NeverExpiresExpirationPolicy()));
+            () -> s.grantProxyGrantingTicket(idGenerator.getNewTicketId(TicketGrantingTicket.PREFIX), a, NeverExpiresExpirationPolicy.INSTANCE));
     }
 }
