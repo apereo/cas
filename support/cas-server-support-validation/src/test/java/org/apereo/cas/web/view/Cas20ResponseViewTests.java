@@ -83,7 +83,7 @@ public class Cas20ResponseViewTests extends AbstractServiceValidateControllerTes
         };
         val view = new Cas20ResponseView(true, new NoOpProtocolAttributeEncoder(),
             null, delegatedView, new DefaultAuthenticationAttributeReleasePolicy("attribute"),
-            new DefaultAuthenticationServiceSelectionPlan(), new NoOpProtocolAttributesRenderer());
+            new DefaultAuthenticationServiceSelectionPlan(), NoOpProtocolAttributesRenderer.INSTANCE);
         view.render(modelAndView.getModel(), req, resp);
 
         assertNotNull(req.getAttribute(CasViewConstants.MODEL_ATTRIBUTE_NAME_CHAINED_AUTHENTICATIONS));

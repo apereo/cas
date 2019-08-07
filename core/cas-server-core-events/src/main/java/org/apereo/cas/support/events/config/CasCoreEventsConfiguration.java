@@ -35,7 +35,7 @@ public class CasCoreEventsConfiguration {
     @ConditionalOnMissingBean(name = "casEventRepository")
     @Bean
     public CasEventRepository casEventRepository() {
-        return new NoOpCasEventRepository();
+        return NoOpCasEventRepository.INSTANCE;
     }
 
     @Bean

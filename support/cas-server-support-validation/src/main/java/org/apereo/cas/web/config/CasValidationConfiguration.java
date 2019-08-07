@@ -183,7 +183,7 @@ public class CasValidationConfiguration {
             cas2SuccessView.getIfAvailable(),
             authenticationAttributeReleasePolicy.getIfAvailable(),
             authenticationServiceSelectionPlan.getIfAvailable(),
-            new NoOpProtocolAttributesRenderer());
+            NoOpProtocolAttributesRenderer.INSTANCE);
     }
 
     @Bean
@@ -217,7 +217,7 @@ public class CasValidationConfiguration {
                 return new AttributeValuesPerLineProtocolAttributesRenderer();
             case DEFAULT:
             default:
-                return new NoOpProtocolAttributesRenderer();
+                return NoOpProtocolAttributesRenderer.INSTANCE;
         }
     }
 

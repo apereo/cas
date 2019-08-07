@@ -76,7 +76,7 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
             StandardCharsets.UTF_8.name(),
             new DefaultAuthenticationAttributeReleasePolicy("attribute"),
             new DefaultAuthenticationServiceSelectionPlan(),
-            new NoOpProtocolAttributesRenderer(),
+            NoOpProtocolAttributesRenderer.INSTANCE,
             samlResponseBuilder);
     }
 
