@@ -17,7 +17,7 @@ cas.javascript.file=/js/cas.js
 
 ## Responsive Design
 
-CSS media queries bring responsive design features to CAS which would allow adopter to focus on one theme for all appropriate devices and platforms. These queries are defined in the same `cas.css` file.
+CSS media queries bring responsive design features to CAS which would allow the adopter to focus on one theme for all appropriate devices and platforms. These queries are defined in the same `cas.css` file.
 
 # Javascript
 
@@ -40,12 +40,12 @@ Most importantly, the following Javascript libraries are utilized by CAS automat
 
 ## Asynchronous Script Loading
 
-CAS will attempt load the aforementioned script libraries asynchronously so as to not block the page rendering functionality.
+CAS will attempt to load the aforementioned script libraries asynchronously so as to not block the page rendering functionality.
 The loading of script files is handled by the [`head.js` library](http://headjs.com) and is the responsibility of some javascript in the `bottom.html` template fragment which calls some methods in the `cas.js` file.
 
 The only script that is loaded synchronously is the `head.js` library itself.
 
-Because scripts, and specially JQuery are loaded asynchronously, any custom Javascript that is placed inside the page
+Because scripts, and especially JQuery are loaded asynchronously, any custom Javascript that is placed inside the page
 that relies on these libraries may not immediately function on page load. CAS provides a callback function that allows
 adopters to be notified when script loading has completed and this would be a safe time to execute/load other Javascript-related
 functions that depend on JQuery inside the actual page.
@@ -71,7 +71,7 @@ Anchors/fragments may be lost across redirects as the server-side handler of the
 
 ### WebJARs for Javascript/CSS Libraries
 
-The CAS application application packages third party static resources inside the CAS webapp rather than referencing CDN links so that CAS may be deployed on 
+The CAS application packages third party static resources inside the CAS webapp rather than referencing CDN links so that CAS may be deployed on 
 networks with limited internet access.
 
 The 3rd party static resources are packaged in "WebJAR" jar files and served up via the servlet `3.0` feature 
