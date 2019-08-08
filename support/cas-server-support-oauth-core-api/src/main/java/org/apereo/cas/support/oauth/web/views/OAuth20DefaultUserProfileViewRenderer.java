@@ -55,7 +55,8 @@ public class OAuth20DefaultUserProfileViewRenderer implements OAuth20UserProfile
      * @param response    the response
      * @return the rendered user profile
      */
-    protected Map<String, Object> getRenderedUserProfile(final Map<String, Object> model, final AccessToken accessToken,
+    protected Map<String, Object> getRenderedUserProfile(final Map<String, Object> model,
+                                                         final AccessToken accessToken,
                                                          final HttpServletResponse response) {
         if (oauthProperties.getUserProfileViewType() == OAuthProperties.UserProfileViewTypes.FLAT) {
             val flattened = new LinkedHashMap<String, Object>();
