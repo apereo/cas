@@ -10,6 +10,9 @@ import org.apereo.cas.oidc.jwks.OidcDefaultJsonWebKeystoreCacheLoaderTests;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeystoreGeneratorServiceTests;
 import org.apereo.cas.oidc.jwks.OidcServiceJsonWebKeystoreCacheLoaderTests;
 import org.apereo.cas.oidc.profile.OidcProfileScopeToAttributesFilterTests;
+import org.apereo.cas.oidc.profile.OidcUserProfileDataCreatorTests;
+import org.apereo.cas.oidc.profile.OidcUserProfileViewRendererDefaultTests;
+import org.apereo.cas.oidc.profile.OidcUserProfileViewRendererFlatTests;
 import org.apereo.cas.oidc.services.OidcServiceRegistryListenerTests;
 import org.apereo.cas.oidc.token.OidcIdTokenGeneratorServiceTests;
 import org.apereo.cas.oidc.token.OidcIdTokenSigningAndEncryptionServiceTests;
@@ -45,6 +48,9 @@ import org.junit.runner.RunWith;
     OidcEchoingWebFingerUserInfoRepositoryTests.class,
     OidcGroovyWebFingerUserInfoRepositoryTests.class,
     OidcServiceRegistryListenerTests.class,
+    OidcUserProfileDataCreatorTests.class,
+    OidcUserProfileViewRendererDefaultTests.class,
+    OidcUserProfileViewRendererFlatTests.class,
     OidcRestfulWebFingerUserInfoRepositoryTests.class
 })
 @RunWith(JUnitPlatform.class)

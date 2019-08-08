@@ -728,6 +728,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
 
     @ConditionalOnMissingBean(name = "oidcUserProfileViewRenderer")
     @Bean
+    @RefreshScope
     public OAuth20UserProfileViewRenderer oidcUserProfileViewRenderer() {
         return new OidcUserProfileViewRenderer(casProperties.getAuthn().getOauth(),
             servicesManager.getIfAvailable(),

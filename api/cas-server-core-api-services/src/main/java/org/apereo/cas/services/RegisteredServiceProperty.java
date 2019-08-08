@@ -36,8 +36,8 @@ public interface RegisteredServiceProperty extends Serializable {
      *
      * @return the value, or null if the collection is empty.
      */
+    @JsonIgnore
     String getValue();
-
 
     /**
      * Gets property value.
@@ -46,6 +46,7 @@ public interface RegisteredServiceProperty extends Serializable {
      * @param clazz the clazz
      * @return the property value
      */
+    @JsonIgnore
     default <T> T getValue(final Class<T> clazz) {
         val value = getValue();
         if (StringUtils.isNotBlank(value)) {
@@ -67,6 +68,7 @@ public interface RegisteredServiceProperty extends Serializable {
      *
      * @return the property value
      */
+    @JsonIgnore
     default boolean getBooleanValue() {
         val value = getValue();
         if (StringUtils.isNotBlank(value)) {
