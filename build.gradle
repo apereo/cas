@@ -258,8 +258,6 @@ subprojects {
                 failOnVersionConflict()
             }
             preferProjectModules()
-            cacheDynamicVersionsFor 0, "days"
-            cacheChangingModulesFor 0, "days"
 
             /**
              * Required for all JRadius modules
