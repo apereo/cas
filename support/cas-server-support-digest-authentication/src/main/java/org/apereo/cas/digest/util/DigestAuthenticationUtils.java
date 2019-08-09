@@ -33,7 +33,7 @@ public class DigestAuthenticationUtils {
     }
 
     /**
-     * Create cnonce string.
+     * Create c-nonce string.
      *
      * @return the cnonce
      */

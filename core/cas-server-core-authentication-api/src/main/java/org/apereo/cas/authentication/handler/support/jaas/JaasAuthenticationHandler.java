@@ -27,7 +27,7 @@ import java.security.URIParameter;
 import java.util.Arrays;
 
 /**
- * JAAS Authentication Handler for CAAS. This is a simple bridge from CAS'
+ * JAAS Authentication Handler for CAS. This is a simple bridge from CAS'
  * authentication to JAAS.
  * <p>
  * Using the JAAS Authentication Handler requires you to configure the
