@@ -1,6 +1,8 @@
 package org.apereo.cas.oidc.authn;
 
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.authenticator.OAuth20AccessTokenAuthenticator;
+import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.ticket.OAuthTokenSigningAndEncryptionService;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -13,6 +15,8 @@ import org.pac4j.core.context.WebContext;
 import org.pac4j.core.credentials.TokenCredentials;
 import org.pac4j.core.profile.CommonProfile;
 
+import java.util.Optional;
+
 /**
  * This is {@link OidcAccessTokenAuthenticator}.
  *
@@ -22,10 +26,14 @@ import org.pac4j.core.profile.CommonProfile;
 @Slf4j
 public class OidcAccessTokenAuthenticator extends OAuth20AccessTokenAuthenticator {
     private final OAuthTokenSigningAndEncryptionService idTokenSigningAndEncryptionService;
+    private final ServicesManager servicesManager;
 
-    public OidcAccessTokenAuthenticator(final TicketRegistry ticketRegistry, final OAuthTokenSigningAndEncryptionService signingAndEncryptionService) {
+    public OidcAccessTokenAuthenticator(final TicketRegistry ticketRegistry,
+                                        final OAuthTokenSigningAndEncryptionService signingAndEncryptionService,
+                                        final ServicesManager servicesManager) {
         super(ticketRegistry);
         this.idTokenSigningAndEncryptionService = signingAndEncryptionService;
+        this.servicesManager = servicesManager;
     }
 
     @Override
@@ -49,7 +57,8 @@ public class OidcAccessTokenAuthenticator extends OAuth20AccessTokenAuthenticato
      */
     protected void validateIdTokenIfAny(final AccessToken accessToken, final CommonProfile profile) throws MalformedClaimException {
         if (StringUtils.isNotBlank(accessToken.getIdToken())) {
-            val idTokenResult = idTokenSigningAndEncryptionService.validate(accessToken.getIdToken());
+            val service = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, accessToken.getClientId());
+            val idTokenResult = idTokenSigningAndEncryptionService.decode(accessToken.getIdToken(), Optional.ofNullable(service));
             profile.setId(idTokenResult.getSubject());
             profile.addAttributes(idTokenResult.getClaimsMap());
         }
