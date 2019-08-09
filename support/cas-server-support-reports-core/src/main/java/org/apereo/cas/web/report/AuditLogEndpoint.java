@@ -66,7 +66,7 @@ public class AuditLogEndpoint extends BaseCasActuatorEndpoint {
 
     /**
      * Gets Audit logs for the passed interval subtracted from current time.  Entries are then filtered to those
-     * that match the reqular expressions passed in the json body.
+     * that match the regular expressions passed in the json body.
      *
      * @param interval - Interval subtracted from current time
      * @param actionPerformed - actionPerformed that was logged

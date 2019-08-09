@@ -15,23 +15,10 @@ import lombok.Getter;
 @Getter
 class NoOpCipherExecutor<I, O> implements CipherExecutor<I, O> {
 
-    private static volatile CipherExecutor INSTANCE;
-
     /**
-     * Gets instance.
-     *
-     * @return the instance
+     * Static instance.
      */
-    static <I, O> CipherExecutor<I, O> getInstance() {
-        if (INSTANCE == null) {
-            synchronized (NoOpCipherExecutor.class) {
-                if (INSTANCE == null) {
-                    INSTANCE = new NoOpCipherExecutor<>();
-                }
-            }
-        }
-        return INSTANCE;
-    }
+    public static final CipherExecutor INSTANCE = new NoOpCipherExecutor();
 
     @Override
     public O encode(final I value, final Object[] parameters) {

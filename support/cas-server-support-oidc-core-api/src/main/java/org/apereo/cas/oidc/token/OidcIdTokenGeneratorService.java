@@ -27,6 +27,7 @@ import org.pac4j.core.profile.UserProfile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.stream.Stream;
@@ -129,7 +130,8 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService {
 
         LOGGER.trace("Comparing principal attributes [{}] with supported claims [{}]", principal.getAttributes(), oidc.getClaims());
 
-        principal.getAttributes().entrySet().stream()
+        principal.getAttributes().entrySet()
+            .stream()
             .filter(entry -> {
                 if (oidc.getClaims().contains(entry.getKey())) {
                     LOGGER.trace("Found supported claim [{}]", entry.getKey());
@@ -138,7 +140,15 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService {
                 LOGGER.warn("Claim [{}] is not defined as a supported claim in CAS configuration. Skipping...", entry.getKey());
                 return false;
             })
-            .forEach(entry -> claims.setClaim(entry.getKey(), entry.getValue()));
+            .forEach(entry -> {
+                val claimValue = CollectionUtils.toCollection(entry.getValue());
+                if (claimValue.size() == 1) {
+                    val value = CollectionUtils.firstElement(claimValue);
+                    value.ifPresent(v -> claims.setClaim(entry.getKey(), v));
+                } else {
+                    claims.setClaim(entry.getKey(), claimValue);
+                }
+            });
 
         if (!claims.hasClaim(OidcConstants.CLAIM_PREFERRED_USERNAME)) {
             claims.setClaim(OidcConstants.CLAIM_PREFERRED_USERNAME, principal.getId());
