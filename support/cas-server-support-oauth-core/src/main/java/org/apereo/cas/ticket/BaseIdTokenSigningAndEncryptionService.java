@@ -113,7 +113,7 @@ public abstract class BaseIdTokenSigningAndEncryptionService implements IdTokenS
             throw new IllegalArgumentException("Claims do not container an issuer");
         }
 
-        if (claims.getIssuer().equalsIgnoreCase(this.issuer)) {
+        if (!claims.getIssuer().equalsIgnoreCase(this.issuer)) {
             throw new IllegalArgumentException("Issuer assigned to claims does not match " + this.issuer);
         }
 
