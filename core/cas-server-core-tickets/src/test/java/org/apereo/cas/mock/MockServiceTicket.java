@@ -53,7 +53,7 @@ public class MockServiceTicket implements ServiceTicket, TicketState {
         this.id = id;
         this.ticketGrantingTicket = parent;
         this.creationTime = ZonedDateTime.now(ZoneOffset.UTC);
-        this.expirationPolicy = policy == null ? new NeverExpiresExpirationPolicy() : policy;
+        this.expirationPolicy = policy == null ? NeverExpiresExpirationPolicy.INSTANCE : policy;
     }
 
     @Override

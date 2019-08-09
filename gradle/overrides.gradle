@@ -8,7 +8,7 @@
   dependencies match that of CAS. 
  */
 ext["hibernateVersion"] = "5.4.3.Final"
-ext["hazelcastVersion"] = "3.12.1"
+ext["hazelcastVersion"] = "3.12.2"
 ext["infinispanVersion"] = "9.4.15.Final"
 
 ext["springVersion"] = "5.2.0.RC1"
@@ -30,9 +30,9 @@ ext["logbackVersion"] = "1.3.0-alpha4"
 ext["caffeinVersion"] = "2.7.0"
 ext["couchbaseVersion"] = "2.7.4"
 
-ext["mysqlVersion"] = "8.0.16"
+ext["mysqlVersion"] = "8.0.17"
 ext["postgresqlVersion"] = "42.2.6"
-ext["mariaDbVersion"] = "2.4.2"
+ext["mariaDbVersion"] = "2.4.3"
 ext["jtdsVersion"] = "1.3.1"
 ext["mssqlServerVersion"] = "7.2.1.jre11"
 ext["mongoDriverVersion"] = "3.10.2"
