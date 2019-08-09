@@ -137,7 +137,7 @@ public class SamlConfiguration {
             StandardCharsets.UTF_8.name(),
             authenticationAttributeReleasePolicy.getIfAvailable(),
             authenticationServiceSelectionPlan.getIfAvailable(),
-            new NoOpProtocolAttributesRenderer(),
+            NoOpProtocolAttributesRenderer.INSTANCE,
             samlResponseBuilder());
     }
 
@@ -151,7 +151,7 @@ public class SamlConfiguration {
             StandardCharsets.UTF_8.name(),
             authenticationAttributeReleasePolicy.getIfAvailable(),
             authenticationServiceSelectionPlan.getIfAvailable(),
-            new NoOpProtocolAttributesRenderer(),
+            NoOpProtocolAttributesRenderer.INSTANCE,
             samlResponseBuilder());
     }
 

@@ -47,7 +47,7 @@ public class CasCookieConfiguration {
         if (casProperties.getTgc().getCrypto().isEnabled()) {
             return new DefaultCasCookieValueManager(cookieCipherExecutor(), casProperties.getTgc());
         }
-        return new NoOpCookieValueManager();
+        return NoOpCookieValueManager.INSTANCE;
     }
 
     @ConditionalOnMissingBean(name = "cookieCipherExecutor")

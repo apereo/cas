@@ -98,11 +98,11 @@ public class CasKryoTranscoderTests {
         val expectedTGT = new TicketGrantingTicketImpl(TGT_ID,
             RegisteredServiceTestUtils.getService(),
             null, authentication,
-            new NeverExpiresExpirationPolicy());
+            NeverExpiresExpirationPolicy.INSTANCE);
 
         val serviceTicket = expectedTGT.grantServiceTicket(ST_ID,
             RegisteredServiceTestUtils.getService(),
-            new NeverExpiresExpirationPolicy(), false, true);
+            NeverExpiresExpirationPolicy.INSTANCE, false, true);
         var encoded = transcoder.encode(expectedTGT);
         var decoded = transcoder.decode(encoded);
 
