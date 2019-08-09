@@ -21,6 +21,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import java.util.Optional;
+
 /**
  * This is {@link OidcLogoutEndpointController}.
  *
@@ -51,7 +53,7 @@ public class OidcLogoutEndpointController extends BaseOAuth20Controller {
                                       final HttpServletRequest request, final HttpServletResponse response) {
 
         if (StringUtils.isNotBlank(idToken)) {
-            val claims = getOAuthConfigurationContext().getIdTokenSigningAndEncryptionService().validate(idToken);
+            val claims = getOAuthConfigurationContext().getIdTokenSigningAndEncryptionService().decode(idToken, Optional.empty());
 
             val clientId = claims.getStringClaimValue(OAuth20Constants.CLIENT_ID);
 

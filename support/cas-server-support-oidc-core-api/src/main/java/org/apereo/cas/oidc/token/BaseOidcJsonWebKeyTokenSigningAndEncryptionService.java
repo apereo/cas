@@ -3,12 +3,14 @@ package org.apereo.cas.oidc.token;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.ticket.BaseTokenSigningAndEncryptionService;
+import org.apereo.cas.util.EncodingUtils;
 
 import com.github.benmanes.caffeine.cache.LoadingCache;
+import com.nimbusds.jwt.EncryptedJWT;
+import com.nimbusds.jwt.JWTParser;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.PublicJsonWebKey;
 import org.jose4j.jwk.RsaJsonWebKey;
 import org.jose4j.jws.JsonWebSignature;
@@ -32,10 +34,10 @@ public abstract class BaseOidcJsonWebKeyTokenSigningAndEncryptionService extends
     /**
      * The service keystore for OIDC tokens.
      */
-    protected final LoadingCache<OidcRegisteredService, Optional<RsaJsonWebKey>> serviceJsonWebKeystoreCache;
+    protected final LoadingCache<OAuthRegisteredService, Optional<RsaJsonWebKey>> serviceJsonWebKeystoreCache;
 
     public BaseOidcJsonWebKeyTokenSigningAndEncryptionService(final LoadingCache<String, Optional<RsaJsonWebKey>> defaultJsonWebKeystoreCache,
-                                                              final LoadingCache<OidcRegisteredService, Optional<RsaJsonWebKey>> serviceJsonWebKeystoreCache,
+                                                              final LoadingCache<OAuthRegisteredService, Optional<RsaJsonWebKey>> serviceJsonWebKeystoreCache,
                                                               final String issuer) {
         super(issuer);
         this.defaultJsonWebKeystoreCache = defaultJsonWebKeystoreCache;
@@ -97,13 +99,27 @@ public abstract class BaseOidcJsonWebKeyTokenSigningAndEncryptionService extends
         return jws.getCompactSerialization();
     }
 
+    @SneakyThrows
+    @Override
+    public JwtClaims decode(final String token, final Optional<OAuthRegisteredService> service) {
+        if (service.isPresent()) {
+            var jwt = JWTParser.parse(token);
+            if (jwt instanceof EncryptedJWT) {
+                val encryptionKey = getJsonWebKeyForEncryption(service.get());
+                val decoded = EncodingUtils.decryptJwtValue(encryptionKey.getPrivateKey(), token);
+                return super.decode(decoded, service);
+            }
+        }
+        return super.decode(token, service);
+    }
+
     /**
      * Gets json web key for encryption.
      *
      * @param svc the svc
      * @return the json web key for encryption
      */
-    protected JsonWebKey getJsonWebKeyForEncryption(final OidcRegisteredService svc) {
+    protected PublicJsonWebKey getJsonWebKeyForEncryption(final OAuthRegisteredService svc) {
         LOGGER.debug("Service [{}] is set to encrypt tokens", svc);
         val jwks = this.serviceJsonWebKeystoreCache.get(svc);
         if (Objects.requireNonNull(jwks).isEmpty()) {

@@ -2,6 +2,7 @@ package org.apereo.cas.oidc.token;
 
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20RegisteredServiceJwtAccessTokenCipherExecutor;
 
 import com.github.benmanes.caffeine.cache.LoadingCache;
@@ -30,7 +31,7 @@ public class OidcRegisteredServiceJwtAccessTokenCipherExecutor extends OAuth20Re
     /**
      * The service keystore for OIDC tokens.
      */
-    protected final LoadingCache<OidcRegisteredService, Optional<RsaJsonWebKey>> serviceJsonWebKeystoreCache;
+    protected final LoadingCache<OAuthRegisteredService, Optional<RsaJsonWebKey>> serviceJsonWebKeystoreCache;
 
     /**
      * OIDC issuer.

@@ -1,6 +1,7 @@
 package org.apereo.cas.oidc.jwks;
 
 import org.apereo.cas.services.OidcRegisteredService;
+import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 
 import com.github.benmanes.caffeine.cache.CacheLoader;
 import lombok.NonNull;
@@ -19,10 +20,11 @@ import java.util.Optional;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class OidcServiceJsonWebKeystoreCacheLoader implements CacheLoader<OidcRegisteredService, Optional<RsaJsonWebKey>> {
+public class OidcServiceJsonWebKeystoreCacheLoader implements CacheLoader<OAuthRegisteredService, Optional<RsaJsonWebKey>> {
 
     @Override
-    public Optional<RsaJsonWebKey> load(final @NonNull OidcRegisteredService svc) {
+    public Optional<RsaJsonWebKey> load(final @NonNull OAuthRegisteredService service) {
+        val svc = (OidcRegisteredService) service;
         val jwks = OidcJsonWebKeySetUtils.getJsonWebKeySet(svc);
         if (jwks.isEmpty() || jwks.get().getJsonWebKeys().isEmpty()) {
             return Optional.empty();

@@ -23,7 +23,7 @@ import java.util.Optional;
 public class OidcIdTokenSigningAndEncryptionService extends BaseOidcJsonWebKeyTokenSigningAndEncryptionService {
 
     public OidcIdTokenSigningAndEncryptionService(final LoadingCache<String, Optional<RsaJsonWebKey>> defaultJsonWebKeystoreCache,
-                                                  final LoadingCache<OidcRegisteredService, Optional<RsaJsonWebKey>> serviceJsonWebKeystoreCache,
+                                                  final LoadingCache<OAuthRegisteredService, Optional<RsaJsonWebKey>> serviceJsonWebKeystoreCache,
                                                   final String issuer) {
         super(defaultJsonWebKeystoreCache, serviceJsonWebKeystoreCache, issuer);
     }

@@ -28,7 +28,7 @@ public class OidcUserProfileSigningAndEncryptionService extends BaseOidcJsonWebK
     public static final String USER_INFO_RESPONSE_ENCRYPTION_ENCODING_DEFAULT = "A128CBC-HS256";
 
     public OidcUserProfileSigningAndEncryptionService(final LoadingCache<String, Optional<RsaJsonWebKey>> defaultJsonWebKeystoreCache,
-                                                      final LoadingCache<OidcRegisteredService, Optional<RsaJsonWebKey>> serviceJsonWebKeystoreCache,
+                                                      final LoadingCache<OAuthRegisteredService, Optional<RsaJsonWebKey>> serviceJsonWebKeystoreCache,
                                                       final String issuer) {
         super(defaultJsonWebKeystoreCache, serviceJsonWebKeystoreCache, issuer);
     }
