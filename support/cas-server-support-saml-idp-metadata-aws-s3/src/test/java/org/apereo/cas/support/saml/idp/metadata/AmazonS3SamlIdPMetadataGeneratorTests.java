@@ -23,6 +23,7 @@ import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
+import com.amazonaws.services.s3.internal.SkipMd5CheckStrategy;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,17 +74,17 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnabledIfContinuousIntegration
 @Tag("AmazonWebServices")
 public class AmazonS3SamlIdPMetadataGeneratorTests {
+    static {
+        System.setProperty(SkipMd5CheckStrategy.DISABLE_GET_OBJECT_MD5_VALIDATION_PROPERTY, "true");
+        System.setProperty("com.amazonaws.services.s3.disableGetObjectMD5Validation", "true");
+    }
+
     @Autowired
     @Qualifier("samlIdPMetadataLocator")
     protected SamlIdPMetadataLocator samlIdPMetadataLocator;
-
     @Autowired
     @Qualifier("samlIdPMetadataGenerator")
     private SamlIdPMetadataGenerator samlIdPMetadataGenerator;
-
-    static {
-        System.setProperty("com.amazonaws.services.s3.disableGetObjectMD5Validation", "true");
-    }
 
     @Test
     public void verifyOperation() {
