@@ -10,7 +10,7 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
- * Action that is responsible for determing if this MFA provider for the current subflow can
+ * Action that is responsible for determining if this MFA provider for the current subflow can
  * be bypassed for the user attempting to login into the service.
  *
  * @author Travis Schmidt
