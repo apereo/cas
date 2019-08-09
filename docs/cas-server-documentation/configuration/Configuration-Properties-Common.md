@@ -66,6 +66,17 @@ in each case to learn the exact unit of measure.
 # ${configurationKey}.httpOnly=true
 ```                               
 
+## Job Scheduling
+
+A number of CAS components are given the ability to schedule background jobs to clean tokens, remove records, etc.
+The behavior of the scheduler can be controlled using the following settings:
+
+```properties
+# ${configurationKey}.schedule.startDelay=PT10S
+# ${configurationKey}.schedule.repeatInterval=PT60S
+# ${configurationKey}.schedule.enabled=true
+```
+
 ## Authentication Throttling
 
 Certain functionality in CAS, such as [OAuth](../installation/OAuth-OpenId-Authentication.html) 

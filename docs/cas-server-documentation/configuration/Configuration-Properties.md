@@ -1401,14 +1401,14 @@ To learn more about this topic, [please review this guide](../installation/Confi
 
 ```properties
 # cas.authn.throttle.usernameParameter=username
-# cas.authn.throttle.schedule.startDelay=PT10S
-# cas.authn.throttle.schedule.repeatInterval=PT20S
 # cas.authn.throttle.appCode=CAS
 
 # cas.authn.throttle.failure.threshold=100
 # cas.authn.throttle.failure.code=AUTHENTICATION_FAILED
 # cas.authn.throttle.failure.rangeSeconds=60
 ```
+
+Scheduler settings for this feature are available [here](Configuration-Properties-Common.html#job-scheduling) under the configuration key `cas.authn.throttle`.
 
 ### Bucket4j
 
@@ -2661,13 +2661,9 @@ The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`. Signing & encrypt
 #### Cleaner
 
 A cleaner process is scheduled to run in the background to clean up expired and stale tickets.
-This section controls how that process should behave.
+This section controls how that process should behave. Scheduler settings for this feature 
+are available [here](Configuration-Properties-Common.html#job-scheduling) under the configuration key `cas.authn.mfa.trusted.cleaner`.
 
-```properties
-# cas.authn.mfa.trusted.cleaner.schedule.startDelay=10000
-# cas.authn.mfa.trusted.cleaner.schedule.repeatInterval=60000
-# cas.authn.mfa.trusted.cleaner.enabled=true
-```
 
 ### Simple Multifactor Authentication
 
@@ -2702,14 +2698,10 @@ To learn more about this topic, [please review this guide](../mfa/GoogleAuthenti
 
 # cas.authn.mfa.gauth.name=
 # cas.authn.mfa.gauth.order=
-
-# cas.authn.mfa.gauth.cleaner.enabled=true
-# cas.authn.mfa.gauth.cleaner.schedule.startDelay=20000
-# cas.authn.mfa.gauth.cleaner.schedule.repeatInterval=60000
 ```
 
 Multifactor authentication bypass settings for this provider are available [here](Configuration-Properties-Common.html#multifactor-authentication-bypass)
-under the configuration key `cas.authn.mfa.gauth`.
+under the configuration key `cas.authn.mfa.gauth`. Scheduler settings for this feature are available [here](Configuration-Properties-Common.html#job-scheduling) under the configuration key `cas.authn.mfa.gauth.cleaner`.
 
 #### Signing & Encryption
 
@@ -2873,11 +2865,7 @@ under the configuration key `cas.authn.mfa.u2f`.
 
 ### FIDO U2F Cleaner
 
-```properties
-# cas.authn.mfa.u2f.cleaner.schedule.enabled=true
-# cas.authn.mfa.u2f.cleaner.schedule.startDelay=PT10S
-# cas.authn.mfa.u2f.cleaner.schedule.repeatInterval=PT60S
-```
+Scheduler settings for this feature are available [here](Configuration-Properties-Common.html#job-scheduling) under the configuration key `cas.authn.mfa.u2f.cleaner`.
 
 ### FIDO U2F CouchDb
 
@@ -3751,6 +3739,8 @@ under the configuration key `cas.audit.jdbc`.
 # cas.audit.jdbc.propagationBehaviorName=PROPAGATION_REQUIRED
 ```
 
+Scheduler settings for this feature are available [here](Configuration-Properties-Common.html#job-scheduling) under the configuration key `cas.audit.jdbc`.
+
 ### REST Audits
 
 Store audit logs inside a database. RESTful settings for this feature are 
@@ -3979,14 +3969,13 @@ See [this guide](../services/Service-Management.html) to learn more.
 ```properties
 # cas.serviceRegistry.watcherEnabled=true
 
-# cas.serviceRegistry.schedule.repeatInterval=120000
-# cas.serviceRegistry.schedule.startDelay=15000
-
 # Auto-initialize the registry from default JSON service definitions
 # cas.serviceRegistry.initFromJson=false
 
 # cas.serviceRegistry.managementType=DEFAULT|DOMAIN
 ```
+
+Scheduler settings for this feature are available [here](Configuration-Properties-Common.html#job-scheduling) under the configuration key `cas.serviceRegistry`.
 
 ### Service Registry Notifications
 
@@ -4153,13 +4142,8 @@ The encryption key must be randomly-generated string of size `16`. The signing k
 ### Cleaner
 
 A cleaner process is scheduled to run in the background to clean up expired and stale tickets.
-This section controls how that process should behave.
-
-```properties
-# cas.ticket.registry.cleaner.schedule.startDelay=10000
-# cas.ticket.registry.cleaner.schedule.repeatInterval=60000
-# cas.ticket.registry.cleaner.schedule.enabled=true
-```
+This section controls how that process should behave. Scheduler settings for this feature are 
+available [here](Configuration-Properties-Common.html#job-scheduling) under the configuration key `cas.ticket.registry.cleaner`.
 
 ### JPA Ticket Registry
 
@@ -4873,13 +4857,13 @@ To learn more about this topic, [please review this guide](../integration/Shibbo
 
 ```properties
 # cas.samlMetadataUi.requireValidMetadata=true
-# cas.samlMetadataUi.schedule.repeatInterval=120000
-# cas.samlMetadataUi.schedule.startDelay=30000
 # cas.samlMetadataUi.resources=classpath:/sp-metadata::classpath:/pub.key,http://md.incommon.org/InCommon/InCommon-metadata.xml::classpath:/inc-md-pub.key
 # cas.samlMetadataUi.maxValidity=0
 # cas.samlMetadataUi.requireSignedRoot=false
 # cas.samlMetadataUi.parameter=entityId
-```
+```         
+
+Scheduler settings for this feature are available [here](Configuration-Properties-Common.html#job-scheduling) under the configuration key `cas.samlMetadataUi`.
 
 ## Eureka Service Discovery
 
