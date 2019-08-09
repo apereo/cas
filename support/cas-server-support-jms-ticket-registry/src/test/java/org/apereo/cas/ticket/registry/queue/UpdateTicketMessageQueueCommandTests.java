@@ -22,7 +22,7 @@ public class UpdateTicketMessageQueueCommandTests extends AbstractTicketMessageQ
     @Test
     public void verifyUpdateTicket() {
         TicketGrantingTicket ticket = new TicketGrantingTicketImpl("TGT", CoreAuthenticationTestUtils.getAuthentication(),
-            new NeverExpiresExpirationPolicy());
+            NeverExpiresExpirationPolicy.INSTANCE);
         val cmd = new UpdateTicketMessageQueueCommand(new StringBean(), ticket);
         cmd.execute(ticketRegistry);
         ticket = ticketRegistry.getTicket(ticket.getId(), ticket.getClass());

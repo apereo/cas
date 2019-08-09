@@ -61,7 +61,7 @@ public class UniquePrincipalAuthenticationPolicyTests {
     public void verifyPolicyFailsUserFoundOnce() {
         this.ticketRegistry.deleteAll();
         this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TGT-1", CoreAuthenticationTestUtils.getAuthentication("casuser"),
-            new NeverExpiresExpirationPolicy()));
+            NeverExpiresExpirationPolicy.INSTANCE));
         val p = new UniquePrincipalAuthenticationPolicy(this.ticketRegistry);
         assertFalse(p.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication("casuser"), new LinkedHashSet<>()));
     }
