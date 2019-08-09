@@ -5,7 +5,7 @@ pull_request_rules:
     - status-success=WIP
     - "#changes-requested-reviews-by=0"
     - base=master
-    - label=dependencies
+    - label=Dependencies & Modules
   actions:
     merge:
       method: merge
@@ -17,7 +17,7 @@ pull_request_rules:
     - status-success=WIP
     - "#changes-requested-reviews-by=0"
     - base=master
-    - label=dependencies
+    - label=Dependencies & Modules
   actions:
     merge:
       method: merge
