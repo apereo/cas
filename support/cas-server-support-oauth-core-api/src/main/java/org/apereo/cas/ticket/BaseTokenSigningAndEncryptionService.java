@@ -19,6 +19,7 @@ import org.jose4j.jwt.JwtClaims;
 
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
+import java.util.Optional;
 
 /**
  * This is {@link BaseTokenSigningAndEncryptionService}.
@@ -99,7 +100,7 @@ public abstract class BaseTokenSigningAndEncryptionService implements OAuthToken
 
     @Override
     @SneakyThrows
-    public JwtClaims validate(final String token) {
+    public JwtClaims decode(final String token, final Optional<OAuthRegisteredService> service) {
         val jsonWebKey = getJsonWebKeySigningKey();
         if (jsonWebKey.getPublicKey() == null) {
             throw new IllegalArgumentException("JSON web key used to validate the id token signature has no associated public key");
@@ -111,12 +112,12 @@ public abstract class BaseTokenSigningAndEncryptionService implements OAuthToken
         val result = new String(jwt, StandardCharsets.UTF_8);
         val claims = JwtClaims.parse(result);
 
-        LOGGER.debug("Validated claims as [{}]", claims);
         if (StringUtils.isBlank(claims.getIssuer())) {
             throw new IllegalArgumentException("Claims do not container an issuer");
         }
 
-        if (claims.getIssuer().equalsIgnoreCase(this.issuer)) {
+        LOGGER.debug("Validating claims as [{}] with issuer [{}]", claims, claims.getIssuer());
+        if (!claims.getIssuer().equalsIgnoreCase(this.issuer)) {
             throw new IllegalArgumentException("Issuer assigned to claims does not match " + this.issuer);
         }
 
