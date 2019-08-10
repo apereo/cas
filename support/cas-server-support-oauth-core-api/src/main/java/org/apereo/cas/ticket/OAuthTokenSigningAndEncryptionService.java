@@ -5,6 +5,8 @@ import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jwt.JwtClaims;
 
+import java.util.Optional;
+
 /**
  * This is {@link OAuthTokenSigningAndEncryptionService}.
  *
@@ -15,19 +17,20 @@ public interface OAuthTokenSigningAndEncryptionService {
     /**
      * Sign id token.
      *
-     * @param svc    the service
+     * @param service    the service
      * @param claims the claims
      * @return the string
      */
-    String encode(OAuthRegisteredService svc, JwtClaims claims);
+    String encode(OAuthRegisteredService service, JwtClaims claims);
 
     /**
      * Decode jwt claims.
      *
-     * @param token the token
+     * @param token   the token
+     * @param service the service
      * @return the jwt claims
      */
-    JwtClaims validate(String token);
+    JwtClaims decode(String token, Optional<OAuthRegisteredService> service);
 
     /**
      * Gets json web key signing algorithm.

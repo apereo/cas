@@ -6,6 +6,8 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -26,8 +28,9 @@ public class OidcIdTokenSigningAndEncryptionServiceTests extends AbstractOidcTes
     @Test
     public void verifyValidationOperation() {
         val claims = getClaims();
-        val result = oidcTokenSigningAndEncryptionService.encode(getOidcRegisteredService(true, false), claims);
-        val jwt = oidcTokenSigningAndEncryptionService.validate(result);
+        val oidcRegisteredService = getOidcRegisteredService(true, false);
+        val result = oidcTokenSigningAndEncryptionService.encode(oidcRegisteredService, claims);
+        val jwt = oidcTokenSigningAndEncryptionService.decode(result, Optional.of(oidcRegisteredService));
         assertNotNull(jwt);
     }
 }

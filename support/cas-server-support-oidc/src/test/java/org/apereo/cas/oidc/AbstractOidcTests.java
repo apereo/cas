@@ -33,15 +33,21 @@ import org.apereo.cas.oidc.config.OidcConfiguration;
 import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettings;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeystoreGeneratorService;
 import org.apereo.cas.services.OidcRegisteredService;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServiceRegistryListener;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.web.config.CasThemesConfiguration;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
+import org.apereo.cas.support.oauth.profile.OAuth20UserProfileDataCreator;
+import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.support.oauth.web.views.OAuth20UserProfileViewRenderer;
 import org.apereo.cas.ticket.IdTokenGeneratorService;
 import org.apereo.cas.ticket.OAuthTokenSigningAndEncryptionService;
+import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.code.OAuthCodeFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
@@ -65,7 +71,10 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.execution.Action;
 
+import java.util.List;
 import java.util.Optional;
+
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link AbstractOidcTests}.
@@ -115,6 +124,14 @@ import java.util.Optional;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public abstract class AbstractOidcTests {
     @Autowired
+    @Qualifier("oidcUserProfileViewRenderer")
+    protected OAuth20UserProfileViewRenderer oidcUserProfileViewRenderer;
+
+    @Autowired
+    @Qualifier("oidcUserProfileDataCreator")
+    protected OAuth20UserProfileDataCreator oidcUserProfileDataCreator;
+
+    @Autowired
     @Qualifier("profileScopeToAttributesFilter")
     protected OAuth20ProfileScopeToAttributesFilter profileScopeToAttributesFilter;
 
@@ -143,7 +160,7 @@ public abstract class AbstractOidcTests {
 
     @Autowired
     @Qualifier("oidcServiceJsonWebKeystoreCache")
-    protected LoadingCache<OidcRegisteredService, Optional<RsaJsonWebKey>> oidcServiceJsonWebKeystoreCache;
+    protected LoadingCache<OAuthRegisteredService, Optional<RsaJsonWebKey>> oidcServiceJsonWebKeystoreCache;
 
     @Autowired
     @Qualifier("oidcJsonWebKeystoreGeneratorService")
@@ -173,11 +190,6 @@ public abstract class AbstractOidcTests {
     @Qualifier("oidcIdTokenGenerator")
     protected IdTokenGeneratorService oidcIdTokenGenerator;
 
-    @BeforeEach
-    public void initialize() {
-        servicesManager.save(getOidcRegisteredService());
-    }
-
     protected static OidcRegisteredService getOidcRegisteredService() {
         return getOidcRegisteredService(true, true);
     }
@@ -203,6 +215,8 @@ public abstract class AbstractOidcTests {
         svc.setInformationUrl("info");
         svc.setPrivacyUrl("privacy");
         svc.setJwks("classpath:keystore.jwks");
+        svc.setScopes(CollectionUtils.wrapSet(OidcConstants.StandardScopes.EMAIL.getScope(),
+            OidcConstants.StandardScopes.PROFILE.getScope()));
         return svc;
     }
 
@@ -226,5 +240,23 @@ public abstract class AbstractOidcTests {
         claims.setSubject(subject);
         claims.setStringClaim(OAuth20Constants.CLIENT_ID, clientId);
         return claims;
+    }
+
+    protected static AccessToken getAccessToken() {
+        val principal = RegisteredServiceTestUtils.getPrincipal("casuser", CollectionUtils.wrap("email", List.of("casuser@example.org")));
+        val accessToken = mock(AccessToken.class);
+        when(accessToken.getAuthentication()).thenReturn(RegisteredServiceTestUtils.getAuthentication(principal));
+        when(accessToken.getService()).thenReturn(RegisteredServiceTestUtils.getService("https://oauth.example.org"));
+        when(accessToken.getId()).thenReturn("AT-123456");
+        when(accessToken.getClientId()).thenReturn("clientid");
+        when(accessToken.getScopes()).thenReturn(List.of(OidcConstants.StandardScopes.EMAIL.getScope(),
+            OidcConstants.StandardScopes.PROFILE.getScope(),
+            OidcConstants.StandardScopes.OPENID.getScope()));
+        return accessToken;
+    }
+
+    @BeforeEach
+    public void initialize() {
+        servicesManager.save(getOidcRegisteredService());
     }
 }

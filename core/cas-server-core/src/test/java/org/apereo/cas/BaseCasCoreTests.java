@@ -98,7 +98,7 @@ public abstract class BaseCasCoreTests {
             private static final long serialVersionUID = -9043565995104313970L;
             @Override
             public ExpirationPolicy buildTicketExpirationPolicy() {
-                return new NeverExpiresExpirationPolicy();
+                return NeverExpiresExpirationPolicy.INSTANCE;
             }
 
             @Override

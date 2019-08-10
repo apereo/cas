@@ -65,7 +65,6 @@ import org.apereo.cas.oidc.web.controllers.token.OidcRevocationEndpointControlle
 import org.apereo.cas.oidc.web.flow.OidcMultifactorAuthenticationTrigger;
 import org.apereo.cas.oidc.web.flow.OidcRegisteredServiceUIAction;
 import org.apereo.cas.oidc.web.flow.OidcWebflowConfigurer;
-import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.ServiceRegistryListener;
 import org.apereo.cas.services.ServicesManager;
@@ -75,6 +74,7 @@ import org.apereo.cas.support.oauth.authenticator.OAuth20CasAuthenticationBuilde
 import org.apereo.cas.support.oauth.authenticator.OAuthAuthenticationClientProvider;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.profile.OAuth20UserProfileDataCreator;
+import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationRequestValidator;
 import org.apereo.cas.support.oauth.validator.token.OAuth20TokenRequestValidator;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
@@ -577,7 +577,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
     }
 
     @Bean
-    public LoadingCache<OidcRegisteredService, Optional<RsaJsonWebKey>> oidcServiceJsonWebKeystoreCache() {
+    public LoadingCache<OAuthRegisteredService, Optional<RsaJsonWebKey>> oidcServiceJsonWebKeystoreCache() {
         return Caffeine.newBuilder()
             .maximumSize(1)
             .expireAfter(new OidcServiceJsonWebKeystoreCacheExpirationPolicy(casProperties))
@@ -598,7 +598,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
     }
 
     @Bean
-    public CacheLoader<OidcRegisteredService, Optional<RsaJsonWebKey>> oidcServiceJsonWebKeystoreCacheLoader() {
+    public CacheLoader<OAuthRegisteredService, Optional<RsaJsonWebKey>> oidcServiceJsonWebKeystoreCacheLoader() {
         return new OidcServiceJsonWebKeystoreCacheLoader();
     }
 
@@ -712,7 +712,8 @@ public class OidcConfiguration implements WebMvcConfigurer {
 
     @Bean
     public Authenticator<TokenCredentials> oAuthAccessTokenAuthenticator() {
-        return new OidcAccessTokenAuthenticator(ticketRegistry.getIfAvailable(), oidcTokenSigningAndEncryptionService());
+        return new OidcAccessTokenAuthenticator(ticketRegistry.getIfAvailable(),
+            oidcTokenSigningAndEncryptionService(), servicesManager.getIfAvailable());
     }
 
     @ConditionalOnMissingBean(name = "oidcCasWebflowExecutionPlanConfigurer")
@@ -728,6 +729,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
 
     @ConditionalOnMissingBean(name = "oidcUserProfileViewRenderer")
     @Bean
+    @RefreshScope
     public OAuth20UserProfileViewRenderer oidcUserProfileViewRenderer() {
         return new OidcUserProfileViewRenderer(casProperties.getAuthn().getOauth(),
             servicesManager.getIfAvailable(),
