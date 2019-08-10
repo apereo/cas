@@ -118,7 +118,7 @@ public abstract class BaseTokenSigningAndEncryptionService implements OAuthToken
 
         LOGGER.debug("Validating claims as [{}] with issuer [{}]", claims, claims.getIssuer());
         if (!claims.getIssuer().equalsIgnoreCase(this.issuer)) {
-            throw new IllegalArgumentException("Issuer assigned to claims does not match " + this.issuer);
+            throw new IllegalArgumentException("Issuer assigned to claims " + claims.getIssuer() + " does not match " + this.issuer);
         }
 
         if (StringUtils.isBlank(claims.getStringClaimValue(OAuth20Constants.CLIENT_ID))) {
