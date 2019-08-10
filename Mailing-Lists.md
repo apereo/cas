@@ -29,12 +29,16 @@ Post to this list if you have a question about installing, configuring, or troub
 
 Always ensure you have enough diagnostics data in your report:
 
-- Have you reported the exact version numbers that exhibit the seemingly-faulty behavior? 
+- Have you reported the **exact CAS version numbers** that exhibit the seemingly-faulty behavior? 
 - Have you described your deployment/development environment in enough detail? 
-- Have you included error logs, screenshots and other useful snippets of your configuration to demonstrate the issue? 
+- Have you included error logs, **debug logs**, screenshots and other useful snippets of your configuration to demonstrate the issue? 
 - Have you included steps to explain how one might duplicate the problem? 
 - Have you prepared unit tests to recreate the issue?
 - Have you prepared an overlay project that might allow the project to duplicate the issue? 
+
+Please remember:
+
+> "It doesn't work" doesn't work. Share as much information as possible.
 
 Put another way; readers of your case aren’t necessarily housed in your head! They don’t know what you know. Help them out. Would you want to respond to your own report?
 
@@ -58,7 +62,7 @@ Research the issue and be sure to do your due diligence:
 
 <div class="alert alert-info"><strong>Remember</strong><p>If you have already identified an enhancement or a bug, it is <strong>STRONGLY</strong> recommended that you simply submit a pull request to address the case. There is no need for special ceremony to create separate issues. The pull request <strong>IS</strong> the issue and it will be tracked and tagged as such.</p></div>
 
-If you can, always volunteer to post a patch and work up a solution. Be prepared to follow up to test the produced patch in your environment and always try to provide a confirmation. Simply complaining about something and letting it sit in the issue tracker for someone else to handle isn't going to get you much. If you find something that you deem worth someone else's time to fix for you, be sure to demonstrate the issue is first and foremost worth your own time as well. “It ain’t a problem for me if it ain’t a problem for you”, sort of thing. 
+If you can, [always volunteer to post a patch](/cas/developer/Contributor-Guidelines.html) and work up a solution. Be prepared to follow up to test the produced patch in your environment and always try to provide a confirmation. Simply complaining about something and letting it sit in the issue tracker for someone else to handle isn't going to get you much. If you find something that you deem worth someone else's time to fix for you, be sure to demonstrate the issue is first and foremost worth your own time as well. “It ain’t a problem for me if it ain’t a problem for you”, sort of thing. 
 
 When in doubt, please consult the project Apache v2 license:
 
