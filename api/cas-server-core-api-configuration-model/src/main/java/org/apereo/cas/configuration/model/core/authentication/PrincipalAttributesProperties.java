@@ -65,7 +65,7 @@ public class PrincipalAttributesProperties implements Serializable {
      * <li>{@code REPLACE}: Overwrites existing attribute values, if any.</li>
      * <li>{@code ADD}: Retains existing attribute values if any, and ignores
      * values from subsequent sources in the resolution chain.</li>
-     * <li>{@code MERGE}: Combines all values into a single attribute, essentially creating a multi-valued attribute. </li>
+     * <li>{@code MULTIVALUED}: Combines all values into a single attribute, essentially creating a multi-valued attribute. </li>
      * <li>{@code NONE}: Doesn't merge attributes, ignores attributes from non-authentication attribute repositories </li>
      * </ul>
      */
