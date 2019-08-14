@@ -65,7 +65,7 @@ public class AmazonS3BucketsCloudConfigBootstrapConfigurationTests {
         environment.setProperty(AmazonS3BucketsCloudConfigBootstrapConfiguration.CAS_CONFIGURATION_PREFIX + '.' + "credentialSecretKey", CREDENTIAL_SECRET_KEY);
 
         val builder = new AmazonEnvironmentAwareClientBuilder(AmazonS3BucketsCloudConfigBootstrapConfiguration.CAS_CONFIGURATION_PREFIX, environment);
-        val s3Client = builder.build(AmazonS3ClientBuilder.standard().disableChunkedEncoding(), AmazonS3.class);
+        val s3Client = builder.build(AmazonS3ClientBuilder.standard(), AmazonS3.class);
 
         deleteBucket(s3Client);
 
