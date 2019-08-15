@@ -61,6 +61,7 @@ import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import lombok.val;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
 import org.jose4j.jwe.KeyManagementAlgorithmIdentifiers;
 import org.jose4j.jwk.RsaJsonWebKey;
@@ -131,7 +132,7 @@ import static org.mockito.Mockito.*;
 public abstract class AbstractOidcTests {
     @Autowired
     protected ResourceLoader resourceLoader;
-    
+
     @Autowired
     @Qualifier("oidcUserProfileViewRenderer")
     protected OAuth20UserProfileViewRenderer oidcUserProfileViewRenderer;
@@ -237,11 +238,6 @@ public abstract class AbstractOidcTests {
         return svc;
     }
 
-    protected JwtClaims getClaims() {
-        val clientId = getOidcRegisteredService().getClientId();
-        return getClaims("casuser", casProperties.getAuthn().getOidc().getIssuer(), clientId, clientId);
-    }
-
     protected static JwtClaims getClaims(final String subject, final String issuer,
                                          final String clientId, final String audience) {
         val claims = new JwtClaims();
@@ -259,7 +255,16 @@ public abstract class AbstractOidcTests {
         return claims;
     }
 
+    protected JwtClaims getClaims() {
+        val clientId = getOidcRegisteredService().getClientId();
+        return getClaims("casuser", casProperties.getAuthn().getOidc().getIssuer(), clientId, clientId);
+    }
+
     protected static AccessToken getAccessToken() {
+        return getAccessToken(StringUtils.EMPTY);
+    }
+
+    protected static AccessToken getAccessToken(final String idToken) {
         val principal = RegisteredServiceTestUtils.getPrincipal("casuser", CollectionUtils.wrap("email", List.of("casuser@example.org")));
         val accessToken = mock(AccessToken.class);
         when(accessToken.getAuthentication()).thenReturn(RegisteredServiceTestUtils.getAuthentication(principal));
@@ -270,6 +275,7 @@ public abstract class AbstractOidcTests {
         when(accessToken.getScopes()).thenReturn(List.of(OidcConstants.StandardScopes.EMAIL.getScope(),
             OidcConstants.StandardScopes.PROFILE.getScope(),
             OidcConstants.StandardScopes.OPENID.getScope()));
+        when(accessToken.getIdToken()).thenReturn(idToken);
         return accessToken;
     }
 
@@ -286,6 +292,7 @@ public abstract class AbstractOidcTests {
         when(token.getExpirationPolicy()).thenReturn(NeverExpiresExpirationPolicy.INSTANCE);
         return token;
     }
+
 
     @BeforeEach
     public void initialize() {

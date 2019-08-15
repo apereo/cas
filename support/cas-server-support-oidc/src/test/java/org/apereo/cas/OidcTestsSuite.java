@@ -1,5 +1,7 @@
 package org.apereo.cas;
 
+import org.apereo.cas.oidc.authn.OidcAccessTokenAuthenticatorTests;
+import org.apereo.cas.oidc.authn.OidcClientConfigurationAccessTokenAuthenticatorTests;
 import org.apereo.cas.oidc.authn.OidcClientSecretJwtAuthenticatorTests;
 import org.apereo.cas.oidc.authn.OidcPrivateKeyJwtAuthenticatorTests;
 import org.apereo.cas.oidc.claims.OidcAddressScopeAttributeReleasePolicyTests;
@@ -65,7 +67,9 @@ import org.junit.runner.RunWith;
     OidcEmailScopeAttributeReleasePolicyTests.class,
     OidcPhoneScopeAttributeReleasePolicyTests.class,
     OidcProfileScopeAttributeReleasePolicyTests.class,
-    DefaultOidcAttributeToScopeClaimMapperTests.class
+    DefaultOidcAttributeToScopeClaimMapperTests.class,
+    OidcAccessTokenAuthenticatorTests.class,
+    OidcClientConfigurationAccessTokenAuthenticatorTests.class
 })
 @RunWith(JUnitPlatform.class)
 public class OidcTestsSuite {
