@@ -160,6 +160,9 @@ public class MultifactorAuthenticationUtils {
                                                             final Optional<RequestContext> context,
                                                             final MultifactorAuthenticationProvider provider,
                                                             final Predicate<String> predicate) {
+        if (attributeValue instanceof Collection and attributeValue.size() == 1) {
+            attributeValue = attributeValue.iterator().next();
+        }
         if (!(attributeValue instanceof Collection)) {
             LOGGER.debug("Attribute value [{}] is a single-valued attribute", attributeValue);
             if (predicate.test(attributeValue.toString())) {
