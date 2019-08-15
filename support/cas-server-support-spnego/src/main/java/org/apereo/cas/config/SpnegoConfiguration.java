@@ -22,6 +22,7 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -105,6 +106,7 @@ public class SpnegoConfiguration {
 
     @Bean
     @RefreshScope
+    @ConditionalOnProperty(prefix = "cas.authn.ntlm", name = "enabled", havingValue = "true")
     public AuthenticationHandler ntlmAuthenticationHandler() {
         val ntlmProperties = casProperties.getAuthn().getNtlm();
         return new NtlmAuthenticationHandler(ntlmProperties.getName(),
@@ -148,6 +150,11 @@ public class SpnegoConfiguration {
     @ConditionalOnMissingBean(name = "spnegoAuthenticationEventExecutionPlanConfigurer")
     @Bean
     public AuthenticationEventExecutionPlanConfigurer spnegoAuthenticationEventExecutionPlanConfigurer() {
-        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(spnegoHandler(), spnegoPrincipalResolver());
+        return plan -> {
+            plan.registerAuthenticationHandlerWithPrincipalResolver(spnegoHandler(), spnegoPrincipalResolver());
+            if (casProperties.getAuthn().getNtlm().isEnabled()) {
+                plan.registerAuthenticationHandler(ntlmAuthenticationHandler());
+            }
+        };
     }
 }
