@@ -239,7 +239,7 @@ publishing {
     repositories {
         if (publishReleases) {
             maven {
-                name "Sonatype Releases"
+                name "Sonatype-Releases"
                 url "${sonatypeRepositoryUrl}"
                 credentials {
                     username "${sonatypeUsername}"
@@ -249,7 +249,7 @@ publishing {
         }
         if (publishSnapshots) {
             maven {
-                name "Sonatype Snapshots"
+                name "Sonatype-Snapshots"
                 url "${sonatypeSnapshotsRepositoryUrl}"
                 credentials {
                     username "${sonatypeUsername}"
