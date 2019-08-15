@@ -3,7 +3,6 @@ package org.apereo.cas.util;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.core.io.VfsResource;
 
 import java.io.File;
 import java.time.ZoneOffset;
@@ -57,23 +56,7 @@ public class CasVersion {
         val clazz = CasVersion.class;
         val resource = clazz.getResource(clazz.getSimpleName() + ".class");
         try {
-            if ("file".equals(resource.getProtocol())) {
-                return DateTimeUtils.zonedDateTimeOf(new File(resource.toURI()).lastModified());
-            }
-            if ("jar".equals(resource.getProtocol())) {
-                val path = resource.getPath();
-                val file = new File(path.substring(JAR_PROTOCOL_STARTING_INDEX, path.indexOf('!')));
-                return DateTimeUtils.zonedDateTimeOf(file.lastModified());
-            }
-            if ("vfs".equals(resource.getProtocol())) {
-                val content = resource.openConnection().getContent();
-                val virtualFile = Thread.currentThread().getContextClassLoader().loadClass("org.jboss.vfs.VirtualFile");
-                if (virtualFile.isAssignableFrom(content.getClass())) {
-                    val file = new VfsResource(resource.openConnection().getContent(new Class[] {virtualFile})).getFile();
-                    return DateTimeUtils.zonedDateTimeOf(file.lastModified());
-                }
-                return ZonedDateTime.now(ZoneOffset.UTC);
-            }
+            return DateTimeUtils.zonedDateTimeOf(resource.openConnection().getLastModified());
         } catch (final Exception e) {
             LOGGER.warn(e.getMessage(), e);
         }
