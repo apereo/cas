@@ -1,8 +1,8 @@
 package org.apereo.cas.support.oauth.web.response.accesstoken;
 
+import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
-import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.refreshtoken.RefreshToken;
 
@@ -24,7 +24,7 @@ public class OAuth20TokenGeneratedResult {
     private RefreshToken refreshToken;
     private OAuth20ResponseTypes responseType;
     private OAuth20GrantTypes grantType;
-    private OAuthRegisteredService registeredService;
+    private RegisteredService registeredService;
     private String deviceCode;
     private String userCode;
 
@@ -47,7 +47,7 @@ public class OAuth20TokenGeneratedResult {
         return Optional.ofNullable(grantType);
     }
 
-    public Optional<OAuthRegisteredService> getRegisteredService() {
+    public Optional<RegisteredService> getRegisteredService() {
         return Optional.ofNullable(registeredService);
     }
 
