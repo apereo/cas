@@ -2,8 +2,8 @@ package org.apereo.cas.support.oauth.web.response.accesstoken.response;
 
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
-import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGeneratedResult;
 
 import lombok.Builder;
@@ -21,7 +21,7 @@ import org.springframework.core.io.ResourceLoader;
 public class OAuth20AccessTokenResponseResult {
 
     private final ResourceLoader resourceLoader;
-    private final OAuthRegisteredService registeredService;
+    private final RegisteredService registeredService;
     private final Service service;
     private final OAuth20TokenGeneratedResult generatedToken;
     private final long accessTokenTimeout;
