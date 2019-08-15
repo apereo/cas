@@ -47,4 +47,10 @@ public class NtlmProperties implements Serializable {
      * The order of the authentication handler in the chain.
      */
     private int order = Integer.MAX_VALUE;
+
+    /**
+     * Whether NTLM authentication should be enabled
+     * and registered with CAS as well.
+     */
+    private boolean enabled;
 }
