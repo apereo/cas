@@ -903,7 +903,7 @@ and their results are cached and merged.
 # cas.authn.attributeRepository.expirationTime=30
 # cas.authn.attributeRepository.expirationTimeUnit=MINUTES
 # cas.authn.attributeRepository.maximumCacheSize=10000
-# cas.authn.attributeRepository.merger=REPLACE|ADD|MULTIVALUED
+# cas.authn.attributeRepository.merger=REPLACE|ADD|MULTIVALUED|NONE
 ```
 
 <div class="alert alert-info"><strong>Remember This</strong><p>Note that in certain cases,
@@ -957,7 +957,8 @@ The following merging strategies can be used to resolve conflicts when the same 
 |-------------------------|----------------------------------------------------------------------------------------------------
 | `REPLACE`               | Overwrites existing attribute values, if any.
 | `ADD`                   | Retains existing attribute values if any, and ignores values from subsequent sources in the resolution chain.
-| `MERGE`                 | Combines all values into a single attribute, essentially creating a multi-valued attribute.
+| `MULTIVALUED`           | Combines all values into a single attribute, essentially creating a multi-valued attribute.
+| `NONE`                  | Do not merge attributes, only use attributes retrieved during authentication.
 
 ### Stub
 
