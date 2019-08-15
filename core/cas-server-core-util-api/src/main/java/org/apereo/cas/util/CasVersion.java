@@ -4,7 +4,6 @@ import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
-import java.io.File;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 
@@ -19,8 +18,6 @@ import java.time.ZonedDateTime;
 @Slf4j
 @UtilityClass
 public class CasVersion {
-    private static final int JAR_PROTOCOL_STARTING_INDEX = 5;
-
     /**
      * To string.
      *
