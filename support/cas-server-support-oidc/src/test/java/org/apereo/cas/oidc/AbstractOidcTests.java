@@ -29,6 +29,7 @@ import org.apereo.cas.config.CasThrottlingConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
+import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.oidc.config.OidcConfiguration;
 import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettings;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeystoreGeneratorService;
@@ -41,11 +42,15 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.profile.OAuth20UserProfileDataCreator;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseGenerator;
 import org.apereo.cas.support.oauth.web.views.OAuth20UserProfileViewRenderer;
 import org.apereo.cas.ticket.IdTokenGeneratorService;
 import org.apereo.cas.ticket.OAuthTokenSigningAndEncryptionService;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.code.OAuthCodeFactory;
+import org.apereo.cas.ticket.device.DeviceTokenFactory;
+import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
+import org.apereo.cas.ticket.refreshtoken.RefreshToken;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.config.CasCookieConfiguration;
@@ -67,6 +72,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.execution.Action;
@@ -124,8 +130,15 @@ import static org.mockito.Mockito.*;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public abstract class AbstractOidcTests {
     @Autowired
+    protected ResourceLoader resourceLoader;
+    
+    @Autowired
     @Qualifier("oidcUserProfileViewRenderer")
     protected OAuth20UserProfileViewRenderer oidcUserProfileViewRenderer;
+
+    @Autowired
+    @Qualifier("defaultDeviceTokenFactory")
+    protected DeviceTokenFactory deviceTokenFactory;
 
     @Autowired
     @Qualifier("oidcUserProfileDataCreator")
@@ -177,6 +190,10 @@ public abstract class AbstractOidcTests {
     @Autowired
     @Qualifier("oidcServerDiscoverySettingsFactory")
     protected OidcServerDiscoverySettings oidcServerDiscoverySettings;
+
+    @Autowired
+    @Qualifier("oidcAccessTokenResponseGenerator")
+    protected OAuth20AccessTokenResponseGenerator oidcAccessTokenResponseGenerator;
 
     @Autowired
     @Qualifier("ticketRegistry")
@@ -248,11 +265,26 @@ public abstract class AbstractOidcTests {
         when(accessToken.getAuthentication()).thenReturn(RegisteredServiceTestUtils.getAuthentication(principal));
         when(accessToken.getService()).thenReturn(RegisteredServiceTestUtils.getService("https://oauth.example.org"));
         when(accessToken.getId()).thenReturn("AT-123456");
+        when(accessToken.getTicketGrantingTicket()).thenReturn(new MockTicketGrantingTicket("casuser"));
         when(accessToken.getClientId()).thenReturn("clientid");
         when(accessToken.getScopes()).thenReturn(List.of(OidcConstants.StandardScopes.EMAIL.getScope(),
             OidcConstants.StandardScopes.PROFILE.getScope(),
             OidcConstants.StandardScopes.OPENID.getScope()));
         return accessToken;
+    }
+
+    protected static RefreshToken getRefreshToken() {
+        val principal = RegisteredServiceTestUtils.getPrincipal("casuser", CollectionUtils.wrap("email", List.of("casuser@example.org")));
+        val token = mock(RefreshToken.class);
+        when(token.getAuthentication()).thenReturn(RegisteredServiceTestUtils.getAuthentication(principal));
+        when(token.getService()).thenReturn(RegisteredServiceTestUtils.getService("https://oauth.example.org"));
+        when(token.getId()).thenReturn("RT-123456");
+        when(token.getTicketGrantingTicket()).thenReturn(new MockTicketGrantingTicket("casuser"));
+        when(token.getScopes()).thenReturn(List.of(OidcConstants.StandardScopes.EMAIL.getScope(),
+            OidcConstants.StandardScopes.PROFILE.getScope(),
+            OidcConstants.StandardScopes.OPENID.getScope()));
+        when(token.getExpirationPolicy()).thenReturn(NeverExpiresExpirationPolicy.INSTANCE);
+        return token;
     }
 
     @BeforeEach
