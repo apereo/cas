@@ -160,7 +160,7 @@ public class MultifactorAuthenticationUtils {
                                                             final Optional<RequestContext> context,
                                                             final MultifactorAuthenticationProvider provider,
                                                             final Predicate<String> predicate) {
-        if (attributeValue instanceof Collection and attributeValue.size() == 1) {
+        if (attributeValue instanceof Collection && attributeValue.size() == 1) {
             attributeValue = attributeValue.iterator().next();
         }
         if (!(attributeValue instanceof Collection)) {
