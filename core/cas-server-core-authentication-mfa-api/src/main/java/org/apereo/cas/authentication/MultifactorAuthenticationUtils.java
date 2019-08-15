@@ -66,7 +66,7 @@ public class MultifactorAuthenticationUtils {
                                                                       final Map<String, Object> attributes) {
         val attributesMap = new LocalAttributeMap<Object>(attributes);
         val event = new Event(eventId, eventId, attributesMap);
-
+        LOGGER.trace("Attempting to find a matching transition for event id [{}]", event.getId());
         return context.map(ctx -> {
             val def = ctx.getMatchingTransition(event.getId());
             if (def == null) {
@@ -96,21 +96,24 @@ public class MultifactorAuthenticationUtils {
                                                                  final Predicate<String> predicate) {
         val events = new HashSet<Event>();
         if (attributeValue instanceof Collection) {
+            LOGGER.debug("Attribute value [{}] is a multi-valued attribute", attributeValue);
             val values = (Collection<String>) attributeValue;
             values.forEach(value -> {
+                val id = provider.getId();
                 try {
                     if (predicate.test(value)) {
-                        val id = provider.getId();
-                        val event = validateEventIdForMatchingTransitionInContext(id, context, buildEventAttributeMap(principal, Optional.ofNullable(service), provider));
+                        val attributeMap = buildEventAttributeMap(principal, Optional.ofNullable(service), provider);
+                        LOGGER.trace("Event attribute map for provider [{}] transition is [{}]", provider, attributeMap);
+                        val event = validateEventIdForMatchingTransitionInContext(id, context, attributeMap);
                         events.add(event);
                     }
                 } catch (final Exception e) {
-                    LOGGER.debug("Ignoring [{}] since no matching transition could be found", value);
+                    LOGGER.debug("Ignoring [{}] since no matching transition could be found for provider [{}}", value, id);
                 }
             });
             return events;
         }
-
+        LOGGER.debug("Attribute value [{}] is not a multi-valued attribute", attributeValue);
         return null;
     }
 

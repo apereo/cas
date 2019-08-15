@@ -2111,6 +2111,7 @@ LDAP settings for this feature are available [here](Configuration-Properties-Com
 # cas.authn.ntlm.domainController=
 # cas.authn.ntlm.name=
 # cas.authn.ntlm.order=
+# cas.authn.ntlm.enabled=false
 ```
 
 ## JAAS Authentication
