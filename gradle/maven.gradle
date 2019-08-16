@@ -217,23 +217,37 @@ ext.createPomRepositories = { node ->
 
 publishing {
     publications {
-        
-        mavenJava(MavenPublication) {
-            from components.java
-            artifact tasks['sourcesJar']
-            artifact tasks['resourcesJar']
-            artifact tasks['javadocJar']
-            artifact tasks['testJar']
 
-            pom {
-                createPom(it, project)
+        def artifactType = project.ext.properties.get("artifactType")
+        println "in publishing script: " + project.name + " " + artifactType
+
+        if (artifactType.equals("web")) {
+            mavenWeb(MavenPublication) {
+                from components.web
+                pom {
+                    createPom(it, project)
+                }
+                pom.withXml {
+                    createPomRepositories(asNode())
+                }
             }
+        } else {
+            mavenJava(MavenPublication) {
+                from components.java
+                artifact tasks['sourcesJar']
+                artifact tasks['resourcesJar']
+                artifact tasks['javadocJar']
+                artifact tasks['testJar']
 
-            pom.withXml {
-               createPomRepositories(asNode()) 
+                pom {
+                    createPom(it, project)
+                }
+
+                pom.withXml {
+                    createPomRepositories(asNode())
+                }
             }
         }
-        
     }
 
     repositories {

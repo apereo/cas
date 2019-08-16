@@ -136,6 +136,8 @@ allprojects {
     apply plugin: "eclipse"
     apply plugin: "jacoco"
     apply plugin: "java"
+
+    apply from: rootProject.file("gradle/tasks.gradle")
     
     if (rootProject.publishReleases || rootProject.publishSnapshots || rootProject.generateGitProperties) {
         apply plugin: "com.gorylenko.gradle-git-properties"
@@ -210,8 +212,6 @@ subprojects {
     apply plugin: "propdeps-idea"
     apply plugin: "propdeps-eclipse"
 
-
-    apply from: rootProject.file("gradle/tasks.gradle")
     apply from: rootProject.file("gradle/tests.gradle")
 
     if (projectShouldBePublished(project)) {

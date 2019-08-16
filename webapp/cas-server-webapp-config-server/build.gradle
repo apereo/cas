@@ -5,19 +5,7 @@ apply from: rootProject.file("gradle/springboot.gradle")
 
 description = "Apereo CAS Spring Cloud Configuration Web Application Server"
 
-publishing {
-    publications {
-        mavenWeb(MavenPublication) {
-            from components.web
-            pom {
-                createPom(it, project)
-            }
-            pom.withXml {
-                createPomRepositories(asNode())
-            }
-        }
-    }
-}
+
 
 dependencies {
     implementation libraries.springboottomcat
