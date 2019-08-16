@@ -138,7 +138,7 @@ allprojects {
     apply plugin: "java"
 
     apply from: rootProject.file("gradle/tasks.gradle")
-    
+
     if (rootProject.publishReleases || rootProject.publishSnapshots || rootProject.generateGitProperties) {
         apply plugin: "com.gorylenko.gradle-git-properties"
         gitProperties {
@@ -169,7 +169,7 @@ allprojects {
             }
         }
     }
-    
+
     repositories {
         mavenLocal()
         mavenCentral()
@@ -183,6 +183,8 @@ allprojects {
         failOnError = Boolean.getBoolean("ignoreJavadocFailures")
         excludes = ['**/generated/**']
     }
+
+
 }
 
 subprojects {
@@ -203,6 +205,11 @@ subprojects {
         doLast {}
     }
     apply plugin: "java-library"
+    if (projectShouldBePublished(project)) {
+        apply plugin: "maven-publish"
+        apply plugin: "signing"
+    }
+
     if (!rootProject.skipErrorProneCompiler) {
         apply plugin: "net.ltgt.errorprone-javacplugin"
     }
@@ -213,16 +220,6 @@ subprojects {
     apply plugin: "propdeps-eclipse"
 
     apply from: rootProject.file("gradle/tests.gradle")
-
-    if (projectShouldBePublished(project)) {
-        apply plugin: "maven-publish"
-        apply plugin: "signing"
-        apply from: rootProject.file("gradle/maven.gradle")
-        signing {
-            required = isArtifactSigningRequired
-            sign publishing.publications
-        }
-    }
 
     ext.libraries = rootProject.ext.libraries
 
@@ -273,6 +270,79 @@ subprojects {
         exclude(group: "org.slf4j", module: "slf4j-log4j12")
         exclude(group: "org.slf4j", module: "slf4j-simple")
         exclude(group: "org.apache.logging.log4j", module: "log4j-to-slf4j")
+    }
+
+    /**
+     * Apply publishing rules after the build has had a chance to
+     * evaluate sub-projects to apply plugins, etc.
+     */
+    afterEvaluate { project ->
+        if (projectShouldBePublished(project)) {
+            logger.info "Project ${project.name} should be published"
+            apply from: rootProject.file("gradle/maven.gradle")
+
+            publishing {
+                publications {
+                    def isWarPluginApplied = project.plugins.hasPlugin("war")
+                    if (isWarPluginApplied) {
+                        logger.info "Project ${project.name} should be published as a WAR"
+                        mavenWeb(MavenPublication) {
+                            from components.web
+                            pom {
+                                createPom(it, project)
+                            }
+                            pom.withXml {
+                                createPomRepositories(asNode())
+                            }
+                        }
+                    } else {
+                        logger.info "Project ${project.name} should be published as a JAR"
+                        mavenJava(MavenPublication) {
+                            from components.java
+                            artifact tasks['sourcesJar']
+                            artifact tasks['resourcesJar']
+                            artifact tasks['javadocJar']
+                            artifact tasks['testJar']
+
+                            pom {
+                                createPom(it, project)
+                            }
+                            pom.withXml {
+                                createPomRepositories(asNode())
+                            }
+                        }
+                    }
+                }
+
+                repositories {
+                    if (rootProject.publishReleases) {
+                        maven {
+                            name "Sonatype-Releases"
+                            url "${sonatypeRepositoryUrl}"
+                            credentials {
+                                username "${sonatypeUsername}"
+                                password "${sonatypePassword}"
+                            }
+                        }
+                    }
+                    if (rootProject.publishSnapshots) {
+                        maven {
+                            name "Sonatype-Snapshots"
+                            url "${sonatypeSnapshotsRepositoryUrl}"
+                            credentials {
+                                username "${sonatypeUsername}"
+                                password "${sonatypePassword}"
+                            }
+                        }
+                    }
+                }
+            }
+            
+            signing {
+                required = isArtifactSigningRequired
+                sign publishing.publications
+            }
+        }
     }
 
     artifacts {
