@@ -37,7 +37,7 @@ import static org.mockito.Mockito.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     CasCoreMultifactorAuthenticationConfiguration.class,
-    CasCoreMultifactorAuthenticationAuditConfiguration.class,
+    CasCoreMultifactorAuthenticationAuditConfiguration.class
 })
 @DirtiesContext
 public class DefaultMultifactorAuthenticationProviderResolverTests {
