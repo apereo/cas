@@ -63,8 +63,7 @@ stages:
   - build
   - postbuild
   - test
-  - dependencies
-  - spotbugs
+  - posttestchecks
 jobs:
   include:
     - stage: initialize
@@ -104,18 +103,6 @@ jobs:
     - stage: postbuild
       script: ./ci/check-config-factories.sh
       name: "Configuration Factory Analysis"
-      ############################################
-    - stage: dependencies
-      script: ./ci/analyze-dependencies.sh
-      name: "Dependency Security Analysis"
-    - stage: dependencies
-      if: type != pull_request and (branch =~ /^\d+\.\d+\.x$/ or branch = master)
-      script: ./ci/report-dependency-updates.sh
-      name: "Dependency Update Report"
-    - stage: dependencies
-      if: type != pull_request and (branch =~ /^\d+\.\d+\.x$/ or branch = master)
-      script: ./ci/update-dependencies.sh
-      name: "Renovate Dependency Updates"
       ############################################
     - stage: test
       script: ./ci/tests/validate-tests.sh
@@ -195,9 +182,21 @@ jobs:
     - stage: test
       script: ./ci/tests/redis/run-tests-redis.sh
       name: "Redis Tests"
-    - stage: spotbugs
+      ############################################
+    - stage: posttestchecks
+      script: ./ci/analyze-dependencies.sh
+      name: "Dependency Security Analysis"
+    - stage: posttestchecks
+      if: type != pull_request and (branch =~ /^\d+\.\d+\.x$/ or branch = master)
+      script: ./ci/report-dependency-updates.sh
+      name: "Dependency Update Report"
+    - stage: posttestchecks
+      if: type != pull_request and (branch =~ /^\d+\.\d+\.x$/ or branch = master)
+      script: ./ci/update-dependencies.sh
+      name: "Renovate Dependency Updates"
+    - stage: posttestchecks
       script: ./ci/analyze-bugs-main.sh
       name: "Spotbugs Main Analysis"
-    - stage: spotbugs
+    - stage: posttestchecks
       script: ./ci/analyze-bugs-tests.sh
       name: "Spotbugs Tests Analysis"
