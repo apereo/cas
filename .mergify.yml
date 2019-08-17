@@ -21,5 +21,5 @@ pull_request_rules:
   actions:
     merge:
       method: merge
-      strict: true
+      strict: false
     delete_head_branch:
