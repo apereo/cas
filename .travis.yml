@@ -89,7 +89,7 @@ jobs:
       if: type != pull_request
       name: "SonarCloud Analysis"
     - stage: postbuild
-      if: NOT commit_message =~ env(DEPENDENCY_BOT_RE) and type = pull_request
+      if: NOT (commit_message =~ env(DEPENDENCY_BOT_RE) and type = pull_request)
       script: ./ci/analyze-style.sh
       name: "Checkstyle Analysis"
     - stage: postbuild
@@ -97,15 +97,15 @@ jobs:
       if: type != pull_request and (branch =~ /^\d+\.\d+\.x$/ or branch = master)
       name: "Publish Documentation"
     - stage: postbuild
-      if: NOT commit_message =~ env(DEPENDENCY_BOT_RE) and type = pull_request
+      if: NOT (commit_message =~ env(DEPENDENCY_BOT_RE) and type = pull_request)
       script: ./ci/build-javadocs.sh
       name: "Build Javadocs"
     - stage: postbuild
-      if: NOT commit_message =~ env(DEPENDENCY_BOT_RE) and type = pull_request
+      if: NOT (commit_message =~ env(DEPENDENCY_BOT_RE) and type = pull_request)
       script: ./ci/build-config-metadata.sh
       name: "Configuration Metadata Analysis"
     - stage: postbuild
-      if: NOT commit_message =~ env(DEPENDENCY_BOT_RE) and type = pull_request
+      if: NOT (commit_message =~ env(DEPENDENCY_BOT_RE) and type = pull_request)
       script: ./ci/check-config-factories.sh
       name: "Configuration Factory Analysis"
       ############################################
@@ -189,7 +189,7 @@ jobs:
       name: "Redis Tests"
       ############################################
     - stage: posttestchecks
-      if: NOT commit_message =~ env(DEPENDENCY_BOT_RE) and type = pull_request
+      if: NOT (commit_message =~ env(DEPENDENCY_BOT_RE) and type = pull_request)
       script: ./ci/analyze-dependencies.sh
       name: "Dependency Security Analysis"
     - stage: posttestchecks
@@ -201,10 +201,10 @@ jobs:
       script: ./ci/update-dependencies.sh
       name: "Renovate Dependency Updates"
     - stage: posttestchecks
-      if: NOT commit_message =~ env(DEPENDENCY_BOT_RE) and type = pull_request
+      if: NOT (commit_message =~ env(DEPENDENCY_BOT_RE) and type = pull_request)
       script: ./ci/analyze-bugs-main.sh
       name: "Spotbugs Main Analysis"
     - stage: posttestchecks
-      if: NOT commit_message =~ env(DEPENDENCY_BOT_RE) and type = pull_request
+      if: NOT (commit_message =~ env(DEPENDENCY_BOT_RE) and type = pull_request)
       script: ./ci/analyze-bugs-tests.sh
       name: "Spotbugs Tests Analysis"
