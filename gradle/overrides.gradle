@@ -12,8 +12,8 @@ ext["hazelcastVersion"] = "3.12.2"
 ext["infinispanVersion"] = "9.4.15.Final"
 
 ext["springVersion"] = "5.2.0.RC1"
-ext["springBootTomcatVersion"] = "9.0.22"
-ext["springSessionVersion"] = "2.2.0.M2"
+ext["springBootTomcatVersion"] = "9.0.24"
+ext["springSessionVersion"] = "2.2.0.M3"
 ext["springSessionMongoVersion"] = "2.2.0.M3"
 
 ext["jacksonVersion"] = "2.9.9"
@@ -23,11 +23,11 @@ ext["thymeleafDialectVersion"] = "2.4.1"
 ext["hsqlVersion"] = "2.5.0"
 ext["httpCoreVersion"] = "4.4.11"
 ext["hikariVersion"] = "3.3.1"
-ext["groovyVersion"] = "3.0.0-beta-2"
-ext["log4jVersion"] = "2.12.0"
-ext["commonsBeansVersion"] = "1.9.3"
+ext["groovyVersion"] = "3.0.0-beta-3"
+ext["log4jVersion"] = "2.12.1"
+ext["commonsBeansVersion"] = "1.9.4"
 ext["logbackVersion"] = "1.3.0-alpha4"
-ext["caffeinVersion"] = "2.7.0"
+ext["caffeinVersion"] = "2.8.0"
 ext["couchbaseVersion"] = "2.7.4"
 
 ext["mysqlVersion"] = "8.0.17"
@@ -39,7 +39,7 @@ ext["mongoDriverVersion"] = "3.10.2"
 
 ext["couchbase-client.version"] = ext["couchbaseVersion"]
 ext["caffeine.version"] = ext["caffeinVersion"]
-ext["commons-beanutils.version"] = "1.8.3"
+ext["commons-beanutils.version"] = ext["commonsBeansVersion"]
 ext["hazelcast.version"] = ext["hazelcastVersion"]
 ext["hibernate.version"] = ext["hibernateVersion"]
 ext["tomcat.version"] = ext["springBootTomcatVersion"]
