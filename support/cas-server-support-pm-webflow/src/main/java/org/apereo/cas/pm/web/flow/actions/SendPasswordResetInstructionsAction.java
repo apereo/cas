@@ -34,6 +34,8 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
     public static final String PARAMETER_NAME_TOKEN = "pswdrst";
     public static final String PARAMETER_NAME_SERVICE = "service";
 
+    public static final String PARAMETER_NAME_SERVICE = "service";
+
     /**
      * The CAS configuration properties.
      */
