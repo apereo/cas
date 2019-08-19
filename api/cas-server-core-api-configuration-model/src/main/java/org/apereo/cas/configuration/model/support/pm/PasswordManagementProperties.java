@@ -223,6 +223,11 @@ public class PasswordManagementProperties implements Serializable {
         private boolean securityQuestionsEnabled = true;
 
         /**
+         * Add serviceUrl to the password reset url
+         */
+        private boolean addServiceToPasswordResetUrl = false;
+
+        /**
          * How long in minutes should the password expiration link remain valid.
          */
         private long expirationMinutes = 1;
