@@ -1,8 +1,9 @@
+apply plugin: "war"
+ext {
+    mainClassName = "org.apereo.cas.web.CasWebApplication"
+}
 description = "Apereo CAS Web Application"
 
-apply plugin: "war"
-
-project.ext["mainClassName"] = "org.apereo.cas.web.CasWebApplication"
 sourceSets {
     main {
         resources {
@@ -17,20 +18,6 @@ sourceSets {
         resources {
             srcDirs new File("//etc/cas/templates/"),
                     new File("${project(":webapp").getProjectDir()}/cas-server-webapp-resources/src/main/resources/")
-        }
-    }
-}
-
-publishing {
-    publications {
-        mavenWeb(MavenPublication) {
-            from components.web
-            pom {
-                createPom(it, project)
-            }
-            pom.withXml {
-                createPomRepositories(asNode())
-            }
         }
     }
 }
@@ -58,6 +45,7 @@ dependencies {
 
     implementation project(":webapp:cas-server-webapp-config")
     implementation project(":webapp:cas-server-webapp-init")
+    implementation project(":webapp:cas-server-webapp-resources")
 
     implementation libraries.springcloudconfigclient
 
