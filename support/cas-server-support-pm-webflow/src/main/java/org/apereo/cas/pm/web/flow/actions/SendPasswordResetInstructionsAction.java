@@ -1,5 +1,6 @@
 package org.apereo.cas.pm.web.flow.actions;
 
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.util.io.CommunicationsManager;
@@ -12,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.binding.message.MessageBuilder;
+import org.springframework.web.util.UriUtils;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
@@ -30,6 +32,7 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
      * Param name for the token.
      */
     public static final String PARAMETER_NAME_TOKEN = "pswdrst";
+    public static final String PARAMETER_NAME_SERVICE = "service";
 
     /**
      * The CAS configuration properties.
@@ -52,15 +55,24 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
      * @param username                  username
      * @param passwordManagementService passwordManagementService
      * @param casProperties             casProperties
+     * @param service                   service from the flow scope
      * @return URL a user can use to start the password reset process
      */
     public static String buildPasswordResetUrl(final String username,
                                                final PasswordManagementService passwordManagementService,
-                                               final CasConfigurationProperties casProperties) {
+                                               final CasConfigurationProperties casProperties, final WebApplicationService service) {
         val token = passwordManagementService.createToken(username);
         if (StringUtils.isNotBlank(token)) {
-            return casProperties.getServer().getPrefix()
-                .concat('/' + CasWebflowConfigurer.FLOW_ID_LOGIN + '?' + PARAMETER_NAME_TOKEN + '=').concat(token);
+            final StringBuilder restetUrl = new StringBuilder(casProperties.getServer().getPrefix())
+                    .append('/').append(CasWebflowConfigurer.FLOW_ID_LOGIN).append('?')
+                    .append(PARAMETER_NAME_TOKEN).append('=').append(token);
+
+            if (casProperties.getAuthn().getPm().getReset().isAddServiceToPasswordResetUrl() && service != null) {
+                final String encodeServiceUrl = UriUtils.encode(service.getOriginalUrl(), "UTF-8");
+                restetUrl.append('&').append(PARAMETER_NAME_SERVICE).append('=').append(encodeServiceUrl);
+            }
+
+            return restetUrl.toString();
         }
         LOGGER.error("Could not create password reset url since no reset token could be generated");
         return null;
@@ -88,7 +100,8 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
             return getErrorEvent("email.invalid", "Provided email address is invalid", requestContext);
         }
 
-        val url = buildPasswordResetUrl(username, passwordManagementService, casProperties);
+        final WebApplicationService service = WebUtils.getService(requestContext);
+        val url = buildPasswordResetUrl(username, passwordManagementService, casProperties, service);
         if (StringUtils.isNotBlank(url)) {
             LOGGER.debug("Generated password reset URL [{}]; Link is only active for the next [{}] minute(s)", url, pm.getReset().getExpirationMinutes());
             if (sendPasswordResetEmailToAccount(to, url)) {
@@ -112,18 +125,18 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
         val reset = casProperties.getAuthn().getPm().getReset().getMail();
         val text = String.format(reset.getText(), url);
         return this.communicationsManager.email(text, reset.getFrom(),
-            reset.getSubject(),
-            to,
-            reset.getCc(),
-            reset.getBcc());
+                reset.getSubject(),
+                to,
+                reset.getCc(),
+                reset.getBcc());
     }
 
     private Event getErrorEvent(final String code, final String defaultMessage, final RequestContext requestContext) {
         val messages = requestContext.getMessageContext();
         messages.addMessage(new MessageBuilder()
-            .error()
-            .code("screen.pm.reset." + code)
-            .build());
+                .error()
+                .code("screen.pm.reset." + code)
+                .build());
         LOGGER.error(defaultMessage);
         return new EventFactorySupport().event(this, CasWebflowConstants.VIEW_ID_ERROR);
     }
