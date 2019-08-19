@@ -5,10 +5,12 @@ import org.apereo.cas.util.CollectionUtilsTests;
 import org.apereo.cas.util.CompressionUtilsTests;
 import org.apereo.cas.util.DateTimeUtilsTests;
 import org.apereo.cas.util.EncodingUtilsTests;
+import org.apereo.cas.util.JsonUtilsTests;
 import org.apereo.cas.util.RandomUtilsTests;
 import org.apereo.cas.util.RegexUtilsTests;
 import org.apereo.cas.util.ResourceUtilsTests;
 import org.apereo.cas.util.ScriptingUtilsTests;
+import org.apereo.cas.util.SystemUtilsTests;
 import org.apereo.cas.util.cipher.BinaryCipherExecutorTests;
 import org.apereo.cas.util.cipher.DefaultTicketCipherExecutorTests;
 import org.apereo.cas.util.cipher.JsonWebKeySetStringCipherExecutorTests;
@@ -63,7 +65,9 @@ import org.junit.runner.RunWith;
     ScriptingUtilsTests.class,
     GroovySmsSenderTests.class,
     RestfulSmsSenderTests.class,
-    RandomUtilsTests.class
+    RandomUtilsTests.class,
+    SystemUtilsTests.class,
+    JsonUtilsTests.class
 })
 @RunWith(JUnitPlatform.class)
 public class AllUtilityTestsSuite {

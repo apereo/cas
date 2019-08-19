@@ -62,9 +62,9 @@ stages:
   - initialize
   - publish
   - build
-  - postbuild
+  - validate
   - test
-  - posttestchecks
+  - finalize
 jobs:
   include:
     - stage: initialize
@@ -84,27 +84,27 @@ jobs:
       if: branch =~ /^\d+\.\d+\.x$/ or branch = master
       name: "Validate Documentation"
       ############################################
-    - stage: postbuild
+    - stage: validate
       script: ./ci/analyze-sonarqube.sh
       if: type != pull_request
       name: "SonarCloud Analysis"
-    - stage: postbuild
+    - stage: validate
       if: NOT (commit_message =~ env(DEPENDENCY_BOT_RE) and type = pull_request)
       script: ./ci/analyze-style.sh
       name: "Checkstyle Analysis"
-    - stage: postbuild
+    - stage: validate
       script: ./ci/push-docs-ghpages.sh
       if: type != pull_request and (branch =~ /^\d+\.\d+\.x$/ or branch = master)
       name: "Publish Documentation"
-    - stage: postbuild
+    - stage: validate
       if: NOT (commit_message =~ env(DEPENDENCY_BOT_RE) and type = pull_request)
       script: ./ci/build-javadocs.sh
       name: "Build Javadocs"
-    - stage: postbuild
+    - stage: validate
       if: NOT (commit_message =~ env(DEPENDENCY_BOT_RE) and type = pull_request)
       script: ./ci/build-config-metadata.sh
       name: "Configuration Metadata Analysis"
-    - stage: postbuild
+    - stage: validate
       if: NOT (commit_message =~ env(DEPENDENCY_BOT_RE) and type = pull_request)
       script: ./ci/check-config-factories.sh
       name: "Configuration Factory Analysis"
@@ -188,23 +188,23 @@ jobs:
       script: ./ci/tests/redis/run-tests-redis.sh
       name: "Redis Tests"
       ############################################
-    - stage: posttestchecks
+    - stage: finalize
       if: NOT (commit_message =~ env(DEPENDENCY_BOT_RE) and type = pull_request)
       script: ./ci/analyze-dependencies.sh
       name: "Dependency Security Analysis"
-    - stage: posttestchecks
+    - stage: finalize
       if: type != pull_request and (branch =~ /^\d+\.\d+\.x$/ or branch = master)
       script: ./ci/report-dependency-updates.sh
       name: "Dependency Update Report"
-    - stage: posttestchecks
+    - stage: finalize
       if: type != pull_request and (branch =~ /^\d+\.\d+\.x$/ or branch = master)
       script: ./ci/update-dependencies.sh
       name: "Renovate Dependency Updates"
-    - stage: posttestchecks
+    - stage: finalize
       if: NOT (commit_message =~ env(DEPENDENCY_BOT_RE) and type = pull_request)
       script: ./ci/analyze-bugs-main.sh
       name: "Spotbugs Main Analysis"
-    - stage: posttestchecks
+    - stage: finalize
       if: NOT (commit_message =~ env(DEPENDENCY_BOT_RE) and type = pull_request)
       script: ./ci/analyze-bugs-tests.sh
       name: "Spotbugs Tests Analysis"
