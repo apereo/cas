@@ -1,5 +1,6 @@
 package org.apereo.cas.pm.web.flow.actions;
 
+import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pm.PasswordManagementService;
@@ -19,6 +20,8 @@ import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.nio.charset.StandardCharsets;
+
 /**
  * This is {@link SendPasswordResetInstructionsAction}.
  *
@@ -32,7 +35,6 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
      * Param name for the token.
      */
     public static final String PARAMETER_NAME_TOKEN = "pswdrst";
-    public static final String PARAMETER_NAME_SERVICE = "service";
 
     /**
      * The CAS configuration properties.
@@ -67,9 +69,9 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
                     .append('/').append(CasWebflowConfigurer.FLOW_ID_LOGIN).append('?')
                     .append(PARAMETER_NAME_TOKEN).append('=').append(token);
 
-            if (casProperties.getAuthn().getPm().getReset().isAddServiceToPasswordResetUrl() && service != null) {
-                final String encodeServiceUrl = UriUtils.encode(service.getOriginalUrl(), "UTF-8");
-                restetUrl.append('&').append(PARAMETER_NAME_SERVICE).append('=').append(encodeServiceUrl);
+            if (service != null) {
+                final String encodeServiceUrl = UriUtils.encode(service.getOriginalUrl(), StandardCharsets.UTF_8);
+                restetUrl.append('&').append(CasProtocolConstants.PARAMETER_SERVICE).append('=').append(encodeServiceUrl);
             }
 
             return restetUrl.toString();
