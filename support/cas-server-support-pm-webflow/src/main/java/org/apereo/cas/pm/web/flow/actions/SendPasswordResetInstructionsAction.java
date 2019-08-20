@@ -127,18 +127,18 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
         val reset = casProperties.getAuthn().getPm().getReset().getMail();
         val text = String.format(reset.getText(), url);
         return this.communicationsManager.email(text, reset.getFrom(),
-                reset.getSubject(),
-                to,
-                reset.getCc(),
-                reset.getBcc());
+            reset.getSubject(),
+            to,
+            reset.getCc(),
+            reset.getBcc());
     }
 
     private Event getErrorEvent(final String code, final String defaultMessage, final RequestContext requestContext) {
         val messages = requestContext.getMessageContext();
         messages.addMessage(new MessageBuilder()
-                .error()
-                .code("screen.pm.reset." + code)
-                .build());
+            .error()
+            .code("screen.pm.reset." + code)
+            .build());
         LOGGER.error(defaultMessage);
         return new EventFactorySupport().event(this, CasWebflowConstants.VIEW_ID_ERROR);
     }
