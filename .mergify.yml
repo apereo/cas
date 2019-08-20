@@ -8,7 +8,7 @@ pull_request_rules:
     - label=Dependencies & Modules
   actions:
     merge:
-      method: merge
+      method: squash
       strict: true
     delete_head_branch:
 - name: automatic merge by renovate
@@ -20,6 +20,6 @@ pull_request_rules:
     - label=Dependencies & Modules
   actions:
     merge:
-      method: merge
+      method: squash
       strict: false
     delete_head_branch:
