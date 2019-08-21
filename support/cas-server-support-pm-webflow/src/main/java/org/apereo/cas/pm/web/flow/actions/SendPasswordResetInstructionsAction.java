@@ -65,12 +65,12 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
                                                final CasConfigurationProperties casProperties, final WebApplicationService service) {
         val token = passwordManagementService.createToken(username);
         if (StringUtils.isNotBlank(token)) {
-            final StringBuilder restetUrl = new StringBuilder(casProperties.getServer().getPrefix())
+            StringBuilder restetUrl = new StringBuilder(casProperties.getServer().getPrefix())
                     .append('/').append(CasWebflowConfigurer.FLOW_ID_LOGIN).append('?')
                     .append(PARAMETER_NAME_TOKEN).append('=').append(token);
 
             if (service != null) {
-                final String encodeServiceUrl = UriUtils.encode(service.getOriginalUrl(), StandardCharsets.UTF_8);
+                val encodeServiceUrl = UriUtils.encode(service.getOriginalUrl(), StandardCharsets.UTF_8);
                 restetUrl.append('&').append(CasProtocolConstants.PARAMETER_SERVICE).append('=').append(encodeServiceUrl);
             }
 
@@ -102,7 +102,7 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
             return getErrorEvent("email.invalid", "Provided email address is invalid", requestContext);
         }
 
-        final WebApplicationService service = WebUtils.getService(requestContext);
+        val service = WebUtils.getService(requestContext);
         val url = buildPasswordResetUrl(username, passwordManagementService, casProperties, service);
         if (StringUtils.isNotBlank(url)) {
             LOGGER.debug("Generated password reset URL [{}]; Link is only active for the next [{}] minute(s)", url, pm.getReset().getExpirationMinutes());
