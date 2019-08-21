@@ -25,8 +25,8 @@ public class RegisteredServiceTokenTicketCipherExecutor extends TokenTicketCiphe
             final RegisteredService registeredService = service.get();
             if (supports(registeredService)) {
                 LOGGER.debug("Found signing and/or encryption keys for [{}] in service registry to decode", registeredService.getServiceId());
-                final String encryptionKey = getEncryptionKey(registeredService).get();
-                final String signingKey = getSigningKey(registeredService).get();
+                final String encryptionKey = getEncryptionKey(registeredService).orElse(StringUtils.EMPTY);
+                final String signingKey = getSigningKey(registeredService).orElse(StringUtils.EMPTY);
                 final TokenTicketCipherExecutor cipher = new TokenTicketCipherExecutor(encryptionKey, signingKey,
                     StringUtils.isNotBlank(encryptionKey), StringUtils.isNotBlank(signingKey));
                 if (cipher.isEnabled()) {
@@ -43,8 +43,8 @@ public class RegisteredServiceTokenTicketCipherExecutor extends TokenTicketCiphe
             final RegisteredService registeredService = service.get();
             if (supports(registeredService)) {
                 LOGGER.debug("Found signing and/or encryption keys for [{}] in service registry to encode", registeredService.getServiceId());
-                final String encryptionKey = getEncryptionKey(registeredService).get();
-                final String signingKey = getSigningKey(registeredService).get();
+                final String encryptionKey = getEncryptionKey(registeredService).orElse(StringUtils.EMPTY);
+                final String signingKey = getSigningKey(registeredService).orElse(StringUtils.EMPTY);
                 final TokenTicketCipherExecutor cipher = new TokenTicketCipherExecutor(encryptionKey, signingKey,
                     StringUtils.isNotBlank(encryptionKey), StringUtils.isNotBlank(signingKey));
                 if (cipher.isEnabled()) {
