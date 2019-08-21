@@ -2,7 +2,10 @@ package org.apereo.cas.configuration.model.core.audit;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
+import org.apereo.cas.configuration.model.support.quartz.SchedulingProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 /**
@@ -17,7 +20,13 @@ import org.apereo.cas.configuration.support.RequiresModule;
 public class AuditJdbcProperties extends AbstractJpaProperties {
 
     private static final long serialVersionUID = 4227475246873515918L;
-
+    
+    /**
+     * Scheduler settings to indicate how often cleaner is reloaded.
+     */
+    @NestedConfigurationProperty
+    private SchedulingProperties schedule = new SchedulingProperties();
+    
     /**
      * Execute the recording of audit records in async manner.
      * This setting must almost always be set to true.
