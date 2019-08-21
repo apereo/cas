@@ -7,20 +7,20 @@
   overlays could use and pull this file and have their 
   dependencies match that of CAS. 
  */
-ext["hibernateVersion"] = "5.2.17.Final"
-ext["springBootTomcatVersion"] = "8.5.43"
-ext["hazelcastVersion"] = "3.12.1"
+ext["hibernateVersion"] = "5.2.18.Final"
+ext["springBootTomcatVersion"] = "8.5.45"
+ext["hazelcastVersion"] = "3.12.2"
 ext["infinispanVersion"] = "9.1.1.Final"
-ext["springVersion"] = "4.3.24.RELEASE"
+ext["springVersion"] = "4.3.25.RELEASE"
 ext["jacksonDatabindVersion"] = "2.9.9"
-ext["thymeleafVersion"] = "3.0.9.RELEASE"
-ext["thymeleafDialectVersion"] = "2.3.0"
+ext["thymeleafVersion"] = "3.0.11.RELEASE"
+ext["thymeleafDialectVersion"] = "2.4.1"
 ext["springSessionVersion"] = "1.3.1.RELEASE"
 ext["hsqlVersion"] = "2.4.0"
 ext["httpCoreVersion"] = "4.4.9"
 ext["hikariVersion"] = "3.2.0"
 ext["groovyVersion"] = "2.4.15"
-ext["log4jVersion"] = "2.12.0"
+ext["log4jVersion"] = "2.12.1"
 ext["commonsBeansVersion"] = "1.9.3"
 ext["dropwizardMetricsVersion"] = "3.2.5"
 ext["caffeinVersion"] = "2.6.2"
@@ -30,7 +30,7 @@ ext["postgresqlVersion"] = "42.2.5"
 ext["mariaDbVersion"] = "2.2.4"
 ext["jtdsVersion"] = "1.3.1"
 ext["mssqlServerVersion"] = "6.4.0.jre8"
-ext["mongoDriverVersion"] = "3.8.2"
+ext["mongoDriverVersion"] = "3.11.0"
 
 ext["couchbase-client.version"] = ext["couchbaseVersion"]
 ext["caffeine.version"] = ext["caffeinVersion"]
