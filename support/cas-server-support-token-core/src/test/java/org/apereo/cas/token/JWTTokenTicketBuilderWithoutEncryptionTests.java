@@ -36,7 +36,6 @@ public class JWTTokenTicketBuilderWithoutEncryptionTests extends BaseJWTTokenTic
     public void verifyJwtForServiceTicketWithoutEncryptionKey() throws Exception {
 
         final Service service = CoreAuthenticationTestUtils.getService("https://jwt.no-encryption-key.example.org/cas");
-
         final String jwt = tokenTicketBuilder.build("ST-123456", service);
         assertNotNull(jwt);
         final Object result = tokenCipherExecutor.decode(jwt);
