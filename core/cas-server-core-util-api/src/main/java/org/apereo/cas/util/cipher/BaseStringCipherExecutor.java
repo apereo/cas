@@ -164,7 +164,7 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
 
     @Override
     public String encode(final Serializable value, final Object[] parameters) {
-        val encoded = this.encryptionEnabled && this.secretKeyEncryptionKey != null
+        val encoded = isEncryptionPossible()
             ? EncodingUtils.encryptValueAsJwt(this.secretKeyEncryptionKey, value, this.encryptionAlgorithm, this.contentEncryptionAlgorithmIdentifier)
             : value.toString();
 
@@ -183,12 +183,21 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
         if (encoded != null && encoded.length > 0) {
             val encodedObj = new String(encoded, StandardCharsets.UTF_8);
 
-            if (this.encryptionEnabled && this.secretKeyEncryptionKey != null) {
+            if (isEncryptionPossible()) {
                 return EncodingUtils.decryptJwtValue(this.secretKeyEncryptionKey, encodedObj);
             }
             return encodedObj;
         }
         return null;
+    }
+
+    /**
+     * Is encryption possible?
+     *
+     * @return the boolean
+     */
+    protected boolean isEncryptionPossible() {
+        return this.encryptionEnabled && this.secretKeyEncryptionKey != null;
     }
 
     /**

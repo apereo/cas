@@ -1,6 +1,7 @@
 package org.apereo.cas.support.oauth.authenticator;
 
 import org.apereo.cas.services.RegisteredServiceAccessStrategyAuditableEnforcer;
+import org.apereo.cas.support.oauth.services.OAuth20RegisteredServiceCipherExecutor;
 
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,7 +26,9 @@ public class OAuth20ClientIdClientSecretAuthenticatorTests extends BaseOAuth20Au
 
     @BeforeEach
     public void init() {
-        authenticator = new OAuth20ClientIdClientSecretAuthenticator(servicesManager, serviceFactory, new RegisteredServiceAccessStrategyAuditableEnforcer());
+        authenticator = new OAuth20ClientIdClientSecretAuthenticator(servicesManager, serviceFactory,
+            new RegisteredServiceAccessStrategyAuditableEnforcer(),
+            new OAuth20RegisteredServiceCipherExecutor());
     }
 
     @Test

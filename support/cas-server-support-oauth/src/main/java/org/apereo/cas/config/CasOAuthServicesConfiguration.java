@@ -47,7 +47,7 @@ public class CasOAuthServicesConfiguration {
     public Service oauthCallbackService() {
         val oAuthCallbackUrl = casProperties.getServer().getPrefix()
             + OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.CALLBACK_AUTHORIZE_URL_DEFINITION;
-        return webApplicationServiceFactory.getIfAvailable().createService(oAuthCallbackUrl);
+        return webApplicationServiceFactory.getObject().createService(oAuthCallbackUrl);
     }
 
     @Bean
@@ -67,5 +67,4 @@ public class CasOAuthServicesConfiguration {
             }
         };
     }
-
 }

@@ -7,6 +7,7 @@ import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +21,7 @@ import org.pac4j.core.credentials.extractor.BasicAuthExtractor;
 import org.pac4j.core.exception.CredentialsException;
 import org.pac4j.core.profile.CommonProfile;
 
+import java.io.Serializable;
 import java.util.Map;
 
 /**
@@ -34,6 +36,7 @@ public class OAuth20UsernamePasswordAuthenticator implements Authenticator<Usern
     private final AuthenticationSystemSupport authenticationSystemSupport;
     private final ServicesManager servicesManager;
     private final ServiceFactory webApplicationServiceFactory;
+    private final CipherExecutor<Serializable, String> registeredServiceCipherExecutor;
 
     @Override
     public void validate(final UsernamePasswordCredentials credentials, final WebContext context) throws CredentialsException {
@@ -49,7 +52,8 @@ public class OAuth20UsernamePasswordAuthenticator implements Authenticator<Usern
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
 
             val clientSecret = clientIdAndSecret.getRight();
-            if (StringUtils.isNotBlank(clientSecret) && !OAuth20Utils.checkClientSecret(registeredService, clientSecret)) {
+            if (StringUtils.isNotBlank(clientSecret)
+                && !OAuth20Utils.checkClientSecret(registeredService, clientSecret, registeredServiceCipherExecutor)) {
                 throw new CredentialsException("Bad secret for client identifier: " + clientId);
             }
 
@@ -58,7 +62,7 @@ public class OAuth20UsernamePasswordAuthenticator implements Authenticator<Usern
             val service = StringUtils.isNotBlank(redirectUri)
                 ? this.webApplicationServiceFactory.createService(redirectUri)
                 : null;
-            
+
             val authenticationResult = authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, casCredential);
             if (authenticationResult == null) {
                 throw new CredentialsException("Could not authenticate the provided credentials");

@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +17,8 @@ import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.pac4j.core.exception.CredentialsException;
 import org.pac4j.core.profile.CommonProfile;
+
+import java.io.Serializable;
 
 /**
  * Authenticator for client credentials authentication.
@@ -29,6 +32,7 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator<U
     private final ServicesManager servicesManager;
     private final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory;
     private final AuditableExecution registeredServiceAccessStrategyEnforcer;
+    private final CipherExecutor<Serializable, String> registeredServiceCipherExecutor;
 
     @Override
     public void validate(final UsernamePasswordCredentials credentials, final WebContext context) throws CredentialsException {
@@ -67,7 +71,7 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator<U
     protected void validateCredentials(final UsernamePasswordCredentials credentials,
                                        final OAuthRegisteredService registeredService,
                                        final WebContext context) {
-        if (!OAuth20Utils.checkClientSecret(registeredService, credentials.getPassword())) {
+        if (!OAuth20Utils.checkClientSecret(registeredService, credentials.getPassword(), registeredServiceCipherExecutor)) {
             throw new CredentialsException("Bad secret for client identifier: " + credentials.getPassword());
         }
     }

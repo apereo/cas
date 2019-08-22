@@ -34,7 +34,10 @@ import java.util.Set;
 @Getter
 public abstract class AbstractCasWebflowEventResolver implements CasWebflowEventResolver {
 
-    private static final String RESOLVED_AUTHENTICATION_EVENTS = "resolvedAuthenticationEvents";
+    /**
+     * Context attribute to keep track of resolved authn events.
+     */
+    public static final String RESOLVED_AUTHENTICATION_EVENTS = "resolvedAuthenticationEvents";
 
     private static final String DEFAULT_MESSAGE_BUNDLE_PREFIX = "authenticationFailure.";
 

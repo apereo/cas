@@ -126,14 +126,16 @@ public class OAuth20IntrospectionEndpointController extends BaseOAuth20Controlle
             return Optional.of(buildBadRequestResponseEntity(OAuth20Constants.MISSING_ACCESS_TOKEN));
         }
 
-        if (OAuth20Utils.checkClientSecret(registeredService, credentials.getPassword())) {
+        if (OAuth20Utils.checkClientSecret(registeredService, credentials.getPassword(), getOAuthConfigurationContext().getRegisteredServiceCipherExecutor())) {
             val service = getOAuthConfigurationContext().getWebApplicationServiceServiceFactory().createService(registeredService.getServiceId());
             val audit = AuditableContext.builder()
                 .service(service)
                 .registeredService(registeredService)
                 .build();
             val accessResult = getOAuthConfigurationContext().getRegisteredServiceAccessStrategyEnforcer().execute(audit);
-            return accessResult.isExecutionFailure() ? Optional.of(buildUnauthorizedResponseEntity(OAuth20Constants.UNAUTHORIZED_CLIENT, false)) : Optional.empty();
+            return accessResult.isExecutionFailure()
+                ? Optional.of(buildUnauthorizedResponseEntity(OAuth20Constants.UNAUTHORIZED_CLIENT, false))
+                : Optional.empty();
         }
         return Optional.of(buildUnauthorizedResponseEntity(OAuth20Constants.INVALID_CLIENT, true));
     }

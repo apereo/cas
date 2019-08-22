@@ -9,6 +9,7 @@ import org.apereo.cas.ticket.code.OAuthCode;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.EncodingUtils;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -17,6 +18,7 @@ import org.pac4j.core.context.WebContext;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.exception.CredentialsException;
 
+import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -32,8 +34,9 @@ public class OAuth20ProofKeyCodeExchangeAuthenticator extends OAuth20ClientIdCli
     public OAuth20ProofKeyCodeExchangeAuthenticator(final ServicesManager servicesManager,
                                                     final ServiceFactory webApplicationServiceFactory,
                                                     final AuditableExecution registeredServiceAccessStrategyEnforcer,
-                                                    final TicketRegistry ticketRegistry) {
-        super(servicesManager, webApplicationServiceFactory, registeredServiceAccessStrategyEnforcer);
+                                                    final TicketRegistry ticketRegistry,
+                                                    final CipherExecutor<Serializable, String> registeredServiceCipherExecutor) {
+        super(servicesManager, webApplicationServiceFactory, registeredServiceAccessStrategyEnforcer, registeredServiceCipherExecutor);
         this.ticketRegistry = ticketRegistry;
     }
 
