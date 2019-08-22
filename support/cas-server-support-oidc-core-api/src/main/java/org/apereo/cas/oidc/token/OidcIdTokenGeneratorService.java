@@ -5,6 +5,7 @@ import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
+import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.ticket.BaseIdTokenGeneratorService;
@@ -42,8 +43,14 @@ import java.util.stream.Stream;
 @Getter
 public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService {
 
-    public OidcIdTokenGeneratorService(final OAuth20ConfigurationContext configurationContext) {
+    /**
+     * The oauth2 scope to attributes filter.
+     */
+    private final OAuth20ProfileScopeToAttributesFilter scopeToAttributesFilter;
+
+    public OidcIdTokenGeneratorService(final OAuth20ConfigurationContext configurationContext, OAuth20ProfileScopeToAttributesFilter scopeToAttributesFilter) {
         super(configurationContext);
+        this.scopeToAttributesFilter = scopeToAttributesFilter;
     }
 
     @Override
@@ -89,7 +96,10 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService {
                                        final JEEContext context,
                                        final OAuth20ResponseTypes responseType) {
         val authentication = accessTokenId.getAuthentication();
-        val principal = authentication.getPrincipal();
+
+        val principal = this.scopeToAttributesFilter.filter(accessTokenId.getService(), authentication.getPrincipal(),
+                service, context, accessTokenId);
+
         val oidc = getConfigurationContext().getCasProperties().getAuthn().getOidc();
 
         val claims = new JwtClaims();

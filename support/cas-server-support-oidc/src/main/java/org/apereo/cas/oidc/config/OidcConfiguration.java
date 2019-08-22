@@ -370,7 +370,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
     public IdTokenGeneratorService oidcIdTokenGenerator() {
         val context = buildConfigurationContext();
         context.setIdTokenSigningAndEncryptionService(oidcTokenSigningAndEncryptionService());
-        return new OidcIdTokenGeneratorService(context);
+        return new OidcIdTokenGeneratorService(context, profileScopeToAttributesFilter());
     }
 
     @ConditionalOnMissingBean(name = "oidcAccessTokenResponseGenerator")

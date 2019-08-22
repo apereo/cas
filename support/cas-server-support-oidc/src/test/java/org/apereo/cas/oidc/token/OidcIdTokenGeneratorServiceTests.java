@@ -18,7 +18,6 @@ import org.pac4j.core.context.Pac4jConstants;
 import org.pac4j.core.profile.CommonProfile;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.test.context.TestPropertySource;
 
 import java.util.HashMap;
 import java.util.List;
@@ -34,7 +33,6 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @Tag("OIDC")
-@TestPropertySource(properties = "cas.authn.oidc.claims=cn,mail,uid,sub,name")
 public class OidcIdTokenGeneratorServiceTests extends AbstractOidcTests {
     @Test
     public void verifyTokenGeneration() throws Exception {
@@ -56,8 +54,9 @@ public class OidcIdTokenGeneratorServiceTests extends AbstractOidcTests {
         when(tgt.getServices()).thenReturn(CollectionUtils.wrap("service", service));
 
         val principal = RegisteredServiceTestUtils.getPrincipal("casuser", CollectionUtils.wrap(
-            "mail", List.of("casuser@example.org"),
-            "cn", List.of("cas", "CAS")));
+            "email", List.of("casuser@example.org"),
+            "phone_number", List.of("123456789"),
+            "name", List.of("cas", "CAS")));
 
         var authentication = CoreAuthenticationTestUtils.getAuthentication(principal,
             CollectionUtils.wrap(OAuth20Constants.STATE, List.of("some-state"),
@@ -68,6 +67,7 @@ public class OidcIdTokenGeneratorServiceTests extends AbstractOidcTests {
         when(accessToken.getAuthentication()).thenReturn(authentication);
         when(accessToken.getTicketGrantingTicket()).thenReturn(tgt);
         when(accessToken.getId()).thenReturn(getClass().getSimpleName());
+        when(accessToken.getScopes()).thenReturn(List.of("openid", "profile", "email"));
 
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, "clientid");
         val idToken = oidcIdTokenGenerator.generate(request, response, accessToken, 30,
@@ -76,9 +76,11 @@ public class OidcIdTokenGeneratorServiceTests extends AbstractOidcTests {
 
         val claims = oidcTokenSigningAndEncryptionService.decode(idToken, Optional.ofNullable(registeredService));
         assertNotNull(claims);
-        assertTrue(claims.hasClaim("mail"));
-        assertEquals("casuser@example.org", claims.getStringClaimValue("mail"));
-        assertEquals(principal.getAttributes().get("cn"), claims.getStringListClaimValue("cn"));
+        assertTrue(claims.hasClaim("email"));
+        assertTrue(claims.hasClaim("name"));
+        assertFalse(claims.hasClaim("phone_number"));
+        assertEquals("casuser@example.org", claims.getStringClaimValue("email"));
+        assertEquals(principal.getAttributes().get("name"), claims.getStringListClaimValue("name"));
     }
 
     @Test
