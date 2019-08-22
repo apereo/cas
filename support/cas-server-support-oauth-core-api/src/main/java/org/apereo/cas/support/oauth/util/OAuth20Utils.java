@@ -403,11 +403,12 @@ public class OAuth20Utils {
      */
     public static boolean checkClientSecret(final OAuthRegisteredService registeredService, final String clientSecret) {
         LOGGER.debug("Found: [{}] in secret check", registeredService);
-        if (StringUtils.isBlank(registeredService.getClientSecret())) {
+        val definedSecret = registeredService.getClientSecret();
+        if (StringUtils.isBlank(definedSecret)) {
             LOGGER.debug("The client secret is not defined for the registered service [{}]", registeredService.getName());
             return true;
         }
-        if (!StringUtils.equals(registeredService.getClientSecret(), clientSecret)) {
+        if (!StringUtils.equals(definedSecret, clientSecret)) {
             LOGGER.error("Wrong client secret for service: [{}]", registeredService.getServiceId());
             return false;
         }
