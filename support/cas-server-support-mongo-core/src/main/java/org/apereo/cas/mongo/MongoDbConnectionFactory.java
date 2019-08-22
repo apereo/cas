@@ -247,6 +247,7 @@ public class MongoDbConnectionFactory {
                 .socketKeepAlive(mongo.isSocketKeepAlive())
                 .maxConnectionIdleTime((int) Beans.newDuration(mongo.getIdleTimeout()).toMillis())
                 .connectionsPerHost(mongo.getConns().getPerHost())
+                .retryWrites(mongo.isRetryWrites())
                 .socketTimeout((int) Beans.newDuration(mongo.getTimeout()).toMillis())
                 .connectTimeout((int) Beans.newDuration(mongo.getTimeout()).toMillis())
                 .sslEnabled(mongo.isSslEnabled());
