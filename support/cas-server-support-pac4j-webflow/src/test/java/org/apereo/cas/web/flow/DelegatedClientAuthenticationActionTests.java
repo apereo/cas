@@ -332,6 +332,7 @@ public class DelegatedClientAuthenticationActionTests {
             new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()),
             mock(CentralAuthenticationService.class),
             SingleSignOnParticipationStrategy.alwaysParticipating(),
-            new JEESessionStore());
+            new JEESessionStore(),
+            CollectionUtils.wrap(new DefaultArgumentExtractor(new WebApplicationServiceFactory())));
     }
 }

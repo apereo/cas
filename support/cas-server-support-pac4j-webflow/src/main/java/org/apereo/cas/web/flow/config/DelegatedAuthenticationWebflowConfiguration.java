@@ -174,7 +174,8 @@ public class DelegatedAuthenticationWebflowConfiguration {
             authenticationRequestServiceSelectionStrategies.getIfAvailable(),
             centralAuthenticationService.getIfAvailable(),
             webflowSingleSignOnParticipationStrategy.getIfAvailable(),
-            delegatedClientDistributedSessionStore.getIfAvailable());
+            delegatedClientDistributedSessionStore.getIfAvailable(),
+            CollectionUtils.wrap(argumentExtractor.getIfAvailable()));
     }
 
     @ConditionalOnMissingBean(name = "delegatedAuthenticationWebflowConfigurer")
