@@ -44,8 +44,8 @@ public class JWTTokenTicketBuilderWithoutEncryptionTests extends BaseJWTTokenTic
         final RegisteredService registeredService = servicesManager.findServiceBy(service);
         final RegisteredServiceTokenTicketCipherExecutor cipher = new RegisteredServiceTokenTicketCipherExecutor();
         assertTrue(cipher.supports(registeredService));
-        val decoded = cipher.decode(jwt, Optional.of(registeredService));
-        val claims = JWTClaimsSet.parse(decoded);
+        final val decoded = cipher.decode(jwt, Optional.of(registeredService));
+        final val claims = JWTClaimsSet.parse(decoded);
         assertEquals("casuser", claims.getSubject());
     }
 

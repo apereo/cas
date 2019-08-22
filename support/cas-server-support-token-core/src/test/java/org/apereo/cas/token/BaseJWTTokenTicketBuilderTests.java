@@ -79,10 +79,10 @@ public abstract class BaseJWTTokenTicketBuilderTests {
         public void init() {
             inMemoryRegisteredServices.add(RegisteredServiceTestUtils.getRegisteredService("https://cas.example.org.+"));
             inMemoryRegisteredServices.add(createRegisteredService("https://jwt.example.org/cas.*", true, true));
-            inMemoryRegisteredServices.add( createRegisteredService("https://jwt.no-encryption-key.example.org/cas.*", true, false));
+            inMemoryRegisteredServices.add(createRegisteredService("https://jwt.no-encryption-key.example.org/cas.*", true, false));
         }
 
-        private AbstractRegisteredService createRegisteredService(String id, boolean hasSigningKey, boolean hasEncryptionKey) {
+        private AbstractRegisteredService createRegisteredService(final String id, final boolean hasSigningKey, final boolean hasEncryptionKey) {
             final AbstractRegisteredService registeredService = RegisteredServiceTestUtils.getRegisteredService(id);
 
             if (hasSigningKey) {
