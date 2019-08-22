@@ -20,12 +20,13 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.binding.message.MessageBuilder;
+import org.springframework.web.util.UriUtils;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
-import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
 
 /**
  * This is {@link SendPasswordResetInstructionsAction}.
@@ -70,23 +71,24 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
      * @param username                  username
      * @param passwordManagementService passwordManagementService
      * @param casProperties             casProperties
+     * @param service                   service from the flow scope
      * @return URL a user can use to start the password reset process
      */
     public String buildPasswordResetUrl(final String username,
                                         final PasswordManagementService passwordManagementService,
-                                        final CasConfigurationProperties casProperties) {
+                                               final CasConfigurationProperties casProperties, final WebApplicationService service) {
         val token = passwordManagementService.createToken(username);
         if (StringUtils.isNotBlank(token)) {
-            val transientFactory = (TransientSessionTicketFactory) this.ticketFactory.get(TransientSessionTicket.class);
-            val serverPrefix = casProperties.getServer().getPrefix();
-            val service = webApplicationServiceFactory.createService(serverPrefix);
-            val properties = CollectionUtils.<String, Serializable>wrap(PasswordManagementWebflowUtils.FLOWSCOPE_PARAMETER_NAME_TOKEN, token);
-            val ticket = transientFactory.create(service, properties);
-            this.ticketRegistry.addTicket(ticket);
+            StringBuilder restetUrl = new StringBuilder(casProperties.getServer().getPrefix())
+                    .append('/').append(CasWebflowConfigurer.FLOW_ID_LOGIN).append('?')
+                    .append(PARAMETER_NAME_TOKEN).append('=').append(token);
 
-            return serverPrefix
-                .concat('/' + CasWebflowConfigurer.FLOW_ID_LOGIN + '?' + PasswordManagementWebflowUtils.REQUEST_PARAMETER_NAME_PASSWORD_RESET_TOKEN + '=')
-                .concat(ticket.getId());
+            if (service != null) {
+                val encodeServiceUrl = UriUtils.encode(service.getOriginalUrl(), StandardCharsets.UTF_8);
+                restetUrl.append('&').append(CasProtocolConstants.PARAMETER_SERVICE).append('=').append(encodeServiceUrl);
+            }
+
+            return restetUrl.toString();
         }
         LOGGER.error("Could not create password reset url since no reset token could be generated");
         return null;
@@ -114,7 +116,8 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
             return getErrorEvent("email.invalid", "Provided email address is invalid", requestContext);
         }
 
-        val url = buildPasswordResetUrl(username, passwordManagementService, casProperties);
+        val service = WebUtils.getService(requestContext);
+        val url = buildPasswordResetUrl(username, passwordManagementService, casProperties, service);
         if (StringUtils.isNotBlank(url)) {
             LOGGER.debug("Generated password reset URL [{}]; Link is only active for the next [{}] minute(s)", url, pm.getReset().getExpirationMinutes());
             if (sendPasswordResetEmailToAccount(to, url)) {
