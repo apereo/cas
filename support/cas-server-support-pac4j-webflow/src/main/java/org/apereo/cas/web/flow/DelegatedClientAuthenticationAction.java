@@ -23,6 +23,7 @@ import org.apereo.cas.web.DelegatedClientWebflowManager;
 import org.apereo.cas.web.flow.actions.AbstractAuthenticationAction;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
+import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.AllArgsConstructor;
@@ -54,6 +55,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
@@ -117,6 +119,8 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
 
     private final CasConfigurationProperties casProperties;
 
+    private final List<ArgumentExtractor> argumentExtractors;
+
     public DelegatedClientAuthenticationAction(final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
                                                final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
                                                final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy,
@@ -129,7 +133,8 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
                                                final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies,
                                                final CentralAuthenticationService centralAuthenticationService,
                                                final SingleSignOnParticipationStrategy singleSignOnParticipationStrategy,
-                                               final SessionStore<JEEContext> sessionStore) {
+                                               final SessionStore<JEEContext> sessionStore,
+                                               final List<ArgumentExtractor> argumentExtractors) {
         super(initialAuthenticationAttemptWebflowEventResolver, serviceTicketRequestWebflowEventResolver, adaptiveAuthenticationPolicy);
         this.clients = clients;
         this.servicesManager = servicesManager;
@@ -143,6 +148,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         this.casProperties = casProperties;
         this.delegatedAuthenticationAccessStrategyHelper =
             new DelegatedAuthenticationAccessStrategyHelper(this.servicesManager, delegatedAuthenticationPolicyEnforcer);
+        this.argumentExtractors = argumentExtractors;
     }
 
     /**
@@ -548,7 +554,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
     }
 
     private void prepareRequestContextForSingleSignOn(final RequestContext context, final JEEContext webContext) {
-        val resolvedService = resolveServiceFromRequestContext(context);
+        val resolvedService = WebUtils.getService(argumentExtractors, context);
         WebUtils.putServiceIntoFlowScope(context, resolvedService);
         val registeredService = servicesManager.findServiceBy(resolvedService);
         WebUtils.putRegisteredService(context, registeredService);
