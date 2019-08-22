@@ -92,4 +92,5 @@ public class OAuthRegisteredService extends RegexRegisteredService {
     public String getFriendlyName() {
         return "OAuth2 Client";
     }
+
 }

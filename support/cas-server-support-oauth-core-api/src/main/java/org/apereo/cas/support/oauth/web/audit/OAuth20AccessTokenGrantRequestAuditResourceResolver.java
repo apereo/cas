@@ -12,13 +12,13 @@ import org.aspectj.lang.JoinPoint;
 import static org.apache.commons.lang3.builder.ToStringStyle.NO_CLASS_NAME_STYLE;
 
 /**
- * The {@link AccessTokenGrantRequestAuditResourceResolver} for audit advice
+ * The {@link OAuth20AccessTokenGrantRequestAuditResourceResolver} for audit advice
  * weaved at {@link org.apereo.cas.support.oauth.web.response.accesstoken.ext.BaseAccessTokenGrantRequestExtractor#extract} join point.
  *
  * @author Dmitriy Kopylenko
  * @since 5.3.0
  */
-public class AccessTokenGrantRequestAuditResourceResolver extends ReturnValueAsStringResourceResolver {
+public class OAuth20AccessTokenGrantRequestAuditResourceResolver extends ReturnValueAsStringResourceResolver {
 
     @Override
     public String[] resolveFrom(final JoinPoint auditableTarget, final Object retval) {

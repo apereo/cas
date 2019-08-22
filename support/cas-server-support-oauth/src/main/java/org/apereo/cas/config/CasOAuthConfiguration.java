@@ -41,8 +41,8 @@ import org.apereo.cas.support.oauth.validator.token.OAuth20PasswordGrantTypeToke
 import org.apereo.cas.support.oauth.validator.token.OAuth20RefreshTokenGrantTypeTokenRequestValidator;
 import org.apereo.cas.support.oauth.validator.token.OAuth20TokenRequestValidator;
 import org.apereo.cas.support.oauth.web.OAuth20CasCallbackUrlResolver;
-import org.apereo.cas.support.oauth.web.audit.AccessTokenGrantRequestAuditResourceResolver;
 import org.apereo.cas.support.oauth.web.audit.AccessTokenResponseAuditResourceResolver;
+import org.apereo.cas.support.oauth.web.audit.OAuth20AccessTokenGrantRequestAuditResourceResolver;
 import org.apereo.cas.support.oauth.web.audit.OAuth20UserProfileDataAuditResourceResolver;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AccessTokenEndpointController;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AuthorizeEndpointController;
@@ -727,7 +727,7 @@ public class CasOAuthConfiguration {
                 new DefaultAuditActionResolver(AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED,
                     AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED));
             plan.registerAuditResourceResolver("OAUTH2_ACCESS_TOKEN_REQUEST_RESOURCE_RESOLVER",
-                new AccessTokenGrantRequestAuditResourceResolver());
+                new OAuth20AccessTokenGrantRequestAuditResourceResolver());
 
             plan.registerAuditActionResolver("OAUTH2_ACCESS_TOKEN_RESPONSE_ACTION_RESOLVER",
                 new DefaultAuditActionResolver(AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED,
