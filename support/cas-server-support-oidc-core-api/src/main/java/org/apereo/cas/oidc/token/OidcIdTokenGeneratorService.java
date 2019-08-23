@@ -48,7 +48,7 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService {
      */
     private final OAuth20ProfileScopeToAttributesFilter scopeToAttributesFilter;
 
-    public OidcIdTokenGeneratorService(final OAuth20ConfigurationContext configurationContext, OAuth20ProfileScopeToAttributesFilter scopeToAttributesFilter) {
+    public OidcIdTokenGeneratorService(final OAuth20ConfigurationContext configurationContext, final OAuth20ProfileScopeToAttributesFilter scopeToAttributesFilter) {
         super(configurationContext);
         this.scopeToAttributesFilter = scopeToAttributesFilter;
     }

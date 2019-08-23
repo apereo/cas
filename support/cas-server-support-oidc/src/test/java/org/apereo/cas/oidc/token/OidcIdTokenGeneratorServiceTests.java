@@ -34,6 +34,11 @@ import static org.mockito.Mockito.*;
  */
 @Tag("OIDC")
 public class OidcIdTokenGeneratorServiceTests extends AbstractOidcTests {
+
+    private static final String OIDC_CLAIM_EMAIL = "email";
+    private static final String OIDC_CLAIM_PHONE_NUMBER = "phone_number";
+    private static final String OIDC_CLAIM_NAME = "name";
+
     @Test
     public void verifyTokenGeneration() throws Exception {
         val request = new MockHttpServletRequest();
@@ -54,9 +59,9 @@ public class OidcIdTokenGeneratorServiceTests extends AbstractOidcTests {
         when(tgt.getServices()).thenReturn(CollectionUtils.wrap("service", service));
 
         val principal = RegisteredServiceTestUtils.getPrincipal("casuser", CollectionUtils.wrap(
-            "email", List.of("casuser@example.org"),
-            "phone_number", List.of("123456789"),
-            "name", List.of("cas", "CAS")));
+                OIDC_CLAIM_EMAIL, List.of("casuser@example.org"),
+                OIDC_CLAIM_PHONE_NUMBER, List.of("123456789"),
+                OIDC_CLAIM_NAME, List.of("cas", "CAS")));
 
         var authentication = CoreAuthenticationTestUtils.getAuthentication(principal,
             CollectionUtils.wrap(OAuth20Constants.STATE, List.of("some-state"),
@@ -76,11 +81,11 @@ public class OidcIdTokenGeneratorServiceTests extends AbstractOidcTests {
 
         val claims = oidcTokenSigningAndEncryptionService.decode(idToken, Optional.ofNullable(registeredService));
         assertNotNull(claims);
-        assertTrue(claims.hasClaim("email"));
-        assertTrue(claims.hasClaim("name"));
-        assertFalse(claims.hasClaim("phone_number"));
-        assertEquals("casuser@example.org", claims.getStringClaimValue("email"));
-        assertEquals(principal.getAttributes().get("name"), claims.getStringListClaimValue("name"));
+        assertTrue(claims.hasClaim(OIDC_CLAIM_EMAIL));
+        assertTrue(claims.hasClaim(OIDC_CLAIM_NAME));
+        assertFalse(claims.hasClaim(OIDC_CLAIM_PHONE_NUMBER));
+        assertEquals("casuser@example.org", claims.getStringClaimValue(OIDC_CLAIM_EMAIL));
+        assertEquals(principal.getAttributes().get(OIDC_CLAIM_NAME), claims.getStringListClaimValue(OIDC_CLAIM_NAME));
     }
 
     @Test
