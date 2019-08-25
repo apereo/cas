@@ -49,7 +49,7 @@ public class ChainingAttributeReleasePolicy implements RegisteredServiceAttribut
         this.policies.forEach(policy -> {
             val embeddedConsentPolicy = policy.getConsentPolicy();
             if (embeddedConsentPolicy instanceof ChainingRegisteredServiceConsentPolicy) {
-                ((ChainingRegisteredServiceConsentPolicy)embeddedConsentPolicy)
+                ((ChainingRegisteredServiceConsentPolicy) embeddedConsentPolicy)
                         .getPolicies()
                         .forEach(consentPolicy -> newConsentPolicies.add(consentPolicy));
             } else {
