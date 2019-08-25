@@ -60,14 +60,6 @@ public class ChainingAttributeReleasePolicy implements RegisteredServiceAttribut
                 newConsentPolicies.stream().distinct().collect(Collectors.toList())
         );
         return chainingRegisteredServiceConsentPolicy;
-        // val policy = new ChainingRegisteredServiceConsentPolicy();
-        // val consentPolicies = this.policies
-        //     .stream()
-        //     .map(RegisteredServiceAttributeReleasePolicy::getConsentPolicy)
-        //     .distinct()
-        //     .collect(Collectors.toList());
-        // policy.addPolicies(consentPolicies);
-        // return policy;
     }
 
     @Override
