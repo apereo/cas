@@ -517,6 +517,7 @@ public class CasOAuthConfiguration {
         validators.add(oauthAuthorizationCodeResponseTypeRequestValidator());
         validators.add(oauthIdTokenResponseTypeRequestValidator());
         validators.add(oauthTokenResponseTypeRequestValidator());
+        validators.add(oauthIdTokenAndTokenResponseTypeRequestValidator());
         return validators;
     }
 
