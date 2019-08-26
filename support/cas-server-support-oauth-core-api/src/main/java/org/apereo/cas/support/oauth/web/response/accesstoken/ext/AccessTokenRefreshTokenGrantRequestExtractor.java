@@ -38,9 +38,12 @@ public class AccessTokenRefreshTokenGrantRequestExtractor extends AccessTokenAut
         if (registeredService == null) {
             throw new UnauthorizedServiceException("Unable to locate service in registry ");
         }
-        if (registeredService.isGenerateRefreshToken() && registeredService.isRenewRefreshToken()) {
-            builder.expireOldRefreshToken(true);
-        }
+
+        boolean shouldRenewRefreshToken =
+            registeredService.isGenerateRefreshToken() && registeredService.isRenewRefreshToken();
+        builder.generateRefreshToken(shouldRenewRefreshToken);
+        builder.expireOldRefreshToken(shouldRenewRefreshToken);
+
         return super.extractInternal(request, response, builder);
     }
 
