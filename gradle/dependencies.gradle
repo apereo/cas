@@ -1338,6 +1338,7 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-context")
                     exclude(group: "org.springframework", module: "spring-core")
                     exclude(group: "org.springframework", module: "spring-aop")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter")
                     force = true
                 },
                 dependencies.create("org.apache.activemq:activemq-pool:$activemqPoolVersion") {
@@ -1368,6 +1369,7 @@ ext.libraries = [
                     exclude(group: "ch.qos.logback", module: "logback-core")
                     exclude(group: "ch.qos.logback", module: "logback-classic")
                     exclude(group: "nz.net.ultraq.thymeleaf", module: "thymeleaf-layout-dialect")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
                     exclude(group: "org.sourceforge.nekohtml", module: "nekohtml")
                     exclude(group: "org.javassist", module: "javassist")

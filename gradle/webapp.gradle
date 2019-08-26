@@ -4,6 +4,10 @@ ext {
 }
 description = "Apereo CAS Web Application"
 
+def getServerType(String projectName) {
+    return projectName.split('-').last()
+}
+
 sourceSets {
     main {
         resources {
@@ -13,11 +17,14 @@ sourceSets {
     /**
      * Make resources become reloadable.
      * Application’s static resources are loaded from their source location.
+     * Only load extra resources for one type of server to avoid intellij duplicate path warnings.
      */
     bootRun {
-        resources {
-            srcDirs new File("//etc/cas/templates/"),
-                    new File("${project(":webapp").getProjectDir()}/cas-server-webapp-resources/src/main/resources/")
+        if (getServerType(project.name).equals('tomcat')) {
+            resources {
+                srcDirs new File("//etc/cas/templates/"),
+                        new File("${project(":webapp").getProjectDir()}/cas-server-webapp-resources/src/main/resources/")
+            }
         }
     }
 }
