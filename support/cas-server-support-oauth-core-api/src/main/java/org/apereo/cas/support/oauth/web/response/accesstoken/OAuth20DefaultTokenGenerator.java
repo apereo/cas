@@ -4,11 +4,13 @@ import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.validator.token.device.InvalidOAuth20DeviceTokenException;
 import org.apereo.cas.support.oauth.validator.token.device.ThrottledOAuth20DeviceUserCodeApprovalException;
 import org.apereo.cas.support.oauth.validator.token.device.UnapprovedOAuth20DeviceUserCodeException;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestDataHolder;
+import org.apereo.cas.ticket.OAuthToken;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketState;
@@ -276,7 +278,16 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
             responseHolder.getClaims());
         LOGGER.debug("Adding refresh token [{}] to the registry", refreshToken);
         addTicketToRegistry(refreshToken, responseHolder.getTicketGrantingTicket());
+        if (responseHolder.isExpireOldRefreshToken()) {
+            expireOldRefreshToken(responseHolder);
+        }
         return refreshToken;
+    }
+
+    private void expireOldRefreshToken(AccessTokenRequestDataHolder responseHolder) {
+        OAuthToken oldRefreshToken = responseHolder.getToken();
+        oldRefreshToken.markTicketExpired();
+        ticketRegistry.updateTicket(oldRefreshToken);
     }
 
     private static OAuth20TokenGeneratedResult generateAccessTokenResult(final AccessTokenRequestDataHolder holder,

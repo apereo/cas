@@ -49,14 +49,13 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
         val service = getOAuthConfigurationContext().getWebApplicationServiceServiceFactory().createService(redirectUri);
         scopes.addAll(token.getScopes());
 
-        val generateRefreshToken = isAllowedToGenerateRefreshToken() && registeredService.isGenerateRefreshToken();
         val builder = AccessTokenRequestDataHolder.builder()
             .scopes(scopes)
             .service(service)
             .authentication(token.getAuthentication())
             .registeredService(registeredService)
             .grantType(getGrantType())
-            .generateRefreshToken(generateRefreshToken)
+            .generateRefreshToken(registeredService.isGenerateRefreshToken())
             .token(token)
             .claims(token.getClaims())
             .ticketGrantingTicket(token.getTicketGrantingTicket());
@@ -85,15 +84,6 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
      */
     protected String getRegisteredServiceIdentifierFromRequest(final HttpServletRequest request) {
         return request.getParameter(OAuth20Constants.REDIRECT_URI);
-    }
-
-    /**
-     * Is allowed to generate refresh token ?
-     *
-     * @return the boolean
-     */
-    protected boolean isAllowedToGenerateRefreshToken() {
-        return true;
     }
 
     protected String getOAuthParameterName() {
