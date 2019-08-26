@@ -569,6 +569,7 @@ The following options related to MongoDb support in CAS apply equally to a numbe
 # ${configurationKey}.mongo.dropCollection=false
 # ${configurationKey}.mongo.socketKeepAlive=false
 # ${configurationKey}.mongo.password=
+# ${configurationKey}.mongo.retryWrites=false
 
 # Depending on the feature at hand, CAS may decide to dynamically create its own collections and ignore this setting.
 # ${configurationKey}.mongo.collection=cas-service-registry

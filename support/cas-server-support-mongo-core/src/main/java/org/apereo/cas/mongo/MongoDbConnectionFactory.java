@@ -1,5 +1,9 @@
 package org.apereo.cas.mongo;
 
+import org.apereo.cas.configuration.model.support.mongo.BaseMongoDbProperties;
+import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.util.CollectionUtils;
+
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
 import com.mongodb.MongoClientURI;
@@ -8,12 +12,8 @@ import com.mongodb.ServerAddress;
 import com.mongodb.WriteConcern;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.ssl.SSLContexts;
-import org.apereo.cas.configuration.model.support.mongo.BaseMongoDbProperties;
-import org.apereo.cas.configuration.support.Beans;
-import org.apereo.cas.util.CollectionUtils;
 import org.bson.BSON;
 import org.bson.codecs.configuration.CodecRegistries;
 import org.bson.codecs.configuration.CodecRegistry;
@@ -160,7 +160,7 @@ public class MongoDbConnectionFactory {
         if (StringUtils.isNotBlank(props.getClientUri())) {
             final MongoClientURI uri = buildMongoClientURI(props.getClientUri(), buildMongoDbClientOptions(props));
             LOGGER.debug("Using database [{}] from the connection client URI with authentication database [{}]",
-                    uri.getDatabase(), uri.getCredentials() != null ? uri.getCredentials().getSource() : null);
+                uri.getDatabase(), uri.getCredentials() != null ? uri.getCredentials().getSource() : null);
             try {
                 return new SimpleMongoDbFactory(uri);
             } catch (final UnknownHostException e) {
@@ -255,16 +255,17 @@ public class MongoDbConnectionFactory {
             clientOptions = MongoClientOptions.builder(opts);
         } else {
             clientOptions = MongoClientOptions.builder()
-                    .writeConcern(WriteConcern.valueOf(mongo.getWriteConcern()))
-                    .heartbeatConnectTimeout((int) Beans.newDuration(mongo.getTimeout()).toMillis())
-                    .heartbeatSocketTimeout((int) Beans.newDuration(mongo.getTimeout()).toMillis())
-                    .maxConnectionLifeTime(mongo.getConns().getLifetime())
-                    .socketKeepAlive(mongo.isSocketKeepAlive())
-                    .maxConnectionIdleTime((int) Beans.newDuration(mongo.getIdleTimeout()).toMillis())
-                    .connectionsPerHost(mongo.getConns().getPerHost())
-                    .socketTimeout((int) Beans.newDuration(mongo.getTimeout()).toMillis())
-                    .connectTimeout((int) Beans.newDuration(mongo.getTimeout()).toMillis())
-                    .sslEnabled(mongo.isSslEnabled());
+                .writeConcern(WriteConcern.valueOf(mongo.getWriteConcern()))
+                .heartbeatConnectTimeout((int) Beans.newDuration(mongo.getTimeout()).toMillis())
+                .heartbeatSocketTimeout((int) Beans.newDuration(mongo.getTimeout()).toMillis())
+                .maxConnectionLifeTime(mongo.getConns().getLifetime())
+                .socketKeepAlive(mongo.isSocketKeepAlive())
+                .retryWrites(mongo.isRetryWrites())
+                .maxConnectionIdleTime((int) Beans.newDuration(mongo.getIdleTimeout()).toMillis())
+                .connectionsPerHost(mongo.getConns().getPerHost())
+                .socketTimeout((int) Beans.newDuration(mongo.getTimeout()).toMillis())
+                .connectTimeout((int) Beans.newDuration(mongo.getTimeout()).toMillis())
+                .sslEnabled(mongo.isSslEnabled());
 
             if (StringUtils.isNotBlank(mongo.getReplicaSet())) {
                 clientOptions.requiredReplicaSetName(mongo.getReplicaSet());
@@ -275,8 +276,8 @@ public class MongoDbConnectionFactory {
         BSON.addEncodingHook(ZonedDateTime.class, new BaseConverters.ZonedDateTimeTransformer());
 
         final CodecRegistry codecRegistry = CodecRegistries.fromRegistries(
-                CodecRegistries.fromProviders(new BaseConverters.ZonedDateTimeCodecProvider()),
-                MongoClient.getDefaultCodecRegistry()
+            CodecRegistries.fromProviders(new BaseConverters.ZonedDateTimeCodecProvider()),
+            MongoClient.getDefaultCodecRegistry()
         );
         clientOptions.codecRegistry(codecRegistry);
         return clientOptions.build();

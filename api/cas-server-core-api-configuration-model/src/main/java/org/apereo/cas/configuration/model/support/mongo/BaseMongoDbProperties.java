@@ -90,6 +90,11 @@ public abstract class BaseMongoDbProperties implements Serializable {
     private boolean socketKeepAlive;
 
     /**
+     * Whether write operations should be retried.
+     */
+    private boolean retryWrites;
+    
+    /**
      * Name of the database to use for authentication.
      */
     private String authenticationDatabaseName;

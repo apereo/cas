@@ -2972,7 +2972,10 @@ under the configuration key `cas.audit.jdbc`.
 # cas.audit.jdbc.maxAgeDays=180
 # cas.audit.jdbc.columnLength=100
 # cas.audit.jdbc.isolationLevelName=ISOLATION_READ_COMMITTED
-# cas.audit.jdbc.propagationBehaviorName=PROPAGATION_REQUIRED
+# cas.audit.jdbc.propagationBehaviorName=PROPAGATION_REQUIRED     
+
+# cas.serviceRegistry.schedule.repeatInterval=30000
+# cas.serviceRegistry.schedule.startDelay=10000
 ```
 
 ### REST Audits
