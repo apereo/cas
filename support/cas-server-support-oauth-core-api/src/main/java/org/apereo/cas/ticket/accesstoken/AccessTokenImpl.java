@@ -34,6 +34,9 @@ public class AccessTokenImpl extends OAuthCodeImpl implements AccessToken {
     @Column(length = 2048)
     private String idToken;
 
+    @Column(length = 2048)
+    private String jwt;
+
     public AccessTokenImpl(final String id, final Service service,
                            final Authentication authentication,
                            final ExpirationPolicy expirationPolicy,

@@ -45,6 +45,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AccessTokenEndpointController;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20DeviceUserCodeApprovalEndpointController;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseGenerator;
@@ -52,6 +53,7 @@ import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
+import org.apereo.cas.ticket.accesstoken.OAuthAccessTokenIdExtractor;
 import org.apereo.cas.ticket.code.OAuthCode;
 import org.apereo.cas.ticket.code.OAuthCodeFactory;
 import org.apereo.cas.ticket.expiration.AlwaysExpiresExpirationPolicy;
@@ -210,6 +212,10 @@ public abstract class AbstractOAuth20Tests {
     @Qualifier("ticketRegistry")
     protected TicketRegistry ticketRegistry;
 
+    @Autowired
+    @Qualifier("oAuthAccessTokenIdExtractor")
+    protected OAuthAccessTokenIdExtractor oAuthAccessTokenIdExtractor;
+
     protected static Principal createPrincipal() {
         val map = new HashMap<String, List<Object>>();
         map.put(NAME, List.of(VALUE));
@@ -348,7 +354,8 @@ public abstract class AbstractOAuth20Tests {
             refreshTokenId = model.get(OAuth20Constants.REFRESH_TOKEN).toString();
         }
         assertTrue(model.containsKey(OAuth20Constants.EXPIRES_IN));
-        accessTokenId = model.get(OAuth20Constants.ACCESS_TOKEN).toString();
+        val accessTokenFromRequest = model.get(OAuth20Constants.ACCESS_TOKEN).toString();
+        accessTokenId = OAuth20Utils.getAccessTokenId(accessTokenFromRequest, oAuthAccessTokenIdExtractor);
 
         val accessToken = this.ticketRegistry.getTicket(accessTokenId, AccessToken.class);
         assertEquals(principal, accessToken.getAuthentication().getPrincipal());

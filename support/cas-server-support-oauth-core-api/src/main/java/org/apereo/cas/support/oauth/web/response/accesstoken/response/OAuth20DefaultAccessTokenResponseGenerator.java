@@ -2,6 +2,7 @@ package org.apereo.cas.support.oauth.web.response.accesstoken.response;
 
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
+import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.token.JwtBuilder;
 
@@ -141,6 +142,6 @@ public class OAuth20DefaultAccessTokenResponseGenerator implements OAuth20Access
      */
     protected String encodeAccessToken(final AccessToken accessToken,
                                        final OAuth20AccessTokenResponseResult result) {
-        return accessToken.getId();
+        return OAuth20Utils.encodeAccessToken(accessToken);
     }
 }

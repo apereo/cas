@@ -17,6 +17,18 @@ public interface AccessToken extends OAuthToken {
     String PREFIX = "AT";
 
     /**
+     * Sets jwt.
+     * @param jwt the jwt
+     */
+    void setJwt(String jwt);
+
+    /**
+     * Gets jwt.
+     * @return the jwt
+     */
+    String getJwt();
+
+    /**
      * Sets id token.
      *
      * @param idToken the id token

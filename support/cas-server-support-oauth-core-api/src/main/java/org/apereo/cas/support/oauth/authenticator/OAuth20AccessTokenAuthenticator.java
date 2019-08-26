@@ -1,6 +1,8 @@
 package org.apereo.cas.support.oauth.authenticator;
 
+import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
+import org.apereo.cas.ticket.accesstoken.OAuthAccessTokenIdExtractor;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 
 import lombok.RequiredArgsConstructor;
@@ -24,16 +26,18 @@ import java.util.HashMap;
 @RequiredArgsConstructor
 public class OAuth20AccessTokenAuthenticator implements Authenticator<TokenCredentials> {
     private final TicketRegistry ticketRegistry;
+    private final OAuthAccessTokenIdExtractor oAuthAccessTokenIdExtractor;
 
     @SneakyThrows
     @Override
     public void validate(final TokenCredentials tokenCredentials, final WebContext webContext) {
-        val token = tokenCredentials.getToken();
-        LOGGER.trace("Received access token [{}] for authentication", token);
-        
-        val accessToken = ticketRegistry.getTicket(token, AccessToken.class);
+        val token = tokenCredentials.getToken().trim();
+        val accessTokenId = OAuth20Utils.getAccessTokenId(token, oAuthAccessTokenIdExtractor);
+        LOGGER.trace("Received access token [{}] for authentication", accessTokenId);
+
+        val accessToken = ticketRegistry.getTicket(accessTokenId, AccessToken.class);
         if (accessToken == null || accessToken.isExpired()) {
-            LOGGER.error("Provided access token [{}] is either not found in the ticket registry or has expired", token);
+            LOGGER.error("Provided access token [{}] is either not found in the ticket registry or has expired", accessTokenId);
             return;
         }
         val profile = buildUserProfile(tokenCredentials, webContext, accessToken);

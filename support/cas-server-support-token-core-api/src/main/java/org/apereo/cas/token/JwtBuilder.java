@@ -6,6 +6,7 @@ import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nimbusds.jose.JOSEObjectType;
 import com.nimbusds.jose.PlainHeader;
 import com.nimbusds.jwt.JWTClaimsSet;
@@ -13,6 +14,7 @@ import com.nimbusds.jwt.PlainJWT;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.hjson.JsonValue;
@@ -35,6 +37,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Getter
 public class JwtBuilder {
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+
     private final String casSeverPrefix;
     private final CipherExecutor<Serializable, String> defaultTokenCipherExecutor;
     private final ServicesManager servicesManager;
@@ -46,6 +50,7 @@ public class JwtBuilder {
      * @param payload the payload
      * @return the jwt
      */
+    @SneakyThrows
     public String build(final JwtRequest payload) {
         val serviceAudience = payload.getServiceAudience();
         val claims = new JWTClaimsSet.Builder()
@@ -61,7 +66,7 @@ public class JwtBuilder {
         val claimsSet = claims.build();
         val object = claimsSet.toJSONObject();
 
-        val jwtJson = object.toJSONString();
+        val jwtJson = OBJECT_MAPPER.writeValueAsString(object);
         LOGGER.debug("Generated JWT [{}]", JsonValue.readJSON(jwtJson).toString(Stringify.FORMATTED));
 
         LOGGER.trace("Locating service [{}] in service registry", serviceAudience);

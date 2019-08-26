@@ -6,6 +6,7 @@ import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.ticket.BaseIdTokenGeneratorService;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -186,14 +187,14 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService {
     /**
      * Generate access token hash string.
      *
-     * @param accessTokenId the access token id
+     * @param accessToken the access token
      * @param service       the service
      * @return the string
      */
-    protected String generateAccessTokenHash(final AccessToken accessTokenId,
+    protected String generateAccessTokenHash(final AccessToken accessToken,
                                              final OidcRegisteredService service) {
         val alg = getConfigurationContext().getIdTokenSigningAndEncryptionService().getJsonWebKeySigningAlgorithm(service);
-        val tokenBytes = accessTokenId.getId().getBytes(StandardCharsets.UTF_8);
+        val tokenBytes = OAuth20Utils.encodeAccessToken(accessToken).getBytes(StandardCharsets.UTF_8);
         if (AlgorithmIdentifiers.NONE.equalsIgnoreCase(alg)) {
             LOGGER.debug("Signing algorithm specified by service [{}] is unspecified", service.getServiceId());
             return EncodingUtils.encodeUrlSafeBase64(tokenBytes);

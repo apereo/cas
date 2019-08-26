@@ -197,7 +197,7 @@ public class UmaAuthorizationRequestEndpointController extends BaseUmaEndpointCo
         if (StringUtils.isNotBlank(umaRequest.getRpt())) {
             getUmaConfigurationContext().getTicketRegistry().deleteTicket(umaRequest.getRpt());
         }
-        val model = CollectionUtils.wrap("rpt", accessToken.getId(), "code", HttpStatus.CREATED);
+        val model = CollectionUtils.wrap("rpt", OAuth20Utils.encodeAccessToken(accessToken), "code", HttpStatus.CREATED);
         return new ResponseEntity<>(model, HttpStatus.OK);
     }
 }

@@ -90,6 +90,7 @@ import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.IdTokenGeneratorService;
 import org.apereo.cas.ticket.OAuthTokenSigningAndEncryptionService;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
+import org.apereo.cas.ticket.accesstoken.OAuthAccessTokenIdExtractor;
 import org.apereo.cas.ticket.code.OAuthCodeFactory;
 import org.apereo.cas.ticket.device.DeviceTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -168,6 +169,10 @@ public class OidcConfiguration implements WebMvcConfigurer {
     @Autowired
     @Qualifier("accessTokenJwtBuilder")
     private ObjectProvider<JwtBuilder> accessTokenJwtBuilder;
+
+    @Autowired
+    @Qualifier("oAuthAccessTokenIdExtractor")
+    private ObjectProvider<OAuthAccessTokenIdExtractor> oAuthAccessTokenIdExtractor;
 
     @Autowired
     @Qualifier("accessTokenGrantAuditableRequestExtractor")
@@ -669,7 +674,8 @@ public class OidcConfiguration implements WebMvcConfigurer {
         return () -> {
             val accessTokenClient = new HeaderClient();
             accessTokenClient.setCredentialsExtractor(new BearerAuthExtractor());
-            accessTokenClient.setAuthenticator(new OidcClientConfigurationAccessTokenAuthenticator(ticketRegistry.getIfAvailable()));
+            accessTokenClient.setAuthenticator(new OidcClientConfigurationAccessTokenAuthenticator(
+                    ticketRegistry.getIfAvailable(), oAuthAccessTokenIdExtractor.getIfAvailable()));
             accessTokenClient.setName(OidcConstants.CAS_OAUTH_CLIENT_CONFIG_ACCESS_TOKEN_AUTHN);
             accessTokenClient.init();
             return accessTokenClient;
@@ -713,7 +719,8 @@ public class OidcConfiguration implements WebMvcConfigurer {
     @Bean
     public Authenticator<TokenCredentials> oAuthAccessTokenAuthenticator() {
         return new OidcAccessTokenAuthenticator(ticketRegistry.getIfAvailable(),
-            oidcTokenSigningAndEncryptionService(), servicesManager.getIfAvailable());
+                oAuthAccessTokenIdExtractor.getIfAvailable(), oidcTokenSigningAndEncryptionService(),
+                servicesManager.getIfAvailable());
     }
 
     @ConditionalOnMissingBean(name = "oidcCasWebflowExecutionPlanConfigurer")
@@ -735,7 +742,6 @@ public class OidcConfiguration implements WebMvcConfigurer {
             servicesManager.getIfAvailable(),
             oidcUserProfileSigningAndEncryptionService());
     }
-
 
     private OAuth20ConfigurationContext buildConfigurationContext() {
         return OAuth20ConfigurationContext.builder()
@@ -772,6 +778,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
             .oauthRequestValidators(oauthRequestValidators.getIfAvailable())
             .singleLogoutServiceLogoutUrlBuilder(singleLogoutServiceLogoutUrlBuilder.getIfAvailable())
             .idTokenSigningAndEncryptionService(oidcTokenSigningAndEncryptionService())
+            .oAuthAccessTokenIdExtractor(oAuthAccessTokenIdExtractor.getIfAvailable())
             .build();
     }
 }

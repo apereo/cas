@@ -3,6 +3,7 @@ package org.apereo.cas.oidc.authn;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.support.oauth.authenticator.OAuth20AccessTokenAuthenticator;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
+import org.apereo.cas.ticket.accesstoken.OAuthAccessTokenIdExtractor;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 
 import lombok.extern.slf4j.Slf4j;
@@ -19,8 +20,8 @@ import org.pac4j.core.profile.CommonProfile;
  */
 @Slf4j
 public class OidcClientConfigurationAccessTokenAuthenticator extends OAuth20AccessTokenAuthenticator {
-    public OidcClientConfigurationAccessTokenAuthenticator(final TicketRegistry ticketRegistry) {
-        super(ticketRegistry);
+    public OidcClientConfigurationAccessTokenAuthenticator(final TicketRegistry ticketRegistry, final OAuthAccessTokenIdExtractor oAuthAccessTokenIdExtractor) {
+        super(ticketRegistry, oAuthAccessTokenIdExtractor);
     }
 
     @Override

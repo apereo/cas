@@ -149,7 +149,7 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuth20
             val clientResponse = OidcClientRegistrationUtils.getClientRegistrationResponse(registeredService, prefix);
 
             val accessToken = generateRegistrationAccessToken(request, response, registeredService, registrationRequest);
-            clientResponse.setRegistrationAccessToken(accessToken.getId());
+            clientResponse.setRegistrationAccessToken(OAuth20Utils.encodeAccessToken(accessToken));
 
             registeredService.setScopes(supportedScopes);
             val processedScopes = new LinkedHashSet<String>(supportedScopes);

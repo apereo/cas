@@ -23,6 +23,7 @@ import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.OAuthTokenSigningAndEncryptionService;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
+import org.apereo.cas.ticket.accesstoken.OAuthAccessTokenIdExtractor;
 import org.apereo.cas.ticket.code.OAuthCodeFactory;
 import org.apereo.cas.ticket.device.DeviceToken;
 import org.apereo.cas.ticket.device.DeviceTokenFactory;
@@ -119,4 +120,6 @@ public class OAuth20ConfigurationContext {
     private final SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder;
 
     private final SessionStore<JEEContext> sessionStore;
+
+    private final OAuthAccessTokenIdExtractor oAuthAccessTokenIdExtractor;
 }

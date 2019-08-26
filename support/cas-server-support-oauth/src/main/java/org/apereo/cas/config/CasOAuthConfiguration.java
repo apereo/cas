@@ -85,6 +85,7 @@ import org.apereo.cas.ticket.accesstoken.AccessTokenExpirationPolicyBuilder;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.accesstoken.DefaultAccessTokenFactory;
 import org.apereo.cas.ticket.accesstoken.OAuth20JwtBuilder;
+import org.apereo.cas.ticket.accesstoken.OAuthAccessTokenIdExtractor;
 import org.apereo.cas.ticket.code.DefaultOAuthCodeFactory;
 import org.apereo.cas.ticket.code.OAuthCodeExpirationPolicyBuilder;
 import org.apereo.cas.ticket.code.OAuthCodeFactory;
@@ -206,6 +207,15 @@ public class CasOAuthConfiguration {
             oauthAccessTokenJwtCipherExecutor(),
             servicesManager.getIfAvailable(),
             oauthRegisteredServiceJwtAccessTokenCipherExecutor());
+    }
+
+    @ConditionalOnMissingBean(name = "oAuthAccessTokenIdExtractor")
+    @Bean
+    public OAuthAccessTokenIdExtractor oAuthAccessTokenIdExtractor() {
+        return new OAuthAccessTokenIdExtractor(casProperties.getServer().getPrefix(),
+                oauthAccessTokenJwtCipherExecutor(),
+                servicesManager.getIfAvailable(),
+                oauthRegisteredServiceJwtAccessTokenCipherExecutor());
     }
 
     @ConditionalOnMissingBean(name = "oauthRegisteredServiceJwtAccessTokenCipherExecutor")
@@ -334,7 +344,7 @@ public class CasOAuthConfiguration {
     @ConditionalOnMissingBean(name = "oAuthAccessTokenAuthenticator")
     @Bean
     public Authenticator<TokenCredentials> oAuthAccessTokenAuthenticator() {
-        return new OAuth20AccessTokenAuthenticator(ticketRegistry.getIfAvailable());
+        return new OAuth20AccessTokenAuthenticator(ticketRegistry.getIfAvailable(), oAuthAccessTokenIdExtractor());
     }
 
     @ConditionalOnMissingBean(name = "oauthAccessTokenResponseGenerator")
@@ -812,6 +822,7 @@ public class CasOAuthConfiguration {
             .consentApprovalViewResolver(consentApprovalViewResolver())
             .authenticationBuilder(oauthCasAuthenticationBuilder())
             .oauthAuthorizationResponseBuilders(oauthAuthorizationResponseBuilders())
-            .oauthRequestValidators(oauthAuthorizationRequestValidators());
+            .oauthRequestValidators(oauthAuthorizationRequestValidators())
+            .oAuthAccessTokenIdExtractor(oAuthAccessTokenIdExtractor());
     }
 }

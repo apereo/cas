@@ -69,7 +69,10 @@ public class DefaultAccessTokenFactory implements AccessTokenFactory {
                               final Map<String, Map<String, Object>> requestClaims) {
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(jwtBuilder.getServicesManager(), clientId);
         val expirationPolicyToUse = determineExpirationPolicyForService(registeredService);
-        var accessTokenId = this.accessTokenIdGenerator.getNewTicketId(AccessToken.PREFIX);
+        val accessTokenId = this.accessTokenIdGenerator.getNewTicketId(AccessToken.PREFIX);
+        val at = new AccessTokenImpl(accessTokenId, service, authentication,
+                expirationPolicyToUse, ticketGrantingTicket, scopes,
+                clientId, requestClaims);
         if (registeredService != null && registeredService.isJwtAccessToken()) {
             val dt = ZonedDateTime.now(ZoneOffset.UTC).plusSeconds(expirationPolicyToUse.getTimeToLive());
             val builder = JwtBuilder.JwtRequest.builder();
@@ -82,11 +85,9 @@ public class DefaultAccessTokenFactory implements AccessTokenFactory {
                 .validUntilDate(DateTimeUtils.dateOf(dt))
                 .attributes(authentication.getAttributes())
                 .build();
-            accessTokenId = jwtBuilder.build(request);
+            at.setJwt(jwtBuilder.build(request));
         }
-        val at = new AccessTokenImpl(accessTokenId, service, authentication,
-            expirationPolicyToUse, ticketGrantingTicket, scopes,
-            clientId, requestClaims);
+
         if (ticketGrantingTicket != null) {
             ticketGrantingTicket.getDescendantTickets().add(at.getId());
         }

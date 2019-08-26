@@ -82,7 +82,7 @@ public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
     @Test
     public void verifyNoExistingAccessToken() throws Exception {
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.PROFILE_URL);
-        mockRequest.setParameter(OAuth20Constants.ACCESS_TOKEN, "DOES NOT EXIST");
+        mockRequest.setParameter(OAuth20Constants.ACCESS_TOKEN, "AT- DOES NOT EXIST");
         val mockResponse = new MockHttpServletResponse();
 
         val entity = oAuth20ProfileController.handleGetRequest(mockRequest, mockResponse);
@@ -140,6 +140,42 @@ public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
 
         val expected = "{\"id\":\"" + ID + "\",\"attributes\":[{\"" + NAME + "\":\"" + VALUE + "\"},{\"" + NAME2
             + "\":[\"" + VALUE + "\",\"" + VALUE + "\"]}]}";
+        val expectedObj = MAPPER.readTree(expected);
+        val receivedObj = MAPPER.readTree(entity.getBody());
+        assertEquals(expectedObj.get("id").asText(), receivedObj.get("id").asText());
+
+        val expectedAttributes = expectedObj.get(ATTRIBUTES_PARAM);
+        val receivedAttributes = receivedObj.get(ATTRIBUTES_PARAM);
+
+        assertEquals(expectedAttributes.findValue(NAME).asText(), receivedAttributes.findValue(NAME).asText());
+        assertEquals(expectedAttributes.findValues(NAME2), receivedAttributes.findValues(NAME2));
+    }
+
+    @Test
+    public void verifyOKJwtAccessToken() throws Exception {
+        val map = new HashMap<String, List<Object>>();
+        map.put(NAME, List.of(VALUE));
+        val list = List.of(VALUE, VALUE);
+        map.put(NAME2, (List) list);
+
+        val principal = CoreAuthenticationTestUtils.getPrincipal(ID, map);
+        val authentication = getAuthentication(principal);
+        val service = addRegisteredService();
+        service.setJwtAccessToken(true);
+        val accessToken = accessTokenFactory.create(RegisteredServiceTestUtils.getService(), authentication,
+              new MockTicketGrantingTicket("casuser"), new ArrayList<>(), service.getClientId(), new HashMap<>());
+        this.ticketRegistry.addTicket(accessToken);
+
+        val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.PROFILE_URL);
+        mockRequest.setParameter(OAuth20Constants.ACCESS_TOKEN, accessToken.getJwt());
+        val mockResponse = new MockHttpServletResponse();
+
+        val entity = oAuth20ProfileController.handleGetRequest(mockRequest, mockResponse);
+        assertEquals(HttpStatus.OK, entity.getStatusCode());
+        assertEquals(MediaType.APPLICATION_JSON_VALUE, mockResponse.getContentType());
+
+        val expected = "{\"id\":\"" + ID + "\",\"attributes\":[{\"" + NAME + "\":\"" + VALUE + "\"},{\"" + NAME2
+              + "\":[\"" + VALUE + "\",\"" + VALUE + "\"]}]}";
         val expectedObj = MAPPER.readTree(expected);
         val receivedObj = MAPPER.readTree(entity.getBody());
         assertEquals(expectedObj.get("id").asText(), receivedObj.get("id").asText());

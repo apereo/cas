@@ -4,6 +4,8 @@ import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
+import org.apereo.cas.services.DefaultRegisteredServiceProperty;
+import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
@@ -13,6 +15,7 @@ import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.code.DefaultOAuthCodeFactory;
 import org.apereo.cas.ticket.refreshtoken.DefaultRefreshTokenFactory;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.EncodingUtils;
 
 import lombok.SneakyThrows;
 import lombok.val;
@@ -688,6 +691,25 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
                 CollectionUtils.wrapSet(OAuth20GrantTypes.REFRESH_TOKEN));
         service.setGenerateRefreshToken(true);
         assertRefreshTokenOk(service);
+    }
+
+    @Test
+    public void verifyJwtAccessToken() {
+        val service = addRegisteredService();
+        service.setJwtAccessToken(true);
+        assertClientOK(service, false);
+    }
+
+    @Test
+    public void verifyJwtAccessTokenServiceSigned() {
+        val service = addRegisteredService();
+        service.setJwtAccessToken(true);
+        val properties = new HashMap<String, RegisteredServiceProperty>();
+        val key = EncodingUtils.generateJsonWebKey(512);
+        val property = new DefaultRegisteredServiceProperty(key);
+        properties.put(RegisteredServiceProperty.RegisteredServiceProperties.ACCESS_TOKEN_AS_JWT_SIGNING_KEY.getPropertyName(), property);
+        service.setProperties(properties);
+        assertClientOK(service, false);
     }
 
 }

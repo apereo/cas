@@ -3,6 +3,7 @@ package org.apereo.cas.support.oauth.web.response.callback;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
+import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGenerator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestDataHolder;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
@@ -84,7 +85,7 @@ public class OAuth20TokenAuthorizationResponseBuilder implements OAuth20Authoriz
         val timeToLive = expiration.getTimeToLive();
         stringBuilder.append(OAuth20Constants.ACCESS_TOKEN)
             .append('=')
-            .append(accessToken.getId())
+            .append(OAuth20Utils.encodeAccessToken(accessToken))
             .append('&')
             .append(OAuth20Constants.TOKEN_TYPE)
             .append('=')
@@ -123,7 +124,7 @@ public class OAuth20TokenAuthorizationResponseBuilder implements OAuth20Authoriz
 
         LOGGER.debug("Redirecting to URL [{}]", url);
         val parameters = new LinkedHashMap<String, String>();
-        parameters.put(OAuth20Constants.ACCESS_TOKEN, accessToken.getId());
+        parameters.put(OAuth20Constants.ACCESS_TOKEN, OAuth20Utils.encodeAccessToken(accessToken));
         if (refreshToken != null) {
             parameters.put(OAuth20Constants.REFRESH_TOKEN, refreshToken.getId());
         }
