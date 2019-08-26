@@ -1338,6 +1338,7 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-context")
                     exclude(group: "org.springframework", module: "spring-core")
                     exclude(group: "org.springframework", module: "spring-aop")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter")
                     force = true
                 },
                 dependencies.create("org.apache.activemq:activemq-pool:$activemqPoolVersion") {
@@ -1368,6 +1369,7 @@ ext.libraries = [
                     exclude(group: "ch.qos.logback", module: "logback-core")
                     exclude(group: "ch.qos.logback", module: "logback-classic")
                     exclude(group: "nz.net.ultraq.thymeleaf", module: "thymeleaf-layout-dialect")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
                     exclude(group: "org.sourceforge.nekohtml", module: "nekohtml")
                     exclude(group: "org.javassist", module: "javassist")
@@ -2464,6 +2466,7 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-context")
                     exclude(group: "org.springframework", module: "spring-messaging")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-actuator")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter")
                     exclude(group: "org.hibernate", module: "hibernate-validator")
                     exclude(group: "ch.qos.logback", module: "logback-core")
                     exclude(group: "ch.qos.logback", module: "logback-classic")
@@ -2490,6 +2493,7 @@ ext.libraries = [
         ],
         springboot              : [
                 dependencies.create("org.springframework.boot:spring-boot-starter-mail:$springBootVersion") {
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.slf4j", module: "log4j-over-slf4j")
@@ -2504,6 +2508,7 @@ ext.libraries = [
                     force = true
                 },
                 dependencies.create("org.springframework.boot:spring-boot-starter-aop:$springBootVersion") {
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.slf4j", module: "log4j-over-slf4j")
@@ -2535,6 +2540,7 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-aop")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-actuator")
                     exclude(group: "org.slf4j", module: "jcl-over-slf4j")
@@ -2543,6 +2549,7 @@ ext.libraries = [
                     exclude(group: "org.apache.tomcat.embed", module: "tomcat-embed-el")
                     exclude(group: "org.apache.tomcat.embed", module: "tomcat-embed-websocket")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-tomcat")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-validation")
                     force = true
                 },
                 dependencies.create("org.springframework.boot:spring-boot-autoconfigure:$springBootVersion") {
@@ -2595,6 +2602,7 @@ ext.libraries = [
                     force = true
                 },
                 dependencies.create("org.springframework.boot:spring-boot-starter-actuator:$springBootVersion") {
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-web")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
@@ -2636,6 +2644,7 @@ ext.libraries = [
                     exclude(group: "org.apache.tomcat.embed", module: "tomcat-embed-core")
                     exclude(group: "org.apache.tomcat.embed", module: "tomcat-embed-el")
                     exclude(group: "org.apache.tomcat.embed", module: "tomcat-embed-websocket")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
                     force = true
                 },
@@ -2675,6 +2684,7 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-web")
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.slf4j", module: "jcl-over-slf4j")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
                     force = true
                 }
@@ -2713,7 +2723,6 @@ ext.libraries = [
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-validation")
                     exclude(group: "org.springframework.integration", module: "spring-integration-core")
                     exclude(group: "org.apache.tomcat.embed", module: "tomcat-embed-el")
-                    exclude(group: "org.springframework.boot", module: "spring-boot-starter")
                     force = true
                 },
         ],
@@ -2817,7 +2826,6 @@ ext.libraries = [
                     exclude(group: "org.springframework.retry", module: "spring-retry")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
-                    exclude(group: "org.springframework.boot", module: "spring-boot-starter")
                     exclude(group: "org.springframework", module: "spring-beans")
                     exclude(group: "org.springframework", module: "spring-core")
                     exclude(group: "org.springframework", module: "spring-web")
@@ -2888,7 +2896,9 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "com.google.code.findbugs", module: "jsr305")
                     exclude(group: "javax.servlet", module: "servlet-api")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-autoconfigure")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-aop")
                     exclude(group: "com.netflix.archaius", module: "archaius-core")
                     exclude(group: "org.bouncycastle", module: "bcprov-jdk15on")
                     exclude(group: "org.bouncycastle", module: "bcpkix-jdk15on")
@@ -2922,6 +2932,8 @@ ext.libraries = [
                     exclude(group: "javax.servlet", module: "servlet-api")
                     exclude(group: "com.netflix.netflix-commons", module: "netflix-eventbus")
                     exclude(group: "com.google.code.gson", module: "gson")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-autoconfigure")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-aop")
                     force = true
                 },
                 dependencies.create("com.netflix.netflix-commons:netflix-eventbus:0.3.0") {
