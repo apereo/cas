@@ -53,7 +53,7 @@ else
         exit $retVal
     fi
 
-    java -jar support/cas-server-support-shell/build/libs/cas-server-support-shell-${casVersion}.jar @ci/tests/shel/cas-shell-scripts.sh
+    java -jar support/cas-server-support-shell/build/libs/cas-server-support-shell-${casVersion}.jar @ci/tests/shell/cas-shell-scripts.sh
     retVal=$?
     if [ $retVal == 0 ]; then
         echo "CAS shell script finished successfully."
