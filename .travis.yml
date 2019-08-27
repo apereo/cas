@@ -39,6 +39,7 @@ env:
     - JAVA_OPTS="-Xms512m -Xmx4048m -Xss128m -XX:ReservedCodeCacheSize=512m -XX:+UseG1GC -Xverify:none -server"
     - GRADLE_OPTS="-Xms512m -Xmx1024m -Xss128m -XX:ReservedCodeCacheSize=512m -XX:+UseG1GC -Xverify:none -server"
     - SPRING_MAIN_BANNER-MODE="off"
+    - DEPENDENCY_BOT_BRANCH=^renovate
     - secure: "ScUSTo0if5m7ddnwUA7EaYucc6yzEUrKLk0DzCvkMfjn2h5taUFSKHx+S0hd2EzJofv+Em4eI5qncSK5LTxgD7HhHR1e3iZp+SqJenhhOnbuciZfg4QA+tUGw3XUdmREac5cz2l0qhi1q4vsnnZARj2d4vvf2HWuNtEOBu/ZAKI="
     - secure: "iWPPLKSS3zBs2adqLPkMiHfCj2hSLyD5BoV3oodhR7Ne83Kpn1khRcEWFoHF3Ed11eSU+glNdPSzUpc8TzwTZGx5B3RU2Qp36hZFyjuzNWJARmoVPYMiEg3FFBQrUR75w+Tbtn6zPkiAk6nl0K5ewmY0/xixVdnTLXL5HjpE2rc="
     - secure: "f3mDIZ8m6NYJXI8KvWD/sZRSeCCyIyfgPRy3Q6o9u9WyHZuYaJf95Ia0eJQ3gxUDS1TKL31Vk08dhFKrfIcKgifFPa2uQ2uyJkvGxlarMTQ+tpqsZYp4zAJgKc9r4xdZasvF2k4xqr+pl9AFjlpXB4jDD59XPXt3DcRABOYA9sM="
@@ -61,10 +62,9 @@ stages:
   - initialize
   - publish
   - build
-  - postbuild
+  - validate
   - test
-  - dependencies
-  - spotbugs
+  - finalize
 jobs:
   include:
     - stage: initialize
@@ -72,7 +72,7 @@ jobs:
       name: "Initialize Build System"
       ############################################
     - stage: publish
-      if: NOT commit_message =~ ^\[skip\s+snapshots\] and type != "pull_request" and (branch =~ /^\d+\.\d+\.x$/ or branch = master)
+      if: NOT commit_message =~ ^\[skip\s+snapshots\] and type != pull_request and (branch =~ /^\d+\.\d+\.x$/ or branch = master)
       script: ./ci/publish-snapshots-release.sh
       name: "Publish SNAPSHOT Artifacts"
       ############################################
@@ -81,41 +81,33 @@ jobs:
       name: "Build CAS"
     - stage: build
       script: ./ci/html-proofer-docs.sh
-      if: branch =~ /^\d+\.\d+\.x$/ or branch = master
+      if: NOT (head_branch =~ env(DEPENDENCY_BOT_BRANCH) and type = pull_request) and (branch =~ /^\d+\.\d+\.x$/ or branch = master)
       name: "Validate Documentation"
       ############################################
-    - stage: postbuild
+    - stage: validate
       script: ./ci/analyze-sonarqube.sh
       if: type != pull_request
       name: "SonarCloud Analysis"
-    - stage: postbuild
+    - stage: validate
+      if: NOT (head_branch =~ env(DEPENDENCY_BOT_BRANCH) and type = pull_request)
       script: ./ci/analyze-style.sh
       name: "Checkstyle Analysis"
-    - stage: postbuild
+    - stage: validate
       script: ./ci/push-docs-ghpages.sh
       if: type != pull_request and (branch =~ /^\d+\.\d+\.x$/ or branch = master)
       name: "Publish Documentation"
-    - stage: postbuild
+    - stage: validate
+      if: NOT (head_branch =~ env(DEPENDENCY_BOT_BRANCH) and type = pull_request)
       script: ./ci/build-javadocs.sh
       name: "Build Javadocs"
-    - stage: postbuild
+    - stage: validate
+      if: NOT (head_branch =~ env(DEPENDENCY_BOT_BRANCH) and type = pull_request)
       script: ./ci/build-config-metadata.sh
       name: "Configuration Metadata Analysis"
-    - stage: postbuild
+    - stage: validate
+      if: NOT (head_branch =~ env(DEPENDENCY_BOT_BRANCH) and type = pull_request)
       script: ./ci/check-config-factories.sh
       name: "Configuration Factory Analysis"
-      ############################################
-    - stage: dependencies
-      script: ./ci/analyze-dependencies.sh
-      name: "Dependency Security Analysis"
-    - stage: dependencies
-      if: type != pull_request and (branch =~ /^\d+\.\d+\.x$/ or branch = master)
-      script: ./ci/report-dependency-updates.sh
-      name: "Dependency Update Report"
-    - stage: dependencies
-      if: type != pull_request and (branch =~ /^\d+\.\d+\.x$/ or branch = master)
-      script: ./ci/update-dependencies.sh
-      name: "Renovate Dependency Updates"
       ############################################
     - stage: test
       script: ./ci/tests/validate-tests.sh
@@ -195,9 +187,24 @@ jobs:
     - stage: test
       script: ./ci/tests/redis/run-tests-redis.sh
       name: "Redis Tests"
-    - stage: spotbugs
+      ############################################
+    - stage: finalize
+      if: NOT (head_branch =~ env(DEPENDENCY_BOT_BRANCH) and type = pull_request)
+      script: ./ci/analyze-dependencies.sh
+      name: "Dependency Security Analysis"
+    - stage: finalize
+      if: type != pull_request and (branch =~ /^\d+\.\d+\.x$/ or branch = master)
+      script: ./ci/report-dependency-updates.sh
+      name: "Dependency Update Report"
+    - stage: finalize
+      if: type != pull_request and (branch =~ /^\d+\.\d+\.x$/ or branch = master)
+      script: ./ci/update-dependencies.sh
+      name: "Renovate Dependency Updates"
+    - stage: finalize
+      if: NOT (head_branch =~ env(DEPENDENCY_BOT_BRANCH) and type = pull_request)
       script: ./ci/analyze-bugs-main.sh
       name: "Spotbugs Main Analysis"
-    - stage: spotbugs
+    - stage: finalize
+      if: NOT (head_branch =~ env(DEPENDENCY_BOT_BRANCH) and type = pull_request)
       script: ./ci/analyze-bugs-tests.sh
       name: "Spotbugs Tests Analysis"

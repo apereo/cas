@@ -1,8 +1,13 @@
+apply plugin: "war"
+ext {
+    mainClassName = "org.apereo.cas.web.CasWebApplication"
+}
 description = "Apereo CAS Web Application"
 
-apply plugin: "war"
+def getServerType(String projectName) {
+    return projectName.split('-').last()
+}
 
-project.ext["mainClassName"] = "org.apereo.cas.web.CasWebApplication"
 sourceSets {
     main {
         resources {
@@ -12,24 +17,13 @@ sourceSets {
     /**
      * Make resources become reloadable.
      * Application’s static resources are loaded from their source location.
+     * Only load extra resources for one type of server to avoid intellij duplicate path warnings.
      */
     bootRun {
-        resources {
-            srcDirs new File("//etc/cas/templates/"),
-                    new File("${project(":webapp").getProjectDir()}/cas-server-webapp-resources/src/main/resources/")
-        }
-    }
-}
-
-publishing {
-    publications {
-        mavenWeb(MavenPublication) {
-            from components.web
-            pom {
-                createPom(it, project)
-            }
-            pom.withXml {
-                createPomRepositories(asNode())
+        if (getServerType(project.name).equals('tomcat')) {
+            resources {
+                srcDirs new File("//etc/cas/templates/"),
+                        new File("${project(":webapp").getProjectDir()}/cas-server-webapp-resources/src/main/resources/")
             }
         }
     }
@@ -58,6 +52,7 @@ dependencies {
 
     implementation project(":webapp:cas-server-webapp-config")
     implementation project(":webapp:cas-server-webapp-init")
+    implementation project(":webapp:cas-server-webapp-resources")
 
     implementation libraries.springcloudconfigclient
 
