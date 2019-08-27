@@ -286,6 +286,7 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
 
     private void expireOldRefreshToken(AccessTokenRequestDataHolder responseHolder) {
         OAuthToken oldRefreshToken = responseHolder.getToken();
+        LOGGER.debug("Expiring old refresh token [{}]", oldRefreshToken);
         oldRefreshToken.markTicketExpired();
         ticketRegistry.updateTicket(oldRefreshToken);
     }
