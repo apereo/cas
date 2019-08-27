@@ -60,6 +60,7 @@ after_script:
   - ./ci/stop.sh
 stages:
   - initialize
+  - first
   - publish
   - build
   - validate
@@ -112,6 +113,9 @@ jobs:
     - stage: test
       script: ./ci/tests/validate-tests.sh
       name: "Validate Tests & Suites"
+    - stage: first
+      script: ./ci/tests/shell/validate-shell.sh
+      name: "Validate CAS Shell"
     - stage: test
       script: ./ci/tests/run-tests-simple.sh
       name: "Simple Unit Tests"
