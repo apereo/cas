@@ -386,9 +386,9 @@ public abstract class AbstractOAuth20Tests {
             assertFalse(mv.getModel().containsKey(OAuth20Constants.REFRESH_TOKEN));
             newRefreshToken = refreshToken;
         } else {
+            assertTrue(mv.getModel().containsKey(OAuth20Constants.REFRESH_TOKEN));
             val refreshTokenId = mv.getModel().get(OAuth20Constants.REFRESH_TOKEN).toString();
             newRefreshToken = this.ticketRegistry.getTicket(refreshTokenId, RefreshToken.class);
-            assertTrue(mv.getModel().containsKey(OAuth20Constants.REFRESH_TOKEN));
         }
         assertTrue(mv.getModel().containsKey(OAuth20Constants.EXPIRES_IN));
         accessTokenId = mv.getModel().get(OAuth20Constants.ACCESS_TOKEN).toString();
