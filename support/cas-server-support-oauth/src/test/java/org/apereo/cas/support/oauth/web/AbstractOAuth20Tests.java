@@ -379,17 +379,17 @@ public abstract class AbstractOAuth20Tests {
         assertEquals(200, mockResponse.getStatus());
 
         var accessTokenId = StringUtils.EMPTY;
-        RefreshToken newRefreshToken;
-
         assertTrue(mv.getModel().containsKey(OAuth20Constants.ACCESS_TOKEN));
+
         if (!service.isRenewRefreshToken()) {
             assertFalse(mv.getModel().containsKey(OAuth20Constants.REFRESH_TOKEN));
-            newRefreshToken = refreshToken;
         } else {
             assertTrue(mv.getModel().containsKey(OAuth20Constants.REFRESH_TOKEN));
-            val refreshTokenId = mv.getModel().get(OAuth20Constants.REFRESH_TOKEN).toString();
-            newRefreshToken = this.ticketRegistry.getTicket(refreshTokenId, RefreshToken.class);
         }
+        val newRefreshToken = service.isRenewRefreshToken()
+            ? this.ticketRegistry.getTicket(mv.getModel().get(OAuth20Constants.REFRESH_TOKEN).toString(), RefreshToken.class)
+            : refreshToken;
+
         assertTrue(mv.getModel().containsKey(OAuth20Constants.EXPIRES_IN));
         accessTokenId = mv.getModel().get(OAuth20Constants.ACCESS_TOKEN).toString();
 
