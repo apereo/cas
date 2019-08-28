@@ -11,13 +11,13 @@ import org.springframework.shell.standard.commands.Quit;
  */
 public class ExitCommand extends Quit {
 
+    /**
+     * Quit the shell when requested, regardless of running threads.
+     */
     @ShellMethod(
             value = "Exit the shell.",
             key = {"quit", "exit"}
     )
-    /**
-     * Quit the shell when requested, regardless of running threads.
-     */
     @SuppressFBWarnings("DM_EXIT")
     public void quit() {
         super.quit();
