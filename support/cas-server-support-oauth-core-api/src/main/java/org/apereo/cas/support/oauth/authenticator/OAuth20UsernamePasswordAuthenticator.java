@@ -49,7 +49,7 @@ public class OAuth20UsernamePasswordAuthenticator implements Authenticator<Usern
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
 
             val clientSecret = clientIdAndSecret.getRight();
-            if (StringUtils.isNotBlank(clientSecret) && !OAuth20Utils.checkClientSecret(registeredService, clientSecret)) {
+            if (!OAuth20Utils.checkClientSecret(registeredService, clientSecret)) {
                 throw new CredentialsException("Bad secret for client identifier: " + clientId);
             }
 
