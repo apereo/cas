@@ -36,6 +36,8 @@ public class AccessTokenRequestDataHolder {
 
     private final boolean generateRefreshToken;
 
+    private final boolean expireOldRefreshToken;
+
     private final OAuthRegisteredService registeredService;
 
     private final TicketGrantingTicket ticketGrantingTicket;

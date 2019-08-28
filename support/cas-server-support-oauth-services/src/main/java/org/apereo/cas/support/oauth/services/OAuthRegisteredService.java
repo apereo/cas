@@ -45,6 +45,9 @@ public class OAuthRegisteredService extends RegexRegisteredService {
     private boolean generateRefreshToken;
 
     @Column
+    private boolean renewRefreshToken;
+
+    @Column
     private boolean jwtAccessToken;
 
     @Lob

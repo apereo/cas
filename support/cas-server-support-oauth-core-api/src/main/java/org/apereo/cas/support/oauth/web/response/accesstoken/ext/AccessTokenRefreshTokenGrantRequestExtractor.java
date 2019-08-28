@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.web.response.accesstoken.ext;
 
+import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
@@ -10,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * This is {@link AccessTokenRefreshTokenGrantRequestExtractor}.
@@ -29,8 +31,20 @@ public class AccessTokenRefreshTokenGrantRequestExtractor extends AccessTokenAut
     }
 
     @Override
-    protected boolean isAllowedToGenerateRefreshToken() {
-        return false;
+    protected AccessTokenRequestDataHolder extractInternal(final HttpServletRequest request,
+        final HttpServletResponse response,
+        final AccessTokenRequestDataHolder.AccessTokenRequestDataHolderBuilder builder) {
+        val registeredService = getOAuthRegisteredServiceBy(request);
+        if (registeredService == null) {
+            throw new UnauthorizedServiceException("Unable to locate service in registry ");
+        }
+
+        val shouldRenewRefreshToken =
+            registeredService.isGenerateRefreshToken() && registeredService.isRenewRefreshToken();
+        builder.generateRefreshToken(shouldRenewRefreshToken);
+        builder.expireOldRefreshToken(shouldRenewRefreshToken);
+
+        return super.extractInternal(request, response, builder);
     }
 
     @Override
