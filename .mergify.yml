@@ -9,7 +9,7 @@ pull_request_rules:
   actions:
     merge:
       method: squash
-      strict: true
+      strict: false
     delete_head_branch:
 - name: automatic merge by renovate
   conditions:
