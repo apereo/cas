@@ -3,6 +3,7 @@ package org.apereo.cas.oidc.util;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 
@@ -93,6 +94,13 @@ public class OidcAuthorizationRequestSupport {
     public static Optional<CommonProfile> isAuthenticationProfileAvailable(final JEEContext context) {
         val manager = new ProfileManager<CommonProfile>(context, context.getSessionStore());
         return manager.get(true);
+    }
+
+    @SneakyThrows
+    public static String getRedirectUrlWithError(final String originalRedirectUrl, final String errorCode) {
+        val uriBuilder = new URIBuilder(originalRedirectUrl)
+                .addParameter(OAuth20Constants.ERROR, errorCode);
+        return uriBuilder.build().toASCIIString();
     }
 
     @SneakyThrows

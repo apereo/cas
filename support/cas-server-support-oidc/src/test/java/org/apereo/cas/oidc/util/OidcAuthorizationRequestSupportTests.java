@@ -66,4 +66,11 @@ public class OidcAuthorizationRequestSupportTests {
         context.setRequestAttribute(Pac4jConstants.USER_PROFILES, new CommonProfile());
         assertTrue(OidcAuthorizationRequestSupport.isAuthenticationProfileAvailable(context).isPresent());
     }
+
+    @Test
+    public void verifyGetRedirectUrlWithError() {
+        val originalRedirectUrl = "https://www.example.org";
+        val expectedUrlWithError = originalRedirectUrl + "?error=login_required";
+        assertEquals(expectedUrlWithError, OidcAuthorizationRequestSupport.getRedirectUrlWithError(originalRedirectUrl, OidcConstants.LOGIN_REQUIRED));
+    }
 }
