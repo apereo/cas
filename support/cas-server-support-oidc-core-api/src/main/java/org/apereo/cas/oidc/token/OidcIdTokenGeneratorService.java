@@ -89,7 +89,10 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService {
                                        final JEEContext context,
                                        final OAuth20ResponseTypes responseType) {
         val authentication = accessTokenId.getAuthentication();
-        val principal = authentication.getPrincipal();
+
+        val principal = this.getConfigurationContext().getProfileScopeToAttributesFilter().filter(accessTokenId.getService(), authentication.getPrincipal(),
+                service, context, accessTokenId);
+
         val oidc = getConfigurationContext().getCasProperties().getAuthn().getOidc();
 
         val claims = new JwtClaims();
