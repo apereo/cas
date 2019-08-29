@@ -58,7 +58,7 @@ public class GenerateSamlIdPMetadataCommand {
             help = "Scope to use when generating metadata",
             defaultValue = "example.org") final String scope,
         @ShellOption(value = { "force", "--force" },
-            help = "Force metadata generation, disregarding anything that might already be available at the specified location")
+            help = "Force metadata generation (XML only, not certs), overwriting anything at the specified location")
             final boolean force,
         @ShellOption(value = { "subjectAltNames", "--subjectAltNames" },
             help = "Comma separated list of other subject alternative names for the certificate (besides entityId)",
