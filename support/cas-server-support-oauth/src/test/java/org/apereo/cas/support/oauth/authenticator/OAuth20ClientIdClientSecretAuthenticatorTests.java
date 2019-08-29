@@ -1,10 +1,10 @@
 package org.apereo.cas.support.oauth.authenticator;
 
 import org.apereo.cas.services.RegisteredServiceAccessStrategyAuditableEnforcer;
-
-import lombok.val;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
+
+import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
