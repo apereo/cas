@@ -50,9 +50,11 @@ public class StringableCipherExecutorCommand {
         final String secretKeyEncryption,
         @ShellOption(value = { "signing-key", "--signing-key" }, defaultValue = ShellOption.NULL, help = "Signing key")
         final String secretKeySigning,
-        @ShellOption(value = { "encryption-key-size", "--encryption-key-size" }, defaultValue = StringUtils.EMPTY + CipherExecutor.DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE, help = "Encryption key size")
+        @ShellOption(value = { "encryption-key-size", "--encryption-key-size" },
+            defaultValue = StringUtils.EMPTY + CipherExecutor.DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE, help = "Encryption key size")
         final int secretKeyEncryptionSize,
-        @ShellOption(value = { "signing-key-size", "--signing-key-size" }, defaultValue = StringUtils.EMPTY + CipherExecutor.DEFAULT_STRINGABLE_SIGNING_KEY_SIZE, help = "Signing key size")
+        @ShellOption(value = { "signing-key-size", "--signing-key-size" },
+            defaultValue = StringUtils.EMPTY + CipherExecutor.DEFAULT_STRINGABLE_SIGNING_KEY_SIZE, help = "Signing key size")
         final int secretKeySigningSize,
         @ShellOption(value = { "enable-encryption", "--enable-encryption" }, defaultValue = "true", help = "Whether value should be encrypted")
         final boolean encryptionEnabled,
