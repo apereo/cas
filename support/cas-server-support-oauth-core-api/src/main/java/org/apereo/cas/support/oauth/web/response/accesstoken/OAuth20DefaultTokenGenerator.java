@@ -276,7 +276,17 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
             responseHolder.getClaims());
         LOGGER.debug("Adding refresh token [{}] to the registry", refreshToken);
         addTicketToRegistry(refreshToken, responseHolder.getTicketGrantingTicket());
+        if (responseHolder.isExpireOldRefreshToken()) {
+            expireOldRefreshToken(responseHolder);
+        }
         return refreshToken;
+    }
+
+    private void expireOldRefreshToken(final AccessTokenRequestDataHolder responseHolder) {
+        val oldRefreshToken = responseHolder.getToken();
+        LOGGER.debug("Expiring old refresh token [{}]", oldRefreshToken);
+        oldRefreshToken.markTicketExpired();
+        ticketRegistry.updateTicket(oldRefreshToken);
     }
 
     private static OAuth20TokenGeneratedResult generateAccessTokenResult(final AccessTokenRequestDataHolder holder,

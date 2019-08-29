@@ -163,6 +163,7 @@ The following fields are supported:
 | `supportedResponseTypes`          | Collection of supported response types for this service.
 | `bypassApprovalPrompt`            | Whether approval prompt/consent screen should be bypassed. Default is `false`.
 | `generateRefreshToken`            | Whether a refresh token should be generated along with the access token. Default is `false`.
+| `renewRefreshToken`               | Whether the existing refresh token should be expired and a new one generated (and sent along) whenever a new access token is requested (with `grant_type` = `refresh_token`). Only possible if `generateRefreshToken` is set to `true`. Default is `false`.
 | `jwtAccessToken`                  | Whether access tokens should be created as JWTs. Default is `false`.
 | `serviceId`                       | The pattern that authorizes the redirect URI(s), or same as `clientId` in case `redirect_uri` is not required by the grant type (i.e `client_credentials`, etc).
 
