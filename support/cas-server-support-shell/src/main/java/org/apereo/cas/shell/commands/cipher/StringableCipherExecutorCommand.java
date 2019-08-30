@@ -42,21 +42,23 @@ public class StringableCipherExecutorCommand {
     @SneakyThrows
     @ShellMethod(key = "cipher-text", value = "Sign and encrypt text data using keys")
     public void cipher(
-        @ShellOption(value = "value", defaultValue = ShellOption.NULL, help = "Value to put through the cipher")
+        @ShellOption(value = { "value", "--value" }, defaultValue = ShellOption.NULL, help = "Value to put through the cipher")
         final String value,
-        @ShellOption(value = "file", defaultValue = ShellOption.NULL, help = "File path to put through the cipher")
+        @ShellOption(value = { "file", "--file" }, defaultValue = ShellOption.NULL, help = "File path to put through the cipher")
         final File file,
-        @ShellOption(value = "encryption-key", defaultValue = ShellOption.NULL, help = "Encryption key")
+        @ShellOption(value = { "encryption-key", "--encryption-key" }, defaultValue = ShellOption.NULL, help = "Encryption key")
         final String secretKeyEncryption,
-        @ShellOption(value = "signing-key", defaultValue = ShellOption.NULL, help = "Signing key")
+        @ShellOption(value = { "signing-key", "--signing-key" }, defaultValue = ShellOption.NULL, help = "Signing key")
         final String secretKeySigning,
-        @ShellOption(value = "encryption-key-size", defaultValue = StringUtils.EMPTY + CipherExecutor.DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE, help = "Encryption key size")
+        @ShellOption(value = { "encryption-key-size", "--encryption-key-size" },
+            defaultValue = StringUtils.EMPTY + CipherExecutor.DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE, help = "Encryption key size")
         final int secretKeyEncryptionSize,
-        @ShellOption(value = "signing-key-size", defaultValue = StringUtils.EMPTY + CipherExecutor.DEFAULT_STRINGABLE_SIGNING_KEY_SIZE, help = "Signing key size")
+        @ShellOption(value = { "signing-key-size", "--signing-key-size" },
+            defaultValue = StringUtils.EMPTY + CipherExecutor.DEFAULT_STRINGABLE_SIGNING_KEY_SIZE, help = "Signing key size")
         final int secretKeySigningSize,
-        @ShellOption(value = "enable-encryption", defaultValue = "true", help = "Whether value should be encrypted")
+        @ShellOption(value = { "enable-encryption", "--enable-encryption" }, defaultValue = "true", help = "Whether value should be encrypted")
         final boolean encryptionEnabled,
-        @ShellOption(value = "enable-signing", defaultValue = "true", help = "Whether value should be signed")
+        @ShellOption(value = { "enable-signing", "--enable-signing" }, defaultValue = "true", help = "Whether value should be signed")
         final boolean signingEnabled) {
 
         var toEncode = value;

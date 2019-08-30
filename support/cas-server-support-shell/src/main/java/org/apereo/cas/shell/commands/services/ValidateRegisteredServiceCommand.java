@@ -34,9 +34,9 @@ public class ValidateRegisteredServiceCommand {
      */
     @ShellMethod(key = "validate-service", value = "Validate a given JSON/YAML service definition by path or directory")
     public static void validateService(
-        @ShellOption(value = "file",
+        @ShellOption(value = { "file", "--file" },
             help = "Path to the JSON/YAML service definition file") final String file,
-        @ShellOption(value = "directory",
+        @ShellOption(value = { "directory", "--directory" },
             help = "Path to the JSON/YAML service definitions directory",
             defaultValue = "/etc/cas/services") final String directory) {
 

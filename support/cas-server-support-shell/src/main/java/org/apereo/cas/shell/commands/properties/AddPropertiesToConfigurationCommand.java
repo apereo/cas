@@ -44,10 +44,10 @@ public class AddPropertiesToConfigurationCommand {
      */
     @ShellMethod(key = "add-properties", value = "Add properties associated with a CAS group/module to a Properties/Yaml configuration file.")
     public static void add(
-        @ShellOption(value = "file",
+        @ShellOption(value = { "file", "--file" },
             help = "Path to the CAS configuration file",
             defaultValue = "/etc/cas/config/cas.properties") final String file,
-        @ShellOption(value = "group",
+        @ShellOption(value = { "group", "--group" },
             help = "Group/module whose associated settings should be added to the CAS configuration file") final String group) throws Exception {
 
         if (StringUtils.isBlank(file)) {
