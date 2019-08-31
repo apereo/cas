@@ -3490,29 +3490,50 @@ The signing and encryption keys [are both JWKs](Configuration-Properties-Common.
 
 Allows CAS to act as an OAuth2 provider. Here you can control how long various tokens issued by CAS should last, etc.
 
+Signing & encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.authn.oauth`.
+
 To learn more about this topic, [please review this guide](../installation/OAuth-OpenId-Authentication.html).
 
 ```properties
-# cas.authn.oauth.replicateSessions=false
-
-# cas.authn.oauth.refreshToken.timeToKillInSeconds=2592000
-
-# cas.authn.oauth.code.timeToKillInSeconds=30
-# cas.authn.oauth.code.numberOfUses=1
-
-# cas.authn.oauth.accessToken.timeToKillInSeconds=7200
-# cas.authn.oauth.accessToken.maxTimeToLiveInSeconds=28800
-
-# cas.authn.oauth.deviceToken.timeToKillInSeconds=2592000
-# cas.authn.oauth.deviceToken.refreshInterval=PT15S 
-
-# cas.authn.oauth.deviceUserCode.timeToKillInSeconds=2592000
-# cas.authn.oauth.deviceUserCode.userCodeLength=8
-
+# cas.authn.oauth.replicateSessions=false 
 # cas.authn.oauth.grants.resourceOwner.requireServiceHeader=true
-
 # cas.authn.oauth.userProfileViewType=NESTED|FLAT
 ```
+
+### Refresh Tokens
+
+```properties
+# cas.authn.oauth.refreshToken.timeToKillInSeconds=2592000
+```
+
+### Codes
+
+```properties
+# cas.authn.oauth.code.timeToKillInSeconds=30
+# cas.authn.oauth.code.numberOfUses=1
+```
+
+### Access Tokens
+
+```properties
+# cas.authn.oauth.accessToken.timeToKillInSeconds=7200
+# cas.authn.oauth.accessToken.maxTimeToLiveInSeconds=28800
+```
+
+### Device Tokens
+ 
+```
+# cas.authn.oauth.deviceToken.timeToKillInSeconds=2592000
+# cas.authn.oauth.deviceToken.refreshInterval=PT15S 
+```
+
+### Device User Codes
+
+```
+# cas.authn.oauth.deviceUserCode.timeToKillInSeconds=2592000
+# cas.authn.oauth.deviceUserCode.userCodeLength=8
+```
+
 
 ### OAuth2 JWT Access Tokens
 
