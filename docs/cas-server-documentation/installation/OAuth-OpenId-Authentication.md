@@ -173,6 +173,24 @@ Service definitions are typically managed by the [service management](../service
 
 <div class="alert alert-warning"><strong>Usage Warning!</strong><p>CAS today does not strictly enforce the collection of authorized supported response/grant types for backward compatibility reasons. This means that if left undefined, all grant and response types may be allowed by the service definition and related policies. Do please note that this behavior is <strong>subject to change</strong> in future releases and thus, it is strongly recommended that all authorized grant/response types for each profile be declared in the service definition immediately to avoid surprises in the future.</p></div>
 
+### Encryptable Client Secrets
+
+Client secrets for OAuth relying parties may be defined as encrypted values prefixed with `{cas-cipher}`:
+
+```json
+{
+  "@class": "org.apereo.cas.support.oauth.services.OAuthRegisteredService",
+  "clientId": "clientid",
+  "clientSecret": "{cas-cipher}eyJhbGciOiJIUzUxMiIs...",
+  "serviceId" : "^(https|imaps)://<redirect-uri>.*",
+  "name": "Sample",
+  "id": 100
+}
+``` 
+
+Client secrets may be encrypted using CAS-provided cipher operations either manually or via the [CAS Command-line shell](Configuring-Commandline-Shell.html).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#oauth2).
+
 ### Attribute Release
 
 Attribute/claim filtering and release policies are defined per OAuth service.

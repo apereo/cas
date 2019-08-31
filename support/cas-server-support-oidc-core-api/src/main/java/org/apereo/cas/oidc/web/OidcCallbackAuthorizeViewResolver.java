@@ -12,8 +12,6 @@ import org.pac4j.core.profile.ProfileManager;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
-import static org.apereo.cas.oidc.util.OidcAuthorizationRequestSupport.getRedirectUrlWithError;
-
 /**
  * This is {@link OidcCallbackAuthorizeViewResolver}.
  *
@@ -33,7 +31,7 @@ public class OidcCallbackAuthorizeViewResolver implements OAuth20CallbackAuthori
                 return new ModelAndView(url);
             }
             LOGGER.warn("Unable to detect an authenticated user profile for prompt-less login attempts");
-            return new ModelAndView(new RedirectView(getRedirectUrlWithError(ctx.getFullRequestURL(), OidcConstants.LOGIN_REQUIRED)));
+            return new ModelAndView(new RedirectView(OidcAuthorizationRequestSupport.getRedirectUrlWithError(ctx.getFullRequestURL(), OidcConstants.LOGIN_REQUIRED)));
         }
         if (prompt.contains(OidcConstants.PROMPT_LOGIN)) {
             LOGGER.trace("Removing login prompt from URL [{}]", url);

@@ -31,8 +31,7 @@ import java.util.HashSet;
 public class OAuthRegisteredService extends RegexRegisteredService {
 
     private static final long serialVersionUID = 5318897374067731021L;
-
-    @Column
+    
     private String clientSecret;
 
     @Column
