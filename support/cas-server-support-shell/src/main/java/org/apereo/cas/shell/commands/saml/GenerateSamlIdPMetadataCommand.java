@@ -9,6 +9,7 @@ import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.shell.standard.ShellCommandGroup;
@@ -17,6 +18,7 @@ import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
 
 import java.io.File;
+import java.util.Arrays;
 
 /**
  * This is {@link GenerateSamlIdPMetadataCommand}.
@@ -39,26 +41,35 @@ public class GenerateSamlIdPMetadataCommand {
      * @param serverPrefix     the server prefix
      * @param scope            the scope
      * @param force            force generation of metadata
+     * @param subjectAltNames  additional subject alternative names for cert (besides entity id)
      */
     @ShellMethod(key = "generate-idp-metadata", value = "Generate SAML2 IdP Metadata")
     public void generate(
-        @ShellOption(value = "metadataLocation",
+        @ShellOption(value = { "metadataLocation", "--metadataLocation" },
             help = "Directory location to hold metadata and relevant keys/certificates",
             defaultValue = "/etc/cas/saml") final String metadataLocation,
-        @ShellOption(value = "entityId",
+        @ShellOption(value = { "entityId", "--entityId" },
             help = "Entity ID to use for the generated metadata",
             defaultValue = "cas.example.org") final String entityId,
-        @ShellOption(value = "hostName",
+        @ShellOption(value = { "hostName", "--hostName" },
             help = "CAS server prefix to be used at the IdP host name when generating metadata",
             defaultValue = "https://cas.example.org/cas") final String serverPrefix,
-        @ShellOption(value = "scope",
+        @ShellOption(value = { "scope", "--scope" },
             help = "Scope to use when generating metadata",
             defaultValue = "example.org") final String scope,
-        @ShellOption(value = "force",
-            help = "Force metadata generation, disregarding anything that might already be available at the specified location") final boolean force) {
+        @ShellOption(value = { "force", "--force" },
+            help = "Force metadata generation (XML only, not certs), overwriting anything at the specified location")
+            final boolean force,
+        @ShellOption(value = { "subjectAltNames", "--subjectAltNames" },
+            help = "Comma separated list of other subject alternative names for the certificate (besides entityId)",
+            defaultValue = StringUtils.EMPTY) final String subjectAltNames) {
 
         val locator = new FileSystemSamlIdPMetadataLocator(new File(metadataLocation));
         val writer = new DefaultSamlIdPCertificateAndKeyWriter();
+        writer.setHostname(entityId);
+        if (StringUtils.isNotBlank(subjectAltNames)) {
+            writer.setUriSubjectAltNames(Arrays.asList(StringUtils.split(subjectAltNames, ",")));
+        }
 
         val context = SamlIdPMetadataGeneratorConfigurationContext.builder()
             .samlIdPMetadataLocator(locator)

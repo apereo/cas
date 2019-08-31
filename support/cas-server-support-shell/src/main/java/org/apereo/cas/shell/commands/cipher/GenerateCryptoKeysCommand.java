@@ -25,7 +25,7 @@ public class GenerateCryptoKeysCommand {
      * @param keySize the key size
      */
     @ShellMethod(key = "generate-key", value = "Generate signing/encryption crypto keys for CAS settings")
-    public void generateKey(@ShellOption(value = "key-size",
+    public void generateKey(@ShellOption(value = { "key-size", "--key-size" },
         defaultValue = "256", help = "Key size") final int keySize) {
         LOGGER.info(EncodingUtils.generateJsonWebKey(keySize));
     }

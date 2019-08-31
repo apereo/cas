@@ -28,11 +28,11 @@ public class AnonymousUsernameAttributeProviderCommand {
      */
     @ShellMethod(key = "generate-anonymous-user", value = "Generate an anonymous (persistent) username identifier")
     public void generateUsername(
-        @ShellOption(value = "username",
+        @ShellOption(value = { "username", "--username" },
             help = "Authenticated username") final String username,
-        @ShellOption(value = "service",
+        @ShellOption(value = { "service", "--service" },
             help = "Service application URL for which CAS may generate the identifier") final String service,
-        @ShellOption(value = "salt",
+        @ShellOption(value = { "salt", "--salt" },
             help = "Salt used to generate and encode the anonymous identifier") final String salt) {
         val generator = new ShibbolethCompatiblePersistentIdGenerator(salt);
         val id = generator.generate(username, service);

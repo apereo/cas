@@ -28,7 +28,7 @@ public class JasyptListAlgorithmsCommand {
      * @param includeBC whether to include the BouncyCastle provider
      */
     @ShellMethod(key = "jasypt-list-algorithms", value = "List alogrithms you can use with Jasypt for property encryption")
-    public void listAlgorithms(@ShellOption(value = "includeBC",
+    public void listAlgorithms(@ShellOption(value = { "includeBC", "--includeBC" },
         help = "Include Bouncy Castle provider") final boolean includeBC) {
         if (includeBC) {
             if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
