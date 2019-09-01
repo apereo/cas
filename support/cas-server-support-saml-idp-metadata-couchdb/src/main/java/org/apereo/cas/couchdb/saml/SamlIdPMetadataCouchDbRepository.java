@@ -19,7 +19,7 @@ public class SamlIdPMetadataCouchDbRepository extends CouchDbRepositorySupport<C
 
     /**
      * Get one SAML metadata document.
-     * @return first found SAML metatdata doc
+     * @return first found SAML metadata doc
      */
     public CouchDbSamlIdPMetadataDocument getOne() {
         val view = createQuery("all").limit(1);
