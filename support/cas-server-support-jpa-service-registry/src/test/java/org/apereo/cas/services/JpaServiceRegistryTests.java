@@ -29,7 +29,7 @@ public class JpaServiceRegistryTests extends AbstractServiceRegistryTests {
 
     @Autowired
     @Qualifier("jpaServiceRegistry")
-    private ServiceRegistry serviceRegistry;
+    protected ServiceRegistry serviceRegistry;
 
     @Override
     public ServiceRegistry getNewServiceRegistry() {

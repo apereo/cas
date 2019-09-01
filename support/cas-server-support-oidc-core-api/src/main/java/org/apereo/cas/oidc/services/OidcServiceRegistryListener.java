@@ -33,6 +33,16 @@ public class OidcServiceRegistryListener implements ServiceRegistryListener {
 
     private final Collection<BaseOidcScopeAttributeReleasePolicy> userScopes;
 
+    private static void addAttributeReleasePolicy(final ChainingAttributeReleasePolicy chain,
+                                                  final BaseOidcScopeAttributeReleasePolicy policyToAdd,
+                                                  final String givenScope,
+                                                  final OidcRegisteredService registeredService) {
+        LOGGER.debug("Mapped [{}] to attribute release policy [{}]", givenScope, policyToAdd.getClass().getSimpleName());
+        val consentPolicy = registeredService.getAttributeReleasePolicy().getConsentPolicy();
+        policyToAdd.setConsentPolicy(consentPolicy);
+        chain.getPolicies().add(policyToAdd);
+    }
+
     @Override
     public RegisteredService postLoad(final RegisteredService registeredService) {
         if (registeredService instanceof OidcRegisteredService) {
@@ -41,7 +51,13 @@ public class OidcServiceRegistryListener implements ServiceRegistryListener {
         return registeredService;
     }
 
-    private RegisteredService reconcile(final OidcRegisteredService oidcService) {
+    /**
+     * Reconcile registered service.
+     *
+     * @param oidcService the oidc service
+     * @return the registered service
+     */
+    protected RegisteredService reconcile(final OidcRegisteredService oidcService) {
         LOGGER.trace("Reconciling OpenId Connect scopes and claims for [{}]", oidcService.getServiceId());
 
         val definedServiceScopes = oidcService.getScopes();
@@ -105,14 +121,5 @@ public class OidcServiceRegistryListener implements ServiceRegistryListener {
             oidcService.getServiceId(), oidcService.getAttributeReleasePolicy());
 
         return oidcService;
-    }
-
-    private static void addAttributeReleasePolicy(final ChainingAttributeReleasePolicy chain,
-                                                  final BaseOidcScopeAttributeReleasePolicy policyToAdd,
-                                                  final String givenScope,
-                                                  final OidcRegisteredService registeredService) {
-        LOGGER.debug("Mapped [{}] to attribute release policy [{}]", givenScope, policyToAdd.getClass().getSimpleName());
-        policyToAdd.setConsentPolicy(registeredService.getAttributeReleasePolicy().getConsentPolicy());
-        chain.getPolicies().add(policyToAdd);
     }
 }

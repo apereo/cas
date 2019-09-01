@@ -81,4 +81,10 @@ public class ChainingRegisteredServiceConsentPolicy implements RegisteredService
             .flatMap(Set::stream)
             .collect(Collectors.toCollection(LinkedHashSet::new));
     }
+
+    @Override
+    @JsonIgnore
+    public int size() {
+        return policies.size();
+    }
 }

@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Collection;
@@ -59,6 +60,27 @@ public interface ServiceRegistry {
     RegisteredService findServiceById(long id);
 
     /**
+     * Find service by the numeric id.
+     *
+     * @param <T>   the type parameter
+     * @param id    the id
+     * @param clazz the clazz
+     * @return the registered service
+     */
+    default <T extends RegisteredService> T findServiceById(final long id, final Class<T> clazz) {
+        val service = findServiceById(id);
+        if (service == null) {
+            return null;
+        }
+        
+        if (!clazz.isAssignableFrom(service.getClass())) {
+            throw new ClassCastException("Object [" + service + " is of type " + service.getClass()
+                + " when we were expecting " + clazz);
+        }
+        return clazz.cast(service);
+    }
+
+    /**
      * Find a service by an exact match of the service id.
      *
      * @param id the id
@@ -84,6 +106,27 @@ public interface ServiceRegistry {
             .filter(r -> r.getName().equals(name))
             .findFirst()
             .orElse(null);
+    }
+
+    /**
+     * Find service by exact service name t.
+     *
+     * @param <T>   the type parameter
+     * @param name  the name
+     * @param clazz the clazz
+     * @return the t
+     */
+    default <T extends RegisteredService> T findServiceByExactServiceName(final String name, final Class<T> clazz) {
+        val service = findServiceByExactServiceName(name);
+        if (service == null) {
+            return null;
+        }
+
+        if (!clazz.isAssignableFrom(service.getClass())) {
+            throw new ClassCastException("Object [" + service + " is of type " + service.getClass()
+                + " when we were expecting " + clazz);
+        }
+        return clazz.cast(service);
     }
 
     /**

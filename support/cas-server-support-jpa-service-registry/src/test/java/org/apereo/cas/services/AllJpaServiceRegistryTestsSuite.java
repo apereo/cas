@@ -15,7 +15,8 @@ import org.junit.runner.RunWith;
     JpaServiceRegistryMySQLTests.class,
     JpaServiceRegistryMicrosoftSqlServerTests.class,
     JpaServiceRegistryPostgresTests.class,
-    JpaServiceRegistryMariaDbTests.class
+    JpaServiceRegistryMariaDbTests.class,
+    OidcJpaServiceRegistryTests.class
 })
 @RunWith(JUnitPlatform.class)
 public class AllJpaServiceRegistryTestsSuite {
