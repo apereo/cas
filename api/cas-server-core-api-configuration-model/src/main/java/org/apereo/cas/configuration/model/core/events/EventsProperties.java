@@ -25,6 +25,11 @@ public class EventsProperties implements Serializable {
     private static final long serialVersionUID = 1734523424737956370L;
 
     /**
+     * Whether event tracking and recording functionality should be enabled.
+     */
+    private boolean enabled = true;
+
+    /**
      * Whether geolocation should be tracked as part of collected authentication events.
      * This of course require's consent from the user's browser to collect stats on location.
      */
