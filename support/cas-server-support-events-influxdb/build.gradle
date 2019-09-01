@@ -4,11 +4,12 @@ dependencies {
     api project(":api:cas-server-core-api-services")
     api project(":api:cas-server-core-api-validation")
     api project(":api:cas-server-core-api-events")
-    
+
     implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-events")
+    implementation project(":core:cas-server-core-events-api")
 
     implementation project(":support:cas-server-support-influxdb-core")
     
