@@ -154,9 +154,8 @@ public class AccepttoApiUtils {
             parameters.put("groups", group);
         }
 
-        AccepttoWebflowUtils.getEGuardianUserId(requestContext).ifPresent(value -> {
-            parameters.put("eguardian_user_id", value);
-        });
+        AccepttoWebflowUtils.getEGuardianUserId(requestContext)
+            .ifPresent(value -> parameters.put("eguardian_user_id", value));
 
         val currentCredential = WebUtils.getCredential(requestContext);
         if (currentCredential instanceof AccepttoEmailCredential) {

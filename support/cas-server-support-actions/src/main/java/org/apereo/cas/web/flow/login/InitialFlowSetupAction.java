@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 /**
  * Class to automatically set the paths for the CookieGenerators.
  * <p>
- * Note: This is technically not threadsafe, but because its overriding with a
+ * Note: This is technically not thread-safe, but because its overriding with a
  * constant value it doesn't matter.
  * <p>
  * Note: As of CAS 3.1, this is a required class that retrieves and exposes the

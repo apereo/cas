@@ -18,6 +18,7 @@ import lombok.val;
 @RequiredArgsConstructor
 public class DefaultMultifactorAuthenticationFailureModeEvaluator implements MultifactorAuthenticationFailureModeEvaluator {
 
+    private static final long serialVersionUID = 3837589092620951038L;
     private final CasConfigurationProperties casProperties;
 
     @Override
