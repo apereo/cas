@@ -3968,7 +3968,11 @@ a local truststore is provided by CAS to improve portability of configuration ac
 ```properties
 # cas.httpClient.connectionTimeout=5000
 # cas.httpClient.asyncTimeout=5000
-# cas.httpClient.readTimeout=5000
+# cas.httpClient.readTimeout=5000 
+
+# cas.httpClient.proxyHost=
+# cas.httpClient.proxyPort=0 
+
 # cas.httpClient.hostNameVerifier=NONE|DEFAULT
 # cas.httpClient.allowLocalLogoutUrls=false
 # cas.httpClient.authorityValidationRegEx=

@@ -63,7 +63,8 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
 
     private final transient Cache<String, DuoSecurityUserAccount> userAccountCache;
 
-    public BaseDuoSecurityAuthenticationService(final DuoSecurityMultifactorProperties duoProperties, final HttpClient httpClient) {
+    public BaseDuoSecurityAuthenticationService(final DuoSecurityMultifactorProperties duoProperties,
+                                                final HttpClient httpClient) {
         this.duoProperties = duoProperties;
         this.httpClient = httpClient;
 
@@ -178,9 +179,11 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
      * @return the http
      */
     protected Http buildHttpPostAuthRequest() {
-        return new Http(HttpMethod.POST.name(),
+        val request = new Http(HttpMethod.POST.name(),
             duoProperties.getDuoApiHost(),
             String.format("/auth/v%s/auth", AUTH_API_VERSION));
+        configureHttpRequest(request);
+        return request;
     }
 
     /**
@@ -190,11 +193,24 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
      * @return the http
      */
     protected Http buildHttpPostUserPreAuthRequest(final String username) {
-        val usersRequest = new Http(HttpMethod.POST.name(),
+        val request = new Http(HttpMethod.POST.name(),
             duoProperties.getDuoApiHost(),
             String.format("/auth/v%s/preauth", AUTH_API_VERSION));
-        usersRequest.addParam("username", username);
-        return usersRequest;
+        request.addParam("username", username);
+        configureHttpRequest(request);
+        return request;
+    }
+
+    /**
+     * Configure http request.
+     *
+     * @param request the request
+     */
+    protected void configureHttpRequest(final Http request) {
+        val factory = this.httpClient.getHttpClientFactory();
+        if (factory.getProxy() != null) {
+            request.setProxy(factory.getProxy().getHostName(), factory.getProxy().getPort());
+        }
     }
 
 
