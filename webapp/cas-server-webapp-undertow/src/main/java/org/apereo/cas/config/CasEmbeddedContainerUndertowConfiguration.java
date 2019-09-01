@@ -25,7 +25,6 @@ import org.springframework.core.Ordered;
 @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
 public class CasEmbeddedContainerUndertowConfiguration {
 
-
     @Autowired
     private CasConfigurationProperties casProperties;
 }
