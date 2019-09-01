@@ -3661,7 +3661,8 @@ The baseNames are message bundle base names representing files that either end i
 Control how audit messages are formatted.
 To learn more about this topic, [please review this guide](../installation/Audits.html).
 
-```properties
+```properties 
+# cas.audit.enabled=true
 # cas.audit.ignoreAuditFailures=false
 # cas.audit.appCode=CAS
 # cas.audit.numberOfDaysInHistory=30
@@ -3884,8 +3885,9 @@ To learn more about this topic, [please review this guide](../ux/User-Interface-
 Decide how CAS should track authentication events.
 To learn more about this topic, [please review this guide](../installation/Configuring-Authentication-Events.html).
 
-
 ```properties
+cas.events.enabled=true
+
 # Whether geolocation tracking should be turned on and requested from the browser.
 # cas.events.trackGeolocation=false
 
