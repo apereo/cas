@@ -44,14 +44,22 @@ public class ChainingAttributeReleasePolicy implements RegisteredServiceAttribut
     @Override
     public RegisteredServiceConsentPolicy getConsentPolicy() {
         AnnotationAwareOrderComparator.sortIfNecessary(policies);
-        val policy = new ChainingRegisteredServiceConsentPolicy();
-        val consentPolicies = this.policies
-            .stream()
-            .map(RegisteredServiceAttributeReleasePolicy::getConsentPolicy)
-            .distinct()
-            .collect(Collectors.toList());
-        policy.addPolicies(consentPolicies);
-        return policy;
+        val chainingRegisteredServiceConsentPolicy = new ChainingRegisteredServiceConsentPolicy();
+        val newConsentPolicies = new ArrayList<RegisteredServiceConsentPolicy>();
+        this.policies.forEach(policy -> {
+            val embeddedConsentPolicy = policy.getConsentPolicy();
+            if (embeddedConsentPolicy instanceof ChainingRegisteredServiceConsentPolicy) {
+                ((ChainingRegisteredServiceConsentPolicy) embeddedConsentPolicy)
+                        .getPolicies()
+                        .forEach(consentPolicy -> newConsentPolicies.add(consentPolicy));
+            } else {
+                newConsentPolicies.add(embeddedConsentPolicy);
+            }
+        });
+        chainingRegisteredServiceConsentPolicy.addPolicies(
+                newConsentPolicies.stream().distinct().collect(Collectors.toList())
+        );
+        return chainingRegisteredServiceConsentPolicy;
     }
 
     @Override
