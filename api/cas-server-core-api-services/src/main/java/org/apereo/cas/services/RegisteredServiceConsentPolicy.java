@@ -6,6 +6,7 @@ import org.springframework.core.Ordered;
 
 import java.io.Serializable;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -61,5 +62,10 @@ public interface RegisteredServiceConsentPolicy extends Serializable, Ordered {
     @JsonIgnore
     default int size() {
         return 1;
+    }
+
+    @JsonIgnore
+    default List<RegisteredServiceConsentPolicy> getPolicies() {
+        return List.of(this);
     }
 }

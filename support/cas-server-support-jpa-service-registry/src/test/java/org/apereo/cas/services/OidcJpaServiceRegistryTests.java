@@ -4,7 +4,6 @@ import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.services.OidcServiceRegistryListener;
 import org.apereo.cas.util.CollectionUtils;
 
-import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -41,7 +40,7 @@ public class OidcJpaServiceRegistryTests extends JpaServiceRegistryTests {
         this.serviceRegistry.save(svc);
         this.serviceRegistry.load();
         svc = this.serviceRegistry.findServiceByExactServiceName(svc.getName(), OidcRegisteredService.class);
-        
+
         var consentPolicy = svc.getAttributeReleasePolicy().getConsentPolicy();
         assertEquals(1, consentPolicy.size());
 
@@ -50,10 +49,6 @@ public class OidcJpaServiceRegistryTests extends JpaServiceRegistryTests {
 
         consentPolicy = svc.getAttributeReleasePolicy().getConsentPolicy();
         assertEquals(1, consentPolicy.size());
-        
-        this.serviceRegistry.save(svc);
-        this.serviceRegistry.load();
-        this.serviceRegistry.save(svc);
     }
 
     @TestConfiguration("OidcJpaServiceRegistryTestConfiguration")

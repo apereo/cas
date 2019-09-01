@@ -16,6 +16,7 @@ import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -44,22 +45,14 @@ public class ChainingAttributeReleasePolicy implements RegisteredServiceAttribut
     @Override
     public RegisteredServiceConsentPolicy getConsentPolicy() {
         AnnotationAwareOrderComparator.sortIfNecessary(policies);
-        val chainingRegisteredServiceConsentPolicy = new ChainingRegisteredServiceConsentPolicy();
-        val newConsentPolicies = new ArrayList<RegisteredServiceConsentPolicy>();
-        this.policies.forEach(policy -> {
-            val embeddedConsentPolicy = policy.getConsentPolicy();
-            if (embeddedConsentPolicy instanceof ChainingRegisteredServiceConsentPolicy) {
-                ((ChainingRegisteredServiceConsentPolicy) embeddedConsentPolicy)
-                        .getPolicies()
-                        .forEach(consentPolicy -> newConsentPolicies.add(consentPolicy));
-            } else {
-                newConsentPolicies.add(embeddedConsentPolicy);
-            }
-        });
-        chainingRegisteredServiceConsentPolicy.addPolicies(
-                newConsentPolicies.stream().distinct().collect(Collectors.toList())
-        );
-        return chainingRegisteredServiceConsentPolicy;
+        val chainingConsentPolicy = new ChainingRegisteredServiceConsentPolicy();
+        val newConsentPolicies = policies
+            .stream()
+            .map(policy -> policy.getConsentPolicy().getPolicies())
+            .flatMap(List::stream)
+            .collect(Collectors.toCollection(LinkedHashSet::new));
+        chainingConsentPolicy.addPolicies(newConsentPolicies);
+        return chainingConsentPolicy;
     }
 
     @Override
