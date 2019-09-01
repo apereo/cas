@@ -103,7 +103,7 @@ public class ChainingAttributeReleasePolicy implements RegisteredServiceAttribut
     }
 
     /**
-     * Size.
+     * Size int.
      *
      * @return the int
      */

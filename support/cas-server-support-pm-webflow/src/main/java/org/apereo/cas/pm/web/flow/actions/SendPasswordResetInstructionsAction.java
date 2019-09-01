@@ -1,15 +1,13 @@
 package org.apereo.cas.pm.web.flow.actions;
 
+import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pm.PasswordManagementService;
-import org.apereo.cas.pm.web.flow.PasswordManagementWebflowUtils;
 import org.apereo.cas.ticket.TicketFactory;
-import org.apereo.cas.ticket.TransientSessionTicket;
-import org.apereo.cas.ticket.TransientSessionTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.token.TokenConstants;
 import org.apereo.cas.util.io.CommunicationsManager;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -76,12 +74,12 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
      */
     public String buildPasswordResetUrl(final String username,
                                         final PasswordManagementService passwordManagementService,
-                                               final CasConfigurationProperties casProperties, final WebApplicationService service) {
+                                        final CasConfigurationProperties casProperties, final WebApplicationService service) {
         val token = passwordManagementService.createToken(username);
         if (StringUtils.isNotBlank(token)) {
             StringBuilder restetUrl = new StringBuilder(casProperties.getServer().getPrefix())
-                    .append('/').append(CasWebflowConfigurer.FLOW_ID_LOGIN).append('?')
-                    .append(PARAMETER_NAME_TOKEN).append('=').append(token);
+                .append('/').append(CasWebflowConfigurer.FLOW_ID_LOGIN).append('?')
+                .append(TokenConstants.PARAMETER_NAME_TOKEN).append('=').append(token);
 
             if (service != null) {
                 val encodeServiceUrl = UriUtils.encode(service.getOriginalUrl(), StandardCharsets.UTF_8);
@@ -143,7 +141,15 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
         return this.communicationsManager.email(reset, to, text);
     }
 
-    private Event getErrorEvent(final String code, final String defaultMessage, final RequestContext requestContext) {
+    /**
+     * Gets error event.
+     *
+     * @param code           the code
+     * @param defaultMessage the default message
+     * @param requestContext the request context
+     * @return the error event
+     */
+    protected Event getErrorEvent(final String code, final String defaultMessage, final RequestContext requestContext) {
         val messages = requestContext.getMessageContext();
         messages.addMessage(new MessageBuilder()
             .error()
