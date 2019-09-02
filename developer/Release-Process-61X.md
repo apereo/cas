@@ -66,33 +66,23 @@ git checkout -b $BRANCH
 If there already exists a remote tracking branch for the version you are about to release, you should <code>git checkout</code> that branch, 
 skip this step and move on to next section to build and release.</p></div>
 
-#### Travis CI
+### Travis CI
 
 - Change `.travis.yml` to *only* build the newly-created release branch.
 - Examine all CI shell scripts under the `ci` folder to make sure nothing points to `development` or `master`. This is particularly applicable to how CAS documentation is published to the `gh-pages` branch.
  
 Do not forget to commit all changes and push changes upstream, creating a new remote branch to track the release.
 
-### Build 
+## Performing the Release 
 
 - In the project's `gradle.properties`, change the project version to the release version and remove the `-SNAPSHOT`. (i.e. `5.0.0-RC1`). 
-- Then build the project using the following command:
+- Then build and release the project using the following command:
 
 ```bash
-./gradlew clean assemble -x test -x check -DpublishReleases=true -DsonatypeUsername=<UID> -DsonatypePassword=<PASSWORD>
+./release.sh
 ```
 
-### Release
-
-Release the project using the following commands:
-
-```bash
-./gradlew publish -DpublishReleases=true -DsonatypeUsername=<UID> -DsonatypePassword=<PASSWORD> -Dorg.gradle.internal.http.socketTimeout=160000 -Dorg.gradle.internal.http.connectionTimeout=160000
-```
-
-## Performing the Release
-
-Follow the process for [deploying artifacts to Maven Central](https://wiki.jasig.org/display/JCH/Deploying+Maven+Artifacts) via Sonatype OSS repository.  
+Next:  
 
 - Log into [https://oss.sonatype.org](https://oss.sonatype.org).
 - Click on "Staged Repositories" on the left and find the CAS release artifacts at the bottom of the list.
