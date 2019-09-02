@@ -3490,29 +3490,50 @@ The signing and encryption keys [are both JWKs](Configuration-Properties-Common.
 
 Allows CAS to act as an OAuth2 provider. Here you can control how long various tokens issued by CAS should last, etc.
 
+Signing & encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.authn.oauth`.
+
 To learn more about this topic, [please review this guide](../installation/OAuth-OpenId-Authentication.html).
 
 ```properties
-# cas.authn.oauth.replicateSessions=false
-
-# cas.authn.oauth.refreshToken.timeToKillInSeconds=2592000
-
-# cas.authn.oauth.code.timeToKillInSeconds=30
-# cas.authn.oauth.code.numberOfUses=1
-
-# cas.authn.oauth.accessToken.timeToKillInSeconds=7200
-# cas.authn.oauth.accessToken.maxTimeToLiveInSeconds=28800
-
-# cas.authn.oauth.deviceToken.timeToKillInSeconds=2592000
-# cas.authn.oauth.deviceToken.refreshInterval=PT15S 
-
-# cas.authn.oauth.deviceUserCode.timeToKillInSeconds=2592000
-# cas.authn.oauth.deviceUserCode.userCodeLength=8
-
+# cas.authn.oauth.replicateSessions=false 
 # cas.authn.oauth.grants.resourceOwner.requireServiceHeader=true
-
 # cas.authn.oauth.userProfileViewType=NESTED|FLAT
 ```
+
+### Refresh Tokens
+
+```properties
+# cas.authn.oauth.refreshToken.timeToKillInSeconds=2592000
+```
+
+### Codes
+
+```properties
+# cas.authn.oauth.code.timeToKillInSeconds=30
+# cas.authn.oauth.code.numberOfUses=1
+```
+
+### Access Tokens
+
+```properties
+# cas.authn.oauth.accessToken.timeToKillInSeconds=7200
+# cas.authn.oauth.accessToken.maxTimeToLiveInSeconds=28800
+```
+
+### Device Tokens
+ 
+```
+# cas.authn.oauth.deviceToken.timeToKillInSeconds=2592000
+# cas.authn.oauth.deviceToken.refreshInterval=PT15S 
+```
+
+### Device User Codes
+
+```
+# cas.authn.oauth.deviceUserCode.timeToKillInSeconds=2592000
+# cas.authn.oauth.deviceUserCode.userCodeLength=8
+```
+
 
 ### OAuth2 JWT Access Tokens
 
@@ -3640,7 +3661,8 @@ The baseNames are message bundle base names representing files that either end i
 Control how audit messages are formatted.
 To learn more about this topic, [please review this guide](../installation/Audits.html).
 
-```properties
+```properties 
+# cas.audit.enabled=true
 # cas.audit.ignoreAuditFailures=false
 # cas.audit.appCode=CAS
 # cas.audit.numberOfDaysInHistory=30
@@ -3863,8 +3885,9 @@ To learn more about this topic, [please review this guide](../ux/User-Interface-
 Decide how CAS should track authentication events.
 To learn more about this topic, [please review this guide](../installation/Configuring-Authentication-Events.html).
 
-
 ```properties
+cas.events.enabled=true
+
 # Whether geolocation tracking should be turned on and requested from the browser.
 # cas.events.trackGeolocation=false
 
@@ -3945,7 +3968,11 @@ a local truststore is provided by CAS to improve portability of configuration ac
 ```properties
 # cas.httpClient.connectionTimeout=5000
 # cas.httpClient.asyncTimeout=5000
-# cas.httpClient.readTimeout=5000
+# cas.httpClient.readTimeout=5000 
+
+# cas.httpClient.proxyHost=
+# cas.httpClient.proxyPort=0 
+
 # cas.httpClient.hostNameVerifier=NONE|DEFAULT
 # cas.httpClient.allowLocalLogoutUrls=false
 # cas.httpClient.authorityValidationRegEx=

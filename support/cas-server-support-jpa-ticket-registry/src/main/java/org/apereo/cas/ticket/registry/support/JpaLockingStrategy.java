@@ -21,7 +21,7 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 
 /**
- * JPA 2.0 implementation of an exclusive, non-reentrant lock.
+ * JPA 2.0 implementation of an exclusive, non re-entrant lock.
  *
  * @author Marvin S. Addison
  * @since 3.0.0

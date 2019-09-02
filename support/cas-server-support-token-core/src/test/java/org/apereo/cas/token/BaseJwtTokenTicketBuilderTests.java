@@ -9,6 +9,7 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.TokenCoreConfiguration;
+import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.DefaultRegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -73,19 +74,28 @@ public abstract class BaseJwtTokenTicketBuilderTests {
         @Override
         public void afterPropertiesSet() {
             inMemoryRegisteredServices.add(RegisteredServiceTestUtils.getRegisteredService("https://cas.example.org.+"));
-            val registeredService = RegisteredServiceTestUtils.getRegisteredService("https://jwt.example.org/cas.*");
+            inMemoryRegisteredServices.add(createRegisteredService("https://jwt.example.org/cas.*", true, true));
+            inMemoryRegisteredServices.add(createRegisteredService("https://jwt.no-encryption-key.example.org/cas.*", true, false));
+        }
 
-            val signingKey = new DefaultRegisteredServiceProperty();
-            signingKey.addValue("pR3Vizkn5FSY5xCg84cIS4m-b6jomamZD68C8ash-TlNmgGPcoLgbgquxHPoi24tRmGpqHgM4mEykctcQzZ-Xg");
-            registeredService.getProperties().put(
-                RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET_SIGNING_KEY.getPropertyName(), signingKey);
+        private AbstractRegisteredService createRegisteredService(final String id, final boolean hasSigningKey, final boolean hasEncryptionKey) {
+            val registeredService = RegisteredServiceTestUtils.getRegisteredService(id);
 
-            val encKey = new DefaultRegisteredServiceProperty();
-            encKey.addValue("0KVXaN-nlXafRUwgsr3H_l6hkufY7lzoTy7OVI5pN0E");
-            registeredService.getProperties().put(
-                RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET_ENCRYPTION_KEY.getPropertyName(), encKey);
+            if (hasSigningKey) {
+                val signingKey = new DefaultRegisteredServiceProperty();
+                signingKey.addValue("pR3Vizkn5FSY5xCg84cIS4m-b6jomamZD68C8ash-TlNmgGPcoLgbgquxHPoi24tRmGpqHgM4mEykctcQzZ-Xg");
+                registeredService.getProperties().put(
+                    RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET_SIGNING_KEY.getPropertyName(), signingKey);
+            }
+            if (hasEncryptionKey) {
+                val encKey = new DefaultRegisteredServiceProperty();
+                encKey.addValue("0KVXaN-nlXafRUwgsr3H_l6hkufY7lzoTy7OVI5pN0E");
+                registeredService.getProperties().put(
+                    RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET_ENCRYPTION_KEY.getPropertyName(), encKey);
 
-            inMemoryRegisteredServices.add(registeredService);
+                inMemoryRegisteredServices.add(registeredService);
+            }
+            return registeredService;
         }
 
         @Bean

@@ -28,6 +28,7 @@ import org.apereo.cas.ticket.code.OAuthCodeFactory;
 import org.apereo.cas.ticket.device.DeviceToken;
 import org.apereo.cas.ticket.device.DeviceTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.gen.RandomStringGenerator;
 import org.apereo.cas.util.serialization.StringSerializer;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
@@ -41,6 +42,7 @@ import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.springframework.core.io.ResourceLoader;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Set;
 
@@ -120,6 +122,8 @@ public class OAuth20ConfigurationContext {
     private final SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder;
 
     private final SessionStore<JEEContext> sessionStore;
+  
+    private final CipherExecutor<Serializable, String> registeredServiceCipherExecutor;
 
     private final OAuthAccessTokenIdExtractor oAuthAccessTokenIdExtractor;
 }

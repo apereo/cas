@@ -13,6 +13,7 @@ import org.apereo.cas.ticket.OAuthToken;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.accesstoken.OAuthAccessTokenIdExtractor;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -32,6 +33,8 @@ import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -401,15 +404,19 @@ public class OAuth20Utils {
      *
      * @param registeredService the registered service
      * @param clientSecret      the client secret
+     * @param cipherExecutor    the cipher executor
      * @return whether the secret is valid
      */
-    public static boolean checkClientSecret(final OAuthRegisteredService registeredService, final String clientSecret) {
+    public static boolean checkClientSecret(final OAuthRegisteredService registeredService, final String clientSecret,
+                                            final CipherExecutor<Serializable, String> cipherExecutor) {
         LOGGER.debug("Found: [{}] in secret check", registeredService);
-        if (StringUtils.isBlank(registeredService.getClientSecret())) {
+        var definedSecret = registeredService.getClientSecret();
+        if (StringUtils.isBlank(definedSecret)) {
             LOGGER.debug("The client secret is not defined for the registered service [{}]", registeredService.getName());
             return true;
         }
-        if (!StringUtils.equals(registeredService.getClientSecret(), clientSecret)) {
+        definedSecret = cipherExecutor.decode(definedSecret, new Object[] {registeredService});
+        if (!StringUtils.equals(definedSecret, clientSecret)) {
             LOGGER.error("Wrong client secret for service: [{}]", registeredService.getServiceId());
             return false;
         }

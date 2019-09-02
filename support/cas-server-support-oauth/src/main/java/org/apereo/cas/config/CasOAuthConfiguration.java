@@ -26,6 +26,7 @@ import org.apereo.cas.support.oauth.profile.DefaultOAuth20ProfileScopeToAttribut
 import org.apereo.cas.support.oauth.profile.DefaultOAuth20UserProfileDataCreator;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.profile.OAuth20UserProfileDataCreator;
+import org.apereo.cas.support.oauth.services.OAuth20RegisteredServiceCipherExecutor;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationRequestValidator;
@@ -41,8 +42,8 @@ import org.apereo.cas.support.oauth.validator.token.OAuth20PasswordGrantTypeToke
 import org.apereo.cas.support.oauth.validator.token.OAuth20RefreshTokenGrantTypeTokenRequestValidator;
 import org.apereo.cas.support.oauth.validator.token.OAuth20TokenRequestValidator;
 import org.apereo.cas.support.oauth.web.OAuth20CasCallbackUrlResolver;
-import org.apereo.cas.support.oauth.web.audit.AccessTokenGrantRequestAuditResourceResolver;
 import org.apereo.cas.support.oauth.web.audit.AccessTokenResponseAuditResourceResolver;
+import org.apereo.cas.support.oauth.web.audit.OAuth20AccessTokenGrantRequestAuditResourceResolver;
 import org.apereo.cas.support.oauth.web.audit.OAuth20UserProfileDataAuditResourceResolver;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AccessTokenEndpointController;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AuthorizeEndpointController;
@@ -320,8 +321,10 @@ public class CasOAuthConfiguration {
     @ConditionalOnMissingBean(name = "oAuthClientAuthenticator")
     @Bean
     public Authenticator<UsernamePasswordCredentials> oAuthClientAuthenticator() {
-        return new OAuth20ClientIdClientSecretAuthenticator(servicesManager.getIfAvailable(), webApplicationServiceFactory.getIfAvailable(),
-            registeredServiceAccessStrategyEnforcer.getIfAvailable());
+        return new OAuth20ClientIdClientSecretAuthenticator(servicesManager.getIfAvailable(),
+            webApplicationServiceFactory.getIfAvailable(),
+            registeredServiceAccessStrategyEnforcer.getIfAvailable(),
+            oauthRegisteredServiceCipherExecutor());
     }
 
     @ConditionalOnMissingBean(name = "oAuthProofKeyCodeExchangeAuthenticator")
@@ -330,7 +333,8 @@ public class CasOAuthConfiguration {
         return new OAuth20ProofKeyCodeExchangeAuthenticator(this.servicesManager.getIfAvailable(),
             webApplicationServiceFactory.getIfAvailable(),
             registeredServiceAccessStrategyEnforcer.getIfAvailable(),
-            ticketRegistry.getIfAvailable());
+            ticketRegistry.getIfAvailable(),
+            oauthRegisteredServiceCipherExecutor());
     }
 
     @ConditionalOnMissingBean(name = "oAuthUserAuthenticator")
@@ -338,7 +342,8 @@ public class CasOAuthConfiguration {
     public Authenticator<UsernamePasswordCredentials> oAuthUserAuthenticator() {
         return new OAuth20UsernamePasswordAuthenticator(authenticationSystemSupport.getIfAvailable(),
             servicesManager.getIfAvailable(),
-            webApplicationServiceFactory.getIfAvailable());
+            webApplicationServiceFactory.getIfAvailable(),
+            oauthRegisteredServiceCipherExecutor());
     }
 
     @ConditionalOnMissingBean(name = "oAuthAccessTokenAuthenticator")
@@ -738,7 +743,7 @@ public class CasOAuthConfiguration {
                 new DefaultAuditActionResolver(AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED,
                     AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED));
             plan.registerAuditResourceResolver("OAUTH2_ACCESS_TOKEN_REQUEST_RESOURCE_RESOLVER",
-                new AccessTokenGrantRequestAuditResourceResolver());
+                new OAuth20AccessTokenGrantRequestAuditResourceResolver());
 
             plan.registerAuditActionResolver("OAUTH2_ACCESS_TOKEN_RESPONSE_ACTION_RESOLVER",
                 new DefaultAuditActionResolver(AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED,
@@ -794,8 +799,40 @@ public class CasOAuthConfiguration {
         return new JEESessionStore();
     }
 
+    @RefreshScope
+    @Bean
+    @ConditionalOnMissingBean(name = "oauthRegisteredServiceCipherExecutor")
+    public CipherExecutor oauthRegisteredServiceCipherExecutor() {
+        val crypto = casProperties.getAuthn().getOauth().getCrypto();
+
+        val enabled = FunctionUtils.doIf(
+            !crypto.isEnabled() && StringUtils.isNotBlank(crypto.getEncryption().getKey()) && StringUtils.isNotBlank(crypto.getSigning().getKey()),
+            () -> {
+                LOGGER.warn("Secret encryption/signing is not enabled explicitly in the configuration for OAuth/OIDC services, yet signing/encryption keys "
+                    + "are defined for operations. CAS will proceed to enable the encryption/signing functionality.");
+                return Boolean.TRUE;
+            },
+            crypto::isEnabled)
+            .get();
+
+        if (enabled) {
+            return new OAuth20RegisteredServiceCipherExecutor(crypto.getEncryption().getKey(),
+                crypto.getSigning().getKey(),
+                crypto.getAlg(),
+                crypto.isEncryptionEnabled(),
+                crypto.isSigningEnabled(),
+                crypto.getSigning().getKeySize(),
+                crypto.getEncryption().getKeySize());
+        }
+        LOGGER.info("Relying party secret encryption/signing is turned off for OAuth/OIDC services. This "
+            + "MAY NOT be safe in a production environment. Consider using other choices to handle encryption, "
+            + "signing and verification of relying party secrets.");
+        return CipherExecutor.noOp();
+    }
+
     private OAuth20ConfigurationContext.OAuth20ConfigurationContextBuilder buildConfigurationContext() {
         return OAuth20ConfigurationContext.builder()
+            .registeredServiceCipherExecutor(oauthRegisteredServiceCipherExecutor())
             .sessionStore(oauthDistributedSessionStore())
             .servicesManager(servicesManager.getIfAvailable())
             .ticketRegistry(ticketRegistry.getIfAvailable())

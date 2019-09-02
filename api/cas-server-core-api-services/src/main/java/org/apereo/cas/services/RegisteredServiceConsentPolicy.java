@@ -1,10 +1,12 @@
 package org.apereo.cas.services;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.springframework.core.Ordered;
 
 import java.io.Serializable;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -50,5 +52,20 @@ public interface RegisteredServiceConsentPolicy extends Serializable, Ordered {
     @Override
     default int getOrder() {
         return 0;
+    }
+
+    /**
+     * Size.
+     *
+     * @return the int
+     */
+    @JsonIgnore
+    default int size() {
+        return 1;
+    }
+
+    @JsonIgnore
+    default List<RegisteredServiceConsentPolicy> getPolicies() {
+        return List.of(this);
     }
 }
