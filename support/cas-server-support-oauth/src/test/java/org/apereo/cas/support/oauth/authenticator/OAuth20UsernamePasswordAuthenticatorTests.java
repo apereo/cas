@@ -2,6 +2,7 @@ package org.apereo.cas.support.oauth.authenticator;
 
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.support.oauth.services.OAuth20RegisteredServiceCipherExecutor;
 import org.apereo.cas.util.HttpUtils;
 
 import lombok.val;
@@ -29,7 +30,9 @@ public class OAuth20UsernamePasswordAuthenticatorTests extends BaseOAuth20Authen
 
     @BeforeEach
     public void init() {
-        authenticator = new OAuth20UsernamePasswordAuthenticator(authenticationSystemSupport, servicesManager, serviceFactory);
+        authenticator = new OAuth20UsernamePasswordAuthenticator(authenticationSystemSupport,
+            servicesManager, serviceFactory,
+            new OAuth20RegisteredServiceCipherExecutor());
     }
 
     @Test

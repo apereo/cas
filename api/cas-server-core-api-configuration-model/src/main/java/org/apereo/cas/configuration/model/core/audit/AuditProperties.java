@@ -27,6 +27,11 @@ public class AuditProperties implements Serializable {
     private static final long serialVersionUID = 3946106584608417663L;
 
     /**
+     * Whether auditing functionality should be enabled.
+     */
+    private boolean enabled = true;
+
+    /**
      * Retrieve audit records from storage, starting from now
      * and going back the indicated number of days in history.
      */

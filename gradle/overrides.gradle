@@ -12,9 +12,10 @@ ext["hazelcastVersion"] = "3.12.2"
 ext["infinispanVersion"] = "9.4.15.Final"
 
 ext["springVersion"] = "5.2.0.RC1"
-ext["springBootTomcatVersion"] = "9.0.24"
 ext["springSessionVersion"] = "2.2.0.M3"
 ext["springSessionMongoVersion"] = "2.2.0.M3"
+
+ext["springBootTomcatVersion"] = "9.0.24"
 
 ext["jacksonVersion"] = "2.9.9"
 ext["jacksonCoreVersion"] = "2.9.9.3"
@@ -43,6 +44,7 @@ ext["commons-beanutils.version"] = ext["commonsBeansVersion"]
 ext["hazelcast.version"] = ext["hazelcastVersion"]
 ext["hibernate.version"] = ext["hibernateVersion"]
 ext["tomcat.version"] = ext["springBootTomcatVersion"]
+
 ext["infinispan.version"] = ext["infinispanVersion"]
 ext["spring.version"] = ext["springVersion"]
 ext["jackson.version"] = ext["jacksonVersion"]

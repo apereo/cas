@@ -96,6 +96,7 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.gen.DefaultRandomStringGenerator;
 import org.apereo.cas.util.serialization.StringSerializer;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
@@ -161,6 +162,10 @@ import java.util.stream.Collectors;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class OidcConfiguration implements WebMvcConfigurer {
+    @Autowired
+    @Qualifier("oauthRegisteredServiceCipherExecutor")
+    private ObjectProvider<CipherExecutor> oauthRegisteredServiceCipherExecutor;
+
     @Autowired
     @Qualifier("oauthDistributedSessionStore")
     private ObjectProvider<SessionStore> oauthDistributedSessionStore;
@@ -739,6 +744,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
 
     private OAuth20ConfigurationContext buildConfigurationContext() {
         return OAuth20ConfigurationContext.builder()
+            .registeredServiceCipherExecutor(oauthRegisteredServiceCipherExecutor.getIfAvailable())
             .sessionStore(oauthDistributedSessionStore.getIfAvailable())
             .servicesManager(servicesManager.getIfAvailable())
             .ticketRegistry(ticketRegistry.getIfAvailable())

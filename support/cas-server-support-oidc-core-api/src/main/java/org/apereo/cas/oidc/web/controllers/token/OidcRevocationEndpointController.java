@@ -61,7 +61,8 @@ public class OidcRevocationEndpointController extends BaseOAuth20Controller {
 
             if (!accessResult.isExecutionFailure()
                 && HttpRequestUtils.doesParameterExist(request, OidcConstants.TOKEN)
-                && OAuth20Utils.checkClientSecret(registeredService, credentials.getPassword())) {
+                && OAuth20Utils.checkClientSecret(registeredService, credentials.getPassword(),
+                getOAuthConfigurationContext().getRegisteredServiceCipherExecutor())) {
                 val token = request.getParameter(OidcConstants.TOKEN);
                 LOGGER.debug("Located token [{}] in the revocation request", token);
                 getOAuthConfigurationContext().getTicketRegistry().deleteTicket(token);

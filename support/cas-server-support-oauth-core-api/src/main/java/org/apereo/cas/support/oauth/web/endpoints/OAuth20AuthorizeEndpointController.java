@@ -182,7 +182,8 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
             getOAuthConfigurationContext().getTicketRegistry(), context.getNativeRequest());
 
         val grantType = context.getRequestParameter(OAuth20Constants.GRANT_TYPE)
-            .map(String::valueOf).orElse(OAuth20GrantTypes.AUTHORIZATION_CODE.getType())
+            .map(String::valueOf)
+            .orElseGet(OAuth20GrantTypes.AUTHORIZATION_CODE::getType)
             .toUpperCase();
 
         val scopes = OAuth20Utils.parseRequestScopes(context);

@@ -10,6 +10,7 @@ import org.apereo.cas.support.events.web.CasEventsReportEndpoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,11 +23,13 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("casCoreEventsConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ConditionalOnProperty(prefix = "cas.events", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class CasCoreEventsConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
 
+    @ConditionalOnMissingBean(name = "defaultCasEventListener")
     @Bean
     public DefaultCasEventListener defaultCasEventListener() {
         return new DefaultCasEventListener(casEventRepository());
@@ -44,6 +47,7 @@ public class CasCoreEventsConfiguration {
         return new CasEventsReportEndpoint(casProperties, casEventRepository());
     }
 
+    @ConditionalOnMissingBean(name = "loggingCasEventListener")
     @Bean
     public LoggingCasEventListener loggingCasEventListener() {
         return new LoggingCasEventListener();

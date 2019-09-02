@@ -1,9 +1,11 @@
 package org.apereo.cas.configuration.model.support.oauth;
 
+import org.apereo.cas.configuration.model.core.util.EncryptionOptionalSigningOptionalJwtCryptographyProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
 
@@ -30,6 +32,12 @@ public class OAuthProperties implements Serializable {
      * via means and libraries outside of CAS.
      */
     private boolean replicateSessions;
+
+    /**
+     * Crypto settings that sign/encrypt secrets.
+     */
+    @NestedConfigurationProperty
+    private EncryptionOptionalSigningOptionalJwtCryptographyProperties crypto = new EncryptionOptionalSigningOptionalJwtCryptographyProperties();
 
     /**
      * Settings related to oauth grants.

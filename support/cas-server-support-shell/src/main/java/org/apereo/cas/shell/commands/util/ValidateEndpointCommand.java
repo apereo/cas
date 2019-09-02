@@ -77,11 +77,11 @@ public class ValidateEndpointCommand {
      */
     @ShellMethod(key = "validate-endpoint", value = "Test connections to an endpoint to verify connectivity, SSL, etc")
     public void validateEndpoint(
-        @ShellOption(value = "url",
+        @ShellOption(value = { "url", "--url" },
             help = "Endpoint URL to test") final String url,
-        @ShellOption(value = "proxy",
+        @ShellOption(value = { "proxy", "--proxy" },
             help = "Proxy address to use when testing the endpoint url") final String proxy,
-        @ShellOption(value = "timeout",
+        @ShellOption(value = { "timeout", "--timeout" },
             help = "Timeout to use in milliseconds when testing the url",
             defaultValue = "5000") final int timeout) {
 
