@@ -11,7 +11,7 @@ import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.ticket.OAuthToken;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
-import org.apereo.cas.ticket.accesstoken.OAuthAccessTokenIdExtractor;
+import org.apereo.cas.ticket.accesstoken.OAuth20AccessTokenIdExtractor;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
@@ -496,25 +496,10 @@ public class OAuth20Utils {
      * @param accessToken Access token to encode into a response
      * @return Either the JWT or the access token's ID
      */
-    public static String encodeAccessToken(final AccessToken accessToken) {
+    public static String responseAccessToken(final AccessToken accessToken) {
         if (accessToken.getJwt() != null) {
             return accessToken.getJwt();
         }
         return accessToken.getId();
-    }
-
-    /**
-     * Gets the access token id from a request.
-     *
-     * @param accessToken String either AT-... or the jwt access token
-     * @param oAuthAccessTokenIdExtractor service to decode the access token if jwt
-     * @return Access token id
-     */
-    @SneakyThrows
-    public static String getAccessTokenId(final String accessToken, final OAuthAccessTokenIdExtractor oAuthAccessTokenIdExtractor) {
-        if (accessToken != null && !accessToken.startsWith(AccessToken.PREFIX + "-")) {
-            return oAuthAccessTokenIdExtractor.extractId(accessToken);
-        }
-        return accessToken;
     }
 }

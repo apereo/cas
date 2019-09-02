@@ -47,7 +47,7 @@ import org.apereo.cas.support.oauth.web.views.OAuth20UserProfileViewRenderer;
 import org.apereo.cas.ticket.IdTokenGeneratorService;
 import org.apereo.cas.ticket.OAuthTokenSigningAndEncryptionService;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
-import org.apereo.cas.ticket.accesstoken.OAuthAccessTokenIdExtractor;
+import org.apereo.cas.ticket.accesstoken.OAuth20AccessTokenIdExtractor;
 import org.apereo.cas.ticket.code.OAuthCodeFactory;
 import org.apereo.cas.ticket.device.DeviceTokenFactory;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
@@ -210,8 +210,8 @@ public abstract class AbstractOidcTests {
     protected IdTokenGeneratorService oidcIdTokenGenerator;
 
     @Autowired
-    @Qualifier("oAuthAccessTokenIdExtractor")
-    protected OAuthAccessTokenIdExtractor oAuthAccessTokenIdExtractor;
+    @Qualifier("accessTokenIdExtractor")
+    protected OAuth20AccessTokenIdExtractor accessTokenIdExtractor;
 
     protected static OidcRegisteredService getOidcRegisteredService() {
         return getOidcRegisteredService(true, true);

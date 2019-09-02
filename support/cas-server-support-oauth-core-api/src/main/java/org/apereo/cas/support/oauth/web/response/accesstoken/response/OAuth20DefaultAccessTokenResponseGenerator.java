@@ -142,6 +142,6 @@ public class OAuth20DefaultAccessTokenResponseGenerator implements OAuth20Access
      */
     protected String encodeAccessToken(final AccessToken accessToken,
                                        final OAuth20AccessTokenResponseResult result) {
-        return OAuth20Utils.encodeAccessToken(accessToken);
+        return OAuth20Utils.responseAccessToken(accessToken);
     }
 }

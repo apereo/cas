@@ -1,7 +1,7 @@
 package org.apereo.cas.uma.web.authn;
 
 import org.apereo.cas.support.oauth.OAuth20Constants;
-import org.apereo.cas.ticket.accesstoken.OAuthAccessTokenIdExtractor;
+import org.apereo.cas.ticket.accesstoken.OAuth20AccessTokenIdExtractor;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 
 import lombok.extern.slf4j.Slf4j;
@@ -16,8 +16,8 @@ import lombok.extern.slf4j.Slf4j;
 public class UmaAuthorizationApiTokenAuthenticator extends BaseUmaTokenAuthenticator {
 
     public UmaAuthorizationApiTokenAuthenticator(final TicketRegistry ticketRegistry,
-                                                 final OAuthAccessTokenIdExtractor oAuthAccessTokenIdExtractor) {
-        super(ticketRegistry, oAuthAccessTokenIdExtractor);
+                                                 final OAuth20AccessTokenIdExtractor accessTokenIdExtractor) {
+        super(ticketRegistry, accessTokenIdExtractor);
     }
 
     @Override

@@ -1,8 +1,7 @@
 package org.apereo.cas.support.oauth.authenticator;
 
-import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
-import org.apereo.cas.ticket.accesstoken.OAuthAccessTokenIdExtractor;
+import org.apereo.cas.ticket.accesstoken.OAuth20AccessTokenIdExtractor;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 
 import lombok.RequiredArgsConstructor;
@@ -26,13 +25,13 @@ import java.util.HashMap;
 @RequiredArgsConstructor
 public class OAuth20AccessTokenAuthenticator implements Authenticator<TokenCredentials> {
     private final TicketRegistry ticketRegistry;
-    private final OAuthAccessTokenIdExtractor oAuthAccessTokenIdExtractor;
+    private final OAuth20AccessTokenIdExtractor accessTokenIdExtractor;
 
     @SneakyThrows
     @Override
     public void validate(final TokenCredentials tokenCredentials, final WebContext webContext) {
         val token = tokenCredentials.getToken().trim();
-        val accessTokenId = OAuth20Utils.getAccessTokenId(token, oAuthAccessTokenIdExtractor);
+        val accessTokenId = accessTokenIdExtractor.extractId(token);
         LOGGER.trace("Received access token [{}] for authentication", accessTokenId);
 
         val accessToken = ticketRegistry.getTicket(accessTokenId, AccessToken.class);

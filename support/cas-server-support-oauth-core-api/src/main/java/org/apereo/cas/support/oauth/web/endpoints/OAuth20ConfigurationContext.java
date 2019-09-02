@@ -23,7 +23,7 @@ import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.OAuthTokenSigningAndEncryptionService;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
-import org.apereo.cas.ticket.accesstoken.OAuthAccessTokenIdExtractor;
+import org.apereo.cas.ticket.accesstoken.OAuth20AccessTokenIdExtractor;
 import org.apereo.cas.ticket.code.OAuthCodeFactory;
 import org.apereo.cas.ticket.device.DeviceToken;
 import org.apereo.cas.ticket.device.DeviceTokenFactory;
@@ -125,5 +125,5 @@ public class OAuth20ConfigurationContext {
   
     private final CipherExecutor<Serializable, String> registeredServiceCipherExecutor;
 
-    private final OAuthAccessTokenIdExtractor oAuthAccessTokenIdExtractor;
+    private final OAuth20AccessTokenIdExtractor accessTokenIdExtractor;
 }

@@ -8,7 +8,6 @@ import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -20,15 +19,14 @@ import java.io.Serializable;
 import java.util.Optional;
 
 /**
- * This is {@link OAuthAccessTokenIdExtractor}.
+ * This is {@link DefaultOAuth20AccessTokenIdExtractor}.
  *
  * @author charlibot
  * @since 6.1.0
  */
 @Slf4j
 @RequiredArgsConstructor
-@Getter
-public class OAuthAccessTokenIdExtractor {
+public class DefaultOAuth20AccessTokenIdExtractor implements OAuth20AccessTokenIdExtractor {
 
     private final String casSeverPrefix;
     private final CipherExecutor<Serializable, String> defaultTokenCipherExecutor;
@@ -36,12 +34,17 @@ public class OAuthAccessTokenIdExtractor {
     private final RegisteredServiceCipherExecutor registeredServiceCipherExecutor;
 
     @SneakyThrows
-    public String extractId(final String accessTokenJwt) {
+    @Override
+    public String extractId(final String accessTokenFromRequest) {
+        if (accessTokenFromRequest == null || accessTokenFromRequest.startsWith(AccessToken.PREFIX + "-")) {
+            return accessTokenFromRequest;
+        }
+
         String decoded = null;
         if (defaultTokenCipherExecutor.isEnabled()) {
-            LOGGER.trace("Verifying JWT based on default global keys for [{}]", accessTokenJwt);
+            LOGGER.trace("Verifying JWT based on default global keys for [{}]", accessTokenFromRequest);
             try {
-                decoded = defaultTokenCipherExecutor.decode(accessTokenJwt);
+                decoded = defaultTokenCipherExecutor.decode(accessTokenFromRequest);
             } catch (final Exception e) {
                 LOGGER.trace("Not encoded by the default", e);
             }
@@ -52,7 +55,7 @@ public class OAuthAccessTokenIdExtractor {
             for (val service : services) {
                 if (registeredServiceCipherExecutor.supports(service)) {
                     try {
-                        decoded = registeredServiceCipherExecutor.decode(accessTokenJwt, Optional.of(service));
+                        decoded = registeredServiceCipherExecutor.decode(accessTokenFromRequest, Optional.of(service));
                         break;
                     } catch (final Exception e) {
                         LOGGER.trace("Not encoded by the service [{}]", service.getServiceId());
@@ -81,7 +84,7 @@ public class OAuthAccessTokenIdExtractor {
     private RegisteredService locateRegisteredService(final String serviceAudience) {
         var service = servicesManager.findServiceBy(serviceAudience);
         if (service == null) {
-            service = OAuth20Utils.getRegisteredOAuthServiceByClientId(getServicesManager(), serviceAudience);
+            service = OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, serviceAudience);
         }
         return service;
     }

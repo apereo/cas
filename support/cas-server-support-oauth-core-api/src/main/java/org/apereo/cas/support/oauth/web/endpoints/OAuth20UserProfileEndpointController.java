@@ -141,6 +141,6 @@ public class OAuth20UserProfileEndpointController extends BaseOAuth20Controller 
             }
         }
         LOGGER.debug("[{}]: [{}]", OAuth20Constants.ACCESS_TOKEN, accessToken);
-        return OAuth20Utils.getAccessTokenId(accessToken, getOAuthConfigurationContext().getOAuthAccessTokenIdExtractor());
+        return getOAuthConfigurationContext().getAccessTokenIdExtractor().extractId(accessToken);
     }
 }

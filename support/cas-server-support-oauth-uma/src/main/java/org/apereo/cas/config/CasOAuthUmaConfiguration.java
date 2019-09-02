@@ -9,7 +9,7 @@ import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGenerat
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.IdTokenGeneratorService;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
-import org.apereo.cas.ticket.accesstoken.OAuthAccessTokenIdExtractor;
+import org.apereo.cas.ticket.accesstoken.OAuth20AccessTokenIdExtractor;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.uma.UmaConfigurationContext;
 import org.apereo.cas.uma.claim.DefaultUmaResourceSetClaimPermissionExaminer;
@@ -93,8 +93,8 @@ public class CasOAuthUmaConfiguration implements WebMvcConfigurer {
     private ObjectProvider<OAuth20TokenGenerator> oauthTokenGenerator;
 
     @Autowired
-    @Qualifier("oAuthAccessTokenIdExtractor")
-    private ObjectProvider<OAuthAccessTokenIdExtractor> oAuthAccessTokenIdExtractor;
+    @Qualifier("accessTokenIdExtractor")
+    private ObjectProvider<OAuth20AccessTokenIdExtractor> accessTokenIdExtractor;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -226,14 +226,14 @@ public class CasOAuthUmaConfiguration implements WebMvcConfigurer {
     @Bean
     public SecurityInterceptor umaRequestingPartyTokenSecurityInterceptor() {
         val authenticator = new UmaRequestingPartyTokenAuthenticator(ticketRegistry.getIfAvailable(),
-                oAuthAccessTokenIdExtractor.getIfAvailable());
+                accessTokenIdExtractor.getIfAvailable());
         return getSecurityInterceptor(authenticator, "CAS_UMA_CLIENT_RPT_AUTH");
     }
 
     @Bean
     public SecurityInterceptor umaAuthorizationApiTokenSecurityInterceptor() {
         val authenticator = new UmaAuthorizationApiTokenAuthenticator(ticketRegistry.getIfAvailable(),
-                oAuthAccessTokenIdExtractor.getIfAvailable());
+                accessTokenIdExtractor.getIfAvailable());
         return getSecurityInterceptor(authenticator, "CAS_UMA_CLIENT_AAT_AUTH");
     }
 

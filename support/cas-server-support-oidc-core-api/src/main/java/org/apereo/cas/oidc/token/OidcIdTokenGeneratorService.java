@@ -197,7 +197,7 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService {
     protected String generateAccessTokenHash(final AccessToken accessToken,
                                              final OidcRegisteredService service) {
         val alg = getConfigurationContext().getIdTokenSigningAndEncryptionService().getJsonWebKeySigningAlgorithm(service);
-        val tokenBytes = OAuth20Utils.encodeAccessToken(accessToken).getBytes(StandardCharsets.UTF_8);
+        val tokenBytes = OAuth20Utils.responseAccessToken(accessToken).getBytes(StandardCharsets.UTF_8);
         if (AlgorithmIdentifiers.NONE.equalsIgnoreCase(alg)) {
             LOGGER.debug("Signing algorithm specified by service [{}] is unspecified", service.getServiceId());
             return EncodingUtils.encodeUrlSafeBase64(tokenBytes);

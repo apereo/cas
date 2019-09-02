@@ -299,7 +299,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
         assertTrue(redirectUrl.startsWith(REDIRECT_URI + "#access_token="));
 
         val code = StringUtils.substringBetween(redirectUrl, "#access_token=", "&token_type=bearer");
-        val accessTokenId = OAuth20Utils.getAccessTokenId(code, oAuthAccessTokenIdExtractor);
+        val accessTokenId = accessTokenIdExtractor.extractId(code);
         val accessToken = (AccessToken) this.ticketRegistry.getTicket(accessTokenId);
         assertNotNull(accessToken);
         val principal = accessToken.getAuthentication().getPrincipal();

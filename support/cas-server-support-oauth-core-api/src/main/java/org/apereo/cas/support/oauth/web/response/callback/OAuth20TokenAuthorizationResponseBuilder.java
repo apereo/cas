@@ -85,7 +85,7 @@ public class OAuth20TokenAuthorizationResponseBuilder implements OAuth20Authoriz
         val timeToLive = expiration.getTimeToLive();
         stringBuilder.append(OAuth20Constants.ACCESS_TOKEN)
             .append('=')
-            .append(OAuth20Utils.encodeAccessToken(accessToken))
+            .append(OAuth20Utils.responseAccessToken(accessToken))
             .append('&')
             .append(OAuth20Constants.TOKEN_TYPE)
             .append('=')
@@ -124,7 +124,7 @@ public class OAuth20TokenAuthorizationResponseBuilder implements OAuth20Authoriz
 
         LOGGER.debug("Redirecting to URL [{}]", url);
         val parameters = new LinkedHashMap<String, String>();
-        parameters.put(OAuth20Constants.ACCESS_TOKEN, OAuth20Utils.encodeAccessToken(accessToken));
+        parameters.put(OAuth20Constants.ACCESS_TOKEN, OAuth20Utils.responseAccessToken(accessToken));
         if (refreshToken != null) {
             parameters.put(OAuth20Constants.REFRESH_TOKEN, refreshToken.getId());
         }

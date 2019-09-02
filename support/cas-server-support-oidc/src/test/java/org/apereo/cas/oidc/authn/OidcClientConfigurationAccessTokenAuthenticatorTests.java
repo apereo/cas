@@ -27,7 +27,7 @@ public class OidcClientConfigurationAccessTokenAuthenticatorTests extends Abstra
     public void verifyOperation() {
         val request = new MockHttpServletRequest();
         val ctx = new JEEContext(request, new MockHttpServletResponse());
-        val auth = new OidcClientConfigurationAccessTokenAuthenticator(ticketRegistry, oAuthAccessTokenIdExtractor);
+        val auth = new OidcClientConfigurationAccessTokenAuthenticator(ticketRegistry, accessTokenIdExtractor);
         val at = getAccessToken();
         when(at.getScopes()).thenReturn(List.of(OidcConstants.CLIENT_REGISTRATION_SCOPE));
         ticketRegistry.addTicket(at);
