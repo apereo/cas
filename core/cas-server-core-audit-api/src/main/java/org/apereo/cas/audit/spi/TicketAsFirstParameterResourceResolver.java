@@ -1,7 +1,11 @@
 package org.apereo.cas.audit.spi;
 
-import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.util.AopUtils;
+import org.apereo.cas.util.DigestUtils;
+
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 import org.aspectj.lang.JoinPoint;
 
@@ -22,9 +26,18 @@ public class TicketAsFirstParameterResourceResolver implements AuditResourceReso
     @Override
     public String[] resolveFrom(final JoinPoint joinPoint, final Object object) {
         final JoinPoint jp = AopUtils.unWrapJoinPoint(joinPoint);
-        if (jp != null && jp.getArgs() != null) {
-            return new String[]{jp.getArgs()[0].toString()};
+        if (jp != null) {
+            final Object[] arguments = jp.getArgs();
+            if (arguments != null) {
+                final Object ticket = arguments[0];
+                if (arguments.length >= 2) {
+                    final Service service = (Service) arguments[1];
+                    final String builder = ticket.toString() + " for " + DigestUtils.abbreviate(service.getId());
+                    return new String[]{builder};
+                }
+                return new String[]{ticket.toString()};
+            }
         }
-        return new String[]{};
+        return ArrayUtils.EMPTY_STRING_ARRAY;
     }
 }
