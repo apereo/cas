@@ -65,7 +65,7 @@ public class ValidateRegisteredServiceCommand {
 
     private static void validate(final File filePath) {
         try {
-            final RegisteredServiceJsonSerializer validator;
+            var validator = (RegisteredServiceJsonSerializer) null;
             if (filePath.isFile() && filePath.exists() && filePath.canRead() && filePath.length() > 0) {
                 switch (FilenameUtils.getExtension(filePath.getPath())) {
                     case "json":
