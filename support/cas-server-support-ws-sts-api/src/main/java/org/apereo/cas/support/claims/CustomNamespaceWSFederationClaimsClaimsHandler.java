@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.rt.security.claims.Claim;
 import org.apache.cxf.sts.claims.ClaimsParameters;
 
@@ -55,8 +56,13 @@ public class CustomNamespaceWSFederationClaimsClaimsHandler extends NonWSFederat
 
         @Override
         public boolean contains(final Object o) {
-            val uri = ((URI) o).toASCIIString();
-            return namespaces.stream().anyMatch(uri::startsWith);
+            var uri = StringUtils.EMPTY;
+            if (o instanceof URI) {
+                uri = ((URI) o).toASCIIString();
+            } else {
+                uri = o.toString();
+            }
+            return StringUtils.isNotBlank(uri) && namespaces.stream().anyMatch(uri::startsWith);
         }
     }
 }
