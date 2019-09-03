@@ -1,9 +1,5 @@
 package org.apereo.cas;
 
-import com.codahale.metrics.annotation.Counted;
-import com.codahale.metrics.annotation.Metered;
-import com.codahale.metrics.annotation.Timed;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.audit.AuditableExecutionResult;
@@ -51,6 +47,11 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.validation.Assertion;
 import org.apereo.cas.validation.DefaultAssertionBuilder;
+
+import com.codahale.metrics.annotation.Counted;
+import com.codahale.metrics.annotation.Metered;
+import com.codahale.metrics.annotation.Timed;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.transaction.annotation.Transactional;
@@ -154,11 +155,11 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         AuthenticationCredentialsThreadLocalBinder.bindCurrent(latestAuthentication);
         final Principal principal = latestAuthentication.getPrincipal();
         final ServiceTicketFactory factory = (ServiceTicketFactory) this.ticketFactory.get(ServiceTicket.class);
-        final ServiceTicket serviceTicket = factory.create(ticketGrantingTicket, service, credentialProvided, ServiceTicket.class);
+        final ServiceTicket serviceTicket = factory.create(ticketGrantingTicket, selectedService, credentialProvided, ServiceTicket.class);
         this.ticketRegistry.updateTicket(ticketGrantingTicket);
         this.ticketRegistry.addTicket(serviceTicket);
 
-        LOGGER.info("Granted ticket [{}] for service [{}] and principal [{}]", serviceTicket.getId(), DigestUtils.abbreviate(service.getId()), principal.getId());
+        LOGGER.info("Granted ticket [{}] for service [{}] and principal [{}]", serviceTicket.getId(), DigestUtils.abbreviate(selectedService.getId()), principal.getId());
         doPublishEvent(new CasServiceTicketGrantedEvent(this, ticketGrantingTicket, serviceTicket));
         return serviceTicket;
     }
@@ -284,6 +285,11 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         }
 
         try {
+            final Service selectedService = resolveServiceFromAuthenticationRequest(serviceTicket.getService());
+            final Service resolvedService = resolveServiceFromAuthenticationRequest(service);
+            LOGGER.debug("Resolved service [{}] from the authentication request with service [{}] linked to service ticket [{}]",
+                resolvedService, selectedService, serviceTicket.getId());
+
             /*
              * Synchronization on ticket object in case of cache based registry doesn't serialize
              * access to critical section. The reason is that cache pulls serialized data and
@@ -295,15 +301,12 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
                     throw new InvalidTicketException(serviceTicketId);
                 }
 
-                if (!serviceTicket.isValidFor(service)) {
+                if (!serviceTicket.isValidFor(resolvedService)) {
                     LOGGER.error("Service ticket [{}] with service [{}] does not match supplied service [{}]",
-                        serviceTicketId, serviceTicket.getService().getId(), service);
+                        serviceTicketId, serviceTicket.getService().getId(), resolvedService);
                     throw new UnrecognizableServiceForServiceTicketValidationException(serviceTicket.getService());
                 }
             }
-
-            final Service selectedService = resolveServiceFromAuthenticationRequest(serviceTicket.getService());
-            LOGGER.debug("Resolved service [{}] from the authentication request", selectedService);
 
             final RegisteredService registeredService = this.servicesManager.findServiceBy(selectedService);
             LOGGER.debug("Located registered service definition [{}] from [{}] to handle validation request", registeredService, selectedService);
