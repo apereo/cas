@@ -20,14 +20,11 @@ public class CasRegisteredServiceExpiredEvent extends BaseCasRegisteredServiceEv
 
     private final RegisteredService registeredService;
 
-    /**
-     * Instantiates a new event.
-     *
-     * @param source            the source
-     * @param registeredService the registered service
-     */
-    public CasRegisteredServiceExpiredEvent(final Object source, final RegisteredService registeredService) {
+    private final boolean deleted;
+
+    public CasRegisteredServiceExpiredEvent(final Object source, final RegisteredService registeredService, final boolean deleted) {
         super(source);
         this.registeredService = registeredService;
+        this.deleted = deleted;
     }
 }

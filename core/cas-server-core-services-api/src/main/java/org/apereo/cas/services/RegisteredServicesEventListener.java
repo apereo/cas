@@ -6,6 +6,7 @@ import org.apereo.cas.support.events.service.CasRegisteredServicesRefreshEvent;
 import org.apereo.cas.util.io.CommunicationsManager;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.event.EventListener;
@@ -17,6 +18,7 @@ import org.springframework.context.event.EventListener;
  * @since 5.1.0
  */
 @RequiredArgsConstructor
+@Slf4j
 public class RegisteredServicesEventListener {
     private final ServicesManager servicesManager;
     private final CasConfigurationProperties casProperties;
@@ -42,10 +44,18 @@ public class RegisteredServicesEventListener {
         val registeredService = event.getRegisteredService();
         val contacts = registeredService.getContacts();
 
-        val mail = casProperties.getServiceRegistry().getMail();
-        val sms = casProperties.getServiceRegistry().getSms();
+        val serviceRegistry = casProperties.getServiceRegistry();
+        val mail = serviceRegistry.getMail();
+        val sms = serviceRegistry.getSms();
 
         val serviceName = StringUtils.defaultIfBlank(registeredService.getName(), registeredService.getServiceId());
+        if (event.isDeleted()) {
+            LOGGER.info("Sending notification to [{}] as registered service [{}] is deleted from service registry", contacts, serviceName);
+        } else {
+            LOGGER.info("Sending notification to [{}] as registered service [{}] is expired in service registry", contacts, serviceName);
+        }
+        
+        communicationsManager.validate();
         if (communicationsManager.isMailSenderDefined()) {
             val message = mail.getFormattedBody(serviceName);
             contacts
@@ -63,5 +73,4 @@ public class RegisteredServicesEventListener {
 
         servicesManager.load();
     }
-
 }

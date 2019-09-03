@@ -11,6 +11,7 @@ dependencies {
     implementation project(":core:cas-server-core-authentication-attributes")
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-util-api")
+    implementation project(":core:cas-server-core-events-api")
 
     testImplementation project(":support:cas-server-support-oauth-services")
     testImplementation project(":support:cas-server-support-saml-idp-core")
@@ -18,6 +19,7 @@ dependencies {
     testImplementation project(":support:cas-server-support-ws-idp-api")
     
     testImplementation project(":core:cas-server-core-configuration")
+    testImplementation project(":core:cas-server-core-util")
 
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
