@@ -3,7 +3,7 @@ package org.apereo.cas.ticket.accesstoken;
 /**
  * This is {@link OAuth20AccessTokenIdExtractor}.
  *
- * @author charlievans
+ * @author charlibot
  * @since 6.1.0
  */
 @FunctionalInterface
