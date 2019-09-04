@@ -33,19 +33,20 @@ public class DefaultRegisteredServiceExpirationPolicy implements RegisteredServi
     private boolean deleteWhenExpired;
 
     private boolean notifyWhenDeleted;
+    
+    private boolean notifyWhenExpired;
 
     private String expirationDate;
-
-
+    
     public DefaultRegisteredServiceExpirationPolicy(final boolean deleteWhenExpired, final String expirationDate) {
-        this(deleteWhenExpired, false, expirationDate);
+        this(deleteWhenExpired, false, false, expirationDate);
     }
 
     public DefaultRegisteredServiceExpirationPolicy(final boolean deleteWhenExpired, final LocalDate expirationDate) {
-        this(deleteWhenExpired, false, expirationDate.toString());
+        this(deleteWhenExpired, false, false, expirationDate.toString());
     }
 
     public DefaultRegisteredServiceExpirationPolicy(final boolean deleteWhenExpired, final LocalDateTime expirationDate) {
-        this(deleteWhenExpired, false, expirationDate.toString());
+        this(deleteWhenExpired, false, false, expirationDate.toString());
     }
 }
