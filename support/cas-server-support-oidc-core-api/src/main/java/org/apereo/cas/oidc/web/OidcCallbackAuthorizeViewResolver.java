@@ -2,6 +2,7 @@ package org.apereo.cas.oidc.web;
 
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.util.OidcAuthorizationRequestSupport;
+import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.web.views.OAuth20CallbackAuthorizeViewResolver;
 
 import lombok.RequiredArgsConstructor;
@@ -30,8 +31,9 @@ public class OidcCallbackAuthorizeViewResolver implements OAuth20CallbackAuthori
                 LOGGER.trace("Redirecting to URL [{}] without prompting for login", url);
                 return new ModelAndView(url);
             }
-            LOGGER.warn("Unable to detect an authenticated user profile for prompt-less login attempts");
-            return new ModelAndView(new RedirectView(OidcAuthorizationRequestSupport.getRedirectUrlWithError(ctx.getFullRequestURL(), OidcConstants.LOGIN_REQUIRED)));
+            val originalRedirectUrl = ctx.getRequestParameter(OAuth20Constants.REDIRECT_URI).orElse(ctx.getFullRequestURL());
+            LOGGER.warn("Unable to detect an authenticated user profile for prompt-less login attempts. Redirecting to URL[{}]", originalRedirectUrl);
+            return new ModelAndView(new RedirectView(OidcAuthorizationRequestSupport.getRedirectUrlWithError(originalRedirectUrl, OidcConstants.LOGIN_REQUIRED)));
         }
         if (prompt.contains(OidcConstants.PROMPT_LOGIN)) {
             LOGGER.trace("Removing login prompt from URL [{}]", url);
