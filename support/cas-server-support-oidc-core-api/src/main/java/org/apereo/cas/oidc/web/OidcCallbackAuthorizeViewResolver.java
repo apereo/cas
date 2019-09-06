@@ -12,6 +12,9 @@ import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
+import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
+
+import java.util.HashMap;
 
 /**
  * This is {@link OidcCallbackAuthorizeViewResolver}.
@@ -31,9 +34,16 @@ public class OidcCallbackAuthorizeViewResolver implements OAuth20CallbackAuthori
                 LOGGER.trace("Redirecting to URL [{}] without prompting for login", url);
                 return new ModelAndView(url);
             }
-            val originalRedirectUrl = ctx.getRequestParameter(OAuth20Constants.REDIRECT_URI).orElse(ctx.getFullRequestURL());
-            LOGGER.warn("Unable to detect an authenticated user profile for prompt-less login attempts. Redirecting to URL[{}]", originalRedirectUrl);
-            return new ModelAndView(new RedirectView(OidcAuthorizationRequestSupport.getRedirectUrlWithError(originalRedirectUrl, OidcConstants.LOGIN_REQUIRED)));
+            val originalRedirectUrl = ctx.getRequestParameter(OAuth20Constants.REDIRECT_URI);
+
+            if (originalRedirectUrl.isEmpty()) {
+                val model = new HashMap<String, String>();
+                model.put(OAuth20Constants.ERROR, OidcConstants.LOGIN_REQUIRED);
+                return new ModelAndView(new MappingJackson2JsonView(), model);
+            } else {
+                LOGGER.warn("Unable to detect an authenticated user profile for prompt-less login attempts. Redirecting to URL[{}]", originalRedirectUrl.get());
+                return new ModelAndView(new RedirectView(OidcAuthorizationRequestSupport.getRedirectUrlWithError(originalRedirectUrl.get(), OidcConstants.LOGIN_REQUIRED)));
+            }
         }
         if (prompt.contains(OidcConstants.PROMPT_LOGIN)) {
             LOGGER.trace("Removing login prompt from URL [{}]", url);
