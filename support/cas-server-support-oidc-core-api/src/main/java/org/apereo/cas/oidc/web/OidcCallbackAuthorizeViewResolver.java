@@ -42,7 +42,7 @@ public class OidcCallbackAuthorizeViewResolver implements OAuth20CallbackAuthori
                 return new ModelAndView(new MappingJackson2JsonView(), model);
             }
             val redirectUrlWithErrorCode = OidcAuthorizationRequestSupport.getRedirectUrlWithError(originalRedirectUrl.get(), OidcConstants.LOGIN_REQUIRED);
-            LOGGER.warn("Unable to detect an authenticated user profile for prompt-less login attempts. Redirecting to URL[{}]", redirectUrlWithErrorCode);
+            LOGGER.warn("Unable to detect an authenticated user profile for prompt-less login attempts. Redirecting to URL [{}]", redirectUrlWithErrorCode);
             return new ModelAndView(new RedirectView(redirectUrlWithErrorCode));
         }
         if (prompt.contains(OidcConstants.PROMPT_LOGIN)) {
