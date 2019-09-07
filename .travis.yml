@@ -97,18 +97,6 @@ jobs:
       if: type != pull_request and (branch =~ /^\d+\.\d+\.x$/ or branch = master)
       name: "Publish Documentation"
     - stage: validate
-      script: ./ci/tests/tomcat/validate-embedded-tomcat-webapp.sh
-      if: type != pull_request and (branch =~ /^\d+\.\d+\.x$/ or branch = master)
-      name: "Validate Web Application Server via Apache Tomcat"
-    - stage: validate
-      script: ./ci/tests/jetty/validate-embedded-jetty-webapp.sh
-      if: type != pull_request and (branch =~ /^\d+\.\d+\.x$/ or branch = master)
-      name: "Validate Web Application Server via Jetty"
-    - stage: validate
-      script: ./ci/tests/undertow/validate-embedded-undertow-webapp.sh
-      if: type != pull_request and (branch =~ /^\d+\.\d+\.x$/ or branch = master)
-      name: "Validate Web Application Server via Undertow"
-    - stage: validate
       if: NOT (head_branch =~ env(DEPENDENCY_BOT_BRANCH) and type = pull_request)
       script: ./ci/build-javadocs.sh
       name: "Build Javadocs"
@@ -124,6 +112,18 @@ jobs:
       if: NOT (head_branch =~ env(DEPENDENCY_BOT_BRANCH) and type = pull_request)
       script: ./ci/tests/shell/validate-shell.sh
       name: "Validate CAS Shell"
+    - stage: validate
+      script: ./ci/tests/webapp/validate-embedded-webapp.sh tomcat
+      if: type != pull_request and (branch =~ /^\d+\.\d+\.x$/ or branch = master)
+      name: "Validate Web Application Server via Apache Tomcat"
+    - stage: validate
+      script: ./ci/tests/webapp/validate-embedded-webapp.sh jetty
+      if: type != pull_request and (branch =~ /^\d+\.\d+\.x$/ or branch = master)
+      name: "Validate Web Application Server via Jetty"
+    - stage: validate
+      script: ./ci/tests/webapp/validate-embedded-webapp.sh undertow
+      if: type != pull_request and (branch =~ /^\d+\.\d+\.x$/ or branch = master)
+      name: "Validate Web Application Server via Undertow"
       ############################################
     - stage: test
       script: ./ci/tests/validate-tests.sh
