@@ -1,13 +1,15 @@
 package org.apereo.cas.pm.web.flow.actions;
 
 import org.apereo.cas.CasProtocolConstants;
-import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pm.PasswordManagementService;
+import org.apereo.cas.pm.web.flow.PasswordManagementWebflowUtils;
 import org.apereo.cas.ticket.TicketFactory;
+import org.apereo.cas.ticket.TransientSessionTicket;
+import org.apereo.cas.ticket.TransientSessionTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.token.TokenConstants;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.io.CommunicationsManager;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -24,6 +26,7 @@ import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -61,8 +64,6 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
      */
     protected final TicketFactory ticketFactory;
 
-    private final ServiceFactory<WebApplicationService> webApplicationServiceFactory;
-
     /**
      * Utility method to generate a password reset URL.
      *
@@ -77,16 +78,23 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
                                         final CasConfigurationProperties casProperties, final WebApplicationService service) {
         val token = passwordManagementService.createToken(username);
         if (StringUtils.isNotBlank(token)) {
-            StringBuilder restetUrl = new StringBuilder(casProperties.getServer().getPrefix())
+            val transientFactory = (TransientSessionTicketFactory) this.ticketFactory.get(TransientSessionTicket.class);
+            val properties = CollectionUtils.<String, Serializable>wrap(PasswordManagementWebflowUtils.FLOWSCOPE_PARAMETER_NAME_TOKEN, token);
+            val ticket = transientFactory.create(service, properties);
+            this.ticketRegistry.addTicket(ticket);
+            
+            StringBuilder resetUrl = new StringBuilder(casProperties.getServer().getPrefix())
                 .append('/').append(CasWebflowConfigurer.FLOW_ID_LOGIN).append('?')
-                .append(TokenConstants.PARAMETER_NAME_TOKEN).append('=').append(token);
+                .append(PasswordManagementWebflowUtils.REQUEST_PARAMETER_NAME_PASSWORD_RESET_TOKEN).append('=').append(ticket.getId());
 
             if (service != null) {
                 val encodeServiceUrl = UriUtils.encode(service.getOriginalUrl(), StandardCharsets.UTF_8);
-                restetUrl.append('&').append(CasProtocolConstants.PARAMETER_SERVICE).append('=').append(encodeServiceUrl);
+                resetUrl.append('&').append(CasProtocolConstants.PARAMETER_SERVICE).append('=').append(encodeServiceUrl);
             }
 
-            return restetUrl.toString();
+            val url = resetUrl.toString();
+            LOGGER.debug("Final password reset URL designed for [{}] is [{}]", username, url);
+            return url;
         }
         LOGGER.error("Could not create password reset url since no reset token could be generated");
         return null;
@@ -104,7 +112,7 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
         val username = request.getParameter("username");
 
         if (StringUtils.isBlank(username)) {
-            LOGGER.warn("No username is provided");
+            LOGGER.warn("No username parameter is provided");
             return getErrorEvent("username.required", "No username is provided", requestContext);
         }
 
