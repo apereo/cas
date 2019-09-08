@@ -92,7 +92,7 @@ public class AcceptableUsagePolicyProperties implements Serializable {
          * Store aup acceptance such that user is prompted when they authenticate via credentials (not TGT).
          */
         AUTHENTICATION
-    };
+    }
 
     /**
      * Scope of map where the aup selection is stored.
