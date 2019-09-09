@@ -136,7 +136,7 @@ public class PasswordManagementWebflowConfiguration {
     public Action sendPasswordResetInstructionsAction() {
         return new SendPasswordResetInstructionsAction(casProperties, communicationsManager.getIfAvailable(),
             passwordManagementService.getIfAvailable(), ticketRegistry.getIfAvailable(),
-            ticketFactory.getIfAvailable(), webApplicationServiceFactory.getIfAvailable());
+            ticketFactory.getIfAvailable());
     }
 
     @ConditionalOnMissingBean(name = "sendForgotUsernameInstructionsAction")

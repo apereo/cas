@@ -5,9 +5,18 @@
     <property name="severity" value="warning"/>
     <property name="charset" value="UTF-8"/>
 
+    <module name="LineLength">
+        <property name="max" value="190"/>
+        <property name="tabWidth" value="4"/>
+        <property name="severity" value="error"/>
+    </module>
+    
     <!-- TreeWalker module checks -->
     <module name="TreeWalker">
         <property name="tabWidth" value="4"/>
+        <module name="UnnecessarySemicolonAfterTypeMemberDeclaration">
+            <property name="severity" value="error"/>
+        </module>
         <module name="NonEmptyAtclauseDescription">
             <property name="severity" value="error"/>
         </module>
@@ -198,11 +207,6 @@
             <property name="max" value="15"/>
             <property name="severity" value="error"/>
             <property name="tokens" value="CTOR_DEF"/>
-        </module>
-        <module name="LineLength">
-            <property name="max" value="190"/>
-            <property name="tabWidth" value="4"/>
-            <property name="severity" value="error"/>
         </module>
         <module name="EmptyForIteratorPad"/>
         <module name="MethodParamPad">

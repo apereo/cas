@@ -18,5 +18,5 @@ public interface RevocationChecker {
      * @throws GeneralSecurityException If certificate has been revoked or the revocation
      *                                  check fails for some reason such as revocation data not available.
      */
-    default void check(final X509Certificate certificate) throws GeneralSecurityException {};
+    default void check(final X509Certificate certificate) throws GeneralSecurityException {}
 }
