@@ -12,8 +12,6 @@ dependencies {
     provided project(":core:cas-server-core-services")
 
     provided project(":support:cas-server-support-memcached-spy")
-    compileOnly project(":support:cas-server-support-saml")
-    compileOnly project(":support:cas-server-support-saml-googleapps-core")
 
     testImplementation project(":core:cas-server-core-tickets")
     testImplementation project(":core:cas-server-core-configuration")
