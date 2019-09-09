@@ -22,11 +22,19 @@ public interface RegisteredServiceExpirationPolicy extends Serializable {
 
     /**
      * Notify service owners and contacts
-     * when this service is marked as expired.
+     * when this service is marked as expired and is about to be deleted.
      *
      * @return true/false
      */
     boolean isNotifyWhenDeleted();
+
+    /**
+     * Notify service owners and contacts
+     * when this service is marked as expired.
+     *
+     * @return true/false
+     */
+    boolean isNotifyWhenExpired();
 
     /**
      * Whether service should be deleted from the registry

@@ -139,6 +139,7 @@ public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPart
             if (ex.getFaultCode() != null && "RequestFailed".equals(ex.getFaultCode().getLocalPart())) {
                 throw new IllegalArgumentException(new ProcessingException(ProcessingException.TYPE.BAD_REQUEST));
             }
+            LOGGER.error(ex.getMessage(), ex);
             throw ex;
         }
     }

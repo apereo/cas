@@ -29,7 +29,6 @@ import javax.servlet.http.HttpServletResponse;
  */
 @Slf4j
 public class OAuth20CallbackAuthorizeEndpointController extends BaseOAuth20Controller {
-    private final OAuth20CallbackLogic callback = new OAuth20CallbackLogic();
 
     public OAuth20CallbackAuthorizeEndpointController(final OAuth20ConfigurationContext oAuthConfigurationContext) {
         super(oAuthConfigurationContext);
@@ -44,6 +43,7 @@ public class OAuth20CallbackAuthorizeEndpointController extends BaseOAuth20Contr
      */
     @GetMapping(path = OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.CALLBACK_AUTHORIZE_URL)
     public ModelAndView handleRequest(final HttpServletRequest request, final HttpServletResponse response) {
+        val callback = new OAuth20CallbackLogic();
         val context = new JEEContext(request, response, getOAuthConfigurationContext().getSessionStore());
         callback.perform(context, getOAuthConfigurationContext().getOauthConfig(), (object, ctx) -> Boolean.FALSE,
             context.getFullRequestURL(), Boolean.TRUE, Boolean.FALSE,
@@ -60,12 +60,12 @@ public class OAuth20CallbackAuthorizeEndpointController extends BaseOAuth20Contr
     }
 
     @Getter
-    private class OAuth20CallbackLogic extends DefaultCallbackLogic {
+    private static class OAuth20CallbackLogic extends DefaultCallbackLogic {
         private String redirectUrl;
 
         @Override
         protected HttpAction redirectToOriginallyRequestedUrl(final WebContext context, final String defaultUrl) {
-            val result = callback.getSavedRequestHandler().restore(context, defaultUrl);
+            val result = getSavedRequestHandler().restore(context, defaultUrl);
             if (result instanceof WithLocationAction) {
                 redirectUrl = WithLocationAction.class.cast(result).getLocation();
             }

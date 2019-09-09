@@ -43,9 +43,7 @@ public class JsonResourceInterruptInquirer extends BaseInterruptInquirer impleme
         try {
             if (ResourceUtils.isFile(this.resource)) {
                 val resourceFile = this.resource.getFile();
-                keystorePatchWatcherService = new FileWatcherService(resourceFile, file -> {
-                    readResourceForInterrupts();
-                });
+                keystorePatchWatcherService = new FileWatcherService(resourceFile, file -> readResourceForInterrupts());
             }
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);

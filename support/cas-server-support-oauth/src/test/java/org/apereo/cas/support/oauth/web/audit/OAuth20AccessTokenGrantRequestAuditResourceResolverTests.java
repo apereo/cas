@@ -17,16 +17,16 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
- * This is {@link AccessTokenGrantRequestAuditResourceResolverTests}.
+ * This is {@link OAuth20AccessTokenGrantRequestAuditResourceResolverTests}.
  *
  * @author Misagh Moayyed
  * @since 5.3.0
  */
 @Tag("OAuth")
-public class AccessTokenGrantRequestAuditResourceResolverTests {
+public class OAuth20AccessTokenGrantRequestAuditResourceResolverTests {
     @Test
     public void verifyAction() {
-        val r = new AccessTokenGrantRequestAuditResourceResolver();
+        val r = new OAuth20AccessTokenGrantRequestAuditResourceResolver();
         val token = mock(OAuthToken.class);
         when(token.getId()).thenReturn("CODE");
         when(token.getService()).thenReturn(RegisteredServiceTestUtils.getService());
@@ -43,7 +43,7 @@ public class AccessTokenGrantRequestAuditResourceResolverTests {
             .registeredService(service)
             .grantType(OAuth20GrantTypes.AUTHORIZATION_CODE)
             .token(token)
-            .ticketGrantingTicket(token != null ? token.getTicketGrantingTicket() : null)
+            .ticketGrantingTicket(token.getTicketGrantingTicket())
             .build();
         val result = AuditableExecutionResult.builder()
             .executionResult(holder)

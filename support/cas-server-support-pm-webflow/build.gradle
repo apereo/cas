@@ -1,19 +1,21 @@
 description = "Apereo CAS Password Management - Core"
 dependencies {
     api project(":api:cas-server-core-api-webflow")
-    
+    api project(":api:cas-server-core-api-protocol")
+
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-webflow")
     implementation project(":core:cas-server-core-webflow-api")
     implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-configuration-api")
+
     implementation project(":support:cas-server-support-pm")
     implementation project(":support:cas-server-support-pm-core")
+    implementation project(":support:cas-server-support-token-core-api")
 
     implementation libraries.pac4jcore
     implementation libraries.nimbus
-    
     
     testImplementation project(":support:cas-server-support-themes")
     testImplementation project(":core:cas-server-core-services")
@@ -29,4 +31,6 @@ dependencies {
 
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
 }

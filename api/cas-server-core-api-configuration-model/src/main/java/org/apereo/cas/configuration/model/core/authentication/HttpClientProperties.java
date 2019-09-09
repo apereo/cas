@@ -59,6 +59,18 @@ public class HttpClientProperties implements Serializable {
     private String authorityValidationRegEx;
 
     /**
+     * Send requests via a proxy; define the hostname.
+     */
+    private String proxyHost;
+
+    /**
+     * Send requests via a proxy; define the proxy port.
+     * Negative/zero values should deactivate the proxy configuration
+     * for the http client.
+     */
+    private int proxyPort;
+
+    /**
      * Whether the regular expression specified with {@code authorityValidationRegEx} should be handled as case-sensitive
      * ({@code true}) or case-insensitive ({@code false}). If no {@code authorityValidationRegEx} is set, this value does not have any effect.
      */

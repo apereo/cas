@@ -728,7 +728,9 @@ The following options related to MongoDb support in CAS apply equally to a numbe
 # ${configurationKey}.mongo.writeConcern=NORMAL
 # ${configurationKey}.mongo.authenticationDatabaseName=
 # ${configurationKey}.mongo.replicaSet=
-# ${configurationKey}.mongo.sslEnabled=false
+# ${configurationKey}.mongo.sslEnabled=false 
+# ${configurationKey}.mongo.retryWrites=false 
+
 # ${configurationKey}.mongo.conns.lifetime=60000
 # ${configurationKey}.mongo.conns.perHost=10
 ```

@@ -31,8 +31,7 @@ import java.util.HashSet;
 public class OAuthRegisteredService extends RegexRegisteredService {
 
     private static final long serialVersionUID = 5318897374067731021L;
-
-    @Column
+    
     private String clientSecret;
 
     @Column
@@ -43,6 +42,9 @@ public class OAuthRegisteredService extends RegexRegisteredService {
 
     @Column
     private boolean generateRefreshToken;
+
+    @Column
+    private boolean renewRefreshToken;
 
     @Column
     private boolean jwtAccessToken;
@@ -92,4 +94,5 @@ public class OAuthRegisteredService extends RegexRegisteredService {
     public String getFriendlyName() {
         return "OAuth2 Client";
     }
+
 }

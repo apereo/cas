@@ -27,6 +27,7 @@ import org.apereo.cas.services.RegexMatchingRegisteredServiceProxyPolicyTests;
 import org.apereo.cas.services.RegexRegisteredServiceTests;
 import org.apereo.cas.services.RegisteredServiceAuthenticationHandlerResolverTests;
 import org.apereo.cas.services.RegisteredServicePublicKeyImplTests;
+import org.apereo.cas.services.RegisteredServicesEventListenerTests;
 import org.apereo.cas.services.RemoteEndpointServiceAccessStrategyTests;
 import org.apereo.cas.services.ScriptedRegisteredServiceUsernameProviderTests;
 import org.apereo.cas.services.SimpleServiceTests;
@@ -75,6 +76,7 @@ import org.junit.runner.RunWith;
     UnauthorizedServiceExceptionTests.class,
     UnauthorizedSsoServiceExceptionTests.class,
     ResponseTests.class,
+    RegisteredServicesEventListenerTests.class,
     DefaultRegisteredServiceDomainExtractorTests.class,
     ChainingRegisteredServiceSingleSignOnParticipationPolicyTests.class,
     DefaultRegisteredServiceProxyTicketExpirationPolicyTests.class,

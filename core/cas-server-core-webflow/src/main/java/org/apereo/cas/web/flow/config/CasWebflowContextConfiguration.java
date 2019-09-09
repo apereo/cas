@@ -153,6 +153,7 @@ public class CasWebflowContextConfiguration {
     @Lazy(false)
     @RefreshScope
     @Bean
+    @Qualifier("flowBuilderServices")
     public FlowBuilderServices builder() {
         val builder = new FlowBuilderServicesBuilder();
         builder.setViewFactoryCreator(viewFactoryCreator());
