@@ -3473,7 +3473,15 @@ To learn more about this topic, [please review this guide](../protocol/WS-Federa
 # cas.authn.wsfedIdp.sts.encryptionKeystorePassword=storepass
 
 # cas.authn.wsfedIdp.sts.subjectNameIdFormat=unspecified
+# cas.authn.wsfedIdp.sts.subjectNameQualifier=http://cxf.apache.org/sts
 # cas.authn.wsfedIdp.sts.encryptTokens=true
+# cas.authn.wsfedIdp.sts.signTokens=true
+   
+# cas.authn.wsfedIdp.sts.conditionsAcceptClientLifetime=true
+# cas.authn.wsfedIdp.sts.conditionsFailLifetimeExceedance=false
+# cas.authn.wsfedIdp.sts.conditionsFutureTimeToLive=PT60S
+# cas.authn.wsfedIdp.sts.conditionsLifetime=PT30M
+# cas.authn.wsfedIdp.sts.conditionsMaxLifetime=PT12H
 
 # cas.authn.wsfedIdp.sts.realm.keystoreFile=/etc/cas/config/stscasrealm.jks
 # cas.authn.wsfedIdp.sts.realm.keystorePassword=storepass

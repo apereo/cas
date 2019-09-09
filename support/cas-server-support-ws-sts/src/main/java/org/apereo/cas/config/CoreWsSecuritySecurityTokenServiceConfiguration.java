@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.SecurityTokenServiceClientBuilder;
 import org.apereo.cas.authentication.SecurityTokenServiceTokenFetcher;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.claims.CustomNamespaceWSFederationClaimsClaimsHandler;
 import org.apereo.cas.support.claims.NonWSFederationClaimsClaimsHandler;
@@ -294,6 +295,9 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
         val wsfed = casProperties.getAuthn().getWsfedIdp().getSts();
 
         val s = new DefaultSubjectProvider();
+        if (StringUtils.isNotBlank(wsfed.getSubjectNameQualifier())) {
+            s.setSubjectNameQualifier(wsfed.getSubjectNameQualifier());
+        }
         switch (wsfed.getSubjectNameIdFormat().trim().toLowerCase()) {
             case "email":
                 s.setSubjectNameIDFormat(NameID.EMAIL);
@@ -311,13 +315,18 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
         }
 
         val c = new DefaultConditionsProvider();
-        c.setAcceptClientLifetime(true);
+        c.setAcceptClientLifetime(wsfed.isConditionsAcceptClientLifetime());
+        c.setFailLifetimeExceedance(wsfed.isConditionsFailLifetimeExceedance());
+        c.setFutureTimeToLive(Beans.newDuration(wsfed.getConditionsFutureTimeToLive()).toSeconds());
+        c.setLifetime(Beans.newDuration(wsfed.getConditionsLifetime()).toSeconds());
+        c.setMaxLifetime(Beans.newDuration(wsfed.getConditionsMaxLifetime()).toSeconds());
 
         val provider = new SAMLTokenProvider();
         provider.setAttributeStatementProviders(CollectionUtils.wrap(new ClaimsAttributeStatementProvider()));
         provider.setRealmMap(realms());
         provider.setConditionsProvider(c);
         provider.setSubjectProvider(s);
+        provider.setSignToken(wsfed.isSignTokens());
         return provider;
     }
 
