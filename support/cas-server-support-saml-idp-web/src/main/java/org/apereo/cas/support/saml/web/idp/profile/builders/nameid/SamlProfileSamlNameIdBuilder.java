@@ -30,6 +30,7 @@ import org.opensaml.saml.saml2.core.RequestAbstractType;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * This is {@link SamlProfileSamlNameIdBuilder}.
@@ -207,7 +208,7 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
      */
     protected static String getRequiredNameIdFormatIfAny(final RequestAbstractType authnRequest) {
         val nameIDPolicy = getNameIDPolicy(authnRequest);
-        val requiredNameFormat = nameIDPolicy != null ? nameIDPolicy.getFormat() : null;
+        val requiredNameFormat = Optional.ofNullable(nameIDPolicy).map(NameIDPolicy::getFormat).orElse(null);
         LOGGER.debug("AuthN request indicates [{}] is the required NameID format", requiredNameFormat);
         return requiredNameFormat;
     }

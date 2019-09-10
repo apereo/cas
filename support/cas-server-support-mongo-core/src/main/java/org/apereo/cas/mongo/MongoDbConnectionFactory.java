@@ -43,6 +43,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -316,7 +317,7 @@ public class MongoDbConnectionFactory {
     }
 
     private static MongoClientURI buildMongoClientURI(final String clientUri, final MongoClientOptions clientOptions) {
-        val builder = clientOptions != null ? MongoClientOptions.builder(clientOptions) : MongoClientOptions.builder();
+        val builder = Optional.ofNullable(clientOptions).map(MongoClientOptions::builder).orElseGet(MongoClientOptions::builder);
         return new MongoClientURI(clientUri, builder);
     }
 
