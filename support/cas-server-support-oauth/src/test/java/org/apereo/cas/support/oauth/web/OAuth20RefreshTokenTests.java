@@ -71,8 +71,6 @@ public class OAuth20RefreshTokenTests extends AbstractOAuth20Tests {
         assertNotEquals(rt.getId(), rt2.getId());
 
         val oldRt = this.ticketRegistry.getTicket(result.getRight(), ticket -> true);
-        assertNotNull(oldRt);
-        assertTrue(oldRt.isExpired());
+        assertNull(oldRt);
     }
-
 }

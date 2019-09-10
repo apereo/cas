@@ -21,6 +21,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * This is {@link HttpRequestUtils}.
@@ -51,7 +52,7 @@ public class HttpRequestUtils {
     public static HttpServletRequest getHttpServletRequestFromRequestAttributes() {
         try {
             val requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-            return requestAttributes != null ? requestAttributes.getRequest() : null;
+            return Optional.ofNullable(requestAttributes).map(ServletRequestAttributes::getRequest).orElse(null);
         } catch (final Exception e) {
             LOGGER.trace(e.getMessage(), e);
         }
@@ -65,7 +66,7 @@ public class HttpRequestUtils {
      */
     public static HttpServletResponse getHttpServletResponseFromRequestAttributes() {
         val requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        return requestAttributes != null ? requestAttributes.getResponse() : null;
+        return Optional.ofNullable(requestAttributes).map(ServletRequestAttributes::getResponse).orElse(null);
     }
 
     /**

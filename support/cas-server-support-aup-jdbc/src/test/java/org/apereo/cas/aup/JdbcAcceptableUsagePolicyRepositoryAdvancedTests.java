@@ -96,8 +96,8 @@ public class JdbcAcceptableUsagePolicyRepositoryAdvancedTests extends BaseJdbcAc
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         
         val c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser");
-        val pricipal = CoreAuthenticationTestUtils.getPrincipal(c.getId(), profileAttributes);
-        val auth = CoreAuthenticationTestUtils.getAuthentication(pricipal);
+        val principal = CoreAuthenticationTestUtils.getPrincipal(c.getId(), profileAttributes);
+        val auth = CoreAuthenticationTestUtils.getAuthentication(principal);
         WebUtils.putAuthentication(auth, context);
         
         jdbcAupRepository.determinePrincipalId(context, c);

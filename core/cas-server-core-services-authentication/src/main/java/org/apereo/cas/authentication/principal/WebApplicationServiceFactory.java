@@ -10,6 +10,8 @@ import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 
+import java.util.Optional;
+
 /**
  * The {@link WebApplicationServiceFactory} is responsible for
  * creating {@link WebApplicationService} objects.
@@ -29,7 +31,7 @@ public class WebApplicationServiceFactory extends AbstractServiceFactory<WebAppl
      */
     private static AbstractWebApplicationService determineWebApplicationFormat(final HttpServletRequest request,
                                                                                final AbstractWebApplicationService webApplicationService) {
-        val format = request != null ? request.getParameter(CasProtocolConstants.PARAMETER_FORMAT) : null;
+        val format = Optional.ofNullable(request).map(httpServletRequest -> httpServletRequest.getParameter(CasProtocolConstants.PARAMETER_FORMAT)).orElse(null);
         try {
             if (StringUtils.isNotBlank(format)) {
                 val formatType = ValidationResponseType.valueOf(format.toUpperCase());
@@ -50,7 +52,9 @@ public class WebApplicationServiceFactory extends AbstractServiceFactory<WebAppl
      */
     protected static AbstractWebApplicationService newWebApplicationService(final HttpServletRequest request,
                                                                             final String serviceToUse) {
-        val artifactId = request != null ? request.getParameter(CasProtocolConstants.PARAMETER_TICKET) : null;
+        val artifactId = Optional.ofNullable(request)
+            .map(httpServletRequest -> httpServletRequest.getParameter(CasProtocolConstants.PARAMETER_TICKET))
+            .orElse(null);
         val id = cleanupUrl(serviceToUse);
         val newService = new SimpleWebApplicationServiceImpl(id, serviceToUse, artifactId);
         determineWebApplicationFormat(request, newService);

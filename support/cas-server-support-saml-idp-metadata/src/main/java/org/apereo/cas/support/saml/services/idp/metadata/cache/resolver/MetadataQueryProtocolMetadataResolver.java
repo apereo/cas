@@ -28,6 +28,7 @@ import org.springframework.http.HttpStatus;
 import java.io.File;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Optional;
 
 /**
  * This is {@link MetadataQueryProtocolMetadataResolver}.
@@ -47,7 +48,7 @@ public class MetadataQueryProtocolMetadataResolver extends UrlResourceMetadataRe
     protected String getMetadataLocationForService(final SamlRegisteredService service, final CriteriaSet criteriaSet) {
         LOGGER.debug("Getting metadata location dynamically for [{}] based on criteria [{}]", service.getName(), criteriaSet);
         val entityIdCriteria = criteriaSet.get(EntityIdCriterion.class);
-        val entityId = entityIdCriteria == null ? service.getServiceId() : entityIdCriteria.getEntityId();
+        val entityId = Optional.ofNullable(entityIdCriteria).map(EntityIdCriterion::getEntityId).orElseGet(service::getServiceId);
         if (StringUtils.isBlank(entityId)) {
             throw new SamlException("Unable to determine entity id to fetch metadata dynamically via MDQ for service " + service.getName());
         }

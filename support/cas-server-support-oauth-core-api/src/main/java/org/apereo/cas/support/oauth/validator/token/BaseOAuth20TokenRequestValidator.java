@@ -104,7 +104,8 @@ public abstract class BaseOAuth20TokenRequestValidator implements OAuth20TokenRe
      * @param userProfile the profile
      * @return true/false
      */
-    protected boolean validateInternal(final JEEContext context, final String grantType,
+    protected boolean validateInternal(final JEEContext context,
+                                       final String grantType,
                                        final ProfileManager manager,
                                        final UserProfile userProfile) {
         return false;

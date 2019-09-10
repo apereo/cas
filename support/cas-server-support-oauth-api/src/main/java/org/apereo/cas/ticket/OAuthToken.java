@@ -2,8 +2,8 @@ package org.apereo.cas.ticket;
 
 import org.apereo.cas.authentication.Authentication;
 
-import java.util.Collection;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * OAuth tokens are mostly like service tickets: they deal with authentication and service.
@@ -25,7 +25,7 @@ public interface OAuthToken extends ServiceTicket {
      *
      * @return requested scopes.
      */
-    Collection<String> getScopes();
+    Set<String> getScopes();
 
     /**
      * Collection of requested claims, if any.
