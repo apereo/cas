@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * This is {@link JsonResourcePasswordManagementService}.
@@ -80,7 +81,7 @@ public class JsonResourcePasswordManagementService extends BasePasswordManagemen
     @Override
     public String findEmail(final String username) {
         val account = this.jsonBackedAccounts.getOrDefault(username, null);
-        return account == null ? null : account.getEmail();
+        return Optional.ofNullable(account).map(JsonBackedAccount::getEmail).orElse(null);
     }
 
     @Override

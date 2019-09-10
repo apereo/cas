@@ -94,7 +94,7 @@ public class HttpRequestMultifactorAuthenticationTrigger implements MultifactorA
 
         val attributeName = casProperties.getAuthn().getMfa().getSessionAttribute();
         val session = request.getSession(false);
-        var attributeValue = session != null ? session.getAttribute(attributeName) : null;
+        var attributeValue = Optional.ofNullable(session).map(httpSession -> httpSession.getAttribute(attributeName)).orElse(null);
         if (attributeValue == null) {
             LOGGER.trace("No value could be found for session attribute [{}]. Checking request attributes...", attributeName);
             attributeValue = request.getAttribute(attributeName);

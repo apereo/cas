@@ -270,7 +270,9 @@ public class DelegatedClientAuthenticationActionTests {
 
     private static ServicesManager getServicesManagerWith(final Service service, final RegisteredServiceAccessStrategy accessStrategy) {
         val mgr = mock(ServicesManager.class);
-        val regSvc = service != null ? RegisteredServiceTestUtils.getRegisteredService(service.getId()) : null;
+        val regSvc = Optional.ofNullable(service)
+            .map(svc -> RegisteredServiceTestUtils.getRegisteredService(svc.getId()))
+            .orElse(null);
 
         if (regSvc != null) {
             regSvc.setAccessStrategy(accessStrategy);

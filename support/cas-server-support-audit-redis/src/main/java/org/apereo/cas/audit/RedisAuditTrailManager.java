@@ -68,7 +68,7 @@ public class RedisAuditTrailManager extends AbstractAuditTrailManager {
 
     @Override
     public void removeAll() {
-        getAuditRedisKeys().forEach(key -> this.redisTemplate.delete(key));
+        getAuditRedisKeys().forEach(this.redisTemplate::delete);
     }
 
     private static String getAuditRedisKey(final AuditActionContext context) {

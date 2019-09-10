@@ -20,6 +20,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.context.JEEContext;
 import org.springframework.core.Ordered;
 
+import java.util.Optional;
 import java.util.stream.Stream;
 
 /**
@@ -73,7 +74,9 @@ public class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator i
 
         val clientId = request.getParameter(OAuth20Constants.CLIENT_ID);
         val registeredService = getRegisteredServiceByClientId(clientId);
-        val service = registeredService != null ? webApplicationServiceServiceFactory.createService(registeredService.getServiceId()) : null;
+        val service = Optional.ofNullable(registeredService)
+            .map(svc -> webApplicationServiceServiceFactory.createService(svc.getServiceId()))
+            .orElse(null);
         val audit = AuditableContext.builder()
             .service(service)
             .registeredService(registeredService)

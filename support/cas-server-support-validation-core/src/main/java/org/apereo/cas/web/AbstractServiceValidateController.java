@@ -137,7 +137,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
     @Override
     public ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         val service = serviceValidateConfigurationContext.getArgumentExtractor().extractService(request);
-        val serviceTicketId = service != null ? service.getArtifactId() : null;
+        val serviceTicketId = Optional.ofNullable(service).map(WebApplicationService::getArtifactId).orElse(null);
         if (service == null || StringUtils.isBlank(serviceTicketId)) {
             LOGGER.warn("Could not identify service and/or service ticket for service: [{}]", service);
             return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_REQUEST, StringUtils.EMPTY, request, service);

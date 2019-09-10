@@ -313,7 +313,6 @@ public class JpaLockingStrategyTests {
 
     private static class Releaser implements Callable<Boolean> {
 
-
         private final LockingStrategy lock;
 
         Releaser(final LockingStrategy l) {

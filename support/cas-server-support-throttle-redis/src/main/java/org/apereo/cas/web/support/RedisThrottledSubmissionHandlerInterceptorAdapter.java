@@ -6,12 +6,14 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.audit.AuditActionContext;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
+import org.springframework.data.redis.core.BoundValueOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Comparator;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -39,7 +41,7 @@ public class RedisThrottledSubmissionHandlerInterceptorAdapter extends AbstractI
         val keys = (Set<String>) this.redisTemplate.keys(RedisAuditTrailManager.CAS_AUDIT_CONTEXT_PREFIX + '*');
         val failures = Objects.requireNonNull(keys)
             .stream()
-            .map(redisKey -> this.redisTemplate.boundValueOps(redisKey))
+            .map((Function<String, BoundValueOperations>) this.redisTemplate::boundValueOps)
             .map(AuditActionContext.class::cast)
             .filter(audit ->
                 audit.getPrincipal().equalsIgnoreCase(getUsernameParameterFromRequest(request))

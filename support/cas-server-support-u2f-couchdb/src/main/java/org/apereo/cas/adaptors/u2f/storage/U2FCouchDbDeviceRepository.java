@@ -98,7 +98,7 @@ public class U2FCouchDbDeviceRepository extends BaseU2FDeviceRepository {
     @Override
     public void removeAll() {
         if (asynchronous) {
-            this.executorService.execute(() -> couchDb.deleteAll());
+            this.executorService.execute(couchDb::deleteAll);
         } else {
             couchDb.deleteAll();
         }

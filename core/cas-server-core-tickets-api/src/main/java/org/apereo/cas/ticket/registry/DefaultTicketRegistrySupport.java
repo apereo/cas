@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * This is {@link DefaultTicketRegistrySupport}.
@@ -51,19 +52,19 @@ public class DefaultTicketRegistrySupport implements TicketRegistrySupport {
             return null;
         }
         val tgt = getTicketGrantingTicket(ticketGrantingTicketId);
-        return tgt != null ? tgt.getAuthentication() : null;
+        return Optional.ofNullable(tgt).map(TicketGrantingTicket::getAuthentication).orElse(null);
     }
 
     @Override
     public Principal getAuthenticatedPrincipalFrom(final String ticketGrantingTicketId) {
         val auth = getAuthenticationFrom(ticketGrantingTicketId);
-        return auth == null ? null : auth.getPrincipal();
+        return Optional.ofNullable(auth).map(Authentication::getPrincipal).orElse(null);
     }
 
     @Override
     public Map<String, List<Object>> getPrincipalAttributesFrom(final String ticketGrantingTicketId) {
         val principal = getAuthenticatedPrincipalFrom(ticketGrantingTicketId);
-        return principal == null ? null : principal.getAttributes();
+        return Optional.ofNullable(principal).map(Principal::getAttributes).orElse(null);
     }
 
     @Override

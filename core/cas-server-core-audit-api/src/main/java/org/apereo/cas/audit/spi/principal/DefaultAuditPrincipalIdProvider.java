@@ -6,6 +6,8 @@ import org.apereo.cas.authentication.Authentication;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Optional;
+
 /**
  * This is {@link DefaultAuditPrincipalIdProvider}.
  *
@@ -19,7 +21,9 @@ public class DefaultAuditPrincipalIdProvider implements AuditPrincipalIdProvider
 
     @Override
     public String getPrincipalIdFrom(final Authentication authentication, final Object returnValue, final Exception exception) {
-        return authentication != null ? authentication.getPrincipal().getId() : null;
+        return Optional.ofNullable(authentication)
+            .map(authn -> authn.getPrincipal().getId())
+            .orElse(null);
     }
 
     @Override

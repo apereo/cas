@@ -14,6 +14,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
@@ -110,7 +111,7 @@ public class RegexRegisteredServiceTests {
     public void verifyMatches(final RegexRegisteredService service,
                               final String serviceToMatch,
                               final boolean expectedResult) {
-        val testService = serviceToMatch == null ? null : RegisteredServiceTestUtils.getService(serviceToMatch);
+        val testService = Optional.ofNullable(serviceToMatch).map(RegisteredServiceTestUtils::getService).orElse(null);
         assertEquals(expectedResult, service.matches(testService));
     }
 
@@ -122,7 +123,7 @@ public class RegexRegisteredServiceTests {
         MAPPER.writeValue(JSON_FILE, service);
         val serviceRead = MAPPER.readValue(JSON_FILE, RegexRegisteredService.class);
         assertEquals(service, serviceRead);
-        val testService = serviceToMatch == null ? null : RegisteredServiceTestUtils.getService(serviceToMatch);
+        val testService = Optional.ofNullable(serviceToMatch).map(RegisteredServiceTestUtils::getService).orElse(null);
         assertEquals(expectedResult, serviceRead.matches(testService));
     }
 
