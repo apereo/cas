@@ -192,6 +192,11 @@ public interface OAuth20Constants {
     String INVALID_GRANT = "invalid_grant";
 
     /**
+     * The invalid scope.
+     */
+    String INVALID_SCOPE = "invalid_scope";
+
+    /**
      * Access denied error.
      */
     String ACCESS_DENIED = "access_denied";

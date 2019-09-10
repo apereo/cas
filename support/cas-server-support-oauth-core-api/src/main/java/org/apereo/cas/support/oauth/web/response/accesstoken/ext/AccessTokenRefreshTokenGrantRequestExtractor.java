@@ -6,12 +6,17 @@ import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
+import org.apereo.cas.ticket.OAuthToken;
+import org.apereo.cas.ticket.UnauthorizedScopeRequestException;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * This is {@link AccessTokenRefreshTokenGrantRequestExtractor}.
@@ -32,16 +37,15 @@ public class AccessTokenRefreshTokenGrantRequestExtractor extends AccessTokenAut
 
     @Override
     protected AccessTokenRequestDataHolder extractInternal(final HttpServletRequest request,
-        final HttpServletResponse response,
-        final AccessTokenRequestDataHolder.AccessTokenRequestDataHolderBuilder builder) {
+                                                           final HttpServletResponse response,
+                                                           final AccessTokenRequestDataHolder.AccessTokenRequestDataHolderBuilder builder) {
         val registeredService = getOAuthRegisteredServiceBy(request);
         if (registeredService == null) {
             throw new UnauthorizedServiceException("Unable to locate service in registry ");
         }
 
-        val shouldRenewRefreshToken =
-            registeredService.isGenerateRefreshToken() && registeredService.isRenewRefreshToken();
-        builder.generateRefreshToken(shouldRenewRefreshToken);
+        val shouldRenewRefreshToken = registeredService.isGenerateRefreshToken() && registeredService.isRenewRefreshToken();
+        builder.generateRefreshToken(registeredService.isGenerateRefreshToken());
         builder.expireOldRefreshToken(shouldRenewRefreshToken);
 
         return super.extractInternal(request, response, builder);
@@ -69,5 +73,26 @@ public class AccessTokenRefreshTokenGrantRequestExtractor extends AccessTokenAut
     @Override
     protected String getRegisteredServiceIdentifierFromRequest(final HttpServletRequest request) {
         return request.getParameter(OAuth20Constants.CLIENT_ID);
+    }
+
+    /**
+     * {@inheritDoc}
+     * <p>The requested scope MUST NOT include any scope
+     * not originally granted by the resource owner, and if omitted is
+     * treated as equal to the scope originally granted by the
+     * resource owner. </p>
+     *
+     * @param requestedScopes the requested scopes
+     * @param token           the token
+     * @param request         the request
+     * @return scopes
+     */
+    @Override
+    protected Set<String> extractRequestedScopesByToken(final Set<String> requestedScopes, final OAuthToken token, final HttpServletRequest request) {
+        if (!requestedScopes.isEmpty() && !requestedScopes.equals(token.getScopes())) {
+            LOGGER.error("Requested scopes [{}} exceed the granted scopes [{}} for token [{}}", requestedScopes, token.getScopes(), token.getId());
+            throw new UnauthorizedScopeRequestException(token.getId());
+        }
+        return new TreeSet<>(token.getScopes());
     }
 }
