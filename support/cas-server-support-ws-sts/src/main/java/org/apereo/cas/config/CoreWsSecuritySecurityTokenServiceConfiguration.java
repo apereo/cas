@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.SecurityTokenServiceClientBuilder;
 import org.apereo.cas.authentication.SecurityTokenServiceTokenFetcher;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.wsfed.WsFederationProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.claims.CustomWSFederationClaimsClaimsHandler;
 import org.apereo.cas.support.claims.NonWSFederationClaimsClaimsHandler;
@@ -64,6 +65,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 
 import javax.xml.ws.Provider;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -232,7 +234,14 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
         }
 
         final DefaultConditionsProvider c = new DefaultConditionsProvider();
-        c.setAcceptClientLifetime(true);
+        if (StringUtils.isNotBlank(wsfed.getSubjectNameQualifier())) {
+            s.setSubjectNameQualifier(wsfed.getSubjectNameQualifier());
+        }
+        c.setAcceptClientLifetime(wsfed.isConditionsAcceptClientLifetime());
+        c.setFailLifetimeExceedance(wsfed.isConditionsFailLifetimeExceedance());
+        c.setFutureTimeToLive(Beans.newDuration(wsfed.getConditionsFutureTimeToLive()).getSeconds());
+        c.setLifetime(Beans.newDuration(wsfed.getConditionsLifetime()).getSeconds());
+        c.setMaxLifetime(Beans.newDuration(wsfed.getConditionsMaxLifetime()).getSeconds());
 
         final SAMLTokenProvider provider = new SAMLTokenProvider();
         provider.setAttributeStatementProviders(CollectionUtils.wrap(new ClaimsAttributeStatementProvider()));
