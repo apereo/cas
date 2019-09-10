@@ -10,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.WebApplicationType;
-import org.springframework.boot.actuate.autoconfigure.jdbc.DataSourceHealthIndicatorAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.cassandra.CassandraAutoConfiguration;
 import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration;
@@ -46,7 +45,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
     GroovyTemplateAutoConfiguration.class,
     JmxAutoConfiguration.class,
     DataSourceAutoConfiguration.class,
-    DataSourceHealthIndicatorAutoConfiguration.class,
     RedisAutoConfiguration.class,
     MongoAutoConfiguration.class,
     MongoDataAutoConfiguration.class,
@@ -56,7 +54,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableAsync
-@EnableAspectJAutoProxy(proxyTargetClass=true)
+@EnableAspectJAutoProxy(proxyTargetClass = true)
 @EnableTransactionManagement(proxyTargetClass = true)
 @EnableScheduling
 @NoArgsConstructor
