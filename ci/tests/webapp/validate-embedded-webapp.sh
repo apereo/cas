@@ -3,7 +3,7 @@
 prepCommand="echo 'Running command...'; "
 gradle="./gradlew "
 gradleBuild=""
-gradleBuildOptions="--stacktrace --build-cache --configure-on-demand --no-daemon "
+gradleBuildOptions="--stacktrace --build-cache --configure-on-demand --no-daemon -PchecksumFailOn=build_finish -PchecksumPrint "
 
 webAppServerType="$1"
 

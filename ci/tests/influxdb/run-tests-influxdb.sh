@@ -21,7 +21,7 @@ fi
 prepCommand="echo 'Running command...'; "
 gradle="./gradlew $@"
 gradleBuild=""
-gradleBuildOptions="--stacktrace --build-cache --configure-on-demand --no-daemon -DtestCategoryType=INFLUXDB "
+gradleBuildOptions="--stacktrace --build-cache --configure-on-demand --no-daemon -DtestCategoryType=INFLUXDB -PchecksumFailOn=build_finish -PchecksumPrint "
 
 echo -e "***********************************************"
 echo -e "Gradle build started at `date`"

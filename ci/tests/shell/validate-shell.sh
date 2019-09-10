@@ -1,11 +1,11 @@
 #!/bin/bash
 
 prepCommand="echo 'Running command...'; "
-casVersion=$(./gradlew casVersion --no-daemon -q)
+casVersion=$(./gradlew casVersion --no-daemon -q -PchecksumPrint)
 echo "Current CAS version is $casVersion"
 gradle="./gradlew $@"
 gradleBuild=""
-gradleBuildOptions="--stacktrace --build-cache --configure-on-demand --no-daemon --parallel -x test -x javadoc -x check"
+gradleBuildOptions="--stacktrace --build-cache --configure-on-demand --no-daemon --parallel -x test -x javadoc -x check -PchecksumFailOn=build_finish -PchecksumPrint "
 
 echo -e "***********************************************"
 echo -e "Gradle build started at `date`"

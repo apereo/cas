@@ -1,0 +1,1562 @@
+<?xml version='1.0' encoding='utf-8'?>
+<dependency-verification version='1'>
+  <trust-requirement pgp='GROUP' checksum='NONE' />
+  <ignored-keys>
+    <ignored-key id='74dafdfd6dae2441' />
+  </ignored-keys>
+  <trusted-keys>
+    <trusted-key id='2c7b12f2a511e325' group='ch.qos.logback' />
+    <trusted-key id='8e929b5b774e3e31' group='com.amazonaws' />
+    <trusted-key id='ac107b386692dadd' group='com.amazonaws' />
+    <trusted-key id='663e52438ad73e30' group='com.authy' />
+    <trusted-key id='82e75b7025f67410' group='com.couchbase.client' />
+    <trusted-key id='5aa2f8e042881e38' group='com.datastax.cassandra' />
+    <trusted-key id='81cd11d1ce92d750' group='com.ecwid.consul' />
+    <trusted-key id='ec5bce97b4defa96' group='com.esotericsoftware' />
+    <trusted-key id='c9fbaa83a8753994' group='com.fasterxml.jackson.core' />
+    <trusted-key id='9cd8549acf9bd0ce' group='com.fasterxml.jackson.dataformat' />
+    <trusted-key id='c9fbaa83a8753994' group='com.fasterxml.jackson.dataformat' />
+    <trusted-key id='c9fbaa83a8753994' group='com.fasterxml.jackson.datatype' />
+    <trusted-key id='c9fbaa83a8753994' group='com.fasterxml.jackson.jaxrs' />
+    <trusted-key id='c9fbaa83a8753994' group='com.fasterxml.jackson.module' />
+    <trusted-key id='9cd8549acf9bd0ce' group='com.fasterxml.uuid' />
+    <trusted-key id='c9fbaa83a8753994' group='com.fasterxml.woodstox' />
+    <trusted-key id='fcb6a5cf252426c1' group='com.getsentry.raven' />
+    <trusted-key id='3c0a8f4744f37328' group='com.github.ben-manes.caffeine' />
+    <trusted-key id='379ce192d401ab61' group='com.github.javaparser' />
+    <trusted-key id='62ebfc78fe4156d1' group='com.github.jnr' />
+    <trusted-key id='8e26ff248bc7aead' group='com.github.jnr' />
+    <trusted-key id='218fa0f6a941a037' group='com.github.kevinstern' />
+    <trusted-key id='7810e67d77cd510f' group='com.github.kstyrc' />
+    <trusted-key id='90c9d18cc8126b0e' group='com.github.lalyos' />
+    <trusted-key id='711c0a9a896fe336' group='com.github.luben' />
+    <trusted-key id='727dde55e7d8c857' group='com.github.oshi' />
+    <trusted-key id='d367336f712fbb5a' group='com.github.scribejava' />
+    <trusted-key id='1756b920eecf0e90' group='com.github.spotbugs' />
+    <trusted-key id='fd139c4dc4a807c7' group='com.github.vladimir-bukhtoyarov' />
+    <trusted-key id='38f47d3e410c47b1' group='com.github.vlsi.compactmap' />
+    <trusted-key id='5e1f79a7c298661e' group='com.google.auto' />
+    <trusted-key id='7a01b0f236e5430f' group='com.google.code.gson' />
+    <trusted-key id='687c81d51413645e' group='com.google.code.javaparser' />
+    <trusted-key id='912d2c0eccda55c0' group='com.google.errorprone' />
+    <trusted-key id='9a259c7ee636c5ed' group='com.google.errorprone' />
+    <trusted-key id='abe9f3126bb741c1' group='com.google.guava' />
+    <trusted-key id='52e6585e0102b84d' group='com.google.inject.extensions' />
+    <trusted-key id='29579f18fa8fd93b' group='com.google.j2objc' />
+    <trusted-key id='34b403c1a52961c0' group='com.google.maps' />
+    <trusted-key id='f6ce9695c9318406' group='com.google.zxing' />
+    <trusted-key id='72475fd306b9cab7' group='com.googlecode.javaewah' />
+    <trusted-key id='4ece492b63e38acf' group='com.h3xstream.findsecbugs' />
+    <trusted-key id='860675eebac22464' group='com.hazelcast' />
+    <trusted-key id='379ce192d401ab61' group='com.hierynomus' />
+    <trusted-key id='a50569c7ca7fa1f0' group='com.jcraft' />
+    <trusted-key id='bffa420097f49c8a' group='com.lmax' />
+    <trusted-key id='4b70cd29736fc6e7' group='com.maxmind.db' />
+    <trusted-key id='1c5baa9f52f24d87' group='com.maxmind.geoip2' />
+    <trusted-key id='982f38d39bb64ba8' group='com.mchange' />
+    <trusted-key id='39a39ee87f09b798' group='com.mebigfatguy.fb-contrib' />
+    <trusted-key id='08bd20dc0f8fd97e' group='com.microsoft.azure' />
+    <trusted-key id='62988da92c562b76' group='com.microsoft.azure' />
+    <trusted-key id='8d5db0baa89fe87b' group='com.microsoft.azure' />
+    <trusted-key id='c42771286e67fa5d' group='com.microsoft.azure' />
+    <trusted-key id='c42771286e67fa5d' group='com.microsoft.rest' />
+    <trusted-key id='c42771286e67fa5d' group='com.microsoft.sqlserver' />
+    <trusted-key id='075def3ef14f0793' group='com.moandjiezana.toml' />
+    <trusted-key id='21b8e7eaf08b2f3e' group='com.netflix.archaius' />
+    <trusted-key id='21b8e7eaf08b2f3e' group='com.netflix.eureka' />
+    <trusted-key id='21b8e7eaf08b2f3e' group='com.netflix.hystrix' />
+    <trusted-key id='9250a2012806a725' group='com.netflix.nebula' />
+    <trusted-key id='21b8e7eaf08b2f3e' group='com.netflix.netflix-commons' />
+    <trusted-key id='21b8e7eaf08b2f3e' group='com.netflix.ribbon' />
+    <trusted-key id='21b8e7eaf08b2f3e' group='com.netflix.servo' />
+    <trusted-key id='21b8e7eaf08b2f3e' group='com.netflix.spectator' />
+    <trusted-key id='5b30417e67345417' group='com.nexmo' />
+    <trusted-key id='3efd9d223d715e9a' group='com.nimbusds' />
+    <trusted-key id='a09d87880cbd1448' group='com.nimbusds' />
+    <trusted-key id='1063fe98bcecb758' group='com.puppycrawl.tools' />
+    <trusted-key id='6b73a36e6026dfca' group='com.rabbitmq' />
+    <trusted-key id='9a2c7a98e457c53d' group='com.rabbitmq' />
+    <trusted-key id='ecab0e7b83e6ae0d' group='com.signalfx.public' />
+    <trusted-key id='8e3f0de7ae354651' group='com.squareup.moshi' />
+    <trusted-key id='8e3f0de7ae354651' group='com.squareup.okhttp' />
+    <trusted-key id='8671a8df71296252' group='com.squareup.okhttp3' />
+    <trusted-key id='8671a8df71296252' group='com.squareup.okio' />
+    <trusted-key id='8e3f0de7ae354651' group='com.squareup.okio' />
+    <trusted-key id='80c08b1c29100955' group='com.squareup.retrofit' />
+    <trusted-key id='80c08b1c29100955' group='com.squareup.retrofit2' />
+    <trusted-key id='e0cb7823cfd00fbf' group='com.squareup.retrofit2' />
+    <trusted-key id='d908a43fb7ec07ac' group='com.sun.activation' />
+    <trusted-key id='3575e1c767076ca8' group='com.sun.istack' />
+    <trusted-key id='6425559c47cc79c4' group='com.sun.jersey' />
+    <trusted-key id='6425559c47cc79c4' group='com.sun.jersey.contribs' />
+    <trusted-key id='0c27e8fac93b3b19' group='com.sun.mail' />
+    <trusted-key id='6425559c47cc79c4' group='com.sun.mail' />
+    <trusted-key id='102e05d8da6c286d' group='com.sun.xml.bind' />
+    <trusted-key id='3575e1c767076ca8' group='com.sun.xml.bind' />
+    <trusted-key id='b6d3fc494798e478' group='com.sun.xml.messaging.saaj' />
+    <trusted-key id='e750c26734cb6427' group='com.textmagic.sdk' />
+    <trusted-key id='602ec18d20c4661c' group='com.thoughtworks.xstream' />
+    <trusted-key id='a6adfc93ef34893e' group='com.timgroup' />
+    <trusted-key id='16035fdaa013f075' group='com.twilio.sdk' />
+    <trusted-key id='5657b51f13e59dbe' group='com.unboundid' />
+    <trusted-key id='5657b51f13e59dbe' group='com.unboundid.product.scim' />
+    <trusted-key id='5657b51f13e59dbe' group='com.unboundid.product.scim2' />
+    <trusted-key id='b263d126c8a7e813' group='com.vdurmont' />
+    <trusted-key id='e17cf2af6d02ec61' group='com.warrenstrange' />
+    <trusted-key id='adbf7d017ed800f8' group='com.wavefront' />
+    <trusted-key id='d8588a5844e2a774' group='com.yubico' />
+    <trusted-key id='4cc08e7f47c3ec76' group='com.zaxxer' />
+    <trusted-key id='3faad2cd5ecbb314' group='commons-beanutils' />
+    <trusted-key id='86fdc7e2a11262cb' group='commons-codec' />
+    <trusted-key id='7c4504a4d75cf3dc' group='commons-configuration' />
+    <trusted-key id='f202cb82961c9460' group='commons-configuration' />
+    <trusted-key id='217c9cff2163ddce' group='commons-jxpath' />
+    <trusted-key id='98caacc7e20a1f40' group='de.codecentric' />
+    <trusted-key id='ec5bce97b4defa96' group='de.javakaffee' />
+    <trusted-key id='1d3f3e9e30c7f312' group='edu.internet2.middleware.grouper' />
+    <trusted-key id='2d6641c6af88103e' group='gnu.getopt' />
+    <trusted-key id='e9b5bb0269d5aa83' group='info.ganglia.gmetric4j' />
+    <trusted-key id='379ce192d401ab61' group='info.picocli' />
+    <trusted-key id='dba4712e9660fd1d' group='io.dropwizard.metrics' />
+    <trusted-key id='015ef5b6fd1f998b' group='io.jsonwebtoken' />
+    <trusted-key id='5e7f97dda07a415b' group='io.lettuce' />
+    <trusted-key id='379ce192d401ab61' group='io.micrometer' />
+    <trusted-key id='056aca74d46000bf' group='io.netty' />
+    <trusted-key id='31baae0110378968' group='io.openapitools.jackson.dataformat' />
+    <trusted-key id='379ce192d401ab61' group='io.opentracing' />
+    <trusted-key id='9a2c7a98e457c53d' group='io.projectreactor' />
+    <trusted-key id='5007c2a4ea64f2ba' group='io.prometheus' />
+    <trusted-key id='94b291aef984a085' group='io.reactivex' />
+    <trusted-key id='94b291aef984a085' group='io.reactivex.rxjava2' />
+    <trusted-key id='9a2c7a98e457c53d' group='io.spring.gradle' />
+    <trusted-key id='8da107ecc265290a' group='io.springfox' />
+    <trusted-key id='704514f6556102e5' group='io.swagger' />
+    <trusted-key id='704514f6556102e5' group='io.swagger.core.v3' />
+    <trusted-key id='b263d126c8a7e813' group='io.userinfo' />
+    <trusted-key id='379ce192d401ab61' group='io.zipkin.brave' />
+    <trusted-key id='379ce192d401ab61' group='io.zipkin.reporter2' />
+    <trusted-key id='379ce192d401ab61' group='io.zipkin.zipkin2' />
+    <trusted-key id='0e325becb6962a24' group='jakarta.annotation' />
+    <trusted-key id='590c2310cee1c9be' group='jakarta.jms' />
+    <trusted-key id='ac690b38780454cd' group='jakarta.jws' />
+    <trusted-key id='6d9567281201e5e3' group='jakarta.servlet' />
+    <trusted-key id='e0e92c40a43a012a' group='jakarta.websocket' />
+    <trusted-key id='b4bf94f677caa76f' group='jakarta.ws.rs' />
+    <trusted-key id='ac690b38780454cd' group='jakarta.xml.soap' />
+    <trusted-key id='ac690b38780454cd' group='jakarta.xml.ws' />
+    <trusted-key id='6425559c47cc79c4' group='javax' />
+    <trusted-key id='d5e520459cb3aa49' group='javax.cache' />
+    <trusted-key id='6425559c47cc79c4' group='javax.ws.rs' />
+    <trusted-key id='0a71e49a4906bf73' group='javax.xml.soap' />
+    <trusted-key id='0315bfb7970a144f' group='javax.xml.ws' />
+    <trusted-key id='0a07e0e55e45f65b' group='jcifs' />
+    <trusted-key id='ecdfea3cb4493b94' group='jline' />
+    <trusted-key id='72385ff0af338d52' group='joda-time' />
+    <trusted-key id='cddf87cd3cb9acae' group='net.bull.javamelody' />
+    <trusted-key id='bb2914c1fa0811c3' group='net.bytebuddy' />
+    <trusted-key id='13b5ee58c09fb3e0' group='net.i2p.crypto' />
+    <trusted-key id='f6bc09712c8df6ec' group='net.minidev' />
+    <trusted-key id='515d961018eea4af' group='net.rdrei.android.buildtimetracker' />
+    <trusted-key id='b83a12a027fc6962' group='net.sf.ehcache' />
+    <trusted-key id='1d185615d0a84648' group='net.sf.saxon' />
+    <trusted-key id='4d37705b61cb0b3f' group='net.shibboleth.ext' />
+    <trusted-key id='277ec86a07ceeb8b' group='net.shibboleth.idp' />
+    <trusted-key id='4d37705b61cb0b3f' group='net.shibboleth.liberty' />
+    <trusted-key id='9a804e97d7079c77' group='net.shibboleth.tool' />
+    <trusted-key id='4d37705b61cb0b3f' group='net.shibboleth.utilities' />
+    <trusted-key id='a6bccb72d65b0d0f' group='net.spy' />
+    <trusted-key id='9cf7fd491029581f' group='nz.net.ultraq.thymeleaf' />
+    <trusted-key id='f721c545d0caa2e3' group='ognl' />
+    <trusted-key id='e1e636f6326502ca' group='org.acplt.remotetea' />
+    <trusted-key id='c84125c13bf6f2f2' group='org.ajoberstar.grgit' />
+    <trusted-key id='bff2ee42c8282e76' group='org.apache.activemq' />
+    <trusted-key id='86fdc7e2a11262cb' group='org.apache.bcel' />
+    <trusted-key id='3faad2cd5ecbb314' group='org.apache.commons' />
+    <trusted-key id='86fdc7e2a11262cb' group='org.apache.commons' />
+    <trusted-key id='96f0914f88e926a4' group='org.apache.curator' />
+    <trusted-key id='858fc4c4f43856a3' group='org.apache.cxf' />
+    <trusted-key id='67bf80b10ad53983' group='org.apache.cxf.fediz' />
+    <trusted-key id='858fc4c4f43856a3' group='org.apache.cxf.services.sts' />
+    <trusted-key id='c785b8885d54a8b4' group='org.apache.directory.fortress' />
+    <trusted-key id='3690e0223134b697' group='org.apache.geronimo.javamail' />
+    <trusted-key id='cbaebe39a46c4ca1' group='org.apache.geronimo.specs' />
+    <trusted-key id='ecdfea3cb4493b94' group='org.apache.geronimo.specs' />
+    <trusted-key id='7c25280eae63ebe5' group='org.apache.httpcomponents' />
+    <trusted-key id='e3e18156612654f7' group='org.apache.ignite' />
+    <trusted-key id='f5892408c7f10751' group='org.apache.jclouds' />
+    <trusted-key id='f5892408c7f10751' group='org.apache.jclouds.api' />
+    <trusted-key id='f5892408c7f10751' group='org.apache.jclouds.common' />
+    <trusted-key id='f5892408c7f10751' group='org.apache.jclouds.driver' />
+    <trusted-key id='c12ee304527a133b' group='org.apache.jclouds.labs' />
+    <trusted-key id='f5892408c7f10751' group='org.apache.jclouds.provider' />
+    <trusted-key id='de78987a9cd4d9d3' group='org.apache.kafka' />
+    <trusted-key id='3595395eb3d8e1ba' group='org.apache.logging.log4j' />
+    <trusted-key id='051a0faf76bc6507' group='org.apache.lucene' />
+    <trusted-key id='d4f181881a42f9e6' group='org.apache.lucene' />
+    <trusted-key id='858fc4c4f43856a3' group='org.apache.neethi' />
+    <trusted-key id='67bf80b10ad53983' group='org.apache.santuario' />
+    <trusted-key id='6e97418b04b11dcb' group='org.apache.shiro' />
+    <trusted-key id='6b4313ed273df287' group='org.apache.syncope.common' />
+    <trusted-key id='10c01c5a2f6059e7' group='org.apache.tomcat' />
+    <trusted-key id='10c01c5a2f6059e7' group='org.apache.tomcat.embed' />
+    <trusted-key id='6fb21e8933c60243' group='org.apache.tomcat.embed' />
+    <trusted-key id='f39f187defb55df1' group='org.apache.wink' />
+    <trusted-key id='67bf80b10ad53983' group='org.apache.ws.xmlschema' />
+    <trusted-key id='67bf80b10ad53983' group='org.apache.wss4j' />
+    <trusted-key id='ffe35b7f15dfa1ba' group='org.apache.zookeeper' />
+    <trusted-key id='11bdc3ba6a2ef9aa' group='org.apereo' />
+    <trusted-key id='11bdc3ba6a2ef9aa' group='org.apereo.cas' />
+    <trusted-key id='11bdc3ba6a2ef9aa' group='org.apereo.inspektr' />
+    <trusted-key id='d991771df57b3053' group='org.apereo.service.persondir' />
+    <trusted-key id='85911f425ec61b51' group='org.apiguardian' />
+    <trusted-key id='521a9c06820d5c1d' group='org.aspectj' />
+    <trusted-key id='e2b3d84202b812d9' group='org.assertj' />
+    <trusted-key id='280d66a55f5316c5' group='org.bitbucket.b_c' />
+    <trusted-key id='379ce192d401ab61' group='org.bitsofinfo' />
+    <trusted-key id='b341ddb020fcb6ab' group='org.bouncycastle' />
+    <trusted-key id='b16698a4adf4d638' group='org.checkerframework' />
+    <trusted-key id='41321490758aad6f' group='org.codehaus.groovy' />
+    <trusted-key id='99c76e4ddedeab92' group='org.codehaus.jettison' />
+    <trusted-key id='873a8e86b4372146' group='org.codehaus.mojo' />
+    <trusted-key id='c9fbaa83a8753994' group='org.codehaus.woodstox' />
+    <trusted-key id='591f621636fbacac' group='org.cryptacular' />
+    <trusted-key id='70b2ebe96c112cc9' group='org.cryptacular' />
+    <trusted-key id='2d0e1fb8fe4b68b4' group='org.eclipse.jetty' />
+    <trusted-key id='2d0e1fb8fe4b68b4' group='org.eclipse.jetty.websocket' />
+    <trusted-key id='5b05ccde140c2876' group='org.eclipse.jgit' />
+    <trusted-key id='b83a12a027fc6962' group='org.ehcache' />
+    <trusted-key id='28e6ed7b778c99df' group='org.ektorp' />
+    <trusted-key id='9ff25980f5ba7e4f' group='org.fusesource.hawtbuf' />
+    <trusted-key id='da70365f88dd141c' group='org.glassfish' />
+    <trusted-key id='afc18a2271eddfe1' group='org.glassfish.hk2' />
+    <trusted-key id='afc18a2271eddfe1' group='org.glassfish.hk2.external' />
+    <trusted-key id='0315bfb7970a144f' group='org.glassfish.jaxb' />
+    <trusted-key id='6425559c47cc79c4' group='org.glassfish.jersey.connectors' />
+    <trusted-key id='18d239b1cbcd2236' group='org.glassfish.jersey.core' />
+    <trusted-key id='18d239b1cbcd2236' group='org.glassfish.jersey.ext' />
+    <trusted-key id='6425559c47cc79c4' group='org.glassfish.jersey.ext' />
+    <trusted-key id='18d239b1cbcd2236' group='org.glassfish.jersey.inject' />
+    <trusted-key id='18d239b1cbcd2236' group='org.glassfish.jersey.media' />
+    <trusted-key id='6425559c47cc79c4' group='org.glassfish.jersey.media' />
+    <trusted-key id='18d239b1cbcd2236' group='org.glassfish.jersey.security' />
+    <trusted-key id='6425559c47cc79c4' group='org.glassfish.main.javaee-api' />
+    <trusted-key id='b35c91147d038659' group='org.gridgain' />
+    <trusted-key id='bede11eaf1164480' group='org.hamcrest' />
+    <trusted-key id='960d2e8635a91268' group='org.hdrhistogram' />
+    <trusted-key id='379ce192d401ab61' group='org.hibernate' />
+    <trusted-key id='0bc40e7627c8626e' group='org.hjson' />
+    <trusted-key id='313cba932516c4d3' group='org.hsqldb' />
+    <trusted-key id='fa6110176070dcda' group='org.influxdb' />
+    <trusted-key id='cb43338e060cf9fa' group='org.jacoco' />
+    <trusted-key id='b1bccc90229ca32e' group='org.jasig.cas.client' />
+    <trusted-key id='152888e10ef880b3' group='org.jasypt' />
+    <trusted-key id='6086c3b1eba1a8f5' group='org.jasypt' />
+    <trusted-key id='10066a9707090cf9' group='org.javassist' />
+    <trusted-key id='6a0975f8b1127b83' group='org.jetbrains.kotlin' />
+    <trusted-key id='98fe03a974ce0a0b' group='org.jetbrains.kotlin' />
+    <trusted-key id='9bf1b061f08089e0' group='org.jgrapht' />
+    <trusted-key id='ecdfea3cb4493b94' group='org.jline' />
+    <trusted-key id='81d53eb87cdfbc34' group='org.jolokia' />
+    <trusted-key id='715698abcbc3a313' group='org.jooq' />
+    <trusted-key id='cddf87cd3cb9acae' group='org.jrobin' />
+    <trusted-key id='62ebfc78fe4156d1' group='org.jruby' />
+    <trusted-key id='9e8b5509d1e3eace' group='org.json' />
+    <trusted-key id='85911f425ec61b51' group='org.junit.jupiter' />
+    <trusted-key id='85911f425ec61b51' group='org.junit.platform' />
+    <trusted-key id='85911f425ec61b51' group='org.junit.vintage' />
+    <trusted-key id='0f54d3ea50bdbbd3' group='org.jvnet.jaxb2_commons' />
+    <trusted-key id='021e3be573f727ed' group='org.jvnet.staxex' />
+    <trusted-key id='70b2ebe96c112cc9' group='org.ldaptive' />
+    <trusted-key id='1f318213e56e467a' group='org.lz4' />
+    <trusted-key id='f8957c3395910043' group='org.mariadb.jdbc' />
+    <trusted-key id='a1b4460d8ba7b9af' group='org.mockito' />
+    <trusted-key id='82216a03caa86c78' group='org.mongodb' />
+    <trusted-key id='27ded4bf6216db8f' group='org.mortbay.jasper' />
+    <trusted-key id='27ded4bf6216db8f' group='org.mortbay.jetty' />
+    <trusted-key id='2c6b5cc06c656198' group='org.msgpack' />
+    <trusted-key id='7c7d8456294423ba' group='org.objenesis' />
+    <trusted-key id='2fa939174d4ddd4a' group='org.ocpsoft.prettytime' />
+    <trusted-key id='c2501a0677d6ff22' group='org.openid4java' />
+    <trusted-key id='4d37705b61cb0b3f' group='org.opensaml' />
+    <trusted-key id='85911f425ec61b51' group='org.opentest4j' />
+    <trusted-key id='097586cfea37f9a6' group='org.owasp' />
+    <trusted-key id='3b2c12292e76fee3' group='org.pac4j' />
+    <trusted-key id='38f47d3e410c47b1' group='org.postgresql' />
+    <trusted-key id='f95add0a28d2f139' group='org.projectlombok' />
+    <trusted-key id='3979a71621665974' group='org.python' />
+    <trusted-key id='b83a12a027fc6962' group='org.quartz-scheduler' />
+    <trusted-key id='a4ab1622ac952193' group='org.rauschig' />
+    <trusted-key id='2c7b12f2a511e325' group='org.slf4j' />
+    <trusted-key id='cfca4a29d26468de' group='org.sonarsource.scanner.api' />
+    <trusted-key id='cfca4a29d26468de' group='org.sonarsource.scanner.gradle' />
+    <trusted-key id='52e6585e0102b84d' group='org.sonatype.sisu.inject' />
+    <trusted-key id='9a2c7a98e457c53d' group='org.springframework.boot' />
+    <trusted-key id='257d4510e2e11827' group='org.springframework.retry' />
+    <trusted-key id='257d4510e2e11827' group='org.springframework.security' />
+    <trusted-key id='9a2c7a98e457c53d' group='org.springframework.shell' />
+    <trusted-key id='51a00fa751b91849' group='org.springframework.vault' />
+    <trusted-key id='9a2c7a98e457c53d' group='org.springframework.webflow' />
+    <trusted-key id='9a2c7a98e457c53d' group='org.springframework.ws' />
+    <trusted-key id='3d5008619690c602' group='org.synchronoss.cloud' />
+    <trusted-key id='154560b16c7614ac' group='org.thymeleaf.extras' />
+    <trusted-key id='e0130a3ed5a2079e' group='org.webjars' />
+    <trusted-key id='e57a697a70cfe5f9' group='org.webjars' />
+    <trusted-key id='42575e0ccd6ba16a' group='org.xerial.snappy' />
+    <trusted-key id='a2115ae15f6b8b72' group='org.xmlunit' />
+    <trusted-key id='55c7e5e701832382' group='org.yaml' />
+    <trusted-key id='e4fbf7179d65e94d' group='software.amazon.ion' />
+  </trusted-keys>
+  <dependencies>
+    <dependency group='antlr' module='antlr' version='2.7.7'>
+      <sha512>311C3115F9F6651D1711C52D1739E25A70F25456CACB9A2CDDE7627498C30B13D721133CC75B39462AD18812A82472EF1B3B9D64FAB5ABB0377C12BF82043A74</sha512>
+    </dependency>
+    <dependency group='aopalliance' module='aopalliance' version='1.0'>
+      <sha512>3F44A932D8C00CFEEE2EB057BCD7C301A2D029063E0A916E1E20B3AEC4877D19D67A2FD8AAF58FA2D5A00133D1602128A7F50912FFB6CABC7B0FDC7FBDA3F8A1</sha512>
+    </dependency>
+    <dependency group='asm' module='asm' version='3.1'>
+      <sha512>74612F145765D33C449887A29DD0791205881BA42D613E52B360CA53BD47C5F9835049DE8FC6A384041DE2E73BD271B6177C2225E2F72853A88359F6C10B14D</sha512>
+    </dependency>
+    <dependency group='cglib' module='cglib-nodep' version='2.1_3'>
+      <sha512>86A49C4A7D9D609636F8A7C42D40DCA96E20EC4F3EC182BB0AA6EE5C8233234D399086F1342198B5048F7A36DB402F1B956FBF74220192EC4AA39880C8FF2381</sha512>
+    </dependency>
+    <dependency group='ch.qos.logback' module='logback-classic' version='1.2.3'>
+      <sha512>9AD5DF9055E74C1DB67E10422774E740903477C821591702D2709A4C1F73E3FC3FA6B1A871B6985901817BC2BDEBA916849035DC2BBF518F308637B0586E36F1</sha512>
+    </dependency>
+    <dependency group='ch.qos.logback' module='logback-core' version='1.2.3'>
+      <sha512>BD1A7512647FE61B90CFD18BEDF2A33F3F16F334F8F8CE947CDD353C0B0B7A7CCE203070F0D2183F6583E0F2B2FE6E0B12EB93BD5B2DC29076E7B466447F6DC5</sha512>
+    </dependency>
+    <dependency group='com.beust' module='jcommander' version='1.48'>
+      <sha512>C6ED390C58704F87405C6C9E4B7C42E1D99DEA949DBBA8122CEE78D256BAB1DDFB67BBBAB2AD8F47164817EF9A0D367B346A6BCB24C42D3D1CFE5E7FA211DF3A</sha512>
+    </dependency>
+    <dependency group='com.esotericsoftware' module='minlog' version='1.3'>
+      <sha512>DC14E611796785969C3BBB7E78EFA5CA84E25C5FB262401EAA1C9049DB3543025D379B2DC5A71F7E3EA502C6B43483EF1E4BB00ED6A3ECDF3E601251AF02FCBD</sha512>
+    </dependency>
+    <dependency group='com.esotericsoftware' module='minlog' version='1.3.0'>
+      <sha512>CA319C94B7FD8A275DCC3C5102FC01D73071AC77F5E14B4FC5B6547F96574A4FFF0E8CB7B0B0D5006E71FAA00575A91DEFDBFC92A94D9D38DD65520D4AB52000</sha512>
+    </dependency>
+    <dependency group='com.fasterxml.jackson.core' module='jackson-annotations' version='2.9.0'>
+      <sha512>266589C36EA544EBCA94AECD76BA9DFE88637563B94CF24E46846466B103074C9F95508BFA237C20D0AB9C60BFB6BEFA2628236DCF7222A69CF1EF9462BCF0B3</sha512>
+    </dependency>
+    <dependency group='com.fasterxml.jackson.core' module='jackson-databind' version='2.9.9.3'>
+      <sha512>B69ACA11BAA7E8E45A4E584ADA480465797F4722C266A1711F224F91F1051683526D59654771D83DE54A9CCE0786C5613A0256645BB73964DF9E47015AD8931B</sha512>
+    </dependency>
+    <dependency group='com.fasterxml' module='classmate' version='1.3.4'>
+      <sha512>15E32620C434FFADAB0B198E1F3346F4B3F0DD8F47BBDD3EDDB7384FFFC14B593E1679A7F4200A9B9F7CC25A8DEF67DED0A27F0DCD564703284DCE6231891EF</sha512>
+    </dependency>
+    <dependency group='com.github.andrewoma.dexx' module='dexx-collections' version='0.2'>
+      <sha512>41828519A334EB6C196B3B980164CEF4BBC8E3CDCBD286C0D1C22AA08E9BB72958E85185669BCEB1CAF03EEEBEC2AC21C7FB5194EC4147A52F2CDB01DF1EA7F9</sha512>
+    </dependency>
+    <dependency group='com.github.ben-manes' module='gradle-versions-plugin' version='0.24.0'>
+      <sha512>6F5D54B61291563CE720F78ED8EB29D0D5675449C7F91A822F56312C7EFA56C2F318ED60D632234C59F87BC7CEBF10549C204AEB05C236FC8C58437EF1514929</sha512>
+    </dependency>
+    <dependency group='com.github.coova.jradius' module='jradius-apps' version='jradius-1.1.5'>
+      <sha512>3EA468C7C1443F9BFE02DD9986F68246BBE9F58124FF93CB761BAADE709D7E4A927FC4162A5E9892143B1FEBFA8952A590F6BF04F5CE5ACE33578F0BDB354361</sha512>
+    </dependency>
+    <dependency group='com.github.coova.jradius' module='jradius-client' version='jradius-1.1.5'>
+      <sha512>EA30A08405806377DDCF21E5E057C8DF389730B5EF306F019844CFCDCFA8C65D5528A7DA9C2A3BCD7164645C9F46E8D5328ED0EF5E7BAB67381F8FA343C58719</sha512>
+    </dependency>
+    <dependency group='com.github.coova.jradius' module='jradius-core' version='jradius-1.1.5'>
+      <sha512>8511F6762FF655FB7732A51896B49A10114D2715D107B2885435238FD2D1CD50377FA1C36AB31A344DFEAAE1F8762B7BCBA085600FCB131A66D12A332A44D017</sha512>
+    </dependency>
+    <dependency group='com.github.coova.jradius' module='jradius-dictionary-min' version='jradius-1.1.5'>
+      <sha512>7AAF143DF4D95551533CB9FA2A569BDD428EA94CC78DB6D4690333B04D5382D3CA227E0F512A7F14B4CFD5D6307FD2AD9C35F65E12ED259E3D20E1D33F52D455</sha512>
+    </dependency>
+    <dependency group='com.github.coova.jradius' module='jradius-dictionary' version='jradius-1.1.5'>
+      <sha512>9D0895B214DAD863392634BEE2F1562220489EA926278AD655588355CCC79B4F285FAB65776BB519BE866D93FE369ED20FEA01C21BCAEAF61E59261ED66E6A5C</sha512>
+    </dependency>
+    <dependency group='com.github.coova.jradius' module='jradius-example' version='jradius-1.1.5'>
+      <sha512>A56FE23391B4F3C9C689DFD2D256FA2E06D9B1ECCE7E8E1B66DF6A50C5D8E10032342F790060E88179A09B1665905875EEBDD4D2D972612205C7B0979FCFDDD</sha512>
+    </dependency>
+    <dependency group='com.github.coova.jradius' module='jradius-extended' version='jradius-1.1.5'>
+      <sha512>7954BABE5C5A06EEDC39B750F9DE6D9C6123A553306B5B4AAE1F29059021BBB73AFB67892199F29B2C37C7D6EF92F85588739120311CBD0751F404CAC858F4A4</sha512>
+    </dependency>
+    <dependency group='com.github.coova.jradius' module='jradius-extras' version='jradius-1.1.5'>
+      <sha512>1FB50B62F0F26ECC53472BFBFB35E39C06257A1D80465CB799526AFCDB3DB5C9791A4646FC622AA36E82550ED10A8FDF0C57695D0A20932AC7FDDEEB4DF35A07</sha512>
+    </dependency>
+    <dependency group='com.github.coova.jradius' module='jradius-server' version='jradius-1.1.5'>
+      <sha512>B9EE115AA58D128C1C9EFE8D0C9CDA7AD2C8B0BEC71431A996497339C023EE4C92B8E0668D3E4970E99EDDCD5D242E0397D6BAE431ED1435E80212BD64C72642</sha512>
+    </dependency>
+    <dependency group='com.github.coova' module='jradius' version='jradius-1.1.5'>
+      <sha512>5E2F959F36B66DF0580A94F384C5FC1CEEEC4B2A3925F062D7B68F21758B86581AC2ADCFDDE73A171A28496E758EF1B23CA4951C05455CDAE9357CC3B5A5825F</sha512>
+    </dependency>
+    <dependency group='com.github.jnr' module='jffi' version='1.2.16'>
+      <sha512>6CF4DA577CE7FFF54553F049B32838001747D0EEB1965B63839EA0046DBA7923EE753371A07FC51AEB458D7FFE0692B1A6A92F393563BA042F0D20FDFEFF5C88</sha512>
+    </dependency>
+    <dependency group='com.github.jnr' module='jffi' version='1.2.16' classifier='native'>
+      <sha512>3660E980144B4C22D9E23B76E9504AD38EF9CDB36553E87E2BBBB7A768B5626409814C678A76E0810BFC45D872DB30D55FA22C6847C97B142DB51590842CA2E3</sha512>
+    </dependency>
+    <dependency group='com.github.jnr' module='jnr-constants' version='0.9.9'>
+      <sha512>411111D14201EFA200584F497DDF60753217D55F5C932B9687168D6896C025087480027066BD924A6210ABB1F77BFEF7AC5595F815DE5413F1A21956F1FAFA27</sha512>
+    </dependency>
+    <dependency group='com.github.jnr' module='jnr-ffi' version='2.1.7'>
+      <sha512>E4FD3A05EDEBCFF52A5AA93E6D4C8FF8BF4F183C50CFF3B2F9B5B434D879BAFAFDBF78EE08DBDA4BD313B959E93A89BC033AB12209AA6DEB8E7986E2255F9066</sha512>
+    </dependency>
+    <dependency group='com.github.jnr' module='jnr-posix' version='3.0.44'>
+      <sha512>22F73E2B00D3AB22D4617EB91B79F941335E842F2977BB8117B8961BAC6B4A2F993FC422C5D37FC4AB00FDCE906F023050BA118991B0083BB3079EE2F7A6AF09</sha512>
+    </dependency>
+    <dependency group='com.github.jnr' module='jnr-x86asm' version='1.0.2'>
+      <sha512>E928926B01CE545144C1BBF160EDEE9B923773E32F9A399A71C2AB5E8325D9CBCFB41F41C8F008B80D1BEAB8DA1C4B74845996479C07ED73BC131959911D4762</sha512>
+    </dependency>
+    <dependency group='com.github.package-url' module='packageurl-java' version='1.1.0'>
+      <sha512>39FD0F7095FD8E1B742B24B3322CB73EDD18E42379B3F52DB5E0BF4EF1519707199CB1B733A8FE9BE5385E85CA396A9AF14C9884E4DE12479C0C80A70086C9B9</sha512>
+    </dependency>
+    <dependency group='com.github.spullara.mustache.java' module='compiler' version='0.8.17'>
+      <sha512>6642281806B922DCF01D563BC0EEF23D717CE696493525321487574536C11BE69113DD0F9F0799340F43A6F31B0503F87B72A3FA4D21E0066B4861F4966F3BA9</sha512>
+    </dependency>
+    <dependency group='com.github.stephenc.jcip' module='jcip-annotations' version='1.0-1'>
+      <sha512>2FCD16A30D0E68B3E9E4899731181C6ABB7117BAA15C096CA940E01DDE08BB86101CBEAE552C497F8A90D923B5FA2F2B6F3850BAF8DC94DBD399887924A9069</sha512>
+    </dependency>
+    <dependency group='com.google.code.findbugs' module='annotations' version='2.0.0'>
+      <sha512>2605F3997E5835F8877E0305686918547113259D1580EA928DD42BAAF236604D3F5C23A1377E2D0D1B0AC6266DE5612497717111CC8AD94CFCDD542E233B2D31</sha512>
+    </dependency>
+    <dependency group='com.google.code.findbugs' module='jFormatString' version='3.0.0'>
+      <sha512>15A40BCDE9731987BA7E89B6880D7B91BE29C98014DA94C1C9DF81FB4DE3BB444665B0F75DEA1088251397B1FDAA2449060EFE0DD0F75F35B38AEAD081B72B16</sha512>
+    </dependency>
+    <dependency group='com.google.code.findbugs' module='jsr305' version='3.0.0'>
+      <sha512>399510F759FB48255C6298F3545C9B644372FBC9D7245E80E6B51F49DA0AC9275D104092C537AC047D5A1312C7D191DEE8D655CA8D760B59CE1452BF4370A6E0</sha512>
+    </dependency>
+    <dependency group='com.google.code.findbugs' module='jsr305' version='3.0.2'>
+      <sha512>BB09DB62919A50FA5B55906013BE6CA4FC7ACB2E87455FAC5EAF9EDE2E41CE8BBAFC0E5A385A561264EA4CD71BBBD3EF5A45E02D63277A201D06A0AE1636F804</sha512>
+    </dependency>
+    <dependency group='com.google.code.gson' module='gson' version='2.2.4'>
+      <sha512>D7AA9214CEFB99B2F39BAB6BF5718DAFCB43742F8A881E5FB6CBC3A757491C0082A536ED1FEF6C7168412B6E5BDEC28E68A40B4D4D0B57B63A7BBC9A55F820CD</sha512>
+    </dependency>
+    <dependency group='com.google.code.gson' module='gson' version='2.5'>
+      <sha512>EF11B07224D43ABC6965C01D0745D1552A28002339314F351E22833ED76F9BEDB8C734681067ED7DDA436BFA631334F0A4CEE9D4E7DCCEAA4861898EDE5F7AB5</sha512>
+    </dependency>
+    <dependency group='com.google.code.gson' module='gson' version='2.8.0'>
+      <sha512>740F66DDD5D46EF9F8DA97B2F53299AFF64CADBFFC15217F0B26DC6DC7D53B140B16B3D09D22F72B223D7F85740DD6C2E1951CE57B4C06F5BA795FC17DF30CFD</sha512>
+    </dependency>
+    <dependency group='com.google.code.gson' module='gson' version='2.8.5'>
+      <sha512>5DD7214C542A7B93AAB3EAB0BA13E4AC3D6DDB05C795FB6D3992E21925A98DCE87CB186AC67B4D3AD146F96E14D38B3892837ECA57A27B4E845ACA6D4E4F708A</sha512>
+    </dependency>
+    <dependency group='com.google.guava' module='failureaccess' version='1.0.1'>
+      <sha512>F8D59B808D6BA617252305B66D5590937DA9B2B843D492D06B8D0B1B1F397E39F360D5817707797B979A5BF20BF21987B35333E7A15C44ED7401FEA2D2119CAE</sha512>
+    </dependency>
+    <dependency group='com.google.guava' module='listenablefuture' version='9999.0-empty-to-avoid-conflict-with-guava'>
+      <sha512>C5987A979174CBACAE2E78B319F080420CC71BCDBCF7893745731EEB93C23ED13BFF8D4599441F373F3A246023D33DF03E882DE3015EE932A74A774AFDD0782F</sha512>
+    </dependency>
+    <dependency group='com.google.inject.extensions' module='guice-assistedinject' version='3.0'>
+      <sha512>FB60FB15EAE518B746BEFEB772635129A64690A5F9A219B4F774A6F024A733CDC599C2595818A5BDB7C4849D9D14D76FDA74D4F12C066AE723C7FDBD54301540</sha512>
+    </dependency>
+    <dependency group='com.google.inject' module='guice' version='2.0'>
+      <sha512>9095A15B000F1A55A5321099326746CAA83DD3095E6BAAC3F40978C4114BE7D98FB28BF0738A66741FCF2C49D47256BC036E0B067CAE6E755028BDBFC45B9D68</sha512>
+    </dependency>
+    <dependency group='com.google.inject' module='guice' version='3.0'>
+      <sha512>8695045803E3D391A427C57573EBEA1AF880F68D312014E156B977E5B6FA73CD327FE49DBC218E62C1D1E7BD4940BAE454CD78C6FF60BAD7E3620F66EA0DAFBF</sha512>
+    </dependency>
+    <dependency group='com.google.inject' module='guice' version='4.1.0'>
+      <sha512>109A1595668293B32376E885AD59E0E4C0E088EA00F58119F0F7D0D2055F03EB93A9F92D974B6DBD56EF721792AC03C889D9ADD3A2850AA7CCD732C2682D17EF</sha512>
+    </dependency>
+    <dependency group='com.google.j2objc' module='j2objc-annotations' version='1.1'>
+      <sha512>A4A0B58FFC2D9F9B516F571BCD0AC14E4D3EEC15AACD6320A4A1A12045ACCE8C6081E8CE922C4E882221CEDB2CC266399AB468487AE9A08124D65EDC07AE30F0</sha512>
+    </dependency>
+    <dependency group='com.google.protobuf' module='protobuf-java' version='3.4.0'>
+      <sha512>439C9DE95851EB5A78A6789CCD70C647C23FBF3CD907E8325A5A240CA36EB458F2DE3D42F74C7F795BC78F1CC6284558ACD713B4E93EC916900ED010DAAFFEC6</sha512>
+    </dependency>
+    <dependency group='com.google.protobuf' module='protobuf-java' version='3.6.1'>
+      <sha512>7A6D14E27268223CB64A005F73D32C1077689B51A014F960A185F35D524BE7107B8FB5E7D22ED3149CEDDFB1D2D0CABD7EEE9F4BE96BBC4C5437F476198B02C7</sha512>
+    </dependency>
+    <dependency group='com.googlecode.java-diff-utils' module='diffutils' version='1.3.0'>
+      <sha512>F79CB19DB3589287019299F0CADA2372BF5E3848F3C45354E53257231D0E3937DF7D6DF1159C452BBC58340C7D4ADFC99993DBDD71928884C99FE7A2F264FB0F</sha512>
+    </dependency>
+    <dependency group='com.googlecode.json-simple' module='json-simple' version='1.1'>
+      <sha512>F9CAAFC041EEA982D5BA266482418DCA05D46FB992BEF3F076A83D564765083A0870E30F68E7C6FC8C80EBD3C88B087EECD2F8455C12DAAF7DB3B5A975B622E4</sha512>
+    </dependency>
+    <dependency group='com.googlecode.json-simple' module='json-simple' version='1.1.1'>
+      <sha512>F8798BFBCC8AB8001BAF90CE47EC2264234DC1DA2D4AA97FDCDC0990472A6B5A5A32F828E776140777D598A99D8A0C0F51C6D0767AE1A829690AB9200AE35742</sha512>
+    </dependency>
+    <dependency group='com.gradle' module='build-scan-plugin' version='2.4.1'>
+      <sha512>347F865BD5B9310D6972BDA95AB089D2BA911C4EA897A1E4E316465077A0153609E31DFFD3C2D61DEEA7E54C07D7D36D5807F9B24F3111A97553DFD260A205F1</sha512>
+    </dependency>
+    <dependency group='com.h2database' module='h2' version='1.4.196'>
+      <sha512>A4684467278878E2E606C752DD7BDDDAB8371B174BBE250200C42BC42122D5A7820FCB53D5060C84404763808069809A4FEC9DCB5E8045B15E9FD5F42128E5C0</sha512>
+    </dependency>
+    <dependency group='com.h2database' module='h2' version='1.4.197'>
+      <sha512>AA4AF17F766A1CFB0326D0301E1C40FC884B27E73AED4E60141D284275DA70F483A3CE54D65F79F9BA66E9A53C5A68102DFC5E40A36E9D2C0A2AA9A7F7321688</sha512>
+    </dependency>
+    <dependency group='com.h3xstream.retirejs' module='retirejs-core' version='3.0.1'>
+      <sha512>BBD784332C12B7B0DED28177751C7BF674A4B2203F062F5ACAED5021B42CCEF0D351B4BBB540A8B9ADF129A5C9E99868EBBC6AC45404F56D9461762ADAFAA3DF</sha512>
+    </dependency>
+    <dependency group='com.jayway.jsonpath' module='json-path' version='2.4.0'>
+      <sha512>B55B30CF85CA12E6A492FD48D4B6BB0B1F3BA610C195AA1A36EDA2A80E24BF7688A6A802362D398108E822F6DCB7B713CF421BB4208897FC4F5CC7B8B9B4C97C</sha512>
+    </dependency>
+    <dependency group='com.jcraft' module='jsch.agentproxy.core' version='0.0.9'>
+      <sha512>B397EFFE92C9A93012ECE3EB7660AACCE3CEF1C07D2B176CFCB7F7D8D735D22CA0C968E76FB36CB2A311566EE4B23982126671BFF9BAF11B4786606F2A6A0C81</sha512>
+    </dependency>
+    <dependency group='com.jcraft' module='jsch.agentproxy.sshagent' version='0.0.9'>
+      <sha512>898F33A1EAE03AB3B0D78AD26076756EC0EEC456E185B7D5057E003B33E0CB1B2CA57B8C4CDCA48EAE544DAF36ADCABD170138E5950B85AB8B64C97C094BA9D</sha512>
+    </dependency>
+    <dependency group='com.jcraft' module='jsch.agentproxy.usocket-nc' version='0.0.9'>
+      <sha512>B1C67975955BC2EF240E05ECB4C82335F40B038EE4483190E346F633CA1B78DE9BFB848A5BEE803971ACF6B7282B2343461A12615257B2FCB01E7E2C349FC084</sha512>
+    </dependency>
+    <dependency group='com.jcraft' module='jsch' version='0.1.54'>
+      <sha512>97EC6DE64F4870EE3C84F883BD3664562BFD600CA9F3364966E7DBEE7E4E8520647C03F9F81D6808E330052CA1333E37F497D6252CD26FE721A90F573CBE2036</sha512>
+    </dependency>
+    <dependency group='com.jcraft' module='jsch' version='0.1.55'>
+      <sha512>B6827D8DE471682FD11744080663AEA77612A03774E2EBCC3357C7C493D5DF50D4EC9C8D52C4FCC928BDFDD75B62B40D3C60F184DA8A7B8ABA44C92AFECEE7A5</sha512>
+    </dependency>
+    <dependency group='com.jcraft' module='jzlib' version='1.1.3'>
+      <sha512>339793DF0001214AAADAC2A5456C3CD54A0C09BA2C9E73CF13155ADBFDF1C2A953F7336903E45E76A52CE6B48C5B7C78436667D7836E7354E02E85BA0908AFD3</sha512>
+    </dependency>
+    <dependency group='com.splunk.logging' module='splunk-library-javalogging' version='1.7.3'>
+      <sha512>6A85674D73AB60A5DE61168823A274BD6440A29F044EF1CF96F245277A60396A9FD20E151D61B3D7FEE8911BDC9B146AE9F0E2F5108DD9E9787A8CD5BD66DCDB</sha512>
+    </dependency>
+    <dependency group='com.spotify' module='docker-client' version='8.16.1-SNAPSHOT' classifier='shaded'>
+      <sha512>ACD9D86E09356AF40073AF68B828A71B2B3728DF5E3E67182FBD12040550ACF4FECD0E18EF0E00AA04FED046F2582E68132BB36ACCA342FCDF84DC58FA1DB7B9</sha512>
+    </dependency>
+    <dependency group='com.sun.mail' module='mailapi' version='1.6.2'>
+      <sha512>72F2E7F843AE92986D384166835588E5B4299B271E4B26158248418843E4A9C885AB50FC4284E2504807C59B0AF1D59A6B27B7543784CA746377AE815EDD1143</sha512>
+    </dependency>
+    <dependency group='com.sun.xml.bind' module='jaxb-core' version='2.2.11'>
+      <sha512>B0D60D829E94AA06AB90AA25F000E6EB070CF1E3E60D9EF5839A207C805D3B34DA450F65C811DF00CFAA7B348B514B02B762541DE0483EC9B4256BB6EA480054</sha512>
+    </dependency>
+    <dependency group='com.sun.xml.bind' module='jaxb-impl' version='2.2.11'>
+      <sha512>4878F5721E5007B561CA1DCEEA74FDE79E4A68FE5696C38ED11858AAB4650EA002A8E643619A5452E94BACD435B72A47818831C167BCD05E73A2A372CE2BE1E1</sha512>
+    </dependency>
+    <dependency group='com.sun.xml.fastinfoset' module='FastInfoset' version='1.2.13'>
+      <sha512>3EAD1BBC9AEDDF16CF270518B5EF63B4A020154C5CE4B4D1AAF3ED7D5BA312D952122D656A5A57E11E947D752404D5D3F6FDFF9E9B5B2E72F06D3DC9C400C252</sha512>
+    </dependency>
+    <dependency group='com.thoughtworks.xstream' module='xstream' version='1.4.10'>
+      <sha512>19271DFF2CEA8D5DF6725B6938F4533BF4258B857C9BCFEE0891589D20D21FC49433694BEA2E0E647E722C8392EF714D4368B604D6D97B4649155B67C7C7988F</sha512>
+    </dependency>
+    <dependency group='com.vdurmont' module='semver4j' version='2.2.0'>
+      <sha512>8E6D1F02E0A948136BAA3D0400DF2BA06748A82A5E0E938763F5AA82C12A321285F0896DADE6FD7580805881A4D72DA251BCA6DF7CDBA6119F07608212D94DB1</sha512>
+    </dependency>
+    <dependency group='com.zaxxer' module='HikariCP-java7' version='2.4.13'>
+      <sha512>7A72A1C50946904EC4B46A0F66059C5287A1138AEAE66EACA523A7D40CD5327D164AEB49C9B60A40FDC4109889D847870B34A4D11F9845B8AC2E474C9E066B6F</sha512>
+    </dependency>
+    <dependency group='commons-attributes' module='commons-attributes-api' version='2.1'>
+      <sha512>B99C28EC949E05AC3C171E2368AF970F6FBB6FBD56BBFA66294C1C348186DE0341FD655B6B5B7E50B4DDB2E31AFDCA9C4138D9EFD5502519B79B656EEED0EF2E</sha512>
+    </dependency>
+    <dependency group='commons-attributes' module='commons-attributes-compiler' version='2.1'>
+      <sha512>C05327DC86869BB0B29966C5F0948190BD7281DF6BADEF9526F97E173BBEE3590AFFA160673BF819F4EC85E4DA99E7995BE45182C3FE3784D36666399EDFA443</sha512>
+    </dependency>
+    <dependency group='commons-beanutils' module='commons-beanutils-core' version='1.7.0'>
+      <sha512>9CA7EDAE21F9C2B2005690E5F7D395BD9B560B296A603D10A2E8EA14825514810A564D145D20CCAE313E51460B56D698B7FAC8F788F5C128A44D6C8C63A25520</sha512>
+    </dependency>
+    <dependency group='commons-chain' module='commons-chain' version='1.2'>
+      <sha512>A8C5849FB803FE4E2140CCE073D6CC5FF2AFD2CD9CE99F412E5CB874870F0FBDF32E3891E778E3450F2E7183C92E2345C9D8432994EE3A6CBD45435D58A125A6</sha512>
+    </dependency>
+    <dependency group='commons-cli' module='commons-cli' version='1.4'>
+      <sha512>FA769A08A118141831CD4EAF2CE4F3F65855B8AEEE86FBF3E07B4C619FACF801F8B55C14C5E56A154CD14F438A8F120BB59A20C1B6BE04979501E362F252CA48</sha512>
+    </dependency>
+    <dependency group='commons-collections' module='commons-collections' version='3.2.2'>
+      <sha512>51C72F9ACA7726F3C387095E66BE85A6DF97C74B00A25434B89188C1B8EAB6E2B55ACCF7B9BD412430D22BD09324DEC076E300B3D1FA39FCCAD471F0F2A3DA16</sha512>
+    </dependency>
+    <dependency group='commons-digester' module='commons-digester' version='1.8'>
+      <sha512>138AAADDE6B134EEB39574FDE80F8EED1DEE4A7049FCCDD8C462C0A0DFAB5419BAFD259E77B99D85094B4E7C864673F07249C39C3B18AFF87EF39B3663F537A2</sha512>
+    </dependency>
+    <dependency group='commons-io' module='commons-io' version='2.6'>
+      <sha512>4DE22E2A50711F756A5542474395D8619DCA0A8BE0407B722605005A1167F8C306BC5EEF7F0B8252F5508C817C1CEB759171E4E18D4EB9697DFDD809AC39673F</sha512>
+    </dependency>
+    <dependency group='commons-jexl' module='commons-jexl' version='1.1'>
+      <sha512>A0F666E2D3DCD91CC8C875445ED0D63E06E4A0C249FF50F36E241998022A05BFE991B924C2209873F944ECBD02660F9961C1C4099C8C108E7C8ECC21C96214D6</sha512>
+    </dependency>
+    <dependency group='commons-lang' module='commons-lang' version='2.6'>
+      <sha512>4A5A3DBE4941C645E2CCA068CCA5C1882CFE988B02E7CD981D1E51784900767D1DEAB0E0E0566F559C9FCABB4A180E436D5BB948902D4F4106F37360466AFB42</sha512>
+    </dependency>
+    <dependency group='commons-logging' module='commons-logging' version='1.2'>
+      <sha512>ED00DBFABD9AE00EFA26DD400983601D076FE36408B7D6520084B447E5D1FA527CE65BD6AFDCB58506C3A808323D28E88F26CB99C6F5DB9FF64F6525ECDFA557</sha512>
+    </dependency>
+    <dependency group='commons-pool' module='commons-pool' version='1.5.4'>
+      <sha512>BB5A66D7DA8F389660FB369C1A6E77296F39239CCA1D69CA1B7C80E8E81C38A9D25DEBEFB702A2EAAC987E83885898CA0C95C6387D8440E548653D6BDAE686A6</sha512>
+    </dependency>
+    <dependency group='commons-pool' module='commons-pool' version='1.6'>
+      <sha512>3BF5BCDBD7342E794F95747421C510778D8656D7CA901EB9B0FD15B9EDB5B470E799C76ABCE9FE5958355D0D6067565AB71897D02462232176A0145A7D546E69</sha512>
+    </dependency>
+    <dependency group='commons-validator' module='commons-validator' version='1.6'>
+      <sha512>ADED530D3B79EAD6BA5C44668C6D6964D7721F9617249F6AAA1C8F558AD4B3D3C1B6D78B639A4CB8DD27A671879B662FDBBA0502FD04E131F3286169507DF30C</sha512>
+    </dependency>
+    <dependency group='concurrent' module='concurrent' version='1.3.4'>
+      <sha512>7DC98CDB9D34932AC9ACAC50CC0C0CD19470FD97CE047556D57A135ECFC17BF902A31D9468B7644B7073CDDF289526D1C6BD04FA2704BD6CAF6BCE366AAE3F5C</sha512>
+    </dependency>
+    <dependency group='geronimo-spec' module='geronimo-spec-jta' version='1.0.1B-rc4'>
+      <sha512>4182D7391C022AFF1481C91D9FAC5D622DAF2085E0D0A73D8D60A1232436A6CCEAF0066AA67E1D4E23ACA74FB5A4ECF08F33F6453425C0804153B70CCBA9ACA6</sha512>
+    </dependency>
+    <dependency group='gradle.plugin.com.ewerk.gradle.plugins' module='jaxb2-plugin' version='1.0.9'>
+      <sha512>DC39E778B18DC53E5FCE062952EF1705CBFA89BF5C56E1A128BF0CA3AAE22A6D23A8986BF9240A1EFAF51BAA73B3DC44C7845C9DD1BDF315D147C492EBF2583A</sha512>
+    </dependency>
+    <dependency group='gradle.plugin.com.github.spotbugs' module='spotbugs-gradle-plugin' version='2.0.0'>
+      <sha512>B3BFAD07E6A3D4D73CBCE802D8614CF4AC84E589166D243D41028DC077F84C027DF4D514F145360405F37DA73A8F2E7B65D90877A9EE1151174D2440530F9051</sha512>
+    </dependency>
+    <dependency group='gradle.plugin.com.gorylenko.gradle-git-properties' module='gradle-git-properties' version='2.0.0'>
+      <sha512>D0928B231D809E7E7ABC609F02DDD162A8D403DE4DE42B9E6D2CAFB3244A7DA15996387314CCBDE9638D8D49B8F1B124B7A5C8036394B0D106C4545DA104F02E</sha512>
+    </dependency>
+    <dependency group='io.dropwizard.metrics' module='metrics-core' version='3.1.2'>
+      <sha512>D22C007D1FDF0EC25BDEB4CEAFC89009D80A746441D49D8BE433BE9A2A4AF6DE34B119A02C8270BDC50F3A4041944A2C99FD546BFF85922B782607EC4F8FBD7D</sha512>
+    </dependency>
+    <dependency group='io.dropwizard.metrics' module='metrics-core' version='3.2.2'>
+      <sha512>AA8519D766133A3C57C331D98810F490D5B9F52DD36D8FC62140EB26CFED8B45D3CADC343F0F6616ACB6979EE0430D4BC0E9B95A3440BB10DE2470962E5E74B6</sha512>
+    </dependency>
+    <dependency group='io.dropwizard.metrics' module='metrics-core' version='4.0.5'>
+      <sha512>5D553993BF5BBD985453BB69F0704997F624A6EF81AA126C7228FE3D2DD7EBE57E7EEB161067E19914A9F36C762CE2FA7BE5E47D0FB4DEB623A3FB82ED6A70F2</sha512>
+    </dependency>
+    <dependency group='io.franzbecker' module='gradle-lombok' version='3.1.0'>
+      <sha512>62E6E6C8EE7B9D34E37B8039BBD281F982D178D7BDE67EA8EB9F43F7CB1ABC77EF0DDCCB8C4854E3E791085F18469CDC710FC542AA9418BC51BF28E971A04EFB</sha512>
+    </dependency>
+    <dependency group='io.netty' module='netty-buffer' version='4.0.27.Final'>
+      <sha512>D0D73205412E576654398539F7BE05F3CFF368CD6BA1C08766F359C7387BA6BA66F092045061F641BB8BFCEC2A171826CC86575E92C9671D522EF38C68760BD4</sha512>
+    </dependency>
+    <dependency group='io.netty' module='netty-buffer' version='4.0.56.Final'>
+      <sha512>ACBAAD60D1E8ABC98D979C9AB927E050975F61F36F054B4E468D84ED5489097DB256C6A4351F22101CC7436011C59F292420AD49873AF36DEC3E1ECEEB377EDB</sha512>
+    </dependency>
+    <dependency group='io.netty' module='netty-codec' version='4.0.27.Final'>
+      <sha512>1C75EB047CBDFF3E1DCD9A9B2D7F2704AFA16C00821F1B67E070F1ADDB83BDCFA3825106C239D2041A16FE7EB41BBED5CDAEF2AC50B6B3E5A5E032CAE6F0B021</sha512>
+    </dependency>
+    <dependency group='io.netty' module='netty-codec' version='4.0.56.Final'>
+      <sha512>D67C7AAC5C10A99921B87EF7E3C8C0C3B60BEC83CA5815F3CFA0F60630F95F82DD60A65B6644874D6E2615CE7AD70CC5AB3716E6EDFDAF50527F95DC4D23242C</sha512>
+    </dependency>
+    <dependency group='io.netty' module='netty-common' version='4.0.27.Final'>
+      <sha512>230952CADF828A38B4D24F7FE1713BFDD299909672D1C4778318BCDC16E307A1BFA4B5A6D4DCD5B6D0E8176043FA31C5D78C5CB7A377D248DE46F1A48741A727</sha512>
+    </dependency>
+    <dependency group='io.netty' module='netty-common' version='4.0.56.Final'>
+      <sha512>263E3844D9F3E7564AAD9225CEB13C3B7607623C13A0510CD73D935A3345F9516B92BAFD6EF38E87B97EE0DE368B6E60F4BB56C0AF24FBEFCD661C7A10A8208E</sha512>
+    </dependency>
+    <dependency group='io.netty' module='netty-handler' version='4.0.27.Final'>
+      <sha512>3A51BE231757C78BDF374902472EAA6A474812D0AA403A04D3E400277A52214B444635EC175144B08E0222D689E1FD4C02A6E8D33E05EE6F781303425037937E</sha512>
+    </dependency>
+    <dependency group='io.netty' module='netty-handler' version='4.0.56.Final'>
+      <sha512>6B3C1E2E5EA7CF1BBDA35B95589898767AA5CDE92FEE5FC203EB12D866EDA9107270287755068C64C82AF64BE5A9A9D43F1689C0045D37E13E3EA4F64608DA38</sha512>
+    </dependency>
+    <dependency group='io.netty' module='netty-transport' version='4.0.27.Final'>
+      <sha512>243AAB10917901D3694852A32133C30FBDCA9327807BFFE18094E5C3D476E460EF54AF9FC52E47C019A50D3F8158FC855786A48C9FFC59FBA87A817F709B70E2</sha512>
+    </dependency>
+    <dependency group='io.netty' module='netty-transport' version='4.0.56.Final'>
+      <sha512>1219326C4D3AA790C74472F4FB35A39A10DCE856381E0DF05396B5EF75142A22DFEC517D37EBCD0060F6E85D88F4E4957F48772289B54C87171D2E08387E7083</sha512>
+    </dependency>
+    <dependency group='io.projectreactor.addons' module='reactor-extra' version='3.3.0.M1'>
+      <sha512>667F5A04B245F49EDFFCC0AC0A673D3A7CDC75A19E05947889157A12929761C3E76ED9ED70BCA91B5D231A22B5A31D35D9A6E2E656AC741DBCA6D33A43D397DE</sha512>
+    </dependency>
+    <dependency group='io.projectreactor.addons' module='reactor-pool' version='0.0.1.M3'>
+      <sha512>7F20AEC5D35AEC12D361174C9C47E6DDBD8B0AAC58265A99D279FDB89BB341019A7575D36D8CDB8D99117EDCE41C8C07A53580FF034D36249BA5764CEE1B07E4</sha512>
+    </dependency>
+    <dependency group='io.projectreactor.netty' module='reactor-netty' version='0.9.0.M3'>
+      <sha512>4994F838088AD2D1A4491CBB6F6FF455AF58002A3EE6A5233C34EC032B272B1E6328189A56FD430482CFB4ED48074F9F93BCF488E4609AAEBDBEBCD82BE5F508</sha512>
+    </dependency>
+    <dependency group='io.projectreactor' module='reactor-core' version='3.3.0.M3'>
+      <sha512>A3A9FAADEDB4DBA5994A6046632E84E90652EB18B1AD12AD567DC86B91FB14BCDFB2CAD4A45C3B43B6316EC03D261B6AA05331ECB6CADD3FB29C289B541A0A8F</sha512>
+    </dependency>
+    <dependency group='io.spring.gradle' module='propdeps-plugin' version='0.0.10.RELEASE'>
+      <sha512>372048EEEA344CBD25769A86BAB3BAF8B20FBF2FB372C781EA4A1B66822193B7FCC66E43A922477D0013554E9B600F9ED998442457950E02DE2D34582EB4015F</sha512>
+    </dependency>
+    <dependency group='io.springfox' module='springfox-spring-web' version='2.9.2'>
+      <sha512>A0C6530EFA068732AD76F5F301E512A371590D35A2891447B42DCDDE59CF42FD25960CC142BCF3E758A710C9D53801737601D65966124952F415788503F0004B</sha512>
+    </dependency>
+    <dependency group='io.springfox' module='springfox-swagger-common' version='2.9.2'>
+      <sha512>BF5ADB24CD62CC779F1BAF15F251F92397BE082E918E00CDD98FBC732207EBB40C32D434B85876B5391B5683BAEA351A7A27DC457AE3E9DB2991B2387BD2D9D1</sha512>
+    </dependency>
+    <dependency group='io.springfox' module='springfox-swagger-ui' version='2.9.2'>
+      <sha512>132DACC2C6825A151ADA93AC8CB1DF43F31D4FEAD28518DA28A58B255912C230192129FA9061A16A7FD885BF8EA33D4A9250EE8B14D3FDFEC0DE76992B1BA324</sha512>
+    </dependency>
+    <dependency group='io.springfox' module='springfox-swagger2' version='2.9.2'>
+      <sha512>DE41CDD5FD6B9BEB6E5FA06C17D4FB3E587BC18B0E3B5DC43BA85065BCD5D5C45504089836102CC4B103862DB2F6DC297E5CE1B349998A58E1F7848962D56352</sha512>
+    </dependency>
+    <dependency group='io.undertow' module='undertow-core' version='2.0.23.Final'>
+      <sha512>13DDA92C1864C3CF17B43373C629E7E416FE20BD85152859978FDDE050743E01827A95AC1F5F5FD746B1FB669A33970B8128FF13D7BB65EE1C50BB07877AB939</sha512>
+    </dependency>
+    <dependency group='io.undertow' module='undertow-servlet' version='2.0.23.Final'>
+      <sha512>5D5443455C82886933EE16C638B4E3B7652D63CD02CCCD38E14591A0F32A2BF8CEF874A8904E08A78FA45FCE5D931C8BD0EF16E9F31F22A699D44525576FE626</sha512>
+    </dependency>
+    <dependency group='io.undertow' module='undertow-websockets-jsr' version='2.0.23.Final'>
+      <sha512>826AA90E7391F0FFEEB94CBF9078D371065FD2EE176E6DDFD08B51B1DA279E5C96657052EF502389409305B1AA48885BBB7F05CCD19AF23D843A2E5026B403ED</sha512>
+    </dependency>
+    <dependency group='jakarta.activation' module='jakarta.activation-api' version='1.2.1'>
+      <sha512>C60EDC99F119B9E0DF0CF527E2512F2B7AB9DB0E17C54E83850695F80F652C981EAAE90A296DB671CF7ED88A044C150224E030DF333FEB30F346E8A31FB794C6</sha512>
+    </dependency>
+    <dependency group='jakarta.validation' module='jakarta.validation-api' version='2.0.1'>
+      <sha512>4400F1372BA0F5D878A7A2B9087C4FEA3EA387D8035A0580C82605232A9DD47651250A211C88D480D7A8DC7BFDB681C4A11F8A738453A27848965C5EA5D53525</sha512>
+    </dependency>
+    <dependency group='jakarta.xml.bind' module='jakarta.xml.bind-api' version='2.3.2'>
+      <sha512>5A9A94FC323AECC9C5B28E9AC688AAC8D09725D4CAE660A57F5698914DB91E351283DFE4909A2CC6DE803890AC2B3B9F06AF9D071D465031E55326A1085A11DB</sha512>
+    </dependency>
+    <dependency group='javax.activation' module='activation' version='1.1'>
+      <sha512>C0FF5BF3ACE7ACC1B31FCC109CEE48D9EB8F025AE15A31DC91ECA760933BDB97C93F05D61E95AF1E317859D72E5F179F897F5BF3DF0E3810F4212D43BACEE4BD</sha512>
+    </dependency>
+    <dependency group='javax.activation' module='activation' version='1.1.1'>
+      <sha512>49119B0CC3AF02700685A55C6F15E6D40643F81640E642B9EA39A59E18D542F8837D30B43B5BE006CE1A98C8EC9729BB2165C0442978168F64CAA2FC6E3CB93D</sha512>
+    </dependency>
+    <dependency group='javax.activation' module='javax.activation-api' version='1.2.0'>
+      <sha512>8EE0DB43AE402F0079A836EF2BFF5D15160E3FF9D585C3283F4CF474BE4EDD2FCC8714D8F032EFD72CAE77EC5F6D304FC24FA094D9CDBA5CF72966CC964AF6C9</sha512>
+    </dependency>
+    <dependency group='javax.annotation' module='javax.annotation-api' version='1.2'>
+      <sha512>2453330B27A0822BBA440C28B98AE1D83D60D97DFA2D040562DD5126B3548E0CAA040FEA3B886AC6FEB0A858E6C1BC45B6C5472B180F1F14792E5CA33E355959</sha512>
+    </dependency>
+    <dependency group='javax.annotation' module='javax.annotation-api' version='1.3.2'>
+      <sha512>679CF44C3B9D635B43ED122A555D570292C3F0937C33871C40438A1A53E2058C80578694EC9466EAC9E280E19BFB7A95B261594CC4C1161C85DC97DF6235E553</sha512>
+    </dependency>
+    <dependency group='javax.annotation' module='jsr250-api' version='1.0'>
+      <sha512>8B5DD24460E42763F3645205BE4B4F80691E217D36BEE5FC5B5DF6EBC8782ED0F641FB9E2FE918A2D0EEDE32556656F6B61FE65D2CBEC5086E61EF3D91E4D871</sha512>
+    </dependency>
+    <dependency group='javax.el' module='javax.el-api' version='3.0.0'>
+      <sha512>29338108D06B1B31C27A1A32FF832834E60C4A8AAFD960292A592D02E3900B70C03D521FEEC4D89ACB3DF204AEF5640C74AD92494303B0C55E18F7D38026BD5E</sha512>
+    </dependency>
+    <dependency group='javax.inject' module='javax.inject' version='1'>
+      <sha512>E126B7CCF3E42FD1984A0BEEF1004A7269A337C202E59E04E8E2AF714280D2F2D8D2BA5E6F59481B8DCD34AAF35C966A688D0B48EC7E96F102C274DC0D3B381E</sha512>
+    </dependency>
+    <dependency group='javax.json' module='javax.json-api' version='1.0'>
+      <sha512>AAA86C8846FA7ACC2DF31D562C438285695809CED22AAA9E1F7515E4768F909314C795AF9C9E934354B9AF07DA833D2B0287746816473FEFCA3CC9CF28793F3B</sha512>
+    </dependency>
+    <dependency group='javax.mail' module='mail' version='1.4.7'>
+      <sha512>331D2ECDA625F4AD8A2C2539B577E9906787E7EF08D47683F45DD6FFF18E3B7601071F20970896210BD26498018AA570FE2AB4BFD7F7084068A234A809BBD481</sha512>
+    </dependency>
+    <dependency group='javax.persistence' module='javax.persistence-api' version='2.2'>
+      <sha512>13E4E0EFE64B1CF6744DCE44ED716B4D8513B2AD5B6A0131AF663B7918EB65705BD09D4DF763FF4A810829F4F6B6C198CA7670CE439940BE57AED0914B513F8</sha512>
+    </dependency>
+    <dependency group='javax.servlet' module='javax.servlet-api' version='4.0.1'>
+      <sha512>763DEC9801F647B1A45E492EB2A67F6A60FC608BEF4738EB7B1A92D93F1F6DB02B32F4C6553D4557C320DFC25C0EA0B9854C59E793262B6CA453C71CAF05EF38</sha512>
+    </dependency>
+    <dependency group='javax.servlet' module='jstl' version='1.2'>
+      <sha512>FB6FE33922631BBA21B606CB5D53C4457071E695EC5632205185281E7DB3E2D63D95248B43B9C7FB2CB5042D14A267B87D2C5DA742C989174C3526DCCF23AEEC</sha512>
+    </dependency>
+    <dependency group='javax.servlet' module='servlet-api' version='2.5'>
+      <sha512>363BA5590436AB82067B7A2E14B481AEB2B12CA4048D7A1519A2E549B2D3C09DDF718AC64DC2BE6C2FC24C51FDC9C8160261329403113369588CE27D87771DB6</sha512>
+    </dependency>
+    <dependency group='javax.validation' module='validation-api' version='2.0.1.Final'>
+      <sha512>2F136D337C49A83DC0EFF1CAAE74BA11413269B779257AE0B76864E207ABD729B2392AB2AE3A3DC7A6D065D60BAEF844AD797A11F69589119A827CCEE5C20840</sha512>
+    </dependency>
+    <dependency group='javax.ws.rs' module='javax.ws.rs-api' version='2.0.1'>
+      <sha512>4A85D3B61EA018F354A4DFA43104F3B4967CB4719DF203956F82F7A696F75BEE9D660540FC0F7BB61E0A5F826461DE8929144EDDD5622F9CB59A4DA289D7297A</sha512>
+    </dependency>
+    <dependency group='javax.ws.rs' module='jsr311-api' version='1.1.1'>
+      <sha512>EEDE48CA4C30FE25160636CAD27FC5732131543D67C59676282E4FD068E56C2E272171C9048DD6B5BC0B0C888BDBC3AA8F9C117C97E42D9309CF049D0BF894BB</sha512>
+    </dependency>
+    <dependency group='javax.xml.bind' module='jaxb-api' version='2.3.1'>
+      <sha512>93A47B245AB830D664A48C9D14E86198A38809CE94F72CA66B3D68746AE1D7B902F6FEF2D1AC1A92C01701549AE80A07DB69BD822FFD831A95D8DBFFAD435790</sha512>
+    </dependency>
+    <dependency group='javax.xml.stream' module='stax-api' version='1.0-2'>
+      <sha512>A7F337735100356F72639053734506982329015693677FAFD4D2CA74C4E412CAAE077999CB42DEE2402CC641A80C8FB027DEB9D2DC6C4E141D94C9184BAA9DC5</sha512>
+    </dependency>
+    <dependency group='jaxen' module='jaxen' version='1.1.6'>
+      <sha512>6BD11529D6DFCB27DDD485C8DA2440D3686CB61693A9461833A2BED49407343DF4BA707F45164A6E69B78979581D91FBF0F6C5EAB28653DCFA724AFC89529778</sha512>
+    </dependency>
+    <dependency group='joda-time' module='joda-time' version='2.9.9'>
+      <sha512>3A6749ECD71EE8D5781821C36D77850A810E72EE33757EC4EE9E3D424676DCED7EEB955A432F45EDB3694DC14DBE1EE4C608545D6A445B29B86979A7C9829384</sha512>
+    </dependency>
+    <dependency group='junit' module='junit' version='4.10'>
+      <sha512>2C8B595C24A5AD2499A5BD5BB01204453CD09F51308FEA5834922E042B8F39BD8EF0099848EB3A8576DDC4CE4EC907181BA0C20F1222A25B3064D1C3C5499CBD</sha512>
+    </dependency>
+    <dependency group='junit' module='junit' version='4.12'>
+      <sha512>5974670C3D178A12DA5929BA5DD9B4F5FF461BDC1B92618C2C36D53E88650DF7ADBF3C1684017BB082B477CB8F40F15DCF7526F06F06183F93118BA9EBEACCCE</sha512>
+    </dependency>
+    <dependency group='mysql' module='mysql-connector-java' version='8.0.17'>
+      <sha512>1270422B5D440C9DFA61D482DDBDF0E18C49173B063D4858533EFD0DF3E106DC28A36A1CB10F5243889D062CC77328DE646FC261D7ABF383D82254A298178B8D</sha512>
+    </dependency>
+    <dependency group='net.bytebuddy' module='byte-buddy-agent' version='1.9.10'>
+      <sha512>1F66CF4FC5BAD55C2AD103C79DD19529288C8DF5AF2ACEA121229677B445B2B06D029B207C5D2D348565998B458014D405CEE4534EB0A12EC2F0D634F8925634</sha512>
+    </dependency>
+    <dependency group='net.java.dev.jna' module='jna-platform' version='4.1.0'>
+      <sha512>8AB09D04FD7E86B505F917E0A2B11D2C2E9F3A3E923A9FB94AD7E0BF6715F1923E02D8F3927F9580AB9F39F9FA213176013C3BCD977C2D1EF6461E2610571455</sha512>
+    </dependency>
+    <dependency group='net.java.dev.jna' module='jna' version='4.1.0'>
+      <sha512>EA1B400CF25C6032160553F19BAEDB21103341F1C4236FBECF5F8462CC4DB06F3459D7812ED0AD07A0B9FAA3B576F8FA6EDBD9ED64F9486B85E5BF982C21775E</sha512>
+    </dependency>
+    <dependency group='net.java.dev.jna' module='jna' version='4.2.2'>
+      <sha512>E2594C5D95937A8675190750E29B73C10F496637E940B4444DD4A6F03F7F323A346481521881A6D54A826FD12DF312BB21B1F07EDCFA3A09141F8CF362F6A564</sha512>
+    </dependency>
+    <dependency group='net.jcip' module='jcip-annotations' version='1.0'>
+      <sha512>CB312B3F571D91EF183C119D878F50464FFD97F853B7311CBA386463F295E8B7B3A5A89ED4269A045CACD5AA7CB4C803D4882854A0FDDEFA9BBC28C72AA6C786</sha512>
+    </dependency>
+    <dependency group='net.ltgt.gradle' module='gradle-errorprone-javacplugin-plugin' version='0.5'>
+      <sha512>64E8F186A535EBE40A94C2798E6A128B2EBA2F26707A1B0A3301CBDB266274C3DF94E4437FB1E096DA23EAACFB2990437E3A21A588E047FBD3E3DF02DA036F5C</sha512>
+    </dependency>
+    <dependency group='net.minidev' module='accessors-smart' version='1.2'>
+      <sha512>39FE6A5EBD2AE2D33D8737C8407A8CAA4F6A62CE2057D726BB82496D35104B76F230BBB9721E1DB5F535FEFA3D70EE88C0A5A5E4A3F1266D7317CAE897AD0882</sha512>
+    </dependency>
+    <dependency group='net.minidev' module='json-smart' version='2.3'>
+      <sha512>977FFE05C17965B403A60471EB6C160103263BBE454E942D67D4D725E1826B504DE6C15038FF01EA90632BF9AD8A31B47C6662613BB905F020EFFA68C44D6F9A</sha512>
+    </dependency>
+    <dependency group='net.sf.opencsv' module='opencsv' version='2.3'>
+      <sha512>C385519E65F09C84785988DBE29966B41D74FA1A35F27053D150FC69A5B3D07B20E351AAF9CE50005DF9A7123C0520473208520A05E58090255B82E7AC0B27A</sha512>
+    </dependency>
+    <dependency group='net.sourceforge.findbugs' module='annotations' version='1.3.2'>
+      <sha512>C9D00C49F91677F7E7B5E6A615992F31C18E39E59FDADC82735299FF5D42065FD443E3D85422C688226FE49CD11F26F4EB527AB531BF2B59A121F516902E4F52</sha512>
+    </dependency>
+    <dependency group='net.sourceforge.jtds' module='jtds' version='1.3.1'>
+      <sha512>8E3DFA1C2408AF4C7649BE9B8229D16A57FCC76E89E8013763FCE3AA7E30A0AA3F3D4F4BFA102A748FA7426A4EBADD73E17967840B0240BDF4F1F8714FF3F6A9</sha512>
+    </dependency>
+    <dependency group='net.sourceforge.nekohtml' module='nekohtml' version='1.9.10'>
+      <sha512>C360205234269425A3DD2B487F2DA405FEC348519CC9959BF8145C1AAF80F7112B2F207A8EA62540D2493FCD80476436DB420E6EDE1165153C5045380F6FE39C</sha512>
+    </dependency>
+    <dependency group='net.unicon.iam' module='duo-client' version='0.2.2'>
+      <sha512>E13B0428E1CB07FED43DB683E976BA20A63420631A2FC1727E9D4D45FE26DE864F12246EB34C7EC8C18B3C659053F41D5ED7162F4C5B4F7B7E048E081BDB58B6</sha512>
+    </dependency>
+    <dependency group='net.unicon.iam' module='duo-java' version='1.1'>
+      <sha512>6F46D31F0BE3EEFDE0AF1EE764AAFA3783C16ECA43DEBEFDCBCDB0CC1F18B8E881AD90E99435F3C548B9D5664137B7FE4C71841A35FF022437D011445B93DFA3</sha512>
+    </dependency>
+    <dependency group='opensymphony' module='oscache' version='2.1.1'>
+      <sha512>D856F97E84F4DB54F7446BFA0FD8B54E6CC81279DEBF956F0C5AB9C7FD609F4F4C53A7457A3A8C6D03F105C4331AC87E17DDCF08A61F2708BA07D9D636DB2001</sha512>
+    </dependency>
+    <dependency group='org.antlr' module='antlr-runtime' version='3.4'>
+      <sha512>1786AFF2DF4664483ADCB319E64BE7B69B643AC9508C3F11796B5AA45B9072B46F53F0A21B2FF7291162AFE81506DE16161746273E4532EBAD75ADBD81203F0D</sha512>
+    </dependency>
+    <dependency group='org.antlr' module='antlr4-runtime' version='4.7.2'>
+      <sha512>F057286FA0F7E3D0CCA414A348893577288882B887C0278DD0C012447D3C48AC150B30E023F886F038C6B0A144329FF927A3869AF5534D23B279CF88F302E0BB</sha512>
+    </dependency>
+    <dependency group='org.antlr' module='stringtemplate' version='3.2.1'>
+      <sha512>47F3CFD91906B527B615FD10D27387AAFA9F355AA9C18A86861C975091C39895B711FE514ED1597DABE6AF2A2705DFC45BB70FB5E30F5D428A48E0D1B02B7856</sha512>
+    </dependency>
+    <dependency group='org.apache.ant' module='ant-launcher' version='1.10.5'>
+      <sha512>613612F80DDC5B8C0DA49C97CC3E12108F2B06257053330AC364B943BB7AE07DE375F57DA961C9C04D23DB9D202C5A60BC1DD17CB473EC56BA6B2F371D36DA4D</sha512>
+    </dependency>
+    <dependency group='org.apache.ant' module='ant' version='1.10.5'>
+      <sha512>84040128CBE8EB051ECC17037D4744A04437D891E376DA7728588A93C92EC78A21B282723F7C37060BBD50693D556358197B4AA25C68A7508FA8C20F7EB12618</sha512>
+    </dependency>
+    <dependency group='org.apache.commons' module='commons-compress' version='1.18'>
+      <sha512>CB581DF3820FDFA810826F00BE2AEE1B7E551DE8363ED6D8D712098E545D61CD9C903F057F7BBDF5AF6BACFD314754A13FF9694B44F848DF0DE51239F01805FB</sha512>
+    </dependency>
+    <dependency group='org.apache.commons' module='commons-jcs-core' version='2.2.1'>
+      <sha512>B6F1D090C3DA7750D1EAA73B31F1033AEE9DAB4BBE97093088708C0F22C6563542DC0064DF7D977FFC18A024F0B507562396DD836F2CB7E0236252EFB70706BC</sha512>
+    </dependency>
+    <dependency group='org.apache.commons' module='commons-lang3' version='3.2.1'>
+      <sha512>5150DA26BDEC9E678F15715C400585FA32DC0C7A192C1710ECE7031CBB6B91E477B7266950E19EFDFB3BA383251A26154B1D8E737BD6A01C803026B22E24B3AF</sha512>
+    </dependency>
+    <dependency group='org.apache.commons' module='commons-math' version='2.2'>
+      <sha512>F444EAD8D025D92EBACC05A366CDFD6F3C9B9788F36961CC66A4C71846B9E953A586268C23268A7A8B9561159FC38F7478DAEA8142B3B55FB3A8DEA756720AB6</sha512>
+    </dependency>
+    <dependency group='org.apache.geronimo.specs' module='geronimo-jms_1.1_spec' version='1.1.1'>
+      <sha512>94CB8660775596B298DB93E11FDBB28D2A582B161F7A6D667D41946F59E8B114AA80E15C28C4186F05B43F432B1AC555D845AD870309609202382C3F6061E319</sha512>
+    </dependency>
+    <dependency group='org.apache.httpcomponents' module='httpasyncclient' version='4.1.3'>
+      <sha512>1DCF26866A0747DDBCA6EBABF361BC8E03C433E86E427ED244504CB2BE036A9E68462E65C095945FD0C8CDA589836934DA3B5A741C3FBDC45446D7AC8AFADF46</sha512>
+    </dependency>
+    <dependency group='org.apache.httpcomponents' module='httpclient' version='4.5.9'>
+      <sha512>F6CA7FE0DD9BFADA4B08F67AF536CCB1111538F1319C3C046F7030544C1A7FCE72CF693EF8901D946621217FF1A4D45DC7458F4554D2E37F5B0D691A8CE1124</sha512>
+    </dependency>
+    <dependency group='org.apache.httpcomponents' module='httpcore-nio' version='4.4.6'>
+      <sha512>328B1F7315AC6BCD73258D1A3AE43D1DDA935ACF4FC879BF80683F67CFE32D7E9AB3EC15352237B9A047AD033729F350220C6642487E16425D90D3BDBF5DED5C</sha512>
+    </dependency>
+    <dependency group='org.apache.logging.log4j' module='log4j-api' version='2.11.0'>
+      <sha512>72E37483A4BD3F338885A08242005E76347D13F879937ACCCB4B3DFF3909D832BDF8B7091D4BC1E6F201A43D906D348F0FA27BFEFDDCE7D27F13E23604B7E570</sha512>
+    </dependency>
+    <dependency group='org.apache.logging.log4j' module='log4j-api' version='2.11.2'>
+      <sha512>544EF43727FF33B85DD751D819319B21A1287E538B481699BC67593D5F991F99085E49A740AE521612D18FF0EEF19435FF84357B01A69D2BD6FB2AD243C2D4B</sha512>
+    </dependency>
+    <dependency group='org.apache.logging.log4j' module='log4j-core' version='2.11.0'>
+      <sha512>C79153BAE0743D9130C4697216C941FA5261D1CA1A7AF8D78C4EBB8CEEB28E0D3BEFEF98895042FDD31B5B9C17E5408EA60490B108618A1B83C2D146E3D816F2</sha512>
+    </dependency>
+    <dependency group='org.apache.maven' module='maven-artifact' version='3.6.0'>
+      <sha512>ECEB2622CE208EEB2BD5B163E5B97EB1B7BAC2DEFFD06859B384E6F0527D802AB59D1537C6D6FBD73F8F16DE919696B1ED4CBCC22A8F592749953148D3172747</sha512>
+    </dependency>
+    <dependency group='org.apache.maven' module='maven-builder-support' version='3.6.0'>
+      <sha512>D7B14FA7730CD4E52FA2223234CC046D5A96A391B639B77067537B38185E71AE140EC15D07A0CD71C4E9D3089B782BA092EFBAA218A528A5F67999438B245E8E</sha512>
+    </dependency>
+    <dependency group='org.apache.maven' module='maven-model-builder' version='3.6.0'>
+      <sha512>E0D1D1C1465A8E0573BB9D8E169BC736B4C34EC4138E0DBFF71B7866557E23C2DC384F2E4147E74E9782C582568812BD9F209511352C1E6E487548EF41347B38</sha512>
+    </dependency>
+    <dependency group='org.apache.maven' module='maven-model' version='3.6.0'>
+      <sha512>6EA5F34F4D11524E069716A142140AF0F17C7723EEC070E33443FAB20501E177F265B38C02A324DD50FC2C9D6AA62E73EF537A09E07A9E55282C686B0A905E67</sha512>
+    </dependency>
+    <dependency group='org.apache.velocity' module='velocity-engine-core' version='2.1'>
+      <sha512>3FFE9C8F29B36E39DB1B47ADAB2A787198031D4F04999955C73D3EBB3EE24ACA969F5D7CD6468C61124989986A95307CDD7F2C4A5365D0B0D4FE63EC633F8ECB</sha512>
+    </dependency>
+    <dependency group='org.apache.velocity' module='velocity' version='1.7'>
+      <sha512>E521785D947CAE1A02070B26A43D235B6319439A6364C58266D3F9C458F9A099406C10AAB5F51C5DB5BA541E88322CB35203C6758B4B8BB65F9539A345DA9A04</sha512>
+    </dependency>
+    <dependency group='org.apache.yetus' module='audience-annotations' version='0.5.0'>
+      <sha512>7C05F699BA6D63053D513DFC1BDD893F5A76F9973D2BF366C31A5EB99F9954521CB58DB0F7D1274FDDF2DD39DACBCDE6907D5FFC8AFC728C91817D2E99EE2A96</sha512>
+    </dependency>
+    <dependency group='org.attoparser' module='attoparser' version='2.0.5.RELEASE'>
+      <sha512>91B2EAADAB67420252E47E52B4460EC13BB8C38A3A9B89A924974A4E2E411F0537A758E924800E4355B83AAE5DB6925F7E002FB5E0200735C69910D56B216524</sha512>
+    </dependency>
+    <dependency group='org.bouncycastle' module='bcpkix-jdk15on' version='1.60'>
+      <sha512>D44CDAC998A0D804AC452725C9E84B7D517C838CC6770CECDB214E1DF50EFC5EC2D067A91A5009F1316A5635CF7A1D213F2EE2A4E7497C66E1C7BBD5D2D4445F</sha512>
+    </dependency>
+    <dependency group='org.bouncycastle' module='bcprov-jdk15on' version='1.51'>
+      <sha512>1D377E5E7567DD1D2565C4E5CC6610E5B059089819A361D0FE2EBA5F58B1667EB390A17201EF48C2D43AD7DF5B56F8F13BDADC74DC309A9EA581564A0EEDC309</sha512>
+    </dependency>
+    <dependency group='org.bouncycastle' module='bcprov-jdk15on' version='1.54'>
+      <sha512>DA73A0FFF8844148CD1D450769A0B01C2C436887867B2623283398399BFB386EF28FEB65D76E48C5AEEC3C65D206AA5DC7125F61B5C87D80653E69742DAB6B39</sha512>
+    </dependency>
+    <dependency group='org.bouncycastle' module='bcprov-jdk15on' version='1.60'>
+      <sha512>1C08D82349E333720C08FC467FF6489B14B8633A09019BF8BB5E6A3C426DFAE6DCC415648FE1FB4A2DA8631548F4947AB6CA1BC90B3190A05040F4D2EB271A10</sha512>
+    </dependency>
+    <dependency group='org.bouncycastle' module='bcprov-jdk15on' version='1.61'>
+      <sha512>2F09C3E8EA8666620CF32A0BC3D1B8DCB562EC4CB06B485D038956FA2CC898AB11132A675B3C12CBFB00A1CA96DDF34ADC0C1B5981FCCDC566557FC6C533673B</sha512>
+    </dependency>
+    <dependency group='org.checkerframework' module='checker-qual' version='2.5.3'>
+      <sha512>51121FFDBCEC6A74AD00A87DFC0BC0F404B54374C94AEB9B35D35A40DFC018773D1B8925F3B4BB57DD5B98FEC6E2ACF070B629F514D0344B9DAC392284FDA423</sha512>
+    </dependency>
+    <dependency group='org.codehaus.gpars' module='gpars' version='1.2.1'>
+      <sha512>B9583F7923425FFA2DF6B986374325B926385F1F6DD0468333253ED71461B7D150C5F3AD905266558C63DCF113DEFB42CE8C83AD728E1EFA87F622A5A6D235F9</sha512>
+    </dependency>
+    <dependency group='org.codehaus.jackson' module='jackson-core-asl' version='1.9.13'>
+      <sha512>11725DA54C7C18AF0B50967A9317866CE9D11EB94D3B52FF7A54C6550070E143B5A582DE9A8EBB6D61A8104F4DCD7DDB9C2E6F5C3605B6900D48F5241FE38D89</sha512>
+    </dependency>
+    <dependency group='org.codehaus.jackson' module='jackson-mapper-asl' version='1.9.13'>
+      <sha512>81CD7962FD9EE6D2354F5E44D23DE1FA96D0DA665B79A0F4CE6F8012BB4651683AE69B82DAAE3CF4FEB101658A344BF4D665FEFC3A57ECA3A720761732963873</sha512>
+    </dependency>
+    <dependency group='org.codehaus.janino' module='commons-compiler' version='2.7.8'>
+      <sha512>FEF51007D11288037E7A5BD16BC092F759C598EDDF78E3330C150BE61C9E558D370261AF92A3D9B116D15FDAA5C0E7494F6DDB7755EB5C4826F1D96627D0F2D2</sha512>
+    </dependency>
+    <dependency group='org.codehaus.janino' module='janino' version='2.7.8'>
+      <sha512>F991EAEE7A5FCDA75B57F933B10BCA30D11BB3CE5C38DE64BC4A3D694A65AD5E41E125C7B6FE57A21FCC8EB65882BD572A7D82976F934B4028895B8EEA8D0463</sha512>
+    </dependency>
+    <dependency group='org.codehaus.jsr166-mirror' module='jsr166y' version='1.7.0'>
+      <sha512>4565347BB6761162783E4729BC50A432E7EA461AAB313F1B6BB898879A07BF449C058FDB28922803D69398E39827C117BB51E546944F1A3AC5C597AF4ABFA733</sha512>
+    </dependency>
+    <dependency group='org.codehaus.mojo' module='animal-sniffer-annotations' version='1.14'>
+      <sha512>9E5E3EA9E06E0AC9463869FD0E08ED38F7042784995A7B50C9BFD7F692A53F0E1430B9E1367DC772D0D4EAFE5FD2BEABBCC60DA5008BD792F9E7EC8436C0F136</sha512>
+    </dependency>
+    <dependency group='org.codehaus.mojo' module='animal-sniffer-annotations' version='1.17'>
+      <sha512>94D0335CDF94AA547AD6C0C7E44B8E3BDA736CE19D941DD0FAA3A45390E5AB2D122022FF4E07BB9AAEDD41FFBD9500F324E0A9E42F4C5441BCE0774F44872F45</sha512>
+    </dependency>
+    <dependency group='org.codehaus.plexus' module='plexus-component-annotations' version='1.7.1'>
+      <sha512>E20AA9FDB3FDA4126F55EF45C36362138C6554EDE40FA266FF6B63FE1C3B4D699F9EB95793F26527E096EC7567874AA7AF5FE84124815729FDB2D4ABAA9DDEA8</sha512>
+    </dependency>
+    <dependency group='org.codehaus.plexus' module='plexus-interpolation' version='1.25'>
+      <sha512>FB647C1F159D17E16AE925BB407585E4A4B30C468518E60D3069EA4A75FA0F7122E789923534632125B22B7CEF1CB44CAF00700BBA90282360F7C76E086B6699</sha512>
+    </dependency>
+    <dependency group='org.codehaus.plexus' module='plexus-utils' version='3.1.0'>
+      <sha512>3805C57B7297459C5E2754D0FD56ABD454EEE08691974FB930EBB9B79A529FD874F16D40CEC66E7FD90D4146C9D1FEF45CDB59F9E359FCE0C48AC77526FC320D</sha512>
+    </dependency>
+    <dependency group='org.codehaus.woodstox' module='woodstox-core-asl' version='4.4.1'>
+      <sha512>33165CB587901E8908FA2589F16A6D1EEB87429936734E840B607E0A80C6A6680536EB8044536B871F3CD94B54AC734F51FDDA9120BCE0D2F58754C6822216D0</sha512>
+    </dependency>
+    <dependency group='org.dom4j' module='dom4j' version='2.1.1'>
+      <sha512>547DA0752FFB12CE40800449376F2F7E20F053F816DE4AE8ADF1A4FAD5A3B87CE4E98E95650671A6C9CDCBBF7C20A4B61E711E5AE8D324C923D508BCB07E02E1</sha512>
+    </dependency>
+    <dependency group='org.freemarker' module='freemarker' version='2.3.28'>
+      <sha512>44435CB2B6BA02ABACDC4A21BEA44A2DC50FAA1B486FC5B2F79097A68F1F98CA24AA835448AC5DEC33A1869EED1B8A32AC285E95FDABBDAFAA810D575951894E</sha512>
+    </dependency>
+    <dependency group='org.glassfish.hk2.external' module='aopalliance-repackaged' version='2.4.0-b34'>
+      <sha512>4AFE9EE47F54AF9DA8D0F893DD02D6BE94936B81FB1DCD9452537F40DB90199F3C61A835350E29E14C5EDE3DAEF53836B9374E2BA23309B8A447F7B524F92188</sha512>
+    </dependency>
+    <dependency group='org.glassfish.hk2.external' module='javax.inject' version='2.4.0-b34'>
+      <sha512>282F41317D2DF6E0254E8425D9D9D65B63A213676FE3F33FA582020466F724114FC1AEBBA7FCB24D8497DAA5CC7E1D77D7112EA8B0E7EEEC076CC9899E21C25E</sha512>
+    </dependency>
+    <dependency group='org.glassfish.hk2' module='hk2-api' version='2.4.0-b34'>
+      <sha512>688A1FF4C5CBE8A728D7B158BAF82FE7EF5A5817196BF969B662F9D2AD56BF4A114E8C2D4CA02BA76358642D1937A066B947E6271C73D951A4BDB9FDBC3F6606</sha512>
+    </dependency>
+    <dependency group='org.glassfish.hk2' module='hk2-locator' version='2.4.0-b34'>
+      <sha512>D225E840F4BE009EF685514E356CFCCAE9518D033FB4C2254A4BE7363F4283676A0F3599F01C48BE15B21BCB7640431A20F48A8E081420205311A6CBC61EB5B7</sha512>
+    </dependency>
+    <dependency group='org.glassfish.hk2' module='hk2-utils' version='2.4.0-b34'>
+      <sha512>A36C594FE0C565D3143D68B2DD34B57E4629B42677FDE9F5CDC4EFE2F9B97C191777083A351E3182B2988561A79DEF2E298F8BE37454AB9E3BD39A2645D129D4</sha512>
+    </dependency>
+    <dependency group='org.glassfish.hk2' module='osgi-resource-locator' version='1.0.1'>
+      <sha512>E064A477D5B1F8C56B4741BA606EED764B779A5D9870B8C193771BF0D904350AED839AB21602DBF5F376F7208B8CA24F64504D73EC6A0C5C08C5F0ABC7C466D4</sha512>
+    </dependency>
+    <dependency group='org.glassfish.jersey.bundles.repackaged' module='jersey-guava' version='2.22.2'>
+      <sha512>149AA6F7039682384A82820179ED4BE9DD172237235335C7DE1A22A2FB3442BAEDF56FA38FF0AEEE310A469D47C376684C6A9B0FECD424DD14FCE6CE042A405D</sha512>
+    </dependency>
+    <dependency group='org.glassfish.jersey.core' module='jersey-client' version='2.22.2'>
+      <sha512>C236CD8F6681EC9FF299800C89644020824680CA8FE9249403D76C0EA07D1FF359ECA22726C441E1A218DF5F01A346E9F9A04B089D0A295961004C9B8717A53C</sha512>
+    </dependency>
+    <dependency group='org.glassfish.jersey.core' module='jersey-common' version='2.22.2'>
+      <sha512>706A8FF31D487B3DC64AAB777B367217A17168220D2D45F6FE64A67614D6927AD0382D8280E65649034B4CCC295B49091811AE2A7670B6788B0FD0C477D66C80</sha512>
+    </dependency>
+    <dependency group='org.glassfish.web' module='el-impl' version='2.2'>
+      <sha512>55702761C2CA5A1C21976447D5192B68E5A82E23A97A1859F4DB2CE7F13973AF39032EA6B83843EC9F4E03955C36D197FA48D726F5BF77E315D41878DEB1AFC3</sha512>
+    </dependency>
+    <dependency group='org.glassfish' module='javax.json' version='1.0.4'>
+      <sha512>5183FFEEFD4BC17B63DBCAAD08B43AD2B7B49DC18479D725B10693A437425B099B6D73CD19D281222686BC03C75E412C4A189084D95337DFB2C6316485D30628</sha512>
+    </dependency>
+    <dependency group='org.hamcrest' module='hamcrest-core' version='1.1'>
+      <sha512>EEF6453BB867D173F3611844A95E0B9D1792EE35C0C49D20A309D87C7140DFACEE0FC479DEF9A32351773D3F0D9DC51BEF8D9EC30F84189FCD7F44A2892B52B4</sha512>
+    </dependency>
+    <dependency group='org.hamcrest' module='hamcrest-core' version='1.3'>
+      <sha512>E237AE735AAC4FA5A7253EC693191F42EF7DDCE384C11D29FBF605981C0BE077D086757409ACAD53CB5B9E53D86A07CC428D459FF0F5B00D32A8CBBCA390BE49</sha512>
+    </dependency>
+    <dependency group='org.hibernate.common' module='hibernate-commons-annotations' version='5.1.0.Final'>
+      <sha512>12A3C896D8CB0FC9FAA3499A3ADB964B525737284476661DD1449F940E0232049606D825AD0CB73F895926DB198184916F0756B70373922AF07734DE7F1671AE</sha512>
+    </dependency>
+    <dependency group='org.hibernate.javax.persistence' module='hibernate-jpa-2.1-api' version='1.0.0.Final'>
+      <sha512>696DD1548504C9EA8D8526411E81BEE8B752F12861979DA2707D1059B35A8CCB3F018A1D4E2D12436E7C9DAEC8E63B97FCF980E03032981867CEA63D4301F3DA</sha512>
+    </dependency>
+    <dependency group='org.hibernate.validator' module='hibernate-validator' version='6.0.17.Final'>
+      <sha512>C851437C5E35DF205AE13F1C1344894E85B5AE453317355C85566AFA995E6AABE723AA4AD12BA776A656CF45EC57824A87CF262C6EE3FD4F404B264C5C9D5436</sha512>
+    </dependency>
+    <dependency group='org.infinispan' module='infinispan-cachestore-remote' version='9.4.15.Final'>
+      <sha512>8FEFFBC18D031A947E09252D2812753D5AFBD0486D0AC8B57ECDB775345907B32ACDA75B18095940080C311677C1FE972BB7F8F2E791C1665794D9D2C52D2B0E</sha512>
+    </dependency>
+    <dependency group='org.infinispan' module='infinispan-client-hotrod' version='9.4.15.Final'>
+      <sha512>8B65D6AFE336D5FFF605FABAAB30B4EF06CEF33C3609846742E65AD0841AC0FCD866D0167C1BD505AC67C82FACC4BE3356776E4ADD5212A5981FC700D15959D9</sha512>
+    </dependency>
+    <dependency group='org.infinispan' module='infinispan-commons' version='9.4.15.Final'>
+      <sha512>A27F9265376E2EA4AFDF084AE1E7875422D83D24E481B62D3674576D8B3B8FC61A56AE21E56FB25E45B12163DC31A131AD171FCE00E9683D6BEB0A4D743677B2</sha512>
+    </dependency>
+    <dependency group='org.infinispan' module='infinispan-core' version='9.4.15.Final'>
+      <sha512>2D81A47E94F09C0AEDA91E1529663C1AD0DD970E987CAE49996CD63E20AB2DABE7A0D02675D9A8FC07343D31D4874CFF1F20966A8E70E74E8744AC8E3CF09388</sha512>
+    </dependency>
+    <dependency group='org.infinispan' module='infinispan-multimap' version='9.4.15.Final'>
+      <sha512>B2B6A324E2F801721E18A8DF9F6BCF4F4DDCEC78EDD4C0B7452805A824C4A8FED86D9F473DBD9B383A25CA3091CE453E199E6B463B2B8E8BD4EAA993EE98736C</sha512>
+    </dependency>
+    <dependency group='org.jacoco' module='org.jacoco.core' version='0.8.2'>
+      <sha512>7422BCFECBC36548475319FD9C896A9052F98798F6AC0D602614526C620C9CC7880BB05D987089FC41299D817C92A92E12E72D6A51459740A3BF61582B613669</sha512>
+    </dependency>
+    <dependency group='org.jacoco' module='org.jacoco.report' version='0.8.2'>
+      <sha512>EDE1B3CB978D21F0C65916DDA286732532D1A01450B2B833C9B8C7046B935167ADB63DB24B9ABF0C93AE155B7E8CF5FC74815711704C001093398E4D0FDF081</sha512>
+    </dependency>
+    <dependency group='org.jboss.logging' module='jboss-logging' version='3.3.2.Final'>
+      <sha512>29FFCC84716C6E8C8AEE56534F2D09C7235FD5DDC7F9E6E0D093CFCD278C2FAE6F4FC8526B4BE22832C348E2D1D81D1347963A53F8840F2D048470E85EC36BB5</sha512>
+    </dependency>
+    <dependency group='org.jboss.logging' module='jboss-logging' version='3.4.0.Final'>
+      <sha512>2316AE680A937B5A0EFE8CEDC5437AFC1B326682E103F7D2C3CB9A689F61402326446F08F24CEBBC72DCEF44AD9F81D307FCF6D6FB186E3AA3818D15CEB517F9</sha512>
+    </dependency>
+    <dependency group='org.jboss.marshalling' module='jboss-marshalling-osgi' version='2.0.6.Final'>
+      <sha512>9E8E337C43907AFDB57ACA7A5FE47BC92AC2BE0ACCB7D5D198DA098C1803FABC83D7DD2E3C44ED5B002BC50C6AE6CFC66977082C26B0584EF3DADC47588F4290</sha512>
+    </dependency>
+    <dependency group='org.jboss.spec.javax.annotation' module='jboss-annotations-api_1.2_spec' version='1.0.2.Final'>
+      <sha512>4989263A1A7DC1A22A3F206A28D3E20A81D6CDB47045BBFE9C68D5A8F6AD1D19DD4395315820A57546CCBA01F2BE7262C56F8C057E641E85A9F52A57AF152F38</sha512>
+    </dependency>
+    <dependency group='org.jboss.spec.javax.servlet' module='jboss-servlet-api_4.0_spec' version='1.0.0.Final'>
+      <sha512>DFE82F912D2F8D13BEE740D7BDF13B883B87551685FBF2827006EA06B7380140A3021F1CC3EF5B3C6DF18EAFB553560691A8D45D0BCCDC9346B72E5FFEDFF968</sha512>
+    </dependency>
+    <dependency group='org.jboss.spec.javax.transaction' module='jboss-transaction-api_1.2_spec' version='1.1.1.Final'>
+      <sha512>A38870771313EBD16CCD83739566F77B7D2D9C56210166C634A23F152305952287CA09FB17A2DC19F148FE49AE8A70AE9043622A428F62F9F588FBD56A065FAA</sha512>
+    </dependency>
+    <dependency group='org.jboss.spec.javax.websocket' module='jboss-websocket-api_1.1_spec' version='1.1.4.Final'>
+      <sha512>62E3A62EDA18C72302290B202D8B86EFD632F1466C63B968209B3BF9FCA0E85F6E19B2EB917151B76F92176310D6FF2C9F43BDAA37B6BFC5986F92C6E211E80B</sha512>
+    </dependency>
+    <dependency group='org.jboss.xnio' module='xnio-api' version='3.3.8.Final'>
+      <sha512>B12EDED4EAC28F9CBD873D6C987341959A67DEF602AB44071AABEDB2E5D444B964E5ACD39785E0ABA362080A4E157284FE89E3E514740265F5C5352C0255E4FA</sha512>
+    </dependency>
+    <dependency group='org.jboss.xnio' module='xnio-nio' version='3.3.8.Final'>
+      <sha512>1ABBBF1316D766EA6A5326AEC1DB9EBF947FE621FC8456A66B1F39846875936C118C20FD4CAFBBDBFF6B404E7BE896C7C1CD4574E6BBFF979C39E8F45BE6E238</sha512>
+    </dependency>
+    <dependency group='org.jboss' module='jandex' version='2.0.5.Final'>
+      <sha512>A028020685542E387113B40A5B79CC634D8312336D13702F893FCE187CD653B5E7A67C80067BC719C6C214D4A32E19EA0D854BE322334AC1F9B6DB8FDC78F13C</sha512>
+    </dependency>
+    <dependency group='org.jdom' module='jdom' version='1.1'>
+      <sha512>99F12B9089C2A81D621A35457A0204C9DD4EA9988CA2736BE6C5ACD00CC6DC05865B9F643AB027132D58C22596F6CDD03A9977F723CCFD05134B6E02C6420EF7</sha512>
+    </dependency>
+    <dependency group='org.jetbrains' module='annotations' version='13.0'>
+      <sha512>5622D0FFE410E7272E2BB9FAE1006CAEDEB86D0C62D2D9F3929A3B3CDCDEF1963218FCF0CEDE82E95EF9F4DA3ED4A173FA055EE6E4038886376181E0423E02FF</sha512>
+    </dependency>
+    <dependency group='org.jgroups' module='jgroups' version='4.0.20.Final'>
+      <sha512>4ADFFE3742B0EC09487E1128BCEDA6C68635E6D537C67D45D5DB1B823BC52ABAA92A671EEBBF70CC215ECBD9630CA58AD78F16C3FF0AFF48447EDE9744C1DE2B</sha512>
+    </dependency>
+    <dependency group='org.json' module='json' version='20140107'>
+      <sha512>AC0FDFD8E0219013F821D90C00AF6ED54A81416E1CFD2C35981BE3606F8375EE1E7CEFB3B9C853B85256F80F35A8451996D5A71818CF4B33BBB958F31B6EC0A</sha512>
+    </dependency>
+    <dependency group='org.json' module='json' version='20160810'>
+      <sha512>A5E4980E6AA0F5B295BF758A5186B9784CB0598A8CDA3DFEB88EB268DE7A69DDE808B89F0D3802604DBD31B642747BEF02B318AF0FC0588CCF38EF348F810C6F</sha512>
+    </dependency>
+    <dependency group='org.jsoup' module='jsoup' version='1.12.1'>
+      <sha512>4DAAFE59C29C024F471E8D3AD1443BBF979727A1E6A068B57A5F599BF76F9D7C8CC7CDB29830B4A92D21483AD2E2E9B2D3B8CEA2F6F07C009DB9452305E5FADC</sha512>
+    </dependency>
+    <dependency group='org.jvnet.staxex' module='stax-ex' version='1.8.1'>
+      <sha512>D060EA5DCC81508A1078BD0ED947553A5652A5A78DA76CD00DC2E384DCA014166DFE92777FCEB7D7868699894D7E40ECEF99FAC7771372025BFD7F1FA3E2FE32</sha512>
+    </dependency>
+    <dependency group='org.latencyutils' module='LatencyUtils' version='2.0.3'>
+      <sha512>BB81A42498C65389366205F4E07CEE336920E2F05CC0DAAE213F2784B1D0CE9A908B038DAEC20478F23EB00B2BF704F96C5B00F63C99615193AB2A3CC4A9F890</sha512>
+    </dependency>
+    <dependency group='org.mapstruct' module='mapstruct' version='1.2.0.Final'>
+      <sha512>CC0EA220CF083183F7A4D697ABFF9D7DB55558E7E37F904F02A8B94ECD94C8B58F0A54A39589A9320BDBF70160CEBCC27611776E76E8163308AAA5073A63D50D</sha512>
+    </dependency>
+    <dependency group='org.multiverse' module='multiverse-core' version='0.7.0'>
+      <sha512>517DC0667957D52876992A04B6D585453EF9124C89AAA72E9E2A6C022A97854E7F647A2F1BF3AAB5C5CF53C3908A69A93B141BF67E64BE75204F5BE9EEC686F6</sha512>
+    </dependency>
+    <dependency group='org.ow2.asm' module='asm-analysis' version='5.0.3'>
+      <sha512>1E5D21F7B878C21FF79648A1976395FB1A4A355DC5E71E48B31EDE7D1312210E6B829E47B0C3630FB75C20C34D785BCBB5C6CD88E7BF281DDB13FE512E6F8291</sha512>
+    </dependency>
+    <dependency group='org.ow2.asm' module='asm-analysis' version='6.2.1'>
+      <sha512>BE273F8E886BBCFDA81180917145996AB8FD26A17264EBEB5E1FC2337950A309D64DC8CBD373220009728622A8CBF56B8578E960B5561C22EA66848D296AE44E</sha512>
+    </dependency>
+    <dependency group='org.ow2.asm' module='asm-analysis' version='7.0'>
+      <sha512>1A6CA169E9E2D29256F9C45570D89E5B039EAF7D405CCB3F7F79926552F2A0818975CE2C6ADCE3F1F59E28172E4303A1C790C52AB06263C61C9C8181FF279CEE</sha512>
+    </dependency>
+    <dependency group='org.ow2.asm' module='asm-analysis' version='7.1'>
+      <sha512>D74FD51F49A8278545EAAAAF808692D69F7140FA73F4CF1EEC01A21D5D2A378356A5D74FADC2F6983EE023CDF6E06851F9F37A084BE547120300AC97D9CC6BBA</sha512>
+    </dependency>
+    <dependency group='org.ow2.asm' module='asm-commons' version='5.0.3'>
+      <sha512>702037DE4CC53D3C4689D25223774384CE93372F4569D05E7E32E77A0D8A7EFACAF3F574EE6E3BA5547F06431CB1595426DA62F307D6FCF9321AAA9C4D7F6F77</sha512>
+    </dependency>
+    <dependency group='org.ow2.asm' module='asm-commons' version='6.2.1'>
+      <sha512>CDF7DDB8E865B1C22C7532FFF68380FE4EC49A00C6FF3188BF265C4769E49E793B51621FC80A39B5BA2D49E703F100BDB7FC9CFF8F488C5153A9339334371411</sha512>
+    </dependency>
+    <dependency group='org.ow2.asm' module='asm-commons' version='7.0'>
+      <sha512>CA97B49EECE30DA774055B58A63C6E4F65A6BC4C0F40A829DCAF7164FBFFDEC10C6B2D9A22DF0A0918FDC83A47EA9906294AA99D3F170B35FD9E0632578C80B2</sha512>
+    </dependency>
+    <dependency group='org.ow2.asm' module='asm-commons' version='7.1'>
+      <sha512>2879AE5E7B796F0777B4730FB3F21B8D42CBDBF3A090ACADF2CE52082F1EA030059B0067D9A3B4D2C4B4680519A8EE9B2CF1563901931645245A973B9F60B1C2</sha512>
+    </dependency>
+    <dependency group='org.ow2.asm' module='asm-tree' version='5.0.3'>
+      <sha512>41FA352A4B1FCB482CC71A5CF8EB25770E16AEAA926FFC5C9EF5E09FFA29A19CF9F274D7D413839B889620607B16C649FB3DF82A41347269FE77C8F0F0E861DB</sha512>
+    </dependency>
+    <dependency group='org.ow2.asm' module='asm-tree' version='6.2.1'>
+      <sha512>20FE687C2F494717CCEB33C97704FAB7C1867EEA1A0F79B70C68BCAA72E7818F34921B6FBA7A3C1ECBBC7256E1D8E1A538F9EC5B4BD3B2A255D412D2BC2CAA4C</sha512>
+    </dependency>
+    <dependency group='org.ow2.asm' module='asm-tree' version='7.0'>
+      <sha512>81A223620DD16340D18ECBA20AB15CFE078F61AB0EC1AEF091AFCD282E3F6047B9800200412116289EC14917B5ECE9414C8009E92CC9A3333C677B5BFEC13BCF</sha512>
+    </dependency>
+    <dependency group='org.ow2.asm' module='asm-tree' version='7.1'>
+      <sha512>7C285E6DE13CED1FD6110C616F9F38120D5D37DA9E39BE1B6FC16224595F54F645C675313F75ED819AE27E66D84E9BC378A6FB42DF2F4DD2819ED745767A79AC</sha512>
+    </dependency>
+    <dependency group='org.ow2.asm' module='asm-util' version='5.0.3'>
+      <sha512>4E4520640FBDA565F6907B9E368801D4B7ED63E8613493EBC9F4E267808736AAB607DE7A0C5F410D7E4CF6F7B4FE467446CCDDCC9B3EBB2EE6C95791DFF1F8D0</sha512>
+    </dependency>
+    <dependency group='org.ow2.asm' module='asm-util' version='7.0'>
+      <sha512>6B9630AD4C5F6ABC2724F9D85A7C0E81E524F8B0BF25273DD5578EDC20EFC7AB400095CD48E904D2536071181A8E9F39635FF3FEE0986BD078016D2DFF8241B1</sha512>
+    </dependency>
+    <dependency group='org.ow2.asm' module='asm' version='5.0.3'>
+      <sha512>D35BDA1ECF09753572FD0582D2E79F07BBD563CA936D1238690D4BEDAF57C68512580C49ABA75D03FDA41DB27B84FC5CB276B8CFD990167CCC9DBECBC69F388D</sha512>
+    </dependency>
+    <dependency group='org.ow2.asm' module='asm' version='5.0.4'>
+      <sha512>AFEE8F98EE21771F104318D95B839D9EA6EA083157BD62D8BC3462D9302DC20EA939D1B4AE2222F92F09B92BC9AB1317AFF02734007F716CC805FE49B92A8A5A</sha512>
+    </dependency>
+    <dependency group='org.ow2.asm' module='asm' version='6.2.1'>
+      <sha512>C8D0AB865B628CB5A71C2B8C5FC8AACDA3E286B14662C3287CE50A96E91990E959F1447D439BD7190D9088E69E4368EFBFF5890FA539F98776F514A262D6DA8C</sha512>
+    </dependency>
+    <dependency group='org.ow2.asm' module='asm' version='7.0'>
+      <sha512>B31699F50485DDC4E84466064CF5789A3E61BAFBEC53C4B9CB19FFEF07B36722D3EFDCA8722884FD6D6DEDACA65DB4DD6F71CD886BBA599E8A77971955167A60</sha512>
+    </dependency>
+    <dependency group='org.ow2.asm' module='asm' version='7.1'>
+      <sha512>7EBA7097109389F48FA9142BF22D225F5D3104D68013D3B8E0A6D4054A8CD0EF64614372BDCB38987D68ADB6D33A3804E98DDF112BA84DBB09D448CE702DACC4</sha512>
+    </dependency>
+    <dependency group='org.pac4j' module='spring-webmvc-pac4j' version='4.0.0-RC1-SNAPSHOT'>
+      <sha512>5F2349E48F7B265F26DFEC24D11BE6A95D3959AA63EDB40F961A05F47596D324FD8B638280946D921DA764FB6C09036E8C93B47D75DB51434E3F39E53D580A53</sha512>
+    </dependency>
+    <dependency group='org.pcollections' module='pcollections' version='2.1.2'>
+      <sha512>30A958CF60BB6A2623E07C05FEE5876108C2824CDB9E9BD6A14225936F067324E77724EA9DFA8ACD5CB882387681AA60183431DB29ED6501511FD5CAAE7F66F9</sha512>
+    </dependency>
+    <dependency group='org.reactivestreams' module='reactive-streams' version='1.0.2'>
+      <sha512>873AD9EAF57AB70D9D47A99B12ECDBAD60BA81E38C0961262E92F48B2A046EF0E76DAFBF76F5766410F406B1155CDE94622062CD657D29B0B3CE157F8DE0A082</sha512>
+    </dependency>
+    <dependency group='org.reflections' module='reflections' version='0.9.11'>
+      <sha512>2BF16B69319EF2A3374F4170629FE7652BAFB83971A81A55F16E15735C688F6942DC82BE5A2DA9DEBBD1316A05F6192A020D1097571275BF7A0D266EE5C063D8</sha512>
+    </dependency>
+    <dependency group='org.samba.jcifs' module='jcifs-ext' version='0.9.4'>
+      <sha512>4BBFC472E20A197E96A3712ADB40E990B7CF85DF226ADD626EB44722D6BD81E3A822287EC895CD47CAA013FA1D364C05B38E22D67AAFDFCC3FF36497F171569C</sha512>
+    </dependency>
+    <dependency group='org.skyscreamer' module='jsonassert' version='1.5.0'>
+      <sha512>CE2100374F56027C950DF4BCFE10987FE46905690DB83393504A2198761429594A9E7D51743EEED102A9F6584C7032E87C4BBE262E1A4D5591B8692B76E594DE</sha512>
+    </dependency>
+    <dependency group='org.slf4j' module='jcl-over-slf4j' version='1.7.15'>
+      <sha512>F47BE66E54A839EEE5179FBD56A9897576A3912D7A56D383205270385D9E8E273777F3F76DA8DED980AB967E63860D89BCC43D7D780FB48D5388AD3B7C6B873C</sha512>
+    </dependency>
+    <dependency group='org.slf4j' module='jcl-over-slf4j' version='1.7.7'>
+      <sha512>6D1185BC6D5165A32331CBD5ADFF723309A253A15CACF4882E3BBDAC60E2B3F41C990AF5A561F89B8910AF2029BA1FA0924147AFB38A02ACB0C02DCDBFB9B055</sha512>
+    </dependency>
+    <dependency group='org.slf4j' module='log4j-over-slf4j' version='1.7.25'>
+      <sha512>903A65CC6521F31226A4ED80816A334C6A0B8432FBC6D09C4CB99DB246EDD39374C6F57727E7838E89465916F7E3FBD29FD75E56040B722A2AAC04C240E90E9</sha512>
+    </dependency>
+    <dependency group='org.slf4j' module='slf4j-api' version='1.7.26'>
+      <sha512>A944468440A883BB3BDE1F78D39ABE43A90B6091FD9F1A70430AC10EA91B308B2EF035E4836D68BA97AFDBA2B04F62EDECE204278AAA416276A5F8596F8688AF</sha512>
+    </dependency>
+    <dependency group='org.slf4j' module='slf4j-api' version='1.7.7'>
+      <sha512>C47D0D78388022E38BD60FD6E613AB4CEB9CAD6B2567A3D36153AEFC832864A99DE1F6CDCD52959F73231E5B933FD9172353434E5FD83777703F41CB40FC97A7</sha512>
+    </dependency>
+    <dependency group='org.slf4j' module='slf4j-api' version='1.8.0-beta2'>
+      <sha512>49F858C76964F7DBDDF715C70D3CE3A1872E8342CF1643EFCD429CF45BBA97B1859D2723F6565DFB811586B61EBF5B160B3950D3D93D6BC2C3568F5142E5343E</sha512>
+    </dependency>
+    <dependency group='org.sonatype.goodies' module='package-url-java' version='1.0.1'>
+      <sha512>FFD27FD5B0ACB23C98762F61558ED7DC219BFDF893DAF5A8529B919C4E408DEA448473F2C855E33F46C9DA0159960DF8E987D5360E984E2B743C41A98C8A7C3A</sha512>
+    </dependency>
+    <dependency group='org.sonatype.ossindex' module='ossindex-service-api' version='1.2.0'>
+      <sha512>E6B9BF6999A3667746F5926071F45025FF02BD6ACAA98852B19B40C9428A9150C4697604F16E8567DFE2460E30FA1A696D81EAA07AFEA497C9404BCE2B686B65</sha512>
+    </dependency>
+    <dependency group='org.sonatype.ossindex' module='ossindex-service-client' version='1.2.0'>
+      <sha512>E457209399553141623C07952EBF7AFEB5E4A4876F37CF62801BC23A00F6900137DA077548F4AB327531A516719B698C7075A7C237E670D01646A39BB471EDDB</sha512>
+    </dependency>
+    <dependency group='org.springframework.amqp' module='spring-amqp' version='2.2.0.M4'>
+      <sha512>75C7DD7F2843E53A4BE1B44F2603149CEF88091F78810C031FF0B7CA3EA9B0D066709F394A5ABFB5F92A9336A0907F6B4132CBBFD2D3D3FCB306513DBBC5BE49</sha512>
+    </dependency>
+    <dependency group='org.springframework.amqp' module='spring-rabbit' version='2.2.0.M4'>
+      <sha512>BC9B10B2A012283D08AE46195343C9327C2D27BDAAD875D9D7CB12124483556B4893D84DF56A6FA6D8409CA15B2B36668360B1AB292D41B9D0B09A16C54BC7FA</sha512>
+    </dependency>
+    <dependency group='org.springframework.boot' module='spring-boot-actuator-autoconfigure' version='2.2.0.M5'>
+      <sha512>A1B6D903B733CB97FB55926CD752FBE9E318D04F885AD83F4788E9FC5A222325B4DC2C8B56A086C439FF289A5D8485DAA86689A34CFC372DCE3422C1907FF0FE</sha512>
+    </dependency>
+    <dependency group='org.springframework.boot' module='spring-boot-actuator' version='2.2.0.M5'>
+      <sha512>D10FE50BF098B62977CC6C7673A6441A13F42740DD9865BA717491827A85DF0255CCF103615A3BEE221C78AB4309AF1AF88EAB9B51E4B874E6AAC197AD6BCB69</sha512>
+    </dependency>
+    <dependency group='org.springframework.boot' module='spring-boot-autoconfigure' version='2.2.0.M5'>
+      <sha512>F2C0EF5D81F78FB0906E7826641FA6107B6D8E99BB09F5573713D132052268679050AAC48E04CB51CB5376E6FFEC6161AECE8FF28491A77F6288794FF7959515</sha512>
+    </dependency>
+    <dependency group='org.springframework.boot' module='spring-boot-configuration-metadata' version='2.2.0.M5'>
+      <sha512>FA6E6822FE9E436111B7940750369B038FE1218FC12B2AA76C870D42128D3A09E65BE5302D71A234CDB29246C3C86AFDA0D4ABCAD0DEC25CE431B49F21EBF66A</sha512>
+    </dependency>
+    <dependency group='org.springframework.boot' module='spring-boot-configuration-processor' version='2.2.0.M5'>
+      <sha512>22A04054F4FD10EE34F0EBAC7E8310C4283E964E338CFCA45F0D4BA42BFDBC91806CAFAA5E6B8A3309387E4AEA41ACA3E5D2C53867EB4132CD6CC9C6AB7E722</sha512>
+    </dependency>
+    <dependency group='org.springframework.boot' module='spring-boot-devtools' version='2.2.0.M5'>
+      <sha512>9EA3DE2CF5FBC2A7944218C4C3757B4128094D302EEC62C8969B71F34EB889FEB633268B6E245C8CBFF59ADC8267E627CEAA1DA5910D33FD4DF8FA25946566DF</sha512>
+    </dependency>
+    <dependency group='org.springframework.boot' module='spring-boot-gradle-plugin' version='2.2.0.M5'>
+      <sha512>B5B5E94A195394DF496E63A3FCEC3113D2A2ECFB039AB01C2CC9BFCDE14697AF33E360740AA4EF1AF8670B16186723C05DF924B0B4D44B1B1126770C7C6E2E8A</sha512>
+    </dependency>
+    <dependency group='org.springframework.boot' module='spring-boot-loader-tools' version='2.2.0.M5'>
+      <sha512>B86EEF1C17B6313B662D90B72730DBD794EE36EA238464D776586BB5250276328506F13DF70DCFABFE4974E0CF3229CCA74B9968C17F39393FA924B33EEA209B</sha512>
+    </dependency>
+    <dependency group='org.springframework.boot' module='spring-boot-properties-migrator' version='2.2.0.M5'>
+      <sha512>53D1A16FC6D3ED733C2387E849CE8D5EB942A39C2F295CE3BAD6F1F85074CAB554DBD711E4F8C2866F2F8FBA8BC5FA11A992A232B54A5F334C75046EAD31AB4A</sha512>
+    </dependency>
+    <dependency group='org.springframework.boot' module='spring-boot-starter-activemq' version='2.2.0.M5'>
+      <sha512>EB9117648CDEAC1EF69FF59F32E11D383703DACE83A111365B6430BD8976DCD67B01AFF192FA75CA48203F24FBEE735E274151FA1E40C00F950F5BE28B164201</sha512>
+    </dependency>
+    <dependency group='org.springframework.boot' module='spring-boot-starter-actuator' version='2.2.0.M5'>
+      <sha512>377BC43F75A4FB09514F8C528D221F5588E9A3B43891CE4250F868A5B5F631B4039012296362CECC5B338C9717F54FF612F0D58B2C0105A3831125046D056FFC</sha512>
+    </dependency>
+    <dependency group='org.springframework.boot' module='spring-boot-starter-amqp' version='2.2.0.M5'>
+      <sha512>88E3A24F455455F0F23CA678F48CC774EA2EB206B993A4F92ED8B4B7B557965819021C41C55952D235E08D361E6CA2F688DA50C3789CD308E11A243CE67415D9</sha512>
+    </dependency>
+    <dependency group='org.springframework.boot' module='spring-boot-starter-aop' version='2.2.0.M5'>
+      <sha512>5F24FAF09398110F459D4F0A64AC67AD728DAAE7B25343D63523F7AE39B1770BD27463825A41C880E93376E82BB75DBDB133FC9D003F3C2B1C25E4262905B759</sha512>
+    </dependency>
+    <dependency group='org.springframework.boot' module='spring-boot-starter-data-redis' version='2.2.0.M5'>
+      <sha512>2CA40F82E509B0EEF32F7D077D8AE0145C641B3F40B55C4B63B6A66518BC4E3BA74F0492CBB0E4D798D5A03CB39B5477BC973C68331C6E5614B90FBF6BBAC294</sha512>
+    </dependency>
+    <dependency group='org.springframework.boot' module='spring-boot-starter-freemarker' version='2.2.0.M5'>
+      <sha512>2F98D692634FEDE303AF1C7C259D537599B18E8E7CB8B92542CEF9F6F1D798961CB48ADD870E661CD362EDEBB746E0F6750393C0D39885DB48E89348E64D4066</sha512>
+    </dependency>
+    <dependency group='org.springframework.boot' module='spring-boot-starter-jetty' version='2.2.0.M5'>
+      <sha512>537882A56FC268FB024C2EFD5316CBD8C7DFF4C92E32B4F478A23A87696E5CEBCAA3AECCC4EA56598F81285D7FB603C81469A6EB93B90E7E204781C8ADBA1484</sha512>
+    </dependency>
+    <dependency group='org.springframework.boot' module='spring-boot-starter-json' version='2.2.0.M5'>
+      <sha512>4D5785D0B68E093F31CE40BAD3098B3B51FF7A7D4E1C5FD4AC1D4056E0A0149E4F90526D3812FA22BAD52E307DD30497FBD67A587CC9185F3AC03E058B32E7E8</sha512>
+    </dependency>
+    <dependency group='org.springframework.boot' module='spring-boot-starter-log4j2' version='2.2.0.M5'>
+      <sha512>94E6CBFCD38D57B4CDE6181A46E8FD2E4920A37D0C522E51A16D4EA33ECA3A0AF38D74D2D7D056B5EE8780E264255521C668DC364C2BB81BABE9E36A58417E8B</sha512>
+    </dependency>
+    <dependency group='org.springframework.boot' module='spring-boot-starter-logging' version='2.2.0.M5'>
+      <sha512>21C13461DDFD6D8CC1EE547D0E38570ABF5CE3585FAA5890066E74AF1BA0FC7E12EF1EE830AD0E00AACD98AFB821B40D50FF6D6A9807FAEDA03507B0740E82C4</sha512>
+    </dependency>
+    <dependency group='org.springframework.boot' module='spring-boot-starter-mail' version='2.2.0.M5'>
+      <sha512>CC2D795A388E1E128B4C098C969EC1D77C79F152C7C9FE42D254FBC24B662FCA369B113FF780A712D977333B0109BD1F94CC0C8D6AA12A959333C57D17443E13</sha512>
+    </dependency>
+    <dependency group='org.springframework.boot' module='spring-boot-starter-reactor-netty' version='2.2.0.M5'>
+      <sha512>BD9C844172156E28BBC5872F39A722ECD7C6CEDA4C9AFF131DE113065B56465F0589FDAAECAD1176C269588CA5DAFA4036F112E18BB71DB704FEF65EE58C0D69</sha512>
+    </dependency>
+    <dependency group='org.springframework.boot' module='spring-boot-starter-test' version='2.2.0.M5'>
+      <sha512>2419D213D53FDDAC831283D1B9AAE24771EE8A030CD5D27BE64F1D84FB3CB187203F9D6A46316849753BC9ACA037CBC8C230486CDBBB8009097076B62DCE5BD9</sha512>
+    </dependency>
+    <dependency group='org.springframework.boot' module='spring-boot-starter-thymeleaf' version='2.2.0.M5'>
+      <sha512>FCDA6BF6C9155381D6B6BA00B15117A8472E2C1B71B79206AFF1DA2E8297E4AA157B168A26CC9325DBE3EDACBBBFA38EAAE235E7538166EA54B49D1F294AB46B</sha512>
+    </dependency>
+    <dependency group='org.springframework.boot' module='spring-boot-starter-tomcat' version='2.2.0.M5'>
+      <sha512>AD3CB40AF4F464AA402542B563401CD5C9B149F7CBAD0CC41BF8D0BB052BB480604711E953639C17AA3BFE3357DA84A94E9F4FBB526A2D8E2303372A7D5D9CCF</sha512>
+    </dependency>
+    <dependency group='org.springframework.boot' module='spring-boot-starter-undertow' version='2.2.0.M5'>
+      <sha512>DB1EF050B297A2DFB28847CFD05D7E10DB7930749AE5DC762CCDB292866371756931CAEB0A2412B33FDD14360E58A26745D4114CF8E9C7167F0AAACEB3F0CDBB</sha512>
+    </dependency>
+    <dependency group='org.springframework.boot' module='spring-boot-starter-validation' version='2.2.0.M5'>
+      <sha512>F4F0534F33833F58EF6D35940F4113E034A34268CB9056A6D498EEF2903F1999503DD16227251381A39E8087CEE57A4DFA1AB567FCD74882E99624E65EF03ACA</sha512>
+    </dependency>
+    <dependency group='org.springframework.boot' module='spring-boot-starter-web-services' version='2.2.0.M5'>
+      <sha512>A1BBC31B56BAC140F46FE81823B953D3B2F9C37944528FE90F6DD031D431AA10937D733FFABE2FFBE3E390646EA5B85FDEED62AE4CD74155B2E3F9DB620E1B3B</sha512>
+    </dependency>
+    <dependency group='org.springframework.boot' module='spring-boot-starter-web' version='2.2.0.M5'>
+      <sha512>CAD575F4C6EF09355DC3E0AE8EC01114B275AD9D3552D5838E2C62FBE68910EDAABDFB5D08B6E11A97495D4D074CD99CEF7C18730A66C65D686FCFD618A80081</sha512>
+    </dependency>
+    <dependency group='org.springframework.boot' module='spring-boot-starter-webflux' version='2.2.0.M5'>
+      <sha512>7A118FD79E49592EFD9932252CBDD7BFF7FD73D0434B7F6CE4FE94265123A8CF26E979E6140B48A14EE976E77DC65C18412F350A7A1AA7A7E24F0F83325B5835</sha512>
+    </dependency>
+    <dependency group='org.springframework.boot' module='spring-boot-starter' version='2.2.0.M5'>
+      <sha512>6E33E2EA5F68EA0F8402DA29917E5620BC6DC769D71415D197EA5C201CC0816F72AB60D7BB256F768A263F3883ADC2563139DFFD73C4F1E1600D07E9491246B9</sha512>
+    </dependency>
+    <dependency group='org.springframework.boot' module='spring-boot-test-autoconfigure' version='2.2.0.M5'>
+      <sha512>1002478AF49253266D7A2487EC138D1E7C8F52AE12518DFA26AB2B460B6D04E51CC21BCD584AE165AF960B5E389031F833A0F8ED02E98E5725A4A755C2CC3E4F</sha512>
+    </dependency>
+    <dependency group='org.springframework.boot' module='spring-boot-test' version='2.2.0.M5'>
+      <sha512>5E6A9F7FC409788CF34C5B5E85B695376EB79D2F40182EACB5333E24D7ED612FAA221AFA356F72047C4482A11CFEA05698300C61A61A5A397A824F5E53100790</sha512>
+    </dependency>
+    <dependency group='org.springframework.boot' module='spring-boot' version='2.2.0.M5'>
+      <sha512>F9ED388DCDBED0714533A195BD33E9E4FB7BD3DC64291E70966518B009D92FAE00587BAC24E8CB9FA32518A40E0C02C979FF33EEA2D3EEADB48A56DF3EC96F0E</sha512>
+    </dependency>
+    <dependency group='org.springframework.cloud' module='spring-cloud-bus' version='2.2.0.M2'>
+      <sha512>BB1D4DA483B473855BCD58CE315EB155B71BF08348AFA33D9F85A10CC65D3C1394E27FA9035887EA1F7B47E5118FBE465F515273E084E937C05D414BFA6259B2</sha512>
+    </dependency>
+    <dependency group='org.springframework.cloud' module='spring-cloud-commons' version='2.2.0.M2'>
+      <sha512>CB52F1D53A59679A0B923EBB50A60A3905B44D5FDEE8C39B05FEB921B760317FA909A02822C52CCE1E80E1C44FC1F7ABFA28A7B731423A19086E1B8393F605AD</sha512>
+    </dependency>
+    <dependency group='org.springframework.cloud' module='spring-cloud-config-client' version='2.2.0.M2'>
+      <sha512>7E72A70BA718A9E6C5D491C2BD886E0C7AF7C8B595DAE7695C56174E78BBFBCA1CBB3BB8BD6C6BCA18912277BC7B9C9201AF24F65C3DE8C973519AB5623EC00D</sha512>
+    </dependency>
+    <dependency group='org.springframework.cloud' module='spring-cloud-config-monitor' version='2.2.0.M2'>
+      <sha512>B1A4715859E5F716952D9CF3350722460FEE97AB0A4B7C626A860E2A476EEFBDFA3DEAAB4B20EC99D40DA503110204015FE65DCCC03499087E16031940DADC8E</sha512>
+    </dependency>
+    <dependency group='org.springframework.cloud' module='spring-cloud-config-server' version='2.2.0.M2'>
+      <sha512>8CAA2F21B01B77DF25A687937A8C91E68703B0B18A2600B99D7C7E3A70E6383BA401B1AD2C9BEE486DAB1C744385F940E0777F1C4CDBA700AD22718AB38737E8</sha512>
+    </dependency>
+    <dependency group='org.springframework.cloud' module='spring-cloud-consul-binder' version='2.2.0.M2'>
+      <sha512>8182560F1FCAC0AB756B34C4BCCBBA6A5BCE3C20775E6304376B63B2DBAA311E0F823D48A0ACB23B072F471D914C96A55C6782EEA2153D23C22574BB26DF5F17</sha512>
+    </dependency>
+    <dependency group='org.springframework.cloud' module='spring-cloud-consul-config' version='2.2.0.M2'>
+      <sha512>CC963D63B55BE82B20AA777E7E30F309D44A507CA6CDBEF36F40DC80806D649FF628CE2F2621F96CA7EAFB1CF97853780EB3ABE33073A5B6325859AF5C97FB6B</sha512>
+    </dependency>
+    <dependency group='org.springframework.cloud' module='spring-cloud-consul-core' version='2.2.0.M2'>
+      <sha512>3CE64044C37B19947869D58C2D60642ED2C148A7BC6F8B2F8C65D35A570915951CF08F30DA49B4A8526FEC800B5703FCFF5D70CCE6A8BB6576655AA2BFDCB858</sha512>
+    </dependency>
+    <dependency group='org.springframework.cloud' module='spring-cloud-consul-discovery' version='2.2.0.M2'>
+      <sha512>DF04F7F9AE22DAE30A084C5E54E6BAB393222FCA033B15A54B50CA762EB20A018E915795D761ACE1D12A4D9FC34A1B23BEEF87779344E03EA5F914B2B1007966</sha512>
+    </dependency>
+    <dependency group='org.springframework.cloud' module='spring-cloud-context' version='2.2.0.M2'>
+      <sha512>5AF878C6B7280F3430CC39E1CAC57CD3B1C2512B17AF1E83E9DF1573D26C91D9F4B9A4E75A9BF9AED56D0A606626896F9EAB17791F1EA381B307F20AAD64ECAC</sha512>
+    </dependency>
+    <dependency group='org.springframework.cloud' module='spring-cloud-function-context' version='3.0.0.M2'>
+      <sha512>C0504E0E1DF87D528E49D1A5B92B45545222B4BF0EDCF1844C5547F4916546872AF64082B3B52E5055512669994EC0E046234A1C6F08243991EC4D9FF04C029A</sha512>
+    </dependency>
+    <dependency group='org.springframework.cloud' module='spring-cloud-function-core' version='3.0.0.M2'>
+      <sha512>156D881A3C72F26C1CA8289EDB3762862151FDE7D0F48ADF375C1A85ACBC0FDA4E662AE75C5B4FC6F01A2D9B28F4B259FCC5C24AD10E528BB78BD04F1C2A2827</sha512>
+    </dependency>
+    <dependency group='org.springframework.cloud' module='spring-cloud-netflix-archaius' version='2.2.0.M2'>
+      <sha512>BAB71770001F608C3F8E3F91C05D267B011DC5234CF348C28312564A256500F1F0BAA21D6384CE6ACD0CA7725A21236A80699CD5842C630A23382AAA5C54DE7A</sha512>
+    </dependency>
+    <dependency group='org.springframework.cloud' module='spring-cloud-netflix-eureka-client' version='2.2.0.M2'>
+      <sha512>6ED6AD7F0F74D344BE7C848527ACF6985C0F689AE1BB7C022D40947076E8ADB25BE98EDB2FA8F1D1266574ECAC39538C60FAC756AF6FFCB414E3A7499CE0B2D8</sha512>
+    </dependency>
+    <dependency group='org.springframework.cloud' module='spring-cloud-netflix-eureka-server' version='2.2.0.M2'>
+      <sha512>497C55D4C4DE59803A668B269A56364AB568F550F0B8C9CC06BC9C084887C86A8AC320390B12A973AD0A213AF6283EBDA82FF35E580F50FAD339C432316BA3B</sha512>
+    </dependency>
+    <dependency group='org.springframework.cloud' module='spring-cloud-netflix-hystrix' version='2.2.0.M2'>
+      <sha512>21C016C95F189BB5FB93CD052AD916CA1B729087FA6E4D74A7E34155F88FA74887B0F1243F4B6EA52FCFE98AD0A5F1236909A8833198A76A7A56D5CFEB348CC</sha512>
+    </dependency>
+    <dependency group='org.springframework.cloud' module='spring-cloud-netflix-ribbon' version='2.2.0.M2'>
+      <sha512>40D2B28A938272A4AA343BC5C162AC3A711818ADEC466A9FA2E6BD0CCEC4171769608EA78B323BF5B43E0255055D9B439A70CD149879021D79A7464A646284A6</sha512>
+    </dependency>
+    <dependency group='org.springframework.cloud' module='spring-cloud-sleuth-core' version='2.2.0.M2'>
+      <sha512>14DFD39753BCB99CE685C0931A420E1D57759180B82342350C599C0DEF8C5E0C60A99D862BEF0090B1D33E9524569686579E12ED38F8320ADCF60FBFAFAFC5D7</sha512>
+    </dependency>
+    <dependency group='org.springframework.cloud' module='spring-cloud-sleuth-zipkin' version='2.2.0.M2'>
+      <sha512>6E59715C329A10BAEE354BB2D1558629D886E10F13FBB4FE952B589C4F7A36F97226F2C1DC3AB8832E0F8C358B3353E75E595A33DB3CC45DBF6F10CBF1425146</sha512>
+    </dependency>
+    <dependency group='org.springframework.cloud' module='spring-cloud-starter-bus-amqp' version='2.2.0.M2'>
+      <sha512>D844623923BEF5B36E3DD9C4028E656F11C0AE67C9761DA7E8AF1EA0DDBC4701714713FDA7387E18C9419A489F5270EC424CE9767226D34447E198094F7FAA8A</sha512>
+    </dependency>
+    <dependency group='org.springframework.cloud' module='spring-cloud-starter-bus-kafka' version='2.2.0.M2'>
+      <sha512>2649A60D8DA80EE269AFEAA3AFA55F2E08067E9EA15E54A21D3EB75C698963F2B9AAE9A055770E5FE9D3D9BAC98506E4AF96F6CDA75B7E4569ABDAA22B379067</sha512>
+    </dependency>
+    <dependency group='org.springframework.cloud' module='spring-cloud-starter-consul-all' version='2.2.0.M2'>
+      <sha512>2C8D3ABD2D70BFD5910206829200A13313EA3423A238A4BBFB83ABAD77A9A5A2CD668E4D9F9288442712C5046BA1B57F74CF9886F943831B203258E90C78553D</sha512>
+    </dependency>
+    <dependency group='org.springframework.cloud' module='spring-cloud-starter-consul-bus' version='2.2.0.M2'>
+      <sha512>5AEF469746C1D42926C387E7A7FDE801A99F47D0D44895BBB213722A61F5BF8A945AEEBE12E3B96A0A9086D0F6C339543C4EDC44CBF43B4CA63FFC90B217713B</sha512>
+    </dependency>
+    <dependency group='org.springframework.cloud' module='spring-cloud-starter-consul-config' version='2.2.0.M2'>
+      <sha512>23616709A2F945BDAA6748A3255B3DAD809CBA7519AEE500A769AC93C33BD15D9CE2B4D6213F72A209F28C5E6951C322A232F124DBD3F98DC25FB87B798A2A44</sha512>
+    </dependency>
+    <dependency group='org.springframework.cloud' module='spring-cloud-starter-consul-discovery' version='2.2.0.M2'>
+      <sha512>F4B85C454E6862C17AF48D9990A1842FF712590372106310BB595C3228400486704E319C984DF16D8C6DCF19B4258C085DC36BAE96A01DCB0296DBEB90629BB8</sha512>
+    </dependency>
+    <dependency group='org.springframework.cloud' module='spring-cloud-starter-consul' version='2.2.0.M2'>
+      <sha512>2815FAEEFC62070BF2D8CB89080BF963EF8B483AF88D81A5534F70CC5FCAC625DDA0B40044A2C77675B705F290CC254AEFF542F55BE19CEEE1470A933F10C74A</sha512>
+    </dependency>
+    <dependency group='org.springframework.cloud' module='spring-cloud-starter-netflix-archaius' version='2.2.0.M2'>
+      <sha512>848C7B09047C669458E09AAE8EEF99090CF31670B6443326AD4B83202D101D09FD7664BA6D643F26F0C4996C746210AFEEB9E8CCBBBD1C620525DE142C5A9D96</sha512>
+    </dependency>
+    <dependency group='org.springframework.cloud' module='spring-cloud-starter-netflix-eureka-client' version='2.2.0.M2'>
+      <sha512>84519BDEABFD673C061A6612072DAD2BBCB59DF62990FF8B083B38497E581904FFCF79EDC4F89E9D2B97755CF3084267F3883EE1379C0736DD60E6CEB7F92C03</sha512>
+    </dependency>
+    <dependency group='org.springframework.cloud' module='spring-cloud-starter-netflix-eureka-server' version='2.2.0.M2'>
+      <sha512>93AEF68B0837E505EF415CE4A7992438419DBDA605BC35970DD041FEBEEA36B76542666C5F4A3F13C4122247CA218F3AB887DDE65238D7701E5B587CA443CC61</sha512>
+    </dependency>
+    <dependency group='org.springframework.cloud' module='spring-cloud-starter-netflix-ribbon' version='2.2.0.M2'>
+      <sha512>6C04B7F1ED5C955FB62F6FA32CED3F0D004DC4619CF8F100E6E0F49CB049A96C5B686D9EB5F35D37ED49B43532A4B6C5C6FE44E20D6761F1B59EA7DD765ECF2C</sha512>
+    </dependency>
+    <dependency group='org.springframework.cloud' module='spring-cloud-starter-sleuth' version='2.2.0.M2'>
+      <sha512>13E0F088474F0A439D120D29BD87C8ACEB7B6B23941B08B9378AB0BA4F420890E509AB37DF4C7CAC466F9D06FF1F22041A0B69DCF0ABED1C94DFEBE7EFE19FC</sha512>
+    </dependency>
+    <dependency group='org.springframework.cloud' module='spring-cloud-starter-stream-kafka' version='3.0.0.M3'>
+      <sha512>ED8D3E207B17B44CD0CFDED0BE15EBB45DC3D999547BBEA38D946BF5D1801F08F1F5A936156F17A31611D4DF27A7266246229BF5AFB0B83716A5419DB49CF08D</sha512>
+    </dependency>
+    <dependency group='org.springframework.cloud' module='spring-cloud-starter-stream-rabbit' version='3.0.0.M3'>
+      <sha512>736B8DCA4F42520631B1BBFC1E60443BC059A192D9A97577F0907B81D05351CE2F1CCE1E0820380BE7666AD3AC6393E1D2C79FEE84F5D770450C5936F9D15311</sha512>
+    </dependency>
+    <dependency group='org.springframework.cloud' module='spring-cloud-starter-vault-config' version='2.2.0.M2'>
+      <sha512>F10FB92BAAA0DF36EC49DD007882C116DFA58937628D747CD402F868147C2FBA524F6A2A966CE4E7CBC8B830E7D78091851394E0ED7C225FB43FFBC76E540475</sha512>
+    </dependency>
+    <dependency group='org.springframework.cloud' module='spring-cloud-starter-zipkin' version='2.2.0.M2'>
+      <sha512>2D3BB7E85DD63370EBCA444CE185E3D3EA12AA8D27E098A31D46D7124931C3408CA5EDF858E354B3BCBE1440A2060703B046713E2315FA236344B28281E255E4</sha512>
+    </dependency>
+    <dependency group='org.springframework.cloud' module='spring-cloud-starter-zookeeper-config' version='2.2.0.M2'>
+      <sha512>A78926F70121929FC0A7074843BCCFC51C2ED2166F5B0789C13BB642D6B371E62AE570031E3E76F2B5BC7D78459AD94470ED784B9442635DB94AC8DDAB326AE9</sha512>
+    </dependency>
+    <dependency group='org.springframework.cloud' module='spring-cloud-starter-zookeeper' version='2.2.0.M2'>
+      <sha512>BB3DF4DC447FEDFA1E556C4319744B1AC28B25C5C1E3F0F4AF2AC0336C7C2653D5A468D3AFFD5123E7E898DFA0FF9D85D4445F30DE289EA70E3CFEE0A73203FB</sha512>
+    </dependency>
+    <dependency group='org.springframework.cloud' module='spring-cloud-starter' version='2.2.0.M2'>
+      <sha512>7199C1D069C37FCC481378E7EC16DBE8897FE18A18B3E84B0BC68A314CFA8DCA40B6679ECBE04530265F61932449F0E9C950565E5C2F167169C3446A4CD657E7</sha512>
+    </dependency>
+    <dependency group='org.springframework.cloud' module='spring-cloud-stream-binder-kafka-core' version='3.0.0.M3'>
+      <sha512>BF957FC1F3FE27A3BEB32C364BBBCFA9EA0D6CE8DA8CF1FEE15CA5B62E12EB0E27B7FA7B8CF022FCB6E26E653620CAD2F4B110CDE1F3C12C4B57A07DA3BC5E0B</sha512>
+    </dependency>
+    <dependency group='org.springframework.cloud' module='spring-cloud-stream-binder-kafka' version='3.0.0.M3'>
+      <sha512>AB4606A0033A48A8C1AC3D1FC1C5074AA8B8A2D9AB14AE4996A0DA7ADFBBECE476672D64CA93DCDE5D23C5368F32B06A474D77E35588B48E793B97D618D803B9</sha512>
+    </dependency>
+    <dependency group='org.springframework.cloud' module='spring-cloud-stream-binder-rabbit-core' version='3.0.0.M3'>
+      <sha512>934E3E669C0EE9A095954150D781DEF48D54085E5E169F922F21EDCD5C121507FC8001D7D93CC32FEC03CBD8A0C96F84E3BE067D4C448BA5F4DAA91A186528FC</sha512>
+    </dependency>
+    <dependency group='org.springframework.cloud' module='spring-cloud-stream-binder-rabbit' version='3.0.0.M3'>
+      <sha512>1AB2A865361E62B9127ED6902B8E877912977296F49EB418A3B060A826EA87AA358B29437761088C1FC2C2FFFE727E9121EBC674B10EEA4E71B6DF328D6FD7CD</sha512>
+    </dependency>
+    <dependency group='org.springframework.cloud' module='spring-cloud-stream' version='3.0.0.M3'>
+      <sha512>EFD3250C759AD02CAE2824DC2782C528A1C77F3FEC1FB0363275465171819846DCC2F4E9FC6A19527DA21FFEA70BA69797C7EE4BBD65F761530B407AAE621CB4</sha512>
+    </dependency>
+    <dependency group='org.springframework.cloud' module='spring-cloud-vault-config' version='2.2.0.M2'>
+      <sha512>24DEE69C88F7197BD3415AC0A89BF09918CF0CB94243B73D764632D7A9766322CBFBD1BD8C0D8A0F27591896DE59BCCC9FB702E791D2A5E3939550B6D925033F</sha512>
+    </dependency>
+    <dependency group='org.springframework.cloud' module='spring-cloud-zookeeper-config' version='2.2.0.M2'>
+      <sha512>244341968BFFCC592D9A49F9FD6EBBE796619F6843BBF9405D313F7A3010ED02DFF20FF7772AE087175E4770E25BDA524A8F83CCF14E4A5A5ECEE9F87AA7BC02</sha512>
+    </dependency>
+    <dependency group='org.springframework.cloud' module='spring-cloud-zookeeper-core' version='2.2.0.M2'>
+      <sha512>5202AE86642F07A1603828E84E6F60F90F4E2849C116BDA7B32ADF8E12B87CAC0F34C1E694A7FDFC01901BE5A94B177A5EAC529373C50CAC0F0595AF147ABA0B</sha512>
+    </dependency>
+    <dependency group='org.springframework.data' module='spring-data-commons' version='2.2.0.RC2'>
+      <sha512>19E6B2E8ADA9379EFD82C6F4A664B4E16C92F74495CC20A19086FCD9FA29D8065E0933ADD24822DFE6E9E1D19C66307A5727EC6F496D66AE9F6DBAE4B40EA15</sha512>
+    </dependency>
+    <dependency group='org.springframework.data' module='spring-data-keyvalue' version='2.2.0.RC2'>
+      <sha512>86718B3F0DBA2EA893920D97F2F8242F872CA6BEA0EDABDB451CC78CD950A39880CA432BEB5E3CBA99FDE8143703480E8F4AD93B4161CEB2ABD8CFD1F5AA7586</sha512>
+    </dependency>
+    <dependency group='org.springframework.data' module='spring-data-mongodb' version='2.2.0.M3'>
+      <sha512>894BD213C33B0711C865FFD5B48615DE57BCF68863D20E31C95091AB3D6805363ED74FA9EAAD74A5F096CEEB3BD85DF40BE7515C6F590DFB54EFA35AC9794B5E</sha512>
+    </dependency>
+    <dependency group='org.springframework.data' module='spring-data-mongodb' version='2.2.0.RC2'>
+      <sha512>7AB7FE01FFCBF766A04C192CAE42F103415588DA7CCE0975C6C73AB06344EAB4521476DE2ACA0300F02C9FDCF93F2AFF4DD5223788F21AD7D9ADC6515E4E4072</sha512>
+    </dependency>
+    <dependency group='org.springframework.data' module='spring-data-redis' version='2.2.0.RC2'>
+      <sha512>50E2E160C2A600FE5C0DF26501BD2C40E6712343C3A0AE3773566C243D08B85876496759D458FF5A4B6D8593FB9E138D534B3B3A9394D796F7769BB03A5EFCA3</sha512>
+    </dependency>
+    <dependency group='org.springframework.integration' module='spring-integration-amqp' version='5.2.0.M4'>
+      <sha512>957FFEFB98E2F41F25120D2E17384F623EF50EF252E4ADE16BFF46D4371B3341C224E9059E9DD3D3F44151659BFA6F0D1D4F4C224DC1FCD8E7A39902A1548014</sha512>
+    </dependency>
+    <dependency group='org.springframework.integration' module='spring-integration-core' version='5.2.0.M4'>
+      <sha512>545918880F57682ECF65B819A3F03827B5D308D70F1C5930ABED497D17A52B17EC5E426A7B11720DF4891FCB7A6727C843B5E7F67A1E429F62D6687AC356C746</sha512>
+    </dependency>
+    <dependency group='org.springframework.integration' module='spring-integration-jmx' version='5.2.0.M4'>
+      <sha512>634524BA1B4A5656C2CE6B0BE6E7EAA8AEAF58553EDF6210EA607EFB8484E8F55D743793902A450D33238BB92155EB2E16C6F9EB402E2216C6200B2496080985</sha512>
+    </dependency>
+    <dependency group='org.springframework.integration' module='spring-integration-kafka' version='3.2.0.M4'>
+      <sha512>5EBD7CDA31FB4ADF1A3DBE6757761104BEB0C3A12025E97098701FDE753FBCEC1B95F9D2463618CBEC5A1F190C989026D6A2536393815D4C1F8358465B136871</sha512>
+    </dependency>
+    <dependency group='org.springframework.kafka' module='spring-kafka' version='2.3.0.M4'>
+      <sha512>BEA11624167863569289B2979845E33F9E26F1AA9A3CEE7FD3EA553771FB17B5C82B3FE16660BBAA6E3BF5BE59F330DDE4D66F3F40DD99A5644FC8D3763C447</sha512>
+    </dependency>
+    <dependency group='org.springframework.plugin' module='spring-plugin-core' version='1.2.0.RELEASE'>
+      <sha512>FAA81F9DE0A459130BA53954F1592D95A7FA3F62F205EDD3CF96C2BE8FC35AAA7685F837EDCC9D359BCE401C7D1EECF17ABCC7408E506B490C6F2C344B6D9423</sha512>
+    </dependency>
+    <dependency group='org.springframework.plugin' module='spring-plugin-metadata' version='1.2.0.RELEASE'>
+      <sha512>6F729019CFB761114C813FDCB5CA645BE410BC58E8F701883F9793CF5279F9675376FB337548B25FD21F9119CB832048385295322EB608B25F87680346DA8821</sha512>
+    </dependency>
+    <dependency group='org.springframework.security' module='spring-security-cas' version='5.2.0.M4'>
+      <sha512>C6B08D2CB766764DFD0B5D11EFAA7787A46D4BE351C6A598DB4ECE9FEB2D2531E0EA25A305FB6791758188AA85E722380732721D7497586113D36A22F638F7D7</sha512>
+    </dependency>
+    <dependency group='org.springframework.security' module='spring-security-config' version='5.2.0.M4'>
+      <sha512>40701D37B9782DD587BC8836BFDB7776E4A740B397BEF0CA2ABA955D674269D3E6F46824EB0BC4E7C0F191E6F1CA1F90EEBFA50BCE4316C3C77DF7D43874DAA1</sha512>
+    </dependency>
+    <dependency group='org.springframework.security' module='spring-security-core' version='5.2.0.M4'>
+      <sha512>E5228A5A4C788BFC2CF22F83C88DE0CE3741C8E0C289C1751A0F2AFA280E5BADC2F0372203A5B52E9FD49AA5681D30651A899D13862CBD363721CB896252CDFD</sha512>
+    </dependency>
+    <dependency group='org.springframework.security' module='spring-security-crypto' version='5.2.0.M4'>
+      <sha512>8D1104A5E45C99B7C8AFEF941E8E466DD832FA7E5F9ADBFD0E59765F4DCA48FC67A54D597E5174490FFFB0BD923017F4E651293E3B1929A355A0545ADA6955B5</sha512>
+    </dependency>
+    <dependency group='org.springframework.security' module='spring-security-web' version='5.2.0.M4'>
+      <sha512>564DA4BADA4C168A4749D0FA3AC1A33FA36D4AD3552D69AB1BCCD5325683FC6541E42BE6DD6810055D9DC7A360EA145F802FA5EFB2498EE0992229D84948598F</sha512>
+    </dependency>
+    <dependency group='org.springframework.session' module='spring-session-core' version='2.2.0.M3'>
+      <sha512>A2DC8C057EBFF5B21E577EE7FB0648F0BA2377B3138E0B90EBEB95DE53FD3BA3E1C99AA78127453695D4D7BD7CC7D3F659CA86F9AC910CEFBF59E9B508D3133B</sha512>
+    </dependency>
+    <dependency group='org.springframework.session' module='spring-session-data-mongodb' version='2.2.0.M3'>
+      <sha512>7190FB1FC9467E723092142800E493978308FBA138D213C815379BA01B77BBCEADE50533E53CD8E9AFD8BAB455FB2D39E4DCEB0A8A69A602D402E9BF6466F738</sha512>
+    </dependency>
+    <dependency group='org.springframework.session' module='spring-session-data-redis' version='2.2.0.M3'>
+      <sha512>54AAECDDC2F9CD0629CAB49965A15B06835E2B2A7A678BF4910AAEE78514FD477876219BC17C49047E0E3804297B6495BEB910B8C94686CED4DDA706409FC182</sha512>
+    </dependency>
+    <dependency group='org.springframework.session' module='spring-session-hazelcast' version='2.2.0.M3'>
+      <sha512>FE4F13B0801FC3597F6101D6A6BC45EE77B6CF749EF86DF9571DE83B4D4486D95E2CC4AC76DF6449A554BE531643223ADFB43479CB69F2AF6CE787CF14152F8F</sha512>
+    </dependency>
+    <dependency group='org.springframework.session' module='spring-session-jdbc' version='2.2.0.M3'>
+      <sha512>433E9E2E32AA7ADCE279A6617B4BF56A4970BE69264983E4FE463C319787830431ACD5FEEEC189758B902D58751D8A6A85E79601928397561386F9725F6C7FD1</sha512>
+    </dependency>
+    <dependency group='org.springframework' module='spring-aop' version='5.2.0.RC1'>
+      <sha512>B38107F148F187796F6B80E48003C6D9D3DE0E6FE116DA25AA3B0DD8093372043343042077BE873930AE6AA26981F7ECBE848EEFF52F6F048F06E17F75B2D593</sha512>
+    </dependency>
+    <dependency group='org.springframework' module='spring-beans' version='5.2.0.RC1'>
+      <sha512>8BD4DFAB0A1DDF1414885A8279E0EF24C7D79DF4938CAD02A4FA024D16E60FBBE104AEEC38ED6BC240435B0F96864615B8A5A0641BA2A6251341FCC866C8F3F4</sha512>
+    </dependency>
+    <dependency group='org.springframework' module='spring-context-support' version='5.2.0.RC1'>
+      <sha512>3D6C938C1EF955E5A41BC9BBEEA43499C8FED9AA8DEF7A1171FF92E456983C2D15840751933D1B85FD2B14D889AEE53C20571390B95EB56021C7EE6BD540D90C</sha512>
+    </dependency>
+    <dependency group='org.springframework' module='spring-context' version='5.2.0.RC1'>
+      <sha512>ACE3C725680961D8EB148462B6EA5520AFD737B0EF3131FC19EEAE133FCB3D7332A68DDFB4CCD2955C7CCA8D980C86C78106CA7D4D20A30CEF0E15DBCC2C16F6</sha512>
+    </dependency>
+    <dependency group='org.springframework' module='spring-core' version='5.2.0.RC1'>
+      <sha512>5258AA562A288D00E83E66CCE7829F8CCECD9403864CE16DE33F93DDE9397784352CEF3CDDE0C669BCB34C668A760608CEEA70C7407C56255E995EE7DFDCB4B3</sha512>
+    </dependency>
+    <dependency group='org.springframework' module='spring-expression' version='5.2.0.RC1'>
+      <sha512>DAE41DC17B46C0725183BBD7C4129CF05407A661DB8D3B53713BB4EA189CFC9D1AE795D14E4250DE079DE4B6C560D7B19BF7FE5975848A5BD3E12D815D7D2A4D</sha512>
+    </dependency>
+    <dependency group='org.springframework' module='spring-jcl' version='5.2.0.RC1'>
+      <sha512>C3562B5ED1459BAC436A2D17C9C5CBFA5B18D1C9BFA75B3CD94132EEA4071F1ED3EFC03EC4BB94BE9FDD3FF3E0D019EF7A0B35B7165659394C33B9114482A00C</sha512>
+    </dependency>
+    <dependency group='org.springframework' module='spring-jdbc' version='5.2.0.RC1'>
+      <sha512>8A51EC6024AF68D44A58E7CD906CDAC808D39634327A7ED7BC92E326D7B7DEB5F016A236497B4222BFA147CA107E6B6B3770F87EE43C1F47DEC1D95EA729B881</sha512>
+    </dependency>
+    <dependency group='org.springframework' module='spring-jms' version='5.2.0.RC1'>
+      <sha512>78C36C144FF7C665BB94ADB45A730773BE75A44C7FF76C1BE73AA1BE90214BCAB1921406FFED81B0BCAA9371EC9BDA956C927FF18BA41CCFF0AE094A93D37A03</sha512>
+    </dependency>
+    <dependency group='org.springframework' module='spring-messaging' version='5.2.0.RC1'>
+      <sha512>88883AF02813D96BD3DFD62198A1B0A948225E1706ED011EFD25BB2BE12474F4D5B57E983D6C673DDECEC583F9C3113A54796A1BC498E2518396E7A7A7F46C12</sha512>
+    </dependency>
+    <dependency group='org.springframework' module='spring-orm' version='5.2.0.RC1'>
+      <sha512>A1384C8F990C1965F192DEDFF12AF19FC7205CDE84F238D6669807A60C11AE2F5C6E01B96F1597FB5C09BC5D67D87EC39B018BF0CF0FF4EA150DFF3BAF39F279</sha512>
+    </dependency>
+    <dependency group='org.springframework' module='spring-oxm' version='5.2.0.RC1'>
+      <sha512>AA400BB2E1EBABB09E1689A5EAC02E2A49D9628318569EFA094560D995EE64C1CDE8A6193E6AC76974A1BCCC5FC5E8E527B5364537FE309476F82F70E59CC37D</sha512>
+    </dependency>
+    <dependency group='org.springframework' module='spring-test' version='5.2.0.RC1'>
+      <sha512>9BC929DEFA20192962B1FD18D26DAF5199D709843BBA9812C0624EFF36A0F3AD96B465F50370B1CE55499E8976C2CE04AC7A6DFFE9C7ACDB79BE5F7364958995</sha512>
+    </dependency>
+    <dependency group='org.springframework' module='spring-tx' version='5.2.0.RC1'>
+      <sha512>E20CFD2236178A149A27023F9D868F8F238C06C1E7FADBA1F3FD9386D079CEDF420D15946187A9A3EE2145E99E21762F88E6AAE5BC51B9AB7DA5FF135409391A</sha512>
+    </dependency>
+    <dependency group='org.springframework' module='spring-web' version='5.2.0.RC1'>
+      <sha512>343224B31B70B33174088BAB2752DECFCD375D4614966C085E64A362DF0A93F880F4B17B339633AE6557F3FB96B07D6B2695A8314E06F34A1FBCACD4489B326C</sha512>
+    </dependency>
+    <dependency group='org.springframework' module='spring-webflux' version='5.2.0.RC1'>
+      <sha512>A17C9E8453F9E0CA1CBB56B8FD62D8ECE9936CD177775C77C6DC7057BD3BAC4BD30939D192545BDDC77CA276B0C71B7CFFD512734AE22FB28D82D329371F84A</sha512>
+    </dependency>
+    <dependency group='org.springframework' module='spring-webmvc' version='5.2.0.RC1'>
+      <sha512>C3F2CDF3201020B682D89E36B3640A4AA3F79027433AC9F2CEECE791599497EC3D3A3B7FBA9A9A0F3C0E229B2E0648D88BEE3A6E3BFB4B6FB22D80B747934B16</sha512>
+    </dependency>
+    <dependency group='org.springmodules' module='spring-modules-cache' version='0.8'>
+      <sha512>58A72DDE47547AA5E259469B8984A128AF3312F29654F3A471DF602A0790F98FAF93DDE1B29F3E21486FB289FFF37566663D9EA8A9EEC2B20B6C74CEA5841390</sha512>
+    </dependency>
+    <dependency group='org.thymeleaf' module='thymeleaf-spring5' version='3.0.11.RELEASE'>
+      <sha512>7583142E00F849BF9563C67D9AD01FEAA10084D4BA5E406AD01F8055D3097E127F06B0FACFFA8D5865FE79C9CF71241083A2F01CCCF703FC6D29FA219D3CAA01</sha512>
+    </dependency>
+    <dependency group='org.thymeleaf' module='thymeleaf' version='3.0.11.RELEASE'>
+      <sha512>C6957FCAE2B0DF23B10BE9C79A217844D9EAF086BA7DC20592430613A3A74ACC968B5DFBB2EFCE618942A6C7DAFA0811E96DC9B01C72F5C2DB9572F104DFE124</sha512>
+    </dependency>
+    <dependency group='org.unbescape' module='unbescape' version='1.1.6.RELEASE'>
+      <sha512>6918E9579B06721942FDCD91E401F5B996FB4EAC13056DBAFDF594661F355A34874EB5266784BC2C4F82DF9FDD9E219D71A96F52945A354F01665F85F8166BB3</sha512>
+    </dependency>
+    <dependency group='org.yaml' module='snakeyaml' version='1.17'>
+      <sha512>F1158EDC1CC658D7A574A6D4BB330AB26EB1FEC259CAE0A2FB1743EB764099B1867AC78766DC97EFEDA4C93FB3F34001C861D0F8B8D05916B832ABD873B39F1E</sha512>
+    </dependency>
+    <dependency group='org.yaml' module='snakeyaml' version='1.23'>
+      <sha512>8091467927DC88FE2741F85C6E429914F4306E7A1183E52090CCC7D617CA5279BA42B03FFC8CD1A914B6C3DC4151BD731757E72592E9C1B23346781936AC9FC7</sha512>
+    </dependency>
+    <dependency group='oro' module='oro' version='2.0.8'>
+      <sha512>9A98E493C4D771322B1331EC05AB0E363A83D8AC2AF8018D96A44DF2BF5BFC97D33EBE6F6F93E46AB10BF1536F0C29E9D9569318ED49BC18B4E96B1A8B476D37</sha512>
+    </dependency>
+    <dependency group='qdox' module='qdox' version='1.5'>
+      <sha512>A78615EB334ACCF43D0C97E5ADB110338978392D134094CA70A372235E177DDF26A9831B3AF4635E68DA6D2DE494D1FAB562F6ED431B2115C18F575560468082</sha512>
+    </dependency>
+    <dependency group='stax' module='stax-api' version='1.0.1'>
+      <sha512>43C24E8DBFFA9B932492C8CCF2B91926B2BA3D1D34B5A9671C689BD24D4C220B996708A9667521641D1ABBF29404B653755B6F6F3DC0AD0671F5C09DB332EA06</sha512>
+    </dependency>
+    <dependency group='us.springett' module='cpe-parser' version='2.0.1'>
+      <sha512>A1A3A4CD957D65059982EA2A560298B81379EDB2A2E5264983700BDB0AD20713ACF854D1F21951EC619E1F2F7021684BC8BB8E860141C05937F009A111F06386</sha512>
+    </dependency>
+    <dependency group='wsdl4j' module='wsdl4j' version='1.6.3'>
+      <sha512>3779363EFE4B7CF23BFC68388F3C6B5105DEDB9192080F144534FCACC8A77014F9F3EB3AE1927344A267364C24DEEDEBF25E306F80DFC293851973685CC58C52</sha512>
+    </dependency>
+    <dependency group='xerces' module='xercesImpl' version='2.12.0'>
+      <sha512>E9D62DC311DF808F88AC63B427BB40567C19CEC618A33D0A9C7C830B1BB7C64DAE263A5EE6C824D8E51A63CD24F49FE2EF4E2563D6E6AA0400F63E9BB35DCE97</sha512>
+    </dependency>
+    <dependency group='xml-apis' module='xml-apis' version='1.4.01'>
+      <sha512>8DB0283B6840CD6407957D296B802E3EDF90653E2722F8E29F86C1C0B60996C4B43E9E065E6864DAB89B2138DDB0174D9B4FDDA4A93F94EEB884783DB82F3268</sha512>
+    </dependency>
+    <dependency group='xml-resolver' module='xml-resolver' version='1.2'>
+      <sha512>ECA19B8A6B04C279B7982B16F1763CA1D49B0081A8D4CA2B7419F057D22A0EC60795EB4D901C5EB25DD4A733248876AA2F522C17A6144A26C8EDE9FB2F84531A</sha512>
+    </dependency>
+    <dependency group='xmlpull' module='xmlpull' version='1.1.3.1'>
+      <sha512>54D1090623497E81270B2AF633268656E8855E1EDCE2217886431039516A391BA9F8D8DB3C21A0B5E51C7F7CB672D63EBE77BE75708B760B06F399486960F261</sha512>
+    </dependency>
+    <dependency group='xpp3' module='xpp3_min' version='1.1.4c'>
+      <sha512>34989289CE8ED861499F31742EE1E7B9DC3C59973CE915A7B561D33D98968E77DB5BB94C1692802CCDBD86D04CAA7DB67748EFAFB1402428B2D6AE3056497618</sha512>
+    </dependency>
+  </dependencies>
+</dependency-verification>

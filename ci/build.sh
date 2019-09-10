@@ -3,7 +3,7 @@
 prepCommand="echo 'Running command...'; "
 gradle="./gradlew $@"
 gradleBuild=""
-gradleBuildOptions="--stacktrace --build-cache --configure-on-demand --no-daemon --scan "
+gradleBuildOptions="--stacktrace --build-cache --configure-on-demand --no-daemon --scan -PchecksumFailOn=build_finish -PchecksumPrint "
 
 echo -e "***********************************************"
 echo -e "Gradle build started at `date`"

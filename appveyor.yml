@@ -23,5 +23,5 @@ clone_depth: 2
 # Only relevant for Linux-based images
 stack: jdk 11,docker
 build_script:
-  - ./gradlew gradleHome downloadDependencies --parallel --refresh-dependencies --stacktrace --build-cache --configure-on-demand --no-daemon 
-  - ./gradlew build -x test --parallel --stacktrace --build-cache --configure-on-demand --no-daemon -x check
+  - ./gradlew gradleHome downloadDependencies --parallel --refresh-dependencies --stacktrace --build-cache --configure-on-demand --no-daemon -PchecksumFailOn=build_finish -PchecksumPrint
+  - ./gradlew build -x test --parallel --stacktrace --build-cache --configure-on-demand --no-daemon -x check -PchecksumFailOn=build_finish -PchecksumPrint

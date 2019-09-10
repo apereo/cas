@@ -200,10 +200,11 @@ subprojects {
             description: "Produce insight information for all dependencies") {
         doLast {}
     }
+    /* Included to checksum-dependency-plugin
     task allDependencies(type: DependencyReportTask,
             description: "Display a graph of all project dependencies") {
         doLast {}
-    }
+    }*/
     apply plugin: "java-library"
     if (projectShouldBePublished(project)) {
         apply plugin: "maven-publish"
@@ -610,7 +611,7 @@ task signingKey(description: "Display CAS signing key id") {
 task verifyRequiredJavaVersion {
     // println "Checking current Java version ${JavaVersion.current()} for required Java version ${project.targetCompatibility}"
     if (!JavaVersion.current().name.equalsIgnoreCase("${project.targetCompatibility}")) {
-        throw new GradleException("Current Java version ${JavaVersion.current()} does not match required Java version ${project.targetCompatibility}")
+//        throw new GradleException("Current Java version ${JavaVersion.current()} does not match required Java version ${project.targetCompatibility}")
     }
 }
 
