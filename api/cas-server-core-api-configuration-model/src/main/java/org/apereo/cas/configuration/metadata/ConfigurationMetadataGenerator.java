@@ -95,9 +95,9 @@ public class ConfigurationMetadataGenerator {
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         mapper.enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS);
 
-        final TypeReference<Map<String, Set>> values = new TypeReference<>() {
+        final TypeReference<Map<String, Set<ConfigurationMetadataProperty>>> values = new TypeReference<>() {
         };
-        final Map<String, Set> jsonMap = mapper.readValue(jsonFile, values);
+        final Map<String, Set> jsonMap = (Map) mapper.readValue(jsonFile, values);
         final Set<ConfigurationMetadataProperty> properties = jsonMap.get("properties");
         final Set<ConfigurationMetadataProperty> groups = jsonMap.get("groups");
 
