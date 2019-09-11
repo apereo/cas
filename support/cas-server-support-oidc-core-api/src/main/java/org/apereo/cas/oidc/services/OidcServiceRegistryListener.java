@@ -31,7 +31,7 @@ import java.util.Collection;
 public class OidcServiceRegistryListener implements ServiceRegistryListener {
     private static final long serialVersionUID = -2492163812728091841L;
 
-    private final Collection<BaseOidcScopeAttributeReleasePolicy> userScopes;
+    private final Collection<OidcCustomScopeAttributeReleasePolicy> userScopes;
 
     private static void addAttributeReleasePolicy(final ChainingAttributeReleasePolicy chain,
                                                   final BaseOidcScopeAttributeReleasePolicy policyToAdd,
@@ -78,8 +78,6 @@ public class OidcServiceRegistryListener implements ServiceRegistryListener {
                     + "Checking [{}] against user-defined scopes provided as [{}]", givenScope, givenScope, userScopes);
                 userScopes
                     .stream()
-                    .filter(obj -> obj instanceof OidcCustomScopeAttributeReleasePolicy)
-                    .map(t -> (OidcCustomScopeAttributeReleasePolicy) t)
                     .filter(t -> t.getScopeName().equals(givenScope.trim()))
                     .findFirst()
                     .ifPresent(userPolicy -> addAttributeReleasePolicy(policyChain, userPolicy, givenScope, oidcService));
