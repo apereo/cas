@@ -5,8 +5,13 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.ws.idp.WSFederationClaims;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
+import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Test;
+
+import java.io.File;
+import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -17,6 +22,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.2.0
  */
 public class WSFederationClaimsReleasePolicyTests {
+    private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "WSFederationClaimsReleasePolicyTests.json");
+    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
     @Test
     public void verifyAttributeReleaseNone() {
@@ -40,5 +47,14 @@ public class WSFederationClaimsReleasePolicyTests {
         assertSame(2, results.size());
         assertTrue(results.containsKey(WSFederationClaims.COMMON_NAME.getUri()));
         assertTrue(results.containsKey(WSFederationClaims.EMAIL_ADDRESS.getUri()));
+    }
+
+    @Test
+    public void verifySerializePolicyToJson() throws IOException {
+        val policyWritten = new WSFederationClaimsReleasePolicy(
+            CollectionUtils.wrap(WSFederationClaims.COMMON_NAME.name(), "cn", WSFederationClaims.EMAIL_ADDRESS.name(), "email"));
+        MAPPER.writeValue(JSON_FILE, policyWritten);
+        val policyRead = MAPPER.readValue(JSON_FILE, WSFederationClaimsReleasePolicy.class);
+        assertEquals(policyWritten, policyRead);
     }
 }
