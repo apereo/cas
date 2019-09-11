@@ -97,9 +97,7 @@ public class SamlIdPUtils {
             endpoint = adaptor.getSingleLogoutService(binding);
         } else {
             val endpointReq = getAssertionConsumerServiceFromRequest(authnRequest, binding);
-            endpoint = endpointReq == null
-                ? adaptor.getAssertionConsumerService(binding)
-                : endpointReq;
+            endpoint = Optional.ofNullable(endpointReq).orElseGet(() -> adaptor.getAssertionConsumerService(binding));
         }
 
         if (endpoint == null || StringUtils.isBlank(endpoint.getBinding())) {

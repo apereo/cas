@@ -10,7 +10,7 @@ import org.pac4j.core.credentials.TokenCredentials;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
-import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -29,7 +29,7 @@ public class OidcClientConfigurationAccessTokenAuthenticatorTests extends Abstra
         val ctx = new JEEContext(request, new MockHttpServletResponse());
         val auth = new OidcClientConfigurationAccessTokenAuthenticator(ticketRegistry);
         val at = getAccessToken();
-        when(at.getScopes()).thenReturn(List.of(OidcConstants.CLIENT_REGISTRATION_SCOPE));
+        when(at.getScopes()).thenReturn(Set.of(OidcConstants.CLIENT_REGISTRATION_SCOPE));
         ticketRegistry.addTicket(at);
         val credentials = new TokenCredentials(at.getId());
 

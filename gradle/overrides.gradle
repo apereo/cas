@@ -11,14 +11,14 @@ ext["hibernateVersion"] = "5.4.3.Final"
 ext["hazelcastVersion"] = "3.12.2"
 ext["infinispanVersion"] = "9.4.15.Final"
 
-ext["springVersion"] = "5.2.0.RC1"
-ext["springSessionVersion"] = "2.2.0.M3"
-ext["springSessionMongoVersion"] = "2.2.0.M3"
+ext["springVersion"] = "5.2.0.RC2"
+ext["springSessionVersion"] = "2.2.0.M4"
+ext["springSessionMongoVersion"] = "2.2.0.RC2"
 
 ext["springBootTomcatVersion"] = "9.0.24"
 
 ext["jacksonVersion"] = "2.10.0.pr2"
-ext["jacksonCoreVersion"] = "2.9.9.3"
+ext["jacksonCoreVersion"] = "2.10.0.pr2"
 ext["thymeleafVersion"] = "3.0.11.RELEASE"
 ext["thymeleafDialectVersion"] = "2.4.1"
 ext["hsqlVersion"] = "2.5.0"

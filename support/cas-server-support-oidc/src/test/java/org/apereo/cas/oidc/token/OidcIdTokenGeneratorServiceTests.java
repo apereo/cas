@@ -22,6 +22,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.apereo.cas.oidc.OidcConstants.StandardScopes.EMAIL;
 import static org.apereo.cas.oidc.OidcConstants.StandardScopes.OPENID;
@@ -75,7 +76,7 @@ public class OidcIdTokenGeneratorServiceTests extends AbstractOidcTests {
         when(accessToken.getAuthentication()).thenReturn(authentication);
         when(accessToken.getTicketGrantingTicket()).thenReturn(tgt);
         when(accessToken.getId()).thenReturn(getClass().getSimpleName());
-        when(accessToken.getScopes()).thenReturn(List.of(OPENID.getScope(), PROFILE.getScope(), EMAIL.getScope()));
+        when(accessToken.getScopes()).thenReturn(Set.of(OPENID.getScope(), PROFILE.getScope(), EMAIL.getScope()));
 
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, "clientid");
         val idToken = oidcIdTokenGenerator.generate(request, response, accessToken, 30,

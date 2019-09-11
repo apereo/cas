@@ -12,6 +12,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 
 /**
@@ -75,7 +76,9 @@ public abstract class AbstractWebApplicationServiceResponseBuilder implements Re
      */
     protected Response.ResponseType getWebApplicationServiceResponseType(final WebApplicationService finalService) {
         val request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
-        val methodRequest = request != null ? request.getParameter(CasProtocolConstants.PARAMETER_METHOD) : null;
+        val methodRequest = Optional.ofNullable(request)
+            .map(httpServletRequest -> httpServletRequest.getParameter(CasProtocolConstants.PARAMETER_METHOD))
+            .orElse(null);
         final Function<String, String> func = FunctionUtils.doIf(StringUtils::isBlank,
             t -> {
                 val registeredService = this.servicesManager.findServiceBy(finalService);

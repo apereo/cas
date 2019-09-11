@@ -31,6 +31,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Optional;
 
 /**
  * This is {@link CasWebAppConfiguration}.
@@ -101,7 +102,7 @@ public class CasWebAppConfiguration implements WebMvcConfigurer {
                                                          final HttpServletResponse response) {
                 val queryString = request.getQueryString();
                 val url = request.getContextPath() + "/login"
-                    + (queryString != null ? '?' + queryString : StringUtils.EMPTY);
+                    + Optional.ofNullable(queryString).map(string -> '?' + string).orElse(StringUtils.EMPTY);
                 return new ModelAndView(new RedirectView(response.encodeURL(url)));
             }
 

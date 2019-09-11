@@ -134,7 +134,7 @@ public class SamlMetadataUIInfo extends DefaultRegisteredServiceUserInterfaceInf
     public String getDescription(final String locale) {
         if (this.uiInfo != null) {
             val description = getLocalizedValues(locale, this.uiInfo.getDescriptions());
-            return description != null ? description : super.getDescription();
+            return Optional.ofNullable(description).orElseGet(super::getDescription);
         }
         return super.getDescription();
     }
@@ -153,7 +153,7 @@ public class SamlMetadataUIInfo extends DefaultRegisteredServiceUserInterfaceInf
     public String getDisplayName(final String locale) {
         if (this.uiInfo != null) {
             val displayName = getLocalizedValues(locale, this.uiInfo.getDisplayNames());
-            return displayName != null ? displayName : super.getDisplayName();
+            return Optional.ofNullable(displayName).orElseGet(super::getDisplayName);
         }
         return super.getDisplayName();
     }
@@ -172,7 +172,7 @@ public class SamlMetadataUIInfo extends DefaultRegisteredServiceUserInterfaceInf
     public String getInformationURL(final String locale) {
         if (this.uiInfo != null) {
             val informationUrl = getLocalizedValues(locale, this.uiInfo.getInformationURLs());
-            return informationUrl != null ? informationUrl : super.getInformationURL();
+            return Optional.ofNullable(informationUrl).orElseGet(super::getInformationURL);
         }
         return super.getInformationURL();
     }
@@ -191,7 +191,7 @@ public class SamlMetadataUIInfo extends DefaultRegisteredServiceUserInterfaceInf
     public String getPrivacyStatementURL(final String locale) {
         if (this.uiInfo != null) {
             val privacyStatementURL = getLocalizedValues(locale, this.uiInfo.getPrivacyStatementURLs());
-            return privacyStatementURL != null ? privacyStatementURL : super.getPrivacyStatementURL();
+            return Optional.ofNullable(privacyStatementURL).orElseGet(super::getPrivacyStatementURL);
         }
         return super.getPrivacyStatementURL();
     }

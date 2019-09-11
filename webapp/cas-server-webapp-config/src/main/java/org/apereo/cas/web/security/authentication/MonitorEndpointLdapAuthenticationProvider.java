@@ -32,6 +32,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -51,7 +52,7 @@ public class MonitorEndpointLdapAuthenticationProvider implements Authentication
         try {
             val username = authentication.getPrincipal().toString();
             val credentials = authentication.getCredentials();
-            val password = credentials == null ? null : credentials.toString();
+            val password = Optional.ofNullable(credentials).map(Object::toString).orElse(null);
             if (StringUtils.isBlank(password)) {
                 throw new IllegalArgumentException("Password cannot be blank");
             }

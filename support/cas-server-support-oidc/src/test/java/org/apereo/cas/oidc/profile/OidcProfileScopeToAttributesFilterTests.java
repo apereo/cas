@@ -42,7 +42,7 @@ public class OidcProfileScopeToAttributesFilterTests extends AbstractOidcTests {
         val service = getOidcRegisteredService();
         val accessToken = mock(AccessToken.class);
         when(accessToken.getTicketGrantingTicket()).thenReturn(new MockTicketGrantingTicket("casuser"));
-        when(accessToken.getScopes()).thenReturn(CollectionUtils.wrapList(
+        when(accessToken.getScopes()).thenReturn(CollectionUtils.wrapSet(
             OidcConstants.StandardScopes.OPENID.getScope(),
             OidcConstants.StandardScopes.PHONE.getScope(),
             OidcConstants.StandardScopes.PROFILE.getScope(),
