@@ -71,9 +71,7 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
             }
 
             val oidcService = (OidcRegisteredService) registeredService;
-            if (!oidcService.getScopes().isEmpty()) {
-                scopes.retainAll(oidcService.getScopes());
-            }
+            scopes.retainAll(oidcService.getScopes());
 
             val attributes = filterAttributesByScope(scopes, principal, service, oidcService, accessToken);
             LOGGER.debug("Collection of attributes filtered by scopes [{}] are [{}]", scopes, attributes);
