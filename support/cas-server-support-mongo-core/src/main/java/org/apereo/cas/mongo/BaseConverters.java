@@ -187,7 +187,7 @@ public abstract class BaseConverters {
     static class ObjectIdToLongConverter implements Converter<ObjectId, Long> {
         @Override
         public Long convert(final ObjectId source) {
-            return Long.valueOf(source.getMachineIdentifier());
+            return (long) source.getMachineIdentifier();
         }
     }
 
