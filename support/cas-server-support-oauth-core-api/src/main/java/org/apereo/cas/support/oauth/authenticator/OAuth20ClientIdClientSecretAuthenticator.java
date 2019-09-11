@@ -5,6 +5,8 @@ import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.util.crypto.CipherExecutor;
@@ -42,6 +44,12 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator<U
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, id);
         if (registeredService == null) {
             LOGGER.debug("Unable to locate registered service for [{}]", id);
+            return;
+        }
+        val grantType = context.getRequestParameter(OAuth20Constants.GRANT_TYPE);
+
+        if (grantType.isPresent() && OAuth20Utils.isGrantType(grantType.get(), OAuth20GrantTypes.PASSWORD)) {
+            LOGGER.debug("Skipping Client credential authentication to use password authentication");
             return;
         }
 
