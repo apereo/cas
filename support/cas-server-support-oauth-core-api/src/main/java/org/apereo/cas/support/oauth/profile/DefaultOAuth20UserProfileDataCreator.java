@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.views.OAuth20UserProfileViewRenderer;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 
@@ -44,8 +45,7 @@ public class DefaultOAuth20UserProfileDataCreator implements OAuth20UserProfileD
         actionResolverName = "OAUTH2_USER_PROFILE_ACTION_RESOLVER",
         resourceResolverName = "OAUTH2_USER_PROFILE_RESOURCE_RESOLVER")
     public Map<String, Object> createFrom(final AccessToken accessToken, final JEEContext context) {
-        val service = accessToken.getService();
-        val registeredService = this.servicesManager.findServiceBy(service);
+        val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, accessToken.getClientId());
 
         val principal = getAccessTokenAuthenticationPrincipal(accessToken, context, registeredService);
         val map = new HashMap<String, Object>();

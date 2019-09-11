@@ -47,6 +47,7 @@ public abstract class BaseOAuth20AuthenticatorTests {
     protected AuthenticationSystemSupport authenticationSystemSupport;
     protected ServiceFactory serviceFactory;
     protected OAuthRegisteredService service;
+    protected OAuthRegisteredService serviceWithoutSecret;
     protected TicketRegistry ticketRegistry;
 
     @Autowired
@@ -75,8 +76,15 @@ public abstract class BaseOAuth20AuthenticatorTests {
         service.setClientSecret("secret");
         service.setClientId("client");
 
+        serviceWithoutSecret = new OAuthRegisteredService();
+        serviceWithoutSecret.setName("OAuth2");
+        serviceWithoutSecret.setId(2);
+        serviceWithoutSecret.setServiceId("https://www.example2.org");
+        serviceWithoutSecret.setClientId("clientWithoutSecret");
+
+
         servicesManager = mock(ServicesManager.class);
-        when(servicesManager.getAllServices()).thenReturn(CollectionUtils.wrapList(service));
+        when(servicesManager.getAllServices()).thenReturn(CollectionUtils.wrapList(service, serviceWithoutSecret));
 
         serviceFactory = mock(ServiceFactory.class);
         when(serviceFactory.createService(anyString())).thenReturn(RegisteredServiceTestUtils.getService());

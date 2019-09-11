@@ -39,7 +39,7 @@ public class OAuth20UsernamePasswordAuthenticatorTests extends BaseOAuth20Authen
     public void verifyAcceptedCredentialsWithClientId() {
         val credentials = new UsernamePasswordCredentials("casuser", "casuser");
         val request = new MockHttpServletRequest();
-        request.addParameter(OAuth20Constants.CLIENT_ID, "client");
+        request.addParameter(OAuth20Constants.CLIENT_ID, "clientWithoutSecret");
         val ctx = new JEEContext(request, new MockHttpServletResponse());
         authenticator.validate(credentials, ctx);
         assertNotNull(credentials.getUserProfile());
@@ -81,6 +81,15 @@ public class OAuth20UsernamePasswordAuthenticatorTests extends BaseOAuth20Authen
     @Test
     public void verifyAcceptedCredentialsWithBadCredentials() {
         val credentials = new UsernamePasswordCredentials("casuser-something", "casuser");
+        val request = new MockHttpServletRequest();
+        request.addParameter(OAuth20Constants.CLIENT_ID, "client");
+        val ctx = new JEEContext(request, new MockHttpServletResponse());
+        assertThrows(CredentialsException.class, () -> authenticator.validate(credentials, ctx));
+    }
+
+    @Test
+    public void verifyAcceptedCredentialsWithoutClientSecret() {
+        val credentials = new UsernamePasswordCredentials("casuser", "casuser");
         val request = new MockHttpServletRequest();
         request.addParameter(OAuth20Constants.CLIENT_ID, "client");
         val ctx = new JEEContext(request, new MockHttpServletResponse());
