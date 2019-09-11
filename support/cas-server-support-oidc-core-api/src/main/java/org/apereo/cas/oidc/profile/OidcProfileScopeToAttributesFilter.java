@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.claims.BaseOidcScopeAttributeReleasePolicy;
+import org.apereo.cas.oidc.claims.OidcCustomScopeAttributeReleasePolicy;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.oauth.profile.DefaultOAuth20ProfileScopeToAttributesFilter;
@@ -41,11 +42,11 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
 
     private final PrincipalFactory principalFactory;
     private final CasConfigurationProperties casProperties;
-    private final Collection<BaseOidcScopeAttributeReleasePolicy> userScopes;
+    private final Collection<OidcCustomScopeAttributeReleasePolicy> userScopes;
 
     public OidcProfileScopeToAttributesFilter(final PrincipalFactory principalFactory,
                                               final CasConfigurationProperties casProperties,
-                                              final Collection<BaseOidcScopeAttributeReleasePolicy> userScopes) {
+                                              final Collection<OidcCustomScopeAttributeReleasePolicy> userScopes) {
         this.principalFactory = principalFactory;
         this.casProperties = casProperties;
         this.userScopes = userScopes;
@@ -173,7 +174,7 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
 
         if (!userScopes.isEmpty()) {
             LOGGER.debug("Configuring attributes release policies for user-defined scopes [{}]", userScopes);
-            userScopes.forEach(t -> attributeReleasePolicies.put(t.getScopeType(), t));
+            userScopes.forEach(t -> attributeReleasePolicies.put(t.getScopeName(), t));
         }
     }
 }
