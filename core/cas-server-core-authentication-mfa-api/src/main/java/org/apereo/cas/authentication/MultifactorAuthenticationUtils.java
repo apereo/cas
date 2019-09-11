@@ -9,6 +9,7 @@ import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
@@ -148,31 +149,33 @@ public class MultifactorAuthenticationUtils {
     /**
      * Resolve event via single attribute set.
      *
-     * @param principal      the principal
-     * @param attributeValue the attribute value
-     * @param service        the service
-     * @param context        the context
-     * @param provider       the provider
-     * @param predicate      the predicate
+     * @param principal              the principal
+     * @param providedAttributeValue the attribute value
+     * @param service                the service
+     * @param context                the context
+     * @param provider               the provider
+     * @param predicate              the predicate
      * @return the set
      */
     @SneakyThrows
     public static Set<Event> resolveEventViaSingleAttribute(final Principal principal,
-                                                            final Object attributeValue,
+                                                            final Object providedAttributeValue,
                                                             final RegisteredService service,
                                                             final Optional<RequestContext> context,
                                                             final MultifactorAuthenticationProvider provider,
                                                             final Predicate<String> predicate) {
-        if (!(attributeValue instanceof Collection)) {
+        val processSingleValue = !(providedAttributeValue instanceof Collection) || CollectionUtils.toCollection(providedAttributeValue).size() == 1;
+        if (processSingleValue) {
+            val attributeValue = CollectionUtils.firstElement(providedAttributeValue).map(Object::toString).orElse(StringUtils.EMPTY);
             LOGGER.debug("Attribute value [{}] is a single-valued attribute", attributeValue);
-            if (predicate.test(attributeValue.toString())) {
+            if (predicate.test(attributeValue)) {
                 LOGGER.debug("Attribute value predicate [{}] has matched the [{}]", predicate, attributeValue);
                 return evaluateEventForProviderInContext(principal, service, context, provider);
             }
             LOGGER.debug("Attribute value predicate [{}] could not match the [{}]", predicate, attributeValue);
 
         }
-        LOGGER.debug("Attribute value [{}] is not a single-valued attribute", attributeValue);
+        LOGGER.debug("Attribute value [{}] is not a single-valued attribute", providedAttributeValue);
         return null;
     }
 
@@ -230,8 +233,8 @@ public class MultifactorAuthenticationUtils {
         if (provider != null) {
             LOGGER.debug("Provider [{}] is successfully verified", provider);
             val id = provider.getId();
-            val event = MultifactorAuthenticationUtils.validateEventIdForMatchingTransitionInContext(id, context,
-                MultifactorAuthenticationUtils.buildEventAttributeMap(principal, Optional.of(service), provider));
+            val eventAttrMap = MultifactorAuthenticationUtils.buildEventAttributeMap(principal, Optional.ofNullable(service), provider);
+            val event = MultifactorAuthenticationUtils.validateEventIdForMatchingTransitionInContext(id, context, eventAttrMap);
             return CollectionUtils.wrapSet(event);
         }
         LOGGER.debug("Provider could not be verified");

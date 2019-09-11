@@ -60,12 +60,12 @@ public class DefaultMultifactorAuthenticationProviderResolver implements Multifa
                 LOGGER.debug("Attribute value for [{}] to determine event is not configured for [{}]", attributeName, principal.getId());
                 continue;
             }
-
-            LOGGER.debug("Selecting a multifactor authentication provider out of [{}] for [{}] and service [{}]",
-                providers, principal.getId(), service);
-            val provider = this.multifactorAuthenticationProviderSelector.resolve(providers, service, principal);
-
             LOGGER.debug("Located attribute value [{}] for [{}]", attributeValue, attributeNames);
+
+            val provider = this.multifactorAuthenticationProviderSelector.resolve(providers, service, principal);
+            LOGGER.debug("Selected a multifactor authentication provider out of [{}] for [{}] and service [{}] as [{}]",
+                providers, principal.getId(), service, provider);
+
             var results = MultifactorAuthenticationUtils.resolveEventViaSingleAttribute(principal, attributeValue,
                 service, context, provider, predicate);
             if (results == null || results.isEmpty()) {
