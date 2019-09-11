@@ -60,18 +60,18 @@ public class AuditLogEndpoint extends BaseCasActuatorEndpoint {
         val days = duration.toDays();
         val sinceDate = LocalDate.now().minusDays(days + 1);
         return this.auditTrailManager.getAuditRecordsSince(sinceDate).stream()
-                .filter(a -> a.getWhenActionWasPerformed().after(sinceTime))
-                .collect(Collectors.toSet());
+            .filter(a -> a.getWhenActionWasPerformed().after(sinceTime))
+            .collect(Collectors.toSet());
     }
 
     /**
      * Gets Audit logs for the passed interval subtracted from current time.  Entries are then filtered to those
      * that match the regular expressions passed in the json body.
      *
-     * @param interval - Interval subtracted from current time
-     * @param actionPerformed - actionPerformed that was logged
-     * @param clientIpAddress - client ip address
-     * @param principal - the user id for the log entry
+     * @param interval             - Interval subtracted from current time
+     * @param actionPerformed      - actionPerformed that was logged
+     * @param clientIpAddress      - client ip address
+     * @param principal            - the user id for the log entry
      * @param resourceOperatedUpon - resource operated on.
      * @return - the audit log
      */
@@ -81,11 +81,12 @@ public class AuditLogEndpoint extends BaseCasActuatorEndpoint {
                                                final String clientIpAddress,
                                                final String principal,
                                                final String resourceOperatedUpon) {
-        return getAuditLog(interval).stream()
-                .filter(e-> StringUtils.isNotEmpty(actionPerformed) ? e.getActionPerformed().matches(actionPerformed) : true)
-                .filter(e -> StringUtils.isNotEmpty(clientIpAddress) ? e.getClientIpAddress().matches(clientIpAddress) : true)
-                .filter(e -> StringUtils.isNotEmpty(principal) ? e.getPrincipal().matches(principal) : true)
-                .filter(e -> StringUtils.isNotEmpty(resourceOperatedUpon) ? e.getResourceOperatedUpon().matches(resourceOperatedUpon) : true)
-                .collect(Collectors.toSet());
+        return getAuditLog(interval)
+            .stream()
+            .filter(e -> StringUtils.isBlank(actionPerformed) || e.getActionPerformed().matches(actionPerformed))
+            .filter(e -> StringUtils.isBlank(clientIpAddress) || e.getClientIpAddress().matches(clientIpAddress))
+            .filter(e -> StringUtils.isBlank(principal) || e.getPrincipal().matches(principal))
+            .filter(e -> StringUtils.isBlank(resourceOperatedUpon) || e.getResourceOperatedUpon().matches(resourceOperatedUpon))
+            .collect(Collectors.toSet());
     }
 }
