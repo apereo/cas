@@ -18,6 +18,7 @@ import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.exception.HttpAction;
 import org.pac4j.core.profile.CommonProfile;
 
+import javax.security.auth.login.FailedLoginException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -69,7 +70,10 @@ public class ClientAuthenticationHandler extends AbstractPac4jAuthenticationHand
             final WebContext webContext = Pac4jUtils.getPac4jJ2EContext(request, response);
 
             final CommonProfile userProfile = client.getUserProfile(credentials, webContext);
-            storeUserProfile(webContext, userProfile);
+            if (userProfile == null) {
+                LOGGER.error("Unable to fetch user profile");
+                throw new FailedLoginException();
+            }
             LOGGER.debug("Final user profile is: [{}]", userProfile);
             return createResult(clientCredentials, userProfile, client);
         } catch (final HttpAction e) {
