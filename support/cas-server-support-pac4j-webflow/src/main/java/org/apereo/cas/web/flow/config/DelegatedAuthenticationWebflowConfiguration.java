@@ -179,7 +179,7 @@ public class DelegatedAuthenticationWebflowConfiguration implements CasWebflowEx
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer delegatedAuthenticationWebflowConfigurer() {
         return new DelegatedAuthenticationWebflowConfigurer(flowBuilderServices.getIfAvailable(), loginFlowDefinitionRegistry.getIfAvailable(),
-            logoutFlowDefinitionRegistry.getIfAvailable(), saml2ClientLogoutAction.getIfAvailable(), applicationContext, casProperties);
+            logoutFlowDefinitionRegistry.getIfAvailable(), applicationContext, casProperties);
     }
 
     @ConditionalOnMissingBean(name = "delegatedClientWebflowManager")

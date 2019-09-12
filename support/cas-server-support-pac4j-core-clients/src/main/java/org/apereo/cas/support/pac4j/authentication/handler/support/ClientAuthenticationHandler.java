@@ -16,10 +16,11 @@ import org.pac4j.core.client.Clients;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.exception.HttpAction;
-import org.pac4j.core.profile.UserProfile;
+import org.pac4j.core.profile.CommonProfile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import java.security.GeneralSecurityException;
 
 /**
@@ -67,7 +68,8 @@ public class ClientAuthenticationHandler extends AbstractPac4jAuthenticationHand
             final HttpServletResponse response = WebUtils.getHttpServletResponseFromExternalWebflowContext();
             final WebContext webContext = Pac4jUtils.getPac4jJ2EContext(request, response);
 
-            final UserProfile userProfile = client.getUserProfile(credentials, webContext);
+            final CommonProfile userProfile = client.getUserProfile(credentials, webContext);
+            storeUserProfile(webContext, userProfile);
             LOGGER.debug("Final user profile is: [{}]", userProfile);
             return createResult(clientCredentials, userProfile, client);
         } catch (final HttpAction e) {

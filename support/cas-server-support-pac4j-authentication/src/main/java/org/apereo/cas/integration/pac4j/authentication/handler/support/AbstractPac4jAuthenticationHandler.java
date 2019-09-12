@@ -13,9 +13,13 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.client.BaseClient;
+import org.pac4j.core.context.WebContext;
+import org.pac4j.core.profile.CommonProfile;
+import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
 
 import javax.security.auth.login.FailedLoginException;
+
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -115,12 +119,22 @@ public abstract class AbstractPac4jAuthenticationHandler extends AbstractPreAndP
         LOGGER.debug("Final principal id determined based on client [{}] and user profile [{}] is [{}]", profile, client, id);
         return id;
     }
-    
+
     private String typePrincipalId(final String id, final UserProfile profile) {
         if (isTypedIdUsed) {
             return profile.getClass().getName() + UserProfile.SEPARATOR + id;
-        } else {
-            return id;
         }
+        return id;
+    }
+
+    /**
+     * Store user profile.
+     *
+     * @param webContext the web context
+     * @param profile    the profile
+     */
+    protected void storeUserProfile(final WebContext webContext, final CommonProfile profile) {
+        final ProfileManager manager = new ProfileManager<>(webContext, webContext.getSessionStore());
+        manager.save(true, profile, false);
     }
 }
