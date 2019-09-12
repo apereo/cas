@@ -2,6 +2,7 @@ package org.apereo.cas.oidc.web;
 
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.util.OidcAuthorizationRequestSupport;
+import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.web.views.OAuth20CallbackAuthorizeViewResolver;
 
 import lombok.RequiredArgsConstructor;
@@ -11,6 +12,9 @@ import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
+import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
+
+import java.util.HashMap;
 
 /**
  * This is {@link OidcCallbackAuthorizeViewResolver}.
@@ -30,8 +34,16 @@ public class OidcCallbackAuthorizeViewResolver implements OAuth20CallbackAuthori
                 LOGGER.trace("Redirecting to URL [{}] without prompting for login", url);
                 return new ModelAndView(url);
             }
-            LOGGER.warn("Unable to detect an authenticated user profile for prompt-less login attempts");
-            return new ModelAndView(new RedirectView(OidcAuthorizationRequestSupport.getRedirectUrlWithError(ctx.getFullRequestURL(), OidcConstants.LOGIN_REQUIRED)));
+            val originalRedirectUrl = ctx.getRequestParameter(OAuth20Constants.REDIRECT_URI);
+
+            if (originalRedirectUrl.isEmpty()) {
+                val model = new HashMap<String, String>();
+                model.put(OAuth20Constants.ERROR, OidcConstants.LOGIN_REQUIRED);
+                return new ModelAndView(new MappingJackson2JsonView(), model);
+            }
+            val redirectUrlWithErrorCode = OidcAuthorizationRequestSupport.getRedirectUrlWithError(originalRedirectUrl.get(), OidcConstants.LOGIN_REQUIRED);
+            LOGGER.warn("Unable to detect an authenticated user profile for prompt-less login attempts. Redirecting to URL [{}]", redirectUrlWithErrorCode);
+            return new ModelAndView(new RedirectView(redirectUrlWithErrorCode));
         }
         if (prompt.contains(OidcConstants.PROMPT_LOGIN)) {
             LOGGER.trace("Removing login prompt from URL [{}]", url);

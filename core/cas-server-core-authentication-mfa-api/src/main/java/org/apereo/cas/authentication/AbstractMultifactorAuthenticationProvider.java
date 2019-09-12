@@ -52,6 +52,6 @@ public abstract class AbstractMultifactorAuthenticationProvider implements Multi
 
     @Override
     public boolean matches(final String identifier) {
-        return StringUtils.isNotBlank(getId()) ? getId().matches(identifier) : false;
+        return StringUtils.isNotBlank(getId()) && getId().matches(identifier);
     }
 }

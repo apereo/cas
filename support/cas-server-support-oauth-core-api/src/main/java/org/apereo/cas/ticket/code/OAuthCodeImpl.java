@@ -27,6 +27,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * An OAuth code implementation.
@@ -123,7 +124,7 @@ public class OAuthCodeImpl extends AbstractTicket implements OAuthCode {
     }
 
     @Override
-    public Collection<String> getScopes() {
+    public Set<String> getScopes() {
         return ObjectUtils.defaultIfNull(this.scopes, new HashSet<>());
     }
 }

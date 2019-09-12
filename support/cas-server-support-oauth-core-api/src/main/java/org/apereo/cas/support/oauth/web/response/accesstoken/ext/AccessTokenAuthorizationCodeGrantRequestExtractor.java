@@ -16,6 +16,9 @@ import lombok.val;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import java.util.Set;
+import java.util.TreeSet;
+
 /**
  * This is {@link AccessTokenAuthorizationCodeGrantRequestExtractor}.
  *
@@ -31,7 +34,6 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
     @Override
     public AccessTokenRequestDataHolder extract(final HttpServletRequest request, final HttpServletResponse response) {
         val grantType = request.getParameter(OAuth20Constants.GRANT_TYPE);
-        val scopes = OAuth20Utils.parseRequestScopes(request);
 
         LOGGER.debug("OAuth grant type is [{}]", grantType);
 
@@ -41,13 +43,13 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
             throw new UnauthorizedServiceException("Unable to locate service in registry for redirect URI " + redirectUri);
         }
 
+        val requestedScopes = OAuth20Utils.parseRequestScopes(request);
         val token = getOAuthTokenFromRequest(request);
-        if (token == null) {
+        if (token == null || token.isExpired()) {
             throw new InvalidTicketException(getOAuthParameter(request));
         }
-
+        val scopes = extractRequestedScopesByToken(requestedScopes, token, request);
         val service = getOAuthConfigurationContext().getWebApplicationServiceServiceFactory().createService(redirectUri);
-        scopes.addAll(token.getScopes());
 
         val generateRefreshToken = isAllowedToGenerateRefreshToken() && registeredService.isGenerateRefreshToken();
         val builder = AccessTokenRequestDataHolder.builder()
@@ -62,6 +64,20 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
             .ticketGrantingTicket(token.getTicketGrantingTicket());
 
         return extractInternal(request, response, builder);
+    }
+
+    /**
+     * Filter requested scopes by token and return final set.
+     *
+     * @param requestedScopes the requested scopes
+     * @param token           the token
+     * @param request         the request
+     * @return the set
+     */
+    protected Set<String> extractRequestedScopesByToken(final Set<String> requestedScopes, final OAuthToken token, final HttpServletRequest request) {
+        val scopes = new TreeSet<String>(requestedScopes);
+        scopes.addAll(token.getScopes());
+        return scopes;
     }
 
     /**

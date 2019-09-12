@@ -81,6 +81,7 @@ import org.springframework.webflow.execution.Action;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.mockito.Mockito.*;
 
@@ -277,7 +278,7 @@ public abstract class AbstractOidcTests {
         when(accessToken.getId()).thenReturn("AT-123456");
         when(accessToken.getTicketGrantingTicket()).thenReturn(new MockTicketGrantingTicket("casuser"));
         when(accessToken.getClientId()).thenReturn("clientid");
-        when(accessToken.getScopes()).thenReturn(List.of(OidcConstants.StandardScopes.EMAIL.getScope(),
+        when(accessToken.getScopes()).thenReturn(Set.of(OidcConstants.StandardScopes.EMAIL.getScope(),
             OidcConstants.StandardScopes.PROFILE.getScope(),
             OidcConstants.StandardScopes.OPENID.getScope()));
         when(accessToken.getIdToken()).thenReturn(idToken);
@@ -291,7 +292,7 @@ public abstract class AbstractOidcTests {
         when(token.getService()).thenReturn(RegisteredServiceTestUtils.getService("https://oauth.example.org"));
         when(token.getId()).thenReturn("RT-123456");
         when(token.getTicketGrantingTicket()).thenReturn(new MockTicketGrantingTicket("casuser"));
-        when(token.getScopes()).thenReturn(List.of(OidcConstants.StandardScopes.EMAIL.getScope(),
+        when(token.getScopes()).thenReturn(Set.of(OidcConstants.StandardScopes.EMAIL.getScope(),
             OidcConstants.StandardScopes.PROFILE.getScope(),
             OidcConstants.StandardScopes.OPENID.getScope()));
         when(token.getExpirationPolicy()).thenReturn(NeverExpiresExpirationPolicy.INSTANCE);

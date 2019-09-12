@@ -1,14 +1,14 @@
 #!/bin/bash
 
 prepCommand="echo 'Running command...'; "
-gradle="./gradlew $@"
+gradle="./gradlew "
 gradleBuild=""
 gradleBuildOptions="--stacktrace --build-cache --configure-on-demand --no-daemon "
 
-webAppServerType="undertow"
+webAppServerType="$1"
 
 echo -e "***********************************************"
-echo -e "Gradle build started at `date`"
+echo -e "Gradle build started at `date` for web application server ${webAppServerType}"
 echo -e "***********************************************"
 
 gradleBuild="$gradleBuild :webapp:cas-server-webapp-${webAppServerType}:build -x check -x test -x javadoc -DskipNestedConfigMetadataGen=true -DskipGradleLint=true "
@@ -51,8 +51,8 @@ else
         java -jar webapp/cas-server-webapp-"${webAppServerType}"/build/libs/cas.war --server.ssl.enabled=false --server.port=8080 &> /dev/null &
         pid=$!
         echo "Launched CAS with pid ${pid}. Waiting for CAS server to come online..."
-        sleep 30
-        cmd=`curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/cas/login`
+        sleep 60
+        cmd=`curl --connect-timeout 60 -s -o /dev/null -I -w "%{http_code}" http://localhost:8080/cas/login`
         kill -9 "${pid}"
         echo "CAS server is responding with HTTP status code ${cmd}."
         if [ "$cmd" == 200 ]; then

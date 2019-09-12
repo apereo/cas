@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
@@ -91,7 +92,9 @@ public abstract class AbstractServicesManager implements ServicesManager {
 
     @Override
     public RegisteredService findServiceBy(final Service service) {
-        return service != null ? findServiceBy(service.getId()) : null;
+        return Optional.ofNullable(service)
+            .map(svc -> findServiceBy(svc.getId()))
+            .orElse(null);
     }
 
     @Override

@@ -97,7 +97,7 @@ public class ConfigurationMetadataGenerator {
 
         final TypeReference<Map<String, Set<ConfigurationMetadataProperty>>> values = new TypeReference<>() {
         };
-        final Map<String, Set> jsonMap = mapper.readValue(jsonFile, values);
+        final Map<String, Set> jsonMap = (Map) mapper.readValue(jsonFile, values);
         final Set<ConfigurationMetadataProperty> properties = jsonMap.get("properties");
         final Set<ConfigurationMetadataProperty> groups = jsonMap.get("groups");
 

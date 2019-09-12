@@ -18,7 +18,6 @@ import org.apereo.cas.oidc.authn.OidcAccessTokenAuthenticator;
 import org.apereo.cas.oidc.authn.OidcClientConfigurationAccessTokenAuthenticator;
 import org.apereo.cas.oidc.authn.OidcClientSecretJwtAuthenticator;
 import org.apereo.cas.oidc.authn.OidcPrivateKeyJwtAuthenticator;
-import org.apereo.cas.oidc.claims.BaseOidcScopeAttributeReleasePolicy;
 import org.apereo.cas.oidc.claims.OidcCustomScopeAttributeReleasePolicy;
 import org.apereo.cas.oidc.claims.mapping.DefaultOidcAttributeToScopeClaimMapper;
 import org.apereo.cas.oidc.claims.mapping.OidcAttributeToScopeClaimMapper;
@@ -644,7 +643,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
 
     @RefreshScope
     @Bean
-    public Collection<BaseOidcScopeAttributeReleasePolicy> userDefinedScopeBasedAttributeReleasePolicies() {
+    public Collection<OidcCustomScopeAttributeReleasePolicy> userDefinedScopeBasedAttributeReleasePolicies() {
         val oidc = casProperties.getAuthn().getOidc();
         return oidc.getUserDefinedScopes().entrySet()
             .stream()

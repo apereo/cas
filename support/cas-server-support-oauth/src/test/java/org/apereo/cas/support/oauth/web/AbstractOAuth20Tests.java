@@ -156,7 +156,7 @@ public abstract class AbstractOAuth20Tests {
 
     public static final ObjectMapper MAPPER = new ObjectMapper()
         .findAndRegisterModules()
-        .configure(SerializationFeature.WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED, true);;
+        .configure(SerializationFeature.WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED, true);
 
     public static final String CONTEXT = OAuth20Constants.BASE_OAUTH20_URL + '/';
     public static final String CLIENT_ID = "1";
@@ -382,15 +382,16 @@ public abstract class AbstractOAuth20Tests {
         val mockResponse = new MockHttpServletResponse();
         requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
         val mv = controller.handleRequest(mockRequest, mockResponse);
-        assertEquals(200, mockResponse.getStatus());
+        assertEquals(HttpStatus.SC_OK, mockResponse.getStatus());
 
         var accessTokenId = StringUtils.EMPTY;
         assertTrue(mv.getModel().containsKey(OAuth20Constants.ACCESS_TOKEN));
 
-        if (!service.isRenewRefreshToken()) {
-            assertFalse(mv.getModel().containsKey(OAuth20Constants.REFRESH_TOKEN));
-        } else {
+        if (service.isGenerateRefreshToken()) {
             assertTrue(mv.getModel().containsKey(OAuth20Constants.REFRESH_TOKEN));
+            if (service.isRenewRefreshToken()) {
+                assertNull(this.ticketRegistry.getTicket(refreshToken.getId()));
+            }
         }
         val newRefreshToken = service.isRenewRefreshToken()
             ? this.ticketRegistry.getTicket(mv.getModel().get(OAuth20Constants.REFRESH_TOKEN).toString(), RefreshToken.class)

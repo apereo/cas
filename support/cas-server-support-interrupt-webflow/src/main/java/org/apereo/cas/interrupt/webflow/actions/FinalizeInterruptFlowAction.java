@@ -12,6 +12,8 @@ import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.util.Optional;
+
 /**
  * This is {@link FinalizeInterruptFlowAction}.
  *
@@ -26,9 +28,9 @@ public class FinalizeInterruptFlowAction extends AbstractAction {
         val response = InterruptUtils.getInterruptFrom(requestContext);
 
         if (response.isBlock()) {
-            val accessUrl = registeredService != null
-                ? registeredService.getAccessStrategy().getUnauthorizedRedirectUrl()
-                : null;
+            val accessUrl = Optional.ofNullable(registeredService)
+                .map(service -> service.getAccessStrategy().getUnauthorizedRedirectUrl())
+                .orElse(null);
             if (accessUrl != null) {
                 val url = accessUrl.toURL().toExternalForm();
                 val externalContext = requestContext.getExternalContext();
