@@ -1,5 +1,8 @@
 package org.apereo.cas.support.oauth.authenticator;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.principal.ServiceFactory;
@@ -9,11 +12,9 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
+import org.apereo.cas.ticket.code.OAuthCode;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.crypto.CipherExecutor;
-
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.credentials.authenticator.Authenticator;
@@ -34,7 +35,9 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator<U
     private final ServicesManager servicesManager;
     private final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory;
     private final AuditableExecution registeredServiceAccessStrategyEnforcer;
-    private final CipherExecutor<Serializable, String> registeredServiceCipherExecutor;
+
+    protected final CipherExecutor<Serializable, String> registeredServiceCipherExecutor;
+    protected final TicketRegistry ticketRegistry;
 
     @Override
     public void validate(final UsernamePasswordCredentials credentials, final WebContext context) throws CredentialsException {
@@ -46,27 +49,22 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator<U
             LOGGER.debug("Unable to locate registered service for [{}]", id);
             return;
         }
-        val grantType = context.getRequestParameter(OAuth20Constants.GRANT_TYPE);
+        if (canAuthenticate(context)) {
+            val service = this.webApplicationServiceServiceFactory.createService(registeredService.getServiceId());
+            val audit = AuditableContext.builder()
+                    .service(service)
+                    .registeredService(registeredService)
+                    .build();
+            val accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
+            accessResult.throwExceptionIfNeeded();
 
-        if (grantType.isPresent() && OAuth20Utils.isGrantType(grantType.get(), OAuth20GrantTypes.PASSWORD)) {
-            LOGGER.debug("Skipping Client credential authentication to use password authentication");
-            return;
+            validateCredentials(credentials, registeredService, context);
+
+            val profile = new CommonProfile();
+            profile.setId(id);
+            credentials.setUserProfile(profile);
+            LOGGER.debug("Authenticated user profile [{}]", profile);
         }
-
-        val service = this.webApplicationServiceServiceFactory.createService(registeredService.getServiceId());
-        val audit = AuditableContext.builder()
-            .service(service)
-            .registeredService(registeredService)
-            .build();
-        val accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
-        accessResult.throwExceptionIfNeeded();
-
-        validateCredentials(credentials, registeredService, context);
-
-        val profile = new CommonProfile();
-        profile.setId(id);
-        credentials.setUserProfile(profile);
-        LOGGER.debug("Authenticated user profile [{}]", profile);
     }
 
     /**
@@ -82,5 +80,33 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator<U
         if (!OAuth20Utils.checkClientSecret(registeredService, credentials.getPassword(), registeredServiceCipherExecutor)) {
             throw new CredentialsException("Bad secret for client identifier: " + credentials.getPassword());
         }
+    }
+
+    /**
+     * Check if authentication can be performed for a given context.
+     *
+     * @param context the context
+     * @return true if authenticator can validate credentials.
+     */
+    protected boolean canAuthenticate(final WebContext context) {
+        val grantType = context.getRequestParameter(OAuth20Constants.GRANT_TYPE);
+
+        if (grantType.isPresent() && OAuth20Utils.isGrantType(grantType.get(), OAuth20GrantTypes.PASSWORD)) {
+            LOGGER.debug("Skipping Client credential authentication to use password authentication");
+            return false;
+        }
+
+        val code = context.getRequestParameter(OAuth20Constants.CODE);
+
+        if (!code.isEmpty()) {
+            // Check if this is a PKCE request
+            val token = this.ticketRegistry.getTicket(code.get(), OAuthCode.class);
+
+            if (token != null && token.getCodeChallenge() != null) {
+                LOGGER.debug("The OAuth code [{}] issued contains code challenge which requires PKCE Autentication", code.get());
+                return false;
+            }
+        }
+        return true;
     }
 }
