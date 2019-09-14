@@ -1,8 +1,5 @@
 package org.apereo.cas.support.oauth.authenticator;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.principal.ServiceFactory;
@@ -15,6 +12,9 @@ import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.ticket.code.OAuthCode;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.crypto.CipherExecutor;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.credentials.authenticator.Authenticator;
@@ -30,14 +30,34 @@ import java.io.Serializable;
  * @since 5.0.0
  */
 @Slf4j
-@RequiredArgsConstructor
 public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator<UsernamePasswordCredentials> {
+
+    /**
+     * {@link TicketRegistry} for storing and retrieving tickets as needed.
+     */
+    protected final TicketRegistry ticketRegistry;
+
+    /**
+     * The ticket cipher, if any.
+     */
+    protected final CipherExecutor<Serializable, String> registeredServiceCipherExecutor;
+
     private final ServicesManager servicesManager;
     private final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory;
     private final AuditableExecution registeredServiceAccessStrategyEnforcer;
 
-    protected final CipherExecutor<Serializable, String> registeredServiceCipherExecutor;
-    protected final TicketRegistry ticketRegistry;
+    public OAuth20ClientIdClientSecretAuthenticator(final ServicesManager servicesManager,
+                                                    final ServiceFactory webApplicationServiceFactory,
+                                                    final AuditableExecution registeredServiceAccessStrategyEnforcer,
+                                                    final CipherExecutor<Serializable, String> registeredServiceCipherExecutor,
+                                                    final TicketRegistry ticketRegistry) {
+        this.servicesManager = servicesManager;
+        this.webApplicationServiceServiceFactory = webApplicationServiceFactory;
+        this.registeredServiceCipherExecutor = registeredServiceCipherExecutor;
+        this.registeredServiceAccessStrategyEnforcer = registeredServiceAccessStrategyEnforcer;
+        this.ticketRegistry = ticketRegistry;
+    }
+
 
     @Override
     public void validate(final UsernamePasswordCredentials credentials, final WebContext context) throws CredentialsException {
@@ -99,7 +119,7 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator<U
         val code = context.getRequestParameter(OAuth20Constants.CODE);
 
         if (!code.isEmpty()) {
-            // Check if this is a PKCE request
+            LOGGER.debug("Checking if the OAuth code issued contains code challenge");
             val token = this.ticketRegistry.getTicket(code.get(), OAuthCode.class);
 
             if (token != null && token.getCodeChallenge() != null) {

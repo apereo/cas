@@ -39,9 +39,13 @@ public class OAuth20ProofKeyCodeExchangeAuthenticator extends OAuth20ClientIdCli
         super(servicesManager, webApplicationServiceFactory, registeredServiceAccessStrategyEnforcer, registeredServiceCipherExecutor, ticketRegistry);
     }
 
+    /**
+     * Can perform authentication if the code_verifier is supplied.
+     * @param context the context
+     * @return
+     */
     @Override
     protected boolean canAuthenticate(final WebContext context) {
-        // Can perform authentication if the code_verifier is supplied
         return !context.getRequestParameter(OAuth20Constants.CODE_VERIFIER).isEmpty();
     }
 
