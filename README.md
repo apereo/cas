@@ -4,7 +4,7 @@
 
 # Central Authentication Service (CAS)
 
-[![License](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/apereo/cas/blob/master/LICENSE)
+[![Financial Contributors on Open Collective](https://opencollective.com/apereocas/all/badge.svg?label=financial+contributors)](https://opencollective.com/apereocas) [![License](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/apereo/cas/blob/master/LICENSE)
 [![Twitter](https://img.shields.io/badge/Apereo%20CAS-Twitter-blue.svg)](https://twitter.com/apereo)
 [![Support](https://img.shields.io/badge/Support-Mailing%20Lists-green.svg?colorB=ff69b4)][cassupport]
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)][casgitter]
@@ -113,3 +113,33 @@ If you (or your employer) benefit from this project, please consider becoming a 
 [casgitter]: https://gitter.im/apereo/cas?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
 [casslack]: https://apereo.slack.com/
 [blog]: https://apereo.github.io/
+
+## Contributors
+
+### Code Contributors
+
+This project exists thanks to all the people who contribute. [[Contribute](CONTRIBUTING.md)].
+<a href="https://github.com/apereo/cas/graphs/contributors"><img src="https://opencollective.com/apereocas/contributors.svg?width=890&button=false" /></a>
+
+### Financial Contributors
+
+Become a financial contributor and help us sustain our community. [[Contribute](https://opencollective.com/apereocas/contribute)]
+
+#### Individuals
+
+<a href="https://opencollective.com/apereocas"><img src="https://opencollective.com/apereocas/individuals.svg?width=890"></a>
+
+#### Organizations
+
+Support this project with your organization. Your logo will show up here with a link to your website. [[Contribute](https://opencollective.com/apereocas/contribute)]
+
+<a href="https://opencollective.com/apereocas/organization/0/website"><img src="https://opencollective.com/apereocas/organization/0/avatar.svg"></a>
+<a href="https://opencollective.com/apereocas/organization/1/website"><img src="https://opencollective.com/apereocas/organization/1/avatar.svg"></a>
+<a href="https://opencollective.com/apereocas/organization/2/website"><img src="https://opencollective.com/apereocas/organization/2/avatar.svg"></a>
+<a href="https://opencollective.com/apereocas/organization/3/website"><img src="https://opencollective.com/apereocas/organization/3/avatar.svg"></a>
+<a href="https://opencollective.com/apereocas/organization/4/website"><img src="https://opencollective.com/apereocas/organization/4/avatar.svg"></a>
+<a href="https://opencollective.com/apereocas/organization/5/website"><img src="https://opencollective.com/apereocas/organization/5/avatar.svg"></a>
+<a href="https://opencollective.com/apereocas/organization/6/website"><img src="https://opencollective.com/apereocas/organization/6/avatar.svg"></a>
+<a href="https://opencollective.com/apereocas/organization/7/website"><img src="https://opencollective.com/apereocas/organization/7/avatar.svg"></a>
+<a href="https://opencollective.com/apereocas/organization/8/website"><img src="https://opencollective.com/apereocas/organization/8/avatar.svg"></a>
+<a href="https://opencollective.com/apereocas/organization/9/website"><img src="https://opencollective.com/apereocas/organization/9/avatar.svg"></a>
