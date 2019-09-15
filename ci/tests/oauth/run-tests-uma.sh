@@ -52,9 +52,9 @@ else
     echo $tasks
     echo -e "***************************************************************************************"
 
-#    waitloop="while sleep 9m; do echo -e '\n=====[ Gradle build is still running ]====='; done &"
-#    eval $waitloop
-#    waitRetVal=$?
+    waitloop="while sleep 9m; do echo -e '\n=====[ Gradle build is still running ]====='; done &"
+    eval $waitloop
+    waitRetVal=$?
 
     eval $prepCommand
     eval $tasks
