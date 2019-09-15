@@ -5054,7 +5054,8 @@ To learn more about this topic, [please review this guide](../installation/Passw
 ```
 
 Common email notifications settings for this feature are available [here](Configuration-Properties-Common.html#email-notifications) 
-under the configuration key `cas.authn.pm.reset`.
+under the configuration key `cas.authn.pm.reset`. SMS notifications settings for this feature are 
+available [here](Configuration-Properties-Common.html#sms-notifications) under the configuration key `cas.authn.pm.reset`.
 
 The signing and encryption keys [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`.
 The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`. Signing & encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.authn.pm.reset`.
@@ -5083,7 +5084,8 @@ To learn more about this topic, [please review this guide](../installation/Passw
 
 ### LDAP Password Management
 
-Common LDAP settings for this feature are available [here](Configuration-Properties-Common.html#ldap-connection-settings) under the configuration key `cas.authn.pm.ldap`.
+Common LDAP settings for this feature are available [here](Configuration-Properties-Common.html#ldap-connection-settings) 
+under the configuration key `cas.authn.pm.ldap`.
 
 ```properties
 # cas.authn.pm.ldap.type=AD|GENERIC|EDirectory|FreeIPA
@@ -5107,6 +5109,7 @@ feature are available [here](Configuration-Properties-Common.html#password-encod
 # cas.authn.pm.jdbc.sqlSecurityQuestions=SELECT question, answer FROM table WHERE user=?
 
 # cas.authn.pm.jdbc.sqlFindEmail=SELECT email FROM table WHERE user=?
+# cas.authn.pm.jdbc.sqlFindPhone=SELECT phone FROM table WHERE user=?
 # cas.authn.pm.jdbc.sqlFindUser=SELECT user FROM table WHERE email=?
 # cas.authn.pm.jdbc.sqlChangePassword=UPDATE table SET password=? WHERE user=?
 ```
@@ -5115,6 +5118,7 @@ feature are available [here](Configuration-Properties-Common.html#password-encod
 
 ```properties
 # cas.authn.pm.rest.endpointUrlEmail=
+# cas.authn.pm.rest.endpointUrlPhone=
 # cas.authn.pm.rest.endpointUrlUser=
 # cas.authn.pm.rest.endpointUrlSecurityQuestions=
 # cas.authn.pm.rest.endpointUrlChange=
