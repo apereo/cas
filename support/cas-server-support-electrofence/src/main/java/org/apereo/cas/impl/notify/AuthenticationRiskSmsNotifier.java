@@ -38,6 +38,7 @@ public class AuthenticationRiskSmsNotifier extends BaseAuthenticationRiskNotifie
                 principal.getId());
             return;
         }
-        communicationsManager.sms(sms.getFrom(), principal.getAttributes().get(sms.getAttributeName()).toString(), sms.getText());
+        val to = principal.getAttributes().get(sms.getAttributeName()).toString();
+        communicationsManager.sms(sms.getFrom(), to, sms.getFormattedText());
     }
 }

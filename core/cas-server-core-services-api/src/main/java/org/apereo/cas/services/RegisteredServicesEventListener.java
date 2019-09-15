@@ -64,7 +64,7 @@ public class RegisteredServicesEventListener {
                 .forEach(c -> communicationsManager.email(mail, c.getEmail(), message));
         }
         if (communicationsManager.isSmsSenderDefined()) {
-            val message = String.format(sms.getText(), serviceName);
+            val message = sms.getFormattedText(serviceName);
             contacts
                 .stream()
                 .filter(c -> StringUtils.isNotBlank(c.getPhone()))

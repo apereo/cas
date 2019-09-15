@@ -42,7 +42,7 @@ public class CasSimpleSendTokenAction extends AbstractAction {
 
         val smsProperties = properties.getSms();
         val text = StringUtils.isNotBlank(smsProperties.getText())
-            ? String.format(smsProperties.getText(), token.getId())
+            ? smsProperties.getFormattedText(token.getId())
             : token.getId();
 
         val emailProperties = properties.getMail();
