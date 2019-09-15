@@ -8,6 +8,7 @@ userPassword: 123456
 sn: CasPasswordManagement
 uid: CasPasswordManagement
 mail: caspm@example.org
+telephoneNumber: 1234567890
 registeredAddress: RegisteredAddressQuestion
 postalCode: PostalCodeQuestion
 roomNumber: 666

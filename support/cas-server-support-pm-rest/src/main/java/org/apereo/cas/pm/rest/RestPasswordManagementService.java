@@ -58,7 +58,7 @@ public class RestPasswordManagementService extends BasePasswordManagementService
 
         val entity = new HttpEntity<Object>(headers);
         val result = restTemplate.exchange(rest.getEndpointUrlChange(), HttpMethod.POST, entity, Boolean.class);
-        if (result.getStatusCodeValue() == HttpStatus.OK.value()) {
+        if (result.getStatusCodeValue() == HttpStatus.OK.value() && result.hasBody()) {
             return result.getBody();
         }
         return false;
@@ -95,6 +95,25 @@ public class RestPasswordManagementService extends BasePasswordManagementService
         headers.put("username", CollectionUtils.wrap(username));
         val entity = new HttpEntity<Object>(headers);
         val result = restTemplate.exchange(rest.getEndpointUrlEmail(), HttpMethod.GET, entity, String.class);
+
+        if (result.getStatusCodeValue() == HttpStatus.OK.value() && result.hasBody()) {
+            return result.getBody();
+        }
+        return null;
+    }
+
+    @Override
+    public String findPhone(final String username) {
+        val rest = properties.getRest();
+        if (StringUtils.isBlank(rest.getEndpointUrlPhone())) {
+            return null;
+        }
+
+        val headers = new HttpHeaders();
+        headers.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
+        headers.put("username", CollectionUtils.wrap(username));
+        val entity = new HttpEntity<Object>(headers);
+        val result = restTemplate.exchange(rest.getEndpointUrlPhone(), HttpMethod.GET, entity, String.class);
 
         if (result.getStatusCodeValue() == HttpStatus.OK.value() && result.hasBody()) {
             return result.getBody();

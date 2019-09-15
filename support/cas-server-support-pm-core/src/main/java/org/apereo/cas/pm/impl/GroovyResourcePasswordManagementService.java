@@ -48,6 +48,11 @@ public class GroovyResourcePasswordManagementService extends BasePasswordManagem
     }
 
     @Override
+    public String findPhone(final String username) {
+        return watchableScript.execute("findPhone", String.class, new Object[]{username, LOGGER});
+    }
+
+    @Override
     public String findUsername(final String email) {
         return watchableScript.execute("findUsername", String.class, new Object[]{email, LOGGER});
     }
