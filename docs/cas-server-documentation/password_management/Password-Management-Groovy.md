@@ -22,6 +22,12 @@ def findEmail(Object[] args) {
     return "cas@example.org"
 }
 
+def findPhone(Object[] args) {
+    def username = args[0]
+    def logger = args[1]
+    return "1234567890"
+}
+
 def findUsername(Object[] args) {
     def email = args[0]
     def logger = args[1]

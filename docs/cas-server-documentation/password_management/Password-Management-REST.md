@@ -24,5 +24,6 @@ To see the relevant list of CAS properties, please [review this guide](../config
 | Endpoint                  | Method    | Headers             | Expected Response
 |---------------------------|-----------|------------------------------------------------------------------------
 | Get Email Address         | `GET`     | `username`          | `200`. Email address in the body.
+| Get Phone Number          | `GET`     | `username`          | `200`. Phone number in the body.
 | Get Security Questions    | `GET`     | `username`          | `200`. Security questions map in the body.
 | Update Password           | `POST`    | `username`, `password`, `oldPassword` | `200`. `true/false` in the body.
