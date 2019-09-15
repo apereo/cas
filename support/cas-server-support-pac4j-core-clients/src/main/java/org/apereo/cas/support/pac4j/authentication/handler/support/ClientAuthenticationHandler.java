@@ -74,6 +74,7 @@ public class ClientAuthenticationHandler extends AbstractPac4jAuthenticationHand
                 LOGGER.error("Unable to fetch user profile");
                 throw new FailedLoginException();
             }
+            storeUserProfile(webContext, userProfile);
             LOGGER.debug("Final user profile is: [{}]", userProfile);
             return createResult(clientCredentials, userProfile, client);
         } catch (final HttpAction e) {

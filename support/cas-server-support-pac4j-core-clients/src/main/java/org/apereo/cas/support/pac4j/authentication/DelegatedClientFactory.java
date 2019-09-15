@@ -1,7 +1,5 @@
 package org.apereo.cas.support.pac4j.authentication;
 
-import lombok.Getter;
-import lombok.Setter;
 import org.apereo.cas.authentication.principal.ClientCustomPropertyConstants;
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jBaseClientProperties;
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jDelegatedAuthenticationProperties;
@@ -10,17 +8,17 @@ import org.apereo.cas.configuration.model.support.pac4j.Pac4jSamlClientPropertie
 
 import com.github.scribejava.core.model.Verb;
 import com.nimbusds.jose.JWSAlgorithm;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.support.pac4j.logout.CasServerSpecificLogoutHandler;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.cas.config.CasConfiguration;
 import org.pac4j.cas.config.CasProtocol;
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.http.callback.PathParameterCallbackUrlResolver;
-import org.pac4j.core.logout.handler.LogoutHandler;
 import org.pac4j.oauth.client.BitbucketClient;
 import org.pac4j.oauth.client.DropBoxClient;
 import org.pac4j.oauth.client.FacebookClient;
@@ -28,6 +26,7 @@ import org.pac4j.oauth.client.FoursquareClient;
 import org.pac4j.oauth.client.GenericOAuth20Client;
 import org.pac4j.oauth.client.GitHubClient;
 import org.pac4j.oauth.client.Google2Client;
+import org.pac4j.oauth.client.HiOrgServerClient;
 import org.pac4j.oauth.client.LinkedIn2Client;
 import org.pac4j.oauth.client.OrcidClient;
 import org.pac4j.oauth.client.PayPalClient;
@@ -54,8 +53,6 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-import org.pac4j.oauth.client.HiOrgServerClient;
-
 /**
  * This is {@link DelegatedClientFactory}.
  *
@@ -72,11 +69,6 @@ public class DelegatedClientFactory {
      * The Pac 4 j properties.
      */
     private final Pac4jDelegatedAuthenticationProperties pac4jProperties;
-
-    /**
-     * The pac4j specific logout handler for the CAS server.
-     */
-    private LogoutHandler casServerSpecificLogoutHandler = new CasServerSpecificLogoutHandler();
 
     /**
      * Configure github client.
@@ -331,7 +323,6 @@ public class DelegatedClientFactory {
             .filter(cas -> StringUtils.isNotBlank(cas.getLoginUrl()))
             .forEach(cas -> {
                 final CasConfiguration cfg = new CasConfiguration(cas.getLoginUrl(), CasProtocol.valueOf(cas.getProtocol().toUpperCase()));
-                cfg.setLogoutHandler(casServerSpecificLogoutHandler);
                 final CasClient client = new CasClient(cfg);
 
                 final int count = index.intValue();
@@ -373,7 +364,6 @@ public class DelegatedClientFactory {
                 cfg.setForceAuth(saml.isForceAuth());
                 cfg.setPassive(saml.isPassive());
                 cfg.setWantsAssertionsSigned(saml.isWantsAssertionsSigned());
-                cfg.setLogoutHandler(casServerSpecificLogoutHandler);
 
                 cfg.setSignMetadata(saml.isSignServiceProviderMetadata());
                 cfg.setAttributeConsumingServiceIndex(saml.getAttributeConsumingServiceIndex());
@@ -525,7 +515,7 @@ public class DelegatedClientFactory {
         cfg.setDiscoveryURI(oidc.getDiscoveryUri());
         cfg.setCustomParams(oidc.getCustomParams());
         cfg.setLogoutUrl(oidc.getLogoutUrl());
-        
+
         if (StringUtils.isNotBlank(oidc.getResponseMode())) {
             cfg.setResponseMode(oidc.getResponseMode());
         }
@@ -534,7 +524,7 @@ public class DelegatedClientFactory {
         }
         return cfg;
     }
-    
+
     /**
      * Configure HiOrg-Server client.
      *
