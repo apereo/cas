@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Tag("OAuth")
+@Tag("UMA")
 public class UmaAuthorizationRequestEndpointControllerTests extends BaseUmaEndpointControllerTests {
     @Test
     public void verifyAuthorizationOperation() throws Exception {

@@ -203,6 +203,15 @@ if (hasTestsOfCategory(project, "OAuth")) {
     }
 }
 
+if (hasTestsOfCategory(project, "UMA")) {
+    task testUma(type: Test) {
+        enabled = shouldTest(project, "UMA")
+        useJUnitPlatform {
+            includeTags "UMA"
+        }
+    }
+}
+
 if (hasTestsOfCategory(project, "OIDC")) {
     task testOIDC(type: Test) {
         enabled = shouldTest(project, "OIDC")
@@ -228,7 +237,7 @@ test {
                 "Ldap", "Mail", "MariaDb", "Memcached",
                 "MongoDb", "MsSqlServer", "MySQL", "Postgres", "Redis",
                 "Radius", "AmazonWebServices", "RestfulApi", "Groovy",
-                "OAuth", "OIDC", "SAML"
+                "OAuth", "OIDC", "SAML", "UMA"
     }
     enabled = "SIMPLE".equalsIgnoreCase(rootProject.testCategoryType) && !Boolean.getBoolean("skipTests")
 }
