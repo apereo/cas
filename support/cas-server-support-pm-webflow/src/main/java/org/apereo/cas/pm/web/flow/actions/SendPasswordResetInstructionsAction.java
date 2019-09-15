@@ -149,7 +149,7 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
         if (StringUtils.isNotBlank(to)) {
             LOGGER.debug("Sending password reset URL [{}] via SMS to [{}]", url, to);
             val reset = casProperties.getAuthn().getPm().getReset().getSms();
-            val message = String.format(reset.getText(), url);
+            val message = reset.getFormattedText(url);
             return communicationsManager.sms(reset.getFrom(), to, message);
         }
         return false;
