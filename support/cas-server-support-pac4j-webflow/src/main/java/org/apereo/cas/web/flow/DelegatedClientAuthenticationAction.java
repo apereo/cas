@@ -14,7 +14,6 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
-import org.apereo.cas.support.pac4j.logout.RequestSloException;
 import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.validation.DelegatedAuthenticationAccessStrategyHelper;
@@ -51,7 +50,7 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -257,14 +256,6 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
      * @return the event to trigger
      */
     protected Event handleException(final JEEContext webContext, final BaseClient<Credentials> client, final Exception e) {
-        if (e instanceof RequestSloException) {
-            try {
-                webContext.getNativeResponse().sendRedirect("logout");
-            } catch (final IOException ioe) {
-                throw new IllegalArgumentException("Unable to call logout", ioe);
-            }
-            return stopWebflow();
-        }
         val msg = String.format("Delegated authentication has failed with client %s", client.getName());
         LOGGER.error(msg, e);
         throw new IllegalArgumentException(msg);

@@ -67,6 +67,21 @@ public class JdbcPasswordManagementService extends BasePasswordManagementService
     }
 
     @Override
+    public String findPhone(final String username) {
+        try {
+            val phone = this.jdbcTemplate.queryForObject(properties.getJdbc().getSqlFindPhone(), String.class, username);
+            if (StringUtils.isNotBlank(phone)) {
+                return phone;
+            }
+            LOGGER.debug("Username [{}] not found when searching for phone", username);
+            return null;
+        } catch (final EmptyResultDataAccessException e) {
+            LOGGER.debug("Username [{}] not found when searching for phone", username);
+            return null;
+        }
+    }
+
+    @Override
     public String findUsername(final String email) {
         try {
             val username = this.jdbcTemplate.queryForObject(properties.getJdbc().getSqlFindUser(), String.class, email);

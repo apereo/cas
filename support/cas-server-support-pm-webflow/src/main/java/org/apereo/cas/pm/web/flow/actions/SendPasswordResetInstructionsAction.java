@@ -75,7 +75,8 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
      */
     public String buildPasswordResetUrl(final String username,
                                         final PasswordManagementService passwordManagementService,
-                                        final CasConfigurationProperties casProperties, final WebApplicationService service) {
+                                        final CasConfigurationProperties casProperties,
+                                        final WebApplicationService service) {
         val token = passwordManagementService.createToken(username);
         if (StringUtils.isNotBlank(token)) {
             val transientFactory = (TransientSessionTicketFactory) this.ticketFactory.get(TransientSessionTicket.class);
@@ -103,8 +104,8 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
     @Override
     protected Event doExecute(final RequestContext requestContext) {
         communicationsManager.validate();
-        if (!communicationsManager.isMailSenderDefined()) {
-            return getErrorEvent("email.failed", "Unable to send email as no mail sender is defined", requestContext);
+        if (!communicationsManager.isMailSenderDefined() && !communicationsManager.isSmsSenderDefined()) {
+            return getErrorEvent("contact.failed", "Unable to send email as no mail sender is defined", requestContext);
         }
 
         val pm = casProperties.getAuthn().getPm();
@@ -116,24 +117,42 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
             return getErrorEvent("username.required", "No username is provided", requestContext);
         }
 
-        val to = passwordManagementService.findEmail(username);
-        if (StringUtils.isBlank(to)) {
-            LOGGER.warn("No recipient is provided");
-            return getErrorEvent("email.invalid", "Provided email address is invalid", requestContext);
+        val email = passwordManagementService.findEmail(username);
+        val phone = passwordManagementService.findPhone(username);
+        if (StringUtils.isBlank(email) && StringUtils.isBlank(phone)) {
+            LOGGER.warn("No recipient is provided with a valid email/phone");
+            return getErrorEvent("contact.invalid", "Provided email address or phone number is invalid", requestContext);
         }
 
         val service = WebUtils.getService(requestContext);
         val url = buildPasswordResetUrl(username, passwordManagementService, casProperties, service);
         if (StringUtils.isNotBlank(url)) {
             LOGGER.debug("Generated password reset URL [{}]; Link is only active for the next [{}] minute(s)", url, pm.getReset().getExpirationMinutes());
-            if (sendPasswordResetEmailToAccount(to, url)) {
+            if (sendPasswordResetEmailToAccount(email, url) || sendPasswordResetSmsToAccount(phone, url)) {
                 return success();
             }
         } else {
-            LOGGER.error("No password reset URL could be built and sent to [{}]", to);
+            LOGGER.error("No password reset URL could be built and sent to [{}]", email);
         }
-        LOGGER.error("Failed to notify account [{}]", to);
-        return getErrorEvent("email.failed", "Failed to send the password reset link to the given email address", requestContext);
+        LOGGER.error("Failed to notify account [{}]", email);
+        return getErrorEvent("contact.failed", "Failed to send the password reset link to the given email address or phone number", requestContext);
+    }
+
+    /**
+     * Send password reset sms to account.
+     *
+     * @param to  the to
+     * @param url the url
+     * @return the boolean
+     */
+    protected boolean sendPasswordResetSmsToAccount(final String to, final String url) {
+        if (StringUtils.isNotBlank(to)) {
+            LOGGER.debug("Sending password reset URL [{}] via SMS to [{}]", url, to);
+            val reset = casProperties.getAuthn().getPm().getReset().getSms();
+            val message = String.format(reset.getText(), url);
+            return communicationsManager.sms(reset.getFrom(), to, message);
+        }
+        return false;
     }
 
     /**
@@ -144,9 +163,13 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
      * @return true/false
      */
     protected boolean sendPasswordResetEmailToAccount(final String to, final String url) {
-        val reset = casProperties.getAuthn().getPm().getReset().getMail();
-        val text = reset.getFormattedBody(url);
-        return this.communicationsManager.email(reset, to, text);
+        if (StringUtils.isNotBlank(to)) {
+            val reset = casProperties.getAuthn().getPm().getReset().getMail();
+            val text = reset.getFormattedBody(url);
+            LOGGER.debug("Sending password reset URL [{}] via email to [{}]", url, to);
+            return this.communicationsManager.email(reset, to, text);
+        }
+        return false;
     }
 
     /**

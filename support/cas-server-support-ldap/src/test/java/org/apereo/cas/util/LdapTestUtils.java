@@ -11,6 +11,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.ldaptive.AttributeModification;
 import org.ldaptive.AttributeModificationType;
+import org.ldaptive.BindRequest;
 import org.ldaptive.DefaultConnectionFactory;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
@@ -74,12 +75,24 @@ public class LdapTestUtils {
     }
 
     /**
-     * Creates the given LDAP entries.
+     * Create ldap entries.
      *
-     * @param connection Open LDAP connection used to connect to directory.
-     * @param entries    Collection of LDAP entries.
+     * @param connection the connection
+     * @param entries    the entries
      */
     public static void createLdapEntries(final LDAPConnection connection, final Collection<LdapEntry> entries) {
+        createLdapEntries(connection, entries, null);
+    }
+
+    /**
+     * Creates the given LDAP entries.
+     *
+     * @param connection  Open LDAP connection used to connect to directory.
+     * @param entries     Collection of LDAP entries.
+     * @param bindRequest the bind request
+     */
+    public static void createLdapEntries(final LDAPConnection connection, final Collection<LdapEntry> entries,
+                                         final BindRequest bindRequest) {
         try {
             for (val entry : entries) {
                 val attrs = new ArrayList<Attribute>(entry.getAttributeNames().length);
@@ -93,7 +106,7 @@ public class LdapTestUtils {
             }
         } catch (final LDAPException e) {
             if (e.getResultCode().equals(ResultCode.ENTRY_ALREADY_EXISTS)) {
-                modifyLdapEntries(connection, entries);
+                modifyLdapEntries(connection, entries, bindRequest);
             } else {
                 LOGGER.error(e.getMessage(), e);
             }
@@ -105,46 +118,61 @@ public class LdapTestUtils {
     /**
      * Modify ldap entries.
      *
+     * @param connection  the connection
+     * @param entries     the entries
+     * @param bindRequest the bind request
+     */
+    public static void modifyLdapEntries(final LDAPConnection connection, final Collection<LdapEntry> entries,
+                                         final BindRequest bindRequest) {
+        entries.forEach(entry -> entry.getAttributes().forEach(ldapAttribute -> modifyLdapEntry(connection, entry, ldapAttribute, bindRequest)));
+    }
+
+    /**
+     * Modify ldap entries.
+     *
      * @param connection the connection
      * @param entries    the entries
      */
     public static void modifyLdapEntries(final LDAPConnection connection, final Collection<LdapEntry> entries) {
-        entries.forEach(entry -> entry.getAttributes().forEach(ldapAttribute -> modifyLdapEntry(connection, entry, ldapAttribute)));
+        modifyLdapEntries(connection, entries, null);
     }
-
     /**
      * Modify ldap entry.
      *
-     * @param serverCon the server con
-     * @param dn        the dn
-     * @param attr      the attr
-     * @param add       the add
+     * @param serverCon   the server con
+     * @param dn          the dn
+     * @param attr        the attr
+     * @param add         the add
+     * @param bindRequest the bind request
      */
     public static void modifyLdapEntry(final LDAPConnection serverCon, final String dn,
                                        final LdapAttribute attr,
-                                       final AttributeModificationType add) {
+                                       final AttributeModificationType add,
+                                       final BindRequest bindRequest) {
 
         val address = "ldap://" + serverCon.getConnectedAddress() + ':' + serverCon.getConnectedPort();
         try (val conn = DefaultConnectionFactory.getConnection(address)) {
             try {
-                conn.open();
+                conn.open(bindRequest);
                 val modify = new ModifyOperation(conn);
                 modify.execute(new ModifyRequest(dn, new AttributeModification(add, attr)));
             } catch (final Exception e) {
                 LOGGER.debug(e.getMessage(), e);
             }
         }
-
     }
 
     /**
      * Modify ldap entry.
      *
-     * @param serverCon the server con
-     * @param dn        the dn
-     * @param attr      the attr
+     * @param serverCon   the server con
+     * @param dn          the dn
+     * @param attr        the attr
+     * @param bindRequest the bind request
      */
-    public static void modifyLdapEntry(final LDAPConnection serverCon, final LdapEntry dn, final LdapAttribute attr) {
-        modifyLdapEntry(serverCon, dn.getDn(), attr, AttributeModificationType.ADD);
+    public static void modifyLdapEntry(final LDAPConnection serverCon, final LdapEntry dn,
+                                       final LdapAttribute attr,
+                                       final BindRequest bindRequest) {
+        modifyLdapEntry(serverCon, dn.getDn(), attr, AttributeModificationType.ADD, bindRequest);
     }
 }

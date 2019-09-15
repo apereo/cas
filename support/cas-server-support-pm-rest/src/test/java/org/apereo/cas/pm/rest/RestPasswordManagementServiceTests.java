@@ -44,7 +44,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestPropertySource(properties = {
     "cas.authn.pm.rest.endpointUrlChange=http://localhost:9090",
     "cas.authn.pm.rest.endpointUrlSecurityQuestions=http://localhost:9090",
-    "cas.authn.pm.rest.endpointUrlEmail=http://localhost:9090"
+    "cas.authn.pm.rest.endpointUrlEmail=http://localhost:9090",
+    "cas.authn.pm.rest.endpointUrlPhone=http://localhost:9090"
 })
 @Tag("RestfulApi")
 public class RestPasswordManagementServiceTests {
@@ -71,6 +72,20 @@ public class RestPasswordManagementServiceTests {
             webServer.stop();
             assertNotNull(email);
             assertEquals(data, email);
+        }
+    }
+
+    @Test
+    public void verifyPhoneFound() {
+        val data = "1234567890";
+        try (val webServer = new MockWebServer(9090,
+            new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"),
+            MediaType.APPLICATION_JSON_VALUE)) {
+            webServer.start();
+            val ph = this.passwordChangeService.findPhone("casuser");
+            webServer.stop();
+            assertNotNull(ph);
+            assertEquals(data, ph);
         }
     }
 
