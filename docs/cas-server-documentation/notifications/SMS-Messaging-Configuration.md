@@ -43,7 +43,7 @@ To see the relevant list of CAS properties, please [review this guide](../config
 
 The request body contains the actual message. A status code of `200` is expected from the endpoint.
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#rest).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#rest-2).
 
 ## Twilio
 
