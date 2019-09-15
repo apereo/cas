@@ -111,7 +111,7 @@ public class ResourceUtils {
             getResourceFrom(location);
             return true;
         } catch (final Exception e) {
-            LOGGER.trace(e.getMessage(), e);
+            LOGGER.trace(e.getMessage());
         }
         return false;
     }
