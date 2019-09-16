@@ -8,10 +8,14 @@ import org.apereo.cas.ws.idp.WSFederationClaims;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
+import org.springframework.core.io.ClassPathResource;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -34,6 +38,35 @@ public class WSFederationClaimsReleasePolicyTests {
             CollectionUtils.wrap("uid", "casuser", "cn", "CAS", "givenName", "CAS User"));
         val results = policy.getAttributes(principal, CoreAuthenticationTestUtils.getService(), service);
         assertTrue(results.isEmpty());
+    }
+
+    @Test
+    public void verifyAttributeReleaseInlineGroovy() {
+        val service = RegisteredServiceTestUtils.getRegisteredService("verifyAttributeRelease");
+        val policy = new WSFederationClaimsReleasePolicy(
+            CollectionUtils.wrap(WSFederationClaims.EMAIL_ADDRESS_2005.name(), "groovy { return attributes['cn'][0] + '@example.org' }"));
+        val principal = CoreAuthenticationTestUtils.getPrincipal("casuser", CollectionUtils.wrap("cn", "casuser"));
+        val results = policy.getAttributes(principal, CoreAuthenticationTestUtils.getService(), service);
+        assertFalse(results.isEmpty());
+        assertTrue(results.containsKey(WSFederationClaims.EMAIL_ADDRESS_2005.getUri()));
+        assertEquals(results.get(WSFederationClaims.EMAIL_ADDRESS_2005.getUri()), List.of("casuser@example.org"));
+    }
+
+    @Test
+    public void verifyAttributeReleaseScriptGroovy() throws Exception {
+
+        val file = new File(FileUtils.getTempDirectoryPath(), "script.groovy");
+        val script = IOUtils.toString(new ClassPathResource("wsfed-attr.groovy").getInputStream(), StandardCharsets.UTF_8);
+        FileUtils.write(file, script, StandardCharsets.UTF_8);
+        
+        val service = RegisteredServiceTestUtils.getRegisteredService("verifyAttributeRelease");
+        val policy = new WSFederationClaimsReleasePolicy(
+            CollectionUtils.wrap(WSFederationClaims.EMAIL_ADDRESS_2005.name(), "file:" + file.getCanonicalPath()));
+        val principal = CoreAuthenticationTestUtils.getPrincipal("casuser", CollectionUtils.wrap("cn", "casuser"));
+        val results = policy.getAttributes(principal, CoreAuthenticationTestUtils.getService(), service);
+        assertFalse(results.isEmpty());
+        assertTrue(results.containsKey(WSFederationClaims.EMAIL_ADDRESS_2005.getUri()));
+        assertEquals(results.get(WSFederationClaims.EMAIL_ADDRESS_2005.getUri()), List.of("casuser@example.org"));
     }
 
     @Test

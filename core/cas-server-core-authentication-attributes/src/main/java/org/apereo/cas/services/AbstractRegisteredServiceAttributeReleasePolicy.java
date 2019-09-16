@@ -161,8 +161,8 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
     }
 
     private static PrincipalAttributesRepository getPrincipalAttributesRepositoryFromApplicationContext() {
-        val applicationContext = ApplicationContextProvider.getApplicationContext();
-        if (applicationContext != null) {
+        val applicationContext = ApplicationContextProvider.getConfigurableApplicationContext();
+        if (applicationContext != null && applicationContext.isActive()) {
             if (applicationContext.containsBean("globalPrincipalAttributeRepository")) {
                 LOGGER.trace("Loading global principal attribute repository with caching policies...");
                 return applicationContext.getBean("globalPrincipalAttributeRepository", PrincipalAttributesRepository.class);

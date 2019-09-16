@@ -39,7 +39,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
- * This is {@link BaseOAuthExpirationPolicyTests}.
+ * This is {@link BaseOAuth20ExpirationPolicyTests}.
  *
  * @author Misagh Moayyed
  * @since 5.3.0
@@ -65,7 +65,7 @@ import java.util.HashMap;
     CasDefaultServiceTicketIdGeneratorsConfiguration.class,
     CasOAuthAuthenticationServiceSelectionStrategyConfiguration.class
 })
-public abstract class BaseOAuthExpirationPolicyTests {
+public abstract class BaseOAuth20ExpirationPolicyTests {
     protected static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "oAuthTokenExpirationPolicy.json");
     protected static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 

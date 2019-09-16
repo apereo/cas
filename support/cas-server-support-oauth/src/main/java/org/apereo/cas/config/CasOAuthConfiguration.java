@@ -750,6 +750,7 @@ public class CasOAuthConfiguration {
     }
 
     @Bean
+    @RefreshScope
     @ConditionalOnMissingBean(name = "oauthAccessTokenJwtCipherExecutor")
     public CipherExecutor oauthAccessTokenJwtCipherExecutor() {
         val crypto = casProperties.getAuthn().getOauth().getAccessToken().getCrypto();
