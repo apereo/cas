@@ -13,6 +13,8 @@ import org.apereo.cas.ticket.code.OAuthCode;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.pac4j.core.context.WebContext;
@@ -30,33 +32,17 @@ import java.io.Serializable;
  * @since 5.0.0
  */
 @Slf4j
+@RequiredArgsConstructor
 public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator<UsernamePasswordCredentials> {
-
-    /**
-     * {@link TicketRegistry} for storing and retrieving tickets as needed.
-     */
-    protected final TicketRegistry ticketRegistry;
-
-    /**
-     * The ticket cipher, if any.
-     */
-    protected final CipherExecutor<Serializable, String> registeredServiceCipherExecutor;
-
     private final ServicesManager servicesManager;
     private final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory;
     private final AuditableExecution registeredServiceAccessStrategyEnforcer;
 
-    public OAuth20ClientIdClientSecretAuthenticator(final ServicesManager servicesManager,
-                                                    final ServiceFactory webApplicationServiceFactory,
-                                                    final AuditableExecution registeredServiceAccessStrategyEnforcer,
-                                                    final CipherExecutor<Serializable, String> registeredServiceCipherExecutor,
-                                                    final TicketRegistry ticketRegistry) {
-        this.servicesManager = servicesManager;
-        this.webApplicationServiceServiceFactory = webApplicationServiceFactory;
-        this.registeredServiceCipherExecutor = registeredServiceCipherExecutor;
-        this.registeredServiceAccessStrategyEnforcer = registeredServiceAccessStrategyEnforcer;
-        this.ticketRegistry = ticketRegistry;
-    }
+    @Getter
+    private final CipherExecutor<Serializable, String> registeredServiceCipherExecutor;
+
+    @Getter
+    private final TicketRegistry ticketRegistry;
 
 
     @Override
@@ -98,7 +84,7 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator<U
                                        final OAuthRegisteredService registeredService,
                                        final WebContext context) {
         if (!OAuth20Utils.checkClientSecret(registeredService, credentials.getPassword(), registeredServiceCipherExecutor)) {
-            throw new CredentialsException("Bad secret for client identifier: " + credentials.getPassword());
+            throw new CredentialsException("Client Credentials provided for registered service [{}] is not valid" + registeredService.getName());
         }
     }
 

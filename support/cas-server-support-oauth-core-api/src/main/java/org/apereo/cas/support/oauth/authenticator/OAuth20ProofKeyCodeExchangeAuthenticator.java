@@ -56,15 +56,15 @@ public class OAuth20ProofKeyCodeExchangeAuthenticator extends OAuth20ClientIdCli
                 .map(String::valueOf)
                 .orElse(StringUtils.EMPTY);
 
-        if (!OAuth20Utils.checkClientSecret(registeredService, clientSecret, registeredServiceCipherExecutor)) {
-            throw new CredentialsException("Bad secret for client identifier: " + credentials.getUsername());
+        if (!OAuth20Utils.checkClientSecret(registeredService, clientSecret, getRegisteredServiceCipherExecutor())) {
+            throw new CredentialsException("Client Credentials provided for registered service [{}] is not valid" + registeredService.getName());
         }
 
         val codeVerifier = credentials.getPassword();
         val code = context.getRequestParameter(OAuth20Constants.CODE)
             .map(String::valueOf).orElse(StringUtils.EMPTY);
 
-        val token = this.ticketRegistry.getTicket(code, OAuthCode.class);
+        val token = getTicketRegistry().getTicket(code, OAuthCode.class);
         if (token == null || token.isExpired()) {
             LOGGER.error("Provided code [{}] is either not found in the ticket registry or has expired", code);
             throw new CredentialsException("Invalid token: " + code);
