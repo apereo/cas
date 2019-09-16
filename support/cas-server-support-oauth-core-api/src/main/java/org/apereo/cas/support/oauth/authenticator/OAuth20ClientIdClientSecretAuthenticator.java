@@ -111,11 +111,11 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator<U
      * 2. When request contains OAuth {@code code} which was issued with a {@code code_challenge}, in which case the authentication will be
      *    performed by {{@code OAuth20ProofKeyCodeExchangeAuthenticator}
      *
-     * @see <a href="https://tools.ietf.org/html/rfc7636#section-4.3"> PKCE Auth Code Request</a>
-     * @see <a href="https://tools.ietf.org/html/rfc7636#section-4.5"> PKCE Token request</a>
-     *
      * @param context the context
      * @return true if authenticator can validate credentials.
+     *
+     * @see <a href="https://tools.ietf.org/html/rfc7636#section-4.3"> PKCE Auth Code Request</a>
+     * @see <a href="https://tools.ietf.org/html/rfc7636#section-4.5"> PKCE Token request</a>
      */
     protected boolean canAuthenticate(final WebContext context) {
         val grantType = context.getRequestParameter(OAuth20Constants.GRANT_TYPE);
