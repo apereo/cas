@@ -54,26 +54,29 @@ public class OidcRegisteredServiceJwtAccessTokenCipherExecutor extends OAuth20Re
 
     @Override
     public Optional<String> getEncryptionKey(final RegisteredService registeredService) {
-        val svc = (OidcRegisteredService) registeredService;
+        val svc = (OAuthRegisteredService) registeredService;
 
         val result = super.getEncryptionKey(registeredService);
         if (result.isPresent()) {
             return result;
         }
 
-        val jwks = this.serviceJsonWebKeystoreCache.get(svc);
-        if (jwks.isEmpty()) {
-            LOGGER.warn("Service " + svc.getServiceId()
-                + " with client id " + svc.getClientId()
-                + " is configured to encrypt tokens, yet no JSON web key is available");
-            return Optional.empty();
+        if (svc instanceof OidcRegisteredService) {
+            val jwks = this.serviceJsonWebKeystoreCache.get(svc);
+            if (jwks.isEmpty()) {
+                LOGGER.warn("Service " + svc.getServiceId()
+                    + " with client id " + svc.getClientId()
+                    + " is configured to encrypt tokens, yet no JSON web key is available");
+                return Optional.empty();
+            }
+            val jsonWebKey = jwks.get();
+            LOGGER.debug("Found JSON web key to encrypt the token: [{}]", jsonWebKey);
+            if (jsonWebKey.getPublicKey() == null) {
+                LOGGER.warn("JSON web key used to sign the token has no associated public key");
+                return Optional.empty();
+            }
+            return Optional.of(jwks.get().toJson());
         }
-        val jsonWebKey = jwks.get();
-        LOGGER.debug("Found JSON web key to encrypt the token: [{}]", jsonWebKey);
-        if (jsonWebKey.getPublicKey() == null) {
-            LOGGER.warn("JSON web key used to sign the token has no associated public key");
-            return Optional.empty();
-        }
-        return Optional.of(jwks.get().toJson());
+        return result;
     }
 }

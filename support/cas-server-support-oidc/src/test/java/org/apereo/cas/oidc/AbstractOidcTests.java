@@ -239,6 +239,19 @@ public abstract class AbstractOidcTests {
         return svc;
     }
 
+    protected static OAuthRegisteredService getOAuthRegisteredService(final String clientId,
+                                                                    final String redirectUri) {
+        val svc = new OAuthRegisteredService();
+        svc.setClientId(clientId);
+        svc.setName("oauth");
+        svc.setDescription("description");
+        svc.setClientSecret("secret");
+        svc.setServiceId(redirectUri);
+        svc.setInformationUrl("info");
+        svc.setPrivacyUrl("privacy");
+        return svc;
+    }
+
     protected static JwtClaims getClaims(final String subject, final String issuer,
                                          final String clientId, final String audience) {
         val claims = new JwtClaims();
