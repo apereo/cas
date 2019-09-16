@@ -40,7 +40,7 @@ public class OAuth20ProofKeyCodeExchangeAuthenticator extends OAuth20ClientIdCli
     }
 
     /**
-     * Can perform authentication if the code_verifier is supplied.
+     * Can perform authentication if the {@code code_verifier} is supplied.
      * @param context the context
      * @return
      */
@@ -52,7 +52,9 @@ public class OAuth20ProofKeyCodeExchangeAuthenticator extends OAuth20ClientIdCli
     @Override
     protected void validateCredentials(final UsernamePasswordCredentials credentials,
                                        final OAuthRegisteredService registeredService, final WebContext context) {
-        val clientSecret = context.getRequestParameter(OAuth20Constants.CLIENT_SECRET).map(String::valueOf).orElse(StringUtils.EMPTY);
+        val clientSecret = context.getRequestParameter(OAuth20Constants.CLIENT_SECRET)
+                .map(String::valueOf)
+                .orElse(StringUtils.EMPTY);
 
         if (!OAuth20Utils.checkClientSecret(registeredService, clientSecret, registeredServiceCipherExecutor)) {
             throw new CredentialsException("Bad secret for client identifier: " + credentials.getUsername());

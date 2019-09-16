@@ -105,6 +105,15 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator<U
     /**
      * Check if authentication can be performed for a given context.
      *
+     * ClientCredential authentication can be performed if {@code client_id} & {@code client_secret} are provided.
+     * Exception to this will be
+     * 1. When the grant type is {@code password}, in which case the authentication will be performed by {@code OAuth20UsernamePasswordAuthenticator}
+     * 2. When request contains OAuth {@code code} which was issued with a {@code code_challenge}, in which case the authentication will be
+     *    performed by {{@code OAuth20ProofKeyCodeExchangeAuthenticator}
+     *
+     * @see <a href="https://tools.ietf.org/html/rfc7636#section-4.3"> PKCE Auth Code Request</a>
+     * @see <a href="https://tools.ietf.org/html/rfc7636#section-4.5"> PKCE Token request</a>
+     *
      * @param context the context
      * @return true if authenticator can validate credentials.
      */
@@ -123,7 +132,7 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator<U
             val token = this.ticketRegistry.getTicket(code.get(), OAuthCode.class);
 
             if (token != null && token.getCodeChallenge() != null) {
-                LOGGER.debug("The OAuth code [{}] issued contains code challenge which requires PKCE Autentication", code.get());
+                LOGGER.debug("The OAuth code [{}] issued contains code challenge which requires PKCE Authentication", code.get());
                 return false;
             }
         }
