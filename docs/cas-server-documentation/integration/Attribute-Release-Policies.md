@@ -42,7 +42,7 @@ Supported parameters are the following:
 
 The parameters above can either be added as query string parameters or as a JSON object submitted with a POST:
 
-```code
+```json
 { 
   "username": USERNAME,
   "password": PASSWORD,

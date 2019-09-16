@@ -44,10 +44,14 @@ import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
+import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AccessTokenEndpointController;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20DeviceUserCodeApprovalEndpointController;
+import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGenerator;
+import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestDataHolder;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseGenerator;
+import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseResult;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.Ticket;
@@ -62,6 +66,7 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.SchedulingUtils;
+import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.serialization.ComponentSerializationPlan;
 import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurator;
 import org.apereo.cas.web.config.CasCookieConfiguration;
@@ -92,6 +97,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.nio.charset.StandardCharsets;
 import java.time.ZoneOffset;
@@ -213,8 +219,16 @@ public abstract class AbstractOAuth20Tests {
     protected TicketRegistry ticketRegistry;
 
     @Autowired
+    @Qualifier("oauthAccessTokenJwtCipherExecutor")
+    protected CipherExecutor oauthAccessTokenJwtCipherExecutor;
+
+    @Autowired
     @Qualifier("defaultAccessTokenFactory")
     protected AccessTokenFactory defaultAccessTokenFactory;
+
+    @Autowired
+    @Qualifier("oauthTokenGenerator")
+    protected OAuth20TokenGenerator oauthTokenGenerator;
 
     protected static Principal createPrincipal() {
         val map = new HashMap<String, List<Object>>();
@@ -407,6 +421,32 @@ public abstract class AbstractOAuth20Tests {
         assertTrue(timeLeft >= TIMEOUT - 10 - DELTA);
 
         return Pair.of(accessToken, newRefreshToken);
+    }
+
+    protected ModelAndView generateAccessTokenResponseAndGetModelAndView(final OAuthRegisteredService registeredService) {
+        val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
+        val mockResponse = new MockHttpServletResponse();
+
+        val service = RegisteredServiceTestUtils.getService("example");
+        val holder = AccessTokenRequestDataHolder.builder()
+            .clientId(registeredService.getClientId())
+            .service(service)
+            .authentication(RegisteredServiceTestUtils.getAuthentication("casuser"))
+            .registeredService(registeredService)
+            .grantType(OAuth20GrantTypes.AUTHORIZATION_CODE)
+            .responseType(OAuth20ResponseTypes.CODE)
+            .ticketGrantingTicket(new MockTicketGrantingTicket("casuser"))
+            .build();
+
+        val generatedToken = oauthTokenGenerator.generate(holder);
+        val builder = OAuth20AccessTokenResponseResult.builder();
+        val result = builder
+            .registeredService(registeredService)
+            .responseType(OAuth20ResponseTypes.CODE)
+            .service(service)
+            .generatedToken(generatedToken)
+            .build();
+        return accessTokenResponseGenerator.generate(mockRequest, mockResponse, result);
     }
 
     public static ExpirationPolicyBuilder alwaysExpiresExpirationPolicyBuilder() {

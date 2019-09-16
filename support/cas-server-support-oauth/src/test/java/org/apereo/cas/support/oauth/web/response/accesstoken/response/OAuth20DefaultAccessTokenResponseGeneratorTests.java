@@ -1,35 +1,17 @@
 package org.apereo.cas.support.oauth.web.response.accesstoken.response;
 
-import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.DefaultRegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceProperty;
-import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
-import org.apereo.cas.support.oauth.OAuth20GrantTypes;
-import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
-import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.AbstractOAuth20Tests;
-import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGeneratedResult;
-import org.apereo.cas.ticket.ExpirationPolicy;
-import org.apereo.cas.ticket.ExpirationPolicyBuilder;
-import org.apereo.cas.ticket.accesstoken.AccessToken;
-import org.apereo.cas.ticket.accesstoken.DefaultAccessTokenFactory;
-import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
-import org.apereo.cas.token.JwtBuilder;
 
 import com.nimbusds.jwt.JWTParser;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpMethod;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.web.servlet.ModelAndView;
 
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashSet;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -54,14 +36,15 @@ public class OAuth20DefaultAccessTokenResponseGeneratorTests extends AbstractOAu
         registeredService.setJwtAccessToken(false);
         servicesManager.save(registeredService);
 
-        val mv = getModelAndView(registeredService);
-        assertTrue(mv.getModel().containsKey(OAuth20Constants.ACCESS_TOKEN));
-        assertTrue(mv.getModel().containsKey(OAuth20Constants.EXPIRES_IN));
-        assertTrue(mv.getModel().containsKey(OAuth20Constants.SCOPE));
-        assertTrue(mv.getModel().containsKey(OAuth20Constants.TOKEN_TYPE));
+        val mv = generateAccessTokenResponseAndGetModelAndView(registeredService);
+        val model = mv.getModel();
+        assertTrue(model.containsKey(OAuth20Constants.ACCESS_TOKEN));
+        assertTrue(model.containsKey(OAuth20Constants.EXPIRES_IN));
+        assertTrue(model.containsKey(OAuth20Constants.SCOPE));
+        assertTrue(model.containsKey(OAuth20Constants.TOKEN_TYPE));
 
         assertThrows(ParseException.class, () -> {
-            val at = mv.getModel().get(OAuth20Constants.ACCESS_TOKEN).toString();
+            val at = model.get(OAuth20Constants.ACCESS_TOKEN).toString();
             JWTParser.parse(at);
         });
     }
@@ -72,7 +55,7 @@ public class OAuth20DefaultAccessTokenResponseGeneratorTests extends AbstractOAu
         registeredService.setJwtAccessToken(true);
         servicesManager.save(registeredService);
 
-        val mv = getModelAndView(registeredService);
+        val mv = generateAccessTokenResponseAndGetModelAndView(registeredService);
         assertTrue(mv.getModel().containsKey(OAuth20Constants.ACCESS_TOKEN));
 
         val at = mv.getModel().get(OAuth20Constants.ACCESS_TOKEN).toString();
@@ -97,7 +80,7 @@ public class OAuth20DefaultAccessTokenResponseGeneratorTests extends AbstractOAu
 
         servicesManager.save(registeredService);
 
-        val mv = getModelAndView(registeredService);
+        val mv = generateAccessTokenResponseAndGetModelAndView(registeredService);
         assertTrue(mv.getModel().containsKey(OAuth20Constants.ACCESS_TOKEN));
 
         val at = mv.getModel().get(OAuth20Constants.ACCESS_TOKEN).toString();
@@ -105,47 +88,4 @@ public class OAuth20DefaultAccessTokenResponseGeneratorTests extends AbstractOAu
         assertNotNull(jwt);
     }
 
-    private ModelAndView getModelAndView(final OAuthRegisteredService registeredService) {
-        val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
-        val mockResponse = new MockHttpServletResponse();
-
-        val service = RegisteredServiceTestUtils.getService("example");
-        val expirationPolicy = new ExpirationPolicyBuilder() {
-            private static final long serialVersionUID = 3911344031977989503L;
-
-            @Override
-            public ExpirationPolicy buildTicketExpirationPolicy() {
-                return new HardTimeoutExpirationPolicy(30);
-            }
-
-            @Override
-            public Class getTicketType() {
-                return AccessToken.class;
-            }
-        };
-        val factory = new DefaultAccessTokenFactory(expirationPolicy,
-            new JwtBuilder("cas.example.org", new OAuth20JwtAccessTokenCipherExecutor(), servicesManager,
-                new OAuth20RegisteredServiceJwtAccessTokenCipherExecutor()), servicesManager);
-
-        val accessToken = factory.create(service,
-            RegisteredServiceTestUtils.getAuthentication("casuser"),
-            new MockTicketGrantingTicket("casuser"),
-            new ArrayList<>(), registeredService.getClientId(), new HashMap<>());
-
-        val genBuilder = OAuth20TokenGeneratedResult.builder();
-        val generatedToken = genBuilder.registeredService(registeredService)
-            .grantType(OAuth20GrantTypes.AUTHORIZATION_CODE)
-            .responseType(OAuth20ResponseTypes.CODE)
-            .accessToken(accessToken)
-            .build();
-
-        val builder = OAuth20AccessTokenResponseResult.builder();
-        val result = builder
-            .registeredService(registeredService)
-            .responseType(OAuth20ResponseTypes.CODE)
-            .service(service)
-            .generatedToken(generatedToken)
-            .build();
-        return accessTokenResponseGenerator.generate(mockRequest, mockResponse, result);
-    }
 }
