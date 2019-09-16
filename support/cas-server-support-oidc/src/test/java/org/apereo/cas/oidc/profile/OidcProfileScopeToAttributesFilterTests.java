@@ -65,4 +65,31 @@ public class OidcProfileScopeToAttributesFilterTests extends AbstractOidcTests {
         assertTrue(principal.getAttributes().containsKey("email"));
         assertEquals(4, principal.getAttributes().size());
     }
+
+    @Test
+    public void verifyOperationFilterWithOpenIdWithoutServiceScopes() {
+        val service = getOidcRegisteredService();
+        val accessToken = mock(AccessToken.class);
+        when(accessToken.getTicketGrantingTicket()).thenReturn(new MockTicketGrantingTicket("casuser"));
+        when(accessToken.getScopes()).thenReturn(CollectionUtils.wrapSet(
+                OidcConstants.StandardScopes.OPENID.getScope(),
+                OidcConstants.StandardScopes.PHONE.getScope(),
+                OidcConstants.StandardScopes.PROFILE.getScope(),
+                OidcConstants.StandardScopes.ADDRESS.getScope(),
+                OidcConstants.StandardScopes.EMAIL.getScope()));
+
+        service.getScopes().clear();
+
+        val context = new JEEContext(new MockHttpServletRequest(), new MockHttpServletResponse());
+        val original = CoreAuthenticationTestUtils.getPrincipal(
+                CollectionUtils.wrap("email", "casuser@example.org", "address", "1234 Main Street",
+                        "phone", "123445677", "name", "CAS", "gender", "male"));
+        val principal = profileScopeToAttributesFilter.filter(CoreAuthenticationTestUtils.getService(),
+                original, service, context, accessToken);
+        assertTrue(principal.getAttributes().containsKey("name"));
+        assertTrue(principal.getAttributes().containsKey("address"));
+        assertTrue(principal.getAttributes().containsKey("gender"));
+        assertTrue(principal.getAttributes().containsKey("email"));
+        assertEquals(4, principal.getAttributes().size());
+    }
 }
