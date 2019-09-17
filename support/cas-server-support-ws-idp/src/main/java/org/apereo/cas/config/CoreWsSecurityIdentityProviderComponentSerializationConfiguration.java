@@ -16,7 +16,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration("coreWsSecurityIdentityProviderComponentSerializationConfiguration")
+@Configuration(value = "coreWsSecurityIdentityProviderComponentSerializationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CoreWsSecurityIdentityProviderComponentSerializationConfiguration implements ComponentSerializationPlanConfigurator {
     @Override

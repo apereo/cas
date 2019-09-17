@@ -36,7 +36,7 @@ import java.util.HashMap;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration("casLoggingConfiguration")
+@Configuration(value = "casLoggingConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasLoggingConfiguration {
 

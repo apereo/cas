@@ -29,7 +29,7 @@ import java.io.Serializable;
  * @author Timur Duehr
  * @since 6.0.0
  */
-@Configuration("couchDbU2fConfiguration")
+@Configuration(value = "couchDbU2fConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class U2FCouchDbConfiguration {
     @Autowired

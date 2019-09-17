@@ -17,7 +17,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Configuration("casBucket4jThrottlingConfiguration")
+@Configuration(value = "casBucket4jThrottlingConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class CasBucket4jThrottlingConfiguration {

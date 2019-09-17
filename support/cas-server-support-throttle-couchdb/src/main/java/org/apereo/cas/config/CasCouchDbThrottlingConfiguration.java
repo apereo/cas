@@ -25,7 +25,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Timur Duehr
  * @since 6.0.0
  */
-@Configuration("casCouchDbThrottlingConfiguration")
+@Configuration(value = "casCouchDbThrottlingConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class CasCouchDbThrottlingConfiguration {

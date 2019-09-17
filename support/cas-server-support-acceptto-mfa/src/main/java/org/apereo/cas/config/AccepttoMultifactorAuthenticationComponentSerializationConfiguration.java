@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Configuration("accepttoMultifactorAuthenticationComponentSerializationConfiguration")
+@Configuration(value = "accepttoMultifactorAuthenticationComponentSerializationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class AccepttoMultifactorAuthenticationComponentSerializationConfiguration
     implements ComponentSerializationPlanConfigurator {

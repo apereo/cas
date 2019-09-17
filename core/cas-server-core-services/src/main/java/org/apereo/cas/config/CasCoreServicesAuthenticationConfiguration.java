@@ -23,7 +23,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Configuration("casCoreServicesAuthenticationConfiguration")
+@Configuration(value = "casCoreServicesAuthenticationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasCoreServicesAuthenticationConfiguration {
 

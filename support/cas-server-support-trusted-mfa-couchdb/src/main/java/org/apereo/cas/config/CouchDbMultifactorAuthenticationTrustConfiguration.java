@@ -24,7 +24,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Timur Duehr
  * @since 6.0.0
  */
-@Configuration("couchDbMultifactorAuthenticationTrustConfiguration")
+@Configuration(value = "couchDbMultifactorAuthenticationTrustConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CouchDbMultifactorAuthenticationTrustConfiguration {
 

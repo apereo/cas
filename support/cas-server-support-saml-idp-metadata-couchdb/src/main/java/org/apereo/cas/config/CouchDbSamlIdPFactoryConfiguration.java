@@ -19,7 +19,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Timur Duehr
  * @since 6.0.0
  */
-@Configuration("couchDbSamlIdPFactoryConfiguration")
+@Configuration(value = "couchDbSamlIdPFactoryConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CouchDbSamlIdPFactoryConfiguration {
     @Autowired
