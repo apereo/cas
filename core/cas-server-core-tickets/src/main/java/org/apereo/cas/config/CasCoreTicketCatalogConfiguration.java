@@ -26,7 +26,7 @@ import org.springframework.core.Ordered;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration("casCoreTicketCatalogConfiguration")
+@Configuration(value = "casCoreTicketCatalogConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class CasCoreTicketCatalogConfiguration extends BaseTicketCatalogConfigurer {

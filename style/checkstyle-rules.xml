@@ -667,6 +667,14 @@
         <property name="message" value="Avoid using the indicated annotations such as @Component, @Value, etc."/>
     </module>
     <module name="RegexpSingleline">
+        <metadata name="net.sf.eclipsecs.core.comment" value="Use @TestConfiguration"/>
+        <property name="severity" value="error"/>
+        <property name="id" value="useTestConfiguration"/>
+        <property name="format" value="@Configuration"/>
+        <property name="message" value="Configuration classes for tests must be marked with @TestConfiguration"/>
+    </module>
+
+    <module name="RegexpSingleline">
         <metadata name="net.sf.eclipsecs.core.comment" value="Use Java streams"/>
         <property name="severity" value="error"/>
         <property name="format" value="new .+(Set|List).+\(Arrays\.asList"/>

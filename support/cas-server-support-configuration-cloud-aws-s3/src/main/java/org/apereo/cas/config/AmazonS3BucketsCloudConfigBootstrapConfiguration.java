@@ -24,7 +24,7 @@ import java.util.Properties;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Configuration("AmazonS3BucketsCloudConfigBootstrapConfiguration")
+@Configuration(value = "AmazonS3BucketsCloudConfigBootstrapConfiguration", proxyBeanMethods = false)
 @Slf4j
 @Getter
 public class AmazonS3BucketsCloudConfigBootstrapConfiguration implements PropertySourceLocator {

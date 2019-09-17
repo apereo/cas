@@ -21,7 +21,7 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 public class GroovyPasswordPolicyHandlingStrategy<AuthenticationResponse> implements
-    AuthenticationPasswordPolicyHandlingStrategy<AuthenticationResponse, PasswordPolicyConfiguration> {
+    AuthenticationPasswordPolicyHandlingStrategy<AuthenticationResponse, PasswordPolicyContext> {
 
     private final transient WatchableGroovyScriptResource watchableScript;
 
@@ -31,7 +31,7 @@ public class GroovyPasswordPolicyHandlingStrategy<AuthenticationResponse> implem
 
     @Override
     public List<MessageDescriptor> handle(final AuthenticationResponse response,
-                                          final PasswordPolicyConfiguration configuration) {
+                                          final PasswordPolicyContext configuration) {
         val applicationContext = ApplicationContextProvider.getApplicationContext();
         val args = new Object[]{response, configuration, LOGGER, applicationContext};
         return watchableScript.execute(args, List.class);

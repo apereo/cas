@@ -24,7 +24,7 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration("restServicesConfiguration")
+@Configuration(value = "restServicesConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class RestServicesConfiguration {
 

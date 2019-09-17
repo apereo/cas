@@ -23,7 +23,7 @@ import javax.annotation.PostConstruct;
  * @author Paul Spaude
  * @since 5.3.6
  */
-@Configuration("coreWsSecuritySecurityTokenServiceSamlConfiguration")
+@Configuration(value = "coreWsSecuritySecurityTokenServiceSamlConfiguration", proxyBeanMethods = false)
 @Slf4j
 @AutoConfigureAfter(CoreSamlConfiguration.class)
 public class CoreWsSecuritySecurityTokenServiceSamlConfiguration {

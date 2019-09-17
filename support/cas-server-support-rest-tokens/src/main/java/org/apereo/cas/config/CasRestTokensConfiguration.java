@@ -24,7 +24,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Configuration("casRestTokensConfiguration")
+@Configuration(value = "casRestTokensConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasRestTokensConfiguration implements ServiceTicketResourceEntityResponseFactoryConfigurer {
     @Autowired

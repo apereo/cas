@@ -19,7 +19,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Configuration("ldapPasswordSynchronizationConfiguration")
+@Configuration(value = "ldapPasswordSynchronizationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class LdapPasswordSynchronizationConfiguration {

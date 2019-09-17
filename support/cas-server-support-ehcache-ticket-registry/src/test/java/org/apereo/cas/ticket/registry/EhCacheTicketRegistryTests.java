@@ -27,9 +27,9 @@ import net.sf.ehcache.distribution.CacheReplicator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
 import static org.mockito.Mockito.*;
 
@@ -74,7 +74,7 @@ public class EhCacheTicketRegistryTests extends BaseTicketRegistryTests {
         return ticketRegistry;
     }
 
-    @Configuration("EhcacheTicketRegistryTestConfiguration")
+    @TestConfiguration("EhcacheTicketRegistryTestConfiguration")
     public static class EhcacheTicketRegistryTestConfiguration {
         @Bean
         @SneakyThrows

@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration("casEventsMemoryRepositoryConfiguration")
+@Configuration(value = "casEventsMemoryRepositoryConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class CasEventsInMemoryRepositoryConfiguration {

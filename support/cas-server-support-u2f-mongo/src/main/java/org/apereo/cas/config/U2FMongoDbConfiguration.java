@@ -23,7 +23,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Configuration("u2fMongoDbConfiguration")
+@Configuration(value = "u2fMongoDbConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class U2FMongoDbConfiguration {
 
