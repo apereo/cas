@@ -157,7 +157,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreLogoutConfiguration.class,
     CasCoreUtilConfiguration.class,
     CasCoreWebConfiguration.class},
-    properties = {"spring.main.allow-bean-definition-overriding=true"}
+    properties = "spring.main.allow-bean-definition-overriding=true"
 )
 @DirtiesContext
 @EnableConfigurationProperties(CasConfigurationProperties.class)
