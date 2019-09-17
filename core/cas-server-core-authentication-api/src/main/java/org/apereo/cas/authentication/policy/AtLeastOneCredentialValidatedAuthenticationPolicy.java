@@ -33,7 +33,7 @@ public class AtLeastOneCredentialValidatedAuthenticationPolicy implements Authen
     public boolean isSatisfiedBy(final Authentication authn, final Set<AuthenticationHandler> authenticationHandlers) throws Exception {
         if (this.tryAll) {
             val sum = authn.getSuccesses().size() + authn.getFailures().size();
-            if (authn.getCredentials().size() != sum) {
+            if (authenticationHandlers.size() != sum) {
                 LOGGER.warn("Number of provided credentials [{}] does not match the sum of authentication successes and failures [{}]", authn.getCredentials().size(), sum);
                 return false;
             }
