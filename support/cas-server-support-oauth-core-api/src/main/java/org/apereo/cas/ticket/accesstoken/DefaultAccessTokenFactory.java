@@ -13,7 +13,6 @@ import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.token.JwtBuilder;
-import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 
 import lombok.Getter;
@@ -21,8 +20,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.Map;
 
@@ -69,21 +66,8 @@ public class DefaultAccessTokenFactory implements AccessTokenFactory {
                               final Map<String, Map<String, Object>> requestClaims) {
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(jwtBuilder.getServicesManager(), clientId);
         val expirationPolicyToUse = determineExpirationPolicyForService(registeredService);
-        var accessTokenId = this.accessTokenIdGenerator.getNewTicketId(AccessToken.PREFIX);
-        if (registeredService != null && registeredService.isJwtAccessToken()) {
-            val dt = ZonedDateTime.now(ZoneOffset.UTC).plusSeconds(expirationPolicyToUse.getTimeToLive());
-            val builder = JwtBuilder.JwtRequest.builder();
+        val accessTokenId = this.accessTokenIdGenerator.getNewTicketId(AccessToken.PREFIX);
 
-            val request = builder
-                .serviceAudience(service.getId())
-                .issueDate(DateTimeUtils.dateOf(authentication.getAuthenticationDate()))
-                .jwtId(accessTokenId)
-                .subject(authentication.getPrincipal().getId())
-                .validUntilDate(DateTimeUtils.dateOf(dt))
-                .attributes(authentication.getAttributes())
-                .build();
-            accessTokenId = jwtBuilder.build(request);
-        }
         val at = new AccessTokenImpl(accessTokenId, service, authentication,
             expirationPolicyToUse, ticketGrantingTicket, scopes,
             clientId, requestClaims);

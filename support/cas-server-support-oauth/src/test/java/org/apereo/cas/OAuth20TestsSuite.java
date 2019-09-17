@@ -18,6 +18,7 @@ import org.apereo.cas.support.oauth.web.OAuth20ProfileControllerTests;
 import org.apereo.cas.support.oauth.web.OAuth20RefreshTokenTests;
 import org.apereo.cas.support.oauth.web.audit.OAuth20AccessTokenGrantRequestAuditResourceResolverTests;
 import org.apereo.cas.support.oauth.web.audit.OAuth20UserProfileDataAuditResourceResolverTests;
+import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20DefaultTokenGeneratorTests;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20DefaultAccessTokenResponseGeneratorTests;
 import org.apereo.cas.support.oauth.web.views.OAuth20DefaultUserProfileViewRendererFlatTests;
 import org.apereo.cas.support.oauth.web.views.OAuth20DefaultUserProfileViewRendererNestedTests;
@@ -43,6 +44,7 @@ import org.junit.runner.RunWith;
     OAuthAccessTokenExpirationPolicyTests.class,
     OAuthAccessTokenSovereignExpirationPolicyTests.class,
     OAuthRefreshTokenExpirationPolicyTests.class,
+    OAuth20DefaultTokenGeneratorTests.class,
     OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests.class,
     OAuth20PasswordGrantTypeTokenRequestValidatorTests.class,
     OAuth20ClientCredentialsGrantTypeTokenRequestValidatorTests.class,
@@ -64,5 +66,5 @@ import org.junit.runner.RunWith;
     OAuth20RegisteredServiceCipherExecutorTests.class
 })
 @RunWith(JUnitPlatform.class)
-public class OAuthTestsSuite {
+public class OAuth20TestsSuite {
 }

@@ -48,11 +48,14 @@ public class OidcServiceJsonWebKeystoreCacheExpirationPolicy implements Expiry<O
     }
 
     private long getExpiration(final OAuthRegisteredService givenService, final long currentTime) {
-        val service = (OidcRegisteredService) givenService;
-        if (service.getJwksCacheDuration() > 0 && StringUtils.isNotBlank(service.getJwksCacheTimeUnit())) {
-            val timeUnit = TimeUnit.valueOf(service.getJwksCacheTimeUnit().trim().toUpperCase());
-            return timeUnit.toNanos(service.getJwksCacheDuration());
+        if (givenService instanceof OidcRegisteredService) {
+            val service = (OidcRegisteredService) givenService;
+            if (service.getJwksCacheDuration() > 0 && StringUtils.isNotBlank(service.getJwksCacheTimeUnit())) {
+                val timeUnit = TimeUnit.valueOf(service.getJwksCacheTimeUnit().trim().toUpperCase());
+                return timeUnit.toNanos(service.getJwksCacheDuration());
+            }
+            return TimeUnit.MINUTES.toNanos(casProperties.getAuthn().getOidc().getJwksCacheInMinutes());
         }
-        return TimeUnit.MINUTES.toNanos(casProperties.getAuthn().getOidc().getJwksCacheInMinutes());
+        return -1;
     }
 }

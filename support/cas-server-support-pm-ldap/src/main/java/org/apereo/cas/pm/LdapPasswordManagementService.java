@@ -109,6 +109,41 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
     }
 
     @Override
+    public String findPhone(final String username) {
+        try {
+            val ldap = properties.getLdap();
+            val filter = LdapUtils.newLdaptiveSearchFilter(ldap.getSearchFilter(),
+                LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
+                CollectionUtils.wrap(username));
+            LOGGER.debug("Constructed LDAP filter [{}] to locate account email", filter);
+
+            val response = LdapUtils.executeSearchOperation(this.ldapConnectionFactory, ldap.getBaseDn(), filter, ldap.getPageSize());
+            LOGGER.debug("LDAP response to locate account phone is [{}]", response);
+
+            if (LdapUtils.containsResultEntry(response)) {
+                val entry = response.getResult().getEntry();
+                LOGGER.debug("Found LDAP entry [{}] to use for the account phone number", entry);
+
+                val attributeName = properties.getReset().getSms().getAttributeName();
+                val attr = entry.getAttribute(attributeName);
+                if (attr != null) {
+                    val phoneNumber = attr.getStringValue();
+                    LOGGER.debug("Found phone number [{}] for user [{}].", phoneNumber, username);
+                    return phoneNumber;
+                } else {
+                    LOGGER.error("Could not locate an LDAP attribute [{}] for [{}] and base DN [{}]",
+                        attributeName, filter.format(), ldap.getBaseDn());
+                }
+                return null;
+            }
+            LOGGER.error("Could not locate an LDAP entry for [{}] and base DN [{}]", filter.format(), ldap.getBaseDn());
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return null;
+    }
+
+    @Override
     public boolean changeInternal(final Credential credential, final PasswordChangeRequest bean) {
         try {
             val ldap = properties.getLdap();
