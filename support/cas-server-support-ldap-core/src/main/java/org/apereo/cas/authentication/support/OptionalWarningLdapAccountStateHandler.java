@@ -1,7 +1,7 @@
 package org.apereo.cas.authentication.support;
 
 import org.apereo.cas.authentication.MessageDescriptor;
-import org.apereo.cas.authentication.support.password.PasswordPolicyConfiguration;
+import org.apereo.cas.authentication.support.password.PasswordPolicyContext;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -32,7 +32,7 @@ public class OptionalWarningLdapAccountStateHandler extends DefaultLdapAccountSt
 
     @Override
     protected void handleWarning(final AccountState.Warning warning, final AuthenticationResponse response,
-                                 final PasswordPolicyConfiguration configuration, final List<MessageDescriptor> messages) {
+                                 final PasswordPolicyContext configuration, final List<MessageDescriptor> messages) {
         if (StringUtils.isBlank(this.warnAttributeName)) {
             LOGGER.debug("No warning attribute name is defined");
             return;

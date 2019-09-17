@@ -13,8 +13,8 @@ import org.junit.jupiter.api.parallel.ResourceLock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.EventListener;
 
 /**
@@ -49,7 +49,7 @@ public class CouchbaseServiceRegistryTests extends AbstractServiceRegistryTests 
         return serviceRegistry;
     }
 
-    @Configuration("CouchbaseServiceRegistryTestConfiguration")
+    @TestConfiguration("CouchbaseServiceRegistryTestConfiguration")
     public static class CouchbaseServiceRegistryTestConfiguration {
 
         @SneakyThrows
@@ -57,6 +57,7 @@ public class CouchbaseServiceRegistryTests extends AbstractServiceRegistryTests 
         public void handleCouchbaseSaveEvent(final CouchbaseRegisteredServiceSavedEvent event) {
             Thread.sleep(100);
         }
+
         @SneakyThrows
         @EventListener
         public void handleCouchbaseDeleteEvent(final CouchbaseRegisteredServiceDeletedEvent event) {

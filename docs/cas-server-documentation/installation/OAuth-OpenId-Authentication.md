@@ -304,7 +304,11 @@ By default, OAuth access tokens are created as opaque identifiers. There is also
 }
 ```
 
-Signing and encryption keys may also be defined on a per-service basis, or globally via CAS settings. To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#oauth2).
+Note that the JWT id itself, once unpacked, must be used in follow-up requests to CAS where access token is a required parameter.
+Access tokens that are created as a JWT are always tracked by CAS using their own identifier and not the JWT itself.
+
+Signing and encryption keys may also be defined on a per-service basis, or globally via CAS settings.
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#oauth2).
 
 ## OAuth User Profile Structure
 
