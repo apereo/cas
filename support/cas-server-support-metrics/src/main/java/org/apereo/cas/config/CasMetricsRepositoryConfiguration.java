@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Configuration("casMetricsRepositoryConfiguration")
+@Configuration(value = "casMetricsRepositoryConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Getter
 public class CasMetricsRepositoryConfiguration {

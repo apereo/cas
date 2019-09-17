@@ -29,7 +29,7 @@ import org.springframework.core.Ordered;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration("casEmbeddedContainerTomcatConfiguration")
+@Configuration(value = "casEmbeddedContainerTomcatConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnProperty(name = CasEmbeddedContainerUtils.EMBEDDED_CONTAINER_CONFIG_ACTIVE, havingValue = "true")
 @ConditionalOnClass(value = {Tomcat.class, Http2Protocol.class})

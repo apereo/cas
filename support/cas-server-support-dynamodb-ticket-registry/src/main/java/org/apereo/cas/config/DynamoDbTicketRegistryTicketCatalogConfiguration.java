@@ -16,7 +16,7 @@ import java.util.function.Function;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration("dynamoDbTicketRegistryTicketCatalogConfiguration")
+@Configuration(value = "dynamoDbTicketRegistryTicketCatalogConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class DynamoDbTicketRegistryTicketCatalogConfiguration extends BaseTicketDefinitionBuilderSupportConfiguration {
 

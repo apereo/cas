@@ -33,7 +33,7 @@ import java.util.stream.Stream;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration("spnegoWebflowActionsConfiguration")
+@Configuration(value = "spnegoWebflowActionsConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class SpnegoWebflowActionsConfiguration {
 

@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Configuration("casRemoteAuthenticationComponentSerializationConfiguration")
+@Configuration(value = "casRemoteAuthenticationComponentSerializationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasRemoteAuthenticationComponentSerializationConfiguration implements ComponentSerializationPlanConfigurator {
     @Override

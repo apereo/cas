@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Configuration("swivelComponentSerializationConfiguration")
+@Configuration(value = "swivelComponentSerializationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class SwivelComponentSerializationConfiguration implements ComponentSerializationPlanConfigurator {
     @Override

@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Configuration("googleAuthenticatorAuthenticationComponentSerializationConfiguration")
+@Configuration(value = "googleAuthenticatorAuthenticationComponentSerializationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class GoogleAuthenticatorAuthenticationComponentSerializationConfiguration implements ComponentSerializationPlanConfigurator {
     @Override

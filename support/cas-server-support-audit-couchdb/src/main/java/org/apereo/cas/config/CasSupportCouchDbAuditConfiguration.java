@@ -24,7 +24,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Timur Duehr
  * @since 6.0.0
  */
-@Configuration("casSupportCouchDbAuditConfiguration")
+@Configuration(value = "casSupportCouchDbAuditConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class CasSupportCouchDbAuditConfiguration {

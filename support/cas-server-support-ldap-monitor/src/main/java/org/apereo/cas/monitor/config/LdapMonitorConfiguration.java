@@ -25,7 +25,7 @@ import java.util.concurrent.ExecutorService;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration("ldapMonitorConfiguration")
+@Configuration(value = "ldapMonitorConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class LdapMonitorConfiguration {
 

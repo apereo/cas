@@ -16,7 +16,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Configuration("googleAuthenticatorRestConfiguration")
+@Configuration(value = "googleAuthenticatorRestConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnClass(value = RestHttpRequestCredentialFactoryConfigurer.class)
 public class GoogleAuthenticatorRestConfiguration {

@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Configuration("casSamlSPBlackBaudConfiguration")
+@Configuration(value = "casSamlSPBlackBaudConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasSamlSPBlackBaudConfiguration extends BaseCasSamlSPConfiguration {
 

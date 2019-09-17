@@ -39,7 +39,7 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration("casWebAppConfiguration")
+@Configuration(value = "casWebAppConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasWebAppConfiguration implements WebMvcConfigurer {
 

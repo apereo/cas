@@ -25,7 +25,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Dmitriy Kopylenko
  * @since 5.1.0
  */
-@Configuration("acceptUsersAuthenticationEventExecutionPlanConfiguration")
+@Configuration(value = "acceptUsersAuthenticationEventExecutionPlanConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class AcceptUsersAuthenticationEventExecutionPlanConfiguration {

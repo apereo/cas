@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Configuration("samlGoogleAppsComponentSerializationConfiguration")
+@Configuration(value = "samlGoogleAppsComponentSerializationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class SamlGoogleAppsComponentSerializationConfiguration implements ComponentSerializationPlanConfigurator {
 

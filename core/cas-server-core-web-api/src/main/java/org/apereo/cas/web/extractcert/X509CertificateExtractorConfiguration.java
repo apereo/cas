@@ -17,7 +17,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Curtis W Ruck
  * @since 5.3.3
  */
-@Configuration("x509CertificateExtractorConfiguration")
+@Configuration(value = "x509CertificateExtractorConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class X509CertificateExtractorConfiguration {
 

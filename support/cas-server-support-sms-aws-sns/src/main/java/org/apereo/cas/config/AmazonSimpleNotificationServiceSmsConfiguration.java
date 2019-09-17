@@ -20,7 +20,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Configuration("amazonSimpleNotificationServiceSmsConfiguration")
+@Configuration(value = "amazonSimpleNotificationServiceSmsConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class AmazonSimpleNotificationServiceSmsConfiguration {
     @Autowired

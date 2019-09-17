@@ -25,7 +25,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Timur Duehr
  * @since 6.0.0
  */
-@Configuration("casAcceptableUsagePolicyCoucbDbConfiguration")
+@Configuration(value = "casAcceptableUsagePolicyCoucbDbConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class CasAcceptableUsagePolicyCouchDbConfiguration {

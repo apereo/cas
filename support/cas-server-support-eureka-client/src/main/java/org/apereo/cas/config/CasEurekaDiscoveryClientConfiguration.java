@@ -8,6 +8,6 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration("casEurekaDiscoveryClientConfiguration")
+@Configuration(value = "casEurekaDiscoveryClientConfiguration", proxyBeanMethods = false)
 public class CasEurekaDiscoveryClientConfiguration {
 }

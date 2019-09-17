@@ -12,7 +12,7 @@ import org.springframework.session.data.redis.config.annotation.web.http.EnableR
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration("redisSessionConfiguration")
+@Configuration(value = "redisSessionConfiguration", proxyBeanMethods = false)
 @EnableRedisHttpSession
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class RedisSessionConfiguration {

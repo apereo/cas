@@ -16,7 +16,7 @@ import org.springframework.context.event.EventListener;
  * @since 6.0.0
  */
 @Slf4j
-@Configuration("casSpringBootAdminServerConfiguration")
+@Configuration(value = "casSpringBootAdminServerConfiguration", proxyBeanMethods = false)
 public class CasSpringBootAdminServerConfiguration {
     /**
      * Handle application ready event.

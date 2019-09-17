@@ -20,7 +20,7 @@ import java.util.Collection;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration("openIdUniqueTicketIdGeneratorConfiguration")
+@Configuration(value = "openIdUniqueTicketIdGeneratorConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class OpenIdUniqueTicketIdGeneratorConfiguration implements UniqueTicketIdGeneratorConfigurer {
     @Autowired

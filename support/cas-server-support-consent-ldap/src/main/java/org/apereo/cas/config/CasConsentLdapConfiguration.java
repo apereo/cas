@@ -17,7 +17,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Arnold Bergner
  * @since 5.2.0
  */
-@Configuration("casConsentLdapConfiguration")
+@Configuration(value = "casConsentLdapConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasConsentLdapConfiguration {
 

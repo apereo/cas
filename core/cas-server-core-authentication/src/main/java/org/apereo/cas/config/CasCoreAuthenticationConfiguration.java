@@ -33,7 +33,7 @@ import java.util.List;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-@Configuration("casCoreAuthenticationConfiguration")
+@Configuration(value = "casCoreAuthenticationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class CasCoreAuthenticationConfiguration {

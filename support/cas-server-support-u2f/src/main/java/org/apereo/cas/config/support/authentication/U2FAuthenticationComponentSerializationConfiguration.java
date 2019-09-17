@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Configuration("u2fAuthenticationComponentSerializationConfiguration")
+@Configuration(value = "u2fAuthenticationComponentSerializationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class U2FAuthenticationComponentSerializationConfiguration implements ComponentSerializationPlanConfigurator {
     @Override

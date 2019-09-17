@@ -30,7 +30,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration("casCoreTicketsSchedulingConfiguration")
+@Configuration(value = "casCoreTicketsSchedulingConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
 @EnableAsync

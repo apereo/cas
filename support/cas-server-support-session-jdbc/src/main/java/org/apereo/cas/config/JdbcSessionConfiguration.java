@@ -15,7 +15,7 @@ import org.springframework.session.jdbc.config.annotation.web.http.JdbcHttpSessi
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Configuration("jdbcSessionConfiguration")
+@Configuration(value = "jdbcSessionConfiguration", proxyBeanMethods = false)
 @EnableJdbcHttpSession
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Import({JdbcHttpSessionConfiguration.class, DataSourceAutoConfiguration.class})

@@ -40,7 +40,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Dmitriy Kopylenko
  * @since 5.3.0
  */
-@Configuration("casReportsConfiguration")
+@Configuration(value = "casReportsConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasReportsConfiguration {
 

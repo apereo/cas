@@ -25,7 +25,7 @@ import org.thymeleaf.templateresolver.FileTemplateResolver;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Configuration("casCoreWebViewsConfiguration")
+@Configuration(value = "casCoreWebViewsConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasCoreViewsConfiguration {
 

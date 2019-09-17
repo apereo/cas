@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration("casSamlSPGitlabConfiguration")
+@Configuration(value = "casSamlSPGitlabConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasSamlSPGitlabConfiguration extends BaseCasSamlSPConfiguration {
 

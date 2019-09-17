@@ -23,7 +23,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Timur Duehr
  * @since 6.0.0
  */
-@Configuration("couchDbConsentConfiguration")
+@Configuration(value = "couchDbConsentConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasConsentCouchDbConfiguration {
     @Autowired

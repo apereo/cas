@@ -19,7 +19,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Timur Duehr
  * @since 6.0.0
  */
-@Configuration("casCouchDbCoreConfiguration")
+@Configuration(value = "casCouchDbCoreConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasCouchDbCoreConfiguration {
 

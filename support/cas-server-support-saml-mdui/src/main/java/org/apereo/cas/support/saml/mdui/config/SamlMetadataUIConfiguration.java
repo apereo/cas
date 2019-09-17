@@ -40,7 +40,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration("samlMetadataUIConfiguration")
+@Configuration(value = "samlMetadataUIConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class SamlMetadataUIConfiguration {

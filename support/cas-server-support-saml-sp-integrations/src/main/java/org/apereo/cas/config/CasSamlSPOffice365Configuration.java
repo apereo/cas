@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration("casSamlSPOffice365Configuration")
+@Configuration(value = "casSamlSPOffice365Configuration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasSamlSPOffice365Configuration extends BaseCasSamlSPConfiguration {
 

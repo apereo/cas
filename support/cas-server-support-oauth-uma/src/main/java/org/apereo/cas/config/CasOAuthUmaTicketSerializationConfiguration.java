@@ -16,7 +16,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Configuration("casOAuthUmaTicketSerializationConfiguration")
+@Configuration(value = "casOAuthUmaTicketSerializationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasOAuthUmaTicketSerializationConfiguration implements TicketSerializationExecutionPlanConfigurer {
 

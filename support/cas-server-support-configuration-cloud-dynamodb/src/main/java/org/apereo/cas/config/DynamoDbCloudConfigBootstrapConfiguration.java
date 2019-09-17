@@ -36,7 +36,7 @@ import java.util.Properties;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration("dynamoDbCloudConfigBootstrapConfiguration")
+@Configuration(value = "dynamoDbCloudConfigBootstrapConfiguration", proxyBeanMethods = false)
 @Slf4j
 @Getter
 public class DynamoDbCloudConfigBootstrapConfiguration implements PropertySourceLocator {

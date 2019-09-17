@@ -24,7 +24,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Configuration("casCoreUtilSerializationConfiguration")
+@Configuration(value = "casCoreUtilSerializationConfiguration", proxyBeanMethods = false)
 @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
 @Slf4j
 public class CasCoreUtilSerializationConfiguration implements ComponentSerializationPlanConfigurator {

@@ -23,7 +23,7 @@ import java.io.IOException;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration("casGeoLocationMaxmindConfiguration")
+@Configuration(value = "casGeoLocationMaxmindConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasGeoLocationMaxmindConfiguration {
     @Autowired

@@ -22,7 +22,7 @@ import org.thymeleaf.spring5.SpringTemplateEngine;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration("casProtocolViewsConfiguration")
+@Configuration(value = "casProtocolViewsConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasProtocolViewsConfiguration {
 
