@@ -53,6 +53,7 @@ import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.ticket.refreshtoken.RefreshToken;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
@@ -60,7 +61,6 @@ import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import lombok.val;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
 import org.jose4j.jwe.KeyManagementAlgorithmIdentifiers;
@@ -255,7 +255,7 @@ public abstract class AbstractOidcTests {
     protected static JwtClaims getClaims(final String subject, final String issuer,
                                          final String clientId, final String audience) {
         val claims = new JwtClaims();
-        claims.setJwtId(RandomStringUtils.randomAlphanumeric(16));
+        claims.setJwtId(RandomUtils.randomAlphanumeric(16));
         claims.setIssuer(issuer);
         claims.setAudience(audience);
 

@@ -25,8 +25,8 @@ CAS expects a `token` parameter (or request header) to be passed along to the `/
 Here is an example of how to generate a JWT via [Pac4j](https://github.com/pac4j/pac4j):
 
 ```java
-final String signingSecret = RandomStringUtils.randomAlphanumeric(256);
-final String encryptionSecret = RandomStringUtils.randomAlphanumeric(48);
+final String signingSecret = RandomUtils.randomAlphanumeric(256);
+final String encryptionSecret = RandomUtils.randomAlphanumeric(48);
 
 System.out.println("signingSecret " + signingSecret);
 System.out.println("encryptionSecret " + encryptionSecret);
