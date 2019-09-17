@@ -47,7 +47,7 @@ import org.apereo.cas.services.UnauthorizedServiceForPrincipalException;
 import org.apereo.cas.services.UnauthorizedSsoServiceException;
 import org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy;
 import org.apereo.cas.services.support.RegisteredServiceRegexAttributeFilter;
-import org.apereo.cas.support.saml.authentication.principal.GoogleAccountsService;
+import org.apereo.cas.support.saml.authentication.principal.GoogleAccountsServiceFactory;
 import org.apereo.cas.ticket.ProxyGrantingTicketImpl;
 import org.apereo.cas.ticket.ProxyTicketImpl;
 import org.apereo.cas.ticket.ServiceTicketImpl;
