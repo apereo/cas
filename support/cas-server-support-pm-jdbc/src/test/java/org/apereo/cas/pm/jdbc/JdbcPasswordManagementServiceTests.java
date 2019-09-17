@@ -25,6 +25,12 @@ public class JdbcPasswordManagementServiceTests extends BaseJdbcPasswordManageme
     }
 
     @Test
+    public void verifyPhoneNumberCanBeFound() {
+        val phone = passwordChangeService.findPhone("casuser");
+        assertEquals("1234567890", phone);
+    }
+
+    @Test
     public void verifyNullReturnedIfUserEmailCannotBeFound() {
         val email = passwordChangeService.findEmail("unknown");
         assertNull(email);
@@ -57,8 +63,8 @@ public class JdbcPasswordManagementServiceTests extends BaseJdbcPasswordManageme
         dropTablesBeforeTest(jdbcTemplate);
 
         jdbcTemplate.execute("create table pm_table_accounts (id int, userid varchar(255),"
-            + "password varchar(255), email varchar(255));");
-        jdbcTemplate.execute("insert into pm_table_accounts values (100, 'casuser', 'password', 'casuser@example.org');");
+            + "password varchar(255), email varchar(255), phone varchar(255));");
+        jdbcTemplate.execute("insert into pm_table_accounts values (100, 'casuser', 'password', 'casuser@example.org', '1234567890');");
 
         jdbcTemplate.execute("create table pm_table_questions (id int, userid varchar(255),"
             + " question varchar(255), answer varchar(255));");

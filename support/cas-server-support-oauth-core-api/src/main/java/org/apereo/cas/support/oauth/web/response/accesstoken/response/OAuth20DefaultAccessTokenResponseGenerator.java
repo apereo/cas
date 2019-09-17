@@ -2,8 +2,10 @@ package org.apereo.cas.support.oauth.web.response.accesstoken.response;
 
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
+import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.token.JwtBuilder;
+import org.apereo.cas.util.DateTimeUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +18,9 @@ import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -33,7 +38,15 @@ public class OAuth20DefaultAccessTokenResponseGenerator implements OAuth20Access
     /**
      * JWT builder.
      */
-    protected final JwtBuilder jwtBuilder;
+    protected final JwtBuilder accessTokenJwtBuilder;
+
+    private static boolean shouldGenerateDeviceFlowResponse(final OAuth20AccessTokenResponseResult result) {
+        val generatedToken = result.getGeneratedToken();
+        return OAuth20ResponseTypes.DEVICE_CODE == result.getResponseType()
+            && generatedToken.getDeviceCode().isPresent()
+            && generatedToken.getUserCode().isPresent()
+            && generatedToken.getAccessToken().isEmpty();
+    }
 
     @Audit(action = "OAUTH2_ACCESS_TOKEN_RESPONSE",
         actionResolverName = "OAUTH2_ACCESS_TOKEN_RESPONSE_ACTION_RESOLVER",
@@ -47,14 +60,6 @@ public class OAuth20DefaultAccessTokenResponseGenerator implements OAuth20Access
         }
 
         return generateResponseForAccessToken(request, response, result);
-    }
-
-    private static boolean shouldGenerateDeviceFlowResponse(final OAuth20AccessTokenResponseResult result) {
-        val generatedToken = result.getGeneratedToken();
-        return OAuth20ResponseTypes.DEVICE_CODE == result.getResponseType()
-            && generatedToken.getDeviceCode().isPresent()
-            && generatedToken.getUserCode().isPresent()
-            && generatedToken.getAccessToken().isEmpty();
     }
 
     /**
@@ -141,6 +146,26 @@ public class OAuth20DefaultAccessTokenResponseGenerator implements OAuth20Access
      */
     protected String encodeAccessToken(final AccessToken accessToken,
                                        final OAuth20AccessTokenResponseResult result) {
+
+        val registeredService = OAuthRegisteredService.class.cast(result.getRegisteredService());
+        val authentication = accessToken.getAuthentication();
+        val service = result.getService();
+
+        if (registeredService != null && registeredService.isJwtAccessToken()) {
+            val dt = ZonedDateTime.now(ZoneOffset.UTC).plusSeconds(result.getAccessTokenTimeout());
+            val builder = JwtBuilder.JwtRequest.builder();
+
+            val request = builder
+                .serviceAudience(service.getId())
+                .issueDate(DateTimeUtils.dateOf(authentication.getAuthenticationDate()))
+                .jwtId(accessToken.getId())
+                .subject(authentication.getPrincipal().getId())
+                .validUntilDate(DateTimeUtils.dateOf(dt))
+                .attributes(authentication.getAttributes())
+                .build();
+            return accessTokenJwtBuilder.build(request);
+        }
+
         return accessToken.getId();
     }
 }

@@ -24,15 +24,18 @@ public class OidcServiceJsonWebKeystoreCacheLoader implements CacheLoader<OAuthR
 
     @Override
     public Optional<RsaJsonWebKey> load(final @NonNull OAuthRegisteredService service) {
-        val svc = (OidcRegisteredService) service;
-        val jwks = OidcJsonWebKeySetUtils.getJsonWebKeySet(svc);
-        if (jwks.isEmpty() || jwks.get().getJsonWebKeys().isEmpty()) {
-            return Optional.empty();
+        if (service instanceof OidcRegisteredService) {
+            val svc = (OidcRegisteredService) service;
+            val jwks = OidcJsonWebKeySetUtils.getJsonWebKeySet(svc);
+            if (jwks.isEmpty() || jwks.get().getJsonWebKeys().isEmpty()) {
+                return Optional.empty();
+            }
+            val key = OidcJsonWebKeySetUtils.getJsonWebKeyFromJsonWebKeySet(jwks.get());
+            if (key == null) {
+                return Optional.empty();
+            }
+            return Optional.of(key);
         }
-        val key = OidcJsonWebKeySetUtils.getJsonWebKeyFromJsonWebKeySet(jwks.get());
-        if (key == null) {
-            return Optional.empty();
-        }
-        return Optional.of(key);
+        return Optional.empty();
     }
 }

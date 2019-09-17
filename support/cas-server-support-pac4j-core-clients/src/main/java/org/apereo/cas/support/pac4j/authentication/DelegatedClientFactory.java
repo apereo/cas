@@ -7,7 +7,6 @@ import org.apereo.cas.configuration.model.support.pac4j.oidc.BasePac4jOidcClient
 import org.apereo.cas.configuration.model.support.pac4j.oidc.Pac4jOidcClientProperties;
 import org.apereo.cas.configuration.model.support.pac4j.saml.Pac4jSamlClientProperties;
 import org.apereo.cas.configuration.support.Beans;
-import org.apereo.cas.support.pac4j.logout.CasServerSpecificLogoutHandler;
 
 import com.github.scribejava.core.model.Verb;
 import com.nimbusds.jose.JWSAlgorithm;
@@ -23,7 +22,6 @@ import org.pac4j.cas.config.CasConfiguration;
 import org.pac4j.cas.config.CasProtocol;
 import org.pac4j.core.client.IndirectClient;
 import org.pac4j.core.http.callback.PathParameterCallbackUrlResolver;
-import org.pac4j.core.logout.handler.LogoutHandler;
 import org.pac4j.oauth.client.BitbucketClient;
 import org.pac4j.oauth.client.DropBoxClient;
 import org.pac4j.oauth.client.FacebookClient;
@@ -67,15 +65,6 @@ import java.util.stream.Collectors;
 @Getter
 public class DelegatedClientFactory {
     private final CasConfigurationProperties casProperties;
-
-    /**
-     * The pac4j specific logout handler for the CAS server.
-     */
-    private final LogoutHandler casServerSpecificLogoutHandler;
-
-    public DelegatedClientFactory(final CasConfigurationProperties casProperties) {
-        this(casProperties, new CasServerSpecificLogoutHandler());
-    }
 
     /**
      * Configure github client.
@@ -348,7 +337,6 @@ public class DelegatedClientFactory {
                 val cfg = new CasConfiguration(cas.getLoginUrl(), CasProtocol.valueOf(cas.getProtocol()));
                 var prefix = StringUtils.remove(cas.getLoginUrl(), "/login");
                 cfg.setPrefixUrl(StringUtils.appendIfMissing(prefix, "/"));
-                cfg.setLogoutHandler(casServerSpecificLogoutHandler);
                 val client = new CasClient(cfg);
 
                 val count = index.intValue();
@@ -400,7 +388,6 @@ public class DelegatedClientFactory {
                     cfg.setAttributeAsId(saml.getPrincipalIdAttribute());
                 }
                 cfg.setWantsAssertionsSigned(saml.isWantsAssertionsSigned());
-                cfg.setLogoutHandler(casServerSpecificLogoutHandler);
                 cfg.setUseNameQualifier(saml.isUseNameQualifier());
                 cfg.setAttributeConsumingServiceIndex(saml.getAttributeConsumingServiceIndex());
                 if (saml.getAssertionConsumerServiceIndex() >= 0) {

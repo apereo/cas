@@ -88,7 +88,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
             val redisKey = getTicketRedisKey(encodeTicketId(ticket.getId()));
             val encodeTicket = encodeTicket(ticket);
             val timeout = getTimeout(ticket);
-            this.client.boundValueOps(redisKey).set(encodeTicket, timeout.longValue(), TimeUnit.SECONDS);
+            this.client.boundValueOps(redisKey).set(encodeTicket, timeout, TimeUnit.SECONDS);
         } catch (final Exception e) {
             LOGGER.error("Failed to add [{}]", ticket, e);
         }
@@ -146,7 +146,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
             LOGGER.debug("Fetched redis key [{}] for ticket [{}]", redisKey, ticket);
 
             val timeout = getTimeout(ticket);
-            this.client.boundValueOps(redisKey).set(encodeTicket, timeout.longValue(), TimeUnit.SECONDS);
+            this.client.boundValueOps(redisKey).set(encodeTicket, timeout, TimeUnit.SECONDS);
             return encodeTicket;
         } catch (final Exception e) {
             LOGGER.error("Failed to update [{}]", ticket, e);

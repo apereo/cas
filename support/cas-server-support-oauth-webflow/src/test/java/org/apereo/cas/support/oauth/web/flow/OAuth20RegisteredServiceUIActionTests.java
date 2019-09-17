@@ -82,7 +82,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     CasOAuthAuthenticationServiceSelectionStrategyConfiguration.class,
     CasOAuthWebflowConfiguration.class})
-@Tag("OAuth")
+@Tag("UMA")
 public class OAuth20RegisteredServiceUIActionTests {
     @Autowired
     @Qualifier("oauth20RegisteredServiceUIAction")

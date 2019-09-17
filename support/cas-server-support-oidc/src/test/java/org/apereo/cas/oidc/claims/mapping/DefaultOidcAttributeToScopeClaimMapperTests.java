@@ -23,6 +23,5 @@ public class DefaultOidcAttributeToScopeClaimMapperTests extends AbstractOidcTes
         val mapper = new DefaultOidcAttributeToScopeClaimMapper(CollectionUtils.wrap("name", "givenName"));
         assertTrue(mapper.containsMappedAttribute("name"));
         assertEquals("givenName", mapper.getMappedAttribute("name"));
-
     }
 }

@@ -1,6 +1,6 @@
 package org.apereo.cas.ticket.accesstoken;
 
-import org.apereo.cas.ticket.BaseOAuthExpirationPolicyTests;
+import org.apereo.cas.ticket.BaseOAuth20ExpirationPolicyTests;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @TestPropertySource(properties = "cas.logout.removeDescendantTickets=false")
 @Tag("OAuth")
-public class OAuthAccessTokenSovereignExpirationPolicyTests extends BaseOAuthExpirationPolicyTests {
+public class OAuthAccessTokenSovereignExpirationPolicyTests extends BaseOAuth20ExpirationPolicyTests {
     @Test
     public void verifyAccessTokenExpiryWhenTgtIsExpired() {
         val tgt = newTicketGrantingTicket();

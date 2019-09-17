@@ -59,7 +59,7 @@ public class SurrogateAuthenticationEventListener {
             val smsAttribute = sms.getAttributeName();
             val to = principal.getAttributes().get(smsAttribute);
             if (to != null && StringUtils.isNotBlank(sms.getText())) {
-                val text = sms.getText().concat("\n").concat(eventDetails);
+                val text = sms.getFormattedText("\n\n".concat(eventDetails));
                 this.communicationsManager.sms(sms.getFrom(), to.toString(), text);
             } else {
                 LOGGER.trace("The principal has no [{}] attribute, cannot send SMS notification", smsAttribute);

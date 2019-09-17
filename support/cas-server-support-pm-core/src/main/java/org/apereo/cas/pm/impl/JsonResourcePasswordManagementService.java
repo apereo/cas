@@ -85,6 +85,12 @@ public class JsonResourcePasswordManagementService extends BasePasswordManagemen
     }
 
     @Override
+    public String findPhone(final String username) {
+        val account = this.jsonBackedAccounts.getOrDefault(username, null);
+        return Optional.ofNullable(account).map(JsonBackedAccount::getPhone).orElse(null);
+    }
+
+    @Override
     public String findUsername(final String email) {
         val result = this.jsonBackedAccounts.entrySet()
             .stream()
@@ -112,10 +118,6 @@ public class JsonResourcePasswordManagementService extends BasePasswordManagemen
         }
     }
 
-
-    /**
-     * The type Json backed account.
-     */
     @Data
     private static class JsonBackedAccount implements Serializable {
         private static final long serialVersionUID = -8522936598053838986L;
@@ -124,6 +126,8 @@ public class JsonResourcePasswordManagementService extends BasePasswordManagemen
 
         private String password;
 
+        private String phone;
+        
         private Map<String, String> securityQuestions = new HashMap<>();
     }
 }

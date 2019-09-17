@@ -88,9 +88,11 @@ public abstract class BaseOidcScopeAttributeReleasePolicy extends AbstractRegist
         LOGGER.debug("Attempting to process claim [{}]", claim);
         if (attributeToScopeClaimMapper.containsMappedAttribute(claim)) {
             val mappedAttr = attributeToScopeClaimMapper.getMappedAttribute(claim);
-            val value = resolvedAttributes.get(mappedAttr);
-            LOGGER.debug("Found mapped attribute [{}] with value [{}] for claim [{}]", mappedAttr, value, claim);
-            return Pair.of(claim, value);
+            if (resolvedAttributes.containsKey(mappedAttr)) {
+                val value = resolvedAttributes.get(mappedAttr);
+                LOGGER.debug("Found mapped attribute [{}] with value [{}] for claim [{}]", mappedAttr, value, claim);
+                return Pair.of(claim, value);
+            }
         }
         val value = resolvedAttributes.get(claim);
         LOGGER.debug("No mapped attribute is defined for claim [{}]; Used [{}] to locate value [{}]", claim, claim, value);
