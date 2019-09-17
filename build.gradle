@@ -509,10 +509,6 @@ subprojects {
     }
 }
 
-wrapper {
-    gradleVersion = project.gradleVersion
-}
-
 task javadoc(type: Javadoc, description: "Aggregate all Javadocs into a single directory", overwrite: true) {
     source subprojects.collect { project -> project.sourceSets.main.allJava }
     destinationDir = new File(buildDir, "javadoc")
