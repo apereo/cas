@@ -33,6 +33,7 @@ import org.apereo.cas.config.CasOAuthConfiguration;
 import org.apereo.cas.config.CasOAuthThrottleConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CasThrottlingConfiguration;
+import org.apereo.cas.config.OAuthProtocolTicketCatalogConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.support.EnvironmentConversionServiceInitializer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -144,6 +145,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     CasOAuthAuthenticationServiceSelectionStrategyConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
+    OAuthProtocolTicketCatalogConfiguration.class,
     CasCoreTicketComponentSerializationConfiguration.class,
     CasOAuth20TestAuthenticationEventExecutionPlanConfiguration.class,
     CasCoreUtilSerializationConfiguration.class,
@@ -152,7 +154,9 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class,
     CasCoreLogoutConfiguration.class,
     CasCoreUtilConfiguration.class,
-    CasCoreWebConfiguration.class})
+    CasCoreWebConfiguration.class},
+    properties = {"spring.main.allow-bean-definition-overriding=true"}
+)
 @DirtiesContext
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
