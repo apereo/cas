@@ -1659,7 +1659,14 @@ Send text messaging using TextMagic.
 ```properties
 # cas.smsProvider.textMagic.username=
 # cas.smsProvider.textMagic.token=
-# cas.smsProvider.textMagic.url=
+# cas.smsProvider.textMagic.debugging=false
+# cas.smsProvider.textMagic.password=
+# cas.smsProvider.textMagic.readTimeout=5000
+# cas.smsProvider.textMagic.connectionTimeout=5000
+# cas.smsProvider.textMagic.writeTimeout=5000
+# cas.smsProvider.textMagic.verifyingSsl=true
+# cas.smsProvider.textMagic.apiKey=
+# cas.smsProvider.textMagic.apiKeyPrefix=
 ```
 
 ### Clickatell

@@ -35,6 +35,7 @@ import org.apache.http.impl.client.ProxyAuthenticationStrategy;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 
 import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLContext;
 
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
@@ -125,6 +126,11 @@ public class SimpleHttpClientFactoryBean implements HttpClientFactory {
      * The hostname verifier to be used when verifying the validity of the endpoint.
      */
     private HostnameVerifier hostnameVerifier = new DefaultHostnameVerifier();
+
+    /**
+     * The CAS SSL context used to create ssl socket factories, etc.
+     */
+    private SSLContext sslContext;
 
     /**
      * The credentials provider for endpoints that require authentication.

@@ -108,6 +108,7 @@ public class CasCoreHttpConfiguration {
         }
         c.setSslSocketFactory(trustStoreSslSocketFactory());
         c.setHostnameVerifier(hostnameVerifier());
+        c.setSslContext(sslContext());
 
         return c;
     }

@@ -136,6 +136,7 @@ public class LdapTestUtils {
     public static void modifyLdapEntries(final LDAPConnection connection, final Collection<LdapEntry> entries) {
         modifyLdapEntries(connection, entries, null);
     }
+
     /**
      * Modify ldap entry.
      *
@@ -153,7 +154,11 @@ public class LdapTestUtils {
         val address = "ldap://" + serverCon.getConnectedAddress() + ':' + serverCon.getConnectedPort();
         try (val conn = DefaultConnectionFactory.getConnection(address)) {
             try {
-                conn.open(bindRequest);
+                if (bindRequest != null) {
+                    conn.open(bindRequest);
+                } else {
+                    conn.open();
+                }
                 val modify = new ModifyOperation(conn);
                 modify.execute(new ModifyRequest(dn, new AttributeModification(add, attr)));
             } catch (final Exception e) {
@@ -174,5 +179,17 @@ public class LdapTestUtils {
                                        final LdapAttribute attr,
                                        final BindRequest bindRequest) {
         modifyLdapEntry(serverCon, dn.getDn(), attr, AttributeModificationType.ADD, bindRequest);
+    }
+
+    /**
+     * Modify ldap entry.
+     *
+     * @param serverCon the server con
+     * @param dn        the dn
+     * @param attr      the attr
+     */
+    public static void modifyLdapEntry(final LDAPConnection serverCon, final LdapEntry dn,
+                                       final LdapAttribute attr) {
+        modifyLdapEntry(serverCon, dn.getDn(), attr, AttributeModificationType.ADD, null);
     }
 }
