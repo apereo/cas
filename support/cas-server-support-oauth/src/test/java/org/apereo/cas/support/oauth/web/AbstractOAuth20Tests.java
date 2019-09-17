@@ -53,9 +53,11 @@ import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGenerat
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestDataHolder;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseGenerator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseResult;
+import org.apereo.cas.ticket.CatalogUsingMapTicketRegistry;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.code.OAuthCode;
@@ -498,6 +500,11 @@ public abstract class AbstractOAuth20Tests {
         public void configureComponentSerializationPlan(final ComponentSerializationPlan plan) {
             plan.registerSerializableClass(MockTicketGrantingTicket.class);
             plan.registerSerializableClass(MockServiceTicket.class);
+        }
+
+        @Bean("ticketRegistry")
+        public TicketRegistry ticketRegistry(final TicketCatalog ticketCatalog) {
+            return new CatalogUsingMapTicketRegistry(ticketCatalog);
         }
     }
 }
