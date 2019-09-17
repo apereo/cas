@@ -2,9 +2,9 @@ package org.apereo.cas.support.oauth.util;
 
 import org.apereo.cas.support.oauth.services.OAuth20RegisteredServiceCipherExecutor;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.util.RandomUtils;
 
 import lombok.val;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -21,7 +21,7 @@ public class OAuth20UtilsTests {
     @Test
     public void verifyClientSecretCheck() {
         val cipher = new OAuth20RegisteredServiceCipherExecutor();
-        val secret = RandomStringUtils.randomAlphanumeric(12);
+        val secret = RandomUtils.randomAlphanumeric(12);
         val encodedSecret = cipher.encode(secret);
         val registeredService = new OAuthRegisteredService();
         registeredService.setClientId("clientid");
@@ -33,7 +33,7 @@ public class OAuth20UtilsTests {
     @Test
     public void verifyClientSecretCheckWithoutCipher() {
         val cipher = new OAuth20RegisteredServiceCipherExecutor();
-        val secret = RandomStringUtils.randomAlphanumeric(12);
+        val secret = RandomUtils.randomAlphanumeric(12);
         val registeredService = new OAuthRegisteredService();
         registeredService.setClientId("clientid");
         registeredService.setClientSecret(secret);

@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.principal.PersistentIdGenerator;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
+import org.apereo.cas.util.RandomUtils;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -12,7 +13,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.RandomStringUtils;
 
 /**
  * Generates a persistent id as username for anonymous service access.
@@ -36,7 +36,7 @@ public class AnonymousRegisteredServiceUsernameAttributeProvider extends BaseReg
     /**
      * Encoder to generate PseudoIds.
      */
-    private PersistentIdGenerator persistentIdGenerator = new ShibbolethCompatiblePersistentIdGenerator(RandomStringUtils.randomAlphanumeric(16));
+    private PersistentIdGenerator persistentIdGenerator = new ShibbolethCompatiblePersistentIdGenerator(RandomUtils.randomAlphanumeric(16));
 
     @Override
     protected String resolveUsernameInternal(final Principal principal, final Service service, final RegisteredService registeredService) {

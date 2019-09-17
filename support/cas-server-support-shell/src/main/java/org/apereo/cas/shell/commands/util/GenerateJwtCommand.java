@@ -1,5 +1,7 @@
 package org.apereo.cas.shell.commands.util;
 
+import org.apereo.cas.util.RandomUtils;
+
 import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JWEAlgorithm;
 import com.nimbusds.jose.JWSAlgorithm;
@@ -7,7 +9,6 @@ import com.nimbusds.jose.crypto.AESDecrypter;
 import com.nimbusds.jose.crypto.DirectDecrypter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 import org.pac4j.core.profile.CommonProfile;
@@ -108,7 +109,7 @@ public class GenerateJwtCommand {
             return;
         }
 
-        val encryptionSecret = RandomStringUtils.randomAlphanumeric(encryptionSecretSize);
+        val encryptionSecret = RandomUtils.randomAlphanumeric(encryptionSecretSize);
         LOGGER.info("==== Encryption Secret ====\n[{}]\n", encryptionSecret);
 
         val acceptedEncAlgs = Arrays.stream(JWEAlgorithm.class.getDeclaredFields())
@@ -157,7 +158,7 @@ public class GenerateJwtCommand {
             return;
         }
 
-        val signingSecret = RandomStringUtils.randomAlphanumeric(signingSecretSize);
+        val signingSecret = RandomUtils.randomAlphanumeric(signingSecretSize);
         LOGGER.info("==== Signing Secret ====\n{}\n", signingSecret);
 
         val acceptedSigningAlgs = Arrays.stream(JWSAlgorithm.class.getDeclaredFields())

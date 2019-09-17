@@ -1,7 +1,8 @@
 package org.apereo.cas.support.oauth.services;
 
+import org.apereo.cas.util.RandomUtils;
+
 import lombok.val;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -18,7 +19,7 @@ public class OAuth20RegisteredServiceCipherExecutorTests {
     @Test
     public void verifyOperation() {
         val cipher = new OAuth20RegisteredServiceCipherExecutor();
-        val secret = RandomStringUtils.randomAlphanumeric(12);
+        val secret = RandomUtils.randomAlphanumeric(12);
         val encoded = cipher.encode(secret);
         assertNotNull(encoded);
         assertNotEquals(secret, encoded);
