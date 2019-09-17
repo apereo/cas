@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Configuration("x509AuthenticationComponentSerializationConfiguration")
+@Configuration(value = "x509AuthenticationComponentSerializationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class X509AuthenticationComponentSerializationConfiguration implements ComponentSerializationPlanConfigurator {
     @Override

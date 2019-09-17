@@ -1,7 +1,7 @@
 package org.apereo.cas.authentication.support;
 
 import org.apereo.cas.authentication.support.password.GroovyPasswordPolicyHandlingStrategy;
-import org.apereo.cas.authentication.support.password.PasswordPolicyConfiguration;
+import org.apereo.cas.authentication.support.password.PasswordPolicyContext;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 
 import lombok.val;
@@ -39,7 +39,7 @@ public class GroovyPasswordPolicyHandlingStrategyTests {
         when(res.getAuthenticationResultCode()).thenReturn(AuthenticationResultCode.INVALID_CREDENTIAL);
         when(res.getResult()).thenReturn(false);
 
-        val results = s.handle(res, mock(PasswordPolicyConfiguration.class));
+        val results = s.handle(res, mock(PasswordPolicyContext.class));
 
         assertFalse(s.supports(null));
         assertTrue(s.supports(res));
@@ -51,6 +51,6 @@ public class GroovyPasswordPolicyHandlingStrategyTests {
         val resource = new ClassPathResource("lppe-strategy-throws-error.groovy");
         val s = new GroovyPasswordPolicyHandlingStrategy<AuthenticationResponse>(resource);
         val res = mock(AuthenticationResponse.class);
-        assertThrows(AccountExpiredException.class, () -> s.handle(res, mock(PasswordPolicyConfiguration.class)));
+        assertThrows(AccountExpiredException.class, () -> s.handle(res, mock(PasswordPolicyContext.class)));
     }
 }

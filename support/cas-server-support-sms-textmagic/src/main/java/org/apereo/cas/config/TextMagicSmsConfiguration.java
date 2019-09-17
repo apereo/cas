@@ -22,7 +22,7 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration("textMagicSmsConfiguration")
+@Configuration(value = "textMagicSmsConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class TextMagicSmsConfiguration {
     @Autowired

@@ -21,7 +21,7 @@ import org.springframework.context.annotation.Profile;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration("casCoreBootstrapStandaloneWatchConfiguration")
+@Configuration(value = "casCoreBootstrapStandaloneWatchConfiguration", proxyBeanMethods = false)
 @Slf4j
 @Profile("standalone")
 @EnableConfigurationProperties(CasConfigurationProperties.class)

@@ -8,7 +8,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalNameTransformerUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
-import org.apereo.cas.authentication.support.password.PasswordPolicyConfiguration;
+import org.apereo.cas.authentication.support.password.PasswordPolicyContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 
@@ -60,7 +60,7 @@ public class JsonResourceAuthenticationEventExecutionPlanConfiguration {
             null, jsonProps.getLocation());
         h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(jsonProps.getPasswordEncoder()));
         if (jsonProps.getPasswordPolicy().isEnabled()) {
-            h.setPasswordPolicyConfiguration(new PasswordPolicyConfiguration(jsonProps.getPasswordPolicy()));
+            h.setPasswordPolicyConfiguration(new PasswordPolicyContext(jsonProps.getPasswordPolicy()));
         }
         h.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(jsonProps.getPrincipalTransformation()));
         return h;

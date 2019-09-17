@@ -17,7 +17,7 @@ import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
  * @since 6.0.0
  */
 @Slf4j
-@Configuration("casSpringBootAdminServerSecurityConfiguration")
+@Configuration(value = "casSpringBootAdminServerSecurityConfiguration", proxyBeanMethods = false)
 public class CasSpringBootAdminServerSecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Autowired
     private AdminServerProperties adminServerProperties;

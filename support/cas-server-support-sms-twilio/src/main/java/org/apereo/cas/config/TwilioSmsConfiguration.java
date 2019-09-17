@@ -17,7 +17,7 @@ import org.springframework.util.Assert;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration("twilioSmsConfiguration")
+@Configuration(value = "twilioSmsConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class TwilioSmsConfiguration {
 
