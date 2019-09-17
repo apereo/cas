@@ -8,7 +8,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalNameTransformerUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
-import org.apereo.cas.authentication.support.password.PasswordPolicyConfiguration;
+import org.apereo.cas.authentication.support.password.PasswordPolicyContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 
@@ -79,7 +79,7 @@ public class ShiroAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "shiroPasswordPolicyConfiguration")
     @Bean
-    public PasswordPolicyConfiguration shiroPasswordPolicyConfiguration() {
-        return new PasswordPolicyConfiguration();
+    public PasswordPolicyContext shiroPasswordPolicyConfiguration() {
+        return new PasswordPolicyContext();
     }
 }

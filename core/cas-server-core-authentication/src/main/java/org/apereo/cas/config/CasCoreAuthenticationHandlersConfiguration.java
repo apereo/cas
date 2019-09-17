@@ -13,7 +13,7 @@ import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
 import org.apereo.cas.authentication.principal.resolvers.ProxyingPrincipalResolver;
 import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
-import org.apereo.cas.authentication.support.password.PasswordPolicyConfiguration;
+import org.apereo.cas.authentication.support.password.PasswordPolicyContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.http.HttpClient;
@@ -101,7 +101,7 @@ public class CasCoreAuthenticationHandlersConfiguration {
         val passwordPolicy = props.getPasswordPolicy();
         h.setPasswordPolicyHandlingStrategy(CoreAuthenticationUtils.newPasswordPolicyHandlingStrategy(passwordPolicy));
         if (passwordPolicy.isEnabled()) {
-            val cfg = new PasswordPolicyConfiguration(passwordPolicy);
+            val cfg = new PasswordPolicyContext(passwordPolicy);
             if (passwordPolicy.isAccountStateHandlingEnabled()) {
                 cfg.setAccountStateHandler((response, configuration) -> new ArrayList<>(0));
             } else {
@@ -139,14 +139,14 @@ public class CasCoreAuthenticationHandlersConfiguration {
 
     @ConditionalOnMissingBean(name = "acceptPasswordPolicyConfiguration")
     @Bean
-    public PasswordPolicyConfiguration acceptPasswordPolicyConfiguration() {
-        return new PasswordPolicyConfiguration();
+    public PasswordPolicyContext acceptPasswordPolicyConfiguration() {
+        return new PasswordPolicyContext();
     }
 
     @ConditionalOnMissingBean(name = "jaasPasswordPolicyConfiguration")
     @Bean
-    public PasswordPolicyConfiguration jaasPasswordPolicyConfiguration() {
-        return new PasswordPolicyConfiguration();
+    public PasswordPolicyContext jaasPasswordPolicyConfiguration() {
+        return new PasswordPolicyContext();
     }
 
     /**
@@ -212,7 +212,7 @@ public class CasCoreAuthenticationHandlersConfiguration {
                     h.setPasswordPolicyHandlingStrategy(CoreAuthenticationUtils.newPasswordPolicyHandlingStrategy(passwordPolicy));
                     if (passwordPolicy.isEnabled()) {
                         LOGGER.debug("Password policy is enabled for JAAS. Constructing password policy configuration for [{}]", jaas.getRealm());
-                        val cfg = new PasswordPolicyConfiguration(passwordPolicy);
+                        val cfg = new PasswordPolicyContext(passwordPolicy);
                         if (passwordPolicy.isAccountStateHandlingEnabled()) {
                             cfg.setAccountStateHandler((response, configuration) -> new ArrayList<>(0));
                         } else {

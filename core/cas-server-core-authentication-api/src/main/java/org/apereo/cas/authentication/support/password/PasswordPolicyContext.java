@@ -19,7 +19,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @AllArgsConstructor
-public class PasswordPolicyConfiguration {
+public class PasswordPolicyContext {
 
     /**
      * Directory-specific account state handler component.
@@ -30,11 +30,11 @@ public class PasswordPolicyConfiguration {
     private int passwordWarningNumberOfDays = 30;
     private int loginFailures = 5;
 
-    public PasswordPolicyConfiguration(final int passwordWarningNumberOfDays) {
+    public PasswordPolicyContext(final int passwordWarningNumberOfDays) {
         this.passwordWarningNumberOfDays = passwordWarningNumberOfDays;
     }
 
-    public PasswordPolicyConfiguration(final PasswordPolicyProperties props) {
+    public PasswordPolicyContext(final PasswordPolicyProperties props) {
         this(null, props.isWarnAll(), props.getWarningDays(), props.getLoginFailures());
     }
 }

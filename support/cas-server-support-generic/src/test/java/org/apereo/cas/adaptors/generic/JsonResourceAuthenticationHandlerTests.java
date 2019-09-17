@@ -4,7 +4,7 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeException;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
-import org.apereo.cas.authentication.support.password.PasswordPolicyConfiguration;
+import org.apereo.cas.authentication.support.password.PasswordPolicyContext;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 
@@ -106,7 +106,7 @@ public class JsonResourceAuthenticationHandlerTests {
             .writeValue(resource.getFile(), accounts);
         this.handler = new JsonResourceAuthenticationHandler(null, mock(ServicesManager.class),
             new DefaultPrincipalFactory(), null, resource);
-        this.handler.setPasswordPolicyConfiguration(new PasswordPolicyConfiguration(15));
+        this.handler.setPasswordPolicyConfiguration(new PasswordPolicyContext(15));
     }
 
     @Test

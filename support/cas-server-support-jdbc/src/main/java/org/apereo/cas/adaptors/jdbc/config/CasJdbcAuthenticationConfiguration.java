@@ -13,7 +13,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalNameTransformerUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
-import org.apereo.cas.authentication.support.password.PasswordPolicyConfiguration;
+import org.apereo.cas.authentication.support.password.PasswordPolicyContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jdbc.authn.BaseJdbcAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.jdbc.authn.BindJdbcAuthenticationProperties;
@@ -84,29 +84,29 @@ public class CasJdbcAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "queryAndEncodePasswordPolicyConfiguration")
     @Bean
     @RefreshScope
-    public PasswordPolicyConfiguration queryAndEncodePasswordPolicyConfiguration() {
-        return new PasswordPolicyConfiguration();
+    public PasswordPolicyContext queryAndEncodePasswordPolicyConfiguration() {
+        return new PasswordPolicyContext();
     }
 
     @ConditionalOnMissingBean(name = "searchModePasswordPolicyConfiguration")
     @Bean
     @RefreshScope
-    public PasswordPolicyConfiguration searchModePasswordPolicyConfiguration() {
-        return new PasswordPolicyConfiguration();
+    public PasswordPolicyContext searchModePasswordPolicyConfiguration() {
+        return new PasswordPolicyContext();
     }
 
     @ConditionalOnMissingBean(name = "queryPasswordPolicyConfiguration")
     @Bean
     @RefreshScope
-    public PasswordPolicyConfiguration queryPasswordPolicyConfiguration() {
-        return new PasswordPolicyConfiguration();
+    public PasswordPolicyContext queryPasswordPolicyConfiguration() {
+        return new PasswordPolicyContext();
     }
 
     @ConditionalOnMissingBean(name = "bindSearchPasswordPolicyConfiguration")
     @Bean
     @RefreshScope
-    public PasswordPolicyConfiguration bindSearchPasswordPolicyConfiguration() {
-        return new PasswordPolicyConfiguration();
+    public PasswordPolicyContext bindSearchPasswordPolicyConfiguration() {
+        return new PasswordPolicyContext();
     }
 
     @ConditionalOnMissingBean(name = "jdbcAuthenticationEventExecutionPlanConfigurer")

@@ -1,6 +1,8 @@
 import org.gradle.internal.logging.*
 import org.gradle.internal.logging.events.*
 
+import java.util.regex.Pattern
+
 tasks.withType(Javadoc) {
     def exceptions = []
     doFirst {
@@ -98,6 +100,42 @@ task verifySpringConfigurationFactories(description: "Examine spring.factories f
             }
         }
     }
+}
+
+task verifySpringConfigurationCanDisableBeanProxing(description: "Examine @Configuration files and check whether proxying bean methods can be disabled") {
+     doLast {
+         def patternBeanMethods = Pattern.compile("public\\s\\w+\\s(\\w+)\\(")
+         
+         def results = []
+         new File('.').eachFileRecurse(groovy.io.FileType.FILES) {
+             if (it.name.endsWith('Configuration.java') && it.text.contains("@Configuration")) {
+                 def canProxyBeans = true
+                 def matcher = patternBeanMethods.matcher(it.text)
+                 results.clear()
+                 while (matcher.find()) {
+                     results += matcher.group(1)
+                 }
+                 for (def r in results) {
+                     def patternMethodCall = Pattern.compile(r + "\\(");
+                     def matcher2 = patternMethodCall.matcher(it.text)
+                     def count = 0
+                     while (matcher2.find()) {
+                         count++
+                     }
+                     if (count > 1) {
+                         canProxyBeans = false
+                         break
+                     }
+                 }
+                 if (canProxyBeans) {
+                     def proxyPattern = Pattern.compile("@Configuration\\(value\\s*=\\s*\"(\\w+)\",\\s*proxyBeanMethods\\s*=\\s*false\\)") .matcher(it.text)
+                     if (!proxyPattern.find()) {
+                         throw new GradleException("Configuration class ${it.name} should be marked with proxyBeanMethods = false")
+                     }
+                 }
+             }
+         }
+     }
 }
 
 task validateTestsSuites(description: "Ensure all projects contain a tests suite that contains test classes") {

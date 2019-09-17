@@ -7,7 +7,7 @@ import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
-import org.apereo.cas.authentication.support.password.PasswordPolicyConfiguration;
+import org.apereo.cas.authentication.support.password.PasswordPolicyContext;
 import org.apereo.cas.services.ServicesManager;
 
 import lombok.Getter;
@@ -47,7 +47,7 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
 
     private PrincipalNameTransformer principalNameTransformer = formUserId -> formUserId;
 
-    private PasswordPolicyConfiguration passwordPolicyConfiguration;
+    private PasswordPolicyContext passwordPolicyConfiguration;
 
     public AbstractUsernamePasswordAuthenticationHandler(final String name, final ServicesManager servicesManager,
                                                          final PrincipalFactory principalFactory, final Integer order) {

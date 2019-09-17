@@ -15,7 +15,7 @@ import org.apereo.cas.authentication.support.RejectResultCodeLdapPasswordPolicyH
 import org.apereo.cas.authentication.support.password.DefaultPasswordPolicyHandlingStrategy;
 import org.apereo.cas.authentication.support.password.GroovyPasswordPolicyHandlingStrategy;
 import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
-import org.apereo.cas.authentication.support.password.PasswordPolicyConfiguration;
+import org.apereo.cas.authentication.support.password.PasswordPolicyContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.ldap.LdapAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.ldap.LdapPasswordPolicyProperties;
@@ -161,7 +161,7 @@ public class LdapAuthenticationConfiguration {
         return handlers;
     }
 
-    private static AuthenticationPasswordPolicyHandlingStrategy<AuthenticationResponse, PasswordPolicyConfiguration>
+    private static AuthenticationPasswordPolicyHandlingStrategy<AuthenticationResponse, PasswordPolicyContext>
         createLdapPasswordPolicyHandlingStrategy(final LdapAuthenticationProperties l) {
         if (l.getPasswordPolicy().getStrategy() == LdapPasswordPolicyProperties.PasswordPolicyHandlingOptions.REJECT_RESULT_CODE) {
             LOGGER.debug("Created LDAP password policy handling strategy based on blacklisted authentication result codes");
@@ -178,10 +178,10 @@ public class LdapAuthenticationConfiguration {
         return new DefaultPasswordPolicyHandlingStrategy();
     }
 
-    private static PasswordPolicyConfiguration createLdapPasswordPolicyConfiguration(final LdapPasswordPolicyProperties passwordPolicy,
-                                                                                     final Authenticator authenticator,
-                                                                                     final Multimap<String, Object> attributes) {
-        val cfg = new PasswordPolicyConfiguration(passwordPolicy);
+    private static PasswordPolicyContext createLdapPasswordPolicyConfiguration(final LdapPasswordPolicyProperties passwordPolicy,
+                                                                               final Authenticator authenticator,
+                                                                               final Multimap<String, Object> attributes) {
+        val cfg = new PasswordPolicyContext(passwordPolicy);
         val handlers = new HashSet<Object>();
 
         val customPolicyClass = passwordPolicy.getCustomPolicyClass();

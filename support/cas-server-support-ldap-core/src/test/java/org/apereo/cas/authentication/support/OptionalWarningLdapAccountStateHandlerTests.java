@@ -1,7 +1,7 @@
 package org.apereo.cas.authentication.support;
 
 import org.apereo.cas.authentication.MessageDescriptor;
-import org.apereo.cas.authentication.support.password.PasswordPolicyConfiguration;
+import org.apereo.cas.authentication.support.password.PasswordPolicyContext;
 
 import lombok.val;
 import org.junit.jupiter.api.Test;
@@ -34,7 +34,7 @@ public class OptionalWarningLdapAccountStateHandlerTests {
         when(response.getLdapEntry()).thenReturn(entry);
         when(entry.getAttribute(anyString())).thenReturn(new LdapAttribute("attribute", "value"));
         val messages = new ArrayList<MessageDescriptor>();
-        val config = new PasswordPolicyConfiguration();
+        val config = new PasswordPolicyContext();
         config.setPasswordWarningNumberOfDays(5);
         h.handleWarning(new AccountState.DefaultWarning(ZonedDateTime.now(), 1),
             response, config, messages);
@@ -52,7 +52,7 @@ public class OptionalWarningLdapAccountStateHandlerTests {
         when(response.getLdapEntry()).thenReturn(entry);
         when(entry.getAttribute(anyString())).thenReturn(new LdapAttribute("attribute", "value"));
         val messages = new ArrayList<MessageDescriptor>();
-        val config = new PasswordPolicyConfiguration();
+        val config = new PasswordPolicyContext();
         config.setAlwaysDisplayPasswordExpirationWarning(true);
         h.handleWarning(new AccountState.DefaultWarning(ZonedDateTime.now(), 1),
             response, config, messages);
@@ -70,7 +70,7 @@ public class OptionalWarningLdapAccountStateHandlerTests {
         when(response.getLdapEntry()).thenReturn(entry);
         when(entry.getAttribute(anyString())).thenReturn(new LdapAttribute("attribute", "value"));
         val messages = new ArrayList<MessageDescriptor>();
-        val config = new PasswordPolicyConfiguration();
+        val config = new PasswordPolicyContext();
         config.setPasswordWarningNumberOfDays(5);
         h.handleWarning(new AccountState.DefaultWarning(ZonedDateTime.now(), 1),
             response, config, messages);

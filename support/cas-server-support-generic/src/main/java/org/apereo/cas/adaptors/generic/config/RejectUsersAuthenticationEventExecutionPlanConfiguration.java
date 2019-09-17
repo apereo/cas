@@ -8,7 +8,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalNameTransformerUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
-import org.apereo.cas.authentication.support.password.PasswordPolicyConfiguration;
+import org.apereo.cas.authentication.support.password.PasswordPolicyContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 
@@ -81,7 +81,7 @@ public class RejectUsersAuthenticationEventExecutionPlanConfiguration {
 
     @ConditionalOnMissingBean(name = "rejectPasswordPolicyConfiguration")
     @Bean
-    public PasswordPolicyConfiguration rejectPasswordPolicyConfiguration() {
-        return new PasswordPolicyConfiguration();
+    public PasswordPolicyContext rejectPasswordPolicyConfiguration() {
+        return new PasswordPolicyContext();
     }
 }
