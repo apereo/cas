@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration("casGeoLocationConfiguration")
+@Configuration(value = "casGeoLocationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class GoogleMapsGeoCodingConfiguration {
 

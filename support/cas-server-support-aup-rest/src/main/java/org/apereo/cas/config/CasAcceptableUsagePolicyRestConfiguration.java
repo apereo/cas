@@ -21,7 +21,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Configuration("casAcceptableUsagePolicyRestConfiguration")
+@Configuration(value = "casAcceptableUsagePolicyRestConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnProperty(prefix = "cas.acceptableUsagePolicy", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class CasAcceptableUsagePolicyRestConfiguration {

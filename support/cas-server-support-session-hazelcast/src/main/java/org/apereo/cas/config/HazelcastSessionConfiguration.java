@@ -19,7 +19,7 @@ import org.springframework.session.hazelcast.config.annotation.web.http.EnableHa
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration("hazelcastSessionConfiguration")
+@Configuration(value = "hazelcastSessionConfiguration", proxyBeanMethods = false)
 @EnableHazelcastHttpSession
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class HazelcastSessionConfiguration {

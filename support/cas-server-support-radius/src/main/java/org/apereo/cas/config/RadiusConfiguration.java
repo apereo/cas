@@ -21,7 +21,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalNameTransformerUtils;
 import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
-import org.apereo.cas.authentication.support.password.PasswordPolicyConfiguration;
+import org.apereo.cas.authentication.support.password.PasswordPolicyContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.radius.RadiusClientProperties;
 import org.apereo.cas.configuration.model.support.radius.RadiusServerProperties;
@@ -178,8 +178,8 @@ public class RadiusConfiguration {
 
     @ConditionalOnMissingBean(name = "radiusPasswordPolicyConfiguration")
     @Bean
-    public PasswordPolicyConfiguration radiusPasswordPolicyConfiguration() {
-        return new PasswordPolicyConfiguration();
+    public PasswordPolicyContext radiusPasswordPolicyConfiguration() {
+        return new PasswordPolicyContext();
     }
 
     @RefreshScope

@@ -20,7 +20,7 @@ import java.util.Collection;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration("samlServiceFactoryConfiguration")
+@Configuration(value = "samlServiceFactoryConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class SamlServiceFactoryConfiguration implements ServiceFactoryConfigurer {
     @Override

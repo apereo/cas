@@ -16,7 +16,7 @@ import org.springframework.web.client.RestTemplate;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration("casConsentRestConfiguration")
+@Configuration(value = "casConsentRestConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasConsentRestConfiguration {
 

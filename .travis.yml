@@ -106,6 +106,10 @@ jobs:
       name: "Configuration Metadata Analysis"
     - stage: validate
       if: NOT (head_branch =~ env(DEPENDENCY_BOT_BRANCH) and type = pull_request)
+      script: ./ci/analyze-config-proxying.sh
+      name: "Configuration Proxying Analysis"
+    - stage: validate
+      if: NOT (head_branch =~ env(DEPENDENCY_BOT_BRANCH) and type = pull_request)
       script: ./ci/check-config-factories.sh
       name: "Configuration Factory Analysis"
     - stage: validate

@@ -18,7 +18,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration("casCloudBusEventsConfigEnvironmentConfiguration")
+@Configuration(value = "casCloudBusEventsConfigEnvironmentConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasCloudBusEventsConfigEnvironmentConfiguration {
 
