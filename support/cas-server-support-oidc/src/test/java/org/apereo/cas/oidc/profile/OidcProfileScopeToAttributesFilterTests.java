@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.oidc.claims.OidcProfileScopeAttributeReleasePolicy;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.util.CollectionUtils;
 
@@ -67,7 +68,7 @@ public class OidcProfileScopeToAttributesFilterTests extends AbstractOidcTests {
     }
 
     @Test
-    public void verifyOperationFilterWithLimitedScopes() {
+    public void verifyOperationFilterWithServiceDefinedScopes() {
         val service = getOidcRegisteredService();
         val accessToken = mock(AccessToken.class);
         when(accessToken.getTicketGrantingTicket()).thenReturn(new MockTicketGrantingTicket("casuser"));
@@ -93,7 +94,7 @@ public class OidcProfileScopeToAttributesFilterTests extends AbstractOidcTests {
     }
 
     @Test
-    public void verifyOperationFilterWithOpenIdWithoutServiceScopes() {
+    public void verifyOperationFilterWithServiceDefinedReleasePolicy() {
         val service = getOidcRegisteredService();
         val accessToken = mock(AccessToken.class);
         when(accessToken.getTicketGrantingTicket()).thenReturn(new MockTicketGrantingTicket("casuser"));
@@ -105,6 +106,7 @@ public class OidcProfileScopeToAttributesFilterTests extends AbstractOidcTests {
                 OidcConstants.StandardScopes.EMAIL.getScope()));
 
         service.getScopes().clear();
+        service.setAttributeReleasePolicy(new OidcProfileScopeAttributeReleasePolicy());
 
         val context = new JEEContext(new MockHttpServletRequest(), new MockHttpServletResponse());
         val original = CoreAuthenticationTestUtils.getPrincipal(
@@ -113,9 +115,7 @@ public class OidcProfileScopeToAttributesFilterTests extends AbstractOidcTests {
         val principal = profileScopeToAttributesFilter.filter(CoreAuthenticationTestUtils.getService(),
                 original, service, context, accessToken);
         assertTrue(principal.getAttributes().containsKey("name"));
-        assertTrue(principal.getAttributes().containsKey("address"));
         assertTrue(principal.getAttributes().containsKey("gender"));
-        assertTrue(principal.getAttributes().containsKey("email"));
-        assertEquals(4, principal.getAttributes().size());
+        assertEquals(2, principal.getAttributes().size());
     }
 }

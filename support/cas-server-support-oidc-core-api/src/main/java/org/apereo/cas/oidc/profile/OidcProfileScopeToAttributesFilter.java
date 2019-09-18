@@ -71,11 +71,7 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
             }
 
             val oidcService = (OidcRegisteredService) registeredService;
-            if (!oidcService.getScopes().isEmpty()) {
-                scopes.retainAll(oidcService.getScopes());
-            }
-
-            val attributes = filterAttributesByScope(scopes, principal, service, oidcService, accessToken);
+            val attributes = getAttributesAllowedForService(scopes, principal, service, oidcService, accessToken);
             LOGGER.debug("Collection of attributes filtered by scopes [{}] are [{}]", scopes, attributes);
 
             filterAttributesByAccessTokenRequestedClaims(oidcService, accessToken, principal, attributes);
@@ -83,6 +79,18 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
             return this.principalFactory.createPrincipal(profile.getId(), attributes);
         }
         return principal;
+    }
+
+    private Map<String, List<Object>> getAttributesAllowedForService(final Collection<String> scopes,
+                                                                     final Principal principal,
+                                                                     final Service service,
+                                                                     final OidcRegisteredService oidcService,
+                                                                     final AccessToken accessToken) {
+        if (!oidcService.getScopes().isEmpty()) {
+            scopes.retainAll(oidcService.getScopes());
+            return filterAttributesByScope(scopes, principal, service, oidcService, accessToken);
+        }
+        return oidcService.getAttributeReleasePolicy().getAttributes(principal, service, oidcService);
     }
 
     /**
