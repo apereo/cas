@@ -3,7 +3,7 @@ source ./ci/functions.sh
 
 runBuild=true
 prepCommand="echo 'Running command...'; "
-gradle="gradle $@"
+gradle="./gradlew $@"
 gradleBuild=""
 gradleBuildOptions="--stacktrace --build-cache --configure-on-demand --no-daemon "
 
@@ -35,9 +35,9 @@ echo $prepCommand
 echo $tasks
 echo -e "***************************************************************************************"
 
-#waitloop="while sleep 9m; do echo -e '\n=====[ Gradle build is still running ]====='; done &"
-#eval $waitloop
-#waitRetVal=$?
+waitloop="while sleep 9m; do echo -e '\n=====[ Gradle build is still running ]====='; done &"
+eval $waitloop
+waitRetVal=$?
 
 eval $prepCommand
 eval $tasks
