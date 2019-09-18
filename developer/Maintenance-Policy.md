@@ -35,7 +35,7 @@ of any kind, either express or implied. See the project license file for the spe
 
 <div class="alert alert-info"><strong>Uh...Maintenance?</strong><p>
 In this context, maintenance strictly means that the release line and the target destination branch in the CAS codebase remains open to
-accept patches and contributions from the community and that there will be follow-up binary releases forthcoming until the designated dates. 
+  accept patches and <strong>contributions from the community</strong> and that there will be follow-up binary releases forthcoming until the designated dates. 
 </p></div>
 
 ## EOL Schedule
@@ -45,8 +45,8 @@ The following CAS releases will transition into a security-patch mode (SPM) only
 | Release        | SPM Starting Date    | Full EOL  |
 | -------------- |:--------------------:| -------------------:|
 | `6.1.x`        | December 1st, 2019   | June 1st, 2020      |
-| `6.0.x`        | June 29th, 2019      | December 29th, 2019 |
-| `5.3.x`        | October 29th, 2019      | October 29th, 2020     |
+| `6.0.x`        | November 1st, 2019   | May 1st, 2019 |
+| `5.3.x`        | October 29th, 2019   | October 29th, 2020     |
 | `5.2.x`        | November 27th, 2018  | November 27th, 2019 |
 
 All previous releases absent in the above table are considered EOLed.
