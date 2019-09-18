@@ -19,7 +19,7 @@ import java.util.Properties;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration("casPropertiesConfiguration")
+@Configuration(value = "casPropertiesConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasPropertiesConfiguration implements InitializingBean {
     @Autowired

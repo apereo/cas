@@ -33,7 +33,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Timur Duehr
  * @since 6.0.0
  */
-@Configuration("couchDbAuthenticationConfiguration")
+@Configuration(value = "couchDbAuthenticationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class CouchDbAuthenticationConfiguration {

@@ -20,7 +20,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Configuration("ldapPasswordManagementConfiguration")
+@Configuration(value = "ldapPasswordManagementConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class LdapPasswordManagementConfiguration {
     @Autowired

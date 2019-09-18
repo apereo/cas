@@ -24,7 +24,7 @@ import org.springframework.web.client.RestTemplate;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Configuration("restPasswordManagementConfiguration")
+@Configuration(value = "restPasswordManagementConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class RestPasswordManagementConfiguration {
     @Autowired

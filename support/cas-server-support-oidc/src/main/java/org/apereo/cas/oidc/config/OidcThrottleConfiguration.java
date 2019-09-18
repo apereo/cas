@@ -17,7 +17,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Configuration("oidcThrottleConfiguration")
+@Configuration(value = "oidcThrottleConfiguration", proxyBeanMethods = false)
 public class OidcThrottleConfiguration implements WebMvcConfigurer {
 
     @Autowired

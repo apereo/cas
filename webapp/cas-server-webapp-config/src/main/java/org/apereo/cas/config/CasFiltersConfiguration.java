@@ -37,7 +37,7 @@ import java.util.HashMap;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration("casFiltersConfiguration")
+@Configuration(value = "casFiltersConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasFiltersConfiguration {
 

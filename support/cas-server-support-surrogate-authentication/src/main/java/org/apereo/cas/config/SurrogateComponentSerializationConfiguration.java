@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Configuration("surrogateComponentSerializationConfiguration")
+@Configuration(value = "surrogateComponentSerializationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class SurrogateComponentSerializationConfiguration implements ComponentSerializationPlanConfigurator {
 

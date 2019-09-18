@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Configuration("pac4jDelegatedAuthenticationSerializationConfiguration")
+@Configuration(value = "pac4jDelegatedAuthenticationSerializationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class Pac4jDelegatedAuthenticationSerializationConfiguration implements ComponentSerializationPlanConfigurator {
     @Override

@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Configuration("radiusTokenAuthenticationComponentSerializationConfiguration")
+@Configuration(value = "radiusTokenAuthenticationComponentSerializationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class RadiusTokenAuthenticationComponentSerializationConfiguration implements ComponentSerializationPlanConfigurator {
     @Override

@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Configuration("duoSecurityComponentSerializationConfiguration")
+@Configuration(value = "duoSecurityComponentSerializationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class DuoSecurityComponentSerializationConfiguration implements ComponentSerializationPlanConfigurator {
     @Override

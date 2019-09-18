@@ -15,7 +15,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Configuration("casSwaggerConfiguration")
+@Configuration(value = "casSwaggerConfiguration", proxyBeanMethods = false)
 @EnableSwagger2
 public class CasSwaggerConfiguration {
 

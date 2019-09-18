@@ -8,7 +8,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalNameTransformerUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
-import org.apereo.cas.authentication.support.password.PasswordPolicyConfiguration;
+import org.apereo.cas.authentication.support.password.PasswordPolicyContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.syncope.authentication.SyncopeAuthenticationHandler;
@@ -76,7 +76,7 @@ public class SyncopeAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "syncopePasswordPolicyConfiguration")
     @Bean
-    public PasswordPolicyConfiguration syncopePasswordPolicyConfiguration() {
-        return new PasswordPolicyConfiguration();
+    public PasswordPolicyContext syncopePasswordPolicyConfiguration() {
+        return new PasswordPolicyContext();
     }
 }
