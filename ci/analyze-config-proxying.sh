@@ -3,7 +3,7 @@ source ./ci/functions.sh
 
 runBuild=true
 prepCommand="echo 'Running command...'; "
-gradle="gradle $@"
+gradle="./gradlew $@"
 gradleBuild=""
 gradleBuildOptions="--stacktrace --build-cache --configure-on-demand --no-daemon "
 
