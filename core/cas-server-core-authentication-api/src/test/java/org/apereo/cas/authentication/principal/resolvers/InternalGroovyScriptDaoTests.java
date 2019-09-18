@@ -1,6 +1,5 @@
 package org.apereo.cas.authentication.principal.resolvers;
 
-import org.apereo.cas.config.support.EnvironmentConversionServiceInitializer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 
 import lombok.val;
@@ -11,7 +10,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.support.StaticApplicationContext;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 
 import java.util.HashMap;
@@ -26,7 +24,6 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("Groovy")
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
-@ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @TestPropertySource(properties = "cas.authn.attributeRepository.groovy[0].location=classpath:GroovyAttributeDao.groovy")
 public class InternalGroovyScriptDaoTests {

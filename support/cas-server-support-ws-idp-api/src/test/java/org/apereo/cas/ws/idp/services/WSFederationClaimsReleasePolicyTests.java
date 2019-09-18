@@ -54,7 +54,6 @@ public class WSFederationClaimsReleasePolicyTests {
 
     @Test
     public void verifyAttributeReleaseScriptGroovy() throws Exception {
-
         val file = new File(FileUtils.getTempDirectoryPath(), "script.groovy");
         val script = IOUtils.toString(new ClassPathResource("wsfed-attr.groovy").getInputStream(), StandardCharsets.UTF_8);
         FileUtils.write(file, script, StandardCharsets.UTF_8);
