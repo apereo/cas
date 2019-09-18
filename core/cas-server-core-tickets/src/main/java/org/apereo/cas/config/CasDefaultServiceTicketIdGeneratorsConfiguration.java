@@ -10,6 +10,7 @@ import org.apereo.cas.util.ServiceTicketIdGenerator;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -28,6 +29,7 @@ public class CasDefaultServiceTicketIdGeneratorsConfiguration implements UniqueT
     @Autowired
     private CasConfigurationProperties casProperties;
 
+    @RefreshScope
     @Bean
     public UniqueTicketIdGenerator serviceTicketUniqueIdGenerator() {
         return new ServiceTicketIdGenerator(
