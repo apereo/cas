@@ -81,6 +81,18 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
         return principal;
     }
 
+    /**
+     * Get all attributes allowed by the service.
+     * If a service is registered with {@code scopes}, get attributes allowed as per defined release policies for scopes.
+     * If a service registered with no {@code scopes}, then service {@code attributeReleasePolicy} will be used to get allowed attributes.
+     *
+     * @param scopes            the scopes
+     * @param principal         the principal
+     * @param service           the service
+     * @param oidcService       the registered service
+     * @param accessToken       the access token
+     * @return Attributes allowed by the service
+     */
     private Map<String, List<Object>> getAttributesAllowedForService(final Collection<String> scopes,
                                                                      final Principal principal,
                                                                      final Service service,
