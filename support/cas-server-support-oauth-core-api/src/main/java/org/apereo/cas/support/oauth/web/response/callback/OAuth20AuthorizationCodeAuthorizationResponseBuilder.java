@@ -54,7 +54,8 @@ public class OAuth20AuthorizationCodeAuthorizationResponseBuilder implements OAu
     @Override
     public boolean supports(final JEEContext context) {
         val responseType = context.getRequestParameter(OAuth20Constants.RESPONSE_TYPE)
-            .map(String::valueOf).orElse(StringUtils.EMPTY);
+            .map(String::valueOf)
+            .orElse(StringUtils.EMPTY);
         return StringUtils.equalsIgnoreCase(responseType, OAuth20ResponseTypes.CODE.getType());
     }
 
@@ -75,7 +76,8 @@ public class OAuth20AuthorizationCodeAuthorizationResponseBuilder implements OAu
         val nonce = attributes.get(OAuth20Constants.NONCE).get(0).toString();
 
         val redirectUri = context.getRequestParameter(OAuth20Constants.REDIRECT_URI)
-            .map(String::valueOf).orElse(StringUtils.EMPTY);
+            .map(String::valueOf)
+            .orElse(StringUtils.EMPTY);
         LOGGER.debug("Authorize request successful for client [{}] with redirect uri [{}]", clientId, redirectUri);
 
         var callbackUrl = redirectUri;

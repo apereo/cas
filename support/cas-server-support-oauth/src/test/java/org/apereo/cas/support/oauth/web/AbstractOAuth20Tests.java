@@ -176,7 +176,14 @@ public abstract class AbstractOAuth20Tests {
     public static final String PASSWORD = "password";
     public static final String GOOD_USERNAME = "test";
     public static final String GOOD_PASSWORD = "test";
-    
+    public static final String FIRST_NAME_ATTRIBUTE = "firstName";
+    public static final String FIRST_NAME = "jerome";
+    public static final String LAST_NAME_ATTRIBUTE = "lastName";
+    public static final String LAST_NAME = "LELEU";
+    public static final String CAS_SERVER = "casserver";
+    public static final String CAS_SCHEME = "https";
+    public static final int CAS_PORT = 443;
+
     public static final int DELTA = 2;
     public static final int TIMEOUT = 7200;
 
