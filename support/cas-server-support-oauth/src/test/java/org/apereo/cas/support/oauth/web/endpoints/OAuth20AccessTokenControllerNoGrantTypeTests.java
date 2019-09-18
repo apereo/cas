@@ -1,8 +1,7 @@
-package org.apereo.cas.support.oauth.web;
+package org.apereo.cas.support.oauth.web.endpoints;
 
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
-import org.apereo.cas.support.oauth.web.endpoints.OAuth20AccessTokenEndpointController;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;

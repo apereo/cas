@@ -6,7 +6,7 @@
         </Console>
     </Appenders>
     <Loggers>
-        <Logger name="com.esotericsoftware" level="error">
+        <Logger name="org.apereo" level="warn" additivity="false">
             <AppenderRef ref="console"/>
         </Logger>
         <Root level="off">

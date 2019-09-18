@@ -65,7 +65,9 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
             return OAuth20Utils.produceUnauthorizedErrorView();
         }
 
-        val clientId = context.getRequestParameter(OAuth20Constants.CLIENT_ID).map(String::valueOf).orElse(StringUtils.EMPTY);
+        val clientId = context.getRequestParameter(OAuth20Constants.CLIENT_ID)
+            .map(String::valueOf)
+            .orElse(StringUtils.EMPTY);
         val registeredService = getRegisteredServiceByClientId(clientId);
         try {
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(clientId, registeredService);
@@ -127,11 +129,11 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
         val profile = profileResult.get();
         val service = getOAuthConfigurationContext().getAuthenticationBuilder()
             .buildService(registeredService, context, false);
-        LOGGER.debug("Created service [{}] based on registered service [{}]", service, registeredService);
+        LOGGER.trace("Created service [{}] based on registered service [{}]", service, registeredService);
 
         val authentication = getOAuthConfigurationContext().getAuthenticationBuilder()
             .build(profile, registeredService, context, service);
-        LOGGER.debug("Created OAuth authentication [{}] for service [{}]", service, authentication);
+        LOGGER.trace("Created OAuth authentication [{}] for service [{}]", service, authentication);
 
         try {
             val audit = AuditableContext.builder()
@@ -208,8 +210,7 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
             .claims(claims)
             .build();
 
-        LOGGER.debug("Building authorization response for grant type [{}] with scopes [{}] for client id [{}]",
-            grantType, scopes, clientId);
+        LOGGER.debug("Building authorization response for grant type [{}] with scopes [{}] for client id [{}]", grantType, scopes, clientId);
         return builder.build(context, clientId, holder);
     }
 

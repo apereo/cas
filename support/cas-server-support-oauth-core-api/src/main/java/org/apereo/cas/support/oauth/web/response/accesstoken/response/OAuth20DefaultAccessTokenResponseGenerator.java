@@ -2,10 +2,8 @@ package org.apereo.cas.support.oauth.web.response.accesstoken.response;
 
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
-import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.token.JwtBuilder;
-import org.apereo.cas.util.DateTimeUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -19,8 +17,6 @@ import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -146,26 +142,12 @@ public class OAuth20DefaultAccessTokenResponseGenerator implements OAuth20Access
      */
     protected String encodeAccessToken(final AccessToken accessToken,
                                        final OAuth20AccessTokenResponseResult result) {
-
-        val registeredService = OAuthRegisteredService.class.cast(result.getRegisteredService());
-        val authentication = accessToken.getAuthentication();
-        val service = result.getService();
-
-        if (registeredService != null && registeredService.isJwtAccessToken()) {
-            val dt = ZonedDateTime.now(ZoneOffset.UTC).plusSeconds(result.getAccessTokenTimeout());
-            val builder = JwtBuilder.JwtRequest.builder();
-
-            val request = builder
-                .serviceAudience(service.getId())
-                .issueDate(DateTimeUtils.dateOf(authentication.getAuthenticationDate()))
-                .jwtId(accessToken.getId())
-                .subject(authentication.getPrincipal().getId())
-                .validUntilDate(DateTimeUtils.dateOf(dt))
-                .attributes(authentication.getAttributes())
-                .build();
-            return accessTokenJwtBuilder.build(request);
-        }
-
-        return accessToken.getId();
+        return OAuth20JwtAccessTokenEncoder.builder()
+            .accessToken(accessToken)
+            .registeredService(result.getRegisteredService())
+            .service(result.getService())
+            .accessTokenJwtBuilder(accessTokenJwtBuilder)
+            .build()
+            .encode();
     }
 }
