@@ -10,6 +10,7 @@ import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.IdTokenGeneratorService;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.uma.UmaConfigurationContext;
 import org.apereo.cas.uma.claim.DefaultUmaResourceSetClaimPermissionExaminer;
 import org.apereo.cas.uma.claim.UmaResourceSetClaimPermissionExaminer;
