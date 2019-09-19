@@ -37,6 +37,7 @@ ext["mariaDbVersion"] = "2.4.4"
 ext["jtdsVersion"] = "1.3.1"
 ext["mssqlServerVersion"] = "7.2.1.jre11"
 ext["mongoDriverVersion"] = "3.11.0"
+ext["oracleJdbcVersion"] = "19.3.0.0"
 
 ext["couchbase-client.version"] = ext["couchbaseVersion"]
 ext["caffeine.version"] = ext["caffeinVersion"]

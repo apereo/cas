@@ -13,7 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jose4j.jwk.PublicJsonWebKey;
 import org.jose4j.jwk.RsaJsonWebKey;
-import org.jose4j.jws.JsonWebSignature;
 import org.jose4j.jwt.JwtClaims;
 
 import java.util.Objects;
@@ -47,29 +46,39 @@ public abstract class BaseOidcJsonWebKeyTokenSigningAndEncryptionService extends
     @Override
     @SneakyThrows
     public String encode(final OAuthRegisteredService service, final JwtClaims claims) {
+        LOGGER.trace("Attempting to produce token generated for service [{}]", service);
         val svc = (OidcRegisteredService) service;
-        LOGGER.trace("Attempting to produce token generated for service [{}]", svc);
-
-        val jws = createJsonWebSignature(claims);
         LOGGER.debug("Generated claims to put into token are [{}]", claims.toJson());
 
-        var innerJwt = shouldSignToken(svc) ? signToken(svc, jws) : jws.getCompactSerialization();
+        var innerJwt = signTokenIfNecessary(claims, svc);
         if (shouldEncryptToken(svc)) {
-            innerJwt = encryptToken(svc, jws, innerJwt);
+            innerJwt = encryptToken(svc, innerJwt);
         }
 
         return innerJwt;
+    }
+
+    private String signTokenIfNecessary(final JwtClaims claims, final OidcRegisteredService svc) {
+        if (shouldSignToken(svc)) {
+            LOGGER.debug("Fetching JSON web key to sign the token for : [{}]", svc.getClientId());
+            val jsonWebKey = getJsonWebKeySigningKey();
+            LOGGER.debug("Found JSON web key to sign the token: [{}]", jsonWebKey);
+            if (jsonWebKey.getPrivateKey() == null) {
+                throw new IllegalArgumentException("JSON web key used to sign the token has no associated private key");
+            }
+            return signToken(svc, claims, jsonWebKey);
+        }
+        return signToken(svc, claims, null);
     }
 
     /**
      * Encrypt token.
      *
      * @param svc      the svc
-     * @param jws      the jws
-     * @param innerJwt the inner jwt
+     * @param token the inner jwt
      * @return the string
      */
-    protected abstract String encryptToken(OidcRegisteredService svc, JsonWebSignature jws, String innerJwt);
+    protected abstract String encryptToken(OidcRegisteredService svc, String token);
 
     @Override
     protected PublicJsonWebKey getJsonWebKeySigningKey() {
@@ -78,25 +87,6 @@ public abstract class BaseOidcJsonWebKeyTokenSigningAndEncryptionService extends
             throw new IllegalArgumentException("No signing key could be found for issuer " + getIssuer());
         }
         return jwks.get();
-    }
-
-    /**
-     * Sign token.
-     *
-     * @param svc the svc
-     * @param jws the jws
-     * @return the string
-     * @throws Exception the exception
-     */
-    protected String signToken(final OidcRegisteredService svc, final JsonWebSignature jws) throws Exception {
-        LOGGER.debug("Fetching JSON web key to sign the token for : [{}]", svc.getClientId());
-        val jsonWebKey = getJsonWebKeySigningKey();
-        LOGGER.debug("Found JSON web key to sign the token: [{}]", jsonWebKey);
-        if (jsonWebKey.getPrivateKey() == null) {
-            throw new IllegalArgumentException("JSON web key used to sign the token has no associated private key");
-        }
-        configureJsonWebSignatureForTokenSigning(svc, jws, jsonWebKey);
-        return jws.getCompactSerialization();
     }
 
     @SneakyThrows

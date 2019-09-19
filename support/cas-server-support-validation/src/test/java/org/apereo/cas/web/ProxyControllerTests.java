@@ -13,6 +13,7 @@ import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
+import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.ticket.ProxyGrantingTicketImpl;
@@ -48,6 +49,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreServicesConfiguration.class,
     CasCoreAuthenticationSupportConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
+    CasDefaultServiceTicketIdGeneratorsConfiguration.class,
     CasCoreConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreWebConfiguration.class,

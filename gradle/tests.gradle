@@ -130,6 +130,15 @@ if (hasTestsOfCategory(project, "InfluxDb")) {
     }
 }
 
+if (hasTestsOfCategory(project, "Oracle")) {
+    task testOracle(type: Test) {
+        enabled = shouldTest(project, "Oracle")
+        useJUnitPlatform {
+            includeTags "Oracle"
+        }
+    }
+}
+
 if (hasTestsOfCategory(project, "Ldap")) {
     task testLdap(type: Test) {
         enabled = shouldTest(project, "Ldap")
@@ -237,7 +246,7 @@ test {
                 "Ldap", "Mail", "MariaDb", "Memcached",
                 "MongoDb", "MsSqlServer", "MySQL", "Postgres", "Redis",
                 "Radius", "AmazonWebServices", "RestfulApi", "Groovy",
-                "OAuth", "OIDC", "SAML", "UMA"
+                "OAuth", "OIDC", "SAML", "UMA", "Oracle"
     }
     enabled = "SIMPLE".equalsIgnoreCase(rootProject.testCategoryType) && !Boolean.getBoolean("skipTests")
 }

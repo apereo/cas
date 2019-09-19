@@ -1,4 +1,4 @@
-package org.apereo.cas.support.oauth.web;
+package org.apereo.cas.support.oauth.web.endpoints;
 
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
@@ -9,8 +9,7 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
-import org.apereo.cas.support.oauth.web.endpoints.OAuth20AccessTokenEndpointController;
-import org.apereo.cas.support.oauth.web.endpoints.OAuth20DeviceUserCodeApprovalEndpointController;
+import org.apereo.cas.support.oauth.web.AbstractOAuth20Tests;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.code.DefaultOAuthCodeFactory;
 import org.apereo.cas.ticket.refreshtoken.DefaultRefreshTokenFactory;
@@ -802,7 +801,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
 
         val mockResponse = new MockHttpServletResponse();
         requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
-        
+
         val mv = controller.handleRequest(mockRequest, mockResponse);
         assertEquals(HttpStatus.SC_BAD_REQUEST, mockResponse.getStatus());
         assertEquals(OAuth20Constants.INVALID_SCOPE, mv.getModel().get(OAuth20Constants.ERROR).toString());

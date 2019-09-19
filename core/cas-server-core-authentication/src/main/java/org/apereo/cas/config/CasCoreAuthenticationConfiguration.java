@@ -13,6 +13,7 @@ import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -33,7 +34,7 @@ import java.util.List;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-@Configuration(value = "casCoreAuthenticationConfiguration", proxyBeanMethods = false)
+@Configuration(value = "casCoreAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class CasCoreAuthenticationConfiguration {
@@ -44,17 +45,20 @@ public class CasCoreAuthenticationConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
+    @Autowired
+    @Qualifier("authenticationEventExecutionPlan")
+    private ObjectProvider<AuthenticationEventExecutionPlan> authenticationEventExecutionPlan;
+
     @Bean
-    public AuthenticationTransactionManager authenticationTransactionManager(@Qualifier("casAuthenticationManager") final AuthenticationManager authenticationManager) {
-        return new DefaultAuthenticationTransactionManager(applicationEventPublisher, authenticationManager);
+    public AuthenticationTransactionManager authenticationTransactionManager() {
+        return new DefaultAuthenticationTransactionManager(applicationEventPublisher, casAuthenticationManager());
     }
 
     @ConditionalOnMissingBean(name = "casAuthenticationManager")
-    @Autowired
     @Bean
-    public AuthenticationManager casAuthenticationManager(@Qualifier("authenticationEventExecutionPlan") final AuthenticationEventExecutionPlan authenticationEventExecutionPlan) {
+    public AuthenticationManager casAuthenticationManager() {
         return new PolicyBasedAuthenticationManager(
-            authenticationEventExecutionPlan,
+            authenticationEventExecutionPlan.getIfAvailable(),
             casProperties.getPersonDirectory().isPrincipalResolutionFailureFatal(),
             applicationEventPublisher
         );

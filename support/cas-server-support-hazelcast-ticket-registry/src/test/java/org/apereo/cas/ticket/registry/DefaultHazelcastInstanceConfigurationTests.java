@@ -19,7 +19,6 @@ import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.HazelcastTicketRegistryConfiguration;
 import org.apereo.cas.config.HazelcastTicketRegistryTicketCatalogConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
-import org.apereo.cas.config.support.EnvironmentConversionServiceInitializer;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.util.SchedulingUtils;
 
@@ -36,7 +35,6 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
 
 import java.util.Collections;
 
@@ -71,7 +69,6 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreLogoutConfiguration.class,
     CasCoreWebConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class})
-@ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
 @DirtiesContext
 @Slf4j
 public class DefaultHazelcastInstanceConfigurationTests {

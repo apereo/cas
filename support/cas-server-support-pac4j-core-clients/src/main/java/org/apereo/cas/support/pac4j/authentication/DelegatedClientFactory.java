@@ -7,6 +7,7 @@ import org.apereo.cas.configuration.model.support.pac4j.oidc.BasePac4jOidcClient
 import org.apereo.cas.configuration.model.support.pac4j.oidc.Pac4jOidcClientProperties;
 import org.apereo.cas.configuration.model.support.pac4j.saml.Pac4jSamlClientProperties;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.util.RandomUtils;
 
 import com.github.scribejava.core.model.Verb;
 import com.nimbusds.jose.JWSAlgorithm;
@@ -15,7 +16,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.cas.config.CasConfiguration;
@@ -583,7 +583,7 @@ public class DelegatedClientFactory {
             client.setName(cname);
         } else {
             val className = client.getClass().getSimpleName();
-            val genName = className.concat(RandomStringUtils.randomNumeric(2));
+            val genName = className.concat(RandomUtils.randomNumeric(2));
             client.setName(genName);
             LOGGER.warn("Client name for [{}] is set to a generated value of [{}]. "
                 + "Consider defining an explicit name for the delegated provider", className, genName);

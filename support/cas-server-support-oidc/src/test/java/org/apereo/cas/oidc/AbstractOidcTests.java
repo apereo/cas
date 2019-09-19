@@ -34,6 +34,7 @@ import org.apereo.cas.oidc.config.OidcConfiguration;
 import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettings;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeystoreGeneratorService;
 import org.apereo.cas.services.OidcRegisteredService;
+import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServiceRegistryListener;
 import org.apereo.cas.services.ServicesManager;
@@ -53,6 +54,7 @@ import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.ticket.refreshtoken.RefreshToken;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
@@ -60,7 +62,6 @@ import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import lombok.val;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
 import org.jose4j.jwe.KeyManagementAlgorithmIdentifiers;
@@ -133,6 +134,10 @@ import static org.mockito.Mockito.*;
 public abstract class AbstractOidcTests {
     @Autowired
     protected ResourceLoader resourceLoader;
+
+    @Autowired
+    @Qualifier("oauthRegisteredServiceJwtAccessTokenCipherExecutor")
+    protected RegisteredServiceCipherExecutor oauthRegisteredServiceJwtAccessTokenCipherExecutor;
 
     @Autowired
     @Qualifier("oidcUserProfileViewRenderer")
@@ -213,8 +218,13 @@ public abstract class AbstractOidcTests {
         return getOidcRegisteredService(true, true);
     }
 
-    protected static OidcRegisteredService getOidcRegisteredService(final boolean sign, final boolean encrypt) {
+    protected static OidcRegisteredService getOidcRegisteredService(final boolean sign,
+                                                                    final boolean encrypt) {
         return getOidcRegisteredService("clientid", "https://oauth\\.example\\.org.*", sign, encrypt);
+    }
+
+    protected static OidcRegisteredService getOidcRegisteredService(final String clientid) {
+        return getOidcRegisteredService(clientid, "https://oauth\\.example\\.org.*", true, true);
     }
 
     protected static OidcRegisteredService getOidcRegisteredService(final String clientId,
@@ -240,7 +250,7 @@ public abstract class AbstractOidcTests {
     }
 
     protected static OAuthRegisteredService getOAuthRegisteredService(final String clientId,
-                                                                    final String redirectUri) {
+                                                                      final String redirectUri) {
         val svc = new OAuthRegisteredService();
         svc.setClientId(clientId);
         svc.setName("oauth");
@@ -252,10 +262,15 @@ public abstract class AbstractOidcTests {
         return svc;
     }
 
+    protected JwtClaims getClaims() {
+        val clientId = getOidcRegisteredService().getClientId();
+        return getClaims("casuser", casProperties.getAuthn().getOidc().getIssuer(), clientId, clientId);
+    }
+
     protected static JwtClaims getClaims(final String subject, final String issuer,
                                          final String clientId, final String audience) {
         val claims = new JwtClaims();
-        claims.setJwtId(RandomStringUtils.randomAlphanumeric(16));
+        claims.setJwtId(RandomUtils.randomAlphanumeric(16));
         claims.setIssuer(issuer);
         claims.setAudience(audience);
 
@@ -269,11 +284,6 @@ public abstract class AbstractOidcTests {
         return claims;
     }
 
-    protected JwtClaims getClaims() {
-        val clientId = getOidcRegisteredService().getClientId();
-        return getClaims("casuser", casProperties.getAuthn().getOidc().getIssuer(), clientId, clientId);
-    }
-
     protected static AccessToken getAccessToken() {
         return getAccessToken(StringUtils.EMPTY);
     }
@@ -284,6 +294,7 @@ public abstract class AbstractOidcTests {
         when(accessToken.getAuthentication()).thenReturn(RegisteredServiceTestUtils.getAuthentication(principal));
         when(accessToken.getService()).thenReturn(RegisteredServiceTestUtils.getService("https://oauth.example.org"));
         when(accessToken.getId()).thenReturn("AT-123456");
+        when(accessToken.getExpirationPolicy()).thenReturn(NeverExpiresExpirationPolicy.INSTANCE);
         when(accessToken.getTicketGrantingTicket()).thenReturn(new MockTicketGrantingTicket("casuser"));
         when(accessToken.getClientId()).thenReturn("clientid");
         when(accessToken.getScopes()).thenReturn(Set.of(OidcConstants.StandardScopes.EMAIL.getScope(),

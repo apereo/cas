@@ -1,9 +1,9 @@
 package org.apereo.cas.authentication.mfa;
 
 import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 
-import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.context.ConfigurableApplicationContext;
 
 /**
@@ -29,7 +29,7 @@ public class TestMultifactorAuthenticationProvider extends AbstractMultifactorAu
     public static TestMultifactorAuthenticationProvider registerProviderIntoApplicationContext(final ConfigurableApplicationContext applicationContext) {
         return ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext,
             TestMultifactorAuthenticationProvider.class,
-            "provider" + RandomStringUtils.randomAlphabetic(8));
+            "provider" + RandomUtils.randomAlphabetic(8));
     }
 
     @Override

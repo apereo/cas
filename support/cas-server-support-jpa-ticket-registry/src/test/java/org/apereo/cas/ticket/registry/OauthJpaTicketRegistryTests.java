@@ -23,7 +23,6 @@ import org.apereo.cas.config.JpaTicketRegistryConfiguration;
 import org.apereo.cas.config.JpaTicketRegistryTicketCatalogConfiguration;
 import org.apereo.cas.config.OAuthProtocolTicketCatalogConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
-import org.apereo.cas.config.support.EnvironmentConversionServiceInitializer;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.TicketFactory;
@@ -41,7 +40,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -84,7 +82,6 @@ import static org.junit.jupiter.api.Assertions.assertNull;
     CasWebApplicationServiceFactoryConfiguration.class,
     CasWsSecurityTokenTicketCatalogConfiguration.class
 })
-@ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
 @Transactional(transactionManager = "ticketTransactionManager", isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
 @ResourceLock("oauth-jpa-tickets")
 @Tag("OAuth")

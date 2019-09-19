@@ -15,13 +15,13 @@ import org.apereo.cas.support.oauth.web.endpoints.BaseOAuth20Controller;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.util.HttpUtils;
+import org.apereo.cas.util.RandomUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.springframework.http.HttpStatus;
@@ -92,7 +92,7 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuth20
             if (StringUtils.isNotBlank(registrationRequest.getClientName())) {
                 registeredService.setName(registrationRequest.getClientName());
             } else if (StringUtils.isBlank(registeredService.getName())) {
-                registeredService.setName(RandomStringUtils.randomAlphabetic(GENERATED_CLIENT_NAME_LENGTH));
+                registeredService.setName(RandomUtils.randomAlphabetic(GENERATED_CLIENT_NAME_LENGTH));
             }
 
             val serviceId = String.join("|", registrationRequest.getRedirectUris());
