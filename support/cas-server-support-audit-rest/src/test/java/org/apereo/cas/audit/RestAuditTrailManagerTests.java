@@ -1,7 +1,6 @@
 package org.apereo.cas.audit;
 
 import org.apereo.cas.audit.spi.BaseAuditConfigurationTests;
-import org.apereo.cas.config.CasCoreUtilSerializationConfiguration;
 import org.apereo.cas.config.CasSupportRestAuditConfiguration;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockWebServer;
@@ -36,8 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
-    CasSupportRestAuditConfiguration.class,
-    CasCoreUtilSerializationConfiguration.class
+    CasSupportRestAuditConfiguration.class
 })
 @Tag("RestfulApi")
 @Slf4j
