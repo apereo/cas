@@ -27,6 +27,7 @@ import org.apereo.cas.ticket.code.OAuthCodeFactory;
 import org.apereo.cas.ticket.device.DeviceToken;
 import org.apereo.cas.ticket.device.DeviceTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.gen.RandomStringGenerator;
 import org.apereo.cas.util.serialization.StringSerializer;
@@ -73,6 +74,8 @@ public class OAuth20ConfigurationContext {
     private final CasCookieBuilder ticketGrantingTicketCookieGenerator;
 
     private final OAuth20TokenGenerator accessTokenGenerator;
+
+    private final JwtBuilder accessTokenJwtBuilder;
 
     private final OAuth20AccessTokenResponseGenerator accessTokenResponseGenerator;
 

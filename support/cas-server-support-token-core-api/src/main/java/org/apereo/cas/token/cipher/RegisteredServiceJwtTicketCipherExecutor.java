@@ -29,7 +29,7 @@ public class RegisteredServiceJwtTicketCipherExecutor extends JwtTicketCipherExe
                 LOGGER.debug("Found signing and/or encryption keys for [{}] in service registry to decode", registeredService.getServiceId());
                 val cipher = getTokenTicketCipherExecutorForService(registeredService);
                 if (cipher.isEnabled()) {
-                    return cipher.decode(data);
+                    return cipher.decode(data, new Object[] {registeredService});
                 }
             }
         }
@@ -66,6 +66,17 @@ public class RegisteredServiceJwtTicketCipherExecutor extends JwtTicketCipherExe
     public JwtTicketCipherExecutor getTokenTicketCipherExecutorForService(final RegisteredService registeredService) {
         val encryptionKey = getEncryptionKey(registeredService).orElse(StringUtils.EMPTY);
         val signingKey = getSigningKey(registeredService).orElse(StringUtils.EMPTY);
+        return createCipherExecutorInstance(encryptionKey, signingKey);
+    }
+
+    /**
+     * Create cipher executor instance.
+     *
+     * @param encryptionKey the encryption key
+     * @param signingKey    the signing key
+     * @return the jwt ticket cipher executor
+     */
+    protected JwtTicketCipherExecutor createCipherExecutorInstance(final String encryptionKey, final String signingKey) {
         return new JwtTicketCipherExecutor(encryptionKey, signingKey,
             StringUtils.isNotBlank(encryptionKey), StringUtils.isNotBlank(signingKey), 0, 0);
     }

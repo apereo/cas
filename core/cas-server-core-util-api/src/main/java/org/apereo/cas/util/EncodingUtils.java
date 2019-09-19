@@ -11,15 +11,19 @@ import org.apache.commons.codec.binary.Base32;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang3.StringUtils;
+import org.jose4j.json.JsonUtil;
+import org.jose4j.jwa.AlgorithmConstraints;
 import org.jose4j.jwe.JsonWebEncryption;
 import org.jose4j.jwe.KeyManagementAlgorithmIdentifiers;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.OctJwkGenerator;
+import org.jose4j.jwk.PublicJsonWebKey;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jws.JsonWebSignature;
-import org.jose4j.lang.JoseException;
+import org.jose4j.jwt.JwtClaims;
 
 import javax.crypto.Cipher;
+
 import java.io.Serializable;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -27,6 +31,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This is {@link EncodingUtils} that encapsulates common base64, signing and encryption calls and operations in one spot.
@@ -300,6 +305,34 @@ public class EncodingUtils {
     }
 
 
+
+    /**
+     * Is json web key boolean.
+     *
+     * @param key the key
+     * @return the boolean
+     */
+    public boolean isJsonWebKey(final String key) {
+        try {
+            val results = JsonUtil.parseJson(key);
+            return !results.isEmpty();
+        } catch (final Exception e) {
+            LOGGER.trace(e.getMessage());
+        }
+        return false;
+    }
+
+    /**
+     * New Json web key.
+     *
+     * @param json the json
+     * @return the json web key
+     */
+    @SneakyThrows
+    public static JsonWebKey newJsonWebKey(final String json) {
+        return JsonWebKey.Factory.newJwk(json);
+    }
+
     /**
      * Generate octet json web key of given size .
      *
@@ -323,9 +356,21 @@ public class EncodingUtils {
         val keys = new HashMap<String, Object>(2);
         keys.put("kty", "oct");
         keys.put(EncodingUtils.JSON_WEB_KEY, secret);
-        val jwk = JsonWebKey.Factory.newJwk(keys);
+        return generateJsonWebKey(keys);
+    }
+    
+    /**
+     * Generate json web key.
+     *
+     * @param params the params
+     * @return the key
+     */
+    @SneakyThrows
+    public static Key generateJsonWebKey(final Map<String, Object> params) {
+        val jwk = JsonWebKey.Factory.newJwk(params);
         return jwk.getKey();
     }
+
 
     /**
      * Sign jws.
@@ -358,6 +403,36 @@ public class EncodingUtils {
      */
     public static byte[] signJwsRSASha512(final Key key, final byte[] value) {
         return signJws(key, value, AlgorithmIdentifiers.RSA_USING_SHA512);
+    }
+
+    /**
+     * Sign jws string.
+     *
+     * @param claims               the claims
+     * @param jsonWebKey           the json web key
+     * @param algorithmHeaderValue the algorithm header value
+     * @return the string
+     */
+    @SneakyThrows
+    public static String signJws(final JwtClaims claims,
+                                 final PublicJsonWebKey jsonWebKey,
+                                 final String algorithmHeaderValue) {
+        val jws = new JsonWebSignature();
+        val jsonClaims = claims.toJson();
+        jws.setPayload(jsonClaims);
+        jws.setAlgorithmHeaderValue(AlgorithmIdentifiers.NONE);
+        jws.setAlgorithmConstraints(AlgorithmConstraints.DISALLOW_NONE);
+
+        if (jsonWebKey != null) {
+            jws.setKey(jsonWebKey.getPrivateKey());
+            if (StringUtils.isNotBlank(jsonWebKey.getKeyId())) {
+                jws.setKeyIdHeaderValue(jsonWebKey.getKeyId());
+            }
+            jws.setAlgorithmHeaderValue(StringUtils.defaultString(algorithmHeaderValue, AlgorithmIdentifiers.NONE));
+        }
+        LOGGER.trace("Signing id token with key id header value [{}] and algorithm header value [{}]",
+            jws.getKeyIdHeaderValue(), jws.getAlgorithmHeaderValue());
+        return jws.getCompactSerialization();
     }
 
     /**
@@ -404,31 +479,53 @@ public class EncodingUtils {
     }
 
     /**
-     * Encrypt the value based on the seed array whose length was given during afterPropertiesSet,
+     * Encrypt value as jwt string.
+     *
+     * @param secretKeyEncryptionKey          the secret key encryption key
+     * @param value                           the value
+     * @param algorithmHeaderValue            the algorithm header value
+     * @param encryptionMethodHeaderParameter the encryption method header parameter
+     * @return the string
+     */
+    public static String encryptValueAsJwt(final Key secretKeyEncryptionKey,
+                                           final Serializable value,
+                                           final String algorithmHeaderValue,
+                                           final String encryptionMethodHeaderParameter) {
+        return encryptValueAsJwt(secretKeyEncryptionKey, value, algorithmHeaderValue, encryptionMethodHeaderParameter, null);
+    }
+
+    /**
+     * Encrypt the value based on the seed array whose length was given,
      * and the key and content encryption ids.
      *
-     * @param secretKeyEncryptionKey               the secret key encryption key
-     * @param value                                the value
-     * @param algorithmHeaderValue                 the algorithm header value
-     * @param contentEncryptionAlgorithmIdentifier the content encryption algorithm identifier
+     * @param secretKeyEncryptionKey          the secret key encryption key
+     * @param value                           the value
+     * @param algorithmHeaderValue            the algorithm header value
+     * @param encryptionMethodHeaderParameter the content encryption algorithm identifier
+     * @param keyIdHeaderValue                the key id header value
      * @return the encoded value
      */
     public static String encryptValueAsJwt(final Key secretKeyEncryptionKey,
                                            final Serializable value,
                                            final String algorithmHeaderValue,
-                                           final String contentEncryptionAlgorithmIdentifier) {
+                                           final String encryptionMethodHeaderParameter,
+                                           final String keyIdHeaderValue) {
         try {
             val jwe = new JsonWebEncryption();
             jwe.setPayload(value.toString());
             jwe.enableDefaultCompression();
             jwe.setAlgorithmHeaderValue(algorithmHeaderValue);
-            jwe.setEncryptionMethodHeaderParameter(contentEncryptionAlgorithmIdentifier);
+            jwe.setEncryptionMethodHeaderParameter(encryptionMethodHeaderParameter);
             jwe.setKey(secretKeyEncryptionKey);
+            jwe.setContentTypeHeaderValue("JWT");
             jwe.setHeader("typ", "JWT");
-            LOGGER.trace("Encrypting via [{}]", contentEncryptionAlgorithmIdentifier);
+            if (StringUtils.isNotBlank(keyIdHeaderValue)) {
+                jwe.setKeyIdHeaderValue(keyIdHeaderValue);
+            }
+            LOGGER.trace("Encrypting via [{}]", encryptionMethodHeaderParameter);
             return jwe.getCompactSerialization();
-        } catch (final JoseException e) {
-            throw new IllegalArgumentException("Is JCE Unlimited Strength Jurisdiction Policy installed? " + e.getMessage(), e);
+        } catch (final Exception e) {
+            throw new IllegalArgumentException(e.getMessage(), e);
         }
     }
 
@@ -447,7 +544,7 @@ public class EncodingUtils {
         LOGGER.trace("Decrypting value...");
         try {
             return jwe.getPayload();
-        } catch (final JoseException e) {
+        } catch (final Exception e) {
             if (LOGGER.isTraceEnabled()) {
                 throw new DecryptionException(e);
             }

@@ -19,8 +19,8 @@ import org.apereo.cas.oidc.authn.OidcClientConfigurationAccessTokenAuthenticator
 import org.apereo.cas.oidc.authn.OidcClientSecretJwtAuthenticator;
 import org.apereo.cas.oidc.authn.OidcPrivateKeyJwtAuthenticator;
 import org.apereo.cas.oidc.claims.OidcCustomScopeAttributeReleasePolicy;
-import org.apereo.cas.oidc.claims.mapping.DefaultOidcAttributeToScopeClaimMapper;
 import org.apereo.cas.oidc.claims.mapping.OidcAttributeToScopeClaimMapper;
+import org.apereo.cas.oidc.claims.mapping.OidcDefaultAttributeToScopeClaimMapper;
 import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettings;
 import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettingsFactory;
 import org.apereo.cas.oidc.discovery.webfinger.OidcWebFingerDiscoveryService;
@@ -399,7 +399,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
     @RefreshScope
     public OidcAttributeToScopeClaimMapper oidcAttributeToScopeClaimMapper() {
         val mappings = casProperties.getAuthn().getOidc().getClaimsMap();
-        return new DefaultOidcAttributeToScopeClaimMapper(mappings);
+        return new OidcDefaultAttributeToScopeClaimMapper(mappings);
     }
 
     @Bean
@@ -650,14 +650,14 @@ public class OidcConfiguration implements WebMvcConfigurer {
     public OAuth20AuthorizationResponseBuilder oidcImplicitIdTokenCallbackUrlBuilder() {
         return new OidcImplicitIdTokenAuthorizationResponseBuilder(oidcIdTokenGenerator(), oauthTokenGenerator.getIfAvailable(),
             accessTokenExpirationPolicy.getIfAvailable(), grantingTicketExpirationPolicy.getIfAvailable(),
-            servicesManager.getIfAvailable());
+            servicesManager.getIfAvailable(), accessTokenJwtBuilder.getIfAvailable());
     }
 
     @Bean
     public OAuth20AuthorizationResponseBuilder oidcImplicitIdTokenAndTokenCallbackUrlBuilder() {
         return new OidcImplicitIdTokenAndTokenAuthorizationResponseBuilder(oidcIdTokenGenerator(), oauthTokenGenerator.getIfAvailable(),
             accessTokenExpirationPolicy.getIfAvailable(), grantingTicketExpirationPolicy.getIfAvailable(),
-            servicesManager.getIfAvailable());
+            servicesManager.getIfAvailable(), accessTokenJwtBuilder.getIfAvailable());
     }
 
     @Bean
@@ -777,6 +777,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
             .oauthRequestValidators(oauthRequestValidators.getIfAvailable())
             .singleLogoutServiceLogoutUrlBuilder(singleLogoutServiceLogoutUrlBuilder.getIfAvailable())
             .idTokenSigningAndEncryptionService(oidcTokenSigningAndEncryptionService())
+            .accessTokenJwtBuilder(accessTokenJwtBuilder.getIfAvailable())
             .build();
     }
 }

@@ -10,17 +10,17 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link DefaultOidcAttributeToScopeClaimMapperTests}.
+ * This is {@link OidcDefaultAttributeToScopeClaimMapperTests}.
  *
  * @author Misagh Moayyed
  * @since 6.1.0
  */
 @Tag("OIDC")
-public class DefaultOidcAttributeToScopeClaimMapperTests extends AbstractOidcTests {
+public class OidcDefaultAttributeToScopeClaimMapperTests extends AbstractOidcTests {
 
     @Test
     public void verifyOperation() {
-        val mapper = new DefaultOidcAttributeToScopeClaimMapper(CollectionUtils.wrap("name", "givenName"));
+        val mapper = new OidcDefaultAttributeToScopeClaimMapper(CollectionUtils.wrap("name", "givenName"));
         assertTrue(mapper.containsMappedAttribute("name"));
         assertEquals("givenName", mapper.getMappedAttribute("name"));
     }

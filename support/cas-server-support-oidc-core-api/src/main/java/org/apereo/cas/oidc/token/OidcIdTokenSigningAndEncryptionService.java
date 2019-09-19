@@ -9,7 +9,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jose4j.jwk.RsaJsonWebKey;
 import org.jose4j.jws.AlgorithmIdentifiers;
-import org.jose4j.jws.JsonWebSignature;
 
 import java.util.Optional;
 
@@ -38,10 +37,10 @@ public class OidcIdTokenSigningAndEncryptionService extends BaseOidcJsonWebKeyTo
     }
 
     @Override
-    protected String encryptToken(final OidcRegisteredService svc, final JsonWebSignature jws, final String innerJwt) {
+    protected String encryptToken(final OidcRegisteredService svc, final String innerJwt) {
         val jsonWebKey = getJsonWebKeyForEncryption(svc);
         return encryptToken(svc.getIdTokenEncryptionAlg(), svc.getIdTokenEncryptionEncoding(),
-            jws.getKeyIdHeaderValue(), jsonWebKey.getPublicKey(), innerJwt);
+            jsonWebKey.getKeyId(), jsonWebKey.getPublicKey(), innerJwt);
     }
 
     /**

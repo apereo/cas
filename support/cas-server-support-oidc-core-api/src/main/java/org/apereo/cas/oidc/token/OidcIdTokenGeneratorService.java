@@ -7,19 +7,17 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
+import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20AccessTokenAtHashGenerator;
+import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoder;
 import org.apereo.cas.ticket.BaseIdTokenGeneratorService;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.DigestUtils;
-import org.apereo.cas.util.EncodingUtils;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.codec.digest.MessageDigestAlgorithms;
 import org.apache.commons.lang3.ArrayUtils;
-import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.NumericDate;
 import org.pac4j.core.context.JEEContext;
@@ -28,8 +26,6 @@ import org.pac4j.core.profile.UserProfile;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.stream.Stream;
 
 /**
@@ -90,8 +86,8 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService {
                                        final OAuth20ResponseTypes responseType) {
         val authentication = accessTokenId.getAuthentication();
 
-        val principal = this.getConfigurationContext().getProfileScopeToAttributesFilter().filter(accessTokenId.getService(), authentication.getPrincipal(),
-                service, context, accessTokenId);
+        val principal = this.getConfigurationContext().getProfileScopeToAttributesFilter()
+            .filter(accessTokenId.getService(), authentication.getPrincipal(), service, context, accessTokenId);
 
         val oidc = getConfigurationContext().getCasProperties().getAuthn().getOidc();
 
@@ -129,7 +125,7 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService {
         if (attributes.containsKey(OAuth20Constants.NONCE)) {
             claims.setClaim(OAuth20Constants.NONCE, attributes.get(OAuth20Constants.NONCE).get(0));
         }
-        claims.setClaim(OidcConstants.CLAIM_AT_HASH, generateAccessTokenHash(accessTokenId, service));
+        generateAccessTokenHash(accessTokenId, service, claims);
 
         LOGGER.trace("Comparing principal attributes [{}] with supported claims [{}]", principal.getAttributes(), oidc.getClaims());
 
@@ -189,46 +185,31 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService {
     /**
      * Generate access token hash string.
      *
-     * @param accessTokenId the access token id
-     * @param service       the service
-     * @return the string
+     * @param accessToken       the access token id
+     * @param registeredService the service
+     * @param claims            the claims
      */
-    protected String generateAccessTokenHash(final AccessToken accessTokenId,
-                                             final OidcRegisteredService service) {
-        val alg = getConfigurationContext().getIdTokenSigningAndEncryptionService().getJsonWebKeySigningAlgorithm(service);
-        val tokenBytes = accessTokenId.getId().getBytes(StandardCharsets.UTF_8);
-        if (AlgorithmIdentifiers.NONE.equalsIgnoreCase(alg)) {
-            LOGGER.debug("Signing algorithm specified by service [{}] is unspecified", service.getServiceId());
-            return EncodingUtils.encodeUrlSafeBase64(tokenBytes);
-        }
+    protected void generateAccessTokenHash(final AccessToken accessToken,
+                                           final OidcRegisteredService registeredService,
+                                           final JwtClaims claims) {
+        val encodedAccessToken = OAuth20JwtAccessTokenEncoder.builder()
+            .accessToken(accessToken)
+            .registeredService(registeredService)
+            .service(accessToken.getService())
+            .accessTokenJwtBuilder(getConfigurationContext().getAccessTokenJwtBuilder())
+            .build()
+            .encode();
 
-        val hashAlg = getSigningHashAlgorithm(service);
-        LOGGER.debug("Digesting access token hash via algorithm [{}]", hashAlg);
-        val digested = DigestUtils.rawDigest(hashAlg, tokenBytes);
-        val hashBytesLeftHalf = Arrays.copyOf(digested, digested.length / 2);
-        return EncodingUtils.encodeUrlSafeBase64(hashBytesLeftHalf);
+        claims.setClaim(OAuth20Constants.ACCESS_TOKEN, encodedAccessToken);
+        val alg = getConfigurationContext().getIdTokenSigningAndEncryptionService().getJsonWebKeySigningAlgorithm(registeredService);
+        val hash = OAuth20AccessTokenAtHashGenerator.builder()
+            .accessTokenId(encodedAccessToken)
+            .algorithm(alg)
+            .registeredService(registeredService)
+            .build()
+            .generate();
+        claims.setClaim(OidcConstants.CLAIM_AT_HASH, hash);
     }
 
-    /**
-     * Gets signing hash algorithm.
-     *
-     * @param service the service
-     * @return the signing hash algorithm
-     */
-    protected String getSigningHashAlgorithm(final OidcRegisteredService service) {
-        val alg = getConfigurationContext().getIdTokenSigningAndEncryptionService().getJsonWebKeySigningAlgorithm(service);
-        LOGGER.debug("Signing algorithm specified by service [{}] is [{}]", service.getServiceId(), alg);
-
-        if (AlgorithmIdentifiers.RSA_USING_SHA512.equalsIgnoreCase(alg)) {
-            return MessageDigestAlgorithms.SHA_512;
-        }
-        if (AlgorithmIdentifiers.RSA_USING_SHA384.equalsIgnoreCase(alg)) {
-            return MessageDigestAlgorithms.SHA_384;
-        }
-        if (AlgorithmIdentifiers.RSA_USING_SHA256.equalsIgnoreCase(alg)) {
-            return MessageDigestAlgorithms.SHA_256;
-        }
-        throw new IllegalArgumentException("Could not determine the hash algorithm for the id token issued to service " + service.getServiceId());
-    }
 }
 

@@ -16,11 +16,15 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.jose4j.keys.AesKey;
 import org.jose4j.keys.RsaKeyUtil;
 
+import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
+import java.security.KeyFactory;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.Security;
+import java.security.interfaces.RSAPrivateKey;
+import java.security.spec.RSAPublicKeySpec;
 
 /**
  * Abstract cipher to provide common operations around signing objects.
@@ -33,6 +37,8 @@ import java.security.Security;
 @NoArgsConstructor
 @Getter
 public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, R> {
+
+    private static final BigInteger RSA_PUBLIC_KEY_EXPONENT = BigInteger.valueOf(65537);
 
     static {
         Security.addProvider(new BouncyCastleProvider());
@@ -133,7 +139,17 @@ public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, 
         if (this.signingKey == null) {
             return value;
         }
-        return EncodingUtils.verifyJwsSignature(this.signingKey, value);
+        try {
+            if (this.signingKey instanceof RSAPrivateKey) {
+                val privKey = RSAPrivateKey.class.cast(this.signingKey);
+                val keySpec = new RSAPublicKeySpec(privKey.getModulus(), RSA_PUBLIC_KEY_EXPONENT);
+                val pubKey = KeyFactory.getInstance("RSA").generatePublic(keySpec);
+                return EncodingUtils.verifyJwsSignature(pubKey, value);
+            }
+            return EncodingUtils.verifyJwsSignature(this.signingKey, value);
+        } catch (final Exception e) {
+            throw new IllegalArgumentException(e);
+        }
     }
 
     @Override

@@ -76,6 +76,10 @@ import static org.apereo.cas.support.oauth.OAuth20Constants.BASE_OAUTH20_URL;
 public class CasOAuthUmaConfiguration implements WebMvcConfigurer {
 
     @Autowired
+    @Qualifier("accessTokenJwtBuilder")
+    private ObjectProvider<JwtBuilder> accessTokenJwtBuilder;
+
+    @Autowired
     @Qualifier("servicesManager")
     private ObjectProvider<ServicesManager> servicesManager;
 
@@ -120,6 +124,7 @@ public class CasOAuthUmaConfiguration implements WebMvcConfigurer {
             .idTokenSigningAndEncryptionService(signingService)
             .sessionStore(oauthDistributedSessionStore.getIfAvailable())
             .casProperties(casProperties)
+            .accessTokenJwtBuilder(accessTokenJwtBuilder.getIfAvailable())
             .accessTokenGenerator(oauthTokenGenerator.getIfAvailable())
             .build();
         return new UmaIdTokenGeneratorService(context);
