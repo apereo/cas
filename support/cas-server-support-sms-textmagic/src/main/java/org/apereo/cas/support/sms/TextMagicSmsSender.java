@@ -28,8 +28,12 @@ public class TextMagicSmsSender implements SmsSender {
     public TextMagicSmsSender(final TextMagicProperties properties,
                               final Optional<HttpClient> httpClient) {
         val client = new ApiClient();
-        client.setUsername(properties.getUsername());
-        client.setAccessToken(properties.getToken());
+        if (StringUtils.isNotBlank(properties.getUsername())) {
+            client.setUsername(properties.getUsername());
+        }
+        if (StringUtils.isNotBlank(properties.getToken())) {
+            client.setAccessToken(properties.getToken());
+        }
         client.setDebugging(properties.isDebugging());
         client.setVerifyingSsl(properties.isVerifyingSsl());
 

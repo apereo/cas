@@ -10,7 +10,9 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jose4j.json.JsonUtil;
 import org.jose4j.jwe.KeyManagementAlgorithmIdentifiers;
+import org.jose4j.jwk.PublicJsonWebKey;
 
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
@@ -70,10 +72,11 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
         this(secretKeyEncryption, secretKeySigning, encryptionEnabled, true, signingKeySize, encryptionKeySize);
     }
 
-    public BaseStringCipherExecutor(final String secretKeyEncryption, final String secretKeySigning, final String alg,
+    public BaseStringCipherExecutor(final String secretKeyEncryption, final String secretKeySigning,
+                                    final String contentEncryptionAlgorithmIdentifier,
                                     final int signingKeySize,
                                     final int encryptionKeySize) {
-        this(secretKeyEncryption, secretKeySigning, alg, true, true, signingKeySize, encryptionKeySize);
+        this(secretKeyEncryption, secretKeySigning, contentEncryptionAlgorithmIdentifier, true, true, signingKeySize, encryptionKeySize);
     }
 
 
@@ -118,7 +121,18 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
             LOGGER.warn("Generated signing key [{}] of size [{}] for [{}]. The generated key MUST be added to CAS settings under setting [{}].",
                 signingKeyToUse, this.signingKeySize, getName(), getSigningKeySetting());
         } else {
-            LOGGER.trace("Located signing key to use for [{}]", getName());
+            try {
+                val jwk = PublicJsonWebKey.class.cast(EncodingUtils.newJsonWebKey(signingKeyToUse));
+                LOGGER.trace("Parsed signing key as a JSON web key for [{}] with kid [{}]", getName(), jwk.getKeyId());
+                if (jwk.getPrivateKey() == null) {
+                    val msg = "Provided signing key as a JSON web key does not carry a private key";
+                    LOGGER.error(msg);
+                    throw new RuntimeException(msg);
+                }
+                setSigningKey(jwk.getPrivateKey());
+            } catch (final Exception e) {
+                LOGGER.debug("Unable to recognize signing key as a JSON web key for [{}]: [{}]. Using pre-defined signing key", getName(), e.getMessage());
+            }
         }
         configureSigningKey(signingKeyToUse);
     }
@@ -131,7 +145,13 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
             LOGGER.warn("Generated encryption key [{}] of size [{}] for [{}]. The generated key MUST be added to CAS settings under setting [{}].",
                 secretKeyToUse, this.encryptionKeySize, getName(), getEncryptionKeySetting());
         } else {
-            LOGGER.trace("Located encryption key to use for [{}]", getName());
+            try {
+                val results = JsonUtil.parseJson(secretKeyToUse);
+                LOGGER.trace("Parsed encryption key as a JSON web key for [{}] as [{}]", getName(), results);
+                setSecretKeyEncryptionKey(EncodingUtils.generateJsonWebKey(results));
+            } catch (final Exception e) {
+                LOGGER.debug("Unable to recognize encryption key as a JSON web key: [{}]. Using pre-defined encryption key to use for [{}]", e.getMessage(), getName());
+            }
         }
         try {
             if (ResourceUtils.doesResourceExist(secretKeyToUse)) {

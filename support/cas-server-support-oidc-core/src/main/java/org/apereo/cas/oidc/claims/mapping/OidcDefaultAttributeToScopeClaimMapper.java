@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import java.util.Map;
 
 /**
- * This is {@link DefaultOidcAttributeToScopeClaimMapper}.
+ * This is {@link OidcDefaultAttributeToScopeClaimMapper}.
  * In order for attributes to be released when using a scope in OIDC, attributes need to mapped
  * in to the correct OIDC name (i.e. {@code given_name}) for those attributes.
  * The side effect is that the attribute will always be released as the mapped name
@@ -17,7 +17,7 @@ import java.util.Map;
  * @since 5.1.0
  */
 @RequiredArgsConstructor
-public class DefaultOidcAttributeToScopeClaimMapper implements OidcAttributeToScopeClaimMapper {
+public class OidcDefaultAttributeToScopeClaimMapper implements OidcAttributeToScopeClaimMapper {
 
     /**
      * Map OIDC claim to an attribute.

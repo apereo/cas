@@ -4,14 +4,21 @@ import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20RegisteredServiceJwtAccessTokenCipherExecutor;
+import org.apereo.cas.token.cipher.JwtTicketCipherExecutor;
+import org.apereo.cas.util.EncodingUtils;
 
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
+import org.jose4j.jwe.KeyManagementAlgorithmIdentifiers;
+import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.RsaJsonWebKey;
 
+import java.io.Serializable;
+import java.security.Key;
 import java.util.Optional;
 
 /**
@@ -49,7 +56,7 @@ public class OidcRegisteredServiceJwtAccessTokenCipherExecutor extends OAuth20Re
             LOGGER.warn("No signing key could be found for issuer " + this.issuer);
             return Optional.empty();
         }
-        return Optional.of(jwks.get().toJson());
+        return Optional.of(jwks.get().toJson(JsonWebKey.OutputControlLevel.INCLUDE_PRIVATE));
     }
 
     @Override
@@ -78,5 +85,45 @@ public class OidcRegisteredServiceJwtAccessTokenCipherExecutor extends OAuth20Re
             return Optional.of(jwks.get().toJson());
         }
         return result;
+    }
+
+    private Key getEncryptionKeyForDecryption(final RegisteredService registeredService) {
+        val svc = (OAuthRegisteredService) registeredService;
+        if (svc instanceof OidcRegisteredService) {
+            val jwks = this.serviceJsonWebKeystoreCache.get(svc);
+            if (jwks.isEmpty()) {
+                LOGGER.warn("Service " + svc.getServiceId()
+                    + " with client id " + svc.getClientId()
+                    + " is configured to encrypt tokens, yet no JSON web key is available");
+                return null;
+            }
+            val jsonWebKey = jwks.get();
+            LOGGER.debug("Found JSON web key to encrypt the token: [{}]", jsonWebKey);
+            if (jsonWebKey.getPrivateKey() == null) {
+                LOGGER.warn("JSON web key used to sign the token has no associated private key");
+                return null;
+            }
+            return jsonWebKey.getPrivateKey();
+        }
+        return null;
+    }
+
+    @Override
+    protected JwtTicketCipherExecutor createCipherExecutorInstance(final String encryptionKey, final String signingKey) {
+        val cipher = new JwtTicketCipherExecutor(encryptionKey, signingKey,
+            StringUtils.isNotBlank(encryptionKey), StringUtils.isNotBlank(signingKey), 0, 0) {
+            @Override
+            public String decode(final Serializable value, final Object[] parameters) {
+                if (parameters.length > 0) {
+                    val registeredService = (RegisteredService) parameters[0];
+                    setSecretKeyEncryptionKey(getEncryptionKeyForDecryption(registeredService));
+                }
+                return super.decode(value, parameters);
+            }
+        };
+        if (EncodingUtils.isJsonWebKey(encryptionKey) || EncodingUtils.isJsonWebKey(signingKey)) {
+            cipher.setEncryptionAlgorithm(KeyManagementAlgorithmIdentifiers.RSA_OAEP_256);
+        }
+        return cipher;
     }
 }

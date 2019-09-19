@@ -12,6 +12,7 @@ import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.IdTokenGeneratorService;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.refreshtoken.RefreshToken;
+import org.apereo.cas.token.JwtBuilder;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -39,8 +40,9 @@ public class OidcImplicitIdTokenAuthorizationResponseBuilder extends OAuth20Toke
                                                            final OAuth20TokenGenerator accessTokenGenerator,
                                                            final ExpirationPolicyBuilder<AccessToken> accessTokenExpirationPolicy,
                                                            final ExpirationPolicyBuilder idTokenExpirationPolicy,
-                                                           final ServicesManager servicesManager) {
-        super(accessTokenGenerator, accessTokenExpirationPolicy, servicesManager);
+                                                           final ServicesManager servicesManager,
+                                                           final JwtBuilder accessTokenJwtBuilder) {
+        super(accessTokenGenerator, accessTokenExpirationPolicy, servicesManager, accessTokenJwtBuilder);
         this.idTokenGenerator = idTokenGenerator;
         this.idTokenExpirationPolicy = idTokenExpirationPolicy;
     }

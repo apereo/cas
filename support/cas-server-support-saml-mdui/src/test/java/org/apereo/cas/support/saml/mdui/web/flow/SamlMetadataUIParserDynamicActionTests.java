@@ -1,6 +1,5 @@
 package org.apereo.cas.support.saml.mdui.web.flow;
 
-import org.apereo.cas.config.support.EnvironmentConversionServiceInitializer;
 import org.apereo.cas.support.saml.AbstractOpenSamlTests;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.mdui.SamlMetadataUIInfo;
@@ -19,7 +18,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Action;
@@ -41,7 +39,6 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @Tag("SAML")
 @TestPropertySource(properties = "cas.samlMetadataUi.resources=http://mdq-beta.incommon.org/global/entities/::")
-@ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
 public class SamlMetadataUIParserDynamicActionTests extends AbstractOpenSamlTests {
     @Autowired
     @Qualifier("samlMetadataUIParserAction")

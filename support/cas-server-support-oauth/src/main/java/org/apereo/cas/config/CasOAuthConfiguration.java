@@ -656,7 +656,7 @@ public class CasOAuthConfiguration {
     @RefreshScope
     public OAuth20AuthorizationResponseBuilder oauthTokenResponseBuilder() {
         return new OAuth20TokenAuthorizationResponseBuilder(oauthTokenGenerator(), accessTokenExpirationPolicy(),
-            servicesManager.getIfAvailable());
+            servicesManager.getIfAvailable(), accessTokenJwtBuilder());
     }
 
     @ConditionalOnMissingBean(name = "oauthAuthorizationCodeResponseBuilder")
@@ -840,6 +840,7 @@ public class CasOAuthConfiguration {
             .callbackAuthorizeViewResolver(callbackAuthorizeViewResolver())
             .profileScopeToAttributesFilter(profileScopeToAttributesFilter())
             .accessTokenGenerator(oauthTokenGenerator())
+            .accessTokenJwtBuilder(accessTokenJwtBuilder())
             .accessTokenResponseGenerator(accessTokenResponseGenerator())
             .accessTokenExpirationPolicy(accessTokenExpirationPolicy())
             .deviceTokenExpirationPolicy(deviceTokenExpirationPolicy())

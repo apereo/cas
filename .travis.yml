@@ -205,6 +205,9 @@ jobs:
       script: ./ci/tests/mariadb/run-tests-mariadb.sh
       name: "MariaDb Tests"
     - stage: test
+      script: ./ci/tests/oracle/run-tests-oracle.sh
+      name: "Oracle Tests"
+    - stage: test
       script: ./ci/tests/mongodb/run-tests-mongodb.sh
       name: "MongoDb Tests"
     - stage: test
