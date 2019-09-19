@@ -3,15 +3,18 @@ package org.apereo.cas.oidc.token;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.oidc.AbstractOidcTests;
+import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
+import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20AccessTokenAtHashGenerator;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
+import org.jose4j.jws.AlgorithmIdentifiers;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.core.context.Pac4jConstants;
@@ -63,9 +66,9 @@ public class OidcIdTokenGeneratorServiceTests extends AbstractOidcTests {
         when(tgt.getServices()).thenReturn(CollectionUtils.wrap("service", service));
 
         val principal = RegisteredServiceTestUtils.getPrincipal("casuser", CollectionUtils.wrap(
-                OIDC_CLAIM_EMAIL, List.of("casuser@example.org"),
-                OIDC_CLAIM_PHONE_NUMBER, List.of("123456789"),
-                OIDC_CLAIM_NAME, List.of("casuser")));
+            OIDC_CLAIM_EMAIL, List.of("casuser@example.org"),
+            OIDC_CLAIM_PHONE_NUMBER, List.of("123456789"),
+            OIDC_CLAIM_NAME, List.of("casuser")));
 
         var authentication = CoreAuthenticationTestUtils.getAuthentication(principal,
             CollectionUtils.wrap(OAuth20Constants.STATE, List.of("some-state"),
@@ -130,5 +133,44 @@ public class OidcIdTokenGeneratorServiceTests extends AbstractOidcTests {
                 OAuth20ResponseTypes.CODE,
                 OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, "clientid"));
         });
+    }
+
+    @Test
+    public void verifyAccessTokenAsJwt() throws Exception {
+        val request = new MockHttpServletRequest();
+        val profile = new CommonProfile();
+        profile.setClientName("OIDC");
+        profile.setId("casuser");
+        request.setAttribute(Pac4jConstants.USER_PROFILES, profile);
+
+        val response = new MockHttpServletResponse();
+
+        val tgt = mock(TicketGrantingTicket.class);
+        when(tgt.getServices()).thenReturn(new HashMap<>());
+        val authentication = CoreAuthenticationTestUtils.getAuthentication("casuser",
+            CollectionUtils.wrap(OAuth20Constants.STATE, List.of("some-state"),
+                OAuth20Constants.NONCE, List.of("some-nonce")));
+        when(tgt.getAuthentication()).thenReturn(authentication);
+
+        val accessToken = getAccessToken();
+        val registeredService = getOidcRegisteredService(accessToken.getClientId());
+        registeredService.setJwtAccessToken(true);
+        registeredService.setIdTokenSigningAlg(AlgorithmIdentifiers.RSA_USING_SHA256);
+        this.servicesManager.save(registeredService);
+        val idToken = oidcIdTokenGenerator.generate(request, response,
+            accessToken, 30, OAuth20ResponseTypes.CODE, registeredService);
+        assertNotNull(idToken);
+        val claims = oidcTokenSigningAndEncryptionService.decode(idToken, Optional.of(registeredService));
+        assertNotNull(claims);
+        assertTrue(claims.hasClaim(OidcConstants.CLAIM_AT_HASH));
+        val hash = claims.getClaimValue(OidcConstants.CLAIM_AT_HASH, String.class);
+        val at = claims.getClaimValue(OAuth20Constants.ACCESS_TOKEN, String.class);
+        val newHash = OAuth20AccessTokenAtHashGenerator.builder()
+            .accessTokenId(at)
+            .registeredService(registeredService)
+            .algorithm(registeredService.getIdTokenSigningAlg())
+            .build()
+            .generate();
+        assertEquals(hash, newHash);
     }
 }

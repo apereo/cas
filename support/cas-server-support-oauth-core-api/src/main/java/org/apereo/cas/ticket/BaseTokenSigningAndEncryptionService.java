@@ -10,11 +10,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.jose4j.jwa.AlgorithmConstraints;
-import org.jose4j.jwe.JsonWebEncryption;
 import org.jose4j.jwk.PublicJsonWebKey;
-import org.jose4j.jws.AlgorithmIdentifiers;
-import org.jose4j.jws.JsonWebSignature;
 import org.jose4j.jwt.JwtClaims;
 
 import java.nio.charset.StandardCharsets;
@@ -34,21 +30,6 @@ public abstract class BaseTokenSigningAndEncryptionService implements OAuthToken
     private final String issuer;
 
     /**
-     * Gets json web signature.
-     *
-     * @param claims the claims
-     * @return the json web signature
-     */
-    protected JsonWebSignature createJsonWebSignature(final JwtClaims claims) {
-        val jws = new JsonWebSignature();
-        val jsonClaims = claims.toJson();
-        jws.setPayload(jsonClaims);
-        jws.setAlgorithmHeaderValue(AlgorithmIdentifiers.NONE);
-        jws.setAlgorithmConstraints(AlgorithmConstraints.NO_CONSTRAINTS);
-        return jws;
-    }
-
-    /**
      * Create json web encryption json web encryption.
      *
      * @param encryptionAlg      the encryption alg
@@ -64,38 +45,22 @@ public abstract class BaseTokenSigningAndEncryptionService implements OAuthToken
                                   final String keyIdHeaderValue,
                                   final Key publicKey,
                                   final String payload) {
-        val jwe = new JsonWebEncryption();
-        jwe.setAlgorithmHeaderValue(encryptionAlg);
-        jwe.setEncryptionMethodHeaderParameter(encryptionEncoding);
-        jwe.setKey(publicKey);
-        jwe.setKeyIdHeaderValue(keyIdHeaderValue);
-        jwe.setContentTypeHeaderValue("JWT");
-        jwe.setPayload(payload);
-        return jwe.getCompactSerialization();
+        return EncodingUtils.encryptValueAsJwt(publicKey, payload, encryptionAlg, encryptionEncoding, keyIdHeaderValue);
     }
 
     /**
      * Configure json web signature for id token signing.
      *
      * @param svc        the svc
-     * @param jws        the jws
+     * @param claims     the claims
      * @param jsonWebKey the json web key
      * @return the json web signature
      */
-    protected JsonWebSignature configureJsonWebSignatureForTokenSigning(final OAuthRegisteredService svc,
-                                                                        final JsonWebSignature jws,
-                                                                        final PublicJsonWebKey jsonWebKey) {
+    protected String signToken(final OAuthRegisteredService svc,
+                               final JwtClaims claims,
+                               final PublicJsonWebKey jsonWebKey) {
         LOGGER.debug("Service [{}] is set to sign id tokens", svc);
-        jws.setKey(jsonWebKey.getPrivateKey());
-        jws.setAlgorithmConstraints(AlgorithmConstraints.DISALLOW_NONE);
-        if (StringUtils.isNotBlank(jsonWebKey.getKeyId())) {
-            jws.setKeyIdHeaderValue(jsonWebKey.getKeyId());
-        }
-        LOGGER.debug("Signing id token with key id header value [{}]", jws.getKeyIdHeaderValue());
-        jws.setAlgorithmHeaderValue(getJsonWebKeySigningAlgorithm(svc));
-
-        LOGGER.trace("Signing id token with algorithm [{}]", jws.getAlgorithmHeaderValue());
-        return jws;
+        return EncodingUtils.signJws(claims, jsonWebKey, getJsonWebKeySigningAlgorithm(svc));
     }
 
     @Override

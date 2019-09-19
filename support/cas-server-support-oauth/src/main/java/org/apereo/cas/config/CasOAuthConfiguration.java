@@ -840,6 +840,7 @@ public class CasOAuthConfiguration {
             .callbackAuthorizeViewResolver(callbackAuthorizeViewResolver())
             .profileScopeToAttributesFilter(profileScopeToAttributesFilter())
             .accessTokenGenerator(oauthTokenGenerator())
+            .accessTokenJwtBuilder(accessTokenJwtBuilder())
             .accessTokenResponseGenerator(accessTokenResponseGenerator())
             .accessTokenExpirationPolicy(accessTokenExpirationPolicy())
             .deviceTokenExpirationPolicy(deviceTokenExpirationPolicy())
