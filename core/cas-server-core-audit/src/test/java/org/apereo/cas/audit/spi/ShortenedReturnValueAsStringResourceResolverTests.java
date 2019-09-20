@@ -1,6 +1,7 @@
 package org.apereo.cas.audit.spi;
 
-import org.apache.commons.lang3.RandomStringUtils;
+import org.apereo.cas.util.RandomUtils;
+
 import org.aspectj.lang.JoinPoint;
 import org.junit.Test;
 
@@ -19,6 +20,6 @@ public class ShortenedReturnValueAsStringResourceResolverTests {
     @Test
     public void verifyActionPassed() {
         final JoinPoint jp = mock(JoinPoint.class);
-        assertTrue(r.resolveFrom(jp, RandomStringUtils.randomAlphabetic(52)).length > 0);
+        assertTrue(r.resolveFrom(jp, RandomUtils.randomAlphabetic(52)).length > 0);
     }
 }

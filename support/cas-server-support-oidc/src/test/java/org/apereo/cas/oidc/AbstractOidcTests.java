@@ -2,7 +2,7 @@ package org.apereo.cas.oidc;
 
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.RandomStringUtils;
+
 import org.apereo.cas.category.FileSystemCategory;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
@@ -37,6 +37,7 @@ import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.web.config.CasThemesConfiguration;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
@@ -175,7 +176,7 @@ public abstract class AbstractOidcTests {
 
     protected JwtClaims getClaims() {
         final JwtClaims claims = new JwtClaims();
-        claims.setJwtId(RandomStringUtils.randomAlphanumeric(16));
+        claims.setJwtId(RandomUtils.randomAlphanumeric(16));
         claims.setIssuer("https://cas.example.org");
         claims.setAudience(getOidcRegisteredService().getClientId());
 

@@ -1,11 +1,13 @@
 package org.apereo.cas.services.util;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.RandomStringUtils;
+
 import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.RegisteredServicePublicKeyImpl;
+import org.apereo.cas.util.RandomUtils;
+
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -30,7 +32,7 @@ public class RegisteredServicePublicKeyCipherExecutorTests {
     public void verifyCipherUnableToEncodeForStringIsTooLong() {
         final AbstractRegisteredService svc = getService("classpath:keys/RSA1024Public.key");
 
-        final String ticketId = RandomStringUtils.randomAlphanumeric(120);
+        final String ticketId = RandomUtils.randomAlphanumeric(120);
         final RegisteredServiceCipherExecutor e = new RegisteredServicePublicKeyCipherExecutor();
         assertNull(e.encode(ticketId, Optional.of(svc)));
     }
@@ -38,7 +40,7 @@ public class RegisteredServicePublicKeyCipherExecutorTests {
     @Test
     public void verifyCipherAbleToEncode() {
         final AbstractRegisteredService svc = getService("classpath:keys/RSA4096Public.key");
-        final String ticketId = RandomStringUtils.randomAlphanumeric(120);
+        final String ticketId = RandomUtils.randomAlphanumeric(120);
         final RegisteredServiceCipherExecutor e = new RegisteredServicePublicKeyCipherExecutor();
         assertNotNull(e.encode(ticketId, Optional.of(svc)));
     }
