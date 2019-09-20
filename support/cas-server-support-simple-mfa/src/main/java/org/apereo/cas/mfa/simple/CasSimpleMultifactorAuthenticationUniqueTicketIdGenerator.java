@@ -1,8 +1,7 @@
 package org.apereo.cas.mfa.simple;
 
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
-
-import org.apache.commons.lang3.RandomStringUtils;
+import org.apereo.cas.util.RandomUtils;
 
 /**
  * This is {@link CasSimpleMultifactorAuthenticationUniqueTicketIdGenerator}.
@@ -15,6 +14,6 @@ public class CasSimpleMultifactorAuthenticationUniqueTicketIdGenerator implement
 
     @Override
     public String getNewTicketId(final String prefix) {
-        return prefix + '-' + RandomStringUtils.randomNumeric(TOKEN_LENGTH);
+        return prefix + '-' + RandomUtils.randomNumeric(TOKEN_LENGTH);
     }
 }

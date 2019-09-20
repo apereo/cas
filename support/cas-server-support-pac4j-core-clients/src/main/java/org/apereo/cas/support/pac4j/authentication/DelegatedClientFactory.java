@@ -7,6 +7,7 @@ import org.apereo.cas.configuration.model.support.pac4j.oidc.BasePac4jOidcClient
 import org.apereo.cas.configuration.model.support.pac4j.oidc.Pac4jOidcClientProperties;
 import org.apereo.cas.configuration.model.support.pac4j.saml.Pac4jSamlClientProperties;
 import org.apereo.cas.support.pac4j.logout.CasServerSpecificLogoutHandler;
+import org.apereo.cas.util.RandomUtils;
 
 import com.github.scribejava.core.model.Verb;
 import com.nimbusds.jose.JWSAlgorithm;
@@ -15,7 +16,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.cas.config.CasConfiguration;
@@ -77,6 +77,33 @@ public class DelegatedClientFactory {
 
     public DelegatedClientFactory(final Pac4jDelegatedAuthenticationProperties pac4jProperties) {
         this(pac4jProperties, new CasServerSpecificLogoutHandler());
+    }
+
+    @SneakyThrows
+    private static <T extends OidcConfiguration> T getOidcConfigurationForClient(final BasePac4jOidcClientProperties oidc, final Class<T> clazz) {
+        val cfg = clazz.getDeclaredConstructor().newInstance();
+        if (StringUtils.isNotBlank(oidc.getScope())) {
+            cfg.setScope(oidc.getScope());
+        }
+        cfg.setUseNonce(oidc.isUseNonce());
+        cfg.setSecret(oidc.getSecret());
+        cfg.setClientId(oidc.getId());
+
+        if (StringUtils.isNotBlank(oidc.getPreferredJwsAlgorithm())) {
+            cfg.setPreferredJwsAlgorithm(JWSAlgorithm.parse(oidc.getPreferredJwsAlgorithm().toUpperCase()));
+        }
+        cfg.setMaxClockSkew(oidc.getMaxClockSkew());
+        cfg.setDiscoveryURI(oidc.getDiscoveryUri());
+        cfg.setCustomParams(oidc.getCustomParams());
+        cfg.setLogoutUrl(oidc.getLogoutUrl());
+
+        if (StringUtils.isNotBlank(oidc.getResponseMode())) {
+            cfg.setResponseMode(oidc.getResponseMode());
+        }
+        if (StringUtils.isNotBlank(oidc.getResponseType())) {
+            cfg.setResponseType(oidc.getResponseType());
+        }
+        return cfg;
     }
 
     /**
@@ -333,7 +360,7 @@ public class DelegatedClientFactory {
             client.setName(cname);
         } else {
             val className = client.getClass().getSimpleName();
-            val genName = className.concat(RandomStringUtils.randomNumeric(2));
+            val genName = className.concat(RandomUtils.randomNumeric(2));
             client.setName(genName);
             LOGGER.warn("Client name for [{}] is set to a generated value of [{}]. "
                 + "Consider defining an explicit name for the delegated provider", className, genName);
@@ -528,33 +555,6 @@ public class DelegatedClientFactory {
         oc.setCallbackUrlResolver(new PathParameterCallbackUrlResolver());
         configureClient(oc, oidc.getGeneric());
         return oc;
-    }
-
-    @SneakyThrows
-    private static <T extends OidcConfiguration> T getOidcConfigurationForClient(final BasePac4jOidcClientProperties oidc, final Class<T> clazz) {
-        val cfg = clazz.getDeclaredConstructor().newInstance();
-        if (StringUtils.isNotBlank(oidc.getScope())) {
-            cfg.setScope(oidc.getScope());
-        }
-        cfg.setUseNonce(oidc.isUseNonce());
-        cfg.setSecret(oidc.getSecret());
-        cfg.setClientId(oidc.getId());
-
-        if (StringUtils.isNotBlank(oidc.getPreferredJwsAlgorithm())) {
-            cfg.setPreferredJwsAlgorithm(JWSAlgorithm.parse(oidc.getPreferredJwsAlgorithm().toUpperCase()));
-        }
-        cfg.setMaxClockSkew(oidc.getMaxClockSkew());
-        cfg.setDiscoveryURI(oidc.getDiscoveryUri());
-        cfg.setCustomParams(oidc.getCustomParams());
-        cfg.setLogoutUrl(oidc.getLogoutUrl());
-        
-        if (StringUtils.isNotBlank(oidc.getResponseMode())) {
-            cfg.setResponseMode(oidc.getResponseMode());
-        }
-        if (StringUtils.isNotBlank(oidc.getResponseType())) {
-            cfg.setResponseType(oidc.getResponseType());
-        }
-        return cfg;
     }
 
     /**

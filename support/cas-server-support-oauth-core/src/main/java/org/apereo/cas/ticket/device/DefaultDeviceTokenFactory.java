@@ -6,10 +6,10 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
+import org.apereo.cas.util.RandomUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.apache.commons.lang3.RandomStringUtils;
 
 /**
  * Default OAuth device token factory.
@@ -48,7 +48,7 @@ public class DefaultDeviceTokenFactory implements DeviceTokenFactory {
 
     @Override
     public DeviceUserCode createDeviceUserCode(final DeviceToken deviceToken) {
-        val userCode = generateDeviceUserCode(RandomStringUtils.randomAlphanumeric(userCodeLength));
+        val userCode = generateDeviceUserCode(RandomUtils.randomAlphanumeric(userCodeLength));
         val deviceUserCode = new DeviceUserCodeImpl(userCode, deviceToken.getId(), this.expirationPolicy);
         deviceToken.assignUserCode(deviceUserCode);
         return deviceUserCode;
