@@ -24,12 +24,11 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Configuration(value = "casCoreUtilSerializationConfiguration", proxyBeanMethods = false)
+@Configuration(value = "casCoreUtilSerializationConfiguration", proxyBeanMethods = true)
 @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
 @Slf4j
 public class CasCoreUtilSerializationConfiguration implements ComponentSerializationPlanConfigurator {
-
-
+    
     @ConditionalOnMissingBean(name = "componentSerializationPlan")
     @Autowired
     @Bean

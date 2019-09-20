@@ -58,6 +58,8 @@ public class MemcachedMonitorConfiguration {
     }
 
     @Bean
+    @RefreshScope
+    @ConditionalOnMissingBean(name = "memcachedHealthClientPool")
     public ObjectPool<MemcachedClientIF> memcachedHealthClientPool() {
         val memcached = casProperties.getMonitor().getMemcached();
         val factory = new MemcachedPooledClientConnectionFactory(memcached, memcachedMonitorTranscoder());
