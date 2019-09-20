@@ -13,7 +13,7 @@ echo -e "***********************************************"
 
 echo "Running dependency analysis..."
 
-gradleBuild="$gradleBuild verifySpringConfigurationCanDisableBeanProxing -x javadoc -x check \
+gradleBuild="$gradleBuild verifySpringConfigurationCanDisableBeanProxying -x javadoc -x check \
    -DskipGradleLint=true --parallel  \
    -DskipNestedConfigMetadataGen=true "
 

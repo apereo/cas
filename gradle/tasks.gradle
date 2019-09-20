@@ -102,7 +102,7 @@ task verifySpringConfigurationFactories(description: "Examine spring.factories f
     }
 }
 
-task verifySpringConfigurationCanDisableBeanProxing(description: "Examine @Configuration files and check whether proxying bean methods can be disabled") {
+task verifySpringConfigurationCanDisableBeanProxying(description: "Examine @Configuration files and check whether proxying bean methods can be disabled") {
      doLast {
          def patternBeanMethods = Pattern.compile("public\\s\\w+\\s(\\w+)\\(")
          
@@ -128,7 +128,7 @@ task verifySpringConfigurationCanDisableBeanProxing(description: "Examine @Confi
                      }
                  }
                  if (canProxyBeans) {
-                     def proxyPattern = Pattern.compile("@Configuration\\(value\\s*=\\s*\"(\\w+)\",\\s*proxyBeanMethods\\s*=\\s*false\\)") .matcher(it.text)
+                     def proxyPattern = Pattern.compile("@Configuration\\(value\\s*=\\s*\"(\\w+)\",\\s*proxyBeanMethods\\s*=\\s*(false|true)\\)") .matcher(it.text)
                      if (!proxyPattern.find()) {
                          throw new GradleException("Configuration class ${it.name} should be marked with proxyBeanMethods = false")
                      }
