@@ -27,7 +27,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -93,9 +92,6 @@ public class ElectronicFenceWebflowConfiguration {
     private ConfigurableApplicationContext applicationContext;
 
     @Autowired
-    private ApplicationEventPublisher applicationEventPublisher;
-
-    @Autowired
     @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
     private ObjectProvider<CasDelegatingWebflowEventResolver> initialAuthenticationAttemptWebflowEventResolver;
 
@@ -121,14 +117,14 @@ public class ElectronicFenceWebflowConfiguration {
             .registeredServiceAccessStrategyEnforcer(registeredServiceAccessStrategyEnforcer.getIfAvailable())
             .casProperties(casProperties)
             .ticketRegistry(ticketRegistry.getIfAvailable())
-            .eventPublisher(applicationEventPublisher)
+            .eventPublisher(applicationContext)
             .applicationContext(applicationContext)
             .build();
 
         val r = new RiskAwareAuthenticationWebflowEventResolver(context,
             authenticationRiskEvaluator.getIfAvailable(),
             authenticationRiskMitigator.getIfAvailable());
-        this.initialAuthenticationAttemptWebflowEventResolver.getIfAvailable().addDelegate(r, 0);
+        this.initialAuthenticationAttemptWebflowEventResolver.getObject().addDelegate(r, 0);
         return r;
     }
 
