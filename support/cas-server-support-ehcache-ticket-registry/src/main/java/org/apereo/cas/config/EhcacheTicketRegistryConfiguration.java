@@ -137,6 +137,7 @@ public class EhcacheTicketRegistryConfiguration {
 
     @Autowired
     @Bean
+    @RefreshScope
     public TicketRegistry ticketRegistry(@Qualifier("ehcacheTicketCacheManager") final CacheManager manager,
                                          @Qualifier("ticketCatalog") final TicketCatalog ticketCatalog) {
         val crypto = casProperties.getTicket().getRegistry().getEhcache().getCrypto();
