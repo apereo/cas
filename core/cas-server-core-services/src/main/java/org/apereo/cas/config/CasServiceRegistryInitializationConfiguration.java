@@ -115,7 +115,12 @@ public class CasServiceRegistryInitializationConfiguration {
         EmbeddedResourceBasedServiceRegistry(final ApplicationEventPublisher publisher,
                                              final Resource location,
                                              final Collection<ServiceRegistryListener> serviceRegistryListeners) throws Exception {
-            super(location, getRegisteredServiceSerializers(), publisher, serviceRegistryListeners);
+            super(location, canResourceWatcherBeEnabled(location),
+                getRegisteredServiceSerializers(), publisher, serviceRegistryListeners);
+        }
+
+        private static boolean canResourceWatcherBeEnabled(final Resource location) {
+            return !(location instanceof ClassPathResource);
         }
 
         static Collection<StringSerializer<RegisteredService>> getRegisteredServiceSerializers() {
