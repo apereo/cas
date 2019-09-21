@@ -37,7 +37,7 @@ public class ServiceRegistryInitializer {
             + "This behavior is only useful for testing purposes and MAY NOT be appropriate for production. "
             + "Consider turning off this behavior via the setting [cas.serviceRegistry.initFromJson=false] "
             + "and explicitly register definitions in the services registry.", this.serviceRegistry.getName());
-
+        
         val servicesLoaded = this.jsonServiceRegistry.load();
         val servicesList = servicesLoaded.stream().map(RegisteredService::getName).collect(Collectors.joining(","));
         LOGGER.debug("Loaded JSON services are [{}]", servicesList);
@@ -55,7 +55,13 @@ public class ServiceRegistryInitializer {
         LOGGER.info("Service registry [{}] contains [{}] service definitions", this.serviceRegistry.getName(), this.servicesManager.count());
     }
 
-    private boolean findExistingMatchForService(final RegisteredService r) {
+    /**
+     * Find existing match for service.
+     *
+     * @param r the r
+     * @return the boolean
+     */
+    protected boolean findExistingMatchForService(final RegisteredService r) {
         if (StringUtils.isNotBlank(r.getServiceId())) {
             val match = this.serviceRegistry.findServiceByExactServiceId(r.getServiceId());
             if (match != null) {

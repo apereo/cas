@@ -57,7 +57,9 @@ public class PathWatcherService implements Runnable, Closeable {
         this.onModify = onModify;
         this.onDelete = onDelete;
         this.watcher = watchablePath.getFileSystem().newWatchService();
-        LOGGER.trace("Created service registry watcher for events of type [{}]", Arrays.stream(KINDS).map(WatchEvent.Kind::name).collect(Collectors.joining(",")));
+        LOGGER.trace("Created service registry watcher for events of type [{}]", Arrays.stream(KINDS)
+            .map(WatchEvent.Kind::name)
+            .collect(Collectors.joining(",")));
         watchablePath.register(this.watcher, KINDS);
     }
 
