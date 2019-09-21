@@ -80,7 +80,7 @@ public class DefaultLoginWebflowConfigurer extends AbstractCasWebflowConfigurer 
      */
     protected void createInitialFlowActions(final Flow flow) {
         val startActionList = flow.getStartActionList();
-        startActionList.add(createEvaluateAction(CasWebflowConstants.ACTION_ID_INIT_FLOW_SETUP));
+        startActionList.add(createEvaluateAction(CasWebflowConstants.ACTION_ID_INITIAL_FLOW_SETUP));
         startActionList.add(createEvaluateAction(CasWebflowConstants.ACTION_ID_VERIFY_REQUIRED_SERVICE));
     }
 

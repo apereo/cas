@@ -311,7 +311,7 @@ public class DuoSecurityMultifactorWebflowConfigurer extends AbstractMultifactor
 
     private static void createDuoFlowStartActions(final DynamicFlowModelBuilder modelBuilder) {
         val starts = new ArrayList<AbstractActionModel>();
-        starts.add(new EvaluateModel(CasWebflowConstants.ACTION_ID_INIT_FLOW_SETUP));
+        starts.add(new EvaluateModel(CasWebflowConstants.ACTION_ID_INITIAL_FLOW_SETUP));
         modelBuilder.setOnStartActions(starts);
     }
 

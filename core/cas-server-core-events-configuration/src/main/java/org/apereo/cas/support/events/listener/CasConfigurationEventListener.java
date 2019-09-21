@@ -11,6 +11,7 @@ import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
 import org.springframework.cloud.context.refresh.ContextRefresher;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Async;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -39,6 +40,7 @@ public class CasConfigurationEventListener {
      * @param event the event
      */
     @EventListener
+    @Async
     public void handleRefreshEvent(final EnvironmentChangeEvent event) {
         LOGGER.trace("Received event [{}]", event);
         rebind();
@@ -50,6 +52,7 @@ public class CasConfigurationEventListener {
      * @param event the event
      */
     @EventListener
+    @Async
     public void handleConfigurationModifiedEvent(final CasConfigurationModifiedEvent event) {
         if (this.contextRefresher == null) {
             LOGGER.warn("Unable to refresh application context, since no refresher is available");

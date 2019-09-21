@@ -16,6 +16,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.EnableAsync;
 
 /**
  * This is {@link CasCoreServicesAuthenticationConfiguration}.
@@ -25,6 +26,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration(value = "casCoreServicesAuthenticationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@EnableAsync
 public class CasCoreServicesAuthenticationConfiguration {
 
     @Autowired

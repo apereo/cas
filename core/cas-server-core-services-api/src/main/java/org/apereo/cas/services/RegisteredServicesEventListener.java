@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Async;
 
 /**
  * This is {@link RegisteredServicesEventListener}.
@@ -30,6 +31,7 @@ public class RegisteredServicesEventListener {
      * @param event the event
      */
     @EventListener
+    @Async
     public void handleRefreshEvent(final CasRegisteredServicesRefreshEvent event) {
         servicesManager.load();
     }
@@ -40,6 +42,7 @@ public class RegisteredServicesEventListener {
      * @param event the event
      */
     @EventListener
+    @Async
     public void handleRegisteredServiceExpiredEvent(final CasRegisteredServiceExpiredEvent event) {
         val registeredService = event.getRegisteredService();
         val contacts = registeredService.getContacts();

@@ -117,7 +117,8 @@
                             </div>
                         </section>
 
-                        <section class="form-check" th:if="${passwordManagementEnabled && param.doChangePassword != null}">
+                        <section class="form-check"
+                                 th:if="${passwordManagementEnabled != null && passwordManagementEnabled && param.doChangePassword != null}">
                             <p>
                                 <input type="checkbox" name="doChangePassword" id="doChangePassword"
                                        value="true" th:checked="${param.doChangePassword != null}" tabindex="4"/>
