@@ -108,22 +108,22 @@ public class ElectronicFenceWebflowConfiguration {
     @RefreshScope
     public CasWebflowEventResolver riskAwareAuthenticationWebflowEventResolver() {
         val context = CasWebflowEventResolutionConfigurationContext.builder()
-            .authenticationSystemSupport(authenticationSystemSupport.getIfAvailable())
-            .centralAuthenticationService(centralAuthenticationService.getIfAvailable())
-            .servicesManager(servicesManager.getIfAvailable())
-            .ticketRegistrySupport(ticketRegistrySupport.getIfAvailable())
-            .warnCookieGenerator(warnCookieGenerator.getIfAvailable())
-            .authenticationRequestServiceSelectionStrategies(authenticationRequestServiceSelectionStrategies.getIfAvailable())
-            .registeredServiceAccessStrategyEnforcer(registeredServiceAccessStrategyEnforcer.getIfAvailable())
+            .authenticationSystemSupport(authenticationSystemSupport.getObject())
+            .centralAuthenticationService(centralAuthenticationService.getObject())
+            .servicesManager(servicesManager.getObject())
+            .ticketRegistrySupport(ticketRegistrySupport.getObject())
+            .warnCookieGenerator(warnCookieGenerator.getObject())
+            .authenticationRequestServiceSelectionStrategies(authenticationRequestServiceSelectionStrategies.getObject())
+            .registeredServiceAccessStrategyEnforcer(registeredServiceAccessStrategyEnforcer.getObject())
             .casProperties(casProperties)
-            .ticketRegistry(ticketRegistry.getIfAvailable())
+            .ticketRegistry(ticketRegistry.getObject())
             .eventPublisher(applicationContext)
             .applicationContext(applicationContext)
             .build();
 
         val r = new RiskAwareAuthenticationWebflowEventResolver(context,
-            authenticationRiskEvaluator.getIfAvailable(),
-            authenticationRiskMitigator.getIfAvailable());
+            authenticationRiskEvaluator.getObject(),
+            authenticationRiskMitigator.getObject());
         this.initialAuthenticationAttemptWebflowEventResolver.getObject().addDelegate(r, 0);
         return r;
     }
@@ -133,8 +133,8 @@ public class ElectronicFenceWebflowConfiguration {
     @RefreshScope
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer riskAwareAuthenticationWebflowConfigurer() {
-        return new RiskAwareAuthenticationWebflowConfigurer(flowBuilderServices.getIfAvailable(),
-            loginFlowDefinitionRegistry.getIfAvailable(),
+        return new RiskAwareAuthenticationWebflowConfigurer(flowBuilderServices.getObject(),
+            loginFlowDefinitionRegistry.getObject(),
             applicationContext,
             casProperties);
     }

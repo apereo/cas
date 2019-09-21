@@ -118,7 +118,7 @@ public class SamlIdPMetadataConfiguration {
     public MetadataResolver casSamlIdPMetadataResolver(@Qualifier("samlIdPMetadataLocator") final SamlIdPMetadataLocator samlMetadataLocator) {
         val idp = casProperties.getAuthn().getSamlIdp();
         val resolver = new InMemoryResourceMetadataResolver(samlMetadataLocator.getMetadata(), openSamlConfigBean.getObject());
-        resolver.setParserPool(openSamlConfigBean.getIfAvailable().getParserPool());
+        resolver.setParserPool(openSamlConfigBean.getObject().getParserPool());
         resolver.setFailFastInitialization(idp.getMetadata().isFailFast());
         resolver.setRequireValidMetadata(idp.getMetadata().isRequireValidMetadata());
         resolver.setId(idp.getEntityId());
@@ -172,8 +172,8 @@ public class SamlIdPMetadataConfiguration {
     @RefreshScope
     public SamlRegisteredServiceMetadataResolverCacheLoader chainingMetadataResolverCacheLoader() {
         return new SamlRegisteredServiceMetadataResolverCacheLoader(
-            openSamlConfigBean.getIfAvailable(),
-            httpClient.getIfAvailable(),
+            openSamlConfigBean.getObject(),
+            httpClient.getObject(),
             samlRegisteredServiceMetadataResolvers());
     }
 
@@ -183,7 +183,7 @@ public class SamlIdPMetadataConfiguration {
         val plan = new DefaultSamlRegisteredServiceMetadataResolutionPlan();
 
         val samlIdp = casProperties.getAuthn().getSamlIdp();
-        val cfgBean = openSamlConfigBean.getIfAvailable();
+        val cfgBean = openSamlConfigBean.getObject();
         plan.registerMetadataResolver(new MetadataQueryProtocolMetadataResolver(samlIdp, cfgBean));
         plan.registerMetadataResolver(new JsonResourceMetadataResolver(samlIdp, cfgBean));
         plan.registerMetadataResolver(new FileSystemResourceMetadataResolver(samlIdp, cfgBean));
@@ -216,27 +216,27 @@ public class SamlIdPMetadataConfiguration {
     @ConditionalOnEnabledHealthIndicator("samlRegisteredServiceMetadataHealthIndicator")
     public HealthIndicator samlRegisteredServiceMetadataHealthIndicator() {
         return new SamlRegisteredServiceMetadataHealthIndicator(samlRegisteredServiceMetadataResolvers(),
-            servicesManager.getIfAvailable());
+            servicesManager.getObject());
     }
 
     @Bean
     @ConditionalOnAvailableEndpoint
     public SamlRegisteredServiceCachedMetadataEndpoint samlRegisteredServiceCachedMetadataEndpoint() {
         return new SamlRegisteredServiceCachedMetadataEndpoint(casProperties, defaultSamlRegisteredServiceCachingMetadataResolver(),
-            servicesManager.getIfAvailable(), registeredServiceAccessStrategyEnforcer.getIfAvailable(),
-            openSamlConfigBean.getIfAvailable());
+            servicesManager.getObject(), registeredServiceAccessStrategyEnforcer.getObject(),
+            openSamlConfigBean.getObject());
     }
 
     @Bean
     @ConditionalOnAvailableEndpoint
     public SSOSamlPostProfileHandlerEndpoint ssoSamlPostProfileHandlerEndpoint() {
         return new SSOSamlPostProfileHandlerEndpoint(casProperties,
-            servicesManager.getIfAvailable(),
-            authenticationSystemSupport.getIfAvailable(),
-            webApplicationServiceFactory.getIfAvailable(),
+            servicesManager.getObject(),
+            authenticationSystemSupport.getObject(),
+            webApplicationServiceFactory.getObject(),
             PrincipalFactoryUtils.newPrincipalFactory(),
-            samlProfileSamlResponseBuilder.getIfAvailable(),
+            samlProfileSamlResponseBuilder.getObject(),
             defaultSamlRegisteredServiceCachingMetadataResolver(),
-            new NonInflatingSaml20ObjectBuilder(openSamlConfigBean.getIfAvailable()));
+            new NonInflatingSaml20ObjectBuilder(openSamlConfigBean.getObject()));
     }
 }

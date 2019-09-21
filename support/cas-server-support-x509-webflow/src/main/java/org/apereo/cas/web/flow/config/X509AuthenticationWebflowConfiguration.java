@@ -69,8 +69,8 @@ public class X509AuthenticationWebflowConfiguration {
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer x509WebflowConfigurer() {
-        return new X509WebflowConfigurer(flowBuilderServices.getIfAvailable(),
-            loginFlowDefinitionRegistry.getIfAvailable(),
+        return new X509WebflowConfigurer(flowBuilderServices.getObject(),
+            loginFlowDefinitionRegistry.getObject(),
             applicationContext, casProperties);
     }
 
@@ -78,14 +78,14 @@ public class X509AuthenticationWebflowConfiguration {
     public Action x509Check() {
         val extractCertFromRequestHeader = casProperties.getAuthn().getX509().isExtractCert();
         if (extractCertFromRequestHeader) {
-            return new X509CertificateCredentialsRequestHeaderAction(initialAuthenticationAttemptWebflowEventResolver.getIfAvailable(),
-                serviceTicketRequestWebflowEventResolver.getIfAvailable(),
-                adaptiveAuthenticationPolicy.getIfAvailable(),
-                x509CertificateExtractor.getIfAvailable());
+            return new X509CertificateCredentialsRequestHeaderAction(initialAuthenticationAttemptWebflowEventResolver.getObject(),
+                serviceTicketRequestWebflowEventResolver.getObject(),
+                adaptiveAuthenticationPolicy.getObject(),
+                x509CertificateExtractor.getObject());
         }
-        return new X509CertificateCredentialsNonInteractiveAction(initialAuthenticationAttemptWebflowEventResolver.getIfAvailable(),
-            serviceTicketRequestWebflowEventResolver.getIfAvailable(),
-            adaptiveAuthenticationPolicy.getIfAvailable());
+        return new X509CertificateCredentialsNonInteractiveAction(initialAuthenticationAttemptWebflowEventResolver.getObject(),
+            serviceTicketRequestWebflowEventResolver.getObject(),
+            adaptiveAuthenticationPolicy.getObject());
     }
 
     @Bean

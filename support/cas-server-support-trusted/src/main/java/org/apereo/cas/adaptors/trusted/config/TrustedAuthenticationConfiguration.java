@@ -75,7 +75,7 @@ public class TrustedAuthenticationConfiguration {
     public AuthenticationHandler principalBearingCredentialsAuthenticationHandler() {
         val trusted = casProperties.getAuthn().getTrusted();
         return new PrincipalBearingCredentialsAuthenticationHandler(trusted.getName(),
-            servicesManager.getIfAvailable(), trustedPrincipalFactory(),
+            servicesManager.getObject(), trustedPrincipalFactory(),
             trusted.getOrder());
     }
 
@@ -86,7 +86,7 @@ public class TrustedAuthenticationConfiguration {
         val personDirectory = casProperties.getPersonDirectory();
         val trusted = casProperties.getAuthn().getTrusted();
         val principalAttribute = StringUtils.defaultIfBlank(trusted.getPrincipalAttribute(), personDirectory.getPrincipalAttribute());
-        val bearingPrincipalResolver = new PrincipalBearingPrincipalResolver(attributeRepository.getIfAvailable(),
+        val bearingPrincipalResolver = new PrincipalBearingPrincipalResolver(attributeRepository.getObject(),
             trustedPrincipalFactory(),
             trusted.isReturnNull() || personDirectory.isReturnNull(),
             principalAttribute,
@@ -112,9 +112,9 @@ public class TrustedAuthenticationConfiguration {
     @Bean
     public BasePrincipalFromNonInteractiveCredentialsAction principalFromRemoteUserAction() {
         return new PrincipalFromRequestRemoteUserNonInteractiveCredentialsAction(
-            initialAuthenticationAttemptWebflowEventResolver.getIfAvailable(),
-            serviceTicketRequestWebflowEventResolver.getIfAvailable(),
-            adaptiveAuthenticationPolicy.getIfAvailable(),
+            initialAuthenticationAttemptWebflowEventResolver.getObject(),
+            serviceTicketRequestWebflowEventResolver.getObject(),
+            adaptiveAuthenticationPolicy.getObject(),
             trustedPrincipalFactory(),
             remoteRequestPrincipalAttributesExtractor());
     }
@@ -122,9 +122,9 @@ public class TrustedAuthenticationConfiguration {
     @Bean
     public BasePrincipalFromNonInteractiveCredentialsAction principalFromRemoteUserPrincipalAction() {
         return new PrincipalFromRequestUserPrincipalNonInteractiveCredentialsAction(
-            initialAuthenticationAttemptWebflowEventResolver.getIfAvailable(),
-            serviceTicketRequestWebflowEventResolver.getIfAvailable(),
-            adaptiveAuthenticationPolicy.getIfAvailable(),
+            initialAuthenticationAttemptWebflowEventResolver.getObject(),
+            serviceTicketRequestWebflowEventResolver.getObject(),
+            adaptiveAuthenticationPolicy.getObject(),
             trustedPrincipalFactory(),
             remoteRequestPrincipalAttributesExtractor());
     }
@@ -133,9 +133,9 @@ public class TrustedAuthenticationConfiguration {
     public BasePrincipalFromNonInteractiveCredentialsAction principalFromRemoteHeaderPrincipalAction() {
         val trusted = casProperties.getAuthn().getTrusted();
         return new PrincipalFromRequestHeaderNonInteractiveCredentialsAction(
-            initialAuthenticationAttemptWebflowEventResolver.getIfAvailable(),
-            serviceTicketRequestWebflowEventResolver.getIfAvailable(),
-            adaptiveAuthenticationPolicy.getIfAvailable(),
+            initialAuthenticationAttemptWebflowEventResolver.getObject(),
+            serviceTicketRequestWebflowEventResolver.getObject(),
+            adaptiveAuthenticationPolicy.getObject(),
             trustedPrincipalFactory(),
             remoteRequestPrincipalAttributesExtractor(),
             trusted.getRemotePrincipalHeader());
@@ -146,9 +146,9 @@ public class TrustedAuthenticationConfiguration {
     public Action remoteUserAuthenticationAction() {
         val chain =
             new ChainingPrincipalFromRequestNonInteractiveCredentialsAction(
-                initialAuthenticationAttemptWebflowEventResolver.getIfAvailable(),
-                serviceTicketRequestWebflowEventResolver.getIfAvailable(),
-                adaptiveAuthenticationPolicy.getIfAvailable(),
+                initialAuthenticationAttemptWebflowEventResolver.getObject(),
+                serviceTicketRequestWebflowEventResolver.getObject(),
+                adaptiveAuthenticationPolicy.getObject(),
                 trustedPrincipalFactory(),
                 remoteRequestPrincipalAttributesExtractor());
         chain.addAction(principalFromRemoteUserAction());

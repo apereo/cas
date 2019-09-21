@@ -108,7 +108,7 @@ public class CasCoreConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "serviceMatchingStrategy")
     public ServiceMatchingStrategy serviceMatchingStrategy() {
-        return new DefaultServiceMatchingStrategy(servicesManager.getIfAvailable());
+        return new DefaultServiceMatchingStrategy(servicesManager.getObject());
     }
     
     @Bean
@@ -117,15 +117,15 @@ public class CasCoreConfiguration {
     public CentralAuthenticationService centralAuthenticationService(
         @Qualifier("authenticationServiceSelectionPlan") final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan) {
         return new DefaultCentralAuthenticationService(applicationContext,
-            ticketRegistry.getIfAvailable(),
-            servicesManager.getIfAvailable(),
-            logoutManager.getIfAvailable(),
-            ticketFactory.getIfAvailable(),
+            ticketRegistry.getObject(),
+            servicesManager.getObject(),
+            logoutManager.getObject(),
+            ticketFactory.getObject(),
             authenticationServiceSelectionPlan,
             authenticationPolicyFactory(),
-            principalFactory.getIfAvailable(),
-            cipherExecutor.getIfAvailable(),
-            registeredServiceAccessStrategyEnforcer.getIfAvailable(),
+            principalFactory.getObject(),
+            cipherExecutor.getObject(),
+            registeredServiceAccessStrategyEnforcer.getObject(),
             serviceMatchingStrategy());
     }
 }

@@ -158,7 +158,7 @@ public class SamlIdPEndpointsConfiguration {
             algs.getOverrideSignatureAlgorithms(),
             algs.getOverrideBlackListedSignatureSigningAlgorithms(),
             algs.getOverrideWhiteListedSignatureSigningAlgorithms(),
-            casSamlIdPMetadataResolver.getIfAvailable(),
+            casSamlIdPMetadataResolver.getObject(),
             casProperties
         );
     }
@@ -196,7 +196,7 @@ public class SamlIdPEndpointsConfiguration {
     @RefreshScope
     public SSOSamlPostProfileHandlerController ssoPostProfileHandlerController() {
         val context = getSamlProfileHandlerConfigurationContextBuilder()
-            .responseBuilder(samlProfileSamlResponseBuilder.getIfAvailable())
+            .responseBuilder(samlProfileSamlResponseBuilder.getObject())
             .samlMessageDecoders(ssoPostProfileHandlerDecoders())
             .build();
         return new SSOSamlPostProfileHandlerController(context);
@@ -216,7 +216,7 @@ public class SamlIdPEndpointsConfiguration {
     @RefreshScope
     public SSOSamlPostSimpleSignProfileHandlerController ssoPostSimpleSignProfileHandlerController() {
         val context = getSamlProfileHandlerConfigurationContextBuilder()
-            .responseBuilder(samlProfileSamlResponseBuilder.getIfAvailable())
+            .responseBuilder(samlProfileSamlResponseBuilder.getObject())
             .samlMessageDecoders(ssoPostSimpleSignProfileHandlerDecoders())
             .build();
 
@@ -278,8 +278,8 @@ public class SamlIdPEndpointsConfiguration {
     @RefreshScope
     public ECPProfileHandlerController ecpProfileHandlerController() {
         val context = getSamlProfileHandlerConfigurationContextBuilder()
-            .responseBuilder(samlProfileSamlSoap11ResponseBuilder.getIfAvailable())
-            .samlFaultResponseBuilder(samlProfileSamlSoap11FaultResponseBuilder.getIfAvailable())
+            .responseBuilder(samlProfileSamlSoap11ResponseBuilder.getObject())
+            .samlFaultResponseBuilder(samlProfileSamlSoap11FaultResponseBuilder.getObject())
             .build();
         return new ECPProfileHandlerController(context);
     }
@@ -288,8 +288,8 @@ public class SamlIdPEndpointsConfiguration {
     @RefreshScope
     public Saml1ArtifactResolutionProfileHandlerController saml1ArtifactResolutionController() {
         val context = getSamlProfileHandlerConfigurationContextBuilder()
-            .responseBuilder(samlProfileSamlArtifactResponseBuilder.getIfAvailable())
-            .samlFaultResponseBuilder(samlProfileSamlArtifactFaultResponseBuilder.getIfAvailable())
+            .responseBuilder(samlProfileSamlArtifactResponseBuilder.getObject())
+            .samlFaultResponseBuilder(samlProfileSamlArtifactFaultResponseBuilder.getObject())
             .build();
         return new Saml1ArtifactResolutionProfileHandlerController(context);
     }
@@ -299,8 +299,8 @@ public class SamlIdPEndpointsConfiguration {
     @RefreshScope
     public Saml2AttributeQueryProfileHandlerController saml2AttributeQueryProfileHandlerController() {
         val context = getSamlProfileHandlerConfigurationContextBuilder()
-            .responseBuilder(samlProfileSamlAttributeQueryResponseBuilder.getIfAvailable())
-            .samlFaultResponseBuilder(samlProfileSamlAttributeQueryFaultResponseBuilder.getIfAvailable())
+            .responseBuilder(samlProfileSamlAttributeQueryResponseBuilder.getObject())
+            .samlFaultResponseBuilder(samlProfileSamlAttributeQueryFaultResponseBuilder.getObject())
             .build();
         return new Saml2AttributeQueryProfileHandlerController(context);
     }
@@ -308,7 +308,7 @@ public class SamlIdPEndpointsConfiguration {
     @Bean
     public Service samlIdPCallbackService() {
         val service = casProperties.getServer().getPrefix().concat(SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_POST_CALLBACK);
-        return this.webApplicationServiceFactory.getIfAvailable().createService(service);
+        return this.webApplicationServiceFactory.getObject().createService(service);
     }
 
     @Bean
@@ -334,19 +334,19 @@ public class SamlIdPEndpointsConfiguration {
         return SamlProfileHandlerConfigurationContext.builder()
             .samlObjectSigner(samlObjectSigner.getObject())
             .authenticationSystemSupport(authenticationSystemSupport.getObject())
-            .servicesManager(servicesManager.getIfAvailable())
-            .webApplicationServiceFactory(webApplicationServiceFactory.getIfAvailable())
-            .samlRegisteredServiceCachingMetadataResolver(defaultSamlRegisteredServiceCachingMetadataResolver.getIfAvailable())
-            .openSamlConfigBean(openSamlConfigBean.getIfAvailable())
+            .servicesManager(servicesManager.getObject())
+            .webApplicationServiceFactory(webApplicationServiceFactory.getObject())
+            .samlRegisteredServiceCachingMetadataResolver(defaultSamlRegisteredServiceCachingMetadataResolver.getObject())
+            .openSamlConfigBean(openSamlConfigBean.getObject())
             .casProperties(casProperties)
-            .artifactTicketFactory(samlArtifactTicketFactory.getIfAvailable())
+            .artifactTicketFactory(samlArtifactTicketFactory.getObject())
             .samlObjectSignatureValidator(samlObjectSignatureValidator())
             .samlHttpRequestExtractor(ssoSamlHttpRequestExtractor())
-            .responseBuilder(samlProfileSamlResponseBuilder.getIfAvailable())
-            .ticketValidator(casClientTicketValidator.getIfAvailable())
-            .ticketRegistry(ticketRegistry.getIfAvailable())
-            .ticketGrantingTicketCookieGenerator(ticketGrantingTicketCookieGenerator.getIfAvailable())
-            .samlAttributeQueryTicketFactory(samlAttributeQueryTicketFactory.getIfAvailable())
+            .responseBuilder(samlProfileSamlResponseBuilder.getObject())
+            .ticketValidator(casClientTicketValidator.getObject())
+            .ticketRegistry(ticketRegistry.getObject())
+            .ticketGrantingTicketCookieGenerator(ticketGrantingTicketCookieGenerator.getObject())
+            .samlAttributeQueryTicketFactory(samlAttributeQueryTicketFactory.getObject())
             .callbackService(samlIdPCallbackService());
     }
 }

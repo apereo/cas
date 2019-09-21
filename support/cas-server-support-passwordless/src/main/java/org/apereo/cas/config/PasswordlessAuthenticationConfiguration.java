@@ -111,7 +111,7 @@ public class PasswordlessAuthenticationConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "passwordlessTokenAuthenticationHandler")
     public AuthenticationHandler passwordlessTokenAuthenticationHandler() {
-        return new PasswordlessTokenAuthenticationHandler(null, servicesManager.getIfAvailable(),
+        return new PasswordlessTokenAuthenticationHandler(null, servicesManager.getObject(),
             passwordlessPrincipalFactory(), null, passwordlessTokenRepository());
     }
 
@@ -187,11 +187,11 @@ public class PasswordlessAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "acceptPasswordlessAuthenticationAction")
     @RefreshScope
     public Action acceptPasswordlessAuthenticationAction() {
-        return new AcceptPasswordlessAuthenticationAction(initialAuthenticationAttemptWebflowEventResolver.getIfAvailable(),
-            serviceTicketRequestWebflowEventResolver.getIfAvailable(),
-            adaptiveAuthenticationPolicy.getIfAvailable(),
+        return new AcceptPasswordlessAuthenticationAction(initialAuthenticationAttemptWebflowEventResolver.getObject(),
+            serviceTicketRequestWebflowEventResolver.getObject(),
+            adaptiveAuthenticationPolicy.getObject(),
             passwordlessTokenRepository(),
-            authenticationSystemSupport.getIfAvailable(),
+            authenticationSystemSupport.getObject(),
             passwordlessUserAccountStore());
     }
 
@@ -200,12 +200,12 @@ public class PasswordlessAuthenticationConfiguration {
     @RefreshScope
     public Action displayBeforePasswordlessAuthenticationAction() {
         return new DisplayBeforePasswordlessAuthenticationAction(passwordlessTokenRepository(),
-            passwordlessUserAccountStore(), communicationsManager.getIfAvailable(), casProperties.getAuthn().getPasswordless());
+            passwordlessUserAccountStore(), communicationsManager.getObject(), casProperties.getAuthn().getPasswordless());
     }
 
     @Bean
     public Action initializeLoginAction() {
-        return new PrepareForPasswordlessAuthenticationAction(servicesManager.getIfAvailable());
+        return new PrepareForPasswordlessAuthenticationAction(servicesManager.getObject());
     }
 
     @ConditionalOnMissingBean(name = "passwordlessAuthenticationWebflowConfigurer")
@@ -213,14 +213,14 @@ public class PasswordlessAuthenticationConfiguration {
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer passwordlessAuthenticationWebflowConfigurer() {
         return new PasswordlessAuthenticationWebflowConfigurer(flowBuilderServices,
-            loginFlowDefinitionRegistry.getIfAvailable(), applicationContext, casProperties);
+            loginFlowDefinitionRegistry.getObject(), applicationContext, casProperties);
     }
 
     @ConditionalOnMissingBean(name = "passwordlessAuthenticationEventExecutionPlanConfigurer")
     @Bean
     public AuthenticationEventExecutionPlanConfigurer passwordlessAuthenticationEventExecutionPlanConfigurer() {
         return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(
-            passwordlessTokenAuthenticationHandler(), defaultPrincipalResolver.getIfAvailable());
+            passwordlessTokenAuthenticationHandler(), defaultPrincipalResolver.getObject());
     }
 
     @ConditionalOnMissingBean(name = "passwordlessCasWebflowExecutionPlanConfigurer")
