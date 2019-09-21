@@ -169,10 +169,10 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
     public ProxyTicketFactory defaultProxyTicketFactory() {
         val onlyTrackMostRecentSession = casProperties.getTicket().getTgt().isOnlyTrackMostRecentSession();
         return new DefaultProxyTicketFactory(proxyTicketExpirationPolicy(),
-            uniqueIdGeneratorsMap.getIfAvailable(),
+            uniqueIdGeneratorsMap.getObject(),
             protocolTicketCipherExecutor(),
             onlyTrackMostRecentSession,
-            servicesManager.getIfAvailable());
+            servicesManager.getObject());
     }
 
     @ConditionalOnMissingBean(name = "proxyGrantingTicketUniqueIdGenerator")
@@ -223,10 +223,10 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
     public ServiceTicketFactory defaultServiceTicketFactory() {
         val onlyTrackMostRecentSession = casProperties.getTicket().getTgt().isOnlyTrackMostRecentSession();
         return new DefaultServiceTicketFactory(serviceTicketExpirationPolicy(),
-            uniqueIdGeneratorsMap.getIfAvailable(),
+            uniqueIdGeneratorsMap.getObject(),
             onlyTrackMostRecentSession,
             protocolTicketCipherExecutor(),
-            servicesManager.getIfAvailable());
+            servicesManager.getObject());
     }
 
     @ConditionalOnMissingBean(name = "defaultTicketGrantingTicketFactory")
@@ -263,7 +263,7 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
     @Bean
     @ConditionalOnProperty(prefix = "cas.sso", name = "proxyAuthnEnabled", havingValue = "true", matchIfMissing = true)
     public ProxyHandler proxy20Handler() {
-        return new Cas20ProxyHandler(httpClient.getIfAvailable(), proxy20TicketUniqueIdGenerator());
+        return new Cas20ProxyHandler(httpClient.getObject(), proxy20TicketUniqueIdGenerator());
     }
 
     @ConditionalOnMissingBean(name = "ticketRegistry")

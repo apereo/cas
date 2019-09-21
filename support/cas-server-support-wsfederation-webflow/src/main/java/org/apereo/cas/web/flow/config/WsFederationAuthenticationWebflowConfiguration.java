@@ -88,15 +88,15 @@ public class WsFederationAuthenticationWebflowConfiguration {
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer wsFederationWebflowConfigurer() {
         return new WsFederationWebflowConfigurer(flowBuilderServices,
-            loginFlowDefinitionRegistry.getIfAvailable(), applicationContext, casProperties);
+            loginFlowDefinitionRegistry.getObject(), applicationContext, casProperties);
     }
 
     @Bean
     @RefreshScope
     public Action wsFederationAction() {
-        return new WsFederationAction(initialAuthenticationAttemptWebflowEventResolver.getIfAvailable(),
-            serviceTicketRequestWebflowEventResolver.getIfAvailable(),
-            adaptiveAuthenticationPolicy.getIfAvailable(),
+        return new WsFederationAction(initialAuthenticationAttemptWebflowEventResolver.getObject(),
+            serviceTicketRequestWebflowEventResolver.getObject(),
+            adaptiveAuthenticationPolicy.getObject(),
             wsFederationRequestBuilder(),
             wsFederationResponseValidator());
     }
@@ -105,17 +105,17 @@ public class WsFederationAuthenticationWebflowConfiguration {
     @RefreshScope
     @ConditionalOnMissingBean(name = "wsFederationRequestBuilder")
     public WsFederationRequestBuilder wsFederationRequestBuilder() {
-        return new WsFederationRequestBuilder(wsFederationConfigurations, wsFederationHelper.getIfAvailable());
+        return new WsFederationRequestBuilder(wsFederationConfigurations, wsFederationHelper.getObject());
     }
 
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "wsFederationResponseValidator")
     public WsFederationResponseValidator wsFederationResponseValidator() {
-        return new WsFederationResponseValidator(wsFederationHelper.getIfAvailable(),
+        return new WsFederationResponseValidator(wsFederationHelper.getObject(),
             wsFederationConfigurations,
-            authenticationSystemSupport.getIfAvailable(),
-            wsFederationCookieManager.getIfAvailable());
+            authenticationSystemSupport.getObject(),
+            wsFederationCookieManager.getObject());
     }
 
     @Bean

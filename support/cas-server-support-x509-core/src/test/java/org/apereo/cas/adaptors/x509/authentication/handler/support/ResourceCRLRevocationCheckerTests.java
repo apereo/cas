@@ -32,7 +32,7 @@ public class ResourceCRLRevocationCheckerTests extends BaseCRLRevocationCheckerT
     @MethodSource("getTestParameters")
     public void checkCertificate(final ResourceCRLRevocationChecker checker, final String[] certFiles, final GeneralSecurityException expected) {
         checker.init();
-        super.checkCertificate(checker, certFiles, expected);
+        BaseCRLRevocationCheckerTests.checkCertificate(checker, certFiles, expected);
     }
 
     /**

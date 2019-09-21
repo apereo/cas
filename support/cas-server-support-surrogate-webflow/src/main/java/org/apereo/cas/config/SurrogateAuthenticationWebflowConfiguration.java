@@ -95,35 +95,35 @@ public class SurrogateAuthenticationWebflowConfiguration implements Initializing
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer surrogateWebflowConfigurer() {
-        return new SurrogateWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry.getIfAvailable(), applicationContext, casProperties);
+        return new SurrogateWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry.getObject(), applicationContext, casProperties);
     }
 
     @ConditionalOnMissingBean(name = "selectSurrogateAction")
     @Bean
     public Action selectSurrogateAction() {
-        return new SurrogateSelectionAction(surrogatePrincipalBuilder.getIfAvailable());
+        return new SurrogateSelectionAction(surrogatePrincipalBuilder.getObject());
     }
 
     @Bean
     public Action authenticationViaFormAction() {
-        return new SurrogateInitialAuthenticationAction(initialAuthenticationAttemptWebflowEventResolver.getIfAvailable(),
-            serviceTicketRequestWebflowEventResolver.getIfAvailable(),
-            adaptiveAuthenticationPolicy.getIfAvailable(),
+        return new SurrogateInitialAuthenticationAction(initialAuthenticationAttemptWebflowEventResolver.getObject(),
+            serviceTicketRequestWebflowEventResolver.getObject(),
+            adaptiveAuthenticationPolicy.getObject(),
             casProperties.getAuthn().getSurrogate().getSeparator());
     }
 
     @ConditionalOnMissingBean(name = "surrogateAuthorizationCheck")
     @Bean
     public Action surrogateAuthorizationCheck() {
-        return new SurrogateAuthorizationAction(servicesManager.getIfAvailable(),
-            registeredServiceAccessStrategyEnforcer.getIfAvailable());
+        return new SurrogateAuthorizationAction(servicesManager.getObject(),
+            registeredServiceAccessStrategyEnforcer.getObject());
     }
 
     @ConditionalOnMissingBean(name = "loadSurrogatesListAction")
     @Bean
     public Action loadSurrogatesListAction() {
-        return new LoadSurrogatesListAction(surrogateAuthenticationService.getIfAvailable(),
-            surrogatePrincipalBuilder.getIfAvailable());
+        return new LoadSurrogatesListAction(surrogateAuthenticationService.getObject(),
+            surrogatePrincipalBuilder.getObject());
     }
 
     @Override

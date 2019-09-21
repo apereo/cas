@@ -65,7 +65,7 @@ public class CRLDistributionPointRevocationCheckerTests extends BaseCRLRevocatio
         LOGGER.debug("Web server listening on port 8085 serving file [{}]", crlFile);
         Thread.sleep(500);
 
-        super.checkCertificate(checker, certFiles, expected);
+        BaseCRLRevocationCheckerTests.checkCertificate(checker, certFiles, expected);
     }
 
     /**

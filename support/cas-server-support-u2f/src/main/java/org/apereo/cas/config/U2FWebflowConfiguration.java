@@ -117,46 +117,46 @@ public class U2FWebflowConfiguration {
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer u2fMultifactorWebflowConfigurer() {
         return new U2FMultifactorWebflowConfigurer(flowBuilderServices,
-            loginFlowDefinitionRegistry.getIfAvailable(), u2fFlowRegistry(), applicationContext, casProperties);
+            loginFlowDefinitionRegistry.getObject(), u2fFlowRegistry(), applicationContext, casProperties);
     }
 
     @ConditionalOnMissingBean(name = "u2fStartAuthenticationAction")
     @Bean
     public Action u2fStartAuthenticationAction() {
-        return new U2FStartAuthenticationAction(casProperties.getServer().getName(), u2fDeviceRepository.getIfAvailable());
+        return new U2FStartAuthenticationAction(casProperties.getServer().getName(), u2fDeviceRepository.getObject());
     }
 
     @ConditionalOnMissingBean(name = "u2fStartRegistrationAction")
     @Bean
     public Action u2fStartRegistrationAction() {
-        return new U2FStartRegistrationAction(casProperties.getServer().getName(), u2fDeviceRepository.getIfAvailable());
+        return new U2FStartRegistrationAction(casProperties.getServer().getName(), u2fDeviceRepository.getObject());
     }
 
     @ConditionalOnMissingBean(name = "u2fCheckAccountRegistrationAction")
     @Bean
     public Action u2fCheckAccountRegistrationAction() {
-        return new U2FAccountCheckRegistrationAction(u2fDeviceRepository.getIfAvailable());
+        return new U2FAccountCheckRegistrationAction(u2fDeviceRepository.getObject());
     }
 
     @ConditionalOnMissingBean(name = "u2fSaveAccountRegistrationAction")
     @Bean
     public Action u2fSaveAccountRegistrationAction() {
-        return new U2FAccountSaveRegistrationAction(u2fDeviceRepository.getIfAvailable());
+        return new U2FAccountSaveRegistrationAction(u2fDeviceRepository.getObject());
     }
 
     @ConditionalOnMissingBean(name = "u2fAuthenticationWebflowEventResolver")
     @Bean
     public CasWebflowEventResolver u2fAuthenticationWebflowEventResolver() {
         val context = CasWebflowEventResolutionConfigurationContext.builder()
-            .authenticationSystemSupport(authenticationSystemSupport.getIfAvailable())
-            .centralAuthenticationService(centralAuthenticationService.getIfAvailable())
-            .servicesManager(servicesManager.getIfAvailable())
-            .ticketRegistrySupport(ticketRegistrySupport.getIfAvailable())
-            .warnCookieGenerator(warnCookieGenerator.getIfAvailable())
-            .authenticationRequestServiceSelectionStrategies(authenticationRequestServiceSelectionStrategies.getIfAvailable())
-            .registeredServiceAccessStrategyEnforcer(registeredServiceAccessStrategyEnforcer.getIfAvailable())
+            .authenticationSystemSupport(authenticationSystemSupport.getObject())
+            .centralAuthenticationService(centralAuthenticationService.getObject())
+            .servicesManager(servicesManager.getObject())
+            .ticketRegistrySupport(ticketRegistrySupport.getObject())
+            .warnCookieGenerator(warnCookieGenerator.getObject())
+            .authenticationRequestServiceSelectionStrategies(authenticationRequestServiceSelectionStrategies.getObject())
+            .registeredServiceAccessStrategyEnforcer(registeredServiceAccessStrategyEnforcer.getObject())
             .casProperties(casProperties)
-            .ticketRegistry(ticketRegistry.getIfAvailable())
+            .ticketRegistry(ticketRegistry.getObject())
             .eventPublisher(applicationContext)
             .applicationContext(applicationContext)
             .build();

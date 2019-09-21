@@ -89,8 +89,8 @@ public class TokenCoreConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "tokenTicketBuilder")
     public TokenTicketBuilder tokenTicketBuilder() {
-        return new JwtTokenTicketBuilder(casClientTicketValidator.getIfAvailable(),
-            grantingTicketExpirationPolicy.getIfAvailable(),
+        return new JwtTokenTicketBuilder(casClientTicketValidator.getObject(),
+            grantingTicketExpirationPolicy.getObject(),
             tokenTicketJwtBuilder());
     }
 
@@ -101,13 +101,13 @@ public class TokenCoreConfiguration {
         return new JwtBuilder(
             casProperties.getServer().getPrefix(),
             tokenCipherExecutor(),
-            servicesManager.getIfAvailable(),
+            servicesManager.getObject(),
             new RegisteredServiceJwtTicketCipherExecutor());
     }
 
     @Bean
     @ConditionalOnAvailableEndpoint
     public JwtTokenCipherSigningPublicKeyEndpoint jwtTokenCipherSigningPublicKeyEndpoint() {
-        return new JwtTokenCipherSigningPublicKeyEndpoint(casProperties, tokenCipherExecutor(), this.servicesManager.getIfAvailable());
+        return new JwtTokenCipherSigningPublicKeyEndpoint(casProperties, tokenCipherExecutor(), this.servicesManager.getObject());
     }
 }
