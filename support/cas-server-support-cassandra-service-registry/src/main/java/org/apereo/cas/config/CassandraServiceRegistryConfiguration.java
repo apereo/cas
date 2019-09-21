@@ -16,7 +16,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -35,7 +35,7 @@ public class CassandraServiceRegistryConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Autowired
-    private ApplicationEventPublisher eventPublisher;
+    private ConfigurableApplicationContext applicationContext;
 
     @Autowired
     @Qualifier("serviceRegistryListeners")
@@ -46,7 +46,7 @@ public class CassandraServiceRegistryConfiguration {
     public ServiceRegistry cassandraServiceRegistry() {
         val cassandra = casProperties.getServiceRegistry().getCassandra();
         return new CassandraServiceRegistry(cassandraServiceRegistrySessionFactory(), cassandra,
-            eventPublisher, serviceRegistryListeners.getIfAvailable());
+            applicationContext, serviceRegistryListeners.getIfAvailable());
     }
 
     @Bean

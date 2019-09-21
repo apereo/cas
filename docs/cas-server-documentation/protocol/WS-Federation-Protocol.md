@@ -168,7 +168,7 @@ as a dynamic attribute whose value is determined by the inline Groovy script att
   "name" : "sample",
   "id" : 300,
   "attributeReleasePolicy" : {
-    "@class" : "org.apereo.cas.services.ReturnMappedAttributeReleasePolicy",
+    "@class" : "org.apereo.cas.ws.idp.services.WSFederationClaimsReleasePolicy",
     "allowedAttributes" : {
       "@class" : "java.util.TreeMap",
       "EMAIL_ADDRESS_2005" : "groovy { return attributes['cn'].get(0) + '@example.org' }"
@@ -189,7 +189,7 @@ as a dynamic attribute whose value is determined by the Groovy script attribute 
   "name" : "sample",
   "id" : 300,
   "attributeReleasePolicy" : {
-    "@class" : "org.apereo.cas.services.ReturnMappedAttributeReleasePolicy",
+    "@class" : "org.apereo.cas.ws.idp.services.WSFederationClaimsReleasePolicy",
     "allowedAttributes" : {
       "@class" : "java.util.TreeMap",
       "EMAIL_ADDRESS_2005" : "file:/path/to/script.groovy"

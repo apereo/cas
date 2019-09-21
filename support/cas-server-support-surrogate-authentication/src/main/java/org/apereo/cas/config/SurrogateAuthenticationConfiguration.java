@@ -34,7 +34,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
@@ -60,7 +60,7 @@ public class SurrogateAuthenticationConfiguration {
     private ObjectProvider<IPersonAttributeDao> attributeRepository;
 
     @Autowired
-    private ApplicationEventPublisher eventPublisher;
+    private ConfigurableApplicationContext applicationContext;
 
     @Autowired
     @Qualifier("servicesManager")
@@ -120,7 +120,7 @@ public class SurrogateAuthenticationConfiguration {
         return new SurrogateAuthenticationPostProcessor(
             surrogateAuthenticationService(),
             servicesManager.getIfAvailable(),
-            eventPublisher,
+            applicationContext,
             registeredServiceAccessStrategyEnforcer.getIfAvailable(),
             surrogateEligibilityAuditableExecution.getIfAvailable());
     }

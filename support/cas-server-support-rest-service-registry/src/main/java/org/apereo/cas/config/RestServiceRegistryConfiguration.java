@@ -18,7 +18,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
@@ -40,7 +40,7 @@ public class RestServiceRegistryConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Autowired
-    private ApplicationEventPublisher eventPublisher;
+    private ConfigurableApplicationContext applicationContext;
 
     @Autowired
     @Qualifier("serviceRegistryListeners")
@@ -63,7 +63,7 @@ public class RestServiceRegistryConfiguration {
         headers.add("Content-Type", MediaType.APPLICATION_JSON_VALUE);
         headers.add("Accept", MediaType.APPLICATION_JSON_VALUE);
 
-        return new RestfulServiceRegistry(eventPublisher, restTemplate, registry.getUrl(), headers, serviceRegistryListeners.getIfAvailable());
+        return new RestfulServiceRegistry(applicationContext, restTemplate, registry.getUrl(), headers, serviceRegistryListeners.getIfAvailable());
     }
 
     @Bean

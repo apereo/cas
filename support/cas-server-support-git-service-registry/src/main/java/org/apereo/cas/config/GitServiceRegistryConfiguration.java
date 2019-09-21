@@ -19,7 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -35,7 +35,7 @@ import java.util.Collection;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class GitServiceRegistryConfiguration {
     @Autowired
-    private ApplicationEventPublisher eventPublisher;
+    private ConfigurableApplicationContext applicationContext;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -63,7 +63,7 @@ public class GitServiceRegistryConfiguration {
     @Bean
     public ServiceRegistry gitServiceRegistry() {
         val registry = casProperties.getServiceRegistry().getGit();
-        return new GitServiceRegistry(eventPublisher,
+        return new GitServiceRegistry(applicationContext,
             gitRepositoryInstance(),
             CollectionUtils.wrapList(
                 new RegisteredServiceJsonSerializer(),

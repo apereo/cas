@@ -9,6 +9,7 @@ import org.apereo.cas.ticket.DefaultTicketCatalog;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.ServiceTicketFactory;
+import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketCatalogConfigurer;
 import org.apereo.cas.ticket.TicketFactory;
@@ -115,11 +116,7 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
     @Autowired
     @Qualifier("uniqueIdGeneratorsMap")
     private ObjectProvider<Map<String, UniqueTicketIdGenerator>> uniqueIdGeneratorsMap;
-
-    @Autowired
-    @Qualifier("ticketRegistry")
-    private ObjectProvider<TicketRegistry> ticketRegistry;
-
+    
     @Autowired
     @Qualifier("supportsTrustStoreSslSocketFactoryHttpClient")
     private ObjectProvider<HttpClient> httpClient;
@@ -282,13 +279,14 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
             val logoutManager = applicationContext.getBean("logoutManager", LogoutManager.class);
             return new CachingTicketRegistry(cipher, logoutManager);
         }
-        return new DefaultTicketRegistry(new ConcurrentHashMap<>(mem.getInitialCapacity(), mem.getLoadFactor(), mem.getConcurrency()), cipher);
+        val storageMap = new ConcurrentHashMap<String, Ticket>(mem.getInitialCapacity(), mem.getLoadFactor(), mem.getConcurrency());
+        return new DefaultTicketRegistry(storageMap, cipher);
     }
 
     @ConditionalOnMissingBean(name = "defaultTicketRegistrySupport")
     @Bean
     public TicketRegistrySupport defaultTicketRegistrySupport() {
-        return new DefaultTicketRegistrySupport(ticketRegistry.getIfAvailable());
+        return new DefaultTicketRegistrySupport(ticketRegistry());
     }
 
     @ConditionalOnMissingBean(name = "grantingTicketExpirationPolicy")
