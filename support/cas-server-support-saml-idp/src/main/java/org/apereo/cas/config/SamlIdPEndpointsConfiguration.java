@@ -51,7 +51,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
@@ -68,7 +68,7 @@ import org.springframework.http.HttpMethod;
 @Slf4j
 public class SamlIdPEndpointsConfiguration {
     @Autowired
-    private ApplicationEventPublisher eventPublisher;
+    private ConfigurableApplicationContext applicationContext;
 
     @Autowired
     @Qualifier("casClientTicketValidator")
@@ -325,7 +325,7 @@ public class SamlIdPEndpointsConfiguration {
                 service.setName(service.getClass().getSimpleName());
                 service.setDescription("SAML Authentication Request Callback");
                 service.setServiceId(callbackService);
-                plan.registerServiceRegistry(new SamlIdPServiceRegistry(eventPublisher, service));
+                plan.registerServiceRegistry(new SamlIdPServiceRegistry(applicationContext, service));
             }
         };
     }

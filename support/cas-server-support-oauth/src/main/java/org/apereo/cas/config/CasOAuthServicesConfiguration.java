@@ -18,7 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
@@ -34,7 +34,7 @@ import org.springframework.core.Ordered;
 @Slf4j
 public class CasOAuthServicesConfiguration {
     @Autowired
-    private ApplicationEventPublisher eventPublisher;
+    private ConfigurableApplicationContext applicationContext;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -63,7 +63,7 @@ public class CasOAuthServicesConfiguration {
                 service.setDescription("OAuth Authentication Callback Request URL");
                 service.setServiceId(oauthCallbackService().getId());
                 service.setAttributeReleasePolicy(new DenyAllAttributeReleasePolicy());
-                plan.registerServiceRegistry(new OAuth20ServiceRegistry(eventPublisher, service));
+                plan.registerServiceRegistry(new OAuth20ServiceRegistry(applicationContext, service));
             }
         };
     }

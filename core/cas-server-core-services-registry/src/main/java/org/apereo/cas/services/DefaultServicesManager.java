@@ -14,7 +14,7 @@ import java.util.concurrent.ConcurrentSkipListSet;
  */
 public class DefaultServicesManager extends AbstractServicesManager {
 
-    private Set<RegisteredService> orderedServices = new ConcurrentSkipListSet<>();
+    private final Set<RegisteredService> orderedServices = new ConcurrentSkipListSet<>();
 
     public DefaultServicesManager(final ServiceRegistry serviceRegistry, final ApplicationEventPublisher eventPublisher, final Set<String> environments) {
         super(serviceRegistry, eventPublisher, environments);
@@ -32,11 +32,13 @@ public class DefaultServicesManager extends AbstractServicesManager {
 
     @Override
     protected void saveInternal(final RegisteredService service) {
-        this.orderedServices = new ConcurrentSkipListSet<>(getAllServices());
+        this.orderedServices.clear();
+        this.orderedServices.addAll(getAllServices());
     }
 
     @Override
     protected void loadInternal() {
-        this.orderedServices = new ConcurrentSkipListSet<>(getAllServices());
+        this.orderedServices.clear();
+        this.orderedServices.addAll(getAllServices());
     }
 }

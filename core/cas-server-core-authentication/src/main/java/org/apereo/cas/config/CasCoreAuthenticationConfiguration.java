@@ -19,7 +19,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
@@ -40,7 +40,7 @@ import java.util.List;
 public class CasCoreAuthenticationConfiguration {
 
     @Autowired
-    private ApplicationEventPublisher applicationEventPublisher;
+    private ConfigurableApplicationContext applicationContext;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -51,7 +51,7 @@ public class CasCoreAuthenticationConfiguration {
 
     @Bean
     public AuthenticationTransactionManager authenticationTransactionManager() {
-        return new DefaultAuthenticationTransactionManager(applicationEventPublisher, casAuthenticationManager());
+        return new DefaultAuthenticationTransactionManager(applicationContext, casAuthenticationManager());
     }
 
     @ConditionalOnMissingBean(name = "casAuthenticationManager")
@@ -60,7 +60,7 @@ public class CasCoreAuthenticationConfiguration {
         return new PolicyBasedAuthenticationManager(
             authenticationEventExecutionPlan.getIfAvailable(),
             casProperties.getPersonDirectory().isPrincipalResolutionFailureFatal(),
-            applicationEventPublisher
+            applicationContext
         );
     }
 

@@ -18,7 +18,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -38,7 +38,7 @@ public class YamlServiceRegistryConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Autowired
-    private ApplicationEventPublisher eventPublisher;
+    private ConfigurableApplicationContext applicationContext;
 
     @Autowired
     @Qualifier("registeredServiceReplicationStrategy")
@@ -58,7 +58,8 @@ public class YamlServiceRegistryConfiguration {
     public ServiceRegistry yamlServiceRegistry() {
         val registry = casProperties.getServiceRegistry();
         return new YamlServiceRegistry(registry.getYaml().getLocation(),
-            registry.isWatcherEnabled(), eventPublisher,
+            registry.isWatcherEnabled(),
+            applicationContext,
             registeredServiceReplicationStrategy.getIfAvailable(),
             resourceNamingStrategy.getIfAvailable(),
             serviceRegistryListeners.getIfAvailable());

@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -31,10 +31,10 @@ import java.util.Collection;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class MongoDbServiceRegistryConfiguration {
     @Autowired
-    private ApplicationEventPublisher eventPublisher;
+    private CasConfigurationProperties casProperties;
 
     @Autowired
-    private CasConfigurationProperties casProperties;
+    private ConfigurableApplicationContext applicationContext;
 
     @Autowired
     @Qualifier("serviceRegistryListeners")
@@ -55,7 +55,7 @@ public class MongoDbServiceRegistryConfiguration {
     public ServiceRegistry mongoDbServiceRegistry() {
         val mongo = casProperties.getServiceRegistry().getMongo();
         return new MongoDbServiceRegistry(
-            eventPublisher,
+            applicationContext,
             mongoDbServiceRegistryTemplate(),
             mongo.getCollection(),
             serviceRegistryListeners.getIfAvailable());

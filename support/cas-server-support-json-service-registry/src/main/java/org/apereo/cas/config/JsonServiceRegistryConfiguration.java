@@ -18,7 +18,7 @@ import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
@@ -38,7 +38,7 @@ import java.util.Collection;
 public class JsonServiceRegistryConfiguration {
 
     @Autowired
-    private ApplicationEventPublisher eventPublisher;
+    private ConfigurableApplicationContext applicationContext;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -60,7 +60,7 @@ public class JsonServiceRegistryConfiguration {
     public ServiceRegistry jsonServiceRegistry() {
         val registry = casProperties.getServiceRegistry();
         return new JsonServiceRegistry(registry.getJson().getLocation(),
-            registry.isWatcherEnabled(), eventPublisher,
+            registry.isWatcherEnabled(), applicationContext,
             registeredServiceReplicationStrategy.getIfAvailable(),
             resourceNamingStrategy.getIfAvailable(),
             serviceRegistryListeners.getIfAvailable());

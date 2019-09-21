@@ -28,7 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -52,7 +52,7 @@ public class CasCoreConfiguration {
     private ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer;
 
     @Autowired
-    private ApplicationEventPublisher applicationEventPublisher;
+    private ConfigurableApplicationContext applicationContext;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -116,7 +116,7 @@ public class CasCoreConfiguration {
     @ConditionalOnMissingBean(name = "centralAuthenticationService")
     public CentralAuthenticationService centralAuthenticationService(
         @Qualifier("authenticationServiceSelectionPlan") final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan) {
-        return new DefaultCentralAuthenticationService(applicationEventPublisher,
+        return new DefaultCentralAuthenticationService(applicationContext,
             ticketRegistry.getIfAvailable(),
             servicesManager.getIfAvailable(),
             logoutManager.getIfAvailable(),

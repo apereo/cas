@@ -182,7 +182,7 @@ public abstract class AbstractServicesManager implements ServicesManager {
         this.services = this.serviceRegistry.load()
             .stream()
             .collect(Collectors.toConcurrentMap(r -> {
-                LOGGER.debug("Adding registered service [{}]", r.getServiceId());
+                LOGGER.debug("Adding registered service [{}] with name [{}] and internal identifier [{}]", r.getServiceId(), r.getName(), r.getId());
                 return r.getId();
             }, Function.identity(), (r, s) -> s));
         loadInternal();
@@ -202,7 +202,7 @@ public abstract class AbstractServicesManager implements ServicesManager {
     private void evaluateExpiredServiceDefinitions() {
         this.services.values()
             .stream()
-            .filter(getRegisteredServicesFilteringPredicate().negate())
+            .filter(RegisteredServiceAccessStrategyUtils.getRegisteredServiceExpirationPolicyPredicate().negate())
             .filter(Objects::nonNull)
             .forEach(this::processExpiredRegisteredService);
     }

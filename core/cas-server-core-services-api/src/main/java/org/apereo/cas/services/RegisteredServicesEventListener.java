@@ -54,7 +54,7 @@ public class RegisteredServicesEventListener {
         } else {
             LOGGER.info("Sending notification to [{}] as registered service [{}] is expired in service registry", contacts, serviceName);
         }
-        
+
         communicationsManager.validate();
         if (communicationsManager.isMailSenderDefined()) {
             val message = mail.getFormattedBody(serviceName);
@@ -70,7 +70,5 @@ public class RegisteredServicesEventListener {
                 .filter(c -> StringUtils.isNotBlank(c.getPhone()))
                 .forEach(c -> communicationsManager.sms(sms.getFrom(), c.getPhone(), message));
         }
-
-        servicesManager.load();
     }
 }

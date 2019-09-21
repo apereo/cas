@@ -38,7 +38,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
@@ -59,7 +59,7 @@ import java.util.HashSet;
 public class CoreWsSecurityIdentityProviderConfiguration implements AuthenticationServiceSelectionStrategyConfigurer {
 
     @Autowired
-    private ApplicationEventPublisher eventPublisher;
+    private ConfigurableApplicationContext applicationContext;
 
     @Autowired
     @Qualifier("casClientTicketValidator")
@@ -166,7 +166,7 @@ public class CoreWsSecurityIdentityProviderConfiguration implements Authenticati
                 service.setDescription("WS-Federation Authentication Request");
                 service.setServiceId(callbackService.getId().concat(".+"));
                 LOGGER.debug("Saving callback service [{}] into the registry", service);
-                plan.registerServiceRegistry(new WSFederationServiceRegistry(eventPublisher, service));
+                plan.registerServiceRegistry(new WSFederationServiceRegistry(applicationContext, service));
             }
         };
     }

@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -29,7 +29,7 @@ import org.springframework.context.annotation.Profile;
 public class CasCoreBootstrapStandaloneWatchConfiguration {
 
     @Autowired
-    private ApplicationEventPublisher eventPublisher;
+    private ConfigurableApplicationContext applicationContext;
 
     @Autowired
     @Qualifier("configurationPropertiesEnvironmentManager")
@@ -38,6 +38,6 @@ public class CasCoreBootstrapStandaloneWatchConfiguration {
     @ConditionalOnProperty(value = "cas.events.trackConfigurationModifications", havingValue = "true")
     @Bean
     public CasConfigurationWatchService casConfigurationWatchService() {
-        return new CasConfigurationWatchService(configurationPropertiesEnvironmentManager.getIfAvailable(), eventPublisher);
+        return new CasConfigurationWatchService(configurationPropertiesEnvironmentManager.getIfAvailable(), applicationContext);
     }
 }

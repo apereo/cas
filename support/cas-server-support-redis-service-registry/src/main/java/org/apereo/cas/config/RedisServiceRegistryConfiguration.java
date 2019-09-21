@@ -15,7 +15,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -37,7 +37,7 @@ public class RedisServiceRegistryConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Autowired
-    private ApplicationEventPublisher eventPublisher;
+    private ConfigurableApplicationContext applicationContext;
 
     @Autowired
     @Qualifier("serviceRegistryListeners")
@@ -59,7 +59,7 @@ public class RedisServiceRegistryConfiguration {
     @Bean
     @RefreshScope
     public ServiceRegistry redisServiceRegistry() {
-        return new RedisServiceRegistry(eventPublisher, registeredServiceRedisTemplate(), serviceRegistryListeners.getIfAvailable());
+        return new RedisServiceRegistry(applicationContext, registeredServiceRedisTemplate(), serviceRegistryListeners.getIfAvailable());
     }
 
     @Bean
