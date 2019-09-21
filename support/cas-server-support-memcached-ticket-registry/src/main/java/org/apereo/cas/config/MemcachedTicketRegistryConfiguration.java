@@ -55,6 +55,7 @@ public class MemcachedTicketRegistryConfiguration {
     }
 
     @Bean
+    @RefreshScope
     public TicketRegistry ticketRegistry() {
         val memcached = casProperties.getTicket().getRegistry().getMemcached();
         val factory = new MemcachedPooledClientConnectionFactory(memcached, memcachedTicketRegistryTranscoder());

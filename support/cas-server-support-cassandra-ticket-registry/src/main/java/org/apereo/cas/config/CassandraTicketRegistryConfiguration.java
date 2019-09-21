@@ -39,6 +39,7 @@ public class CassandraTicketRegistryConfiguration {
 
     @Autowired
     @Bean
+    @RefreshScope
     public TicketRegistry ticketRegistry(@Qualifier("ticketCatalog") final TicketCatalog ticketCatalog) {
         val cassandra = casProperties.getTicket().getRegistry().getCassandra();
         val sessionFactory = cassandraTicketRegistrySessionFactory();
