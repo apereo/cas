@@ -57,6 +57,8 @@ import org.springframework.context.event.EventListener;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.core.env.Environment;
 import org.springframework.http.converter.AbstractHttpMessageConverter;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.EnableAsync;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -74,6 +76,7 @@ import java.util.stream.Collectors;
 @Configuration("casCoreServicesConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
+@EnableAsync
 public class CasCoreServicesConfiguration {
     @Autowired
     @Qualifier("communicationsManager")
@@ -233,6 +236,7 @@ public class CasCoreServicesConfiguration {
      * @param event the event
      */
     @EventListener
+    @Async
     public void refreshServicesManagerWhenReady(final ApplicationReadyEvent event) {
         servicesManager().load();
     }

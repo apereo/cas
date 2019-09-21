@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Async;
 
 /**
  * This is {@link SurrogateAuthenticationEventListener}.
@@ -32,6 +33,7 @@ public class SurrogateAuthenticationEventListener {
      * @param event the event
      */
     @EventListener
+    @Async
     public void handleSurrogateAuthenticationFailureEvent(final CasSurrogateAuthenticationFailureEvent event) {
         notify(event.getPrincipal(), event);
     }
@@ -42,6 +44,7 @@ public class SurrogateAuthenticationEventListener {
      * @param event the event
      */
     @EventListener
+    @Async
     public void handleSurrogateAuthenticationSuccessEvent(final CasSurrogateAuthenticationSuccessfulEvent event) {
         notify(event.getPrincipal(), event);
     }

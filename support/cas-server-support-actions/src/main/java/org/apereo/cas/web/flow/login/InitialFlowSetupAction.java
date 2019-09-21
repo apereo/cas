@@ -147,7 +147,6 @@ public class InitialFlowSetupAction extends AbstractAction {
         WebUtils.putWarningCookie(context, Boolean.valueOf(this.warnCookieGenerator.retrieveCookieValue(request)));
 
         WebUtils.putGeoLocationTrackingIntoFlowScope(context, casProperties.getEvents().isTrackGeolocation());
-        WebUtils.putPasswordManagementEnabled(context, casProperties.getAuthn().getPm().isEnabled());
         WebUtils.putRememberMeAuthenticationEnabled(context, casProperties.getTicket().getTgt().getRememberMe().isEnabled());
         WebUtils.putStaticAuthenticationIntoFlowScope(context,
             StringUtils.isNotBlank(casProperties.getAuthn().getAccept().getUsers())
