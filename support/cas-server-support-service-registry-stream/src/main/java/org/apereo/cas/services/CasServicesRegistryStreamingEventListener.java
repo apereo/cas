@@ -8,6 +8,7 @@ import org.apereo.cas.support.events.service.CasRegisteredServiceSavedEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Async;
 
 /**
  * This is {@link CasServicesRegistryStreamingEventListener}.
@@ -26,6 +27,7 @@ public class CasServicesRegistryStreamingEventListener {
      * @param event the event
      */
     @EventListener
+    @Async
     public void handleCasRegisteredServiceLoadedEvent(final CasRegisteredServiceLoadedEvent event) {
         LOGGER.trace("Received event [{}]", event);
         this.publisher.publish(event.getRegisteredService(), event);
@@ -37,6 +39,7 @@ public class CasServicesRegistryStreamingEventListener {
      * @param event the event
      */
     @EventListener
+    @Async
     public void handleCasRegisteredServiceSavedEvent(final CasRegisteredServiceSavedEvent event) {
         LOGGER.trace("Received event [{}]", event);
         this.publisher.publish(event.getRegisteredService(), event);
@@ -48,6 +51,7 @@ public class CasServicesRegistryStreamingEventListener {
      * @param event the event
      */
     @EventListener
+    @Async
     public void handleCasRegisteredServiceDeletedEvent(final CasRegisteredServiceDeletedEvent event) {
         LOGGER.trace("Received event [{}]", event);
         this.publisher.publish(event.getRegisteredService(), event);

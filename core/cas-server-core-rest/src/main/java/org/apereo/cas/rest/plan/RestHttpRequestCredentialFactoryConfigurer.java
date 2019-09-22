@@ -8,6 +8,7 @@ import org.apereo.cas.rest.factory.ChainingRestHttpRequestCredentialFactory;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@FunctionalInterface
 public interface RestHttpRequestCredentialFactoryConfigurer {
 
     /**
@@ -15,6 +16,5 @@ public interface RestHttpRequestCredentialFactoryConfigurer {
      *
      * @param factory the factory
      */
-    default void configureCredentialFactory(final ChainingRestHttpRequestCredentialFactory factory) {
-    }
+    void configureCredentialFactory(ChainingRestHttpRequestCredentialFactory factory);
 }

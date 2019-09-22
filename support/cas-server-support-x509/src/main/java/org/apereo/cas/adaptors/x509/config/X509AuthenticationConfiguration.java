@@ -173,7 +173,7 @@ public class X509AuthenticationConfiguration {
 
         return new X509CredentialsAuthenticationHandler(
             x509.getName(),
-            servicesManager.getIfAvailable(),
+            servicesManager.getObject(),
             x509PrincipalFactory(),
             trustedIssuerDnPattern,
             x509.getMaxPathLength(),
@@ -194,7 +194,7 @@ public class X509AuthenticationConfiguration {
         val principal = x509.getPrincipal();
         val principalAttribute = StringUtils.defaultIfBlank(principal.getPrincipalAttribute(), personDirectory.getPrincipalAttribute());
         return new X509SubjectPrincipalResolver(
-            attributeRepository.getIfAvailable(),
+            attributeRepository.getObject(),
             x509PrincipalFactory(),
             principal.isReturnNull() || personDirectory.isReturnNull(),
             principalAttribute,
@@ -213,7 +213,7 @@ public class X509AuthenticationConfiguration {
         val principal = x509.getPrincipal();
         val principalAttribute = StringUtils.defaultIfBlank(principal.getPrincipalAttribute(), personDirectory.getPrincipalAttribute());
         return new X509SubjectDNPrincipalResolver(
-            attributeRepository.getIfAvailable(),
+            attributeRepository.getObject(),
             x509PrincipalFactory(),
             principal.isReturnNull() || personDirectory.isReturnNull(),
             principalAttribute,
@@ -232,7 +232,7 @@ public class X509AuthenticationConfiguration {
         val principal = x509.getPrincipal();
         val principalAttribute = StringUtils.defaultIfBlank(principal.getPrincipalAttribute(), personDirectory.getPrincipalAttribute());
         return new X509SubjectAlternativeNameUPNPrincipalResolver(
-            attributeRepository.getIfAvailable(),
+            attributeRepository.getObject(),
             x509PrincipalFactory(),
             principal.isReturnNull() || personDirectory.isReturnNull(),
             principalAttribute,
@@ -252,7 +252,7 @@ public class X509AuthenticationConfiguration {
         val principal = x509.getPrincipal();
         val principalAttribute = StringUtils.defaultIfBlank(principal.getPrincipalAttribute(), personDirectory.getPrincipalAttribute());
         return new X509SubjectAlternativeNameRFC822EmailPrincipalResolver(
-            attributeRepository.getIfAvailable(),
+            attributeRepository.getObject(),
             x509PrincipalFactory(),
             principal.isReturnNull() || personDirectory.isReturnNull(),
             principalAttribute,
@@ -286,7 +286,7 @@ public class X509AuthenticationConfiguration {
         val personDirectory = casProperties.getPersonDirectory();
         val principalAttribute = StringUtils.defaultIfBlank(principal.getPrincipalAttribute(), personDirectory.getPrincipalAttribute());
 
-        return new X509SerialNumberAndIssuerDNPrincipalResolver(attributeRepository.getIfAvailable(),
+        return new X509SerialNumberAndIssuerDNPrincipalResolver(attributeRepository.getObject(),
             x509PrincipalFactory(),
             principal.isReturnNull() || personDirectory.isReturnNull(),
             principalAttribute,
@@ -306,7 +306,7 @@ public class X509AuthenticationConfiguration {
         val principal = x509.getPrincipal();
         val personDirectory = casProperties.getPersonDirectory();
         val principalAttribute = StringUtils.defaultIfBlank(principal.getPrincipalAttribute(), personDirectory.getPrincipalAttribute());
-        return new X509CommonNameEDIPIPrincipalResolver(attributeRepository.getIfAvailable(),
+        return new X509CommonNameEDIPIPrincipalResolver(attributeRepository.getObject(),
             x509PrincipalFactory(),
             principal.isReturnNull() || personDirectory.isReturnNull(),
             principalAttribute,
@@ -361,7 +361,7 @@ public class X509AuthenticationConfiguration {
         if (Character.MIN_RADIX <= radix && radix <= Character.MAX_RADIX) {
             if (radix == HEX) {
                 return new X509SerialNumberPrincipalResolver(
-                    attributeRepository.getIfAvailable(),
+                    attributeRepository.getObject(),
                     x509PrincipalFactory(),
                     principal.isReturnNull() || personDirectory.isReturnNull(),
                     principalAttribute,
@@ -371,7 +371,7 @@ public class X509AuthenticationConfiguration {
                     org.springframework.util.StringUtils.commaDelimitedListToSet(principal.getActiveAttributeRepositoryIds()));
             }
             return new X509SerialNumberPrincipalResolver(
-                attributeRepository.getIfAvailable(),
+                attributeRepository.getObject(),
                 x509PrincipalFactory(),
                 principal.isReturnNull() || personDirectory.isUseExistingPrincipalId(),
                 principalAttribute,
@@ -381,7 +381,7 @@ public class X509AuthenticationConfiguration {
                 org.springframework.util.StringUtils.commaDelimitedListToSet(principal.getActiveAttributeRepositoryIds()));
         }
         return new X509SerialNumberPrincipalResolver(
-            attributeRepository.getIfAvailable(),
+            attributeRepository.getObject(),
             x509PrincipalFactory(),
             principal.isReturnNull() || personDirectory.isReturnNull(),
             principalAttribute,

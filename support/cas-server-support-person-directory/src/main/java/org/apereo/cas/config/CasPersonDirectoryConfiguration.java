@@ -44,16 +44,19 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
-import org.springframework.core.OrderComparator;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.http.HttpMethod;
 
 import javax.naming.directory.SearchControls;
+
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link CasPersonDirectoryConfiguration}.
@@ -64,7 +67,7 @@ import java.util.concurrent.TimeUnit;
 @Configuration("casPersonDirectoryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-public class CasPersonDirectoryConfiguration implements PersonDirectoryAttributeRepositoryPlanConfigurer {
+public class CasPersonDirectoryConfiguration {
     @Autowired
     private ApplicationContext applicationContext;
 
@@ -73,6 +76,24 @@ public class CasPersonDirectoryConfiguration implements PersonDirectoryAttribute
 
     @Autowired
     private ObjectProvider<List<PersonDirectoryAttributeRepositoryPlanConfigurer>> attributeRepositoryConfigurers;
+
+    private static AbstractJdbcPersonAttributeDao createJdbcPersonAttributeDao(final JdbcPrincipalAttributesProperties jdbc) {
+        if (jdbc.isSingleRow()) {
+            LOGGER.debug("Configured single-row JDBC attribute repository for [{}]", jdbc.getUrl());
+            return new SingleRowJdbcPersonAttributeDao(
+                JpaBeans.newDataSource(jdbc),
+                jdbc.getSql()
+            );
+        }
+        LOGGER.debug("Configured multi-row JDBC attribute repository for [{}]", jdbc.getUrl());
+        val jdbcDao = new MultiRowJdbcPersonAttributeDao(
+            JpaBeans.newDataSource(jdbc),
+            jdbc.getSql()
+        );
+        LOGGER.debug("Configured multi-row JDBC column mappings for [{}] are [{}]", jdbc.getUrl(), jdbc.getColumnMappings());
+        jdbcDao.setNameValueColumnMappings(jdbc.getColumnMappings());
+        return jdbcDao;
+    }
 
     @ConditionalOnMissingBean(name = "attributeRepositories")
     @Bean
@@ -95,7 +116,7 @@ public class CasPersonDirectoryConfiguration implements PersonDirectoryAttribute
         configurers.forEach(c -> c.configureAttributeRepositoryPlan(plan));
         list.addAll(plan.getAttributeRepositories());
 
-        OrderComparator.sort(list);
+        AnnotationAwareOrderComparator.sort(list);
         LOGGER.trace("Final list of attribute repositories is [{}]", list);
         return list;
     }
@@ -221,24 +242,6 @@ public class CasPersonDirectoryConfiguration implements PersonDirectoryAttribute
                 list.add(jdbcDao);
             });
         return list;
-    }
-
-    private static AbstractJdbcPersonAttributeDao createJdbcPersonAttributeDao(final JdbcPrincipalAttributesProperties jdbc) {
-        if (jdbc.isSingleRow()) {
-            LOGGER.debug("Configured single-row JDBC attribute repository for [{}]", jdbc.getUrl());
-            return new SingleRowJdbcPersonAttributeDao(
-                JpaBeans.newDataSource(jdbc),
-                jdbc.getSql()
-            );
-        }
-        LOGGER.debug("Configured multi-row JDBC attribute repository for [{}]", jdbc.getUrl());
-        val jdbcDao = new MultiRowJdbcPersonAttributeDao(
-            JpaBeans.newDataSource(jdbc),
-            jdbc.getSql()
-        );
-        LOGGER.debug("Configured multi-row JDBC column mappings for [{}] are [{}]", jdbc.getUrl(), jdbc.getColumnMappings());
-        jdbcDao.setNameValueColumnMappings(jdbc.getColumnMappings());
-        return jdbcDao;
     }
 
     @ConditionalOnMissingBean(name = "ldapAttributeRepositories")
@@ -376,7 +379,11 @@ public class CasPersonDirectoryConfiguration implements PersonDirectoryAttribute
         if (list.isEmpty()) {
             LOGGER.debug("No attribute repository sources are available/defined to merge together.");
         } else {
-            LOGGER.debug("Configured attribute repository sources to merge together: [{}]", list);
+            val names = list
+                .stream()
+                .map(p -> Arrays.toString(p.getId()))
+                .collect(Collectors.joining(","));
+            LOGGER.debug("Configured attribute repository sources to merge together: [{}]", names);
         }
 
         return mergingDao;

@@ -236,7 +236,7 @@ public class CasSupportActionsConfiguration {
     @RefreshScope
     @Bean
     @Autowired
-    @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_INIT_FLOW_SETUP)
+    @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_INITIAL_FLOW_SETUP)
     public Action initialFlowSetupAction(@Qualifier("argumentExtractor") final ArgumentExtractor argumentExtractor) {
         return new InitialFlowSetupAction(CollectionUtils.wrap(argumentExtractor),
             servicesManager.getIfAvailable(),

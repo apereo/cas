@@ -7,7 +7,6 @@ import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredSer
 import org.apereo.cas.support.saml.web.flow.SamlIdPMetadataUIAction;
 import org.apereo.cas.support.saml.web.flow.SamlIdPMetadataUIWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
-import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 
 import org.springframework.beans.factory.ObjectProvider;
@@ -80,11 +79,6 @@ public class SamlIdPWebflowConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "samlIdPCasWebflowExecutionPlanConfigurer")
     public CasWebflowExecutionPlanConfigurer samlIdPCasWebflowExecutionPlanConfigurer() {
-        return new CasWebflowExecutionPlanConfigurer() {
-            @Override
-            public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-                plan.registerWebflowConfigurer(samlIdPMetadataUIWebConfigurer());
-            }
-        };
+        return plan -> plan.registerWebflowConfigurer(samlIdPMetadataUIWebConfigurer());
     }
 }

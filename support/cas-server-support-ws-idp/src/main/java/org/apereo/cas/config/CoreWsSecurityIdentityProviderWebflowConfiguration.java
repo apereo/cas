@@ -4,7 +4,6 @@ import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
-import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.ws.idp.web.flow.WSFederationMetadataUIAction;
@@ -74,11 +73,6 @@ public class CoreWsSecurityIdentityProviderWebflowConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "wsFederationCasWebflowExecutionPlanConfigurer")
     public CasWebflowExecutionPlanConfigurer wsFederationCasWebflowExecutionPlanConfigurer() {
-        return new CasWebflowExecutionPlanConfigurer() {
-            @Override
-            public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-                plan.registerWebflowConfigurer(wsFederationWebflowConfigurer());
-            }
-        };
+        return plan -> plan.registerWebflowConfigurer(wsFederationWebflowConfigurer());
     }
 }

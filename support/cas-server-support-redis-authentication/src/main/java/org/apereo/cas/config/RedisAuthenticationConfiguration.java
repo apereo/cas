@@ -8,7 +8,6 @@ import org.apereo.cas.authentication.principal.PrincipalNameTransformerUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlan;
 import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlanConfigurer;
 import org.apereo.cas.redis.RedisAuthenticationHandler;
 import org.apereo.cas.redis.RedisPersonAttributeDao;
@@ -112,12 +111,9 @@ public class RedisAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "redisAttributeRepositoryPlanConfigurer")
     @Bean
     public PersonDirectoryAttributeRepositoryPlanConfigurer redisAttributeRepositoryPlanConfigurer() {
-        return new PersonDirectoryAttributeRepositoryPlanConfigurer() {
-            @Override
-            public void configureAttributeRepositoryPlan(final PersonDirectoryAttributeRepositoryPlan plan) {
-                val daos = redisPersonAttributeDaos();
-                daos.forEach(plan::registerAttributeRepository);
-            }
+        return plan -> {
+            val daos = redisPersonAttributeDaos();
+            daos.forEach(plan::registerAttributeRepository);
         };
     }
 }
