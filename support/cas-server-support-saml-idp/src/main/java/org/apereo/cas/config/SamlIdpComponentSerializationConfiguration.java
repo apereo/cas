@@ -10,7 +10,7 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.ticket.artifact.SamlArtifactTicketExpirationPolicy;
 import org.apereo.cas.ticket.query.SamlAttributeQueryTicketExpirationPolicy;
 import org.apereo.cas.util.serialization.ComponentSerializationPlan;
-import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurator;
+import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurer;
 
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
@@ -23,7 +23,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration(value = "samlIdpComponentSerializationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class SamlIdpComponentSerializationConfiguration implements ComponentSerializationPlanConfigurator {
+public class SamlIdpComponentSerializationConfiguration implements ComponentSerializationPlanConfigurer {
     @Override
     public void configureComponentSerializationPlan(final ComponentSerializationPlan plan) {
         plan.registerSerializableClass(SamlArtifactTicketExpirationPolicy.class);

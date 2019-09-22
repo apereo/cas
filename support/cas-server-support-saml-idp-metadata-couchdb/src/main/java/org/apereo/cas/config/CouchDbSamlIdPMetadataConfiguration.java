@@ -61,21 +61,21 @@ public class CouchDbSamlIdPMetadataConfiguration {
     @RefreshScope
     @Bean
     public CouchDbInstance samlIdPMetadataCouchDbInstance() {
-        return samlMetadataCouchDbFactory.getIfAvailable().getCouchDbInstance();
+        return samlMetadataCouchDbFactory.getObject().getCouchDbInstance();
     }
 
     @ConditionalOnMissingBean(name = "samlIdPMetadataCouchDbConnector")
     @RefreshScope
     @Bean
     public CouchDbConnector samlIdPMetadataCouchDbConnector() {
-        return samlMetadataCouchDbFactory.getIfAvailable().getCouchDbConnector();
+        return samlMetadataCouchDbFactory.getObject().getCouchDbConnector();
     }
 
     @ConditionalOnMissingBean(name = "samlIdPMetadataCouchDbRepository")
     @Bean
     @RefreshScope
     public SamlIdPMetadataCouchDbRepository samlIdPMetadataCouchDbRepository() {
-        val repository = new SamlIdPMetadataCouchDbRepository(samlMetadataCouchDbFactory.getIfAvailable().getCouchDbConnector(),
+        val repository = new SamlIdPMetadataCouchDbRepository(samlMetadataCouchDbFactory.getObject().getCouchDbConnector(),
             casProperties.getAuthn().getSamlIdp().getMetadata().getCouchDb().isCreateIfNotExists());
         repository.initStandardDesignDocument();
         return repository;
@@ -109,7 +109,7 @@ public class CouchDbSamlIdPMetadataConfiguration {
 
         val context = SamlIdPMetadataGeneratorConfigurationContext.builder()
             .samlIdPMetadataLocator(samlIdPMetadataLocator())
-            .samlIdPCertificateAndKeyWriter(samlSelfSignedCertificateWriter.getIfAvailable())
+            .samlIdPCertificateAndKeyWriter(samlSelfSignedCertificateWriter.getObject())
             .entityId(idp.getEntityId())
             .resourceLoader(resourceLoader)
             .casServerPrefix(casProperties.getServer().getPrefix())
@@ -117,13 +117,13 @@ public class CouchDbSamlIdPMetadataConfiguration {
             .metadataCipherExecutor(couchDbSamlIdPMetadataCipherExecutor())
             .build();
 
-        return new CouchDbSamlIdPMetadataGenerator(context, samlIdPMetadataRepository.getIfAvailable());
+        return new CouchDbSamlIdPMetadataGenerator(context, samlIdPMetadataRepository.getObject());
     }
 
     @ConditionalOnMissingBean(name = "couchDbSamlIdPMetadataLocator")
     @Bean
     @SneakyThrows
     public SamlIdPMetadataLocator samlIdPMetadataLocator() {
-        return new CouchDbSamlIdPMetadataLocator(couchDbSamlIdPMetadataCipherExecutor(), samlIdPMetadataRepository.getIfAvailable());
+        return new CouchDbSamlIdPMetadataLocator(couchDbSamlIdPMetadataCipherExecutor(), samlIdPMetadataRepository.getObject());
     }
 }

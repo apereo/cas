@@ -10,7 +10,6 @@ import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
-import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlan;
 import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlanConfigurer;
 import org.apereo.cas.persondir.support.CouchbasePersonAttributeDao;
 import org.apereo.cas.services.ServicesManager;
@@ -108,12 +107,9 @@ public class CouchbaseAuthenticationConfiguration {
     @Bean
     public PersonDirectoryAttributeRepositoryPlanConfigurer couchbaseAttributeRepositoryPlanConfigurer() {
         val couchbase = casProperties.getAuthn().getAttributeRepository().getCouchbase();
-        return new PersonDirectoryAttributeRepositoryPlanConfigurer() {
-            @Override
-            public void configureAttributeRepositoryPlan(final PersonDirectoryAttributeRepositoryPlan plan) {
-                if (StringUtils.isNotBlank(couchbase.getUsernameAttribute())) {
-                    plan.registerAttributeRepository(couchbasePersonAttributeDao());
-                }
+        return plan -> {
+            if (StringUtils.isNotBlank(couchbase.getUsernameAttribute())) {
+                plan.registerAttributeRepository(couchbasePersonAttributeDao());
             }
         };
     }

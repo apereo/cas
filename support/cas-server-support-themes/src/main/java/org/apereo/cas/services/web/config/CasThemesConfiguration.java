@@ -3,7 +3,6 @@ package org.apereo.cas.services.web.config;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.services.web.CasPropertiesThymeleafViewResolverConfigurer;
 import org.apereo.cas.services.web.CasThymeleafLoginFormDirector;
 import org.apereo.cas.services.web.CasThymeleafOutputTemplateHandler;
 import org.apereo.cas.services.web.CasThymeleafViewResolverConfigurer;
@@ -87,14 +86,25 @@ public class CasThemesConfiguration {
     @ConditionalOnMissingBean(name = "casPropertiesThymeleafViewResolverConfigurer")
     @Bean
     public CasThymeleafViewResolverConfigurer casPropertiesThymeleafViewResolverConfigurer() {
-        return new CasPropertiesThymeleafViewResolverConfigurer(casProperties);
+        return new CasThymeleafViewResolverConfigurer() {
+            @Override
+            public int getOrder() {
+                return 0;
+            }
+
+            @Override
+            public void configureThymeleafViewResolver(final ThymeleafViewResolver thymeleafViewResolver) {
+                thymeleafViewResolver.addStaticVariable("cas", casProperties);
+                thymeleafViewResolver.addStaticVariable("casProperties", casProperties);
+            }
+        };
     }
 
     @ConditionalOnMissingBean(name = "registeredServiceViewResolver")
     @Bean
     public ViewResolver registeredServiceViewResolver() {
         val resolver = new ThemeBasedViewResolver(themeResolver(), themeViewResolverFactory());
-        resolver.setOrder(thymeleafViewResolver.getIfAvailable().getOrder() - 1);
+        resolver.setOrder(thymeleafViewResolver.getObject().getOrder() - 1);
         return resolver;
     }
 
@@ -142,9 +152,9 @@ public class CasThemesConfiguration {
         cookieThemeResolver.setCookiePath(tgc.getPath());
         cookieThemeResolver.setCookieSecure(tgc.isSecure());
 
-        val serviceThemeResolver = new RegisteredServiceThemeResolver(servicesManager.getIfAvailable(),
+        val serviceThemeResolver = new RegisteredServiceThemeResolver(servicesManager.getObject(),
             serviceThemeResolverSupportedBrowsers(),
-            authenticationRequestServiceSelectionStrategies.getIfAvailable(),
+            authenticationRequestServiceSelectionStrategies.getObject(),
             this.resourceLoader,
             new CasConfigurationProperties());
         serviceThemeResolver.setDefaultThemeName(defaultThemeName);

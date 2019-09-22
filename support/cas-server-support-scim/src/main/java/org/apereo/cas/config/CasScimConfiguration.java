@@ -7,7 +7,6 @@ import org.apereo.cas.scim.v1.ScimV1PrincipalProvisioner;
 import org.apereo.cas.scim.v2.ScimV2PrincipalAttributeMapper;
 import org.apereo.cas.scim.v2.ScimV2PrincipalProvisioner;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
-import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.PrincipalScimProvisionerAction;
 import org.apereo.cas.web.flow.ScimWebflowConfigurer;
@@ -105,11 +104,6 @@ public class CasScimConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "scimCasWebflowExecutionPlanConfigurer")
     public CasWebflowExecutionPlanConfigurer scimCasWebflowExecutionPlanConfigurer() {
-        return new CasWebflowExecutionPlanConfigurer() {
-            @Override
-            public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-                plan.registerWebflowConfigurer(scimWebflowConfigurer());
-            }
-        };
+        return plan -> plan.registerWebflowConfigurer(scimWebflowConfigurer());
     }
 }

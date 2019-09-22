@@ -30,7 +30,6 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
-import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.actions.MultifactorAuthenticationAvailableAction;
 import org.apereo.cas.web.flow.actions.MultifactorAuthenticationBypassAction;
@@ -217,7 +216,7 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
         return new RankedMultifactorAuthenticationProviderWebflowEventResolver(
             getWebflowConfigurationContext(),
             initialAuthenticationAttemptWebflowEventResolver(),
-            authenticationContextValidator.getIfAvailable());
+            authenticationContextValidator.getObject());
     }
 
     @ConditionalOnMissingBean(name = "authenticationAttributeMultifactorAuthenticationTrigger")
@@ -246,7 +245,7 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
             return new GroovyScriptMultifactorAuthenticationProviderSelector(script);
         }
         if (mfa.isProviderSelectionEnabled()) {
-            return new ChainingMultifactorAuthenticationProviderSelector(failureModeEvaluator.getIfAvailable());
+            return new ChainingMultifactorAuthenticationProviderSelector(failureModeEvaluator.getObject());
         }
         return new RankedMultifactorAuthenticationProviderSelector();
     }
@@ -417,8 +416,8 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "compositeProviderSelectionMultifactorWebflowConfigurer")
     public CasWebflowConfigurer compositeProviderSelectionMultifactorWebflowConfigurer() {
-        return new CompositeProviderSelectionMultifactorWebflowConfigurer(flowBuilderServices.getIfAvailable(),
-            loginFlowDefinitionRegistry.getIfAvailable(),
+        return new CompositeProviderSelectionMultifactorWebflowConfigurer(flowBuilderServices.getObject(),
+            loginFlowDefinitionRegistry.getObject(),
             applicationContext,
             casProperties);
     }
@@ -426,12 +425,7 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "compositeProviderSelectionCasWebflowExecutionPlanConfigurer")
     public CasWebflowExecutionPlanConfigurer compositeProviderSelectionCasWebflowExecutionPlanConfigurer() {
-        return new CasWebflowExecutionPlanConfigurer() {
-            @Override
-            public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-                plan.registerWebflowConfigurer(compositeProviderSelectionMultifactorWebflowConfigurer());
-            }
-        };
+        return plan -> plan.registerWebflowConfigurer(compositeProviderSelectionMultifactorWebflowConfigurer());
     }
 
     @Bean
@@ -448,18 +442,18 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
 
     private CasWebflowEventResolutionConfigurationContext getWebflowConfigurationContext() {
         return CasWebflowEventResolutionConfigurationContext.builder()
-            .authenticationSystemSupport(authenticationSystemSupport.getIfAvailable())
-            .centralAuthenticationService(centralAuthenticationService.getIfAvailable())
-            .servicesManager(servicesManager.getIfAvailable())
-            .ticketRegistrySupport(ticketRegistrySupport.getIfAvailable())
-            .warnCookieGenerator(warnCookieGenerator.getIfAvailable())
-            .authenticationRequestServiceSelectionStrategies(authenticationServiceSelectionPlan.getIfAvailable())
-            .registeredServiceAccessStrategyEnforcer(registeredServiceAccessStrategyEnforcer.getIfAvailable())
+            .authenticationSystemSupport(authenticationSystemSupport.getObject())
+            .centralAuthenticationService(centralAuthenticationService.getObject())
+            .servicesManager(servicesManager.getObject())
+            .ticketRegistrySupport(ticketRegistrySupport.getObject())
+            .warnCookieGenerator(warnCookieGenerator.getObject())
+            .authenticationRequestServiceSelectionStrategies(authenticationServiceSelectionPlan.getObject())
+            .registeredServiceAccessStrategyEnforcer(registeredServiceAccessStrategyEnforcer.getObject())
             .casProperties(casProperties)
-            .ticketRegistry(ticketRegistry.getIfAvailable())
+            .ticketRegistry(ticketRegistry.getObject())
             .eventPublisher(applicationContext)
             .applicationContext(applicationContext)
-            .ticketGrantingTicketCookieGenerator(ticketGrantingTicketCookieGenerator.getIfAvailable())
+            .ticketGrantingTicketCookieGenerator(ticketGrantingTicketCookieGenerator.getObject())
             .build();
     }
 }

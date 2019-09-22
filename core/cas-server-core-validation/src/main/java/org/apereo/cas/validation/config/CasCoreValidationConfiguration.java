@@ -16,8 +16,6 @@ import org.apereo.cas.validation.ServiceTicketValidationAuthorizersExecutionPlan
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
-import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +39,7 @@ import java.util.Optional;
 @Configuration("casCoreValidationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-public class CasCoreValidationConfiguration implements ServiceTicketValidationAuthorizerConfigurer {
+public class CasCoreValidationConfiguration {
     @Autowired
     @Qualifier("servicesManager")
     private ObjectProvider<ServicesManager> servicesManager;
@@ -49,19 +47,19 @@ public class CasCoreValidationConfiguration implements ServiceTicketValidationAu
     @Bean
     @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public CasProtocolValidationSpecification cas10ProtocolValidationSpecification() {
-        return new Cas10ProtocolValidationSpecification(servicesManager.getIfAvailable());
+        return new Cas10ProtocolValidationSpecification(servicesManager.getObject());
     }
 
     @Bean
     @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public CasProtocolValidationSpecification cas20ProtocolValidationSpecification() {
-        return new Cas20ProtocolValidationSpecification(servicesManager.getIfAvailable());
+        return new Cas20ProtocolValidationSpecification(servicesManager.getObject());
     }
 
     @Bean
     @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public CasProtocolValidationSpecification cas20WithoutProxyProtocolValidationSpecification() {
-        return new Cas20WithoutProxyingValidationSpecification(servicesManager.getIfAvailable());
+        return new Cas20WithoutProxyingValidationSpecification(servicesManager.getObject());
     }
 
     @Autowired
@@ -70,8 +68,7 @@ public class CasCoreValidationConfiguration implements ServiceTicketValidationAu
     public ServiceTicketValidationAuthorizersExecutionPlan serviceValidationAuthorizers(final List<ServiceTicketValidationAuthorizerConfigurer> configurers) {
         val plan = new DefaultServiceTicketValidationAuthorizersExecutionPlan();
         configurers.forEach(c -> {
-            val name = RegExUtils.removePattern(c.getClass().getSimpleName(), "\\$.+");
-            LOGGER.trace("Configuring service ticket validation authorizer execution plan [{}]", name);
+            LOGGER.trace("Configuring service ticket validation authorizer execution plan [{}]", c.getName());
             c.configureAuthorizersExecutionPlan(plan);
         });
         return plan;
@@ -79,12 +76,12 @@ public class CasCoreValidationConfiguration implements ServiceTicketValidationAu
 
     @Bean
     public ServiceTicketValidationAuthorizer requiredHandlersServiceTicketValidationAuthorizer() {
-        return new RegisteredServiceRequiredHandlersServiceTicketValidationAuthorizer(this.servicesManager.getIfAvailable());
+        return new RegisteredServiceRequiredHandlersServiceTicketValidationAuthorizer(this.servicesManager.getObject());
     }
 
-    @Override
-    public void configureAuthorizersExecutionPlan(final ServiceTicketValidationAuthorizersExecutionPlan plan) {
-        plan.registerAuthorizer(requiredHandlersServiceTicketValidationAuthorizer());
+    @Bean
+    public ServiceTicketValidationAuthorizerConfigurer casCoreServiceTicketValidationAuthorizerConfigurer() {
+        return plan -> plan.registerAuthorizer(requiredHandlersServiceTicketValidationAuthorizer());
     }
 
     @Bean
@@ -92,7 +89,7 @@ public class CasCoreValidationConfiguration implements ServiceTicketValidationAu
     public RequestedAuthenticationContextValidator requestedContextValidator() {
         return (assertion, request) -> {
             LOGGER.trace("Locating the primary authentication associated with this service request [{}]", assertion.getService());
-            val service = servicesManager.getIfAvailable().findServiceBy(assertion.getService());
+            val service = servicesManager.getObject().findServiceBy(assertion.getService());
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(assertion.getService(), service);
             return Pair.of(Boolean.TRUE, Optional.empty());
         };

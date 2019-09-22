@@ -1,6 +1,5 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategyConfigurer;
 import org.apereo.cas.authentication.principal.ServiceFactory;
@@ -27,7 +26,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("casOAuthAuthenticationServiceSelectionStrategyConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class CasOAuthAuthenticationServiceSelectionStrategyConfiguration implements AuthenticationServiceSelectionStrategyConfigurer {
+public class CasOAuthAuthenticationServiceSelectionStrategyConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -48,8 +47,8 @@ public class CasOAuthAuthenticationServiceSelectionStrategyConfiguration impleme
             webApplicationServiceFactory, OAuth20Utils.casOAuthCallbackUrl(casProperties.getServer().getPrefix()));
     }
 
-    @Override
-    public void configureAuthenticationServiceSelectionStrategy(final AuthenticationServiceSelectionPlan plan) {
-        plan.registerStrategy(oauth20AuthenticationRequestServiceSelectionStrategy());
+    @Bean
+    public AuthenticationServiceSelectionStrategyConfigurer oauth20AuthenticationServiceSelectionStrategyConfigurer() {
+        return plan -> plan.registerStrategy(oauth20AuthenticationRequestServiceSelectionStrategy());
     }
 }
