@@ -20,13 +20,10 @@ ext.libraries = [
                     force = true
                     transitive = false
                 },
-                dependencies.create("org.glassfish.jaxb:jaxb-runtime:$jaxbGlassfishVersion") {
+                dependencies.create("org.glassfish.jaxb:jaxb-runtime:$jaxbRuntimeVersion") {
                     force = true
                     transitive = false
                 },
-                dependencies.create("org.glassfish.jaxb:jaxb-core:$jaxbGlassfishVersion") {
-                    force = true
-                }
         ],
         aspectj                 : [
                 dependencies.create("org.aspectj:aspectjrt:$aspectjVersion") {
@@ -664,6 +661,7 @@ ext.libraries = [
                     exclude(group: "org.hibernate", module: "hibernate-validator")
                     exclude(group: "org.jboss.logging", module: "jboss-logging")
                     exclude(group: "net.bytebuddy", module: "byte-buddy")
+                    exclude(group: "org.glassfish.jaxb", module: "jaxb-runtime")
                     force = true
                 },
                 dependencies.create("org.dom4j:dom4j:$dom4jVersion") {
