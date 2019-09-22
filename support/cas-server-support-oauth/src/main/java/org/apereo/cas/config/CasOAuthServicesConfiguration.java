@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.DenyAllAttributeReleasePolicy;
 import org.apereo.cas.services.RegexRegisteredService;
-import org.apereo.cas.services.ServiceRegistryExecutionPlan;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.services.OAuth20ServiceRegistry;
@@ -53,18 +52,15 @@ public class CasOAuthServicesConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "oauthServiceRegistryExecutionPlanConfigurer")
     public ServiceRegistryExecutionPlanConfigurer oauthServiceRegistryExecutionPlanConfigurer() {
-        return new ServiceRegistryExecutionPlanConfigurer() {
-            @Override
-            public void configureServiceRegistry(final ServiceRegistryExecutionPlan plan) {
-                val service = new RegexRegisteredService();
-                service.setId(RandomUtils.nextLong());
-                service.setEvaluationOrder(Ordered.HIGHEST_PRECEDENCE);
-                service.setName(service.getClass().getSimpleName());
-                service.setDescription("OAuth Authentication Callback Request URL");
-                service.setServiceId(oauthCallbackService().getId());
-                service.setAttributeReleasePolicy(new DenyAllAttributeReleasePolicy());
-                plan.registerServiceRegistry(new OAuth20ServiceRegistry(applicationContext, service));
-            }
+        return plan -> {
+            val service = new RegexRegisteredService();
+            service.setId(RandomUtils.nextLong());
+            service.setEvaluationOrder(Ordered.HIGHEST_PRECEDENCE);
+            service.setName(service.getClass().getSimpleName());
+            service.setDescription("OAuth Authentication Callback Request URL");
+            service.setServiceId(oauthCallbackService().getId());
+            service.setAttributeReleasePolicy(new DenyAllAttributeReleasePolicy());
+            plan.registerServiceRegistry(new OAuth20ServiceRegistry(applicationContext, service));
         };
     }
 }

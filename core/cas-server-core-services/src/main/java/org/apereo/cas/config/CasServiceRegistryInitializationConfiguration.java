@@ -33,6 +33,7 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.scheduling.annotation.EnableAsync;
 
 import java.util.Collection;
 
@@ -51,7 +52,8 @@ import java.util.Collection;
 @ConditionalOnBean(ServicesManager.class)
 @ConditionalOnProperty(prefix = "cas.serviceRegistry", name = "initFromJson", havingValue = "true")
 @Slf4j
-@EnableAspectJAutoProxy(proxyTargetClass=true)
+@EnableAspectJAutoProxy(proxyTargetClass = true)
+@EnableAsync
 public class CasServiceRegistryInitializationConfiguration {
 
     @Autowired
@@ -113,7 +115,12 @@ public class CasServiceRegistryInitializationConfiguration {
         EmbeddedResourceBasedServiceRegistry(final ApplicationEventPublisher publisher,
                                              final Resource location,
                                              final Collection<ServiceRegistryListener> serviceRegistryListeners) throws Exception {
-            super(location, getRegisteredServiceSerializers(), publisher, serviceRegistryListeners);
+            super(location, canResourceWatcherBeEnabled(location),
+                getRegisteredServiceSerializers(), publisher, serviceRegistryListeners);
+        }
+
+        private static boolean canResourceWatcherBeEnabled(final Resource location) {
+            return !(location instanceof ClassPathResource);
         }
 
         static Collection<StringSerializer<RegisteredService>> getRegisteredServiceSerializers() {

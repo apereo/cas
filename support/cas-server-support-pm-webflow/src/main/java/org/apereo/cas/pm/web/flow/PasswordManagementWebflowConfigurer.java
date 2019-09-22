@@ -7,6 +7,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
+import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
 import org.springframework.context.ApplicationContext;
@@ -64,6 +65,12 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
     }
 
     private void createAccountStatusViewStates(final Flow flow) {
+        val initialAction = getState(flow, CasWebflowConstants.ACTION_ID_INITIAL_FLOW_SETUP, ActionState.class);
+        initialAction.getActionList().add(requestContext -> {
+            WebUtils.putPasswordManagementEnabled(requestContext, casProperties.getAuthn().getPm().isEnabled());
+            return null;
+        });
+
         createViewState(flow, CasWebflowConstants.VIEW_ID_AUTHENTICATION_BLOCKED, CasWebflowConstants.VIEW_ID_AUTHENTICATION_BLOCKED);
         createViewState(flow, CasWebflowConstants.VIEW_ID_INVALID_WORKSTATION, CasWebflowConstants.VIEW_ID_INVALID_WORKSTATION);
         createViewState(flow, CasWebflowConstants.VIEW_ID_INVALID_AUTHENTICATION_HOURS, CasWebflowConstants.VIEW_ID_INVALID_AUTHENTICATION_HOURS);

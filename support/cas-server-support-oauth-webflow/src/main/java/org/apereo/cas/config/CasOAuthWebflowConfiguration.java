@@ -6,7 +6,6 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.web.flow.OAuth20RegisteredServiceUIAction;
 import org.apereo.cas.support.oauth.web.flow.OAuth20WebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
-import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 
 import lombok.val;
@@ -77,11 +76,6 @@ public class CasOAuthWebflowConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "oauth20CasWebflowExecutionPlanConfigurer")
     public CasWebflowExecutionPlanConfigurer oauth20CasWebflowExecutionPlanConfigurer() {
-        return new CasWebflowExecutionPlanConfigurer() {
-            @Override
-            public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-                plan.registerWebflowConfigurer(oauth20LogoutWebflowConfigurer());
-            }
-        };
+        return plan -> plan.registerWebflowConfigurer(oauth20LogoutWebflowConfigurer());
     }
 }

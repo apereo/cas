@@ -1,6 +1,5 @@
 package org.apereo.cas.trusted.config;
 
-import org.apereo.cas.audit.AuditTrailRecordResolutionPlan;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.authentication.PseudoPlatformTransactionManager;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
@@ -43,7 +42,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @AutoConfigureAfter(CasCoreUtilConfiguration.class)
 @Slf4j
-public class MultifactorAuthnTrustConfiguration implements AuditTrailRecordResolutionPlanConfigurer {
+public class MultifactorAuthnTrustConfiguration {
     private static final int INITIAL_CACHE_SIZE = 50;
     private static final long MAX_CACHE_SIZE = 1_000_000;
 
@@ -118,10 +117,12 @@ public class MultifactorAuthnTrustConfiguration implements AuditTrailRecordResol
             mfaTrustEngine());
     }
 
-    @Override
-    public void configureAuditTrailRecordResolutionPlan(final AuditTrailRecordResolutionPlan plan) {
-        plan.registerAuditResourceResolver("TRUSTED_AUTHENTICATION_RESOURCE_RESOLVER", returnValueResourceResolver.getIfAvailable());
-        plan.registerAuditActionResolver("TRUSTED_AUTHENTICATION_ACTION_RESOLVER", ticketCreationActionResolver.getIfAvailable());
+    @Bean
+    public AuditTrailRecordResolutionPlanConfigurer casMfaTrustAuditTrailRecordResolutionPlanConfigurer() {
+        return plan -> {
+            plan.registerAuditResourceResolver("TRUSTED_AUTHENTICATION_RESOURCE_RESOLVER", returnValueResourceResolver.getIfAvailable());
+            plan.registerAuditActionResolver("TRUSTED_AUTHENTICATION_ACTION_RESOLVER", ticketCreationActionResolver.getIfAvailable());
+        };
     }
 
     @Bean

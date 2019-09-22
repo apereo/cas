@@ -2,7 +2,6 @@ package org.apereo.cas.services.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServiceRegistry;
-import org.apereo.cas.services.ServiceRegistryExecutionPlan;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServiceRegistryListener;
 import org.apereo.cas.services.YamlServiceRegistry;
@@ -68,12 +67,7 @@ public class YamlServiceRegistryConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "yamlServiceRegistryExecutionPlanConfigurer")
     public ServiceRegistryExecutionPlanConfigurer yamlServiceRegistryExecutionPlanConfigurer() {
-        return new ServiceRegistryExecutionPlanConfigurer() {
-            @Override
-            public void configureServiceRegistry(final ServiceRegistryExecutionPlan plan) {
-                plan.registerServiceRegistry(yamlServiceRegistry());
-            }
-        };
+        return plan -> plan.registerServiceRegistry(yamlServiceRegistry());
     }
 
 }

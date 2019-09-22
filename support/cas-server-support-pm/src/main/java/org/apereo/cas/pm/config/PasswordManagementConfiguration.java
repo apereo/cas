@@ -1,7 +1,6 @@
 package org.apereo.cas.pm.config;
 
 import org.apereo.cas.audit.AuditTrailConstants;
-import org.apereo.cas.audit.AuditTrailRecordResolutionPlan;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pm.DefaultPasswordValidationService;
@@ -29,7 +28,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -42,12 +40,9 @@ import org.springframework.context.annotation.Configuration;
 @Configuration("passwordManagementConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-public class PasswordManagementConfiguration implements AuditTrailRecordResolutionPlanConfigurer, InitializingBean {
+public class PasswordManagementConfiguration implements InitializingBean {
     @Autowired
     private CasConfigurationProperties casProperties;
-
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
 
     @Autowired
     @Qualifier("communicationsManager")
@@ -139,12 +134,14 @@ public class PasswordManagementConfiguration implements AuditTrailRecordResoluti
         }
     }
 
-    @Override
-    public void configureAuditTrailRecordResolutionPlan(final AuditTrailRecordResolutionPlan plan) {
-        plan.registerAuditActionResolver("CHANGE_PASSWORD_ACTION_RESOLVER",
-            new BooleanAuditActionResolver(AuditTrailConstants.AUDIT_ACTION_POSTFIX_SUCCESS, AuditTrailConstants.AUDIT_ACTION_POSTFIX_FAILED));
-        plan.registerAuditResourceResolver("CHANGE_PASSWORD_RESOURCE_RESOLVER",
-            new FirstParameterAuditResourceResolver());
+    @Bean
+    public AuditTrailRecordResolutionPlanConfigurer passwordManagementAuditTrailRecordResolutionPlanConfigurer() {
+        return plan -> {
+            plan.registerAuditActionResolver("CHANGE_PASSWORD_ACTION_RESOLVER",
+                new BooleanAuditActionResolver(AuditTrailConstants.AUDIT_ACTION_POSTFIX_SUCCESS, AuditTrailConstants.AUDIT_ACTION_POSTFIX_FAILED));
+            plan.registerAuditResourceResolver("CHANGE_PASSWORD_RESOURCE_RESOLVER",
+                new FirstParameterAuditResourceResolver());
+        };
     }
 }
 

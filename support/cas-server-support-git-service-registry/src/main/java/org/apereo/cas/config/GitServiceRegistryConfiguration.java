@@ -5,7 +5,6 @@ import org.apereo.cas.git.GitRepository;
 import org.apereo.cas.git.GitRepositoryBuilder;
 import org.apereo.cas.services.GitServiceRegistry;
 import org.apereo.cas.services.ServiceRegistry;
-import org.apereo.cas.services.ServiceRegistryExecutionPlan;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServiceRegistryListener;
 import org.apereo.cas.services.resource.RegisteredServiceResourceNamingStrategy;
@@ -78,11 +77,6 @@ public class GitServiceRegistryConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "gitServiceRegistryExecutionPlanConfigurer")
     public ServiceRegistryExecutionPlanConfigurer gitServiceRegistryExecutionPlanConfigurer() {
-        return new ServiceRegistryExecutionPlanConfigurer() {
-            @Override
-            public void configureServiceRegistry(final ServiceRegistryExecutionPlan plan) {
-                plan.registerServiceRegistry(gitServiceRegistry());
-            }
-        };
+        return plan -> plan.registerServiceRegistry(gitServiceRegistry());
     }
 }
