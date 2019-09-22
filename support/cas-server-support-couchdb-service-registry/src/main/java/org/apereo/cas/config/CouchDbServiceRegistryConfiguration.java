@@ -6,7 +6,6 @@ import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
 import org.apereo.cas.couchdb.services.RegisteredServiceCouchDbRepository;
 import org.apereo.cas.services.CouchDbServiceRegistry;
 import org.apereo.cas.services.ServiceRegistry;
-import org.apereo.cas.services.ServiceRegistryExecutionPlan;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServiceRegistryListener;
 
@@ -81,12 +80,7 @@ public class CouchDbServiceRegistryConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "couchDbServiceRegistryExecutionPlanConfigurer")
     public ServiceRegistryExecutionPlanConfigurer couchDbServiceRegistryExecutionPlanConfigurer() {
-        return new ServiceRegistryExecutionPlanConfigurer() {
-            @Override
-            public void configureServiceRegistry(final ServiceRegistryExecutionPlan plan) {
-                plan.registerServiceRegistry(couchDbServiceRegistry());
-            }
-        };
+        return plan -> plan.registerServiceRegistry(couchDbServiceRegistry());
     }
 
 }

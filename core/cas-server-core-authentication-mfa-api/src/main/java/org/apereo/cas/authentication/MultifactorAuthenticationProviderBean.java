@@ -54,14 +54,14 @@ public class MultifactorAuthenticationProviderBean<T extends MultifactorAuthenti
     /**
      * Provider instances are not part of the {@link org.springframework.cloud.context.scope.refresh.RefreshScope}
      * since they were not defined during initial auto-configuration. This class is
-     * usually not consulted after initial configuration.  This listener is here so this bean is initialized after a
+     * usually not consulted after initial configuration. This listener is here so this bean is initialized after a
      * refresh and the provider instances get recreated.
      *
      * @param event - the event.
      */
     @EventListener
     public void onRefreshScopeRefreshed(final RefreshScopeRefreshedEvent event) {
-        LOGGER.debug("Refreshing MFA Providers");
+        LOGGER.debug("Refreshing MFA Providers...");
     }
 
 

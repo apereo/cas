@@ -126,11 +126,6 @@ public class CasThrottlingConfiguration {
     @Bean
     @Order(0)
     public AuthenticationThrottlingExecutionPlanConfigurer authenticationThrottlingExecutionPlanConfigurer() {
-        return new AuthenticationThrottlingExecutionPlanConfigurer() {
-            @Override
-            public void configureAuthenticationThrottlingExecutionPlan(final AuthenticationThrottlingExecutionPlan plan) {
-                plan.registerAuthenticationThrottleInterceptor(authenticationThrottle());
-            }
-        };
+        return plan -> plan.registerAuthenticationThrottleInterceptor(authenticationThrottle());
     }
 }

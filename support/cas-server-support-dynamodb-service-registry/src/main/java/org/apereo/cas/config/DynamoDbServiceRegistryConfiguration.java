@@ -5,7 +5,6 @@ import org.apereo.cas.dynamodb.AmazonDynamoDbClientFactory;
 import org.apereo.cas.services.DynamoDbServiceRegistry;
 import org.apereo.cas.services.DynamoDbServiceRegistryFacilitator;
 import org.apereo.cas.services.ServiceRegistry;
-import org.apereo.cas.services.ServiceRegistryExecutionPlan;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServiceRegistryListener;
 
@@ -59,12 +58,7 @@ public class DynamoDbServiceRegistryConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "dynamoDbServiceRegistryExecutionPlanConfigurer")
     public ServiceRegistryExecutionPlanConfigurer dynamoDbServiceRegistryExecutionPlanConfigurer() {
-        return new ServiceRegistryExecutionPlanConfigurer() {
-            @Override
-            public void configureServiceRegistry(final ServiceRegistryExecutionPlan plan) {
-                plan.registerServiceRegistry(dynamoDbServiceRegistry());
-            }
-        };
+        return plan -> plan.registerServiceRegistry(dynamoDbServiceRegistry());
     }
 
     @RefreshScope

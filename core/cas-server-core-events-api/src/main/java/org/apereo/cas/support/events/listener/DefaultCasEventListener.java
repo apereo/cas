@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Async;
 
 /**
  * This is {@link DefaultCasEventListener} that attempts to consume CAS events
@@ -57,6 +58,7 @@ public class DefaultCasEventListener {
      * @param event the event
      */
     @EventListener
+    @Async
     public void handleCasTicketGrantingTicketCreatedEvent(final CasTicketGrantingTicketCreatedEvent event) {
         if (this.casEventRepository != null) {
             val dto = prepareCasEvent(event);
@@ -73,6 +75,7 @@ public class DefaultCasEventListener {
      * @param event the event
      */
     @EventListener
+    @Async
     public void handleCasAuthenticationTransactionFailureEvent(final CasAuthenticationTransactionFailureEvent event) {
         if (this.casEventRepository != null) {
             val dto = prepareCasEvent(event);
@@ -88,6 +91,7 @@ public class DefaultCasEventListener {
      * @param event the event
      */
     @EventListener
+    @Async
     public void handleCasAuthenticationPolicyFailureEvent(final CasAuthenticationPolicyFailureEvent event) {
         if (this.casEventRepository != null) {
             val dto = prepareCasEvent(event);
@@ -103,6 +107,7 @@ public class DefaultCasEventListener {
      * @param event the event
      */
     @EventListener
+    @Async
     public void handleCasRiskyAuthenticationDetectedEvent(final CasRiskyAuthenticationDetectedEvent event) {
         if (this.casEventRepository != null) {
             val dto = prepareCasEvent(event);
