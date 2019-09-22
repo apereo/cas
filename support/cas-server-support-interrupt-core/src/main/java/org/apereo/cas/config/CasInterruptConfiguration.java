@@ -26,7 +26,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Configuration("casInterruptConfiguration")
+@Configuration(value = "casInterruptConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class CasInterruptConfiguration {

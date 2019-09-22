@@ -104,7 +104,7 @@ task verifySpringConfigurationFactories(description: "Examine spring.factories f
 
 task verifySpringConfigurationCanDisableBeanProxying(description: "Examine @Configuration files and check whether proxying bean methods can be disabled") {
      doLast {
-         def patternBeanMethods = Pattern.compile("public\\s\\w+\\s(\\w+)\\(")
+         def patternBeanMethods = Pattern.compile("public\\s\\w+(<\\w+>)*\\s(\\w+)\\(")
          
          def results = []
          new File('.').eachFileRecurse(groovy.io.FileType.FILES) {
@@ -113,7 +113,7 @@ task verifySpringConfigurationCanDisableBeanProxying(description: "Examine @Conf
                  def matcher = patternBeanMethods.matcher(it.text)
                  results.clear()
                  while (matcher.find()) {
-                     results += matcher.group(1)
+                     results += matcher.group(2)
                  }
                  for (def r in results) {
                      def patternMethodCall = Pattern.compile(r + "\\(");
