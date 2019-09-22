@@ -6,12 +6,8 @@
         </Console>
     </Appenders>
     <Loggers>
-        <Logger name="org.apereo" level="off" additivity="false">
-            <AppenderRef ref="console"/>
-        </Logger>
-        <Logger name="com.couchbase" level="off" additivity="false">
-            <AppenderRef ref="console"/>
-        </Logger>
+        <Logger name="org.apereo" level="off" />
+        <Logger name="com.couchbase" level="off" />
         <Root level="off">
             <AppenderRef ref="console"/>
         </Root>

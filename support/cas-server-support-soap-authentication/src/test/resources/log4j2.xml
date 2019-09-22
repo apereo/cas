@@ -15,24 +15,12 @@
         </RollingFile>
     </Appenders>
     <Loggers>
-        <Logger name="org.apereo" level="warn" additivity="false">
-            <AppenderRef ref="console"/>
-        </Logger>
-        <Logger name="org.springframework.boot" level="warn" additivity="false">
-            <AppenderRef ref="console"/>
-        </Logger>
-        <Logger name="org.springframework.ws" level="warn" additivity="false">
-            <AppenderRef ref="console"/>
-        </Logger>
-        <Logger name="org.apache.ws" level="warn" additivity="false">
-            <AppenderRef ref="console"/>
-        </Logger>
-        <Logger name="org.apache.wss4j" level="warn" additivity="false">
-            <AppenderRef ref="console"/>
-        </Logger>
-        <Logger name="org.springframework.oxm" level="warn" additivity="false">
-            <AppenderRef ref="console"/>
-        </Logger>
+        <Logger name="org.apereo" level="warn" />
+        <Logger name="org.springframework.boot" level="warn" />
+        <Logger name="org.springframework.ws" level="warn" />
+        <Logger name="org.apache.ws" level="warn" />
+        <Logger name="org.apache.wss4j" level="warn" />
+        <Logger name="org.springframework.oxm" level="warn" />
 
         <Root level="off">
             <AppenderRef ref="console"/>
