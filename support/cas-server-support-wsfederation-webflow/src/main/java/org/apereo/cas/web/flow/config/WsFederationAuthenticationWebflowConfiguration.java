@@ -7,7 +7,6 @@ import org.apereo.cas.support.wsfederation.WsFederationConfiguration;
 import org.apereo.cas.support.wsfederation.WsFederationHelper;
 import org.apereo.cas.support.wsfederation.web.WsFederationCookieManager;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
-import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.WsFederationAction;
 import org.apereo.cas.web.flow.WsFederationRequestBuilder;
@@ -121,11 +120,6 @@ public class WsFederationAuthenticationWebflowConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "wsFederationCasWebflowExecutionPlanConfigurer")
     public CasWebflowExecutionPlanConfigurer wsFederationCasWebflowExecutionPlanConfigurer() {
-        return new CasWebflowExecutionPlanConfigurer() {
-            @Override
-            public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-                plan.registerWebflowConfigurer(wsFederationWebflowConfigurer());
-            }
-        };
+        return plan -> plan.registerWebflowConfigurer(wsFederationWebflowConfigurer());
     }
 }

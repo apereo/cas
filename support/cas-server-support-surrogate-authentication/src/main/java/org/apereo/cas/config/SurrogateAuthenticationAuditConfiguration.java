@@ -1,7 +1,6 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.audit.AuditTrailConstants;
-import org.apereo.cas.audit.AuditTrailRecordResolutionPlan;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.authentication.audit.SurrogateAuthenticationEligibilityAuditableExecution;
 import org.apereo.cas.authentication.audit.SurrogateEligibilityVerificationAuditResourceResolver;
@@ -19,7 +18,7 @@ import org.springframework.context.annotation.Configuration;
  * @since 5.3.0
  */
 @Configuration("surrogateAuthenticationAuditConfiguration")
-public class SurrogateAuthenticationAuditConfiguration implements AuditTrailRecordResolutionPlanConfigurer {
+public class SurrogateAuthenticationAuditConfiguration {
 
     @Bean
     public SurrogateAuthenticationEligibilityAuditableExecution surrogateEligibilityAuditableExecution() {
@@ -31,12 +30,14 @@ public class SurrogateAuthenticationAuditConfiguration implements AuditTrailReco
         return new SurrogateEligibilityVerificationAuditResourceResolver();
     }
 
-    @Override
-    public void configureAuditTrailRecordResolutionPlan(final AuditTrailRecordResolutionPlan plan) {
-        val actionResolver = new DefaultAuditActionResolver(AuditTrailConstants.AUDIT_ACTION_POSTFIX_TRIGGERED, StringUtils.EMPTY);
-        plan.registerAuditActionResolver("SURROGATE_AUTHENTICATION_ELIGIBILITY_VERIFICATION_ACTION_RESOLVER", actionResolver);
+    @Bean
+    public AuditTrailRecordResolutionPlanConfigurer surrogateAuditTrailRecordResolutionPlanConfigurer() {
+        return plan -> {
+            val actionResolver = new DefaultAuditActionResolver(AuditTrailConstants.AUDIT_ACTION_POSTFIX_TRIGGERED, StringUtils.EMPTY);
+            plan.registerAuditActionResolver("SURROGATE_AUTHENTICATION_ELIGIBILITY_VERIFICATION_ACTION_RESOLVER", actionResolver);
 
-        plan.registerAuditResourceResolver("SURROGATE_AUTHENTICATION_ELIGIBILITY_VERIFICATION_RESOURCE_RESOLVER",
-            surrogateEligibilityVerificationAuditResourceResolver());
+            plan.registerAuditResourceResolver("SURROGATE_AUTHENTICATION_ELIGIBILITY_VERIFICATION_RESOURCE_RESOLVER",
+                surrogateEligibilityVerificationAuditResourceResolver());
+        };
     }
 }

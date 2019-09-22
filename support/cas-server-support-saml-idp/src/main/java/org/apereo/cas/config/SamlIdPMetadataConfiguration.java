@@ -28,7 +28,7 @@ import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.Metadata
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.UrlResourceMetadataResolver;
 import org.apereo.cas.support.saml.services.idp.metadata.plan.DefaultSamlRegisteredServiceMetadataResolutionPlan;
 import org.apereo.cas.support.saml.services.idp.metadata.plan.SamlRegisteredServiceMetadataResolutionPlan;
-import org.apereo.cas.support.saml.services.idp.metadata.plan.SamlRegisteredServiceMetadataResolutionPlanConfigurator;
+import org.apereo.cas.support.saml.services.idp.metadata.plan.SamlRegisteredServiceMetadataResolutionPlanConfigurer;
 import org.apereo.cas.support.saml.util.NonInflatingSaml20ObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.metadata.SamlIdPMetadataController;
 import org.apereo.cas.support.saml.web.idp.metadata.SamlRegisteredServiceCachedMetadataEndpoint;
@@ -41,7 +41,6 @@ import org.apereo.cas.util.http.HttpClient;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.RegExUtils;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.core.Response;
 import org.springframework.beans.factory.ObjectProvider;
@@ -191,11 +190,10 @@ public class SamlIdPMetadataConfiguration {
         plan.registerMetadataResolver(new ClasspathResourceMetadataResolver(samlIdp, cfgBean));
         plan.registerMetadataResolver(new GroovyResourceMetadataResolver(samlIdp, cfgBean));
 
-        val configurers = applicationContext.getBeansOfType(SamlRegisteredServiceMetadataResolutionPlanConfigurator.class, false, true);
+        val configurers = applicationContext.getBeansOfType(SamlRegisteredServiceMetadataResolutionPlanConfigurer.class, false, true);
 
         configurers.values().forEach(c -> {
-            val name = RegExUtils.removePattern(c.getClass().getSimpleName(), "\\$.+");
-            LOGGER.trace("Configuring saml metadata resolution plan [{}]", name);
+            LOGGER.trace("Configuring saml metadata resolution plan [{}]", c.getName());
             c.configureMetadataResolutionPlan(plan);
         });
         return plan;

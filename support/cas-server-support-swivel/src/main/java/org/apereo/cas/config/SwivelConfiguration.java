@@ -16,7 +16,6 @@ import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
-import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
@@ -137,12 +136,7 @@ public class SwivelConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "swivelCasWebflowExecutionPlanConfigurer")
     public CasWebflowExecutionPlanConfigurer swivelCasWebflowExecutionPlanConfigurer() {
-        return new CasWebflowExecutionPlanConfigurer() {
-            @Override
-            public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-                plan.registerWebflowConfigurer(swivelMultifactorWebflowConfigurer());
-            }
-        };
+        return plan -> plan.registerWebflowConfigurer(swivelMultifactorWebflowConfigurer());
     }
 
     @Bean
@@ -157,7 +151,7 @@ public class SwivelConfiguration {
     @ConditionalOnMissingBean(name = "mfaTrustEngine")
     @ConditionalOnProperty(prefix = "cas.authn.mfa.swivel", name = "trustedDeviceEnabled", havingValue = "true", matchIfMissing = true)
     @Configuration("swivelMultifactorTrustConfiguration")
-    public class SwivelMultifactorTrustConfiguration implements CasWebflowExecutionPlanConfigurer {
+    public class SwivelMultifactorTrustConfiguration {
 
         @ConditionalOnMissingBean(name = "swivelMultifactorTrustWebflowConfigurer")
         @Bean
@@ -169,9 +163,9 @@ public class SwivelConfiguration {
                 swivelAuthenticatorFlowRegistry(), applicationContext, casProperties);
         }
 
-        @Override
-        public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-            plan.registerWebflowConfigurer(swivelMultifactorTrustWebflowConfigurer());
+        @Bean
+        public CasWebflowExecutionPlanConfigurer swivelAuthenticationCasWebflowExecutionPlanConfigurer() {
+            return plan -> plan.registerWebflowConfigurer(swivelMultifactorTrustWebflowConfigurer());
         }
     }
 }

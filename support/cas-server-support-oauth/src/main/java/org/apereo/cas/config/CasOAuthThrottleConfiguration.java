@@ -41,7 +41,7 @@ import static org.apereo.cas.support.oauth.OAuth20Constants.BASE_OAUTH20_URL;
  */
 @Configuration("oauthThrottleConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class CasOAuthThrottleConfiguration implements AuthenticationThrottlingExecutionPlanConfigurer {
+public class CasOAuthThrottleConfiguration {
 
     @Autowired
     @Qualifier("oauthSecConfig")
@@ -85,11 +85,11 @@ public class CasOAuthThrottleConfiguration implements AuthenticationThrottlingEx
             accessTokenGrantRequestExtractors);
     }
 
-    @Override
-    public void configureAuthenticationThrottlingExecutionPlan(final AuthenticationThrottlingExecutionPlan plan) {
-        plan.registerAuthenticationThrottleInterceptor(oauthHandlerInterceptorAdapter());
+    @Bean
+    public AuthenticationThrottlingExecutionPlanConfigurer oauthAuthenticationThrottlingExecutionPlanConfigurer() {
+        return plan -> plan.registerAuthenticationThrottleInterceptor(oauthHandlerInterceptorAdapter());
     }
-
+    
     @Configuration("oauthThrottleWebMvcConfigurer")
     static class CasOAuthThrottleWebMvcConfigurer implements WebMvcConfigurer {
 

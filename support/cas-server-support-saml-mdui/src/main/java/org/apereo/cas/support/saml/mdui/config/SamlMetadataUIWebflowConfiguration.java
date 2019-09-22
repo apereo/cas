@@ -9,7 +9,6 @@ import org.apereo.cas.support.saml.mdui.MetadataResolverAdapter;
 import org.apereo.cas.support.saml.mdui.web.flow.SamlMetadataUIParserAction;
 import org.apereo.cas.support.saml.mdui.web.flow.SamlMetadataUIWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
-import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 
 import lombok.val;
@@ -81,11 +80,6 @@ public class SamlMetadataUIWebflowConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "samlMetadataUICasWebflowExecutionPlanConfigurer")
     public CasWebflowExecutionPlanConfigurer samlMetadataUICasWebflowExecutionPlanConfigurer() {
-        return new CasWebflowExecutionPlanConfigurer() {
-            @Override
-            public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-                plan.registerWebflowConfigurer(samlMetadataUIWebConfigurer());
-            }
-        };
+        return plan -> plan.registerWebflowConfigurer(samlMetadataUIWebConfigurer());
     }
 }

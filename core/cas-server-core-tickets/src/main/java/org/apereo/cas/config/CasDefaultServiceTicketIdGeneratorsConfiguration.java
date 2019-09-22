@@ -14,8 +14,6 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.Collection;
-
 /**
  * This is {@link CasDefaultServiceTicketIdGeneratorsConfiguration}.
  *
@@ -24,7 +22,7 @@ import java.util.Collection;
  */
 @Configuration("casDefaultServiceTicketIdGeneratorsConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class CasDefaultServiceTicketIdGeneratorsConfiguration implements UniqueTicketIdGeneratorConfigurer {
+public class CasDefaultServiceTicketIdGeneratorsConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -37,8 +35,8 @@ public class CasDefaultServiceTicketIdGeneratorsConfiguration implements UniqueT
             casProperties.getHost().getName());
     }
 
-    @Override
-    public Collection<Pair<String, UniqueTicketIdGenerator>> buildUniqueTicketIdGenerators() {
-        return CollectionUtils.wrap(Pair.of(SimpleWebApplicationServiceImpl.class.getName(), serviceTicketUniqueIdGenerator()));
+    @Bean
+    public UniqueTicketIdGeneratorConfigurer casDefaultServiceTicketUniqueTicketIdGeneratorConfigurer() {
+        return () -> CollectionUtils.wrap(Pair.of(SimpleWebApplicationServiceImpl.class.getName(), serviceTicketUniqueIdGenerator()));
     }
 }

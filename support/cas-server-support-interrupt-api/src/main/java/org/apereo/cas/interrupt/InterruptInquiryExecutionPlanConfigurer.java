@@ -14,4 +14,12 @@ public interface InterruptInquiryExecutionPlanConfigurer {
      * @param plan the plan
      */
     void configureInterruptInquiryExecutionPlan(InterruptInquiryExecutionPlan plan);
+    /**
+     * Gets name.
+     *
+     * @return the name
+     */
+    default String getName() {
+        return getClass().getSimpleName();
+    }
 }
