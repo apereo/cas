@@ -106,11 +106,11 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
     public AuthenticationHandler googleAuthenticatorAuthenticationHandler() {
         val gauth = casProperties.getAuthn().getMfa().getGauth();
         return new GoogleAuthenticatorAuthenticationHandler(gauth.getName(),
-            servicesManager.getIfAvailable(),
+            servicesManager.getObject(),
             googlePrincipalFactory(),
             googleAuthenticatorInstance(),
-            oneTimeTokenAuthenticatorTokenRepository.getIfAvailable(),
-            googleAuthenticatorAccountRegistry.getIfAvailable(),
+            oneTimeTokenAuthenticatorTokenRepository.getObject(),
+            googleAuthenticatorAccountRegistry.getObject(),
             gauth.getOrder());
     }
 
@@ -119,9 +119,9 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
     public MultifactorAuthenticationProvider googleAuthenticatorMultifactorAuthenticationProvider() {
         val gauth = casProperties.getAuthn().getMfa().getGauth();
         val p = new GoogleAuthenticatorMultifactorAuthenticationProvider();
-        p.setBypassEvaluator(googleAuthenticatorBypassEvaluator.getIfAvailable());
+        p.setBypassEvaluator(googleAuthenticatorBypassEvaluator.getObject());
         p.setFailureMode(gauth.getFailureMode());
-        p.setFailureModeEvaluator(failureModeEvaluator.getIfAvailable());
+        p.setFailureModeEvaluator(failureModeEvaluator.getObject());
         p.setOrder(gauth.getRank());
         p.setId(gauth.getId());
         return p;
@@ -141,7 +141,7 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
     @RefreshScope
     public Action googleAccountRegistrationAction() {
         val gauth = casProperties.getAuthn().getMfa().getGauth();
-        return new OneTimeTokenAccountCheckRegistrationAction(googleAuthenticatorAccountRegistry.getIfAvailable(),
+        return new OneTimeTokenAccountCheckRegistrationAction(googleAuthenticatorAccountRegistry.getObject(),
             gauth.getLabel(),
             gauth.getIssuer());
     }
@@ -197,7 +197,7 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @RefreshScope
     public Action googleSaveAccountRegistrationAction() {
-        return new OneTimeTokenAccountSaveRegistrationAction(googleAuthenticatorAccountRegistry.getIfAvailable());
+        return new OneTimeTokenAccountSaveRegistrationAction(googleAuthenticatorAccountRegistry.getObject());
     }
 
     @ConditionalOnMissingBean(name = "googlePrincipalFactory")

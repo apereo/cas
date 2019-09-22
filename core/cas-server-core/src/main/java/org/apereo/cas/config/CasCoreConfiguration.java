@@ -22,7 +22,6 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.RegExUtils;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -98,8 +97,7 @@ public class CasCoreConfiguration {
     public AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan(final List<AuthenticationServiceSelectionStrategyConfigurer> configurers) {
         val plan = new DefaultAuthenticationServiceSelectionPlan();
         configurers.forEach(c -> {
-            val name = RegExUtils.removePattern(c.getClass().getSimpleName(), "\\$.+");
-            LOGGER.trace("Configuring authentication request service selection strategy plan [{}]", name);
+            LOGGER.trace("Configuring authentication request service selection strategy plan [{}]", c.getName());
             c.configureAuthenticationServiceSelectionStrategy(plan);
         });
         return plan;
@@ -108,7 +106,7 @@ public class CasCoreConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "serviceMatchingStrategy")
     public ServiceMatchingStrategy serviceMatchingStrategy() {
-        return new DefaultServiceMatchingStrategy(servicesManager.getIfAvailable());
+        return new DefaultServiceMatchingStrategy(servicesManager.getObject());
     }
     
     @Bean
@@ -117,15 +115,15 @@ public class CasCoreConfiguration {
     public CentralAuthenticationService centralAuthenticationService(
         @Qualifier("authenticationServiceSelectionPlan") final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan) {
         return new DefaultCentralAuthenticationService(applicationContext,
-            ticketRegistry.getIfAvailable(),
-            servicesManager.getIfAvailable(),
-            logoutManager.getIfAvailable(),
-            ticketFactory.getIfAvailable(),
+            ticketRegistry.getObject(),
+            servicesManager.getObject(),
+            logoutManager.getObject(),
+            ticketFactory.getObject(),
             authenticationServiceSelectionPlan,
             authenticationPolicyFactory(),
-            principalFactory.getIfAvailable(),
-            cipherExecutor.getIfAvailable(),
-            registeredServiceAccessStrategyEnforcer.getIfAvailable(),
+            principalFactory.getObject(),
+            cipherExecutor.getObject(),
+            registeredServiceAccessStrategyEnforcer.getObject(),
             serviceMatchingStrategy());
     }
 }

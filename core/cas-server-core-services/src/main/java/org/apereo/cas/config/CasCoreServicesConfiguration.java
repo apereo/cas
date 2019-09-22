@@ -40,7 +40,6 @@ import com.google.common.base.Predicates;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.RegExUtils;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -57,6 +56,8 @@ import org.springframework.context.event.EventListener;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.core.env.Environment;
 import org.springframework.http.converter.AbstractHttpMessageConverter;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.EnableAsync;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -74,6 +75,7 @@ import java.util.stream.Collectors;
 @Configuration("casCoreServicesConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
+@EnableAsync
 public class CasCoreServicesConfiguration {
     @Autowired
     @Qualifier("communicationsManager")
@@ -173,8 +175,7 @@ public class CasCoreServicesConfiguration {
             new ArrayList<ServiceRegistryExecutionPlanConfigurer>(0));
         val plan = new DefaultServiceRegistryExecutionPlan();
         configurers.forEach(c -> {
-            val name = RegExUtils.removePattern(c.getClass().getSimpleName(), "\\$.+");
-            LOGGER.trace("Configuring service registry [{}]", name);
+            LOGGER.trace("Configuring service registry [{}]", c.getName());
             c.configureServiceRegistry(plan);
         });
         return plan;
@@ -233,6 +234,7 @@ public class CasCoreServicesConfiguration {
      * @param event the event
      */
     @EventListener
+    @Async
     public void refreshServicesManagerWhenReady(final ApplicationReadyEvent event) {
         servicesManager().load();
     }

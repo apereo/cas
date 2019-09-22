@@ -96,6 +96,18 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
             serviceRegistryListeners);
     }
 
+    public AbstractResourceBasedServiceRegistry(final Resource configDirectory,
+                                                final boolean enableWatcher,
+                                                final Collection<StringSerializer<RegisteredService>> serializers,
+                                                final ApplicationEventPublisher eventPublisher,
+                                                final Collection<ServiceRegistryListener> serviceRegistryListeners) throws Exception {
+        this(configDirectory, serializers, enableWatcher, eventPublisher,
+            new NoOpRegisteredServiceReplicationStrategy(),
+            new DefaultRegisteredServiceResourceNamingStrategy(),
+            serviceRegistryListeners);
+    }
+
+
     public AbstractResourceBasedServiceRegistry(final Path configDirectory, final StringSerializer<RegisteredService> serializer,
                                                 final boolean enableWatcher, final ApplicationEventPublisher eventPublisher,
                                                 final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy,
@@ -138,7 +150,8 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
             registeredServiceReplicationStrategy, resourceNamingStrategy);
     }
 
-    private void initializeRegistry(final Path configDirectory, final Collection<StringSerializer<RegisteredService>> serializers,
+    private void initializeRegistry(final Path configDirectory,
+                                    final Collection<StringSerializer<RegisteredService>> serializers,
                                     final boolean enableWatcher,
                                     final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy,
                                     final RegisteredServiceResourceNamingStrategy resourceNamingStrategy) {

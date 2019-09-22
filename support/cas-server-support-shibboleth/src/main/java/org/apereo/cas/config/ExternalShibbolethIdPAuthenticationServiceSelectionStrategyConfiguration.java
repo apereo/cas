@@ -1,7 +1,6 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.audit.AuditableExecution;
-import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategyConfigurer;
 import org.apereo.cas.authentication.principal.ServiceFactory;
@@ -30,12 +29,12 @@ import org.springframework.context.annotation.Configuration;
 @Configuration("externalShibbolethIdPAuthenticationServiceSelectionStrategyConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-public class ExternalShibbolethIdPAuthenticationServiceSelectionStrategyConfiguration implements AuthenticationServiceSelectionStrategyConfigurer {
+public class ExternalShibbolethIdPAuthenticationServiceSelectionStrategyConfiguration {
 
     @Autowired
     @Qualifier("registeredServiceAccessStrategyEnforcer")
     private ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer;
-    
+
     @Autowired
     @Qualifier("servicesManager")
     private ObjectProvider<ServicesManager> servicesManager;
@@ -53,16 +52,19 @@ public class ExternalShibbolethIdPAuthenticationServiceSelectionStrategyConfigur
     public AuthenticationServiceSelectionStrategy shibbolethIdPEntityIdAuthenticationServiceSelectionStrategy() {
         return new ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategy(webApplicationServiceFactory,
             casProperties.getAuthn().getShibIdp().getServerUrl(),
-            servicesManager.getIfAvailable(),
-            registeredServiceAccessStrategyEnforcer.getIfAvailable());
+            servicesManager.getObject(),
+            registeredServiceAccessStrategyEnforcer.getObject());
     }
 
-    @Override
-    public void configureAuthenticationServiceSelectionStrategy(final AuthenticationServiceSelectionPlan plan) {
-        if (StringUtils.isNotBlank(casProperties.getAuthn().getShibIdp().getServerUrl())) {
-            plan.registerStrategy(shibbolethIdPEntityIdAuthenticationServiceSelectionStrategy());
-        } else {
-            LOGGER.warn("Shibboleth IdP url is not specified; External authentication requests by the IdP will not be recognized by CAS");
-        }
+    @Bean
+    public AuthenticationServiceSelectionStrategyConfigurer shibbolethIdPAuthenticationServiceSelectionStrategyConfigurer() {
+        return plan -> {
+            if (StringUtils.isNotBlank(casProperties.getAuthn().getShibIdp().getServerUrl())) {
+                plan.registerStrategy(shibbolethIdPEntityIdAuthenticationServiceSelectionStrategy());
+            } else {
+                LOGGER.warn("Shibboleth IdP url is not specified; External authentication requests by the IdP will not be recognized");
+            }
+        };
     }
+
 }

@@ -8,14 +8,14 @@ import org.apache.commons.lang3.StringUtils;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@FunctionalInterface
 public interface AuthenticationThrottlingExecutionPlanConfigurer {
     /**
      * Configure authentication throttling execution plan.
      *
      * @param plan the plan
      */
-    default void configureAuthenticationThrottlingExecutionPlan(final AuthenticationThrottlingExecutionPlan plan) {
-    }
+    void configureAuthenticationThrottlingExecutionPlan(AuthenticationThrottlingExecutionPlan plan);
 
     /**
      * Gets name.
