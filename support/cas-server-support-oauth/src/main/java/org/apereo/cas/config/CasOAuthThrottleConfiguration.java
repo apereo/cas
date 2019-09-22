@@ -41,7 +41,7 @@ import static org.apereo.cas.support.oauth.OAuth20Constants.BASE_OAUTH20_URL;
  */
 @Configuration("oauthThrottleConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class CasOAuthThrottleConfiguration implements AuthenticationThrottlingExecutionPlanConfigurer {
+public class CasOAuthThrottleConfiguration {
 
     @Autowired
     @Qualifier("oauthSecConfig")
@@ -54,7 +54,7 @@ public class CasOAuthThrottleConfiguration implements AuthenticationThrottlingEx
     @ConditionalOnMissingBean(name = "requiresAuthenticationAuthorizeInterceptor")
     @Bean
     public SecurityInterceptor requiresAuthenticationAuthorizeInterceptor() {
-        val interceptor = new SecurityInterceptor(oauthSecConfig.getIfAvailable(),
+        val interceptor = new SecurityInterceptor(oauthSecConfig.getObject(),
             Authenticators.CAS_OAUTH_CLIENT, JEEHttpActionAdapter.INSTANCE);
         interceptor.setAuthorizers(StringUtils.EMPTY);
         return interceptor;
@@ -63,14 +63,14 @@ public class CasOAuthThrottleConfiguration implements AuthenticationThrottlingEx
     @ConditionalOnMissingBean(name = "requiresAuthenticationAccessTokenInterceptor")
     @Bean
     public SecurityInterceptor requiresAuthenticationAccessTokenInterceptor() {
-        val secConfig = oauthSecConfig.getIfAvailable();
+        val secConfig = oauthSecConfig.getObject();
         val clients = Objects.requireNonNull(secConfig).getClients()
             .findAllClients()
             .stream()
             .filter(client -> client instanceof DirectClient)
             .map(Client::getName)
             .collect(Collectors.joining(","));
-        val interceptor = new SecurityInterceptor(oauthSecConfig.getIfAvailable(), clients, JEEHttpActionAdapter.INSTANCE);
+        val interceptor = new SecurityInterceptor(oauthSecConfig.getObject(), clients, JEEHttpActionAdapter.INSTANCE);
         interceptor.setAuthorizers(StringUtils.EMPTY);
         return interceptor;
     }
@@ -85,11 +85,11 @@ public class CasOAuthThrottleConfiguration implements AuthenticationThrottlingEx
             accessTokenGrantRequestExtractors);
     }
 
-    @Override
-    public void configureAuthenticationThrottlingExecutionPlan(final AuthenticationThrottlingExecutionPlan plan) {
-        plan.registerAuthenticationThrottleInterceptor(oauthHandlerInterceptorAdapter());
+    @Bean
+    public AuthenticationThrottlingExecutionPlanConfigurer oauthAuthenticationThrottlingExecutionPlanConfigurer() {
+        return plan -> plan.registerAuthenticationThrottleInterceptor(oauthHandlerInterceptorAdapter());
     }
-
+    
     @Configuration("oauthThrottleWebMvcConfigurer")
     static class CasOAuthThrottleWebMvcConfigurer implements WebMvcConfigurer {
 
@@ -99,7 +99,7 @@ public class CasOAuthThrottleConfiguration implements AuthenticationThrottlingEx
 
         @Override
         public void addInterceptors(final InterceptorRegistry registry) {
-            Objects.requireNonNull(authenticationThrottlingExecutionPlan.getIfAvailable()).getAuthenticationThrottleInterceptors()
+            Objects.requireNonNull(authenticationThrottlingExecutionPlan.getObject()).getAuthenticationThrottleInterceptors()
                 .forEach(handler -> {
                     val baseUrl = BASE_OAUTH20_URL.concat("/");
                     registry.addInterceptor(handler)

@@ -131,7 +131,8 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
                 }
                 setSigningKey(jwk.getPrivateKey());
             } catch (final Exception e) {
-                LOGGER.debug("Unable to recognize signing key as a JSON web key for [{}]: [{}]. Using pre-defined signing key", getName(), e.getMessage());
+                LOGGER.trace("[{}] Unable to recognize signing key as a JSON web key: [{}].", getName(), e.getMessage());
+                LOGGER.debug("Using pre-defined signing key to use for [{}]", getName());
             }
         }
         configureSigningKey(signingKeyToUse);
@@ -150,7 +151,8 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
                 LOGGER.trace("Parsed encryption key as a JSON web key for [{}] as [{}]", getName(), results);
                 setSecretKeyEncryptionKey(EncodingUtils.generateJsonWebKey(results));
             } catch (final Exception e) {
-                LOGGER.debug("Unable to recognize encryption key as a JSON web key: [{}]. Using pre-defined encryption key to use for [{}]", e.getMessage(), getName());
+                LOGGER.trace("[{}] Unable to recognize encryption key as a JSON web key: [{}].", getName(), e.getMessage());
+                LOGGER.debug("Using pre-defined encryption key to use for [{}]", getName());
             }
         }
         try {

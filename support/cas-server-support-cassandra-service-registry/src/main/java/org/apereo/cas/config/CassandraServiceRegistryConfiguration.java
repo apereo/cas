@@ -5,7 +5,6 @@ import org.apereo.cas.cassandra.CassandraSessionFactory;
 import org.apereo.cas.cassandra.DefaultCassandraSessionFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServiceRegistry;
-import org.apereo.cas.services.ServiceRegistryExecutionPlan;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServiceRegistryListener;
 
@@ -60,11 +59,6 @@ public class CassandraServiceRegistryConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "cassandraServiceRegistryExecutionPlanConfigurer")
     public ServiceRegistryExecutionPlanConfigurer cassandraServiceRegistryExecutionPlanConfigurer() {
-        return new ServiceRegistryExecutionPlanConfigurer() {
-            @Override
-            public void configureServiceRegistry(final ServiceRegistryExecutionPlan plan) {
-                plan.registerServiceRegistry(cassandraServiceRegistry());
-            }
-        };
+        return plan -> plan.registerServiceRegistry(cassandraServiceRegistry());
     }
 }

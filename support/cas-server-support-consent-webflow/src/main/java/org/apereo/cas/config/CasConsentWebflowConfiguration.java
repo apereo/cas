@@ -5,7 +5,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.consent.ConsentEngine;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
-import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.CheckConsentRequiredAction;
 import org.apereo.cas.web.flow.ConfirmConsentAction;
@@ -87,13 +86,7 @@ public class CasConsentWebflowConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "consentCasWebflowExecutionPlanConfigurer")
     public CasWebflowExecutionPlanConfigurer consentCasWebflowExecutionPlanConfigurer() {
-        return new CasWebflowExecutionPlanConfigurer() {
-
-            @Override
-            public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-                plan.registerWebflowConfigurer(consentWebflowConfigurer());
-            }
-        };
+        return plan -> plan.registerWebflowConfigurer(consentWebflowConfigurer());
     }
 
 }

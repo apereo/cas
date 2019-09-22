@@ -51,7 +51,7 @@ public class AdaptiveMultifactorAuthenticationTrigger implements MultifactorAuth
         val multifactorMap = casProperties.getAuthn().getAdaptive().getRequireMultifactor();
 
         if (service == null || authentication == null) {
-            LOGGER.debug("No service or authentication is available to determine event for principal");
+            LOGGER.trace("No service or authentication is available to determine event for principal");
             return Optional.empty();
         }
 
