@@ -40,7 +40,6 @@ import com.google.common.base.Predicates;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.RegExUtils;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -50,15 +49,15 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.core.env.Environment;
 import org.springframework.http.converter.AbstractHttpMessageConverter;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.EnableAsync;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -76,14 +75,11 @@ import java.util.stream.Collectors;
 @Configuration("casCoreServicesConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-@EnableAspectJAutoProxy(proxyTargetClass=true)
+@EnableAsync
 public class CasCoreServicesConfiguration {
     @Autowired
     @Qualifier("communicationsManager")
     private ObjectProvider<CommunicationsManager> communicationsManager;
-
-    @Autowired
-    private ApplicationEventPublisher eventPublisher;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -141,11 +137,11 @@ public class CasCoreServicesConfiguration {
         val activeProfiles = Arrays.stream(environment.getActiveProfiles()).collect(Collectors.toSet());
         if (managementType == ServiceRegistryProperties.ServiceManagementTypes.DOMAIN) {
             LOGGER.trace("Managing CAS service definitions via domains");
-            return new DomainServicesManager(serviceRegistry(), eventPublisher,
+            return new DomainServicesManager(serviceRegistry(), applicationContext,
                 new DefaultRegisteredServiceDomainExtractor(),
                 activeProfiles);
         }
-        return new DefaultServicesManager(serviceRegistry(), eventPublisher, activeProfiles);
+        return new DefaultServicesManager(serviceRegistry(), applicationContext, activeProfiles);
     }
 
     @Bean
@@ -179,8 +175,7 @@ public class CasCoreServicesConfiguration {
             new ArrayList<ServiceRegistryExecutionPlanConfigurer>(0));
         val plan = new DefaultServiceRegistryExecutionPlan();
         configurers.forEach(c -> {
-            val name = RegExUtils.removePattern(c.getClass().getSimpleName(), "\\$.+");
-            LOGGER.trace("Configuring service registry [{}]", name);
+            LOGGER.trace("Configuring service registry [{}]", c.getName());
             c.configureServiceRegistry(plan);
         });
         return plan;
@@ -214,7 +209,7 @@ public class CasCoreServicesConfiguration {
         val plan = serviceRegistryExecutionPlan();
         val filter = (Predicate) Predicates.not(Predicates.instanceOf(ImmutableServiceRegistry.class));
 
-        val chainingRegistry = new ChainingServiceRegistry(eventPublisher);
+        val chainingRegistry = new ChainingServiceRegistry(applicationContext);
         if (plan.find(filter).isEmpty()) {
             LOGGER.warn("Runtime memory is used as the persistence storage for retrieving and persisting service definitions. "
                 + "Changes that are made to service definitions during runtime WILL be LOST when the CAS server is restarted. "
@@ -227,11 +222,10 @@ public class CasCoreServicesConfiguration {
     }
 
     @Bean
-    //@RefreshScope
     @ConditionalOnMissingBean(name = "inMemoryServiceRegistry")
     public ServiceRegistry inMemoryServiceRegistry() {
         val services = getInMemoryRegisteredServices().orElseGet(ArrayList::new);
-        return new InMemoryServiceRegistry(eventPublisher, services, serviceRegistryListeners());
+        return new InMemoryServiceRegistry(applicationContext, services, serviceRegistryListeners());
     }
 
     /**
@@ -240,6 +234,7 @@ public class CasCoreServicesConfiguration {
      * @param event the event
      */
     @EventListener
+    @Async
     public void refreshServicesManagerWhenReady(final ApplicationReadyEvent event) {
         servicesManager().load();
     }

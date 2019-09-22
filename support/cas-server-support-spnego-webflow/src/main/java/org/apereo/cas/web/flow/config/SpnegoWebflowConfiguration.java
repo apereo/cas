@@ -2,7 +2,6 @@ package org.apereo.cas.web.flow.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
-import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.SpengoWebflowConfigurer;
 
@@ -52,11 +51,6 @@ public class SpnegoWebflowConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "spnegoCasWebflowExecutionPlanConfigurer")
     public CasWebflowExecutionPlanConfigurer spnegoCasWebflowExecutionPlanConfigurer() {
-        return new CasWebflowExecutionPlanConfigurer() {
-            @Override
-            public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-                plan.registerWebflowConfigurer(spnegoWebflowConfigurer());
-            }
-        };
+        return plan -> plan.registerWebflowConfigurer(spnegoWebflowConfigurer());
     }
 }

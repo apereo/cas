@@ -8,7 +8,6 @@ import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
-import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.SurrogateWebflowConfigurer;
 import org.apereo.cas.web.flow.action.LoadSurrogatesListAction;
@@ -95,35 +94,35 @@ public class SurrogateAuthenticationWebflowConfiguration implements Initializing
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer surrogateWebflowConfigurer() {
-        return new SurrogateWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry.getIfAvailable(), applicationContext, casProperties);
+        return new SurrogateWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry.getObject(), applicationContext, casProperties);
     }
 
     @ConditionalOnMissingBean(name = "selectSurrogateAction")
     @Bean
     public Action selectSurrogateAction() {
-        return new SurrogateSelectionAction(surrogatePrincipalBuilder.getIfAvailable());
+        return new SurrogateSelectionAction(surrogatePrincipalBuilder.getObject());
     }
 
     @Bean
     public Action authenticationViaFormAction() {
-        return new SurrogateInitialAuthenticationAction(initialAuthenticationAttemptWebflowEventResolver.getIfAvailable(),
-            serviceTicketRequestWebflowEventResolver.getIfAvailable(),
-            adaptiveAuthenticationPolicy.getIfAvailable(),
+        return new SurrogateInitialAuthenticationAction(initialAuthenticationAttemptWebflowEventResolver.getObject(),
+            serviceTicketRequestWebflowEventResolver.getObject(),
+            adaptiveAuthenticationPolicy.getObject(),
             casProperties.getAuthn().getSurrogate().getSeparator());
     }
 
     @ConditionalOnMissingBean(name = "surrogateAuthorizationCheck")
     @Bean
     public Action surrogateAuthorizationCheck() {
-        return new SurrogateAuthorizationAction(servicesManager.getIfAvailable(),
-            registeredServiceAccessStrategyEnforcer.getIfAvailable());
+        return new SurrogateAuthorizationAction(servicesManager.getObject(),
+            registeredServiceAccessStrategyEnforcer.getObject());
     }
 
     @ConditionalOnMissingBean(name = "loadSurrogatesListAction")
     @Bean
     public Action loadSurrogatesListAction() {
-        return new LoadSurrogatesListAction(surrogateAuthenticationService.getIfAvailable(),
-            surrogatePrincipalBuilder.getIfAvailable());
+        return new LoadSurrogatesListAction(surrogateAuthenticationService.getObject(),
+            surrogatePrincipalBuilder.getObject());
     }
 
     @Override
@@ -134,11 +133,6 @@ public class SurrogateAuthenticationWebflowConfiguration implements Initializing
     @Bean
     @ConditionalOnMissingBean(name = "surrogateCasWebflowExecutionPlanConfigurer")
     public CasWebflowExecutionPlanConfigurer surrogateCasWebflowExecutionPlanConfigurer() {
-        return new CasWebflowExecutionPlanConfigurer() {
-            @Override
-            public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-                plan.registerWebflowConfigurer(surrogateWebflowConfigurer());
-            }
-        };
+        return plan -> plan.registerWebflowConfigurer(surrogateWebflowConfigurer());
     }
 }

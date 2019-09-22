@@ -5,7 +5,6 @@ import org.apereo.cas.adaptors.ldap.services.LdapRegisteredServiceMapper;
 import org.apereo.cas.adaptors.ldap.services.LdapServiceRegistry;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServiceRegistry;
-import org.apereo.cas.services.ServiceRegistryExecutionPlan;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServiceRegistryListener;
 import org.apereo.cas.util.LdapUtils;
@@ -17,7 +16,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -37,7 +36,7 @@ public class LdapServiceRegistryConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Autowired
-    private ApplicationEventPublisher eventPublisher;
+    private ConfigurableApplicationContext applicationContext;
 
     @Autowired
     @Qualifier("serviceRegistryListeners")
@@ -56,17 +55,12 @@ public class LdapServiceRegistryConfiguration {
         val ldap = casProperties.getServiceRegistry().getLdap();
         val connectionFactory = LdapUtils.newLdaptivePooledConnectionFactory(ldap);
         return new LdapServiceRegistry(connectionFactory, ldap.getBaseDn(), ldapServiceRegistryMapper(),
-            ldap, eventPublisher, serviceRegistryListeners.getIfAvailable());
+            ldap, applicationContext, serviceRegistryListeners.getIfAvailable());
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "ldapServiceRegistryExecutionPlanConfigurer")
     public ServiceRegistryExecutionPlanConfigurer ldaplServiceRegistryExecutionPlanConfigurer() {
-        return new ServiceRegistryExecutionPlanConfigurer() {
-            @Override
-            public void configureServiceRegistry(final ServiceRegistryExecutionPlan plan) {
-                plan.registerServiceRegistry(ldapServiceRegistry());
-            }
-        };
+        return plan -> plan.registerServiceRegistry(ldapServiceRegistry());
     }
 }

@@ -67,7 +67,7 @@ import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.SchedulingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.serialization.ComponentSerializationPlan;
-import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurator;
+import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurer;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -476,7 +476,7 @@ public abstract class AbstractOAuth20Tests {
     }
 
     @TestConfiguration("OAuth20TestConfiguration")
-    public static class OAuth20TestConfiguration implements ComponentSerializationPlanConfigurator, InitializingBean {
+    public static class OAuth20TestConfiguration implements ComponentSerializationPlanConfigurer, InitializingBean {
         @Autowired
         protected ApplicationContext applicationContext;
 

@@ -16,7 +16,6 @@ import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
-import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
@@ -29,7 +28,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -61,9 +59,6 @@ public class SwivelConfiguration {
 
     @Autowired
     private ConfigurableApplicationContext applicationContext;
-
-    @Autowired
-    private ApplicationEventPublisher applicationEventPublisher;
 
     @Autowired
     @Qualifier("authenticationServiceSelectionPlan")
@@ -126,7 +121,7 @@ public class SwivelConfiguration {
             .registeredServiceAccessStrategyEnforcer(registeredServiceAccessStrategyEnforcer.getIfAvailable())
             .casProperties(casProperties)
             .ticketRegistry(ticketRegistry.getIfAvailable())
-            .eventPublisher(applicationEventPublisher)
+            .eventPublisher(applicationContext)
             .applicationContext(applicationContext)
             .build();
         return new SwivelAuthenticationWebflowEventResolver(context);
@@ -141,12 +136,7 @@ public class SwivelConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "swivelCasWebflowExecutionPlanConfigurer")
     public CasWebflowExecutionPlanConfigurer swivelCasWebflowExecutionPlanConfigurer() {
-        return new CasWebflowExecutionPlanConfigurer() {
-            @Override
-            public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-                plan.registerWebflowConfigurer(swivelMultifactorWebflowConfigurer());
-            }
-        };
+        return plan -> plan.registerWebflowConfigurer(swivelMultifactorWebflowConfigurer());
     }
 
     @Bean
@@ -161,7 +151,7 @@ public class SwivelConfiguration {
     @ConditionalOnMissingBean(name = "mfaTrustEngine")
     @ConditionalOnProperty(prefix = "cas.authn.mfa.swivel", name = "trustedDeviceEnabled", havingValue = "true", matchIfMissing = true)
     @Configuration("swivelMultifactorTrustConfiguration")
-    public class SwivelMultifactorTrustConfiguration implements CasWebflowExecutionPlanConfigurer {
+    public class SwivelMultifactorTrustConfiguration {
 
         @ConditionalOnMissingBean(name = "swivelMultifactorTrustWebflowConfigurer")
         @Bean
@@ -173,9 +163,9 @@ public class SwivelConfiguration {
                 swivelAuthenticatorFlowRegistry(), applicationContext, casProperties);
         }
 
-        @Override
-        public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-            plan.registerWebflowConfigurer(swivelMultifactorTrustWebflowConfigurer());
+        @Bean
+        public CasWebflowExecutionPlanConfigurer swivelAuthenticationCasWebflowExecutionPlanConfigurer() {
+            return plan -> plan.registerWebflowConfigurer(swivelMultifactorTrustWebflowConfigurer());
         }
     }
 }

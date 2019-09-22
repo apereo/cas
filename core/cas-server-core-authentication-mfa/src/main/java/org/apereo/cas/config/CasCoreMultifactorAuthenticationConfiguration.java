@@ -62,8 +62,8 @@ public class CasCoreMultifactorAuthenticationConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "requestedContextValidator")
     public RequestedAuthenticationContextValidator<MultifactorAuthenticationProvider> requestedContextValidator() {
-        return new DefaultRequestedAuthenticationContextValidator(servicesManager.getIfAvailable(),
-            multifactorTriggerSelectionStrategy.getIfAvailable(),
+        return new DefaultRequestedAuthenticationContextValidator(servicesManager.getObject(),
+            multifactorTriggerSelectionStrategy.getObject(),
             authenticationContextValidator(),
             applicationContext);
     }

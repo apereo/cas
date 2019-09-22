@@ -72,7 +72,7 @@ public class TextMagicSmsSender implements SmsSender {
             message.setFrom(from);
             message.setText(text);
             message.setContacts(to);
-            val result = this.api.sendMessage(message, true);
+            val result = this.api.sendMessage(message, Boolean.TRUE);
             return result != null && result.getMessageId() > 0;
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);

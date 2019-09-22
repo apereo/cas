@@ -26,12 +26,14 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.scheduling.annotation.EnableAsync;
 
 import java.util.Collection;
 
@@ -50,7 +52,8 @@ import java.util.Collection;
 @ConditionalOnBean(ServicesManager.class)
 @ConditionalOnProperty(prefix = "cas.serviceRegistry", name = "initFromJson", havingValue = "true")
 @Slf4j
-@EnableAspectJAutoProxy(proxyTargetClass=true)
+@EnableAspectJAutoProxy(proxyTargetClass = true)
+@EnableAsync
 public class CasServiceRegistryInitializationConfiguration {
 
     @Autowired
@@ -58,7 +61,7 @@ public class CasServiceRegistryInitializationConfiguration {
     private ObjectProvider<Collection<ServiceRegistryListener>> serviceRegistryListeners;
 
     @Autowired
-    private ApplicationEventPublisher eventPublisher;
+    private ConfigurableApplicationContext applicationContext;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -74,7 +77,7 @@ public class CasServiceRegistryInitializationConfiguration {
     @Lazy(false)
     @Bean
     public ServiceRegistryInitializer serviceRegistryInitializer() {
-        val serviceRegistryInstance = serviceRegistry.getIfAvailable();
+        val serviceRegistryInstance = serviceRegistry.getObject();
         val initializer = new ServiceRegistryInitializer(embeddedJsonServiceRegistry(),
             serviceRegistryInstance, servicesManager.getIfAvailable());
 
@@ -96,7 +99,7 @@ public class CasServiceRegistryInitializationConfiguration {
     @Lazy(false)
     public ServiceRegistry embeddedJsonServiceRegistry() {
         val location = getServiceRegistryInitializerServicesDirectoryResource();
-        return new EmbeddedResourceBasedServiceRegistry(eventPublisher, location, serviceRegistryListeners.getIfAvailable());
+        return new EmbeddedResourceBasedServiceRegistry(applicationContext, location, serviceRegistryListeners.getIfAvailable());
     }
 
     private Resource getServiceRegistryInitializerServicesDirectoryResource() {
@@ -112,7 +115,12 @@ public class CasServiceRegistryInitializationConfiguration {
         EmbeddedResourceBasedServiceRegistry(final ApplicationEventPublisher publisher,
                                              final Resource location,
                                              final Collection<ServiceRegistryListener> serviceRegistryListeners) throws Exception {
-            super(location, getRegisteredServiceSerializers(), publisher, serviceRegistryListeners);
+            super(location, canResourceWatcherBeEnabled(location),
+                getRegisteredServiceSerializers(), publisher, serviceRegistryListeners);
+        }
+
+        private static boolean canResourceWatcherBeEnabled(final Resource location) {
+            return !(location instanceof ClassPathResource);
         }
 
         static Collection<StringSerializer<RegisteredService>> getRegisteredServiceSerializers() {

@@ -205,7 +205,7 @@ public class CasOAuthConfiguration {
     public JwtBuilder accessTokenJwtBuilder() {
         return new OAuth20JwtBuilder(casProperties.getServer().getPrefix(),
             oauthAccessTokenJwtCipherExecutor(),
-            servicesManager.getIfAvailable(),
+            servicesManager.getObject(),
             oauthRegisteredServiceJwtAccessTokenCipherExecutor());
     }
 
@@ -231,8 +231,8 @@ public class CasOAuthConfiguration {
         val clientList = oauthSecConfigClients();
         val config = new Config(OAuth20Utils.casOAuthCallbackUrl(casProperties.getServer().getPrefix()), clientList);
         config.setSessionStore(oauthDistributedSessionStore());
-        config.setProfileManagerFactory("CASOAuthSecurityProfileManager", webContext ->
-            new OAuth20ClientIdAwareProfileManager(webContext, config.getSessionStore(), servicesManager.getIfAvailable()));
+        Config.setProfileManagerFactory("CASOAuthSecurityProfileManager", webContext ->
+            new OAuth20ClientIdAwareProfileManager(webContext, config.getSessionStore(), servicesManager.getObject()));
         return config;
     }
 
@@ -240,7 +240,7 @@ public class CasOAuthConfiguration {
     @ConditionalOnMissingBean(name = "oauthSecConfigClients")
     public List<Client> oauthSecConfigClients() {
         val cfg = new CasConfiguration(casProperties.getServer().getLoginUrl());
-        cfg.setDefaultTicketValidator(new CasServerApiBasedTicketValidator(centralAuthenticationService.getIfAvailable()));
+        cfg.setDefaultTicketValidator(new CasServerApiBasedTicketValidator(centralAuthenticationService.getObject()));
 
         val oauthCasClient = new CasClient(cfg);
         oauthCasClient.setRedirectionActionBuilder(webContext ->
@@ -311,35 +311,35 @@ public class CasOAuthConfiguration {
     @ConditionalOnMissingBean(name = "oAuthClientAuthenticator")
     @Bean
     public Authenticator<UsernamePasswordCredentials> oAuthClientAuthenticator() {
-        return new OAuth20ClientIdClientSecretAuthenticator(servicesManager.getIfAvailable(),
-            webApplicationServiceFactory.getIfAvailable(),
-            registeredServiceAccessStrategyEnforcer.getIfAvailable(),
+        return new OAuth20ClientIdClientSecretAuthenticator(servicesManager.getObject(),
+            webApplicationServiceFactory.getObject(),
+            registeredServiceAccessStrategyEnforcer.getObject(),
             oauthRegisteredServiceCipherExecutor(), ticketRegistry.getIfAvailable());
     }
 
     @ConditionalOnMissingBean(name = "oAuthProofKeyCodeExchangeAuthenticator")
     @Bean
     public Authenticator<UsernamePasswordCredentials> oAuthProofKeyCodeExchangeAuthenticator() {
-        return new OAuth20ProofKeyCodeExchangeAuthenticator(this.servicesManager.getIfAvailable(),
-            webApplicationServiceFactory.getIfAvailable(),
-            registeredServiceAccessStrategyEnforcer.getIfAvailable(),
-            ticketRegistry.getIfAvailable(),
+        return new OAuth20ProofKeyCodeExchangeAuthenticator(this.servicesManager.getObject(),
+            webApplicationServiceFactory.getObject(),
+            registeredServiceAccessStrategyEnforcer.getObject(),
+            ticketRegistry.getObject(),
             oauthRegisteredServiceCipherExecutor());
     }
 
     @ConditionalOnMissingBean(name = "oAuthUserAuthenticator")
     @Bean
     public Authenticator<UsernamePasswordCredentials> oAuthUserAuthenticator() {
-        return new OAuth20UsernamePasswordAuthenticator(authenticationSystemSupport.getIfAvailable(),
-            servicesManager.getIfAvailable(),
-            webApplicationServiceFactory.getIfAvailable(),
+        return new OAuth20UsernamePasswordAuthenticator(authenticationSystemSupport.getObject(),
+            servicesManager.getObject(),
+            webApplicationServiceFactory.getObject(),
             oauthRegisteredServiceCipherExecutor());
     }
 
     @ConditionalOnMissingBean(name = "oAuthAccessTokenAuthenticator")
     @Bean
     public Authenticator<TokenCredentials> oAuthAccessTokenAuthenticator() {
-        return new OAuth20AccessTokenAuthenticator(ticketRegistry.getIfAvailable());
+        return new OAuth20AccessTokenAuthenticator(ticketRegistry.getObject());
     }
 
     @ConditionalOnMissingBean(name = "oauthAccessTokenResponseGenerator")
@@ -355,7 +355,7 @@ public class CasOAuthConfiguration {
         return new DefaultAccessTokenFactory(accessTokenIdGenerator(),
             accessTokenExpirationPolicy(),
             accessTokenJwtBuilder(),
-            servicesManager.getIfAvailable());
+            servicesManager.getObject());
     }
 
     @Bean
@@ -364,7 +364,7 @@ public class CasOAuthConfiguration {
     public DeviceTokenFactory defaultDeviceTokenFactory() {
         return new DefaultDeviceTokenFactory(deviceTokenIdGenerator(), deviceTokenExpirationPolicy(),
             casProperties.getAuthn().getOauth().getDeviceUserCode().getUserCodeLength(),
-            servicesManager.getIfAvailable());
+            servicesManager.getObject());
     }
 
     @Bean
@@ -406,7 +406,7 @@ public class CasOAuthConfiguration {
     @ConditionalOnMissingBean(name = "defaultOAuthCodeFactory")
     public OAuthCodeFactory defaultOAuthCodeFactory() {
         return new DefaultOAuthCodeFactory(oAuthCodeIdGenerator(),
-            oAuthCodeExpirationPolicy(), servicesManager.getIfAvailable());
+            oAuthCodeExpirationPolicy(), servicesManager.getObject());
     }
 
     @ConditionalOnMissingBean(name = "profileScopeToAttributesFilter")
@@ -432,7 +432,7 @@ public class CasOAuthConfiguration {
         return new OAuth20DefaultTokenGenerator(defaultAccessTokenFactory(),
             defaultDeviceTokenFactory(),
             defaultRefreshTokenFactory(),
-            ticketRegistry.getIfAvailable(),
+            ticketRegistry.getObject(),
             casProperties);
     }
 
@@ -492,7 +492,7 @@ public class CasOAuthConfiguration {
     @ConditionalOnMissingBean(name = "oAuth2UserProfileDataCreator")
     @Bean
     public OAuth20UserProfileDataCreator oAuth2UserProfileDataCreator() {
-        return new DefaultOAuth20UserProfileDataCreator(servicesManager.getIfAvailable(),
+        return new DefaultOAuth20UserProfileDataCreator(servicesManager.getObject(),
             profileScopeToAttributesFilter());
     }
 
@@ -547,8 +547,8 @@ public class CasOAuthConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "oauthDeviceCodeResponseTypeRequestValidator")
     public OAuth20TokenRequestValidator oauthDeviceCodeResponseTypeRequestValidator() {
-        val svcManager = servicesManager.getIfAvailable();
-        return new OAuth20DeviceCodeResponseTypeRequestValidator(svcManager, webApplicationServiceFactory.getIfAvailable());
+        val svcManager = servicesManager.getObject();
+        return new OAuth20DeviceCodeResponseTypeRequestValidator(svcManager, webApplicationServiceFactory.getObject());
     }
 
     @Bean
@@ -599,40 +599,40 @@ public class CasOAuthConfiguration {
     @Bean
     @RefreshScope
     public OAuth20AuthorizationRequestValidator oauthAuthorizationCodeResponseTypeRequestValidator() {
-        return new OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator(servicesManager.getIfAvailable(),
-            webApplicationServiceFactory.getIfAvailable(), registeredServiceAccessStrategyEnforcer.getIfAvailable());
+        return new OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator(servicesManager.getObject(),
+            webApplicationServiceFactory.getObject(), registeredServiceAccessStrategyEnforcer.getObject());
     }
 
     @ConditionalOnMissingBean(name = "oauthProofKeyCodeExchangeResponseTypeAuthorizationRequestValidator")
     @Bean
     @RefreshScope
     public OAuth20AuthorizationRequestValidator oauthProofKeyCodeExchangeResponseTypeAuthorizationRequestValidator() {
-        return new OAuth20ProofKeyCodeExchangeResponseTypeAuthorizationRequestValidator(servicesManager.getIfAvailable(),
-            webApplicationServiceFactory.getIfAvailable(), registeredServiceAccessStrategyEnforcer.getIfAvailable());
+        return new OAuth20ProofKeyCodeExchangeResponseTypeAuthorizationRequestValidator(servicesManager.getObject(),
+            webApplicationServiceFactory.getObject(), registeredServiceAccessStrategyEnforcer.getObject());
     }
 
     @ConditionalOnMissingBean(name = "oauthTokenResponseTypeRequestValidator")
     @Bean
     @RefreshScope
     public OAuth20AuthorizationRequestValidator oauthTokenResponseTypeRequestValidator() {
-        return new OAuth20TokenResponseTypeAuthorizationRequestValidator(servicesManager.getIfAvailable(),
-            webApplicationServiceFactory.getIfAvailable(), registeredServiceAccessStrategyEnforcer.getIfAvailable());
+        return new OAuth20TokenResponseTypeAuthorizationRequestValidator(servicesManager.getObject(),
+            webApplicationServiceFactory.getObject(), registeredServiceAccessStrategyEnforcer.getObject());
     }
 
     @ConditionalOnMissingBean(name = "oauthIdTokenResponseTypeRequestValidator")
     @Bean
     @RefreshScope
     public OAuth20AuthorizationRequestValidator oauthIdTokenResponseTypeRequestValidator() {
-        return new OAuth20IdTokenResponseTypeAuthorizationRequestValidator(servicesManager.getIfAvailable(),
-            webApplicationServiceFactory.getIfAvailable(), registeredServiceAccessStrategyEnforcer.getIfAvailable());
+        return new OAuth20IdTokenResponseTypeAuthorizationRequestValidator(servicesManager.getObject(),
+            webApplicationServiceFactory.getObject(), registeredServiceAccessStrategyEnforcer.getObject());
     }
 
     @ConditionalOnMissingBean(name = "oauthIdTokenAndTokenResponseTypeRequestValidator")
     @Bean
     @RefreshScope
     public OAuth20AuthorizationRequestValidator oauthIdTokenAndTokenResponseTypeRequestValidator() {
-        return new OAuth20IdTokenAndTokenResponseTypeAuthorizationRequestValidator(servicesManager.getIfAvailable(),
-            webApplicationServiceFactory.getIfAvailable(), registeredServiceAccessStrategyEnforcer.getIfAvailable());
+        return new OAuth20IdTokenAndTokenResponseTypeAuthorizationRequestValidator(servicesManager.getObject(),
+            webApplicationServiceFactory.getObject(), registeredServiceAccessStrategyEnforcer.getObject());
     }
 
     @ConditionalOnMissingBean(name = "oauthResourceOwnerCredentialsResponseBuilder")
@@ -656,15 +656,15 @@ public class CasOAuthConfiguration {
     @RefreshScope
     public OAuth20AuthorizationResponseBuilder oauthTokenResponseBuilder() {
         return new OAuth20TokenAuthorizationResponseBuilder(oauthTokenGenerator(), accessTokenExpirationPolicy(),
-            servicesManager.getIfAvailable(), accessTokenJwtBuilder());
+            servicesManager.getObject(), accessTokenJwtBuilder());
     }
 
     @ConditionalOnMissingBean(name = "oauthAuthorizationCodeResponseBuilder")
     @Bean
     @RefreshScope
     public OAuth20AuthorizationResponseBuilder oauthAuthorizationCodeResponseBuilder() {
-        return new OAuth20AuthorizationCodeAuthorizationResponseBuilder(ticketRegistry.getIfAvailable(),
-            defaultOAuthCodeFactory(), servicesManager.getIfAvailable());
+        return new OAuth20AuthorizationCodeAuthorizationResponseBuilder(ticketRegistry.getObject(),
+            defaultOAuthCodeFactory(), servicesManager.getObject());
     }
 
     @ConditionalOnMissingBean(name = "authorizeController")
@@ -689,7 +689,7 @@ public class CasOAuthConfiguration {
     @ConditionalOnMissingBean(name = "defaultRefreshTokenFactory")
     public RefreshTokenFactory defaultRefreshTokenFactory() {
         return new DefaultRefreshTokenFactory(refreshTokenIdGenerator(),
-            refreshTokenExpirationPolicy(), servicesManager.getIfAvailable());
+            refreshTokenExpirationPolicy(), servicesManager.getObject());
     }
 
     @Bean
@@ -702,7 +702,7 @@ public class CasOAuthConfiguration {
     @Bean
     @RefreshScope
     public OAuth20CasAuthenticationBuilder oauthCasAuthenticationBuilder() {
-        return new OAuth20CasAuthenticationBuilder(oauthPrincipalFactory(), webApplicationServiceFactory.getIfAvailable(),
+        return new OAuth20CasAuthenticationBuilder(oauthPrincipalFactory(), webApplicationServiceFactory.getObject(),
             profileScopeToAttributesFilter(), casProperties);
     }
 
@@ -746,7 +746,7 @@ public class CasOAuthConfiguration {
     @Bean
     @ConditionalOnAvailableEndpoint
     public OAuth20TokenManagementEndpoint oAuth20TokenManagementEndpoint() {
-        return new OAuth20TokenManagementEndpoint(casProperties, ticketRegistry.getIfAvailable());
+        return new OAuth20TokenManagementEndpoint(casProperties, ticketRegistry.getObject());
     }
 
     @Bean
@@ -785,7 +785,7 @@ public class CasOAuthConfiguration {
     public SessionStore<JEEContext> oauthDistributedSessionStore() {
         val replicate = casProperties.getAuthn().getOauth().isReplicateSessions();
         if (replicate) {
-            return new DistributedJ2ESessionStore(ticketRegistry.getIfAvailable(), ticketFactory.getIfAvailable());
+            return new DistributedJ2ESessionStore(ticketRegistry.getObject(), ticketFactory.getObject());
         }
         return new JEESessionStore();
     }
@@ -825,18 +825,18 @@ public class CasOAuthConfiguration {
         return OAuth20ConfigurationContext.builder()
             .registeredServiceCipherExecutor(oauthRegisteredServiceCipherExecutor())
             .sessionStore(oauthDistributedSessionStore())
-            .servicesManager(servicesManager.getIfAvailable())
-            .ticketRegistry(ticketRegistry.getIfAvailable())
+            .servicesManager(servicesManager.getObject())
+            .ticketRegistry(ticketRegistry.getObject())
             .accessTokenFactory(defaultAccessTokenFactory())
             .deviceTokenFactory(defaultDeviceTokenFactory())
             .principalFactory(oauthPrincipalFactory())
-            .webApplicationServiceServiceFactory(webApplicationServiceFactory.getIfAvailable())
+            .webApplicationServiceServiceFactory(webApplicationServiceFactory.getObject())
             .casProperties(casProperties)
-            .ticketGrantingTicketCookieGenerator(ticketGrantingTicketCookieGenerator.getIfAvailable())
+            .ticketGrantingTicketCookieGenerator(ticketGrantingTicketCookieGenerator.getObject())
             .resourceLoader(resourceLoader)
             .oauthConfig(oauthSecConfig())
-            .registeredServiceAccessStrategyEnforcer(registeredServiceAccessStrategyEnforcer.getIfAvailable())
-            .centralAuthenticationService(centralAuthenticationService.getIfAvailable())
+            .registeredServiceAccessStrategyEnforcer(registeredServiceAccessStrategyEnforcer.getObject())
+            .centralAuthenticationService(centralAuthenticationService.getObject())
             .callbackAuthorizeViewResolver(callbackAuthorizeViewResolver())
             .profileScopeToAttributesFilter(profileScopeToAttributesFilter())
             .accessTokenGenerator(oauthTokenGenerator())

@@ -14,8 +14,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.Collection;
-
 /**
  * This is {@link SamlUniqueTicketIdGeneratorConfiguration}.
  *
@@ -24,7 +22,7 @@ import java.util.Collection;
  */
 @Configuration("samlUniqueTicketIdGeneratorConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class SamlUniqueTicketIdGeneratorConfiguration implements UniqueTicketIdGeneratorConfigurer {
+public class SamlUniqueTicketIdGeneratorConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -35,8 +33,10 @@ public class SamlUniqueTicketIdGeneratorConfiguration implements UniqueTicketIdG
         return gen;
     }
 
-    @Override
-    public Collection<Pair<String, UniqueTicketIdGenerator>> buildUniqueTicketIdGenerators() {
-        return CollectionUtils.wrap(Pair.of(SamlService.class.getCanonicalName(), samlServiceTicketUniqueIdGenerator()));
+    @Bean
+    public UniqueTicketIdGeneratorConfigurer samlServiceTicketUniqueTicketIdGeneratorConfigurer() {
+        return () -> CollectionUtils.wrap(
+            Pair.of(SamlService.class.getCanonicalName(), samlServiceTicketUniqueIdGenerator()));
     }
+
 }

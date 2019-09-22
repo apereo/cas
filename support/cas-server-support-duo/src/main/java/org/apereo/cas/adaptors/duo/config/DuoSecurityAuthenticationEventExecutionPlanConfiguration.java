@@ -27,7 +27,6 @@ import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorProp
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
-import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 
 import lombok.extern.slf4j.Slf4j;
@@ -115,7 +114,7 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @RefreshScope
     public MultifactorAuthenticationProviderFactoryBean<DuoSecurityMultifactorAuthenticationProvider, DuoSecurityMultifactorProperties> duoProviderFactory() {
-        return new DuoSecurityMultifactorAuthenticationProviderFactory(httpClient.getIfAvailable(), duoSecurityBypassEvaluator.getIfAvailable(), failureModeEvaluator.getIfAvailable());
+        return new DuoSecurityMultifactorAuthenticationProviderFactory(httpClient.getObject(), duoSecurityBypassEvaluator.getObject(), failureModeEvaluator.getObject());
     }
 
     @ConditionalOnMissingBean(name = "duoProviderBean")
@@ -142,7 +141,7 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
         }
         return duos.stream()
             .map(d -> new DuoSecurityAuthenticationHandler(d.getId(),
-                servicesManager.getIfAvailable(),
+                servicesManager.getObject(),
                 duoPrincipalFactory(),
                 duoProviderBean().getProvider(d.getId()),
                 d.getOrder())
@@ -154,8 +153,8 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer duoMultifactorWebflowConfigurer() {
         val deviceRegistrationEnabled = casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled();
-        return new DuoSecurityMultifactorWebflowConfigurer(flowBuilderServices.getIfAvailable(),
-            loginFlowDefinitionRegistry.getIfAvailable(),
+        return new DuoSecurityMultifactorWebflowConfigurer(flowBuilderServices.getObject(),
+            loginFlowDefinitionRegistry.getObject(),
             deviceRegistrationEnabled,
             applicationContext,
             casProperties);
@@ -185,12 +184,7 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "duoSecurityCasWebflowExecutionPlanConfigurer")
     public CasWebflowExecutionPlanConfigurer duoSecurityCasWebflowExecutionPlanConfigurer() {
-        return new CasWebflowExecutionPlanConfigurer() {
-            @Override
-            public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-                plan.registerWebflowConfigurer(duoMultifactorWebflowConfigurer());
-            }
-        };
+        return plan -> plan.registerWebflowConfigurer(duoMultifactorWebflowConfigurer());
     }
     
     @Bean

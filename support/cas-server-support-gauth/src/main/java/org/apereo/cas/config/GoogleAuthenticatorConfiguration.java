@@ -5,7 +5,6 @@ import org.apereo.cas.gauth.web.flow.GoogleAuthenticatorMultifactorTrustWebflowC
 import org.apereo.cas.gauth.web.flow.GoogleAuthenticatorMultifactorWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
-import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 
 import lombok.val;
@@ -68,12 +67,7 @@ public class GoogleAuthenticatorConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "googleCasWebflowExecutionPlanConfigurer")
     public CasWebflowExecutionPlanConfigurer googleCasWebflowExecutionPlanConfigurer() {
-        return new CasWebflowExecutionPlanConfigurer() {
-            @Override
-            public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-                plan.registerWebflowConfigurer(googleAuthenticatorMultifactorWebflowConfigurer());
-            }
-        };
+        return plan -> plan.registerWebflowConfigurer(googleAuthenticatorMultifactorWebflowConfigurer());
     }
     
     /**
@@ -82,7 +76,7 @@ public class GoogleAuthenticatorConfiguration {
     @ConditionalOnBean(name = "mfaTrustEngine")
     @ConditionalOnProperty(prefix = "cas.authn.mfa.gauth", name = "trustedDeviceEnabled", havingValue = "true", matchIfMissing = true)
     @Configuration("gauthMultifactorTrustConfiguration")
-    public class GoogleAuthenticatorMultifactorTrustConfiguration implements CasWebflowExecutionPlanConfigurer {
+    public class GoogleAuthenticatorMultifactorTrustConfiguration {
 
         @ConditionalOnMissingBean(name = "gauthMultifactorTrustWebflowConfigurer")
         @Bean
@@ -93,9 +87,9 @@ public class GoogleAuthenticatorConfiguration {
                 applicationContext, casProperties);
         }
 
-        @Override
-        public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-            plan.registerWebflowConfigurer(gauthMultifactorTrustWebflowConfigurer());
+        @Bean
+        public CasWebflowExecutionPlanConfigurer gauthMultifactorTrustCasWebflowExecutionPlanConfigurer() {
+            return plan -> plan.registerWebflowConfigurer(gauthMultifactorTrustWebflowConfigurer());
         }
     }
 

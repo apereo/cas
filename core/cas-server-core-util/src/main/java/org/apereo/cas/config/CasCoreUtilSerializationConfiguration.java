@@ -1,12 +1,12 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.util.serialization.ComponentSerializationPlan;
-import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurator;
+import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurer;
 import org.apereo.cas.util.serialization.DefaultComponentSerializationPlan;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.RegExUtils;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -17,29 +17,30 @@ import org.springframework.core.Ordered;
 import java.util.List;
 
 /**
- * This is {@link CasCoreUtilSerializationConfiguration}.
- * It also by default acts as a vanilla serialization plan configurator that does nothing
- * in order to satisfy the auto-wiring requirements.
+ * This is {@link CasCoreUtilSerialiAdaptiveMultifactorAuthenticationTriggerzationConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Configuration(value = "casCoreUtilSerializationConfiguration", proxyBeanMethods = false)
+@Configuration(value = "casCoreUtilSerializationConfiguration", proxyBeanMethods = true)
 @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
 @Slf4j
-public class CasCoreUtilSerializationConfiguration implements ComponentSerializationPlanConfigurator {
+public class CasCoreUtilSerializationConfiguration {
 
+    @Autowired
+    private ObjectProvider<List<ComponentSerializationPlanConfigurer>> configurers;
 
     @ConditionalOnMissingBean(name = "componentSerializationPlan")
-    @Autowired
     @Bean
-    public ComponentSerializationPlan componentSerializationPlan(final List<ComponentSerializationPlanConfigurator> configurers) {
+    public ComponentSerializationPlan componentSerializationPlan() {
         val plan = new DefaultComponentSerializationPlan();
-        configurers.forEach(c -> {
-            val name = RegExUtils.removePattern(c.getClass().getSimpleName(), "\\$.+");
-            LOGGER.trace("Configuring component serialization plan [{}]", name);
-            c.configureComponentSerializationPlan(plan);
+        configurers.ifAvailable(cfgs -> {
+            cfgs.forEach(c -> {
+                LOGGER.trace("Configuring component serialization plan [{}]", c.getName());
+                c.configureComponentSerializationPlan(plan);
+            });
         });
+
         return plan;
     }
 }
