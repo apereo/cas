@@ -1,6 +1,5 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategyConfigurer;
 import org.apereo.cas.authentication.SecurityTokenServiceClientBuilder;
@@ -9,7 +8,6 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegexRegisteredService;
-import org.apereo.cas.services.ServiceRegistryExecutionPlan;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.SecurityTokenTicketFactory;
@@ -56,7 +54,7 @@ import java.util.HashSet;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ImportResource(locations = "classpath:META-INF/cxf/cxf.xml")
 @Slf4j
-public class CoreWsSecurityIdentityProviderConfiguration implements AuthenticationServiceSelectionStrategyConfigurer {
+public class CoreWsSecurityIdentityProviderConfiguration {
 
     @Autowired
     private ConfigurableApplicationContext applicationContext;
@@ -118,7 +116,7 @@ public class CoreWsSecurityIdentityProviderConfiguration implements Authenticati
 
     @Bean
     public Service wsFederationCallbackService() {
-        return webApplicationServiceFactory.getIfAvailable().createService(WSFederationConstants.ENDPOINT_FEDERATION_REQUEST_CALLBACK);
+        return webApplicationServiceFactory.getObject().createService(WSFederationConstants.ENDPOINT_FEDERATION_REQUEST_CALLBACK);
     }
 
     @Bean
@@ -146,28 +144,25 @@ public class CoreWsSecurityIdentityProviderConfiguration implements Authenticati
         return new WSFederationAuthenticationServiceSelectionStrategy(webApplicationServiceFactory.getIfAvailable());
     }
 
-    @Override
-    public void configureAuthenticationServiceSelectionStrategy(final AuthenticationServiceSelectionPlan plan) {
-        plan.registerStrategy(wsFederationAuthenticationServiceSelectionStrategy());
+    @Bean
+    public AuthenticationServiceSelectionStrategyConfigurer wsFederationAuthenticationServiceSelectionStrategyConfigurer() {
+        return plan -> plan.registerStrategy(wsFederationAuthenticationServiceSelectionStrategy());
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "wsFederationServiceRegistryExecutionPlanConfigurer")
     public ServiceRegistryExecutionPlanConfigurer wsFederationServiceRegistryExecutionPlanConfigurer() {
-        return new ServiceRegistryExecutionPlanConfigurer() {
-            @Override
-            public void configureServiceRegistry(final ServiceRegistryExecutionPlan plan) {
-                val callbackService = wsFederationCallbackService();
-                LOGGER.debug("Initializing WS Federation callback service [{}]", callbackService);
-                val service = new RegexRegisteredService();
-                service.setId(RandomUtils.nextLong());
-                service.setEvaluationOrder(Ordered.HIGHEST_PRECEDENCE);
-                service.setName(service.getClass().getSimpleName());
-                service.setDescription("WS-Federation Authentication Request");
-                service.setServiceId(callbackService.getId().concat(".+"));
-                LOGGER.debug("Saving callback service [{}] into the registry", service);
-                plan.registerServiceRegistry(new WSFederationServiceRegistry(applicationContext, service));
-            }
+        return plan -> {
+            val callbackService = wsFederationCallbackService();
+            LOGGER.debug("Initializing WS Federation callback service [{}]", callbackService);
+            val service = new RegexRegisteredService();
+            service.setId(RandomUtils.nextLong());
+            service.setEvaluationOrder(Ordered.HIGHEST_PRECEDENCE);
+            service.setName(service.getClass().getSimpleName());
+            service.setDescription("WS-Federation Authentication Request");
+            service.setServiceId(callbackService.getId().concat(".+"));
+            LOGGER.debug("Saving callback service [{}] into the registry", service);
+            plan.registerServiceRegistry(new WSFederationServiceRegistry(applicationContext, service));
         };
     }
 

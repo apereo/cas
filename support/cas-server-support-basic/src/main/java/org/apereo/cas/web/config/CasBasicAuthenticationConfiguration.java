@@ -7,7 +7,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.BasicAuthenticationAction;
 import org.apereo.cas.web.flow.BasicAuthenticationWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
-import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
@@ -83,12 +82,6 @@ public class CasBasicAuthenticationConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "basicCasWebflowExecutionPlanConfigurer")
     public CasWebflowExecutionPlanConfigurer basicCasWebflowExecutionPlanConfigurer() {
-        return new CasWebflowExecutionPlanConfigurer() {
-
-            @Override
-            public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-                plan.registerWebflowConfigurer(basicAuthenticationWebflowConfigurer());
-            }
-        };
+        return plan -> plan.registerWebflowConfigurer(basicAuthenticationWebflowConfigurer());
     }
 }

@@ -137,7 +137,7 @@ jobs:
       name: "Simple Unit Tests"
     - stage: test
       script: ./ci/tests/groovy/run-tests-groovy.sh
-      name: "Groovy Unit Tests"
+      name: "Groovy Tests"
     - stage: test
       script: ./ci/tests/restful/run-tests-restful.sh
       name: "RESTful Tests"

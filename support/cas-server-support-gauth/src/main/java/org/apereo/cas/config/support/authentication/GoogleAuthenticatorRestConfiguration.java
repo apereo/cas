@@ -2,7 +2,6 @@ package org.apereo.cas.config.support.authentication;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.gauth.rest.GoogleAuthenticatorRestHttpRequestCredentialFactory;
-import org.apereo.cas.rest.factory.ChainingRestHttpRequestCredentialFactory;
 import org.apereo.cas.rest.plan.RestHttpRequestCredentialFactoryConfigurer;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -23,11 +22,6 @@ public class GoogleAuthenticatorRestConfiguration {
 
     @Bean
     public RestHttpRequestCredentialFactoryConfigurer googleAuthenticatorRestHttpRequestCredentialFactoryConfigurer() {
-        return new RestHttpRequestCredentialFactoryConfigurer() {
-            @Override
-            public void configureCredentialFactory(final ChainingRestHttpRequestCredentialFactory factory) {
-                factory.registerCredentialFactory(new GoogleAuthenticatorRestHttpRequestCredentialFactory());
-            }
-        };
+        return factory -> factory.registerCredentialFactory(new GoogleAuthenticatorRestHttpRequestCredentialFactory());
     }
 }

@@ -10,7 +10,6 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalNameTransformerUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
-import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
 import org.apereo.cas.authentication.principal.resolvers.ProxyingPrincipalResolver;
 import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
 import org.apereo.cas.authentication.support.password.PasswordPolicyContext;
@@ -175,13 +174,8 @@ public class CasCoreAuthenticationHandlersConfiguration {
                 .filter(jaas -> StringUtils.isNotBlank(jaas.getRealm()))
                 .map(jaas -> {
                     val jaasPrincipal = jaas.getPrincipal();
-                    val principalAttribute = StringUtils.defaultIfBlank(jaasPrincipal.getPrincipalAttribute(), personDirectory.getPrincipalAttribute());
-                    return new PersonDirectoryPrincipalResolver(attributeRepository.getObject(),
-                        jaasPrincipalFactory(),
-                        jaasPrincipal.isReturnNull() || personDirectory.isReturnNull(),
-                        principalAttribute,
-                        jaasPrincipal.isUseExistingPrincipalId() || personDirectory.isUseExistingPrincipalId(),
-                        jaasPrincipal.isAttributeResolutionEnabled());
+                    return CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(jaasPrincipalFactory(),
+                        attributeRepository.getObject(), jaasPrincipal, personDirectory);
                 })
                 .collect(Collectors.toList());
         }

@@ -3,7 +3,6 @@ package org.apereo.cas.config;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.JsonServiceRegistry;
 import org.apereo.cas.services.ServiceRegistry;
-import org.apereo.cas.services.ServiceRegistryExecutionPlan;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServiceRegistryListener;
 import org.apereo.cas.services.replication.RegisteredServiceReplicationStrategy;
@@ -69,11 +68,6 @@ public class JsonServiceRegistryConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "jsonServiceRegistryExecutionPlanConfigurer")
     public ServiceRegistryExecutionPlanConfigurer jsonServiceRegistryExecutionPlanConfigurer() {
-        return new ServiceRegistryExecutionPlanConfigurer() {
-            @Override
-            public void configureServiceRegistry(final ServiceRegistryExecutionPlan plan) {
-                plan.registerServiceRegistry(jsonServiceRegistry());
-            }
-        };
+        return plan -> plan.registerServiceRegistry(jsonServiceRegistry());
     }
 }

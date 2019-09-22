@@ -7,7 +7,6 @@ import org.apereo.cas.validation.DelegatedAuthenticationServiceTicketValidationA
 import org.apereo.cas.validation.RegisteredServiceDelegatedAuthenticationPolicyAuditableEnforcer;
 import org.apereo.cas.validation.ServiceTicketValidationAuthorizer;
 import org.apereo.cas.validation.ServiceTicketValidationAuthorizerConfigurer;
-import org.apereo.cas.validation.ServiceTicketValidationAuthorizersExecutionPlan;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -35,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration("pac4jDelegatedAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-public class Pac4jDelegatedAuthenticationConfiguration implements ServiceTicketValidationAuthorizerConfigurer {
+public class Pac4jDelegatedAuthenticationConfiguration {
 
     @Autowired
     @Qualifier("servicesManager")
@@ -62,10 +61,11 @@ public class Pac4jDelegatedAuthenticationConfiguration implements ServiceTicketV
             registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer());
     }
 
-    @Override
-    public void configureAuthorizersExecutionPlan(final ServiceTicketValidationAuthorizersExecutionPlan plan) {
-        plan.registerAuthorizer(pac4jServiceTicketValidationAuthorizer());
+    @Bean
+    public ServiceTicketValidationAuthorizerConfigurer pac4jServiceTicketValidationAuthorizerConfigurer() {
+        return plan -> plan.registerAuthorizer(pac4jServiceTicketValidationAuthorizer());
     }
+
 
     /**
      * The type Oauth1 request token mixin.

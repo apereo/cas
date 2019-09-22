@@ -15,7 +15,6 @@ import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
-import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
@@ -138,13 +137,7 @@ public class AuthyConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "authyCasWebflowExecutionPlanConfigurer")
     public CasWebflowExecutionPlanConfigurer authyCasWebflowExecutionPlanConfigurer() {
-        return new CasWebflowExecutionPlanConfigurer() {
-
-            @Override
-            public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-                plan.registerWebflowConfigurer(authyMultifactorWebflowConfigurer());
-            }
-        };
+        return plan -> plan.registerWebflowConfigurer(authyMultifactorWebflowConfigurer());
     }
 
     /**
@@ -153,7 +146,7 @@ public class AuthyConfiguration {
     @ConditionalOnBean(name = "mfaTrustEngine")
     @ConditionalOnProperty(prefix = "cas.authn.mfa.authy", name = "trustedDeviceEnabled", havingValue = "true", matchIfMissing = true)
     @Configuration("authyMultifactorTrustConfiguration")
-    public class AuthyMultifactorTrustConfiguration implements CasWebflowExecutionPlanConfigurer {
+    public class AuthyMultifactorTrustConfiguration {
 
         @ConditionalOnMissingBean(name = "authyMultifactorTrustWebflowConfigurer")
         @Bean
@@ -165,9 +158,9 @@ public class AuthyConfiguration {
                 authyAuthenticatorFlowRegistry(), applicationContext, casProperties);
         }
 
-        @Override
-        public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-            plan.registerWebflowConfigurer(authyMultifactorTrustWebflowConfigurer());
+        @Bean
+        public CasWebflowExecutionPlanConfigurer authyMultifactorTrustCasWebflowExecutionPlanConfigurer() {
+            return plan -> plan.registerWebflowConfigurer(authyMultifactorTrustWebflowConfigurer());
         }
     }
 }

@@ -7,7 +7,6 @@ import org.apereo.cas.gua.impl.StaticUserGraphicalAuthenticationRepository;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.flow.AcceptUserGraphicsForAuthenticationAction;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
-import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.DisplayUserGraphicsBeforeAuthenticationAction;
 import org.apereo.cas.web.flow.GraphicalUserAuthenticationWebflowConfigurer;
@@ -107,11 +106,6 @@ public class GraphicalUserAuthenticationConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "graphicalUserAuthenticationCasWebflowExecutionPlanConfigurer")
     public CasWebflowExecutionPlanConfigurer graphicalUserAuthenticationCasWebflowExecutionPlanConfigurer() {
-        return new CasWebflowExecutionPlanConfigurer() {
-            @Override
-            public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-                plan.registerWebflowConfigurer(graphicalUserAuthenticationWebflowConfigurer());
-            }
-        };
+        return plan -> plan.registerWebflowConfigurer(graphicalUserAuthenticationWebflowConfigurer());
     }
 }

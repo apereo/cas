@@ -6,12 +6,21 @@ package org.apereo.cas.ticket;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@FunctionalInterface
 public interface TicketCatalogConfigurer {
     /**
      * configure the plan.
      *
      * @param plan the plan
      */
-    default void configureTicketCatalog(final TicketCatalog plan) {
+    void configureTicketCatalog(TicketCatalog plan);
+
+    /**
+     * Gets name.
+     *
+     * @return the name
+     */
+    default String getName() {
+        return getClass().getSimpleName();
     }
 }

@@ -17,7 +17,6 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
-import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
@@ -142,12 +141,7 @@ public class YubiKeyConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "yubikeyCasWebflowExecutionPlanConfigurer")
     public CasWebflowExecutionPlanConfigurer yubikeyCasWebflowExecutionPlanConfigurer() {
-        return new CasWebflowExecutionPlanConfigurer() {
-            @Override
-            public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-                plan.registerWebflowConfigurer(yubikeyMultifactorWebflowConfigurer());
-            }
-        };
+        return plan -> plan.registerWebflowConfigurer(yubikeyMultifactorWebflowConfigurer());
     }
 
     @Bean
@@ -175,7 +169,7 @@ public class YubiKeyConfiguration {
     @ConditionalOnBean(name = "mfaTrustEngine")
     @ConditionalOnProperty(prefix = "cas.authn.mfa.yubikey", name = "trustedDeviceEnabled", havingValue = "true", matchIfMissing = true)
     @Configuration("yubiMultifactorTrustConfiguration")
-    public class YubiKeyMultifactorTrustConfiguration implements CasWebflowExecutionPlanConfigurer {
+    public class YubiKeyMultifactorTrustConfiguration {
 
         @ConditionalOnMissingBean(name = "yubiMultifactorTrustWebflowConfigurer")
         @Bean
@@ -186,9 +180,9 @@ public class YubiKeyConfiguration {
                 deviceRegistrationEnabled, loginFlowDefinitionRegistry.getIfAvailable(), applicationContext, casProperties);
         }
 
-        @Override
-        public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-            plan.registerWebflowConfigurer(yubiMultifactorTrustWebflowConfigurer());
+        @Bean
+        public CasWebflowExecutionPlanConfigurer yubiMultifactorCasWebflowExecutionPlanConfigurer() {
+            return plan -> plan.registerWebflowConfigurer(yubiMultifactorTrustWebflowConfigurer());
         }
     }
 }

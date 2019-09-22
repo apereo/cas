@@ -6,12 +6,12 @@ package org.apereo.cas.persondir;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@FunctionalInterface
 public interface PersonDirectoryAttributeRepositoryPlanConfigurer {
     /**
      * Configure attribute repository plan.
      *
      * @param plan the plan
      */
-    default void configureAttributeRepositoryPlan(final PersonDirectoryAttributeRepositoryPlan plan) {
-    }
+    void configureAttributeRepositoryPlan(PersonDirectoryAttributeRepositoryPlan plan);
 }

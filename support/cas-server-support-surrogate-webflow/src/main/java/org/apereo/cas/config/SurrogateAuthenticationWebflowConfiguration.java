@@ -8,7 +8,6 @@ import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
-import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.SurrogateWebflowConfigurer;
 import org.apereo.cas.web.flow.action.LoadSurrogatesListAction;
@@ -134,11 +133,6 @@ public class SurrogateAuthenticationWebflowConfiguration implements Initializing
     @Bean
     @ConditionalOnMissingBean(name = "surrogateCasWebflowExecutionPlanConfigurer")
     public CasWebflowExecutionPlanConfigurer surrogateCasWebflowExecutionPlanConfigurer() {
-        return new CasWebflowExecutionPlanConfigurer() {
-            @Override
-            public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-                plan.registerWebflowConfigurer(surrogateWebflowConfigurer());
-            }
-        };
+        return plan -> plan.registerWebflowConfigurer(surrogateWebflowConfigurer());
     }
 }

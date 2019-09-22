@@ -4,7 +4,6 @@ import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.extractcert.X509CertificateExtractor;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
-import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.X509CertificateCredentialsNonInteractiveAction;
 import org.apereo.cas.web.flow.X509CertificateCredentialsRequestHeaderAction;
@@ -91,11 +90,6 @@ public class X509AuthenticationWebflowConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "x509CasWebflowExecutionPlanConfigurer")
     public CasWebflowExecutionPlanConfigurer x509CasWebflowExecutionPlanConfigurer() {
-        return new CasWebflowExecutionPlanConfigurer() {
-            @Override
-            public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-                plan.registerWebflowConfigurer(x509WebflowConfigurer());
-            }
-        };
+        return plan -> plan.registerWebflowConfigurer(x509WebflowConfigurer());
     }
 }

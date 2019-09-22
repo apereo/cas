@@ -50,7 +50,7 @@ public class TimedMultifactorAuthenticationTrigger implements MultifactorAuthent
 
         val timedMultifactor = casProperties.getAuthn().getAdaptive().getRequireTimedMultifactor();
         if (service == null || authentication == null) {
-            LOGGER.debug("No service or authentication is available to determine event for principal");
+            LOGGER.trace("No service or authentication is available to determine event for principal");
             return Optional.empty();
         }
 

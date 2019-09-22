@@ -11,7 +11,7 @@ import java.util.Collection;
  * ask the executing plan for all classes that they can handle and register in their own engine.
  *
  * @author Misagh Moayyed
- * @see ComponentSerializationPlanConfigurator
+ * @see ComponentSerializationPlanConfigurer
  * @since 5.2.0
  */
 public interface ComponentSerializationPlan {

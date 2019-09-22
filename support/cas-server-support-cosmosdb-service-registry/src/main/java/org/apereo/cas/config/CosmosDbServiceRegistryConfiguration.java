@@ -4,7 +4,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.cosmosdb.CosmosDbObjectFactory;
 import org.apereo.cas.services.CosmosDbServiceRegistry;
 import org.apereo.cas.services.ServiceRegistry;
-import org.apereo.cas.services.ServiceRegistryExecutionPlan;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServiceRegistryListener;
 
@@ -82,12 +81,7 @@ public class CosmosDbServiceRegistryConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "cosmosDbServiceRegistryExecutionPlanConfigurer")
     public ServiceRegistryExecutionPlanConfigurer cosmosDbServiceRegistryExecutionPlanConfigurer() {
-        return new ServiceRegistryExecutionPlanConfigurer() {
-            @Override
-            public void configureServiceRegistry(final ServiceRegistryExecutionPlan plan) {
-                plan.registerServiceRegistry(cosmosDbServiceRegistry());
-            }
-        };
+        return plan -> plan.registerServiceRegistry(cosmosDbServiceRegistry());
     }
 
 }

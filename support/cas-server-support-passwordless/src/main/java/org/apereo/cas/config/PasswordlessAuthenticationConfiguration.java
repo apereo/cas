@@ -23,7 +23,6 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.io.CommunicationsManager;
 import org.apereo.cas.web.flow.AcceptPasswordlessAuthenticationAction;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
-import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.DisplayBeforePasswordlessAuthenticationAction;
 import org.apereo.cas.web.flow.PasswordlessAuthenticationWebflowConfigurer;
@@ -226,11 +225,6 @@ public class PasswordlessAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "passwordlessCasWebflowExecutionPlanConfigurer")
     @Bean
     public CasWebflowExecutionPlanConfigurer passwordlessCasWebflowExecutionPlanConfigurer() {
-        return new CasWebflowExecutionPlanConfigurer() {
-            @Override
-            public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-                plan.registerWebflowConfigurer(passwordlessAuthenticationWebflowConfigurer());
-            }
-        };
+        return plan -> plan.registerWebflowConfigurer(passwordlessAuthenticationWebflowConfigurer());
     }
 }

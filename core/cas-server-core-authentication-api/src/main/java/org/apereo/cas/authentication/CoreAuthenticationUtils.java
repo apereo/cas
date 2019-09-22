@@ -282,16 +282,24 @@ public class CoreAuthenticationUtils {
      */
     public static PrincipalResolver newPersonDirectoryPrincipalResolver(
         final PrincipalFactory principalFactory, final IPersonAttributeDao attributeRepository,
-        final PersonDirectoryPrincipalResolverProperties personDirectory) {
+        final PersonDirectoryPrincipalResolverProperties... personDirectory) {
 
         return new PersonDirectoryPrincipalResolver(
             attributeRepository,
             principalFactory,
-            personDirectory.isReturnNull(),
-            personDirectory.getPrincipalAttribute(),
-            personDirectory.isUseExistingPrincipalId(),
-            personDirectory.isAttributeResolutionEnabled(),
-            org.springframework.util.StringUtils.commaDelimitedListToSet(personDirectory.getActiveAttributeRepositoryIds())
+            Arrays.stream(personDirectory).anyMatch(PersonDirectoryPrincipalResolverProperties::isReturnNull),
+            Arrays.stream(personDirectory)
+                .filter(p -> StringUtils.isNotBlank(p.getPrincipalAttribute()))
+                .map(PersonDirectoryPrincipalResolverProperties::getPrincipalAttribute)
+                .findFirst()
+                .orElse(StringUtils.EMPTY),
+            Arrays.stream(personDirectory).anyMatch(PersonDirectoryPrincipalResolverProperties::isUseExistingPrincipalId),
+            Arrays.stream(personDirectory).anyMatch(PersonDirectoryPrincipalResolverProperties::isAttributeResolutionEnabled),
+            Arrays.stream(personDirectory)
+                .filter(p -> StringUtils.isNotBlank(p.getActiveAttributeRepositoryIds()))
+                .map(p-> org.springframework.util.StringUtils.commaDelimitedListToSet(p.getActiveAttributeRepositoryIds()))
+                .flatMap(Set::stream)
+                .collect(Collectors.toSet())
         );
     }
 }

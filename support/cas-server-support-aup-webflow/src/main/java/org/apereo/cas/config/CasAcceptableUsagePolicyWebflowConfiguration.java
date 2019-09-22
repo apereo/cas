@@ -11,7 +11,6 @@ import org.apereo.cas.web.flow.AcceptableUsagePolicySubmitAction;
 import org.apereo.cas.web.flow.AcceptableUsagePolicyVerifyAction;
 import org.apereo.cas.web.flow.AcceptableUsagePolicyWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
-import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 
 import lombok.val;
@@ -120,11 +119,6 @@ public class CasAcceptableUsagePolicyWebflowConfiguration {
     @ConditionalOnMissingBean(name = "casAcceptableUsagePolicyWebflowExecutionPlanConfigurer")
     @Bean
     public CasWebflowExecutionPlanConfigurer casAcceptableUsagePolicyWebflowExecutionPlanConfigurer() {
-        return new CasWebflowExecutionPlanConfigurer() {
-            @Override
-            public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-                plan.registerWebflowConfigurer(acceptableUsagePolicyWebflowConfigurer());
-            }
-        };
+        return plan -> plan.registerWebflowConfigurer(acceptableUsagePolicyWebflowConfigurer());
     }
 }

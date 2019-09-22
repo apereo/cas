@@ -15,4 +15,12 @@ public interface AuthenticationServiceSelectionStrategyConfigurer {
      * @param plan the plan
      */
     void configureAuthenticationServiceSelectionStrategy(AuthenticationServiceSelectionPlan plan);
+    /**
+     * Gets name.
+     *
+     * @return the name
+     */
+    default String getName() {
+        return getClass().getSimpleName();
+    }
 }

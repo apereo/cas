@@ -5,7 +5,6 @@
         <Console name="casConsole" target="SYSTEM_OUT">
             <PatternLayout pattern="%highlight{%d %p [%c] - &lt;%m&gt;%n}" />
         </Console>
-
         <RollingFile name="casFile" fileName="casconfigserver.log" append="true"
                      filePattern="cas-%d{yyyy-MM-dd-HH}-%i.log">
             <PatternLayout pattern="%highlight{%d %p [%c] - &lt;%m&gt;%n}" />

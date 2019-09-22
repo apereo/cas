@@ -10,7 +10,7 @@ import org.apereo.cas.oidc.claims.OidcProfileScopeAttributeReleasePolicy;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.PairwiseOidcRegisteredServiceUsernameAttributeProvider;
 import org.apereo.cas.util.serialization.ComponentSerializationPlan;
-import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurator;
+import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurer;
 
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
@@ -23,7 +23,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration(value = "oidcComponentSerializationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class OidcComponentSerializationConfiguration implements ComponentSerializationPlanConfigurator {
+public class OidcComponentSerializationConfiguration implements ComponentSerializationPlanConfigurer {
 
     @Override
     public void configureComponentSerializationPlan(final ComponentSerializationPlan plan) {

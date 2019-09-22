@@ -2,7 +2,6 @@ package org.apereo.cas.web.flow.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
-import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.TrustedAuthenticationWebflowConfigurer;
 
@@ -53,11 +52,6 @@ public class TrustedAuthenticationWebflowConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "trustedCasWebflowExecutionPlanConfigurer")
     public CasWebflowExecutionPlanConfigurer trustedCasWebflowExecutionPlanConfigurer() {
-        return new CasWebflowExecutionPlanConfigurer() {
-            @Override
-            public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-                plan.registerWebflowConfigurer(trustedWebflowConfigurer());
-            }
-        };
+        return plan -> plan.registerWebflowConfigurer(trustedWebflowConfigurer());
     }
 }

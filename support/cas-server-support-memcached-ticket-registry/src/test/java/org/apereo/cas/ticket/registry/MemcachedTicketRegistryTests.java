@@ -16,7 +16,7 @@ import org.apereo.cas.ticket.code.OAuthCode;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 import org.apereo.cas.util.serialization.ComponentSerializationPlan;
-import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurator;
+import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurer;
 
 import lombok.val;
 import org.junit.jupiter.api.RepeatedTest;
@@ -91,7 +91,7 @@ public class MemcachedTicketRegistryTests extends BaseTicketRegistryTests {
     }
 
     @TestConfiguration("MemcachedTicketRegistryTestConfiguration")
-    public static class MemcachedTicketRegistryTestConfiguration implements ComponentSerializationPlanConfigurator {
+    public static class MemcachedTicketRegistryTestConfiguration implements ComponentSerializationPlanConfigurer {
         @Override
         public void configureComponentSerializationPlan(final ComponentSerializationPlan plan) {
             plan.registerSerializableClass(MockTicketGrantingTicket.class);

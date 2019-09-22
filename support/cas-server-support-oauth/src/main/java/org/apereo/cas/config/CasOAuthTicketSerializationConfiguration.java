@@ -11,11 +11,11 @@ import org.apereo.cas.ticket.device.DeviceUserCode;
 import org.apereo.cas.ticket.device.DeviceUserCodeImpl;
 import org.apereo.cas.ticket.refreshtoken.RefreshToken;
 import org.apereo.cas.ticket.refreshtoken.RefreshTokenImpl;
-import org.apereo.cas.ticket.serialization.TicketSerializationExecutionPlan;
 import org.apereo.cas.ticket.serialization.TicketSerializationExecutionPlanConfigurer;
 import org.apereo.cas.util.serialization.AbstractJacksonBackedStringSerializer;
 
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
@@ -26,21 +26,23 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration(value = "casOAuthTicketSerializationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class CasOAuthTicketSerializationConfiguration implements TicketSerializationExecutionPlanConfigurer {
+public class CasOAuthTicketSerializationConfiguration {
 
-    @Override
-    public void configureTicketSerialization(final TicketSerializationExecutionPlan plan) {
-        plan.registerTicketSerializer(new OAuthCodeTicketStringSerializer());
-        plan.registerTicketSerializer(new AccessTokenTicketStringSerializer());
-        plan.registerTicketSerializer(new RefreshTokenTicketStringSerializer());
-        plan.registerTicketSerializer(new DeviceTokenTicketStringSerializer());
-        plan.registerTicketSerializer(new DeviceUserCodeTicketStringSerializer());
+    @Bean
+    public TicketSerializationExecutionPlanConfigurer oauthTicketSerializationExecutionPlanConfigurer() {
+        return plan -> {
+            plan.registerTicketSerializer(new OAuthCodeTicketStringSerializer());
+            plan.registerTicketSerializer(new AccessTokenTicketStringSerializer());
+            plan.registerTicketSerializer(new RefreshTokenTicketStringSerializer());
+            plan.registerTicketSerializer(new DeviceTokenTicketStringSerializer());
+            plan.registerTicketSerializer(new DeviceUserCodeTicketStringSerializer());
 
-        plan.registerTicketSerializer(OAuthCode.class.getName(), new OAuthCodeTicketStringSerializer());
-        plan.registerTicketSerializer(AccessToken.class.getName(), new AccessTokenTicketStringSerializer());
-        plan.registerTicketSerializer(RefreshToken.class.getName(), new RefreshTokenTicketStringSerializer());
-        plan.registerTicketSerializer(DeviceToken.class.getName(), new DeviceTokenTicketStringSerializer());
-        plan.registerTicketSerializer(DeviceUserCode.class.getName(), new DeviceUserCodeTicketStringSerializer());
+            plan.registerTicketSerializer(OAuthCode.class.getName(), new OAuthCodeTicketStringSerializer());
+            plan.registerTicketSerializer(AccessToken.class.getName(), new AccessTokenTicketStringSerializer());
+            plan.registerTicketSerializer(RefreshToken.class.getName(), new RefreshTokenTicketStringSerializer());
+            plan.registerTicketSerializer(DeviceToken.class.getName(), new DeviceTokenTicketStringSerializer());
+            plan.registerTicketSerializer(DeviceUserCode.class.getName(), new DeviceUserCodeTicketStringSerializer());
+        };
     }
 
     private static class OAuthCodeTicketStringSerializer extends AbstractJacksonBackedStringSerializer<OAuthCodeImpl> {

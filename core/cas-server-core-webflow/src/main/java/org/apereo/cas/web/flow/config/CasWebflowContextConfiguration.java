@@ -302,13 +302,10 @@ public class CasWebflowContextConfiguration {
     @Bean
     @Lazy(false)
     public CasWebflowExecutionPlanConfigurer casDefaultWebflowExecutionPlanConfigurer() {
-        return new CasWebflowExecutionPlanConfigurer() {
-            @Override
-            public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-                plan.registerWebflowConfigurer(defaultWebflowConfigurer());
-                plan.registerWebflowConfigurer(defaultLogoutWebflowConfigurer());
-                plan.registerWebflowConfigurer(groovyWebflowConfigurer());
-            }
+        return plan -> {
+            plan.registerWebflowConfigurer(defaultWebflowConfigurer());
+            plan.registerWebflowConfigurer(defaultLogoutWebflowConfigurer());
+            plan.registerWebflowConfigurer(groovyWebflowConfigurer());
         };
     }
 }

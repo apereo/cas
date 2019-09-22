@@ -1,7 +1,6 @@
 package org.apereo.cas.support.x509.rest.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.rest.factory.ChainingRestHttpRequestCredentialFactory;
 import org.apereo.cas.rest.factory.RestHttpRequestCredentialFactory;
 import org.apereo.cas.rest.plan.RestHttpRequestCredentialFactoryConfigurer;
 import org.apereo.cas.support.x509.rest.X509RestHttpRequestHeaderCredentialFactory;
@@ -28,7 +27,7 @@ import org.springframework.context.annotation.Lazy;
 @Configuration("x509RestConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-public class X509RestConfiguration implements RestHttpRequestCredentialFactoryConfigurer {
+public class X509RestConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -54,33 +53,36 @@ public class X509RestConfiguration implements RestHttpRequestCredentialFactoryCo
         return new X509RestTlsClientCertCredentialFactory();
     }
 
-    @Override
-    public void configureCredentialFactory(final ChainingRestHttpRequestCredentialFactory factory) {
-        val restProperties = casProperties.getRest();
-        val extractor = x509CertificateExtractor.getIfAvailable();
-        val headerAuth = restProperties.isHeaderAuth();
-        val bodyAuth = restProperties.isBodyAuth();
-        val tlsClientAuth = restProperties.isTlsClientAuth();
-        LOGGER.trace("Is certificate extractor available? = [{}], headerAuth = [{}], bodyAuth = [{}], tlsClientAuth = [{}]",
-                     extractor, headerAuth, bodyAuth, tlsClientAuth);
+    @Bean
+    public RestHttpRequestCredentialFactoryConfigurer x509RestHttpRequestCredentialFactoryConfigurer() {
+        return factory -> {
+            val restProperties = casProperties.getRest();
+            val extractor = x509CertificateExtractor.getIfAvailable();
+            val headerAuth = restProperties.isHeaderAuth();
+            val bodyAuth = restProperties.isBodyAuth();
+            val tlsClientAuth = restProperties.isTlsClientAuth();
+            LOGGER.trace("Is certificate extractor available? = [{}], headerAuth = [{}], bodyAuth = [{}], tlsClientAuth = [{}]",
+                extractor, headerAuth, bodyAuth, tlsClientAuth);
 
-        if (tlsClientAuth && (headerAuth || bodyAuth)) {
-            LOGGER.warn("The X.509 feature over REST using \"headerAuth\" or \"bodyAuth\" provides a tremendously "
-                        + "convenient target for claiming user identities or obtaining TGTs without proof of private "
-                        + "key ownership. To securely use this feature, network configuration MUST allow connections "
-                        + "to the CAS server only from trusted hosts which in turn have strict security limitations "
-                        + "and logging. Thus, \"tlsClientAuth\" shouldn't be activated together with \"headerAuth\" "
-                        + "or \"bodyAuth\"");
-        }
+            if (tlsClientAuth && (headerAuth || bodyAuth)) {
+                LOGGER.warn("The X.509 feature over REST using \"headerAuth\" or \"bodyAuth\" provides a tremendously "
+                    + "convenient target for claiming user identities or obtaining TGTs without proof of private "
+                    + "key ownership. To securely use this feature, network configuration MUST allow connections "
+                    + "to the CAS server only from trusted hosts which in turn have strict security limitations "
+                    + "and logging. Thus, \"tlsClientAuth\" shouldn't be activated together with \"headerAuth\" "
+                    + "or \"bodyAuth\"");
+            }
 
-        if (extractor != null && headerAuth) {
-            factory.registerCredentialFactory(x509RestRequestHeader());
-        }
-        if (bodyAuth) {
-            factory.registerCredentialFactory(x509RestMultipartBody());
-        }
-        if (tlsClientAuth) {
-            factory.registerCredentialFactory(x509RestTlsClientCert());
-        }
+            if (extractor != null && headerAuth) {
+                factory.registerCredentialFactory(x509RestRequestHeader());
+            }
+            if (bodyAuth) {
+                factory.registerCredentialFactory(x509RestMultipartBody());
+            }
+            if (tlsClientAuth) {
+                factory.registerCredentialFactory(x509RestTlsClientCert());
+            }
+        };
     }
+
 }

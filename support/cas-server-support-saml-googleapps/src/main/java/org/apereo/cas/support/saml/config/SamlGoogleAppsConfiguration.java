@@ -3,7 +3,6 @@ package org.apereo.cas.support.saml.config;
 import org.apereo.cas.authentication.principal.ResponseBuilder;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.ServiceFactoryConfigurer;
-import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
@@ -23,8 +22,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 
-import java.util.Collection;
-
 /**
  * This is {@link SamlGoogleAppsConfiguration}.
  *
@@ -33,7 +30,7 @@ import java.util.Collection;
  */
 @Configuration("samlGoogleAppsConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class SamlGoogleAppsConfiguration implements ServiceFactoryConfigurer {
+public class SamlGoogleAppsConfiguration {
 
     @Autowired
     @Qualifier("servicesManager")
@@ -46,10 +43,11 @@ public class SamlGoogleAppsConfiguration implements ServiceFactoryConfigurer {
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    @Override
-    public Collection<ServiceFactory<? extends WebApplicationService>> buildServiceFactories() {
-        return CollectionUtils.wrap(googleAccountsServiceFactory());
+    @Bean
+    public ServiceFactoryConfigurer googleAccountsServiceFactoryConfigurer() {
+        return () -> CollectionUtils.wrap(googleAccountsServiceFactory());
     }
+
 
     @ConditionalOnMissingBean(name = "googleAccountsServiceFactory")
     @Bean

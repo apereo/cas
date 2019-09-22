@@ -8,7 +8,6 @@ import org.apereo.cas.interrupt.webflow.actions.FinalizeInterruptFlowAction;
 import org.apereo.cas.interrupt.webflow.actions.InquireInterruptAction;
 import org.apereo.cas.interrupt.webflow.actions.PrepareInterruptViewAction;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
-import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategyConfigurer;
@@ -98,11 +97,6 @@ public class CasInterruptWebflowConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "interruptCasWebflowExecutionPlanConfigurer")
     public CasWebflowExecutionPlanConfigurer interruptCasWebflowExecutionPlanConfigurer() {
-        return new CasWebflowExecutionPlanConfigurer() {
-            @Override
-            public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-                plan.registerWebflowConfigurer(interruptWebflowConfigurer());
-            }
-        };
+        return plan -> plan.registerWebflowConfigurer(interruptWebflowConfigurer());
     }
 }

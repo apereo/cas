@@ -3,7 +3,6 @@ package org.apereo.cas.config;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RestfulServiceRegistry;
 import org.apereo.cas.services.ServiceRegistry;
-import org.apereo.cas.services.ServiceRegistryExecutionPlan;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServiceRegistryListener;
 import org.apereo.cas.util.HttpUtils;
@@ -69,13 +68,10 @@ public class RestServiceRegistryConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "restfulServiceRegistryExecutionPlanConfigurer")
     public ServiceRegistryExecutionPlanConfigurer restfulServiceRegistryExecutionPlanConfigurer() {
-        return new ServiceRegistryExecutionPlanConfigurer() {
-            @Override
-            public void configureServiceRegistry(final ServiceRegistryExecutionPlan plan) {
-                val registry = casProperties.getServiceRegistry().getRest();
-                if (StringUtils.isNotBlank(registry.getUrl())) {
-                    plan.registerServiceRegistry(restfulServiceRegistry());
-                }
+        return plan -> {
+            val registry = casProperties.getServiceRegistry().getRest();
+            if (StringUtils.isNotBlank(registry.getUrl())) {
+                plan.registerServiceRegistry(restfulServiceRegistry());
             }
         };
     }
