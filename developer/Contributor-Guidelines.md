@@ -95,7 +95,7 @@ There is of course the alternative: [ask](https://apereo.github.io/cas/Mailing-L
 If you do have a pending pull request available and one that might also be tagged as *WIP*, you are most welcome to keep pushing to the underlying branch as frequently as you prefer. There is nothing spammy or annoying about making progress on a *WIP* pull request. Nobody is going to get mad at you for making progress and pushing changes, (That's what email filters, etc are for), so do not ever worry about annoying other contributors and/or project members with the frequency of your progress notifications. Continue working on the use case as often as you like and be sure to keep asking for feedback as you make progress. 
 
 <div class="alert alert-success">
-  <strong>Inactivity</strong><br/>Note that contributions and pull request that remain inactive for a certain period of time get tagged as <i>Pending</i> and will be eventually closed automatically. Staleness is only allowed to a certain degree, but worry not. Any stale closed pull request can always be reopened and progress resumed without data loss.
+  <strong>Inactivity</strong><br/>Note that contributions and pull requests that remain inactive for a certain period of time get tagged as <i>Pending</i> and will be eventually closed automatically. Staleness is only allowed to a certain degree, but worry not. Any stale closed pull request can always be reopened and progress resumed without data loss.
 </div>
 
 ## Can I backport a change to a maintenance branch?
