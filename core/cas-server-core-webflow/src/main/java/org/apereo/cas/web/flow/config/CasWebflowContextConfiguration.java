@@ -81,11 +81,7 @@ public class CasWebflowContextConfiguration {
     @Autowired
     @Qualifier("registeredServiceViewResolver")
     private ObjectProvider<ViewResolver> registeredServiceViewResolver;
-
-    @Autowired
-    @Qualifier("thymeleafViewResolver")
-    private ObjectProvider<ViewResolver> thymeleafViewResolver;
-
+    
     @Autowired
     private ApplicationContext applicationContext;
 
