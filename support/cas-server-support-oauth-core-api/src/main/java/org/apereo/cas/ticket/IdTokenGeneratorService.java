@@ -21,7 +21,7 @@ public interface IdTokenGeneratorService {
      * @param request             the request
      * @param response            the response
      * @param accessToken         the access token
-     * @param encodedAccessToken  the access token
+     * @param encodedAccessToken  the encoded access token
      * @param timeoutInSeconds    the timeoutInSeconds
      * @param responseType        the response type
      * @param registeredService   the registered service

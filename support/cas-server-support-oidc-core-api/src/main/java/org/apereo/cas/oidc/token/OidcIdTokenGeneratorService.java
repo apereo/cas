@@ -187,7 +187,7 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService {
     /**
      * Generate access token hash string.
      *
-     * @param encodedAccessToken the access token id
+     * @param encodedAccessToken the encoded access token
      * @param registeredService  the service
      * @param claims             the claims
      */

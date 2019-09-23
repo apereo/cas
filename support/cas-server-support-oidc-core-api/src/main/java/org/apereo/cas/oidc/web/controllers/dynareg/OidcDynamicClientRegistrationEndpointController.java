@@ -15,7 +15,6 @@ import org.apereo.cas.support.oauth.web.endpoints.BaseOAuth20Controller;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoder;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
-import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.RandomUtils;
 
@@ -53,11 +52,8 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuth20
 
     private static final int GENERATED_CLIENT_NAME_LENGTH = 8;
 
-    private final JwtBuilder accessTokenJwtBuilder;
-
     public OidcDynamicClientRegistrationEndpointController(final OAuth20ConfigurationContext oAuthConfigurationContext) {
         super(oAuthConfigurationContext);
-        this.accessTokenJwtBuilder = oAuthConfigurationContext.getAccessTokenJwtBuilder();
     }
 
     /**
@@ -159,7 +155,7 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuth20
                 .accessToken(accessToken)
                 .registeredService(registeredService)
                 .service(accessToken.getService())
-                .accessTokenJwtBuilder(accessTokenJwtBuilder)
+                .accessTokenJwtBuilder(getOAuthConfigurationContext().getAccessTokenJwtBuilder())
                 .build()
                 .encode();
 
