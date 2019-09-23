@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.radius.RadiusClientProperties;
+import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
@@ -46,8 +47,13 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreWebflowConfiguration.class,
     RadiusConfiguration.class,
     CasCoreConfiguration.class,
+    CasCoreLogoutConfiguration.class,
+    CasCoreServicesConfiguration.class,
+    CasCoreTicketsConfiguration.class,
     CasCoreUtilConfiguration.class,
-    RefreshAutoConfiguration.class
+    CasCoreWebConfiguration.class,
+    CasCoreAuthenticationPrincipalConfiguration.class,
+    RefreshAutoConfiguration.class,
 })
 @TestPropertySource(properties = {
     "cas.authn.radius.client.sharedSecret=NoSecret",
