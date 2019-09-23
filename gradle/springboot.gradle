@@ -79,7 +79,7 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishReleases && !rootP
         list.add("-XX:+UnlockExperimentalVMOptions")
         list.add("-XX:+EnableJVMCI")
         list.add("-XX:+UseJVMCICompiler")
-        
+
         if (rootProject.enableRemoteDebugging) {
             def port = findAvailableTcpPort(5000..5010)
             if (port > 0) {
