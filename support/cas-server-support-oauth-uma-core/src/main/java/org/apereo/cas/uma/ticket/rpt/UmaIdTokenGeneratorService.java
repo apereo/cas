@@ -36,6 +36,7 @@ public class UmaIdTokenGeneratorService extends BaseIdTokenGeneratorService {
     public String generate(final HttpServletRequest request,
                            final HttpServletResponse response,
                            final AccessToken accessToken,
+                           final String encodedAccessToken,
                            final long timeoutInSeconds,
                            final OAuth20ResponseTypes responseType,
                            final OAuthRegisteredService registeredService) {
@@ -43,7 +44,7 @@ public class UmaIdTokenGeneratorService extends BaseIdTokenGeneratorService {
         val context = new JEEContext(request, response, getConfigurationContext().getSessionStore());
         LOGGER.debug("Attempting to produce claims for the rpt access token [{}]", accessToken);
         val authenticatedProfile = getAuthenticatedProfile(request, response);
-        val claims = buildJwtClaims(request, accessToken, timeoutInSeconds,
+        val claims = buildJwtClaims(request, accessToken, encodedAccessToken, timeoutInSeconds,
             registeredService, authenticatedProfile, context, responseType);
 
         return encodeAndFinalizeToken(claims, registeredService, accessToken);
@@ -52,17 +53,19 @@ public class UmaIdTokenGeneratorService extends BaseIdTokenGeneratorService {
     /**
      * Build jwt claims jwt claims.
      *
-     * @param request          the request
-     * @param accessTokenId    the access token id
-     * @param timeoutInSeconds the timeout in seconds
-     * @param service          the service
-     * @param profile          the profile
-     * @param context          the context
-     * @param responseType     the response type
+     * @param request            the request
+     * @param accessToken        the access token
+     * @param encodedAccessToken the encoded acccess token
+     * @param timeoutInSeconds   the timeout in seconds
+     * @param service            the service
+     * @param profile            the profile
+     * @param context            the context
+     * @param responseType       the response type
      * @return the jwt claims
      */
     protected JwtClaims buildJwtClaims(final HttpServletRequest request,
-                                       final AccessToken accessTokenId,
+                                       final AccessToken accessToken,
+                                       final String encodedAccessToken,
                                        final long timeoutInSeconds,
                                        final OAuthRegisteredService service,
                                        final UserProfile profile,

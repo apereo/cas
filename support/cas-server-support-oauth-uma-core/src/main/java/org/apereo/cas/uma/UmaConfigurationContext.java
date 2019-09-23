@@ -6,6 +6,7 @@ import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGenerat
 import org.apereo.cas.ticket.IdTokenGeneratorService;
 import org.apereo.cas.ticket.OAuthTokenSigningAndEncryptionService;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.uma.claim.UmaResourceSetClaimPermissionExaminer;
 import org.apereo.cas.uma.ticket.permission.UmaPermissionTicketFactory;
 import org.apereo.cas.uma.ticket.resource.repository.ResourceSetRepository;
@@ -32,6 +33,7 @@ public class UmaConfigurationContext {
     private final ServicesManager servicesManager;
     private final TicketRegistry ticketRegistry;
     private final OAuth20TokenGenerator accessTokenGenerator;
+    private final JwtBuilder accessTokenJwtBuilder;
     private final UmaPermissionTicketFactory umaPermissionTicketFactory;
     private final ResourceSetRepository umaResourceSetRepository;
     private final CasConfigurationProperties casProperties;
