@@ -8,7 +8,6 @@ import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestDataHolder;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoder;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
-import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.uma.UmaConfigurationContext;
 import org.apereo.cas.uma.claim.UmaResourceSetClaimPermissionResult;
 import org.apereo.cas.uma.ticket.permission.UmaPermissionTicket;
@@ -44,11 +43,9 @@ import java.util.stream.Collectors;
 @Slf4j
 @Controller("umaAuthorizationRequestEndpointController")
 public class UmaAuthorizationRequestEndpointController extends BaseUmaEndpointController {
-    private final JwtBuilder accessTokenJwtBuilder;
 
     public UmaAuthorizationRequestEndpointController(final UmaConfigurationContext umaConfigurationContext) {
         super(umaConfigurationContext);
-        this.accessTokenJwtBuilder = umaConfigurationContext.getAccessTokenJwtBuilder();
     }
 
     /**
@@ -195,7 +192,7 @@ public class UmaAuthorizationRequestEndpointController extends BaseUmaEndpointCo
             .accessToken(accessToken)
             .registeredService(holder.getRegisteredService())
             .service(holder.getService())
-            .accessTokenJwtBuilder(accessTokenJwtBuilder)
+            .accessTokenJwtBuilder(getUmaConfigurationContext().getAccessTokenJwtBuilder())
             .build()
             .encode();
 
