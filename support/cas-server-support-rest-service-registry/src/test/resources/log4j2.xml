@@ -6,21 +6,11 @@
         </Console>
     </Appenders>
     <Loggers>
-        <Logger name="org.apereo.cas" level="error" additivity="false">
-            <AppenderRef ref="console"/>
-        </Logger>
-        <Logger name="org.springframework.boot" level="error" additivity="false">
-            <AppenderRef ref="console"/>
-        </Logger>
-        <Logger name="org.springframework.web" level="warn" additivity="false">
-            <AppenderRef ref="console"/>
-        </Logger>
-        <Logger name="org.springframework.http" level="warn" additivity="false">
-            <AppenderRef ref="console"/>
-        </Logger>
-        <Logger name="com.fasterxml.jackson" level="warn" additivity="false">
-            <AppenderRef ref="console"/>
-        </Logger>
+        <Logger name="org.apereo.cas" level="error" />
+        <Logger name="org.springframework.boot" level="error" />
+        <Logger name="org.springframework.web" level="warn" />
+        <Logger name="org.springframework.http" level="warn" />
+        <Logger name="com.fasterxml.jackson" level="warn" />
         <Root level="off">
             <AppenderRef ref="console"/>
         </Root>
