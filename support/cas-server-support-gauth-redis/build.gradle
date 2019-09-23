@@ -17,6 +17,7 @@ dependencies {
     implementation project(":support:cas-server-support-redis-core")
     
     testImplementation project(":core:cas-server-core")
+    testImplementation project(":core:cas-server-core-cookie")
     testImplementation project(":core:cas-server-core-logout-api")
     testImplementation project(":core:cas-server-core-logout")
     testImplementation project(":core:cas-server-core-services")
@@ -25,7 +26,10 @@ dependencies {
     testImplementation project(":core:cas-server-core-services-authentication")
     testImplementation project(":core:cas-server-core-authentication-api")
     testImplementation project(":core:cas-server-core-authentication")
+    testImplementation project(":core:cas-server-core-authentication-mfa")
     testImplementation project(":core:cas-server-core-web")
+    testImplementation project(":core:cas-server-core-webflow-mfa")
+    testImplementation project(":core:cas-server-core-webflow")
     testImplementation project(":core:cas-server-core-web-api")
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core-authentication-attributes")
