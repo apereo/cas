@@ -53,6 +53,7 @@ import org.springframework.test.annotation.DirtiesContext;
     CasWebApplicationServiceFactoryConfiguration.class,
     CasDefaultServiceTicketIdGeneratorsConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
+    CasCoreMultifactorAuthenticationConfiguration.class,
     CasCoreUtilConfiguration.class,
     CasCoreAuthenticationConfiguration.class,
     CasCoreServicesAuthenticationConfiguration.class,
