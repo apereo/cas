@@ -6,12 +6,8 @@
         </Console>
     </Appenders>
     <Loggers>
-        <Logger name="org.apereo" level="off" additivity="false">
-            <AppenderRef ref="console"/>
-        </Logger>
-        <Logger name="org.springframework" level="off" additivity="false">
-            <AppenderRef ref="console"/>
-        </Logger>
+        <Logger name="org.apereo" level="off" />
+        <Logger name="org.springframework" level="off" />
         <Root level="off">
             <AppenderRef ref="console"/>
         </Root>

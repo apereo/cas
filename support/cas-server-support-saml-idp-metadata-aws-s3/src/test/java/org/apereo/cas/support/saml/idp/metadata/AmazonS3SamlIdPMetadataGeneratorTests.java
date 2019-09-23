@@ -15,6 +15,7 @@ import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.SamlIdPMetadataConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
+import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
 import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
@@ -50,6 +51,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreHttpConfiguration.class,
     CasCoreConfiguration.class,
     CasCoreAuthenticationConfiguration.class,
+    CasCoreLogoutConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasRegisteredServicesTestConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,

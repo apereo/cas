@@ -24,6 +24,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
     CasCoreAuthenticationMetadataConfiguration.class,
     CasCoreAuthenticationSupportConfiguration.class,
     CasCoreAuthenticationHandlersConfiguration.class,
+    CasCoreTicketIdGeneratorsConfiguration.class,
     CasCoreHttpConfiguration.class,
     CasCoreUtilConfiguration.class,
     CoreSamlConfiguration.class,
