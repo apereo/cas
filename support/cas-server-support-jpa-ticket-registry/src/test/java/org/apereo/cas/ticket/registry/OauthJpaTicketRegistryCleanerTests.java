@@ -29,9 +29,9 @@ import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketFactory;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
+import org.apereo.cas.web.config.CasCookieConfiguration;
 
 import lombok.val;
-import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
