@@ -6,15 +6,9 @@
         </Console>
     </Appenders>
     <Loggers>
-        <Logger name="org.apereo" level="error" additivity="false">
-            <AppenderRef ref="console"/>
-        </Logger>
-        <Logger name="net.spy.memcached" level="error" additivity="false">
-            <AppenderRef ref="console"/>
-        </Logger>
-        <Logger name="org.hibernate.validator" level="error" additivity="false">
-            <AppenderRef ref="console"/>
-        </Logger>
+        <Logger name="org.apereo" level="error" />
+        <Logger name="net.spy.memcached" level="error" />
+        <Logger name="org.hibernate.validator" level="error" />
         <Root level="off">
             <AppenderRef ref="console"/>
         </Root>
