@@ -60,6 +60,7 @@ import static org.junit.jupiter.api.Assertions.*;
     DynamoDbTicketRegistryTicketCatalogConfiguration.class,
     OAuthProtocolTicketCatalogConfiguration.class,
     CasCoreTicketsConfiguration.class,
+    CasCoreTicketIdGeneratorsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
     CasCoreLogoutConfiguration.class,
     CasCoreHttpConfiguration.class,

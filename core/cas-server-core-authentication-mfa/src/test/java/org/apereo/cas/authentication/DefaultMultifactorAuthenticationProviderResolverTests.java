@@ -3,6 +3,8 @@ package org.apereo.cas.authentication;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationAuditConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
+import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
@@ -36,6 +38,8 @@ import static org.mockito.Mockito.*;
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    CasCoreServicesConfiguration.class,
+    CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreMultifactorAuthenticationConfiguration.class,
     CasCoreMultifactorAuthenticationAuditConfiguration.class
 })

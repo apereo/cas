@@ -56,6 +56,7 @@ import org.springframework.test.context.TestPropertySource;
     CasCoreTicketIdGeneratorsConfiguration.class,
     RefreshAutoConfiguration.class,
     CasCoreConfiguration.class,
+    CasCoreTicketIdGeneratorsConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreLogoutConfiguration.class,

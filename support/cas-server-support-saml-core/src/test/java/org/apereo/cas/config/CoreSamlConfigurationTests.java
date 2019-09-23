@@ -28,10 +28,12 @@ import org.springframework.scheduling.annotation.EnableScheduling;
     CasCoreHttpConfiguration.class,
     CasCoreUtilConfiguration.class,
     CoreSamlConfiguration.class,
+    CasCoreTicketIdGeneratorsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasPersonDirectoryConfiguration.class,
-    CasCoreServicesConfiguration.class})
+    CasCoreServicesConfiguration.class
+})
 @EnableScheduling
 @Tag("SAML")
 public class CoreSamlConfigurationTests {
