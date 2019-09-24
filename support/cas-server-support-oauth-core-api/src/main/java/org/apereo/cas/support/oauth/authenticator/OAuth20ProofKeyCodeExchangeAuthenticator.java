@@ -52,7 +52,7 @@ public class OAuth20ProofKeyCodeExchangeAuthenticator extends OAuth20ClientIdCli
                 .orElse(StringUtils.EMPTY);
 
         if (!OAuth20Utils.checkClientSecret(registeredService, clientSecret, getRegisteredServiceCipherExecutor())) {
-            throw new CredentialsException("Client Credentials provided for registered service [{}] is not valid", registeredService.getName());
+            throw new CredentialsException("Client Credentials provided is not valid for registered service: " + registeredService.getName());
         }
 
         val codeVerifier = credentials.getPassword();

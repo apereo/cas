@@ -53,7 +53,7 @@ public class OAuth20UsernamePasswordAuthenticator implements Authenticator<Usern
 
             val clientSecret = clientIdAndSecret.getRight();
             if (!OAuth20Utils.checkClientSecret(registeredService, clientSecret, registeredServiceCipherExecutor)) {
-                throw new CredentialsException("Client Credentials provided for registered service [{}] is not valid", registeredService.getName());
+                throw new CredentialsException("Client Credentials provided is not valid for registered service: " + registeredService.getName());
             }
 
             val redirectUri = context.getRequestParameter(OAuth20Constants.REDIRECT_URI)

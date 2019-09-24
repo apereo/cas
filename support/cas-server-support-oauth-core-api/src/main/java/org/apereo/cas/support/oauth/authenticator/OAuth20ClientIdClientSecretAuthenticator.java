@@ -84,7 +84,7 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator<U
                                        final OAuthRegisteredService registeredService,
                                        final WebContext context) {
         if (!OAuth20Utils.checkClientSecret(registeredService, credentials.getPassword(), registeredServiceCipherExecutor)) {
-            throw new CredentialsException("Client Credentials provided for registered service [{}] is not valid", registeredService.getName());
+            throw new CredentialsException("Client Credentials provided is not valid for registered service: " + registeredService.getName());
         }
     }
 
