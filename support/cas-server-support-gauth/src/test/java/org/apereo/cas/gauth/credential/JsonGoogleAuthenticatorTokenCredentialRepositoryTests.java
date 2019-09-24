@@ -5,6 +5,7 @@ import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.support.authentication.GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration;
 import org.apereo.cas.otp.config.OneTimeTokenAuthenticationConfiguration;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
@@ -38,6 +39,7 @@ import java.io.File;
     CasCoreTicketsConfiguration.class,
     CasCookieConfiguration.class,
     CasCoreConfiguration.class,
+    CasCoreWebConfiguration.class,
     CasCoreUtilConfiguration.class
     },
     properties = "cas.authn.mfa.gauth.json.location=classpath:/repository.json")

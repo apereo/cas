@@ -11,6 +11,7 @@ import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
+import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
@@ -69,9 +70,11 @@ import static org.junit.jupiter.api.Assertions.*;
     TokenAuthenticationHandlerTests.TestTokenAuthenticationConfiguration.class,
     CasPersonDirectoryConfiguration.class,
     CasCoreAuthenticationConfiguration.class,
+    CasCoreTicketIdGeneratorsConfiguration.class,
     CasCoreServicesAuthenticationConfiguration.class,
     CasCoreServicesConfiguration.class,
-    TokenAuthenticationConfiguration.class})
+    TokenAuthenticationConfiguration.class
+})
 public class TokenAuthenticationHandlerTests {
     private static final RandomStringGenerator RANDOM_STRING_GENERATOR = new DefaultRandomStringGenerator();
     private static final String SIGNING_SECRET = RANDOM_STRING_GENERATOR.getNewString(256);

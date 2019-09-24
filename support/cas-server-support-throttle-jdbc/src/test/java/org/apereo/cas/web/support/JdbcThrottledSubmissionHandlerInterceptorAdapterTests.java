@@ -14,6 +14,7 @@ import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
+import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
@@ -61,8 +62,10 @@ import org.springframework.test.context.TestPropertySource;
     CasCoreHttpConfiguration.class,
     CasSupportJdbcAuditConfiguration.class,
     CasCoreWebConfiguration.class,
+    CasCoreTicketIdGeneratorsConfiguration.class,
     CasRegisteredServicesTestConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class})
+    CasWebApplicationServiceFactoryConfiguration.class
+})
 @TestPropertySource(properties = {
     "cas.authn.throttle.usernameParameter=username",
     "cas.authn.throttle.failure.code=AUTHENTICATION_FAILED",

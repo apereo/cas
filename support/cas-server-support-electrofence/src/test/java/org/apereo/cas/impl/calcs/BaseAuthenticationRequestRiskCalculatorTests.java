@@ -73,6 +73,7 @@ import org.springframework.test.annotation.DirtiesContext;
     CasCoreConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     CasCoreTicketsConfiguration.class,
+    CasDefaultServiceTicketIdGeneratorsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
     CasCoreLogoutConfiguration.class,
     CasCookieConfiguration.class,

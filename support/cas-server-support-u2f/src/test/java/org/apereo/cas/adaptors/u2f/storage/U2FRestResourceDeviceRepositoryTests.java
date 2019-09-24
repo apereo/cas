@@ -4,6 +4,7 @@ import org.apereo.cas.config.U2FConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockWebServer;
+import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -11,6 +12,7 @@ import com.yubico.u2f.data.DeviceRegistration;
 import lombok.val;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -29,11 +31,13 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@Tag("RestfulApi")
 @SpringBootTest(classes = {
     U2FConfiguration.class,
     AopAutoConfiguration.class,
     RefreshAutoConfiguration.class
 })
+@EnabledIfPortOpen(port = 9196)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @TestPropertySource(properties = "cas.authn.mfa.u2f.rest.url=http://localhost:9196")
 public class U2FRestResourceDeviceRepositoryTests extends AbstractU2FDeviceRepositoryTests {

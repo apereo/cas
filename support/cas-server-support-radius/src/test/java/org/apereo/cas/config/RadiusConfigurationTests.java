@@ -53,6 +53,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreTicketsConfiguration.class,
     CasCoreUtilConfiguration.class,
     CasCoreWebConfiguration.class,
+    CasCoreHttpConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class,

@@ -4,6 +4,8 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
+import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasScimConfiguration;
 import org.apereo.cas.util.MockWebServer;
@@ -50,6 +52,8 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreServicesConfiguration.class,
     CasCoreUtilConfiguration.class,
     CasCoreConfiguration.class,
+    CasCoreTicketIdGeneratorsConfiguration.class,
+    CasCoreTicketsConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     RefreshAutoConfiguration.class
 })

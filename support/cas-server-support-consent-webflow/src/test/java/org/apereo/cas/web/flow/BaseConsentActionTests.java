@@ -8,6 +8,8 @@ import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
+import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
@@ -42,6 +44,8 @@ import org.springframework.webflow.execution.Action;
     CasCoreWebConfiguration.class,
     CasCoreHttpConfiguration.class,
     CasCoreUtilConfiguration.class,
+    CasCoreTicketsConfiguration.class,
+    CasCoreTicketIdGeneratorsConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class
 })
 public abstract class BaseConsentActionTests {

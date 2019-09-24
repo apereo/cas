@@ -4,8 +4,10 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
+import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilSerializationConfiguration;
+import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasOAuthComponentSerializationConfiguration;
 import org.apereo.cas.config.MemcachedTicketRegistryConfiguration;
 import org.apereo.cas.mock.MockServiceTicket;
@@ -45,9 +47,11 @@ import static org.junit.jupiter.api.Assertions.*;
     MemcachedTicketRegistryTests.MemcachedTicketRegistryTestConfiguration.class,
     RefreshAutoConfiguration.class,
     CasCoreHttpConfiguration.class,
+    CasCoreWebConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreUtilSerializationConfiguration.class,
     CasCoreTicketsConfiguration.class,
+    CasCoreTicketIdGeneratorsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class
 })
 @TestPropertySource(properties = {
