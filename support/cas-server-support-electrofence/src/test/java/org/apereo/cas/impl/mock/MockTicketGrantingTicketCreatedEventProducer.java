@@ -1,12 +1,12 @@
 package org.apereo.cas.impl.mock;
 
-import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
 import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketCreatedEvent;
 import org.apereo.cas.support.events.dao.CasEvent;
 import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.serialization.TicketIdSanitizationUtils;
 
 import java.time.ZonedDateTime;
@@ -112,7 +112,7 @@ public class MockTicketGrantingTicketCreatedEventProducer {
         dto.putTimestamp(new Date().getTime());
         final int days = ThreadLocalRandom.current().nextInt(0, 30);
         dto.setCreationTime(ZonedDateTime.now().minusDays(days).format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
-        dto.putId(TicketIdSanitizationUtils.sanitize("TGT-" + i + "-" + RandomStringUtils.randomAlphanumeric(16)));
+        dto.putId(TicketIdSanitizationUtils.sanitize("TGT-" + i + "-" + RandomUtils.randomAlphanumeric(16)));
         dto.setPrincipalId("casuser");
         dto.putClientIpAddress(getMockClientIpAddress());
         dto.putServerIpAddress("127.0.0.1");

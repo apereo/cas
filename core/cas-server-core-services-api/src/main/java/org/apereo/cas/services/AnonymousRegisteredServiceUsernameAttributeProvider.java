@@ -1,11 +1,12 @@
 package org.apereo.cas.services;
 
-import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.authentication.principal.PersistentIdGenerator;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
+import org.apereo.cas.util.RandomUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,7 +29,7 @@ public class AnonymousRegisteredServiceUsernameAttributeProvider extends BaseReg
      * Encoder to generate PseudoIds.
      */
     private PersistentIdGenerator persistentIdGenerator =
-        new ShibbolethCompatiblePersistentIdGenerator(RandomStringUtils.randomAlphanumeric(16));
+        new ShibbolethCompatiblePersistentIdGenerator(RandomUtils.randomAlphanumeric(16));
 
     /**
      * Init provider.

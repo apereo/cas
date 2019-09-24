@@ -1,11 +1,12 @@
 package org.apereo.cas.shell.commands;
 
+import org.apereo.cas.util.RandomUtils;
+
 import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JWEAlgorithm;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.crypto.AESDecrypter;
 import com.nimbusds.jose.crypto.DirectDecrypter;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 import org.pac4j.core.profile.CommonProfile;
@@ -118,7 +119,7 @@ public class GenerateJwtCommand implements CommandMarker {
             return;
         }
 
-        final String encryptionSecret = RandomStringUtils.randomAlphanumeric(encryptionSecretSize);
+        final String encryptionSecret = RandomUtils.randomAlphanumeric(encryptionSecretSize);
         LOGGER.info("==== Encryption Secret ====\n{}\n", encryptionSecret);
 
         final String acceptedEncAlgs = Arrays.stream(JWEAlgorithm.class.getDeclaredFields())
@@ -166,7 +167,7 @@ public class GenerateJwtCommand implements CommandMarker {
             return;
         }
 
-        final String signingSecret = RandomStringUtils.randomAlphanumeric(signingSecretSize);
+        final String signingSecret = RandomUtils.randomAlphanumeric(signingSecretSize);
         LOGGER.info("==== Signing Secret ====\n{}\n", signingSecret);
 
         final String acceptedSigningAlgs = Arrays.stream(JWSAlgorithm.class.getDeclaredFields())
