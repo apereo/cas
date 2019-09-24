@@ -6,9 +6,7 @@
         </Console>
     </Appenders>
     <Loggers>
-        <Logger name="org.apereo" level="info" additivity="false">
-            <AppenderRef ref="console"/>
-        </Logger>
+        <Logger name="org.apereo" level="info" />
         <Root level="warn">
             <AppenderRef ref="console"/>
         </Root>

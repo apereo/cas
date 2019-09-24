@@ -6,12 +6,8 @@
         </Console>
     </Appenders>
     <Loggers>
-        <Logger name="org.apereo" level="warn" additivity="false">
-            <AppenderRef ref="console"/>
-        </Logger>
-        <Logger name="org.opensaml" level="off" additivity="false">
-            <AppenderRef ref="console"/>
-        </Logger>
+        <Logger name="org.apereo" level="warn" />
+        <Logger name="org.opensaml" level="off" />
         <Root level="off">
             <AppenderRef ref="console"/>
         </Root>
