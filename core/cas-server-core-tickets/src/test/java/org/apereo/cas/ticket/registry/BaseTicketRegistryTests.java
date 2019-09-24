@@ -54,6 +54,7 @@ import static org.junit.jupiter.api.Assumptions.*;
 @SpringBootTest(classes = {
     CasCoreTicketsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
+    CasCoreTicketIdGeneratorsConfiguration.class,
     CasCoreTicketsSerializationConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class
 })

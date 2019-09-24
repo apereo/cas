@@ -24,6 +24,10 @@ ext.libraries = [
                     force = true
                     transitive = false
                 },
+                dependencies.create("com.sun.istack:istack-commons-runtime:$istackVersion") {
+                    force = true
+                    transitive = false
+                }
         ],
         aspectj                 : [
                 dependencies.create("org.aspectj:aspectjrt:$aspectjVersion") {
