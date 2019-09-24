@@ -21,7 +21,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration(value = "casCoreTicketIdGeneratorsConfiguration")
+@Configuration(value = "casCoreTicketIdGeneratorsConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasCoreTicketIdGeneratorsConfiguration {
 
