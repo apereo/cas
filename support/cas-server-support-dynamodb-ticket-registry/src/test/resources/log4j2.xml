@@ -6,13 +6,9 @@
         </Console>
     </Appenders>
     <Loggers>
-        <Logger name="org.apereo" level="off" additivity="false">
-            <AppenderRef ref="console"/>
-        </Logger>
-        <Logger name="com.amazonaws" level="off" additivity="false">
-            <AppenderRef ref="console"/>
-        </Logger>
-        <Root level="off" additivity="false">
+        <Logger name="org.apereo" level="off" />
+        <Logger name="com.amazonaws" level="off" />
+        <Root level="off">
             <AppenderRef ref="console"/>
         </Root>
     </Loggers>

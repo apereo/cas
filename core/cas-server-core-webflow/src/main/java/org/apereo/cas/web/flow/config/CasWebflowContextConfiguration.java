@@ -81,11 +81,7 @@ public class CasWebflowContextConfiguration {
     @Autowired
     @Qualifier("registeredServiceViewResolver")
     private ObjectProvider<ViewResolver> registeredServiceViewResolver;
-
-    @Autowired
-    @Qualifier("thymeleafViewResolver")
-    private ObjectProvider<ViewResolver> thymeleafViewResolver;
-
+    
     @Autowired
     private ApplicationContext applicationContext;
 
@@ -302,13 +298,10 @@ public class CasWebflowContextConfiguration {
     @Bean
     @Lazy(false)
     public CasWebflowExecutionPlanConfigurer casDefaultWebflowExecutionPlanConfigurer() {
-        return new CasWebflowExecutionPlanConfigurer() {
-            @Override
-            public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-                plan.registerWebflowConfigurer(defaultWebflowConfigurer());
-                plan.registerWebflowConfigurer(defaultLogoutWebflowConfigurer());
-                plan.registerWebflowConfigurer(groovyWebflowConfigurer());
-            }
+        return plan -> {
+            plan.registerWebflowConfigurer(defaultWebflowConfigurer());
+            plan.registerWebflowConfigurer(defaultLogoutWebflowConfigurer());
+            plan.registerWebflowConfigurer(groovyWebflowConfigurer());
         };
     }
 }

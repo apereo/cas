@@ -12,6 +12,7 @@ import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
+import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
@@ -59,6 +60,7 @@ import static org.junit.jupiter.api.Assertions.*;
     DynamoDbTicketRegistryTicketCatalogConfiguration.class,
     OAuthProtocolTicketCatalogConfiguration.class,
     CasCoreTicketsConfiguration.class,
+    CasCoreTicketIdGeneratorsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
     CasCoreLogoutConfiguration.class,
     CasCoreHttpConfiguration.class,
@@ -66,6 +68,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreAuthenticationConfiguration.class,
     CasCoreServicesAuthenticationConfiguration.class,
     CasCoreConfiguration.class,
+    CasCoreTicketIdGeneratorsConfiguration.class,
     CasCoreWebConfiguration.class,
     CasCoreUtilConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,

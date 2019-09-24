@@ -1,6 +1,5 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategyConfigurer;
 import org.apereo.cas.authentication.principal.ServiceFactory;
@@ -23,7 +22,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("samlIdPAuthenticationServiceSelectionStrategyConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class SamlIdPAuthenticationServiceSelectionStrategyConfiguration implements AuthenticationServiceSelectionStrategyConfigurer {
+public class SamlIdPAuthenticationServiceSelectionStrategyConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -39,8 +38,9 @@ public class SamlIdPAuthenticationServiceSelectionStrategyConfiguration implemen
             casProperties.getServer().getPrefix());
     }
 
-    @Override
-    public void configureAuthenticationServiceSelectionStrategy(final AuthenticationServiceSelectionPlan plan) {
-        plan.registerStrategy(samlIdPEntityIdValidationServiceSelectionStrategy());
+    @Bean
+    public AuthenticationServiceSelectionStrategyConfigurer samlIdPAuthenticationServiceSelectionStrategyConfigurer() {
+        return plan -> plan.registerStrategy(samlIdPEntityIdValidationServiceSelectionStrategy());
     }
+
 }

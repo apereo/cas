@@ -18,7 +18,6 @@ import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.io.CommunicationsManager;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
-import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.actions.StaticEventExecutionAction;
 
@@ -184,12 +183,7 @@ public class PasswordManagementWebflowConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "passwordManagementCasWebflowExecutionPlanConfigurer")
     public CasWebflowExecutionPlanConfigurer passwordManagementCasWebflowExecutionPlanConfigurer() {
-        return new CasWebflowExecutionPlanConfigurer() {
-            @Override
-            public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-                plan.registerWebflowConfigurer(passwordManagementWebflowConfigurer());
-            }
-        };
+        return plan -> plan.registerWebflowConfigurer(passwordManagementWebflowConfigurer());
     }
 }
 

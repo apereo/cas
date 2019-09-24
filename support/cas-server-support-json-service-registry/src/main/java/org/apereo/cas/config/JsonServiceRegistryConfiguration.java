@@ -3,7 +3,6 @@ package org.apereo.cas.config;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.JsonServiceRegistry;
 import org.apereo.cas.services.ServiceRegistry;
-import org.apereo.cas.services.ServiceRegistryExecutionPlan;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServiceRegistryListener;
 import org.apereo.cas.services.replication.RegisteredServiceReplicationStrategy;
@@ -18,7 +17,7 @@ import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
@@ -38,7 +37,7 @@ import java.util.Collection;
 public class JsonServiceRegistryConfiguration {
 
     @Autowired
-    private ApplicationEventPublisher eventPublisher;
+    private ConfigurableApplicationContext applicationContext;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -60,7 +59,7 @@ public class JsonServiceRegistryConfiguration {
     public ServiceRegistry jsonServiceRegistry() {
         val registry = casProperties.getServiceRegistry();
         return new JsonServiceRegistry(registry.getJson().getLocation(),
-            registry.isWatcherEnabled(), eventPublisher,
+            registry.isWatcherEnabled(), applicationContext,
             registeredServiceReplicationStrategy.getIfAvailable(),
             resourceNamingStrategy.getIfAvailable(),
             serviceRegistryListeners.getIfAvailable());
@@ -69,11 +68,6 @@ public class JsonServiceRegistryConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "jsonServiceRegistryExecutionPlanConfigurer")
     public ServiceRegistryExecutionPlanConfigurer jsonServiceRegistryExecutionPlanConfigurer() {
-        return new ServiceRegistryExecutionPlanConfigurer() {
-            @Override
-            public void configureServiceRegistry(final ServiceRegistryExecutionPlan plan) {
-                plan.registerServiceRegistry(jsonServiceRegistry());
-            }
-        };
+        return plan -> plan.registerServiceRegistry(jsonServiceRegistry());
     }
 }

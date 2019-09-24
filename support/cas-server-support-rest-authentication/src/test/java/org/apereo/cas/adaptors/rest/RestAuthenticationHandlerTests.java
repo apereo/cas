@@ -14,6 +14,7 @@ import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
+import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
@@ -75,7 +76,9 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
     CasCoreServicesConfiguration.class,
     RefreshAutoConfiguration.class,
     CasPersonDirectoryConfiguration.class,
-    CasCoreUtilConfiguration.class})
+    CasCoreTicketIdGeneratorsConfiguration.class,
+    CasCoreUtilConfiguration.class
+})
 @TestPropertySource(properties = "cas.authn.rest.uri=http://localhost:8081/authn")
 @EnableScheduling
 @EnableTransactionManagement(proxyTargetClass = true)

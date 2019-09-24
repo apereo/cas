@@ -1,6 +1,7 @@
 package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
@@ -16,7 +17,7 @@ import org.apereo.cas.ticket.code.OAuthCode;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 import org.apereo.cas.util.serialization.ComponentSerializationPlan;
-import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurator;
+import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurer;
 
 import lombok.val;
 import org.junit.jupiter.api.RepeatedTest;
@@ -43,6 +44,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasOAuthComponentSerializationConfiguration.class,
     MemcachedTicketRegistryTests.MemcachedTicketRegistryTestConfiguration.class,
     RefreshAutoConfiguration.class,
+    CasCoreHttpConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreUtilSerializationConfiguration.class,
     CasCoreTicketsConfiguration.class,
@@ -91,7 +93,7 @@ public class MemcachedTicketRegistryTests extends BaseTicketRegistryTests {
     }
 
     @TestConfiguration("MemcachedTicketRegistryTestConfiguration")
-    public static class MemcachedTicketRegistryTestConfiguration implements ComponentSerializationPlanConfigurator {
+    public static class MemcachedTicketRegistryTestConfiguration implements ComponentSerializationPlanConfigurer {
         @Override
         public void configureComponentSerializationPlan(final ComponentSerializationPlan plan) {
             plan.registerSerializableClass(MockTicketGrantingTicket.class);

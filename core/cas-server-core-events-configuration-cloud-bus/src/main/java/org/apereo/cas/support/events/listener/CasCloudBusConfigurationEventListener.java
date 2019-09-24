@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.bus.event.RefreshRemoteApplicationEvent;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Async;
 
 /**
  * This is {@link CasCloudBusConfigurationEventListener}.
@@ -26,6 +27,7 @@ public class CasCloudBusConfigurationEventListener {
      * @param event the event
      */
     @EventListener
+    @Async
     public void handleRefreshEvent(final RefreshRemoteApplicationEvent event) {
         LOGGER.trace("Received event [{}]", event);
         configurationPropertiesEnvironmentManager.rebindCasConfigurationProperties(this.applicationContext);

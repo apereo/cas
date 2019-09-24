@@ -11,7 +11,6 @@ import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
-import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.RemoteAddressWebflowConfigurer;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
@@ -117,11 +116,6 @@ public class CasRemoteAuthenticationConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "remoteCasWebflowExecutionPlanConfigurer")
     public CasWebflowExecutionPlanConfigurer remoteCasWebflowExecutionPlanConfigurer() {
-        return new CasWebflowExecutionPlanConfigurer() {
-            @Override
-            public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-                plan.registerWebflowConfigurer(remoteAddressWebflowConfigurer());
-            }
-        };
+        return plan -> plan.registerWebflowConfigurer(remoteAddressWebflowConfigurer());
     }
 }

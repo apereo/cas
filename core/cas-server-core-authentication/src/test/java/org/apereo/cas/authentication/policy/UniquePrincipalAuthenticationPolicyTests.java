@@ -2,6 +2,7 @@ package org.apereo.cas.authentication.policy;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
@@ -40,7 +41,8 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreUtilConfiguration.class,
     CasCoreHttpConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
-    CasCoreTicketCatalogConfiguration.class
+    CasCoreTicketCatalogConfiguration.class,
+    CasCoreServicesConfiguration.class
 })
 @DirtiesContext
 public class UniquePrincipalAuthenticationPolicyTests {

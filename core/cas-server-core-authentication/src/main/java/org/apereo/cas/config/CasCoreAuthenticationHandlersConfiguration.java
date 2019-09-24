@@ -10,7 +10,6 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalNameTransformerUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
-import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
 import org.apereo.cas.authentication.principal.resolvers.ProxyingPrincipalResolver;
 import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
 import org.apereo.cas.authentication.support.password.PasswordPolicyContext;
@@ -68,9 +67,9 @@ public class CasCoreAuthenticationHandlersConfiguration {
     @Bean
     public AuthenticationHandler proxyAuthenticationHandler() {
         return new HttpBasedServiceCredentialsAuthenticationHandler(null,
-            servicesManager.getIfAvailable(),
+            servicesManager.getObject(),
             proxyPrincipalFactory(), Integer.MIN_VALUE,
-            supportsTrustStoreSslSocketFactoryHttpClient.getIfAvailable());
+            supportsTrustStoreSslSocketFactoryHttpClient.getObject());
     }
 
     @ConditionalOnMissingBean(name = "proxyPrincipalFactory")
@@ -90,7 +89,7 @@ public class CasCoreAuthenticationHandlersConfiguration {
     public AuthenticationHandler acceptUsersAuthenticationHandler() {
         val props = casProperties.getAuthn().getAccept();
         val h = new AcceptUsersAuthenticationHandler(props.getName(),
-            servicesManager.getIfAvailable(),
+            servicesManager.getObject(),
             acceptUsersPrincipalFactory(),
             null,
             getParsedUsers());
@@ -175,13 +174,8 @@ public class CasCoreAuthenticationHandlersConfiguration {
                 .filter(jaas -> StringUtils.isNotBlank(jaas.getRealm()))
                 .map(jaas -> {
                     val jaasPrincipal = jaas.getPrincipal();
-                    val principalAttribute = StringUtils.defaultIfBlank(jaasPrincipal.getPrincipalAttribute(), personDirectory.getPrincipalAttribute());
-                    return new PersonDirectoryPrincipalResolver(attributeRepository.getIfAvailable(),
-                        jaasPrincipalFactory(),
-                        jaasPrincipal.isReturnNull() || personDirectory.isReturnNull(),
-                        principalAttribute,
-                        jaasPrincipal.isUseExistingPrincipalId() || personDirectory.isUseExistingPrincipalId(),
-                        jaasPrincipal.isAttributeResolutionEnabled());
+                    return CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(jaasPrincipalFactory(),
+                        attributeRepository.getObject(), jaasPrincipal, personDirectory);
                 })
                 .collect(Collectors.toList());
         }
@@ -194,7 +188,7 @@ public class CasCoreAuthenticationHandlersConfiguration {
                 .stream()
                 .filter(jaas -> StringUtils.isNotBlank(jaas.getRealm()))
                 .map(jaas -> {
-                    val h = new JaasAuthenticationHandler(jaas.getName(), servicesManager.getIfAvailable(),
+                    val h = new JaasAuthenticationHandler(jaas.getName(), servicesManager.getObject(),
                         jaasPrincipalFactory(), jaas.getOrder());
 
                     h.setKerberosKdcSystemProperty(jaas.getKerberosKdcSystemProperty());

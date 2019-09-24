@@ -33,7 +33,6 @@ import org.apereo.cas.util.crypto.PublicKeyFactoryBean;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
-import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
@@ -50,7 +49,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -119,9 +117,6 @@ public class AccepttoMultifactorAuthenticationConfiguration {
     private ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer;
 
     @Autowired
-    private ApplicationEventPublisher applicationEventPublisher;
-
-    @Autowired
     private FlowBuilderServices flowBuilderServices;
 
     @Autowired
@@ -156,12 +151,7 @@ public class AccepttoMultifactorAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "mfaAccepttoCasWebflowExecutionPlanConfigurer")
     @Bean
     public CasWebflowExecutionPlanConfigurer mfaAccepttoCasWebflowExecutionPlanConfigurer() {
-        return new CasWebflowExecutionPlanConfigurer() {
-            @Override
-            public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-                plan.registerWebflowConfigurer(mfaAccepttoMultifactorWebflowConfigurer());
-            }
-        };
+        return plan -> plan.registerWebflowConfigurer(mfaAccepttoMultifactorWebflowConfigurer());
     }
 
     @ConditionalOnMissingBean(name = "mfaAccepttoDistributedSessionStore")
@@ -234,7 +224,7 @@ public class AccepttoMultifactorAuthenticationConfiguration {
             .registeredServiceAccessStrategyEnforcer(registeredServiceAccessStrategyEnforcer.getIfAvailable())
             .casProperties(casProperties)
             .ticketRegistry(ticketRegistry.getIfAvailable())
-            .eventPublisher(applicationEventPublisher)
+            .eventPublisher(applicationContext)
             .applicationContext(applicationContext)
             .build();
 

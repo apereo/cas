@@ -1,7 +1,6 @@
 package org.apereo.cas.web.flow.action;
 
 import org.apereo.cas.authentication.AcceptUsersAuthenticationHandler;
-import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
@@ -33,6 +32,7 @@ import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.TestPropertySource;
 
 /**
@@ -73,10 +73,12 @@ import org.springframework.test.context.TestPropertySource;
 @TestPropertySource(properties = "cas.authn.surrogate.simple.surrogates.casuser=cassurrogate")
 public class BaseSurrogateInitialAuthenticationActionTests {
     @TestConfiguration
-    public static class TestAuthenticationConfiguration implements AuthenticationEventExecutionPlanConfigurer {
-        @Override
-        public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
-            plan.registerAuthenticationHandler(new AcceptUsersAuthenticationHandler(CollectionUtils.wrap("casuser", "Mellon")));
+    public static class TestAuthenticationConfiguration {
+
+        @Bean
+        public AuthenticationEventExecutionPlanConfigurer surrogateAuthenticationEventExecutionPlanConfigurer() {
+            return plan -> plan.registerAuthenticationHandler(new AcceptUsersAuthenticationHandler(CollectionUtils.wrap("casuser", "Mellon")));
         }
+
     }
 }

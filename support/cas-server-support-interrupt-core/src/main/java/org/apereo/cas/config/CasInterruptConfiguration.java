@@ -11,7 +11,6 @@ import org.apereo.cas.interrupt.RestEndpointInterruptInquirer;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -27,10 +26,10 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Configuration("casInterruptConfiguration")
+@Configuration(value = "casInterruptConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-public class CasInterruptConfiguration implements InterruptInquiryExecutionPlanConfigurer {
+public class CasInterruptConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -40,27 +39,28 @@ public class CasInterruptConfiguration implements InterruptInquiryExecutionPlanC
     public InterruptInquiryExecutionPlan interruptInquirer(final List<InterruptInquiryExecutionPlanConfigurer> configurers) {
         val plan = new DefaultInterruptInquiryExecutionPlan();
         configurers.forEach(c -> {
-            val name = RegExUtils.removePattern(c.getClass().getSimpleName(), "\\$.+");
-            LOGGER.debug("Registering interrupt inquirer [{}]", name);
+            LOGGER.debug("Registering interrupt inquirer [{}]", c.getName());
             c.configureInterruptInquiryExecutionPlan(plan);
         });
         return plan;
     }
 
-    @Override
-    public void configureInterruptInquiryExecutionPlan(final InterruptInquiryExecutionPlan plan) {
-        val ip = casProperties.getInterrupt();
-        if (StringUtils.isNotBlank(ip.getAttributeName()) && StringUtils.isNotBlank(ip.getAttributeValue())) {
-            plan.registerInterruptInquirer(new RegexAttributeInterruptInquirer(ip.getAttributeName(), ip.getAttributeValue()));
-        }
-        if (ip.getJson().getLocation() != null) {
-            plan.registerInterruptInquirer(new JsonResourceInterruptInquirer(ip.getJson().getLocation()));
-        }
-        if (ip.getGroovy().getLocation() != null) {
-            plan.registerInterruptInquirer(new GroovyScriptInterruptInquirer(ip.getGroovy().getLocation()));
-        }
-        if (StringUtils.isNotBlank(ip.getRest().getUrl())) {
-            plan.registerInterruptInquirer(new RestEndpointInterruptInquirer(ip.getRest()));
-        }
+    @Bean
+    public InterruptInquiryExecutionPlanConfigurer casDefaultInterruptInquiryExecutionPlanConfigurer() {
+        return plan -> {
+            val ip = casProperties.getInterrupt();
+            if (StringUtils.isNotBlank(ip.getAttributeName()) && StringUtils.isNotBlank(ip.getAttributeValue())) {
+                plan.registerInterruptInquirer(new RegexAttributeInterruptInquirer(ip.getAttributeName(), ip.getAttributeValue()));
+            }
+            if (ip.getJson().getLocation() != null) {
+                plan.registerInterruptInquirer(new JsonResourceInterruptInquirer(ip.getJson().getLocation()));
+            }
+            if (ip.getGroovy().getLocation() != null) {
+                plan.registerInterruptInquirer(new GroovyScriptInterruptInquirer(ip.getGroovy().getLocation()));
+            }
+            if (StringUtils.isNotBlank(ip.getRest().getUrl())) {
+                plan.registerInterruptInquirer(new RestEndpointInterruptInquirer(ip.getRest()));
+            }
+        };
     }
 }

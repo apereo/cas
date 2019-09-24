@@ -5,6 +5,7 @@ import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.UniqueTicketIdGeneratorConfigurer;
 
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -24,16 +25,18 @@ import java.util.Map;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasCoreTicketIdGeneratorsConfiguration {
 
-    @Bean
     @Autowired
-    public Map<String, UniqueTicketIdGenerator> uniqueIdGeneratorsMap(final List<UniqueTicketIdGeneratorConfigurer> configurers) {
+    private ObjectProvider<List<UniqueTicketIdGeneratorConfigurer>> configurers;
+
+    @Bean
+    public Map<String, UniqueTicketIdGenerator> uniqueIdGeneratorsMap() {
         val map = new HashMap<String, UniqueTicketIdGenerator>();
-        if (configurers != null) {
-            configurers.forEach(c -> {
+        configurers.ifAvailable(cfgs -> {
+            cfgs.forEach(c -> {
                 val pair = c.buildUniqueTicketIdGenerators();
                 pair.forEach(p -> map.put(p.getKey(), p.getValue()));
             });
-        }
+        });
         return map;
     }
 }
