@@ -11,6 +11,7 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
+import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 
@@ -42,7 +43,8 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreWebConfiguration.class,
     CasCoreHttpConfiguration.class,
     CasCookieConfiguration.class,
-    CasCoreConfiguration.class
+    CasCoreConfiguration.class,
+    CasCoreLogoutConfiguration.class
 })
 public class DefaultTicketCatalogTests {
     @Autowired

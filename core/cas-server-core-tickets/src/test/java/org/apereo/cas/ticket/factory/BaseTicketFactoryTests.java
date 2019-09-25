@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.factory;
 
+import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketComponentSerializationConfiguration;
@@ -34,6 +35,7 @@ import java.util.List;
  */
 @SpringBootTest(classes = {
     BaseTicketFactoryTests.TicketFactoryTestConfiguration.class,
+    CasCoreHttpConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
     CasCoreTicketsConfiguration.class,

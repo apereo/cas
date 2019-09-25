@@ -1,6 +1,8 @@
 package org.apereo.cas.ticket.serialization;
 
+import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
+import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -25,9 +27,11 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    CasCoreHttpConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
-    CasCoreTicketsSerializationConfiguration.class
+    CasCoreTicketsSerializationConfiguration.class,
+    CasCoreTicketIdGeneratorsConfiguration.class
 })
 public class DefaultTicketStringSerializationManagerTests {
     @Autowired

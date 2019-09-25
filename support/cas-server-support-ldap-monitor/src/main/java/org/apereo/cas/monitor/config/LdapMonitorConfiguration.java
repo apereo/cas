@@ -8,16 +8,11 @@ import org.apereo.cas.util.LdapUtils;
 import lombok.val;
 import org.ldaptive.pool.SearchValidator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.health.ConditionalOnEnabledHealthIndicator;
 import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.scheduling.concurrent.ThreadPoolExecutorFactoryBean;
-
-import java.util.concurrent.ExecutorService;
 
 /**
  * This is {@link LdapMonitorConfiguration}.
@@ -32,17 +27,11 @@ public class LdapMonitorConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    @Lazy
-    @Bean
-    public ThreadPoolExecutorFactoryBean pooledConnectionFactoryMonitorExecutorService() {
-        return Beans.newThreadPoolExecutorFactoryBean(casProperties.getMonitor().getLdap().getPool());
-    }
-
-    @Autowired
     @Bean
     @ConditionalOnEnabledHealthIndicator("pooledLdapConnectionFactoryHealthIndicator")
-    public HealthIndicator pooledLdapConnectionFactoryHealthIndicator(@Qualifier("pooledConnectionFactoryMonitorExecutorService") final ExecutorService executor) {
+    public HealthIndicator pooledLdapConnectionFactoryHealthIndicator() {
         val ldap = casProperties.getMonitor().getLdap();
+        val executor = Beans.newThreadPoolExecutorFactoryBean(casProperties.getMonitor().getLdap().getPool()).getObject();
         val connectionFactory = LdapUtils.newLdaptivePooledConnectionFactory(ldap);
         return new PooledLdapConnectionFactoryHealthIndicator(Beans.newDuration(ldap.getMaxWait()).toMillis(),
             connectionFactory, executor, new SearchValidator());
