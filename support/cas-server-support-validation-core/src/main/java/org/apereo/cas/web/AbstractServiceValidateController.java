@@ -218,11 +218,15 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         var proxyIou = StringUtils.EMPTY;
         val proxyHandler = serviceValidateConfigurationContext.getProxyHandler();
         if (serviceCredential != null && proxyHandler != null && proxyHandler.canHandle(serviceCredential)) {
-            proxyIou = handleProxyIouDelivery(serviceCredential, proxyGrantingTicketId);
-            if (StringUtils.isEmpty(proxyIou)) {
-                val description = getTicketValidationErrorDescription(CasProtocolConstants.ERROR_CODE_INVALID_PROXY_CALLBACK,
-                    new Object[]{serviceCredential.getId()}, request);
-                return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_PROXY_CALLBACK, description, request, service);
+            val registeredService = ((HttpBasedServiceCredential) serviceCredential).getService();
+            val authorizedToReleaseProxyGrantingTicket = registeredService.getAttributeReleasePolicy().isAuthorizedToReleaseProxyGrantingTicket();
+            if (!authorizedToReleaseProxyGrantingTicket) {
+                proxyIou = handleProxyIouDelivery(serviceCredential, proxyGrantingTicketId);
+                if (StringUtils.isEmpty(proxyIou)) {
+                    val description = getTicketValidationErrorDescription(CasProtocolConstants.ERROR_CODE_INVALID_PROXY_CALLBACK,
+                            new Object[]{serviceCredential.getId()}, request);
+                    return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_PROXY_CALLBACK, description, request, service);
+                }
             }
         } else {
             LOGGER.debug("No service credentials specified, and/or the proxy handler [{}] cannot handle credentials", proxyHandler);

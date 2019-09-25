@@ -41,7 +41,8 @@ import static org.mockito.Mockito.*;
 @Import({CasProtocolViewsConfiguration.class, CasValidationConfiguration.class, ThymeleafAutoConfiguration.class})
 public abstract class AbstractServiceValidateControllerTests extends AbstractCentralAuthenticationServiceTests {
     protected static final String SUCCESS = "Success";
-    protected static final Service SERVICE = RegisteredServiceTestUtils.getService();
+    protected static final Service SERVICE = RegisteredServiceTestUtils.getService("https://www.casinthecloud.com");
+    protected static final Service DEFAULT_SERVICE = RegisteredServiceTestUtils.getService();
 
     private static final String GITHUB_URL = "https://www.github.com";
 
@@ -156,6 +157,23 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         val modelAndView = this.serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse());
         assertTrue(Objects.requireNonNull(modelAndView.getView()).toString().contains(SUCCESS));
         assertNotNull(modelAndView.getModel().get(CasProtocolConstants.PARAMETER_PROXY_GRANTING_TICKET_IOU));
+    }
+
+    @Test
+    public void verifyValidServiceTicketWithValidPgtButNoProxyHandlingBecausePgtIsReleased() throws Exception {
+        val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), DEFAULT_SERVICE);
+
+        val tId = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
+        val sId = getCentralAuthenticationService().grantServiceTicket(tId.getId(), DEFAULT_SERVICE, ctx);
+
+        val request = new MockHttpServletRequest();
+        request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, DEFAULT_SERVICE.getId());
+        request.addParameter(CasProtocolConstants.PARAMETER_TICKET, sId.getId());
+        request.addParameter(CasProtocolConstants.PARAMETER_PROXY_GRANTING_TICKET_URL, DEFAULT_SERVICE.getId());
+
+        val modelAndView = this.serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse());
+        assertTrue(Objects.requireNonNull(modelAndView.getView()).toString().contains(SUCCESS));
+        assertNull(modelAndView.getModel().get(CasProtocolConstants.PARAMETER_PROXY_GRANTING_TICKET_IOU));
     }
 
     @Test
@@ -305,12 +323,12 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
     Helper methods.
      */
     protected ModelAndView getModelAndViewUponServiceValidationWithSecurePgtUrl() throws Exception {
-        val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), SERVICE);
+        val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), DEFAULT_SERVICE);
         val tId = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
-        val sId = getCentralAuthenticationService().grantServiceTicket(tId.getId(), SERVICE, ctx);
+        val sId = getCentralAuthenticationService().grantServiceTicket(tId.getId(), DEFAULT_SERVICE, ctx);
 
         val request = new MockHttpServletRequest();
-        request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, SERVICE.getId());
+        request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, DEFAULT_SERVICE.getId());
         request.addParameter(CasProtocolConstants.PARAMETER_TICKET, sId.getId());
         request.addParameter(CasProtocolConstants.PARAMETER_PROXY_GRANTING_TICKET_URL, GITHUB_URL);
 

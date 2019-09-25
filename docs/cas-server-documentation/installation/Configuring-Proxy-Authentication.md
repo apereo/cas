@@ -82,6 +82,9 @@ Note that the return of the proxy granting ticket id is only carried out by the 
 application issues a request to the `/p3/serviceValidate` endpoint (or `/p3/proxyValidate`). Other means of returning attributes to CAS, such as SAML1
 will **not** support the additional returning of the proxy granting ticket.
 
+<div class="alert alert-warning">Since version 6.1, if CAS is configured to return the proxy-granting ticket id directly in the validation response,
+the pgtIou parameter is ommitted from the response and no callback to the application is performed.</div>
+
 ### Register Service
 
 Once you have received the public key from the client application owner, it must be first
