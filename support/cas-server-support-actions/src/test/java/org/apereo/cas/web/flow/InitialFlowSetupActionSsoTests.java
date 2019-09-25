@@ -29,6 +29,7 @@ import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -82,14 +83,14 @@ import static org.junit.jupiter.api.Assertions.*;
 public class InitialFlowSetupActionSsoTests {
     @Autowired
     @Qualifier("initialFlowSetupAction")
-    private Action action;
+    private ObjectProvider<Action> action;
 
     @Test
     public void disableFlowIfNoService() {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
-        assertThrows(NoSuchFlowExecutionException.class, () -> this.action.execute(context));
+        assertThrows(NoSuchFlowExecutionException.class, () -> this.action.getObject().execute(context));
     }
 
     @TestConfiguration("CasTestConfiguration")
