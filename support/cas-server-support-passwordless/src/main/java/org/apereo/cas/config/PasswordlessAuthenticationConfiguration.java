@@ -83,7 +83,7 @@ public class PasswordlessAuthenticationConfiguration {
     private ApplicationContext applicationContext;
 
     @Autowired
-    private FlowBuilderServices flowBuilderServices;
+    private ObjectProvider<FlowBuilderServices> flowBuilderServices;
 
     @Autowired
     @Qualifier("adaptiveAuthenticationPolicy")
@@ -211,7 +211,7 @@ public class PasswordlessAuthenticationConfiguration {
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer passwordlessAuthenticationWebflowConfigurer() {
-        return new PasswordlessAuthenticationWebflowConfigurer(flowBuilderServices,
+        return new PasswordlessAuthenticationWebflowConfigurer(flowBuilderServices.getObject(),
             loginFlowDefinitionRegistry.getObject(), applicationContext, casProperties);
     }
 

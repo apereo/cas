@@ -44,7 +44,7 @@ public class GenerateServiceTicketActionTests extends AbstractWebflowActionsTest
             .handleAndFinalizeSingleAuthenticationTransaction(CoreAuthenticationTestUtils.getService(),
                 CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
 
-        this.ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(authnResult);
+        this.ticketGrantingTicket = getCentralAuthenticationService().getObject().createTicketGrantingTicket(authnResult);
         getTicketRegistry().addTicket(this.ticketGrantingTicket);
     }
 

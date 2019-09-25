@@ -9,6 +9,7 @@ import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasScimConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
@@ -27,8 +28,8 @@ import org.springframework.webflow.execution.Action;
  * @since 6.1.0
  */
 @SpringBootTest(classes = {
-    CasScimConfiguration.class,
     CasCoreWebflowConfiguration.class,
+    CasCoreWebConfiguration.class,
     CasWebflowContextConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreUtilConfiguration.class,
@@ -40,7 +41,8 @@ import org.springframework.webflow.execution.Action;
     CasCoreTicketsConfiguration.class,
     CasCoreLogoutConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class,
-    CasCoreAuthenticationSupportConfiguration.class
+    CasCoreAuthenticationSupportConfiguration.class,
+    CasScimConfiguration.class
 })
 public abstract class BaseScimProvisionerActionTests {
     @Autowired

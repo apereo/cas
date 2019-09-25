@@ -65,11 +65,11 @@ public class CasSimpleMultifactorAuthenticationConfiguration {
     private ObjectProvider<FlowDefinitionRegistry> loginFlowDefinitionRegistry;
 
     @Autowired
-    private FlowBuilderServices flowBuilderServices;
+    private ObjectProvider<FlowBuilderServices> flowBuilderServices;
 
     @Bean
     public FlowDefinitionRegistry mfaSimpleAuthenticatorFlowRegistry() {
-        val builder = new FlowDefinitionRegistryBuilder(this.applicationContext, this.flowBuilderServices);
+        val builder = new FlowDefinitionRegistryBuilder(this.applicationContext, this.flowBuilderServices.getObject());
         builder.setBasePath(CasWebflowConstants.BASE_CLASSPATH_WEBFLOW);
         builder.addFlowLocationPattern("/mfa-simple/*-webflow.xml");
         return builder.build();
@@ -79,7 +79,8 @@ public class CasSimpleMultifactorAuthenticationConfiguration {
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer mfaSimpleMultifactorWebflowConfigurer() {
-        return new CasSimpleMultifactorWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry.getIfAvailable(),
+        return new CasSimpleMultifactorWebflowConfigurer(flowBuilderServices.getObject(),
+            loginFlowDefinitionRegistry.getObject(),
             mfaSimpleAuthenticatorFlowRegistry(), applicationContext, casProperties);
     }
 
@@ -127,8 +128,10 @@ public class CasSimpleMultifactorAuthenticationConfiguration {
         @Bean
         @DependsOn("defaultWebflowConfigurer")
         public CasWebflowConfigurer mfaSimpleMultifactorTrustWebflowConfigurer() {
-            return new CasSimpleMultifactorTrustWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry.getIfAvailable(),
-                casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled(), mfaSimpleAuthenticatorFlowRegistry(),
+            return new CasSimpleMultifactorTrustWebflowConfigurer(flowBuilderServices.getObject(),
+                loginFlowDefinitionRegistry.getIfAvailable(),
+                casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled(),
+                mfaSimpleAuthenticatorFlowRegistry(),
                 applicationContext, casProperties);
         }
 
