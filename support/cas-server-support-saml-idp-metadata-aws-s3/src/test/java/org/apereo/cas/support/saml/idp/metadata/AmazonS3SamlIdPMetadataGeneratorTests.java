@@ -14,6 +14,7 @@ import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.CoreSamlConfiguration;
 import org.apereo.cas.config.SamlIdPMetadataConfiguration;
@@ -66,6 +67,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     CasCoreUtilConfiguration.class,
     CoreSamlConfiguration.class,
+    CasPersonDirectoryConfiguration.class,
     AmazonS3SamlMetadataConfiguration.class,
     AmazonS3SamlIdPMetadataConfiguration.class,
     SamlIdPMetadataConfiguration.class

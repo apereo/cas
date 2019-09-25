@@ -51,9 +51,10 @@ import org.springframework.test.annotation.DirtiesContext;
  * @since 6.0.0
  */
 @SpringBootTest(classes = {
-    AbstractCentralAuthenticationServiceTests.CasTestConfiguration.class,
-    CasAuthenticationEventExecutionPlanTestConfiguration.class,
     CasCoreServicesConfiguration.class,
+    CasAuthenticationEventExecutionPlanTestConfiguration.class,
+    AbstractCentralAuthenticationServiceTests.CasTestConfiguration.class,
+    CasCoreServicesAuthenticationConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
     CasDefaultServiceTicketIdGeneratorsConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
@@ -76,7 +77,6 @@ import org.springframework.test.annotation.DirtiesContext;
     CasCookieConfiguration.class,
     RefreshAutoConfiguration.class,
     CasCoreAuthenticationConfiguration.class,
-    CasCoreServicesAuthenticationConfiguration.class,
     AopAutoConfiguration.class,
     CasCoreMultifactorAuthenticationConfiguration.class,
     CasMultifactorAuthenticationWebflowConfiguration.class,

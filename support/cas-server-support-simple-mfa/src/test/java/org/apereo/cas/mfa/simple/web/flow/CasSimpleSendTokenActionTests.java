@@ -13,6 +13,7 @@ import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.CasSimpleMultifactorAuthenticationComponentSerializationConfiguration;
 import org.apereo.cas.config.CasSimpleMultifactorAuthenticationConfiguration;
@@ -88,6 +89,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreAuthenticationSupportConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
+    CasPersonDirectoryConfiguration.class,
     CasCoreUtilConfiguration.class
 })
 @TestPropertySource(properties = {
