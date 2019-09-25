@@ -1,7 +1,9 @@
 package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
+import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
@@ -51,9 +53,12 @@ import static org.junit.jupiter.api.Assumptions.*;
  */
 @Slf4j
 @SpringBootTest(classes = {
+    CasCoreHttpConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
-    CasCoreTicketsSerializationConfiguration.class
+    CasCoreTicketIdGeneratorsConfiguration.class,
+    CasCoreTicketsSerializationConfiguration.class,
+    CasCoreTicketIdGeneratorsConfiguration.class
 })
 public abstract class BaseTicketRegistryTests {
 

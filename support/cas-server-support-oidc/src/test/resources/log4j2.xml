@@ -7,9 +7,7 @@
     </Appenders>
 
     <Loggers>
-        <Logger name="org.apereo.cas" level="error" additivity="false">
-            <AppenderRef ref="console"/>
-        </Logger>
+        <Logger name="org.apereo.cas" level="error"/>
         <Root level="off">
             <AppenderRef ref="console"/>
         </Root>

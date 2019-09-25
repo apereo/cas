@@ -6,17 +6,11 @@
         </Console>
     </Appenders>
     <Loggers>
-        <Logger name="org.apereo" level="off" additivity="false">
-            <AppenderRef ref="console"/>
-        </Logger>
-        <Logger name="org.springframework" level="off" additivity="false">
-            <AppenderRef ref="console"/>
-        </Logger>
-        <Logger name="org.springframework.jdbc" level="off" additivity="false">
-            <AppenderRef ref="console"/>
-        </Logger>
+        <Logger name="org.apereo" level="off" />
+        <Logger name="org.springframework" level="off" />
+        <Logger name="org.springframework.jdbc" level="off" />
         <Logger name="org.apereo.inspektr.audit.support.Slf4jLoggingAuditTrailManager" level="off">
-            <AppenderRef ref="file"/>
+            <AppenderRef ref="console"/>
         </Logger>
         <Root level="off">
             <AppenderRef ref="console"/>
