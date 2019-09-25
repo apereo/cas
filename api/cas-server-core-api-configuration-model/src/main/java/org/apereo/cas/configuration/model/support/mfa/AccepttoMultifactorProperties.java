@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.support.SpringResourceProperties;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * This is {@link AccepttoMultifactorProperties}.
@@ -113,7 +114,8 @@ public class AccepttoMultifactorProperties extends BaseMultifactorProviderProper
      * that are produced as part of device pairing and registration.
      */
     @RequiredProperty
-    private SpringResourceProperties registrationApiPublicKey;
+    @NestedConfigurationProperty
+    private SpringResourceProperties registrationApiPublicKey = new SpringResourceProperties();
 
     public AccepttoMultifactorProperties() {
         setId(DEFAULT_IDENTIFIER);

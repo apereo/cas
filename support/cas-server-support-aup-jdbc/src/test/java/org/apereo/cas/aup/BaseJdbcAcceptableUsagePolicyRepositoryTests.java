@@ -2,6 +2,7 @@ package org.apereo.cas.aup;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasAcceptableUsagePolicyJdbcConfiguration;
+import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.support.WebUtils;
@@ -10,6 +11,7 @@ import lombok.Getter;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -27,7 +29,11 @@ import java.util.Map;
  * @author Martin Böhmer
  * @since 5.3.8
  */
-@Import(CasAcceptableUsagePolicyJdbcConfiguration.class)
+@Import({
+    CasAcceptableUsagePolicyJdbcConfiguration.class,
+    CasCoreTicketsConfiguration.class,
+    RefreshAutoConfiguration.class
+})
 @Getter
 public abstract class BaseJdbcAcceptableUsagePolicyRepositoryTests extends BaseAcceptableUsagePolicyRepositoryTests {
     @Autowired

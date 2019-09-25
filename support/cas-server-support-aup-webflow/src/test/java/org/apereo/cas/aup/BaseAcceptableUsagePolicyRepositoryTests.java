@@ -50,6 +50,9 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    CasPersonDirectoryTestConfiguration.class,
+    CasCoreUtilConfiguration.class,
+    CasCoreHttpConfiguration.class,
     CasAcceptableUsagePolicyWebflowConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasWebflowContextConfiguration.class,
@@ -60,10 +63,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreTicketIdGeneratorsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-    CasCoreHttpConfiguration.class,
     CasCoreWebConfiguration.class,
-    CasPersonDirectoryTestConfiguration.class,
-    CasCoreUtilConfiguration.class,
     CasCookieConfiguration.class,
     CasRegisteredServicesTestConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,

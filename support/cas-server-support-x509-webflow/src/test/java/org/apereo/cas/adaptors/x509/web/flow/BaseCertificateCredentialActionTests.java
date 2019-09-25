@@ -2,6 +2,8 @@ package org.apereo.cas.adaptors.x509.web.flow;
 
 import org.apereo.cas.adaptors.x509.authentication.principal.AbstractX509CertificateTests;
 import org.apereo.cas.adaptors.x509.config.X509AuthenticationConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.web.extractcert.X509CertificateExtractorConfiguration;
@@ -25,12 +27,14 @@ import org.springframework.webflow.execution.Action;
  */
 @TestPropertySource(locations = "classpath:/x509.properties")
 @Import(value = {
-    X509AuthenticationWebflowConfiguration.class,
+    RefreshAutoConfiguration.class,
     CasMultifactorAuthenticationWebflowConfiguration.class,
     CasWebflowContextConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
     CasCoreWebConfiguration.class,
-    RefreshAutoConfiguration.class,
+    CasCoreAuthenticationSupportConfiguration.class,
+    CasCoreAuthenticationPrincipalConfiguration.class,
+    X509AuthenticationWebflowConfiguration.class,
     X509AuthenticationConfiguration.class,
     X509CertificateExtractorConfiguration.class
 })
