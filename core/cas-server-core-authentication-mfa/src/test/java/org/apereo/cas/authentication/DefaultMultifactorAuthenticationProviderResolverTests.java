@@ -1,11 +1,17 @@
 package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
+import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
+import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationAuditConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
+import org.apereo.cas.config.CasCoreTicketsConfiguration;
+import org.apereo.cas.config.CasCoreWebConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.util.CollectionUtils;
@@ -45,7 +51,10 @@ import static org.mockito.Mockito.*;
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    CasCoreAuthenticationPrincipalConfiguration.class,
     CasCoreServicesConfiguration.class,
+    CasCoreHttpConfiguration.class,
+    CasCoreWebConfiguration.class,
     CasCoreWebflowConfiguration.class,
     CasWebflowContextConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
@@ -55,7 +64,10 @@ import static org.mockito.Mockito.*;
     CasCoreMultifactorAuthenticationAuditConfiguration.class,
     CasCoreConfiguration.class,
     CasCoreLogoutConfiguration.class,
-    CasCookieConfiguration.class
+    CasCoreTicketsConfiguration.class,
+    CasCoreTicketIdGeneratorsConfiguration.class,
+    CasCookieConfiguration.class,
+    CasPersonDirectoryConfiguration.class
 })
 @DirtiesContext
 public class DefaultMultifactorAuthenticationProviderResolverTests {
