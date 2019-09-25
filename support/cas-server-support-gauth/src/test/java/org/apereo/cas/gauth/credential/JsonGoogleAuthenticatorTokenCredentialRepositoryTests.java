@@ -1,12 +1,19 @@
 package org.apereo.cas.gauth.credential;
 
+import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
+import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
+import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.support.authentication.GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration;
+import org.apereo.cas.config.support.authentication.GoogleAuthenticatorAuthenticationMultifactorProviderBypassConfiguration;
+import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.otp.config.OneTimeTokenAuthenticationConfiguration;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.web.config.CasCookieConfiguration;
@@ -30,14 +37,21 @@ import java.io.File;
  * @since 5.2.0
  */
 @SpringBootTest(classes = {
+    CasCoreMultifactorAuthenticationConfiguration.class,
     GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration.class,
+    GoogleAuthenticatorAuthenticationMultifactorProviderBypassConfiguration.class,
     OneTimeTokenAuthenticationConfiguration.class,
     CasCoreServicesConfiguration.class,
     AopAutoConfiguration.class,
     RefreshAutoConfiguration.class,
     CasCoreAuthenticationSupportConfiguration.class,
+    CasCoreAuthenticationPrincipalConfiguration.class,
     CasCoreTicketsConfiguration.class,
+    CasCoreTicketIdGeneratorsConfiguration.class,
+    CasWebApplicationServiceFactoryConfiguration.class,
+    CasCoreLogoutConfiguration.class,
     CasCookieConfiguration.class,
+    CasCoreHttpConfiguration.class,
     CasCoreConfiguration.class,
     CasCoreWebConfiguration.class,
     CasCoreUtilConfiguration.class
