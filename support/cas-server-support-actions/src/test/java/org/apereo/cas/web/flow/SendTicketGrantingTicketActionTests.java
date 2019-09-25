@@ -9,6 +9,7 @@ import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -35,7 +36,7 @@ public class SendTicketGrantingTicketActionTests extends AbstractWebflowActionsT
 
     @Autowired
     @Qualifier("sendTicketGrantingTicketAction")
-    private Action action;
+    private ObjectProvider<Action> action;
 
     @Autowired
     @Qualifier("ticketGrantingTicketCookieGenerator")
@@ -51,7 +52,7 @@ public class SendTicketGrantingTicketActionTests extends AbstractWebflowActionsT
     @Test
     public void verifyNoTgtToSet() throws Exception {
         this.context.setExternalContext(new ServletExternalContext(new MockServletContext(), new MockHttpServletRequest(), new MockHttpServletResponse()));
-        assertEquals(SUCCESS, this.action.execute(this.context).getId());
+        assertEquals(SUCCESS, this.action.getObject().execute(this.context).getId());
     }
 
     @Test
@@ -69,7 +70,7 @@ public class SendTicketGrantingTicketActionTests extends AbstractWebflowActionsT
         WebUtils.putTicketGrantingTicketInScopes(this.context, tgt);
         this.context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
 
-        assertEquals(SUCCESS, this.action.execute(this.context).getId());
+        assertEquals(SUCCESS, this.action.getObject().execute(this.context).getId());
         request.setCookies(response.getCookies());
         assertEquals(tgt.getId(), this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request));
     }
@@ -91,7 +92,7 @@ public class SendTicketGrantingTicketActionTests extends AbstractWebflowActionsT
         WebUtils.putTicketGrantingTicketInScopes(this.context, tgt);
         this.context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
 
-        assertEquals(SUCCESS, this.action.execute(this.context).getId());
+        assertEquals(SUCCESS, this.action.getObject().execute(this.context).getId());
         request.setCookies(response.getCookies());
         assertEquals(tgt.getId(), this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request));
     }

@@ -9,6 +9,7 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -29,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ServiceWarningActionTests extends AbstractWebflowActionsTests {
     @Autowired
     @Qualifier("serviceWarningAction")
-    private Action action;
+    private ObjectProvider<Action> action;
 
 
     private MockRequestContext context;
@@ -52,6 +53,6 @@ public class ServiceWarningActionTests extends AbstractWebflowActionsTests {
         getTicketRegistry().addTicket(tgt);
         WebUtils.putTicketGrantingTicketInScopes(this.context, tgt);
 
-        assertEquals(CasWebflowConstants.STATE_ID_REDIRECT, this.action.execute(this.context).getId());
+        assertEquals(CasWebflowConstants.STATE_ID_REDIRECT, this.action.getObject().execute(this.context).getId());
     }
 }

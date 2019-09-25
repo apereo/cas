@@ -69,7 +69,7 @@ import static org.mockito.Mockito.*;
     CasWebApplicationServiceFactoryConfiguration.class
 })
 @TestPropertySource(
-    "cas.authn.mfa.acceptto.registration-api-public-key.location=classpath:publickey.pem"
+    properties = "cas.authn.mfa.acceptto.registration-api-public-key.location=classpath:publickey.pem"
 )
 public class AccepttoQRCodeAuthenticationHandlerTests {
     @Test
