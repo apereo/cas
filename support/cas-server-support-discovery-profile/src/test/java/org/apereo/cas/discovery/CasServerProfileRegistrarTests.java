@@ -2,6 +2,7 @@ package org.apereo.cas.discovery;
 
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
+import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
@@ -38,7 +39,8 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreAuditConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
     CasCoreTicketsConfiguration.class,
-    CasCoreAuthenticationPrincipalConfiguration.class
+    CasCoreAuthenticationPrincipalConfiguration.class,
+    CasCoreAuthenticationHandlersConfiguration.class
 })
 @DirtiesContext
 public class CasServerProfileRegistrarTests {
