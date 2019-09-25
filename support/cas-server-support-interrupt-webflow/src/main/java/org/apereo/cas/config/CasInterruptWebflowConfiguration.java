@@ -47,7 +47,7 @@ public class CasInterruptWebflowConfiguration {
     private ObjectProvider<FlowDefinitionRegistry> loginFlowDefinitionRegistry;
 
     @Autowired
-    private FlowBuilderServices flowBuilderServices;
+    private ObjectProvider<FlowBuilderServices> flowBuilderServices;
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -56,14 +56,15 @@ public class CasInterruptWebflowConfiguration {
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer interruptWebflowConfigurer() {
-        return new InterruptWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry.getIfAvailable(), applicationContext, casProperties);
+        return new InterruptWebflowConfigurer(flowBuilderServices.getObject(),
+            loginFlowDefinitionRegistry.getIfAvailable(), applicationContext, casProperties);
     }
 
     @ConditionalOnMissingBean(name = "inquireInterruptAction")
     @Bean
     @RefreshScope
     public Action inquireInterruptAction() {
-        return new InquireInterruptAction(interruptInquirer.getIfAvailable().getInterruptInquirers());
+        return new InquireInterruptAction(interruptInquirer.getObject().getInterruptInquirers());
     }
 
     @ConditionalOnMissingBean(name = "prepareInterruptViewAction")

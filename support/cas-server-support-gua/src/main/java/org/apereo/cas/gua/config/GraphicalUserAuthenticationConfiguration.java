@@ -54,13 +54,13 @@ public class GraphicalUserAuthenticationConfiguration {
     private ApplicationContext applicationContext;
 
     @Autowired
-    private FlowBuilderServices flowBuilderServices;
+    private ObjectProvider<FlowBuilderServices> flowBuilderServices;
 
     @ConditionalOnMissingBean(name = "graphicalUserAuthenticationWebflowConfigurer")
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer graphicalUserAuthenticationWebflowConfigurer() {
-        return new GraphicalUserAuthenticationWebflowConfigurer(flowBuilderServices,
+        return new GraphicalUserAuthenticationWebflowConfigurer(flowBuilderServices.getObject(),
             loginFlowDefinitionRegistry.getIfAvailable(), applicationContext, casProperties);
     }
 

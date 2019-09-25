@@ -37,7 +37,7 @@ public class CasCaptchaConfiguration {
     private ObjectProvider<FlowDefinitionRegistry> loginFlowDefinitionRegistry;
 
     @Autowired
-    private FlowBuilderServices flowBuilderServices;
+    private ObjectProvider<FlowBuilderServices> flowBuilderServices;
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -49,7 +49,8 @@ public class CasCaptchaConfiguration {
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer captchaWebflowConfigurer() {
-        return new CasCaptchaWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry.getIfAvailable(),
+        return new CasCaptchaWebflowConfigurer(flowBuilderServices.getObject(),
+            loginFlowDefinitionRegistry.getIfAvailable(),
             applicationContext, casProperties);
     }
 

@@ -46,7 +46,7 @@ public class CasGoogleAnalyticsConfiguration {
     private ObjectProvider<FlowDefinitionRegistry> logoutFlowDefinitionRegistry;
 
     @Autowired
-    private FlowBuilderServices flowBuilderServices;
+    private ObjectProvider<FlowBuilderServices> flowBuilderServices;
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -62,7 +62,7 @@ public class CasGoogleAnalyticsConfiguration {
     @Bean
     @DependsOn({"defaultWebflowConfigurer", "defaultLogoutWebflowConfigurer"})
     public CasWebflowConfigurer casGoogleAnalyticsWebflowConfigurer() {
-        val cfg = new CasGoogleAnalyticsWebflowConfigurer(flowBuilderServices,
+        val cfg = new CasGoogleAnalyticsWebflowConfigurer(flowBuilderServices.getObject(),
             loginFlowDefinitionRegistry.getIfAvailable(),
             applicationContext, casProperties);
         cfg.setLogoutFlowDefinitionRegistry(logoutFlowDefinitionRegistry.getIfAvailable());

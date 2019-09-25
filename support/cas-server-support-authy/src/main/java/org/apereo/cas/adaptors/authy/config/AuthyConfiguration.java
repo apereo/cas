@@ -63,7 +63,7 @@ public class AuthyConfiguration {
     private ObjectProvider<FlowDefinitionRegistry> loginFlowDefinitionRegistry;
 
     @Autowired
-    private FlowBuilderServices flowBuilderServices;
+    private ObjectProvider<FlowBuilderServices> flowBuilderServices;
 
     @Autowired
     @Qualifier("centralAuthenticationService")
@@ -94,7 +94,7 @@ public class AuthyConfiguration {
 
     @Bean
     public FlowDefinitionRegistry authyAuthenticatorFlowRegistry() {
-        val builder = new FlowDefinitionRegistryBuilder(this.applicationContext, this.flowBuilderServices);
+        val builder = new FlowDefinitionRegistryBuilder(this.applicationContext, flowBuilderServices.getObject());
         builder.setBasePath(CasWebflowConstants.BASE_CLASSPATH_WEBFLOW);
         builder.addFlowLocationPattern("/mfa-authy/*-webflow.xml");
         return builder.build();
@@ -124,7 +124,7 @@ public class AuthyConfiguration {
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer authyMultifactorWebflowConfigurer() {
-        return new AuthyMultifactorWebflowConfigurer(flowBuilderServices,
+        return new AuthyMultifactorWebflowConfigurer(flowBuilderServices.getObject(),
             loginFlowDefinitionRegistry.getObject(), authyAuthenticatorFlowRegistry(), applicationContext, casProperties);
     }
 
@@ -153,7 +153,7 @@ public class AuthyConfiguration {
         @DependsOn("defaultWebflowConfigurer")
         public CasWebflowConfigurer authyMultifactorTrustWebflowConfigurer() {
             val deviceRegistrationEnabled = casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled();
-            return new AuthyMultifactorTrustWebflowConfigurer(flowBuilderServices,
+            return new AuthyMultifactorTrustWebflowConfigurer(flowBuilderServices.getObject(),
                 loginFlowDefinitionRegistry.getObject(), deviceRegistrationEnabled,
                 authyAuthenticatorFlowRegistry(), applicationContext, casProperties);
         }

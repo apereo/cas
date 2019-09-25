@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class JdbcAcceptableUsagePolicyRepositoryAdvancedTests extends BaseJdbcAcceptableUsagePolicyRepositoryTests {
     @BeforeEach
     public void initialize() throws SQLException {
-        try (val c = this.acceptableUsagePolicyDataSource.getConnection()) {
+        try (val c = this.acceptableUsagePolicyDataSource.getObject().getConnection()) {
             try (val s = c.createStatement()) {
                 c.setAutoCommit(true);
                 s.execute("CREATE TABLE users_table (id int primary key, username varchar(255), mail varchar(255), aup boolean)");
@@ -50,7 +50,7 @@ public class JdbcAcceptableUsagePolicyRepositoryAdvancedTests extends BaseJdbcAc
     
     @AfterEach
     public void cleanup() throws SQLException {
-        try (val c = this.acceptableUsagePolicyDataSource.getConnection()) {
+        try (val c = this.acceptableUsagePolicyDataSource.getObject().getConnection()) {
             try (val s = c.createStatement()) {
                 c.setAutoCommit(true);
                 s.execute("DROP TABLE users_table;");
@@ -89,7 +89,8 @@ public class JdbcAcceptableUsagePolicyRepositoryAdvancedTests extends BaseJdbcAc
     private void raiseException(final Map<String, List<Object>> profileAttributes) {
         val aupProperties = casProperties.getAcceptableUsagePolicy();
         val jdbcAupRepository = new JdbcAcceptableUsagePolicyRepository(ticketRegistrySupport.getObject(),
-                aupProperties.getAupAttributeName(), acceptableUsagePolicyDataSource, aupProperties);
+                aupProperties.getAupAttributeName(),
+            acceptableUsagePolicyDataSource.getObject(), aupProperties);
         
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();

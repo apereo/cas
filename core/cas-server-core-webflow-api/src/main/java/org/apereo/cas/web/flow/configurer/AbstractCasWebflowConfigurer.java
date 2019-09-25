@@ -137,14 +137,14 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     @Override
     public Flow getLoginFlow() {
         if (this.loginFlowDefinitionRegistry == null) {
-            LOGGER.error("Login flow registry is not configured and/or initialized correctly.");
+            LOGGER.warn("Login flow registry is not configured and/or initialized correctly.");
             return null;
         }
         val found = Arrays.asList(this.loginFlowDefinitionRegistry.getFlowDefinitionIds()).contains(FLOW_ID_LOGIN);
         if (found) {
             return (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(FLOW_ID_LOGIN);
         }
-        LOGGER.error("Could not find flow definition [{}]. Available flow definition ids are [{}]",
+        LOGGER.warn("Could not find flow definition [{}]. Available flow definition ids are [{}]",
             FLOW_ID_LOGIN, this.loginFlowDefinitionRegistry.getFlowDefinitionIds());
         return null;
     }
@@ -251,7 +251,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     @Override
     public EvaluateAction createEvaluateAction(final String expression) {
         if (this.flowBuilderServices == null) {
-            LOGGER.error("Flow builder services is not configured correctly.");
+            LOGGER.warn("Flow builder services is not configured correctly.");
             return null;
         }
         val ctx = new FluentParserContext();

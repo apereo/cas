@@ -126,7 +126,7 @@ public class AuthenticationViaFormActionTests extends AbstractWebflowActionsTest
         val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(
             getAuthenticationSystemSupport(), service, c);
 
-        val ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
+        val ticketGrantingTicket = getCentralAuthenticationService().getObject().createTicketGrantingTicket(ctx);
         val request = new MockHttpServletRequest();
         val context = new MockRequestContext();
 
@@ -151,7 +151,7 @@ public class AuthenticationViaFormActionTests extends AbstractWebflowActionsTest
         val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(
             getAuthenticationSystemSupport(), RegisteredServiceTestUtils.getService(TEST), c);
 
-        val ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
+        val ticketGrantingTicket = getCentralAuthenticationService().getObject().createTicketGrantingTicket(ctx);
         val request = new MockHttpServletRequest();
         val context = new MockRequestContext();
 
@@ -173,7 +173,7 @@ public class AuthenticationViaFormActionTests extends AbstractWebflowActionsTest
         val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(
             getAuthenticationSystemSupport(), service, c);
 
-        val ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
+        val ticketGrantingTicket = getCentralAuthenticationService().getObject().createTicketGrantingTicket(ctx);
         val request = new MockHttpServletRequest();
         val context = new MockRequestContext();
 

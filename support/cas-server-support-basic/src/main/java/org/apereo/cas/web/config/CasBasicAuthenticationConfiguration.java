@@ -57,7 +57,7 @@ public class CasBasicAuthenticationConfiguration {
     private ObjectProvider<FlowDefinitionRegistry> loginFlowDefinitionRegistry;
 
     @Autowired
-    private FlowBuilderServices flowBuilderServices;
+    private ObjectProvider<FlowBuilderServices> flowBuilderServices;
 
     @Bean
     public Action basicAuthenticationAction() {
@@ -70,7 +70,8 @@ public class CasBasicAuthenticationConfiguration {
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer basicAuthenticationWebflowConfigurer() {
-        return new BasicAuthenticationWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry.getObject(), applicationContext, casProperties);
+        return new BasicAuthenticationWebflowConfigurer(flowBuilderServices.getObject(),
+            loginFlowDefinitionRegistry.getObject(), applicationContext, casProperties);
     }
 
     @ConditionalOnMissingBean(name = "basicPrincipalFactory")

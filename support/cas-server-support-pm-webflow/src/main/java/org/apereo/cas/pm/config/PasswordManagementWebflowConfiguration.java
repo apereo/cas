@@ -66,7 +66,7 @@ public class PasswordManagementWebflowConfiguration {
     private ObjectProvider<CommunicationsManager> communicationsManager;
 
     @Autowired
-    private FlowBuilderServices flowBuilderServices;
+    private ObjectProvider<FlowBuilderServices> flowBuilderServices;
 
     @Autowired
     @Qualifier("loginFlowRegistry")
@@ -176,7 +176,8 @@ public class PasswordManagementWebflowConfiguration {
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer passwordManagementWebflowConfigurer() {
-        return new PasswordManagementWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry.getIfAvailable(),
+        return new PasswordManagementWebflowConfigurer(flowBuilderServices.getObject(),
+            loginFlowDefinitionRegistry.getIfAvailable(),
             applicationContext, casProperties, initPasswordChangeAction());
     }
 

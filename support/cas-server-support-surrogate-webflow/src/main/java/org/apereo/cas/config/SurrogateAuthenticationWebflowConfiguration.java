@@ -81,7 +81,7 @@ public class SurrogateAuthenticationWebflowConfiguration implements Initializing
     private ObjectProvider<FlowDefinitionRegistry> loginFlowDefinitionRegistry;
 
     @Autowired
-    private FlowBuilderServices flowBuilderServices;
+    private ObjectProvider<FlowBuilderServices> flowBuilderServices;
 
     @Autowired
     @Qualifier("handledAuthenticationExceptions")
@@ -94,7 +94,8 @@ public class SurrogateAuthenticationWebflowConfiguration implements Initializing
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer surrogateWebflowConfigurer() {
-        return new SurrogateWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry.getObject(), applicationContext, casProperties);
+        return new SurrogateWebflowConfigurer(flowBuilderServices.getObject(),
+            loginFlowDefinitionRegistry.getObject(), applicationContext, casProperties);
     }
 
     @ConditionalOnMissingBean(name = "selectSurrogateAction")

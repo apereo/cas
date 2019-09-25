@@ -55,22 +55,24 @@ public class CasOAuthWebflowConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Autowired
-    private FlowBuilderServices flowBuilderServices;
+    private ObjectProvider<FlowBuilderServices> flowBuilderServices;
 
     @ConditionalOnMissingBean(name = "oauth20LogoutWebflowConfigurer")
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer oauth20LogoutWebflowConfigurer() {
-        val c = new OAuth20WebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry.getIfAvailable(),
+        val c = new OAuth20WebflowConfigurer(flowBuilderServices.getObject(),
+            loginFlowDefinitionRegistry.getObject(),
             oauth20RegisteredServiceUIAction(), applicationContext, casProperties);
-        c.setLogoutFlowDefinitionRegistry(logoutFlowDefinitionRegistry.getIfAvailable());
+        c.setLogoutFlowDefinitionRegistry(logoutFlowDefinitionRegistry.getObject());
         return c;
     }
 
     @ConditionalOnMissingBean(name = "oauth20RegisteredServiceUIAction")
     @Bean
     public Action oauth20RegisteredServiceUIAction() {
-        return new OAuth20RegisteredServiceUIAction(servicesManager.getIfAvailable(), oauth20AuthenticationServiceSelectionStrategy.getIfAvailable());
+        return new OAuth20RegisteredServiceUIAction(servicesManager.getObject(),
+            oauth20AuthenticationServiceSelectionStrategy.getObject());
     }
 
     @Bean

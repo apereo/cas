@@ -52,7 +52,7 @@ public class WsFederationAuthenticationWebflowConfiguration {
     private ObjectProvider<FlowDefinitionRegistry> loginFlowDefinitionRegistry;
 
     @Autowired
-    private FlowBuilderServices flowBuilderServices;
+    private ObjectProvider<FlowBuilderServices> flowBuilderServices;
 
     @Autowired
     @Qualifier("wsFederationCookieManager")
@@ -86,7 +86,7 @@ public class WsFederationAuthenticationWebflowConfiguration {
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer wsFederationWebflowConfigurer() {
-        return new WsFederationWebflowConfigurer(flowBuilderServices,
+        return new WsFederationWebflowConfigurer(flowBuilderServices.getObject(),
             loginFlowDefinitionRegistry.getObject(), applicationContext, casProperties);
     }
 
