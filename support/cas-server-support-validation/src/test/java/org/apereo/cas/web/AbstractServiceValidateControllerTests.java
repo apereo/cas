@@ -163,8 +163,8 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
     public void verifyValidServiceTicketWithValidPgtButNoProxyHandlingBecausePgtIsReleased() throws Exception {
         val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), DEFAULT_SERVICE);
 
-        val tId = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
-        val sId = getCentralAuthenticationService().grantServiceTicket(tId.getId(), DEFAULT_SERVICE, ctx);
+        val tId = getCentralAuthenticationService().getObject().createTicketGrantingTicket(ctx);
+        val sId = getCentralAuthenticationService().getObject().grantServiceTicket(tId.getId(), DEFAULT_SERVICE, ctx);
 
         val request = new MockHttpServletRequest();
         request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, DEFAULT_SERVICE.getId());
@@ -324,8 +324,8 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
      */
     protected ModelAndView getModelAndViewUponServiceValidationWithSecurePgtUrl() throws Exception {
         val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), DEFAULT_SERVICE);
-        val tId = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
-        val sId = getCentralAuthenticationService().grantServiceTicket(tId.getId(), DEFAULT_SERVICE, ctx);
+        val tId = getCentralAuthenticationService().getObject().createTicketGrantingTicket(ctx);
+        val sId = getCentralAuthenticationService().getObject().grantServiceTicket(tId.getId(), DEFAULT_SERVICE, ctx);
 
         val request = new MockHttpServletRequest();
         request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, DEFAULT_SERVICE.getId());
