@@ -40,9 +40,6 @@ The version `2.0` protocol specification is available at [CAS-Protocol-Specifica
 ## Proxy web flow diagram
 One of the most powerful feature of the CAS protocol is the ability for a CAS service to act as a proxy for another CAS service, transmitting the user identity.
 
-<div class="alert alert-warning">Since version 6.1, if CAS is configured to return the proxy-granting ticket id directly in the validation response,
-the pgtIou parameter is ommitted from the response and no callback to the application is performed.</div>
-
 <a href="../images/cas_proxy_flow_diagram.jpg" target="_blank"><img src="../images/cas_proxy_flow_diagram.jpg" alt="CAS Proxy web flow diagram" title="CAS Proxy web flow diagram" /></a>
 
 
