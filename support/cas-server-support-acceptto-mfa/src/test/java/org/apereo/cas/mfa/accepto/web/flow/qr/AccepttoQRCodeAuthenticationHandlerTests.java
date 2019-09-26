@@ -30,6 +30,7 @@ import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -66,6 +67,14 @@ import static org.mockito.Mockito.*;
     CasMultifactorAuthenticationWebflowConfiguration.class,
     CasCoreMultifactorAuthenticationConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class
+})
+@TestPropertySource(properties = {
+    "cas.authn.mfa.acceptto.apiUrl=http://localhost:5001",
+    "cas.authn.mfa.acceptto.application-id=thisisatestid",
+    "cas.authn.mfa.acceptto.secret=thisisasecret",
+    "cas.authn.mfa.acceptto.organization-id=thisisatestid",
+    "cas.authn.mfa.acceptto.organization-secret=thisisasecret",
+    "cas.authn.mfa.acceptto.registration-api-public-key.location=classpath:publickey.pem"
 })
 public class AccepttoQRCodeAuthenticationHandlerTests {
     @Test

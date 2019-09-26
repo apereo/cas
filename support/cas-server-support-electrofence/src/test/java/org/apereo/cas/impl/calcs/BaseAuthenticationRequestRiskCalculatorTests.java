@@ -15,6 +15,7 @@ import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
+import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
@@ -73,13 +74,17 @@ import org.springframework.test.annotation.DirtiesContext;
     CasCoreConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     CasCoreTicketsConfiguration.class,
+    CasDefaultServiceTicketIdGeneratorsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
+    CasCoreTicketIdGeneratorsConfiguration.class,
+    CasDefaultServiceTicketIdGeneratorsConfiguration.class,
     CasCoreLogoutConfiguration.class,
     CasCookieConfiguration.class,
     CasCoreUtilConfiguration.class,
     CasCoreAuditConfiguration.class,
     CasEventsInMemoryRepositoryConfiguration.class,
-    CasCoreEventsConfiguration.class})
+    CasCoreEventsConfiguration.class
+})
 @DirtiesContext
 @EnableScheduling
 public abstract class BaseAuthenticationRequestRiskCalculatorTests {

@@ -4,10 +4,13 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
+import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilSerializationConfiguration;
+import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasOAuthComponentSerializationConfiguration;
 import org.apereo.cas.config.MemcachedTicketRegistryConfiguration;
+import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.mock.MockServiceTicket;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -42,12 +45,15 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     MemcachedTicketRegistryConfiguration.class,
     CasOAuthComponentSerializationConfiguration.class,
+    CasWebApplicationServiceFactoryConfiguration.class,
     MemcachedTicketRegistryTests.MemcachedTicketRegistryTestConfiguration.class,
     RefreshAutoConfiguration.class,
     CasCoreHttpConfiguration.class,
+    CasCoreWebConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreUtilSerializationConfiguration.class,
     CasCoreTicketsConfiguration.class,
+    CasCoreTicketIdGeneratorsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class
 })
 @TestPropertySource(properties = {

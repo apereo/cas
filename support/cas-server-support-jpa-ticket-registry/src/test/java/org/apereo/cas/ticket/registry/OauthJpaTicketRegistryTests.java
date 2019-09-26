@@ -13,6 +13,7 @@ import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
+import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
@@ -29,6 +30,7 @@ import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketFactory;
 import org.apereo.cas.ticket.code.OAuthCodeFactory;
+import org.apereo.cas.web.config.CasCookieConfiguration;
 
 import lombok.val;
 import org.junit.jupiter.api.AfterEach;
@@ -77,7 +79,9 @@ import static org.junit.jupiter.api.Assertions.assertNull;
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
+    CasCoreTicketIdGeneratorsConfiguration.class,
     CasCoreWebConfiguration.class,
+    CasCookieConfiguration.class,
     OAuthProtocolTicketCatalogConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
     CasWsSecurityTokenTicketCatalogConfiguration.class

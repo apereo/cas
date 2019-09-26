@@ -37,14 +37,14 @@ public class SpnegoWebflowConfiguration {
     private ObjectProvider<FlowDefinitionRegistry> loginFlowDefinitionRegistry;
 
     @Autowired
-    private FlowBuilderServices flowBuilderServices;
-
+    private ObjectProvider<FlowBuilderServices> flowBuilderServices;
 
     @ConditionalOnMissingBean(name = "spnegoWebflowConfigurer")
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer spnegoWebflowConfigurer() {
-        return new SpengoWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry.getIfAvailable(),
+        return new SpengoWebflowConfigurer(flowBuilderServices.getObject(),
+            loginFlowDefinitionRegistry.getIfAvailable(),
             applicationContext, casProperties);
     }
 

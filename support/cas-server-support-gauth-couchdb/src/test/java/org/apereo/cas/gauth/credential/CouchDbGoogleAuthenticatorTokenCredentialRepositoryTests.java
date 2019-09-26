@@ -20,6 +20,7 @@ import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.GoogleAuthenticatorCouchDbConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.support.authentication.GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration;
+import org.apereo.cas.config.support.authentication.GoogleAuthenticatorAuthenticationMultifactorProviderBypassConfiguration;
 import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
 import org.apereo.cas.couchdb.gauth.credential.GoogleAuthenticatorAccountCouchDbRepository;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
@@ -49,6 +50,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
     CasCouchDbCoreConfiguration.class,
     BaseOneTimeTokenCredentialRepositoryTests.BaseTestConfiguration.class,
     GoogleAuthenticatorCouchDbConfiguration.class,
+    GoogleAuthenticatorAuthenticationMultifactorProviderBypassConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
     CasCoreLogoutConfiguration.class,

@@ -11,10 +11,6 @@ import org.apereo.cas.token.TokenConstants;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.gen.DefaultRandomStringGenerator;
 import org.apereo.cas.util.gen.RandomStringGenerator;
-import org.apereo.cas.web.config.CasCookieConfiguration;
-import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
-import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
-import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 import org.apereo.cas.web.flow.config.TokenAuthenticationWebflowConfiguration;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -29,6 +25,7 @@ import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.jwt.config.encryption.SecretEncryptionConfiguration;
 import org.pac4j.jwt.config.signature.SecretSignatureConfiguration;
 import org.pac4j.jwt.profile.JwtGenerator;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
@@ -48,10 +45,6 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Import({
-    CasCoreWebflowConfiguration.class,
-    CasWebflowContextConfiguration.class,
-    CasCookieConfiguration.class,
-    CasMultifactorAuthenticationWebflowConfiguration.class,
     TokenAuthenticationConfiguration.class,
     TokenAuthenticationWebflowConfiguration.class
 })
@@ -62,11 +55,11 @@ public class TokenAuthenticationActionTests extends AbstractCentralAuthenticatio
 
     @Autowired
     @Qualifier("tokenAuthenticationAction")
-    private Action action;
+    private ObjectProvider<Action> action;
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @BeforeEach
     public void before() {
@@ -79,7 +72,7 @@ public class TokenAuthenticationActionTests extends AbstractCentralAuthenticatio
         val prop2 = new DefaultRegisteredServiceProperty();
         prop2.addValue(ENCRYPTION_SECRET);
         svc.getProperties().put(RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_SECRET_ENCRYPTION.getPropertyName(), prop2);
-        this.servicesManager.save(svc);
+        this.servicesManager.getObject().save(svc);
     }
 
     @Test
@@ -102,6 +95,6 @@ public class TokenAuthenticationActionTests extends AbstractCentralAuthenticatio
         val context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService("https://example.token.org"));
-        assertEquals("success", this.action.execute(context).getId());
+        assertEquals("success", this.action.getObject().execute(context).getId());
     }
 }
