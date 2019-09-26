@@ -20,6 +20,7 @@ import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.GoogleAuthenticatorMongoDbConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.support.authentication.GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration;
+import org.apereo.cas.config.support.authentication.GoogleAuthenticatorAuthenticationMultifactorProviderBypassConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.util.CollectionUtils;
@@ -69,6 +70,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreAuthenticationHandlersConfiguration.class,
     CasCoreAuthenticationSupportConfiguration.class,
     CasPersonDirectoryConfiguration.class,
+    GoogleAuthenticatorAuthenticationMultifactorProviderBypassConfiguration.class,
     GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration.class,
     AopAutoConfiguration.class,
     CasCoreConfiguration.class,

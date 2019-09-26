@@ -57,7 +57,7 @@ public class YubiKeyConfiguration {
     private ObjectProvider<FlowDefinitionRegistry> loginFlowDefinitionRegistry;
 
     @Autowired
-    private FlowBuilderServices flowBuilderServices;
+    private ObjectProvider<FlowBuilderServices> flowBuilderServices;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -99,7 +99,7 @@ public class YubiKeyConfiguration {
 
     @Bean
     public FlowDefinitionRegistry yubikeyFlowRegistry() {
-        val builder = new FlowDefinitionRegistryBuilder(this.applicationContext, this.flowBuilderServices);
+        val builder = new FlowDefinitionRegistryBuilder(this.applicationContext, flowBuilderServices.getObject());
         builder.setBasePath(CasWebflowConstants.BASE_CLASSPATH_WEBFLOW);
         builder.addFlowLocationPattern("/mfa-yubikey/*-webflow.xml");
         return builder.build();
@@ -115,8 +115,8 @@ public class YubiKeyConfiguration {
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer yubikeyMultifactorWebflowConfigurer() {
-        return new YubiKeyMultifactorWebflowConfigurer(flowBuilderServices,
-            loginFlowDefinitionRegistry.getIfAvailable(), yubikeyFlowRegistry(), applicationContext, casProperties);
+        return new YubiKeyMultifactorWebflowConfigurer(flowBuilderServices.getObject(),
+            loginFlowDefinitionRegistry.getObject(), yubikeyFlowRegistry(), applicationContext, casProperties);
     }
 
     @Bean
@@ -176,8 +176,8 @@ public class YubiKeyConfiguration {
         @DependsOn("defaultWebflowConfigurer")
         public CasWebflowConfigurer yubiMultifactorTrustWebflowConfigurer() {
             val deviceRegistrationEnabled = casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled();
-            return new YubiKeyMultifactorTrustWebflowConfigurer(flowBuilderServices,
-                deviceRegistrationEnabled, loginFlowDefinitionRegistry.getIfAvailable(), applicationContext, casProperties);
+            return new YubiKeyMultifactorTrustWebflowConfigurer(flowBuilderServices.getObject(),
+                deviceRegistrationEnabled, loginFlowDefinitionRegistry.getObject(), applicationContext, casProperties);
         }
 
         @Bean

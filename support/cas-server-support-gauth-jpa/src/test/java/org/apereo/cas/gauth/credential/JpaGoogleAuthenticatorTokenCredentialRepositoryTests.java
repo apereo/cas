@@ -25,7 +25,10 @@ import org.apereo.cas.config.support.authentication.GoogleAuthenticatorAuthentic
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.util.SchedulingUtils;
+import org.apereo.cas.web.config.CasCookieConfiguration;
+import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
+import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
 import lombok.Getter;
 import org.junit.jupiter.api.BeforeEach;
@@ -57,6 +60,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
     CasCoreTicketCatalogConfiguration.class,
     CasCoreLogoutConfiguration.class,
     CasCoreHttpConfiguration.class,
+    CasCookieConfiguration.class,
     CasCoreAuthenticationConfiguration.class,
     CasCoreServicesAuthenticationConfiguration.class,
     CasCoreAuthenticationMetadataConfiguration.class,
@@ -69,6 +73,9 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
     CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreUtilConfiguration.class,
     CasCoreConfiguration.class,
+    CasCoreWebConfiguration.class,
+    CasCoreWebflowConfiguration.class,
+    CasWebflowContextConfiguration.class,
     CasCoreMultifactorAuthenticationConfiguration.class,
     CasMultifactorAuthenticationWebflowConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,

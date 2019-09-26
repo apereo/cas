@@ -59,9 +59,9 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
     protected HttpServletRequest getHttpServletRequest() {
         val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), SERVICE);
 
-        val tId = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
-        getCentralAuthenticationService().grantServiceTicket(tId.getId(), SERVICE, ctx);
-        val sId2 = getCentralAuthenticationService().grantServiceTicket(tId.getId(), SERVICE, null);
+        val tId = getCentralAuthenticationService().getObject().createTicketGrantingTicket(ctx);
+        getCentralAuthenticationService().getObject().grantServiceTicket(tId.getId(), SERVICE, ctx);
+        val sId2 = getCentralAuthenticationService().getObject().grantServiceTicket(tId.getId(), SERVICE, null);
 
         val request = new MockHttpServletRequest();
         request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, SERVICE.getId());
@@ -81,8 +81,8 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
     public void verifyValidServiceTicketWithValidPgtAndProxyHandlerFailing() throws Exception {
         val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), SERVICE);
 
-        val tId = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
-        val sId = getCentralAuthenticationService().grantServiceTicket(tId.getId(), SERVICE, ctx);
+        val tId = getCentralAuthenticationService().getObject().createTicketGrantingTicket(ctx);
+        val sId = getCentralAuthenticationService().getObject().grantServiceTicket(tId.getId(), SERVICE, ctx);
 
         val request = new MockHttpServletRequest();
         request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, SERVICE.getId());
@@ -99,8 +99,8 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
     public void verifyValidServiceTicket() throws Exception {
         val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), SERVICE);
 
-        val tId = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
-        val sId = getCentralAuthenticationService().grantServiceTicket(tId.getId(), SERVICE, ctx);
+        val tId = getCentralAuthenticationService().getObject().createTicketGrantingTicket(ctx);
+        val sId = getCentralAuthenticationService().getObject().grantServiceTicket(tId.getId(), SERVICE, ctx);
 
         val request = new MockHttpServletRequest();
         request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, SERVICE.getId());
@@ -128,10 +128,10 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         val ctx = CoreAuthenticationTestUtils
             .getAuthenticationResult(getAuthenticationSystemSupport(), SERVICE);
 
-        val tId = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
-        val sId = getCentralAuthenticationService().grantServiceTicket(tId.getId(), SERVICE, ctx);
+        val tId = getCentralAuthenticationService().getObject().createTicketGrantingTicket(ctx);
+        val sId = getCentralAuthenticationService().getObject().grantServiceTicket(tId.getId(), SERVICE, ctx);
 
-        getCentralAuthenticationService().destroyTicketGrantingTicket(tId.getId());
+        getCentralAuthenticationService().getObject().destroyTicketGrantingTicket(tId.getId());
 
         val request = new MockHttpServletRequest();
         request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, SERVICE.getId());
@@ -146,8 +146,8 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
     public void verifyValidServiceTicketWithValidPgtAndProxyHandling() throws Exception {
         val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), SERVICE);
 
-        val tId = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
-        val sId = getCentralAuthenticationService().grantServiceTicket(tId.getId(), SERVICE, ctx);
+        val tId = getCentralAuthenticationService().getObject().createTicketGrantingTicket(ctx);
+        val sId = getCentralAuthenticationService().getObject().grantServiceTicket(tId.getId(), SERVICE, ctx);
 
         val request = new MockHttpServletRequest();
         request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, SERVICE.getId());
@@ -181,9 +181,9 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         val svc = RegisteredServiceTestUtils.getService("proxyService");
         val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), svc);
 
-        val tId = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
+        val tId = getCentralAuthenticationService().getObject().createTicketGrantingTicket(ctx);
 
-        val sId = getCentralAuthenticationService().grantServiceTicket(tId.getId(), svc, ctx);
+        val sId = getCentralAuthenticationService().getObject().grantServiceTicket(tId.getId(), svc, ctx);
 
         val request = new MockHttpServletRequest();
         request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, svc.getId());
@@ -199,9 +199,9 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
     public void verifyValidServiceTicketAndFormatAsJson() throws Exception {
         val svc = RegisteredServiceTestUtils.getService("proxyService");
         val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), svc);
-        val tId = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
+        val tId = getCentralAuthenticationService().getObject().createTicketGrantingTicket(ctx);
 
-        val sId = getCentralAuthenticationService().grantServiceTicket(tId.getId(), svc, ctx);
+        val sId = getCentralAuthenticationService().getObject().grantServiceTicket(tId.getId(), svc, ctx);
 
         val request = new MockHttpServletRequest();
         request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, svc.getId());
@@ -217,9 +217,9 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         val svc = RegisteredServiceTestUtils.getService("proxyService");
         val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), svc);
 
-        val tId = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
+        val tId = getCentralAuthenticationService().getObject().createTicketGrantingTicket(ctx);
 
-        val sId = getCentralAuthenticationService().grantServiceTicket(tId.getId(), svc, ctx);
+        val sId = getCentralAuthenticationService().getObject().grantServiceTicket(tId.getId(), svc, ctx);
 
         val request = new MockHttpServletRequest();
         request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, svc.getId());
@@ -246,8 +246,8 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         val svc = RegisteredServiceTestUtils.getService("http://www.jasig.org?param=hello+world");
         val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), svc);
 
-        val tId = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
-        val sId = getCentralAuthenticationService().grantServiceTicket(tId.getId(), svc, ctx);
+        val tId = getCentralAuthenticationService().getObject().createTicketGrantingTicket(ctx);
+        val sId = getCentralAuthenticationService().getObject().grantServiceTicket(tId.getId(), svc, ctx);
 
         val reqSvc = "http://www.jasig.org?param=hello%20world";
         val request = new MockHttpServletRequest();
@@ -270,8 +270,8 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
     public void verifyValidServiceTicketWithValidPgtNoProxyHandling() throws Exception {
         val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), SERVICE);
 
-        val tId = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
-        val sId = getCentralAuthenticationService().grantServiceTicket(tId.getId(), SERVICE, ctx);
+        val tId = getCentralAuthenticationService().getObject().createTicketGrantingTicket(ctx);
+        val sId = getCentralAuthenticationService().getObject().grantServiceTicket(tId.getId(), SERVICE, ctx);
 
         val request = new MockHttpServletRequest();
         request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, SERVICE.getId());
@@ -288,9 +288,9 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         val svc = RegisteredServiceTestUtils.getService(origSvc);
         val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), svc);
 
-        val tId = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
+        val tId = getCentralAuthenticationService().getObject().createTicketGrantingTicket(ctx);
 
-        val sId = getCentralAuthenticationService().grantServiceTicket(tId.getId(), svc, ctx);
+        val sId = getCentralAuthenticationService().getObject().grantServiceTicket(tId.getId(), svc, ctx);
 
         val reqSvc = "http://WWW.JASIG.ORG?PARAM=hello%20world";
 
@@ -306,8 +306,8 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
     public void verifyValidServiceTicketWithInvalidPgt() throws Exception {
         val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), SERVICE);
 
-        val tId = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
-        val sId = getCentralAuthenticationService().grantServiceTicket(tId.getId(), SERVICE, ctx);
+        val tId = getCentralAuthenticationService().getObject().createTicketGrantingTicket(ctx);
+        val sId = getCentralAuthenticationService().getObject().grantServiceTicket(tId.getId(), SERVICE, ctx);
 
         val request = new MockHttpServletRequest();
         request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, SERVICE.getId());

@@ -38,13 +38,14 @@ public class OpenIdWebflowConfiguration {
     private ObjectProvider<FlowDefinitionRegistry> loginFlowDefinitionRegistry;
 
     @Autowired
-    private FlowBuilderServices flowBuilderServices;
+    private ObjectProvider<FlowBuilderServices> flowBuilderServices;
 
     @ConditionalOnMissingBean(name = "openidWebflowConfigurer")
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer openidWebflowConfigurer() {
-        return new OpenIdWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry.getIfAvailable(), applicationContext, casProperties);
+        return new OpenIdWebflowConfigurer(flowBuilderServices.getObject(),
+            loginFlowDefinitionRegistry.getIfAvailable(), applicationContext, casProperties);
     }
 
     @Bean

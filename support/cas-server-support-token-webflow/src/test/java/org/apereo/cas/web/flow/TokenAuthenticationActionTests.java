@@ -25,6 +25,7 @@ import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.jwt.config.encryption.SecretEncryptionConfiguration;
 import org.pac4j.jwt.config.signature.SecretSignatureConfiguration;
 import org.pac4j.jwt.profile.JwtGenerator;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
@@ -54,11 +55,11 @@ public class TokenAuthenticationActionTests extends AbstractCentralAuthenticatio
 
     @Autowired
     @Qualifier("tokenAuthenticationAction")
-    private Action action;
+    private ObjectProvider<Action> action;
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @BeforeEach
     public void before() {
@@ -71,7 +72,7 @@ public class TokenAuthenticationActionTests extends AbstractCentralAuthenticatio
         val prop2 = new DefaultRegisteredServiceProperty();
         prop2.addValue(ENCRYPTION_SECRET);
         svc.getProperties().put(RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_SECRET_ENCRYPTION.getPropertyName(), prop2);
-        this.servicesManager.save(svc);
+        this.servicesManager.getObject().save(svc);
     }
 
     @Test
@@ -94,6 +95,6 @@ public class TokenAuthenticationActionTests extends AbstractCentralAuthenticatio
         val context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService("https://example.token.org"));
-        assertEquals("success", this.action.execute(context).getId());
+        assertEquals("success", this.action.getObject().execute(context).getId());
     }
 }

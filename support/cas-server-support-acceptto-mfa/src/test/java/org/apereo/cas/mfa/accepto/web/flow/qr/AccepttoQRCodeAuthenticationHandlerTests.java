@@ -68,9 +68,14 @@ import static org.mockito.Mockito.*;
     CasCoreMultifactorAuthenticationConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class
 })
-@TestPropertySource(
+@TestPropertySource(properties = {
+    "cas.authn.mfa.acceptto.apiUrl=http://localhost:5001",
+    "cas.authn.mfa.acceptto.application-id=thisisatestid",
+    "cas.authn.mfa.acceptto.secret=thisisasecret",
+    "cas.authn.mfa.acceptto.organization-id=thisisatestid",
+    "cas.authn.mfa.acceptto.organization-secret=thisisasecret",
     "cas.authn.mfa.acceptto.registration-api-public-key.location=classpath:publickey.pem"
-)
+})
 public class AccepttoQRCodeAuthenticationHandlerTests {
     @Test
     public void verifyOperation() throws Exception {
