@@ -52,6 +52,11 @@ public class PullRequest {
 
     private final Base head;
 
+    private final long changedFiles;
+    private final long deletions;
+    private final long additions;
+    private final long commits;
+
     @JsonCreator
     public PullRequest(@JsonProperty("url") final String url,
                        @JsonProperty("comments_url") final String commentsUrl,
@@ -63,7 +68,11 @@ public class PullRequest {
                        @JsonProperty("number") final String number,
                        @JsonProperty("base") final Base base,
                        @JsonProperty("head") final Base head,
-                       @JsonProperty("body") final String body) {
+                       @JsonProperty("body") final String body,
+                       @JsonProperty("changed_files") final long changedFiles,
+                       @JsonProperty("deletions") final long deletions,
+                       @JsonProperty("additions") final long additions,
+                       @JsonProperty("commits") final long commits) {
         this.url = url;
         this.commentsUrl = commentsUrl;
         this.user = user;
@@ -75,6 +84,11 @@ public class PullRequest {
         this.head = head;
         this.number = number;
         this.body = body;
+
+        this.changedFiles = changedFiles;
+        this.deletions = deletions;
+        this.additions = additions;
+        this.commits = commits;
     }
 
     public boolean isOpen() {

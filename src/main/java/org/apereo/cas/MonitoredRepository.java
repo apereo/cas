@@ -141,6 +141,10 @@ public class MonitoredRepository implements InitializingBean {
         return files;
     }
 
+    public PullRequest getPullRequest(String number) {
+        return this.gitHub.getPullRequest(getOrganization(), getName(), number);
+    }
+
     public List<Commit> getPullRequestCommits(final PullRequest pr) {
         List<Commit> commits = new ArrayList<>();
         Page<Commit> pages = this.gitHub.getPullRequestCommits(getOrganization(), getName(), pr.getNumber());

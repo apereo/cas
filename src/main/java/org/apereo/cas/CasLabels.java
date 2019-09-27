@@ -84,6 +84,7 @@ public enum CasLabels {
     LABEL_PERFORMANCE_LOAD_TESTS("Performance & Load Tests", "threadsafe|jmeter|performance|non-threadsafe|overhead"),
     LABEL_PRINCIPAL_RESOLUTION("Principal Resolution"),
     LABEL_PROPOSAL_DECLINED("Proposal Declined"),
+    LABEL_SEE_CONTRIBUTOR_GUIDELINES("See Contributor Guidelines"),
     LABEL_PROXY_AUTHENTICATION("Proxy Authentication", "pgt|proxy callback"),
     LABEL_RADIUS("RADIUS"),
     LABEL_REST_PROTOCOL("REST Protocol & Integration", "rest"),
@@ -121,7 +122,7 @@ public enum CasLabels {
     LABEL_UNIT_INTEGRATION_TESTS("Unit/Integration Tests", "\\btest\\b|junit|coverage|tests|mockito|suite|\\bunit test\\b|junit5"),
     LABEL_USER_INTERFACE_THEMES("User Interface & Themes", "\\bIE\\b|jquery|ux|thymeleaf|\\bhtml\\b|views|screen|page|gulp|javascript|js|sass|css|themes|\\btheme\\b"),
     LABEL_WS_FED_PROTOCOL("WS-FED Protocol", "WSSecurity"),
-    LABEL_X509("X.509", "x509|certificates|tls|\bclient authentication\b|CRL"),
+    LABEL_X509("X.509", "x509|certificates|tls|\bclient authentication\b|CRL|EDIPI"),
     LABEL_WIP("Pending: Work in Progress", "WIP|\\[WIP\\]"),
     LABEL_RECAPTCHA("reCAPTCHA", "\\bcaptcha\\b"),
     LABEL_BOT("Bot");
