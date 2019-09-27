@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
+import org.apereo.cas.adaptors.x509.authentication.CasX509Certificate;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
@@ -17,10 +18,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Jan Van der Velpen
  * @since 3.0.0
  */
-public class X509SubjectDNPrincipalResolverTests extends AbstractX509CertificateTests {
+public class X509SubjectDNPrincipalResolverTests {
+    private static final CasX509Certificate VALID_CERTIFICATE = new CasX509Certificate(true);
 
-    private final X509SubjectDNPrincipalResolver
-        resolver = new X509SubjectDNPrincipalResolver();
+    private final X509SubjectDNPrincipalResolver resolver = new X509SubjectDNPrincipalResolver();
 
     @Test
     public void verifyResolvePrincipalInternal() {

@@ -21,7 +21,7 @@ import static org.junit.jupiter.params.provider.Arguments.arguments;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-public class X509CommonNameEDIPIPrincipalResolverTests extends AbstractX509CertificateTests {
+public class X509CommonNameEDIPIPrincipalResolverTests {
     /**
      * Gets the unit test parameters.
      *
@@ -30,16 +30,16 @@ public class X509CommonNameEDIPIPrincipalResolverTests extends AbstractX509Certi
     public static Stream<Arguments> getTestParameters() {
         return Stream.of(
             /*
-            * test with cert with EDIPI and no alternate
+             * test with cert with EDIPI and no alternate
              */
             arguments(
                 "/edipi.cer",
                 "1234567890",
                 null
             ),
-    
+
             /*
-            * test with alternate parameter and cert without EDIPI
+             * test with alternate parameter and cert without EDIPI
              */
             arguments(
                 "/user-valid.crt",

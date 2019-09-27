@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
+import org.apereo.cas.adaptors.x509.authentication.CasX509Certificate;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
@@ -19,7 +20,8 @@ import static org.mockito.Mockito.*;
  * @author Jan Van der Velpen
  * @since 3.0.0.6
  */
-public class X509SerialNumberPrincipalResolverTests extends AbstractX509CertificateTests {
+public class X509SerialNumberPrincipalResolverTests {
+    private static final CasX509Certificate VALID_CERTIFICATE = new CasX509Certificate(true);
 
     private final X509SerialNumberPrincipalResolver resolver = new X509SerialNumberPrincipalResolver();
 
