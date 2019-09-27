@@ -31,7 +31,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -63,26 +62,26 @@ import static org.junit.jupiter.api.Assertions.*;
     CasAuthenticationEventExecutionPlanTestConfiguration.class,
     CasDefaultServiceTicketIdGeneratorsConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class
-})
-@TestPropertySource(properties = {
-    "cas.authn.wsfedIdp.idp.realm=urn:org:apereo:cas:ws:idp:realm-CAS",
-    "cas.authn.wsfedIdp.idp.realmName=CAS",
+},
+    properties = {
+        "cas.authn.wsfedIdp.idp.realm=urn:org:apereo:cas:ws:idp:realm-CAS",
+        "cas.authn.wsfedIdp.idp.realmName=CAS",
 
-    "cas.authn.wsfedIdp.sts.signingKeystoreFile=classpath:ststrust.jks",
-    "cas.authn.wsfedIdp.sts.signingKeystorePassword=storepass",
+        "cas.authn.wsfedIdp.sts.signingKeystoreFile=classpath:ststrust.jks",
+        "cas.authn.wsfedIdp.sts.signingKeystorePassword=storepass",
 
-    "cas.authn.wsfedIdp.sts.encryptionKeystoreFile=classpath:stsencrypt.jks",
-    "cas.authn.wsfedIdp.sts.encryptionKeystorePassword=storepass",
+        "cas.authn.wsfedIdp.sts.encryptionKeystoreFile=classpath:stsencrypt.jks",
+        "cas.authn.wsfedIdp.sts.encryptionKeystorePassword=storepass",
 
-    "cas.authn.wsfedIdp.sts.subjectNameIdFormat=unspecified",
-    "cas.authn.wsfedIdp.sts.encryptTokens=true",
+        "cas.authn.wsfedIdp.sts.subjectNameIdFormat=unspecified",
+        "cas.authn.wsfedIdp.sts.encryptTokens=true",
 
-    "cas.authn.wsfedIdp.sts.realm.keystoreFile=classpath:stsrealm_a.jks",
-    "cas.authn.wsfedIdp.sts.realm.keystorePassword=storepass",
-    "cas.authn.wsfedIdp.sts.realm.keystoreAlias=realma",
-    "cas.authn.wsfedIdp.sts.realm.keyPassword=realma",
-    "cas.authn.wsfedIdp.sts.realm.issuer=CAS"
-})
+        "cas.authn.wsfedIdp.sts.realm.keystoreFile=classpath:stsrealm_a.jks",
+        "cas.authn.wsfedIdp.sts.realm.keystorePassword=storepass",
+        "cas.authn.wsfedIdp.sts.realm.keystoreAlias=realma",
+        "cas.authn.wsfedIdp.sts.realm.keyPassword=realma",
+        "cas.authn.wsfedIdp.sts.realm.issuer=CAS"
+    })
 public class SecurityTokenServiceTokenFetcherTests {
     @Autowired
     private CasConfigurationProperties casProperties;

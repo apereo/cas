@@ -22,7 +22,6 @@ import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -41,14 +40,14 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class,
     AopAutoConfiguration.class,
     CoreSamlConfiguration.class
+    },
+    properties = {
+        "cas.authn.samlIdp.metadata.couchDb.dbName=saml_generator",
+        "cas.authn.samlIdp.metadata.couchDb.idpMetadataEnabled=true",
+        "cas.authn.samlIdp.metadata.couchDb.username=cas",
+        "cas.authn.samlIdp.metadata.couchdb.password=password"
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@TestPropertySource(properties = {
-    "cas.authn.samlIdp.metadata.couchDb.dbName=saml_generator",
-    "cas.authn.samlIdp.metadata.couchDb.idpMetadataEnabled=true",
-    "cas.authn.samlIdp.metadata.couchDb.username=cas",
-    "cas.authn.samlIdp.metadata.couchdb.password=password"
-})
 @Tag("CouchDb")
 public class CouchDbSamlIdPMetadataGeneratorTests {
     @Autowired

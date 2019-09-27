@@ -58,7 +58,6 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
@@ -123,10 +122,9 @@ import static org.junit.jupiter.api.Assertions.*;
     AopAutoConfiguration.class,
     RefreshAutoConfiguration.class,
     CasCoreMultifactorAuthenticationConfiguration.class
-})
+}, properties = "spring.aop.proxy-target-class=true")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableAspectJAutoProxy(proxyTargetClass = true)
-@TestPropertySource(properties = "spring.aop.proxy-target-class=true")
 public abstract class BaseCasWebflowSessionContextConfigurationTests {
     @Test
     public void verifyExecutorsAreBeans() {

@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.TestPropertySource;
 
 import java.io.File;
 
@@ -29,11 +28,10 @@ import java.io.File;
     CasCoreServicesConfiguration.class,
     CasCoreUtilConfiguration.class,
     CasCoreAuthenticationMetadataConfiguration.class,
-    RefreshAutoConfiguration.class})
+    RefreshAutoConfiguration.class
+},
+    properties = "cas.serviceRegistry.git.repositoryUrl=file:/tmp/cas-sample-data.git")
 @Slf4j
-@TestPropertySource(properties =
-    "cas.serviceRegistry.git.repositoryUrl=file:/tmp/cas-sample-data.git"
-)
 @Tag("FileSystem")
 public class GitServiceRegistryTests extends AbstractServiceRegistryTests {
 

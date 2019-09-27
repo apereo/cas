@@ -18,7 +18,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.TestPropertySource;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
@@ -39,14 +38,13 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreHttpConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class,
     CassandraAuthenticationConfiguration.class
-})
-@EnableConfigurationProperties(CasConfigurationProperties.class)
-@TestPropertySource(properties = {
+}, properties = {
     "cas.authn.cassandra.tableName=users_table",
     "cas.authn.cassandra.usernameAttribute=user_attr",
     "cas.authn.cassandra.passwordAttribute=pwd_attr",
     "cas.authn.cassandra.keyspace=cas"
 })
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("Cassandra")
 @EnabledIfContinuousIntegration
 public class DefaultCassandraRepositoryTests {

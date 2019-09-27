@@ -77,7 +77,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.execution.Action;
 
 import java.util.List;
@@ -126,12 +125,12 @@ import static org.mockito.Mockito.*;
     CasCoreMultifactorAuthenticationConfiguration.class,
     CasOAuthAuthenticationServiceSelectionStrategyConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class
-})
+},
+    properties = {
+        "cas.authn.oidc.issuer=https://sso.example.org/cas/oidc",
+        "cas.authn.oidc.jwksFile=classpath:keystore.jwks"
+    })
 @DirtiesContext
-@TestPropertySource(properties = {
-    "cas.authn.oidc.issuer=https://sso.example.org/cas/oidc",
-    "cas.authn.oidc.jwksFile=classpath:keystore.jwks"
-})
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public abstract class AbstractOidcTests {
     @Autowired

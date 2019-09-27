@@ -41,7 +41,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.RequestContextHolder;
 import org.springframework.webflow.test.MockRequestContext;
@@ -83,15 +82,15 @@ import static org.mockito.Mockito.*;
     CasMultifactorAuthenticationWebflowConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class
-})
-@TestPropertySource(properties = {
-    "cas.authn.mfa.acceptto.apiUrl=http://localhost:5002",
-    "cas.authn.mfa.acceptto.application-id=thisisatestid",
-    "cas.authn.mfa.acceptto.secret=thisisasecret",
-    "cas.authn.mfa.acceptto.organization-id=thisisatestid",
-    "cas.authn.mfa.acceptto.organization-secret=thisisasecret",
-    "cas.authn.mfa.acceptto.registration-api-public-key.location=classpath:publickey.pem"
-})
+},
+    properties = {
+        "cas.authn.mfa.acceptto.apiUrl=http://localhost:5002",
+        "cas.authn.mfa.acceptto.application-id=thisisatestid",
+        "cas.authn.mfa.acceptto.secret=thisisasecret",
+        "cas.authn.mfa.acceptto.organization-id=thisisatestid",
+        "cas.authn.mfa.acceptto.organization-secret=thisisasecret",
+        "cas.authn.mfa.acceptto.registration-api-public-key.location=classpath:publickey.pem"
+    })
 public class AccepttoMultifactorAuthenticationHandlerTests {
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 

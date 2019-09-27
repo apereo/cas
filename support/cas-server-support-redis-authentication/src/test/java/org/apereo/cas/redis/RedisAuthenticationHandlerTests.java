@@ -34,7 +34,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.test.context.TestPropertySource;
 import redis.embedded.RedisServer;
 
 import javax.security.auth.login.AccountExpiredException;
@@ -70,14 +69,13 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreWebConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
     RefreshAutoConfiguration.class
-})
-@EnableScheduling
-@TestPropertySource(properties = {
+}, properties = {
     "cas.authn.redis.host=localhost",
     "cas.authn.redis.port=6377",
     "cas.authn.redis.password-encoder.type=DEFAULT",
     "cas.authn.redis.password-encoder.encoding-algorithm=SHA-512"
 })
+@EnableScheduling
 @Tag("Redis")
 public class RedisAuthenticationHandlerTests {
     private static RedisServer REDIS_SERVER;
