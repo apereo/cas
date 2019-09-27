@@ -12,7 +12,6 @@ import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.boot.actuate.health.Status;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -26,11 +25,11 @@ import static org.junit.jupiter.api.Assertions.*;
     LdapMonitorConfiguration.class,
     CasCoreUtilConfiguration.class,
     RefreshAutoConfiguration.class
-})
-@TestPropertySource(properties = {
-    "cas.monitor.ldap.ldapUrl=ldap://localhost:10389",
-    "cas.monitor.ldap.useSsl=false"
-})
+},
+    properties = {
+        "cas.monitor.ldap.ldapUrl=ldap://localhost:10389",
+        "cas.monitor.ldap.useSsl=false"
+    })
 @Tag("Ldap")
 @EnabledIfContinuousIntegration
 public class PooledConnectionFactoryHealthIndicatorTests {

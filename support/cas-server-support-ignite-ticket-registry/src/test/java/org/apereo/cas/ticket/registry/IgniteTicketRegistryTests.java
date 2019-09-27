@@ -27,7 +27,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.TestPropertySource;
 
 /**
  * Unit test for {@link IgniteTicketRegistry}.
@@ -62,13 +61,13 @@ import org.springframework.test.context.TestPropertySource;
     CasCoreLogoutConfiguration.class,
     CasCoreWebConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class
-})
-@TestPropertySource(properties = {
-    "cas.ticket.registry.ignite.ticketsCache.writeSynchronizationMode=FULL_ASYNC",
-    "cas.ticket.registry.ignite.ticketsCache.atomicityMode=ATOMIC",
-    "cas.ticket.registry.ignite.ticketsCache.cacheMode=REPLICATED",
-    "cas.ticket.registry.ignite.igniteAddress[0]=localhost:47500"
-})
+},
+    properties = {
+        "cas.ticket.registry.ignite.ticketsCache.writeSynchronizationMode=FULL_ASYNC",
+        "cas.ticket.registry.ignite.ticketsCache.atomicityMode=ATOMIC",
+        "cas.ticket.registry.ignite.ticketsCache.cacheMode=REPLICATED",
+        "cas.ticket.registry.ignite.igniteAddress[0]=localhost:47500"
+    })
 public class IgniteTicketRegistryTests extends BaseTicketRegistryTests {
     @Autowired
     @Qualifier("ticketRegistry")

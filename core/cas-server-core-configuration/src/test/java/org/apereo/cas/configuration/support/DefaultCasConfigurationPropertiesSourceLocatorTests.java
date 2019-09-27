@@ -13,7 +13,6 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.env.CompositePropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ResourceLoader;
-import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -27,8 +26,8 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class,
     CasCoreBootstrapStandaloneLocatorConfiguration.class,
     CasCoreBootstrapStandaloneConfiguration.class
-})
-@TestPropertySource(properties = {"spring.cloud.config.enabled=false", "spring.application.name=CAS"})
+},
+    properties = {"spring.cloud.config.enabled=false", "spring.application.name=CAS"})
 public class DefaultCasConfigurationPropertiesSourceLocatorTests {
     static {
         System.setProperty("spring.application.name", "cas");

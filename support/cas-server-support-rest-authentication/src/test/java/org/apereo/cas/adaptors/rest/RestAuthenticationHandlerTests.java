@@ -37,7 +37,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.test.web.client.ResponseActions;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -78,8 +77,8 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
     CasPersonDirectoryConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
     CasCoreUtilConfiguration.class
-})
-@TestPropertySource(properties = "cas.authn.rest.uri=http://localhost:8081/authn")
+},
+    properties = "cas.authn.rest.uri=http://localhost:8081/authn")
 @EnableScheduling
 @EnableTransactionManagement(proxyTargetClass = true)
 @EnableAspectJAutoProxy(proxyTargetClass = true)

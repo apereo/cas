@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.TestPropertySource;
 
 /**
  * This is {@link BaseSamlIdPServicesTests}.
@@ -23,10 +22,9 @@ import org.springframework.test.context.TestPropertySource;
     RefreshAutoConfiguration.class,
     CasCoreHttpConfiguration.class,
     CoreSamlConfiguration.class
-})
+}, properties = {"spring.mail.host=localhost", "spring.mail.port=25000", "spring.mail.testConnection=true"})
 @Tag("SAML")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@TestPropertySource(properties = {"spring.mail.host=localhost", "spring.mail.port=25000", "spring.mail.testConnection=true"})
 public abstract class BaseSamlIdPServicesTests {
     @Autowired
     @Qualifier("shibboleth.OpenSAMLConfig")

@@ -26,7 +26,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.TestPropertySource;
 
 import java.nio.charset.StandardCharsets;
 
@@ -47,8 +46,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreHttpConfiguration.class,
     CasCoreUtilConfiguration.class,
     CasPersonDirectoryTestConfiguration.class
-})
-@TestPropertySource(properties = "cas.authn.syncope.url=http://localhost:8095")
+}, properties = "cas.authn.syncope.url=http://localhost:8095")
 @Slf4j
 @ResourceLock("Syncope")
 public class SyncopeAuthenticationHandlerTests {

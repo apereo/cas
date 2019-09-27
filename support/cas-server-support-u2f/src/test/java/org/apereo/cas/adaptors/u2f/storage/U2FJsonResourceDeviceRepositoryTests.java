@@ -12,7 +12,6 @@ import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.TestPropertySource;
 
 import java.io.File;
 
@@ -26,10 +25,9 @@ import java.io.File;
     U2FConfiguration.class,
     AopAutoConfiguration.class,
     RefreshAutoConfiguration.class
-})
+}, properties = "cas.authn.mfa.u2f.json.location=file:/tmp/u2f.json")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-@TestPropertySource(properties = "cas.authn.mfa.u2f.json.location=file:/tmp/u2f.json")
 public class U2FJsonResourceDeviceRepositoryTests extends AbstractU2FDeviceRepositoryTests {
     @Autowired
     @Qualifier("u2fDeviceRepository")

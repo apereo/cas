@@ -22,7 +22,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.test.context.TestPropertySource;
 
 /**
  * This is {@link RegisteredServicesEventListenerTests}.
@@ -37,12 +36,7 @@ import org.springframework.test.context.TestPropertySource;
     CasCoreUtilConfiguration.class,
     MailSenderAutoConfiguration.class,
     MailSenderValidatorAutoConfiguration.class
-})
-@Tag("Mail")
-@EnabledIfContinuousIntegration
-@EnabledIfPortOpen(port = 25000)
-@EnableConfigurationProperties(CasConfigurationProperties.class)
-@TestPropertySource(properties = {
+}, properties = {
     "spring.mail.host=localhost",
     "spring.mail.port=25000",
     "spring.mail.testConnection=true",
@@ -52,6 +46,10 @@ import org.springframework.test.context.TestPropertySource;
     "cas.serviceRegistry.mail.subject=Sample Subject",
     "cas.serviceRegistry.mail.text=Service %s has expired in CAS service registry"
 })
+@Tag("Mail")
+@EnabledIfContinuousIntegration
+@EnabledIfPortOpen(port = 25000)
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 public class RegisteredServicesEventListenerTests {
     @Autowired
     @Qualifier("servicesManager")

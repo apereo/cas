@@ -38,7 +38,6 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.RequestContextHolder;
 import org.springframework.webflow.test.MockRequestContext;
@@ -76,8 +75,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreLogoutConfiguration.class,
     CasCoreHttpConfiguration.class,
     CasCoreUtilConfiguration.class
-})
-@TestPropertySource(properties = "cas.authn.mfa.u2f.json.location=file:src/test/resources/u2f-accounts.json")
+}, properties = "cas.authn.mfa.u2f.json.location=file:src/test/resources/u2f-accounts.json")
 @DirtiesContext
 public class U2FAuthenticationHandlerTests {
     @Autowired

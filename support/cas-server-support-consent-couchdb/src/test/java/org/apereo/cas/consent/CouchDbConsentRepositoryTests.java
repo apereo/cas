@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.TestPropertySource;
 
 /**
  * This is {@link CouchDbConsentRepositoryTests}.
@@ -28,13 +27,13 @@ import org.springframework.test.context.TestPropertySource;
     CasCoreAuditConfiguration.class,
     CasCouchDbCoreConfiguration.class,
     CasConsentCoreConfiguration.class,
-    RefreshAutoConfiguration.class})
+    RefreshAutoConfiguration.class},
+    properties = {
+        "cas.consent.couchDb.username=cas",
+        "cas.consent.couchdb.password=password"
+    })
 @Tag("CouchDb")
 @Getter
-@TestPropertySource(properties = {
-    "cas.consent.couchDb.username=cas",
-    "cas.consent.couchdb.password=password"
-})
 public class CouchDbConsentRepositoryTests extends BaseConsentRepositoryTests {
 
     @Autowired

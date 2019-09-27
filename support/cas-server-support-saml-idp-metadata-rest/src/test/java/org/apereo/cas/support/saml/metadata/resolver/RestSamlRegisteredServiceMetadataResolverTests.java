@@ -52,7 +52,6 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.TestPropertySource;
 
 import java.nio.charset.StandardCharsets;
 
@@ -98,11 +97,11 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     CoreSamlConfiguration.class,
     CasPersonDirectoryConfiguration.class,
-    CasCoreUtilConfiguration.class})
-@TestPropertySource(properties = {
-    "cas.authn.samlIdp.metadata.rest.url=http://localhost:8078",
-    "cas.authn.samlIdp.metadata.location=file:/tmp"
-})
+    CasCoreUtilConfiguration.class},
+    properties = {
+        "cas.authn.samlIdp.metadata.rest.url=http://localhost:8078",
+        "cas.authn.samlIdp.metadata.location=file:/tmp"
+    })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class RestSamlRegisteredServiceMetadataResolverTests {
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();

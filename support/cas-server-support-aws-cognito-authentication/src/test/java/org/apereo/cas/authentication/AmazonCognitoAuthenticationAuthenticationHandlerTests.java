@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -30,8 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasRegisteredServicesTestConfiguration.class,
     CasCoreUtilConfiguration.class,
     AmazonCognitoAuthenticationConfiguration.class
-})
-@TestPropertySource(properties = {
+}, properties = {
     "cas.authn.cognito.userPoolId=us-west-2_igeBNHRsb",
     "cas.authn.cognito.region=us-west-2",
     "cas.authn.cognito.clientExecutionTimeout=30000",

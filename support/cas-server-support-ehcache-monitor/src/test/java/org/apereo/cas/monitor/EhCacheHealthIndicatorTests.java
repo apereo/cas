@@ -21,7 +21,6 @@ import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.boot.actuate.health.Status;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.TestPropertySource;
 
 import java.util.stream.IntStream;
 
@@ -43,8 +42,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreTicketIdGeneratorsConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreHttpConfiguration.class
-})
-@TestPropertySource(properties = {
+}, properties = {
     "cas.ticket.registry.ehcache.maxElementsOnDisk=100",
     "cas.ticket.registry.ehcache.maxElementsInMemory=100"
 })

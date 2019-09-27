@@ -35,7 +35,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.TestPropertySource;
 
 /**
  * This is {@link CouchDbThrottledSubmissionHandlerInterceptorAdapterTests}.
@@ -69,13 +68,13 @@ import org.springframework.test.context.TestPropertySource;
     CasCoreWebConfiguration.class,
     CasRegisteredServicesTestConfiguration.class,
     CasThrottlingConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class})
-@TestPropertySource(properties = {
-    "cas.audit.couchDb.dbName=throttle",
-    "cas.audit.couchDb.asynchronous=false",
-    "cas.audit.couchDb.username=cas",
-    "cas.audit.couchdb.password=password"
-})
+    CasWebApplicationServiceFactoryConfiguration.class},
+    properties = {
+        "cas.audit.couchDb.dbName=throttle",
+        "cas.audit.couchDb.asynchronous=false",
+        "cas.audit.couchDb.username=cas",
+        "cas.audit.couchdb.password=password"
+    })
 @Getter
 public class CouchDbThrottledSubmissionHandlerInterceptorAdapterTests extends
     BaseThrottledSubmissionHandlerInterceptorAdapterTests {

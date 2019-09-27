@@ -16,7 +16,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -39,13 +38,13 @@ import static org.mockito.Mockito.*;
     RestServiceRegistryConfiguration.class,
     RefreshAutoConfiguration.class
 },
+    properties = {"server.port=9303", "cas.serviceRegistry.rest.url=http://localhost:9303", "cas.serviceRegistry.initFromJson=false"},
     webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableAutoConfiguration(exclude = {
     CasCoreServicesConfiguration.class,
     MetricsAutoConfiguration.class
 })
-@TestPropertySource(properties = {"server.port=9303", "cas.serviceRegistry.rest.url=http://localhost:9303", "cas.serviceRegistry.initFromJson=false"})
 @Tag("RestfulApi")
 public class RestfulServiceRegistryTests extends AbstractServiceRegistryTests {
 

@@ -18,7 +18,6 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -29,7 +28,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
  * @since 6.0.0
  */
 @Tag("Ldap")
-@TestPropertySource(properties = {
+@SpringBootTest(classes = RefreshAutoConfiguration.class, properties = {
     "cas.monitor.endpoints.ldap.ldapUrl=ldap://localhost:10389",
     "cas.monitor.endpoints.ldap.useSsl=false",
     "cas.monitor.endpoints.ldap.baseDn=ou=people,dc=example,dc=org",
@@ -37,7 +36,6 @@ import org.springframework.web.context.request.ServletRequestAttributes;
     "cas.monitor.endpoints.ldap.bindDn=cn=Directory Manager",
     "cas.monitor.endpoints.ldap.bindCredential=password"
 })
-@SpringBootTest(classes = RefreshAutoConfiguration.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public abstract class BaseMonitorEndpointLdapAuthenticationProviderTests {
     private static final int LDAP_PORT = 10389;

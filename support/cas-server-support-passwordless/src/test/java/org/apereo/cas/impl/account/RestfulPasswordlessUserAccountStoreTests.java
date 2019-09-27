@@ -41,7 +41,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.TestPropertySource;
 
 import java.nio.charset.StandardCharsets;
 
@@ -82,8 +81,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasMultifactorAuthenticationWebflowConfiguration.class,
     CasCoreMultifactorAuthenticationConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class
-})
-@TestPropertySource(properties = "cas.authn.passwordless.accounts.rest.url=http://localhost:9291")
+}, properties = "cas.authn.passwordless.accounts.rest.url=http://localhost:9291")
 @Tag("RestfulApi")
 public class RestfulPasswordlessUserAccountStoreTests {
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();

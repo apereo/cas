@@ -14,7 +14,6 @@ import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.TestPropertySource;
 
 /**
  * This is {@link CasSupportJdbcAuditConfigurationTests}.
@@ -28,9 +27,8 @@ import org.springframework.test.context.TestPropertySource;
     CasCoreUtilConfiguration.class,
     AopAutoConfiguration.class,
     RefreshAutoConfiguration.class
-})
+}, properties = "cas.audit.jdbc.asynchronous=false")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@TestPropertySource(properties = "cas.audit.jdbc.asynchronous=false")
 @Getter
 public class CasSupportJdbcAuditConfigurationTests extends BaseAuditConfigurationTests {
 

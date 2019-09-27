@@ -34,7 +34,6 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -66,9 +65,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreWebConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
     RefreshAutoConfiguration.class
-})
-@EnableScheduling
-@TestPropertySource(properties = {
+}, properties = {
     "cas.authn.mongo.collection=users",
     "cas.authn.mongo.databaseName=cas",
     "cas.authn.mongo.clientUri=mongodb://root:secret@localhost:27017/admin",
@@ -77,6 +74,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.mongo.passwordAttribute=password",
     "cas.authn.pac4j.typedIdUsed=false"
 })
+@EnableScheduling
 @EnabledIfContinuousIntegration
 @Tag("MongoDb")
 @EnableConfigurationProperties(CasConfigurationProperties.class)

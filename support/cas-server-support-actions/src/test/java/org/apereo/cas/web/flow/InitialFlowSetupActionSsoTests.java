@@ -39,7 +39,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.repository.NoSuchFlowExecutionException;
@@ -78,8 +77,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCookieConfiguration.class,
     RefreshAutoConfiguration.class,
     CasCoreServicesConfiguration.class
-})
-@TestPropertySource(properties = "cas.sso.allowMissingServiceParameter=false")
+}, properties = "cas.sso.allowMissingServiceParameter=false")
 public class InitialFlowSetupActionSsoTests {
     @Autowired
     @Qualifier("initialFlowSetupAction")

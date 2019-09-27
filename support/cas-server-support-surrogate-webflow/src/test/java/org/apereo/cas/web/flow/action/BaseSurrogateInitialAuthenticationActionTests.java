@@ -35,7 +35,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.test.context.TestPropertySource;
 
 /**
  * This is {@link BaseSurrogateInitialAuthenticationActionTests}.
@@ -73,8 +72,7 @@ import org.springframework.test.context.TestPropertySource;
     CasDefaultServiceTicketIdGeneratorsConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class
-})
-@TestPropertySource(properties = "cas.authn.surrogate.simple.surrogates.casuser=cassurrogate")
+}, properties = "cas.authn.surrogate.simple.surrogates.casuser=cassurrogate")
 public class BaseSurrogateInitialAuthenticationActionTests {
     @TestConfiguration
     public static class TestAuthenticationConfiguration {

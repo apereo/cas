@@ -33,7 +33,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.TestPropertySource;
 
 /**
  * This is {@link MongoDbTicketRegistryTests}.
@@ -66,9 +65,7 @@ import org.springframework.test.context.TestPropertySource;
     CasCoreTicketsSerializationConfiguration.class,
     CasCoreWebConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class
-})
-@EnableScheduling
-@TestPropertySource(properties = {
+}, properties = {
     "cas.ticket.registry.mongo.databaseName=ticket-registry",
     "cas.ticket.registry.mongo.authenticationDatabaseName=admin",
     "cas.ticket.registry.mongo.host=localhost",
@@ -77,6 +74,7 @@ import org.springframework.test.context.TestPropertySource;
     "cas.ticket.registry.mongo.userId=root",
     "cas.ticket.registry.mongo.password=secret"
 })
+@EnableScheduling
 @DirtiesContext
 @EnabledIfPortOpen(port = 27017)
 @EnabledIfContinuousIntegration
