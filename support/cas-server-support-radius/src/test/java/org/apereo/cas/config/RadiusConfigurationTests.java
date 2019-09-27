@@ -49,6 +49,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasMultifactorAuthenticationWebflowConfiguration.class,
     CasWebflowContextConfiguration.class,
     CasCoreWebflowConfiguration.class,
+    CasPersonDirectoryTestConfiguration.class,
     RadiusConfiguration.class,
     CasCoreConfiguration.class,
     CasCoreLogoutConfiguration.class,
