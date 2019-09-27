@@ -35,7 +35,6 @@ import org.springframework.boot.autoconfigure.mail.MailSenderValidatorAutoConfig
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.execution.Action;
 
 /**
@@ -69,8 +68,7 @@ import org.springframework.webflow.execution.Action;
     CasCoreWebflowConfiguration.class,
     CasCoreHttpConfiguration.class,
     CasWebflowContextConfiguration.class
-})
-@TestPropertySource(properties = {
+}, properties = {
     "spring.mail.host=localhost",
     "spring.mail.port=25000",
     "spring.mail.testConnection=true",

@@ -37,7 +37,6 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.test.MockRequestContext;
@@ -77,8 +76,7 @@ import static org.junit.jupiter.api.Assertions.*;
     WsFedAuthenticationEventExecutionPlanConfiguration.class,
     WsFederationAuthenticationWebflowConfiguration.class,
     WsFederationAuthenticationConfiguration.class
-})
-@TestPropertySource(properties = {
+}, properties = {
     "cas.authn.wsfed[0].identityProviderUrl=https://example.org/adfs/ls/",
     "cas.authn.wsfed[0].identityProviderIdentifier=https://example.org/adfs/services/trust",
     "cas.authn.wsfed[0].relyingPartyIdentifier=urn:cas:example",

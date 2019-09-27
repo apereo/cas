@@ -40,7 +40,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -84,11 +83,10 @@ import static org.junit.jupiter.api.Assertions.*;
     ThymeleafAutoConfiguration.class,
     AopAutoConfiguration.class,
     RefreshAutoConfiguration.class
-})
+}, properties = "spring.aop.proxy-target-class=true")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @WebAppConfiguration
 @EnableAspectJAutoProxy(proxyTargetClass = true)
-@TestPropertySource(properties = "spring.aop.proxy-target-class=true")
 public class WiringConfigurationTests {
     @Autowired
     private ApplicationContext applicationContext;

@@ -32,7 +32,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.TestPropertySource;
 
 /**
  * This is  {@link MongoDbThrottledSubmissionHandlerInterceptorAdapterTests}.
@@ -65,18 +64,18 @@ import org.springframework.test.context.TestPropertySource;
     CasSupportMongoDbAuditConfiguration.class,
     CasCoreWebConfiguration.class,
     CasRegisteredServicesTestConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class})
-@TestPropertySource(properties = {
-    "cas.authn.throttle.usernameParameter=username",
-    "cas.audit.mongo.databaseName=throttle",
-    "cas.audit.mongo.host=localhost",
-    "cas.audit.mongo.port=27017",
-    "cas.audit.mongo.collection=MongoDbCasThrottleRepository",
-    "cas.audit.mongo.dropCollection=true",
-    "cas.audit.mongo.userId=root",
-    "cas.audit.mongo.password=secret",
-    "cas.audit.mongo.authenticationDatabaseName=admin",
-    "cas.audit.mongo.asynchronous=false"})
+    CasWebApplicationServiceFactoryConfiguration.class},
+    properties = {
+        "cas.authn.throttle.usernameParameter=username",
+        "cas.audit.mongo.databaseName=throttle",
+        "cas.audit.mongo.host=localhost",
+        "cas.audit.mongo.port=27017",
+        "cas.audit.mongo.collection=MongoDbCasThrottleRepository",
+        "cas.audit.mongo.dropCollection=true",
+        "cas.audit.mongo.userId=root",
+        "cas.audit.mongo.password=secret",
+        "cas.audit.mongo.authenticationDatabaseName=admin",
+        "cas.audit.mongo.asynchronous=false"})
 @Getter
 @EnabledIfPortOpen(port = 27017)
 @EnabledIfContinuousIntegration

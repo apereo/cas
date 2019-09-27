@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -22,12 +21,12 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = {
     CasPersonDirectoryConfiguration.class,
-    RefreshAutoConfiguration.class})
-@TestPropertySource(properties = {
-    "cas.authn.attributeRepository.stub.attributes.uid=uid",
-    "cas.authn.attributeRepository.stub.attributes.givenName=givenName",
-    "cas.authn.attributeRepository.stub.attributes.eppn=eppn"
-})
+    RefreshAutoConfiguration.class},
+    properties = {
+        "cas.authn.attributeRepository.stub.attributes.uid=uid",
+        "cas.authn.attributeRepository.stub.attributes.givenName=givenName",
+        "cas.authn.attributeRepository.stub.attributes.eppn=eppn"
+    })
 public class CachingAttributeRepositoryTests {
     @Autowired
     @Qualifier("cachingAttributeRepository")

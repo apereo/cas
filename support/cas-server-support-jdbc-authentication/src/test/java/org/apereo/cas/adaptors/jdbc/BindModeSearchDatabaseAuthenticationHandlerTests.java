@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.TestPropertySource;
 
 import javax.sql.DataSource;
 
@@ -28,8 +27,7 @@ import static org.mockito.Mockito.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     DatabaseAuthenticationTestConfiguration.class
-})
-@TestPropertySource(properties = {
+}, properties = {
     "database.user=casuser",
     "database.name:cas-bindmode-authentications",
     "database.password=Mellon"})

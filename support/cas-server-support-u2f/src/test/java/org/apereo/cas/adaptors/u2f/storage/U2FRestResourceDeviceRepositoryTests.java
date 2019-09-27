@@ -19,7 +19,6 @@ import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.TestPropertySource;
 
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -36,10 +35,9 @@ import java.util.List;
     U2FConfiguration.class,
     AopAutoConfiguration.class,
     RefreshAutoConfiguration.class
-})
+}, properties = "cas.authn.mfa.u2f.rest.url=http://localhost:9196")
 @EnabledIfPortOpen(port = 9196)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@TestPropertySource(properties = "cas.authn.mfa.u2f.rest.url=http://localhost:9196")
 public class U2FRestResourceDeviceRepositoryTests extends AbstractU2FDeviceRepositoryTests {
     private static final ObjectMapper MAPPER = new ObjectMapper()
         .enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY)

@@ -36,7 +36,6 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
-import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -73,12 +72,11 @@ import static org.junit.jupiter.api.Assertions.*;
     CasDefaultServiceTicketIdGeneratorsConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
     RefreshAutoConfiguration.class
-})
-@EnableConfigurationProperties(CasConfigurationProperties.class)
-@TestPropertySource(properties = {
+}, properties = {
     "cas.authn.mfa.yubikey.clientId=18423",
     "cas.authn.mfa.yubikey.secretKey=zAIqhjui12mK8x82oe9qzBEb0As="
 })
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 public class JpaYubiKeyAccountRegistryTests {
     private static final String BAD_TOKEN = "123456";
 

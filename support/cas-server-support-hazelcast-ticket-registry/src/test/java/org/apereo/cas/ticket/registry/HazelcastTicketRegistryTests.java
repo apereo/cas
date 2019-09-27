@@ -26,7 +26,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.TestPropertySource;
 
 /**
  * Unit tests for {@link HazelcastTicketRegistry}.
@@ -58,8 +57,7 @@ import org.springframework.test.context.TestPropertySource;
     CasCoreLogoutConfiguration.class,
     CasCoreWebConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class
-})
-@TestPropertySource(properties = "cas.ticket.registry.hazelcast.cluster.instanceName=testlocalhostinstance")
+}, properties = "cas.ticket.registry.hazelcast.cluster.instanceName=testlocalhostinstance")
 public class HazelcastTicketRegistryTests extends BaseTicketRegistryTests {
 
     @Autowired

@@ -2,7 +2,6 @@ package org.apereo.cas.adaptors.radius.authentication.handler.support;
 
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
@@ -20,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -40,8 +38,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
     CasMultifactorAuthenticationWebflowConfiguration.class
-})
-@TestPropertySource(properties = {
+}, properties = {
     "cas.authn.radius.server.protocol=PAP",
     "cas.authn.radius.client.sharedSecret=testing123",
     "cas.authn.radius.client.inetAddress=localhost"

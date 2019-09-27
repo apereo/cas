@@ -21,7 +21,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.web.client.RestTemplate;
 
 import java.nio.charset.StandardCharsets;
@@ -40,13 +39,13 @@ import static org.junit.jupiter.api.Assertions.*;
     RestTemplateAutoConfiguration.class,
     CasCoreUtilConfiguration.class,
     RefreshAutoConfiguration.class
-})
-@TestPropertySource(properties = {
-    "cas.authn.pm.rest.endpointUrlChange=http://localhost:9090",
-    "cas.authn.pm.rest.endpointUrlSecurityQuestions=http://localhost:9090",
-    "cas.authn.pm.rest.endpointUrlEmail=http://localhost:9090",
-    "cas.authn.pm.rest.endpointUrlPhone=http://localhost:9090"
-})
+},
+    properties = {
+        "cas.authn.pm.rest.endpointUrlChange=http://localhost:9090",
+        "cas.authn.pm.rest.endpointUrlSecurityQuestions=http://localhost:9090",
+        "cas.authn.pm.rest.endpointUrlEmail=http://localhost:9090",
+        "cas.authn.pm.rest.endpointUrlPhone=http://localhost:9090"
+    })
 @Tag("RestfulApi")
 public class RestPasswordManagementServiceTests {
     @Autowired

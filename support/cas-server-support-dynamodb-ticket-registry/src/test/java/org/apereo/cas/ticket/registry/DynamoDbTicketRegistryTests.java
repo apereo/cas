@@ -42,7 +42,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.TestPropertySource;
 
 import java.util.HashMap;
 
@@ -80,13 +79,13 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreAuthenticationSupportConfiguration.class,
     CasPersonDirectoryConfiguration.class,
     RefreshAutoConfiguration.class
-})
-@TestPropertySource(properties = {
-    "cas.ticket.registry.dynamoDb.endpoint=http://localhost:8000",
-    "cas.ticket.registry.dynamoDb.dropTablesOnStartup=true",
-    "cas.ticket.registry.dynamoDb.localInstance=true",
-    "cas.ticket.registry.dynamoDb.region=us-east-1"
-})
+},
+    properties = {
+        "cas.ticket.registry.dynamoDb.endpoint=http://localhost:8000",
+        "cas.ticket.registry.dynamoDb.dropTablesOnStartup=true",
+        "cas.ticket.registry.dynamoDb.localInstance=true",
+        "cas.ticket.registry.dynamoDb.region=us-east-1"
+    })
 @EnabledIfContinuousIntegration
 @EnabledIfPortOpen(port = 8000)
 public class DynamoDbTicketRegistryTests extends BaseTicketRegistryTests {

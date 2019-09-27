@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.TestPropertySource;
 
 /**
  * This is {@link GroovyConsentRepositoryTests}.
@@ -21,10 +20,7 @@ import org.springframework.test.context.TestPropertySource;
     CasConsentCoreConfiguration.class,
     RefreshAutoConfiguration.class,
     CasCoreAuditConfiguration.class
-})
-@TestPropertySource(properties =
-    "cas.consent.groovy.location=classpath:/ConsentRepository.groovy"
-)
+}, properties = "cas.consent.groovy.location=classpath:/ConsentRepository.groovy")
 @Getter
 @Tag("Groovy")
 public class GroovyConsentRepositoryTests extends BaseConsentRepositoryTests {

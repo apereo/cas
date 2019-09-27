@@ -16,7 +16,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.TestPropertySource;
 
 import java.util.stream.Stream;
 
@@ -31,15 +30,14 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnableScheduling
 @DirtiesContext
 @Tag("Ldap")
-@TestPropertySource(properties = {
-    "cas.serviceRegistry.ldap.ldapUrl=ldap://localhost:10389",
-    "cas.serviceRegistry.ldap.useSsl=false",
-    "cas.serviceRegistry.ldap.baseDn=dc=example,dc=org"
-})
 @SpringBootTest(classes = {
     LdapServiceRegistryConfiguration.class,
     CasCoreServicesConfiguration.class,
     RefreshAutoConfiguration.class
+}, properties = {
+    "cas.serviceRegistry.ldap.ldapUrl=ldap://localhost:10389",
+    "cas.serviceRegistry.ldap.useSsl=false",
+    "cas.serviceRegistry.ldap.baseDn=dc=example,dc=org"
 })
 public abstract class BaseLdapServiceRegistryTests extends AbstractServiceRegistryTests {
 

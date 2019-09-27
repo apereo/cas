@@ -73,7 +73,6 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.web.context.support.GenericWebApplicationContext;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.support.RequestContext;
@@ -95,9 +94,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 4.0.0
  */
 @DirtiesContext
-@TestPropertySource(properties = {"cas.clearpass.cacheCredential=true", "cas.clearpass.crypto.enabled=false"})
 @Slf4j
-@SpringBootTest(classes = {
+@SpringBootTest(properties = {"cas.clearpass.cacheCredential=true", "cas.clearpass.crypto.enabled=false"},
+    classes = {
     Cas30ResponseViewTests.AttributeRepositoryTestConfiguration.class,
     AopAutoConfiguration.class,
     CasProtocolViewsConfiguration.class,

@@ -41,7 +41,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.test.context.TestPropertySource;
 
 /**
  * This is {@link SurrogateLdapAuthenticationServiceTests}.
@@ -79,8 +78,7 @@ import org.springframework.test.context.TestPropertySource;
     CasCookieConfiguration.class,
     CasThemesConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class
-})
-@TestPropertySource(properties = {
+}, properties = {
     "cas.authn.surrogate.ldap.ldapUrl=ldap://localhost:10389",
     "cas.authn.surrogate.ldap.useSsl=false",
     "cas.authn.surrogate.ldap.baseDn=ou=surrogates,dc=example,dc=org",
@@ -90,7 +88,7 @@ import org.springframework.test.context.TestPropertySource;
     "cas.authn.surrogate.ldap.surrogateSearchFilter=employeeType={surrogate}",
     "cas.authn.surrogate.ldap.memberAttributeName=mail",
     "cas.authn.surrogate.ldap.memberAttributeValueRegex=\\\\w+@example.org"
-    })
+})
 @Getter
 @EnabledIfContinuousIntegration
 public class SurrogateLdapAuthenticationServiceTests extends BaseSurrogateAuthenticationServiceTests {

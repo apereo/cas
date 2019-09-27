@@ -45,7 +45,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.engine.support.DefaultTargetStateResolver;
@@ -87,8 +86,7 @@ import static org.mockito.Mockito.*;
     CasPersonDirectoryTestConfiguration.class,
     GrouperMultifactorAuthenticationPolicyEventResolverTests.GrouperTestConfiguration.class,
     GrouperMultifactorAuthenticationConfiguration.class
-})
-@TestPropertySource(properties = "cas.authn.mfa.grouperGroupField=name")
+}, properties = "cas.authn.mfa.grouperGroupField=name")
 public class GrouperMultifactorAuthenticationPolicyEventResolverTests {
     @Autowired
     @Qualifier("grouperMultifactorAuthenticationWebflowEventResolver")
