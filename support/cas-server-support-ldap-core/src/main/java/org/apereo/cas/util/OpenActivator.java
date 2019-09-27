@@ -9,20 +9,20 @@ import lombok.extern.slf4j.Slf4j;
   which can cause an exception (when opening an open connection)
   Feel free to move this class somewhere else...
 */
-  @Slf4j
-    public class OpenActivator implements Activator<Connection> {
-        
-        public boolean activate(Connection c) {
-            boolean success = false;
-            if (c != null && !c.isOpen()) {
-                try {
-                    c.open();
-                    success = true;
-                } catch (Exception e) {
-                    LOGGER.error("unable to connect to the ldap", e);
-                }
-            }
+@Slf4j
+public class OpenActivator implements Activator<Connection> {
 
-            return success;
+    public boolean activate(final Connection c) {
+        boolean success = false;
+        if (c != null && !c.isOpen()) {
+            try {
+                c.open();
+                success = true;
+            } catch (Exception e) {
+                LOGGER.error("unable to connect to the ldap", e);
+            }
         }
-    }                        
+
+        return success;
+    }
+}                        
