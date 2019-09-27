@@ -83,8 +83,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreTicketIdGeneratorsConfiguration.class,
     CasMultifactorAuthenticationWebflowConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class
-})
-@TestPropertySource(properties = "cas.authn.passwordless.tokens.rest.url=http://localhost:9293")
+}, properties = "cas.authn.passwordless.tokens.rest.url=http://localhost:9293")
 @Tag("RestfulApi")
 public class RestfulPasswordlessTokenRepositoryTests {
     @Autowired
