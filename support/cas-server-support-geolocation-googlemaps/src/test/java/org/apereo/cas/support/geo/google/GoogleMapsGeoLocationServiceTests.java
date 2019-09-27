@@ -22,8 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     GoogleMapsGeoCodingConfiguration.class
-})
-@TestPropertySource(properties = "cas.googleMaps.apiKey=AIzaSyCea6zDOkwJVIOm0vZyAI5eHYrz9Vzlhi9")
+}, properties = "cas.googleMaps.apiKey=AIzaSyCea6zDOkwJVIOm0vZyAI5eHYrz9Vzlhi9")
 public class GoogleMapsGeoLocationServiceTests {
     @Autowired
     @Qualifier("geoLocationService")

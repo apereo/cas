@@ -36,11 +36,11 @@ import org.springframework.test.context.TestPropertySource;
     CasCoreAuditConfiguration.class,
     MultifactorAuthnTrustWebflowConfiguration.class,
     MultifactorAuthnTrustConfiguration.class,
-    MultifactorAuthnTrustedDeviceFingerprintConfiguration.class})
-@TestPropertySource(properties = {
-    "cas.authn.mfa.trusted.couchDb.username=cas",
-    "cas.authn.mfa.trusted.couchdb.password=password"
-})
+    MultifactorAuthnTrustedDeviceFingerprintConfiguration.class},
+    properties = {
+        "cas.authn.mfa.trusted.couchDb.username=cas",
+        "cas.authn.mfa.trusted.couchdb.password=password"
+    })
 @Getter
 @EnabledIfContinuousIntegration
 public class CouchDbMultifactorAuthenticationTrustStorageTests extends AbstractMultifactorAuthenticationTrustStorageTests {

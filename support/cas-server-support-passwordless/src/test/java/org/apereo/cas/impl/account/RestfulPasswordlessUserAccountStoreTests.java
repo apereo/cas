@@ -82,8 +82,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasMultifactorAuthenticationWebflowConfiguration.class,
     CasCoreMultifactorAuthenticationConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class
-})
-@TestPropertySource(properties = "cas.authn.passwordless.accounts.rest.url=http://localhost:9291")
+}, properties = "cas.authn.passwordless.accounts.rest.url=http://localhost:9291")
 @Tag("RestfulApi")
 public class RestfulPasswordlessUserAccountStoreTests {
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
