@@ -1010,20 +1010,16 @@ public class LdapUtils {
   Feel free to move this class somewhere else...
 */
   
-    private class OpenActivator implements Activator<Connection> {
+    public class OpenActivator implements Activator<Connection> {
         
-
-        public OpenActivator() {
-        }
-
         public boolean activate(Connection c) {
             boolean success = false;
             if (c != null && !c.isOpen()) {
                 try {
                     c.open();
                     success = true;
-                } catch (Exception var4) {
-                    LOGGER.error("unable to connect to the ldap", var4);
+                } catch (Exception e) {
+                    LOGGER.error("unable to connect to the ldap", e);
                 }
             }
 
