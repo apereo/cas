@@ -66,6 +66,7 @@ import org.ldaptive.handler.DnAttributeEntryHandler;
 import org.ldaptive.handler.MergeAttributeEntryHandler;
 import org.ldaptive.handler.RecursiveEntryHandler;
 import org.ldaptive.handler.SearchEntryHandler;
+import org.ldaptive.pool.Activator;
 import org.ldaptive.pool.BindPassivator;
 import org.ldaptive.pool.BlockingConnectionPool;
 import org.ldaptive.pool.ClosePassivator;
@@ -968,6 +969,11 @@ public class LdapUtils {
             switch (pass) {
                 case CLOSE:
                     cp.setPassivator(new ClosePassivator());
+                    cp.setActivator(new OpenActivator());
+/* 
+   if we setup CLOSE passivator, I think, we need to specify an activator, 
+   if we do not want to have exceptions thrown on a closed connection taken from the pool                   
+*/                    
                     LOGGER.debug("Created [{}] passivator for [{}]", l.getPoolPassivator(), l.getLdapUrl());
                     break;
                 case BIND:
@@ -996,6 +1002,34 @@ public class LdapUtils {
         cp.initialize();
         return cp;
     }
+         
+/*
+  We need to specify out own activator, based on ConnectActivator from ldaptive, 
+  because ConnectActivator does not check whether the connection is already open, 
+  which can cause an exception (when opening an open connection)
+  Feel free to move this class somewhere else...
+*/
+  
+    private class OpenActivator implements Activator<Connection> {
+        
+
+        public OpenActivator() {
+        }
+
+        public boolean activate(Connection c) {
+            boolean success = false;
+            if (c != null && !c.isOpen()) {
+                try {
+                    c.open();
+                    success = true;
+                } catch (Exception var4) {
+                    LOGGER.error("unable to connect to the ldap", var4);
+                }
+            }
+
+            return success;
+        }
+    }                        
 
     /**
      * New dn resolver entry resolver.
