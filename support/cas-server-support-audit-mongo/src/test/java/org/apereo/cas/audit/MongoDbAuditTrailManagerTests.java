@@ -24,6 +24,7 @@ import org.springframework.test.context.TestPropertySource;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@TestPropertySource
 @SpringBootTest(classes = {
     CasCoreAuditConfiguration.class,
     CasSupportMongoDbAuditConfiguration.class,

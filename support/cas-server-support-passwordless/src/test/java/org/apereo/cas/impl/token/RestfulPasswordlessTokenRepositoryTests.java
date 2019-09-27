@@ -41,7 +41,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.TestPropertySource;
 
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;

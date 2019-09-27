@@ -26,7 +26,6 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -43,11 +42,7 @@ import static org.junit.jupiter.api.Assertions.*;
     PasswordManagementConfiguration.class,
     CasCoreAuditConfiguration.class,
     CasCoreUtilConfiguration.class
-})
-@DirtiesContext
-@EnabledIfContinuousIntegration
-@EnabledIfPortOpen(port = 10389)
-@TestPropertySource(properties = {
+}, properties = {
     "cas.authn.pm.reset.sms.attributeName=telephoneNumber",
     "cas.authn.pm.ldap.ldapUrl=ldap://localhost:10389",
     "cas.authn.pm.ldap.bindDn=cn=Directory Manager",
@@ -59,6 +54,9 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.pm.ldap.securityQuestionsAttributes.registeredAddress=roomNumber",
     "cas.authn.pm.ldap.securityQuestionsAttributes.postalCode=teletexTerminalIdentifier"
 })
+@DirtiesContext
+@EnabledIfContinuousIntegration
+@EnabledIfPortOpen(port = 10389)
 public class LdapPasswordManagementServiceTests {
     private static final int LDAP_PORT = 10389;
 

@@ -40,7 +40,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.execution.Action;
 
 /**
@@ -49,7 +48,6 @@ import org.springframework.webflow.execution.Action;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@TestPropertySource(locations = "classpath:/x509.properties")
 @SpringBootTest(classes = {
     AopAutoConfiguration.class,
     RefreshAutoConfiguration.class,
@@ -87,7 +85,23 @@ import org.springframework.webflow.execution.Action;
     X509AuthenticationWebflowConfiguration.class,
     X509AuthenticationConfiguration.class,
     X509CertificateExtractorConfiguration.class
-})
+},
+    properties = {
+        "cas.authn.attributeRepository.stub.attributes.uid=uid",
+        "cas.authn.attributeRepository.stub.attributes.eduPersonAffiliation=developer",
+        "cas.authn.attributeRepository.stub.attributes.groupMembership=adopters",
+        "cas.authn.attributeRepository.stub.attributes.certificateRevocationList=certificateRevocationList",
+        "cas.authn.x509.regExTrustedIssuerDnPattern=CN=\\\\w+,DC=jasig,DC=org",
+        "cas.authn.x509.principalType=SERIAL_NO_DN",
+        "cas.authn.policy.any.tryAll=true",
+        "cas.authn.x509.crlFetcher=ldap",
+        "cas.authn.x509.ldap.ldapUrl=ldap://localhost:1389",
+        "cas.authn.x509.ldap.useSsl=false",
+        "cas.authn.x509.ldap.baseDn=ou=people,dc=example,dc=org",
+        "cas.authn.x509.ldap.searchFilter=cn=X509",
+        "cas.authn.x509.ldap.bindDn=cn=Directory Manager,dc=example,dc=org",
+        "cas.authn.x509.ldap.bindCredential=Password"
+    })
 public abstract class BaseCertificateCredentialActionTests {
     public static final CasX509Certificate VALID_CERTIFICATE = new CasX509Certificate(true);
 

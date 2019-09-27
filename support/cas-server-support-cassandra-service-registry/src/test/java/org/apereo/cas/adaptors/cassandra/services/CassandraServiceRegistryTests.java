@@ -14,7 +14,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.test.context.TestPropertySource;
 
 /**
  * This is {@link CassandraServiceRegistryTests}.
@@ -27,9 +26,8 @@ import org.springframework.test.context.TestPropertySource;
     CasCoreServicesConfiguration.class,
     RefreshAutoConfiguration.class
 })
-@EnableConfigurationProperties(CasConfigurationProperties.class)
+@EnableConfigurationProperties({CasConfigurationProperties.class, properties = "cas.serviceRegistry.cassandra.keyspace=cas"})
 @EnableScheduling
-@TestPropertySource(properties = "cas.serviceRegistry.cassandra.keyspace=cas")
 @Tag("Cassandra")
 @EnabledIfContinuousIntegration
 public class CassandraServiceRegistryTests extends AbstractServiceRegistryTests {

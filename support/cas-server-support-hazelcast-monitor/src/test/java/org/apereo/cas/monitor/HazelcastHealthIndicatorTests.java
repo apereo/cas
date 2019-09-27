@@ -31,7 +31,6 @@ import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.boot.actuate.health.Status;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.TestPropertySource;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -69,8 +68,8 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreLogoutConfiguration.class,
     CasCoreWebConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class
-})
-@TestPropertySource(properties = "cas.ticket.registry.hazelcast.cluster.instanceName=testlocalmonitor")
+},
+    properties = "cas.ticket.registry.hazelcast.cluster.instanceName=testlocalmonitor")
 public class HazelcastHealthIndicatorTests {
     @Autowired
     @Qualifier("hazelcastHealthIndicator")
