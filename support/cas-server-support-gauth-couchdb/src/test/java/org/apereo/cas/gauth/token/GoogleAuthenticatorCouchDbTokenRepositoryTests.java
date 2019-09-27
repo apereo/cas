@@ -100,7 +100,7 @@ public class GoogleAuthenticatorCouchDbTokenRepositoryTests extends BaseOneTimeT
     public void setUp() {
         couchDbFactory.getCouchDbInstance().createDatabaseIfNotExists(couchDbFactory.getCouchDbConnector().getDatabaseName());
         couchDbRepository.initStandardDesignDocument();
-        oneTimeTokenAuthenticatorTokenRepository.removeAll();
+        oneTimeTokenAuthenticatorTokenRepository.getObject().removeAll();
     }
 
     @AfterEach

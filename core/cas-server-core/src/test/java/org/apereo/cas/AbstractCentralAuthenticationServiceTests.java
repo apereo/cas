@@ -29,7 +29,7 @@ import org.springframework.test.context.TestPropertySource;
     "cas.authn.policy.any.tryAll=true",
     "spring.aop.proxy-target-class=true",
     "cas.ticket.st.timeToKillInSeconds=30"
-    })
+})
 @Setter
 @Getter
 public abstract class AbstractCentralAuthenticationServiceTests extends BaseCasCoreTests {
