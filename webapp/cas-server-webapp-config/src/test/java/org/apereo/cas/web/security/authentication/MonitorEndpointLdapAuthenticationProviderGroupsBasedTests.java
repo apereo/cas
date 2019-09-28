@@ -9,7 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
-import java.util.Collections;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -34,7 +34,7 @@ public class MonitorEndpointLdapAuthenticationProviderGroupsBasedTests extends B
     @Test
     public void verifyAuthorizedByGroup() {
         val securityProperties = new SecurityProperties();
-        securityProperties.getUser().setRoles(Collections.singletonList("ROLE_888"));
+        securityProperties.getUser().setRoles(List.of("ROLE_888"));
         assertNotNull(new MonitorEndpointLdapAuthenticationProvider(casProperties.getMonitor().getEndpoints().getLdap(), securityProperties)
                 .authenticate(new UsernamePasswordAuthenticationToken("authzcas", "123456")));
     }

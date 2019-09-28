@@ -29,7 +29,7 @@ import javax.persistence.Id;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import javax.sql.DataSource;
-import java.util.Collections;
+
 import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -125,7 +125,7 @@ public class QueryDatabaseAuthenticationHandlerTests {
     @Test
     @SneakyThrows
     public void verifySuccess() {
-        val map = CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(Collections.singletonList("phone:phoneNumber"));
+        val map = CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(List.of("phone:phoneNumber"));
         val q = new QueryDatabaseAuthenticationHandler(StringUtils.EMPTY, null, null, null,
             this.dataSource, SQL, PASSWORD_FIELD,
             null, null,
