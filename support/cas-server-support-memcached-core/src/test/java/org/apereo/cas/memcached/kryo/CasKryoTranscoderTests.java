@@ -208,7 +208,7 @@ public class CasKryoTranscoderTests {
     @Test
     public void verifyEncodeDecodeTGTWithSingleton() {
         val newAttributes = new HashMap<String, List<Object>>();
-        newAttributes.put(NICKNAME_KEY, Collections.singletonList(NICKNAME_VALUE));
+        newAttributes.put(NICKNAME_KEY, List.of(NICKNAME_VALUE));
         val userPassCredential = new UsernamePasswordCredential(USERNAME, PASSWORD);
         val expectedTGT = new MockTicketGrantingTicket(TGT_ID, userPassCredential, newAttributes);
         expectedTGT.grantServiceTicket(ST_ID, null, null, false, true);

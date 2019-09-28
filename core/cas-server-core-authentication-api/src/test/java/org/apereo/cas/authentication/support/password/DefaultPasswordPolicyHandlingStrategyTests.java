@@ -5,7 +5,7 @@ import org.apereo.cas.DefaultMessageDescriptor;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 
-import java.util.Collections;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -22,7 +22,7 @@ public class DefaultPasswordPolicyHandlingStrategyTests {
         val s = new DefaultPasswordPolicyHandlingStrategy<Object>();
         assertTrue(s.handle(new Object(), null).isEmpty());
         val cfg = new PasswordPolicyContext(30);
-        cfg.setAccountStateHandler((o, o2) -> Collections.singletonList(new DefaultMessageDescriptor("bad.password")));
+        cfg.setAccountStateHandler((o, o2) -> List.of(new DefaultMessageDescriptor("bad.password")));
         assertFalse(s.handle(new Object(), cfg).isEmpty());
     }
 }

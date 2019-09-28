@@ -9,8 +9,8 @@ import org.junit.jupiter.api.Test;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -28,7 +28,7 @@ public class FilterAndDelegateAuditTrailManagerTests {
             "CAS", new Date(), "1.2.3.4",
             "1.2.3.4");
         val mock = new MockAuditTrailManager();
-        val mgr = new FilterAndDelegateAuditTrailManager(Collections.singletonList(mock), Collections.singletonList("*"));
+        val mgr = new FilterAndDelegateAuditTrailManager(List.of(mock), List.of("*"));
         mgr.record(ctx);
         assertFalse(mock.getAuditRecords().isEmpty());
     }
@@ -39,7 +39,7 @@ public class FilterAndDelegateAuditTrailManagerTests {
             "CAS", new Date(), "1.2.3.4",
             "1.2.3.4");
         val mock = new MockAuditTrailManager();
-        val mgr = new FilterAndDelegateAuditTrailManager(Collections.singletonList(mock), Collections.singletonList("TEST.*"));
+        val mgr = new FilterAndDelegateAuditTrailManager(List.of(mock), List.of("TEST.*"));
         mgr.record(ctx);
         assertFalse(mock.getAuditRecords().isEmpty());
     }
@@ -50,7 +50,7 @@ public class FilterAndDelegateAuditTrailManagerTests {
             "CAS", new Date(), "1.2.3.4",
             "1.2.3.4");
         val mock = new MockAuditTrailManager();
-        val mgr = new FilterAndDelegateAuditTrailManager(Collections.singletonList(mock), Collections.singletonList("PASSED.*"));
+        val mgr = new FilterAndDelegateAuditTrailManager(List.of(mock), List.of("PASSED.*"));
         mgr.record(ctx);
         assertTrue(mock.getAuditRecords().isEmpty());
     }
@@ -63,7 +63,7 @@ public class FilterAndDelegateAuditTrailManagerTests {
             "1.2.3.4",
             "1.2.3.4");
         val mock = new MockAuditTrailManager();
-        val mgr = new FilterAndDelegateAuditTrailManager(Collections.singletonList(mock), Collections.singletonList("TEST.*"));
+        val mgr = new FilterAndDelegateAuditTrailManager(List.of(mock), List.of("TEST.*"));
         mgr.record(ctx);
         assertFalse(mock.getAuditRecords().isEmpty());
         assertEquals(1, mock.getAuditRecordsSince(LocalDate.now(ZoneOffset.UTC)).size());

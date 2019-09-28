@@ -54,8 +54,8 @@ public abstract class AbstractCachingPrincipalAttributesRepositoryTests {
         attributes.put(MAIL, email);
 
         attributes.put("a6", Arrays.asList("v16", "v26", "v63"));
-        attributes.put("a2", Collections.singletonList("v4"));
-        attributes.put("username", Collections.singletonList("uid"));
+        attributes.put("a2", List.of("v4"));
+        attributes.put("username", List.of("uid"));
 
         this.dao = mock(IPersonAttributeDao.class);
         val person = mock(IPersonAttributes.class);
