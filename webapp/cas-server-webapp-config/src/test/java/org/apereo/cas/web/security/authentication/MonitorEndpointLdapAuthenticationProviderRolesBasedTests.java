@@ -1,10 +1,12 @@
 package org.apereo.cas.web.security.authentication;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.test.context.TestPropertySource;
@@ -26,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.monitor.endpoints.ldap.ldapAuthz.rolePrefix=ROLE_"
 })
 @EnabledIfContinuousIntegration
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 public class MonitorEndpointLdapAuthenticationProviderRolesBasedTests extends BaseMonitorEndpointLdapAuthenticationProviderTests {
 
     @Test
