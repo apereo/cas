@@ -27,6 +27,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.sql.DataSource;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
