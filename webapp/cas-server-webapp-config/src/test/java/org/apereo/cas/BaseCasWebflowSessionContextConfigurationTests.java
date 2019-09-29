@@ -187,7 +187,7 @@ public abstract class BaseCasWebflowSessionContextConfigurationTests {
                     val flowScope = requestContext.getFlowScope();
                     flowScope.put("test", TEST);
                     flowScope.put("test0", Collections.singleton(TEST));
-                    flowScope.put("test1", Collections.singletonList(TEST));
+                    flowScope.put("test1", List.of(TEST));
                     flowScope.put("test2", Collections.singletonMap(TEST, TEST));
                     flowScope.put("test3", Arrays.asList(TEST, TEST));
                     flowScope.put("test4", new ConcurrentSkipListSet());

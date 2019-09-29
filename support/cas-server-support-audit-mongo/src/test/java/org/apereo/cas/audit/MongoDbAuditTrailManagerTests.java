@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.TestPropertySource;
 
 /**
  * This is {@link MongoDbAuditTrailManagerTests}.
@@ -24,7 +23,6 @@ import org.springframework.test.context.TestPropertySource;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@TestPropertySource
 @SpringBootTest(classes = {
     CasCoreAuditConfiguration.class,
     CasSupportMongoDbAuditConfiguration.class,

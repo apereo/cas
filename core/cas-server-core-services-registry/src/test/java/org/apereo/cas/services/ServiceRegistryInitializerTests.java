@@ -4,7 +4,7 @@ import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationEventPublisher;
 
-import java.util.Collections;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -21,7 +21,7 @@ public class ServiceRegistryInitializerTests {
 
         val servicesManager = mock(ServicesManager.class);
         val jsonServiceRegistry = mock(ServiceRegistry.class);
-        when(jsonServiceRegistry.load()).thenReturn(Collections.singletonList(initialService));
+        when(jsonServiceRegistry.load()).thenReturn(List.of(initialService));
 
         val serviceRegistry = new InMemoryServiceRegistry(mock(ApplicationEventPublisher.class));
         val serviceRegistryInitializer = new ServiceRegistryInitializer(jsonServiceRegistry, serviceRegistry, servicesManager);
@@ -29,7 +29,7 @@ public class ServiceRegistryInitializerTests {
         assertEquals(1, serviceRegistry.size());
 
         val initialService2 = newService();
-        when(jsonServiceRegistry.load()).thenReturn(Collections.singletonList(initialService2));
+        when(jsonServiceRegistry.load()).thenReturn(List.of(initialService2));
 
         serviceRegistryInitializer.initServiceRegistryIfNecessary();
         assertEquals(1, serviceRegistry.size());

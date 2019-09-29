@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
-import java.util.Collections;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -29,7 +29,7 @@ public class WebUtilTests {
         val request = new MockHttpServletRequest();
         request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, "test");
 
-        val service = HttpRequestUtils.getService(Collections.singletonList(casArgumentExtractor), request);
+        val service = HttpRequestUtils.getService(List.of(casArgumentExtractor), request);
 
         assertNotNull(service);
         assertEquals("test", service.getId());
@@ -40,7 +40,7 @@ public class WebUtilTests {
         val casArgumentExtractor = new DefaultArgumentExtractor(new SamlServiceFactory());
         val request = new MockHttpServletRequest();
         request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, "test");
-        val service = HttpRequestUtils.getService(Collections.singletonList(casArgumentExtractor), request);
+        val service = HttpRequestUtils.getService(List.of(casArgumentExtractor), request);
         assertNull(service);
     }
 }
