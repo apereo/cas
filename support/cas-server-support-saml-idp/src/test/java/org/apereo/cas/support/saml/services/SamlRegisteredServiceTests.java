@@ -23,8 +23,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -90,7 +90,7 @@ public class SamlRegisteredServiceTests {
         service.setName(SAML_SERVICE);
         service.setServiceId("^http://.+");
         service.setMetadataLocation(METADATA_LOCATION);
-        val dao = new InMemoryServiceRegistry(mock(ApplicationEventPublisher.class), Collections.singletonList(service), new ArrayList<>());
+        val dao = new InMemoryServiceRegistry(mock(ApplicationEventPublisher.class), List.of(service), new ArrayList<>());
         val impl = new DefaultServicesManager(dao, mock(ApplicationEventPublisher.class), new HashSet<>());
         impl.load();
 

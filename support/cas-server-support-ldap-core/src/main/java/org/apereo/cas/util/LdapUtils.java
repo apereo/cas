@@ -70,6 +70,7 @@ import org.ldaptive.pool.BindPassivator;
 import org.ldaptive.pool.BlockingConnectionPool;
 import org.ldaptive.pool.ClosePassivator;
 import org.ldaptive.pool.CompareValidator;
+import org.ldaptive.pool.ConnectActivator;
 import org.ldaptive.pool.ConnectionPool;
 import org.ldaptive.pool.IdlePruneStrategy;
 import org.ldaptive.pool.PoolConfig;
@@ -971,8 +972,10 @@ public class LdapUtils {
                     cp.setActivator(new OpenActivator());
 /* 
    if we setup CLOSE passivator, I think, we need to specify an activator, 
-   if we do not want to have exceptions thrown on a closed connection taken from the pool                   
+   if we do not want to have exceptions thrown on a closed connection taken from the pool  
+   We cannot use ConnectActivator from ldaptive, as it does not check if connection is already opened.
 */                    
+
                     LOGGER.debug("Created [{}] passivator for [{}]", l.getPoolPassivator(), l.getLdapUrl());
                     break;
                 case BIND:

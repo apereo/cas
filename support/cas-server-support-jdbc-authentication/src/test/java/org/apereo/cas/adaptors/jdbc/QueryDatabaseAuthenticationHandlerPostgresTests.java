@@ -26,7 +26,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.sql.DataSource;
-import java.util.Collections;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -89,7 +90,7 @@ public class QueryDatabaseAuthenticationHandlerPostgresTests {
     @Test
     @SneakyThrows
     public void verifySuccess() {
-        val map = CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(Collections.singletonList("locations"));
+        val map = CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(List.of("locations"));
         val q = new QueryDatabaseAuthenticationHandler("DbHandler", null,
             PrincipalFactoryUtils.newPrincipalFactory(), 0,
             this.dataSource, SQL, PASSWORD_FIELD,

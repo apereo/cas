@@ -206,7 +206,7 @@ public class RegisteredServiceAttributeReleasePolicyTests {
         stub.setId("SampleStubRepository");
 
         val dao = new MergingPersonAttributeDaoImpl();
-        dao.setPersonAttributeDaos(Collections.singletonList(stub));
+        dao.setPersonAttributeDaos(List.of(stub));
 
         ApplicationContextProvider.registerBeanIntoApplicationContext(this.applicationContext, dao, "attributeRepository");
 
@@ -239,7 +239,7 @@ public class RegisteredServiceAttributeReleasePolicyTests {
         stub.setId("SampleStubRepository");
 
         val dao = new MergingPersonAttributeDaoImpl();
-        dao.setPersonAttributeDaos(Collections.singletonList(stub));
+        dao.setPersonAttributeDaos(List.of(stub));
 
         ApplicationContextProvider.registerBeanIntoApplicationContext(this.applicationContext, dao, "attributeRepository");
         val repository = new CachingPrincipalAttributesRepository(TimeUnit.MILLISECONDS.name(), 0);

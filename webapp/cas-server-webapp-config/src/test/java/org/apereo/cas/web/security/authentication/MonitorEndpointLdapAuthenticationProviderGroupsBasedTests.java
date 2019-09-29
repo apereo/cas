@@ -1,15 +1,17 @@
 package org.apereo.cas.web.security.authentication;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
-import java.util.Collections;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -29,12 +31,13 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.monitor.endpoints.ldap.ldapAuthz.groupAttribute=roomNumber",
         "cas.monitor.endpoints.ldap.ldapAuthz.groupPrefix=ROLE_"
     })
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 public class MonitorEndpointLdapAuthenticationProviderGroupsBasedTests extends BaseMonitorEndpointLdapAuthenticationProviderTests {
 
     @Test
     public void verifyAuthorizedByGroup() {
         val securityProperties = new SecurityProperties();
-        securityProperties.getUser().setRoles(Collections.singletonList("ROLE_888"));
+        securityProperties.getUser().setRoles(List.of("ROLE_888"));
         assertNotNull(new MonitorEndpointLdapAuthenticationProvider(casProperties.getMonitor().getEndpoints().getLdap(), securityProperties)
                 .authenticate(new UsernamePasswordAuthenticationToken("authzcas", "123456")));
     }
