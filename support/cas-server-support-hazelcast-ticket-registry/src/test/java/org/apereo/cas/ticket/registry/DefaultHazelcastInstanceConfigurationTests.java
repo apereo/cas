@@ -37,7 +37,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.annotation.DirtiesContext;
 
-import java.util.Collections;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -83,7 +83,7 @@ public class DefaultHazelcastInstanceConfigurationTests {
         assertNotNull(this.hzInstance);
         val config = this.hzInstance.getConfig();
         assertFalse(config.getNetworkConfig().getJoin().getMulticastConfig().isEnabled());
-        assertEquals(Collections.singletonList("localhost"), config.getNetworkConfig().getJoin().getTcpIpConfig().getMembers());
+        assertEquals(List.of("localhost"), config.getNetworkConfig().getJoin().getTcpIpConfig().getMembers());
         assertTrue(config.getNetworkConfig().isPortAutoIncrement());
         assertEquals(5701, config.getNetworkConfig().getPort());
         assertEquals(5, config.getMapConfigs().size());

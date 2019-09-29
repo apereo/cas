@@ -28,7 +28,6 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.test.MockRequestContext;
 
@@ -47,9 +46,9 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreUtilConfiguration.class,
     CasCoreAuditConfiguration.class,
     AopAutoConfiguration.class,
-    CasThrottlingConfiguration.class})
+    CasThrottlingConfiguration.class},
+    properties = {"spring.aop.proxy-target-class=true", "cas.authn.throttle.failure.rangeSeconds=1", "cas.authn.throttle.failure.threshold=2"})
 @EnableAspectJAutoProxy(proxyTargetClass = true)
-@TestPropertySource(properties = {"spring.aop.proxy-target-class=true", "cas.authn.throttle.failure.rangeSeconds=1", "cas.authn.throttle.failure.threshold=2"})
 @EnableScheduling
 @Slf4j
 public abstract class BaseThrottledSubmissionHandlerInterceptorAdapterTests {

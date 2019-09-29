@@ -70,6 +70,7 @@ import org.ldaptive.pool.BindPassivator;
 import org.ldaptive.pool.BlockingConnectionPool;
 import org.ldaptive.pool.ClosePassivator;
 import org.ldaptive.pool.CompareValidator;
+import org.ldaptive.pool.ConnectActivator;
 import org.ldaptive.pool.ConnectionPool;
 import org.ldaptive.pool.IdlePruneStrategy;
 import org.ldaptive.pool.PoolConfig;
@@ -968,6 +969,7 @@ public class LdapUtils {
             switch (pass) {
                 case CLOSE:
                     cp.setPassivator(new ClosePassivator());
+                    cp.setActivator(new ConnectActivator());
                     LOGGER.debug("Created [{}] passivator for [{}]", l.getPoolPassivator(), l.getLdapUrl());
                     break;
                 case BIND:

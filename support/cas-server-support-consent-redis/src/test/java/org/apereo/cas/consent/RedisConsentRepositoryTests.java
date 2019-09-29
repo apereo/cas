@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.TestPropertySource;
 
 /**
  * This is {@link RedisConsentRepositoryTests}.
@@ -24,12 +23,12 @@ import org.springframework.test.context.TestPropertySource;
     CasConsentCoreConfiguration.class,
     CasCoreAuditConfiguration.class,
     RefreshAutoConfiguration.class
-})
+},
+    properties = {
+        "cas.consent.redis.host=localhost",
+        "cas.consent.redis.port=6379"
+    })
 @Tag("Redis")
-@TestPropertySource(properties = {
-    "cas.consent.redis.host=localhost",
-    "cas.consent.redis.port=6379"
-})
 @Getter
 @EnabledIfContinuousIntegration
 public class RedisConsentRepositoryTests extends BaseConsentRepositoryTests {

@@ -29,7 +29,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.test.context.TestPropertySource;
 
 /**
  * Unit test for {@link InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter}.
@@ -37,7 +36,6 @@ import org.springframework.test.context.TestPropertySource;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
-@TestPropertySource(properties = "cas.authn.throttle.usernameParameter=username")
 @EnableScheduling
 @SpringBootTest(classes = {
     CasThrottlingConfiguration.class,
@@ -63,7 +61,7 @@ import org.springframework.test.context.TestPropertySource;
     CasCoreWebConfiguration.class,
     CasRegisteredServicesTestConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class
-})
+}, properties = "cas.authn.throttle.usernameParameter=username")
 @Getter
 public class InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapterTests
     extends BaseThrottledSubmissionHandlerInterceptorAdapterTests {

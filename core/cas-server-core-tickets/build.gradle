@@ -14,7 +14,7 @@ dependencies {
     implementation project(":core:cas-server-core-util")
     
     compileOnly project(":core:cas-server-core-services")
-
+    
     testImplementation project(":core:cas-server-core-services")
     testImplementation project(":core:cas-server-core-web")
     testImplementation project(":core:cas-server-core-cookie")

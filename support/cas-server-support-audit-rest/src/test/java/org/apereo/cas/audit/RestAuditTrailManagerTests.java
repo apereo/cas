@@ -20,7 +20,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.TestPropertySource;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
@@ -36,13 +35,12 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     CasSupportRestAuditConfiguration.class
-})
-@Tag("RestfulApi")
-@Slf4j
-@TestPropertySource(properties = {
+}, properties = {
     "cas.audit.rest.url=http://localhost:9296",
     "cas.audit.rest.asynchronous=false"
 })
+@Tag("RestfulApi")
+@Slf4j
 @Getter
 public class RestAuditTrailManagerTests extends BaseAuditConfigurationTests {
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
