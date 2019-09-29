@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.TestPropertySource;
 
 /**
  * This is {@link JsonConsentRepositoryTests}.
@@ -20,10 +19,7 @@ import org.springframework.test.context.TestPropertySource;
     CasConsentCoreConfiguration.class,
     RefreshAutoConfiguration.class,
     CasCoreAuditConfiguration.class
-})
-@TestPropertySource(properties =
-    "cas.consent.json.location=classpath:/ConsentRepository.json"
-)
+}, properties = "cas.consent.json.location=classpath:/ConsentRepository.json")
 @Getter
 public class JsonConsentRepositoryTests extends BaseConsentRepositoryTests {
 

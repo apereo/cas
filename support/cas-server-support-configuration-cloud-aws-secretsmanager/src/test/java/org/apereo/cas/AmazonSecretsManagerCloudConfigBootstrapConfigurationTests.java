@@ -18,7 +18,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.mock.env.MockEnvironment;
-import org.springframework.test.context.TestPropertySource;
 
 /**
  * This is {@link AmazonSecretsManagerCloudConfigBootstrapConfigurationTests}.
@@ -29,8 +28,7 @@ import org.springframework.test.context.TestPropertySource;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     AmazonSecretsManagerCloudConfigBootstrapConfiguration.class
-})
-@TestPropertySource(properties = {
+}, properties = {
     "cas.spring.cloud.aws.secretsManager.endpoint=" + AmazonSecretsManagerCloudConfigBootstrapConfigurationTests.ENDPOINT,
     "cas.spring.cloud.aws.secretsManager.credentialAccessKey=" + AmazonSecretsManagerCloudConfigBootstrapConfigurationTests.CREDENTIAL_ACCESS_KEY,
     "cas.spring.cloud.aws.secretsManager.credentialSecretKey=" + AmazonSecretsManagerCloudConfigBootstrapConfigurationTests.CREDENTIAL_SECRET_KEY

@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.TestPropertySource;
 
 import java.time.LocalDateTime;
 
@@ -35,15 +34,15 @@ import static org.junit.jupiter.api.Assertions.*;
     MultifactorAuthnTrustConfiguration.class,
     CasCoreAuditConfiguration.class,
     RefreshAutoConfiguration.class
-})
-@TestPropertySource(properties = {
-    "cas.authn.mfa.trusted.mongo.databaseName=mfa-trusted",
-    "cas.authn.mfa.trusted.mongo.host=localhost",
-    "cas.authn.mfa.trusted.mongo.port=27017",
-    "cas.authn.mfa.trusted.mongo.userId=root",
-    "cas.authn.mfa.trusted.mongo.password=secret",
-    "cas.authn.mfa.trusted.mongo.authenticationDatabaseName=admin",
-    "cas.authn.mfa.trusted.mongo.dropCollection=true"
+},
+    properties = {
+        "cas.authn.mfa.trusted.mongo.databaseName=mfa-trusted",
+        "cas.authn.mfa.trusted.mongo.host=localhost",
+        "cas.authn.mfa.trusted.mongo.port=27017",
+        "cas.authn.mfa.trusted.mongo.userId=root",
+        "cas.authn.mfa.trusted.mongo.password=secret",
+        "cas.authn.mfa.trusted.mongo.authenticationDatabaseName=admin",
+        "cas.authn.mfa.trusted.mongo.dropCollection=true"
     })
 @EnabledIfPortOpen(port = 27017)
 @EnabledIfContinuousIntegration

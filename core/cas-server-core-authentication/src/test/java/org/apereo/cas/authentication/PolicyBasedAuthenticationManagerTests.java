@@ -17,9 +17,10 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.test.annotation.DirtiesContext;
 
 import javax.security.auth.login.FailedLoginException;
-import java.util.Collections;
+
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -113,7 +114,7 @@ public class PolicyBasedAuthenticationManagerTests {
         val svc = mock(ServicesManager.class);
         val reg = CoreAuthenticationTestUtils.getRegisteredService();
         when(svc.findServiceBy(any(Service.class))).thenReturn(reg);
-        when(svc.getAllServices()).thenReturn(Collections.singletonList(reg));
+        when(svc.getAllServices()).thenReturn(List.of(reg));
         return svc;
     }
 
