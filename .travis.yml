@@ -213,6 +213,9 @@ jobs:
     - stage: test
       script: ./ci/tests/redis/run-tests-redis.sh
       name: "Redis Tests"
+    - stage: test
+      script: ./ci/tests/redis/run-tests-jms.sh
+      name: "JMS Tests"
       ############################################
     - stage: finalize
       if: NOT (head_branch =~ env(DEPENDENCY_BOT_BRANCH) and type = pull_request)

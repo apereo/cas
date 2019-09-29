@@ -4265,7 +4265,12 @@ Signing & encryption settings for this registry are available [here](Configurati
 
 To learn more about this topic, [please review this guide](../ticketing/Messaging-JMS-Ticket-Registry.html).
 
-Signing & encryption settings for this registry are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.ticket.registry.jms`.
+Signing & encryption settings for this registry are available [here](Configuration-Properties-Common.html#signing--encryption)
+under the configuration key `cas.ticket.registry.jms`.
+
+```properties
+# cas.ticket.registry.jms.id=
+```
 
 #### JMS Ticket Registry ActiveMQ
 
