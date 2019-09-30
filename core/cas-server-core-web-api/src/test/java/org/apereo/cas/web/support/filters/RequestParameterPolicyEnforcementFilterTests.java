@@ -1,6 +1,7 @@
 package org.apereo.cas.web.support.filters;
 
 import lombok.val;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import javax.servlet.FilterChain;
@@ -33,6 +34,22 @@ import static org.mockito.Mockito.*;
  * @since 6.1
  */
 public class RequestParameterPolicyEnforcementFilterTests {
+
+    private static void internalTestOnlyPostParameter(final String method) {
+        val onlyPostParameters = new HashSet<String>();
+        onlyPostParameters.add("username");
+        onlyPostParameters.add("password");
+
+        val parameterMap = new HashMap<String, String[]>();
+        parameterMap.put("username", new String[]{"jle"});
+
+        RequestParameterPolicyEnforcementFilter.checkOnlyPostParameters(method, parameterMap, onlyPostParameters);
+    }
+
+    @BeforeEach
+    public void setup() {
+        RequestParameterPolicyEnforcementFilter.throwOnErrors = true;
+    }
 
     @Test
     public void verifyUnrecognizedInitParamFailsFilterInit() {
@@ -70,7 +87,7 @@ public class RequestParameterPolicyEnforcementFilterTests {
     }
 
     @Test
-    public void verifySettingFailSafeTrueFromInitParam() throws Exception {
+    public void verifySettingFailSafeTrueFromInitParam() {
 
         val filter = new RequestParameterPolicyEnforcementFilter();
 
@@ -272,7 +289,6 @@ public class RequestParameterPolicyEnforcementFilterTests {
         assertThrows(RuntimeException.class, () -> RequestParameterPolicyEnforcementFilter.throwIfUnrecognizedParamName(parameterNamesEnumeration));
     }
 
-
     @Test
     public void verifyParsesNullToEmptySet() {
         val returnedSet = RequestParameterPolicyEnforcementFilter.parseParametersList(null, true);
@@ -291,7 +307,6 @@ public class RequestParameterPolicyEnforcementFilterTests {
 
         assertEquals(expectedSet, returnedSet);
     }
-
 
     @Test
     public void verifyParsingBlankParametersToCheckThrowsException() {
@@ -511,16 +526,5 @@ public class RequestParameterPolicyEnforcementFilterTests {
     @Test
     public void verifyOnlyPostParameterInGetRequest() {
         assertThrows(Exception.class, () -> internalTestOnlyPostParameter("GET"));
-    }
-
-    private static void internalTestOnlyPostParameter(final String method) {
-        val onlyPostParameters = new HashSet<String>();
-        onlyPostParameters.add("username");
-        onlyPostParameters.add("password");
-
-        val parameterMap = new HashMap<String, String[]>();
-        parameterMap.put("username", new String[]{"jle"});
-
-        RequestParameterPolicyEnforcementFilter.checkOnlyPostParameters(method, parameterMap, onlyPostParameters);
     }
 }

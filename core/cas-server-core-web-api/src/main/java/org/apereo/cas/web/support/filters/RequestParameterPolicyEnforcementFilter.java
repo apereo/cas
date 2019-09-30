@@ -184,8 +184,10 @@ public class RequestParameterPolicyEnforcementFilter extends AbstractSecurityFil
         if (null == initParamValue) {
             return parameterNames;
         }
-
-        val tokens = Splitter.onPattern("\\s+").splitToList(initParamValue);
+        if (initParamValue.trim().isEmpty()) {
+            logException(new IllegalArgumentException('[' + initParamValue + "] had no tokens but should have had at least one token."));
+        }
+        val tokens = Splitter.onPattern("\\s+").splitToList(initParamValue.trim());
         if (tokens.isEmpty()) {
             logException(new IllegalArgumentException('[' + initParamValue + "] had no tokens but should have had at least one token."));
         }
@@ -209,12 +211,19 @@ public class RequestParameterPolicyEnforcementFilter extends AbstractSecurityFil
      * If the String is "none" parse to empty set meaning block no characters.
      * If the String is empty throw, to avoid configurer accidentally configuring not to block any characters.
      *
-     * @param paramValue value of the init param to parse
+     * @param value value of the init param to parse
      * @return non-null Set of zero or more Characters to block
      */
-    public static Set<Character> parseCharactersToForbid(final String paramValue) {
+    public static Set<Character> parseCharactersToForbid(final String value) {
 
         val charactersToForbid = new HashSet<Character>();
+
+        var paramValue = value;
+        if (paramValue == null) {
+            paramValue = DEFAULT_CHARACTERS_BLOCKED;
+        } else if (paramValue.trim().isEmpty()) {
+            logException(new IllegalArgumentException("Expected tokens when parsing [" + paramValue + "] but found no tokens."));
+        }
 
         if ("none".equals(paramValue)) {
             return charactersToForbid;
