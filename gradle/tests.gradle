@@ -16,6 +16,15 @@ if (hasTestsOfCategory(project, "CosmosDb")) {
     }
 }
 
+if (hasTestsOfCategory(project, "JMS")) {
+    task testJMS(type: Test) {
+        enabled = shouldTest(project, "JMS")
+        useJUnitPlatform {
+            includeTags "JMS"
+        }
+    }
+}
+
 if (hasTestsOfCategory(project, "AmazonWebServices")) {
     task testAWSS3(type: Test) {
         enabled = shouldTest(project, "AmazonWebServices")
@@ -246,7 +255,7 @@ test {
                 "Ldap", "Mail", "MariaDb", "Memcached",
                 "MongoDb", "MsSqlServer", "MySQL", "Postgres", "Redis",
                 "Radius", "AmazonWebServices", "RestfulApi", "Groovy",
-                "OAuth", "OIDC", "SAML", "UMA", "Oracle"
+                "OAuth", "OIDC", "SAML", "UMA", "Oracle", "JMS"
     }
     enabled = "SIMPLE".equalsIgnoreCase(rootProject.testCategoryType) && !Boolean.getBoolean("skipTests")
 }

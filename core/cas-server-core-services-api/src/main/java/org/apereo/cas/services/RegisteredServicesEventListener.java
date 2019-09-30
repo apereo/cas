@@ -46,12 +46,15 @@ public class RegisteredServicesEventListener {
     public void handleRegisteredServiceExpiredEvent(final CasRegisteredServiceExpiredEvent event) {
         val registeredService = event.getRegisteredService();
         val contacts = registeredService.getContacts();
-
         val serviceRegistry = casProperties.getServiceRegistry();
+        val serviceName = StringUtils.defaultIfBlank(registeredService.getName(), registeredService.getServiceId());
+        if (contacts == null || contacts.isEmpty()) {
+            LOGGER.debug("No contacts are defined to be notified for policy changes to service [{}]", serviceName);
+            return;
+        }
         val mail = serviceRegistry.getMail();
         val sms = serviceRegistry.getSms();
 
-        val serviceName = StringUtils.defaultIfBlank(registeredService.getName(), registeredService.getServiceId());
         if (event.isDeleted()) {
             LOGGER.info("Sending notification to [{}] as registered service [{}] is deleted from service registry", contacts, serviceName);
         } else {
