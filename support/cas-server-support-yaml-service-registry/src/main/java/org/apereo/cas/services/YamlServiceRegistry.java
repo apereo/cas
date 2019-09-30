@@ -5,6 +5,7 @@ import org.apereo.cas.services.resource.AbstractResourceBasedServiceRegistry;
 import org.apereo.cas.services.resource.RegisteredServiceResourceNamingStrategy;
 import org.apereo.cas.services.util.RegisteredServiceYamlSerializer;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.io.WatcherService;
 
 import lombok.Getter;
 import org.springframework.context.ApplicationEventPublisher;
@@ -49,18 +50,21 @@ public class YamlServiceRegistry extends AbstractResourceBasedServiceRegistry {
      * stored. Uses the {@link RegisteredServiceYamlSerializer} by default.
      *
      * @param configDirectory                      the config directory where service registry files can be found.
-     * @param enableWatcher                        the enable watcher
+     * @param serviceRegistryConfigWatcher         the service registry config watcher
      * @param eventPublisher                       the event publisher
      * @param registeredServiceReplicationStrategy the registered service replication strategy
      * @param resourceNamingStrategy               the registered service naming strategy
      * @param serviceRegistryListeners             the service registry listeners
      */
-    public YamlServiceRegistry(final Path configDirectory, final boolean enableWatcher, final ApplicationEventPublisher eventPublisher,
+    public YamlServiceRegistry(final Path configDirectory,
+                               final WatcherService serviceRegistryConfigWatcher,
+                               final ApplicationEventPublisher eventPublisher,
                                final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy,
                                final RegisteredServiceResourceNamingStrategy resourceNamingStrategy,
                                final Collection<ServiceRegistryListener> serviceRegistryListeners) {
-        super(configDirectory, new RegisteredServiceYamlSerializer(), enableWatcher, eventPublisher,
-            registeredServiceReplicationStrategy, resourceNamingStrategy, serviceRegistryListeners);
+        super(configDirectory, new RegisteredServiceYamlSerializer(), eventPublisher,
+            registeredServiceReplicationStrategy, resourceNamingStrategy, serviceRegistryListeners,
+            serviceRegistryConfigWatcher);
     }
 
     /**
@@ -69,19 +73,23 @@ public class YamlServiceRegistry extends AbstractResourceBasedServiceRegistry {
      * stored. Uses the {@link RegisteredServiceYamlSerializer} by default.
      *
      * @param configDirectory                      the config directory where service registry files can be found.
-     * @param enableWatcher                        the enable watcher
+     * @param serviceRegistryConfigWatcher         the service registry config watcher
      * @param eventPublisher                       the event publisher
      * @param registeredServiceReplicationStrategy the registered service replication strategy
      * @param resourceNamingStrategy               the registered service naming strategy
      * @param serviceRegistryListeners             the service registry listeners
      * @throws Exception the IO exception
      */
-    public YamlServiceRegistry(final Resource configDirectory, final boolean enableWatcher, final ApplicationEventPublisher eventPublisher,
+    public YamlServiceRegistry(final Resource configDirectory,
+                               final WatcherService serviceRegistryConfigWatcher,
+                               final ApplicationEventPublisher eventPublisher,
                                final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy,
                                final RegisteredServiceResourceNamingStrategy resourceNamingStrategy,
                                final Collection<ServiceRegistryListener> serviceRegistryListeners) throws Exception {
-        super(configDirectory, CollectionUtils.wrapList(new RegisteredServiceYamlSerializer()), enableWatcher,
-            eventPublisher, registeredServiceReplicationStrategy, resourceNamingStrategy, serviceRegistryListeners);
+        super(configDirectory,
+            CollectionUtils.wrapList(new RegisteredServiceYamlSerializer()),
+            eventPublisher, registeredServiceReplicationStrategy,
+            resourceNamingStrategy, serviceRegistryListeners, serviceRegistryConfigWatcher);
     }
 
     @Override

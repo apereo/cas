@@ -7,6 +7,7 @@ import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServiceRegistryListener;
 import org.apereo.cas.services.replication.RegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.resource.RegisteredServiceResourceNamingStrategy;
+import org.apereo.cas.util.io.WatcherService;
 
 import lombok.SneakyThrows;
 import lombok.val;
@@ -58,11 +59,16 @@ public class JsonServiceRegistryConfiguration {
     @SneakyThrows
     public ServiceRegistry jsonServiceRegistry() {
         val registry = casProperties.getServiceRegistry();
-        return new JsonServiceRegistry(registry.getJson().getLocation(),
-            registry.isWatcherEnabled(), applicationContext,
-            registeredServiceReplicationStrategy.getIfAvailable(),
-            resourceNamingStrategy.getIfAvailable(),
-            serviceRegistryListeners.getIfAvailable());
+        val json = new JsonServiceRegistry(registry.getJson().getLocation(),
+            WatcherService.noOp(),
+            applicationContext,
+            registeredServiceReplicationStrategy.getObject(),
+            resourceNamingStrategy.getObject(),
+            serviceRegistryListeners.getObject());
+        if (registry.isWatcherEnabled()) {
+            json.enableDefaultWatcherService();
+        }
+        return json;
     }
 
     @Bean

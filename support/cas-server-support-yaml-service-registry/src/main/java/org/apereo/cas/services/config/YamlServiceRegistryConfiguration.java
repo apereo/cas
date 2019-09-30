@@ -7,6 +7,7 @@ import org.apereo.cas.services.ServiceRegistryListener;
 import org.apereo.cas.services.YamlServiceRegistry;
 import org.apereo.cas.services.replication.RegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.resource.RegisteredServiceResourceNamingStrategy;
+import org.apereo.cas.util.io.WatcherService;
 
 import lombok.SneakyThrows;
 import lombok.val;
@@ -56,12 +57,16 @@ public class YamlServiceRegistryConfiguration {
     @SneakyThrows
     public ServiceRegistry yamlServiceRegistry() {
         val registry = casProperties.getServiceRegistry();
-        return new YamlServiceRegistry(registry.getYaml().getLocation(),
-            registry.isWatcherEnabled(),
+        val yaml = new YamlServiceRegistry(registry.getYaml().getLocation(),
+            WatcherService.noOp(),
             applicationContext,
-            registeredServiceReplicationStrategy.getIfAvailable(),
-            resourceNamingStrategy.getIfAvailable(),
-            serviceRegistryListeners.getIfAvailable());
+            registeredServiceReplicationStrategy.getObject(),
+            resourceNamingStrategy.getObject(),
+            serviceRegistryListeners.getObject());
+        if (registry.isWatcherEnabled()) {
+            yaml.enableDefaultWatcherService();
+        }
+        return yaml;
     }
 
     @Bean
@@ -69,5 +74,4 @@ public class YamlServiceRegistryConfiguration {
     public ServiceRegistryExecutionPlanConfigurer yamlServiceRegistryExecutionPlanConfigurer() {
         return plan -> plan.registerServiceRegistry(yamlServiceRegistry());
     }
-
 }

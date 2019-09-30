@@ -6,14 +6,12 @@ import org.apereo.cas.authentication.PrincipalException;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
-import org.apereo.cas.util.DateTimeUtils;
 
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -236,7 +234,7 @@ public class RegisteredServiceAccessStrategyUtils {
                 LOGGER.warn("Service [{}] is not allowed to use SSO for proxying.", service.getId());
                 throw new UnauthorizedSsoServiceException();
             }
-            if (ticketGrantingTicket.getProxiedBy() == null && ticketGrantingTicket.getCountOfUses() > 0 && !credentialsProvided) {
+            if (ticketGrantingTicket.getCountOfUses() > 0 && !credentialsProvided) {
                 LOGGER.warn("Service [{}] is not allowed to use SSO. The ticket-granting ticket [{}] is not proxied and it's been used at least once. "
                     + "The authentication request must provide credentials before access can be granted", ticketGrantingTicket.getId(), service.getId());
                 throw new UnauthorizedSsoServiceException();
@@ -253,32 +251,11 @@ public class RegisteredServiceAccessStrategyUtils {
      */
     public static Predicate<RegisteredService> getRegisteredServiceExpirationPolicyPredicate() {
         return service -> {
-            try {
-                if (service == null) {
-                    return false;
-                }
-                val policy = service.getExpirationPolicy();
-                if (policy == null || StringUtils.isBlank(policy.getExpirationDate())) {
-                    return true;
-                }
-                val now = getCurrentSystemTime();
-                val expirationDate = DateTimeUtils.localDateTimeOf(policy.getExpirationDate());
-                LOGGER.debug("Service expiration date is [{}] while now is [{}]", expirationDate, now);
-                return !now.isAfter(expirationDate);
-            } catch (final Exception e) {
-                LOGGER.warn(e.getMessage(), e);
+            if (service == null) {
+                return false;
             }
-            return false;
+            val policy = service.getExpirationPolicy();
+            return policy == null || !policy.isExpired();
         };
     }
-
-    /**
-     * Gets current system time.
-     *
-     * @return the current system time
-     */
-    protected static LocalDateTime getCurrentSystemTime() {
-        return LocalDateTime.now();
-    }
-
 }

@@ -4,6 +4,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
+import org.springframework.beans.factory.DisposableBean;
 
 import java.io.Closeable;
 import java.io.File;
@@ -25,9 +26,10 @@ import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
  * @since 5.2.0
  */
 @Slf4j
-public class PathWatcherService implements Runnable, Closeable {
+public class PathWatcherService implements WatcherService, Runnable, Closeable, DisposableBean {
 
     private static final WatchEvent.Kind[] KINDS = new WatchEvent.Kind[]{ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY};
+    
     private final WatchService watcher;
     private final Consumer<File> onCreate;
     private final Consumer<File> onModify;
@@ -53,6 +55,7 @@ public class PathWatcherService implements Runnable, Closeable {
     @SneakyThrows
     public PathWatcherService(final Path watchablePath, final Consumer<File> onCreate,
                               final Consumer<File> onModify, final Consumer<File> onDelete) {
+        LOGGER.info("Watching directory at [{}]", watchablePath);
         this.onCreate = onCreate;
         this.onModify = onModify;
         this.onDelete = onDelete;
@@ -112,19 +115,23 @@ public class PathWatcherService implements Runnable, Closeable {
 
     @Override
     public void close() {
+        LOGGER.trace("Closing service registry watcher thread");
         IOUtils.closeQuietly(this.watcher);
         if (this.thread != null) {
             thread.interrupt();
         }
+        LOGGER.trace("Closed service registry watcher thread");
     }
 
-    /**
-     * Start thread.
-     *
-     * @param name the name
-     */
+    @Override
+    public void destroy() {
+        close();
+    }
+
+    @Override
     @SneakyThrows
     public void start(final String name) {
+        LOGGER.trace("Starting watcher thread");
         thread = new Thread(this);
         thread.setName(name);
         thread.start();
