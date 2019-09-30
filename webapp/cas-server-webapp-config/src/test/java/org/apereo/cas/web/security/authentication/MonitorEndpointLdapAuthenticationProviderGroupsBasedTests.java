@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -29,8 +30,15 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.monitor.endpoints.ldap.ldapAuthz.baseDn=ou=people,dc=example,dc=org",
         "cas.monitor.endpoints.ldap.ldapAuthz.searchFilter=cn={user}",
         "cas.monitor.endpoints.ldap.ldapAuthz.groupAttribute=roomNumber",
-        "cas.monitor.endpoints.ldap.ldapAuthz.groupPrefix=ROLE_"
+        "cas.monitor.endpoints.ldap.ldapAuthz.groupPrefix=ROLE_",
+        "cas.monitor.endpoints.ldap.ldapUrl=ldap://localhost:10389",
+        "cas.monitor.endpoints.ldap.useSsl=false",
+        "cas.monitor.endpoints.ldap.baseDn=ou=people,dc=example,dc=org",
+        "cas.monitor.endpoints.ldap.searchFilter=cn={user}",
+        "cas.monitor.endpoints.ldap.bindDn=cn=Directory Manager",
+        "cas.monitor.endpoints.ldap.bindCredential=password"
     })
+@Tag("Ldap")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class MonitorEndpointLdapAuthenticationProviderGroupsBasedTests extends BaseMonitorEndpointLdapAuthenticationProviderTests {
 
