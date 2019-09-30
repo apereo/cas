@@ -47,6 +47,7 @@ public class CasPullRequestListener implements PullRequestListener {
                 + "as quickly as possible. Furthermore, make sure your patch targets the correct branch to avoid conflicts. "
                 + "If you believe this to be an error, please post your explanation here as a comment and it will be reviewed as quickly as possible. "
                 + "For additional details, please review https://apereo.github.io/cas/developer/Contributor-Guidelines.html");
+            repository.close(pr);
             return true;
         }
         return false;
