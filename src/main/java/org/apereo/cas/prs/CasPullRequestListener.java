@@ -41,11 +41,12 @@ public class CasPullRequestListener implements PullRequestListener {
             log.info("Closing invalid pull request {} with large number of changes", pr);
             repository.labelPullRequestAs(pr, CasLabels.LABEL_PROPOSAL_DECLINED);
             repository.labelPullRequestAs(pr, CasLabels.LABEL_SEE_CONTRIBUTOR_GUIDELINES);
-            repository.addComment(pr, "Thank you very much for submitting this pull request! This patch contains "
+            repository.addComment(pr, "Thank you very much for submitting this pull request! \n\nThis patch contains "
                 + "a very large number of commits and changed files and is quite impractical to evaluate and review. "
                 + "Please make sure your changes are broken down into smaller pull requests so that members can assist and review "
-                + "as quickly as possible. Furthermore, make sure your patch targets the correct branch to avoid conflicts. "
-                + "If you believe this to be an error, please post your explanation here as a comment and it will be reviewed as quickly as possible. "
+                + "as quickly as possible. Furthermore, make sure your patch is based on the appropriate branch, is a feature branch and "
+                + "targets the correct CAS branch here to avoid conflicts. \n"
+                + "If you believe this to be an error, please post your explanation here as a comment and it will be reviewed as quickly as possible. \n"
                 + "For additional details, please review https://apereo.github.io/cas/developer/Contributor-Guidelines.html");
             repository.close(pr);
             return true;
