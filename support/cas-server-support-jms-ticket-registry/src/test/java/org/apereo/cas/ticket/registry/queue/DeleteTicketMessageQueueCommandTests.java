@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @EnabledIfContinuousIntegration
 @EnabledIfPortOpen(port = 61616)
-@Tag("JMS")
+@Tag("ActiveMQ")
 public class DeleteTicketMessageQueueCommandTests extends AbstractTicketMessageQueueCommandTests {
 
     @Test
