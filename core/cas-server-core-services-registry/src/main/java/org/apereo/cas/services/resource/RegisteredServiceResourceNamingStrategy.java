@@ -38,7 +38,7 @@ public interface RegisteredServiceResourceNamingStrategy {
             pattern = String.join("|", extensions);
         }
         if (extensions.length > 1) {
-            pattern = "(" + pattern + ")";
+            pattern = '(' + pattern + ')';
         }
         return RegexUtils.createPattern("(\\w+)-(\\d+)\\.".concat(pattern));
     }
