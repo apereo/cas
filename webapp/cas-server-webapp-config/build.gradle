@@ -3,7 +3,6 @@ dependencies {
     api project(":api:cas-server-core-api-webflow")
 
     implementation libraries.pac4jcore
-    implementation libraries.cassecurityfilter
     implementation libraries.springsecurityweb
     implementation libraries.springsecurityconfig
     implementation libraries.ldaptive
