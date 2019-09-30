@@ -135,7 +135,7 @@ public interface ServicesManager {
      * @return the collection
      */
     Collection<RegisteredService> load();
-
+    
     /**
      * Return a count of loaded services by this manager.
      *

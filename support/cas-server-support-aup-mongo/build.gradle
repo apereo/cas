@@ -10,7 +10,6 @@ dependencies {
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":support:cas-server-support-aup-core")
     implementation project(":support:cas-server-support-mongo-core")
-    implementation project(":core:cas-server-core-authentication-api")
     
     implementation libraries.mongo
 

@@ -6,6 +6,7 @@ import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrat
 import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingStrategy;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.io.WatcherService;
 
 import lombok.val;
 import org.apache.commons.io.FileUtils;
@@ -34,7 +35,7 @@ public class OAuthRegisteredServiceTests {
     private final ServiceRegistry dao;
 
     public OAuthRegisteredServiceTests() throws Exception {
-        this.dao = new JsonServiceRegistry(RESOURCE, false,
+        this.dao = new JsonServiceRegistry(RESOURCE, WatcherService.noOp(),
             mock(ApplicationEventPublisher.class), new NoOpRegisteredServiceReplicationStrategy(),
             new DefaultRegisteredServiceResourceNamingStrategy(),
             new ArrayList<>());
