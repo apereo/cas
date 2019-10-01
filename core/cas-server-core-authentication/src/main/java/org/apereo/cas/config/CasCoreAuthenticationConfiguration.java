@@ -58,7 +58,7 @@ public class CasCoreAuthenticationConfiguration {
     @Bean
     public AuthenticationManager casAuthenticationManager() {
         return new PolicyBasedAuthenticationManager(
-            authenticationEventExecutionPlan.getIfAvailable(),
+            authenticationEventExecutionPlan.getObject(),
             casProperties.getPersonDirectory().isPrincipalResolutionFailureFatal(),
             applicationContext
         );

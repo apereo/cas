@@ -23,11 +23,19 @@ public abstract class AbstractSecurityFilter {
     /**
      * Throw fatal errors if set.
      */
-    public static boolean throwOnErrors;
+    private static boolean THROW_ON_ERRORS;
+
+    public static boolean isThrowOnErrors() {
+        return THROW_ON_ERRORS;
+    }
+
+    public static void setThrowOnErrors(final boolean throwOnErrors) {
+        THROW_ON_ERRORS = throwOnErrors;
+    }
 
     protected static void logException(final Exception e) {
         LOGGER.error(e.getMessage(), e);
-        if (throwOnErrors) {
+        if (isThrowOnErrors()) {
             throw new RuntimeException(e);
         }
     }

@@ -331,7 +331,7 @@ public class RequestParameterPolicyEnforcementFilter extends AbstractSecurityFil
         val failSafeParam = filterConfig.getInitParameter(FAIL_SAFE);
 
         if (null != failSafeParam) {
-            throwOnErrors = Boolean.parseBoolean(failSafeParam);
+            setThrowOnErrors(Boolean.parseBoolean(failSafeParam));
         }
 
         val initParamNames = filterConfig.getInitParameterNames();

@@ -48,7 +48,7 @@ public class RequestParameterPolicyEnforcementFilterTests {
 
     @BeforeEach
     public void setup() {
-        RequestParameterPolicyEnforcementFilter.throwOnErrors = true;
+        RequestParameterPolicyEnforcementFilter.setThrowOnErrors(true);
     }
 
     @Test
@@ -101,7 +101,7 @@ public class RequestParameterPolicyEnforcementFilterTests {
         when(filterConfig.getInitParameter(RequestParameterPolicyEnforcementFilter.FAIL_SAFE)).thenReturn("true");
 
         filter.init(filterConfig);
-        assertTrue(AbstractSecurityFilter.throwOnErrors);
+        assertTrue(AbstractSecurityFilter.isThrowOnErrors());
     }
 
     @Test
@@ -120,7 +120,7 @@ public class RequestParameterPolicyEnforcementFilterTests {
             .thenReturn("false");
 
         filter.init(filterConfig);
-        assertFalse(AbstractSecurityFilter.throwOnErrors);
+        assertFalse(AbstractSecurityFilter.isThrowOnErrors());
     }
 
     @Test

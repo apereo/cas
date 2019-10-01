@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.HashSet;
+import java.util.regex.Pattern;
 
 /**
  * Allows users to easily inject the default security headers to assist in protecting the application.
@@ -73,6 +74,7 @@ public class ResponseHeadersEnforcementFilter extends AbstractSecurityFilter imp
      * Consent security policy.
      */
     public static final String INIT_PARAM_CONTENT_SECURITY_POLICY = "contentSecurityPolicy";
+    private static final Pattern CACHE_CONTROL_STATIC_RESOURCES_PATTERN = Pattern.compile(".css|.js|.png|.txt|.jpg|.ico|.jpeg|.bmp|.gif");
 
     private boolean enableCacheControl;
 
@@ -132,59 +134,59 @@ public class ResponseHeadersEnforcementFilter extends AbstractSecurityFilter imp
     public void init(final FilterConfig filterConfig) {
         val failSafeParam = filterConfig.getInitParameter(FAIL_SAFE);
         if (null != failSafeParam) {
-            throwOnErrors = Boolean.parseBoolean(failSafeParam);
+            setThrowOnErrors(Boolean.parseBoolean(failSafeParam));
         }
 
         val initParamNames = filterConfig.getInitParameterNames();
         throwIfUnrecognizedParamName(initParamNames);
 
-        val enableCacheControl = filterConfig.getInitParameter(INIT_PARAM_ENABLE_CACHE_CONTROL);
-        val enableXContentTypeOptions = filterConfig.getInitParameter(INIT_PARAM_ENABLE_XCONTENT_OPTIONS);
-        val enableStrictTransportSecurity = filterConfig.getInitParameter(INIT_PARAM_ENABLE_STRICT_TRANSPORT_SECURITY);
-        val enableXFrameOptions = filterConfig.getInitParameter(INIT_PARAM_ENABLE_STRICT_XFRAME_OPTIONS);
-        val enableXSSProtection = filterConfig.getInitParameter(INIT_PARAM_ENABLE_XSS_PROTECTION);
+        val cacheControl = filterConfig.getInitParameter(INIT_PARAM_ENABLE_CACHE_CONTROL);
+        val contentTypeOpts = filterConfig.getInitParameter(INIT_PARAM_ENABLE_XCONTENT_OPTIONS);
+        val stsEnabled = filterConfig.getInitParameter(INIT_PARAM_ENABLE_STRICT_TRANSPORT_SECURITY);
+        val xframeOpts = filterConfig.getInitParameter(INIT_PARAM_ENABLE_STRICT_XFRAME_OPTIONS);
+        val xssOpts = filterConfig.getInitParameter(INIT_PARAM_ENABLE_XSS_PROTECTION);
 
         try {
-            this.enableCacheControl = Boolean.parseBoolean(enableCacheControl);
+            this.enableCacheControl = Boolean.parseBoolean(cacheControl);
         } catch (final Exception e) {
             logException(new ServletException("Error parsing parameter [" + INIT_PARAM_ENABLE_CACHE_CONTROL
-                + "] with value [" + enableCacheControl + ']', e));
+                + "] with value [" + cacheControl + ']', e));
         }
 
         try {
-            this.enableXContentTypeOptions = Boolean.parseBoolean(enableXContentTypeOptions);
+            this.enableXContentTypeOptions = Boolean.parseBoolean(contentTypeOpts);
         } catch (final Exception e) {
             logException(new ServletException("Error parsing parameter [" + INIT_PARAM_ENABLE_XCONTENT_OPTIONS
-                + "] with value [" + enableXContentTypeOptions + ']', e));
+                + "] with value [" + contentTypeOpts + ']', e));
         }
 
         try {
-            this.enableStrictTransportSecurity = Boolean.parseBoolean(enableStrictTransportSecurity);
+            this.enableStrictTransportSecurity = Boolean.parseBoolean(stsEnabled);
         } catch (final Exception e) {
             logException(new ServletException("Error parsing parameter [" + INIT_PARAM_ENABLE_STRICT_TRANSPORT_SECURITY
-                + "] with value [" + enableStrictTransportSecurity + ']', e));
+                + "] with value [" + stsEnabled + ']', e));
         }
 
         try {
-            this.enableXFrameOptions = Boolean.parseBoolean(enableXFrameOptions);
+            this.enableXFrameOptions = Boolean.parseBoolean(xframeOpts);
             this.xframeOptions = filterConfig.getInitParameter(INIT_PARAM_STRICT_XFRAME_OPTIONS);
             if (this.xframeOptions == null || this.xframeOptions.isEmpty()) {
                 this.xframeOptions = "DENY";
             }
         } catch (final Exception e) {
             logException(new ServletException("Error parsing parameter [" + INIT_PARAM_ENABLE_STRICT_XFRAME_OPTIONS
-                + "] with value [" + enableXFrameOptions + ']', e));
+                + "] with value [" + xframeOpts + ']', e));
         }
 
         try {
-            this.enableXSSProtection = Boolean.parseBoolean(enableXSSProtection);
+            this.enableXSSProtection = Boolean.parseBoolean(xssOpts);
             this.xssProtection = filterConfig.getInitParameter(INIT_PARAM_XSS_PROTECTION);
             if (this.xssProtection == null || this.xssProtection.isEmpty()) {
                 this.xssProtection = "1; mode=block";
             }
         } catch (final Exception e) {
             logException(new ServletException("Error parsing parameter [" + INIT_PARAM_ENABLE_XSS_PROTECTION
-                + "] with value [" + enableXSSProtection + ']', e));
+                + "] with value [" + xssOpts + ']', e));
         }
 
         this.contentSecurityPolicy = filterConfig.getInitParameter(INIT_PARAM_CONTENT_SECURITY_POLICY);
@@ -307,15 +309,7 @@ public class ResponseHeadersEnforcementFilter extends AbstractSecurityFilter imp
                                             final String value) {
 
         val uri = httpServletRequest.getRequestURI();
-        if (!uri.endsWith(".css")
-            && !uri.endsWith(".js")
-            && !uri.endsWith(".png")
-            && !uri.endsWith(".txt")
-            && !uri.endsWith(".jpg")
-            && !uri.endsWith(".ico")
-            && !uri.endsWith(".jpeg")
-            && !uri.endsWith(".bmp")
-            && !uri.endsWith(".gif")) {
+        if (!CACHE_CONTROL_STATIC_RESOURCES_PATTERN.matcher(uri).matches()) {
             httpServletResponse.addHeader("Cache-Control", value);
             httpServletResponse.addHeader("Pragma", "no-cache");
             httpServletResponse.addIntHeader("Expires", 0);
