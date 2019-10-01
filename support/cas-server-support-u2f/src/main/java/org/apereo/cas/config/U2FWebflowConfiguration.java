@@ -56,7 +56,7 @@ public class U2FWebflowConfiguration {
     private ObjectProvider<FlowDefinitionRegistry> loginFlowDefinitionRegistry;
 
     @Autowired
-    private FlowBuilderServices flowBuilderServices;
+    private ObjectProvider<FlowBuilderServices> flowBuilderServices;
 
     @Autowired
     @Qualifier("u2fDeviceRepository")
@@ -99,7 +99,7 @@ public class U2FWebflowConfiguration {
 
     @Bean
     public FlowDefinitionRegistry u2fFlowRegistry() {
-        val builder = new FlowDefinitionRegistryBuilder(this.applicationContext, this.flowBuilderServices);
+        val builder = new FlowDefinitionRegistryBuilder(this.applicationContext, flowBuilderServices.getObject());
         builder.setBasePath(CasWebflowConstants.BASE_CLASSPATH_WEBFLOW);
         builder.addFlowLocationPattern("/mfa-u2f/*-webflow.xml");
         return builder.build();
@@ -115,7 +115,7 @@ public class U2FWebflowConfiguration {
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer u2fMultifactorWebflowConfigurer() {
-        return new U2FMultifactorWebflowConfigurer(flowBuilderServices,
+        return new U2FMultifactorWebflowConfigurer(flowBuilderServices.getObject(),
             loginFlowDefinitionRegistry.getObject(), u2fFlowRegistry(), applicationContext, casProperties);
     }
 

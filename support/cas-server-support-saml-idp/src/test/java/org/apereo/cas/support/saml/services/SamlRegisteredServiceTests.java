@@ -8,6 +8,7 @@ import org.apereo.cas.services.InMemoryServiceRegistry;
 import org.apereo.cas.services.JsonServiceRegistry;
 import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingStrategy;
+import org.apereo.cas.util.io.WatcherService;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
@@ -23,8 +24,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -57,7 +58,7 @@ public class SamlRegisteredServiceTests {
         service.setServiceId("http://mmoayyed.unicon.net");
         service.setMetadataLocation(METADATA_LOCATION);
 
-        val dao = new JsonServiceRegistry(RESOURCE, false,
+        val dao = new JsonServiceRegistry(RESOURCE, WatcherService.noOp(),
             mock(ApplicationEventPublisher.class), new NoOpRegisteredServiceReplicationStrategy(),
             new DefaultRegisteredServiceResourceNamingStrategy(),
             new ArrayList<>());
@@ -76,7 +77,7 @@ public class SamlRegisteredServiceTests {
         chain.setPolicies(Arrays.asList(policy, new DenyAllAttributeReleasePolicy()));
         service.setAttributeReleasePolicy(chain);
 
-        val dao = new JsonServiceRegistry(new FileSystemResource(FileUtils.getTempDirectory()), false,
+        val dao = new JsonServiceRegistry(new FileSystemResource(FileUtils.getTempDirectory()), WatcherService.noOp(),
             mock(ApplicationEventPublisher.class), new NoOpRegisteredServiceReplicationStrategy(),
             new DefaultRegisteredServiceResourceNamingStrategy(),
             new ArrayList<>());
@@ -90,7 +91,7 @@ public class SamlRegisteredServiceTests {
         service.setName(SAML_SERVICE);
         service.setServiceId("^http://.+");
         service.setMetadataLocation(METADATA_LOCATION);
-        val dao = new InMemoryServiceRegistry(mock(ApplicationEventPublisher.class), Collections.singletonList(service), new ArrayList<>());
+        val dao = new InMemoryServiceRegistry(mock(ApplicationEventPublisher.class), List.of(service), new ArrayList<>());
         val impl = new DefaultServicesManager(dao, mock(ApplicationEventPublisher.class), new HashSet<>());
         impl.load();
 

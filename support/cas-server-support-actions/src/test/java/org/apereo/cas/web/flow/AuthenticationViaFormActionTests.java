@@ -9,6 +9,7 @@ import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -34,11 +35,11 @@ public class AuthenticationViaFormActionTests extends AbstractWebflowActionsTest
 
     @Autowired
     @Qualifier("authenticationViaFormAction")
-    private Action action;
+    private ObjectProvider<Action> action;
 
     @Autowired
     @Qualifier("warnCookieGenerator")
-    private CasCookieBuilder warnCookieGenerator;
+    private ObjectProvider<CasCookieBuilder> warnCookieGenerator;
 
     /**
      * Put credentials in request scope.
@@ -62,7 +63,7 @@ public class AuthenticationViaFormActionTests extends AbstractWebflowActionsTest
         val c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
         putCredentialInRequestScope(context, c);
 
-        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, this.action.execute(context).getId());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, this.action.getObject().execute(context).getId());
     }
 
     @Test
@@ -79,7 +80,7 @@ public class AuthenticationViaFormActionTests extends AbstractWebflowActionsTest
         val c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
         putCredentialInRequestScope(context, c);
 
-        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, this.action.execute(context).getId());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, this.action.getObject().execute(context).getId());
     }
 
     @Test
@@ -97,8 +98,8 @@ public class AuthenticationViaFormActionTests extends AbstractWebflowActionsTest
         val c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
         putCredentialInRequestScope(context, c);
 
-        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, this.action.execute(context).getId());
-        assertNotNull(response.getCookie(this.warnCookieGenerator.getCookieName()));
+        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, this.action.getObject().execute(context).getId());
+        assertNotNull(response.getCookie(this.warnCookieGenerator.getObject().getCookieName()));
     }
 
     @Test
@@ -115,7 +116,7 @@ public class AuthenticationViaFormActionTests extends AbstractWebflowActionsTest
         putCredentialInRequestScope(context, c);
 
         context.getRequestScope().put("org.springframework.validation.BindException.credentials", new BindException(c, "credential"));
-        assertEquals(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, this.action.execute(context).getId());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, this.action.getObject().execute(context).getId());
     }
 
     @Test
@@ -125,7 +126,7 @@ public class AuthenticationViaFormActionTests extends AbstractWebflowActionsTest
         val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(
             getAuthenticationSystemSupport(), service, c);
 
-        val ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
+        val ticketGrantingTicket = getCentralAuthenticationService().getObject().createTicketGrantingTicket(ctx);
         val request = new MockHttpServletRequest();
         val context = new MockRequestContext();
 
@@ -139,7 +140,7 @@ public class AuthenticationViaFormActionTests extends AbstractWebflowActionsTest
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         context.getFlowScope().put(CasProtocolConstants.PARAMETER_SERVICE, RegisteredServiceTestUtils.getService());
 
-        val ev = this.action.execute(context);
+        val ev = this.action.getObject().execute(context);
         assertEquals(CasWebflowConstants.STATE_ID_WARN, ev.getId());
     }
 
@@ -150,7 +151,7 @@ public class AuthenticationViaFormActionTests extends AbstractWebflowActionsTest
         val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(
             getAuthenticationSystemSupport(), RegisteredServiceTestUtils.getService(TEST), c);
 
-        val ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
+        val ticketGrantingTicket = getCentralAuthenticationService().getObject().createTicketGrantingTicket(ctx);
         val request = new MockHttpServletRequest();
         val context = new MockRequestContext();
 
@@ -162,7 +163,7 @@ public class AuthenticationViaFormActionTests extends AbstractWebflowActionsTest
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         putCredentialInRequestScope(context, c2);
 
-        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, this.action.execute(context).getId());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, this.action.getObject().execute(context).getId());
     }
 
     @Test
@@ -172,7 +173,7 @@ public class AuthenticationViaFormActionTests extends AbstractWebflowActionsTest
         val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(
             getAuthenticationSystemSupport(), service, c);
 
-        val ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
+        val ticketGrantingTicket = getCentralAuthenticationService().getObject().createTicketGrantingTicket(ctx);
         val request = new MockHttpServletRequest();
         val context = new MockRequestContext();
 
@@ -183,6 +184,6 @@ public class AuthenticationViaFormActionTests extends AbstractWebflowActionsTest
         val c2 = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         putCredentialInRequestScope(context, c2);
-        assertEquals(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, this.action.execute(context).getId());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, this.action.getObject().execute(context).getId());
     }
 }

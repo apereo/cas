@@ -3,6 +3,8 @@ package org.apereo.cas;
 
 import org.apereo.cas.web.flow.decorator.GroovyLoginWebflowDecoratorTests;
 import org.apereo.cas.web.flow.decorator.RestfulLoginWebflowDecoratorTests;
+import org.apereo.cas.web.flow.executor.ClientFlowExecutionRepositoryTests;
+import org.apereo.cas.web.flow.executor.EncryptedTranscoderTests;
 
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
@@ -16,7 +18,9 @@ import org.junit.runner.RunWith;
  */
 @SelectClasses({
     GroovyLoginWebflowDecoratorTests.class,
-    RestfulLoginWebflowDecoratorTests.class
+    RestfulLoginWebflowDecoratorTests.class,
+    ClientFlowExecutionRepositoryTests.class,
+    EncryptedTranscoderTests.class
 })
 @RunWith(JUnitPlatform.class)
 public class AllTestsSuite {

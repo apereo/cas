@@ -11,6 +11,7 @@ import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
+import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
@@ -26,7 +27,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.test.context.TestPropertySource;
 
 import javax.sql.DataSource;
 
@@ -48,6 +48,7 @@ import javax.sql.DataSource;
     CasCoreHttpConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
     CasCoreTicketsConfiguration.class,
+    CasCoreTicketIdGeneratorsConfiguration.class,
     CasPersonDirectoryConfiguration.class,
     CasCoreAuthenticationConfiguration.class,
     CasCoreServicesAuthenticationConfiguration.class,
@@ -56,8 +57,7 @@ import javax.sql.DataSource;
     CasCoreServicesConfiguration.class,
     CasCoreUtilConfiguration.class,
     SurrogateJdbcAuthenticationConfiguration.class
-})
-@TestPropertySource(properties = {
+}, properties = {
     "cas.authn.surrogate.jdbc.surrogateSearchQuery=select count(*) from surrogate_accounts where username=? and surrogateAccount=?",
     "cas.authn.surrogate.jdbc.surrogateAccountQuery=select * from surrogate_accounts where username=?",
     "cas.authn.surrogate.jdbc.autoCommit=true"

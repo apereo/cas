@@ -27,6 +27,7 @@ import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -50,32 +51,32 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
-    CasAcceptableUsagePolicyWebflowConfiguration.class,
     CasCoreTicketsConfiguration.class,
-    CasWebflowContextConfiguration.class,
-    CasCoreWebflowConfiguration.class,
-    CasCoreConfiguration.class,
-    CasCoreLogoutConfiguration.class,
-    CasCoreServicesConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
-    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-    CasCoreHttpConfiguration.class,
     CasCoreWebConfiguration.class,
-    CasPersonDirectoryTestConfiguration.class,
-    CasCoreUtilConfiguration.class,
     CasCookieConfiguration.class,
     CasRegisteredServicesTestConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
     CasAuthenticationEventExecutionPlanTestConfiguration.class,
     CasDefaultServiceTicketIdGeneratorsConfiguration.class,
     CasCoreAuthenticationSupportConfiguration.class,
-    CasCoreAuthenticationPrincipalConfiguration.class
+    CasCoreAuthenticationPrincipalConfiguration.class,
+    CasAcceptableUsagePolicyWebflowConfiguration.class,
+    CasPersonDirectoryTestConfiguration.class,
+    CasCoreUtilConfiguration.class,
+    CasCoreHttpConfiguration.class,
+    CasWebflowContextConfiguration.class,
+    CasCoreWebflowConfiguration.class,
+    CasCoreConfiguration.class,
+    CasCoreLogoutConfiguration.class,
+    CasCoreServicesConfiguration.class,
+    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class
 })
 public abstract class BaseAcceptableUsagePolicyRepositoryTests {
     @Autowired
     @Qualifier("ticketRegistry")
-    protected TicketRegistry ticketRegistry;
+    protected ObjectProvider<TicketRegistry> ticketRegistry;
 
     public abstract AcceptableUsagePolicyRepository getAcceptableUsagePolicyRepository();
 
@@ -94,7 +95,7 @@ public abstract class BaseAcceptableUsagePolicyRepositoryTests {
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         val c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(actualPrincipalId);
         val tgt = new MockTicketGrantingTicket(actualPrincipalId, c, profileAttributes);
-        ticketRegistry.addTicket(tgt);
+        ticketRegistry.getObject().addTicket(tgt);
         val principal = CoreAuthenticationTestUtils.getPrincipal(c.getId(), profileAttributes);
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(principal), context);
         WebUtils.putTicketGrantingTicketInScopes(context, tgt);

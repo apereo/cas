@@ -36,7 +36,6 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
-import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -73,19 +72,19 @@ import static org.junit.jupiter.api.Assertions.*;
     CasDefaultServiceTicketIdGeneratorsConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
     RefreshAutoConfiguration.class
-})
+},
+    properties = {
+        "cas.authn.mfa.yubikey.mongo.databaseName=mfa-trusted",
+        "cas.authn.mfa.yubikey.mongo.host=localhost",
+        "cas.authn.mfa.yubikey.mongo.port=27017",
+        "cas.authn.mfa.yubikey.mongo.dropCollection=true",
+        "cas.authn.mfa.yubikey.mongo.userId=root",
+        "cas.authn.mfa.yubikey.mongo.password=secret",
+        "cas.authn.mfa.yubikey.mongo.authenticationDatabaseName=admin",
+        "cas.authn.mfa.yubikey.clientId=18423",
+        "cas.authn.mfa.yubikey.secretKey=zAIqhjui12mK8x82oe9qzBEb0As="
+    })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@TestPropertySource(properties = {
-    "cas.authn.mfa.yubikey.mongo.databaseName=mfa-trusted",
-    "cas.authn.mfa.yubikey.mongo.host=localhost",
-    "cas.authn.mfa.yubikey.mongo.port=27017",
-    "cas.authn.mfa.yubikey.mongo.dropCollection=true",
-    "cas.authn.mfa.yubikey.mongo.userId=root",
-    "cas.authn.mfa.yubikey.mongo.password=secret",
-    "cas.authn.mfa.yubikey.mongo.authenticationDatabaseName=admin",
-    "cas.authn.mfa.yubikey.clientId=18423",
-    "cas.authn.mfa.yubikey.secretKey=zAIqhjui12mK8x82oe9qzBEb0As="
-})
 public class MongoDbYubiKeyAccountRegistryTests {
     private static final String OTP = "cccccccvlidcnlednilgctgcvcjtivrjidfbdgrefcvi";
     private static final String BAD_TOKEN = "123456";

@@ -1,12 +1,14 @@
 package org.apereo.cas.ticket.registry.queue;
 
-import org.apereo.cas.StringBean;
+import org.apereo.cas.JmsTicketRegistryQueueIdentifier;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
+import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
+import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -17,15 +19,17 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@EnabledIfContinuousIntegration
+@EnabledIfPortOpen(port = 61616)
+@Tag("ActiveMQ")
 public class UpdateTicketMessageQueueCommandTests extends AbstractTicketMessageQueueCommandTests {
 
     @Test
     public void verifyUpdateTicket() {
-        TicketGrantingTicket ticket = new TicketGrantingTicketImpl("TGT", CoreAuthenticationTestUtils.getAuthentication(),
-            NeverExpiresExpirationPolicy.INSTANCE);
-        val cmd = new UpdateTicketMessageQueueCommand(new StringBean(), ticket);
-        cmd.execute(ticketRegistry);
-        ticket = ticketRegistry.getTicket(ticket.getId(), ticket.getClass());
+        var ticket = new TicketGrantingTicketImpl("TGT", CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);
+        val cmd = new UpdateTicketMessageQueueCommand(new JmsTicketRegistryQueueIdentifier(), ticket);
+        cmd.execute(ticketRegistry.getObject());
+        ticket = ticketRegistry.getObject().getTicket(ticket.getId(), ticket.getClass());
         assertNotNull(ticket);
         assertEquals("TGT", ticket.getId());
     }

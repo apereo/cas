@@ -117,7 +117,7 @@ public class AccepttoMultifactorAuthenticationConfiguration {
     private ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer;
 
     @Autowired
-    private FlowBuilderServices flowBuilderServices;
+    private ObjectProvider<FlowBuilderServices> flowBuilderServices;
 
     @Autowired
     @Qualifier("defaultTicketFactory")
@@ -133,7 +133,7 @@ public class AccepttoMultifactorAuthenticationConfiguration {
 
     @Bean
     public FlowDefinitionRegistry mfaAccepttoAuthenticatorFlowRegistry() {
-        val builder = new FlowDefinitionRegistryBuilder(this.applicationContext, this.flowBuilderServices);
+        val builder = new FlowDefinitionRegistryBuilder(this.applicationContext, flowBuilderServices.getObject());
         builder.setBasePath(CasWebflowConstants.BASE_CLASSPATH_WEBFLOW);
         builder.addFlowLocationPattern("/mfa-acceptto/*-webflow.xml");
         return builder.build();
@@ -143,7 +143,7 @@ public class AccepttoMultifactorAuthenticationConfiguration {
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer mfaAccepttoMultifactorWebflowConfigurer() {
-        return new AccepttoMultifactorWebflowConfigurer(flowBuilderServices,
+        return new AccepttoMultifactorWebflowConfigurer(flowBuilderServices.getObject(),
             loginFlowDefinitionRegistry.getIfAvailable(),
             mfaAccepttoAuthenticatorFlowRegistry(), applicationContext, casProperties);
     }

@@ -33,7 +33,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.TestPropertySource;
 import redis.embedded.RedisServer;
 
 /**
@@ -66,12 +65,12 @@ import redis.embedded.RedisServer;
     CasCoreHttpConfiguration.class,
     CasCoreWebConfiguration.class,
     CasRegisteredServicesTestConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class})
-@TestPropertySource(properties = {
-    "cas.authn.throttle.usernameParameter=username",
-    "cas.audit.redis.host=localhost",
-    "cas.audit.redis.port=6385"
-})
+    CasWebApplicationServiceFactoryConfiguration.class},
+    properties = {
+        "cas.authn.throttle.usernameParameter=username",
+        "cas.audit.redis.host=localhost",
+        "cas.audit.redis.port=6385"
+    })
 @Getter
 @EnabledIfContinuousIntegration
 public class RedisThrottledSubmissionHandlerInterceptorAdapterTests extends

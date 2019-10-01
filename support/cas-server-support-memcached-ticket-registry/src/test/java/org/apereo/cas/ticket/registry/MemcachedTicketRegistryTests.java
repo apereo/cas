@@ -4,10 +4,13 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
+import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilSerializationConfiguration;
+import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasOAuthComponentSerializationConfiguration;
 import org.apereo.cas.config.MemcachedTicketRegistryConfiguration;
+import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.mock.MockServiceTicket;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -27,7 +30,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.TestPropertySource;
 
 import java.util.HashMap;
 
@@ -42,21 +44,24 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     MemcachedTicketRegistryConfiguration.class,
     CasOAuthComponentSerializationConfiguration.class,
+    CasWebApplicationServiceFactoryConfiguration.class,
     MemcachedTicketRegistryTests.MemcachedTicketRegistryTestConfiguration.class,
     RefreshAutoConfiguration.class,
     CasCoreHttpConfiguration.class,
+    CasCoreWebConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreUtilSerializationConfiguration.class,
     CasCoreTicketsConfiguration.class,
+    CasCoreTicketIdGeneratorsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class
-})
-@TestPropertySource(properties = {
-    "cas.ticket.registry.memcached.servers=localhost:11211",
-    "cas.ticket.registry.memcached.failureMode=Redistribute",
-    "cas.ticket.registry.memcached.locatorType=ARRAY_MOD",
-    "cas.ticket.registry.memcached.hashAlgorithm=FNV1A_64_HASH",
-    "cas.ticket.registry.memcached.kryoRegistrationRequired=true"
-})
+},
+    properties = {
+        "cas.ticket.registry.memcached.servers=localhost:11211",
+        "cas.ticket.registry.memcached.failureMode=Redistribute",
+        "cas.ticket.registry.memcached.locatorType=ARRAY_MOD",
+        "cas.ticket.registry.memcached.hashAlgorithm=FNV1A_64_HASH",
+        "cas.ticket.registry.memcached.kryoRegistrationRequired=true"
+    })
 @EnabledIfContinuousIntegration
 @Tag("Memcached")
 public class MemcachedTicketRegistryTests extends BaseTicketRegistryTests {

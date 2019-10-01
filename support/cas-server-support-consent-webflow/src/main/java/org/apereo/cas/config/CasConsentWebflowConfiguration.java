@@ -40,7 +40,7 @@ public class CasConsentWebflowConfiguration {
     private ObjectProvider<FlowDefinitionRegistry> loginFlowDefinitionRegistry;
 
     @Autowired
-    private FlowBuilderServices flowBuilderServices;
+    private ObjectProvider<FlowBuilderServices> flowBuilderServices;
 
     @Autowired
     @Qualifier("authenticationServiceSelectionPlan")
@@ -79,7 +79,7 @@ public class CasConsentWebflowConfiguration {
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer consentWebflowConfigurer() {
-        return new ConsentWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry.getIfAvailable(),
+        return new ConsentWebflowConfigurer(flowBuilderServices.getObject(), loginFlowDefinitionRegistry.getIfAvailable(),
             applicationContext, casProperties);
     }
 

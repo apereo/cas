@@ -29,6 +29,7 @@ import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -38,7 +39,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.repository.NoSuchFlowExecutionException;
@@ -77,19 +77,18 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCookieConfiguration.class,
     RefreshAutoConfiguration.class,
     CasCoreServicesConfiguration.class
-})
-@TestPropertySource(properties = "cas.sso.allowMissingServiceParameter=false")
+}, properties = "cas.sso.allowMissingServiceParameter=false")
 public class InitialFlowSetupActionSsoTests {
     @Autowired
     @Qualifier("initialFlowSetupAction")
-    private Action action;
+    private ObjectProvider<Action> action;
 
     @Test
     public void disableFlowIfNoService() {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
-        assertThrows(NoSuchFlowExecutionException.class, () -> this.action.execute(context));
+        assertThrows(NoSuchFlowExecutionException.class, () -> this.action.getObject().execute(context));
     }
 
     @TestConfiguration("CasTestConfiguration")

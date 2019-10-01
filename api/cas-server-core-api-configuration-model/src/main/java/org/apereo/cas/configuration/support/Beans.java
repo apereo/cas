@@ -44,21 +44,6 @@ public class Beans {
     }
 
     /**
-     * New thread pool executor factory bean.
-     *
-     * @param keepAlive the keep alive
-     * @param maxSize   the max size
-     * @return the thread pool executor factory bean
-     */
-    public static ThreadPoolExecutorFactoryBean newThreadPoolExecutorFactoryBean(final long keepAlive,
-                                                                                 final long maxSize) {
-        val bean = new ThreadPoolExecutorFactoryBean();
-        bean.setMaxPoolSize((int) maxSize);
-        bean.setKeepAliveSeconds((int) keepAlive);
-        return bean;
-    }
-
-    /**
      * New attribute repository person attribute dao.
      *
      * @param p the properties

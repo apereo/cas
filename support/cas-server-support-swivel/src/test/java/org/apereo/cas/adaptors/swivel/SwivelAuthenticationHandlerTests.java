@@ -14,6 +14,7 @@ import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
+import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
@@ -43,7 +44,6 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.RequestContextHolder;
 import org.springframework.webflow.test.MockRequestContext;
@@ -70,6 +70,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreUtilConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
     CasCoreTicketsConfiguration.class,
+    CasCoreTicketIdGeneratorsConfiguration.class,
     CasPersonDirectoryTestConfiguration.class,
     CasCoreAuthenticationConfiguration.class,
     CasCoreWebConfiguration.class,
@@ -84,12 +85,12 @@ import static org.junit.jupiter.api.Assertions.*;
     CasThemesConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     SwivelConfiguration.class,
-    SwivelAuthenticationEventExecutionPlanConfiguration.class})
-@TestPropertySource(properties = {
-    "cas.authn.mfa.swivel.swivelUrl=http://localhost:9191",
-    "cas.authn.mfa.swivel.sharedSecret=$ecret",
-    "cas.authn.mfa.swivel.ignoreSslErrors=true"
-})
+    SwivelAuthenticationEventExecutionPlanConfiguration.class},
+    properties = {
+        "cas.authn.mfa.swivel.swivelUrl=http://localhost:9191",
+        "cas.authn.mfa.swivel.sharedSecret=$ecret",
+        "cas.authn.mfa.swivel.ignoreSslErrors=true"
+    })
 public class SwivelAuthenticationHandlerTests {
     @Autowired
     @Qualifier("swivelAuthenticationHandler")

@@ -12,6 +12,7 @@ import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
+import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
@@ -28,7 +29,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -48,6 +48,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreHttpConfiguration.class,
     CasCoreAuditConfiguration.class,
+    CasCoreTicketIdGeneratorsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasPersonDirectoryConfiguration.class,
@@ -58,12 +59,12 @@ import static org.junit.jupiter.api.Assertions.*;
     CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreUtilConfiguration.class,
     PasswordManagementConfiguration.class
-})
-@TestPropertySource(properties = {
-    "cas.authn.pm.json.location=classpath:jsonResourcePassword.json",
-    "cas.authn.pm.enabled=true",
-    "cas.authn.pm.policyPattern=^Test1.+"
-})
+},
+    properties = {
+        "cas.authn.pm.json.location=classpath:jsonResourcePassword.json",
+        "cas.authn.pm.enabled=true",
+        "cas.authn.pm.policyPattern=^Test1.+"
+    })
 public class JsonResourcePasswordManagementServiceTests {
     @Autowired
     @Qualifier("passwordChangeService")

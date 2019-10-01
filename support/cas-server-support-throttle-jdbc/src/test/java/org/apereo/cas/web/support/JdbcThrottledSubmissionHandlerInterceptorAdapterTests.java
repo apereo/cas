@@ -14,6 +14,7 @@ import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
+import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
@@ -29,7 +30,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.TestPropertySource;
 
 /**
  * Unit test for {@link JdbcThrottledSubmissionHandlerInterceptorAdapter}.
@@ -61,9 +61,10 @@ import org.springframework.test.context.TestPropertySource;
     CasCoreHttpConfiguration.class,
     CasSupportJdbcAuditConfiguration.class,
     CasCoreWebConfiguration.class,
+    CasCoreTicketIdGeneratorsConfiguration.class,
     CasRegisteredServicesTestConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class})
-@TestPropertySource(properties = {
+    CasWebApplicationServiceFactoryConfiguration.class
+}, properties = {
     "cas.authn.throttle.usernameParameter=username",
     "cas.authn.throttle.failure.code=AUTHENTICATION_FAILED",
     "cas.audit.jdbc.asynchronous=false"})
