@@ -47,7 +47,7 @@ public class U2FCouchDbConfiguration {
     @Bean
     @RefreshScope
     public CouchDbConnectorFactory u2fCouchDbFactory() {
-        return new CouchDbConnectorFactory(casProperties.getAuthn().getMfa().getU2f().getCouchDb(), objectMapperFactory.getIfAvailable());
+        return new CouchDbConnectorFactory(casProperties.getAuthn().getMfa().getU2f().getCouchDb(), objectMapperFactory.getObject());
     }
 
     @ConditionalOnMissingBean(name = "couchDbU2fDeviceRegistrationRepository")

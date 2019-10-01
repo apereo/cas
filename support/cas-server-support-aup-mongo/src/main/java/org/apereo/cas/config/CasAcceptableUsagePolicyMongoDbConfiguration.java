@@ -49,7 +49,7 @@ public class CasAcceptableUsagePolicyMongoDbConfiguration {
     @Bean
     public AcceptableUsagePolicyRepository acceptableUsagePolicyRepository() {
         val mongo = casProperties.getAcceptableUsagePolicy().getMongo();
-        return new MongoDbAcceptableUsagePolicyRepository(ticketRegistrySupport.getIfAvailable(),
+        return new MongoDbAcceptableUsagePolicyRepository(ticketRegistrySupport.getObject(),
             casProperties.getAcceptableUsagePolicy().getAupAttributeName(),
             mongoAcceptableUsagePolicyTemplate(),
             mongo.getCollection());
