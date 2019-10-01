@@ -2,7 +2,6 @@ package org.apereo.cas.util;
 
 import org.apereo.cas.util.scripting.ScriptingUtils;
 
-import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Test;
@@ -10,6 +9,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -40,8 +40,7 @@ public class ScriptingUtilsTests {
     }
 
     @Test
-    @SneakyThrows
-    void verifyGroovyResourceFileExecution() {
+    void verifyGroovyResourceFileExecution() throws IOException {
         val file = File.createTempFile("test", ".groovy");
         FileUtils.write(file, "def process(String name) { return name }", StandardCharsets.UTF_8);
         val resource = new FileSystemResource(file);
@@ -51,16 +50,27 @@ public class ScriptingUtilsTests {
     }
 
     @Test
-    @SneakyThrows
-    void verifyGroovyResourceClasspathExecution() {
-        try {
-            val resource = new ClassPathResource("ScriptingUtilsTestGroovyScript.groovy");
+    void verifyGroovyResourceFileNotFound() {
+        val resource = new FileSystemResource(new File("missing.groovy"));
 
-            val result = ScriptingUtils.executeGroovyScript(resource, "process", String.class, "casuser");
-            assertEquals("casuser", result);
-        } catch (final Exception e) {
-            throw new AssertionError(e.getMessage(), e);
-        }
+        val result = ScriptingUtils.executeGroovyScript(resource, "process", String.class, "casuser");
+        assertNull(result);
+    }
+
+    @Test
+    void verifyGroovyResourceClasspathExecution() {
+        val resource = new ClassPathResource("ScriptingUtilsTestGroovyScript.groovy");
+
+        val result = ScriptingUtils.executeGroovyScript(resource, "process", String.class, "casuser");
+        assertEquals("casuser", result);
+    }
+
+    @Test
+    void verifyGroovyResourceClasspathNotFound() {
+        val resource = new ClassPathResource("missing.groovy");
+
+        val result = ScriptingUtils.executeGroovyScript(resource, "process", String.class, "casuser");
+        assertNull(result);
     }
 
     @Test
@@ -70,8 +80,7 @@ public class ScriptingUtilsTests {
     }
 
     @Test
-    @SneakyThrows
-    void verifyResourceScriptEngineExecution() {
+    void verifyResourceScriptEngineExecution() throws IOException {
         val file = File.createTempFile("test", ".groovy");
         FileUtils.write(file, "def run(String name) { return name }", StandardCharsets.UTF_8);
 
