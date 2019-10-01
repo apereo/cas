@@ -61,7 +61,7 @@ public class GitServiceRegistry extends AbstractServiceRegistry {
     @Override
     public RegisteredService save(final RegisteredService registeredService) {
         if (registeredService.getId() == RegisteredService.INITIAL_IDENTIFIER_VALUE) {
-            LOGGER.debug("Service id not set. Calculating id based on system time...");
+            LOGGER.trace("Service id not set. Calculating id based on system time...");
             registeredService.setId(System.currentTimeMillis());
         }
 
@@ -75,12 +75,16 @@ public class GitServiceRegistry extends AbstractServiceRegistry {
             });
 
         invokeServiceRegistryListenerPreSave(registeredService);
+        commitAndPush(message);
+        load();
+        return registeredService;
+    }
+
+    private void commitAndPush(final String message) {
         this.gitRepository.commitAll(message);
         if (this.pushChanges) {
             this.gitRepository.push();
         }
-        load();
-        return registeredService;
     }
 
     @SneakyThrows
@@ -90,10 +94,7 @@ public class GitServiceRegistry extends AbstractServiceRegistry {
         if (file.isPresent()) {
             val message = "Deleted registered service " + registeredService.getName();
             FileUtils.forceDelete(file.get());
-            this.gitRepository.commitAll(message);
-            if (this.pushChanges) {
-                this.gitRepository.push();
-            }
+            commitAndPush(message);
             load();
             return true;
         }
