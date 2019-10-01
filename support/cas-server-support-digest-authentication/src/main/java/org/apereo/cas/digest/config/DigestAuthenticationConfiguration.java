@@ -72,9 +72,9 @@ public class DigestAuthenticationConfiguration {
     @Autowired
     @Bean
     public Action digestAuthenticationAction(@Qualifier("defaultDigestCredentialRetriever") final DigestHashedCredentialRetriever defaultDigestCredentialRetriever) {
-        return new DigestAuthenticationAction(initialAuthenticationAttemptWebflowEventResolver.getIfAvailable(),
-            serviceTicketRequestWebflowEventResolver.getIfAvailable(),
-            adaptiveAuthenticationPolicy.getIfAvailable(),
+        return new DigestAuthenticationAction(initialAuthenticationAttemptWebflowEventResolver.getObject(),
+            serviceTicketRequestWebflowEventResolver.getObject(),
+            adaptiveAuthenticationPolicy.getObject(),
             casProperties.getAuthn().getDigest().getRealm(),
             casProperties.getAuthn().getDigest().getAuthenticationMethod(),
             defaultDigestCredentialRetriever);
