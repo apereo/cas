@@ -1,6 +1,8 @@
 package org.apereo.cas.ticket.registry;
 
+import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
+import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.RedisTicketRegistryConfiguration;
@@ -26,10 +28,13 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
     RedisTicketRegistryConfiguration.class,
     RefreshAutoConfiguration.class,
     CasCoreWebConfiguration.class,
+    CasCoreHttpConfiguration.class,
     AopAutoConfiguration.class,
     CasCoreTicketsConfiguration.class,
+    CasCoreTicketIdGeneratorsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class})
+    CasWebApplicationServiceFactoryConfiguration.class
+})
 @EnableTransactionManagement(proxyTargetClass = true)
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 public abstract class BaseRedisSentinelTicketRegistryTests extends BaseTicketRegistryTests {
