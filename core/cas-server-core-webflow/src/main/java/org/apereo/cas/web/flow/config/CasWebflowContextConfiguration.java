@@ -109,7 +109,7 @@ public class CasWebflowContextConfiguration {
     @Bean
     @Lazy(false)
     public ViewFactoryCreator viewFactoryCreator() {
-        val viewResolver = registeredServiceViewResolver.getIfAvailable();
+        val viewResolver = registeredServiceViewResolver.getObject();
         val resolver = new MvcViewFactoryCreator();
         if (viewResolver != null) {
             resolver.setViewResolvers(CollectionUtils.wrap(viewResolver));
@@ -193,7 +193,7 @@ public class CasWebflowContextConfiguration {
         val interceptors = new ArrayList<Object>();
         interceptors.add(localeChangeInterceptor());
         themeChangeInterceptor.ifAvailable(interceptors::add);
-        val plan = authenticationThrottlingExecutionPlan.getIfAvailable();
+        val plan = authenticationThrottlingExecutionPlan.getObject();
         if (plan != null) {
             interceptors.addAll(plan.getAuthenticationThrottleInterceptors());
         }
@@ -233,7 +233,7 @@ public class CasWebflowContextConfiguration {
     @Lazy(false)
     public FlowExecutor logoutFlowExecutor() {
         val factory = new WebflowExecutorFactory(casProperties.getWebflow(),
-            logoutFlowRegistry(), this.webflowCipherExecutor.getIfAvailable(), FLOW_EXECUTION_LISTENERS);
+            logoutFlowRegistry(), this.webflowCipherExecutor.getObject(), FLOW_EXECUTION_LISTENERS);
         return factory.build();
     }
 
@@ -242,7 +242,7 @@ public class CasWebflowContextConfiguration {
     @Lazy(false)
     public FlowExecutor loginFlowExecutor() {
         val factory = new WebflowExecutorFactory(casProperties.getWebflow(),
-            loginFlowRegistry(), this.webflowCipherExecutor.getIfAvailable(),
+            loginFlowRegistry(), this.webflowCipherExecutor.getObject(),
             FLOW_EXECUTION_LISTENERS);
 
         return factory.build();
