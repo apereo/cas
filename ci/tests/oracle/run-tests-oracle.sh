@@ -21,7 +21,7 @@ fi
 prepCommand="echo 'Running command...'; "
 gradle="./gradlew $@"
 gradleBuild=""
-gradleBuildOptions="--stacktrace --build-cache --configure-on-demand --no-daemon -DtestCategoryType=ORACLE "
+gradleBuildOptions="--build-cache --configure-on-demand --no-daemon -DtestCategoryType=ORACLE "
 
 echo -e "***********************************************"
 echo -e "Gradle build started at `date`"
