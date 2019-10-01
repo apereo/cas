@@ -28,7 +28,6 @@ import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfigurati
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.web.servlet.ThemeResolver;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.RequestContext;
@@ -58,8 +57,7 @@ import static org.mockito.Mockito.*;
     CasCoreUtilConfiguration.class,
     ThymeleafAutoConfiguration.class,
     RefreshAutoConfiguration.class
-})
-@TestPropertySource(properties = "cas.theme.defaultThemeName=test")
+}, properties = "cas.theme.defaultThemeName=test")
 public class ServiceThemeResolverTests {
     private static final String MOZILLA = "Mozilla";
     private static final String DEFAULT_THEME_NAME = "test";

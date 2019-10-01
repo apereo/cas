@@ -10,7 +10,6 @@ import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.autoconfigure.mail.MailSenderValidatorAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -25,9 +24,8 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreUtilConfiguration.class,
     MailSenderAutoConfiguration.class,
     MailSenderValidatorAutoConfiguration.class
-})
+}, properties = "cas.smsProvider.groovy.location=classpath:/GroovySmsSender.groovy")
 @Tag("Groovy")
-@TestPropertySource(properties = "cas.smsProvider.groovy.location=classpath:/GroovySmsSender.groovy")
 public class GroovySmsSenderTests {
     @Autowired
     @Qualifier("communicationsManager")

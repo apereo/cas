@@ -27,7 +27,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.TestPropertySource;
 
 import javax.sql.DataSource;
 
@@ -60,8 +59,7 @@ import javax.sql.DataSource;
     JdbcPasswordManagementConfiguration.class,
     JdbcPasswordHistoryManagementConfiguration.class,
     PasswordManagementConfiguration.class
-})
-@TestPropertySource(properties = {
+}, properties = {
     "cas.authn.pm.enabled=true",
     "cas.authn.pm.history.enabled=true",
     "cas.authn.pm.jdbc.autoCommit=true",

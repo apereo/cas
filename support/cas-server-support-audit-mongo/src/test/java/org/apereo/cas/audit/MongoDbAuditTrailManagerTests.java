@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.TestPropertySource;
 
 /**
  * This is {@link MongoDbAuditTrailManagerTests}.
@@ -30,17 +29,17 @@ import org.springframework.test.context.TestPropertySource;
     CasCoreUtilConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
     RefreshAutoConfiguration.class,
-    CasCoreWebConfiguration.class})
-@TestPropertySource(properties = {
-    "cas.audit.mongo.host=localhost",
-    "cas.audit.mongo.port=27017",
-    "cas.audit.mongo.dropCollection=true",
-    "cas.audit.mongo.asynchronous=false",
-    "cas.audit.mongo.userId=root",
-    "cas.audit.mongo.password=secret",
-    "cas.audit.mongo.databaseName=audit",
-    "cas.audit.mongo.authenticationDatabaseName=admin"
-})
+    CasCoreWebConfiguration.class},
+    properties = {
+        "cas.audit.mongo.host=localhost",
+        "cas.audit.mongo.port=27017",
+        "cas.audit.mongo.dropCollection=true",
+        "cas.audit.mongo.asynchronous=false",
+        "cas.audit.mongo.userId=root",
+        "cas.audit.mongo.password=secret",
+        "cas.audit.mongo.databaseName=audit",
+        "cas.audit.mongo.authenticationDatabaseName=admin"
+    })
 @Tag("MongoDb")
 @Getter
 @EnabledIfPortOpen(port = 27017)

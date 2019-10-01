@@ -53,7 +53,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import java.io.IOException;
@@ -104,16 +103,16 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     CoreSamlConfiguration.class,
     CasPersonDirectoryConfiguration.class,
-    CasCoreUtilConfiguration.class})
+    CasCoreUtilConfiguration.class},
+    properties = {
+        "cas.authn.samlIdp.metadata.location=classpath:",
+        "cas.authn.samlIdp.metadata.couchDb.dbName=saml_resolver",
+        "cas.authn.samlIdp.metadata.couchDb.username=cas",
+        "cas.authn.samlIdp.metadata.couchdb.password=password"
+    })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement(proxyTargetClass = true)
 @Slf4j
-@TestPropertySource(properties = {
-    "cas.authn.samlIdp.metadata.location=classpath:",
-    "cas.authn.samlIdp.metadata.couchDb.dbName=saml_resolver",
-    "cas.authn.samlIdp.metadata.couchDb.username=cas",
-    "cas.authn.samlIdp.metadata.couchdb.password=password"
-})
 public class CouchDbSamlRegisteredServiceMetadataResolverTests {
     @Autowired
     @Qualifier("couchDbSamlRegisteredServiceMetadataResolver")

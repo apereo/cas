@@ -51,6 +51,9 @@ import org.springframework.test.annotation.DirtiesContext;
  * @since 6.0.0
  */
 @SpringBootTest(classes = {
+    AopAutoConfiguration.class,
+    RefreshAutoConfiguration.class,
+    CasCookieConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasAuthenticationEventExecutionPlanTestConfiguration.class,
     AbstractCentralAuthenticationServiceTests.CasTestConfiguration.class,
@@ -67,23 +70,20 @@ import org.springframework.test.annotation.DirtiesContext;
     CasCoreAuthenticationSupportConfiguration.class,
     CasCoreAuthenticationHandlersConfiguration.class,
     CasCoreHttpConfiguration.class,
-    CasCoreConfiguration.class,
     CasRegisteredServicesTestConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
     CasCoreWebConfiguration.class,
+    CasWebflowContextConfiguration.class,
+    CasCoreWebflowConfiguration.class,
     CasCoreLogoutConfiguration.class,
-    CasCookieConfiguration.class,
-    RefreshAutoConfiguration.class,
     CasCoreAuthenticationConfiguration.class,
-    AopAutoConfiguration.class,
     CasCoreMultifactorAuthenticationConfiguration.class,
     CasMultifactorAuthenticationWebflowConfiguration.class,
     CasPersonDirectoryTestConfiguration.class,
-    CasWebflowContextConfiguration.class,
-    CasCoreWebflowConfiguration.class,
-    CasCoreValidationConfiguration.class
+    CasCoreValidationConfiguration.class,
+    CasCoreConfiguration.class
 })
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @DirtiesContext

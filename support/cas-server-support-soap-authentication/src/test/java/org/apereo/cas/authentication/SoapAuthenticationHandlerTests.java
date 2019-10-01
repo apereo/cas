@@ -16,7 +16,6 @@ import org.springframework.boot.autoconfigure.web.servlet.ServletWebServerFactor
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -35,8 +34,8 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreUtilConfiguration.class,
     SoapAuthenticationConfiguration.class
 },
+    properties = {"server.port=8080", "cas.authn.soap.url=http://localhost:8080/ws/users"},
     webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-@TestPropertySource(properties = {"server.port=8080", "cas.authn.soap.url=http://localhost:8080/ws/users"})
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class SoapAuthenticationHandlerTests {
     @Autowired

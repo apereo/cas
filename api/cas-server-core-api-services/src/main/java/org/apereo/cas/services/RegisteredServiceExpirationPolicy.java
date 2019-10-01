@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import java.io.Serializable;
@@ -43,4 +44,7 @@ public interface RegisteredServiceExpirationPolicy extends Serializable {
      * @return true/false
      */
     boolean isDeleteWhenExpired();
+
+    @JsonIgnore
+    boolean isExpired();
 }

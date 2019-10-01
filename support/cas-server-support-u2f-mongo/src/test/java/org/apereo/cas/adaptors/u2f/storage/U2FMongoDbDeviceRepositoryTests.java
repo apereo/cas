@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.TestPropertySource;
 
 /**
  * This is {@link U2FMongoDbDeviceRepositoryTests}.
@@ -23,15 +22,15 @@ import org.springframework.test.context.TestPropertySource;
     U2FMongoDbConfiguration.class,
     U2FConfiguration.class,
     AopAutoConfiguration.class,
-    RefreshAutoConfiguration.class})
-@TestPropertySource(properties = {
-    "cas.authn.mfa.u2f.mongo.databaseName=mfa-trusted",
-    "cas.authn.mfa.u2f.mongo.host=localhost",
-    "cas.authn.mfa.u2f.mongo.port=27017",
-    "cas.authn.mfa.u2f.mongo.userId=root",
-    "cas.authn.mfa.u2f.mongo.password=secret",
-    "cas.authn.mfa.u2f.mongo.authenticationDatabaseName=admin",
-    "cas.authn.mfa.u2f.mongo.dropCollection=true"
+    RefreshAutoConfiguration.class},
+    properties = {
+        "cas.authn.mfa.u2f.mongo.databaseName=mfa-trusted",
+        "cas.authn.mfa.u2f.mongo.host=localhost",
+        "cas.authn.mfa.u2f.mongo.port=27017",
+        "cas.authn.mfa.u2f.mongo.userId=root",
+        "cas.authn.mfa.u2f.mongo.password=secret",
+        "cas.authn.mfa.u2f.mongo.authenticationDatabaseName=admin",
+        "cas.authn.mfa.u2f.mongo.dropCollection=true"
     })
 @Getter
 public class U2FMongoDbDeviceRepositoryTests extends AbstractU2FDeviceRepositoryTests {

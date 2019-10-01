@@ -43,7 +43,6 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.test.context.TestPropertySource;
 
 import java.nio.charset.StandardCharsets;
 
@@ -81,14 +80,13 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreAuthenticationHandlersConfiguration.class,
     CasCoreHttpConfiguration.class,
     CasCoreAuthenticationConfiguration.class
-})
-@EnableAspectJAutoProxy(proxyTargetClass = true)
-@EnableScheduling
-@TestPropertySource(properties = {
+}, properties = {
     "cas.server.name=http://localhost:8281",
     "cas.server.prefix=${cas.server.name}/cas",
     "cas.client.validatorType=CAS10"
 })
+@EnableAspectJAutoProxy(proxyTargetClass = true)
+@EnableScheduling
 public class TokenWebApplicationServiceResponseBuilderTests {
     @Autowired
     @Qualifier("webApplicationServiceResponseBuilder")

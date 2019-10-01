@@ -257,7 +257,7 @@ public class LdapUtils {
         try (val connection = createConnection(connectionFactory)) {
             val request = LdapUtils.newLdaptiveSearchRequest(baseDn, filter, binaryAttributes, returnAttributes);
             request.setReferralHandler(new SearchReferralHandler());
-            if (pageSize <=0) {
+            if (pageSize <= 0) {
                 val searchOperation = new SearchOperation(connection);
                 return searchOperation.execute(request);
             }

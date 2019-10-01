@@ -33,7 +33,6 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -97,7 +96,7 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
         authAttributes.put("testSamlAttribute", List.of("value"));
 
         val primary = CoreAuthenticationTestUtils.getAuthentication(principal, authAttributes);
-        val assertion = new DefaultAssertionBuilder(primary).with(Collections.singletonList(primary)).with(
+        val assertion = new DefaultAssertionBuilder(primary).with(List.of(primary)).with(
             CoreAuthenticationTestUtils.getService()).with(true).build();
         model.put("assertion", assertion);
 
@@ -135,7 +134,7 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
 
         val primary = CoreAuthenticationTestUtils.getAuthentication(principal, authAttributes);
         val assertion = new DefaultAssertionBuilder(primary)
-            .with(Collections.singletonList(primary))
+            .with(List.of(primary))
             .with(CoreAuthenticationTestUtils.getService())
             .with(true)
             .build();
@@ -168,7 +167,7 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
         val primary = CoreAuthenticationTestUtils.getAuthentication(principal, authnAttributes);
 
         val assertion = new DefaultAssertionBuilder(primary)
-            .with(Collections.singletonList(primary))
+            .with(List.of(primary))
             .with(CoreAuthenticationTestUtils.getService())
             .with(true)
             .build();
