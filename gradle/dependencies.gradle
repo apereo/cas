@@ -358,9 +358,6 @@ ext.libraries = [
             exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
             force = true
         },
-        cassecurityfilter       : dependencies.create("org.apereo.cas:cas-server-security-filter:$casSecurityFilterVersion") {
-            force = true
-        },
         commons                 : [
                 dependencies.create("commons-io:commons-io:$commonsIoVersion") {
                     force = true
