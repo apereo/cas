@@ -23,7 +23,6 @@ import org.apereo.cas.authentication.principal.NullPrincipalTests;
 import org.apereo.cas.authentication.principal.RememberMeAuthenticationMetaDataPopulatorTests;
 import org.apereo.cas.authentication.principal.SimplePrincipalFactoryTests;
 import org.apereo.cas.authentication.principal.SimplePrincipalTests;
-import org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesRepositoryTests;
 import org.apereo.cas.util.TrustedProxyAuthenticationTrustStoreSslSocketFactoryTests;
 
 import org.junit.platform.runner.JUnitPlatform;
@@ -39,7 +38,6 @@ import org.junit.runner.RunWith;
 @SelectClasses({
     TrustedProxyAuthenticationTrustStoreSslSocketFactoryTests.class,
     SimplePrincipalTests.class,
-    CachingPrincipalAttributesRepositoryTests.class,
     ChainingPrincipalResolverTests.class,
     NullPrincipalTests.class,
     SimplePrincipalFactoryTests.class,

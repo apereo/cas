@@ -1,6 +1,7 @@
 package org.apereo.cas.trusted.authentication.storage;
 
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
+import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCouchDbCoreConfiguration;
 import org.apereo.cas.config.CouchDbMultifactorAuthenticationTrustConfiguration;
 import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
@@ -33,6 +34,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
     CouchDbMultifactorAuthenticationTrustConfiguration.class,
     CasCouchDbCoreConfiguration.class,
     CasCoreAuditConfiguration.class,
+    CasCoreServicesConfiguration.class,
     MultifactorAuthnTrustWebflowConfiguration.class,
     MultifactorAuthnTrustConfiguration.class,
     MultifactorAuthnTrustedDeviceFingerprintConfiguration.class},

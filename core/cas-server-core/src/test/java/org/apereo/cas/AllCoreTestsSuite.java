@@ -1,5 +1,7 @@
 package org.apereo.cas;
 
+import org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesRepositoryTests;
+
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
 import org.junit.runner.RunWith;
@@ -15,7 +17,8 @@ import org.junit.runner.RunWith;
     DefaultCentralAuthenticationServiceTests.class,
     DefaultCentralAuthenticationServiceMockitoTests.class,
     DefaultCasAttributeEncoderTests.class,
-    DefaultPrincipalAttributesRepositoryTests.class
+    DefaultPrincipalAttributesRepositoryTests.class,
+    CachingPrincipalAttributesRepositoryTests.class
 })
 @RunWith(JUnitPlatform.class)
 public class AllCoreTestsSuite {
