@@ -1,6 +1,6 @@
 #!/bin/bash
 
-prepCommand="echo 'Running command...'; "
+
 gradle="./gradlew $@"
 gradleBuild=""
 gradleBuildOptions="--build-cache --configure-on-demand --no-daemon -DtestCategoryType=SIMPLE "
@@ -25,7 +25,7 @@ if [ -z "$gradleBuild" ]; then
 else
     tasks="$gradle $gradleBuildOptions $gradleBuild"
     echo -e "***************************************************************************************"
-    echo $prepCommand
+
     echo $tasks
     echo -e "***************************************************************************************"
 
@@ -33,7 +33,7 @@ else
     eval $waitloop
     waitRetVal=$?
 
-    eval $prepCommand
+
     eval $tasks
     retVal=$?
 
