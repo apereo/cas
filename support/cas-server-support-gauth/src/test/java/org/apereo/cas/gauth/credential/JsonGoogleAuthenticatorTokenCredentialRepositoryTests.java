@@ -19,6 +19,7 @@ import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.otp.config.OneTimeTokenAuthenticationConfiguration;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.web.config.CasCookieConfiguration;
+import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
@@ -61,7 +62,7 @@ import java.io.File;
     CasCoreHttpConfiguration.class,
     CasCoreConfiguration.class,
     CasCoreWebConfiguration.class,
-    CasCoreWebConfiguration.class,
+    CasCoreWebflowConfiguration.class,
     CasWebflowContextConfiguration.class,
     CasCoreUtilConfiguration.class
     },
