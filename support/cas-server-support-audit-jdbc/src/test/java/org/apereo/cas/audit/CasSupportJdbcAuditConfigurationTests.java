@@ -8,6 +8,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 
 import lombok.Getter;
 import org.apereo.inspektr.audit.AuditTrailManager;
+import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -30,6 +31,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 }, properties = "cas.audit.jdbc.asynchronous=false")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Getter
+@Tag("JDBC")
 public class CasSupportJdbcAuditConfigurationTests extends BaseAuditConfigurationTests {
 
     @Autowired

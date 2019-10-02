@@ -1,26 +1,34 @@
 #!/bin/bash
+source ./ci/functions.sh
 
-echo -e "Checking configuration property classes for proper annotations\n"
-grep -L -rnw ./api/cas-server-core-api-configuration-model --include=*Properties.java -e '@RequiresModule' | grep -v "CasConfigurationProperties.java"
-resultVal=$?
-if [ $resultVal == 1 ]; then
-    echo -e "\nConfiguration property classes are all tagged with the correct required module"
+runBuild=false
+echo "Reviewing changes that might affect the Gradle build..."
+currentChangeSetAffectsTests
+retval=$?
+if [ "$retval" == 0 ]
+then
+    echo "Found changes that require the build to run test cases."
+    runBuild=true
 else
-    echo -e "\nSome configuration property classes do not have the @RequiresModule annotation"
-    exit 1
+    echo "Changes do NOT affect project test cases."
+    runBuild=false
+fi
+
+if [ "$runBuild" = false ]; then
+    exit 0
 fi
 
 gradle="./gradlew $@"
 gradleBuild=""
-gradleBuildOptions="--build-cache --configure-on-demand --no-daemon "
+gradleBuildOptions="--build-cache --configure-on-demand --no-daemon -DtestCategoryType=JDBC "
 
 echo -e "***********************************************"
 echo -e "Gradle build started at `date`"
 echo -e "***********************************************"
 
-gradleBuild="$gradleBuild :api:cas-server-core-api-configuration-model:build \
-     -x check -x test -x javadoc \
-     -DskipGradleLint=true "
+gradleBuild="$gradleBuild testJDBC jacocoRootReport -x test -x javadoc -x check \
+    -DskipGradleLint=true  --parallel \
+    -DskipNestedConfigMetadataGen=true "
 
 if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[show streams]"* ]]; then
     gradleBuild="$gradleBuild -DshowStandardStreams=true "
@@ -39,12 +47,14 @@ if [ -z "$gradleBuild" ]; then
 else
     tasks="$gradle $gradleBuildOptions $gradleBuild"
     echo -e "***************************************************************************************"
+
     echo $tasks
     echo -e "***************************************************************************************"
 
     waitloop="while sleep 9m; do echo -e '\n=====[ Gradle build is still running ]====='; done &"
     eval $waitloop
     waitRetVal=$?
+
 
     eval $tasks
     retVal=$?
@@ -54,8 +64,9 @@ else
     echo -e "***************************************************************************************"
 
     if [ $retVal == 0 ]; then
+        echo "Uploading test coverage results..."
+        bash <(curl -s https://codecov.io/bash)
         echo "Gradle build finished successfully."
-        exit 0
     else
         echo "Gradle build did NOT finish successfully."
         exit $retVal

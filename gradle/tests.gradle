@@ -248,11 +248,20 @@ if (hasTestsOfCategory(project, "SAML")) {
     }
 }
 
+if (hasTestsOfCategory(project, "JDBC")) {
+    task testJDBC(type: Test) {
+        enabled = shouldTest(project, "JDBC")
+        useJUnitPlatform {
+            includeTags "JDBC"
+        }
+    }
+}
+
 test {
     useJUnitPlatform {
         excludeTags "Cassandra", "CosmosDb", "Couchbase", "DynamoDb",
                 "FileSystem", "Ignite", "InfluxDb", "CouchDb",
-                "Ldap", "Mail", "MariaDb", "Memcached",
+                "Ldap", "Mail", "MariaDb", "Memcached", "JDBC",
                 "MongoDb", "MsSqlServer", "MySQL", "Postgres", "Redis",
                 "Radius", "AmazonWebServices", "RestfulApi", "Groovy",
                 "OAuth", "OIDC", "SAML", "UMA", "Oracle", "ActiveMQ"

@@ -23,7 +23,7 @@ if [ "$runBuild" = false ]; then
     exit 0
 fi
 
-prepCommand="echo 'Running command...'; "
+
 gradle="./gradlew $@"
 gradleBuild=""
 gradleBuildOptions="--build-cache --configure-on-demand --no-daemon "
@@ -52,7 +52,7 @@ fi
 
 tasks="$gradle $gradleBuildOptions $gradleBuild"
 echo -e "***************************************************************************************"
-echo $prepCommand
+
 echo $tasks
 echo -e "***************************************************************************************"
 
@@ -60,7 +60,7 @@ waitloop="while sleep 9m; do echo -e '\n=====[ Gradle build is still running ]==
 eval $waitloop
 waitRetVal=$?
 
-eval $prepCommand
+
 eval $tasks
 retVal=$?
 
