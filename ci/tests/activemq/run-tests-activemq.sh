@@ -18,10 +18,10 @@ if [ "$runBuild" = false ]; then
     exit 0
 fi
 
-prepCommand="echo 'Running command...'; "
+
 gradle="./gradlew $@"
 gradleBuild=""
-gradleBuildOptions="--stacktrace --build-cache --configure-on-demand --no-daemon -DtestCategoryType=JMS "
+gradleBuildOptions="--build-cache --configure-on-demand --no-daemon -DtestCategoryType=JMS "
 
 echo -e "***********************************************"
 echo -e "Gradle build started at `date`"
@@ -29,7 +29,7 @@ echo -e "***********************************************"
 
 ./ci/tests/activemq/run-activemq-server.sh
 
-gradleBuild="$gradleBuild testJMS jacocoRootReport -x test -x javadoc -x check \
+gradleBuild="$gradleBuild testActiveMQ jacocoRootReport -x test -x javadoc -x check \
     -DskipGradleLint=true --parallel \
     -DskipNestedConfigMetadataGen=true "
 
@@ -50,7 +50,7 @@ if [ -z "$gradleBuild" ]; then
 else
     tasks="$gradle $gradleBuildOptions $gradleBuild"
     echo -e "***************************************************************************************"
-    echo $prepCommand
+
     echo $tasks
     echo -e "***************************************************************************************"
 
@@ -58,7 +58,7 @@ else
     eval $waitloop
     waitRetVal=$?
 
-    eval $prepCommand
+
     eval $tasks
     retVal=$?
 

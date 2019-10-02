@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -48,6 +49,7 @@ public class GitServiceRegistryConfiguration {
     private ObjectProvider<Collection<ServiceRegistryListener>> serviceRegistryListeners;
 
     @Bean
+    @RefreshScope
     @ConditionalOnMissingBean(name = "gitRepositoryInstance")
     public GitRepository gitRepositoryInstance() {
         val registry = casProperties.getServiceRegistry().getGit();
@@ -60,6 +62,7 @@ public class GitServiceRegistryConfiguration {
     }
 
     @Bean
+    @RefreshScope
     public ServiceRegistry gitServiceRegistry() {
         val registry = casProperties.getServiceRegistry().getGit();
         return new GitServiceRegistry(applicationContext,

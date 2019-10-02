@@ -163,6 +163,9 @@ jobs:
       script: ./ci/tests/filesystem/run-tests-filesystem.sh
       name: "FileSystem Tests"
     - stage: test
+      script: ./ci/tests/jdbc/run-tests-jdbc.sh
+      name: "JDBC Tests"
+    - stage: test
       script: ./ci/tests/ignite/run-tests-ignite.sh
       name: "Apache Ignite Tests"
     - stage: test
@@ -214,8 +217,8 @@ jobs:
       script: ./ci/tests/redis/run-tests-redis.sh
       name: "Redis Tests"
     - stage: test
-      script: ./ci/tests/redis/run-tests-jms.sh
-      name: "JMS Tests"
+      script: ./ci/tests/activemq/run-tests-activemq.sh
+      name: "ActiveMQ Tests"
       ############################################
     - stage: finalize
       if: NOT (head_branch =~ env(DEPENDENCY_BOT_BRANCH) and type = pull_request)
