@@ -28,8 +28,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
  * @since 6.0.0
  */
 @Tag("Ldap")
-@SpringBootTest(
-    classes = RefreshAutoConfiguration.class,
+@SpringBootTest(classes = RefreshAutoConfiguration.class,
     properties = {
         "cas.monitor.endpoints.ldap.ldapUrl=ldap://localhost:10389",
         "cas.monitor.endpoints.ldap.useSsl=false",

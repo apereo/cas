@@ -77,7 +77,6 @@ import org.springframework.data.mongodb.core.MongoTemplate;
     RefreshAutoConfiguration.class,
     AopAutoConfiguration.class,
     CasCoreAuthenticationConfiguration.class,
-    CasCoreServicesAuthenticationConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
     CasCoreLogoutConfiguration.class,

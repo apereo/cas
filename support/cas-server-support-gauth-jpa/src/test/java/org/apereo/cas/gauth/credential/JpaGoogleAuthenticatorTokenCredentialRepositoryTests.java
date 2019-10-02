@@ -81,8 +81,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
     CasMultifactorAuthenticationWebflowConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     AopAutoConfiguration.class,
-    RefreshAutoConfiguration.class,
-    CasCoreWebConfiguration.class
+    RefreshAutoConfiguration.class
 },
     properties = "cas.authn.mfa.gauth.crypto.enabled=false")
 @EnableTransactionManagement(proxyTargetClass = true)
