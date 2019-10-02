@@ -18,7 +18,7 @@ if [ "$runBuild" = false ]; then
     exit 0
 fi
 
-prepCommand="echo 'Running command...'; "
+
 gradle="./gradlew $@"
 gradleBuild=""
 gradleBuildOptions="--build-cache --configure-on-demand --no-daemon -DtestCategoryType=IGNITE "
@@ -48,7 +48,7 @@ if [ -z "$gradleBuild" ]; then
 else
     tasks="$gradle $gradleBuildOptions $gradleBuild"
     echo -e "***************************************************************************************"
-    echo $prepCommand
+
     echo $tasks
     echo -e "***************************************************************************************"
 
@@ -56,7 +56,7 @@ else
     eval $waitloop
     waitRetVal=$?
 
-    eval $prepCommand
+
     eval $tasks
     retVal=$?
 

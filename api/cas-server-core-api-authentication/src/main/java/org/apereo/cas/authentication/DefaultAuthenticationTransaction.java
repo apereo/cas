@@ -81,7 +81,7 @@ public class DefaultAuthenticationTransaction implements AuthenticationTransacti
      * @return the credential
      */
     public Optional<Credential> getPrimaryCredential() {
-        return credentials.stream().findFirst();
+        return Objects.requireNonNull(credentials).stream().findFirst();
     }
 
     /**
@@ -91,7 +91,7 @@ public class DefaultAuthenticationTransaction implements AuthenticationTransacti
      * @return true if this AuthenticationTransaction contains a credential of the specified type
      */
     public boolean hasCredentialOfType(final Class<? extends Credential> type) {
-        return credentials.stream().anyMatch(type::isInstance);
+        return Objects.requireNonNull(credentials).stream().anyMatch(type::isInstance);
     }
 }
 

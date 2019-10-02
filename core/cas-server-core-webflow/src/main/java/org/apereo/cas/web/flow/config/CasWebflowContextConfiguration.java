@@ -109,7 +109,7 @@ public class CasWebflowContextConfiguration {
     @Bean
     @Lazy(false)
     public ViewFactoryCreator viewFactoryCreator() {
-        val viewResolver = registeredServiceViewResolver.getObject();
+        val viewResolver = registeredServiceViewResolver.getIfAvailable();
         val resolver = new MvcViewFactoryCreator();
         if (viewResolver != null) {
             resolver.setViewResolvers(CollectionUtils.wrap(viewResolver));

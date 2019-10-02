@@ -10,7 +10,6 @@ else
     exit 1
 fi
 
-prepCommand="echo 'Running command...'; "
 gradle="./gradlew $@"
 gradleBuild=""
 gradleBuildOptions="--build-cache --configure-on-demand --no-daemon "
@@ -47,7 +46,6 @@ else
     eval $waitloop
     waitRetVal=$?
 
-    eval $prepCommand
     eval $tasks
     retVal=$?
 
