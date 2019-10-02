@@ -45,11 +45,15 @@ public class DefaultSingleSignOnParticipationStrategy implements SingleSignOnPar
             return false;
         }
 
-        val service = WebUtils.getService(requestContext);
-        if (service == null) {
-            return true;
+        // if service already resolved & stored in context, use that
+        var registeredService = WebUtils.getRegisteredService(requestContext);
+
+        if (registeredService == null) {
+            val service = WebUtils.getService(requestContext);
+            if (service != null) {
+                registeredService = this.servicesManager.findServiceBy(service);
+            }
         }
-        val registeredService = this.servicesManager.findServiceBy(service);
         if (registeredService == null) {
             return true;
         }
