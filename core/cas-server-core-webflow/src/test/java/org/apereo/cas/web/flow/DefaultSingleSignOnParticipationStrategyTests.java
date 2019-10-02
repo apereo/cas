@@ -70,4 +70,30 @@ public class DefaultSingleSignOnParticipationStrategyTests {
 
         assertFalse(strategy.isParticipating(context));
     }
+
+    @Test
+    public void verifyDoesNotParticipateSAMLCallback() {
+        val mgr = mock(ServicesManager.class);
+        val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
+        val callbackRegisteredService = CoreAuthenticationTestUtils.getRegisteredService("https://cas/idp/profile/SAML2/Callback");
+
+        when(registeredService.getAccessStrategy().isServiceAccessAllowedForSso()).thenReturn(false);
+        when(callbackRegisteredService.getAccessStrategy().isServiceAccessAllowedForSso()).thenReturn(true);
+
+        when(mgr.findServiceBy(any(Service.class))).thenReturn(callbackRegisteredService);
+
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+
+        val strategy = new DefaultSingleSignOnParticipationStrategy(mgr, false, true, mock(TicketRegistrySupport.class));
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+
+        WebUtils.putRegisteredService(context, registeredService);
+        WebUtils.putServiceIntoFlowScope(context, CoreAuthenticationTestUtils.getWebApplicationService());
+        WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication("casuser"), context);
+
+        assertFalse(strategy.isParticipating(context));
+
+    }
 }
