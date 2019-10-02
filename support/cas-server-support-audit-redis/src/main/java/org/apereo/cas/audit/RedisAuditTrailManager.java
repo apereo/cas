@@ -35,7 +35,7 @@ public class RedisAuditTrailManager extends AbstractAuditTrailManager {
 
     public RedisAuditTrailManager(final RedisTemplate redisTemplate, final boolean asynchronous) {
         super(asynchronous);
-        this.redisTemplate = redisTemplate;
+        this.redisTemplate = Objects.requireNonNull(redisTemplate);
     }
 
     @Override

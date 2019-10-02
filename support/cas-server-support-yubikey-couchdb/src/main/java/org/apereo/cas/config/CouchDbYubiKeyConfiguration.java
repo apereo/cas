@@ -55,7 +55,7 @@ public class CouchDbYubiKeyConfiguration {
     @RefreshScope
     public YubiKeyAccountCouchDbRepository couchDbYubiKeyAccountRepository() {
         val couchDb = casProperties.getAuthn().getMfa().getYubikey().getCouchDb();
-        return new YubiKeyAccountCouchDbRepository(yubikeyCouchDbFactory.getIfAvailable().getCouchDbConnector(),
+        return new YubiKeyAccountCouchDbRepository(yubikeyCouchDbFactory.getObject().getCouchDbConnector(),
             couchDb.isCreateIfNotExists());
     }
 
@@ -63,29 +63,29 @@ public class CouchDbYubiKeyConfiguration {
     @RefreshScope
     @Bean
     public CouchDbInstance yubikeyCouchDbInstance() {
-        return yubikeyCouchDbFactory.getIfAvailable().getCouchDbInstance();
+        return yubikeyCouchDbFactory.getObject().getCouchDbInstance();
     }
 
     @ConditionalOnMissingBean(name = "yubikeyCouchDbConnector")
     @RefreshScope
     @Bean
     public CouchDbConnector yubikeyCouchDbConnector() {
-        return yubikeyCouchDbFactory.getIfAvailable().getCouchDbConnector();
+        return yubikeyCouchDbFactory.getObject().getCouchDbConnector();
     }
 
     @ConditionalOnMissingBean(name = "yubikeyCouchDbFactory")
     @Bean
     @RefreshScope
     public CouchDbConnectorFactory yubikeyCouchDbFactory() {
-        return new CouchDbConnectorFactory(casProperties.getAuthn().getMfa().getYubikey().getCouchDb(), objectMapperFactory.getIfAvailable());
+        return new CouchDbConnectorFactory(casProperties.getAuthn().getMfa().getYubikey().getCouchDb(), objectMapperFactory.getObject());
     }
 
     @ConditionalOnMissingBean(name = "couchDbYubikeyAccountRegistry")
     @RefreshScope
     @Bean
     public YubiKeyAccountRegistry yubiKeyAccountRegistry() {
-        val registry = new CouchDbYubiKeyAccountRegistry(yubiKeyAccountValidator.getIfAvailable(), couchDbYubiKeyAccountRepository());
-        registry.setCipherExecutor(yubikeyAccountCipherExecutor.getIfAvailable());
+        val registry = new CouchDbYubiKeyAccountRegistry(yubiKeyAccountValidator.getObject(), couchDbYubiKeyAccountRepository());
+        registry.setCipherExecutor(yubikeyAccountCipherExecutor.getObject());
         return registry;
     }
 }
