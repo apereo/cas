@@ -22,6 +22,7 @@ import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguratio
 import lombok.Getter;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -63,6 +64,7 @@ import javax.sql.DataSource;
     "cas.authn.surrogate.jdbc.autoCommit=true"
 })
 @Getter
+@Tag("JDBC")
 public class SurrogateJdbcAuthenticationServiceTests extends BaseSurrogateAuthenticationServiceTests {
     @Autowired
     @Qualifier("surrogateAuthenticationService")

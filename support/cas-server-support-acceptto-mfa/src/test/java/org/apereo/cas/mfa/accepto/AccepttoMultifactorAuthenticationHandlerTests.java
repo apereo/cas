@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.config.AccepttoMultifactorAuthenticationConfiguration;
 import org.apereo.cas.config.AccepttoMultifactorAuthenticationEventExecutionPlanConfiguration;
 import org.apereo.cas.config.AccepttoMultifactorAuthenticationMultifactorProviderBypassConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPolicyConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
@@ -64,6 +65,7 @@ import static org.mockito.Mockito.*;
     AccepttoMultifactorAuthenticationMultifactorProviderBypassConfiguration.class,
     CasWebflowContextConfiguration.class,
     CasCoreTicketsConfiguration.class,
+    CasCoreAuthenticationConfiguration.class,
     CasCoreAuthenticationSupportConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class,
     CasCoreAuthenticationPolicyConfiguration.class,
