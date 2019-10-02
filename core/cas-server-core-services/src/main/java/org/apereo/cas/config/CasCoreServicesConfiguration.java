@@ -55,7 +55,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.core.env.Environment;
-import org.springframework.http.converter.AbstractHttpMessageConverter;
+import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
 
@@ -145,7 +145,7 @@ public class CasCoreServicesConfiguration {
     }
 
     @Bean
-    public AbstractHttpMessageConverter yamlHttpMessageConverter() {
+    public HttpMessageConverter yamlHttpMessageConverter() {
         return new RegisteredServiceYamlHttpMessageConverter();
     }
 

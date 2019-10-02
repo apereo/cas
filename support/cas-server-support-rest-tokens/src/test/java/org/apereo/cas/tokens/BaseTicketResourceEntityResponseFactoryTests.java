@@ -79,7 +79,6 @@ import java.util.List;
     CasCoreTicketIdGeneratorsConfiguration.class,
     CasDefaultServiceTicketIdGeneratorsConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
-    CasRestTokensConfiguration.class,
     CasRestConfiguration.class,
     CasCoreTicketsConfiguration.class
 })
