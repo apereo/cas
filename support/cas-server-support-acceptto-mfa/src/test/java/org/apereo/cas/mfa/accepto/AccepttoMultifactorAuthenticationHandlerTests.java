@@ -71,7 +71,6 @@ import static org.mockito.Mockito.*;
     CasCoreAuthenticationPolicyConfiguration.class,
     CasCoreAuthenticationMetadataConfiguration.class,
     CasCoreWebflowConfiguration.class,
-    CasWebflowContextConfiguration.class,
     CasCoreWebConfiguration.class,
     CasCoreMultifactorAuthenticationConfiguration.class,
     CasCoreServicesConfiguration.class,
@@ -80,7 +79,6 @@ import static org.mockito.Mockito.*;
     CasCoreConfiguration.class,
     CasCookieConfiguration.class,
     CasCoreLogoutConfiguration.class,
-    AccepttoMultifactorAuthenticationConfiguration.class,
     CasMultifactorAuthenticationWebflowConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class

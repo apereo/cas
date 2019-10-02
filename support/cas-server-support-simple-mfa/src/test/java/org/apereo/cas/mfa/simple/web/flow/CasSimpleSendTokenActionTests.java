@@ -73,7 +73,6 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreLogoutConfiguration.class,
     CasWebflowContextConfiguration.class,
     CasCoreWebflowConfiguration.class,
-    CasWebflowContextConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreWebConfiguration.class,
     CasCoreHttpConfiguration.class,

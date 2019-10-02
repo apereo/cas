@@ -70,8 +70,6 @@ import static org.junit.jupiter.api.Assertions.*;
     JpaTicketRegistryTicketCatalogConfiguration.class,
     JpaTicketRegistryConfiguration.class,
     JpaLockingStrategyTests.JpaTestConfiguration.class,
-    JpaTicketRegistryTicketCatalogConfiguration.class,
-    JpaTicketRegistryConfiguration.class,
     RefreshAutoConfiguration.class,
     AopAutoConfiguration.class,
     CasCoreTicketsConfiguration.class,

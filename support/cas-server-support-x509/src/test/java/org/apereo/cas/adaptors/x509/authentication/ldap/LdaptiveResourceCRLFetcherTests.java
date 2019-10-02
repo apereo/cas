@@ -61,7 +61,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
     CasPersonDirectoryConfiguration.class,
     CasCoreAuthenticationConfiguration.class,
     CasCoreWebConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreServicesAuthenticationConfiguration.class,
     CasCoreServicesConfiguration.class},
     properties = {
