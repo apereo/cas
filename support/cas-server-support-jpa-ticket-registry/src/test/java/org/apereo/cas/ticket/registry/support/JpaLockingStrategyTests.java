@@ -1,10 +1,12 @@
 package org.apereo.cas.ticket.registry.support;
 
+import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPolicyConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
@@ -78,6 +80,8 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreServicesConfiguration.class,
     CasCoreConfiguration.class,
     CasCoreUtilConfiguration.class,
+    CasCoreAuthenticationConfiguration.class,
+    CasCoreAuthenticationSupportConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class,
     CasCoreAuthenticationMetadataConfiguration.class,

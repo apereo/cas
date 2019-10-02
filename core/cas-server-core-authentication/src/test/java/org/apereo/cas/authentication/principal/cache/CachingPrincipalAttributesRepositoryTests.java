@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication.principal.cache;
 
+import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.util.CollectionUtils;
@@ -30,6 +32,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     CasCoreUtilConfiguration.class,
+    CasCoreAuthenticationConfiguration.class,
+    CasCoreAuthenticationPrincipalConfiguration.class,
     CasCoreAuthenticationSupportConfiguration.class
 })
 @DirtiesContext

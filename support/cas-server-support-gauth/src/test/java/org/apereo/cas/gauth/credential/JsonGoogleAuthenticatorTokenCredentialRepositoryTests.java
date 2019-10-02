@@ -1,5 +1,6 @@
 package org.apereo.cas.gauth.credential;
 
+import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
@@ -49,6 +50,7 @@ import java.io.File;
     CasCoreServicesConfiguration.class,
     AopAutoConfiguration.class,
     RefreshAutoConfiguration.class,
+    CasCoreAuthenticationConfiguration.class,
     CasCoreAuthenticationSupportConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class,
     CasCoreTicketsConfiguration.class,
