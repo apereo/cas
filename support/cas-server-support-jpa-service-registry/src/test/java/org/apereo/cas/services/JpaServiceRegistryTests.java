@@ -4,6 +4,7 @@ import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.JpaServiceRegistryConfiguration;
 
+import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -24,6 +25,7 @@ import org.springframework.test.annotation.DirtiesContext;
     JpaServiceRegistryConfiguration.class,
     CasCoreServicesConfiguration.class
 })
+@Tag("JDBC")
 @DirtiesContext
 public class JpaServiceRegistryTests extends AbstractServiceRegistryTests {
 

@@ -26,6 +26,7 @@ import org.apereo.cas.util.SchedulingUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.ResourceLock;
 import org.springframework.beans.factory.InitializingBean;
@@ -94,6 +95,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @DirtiesContext
 @Slf4j
+@Tag("JDBC")
 @ResourceLock("jpa-tickets")
 public class JpaLockingStrategyTests {
     /**
