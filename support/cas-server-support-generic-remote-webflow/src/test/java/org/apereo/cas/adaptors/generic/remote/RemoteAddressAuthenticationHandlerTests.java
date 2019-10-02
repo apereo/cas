@@ -3,6 +3,7 @@ package org.apereo.cas.adaptors.generic.remote;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasAuthenticationEventExecutionPlanTestConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPolicyConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
@@ -60,7 +61,8 @@ import static org.junit.jupiter.api.Assertions.*;
     CasWebflowContextConfiguration.class,
     CasThemesConfiguration.class,
     CasCookieConfiguration.class,
-    CasCoreAuthenticationSupportConfiguration.class,
+    CasCoreAuthenticationConfiguration.class,
+CasCoreAuthenticationSupportConfiguration.class,
     CasCoreAuthenticationPolicyConfiguration.class,
     CasRegisteredServicesTestConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
