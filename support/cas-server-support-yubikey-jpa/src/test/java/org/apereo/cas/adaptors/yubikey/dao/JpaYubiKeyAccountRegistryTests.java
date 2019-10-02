@@ -27,6 +27,7 @@ import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -78,6 +79,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.mfa.yubikey.clientId=18423",
     "cas.authn.mfa.yubikey.secretKey=zAIqhjui12mK8x82oe9qzBEb0As="
 })
+@Tag("JDBC")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class JpaYubiKeyAccountRegistryTests {
     private static final String BAD_TOKEN = "123456";
