@@ -32,6 +32,7 @@ import org.apereo.cas.ticket.TicketGrantingTicketFactory;
 
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.ResourceLock;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,6 +81,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @Transactional(transactionManager = "ticketTransactionManager", isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
 @ResourceLock("jpa-tickets")
+@Tag("JDBC")
 public class JpaTicketRegistryCleanerTests {
     @Autowired
     @Qualifier("defaultTicketFactory")

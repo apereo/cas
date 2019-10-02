@@ -147,7 +147,7 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
             .filter(wsfed -> StringUtils.isNotBlank(wsfed.getIdentityProviderUrl())
                 && StringUtils.isNotBlank(wsfed.getIdentityProviderIdentifier()))
             .forEach(wsfed -> {
-                val handler = new WsFederationAuthenticationHandler(wsfed.getName(), servicesManager.getIfAvailable(),
+                val handler = new WsFederationAuthenticationHandler(wsfed.getName(), servicesManager.getObject(),
                     wsfedPrincipalFactory(), wsfed.getOrder());
                 if (!wsfed.isAttributeResolverEnabled()) {
                     plan.registerAuthenticationHandler(handler);
@@ -162,7 +162,7 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
                     val principal = wsfed.getPrincipal();
                     val principalAttribute = StringUtils.defaultIfBlank(principal.getPrincipalAttribute(),
                         personDirectory.getPrincipalAttribute());
-                    val r = new WsFederationCredentialsToPrincipalResolver(attributeRepository.getIfAvailable(),
+                    val r = new WsFederationCredentialsToPrincipalResolver(attributeRepository.getObject(),
                         wsfedPrincipalFactory(),
                         principal.isReturnNull() || personDirectory.isReturnNull(),
                         principalAttribute,
