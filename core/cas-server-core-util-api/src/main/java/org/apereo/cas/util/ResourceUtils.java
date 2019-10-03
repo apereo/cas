@@ -248,4 +248,15 @@ public class ResourceUtils {
         }
         return false;
     }
+
+    public static boolean isJarResource(final Resource resource) {
+        try {
+            return "jar".equals(resource.getURI().getScheme());
+        } catch (final IOException e) {
+            if (LOGGER.isTraceEnabled()) {
+                LOGGER.trace(e.getMessage(), e);
+            }
+        }
+        return false;
+    }
 }
