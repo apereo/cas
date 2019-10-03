@@ -1,20 +1,18 @@
 package org.apereo.cas.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import org.apereo.cas.util.scripting.ScriptingUtils;
+
+import lombok.val;
+import org.apache.commons.io.FileUtils;
+import org.junit.Test;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.FileSystemResource;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
-import org.apache.commons.io.FileUtils;
-import org.apereo.cas.util.scripting.ScriptingUtils;
-import org.junit.Test;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.FileSystemResource;
-
-import lombok.val;
+import static org.junit.Assert.*;
 
 /**
  * This is {@link ScriptingUtilsTests}.
