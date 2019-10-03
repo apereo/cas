@@ -70,8 +70,6 @@ import java.util.Collection;
     RefreshAutoConfiguration.class,
     AopAutoConfiguration.class,
     CasCookieConfiguration.class,
-    CasCoreAuthenticationConfiguration.class,
-    CasCoreServicesAuthenticationConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
     CasCoreLogoutConfiguration.class,

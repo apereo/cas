@@ -19,6 +19,9 @@ public class PathRegexPatternTreeFilter extends TreeFilter {
 
     @Override
     public boolean include(final TreeWalk walker) {
+        if (walker.isSubtree()) {
+            return true;
+        }
         val pathString = walker.getPathString();
         return pattern.matcher(pathString).find();
     }
