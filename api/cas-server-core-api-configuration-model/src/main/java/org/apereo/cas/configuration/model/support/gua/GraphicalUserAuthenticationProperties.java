@@ -7,6 +7,7 @@ import org.apereo.cas.configuration.support.SpringResourceProperties;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
 
@@ -33,6 +34,7 @@ public class GraphicalUserAuthenticationProperties implements Serializable {
     /**
      * Locate GUA settings and images from a static image.
      */
+    @NestedConfigurationProperty
     private SpringResourceProperties resource = new SpringResourceProperties();
 
     @Getter

@@ -34,6 +34,7 @@ import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.validation.config.CasCoreValidationConfiguration;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
+import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
@@ -52,7 +53,6 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.TestPropertySource;
 
 import java.nio.charset.StandardCharsets;
 
@@ -81,14 +81,13 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreServicesConfiguration.class,
     CasCoreWebConfiguration.class,
     CasCoreWebflowConfiguration.class,
+    CasWebflowContextConfiguration.class,
     SamlIdPConfiguration.class,
     SamlIdPAuthenticationServiceSelectionStrategyConfiguration.class,
     SamlIdPEndpointsConfiguration.class,
     SamlIdPMetadataConfiguration.class,
     RefreshAutoConfiguration.class,
     AopAutoConfiguration.class,
-    CasCoreAuthenticationConfiguration.class,
-    CasCoreServicesAuthenticationConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
     CasCoreLogoutConfiguration.class,
@@ -98,11 +97,11 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     CoreSamlConfiguration.class,
     CasPersonDirectoryConfiguration.class,
-    CasCoreUtilConfiguration.class})
-@TestPropertySource(properties = {
-    "cas.authn.samlIdp.metadata.rest.url=http://localhost:8078",
-    "cas.authn.samlIdp.metadata.location=file:/tmp"
-})
+    CasCoreUtilConfiguration.class},
+    properties = {
+        "cas.authn.samlIdp.metadata.rest.url=http://localhost:8078",
+        "cas.authn.samlIdp.metadata.location=file:/tmp"
+    })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class RestSamlRegisteredServiceMetadataResolverTests {
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();

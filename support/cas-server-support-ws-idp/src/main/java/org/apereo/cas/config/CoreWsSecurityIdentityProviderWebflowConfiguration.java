@@ -39,7 +39,7 @@ public class CoreWsSecurityIdentityProviderWebflowConfiguration {
     private ApplicationContext applicationContext;
 
     @Autowired
-    private FlowBuilderServices flowBuilderServices;
+    private ObjectProvider<FlowBuilderServices> flowBuilderServices;
 
     @Autowired
     @Qualifier("servicesManager")
@@ -66,8 +66,9 @@ public class CoreWsSecurityIdentityProviderWebflowConfiguration {
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer wsFederationWebflowConfigurer() {
-        return new WSFederationWebflowConfigurer(flowBuilderServices,
-            loginFlowDefinitionRegistry.getIfAvailable(), wsFederationMetadataUIAction(), applicationContext, casProperties);
+        return new WSFederationWebflowConfigurer(flowBuilderServices.getObject(),
+            loginFlowDefinitionRegistry.getIfAvailable(), wsFederationMetadataUIAction(),
+            applicationContext, casProperties);
     }
 
     @Bean

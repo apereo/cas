@@ -46,7 +46,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.TestPropertySource;
 
 import java.nio.charset.StandardCharsets;
 
@@ -79,7 +78,6 @@ import static org.junit.jupiter.api.Assertions.*;
     CasPersonDirectoryTestConfiguration.class,
     CasCoreAuthenticationConfiguration.class,
     CasCoreWebConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreServicesAuthenticationConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreWebflowConfiguration.class,
@@ -89,8 +87,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCookieConfiguration.class,
     CasThemesConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class
-})
-@TestPropertySource(properties = "cas.authn.surrogate.rest.url=http://localhost:9301")
+}, properties = "cas.authn.surrogate.rest.url=http://localhost:9301")
 @Getter
 public class SurrogateRestAuthenticationServiceTests extends BaseSurrogateAuthenticationServiceTests {
     private static final ObjectMapper MAPPER = new ObjectMapper()

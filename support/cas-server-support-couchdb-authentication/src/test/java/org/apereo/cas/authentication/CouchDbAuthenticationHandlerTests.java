@@ -38,7 +38,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -70,18 +69,17 @@ import static org.junit.jupiter.api.Assertions.*;
         CasWebApplicationServiceFactoryConfiguration.class,
         CasPersonDirectoryConfiguration.class,
         CasCoreWebConfiguration.class,
-        CasWebApplicationServiceFactoryConfiguration.class,
         RefreshAutoConfiguration.class
+    },
+    properties = {
+        "cas.authn.couchDb.dbName=authentication",
+        "cas.authn.couchDb.attributes=loc,state",
+        "cas.authn.couchDb.usernameAttribute=username",
+        "cas.authn.couchDb.passwordAttribute=password",
+        "cas.authn.couchDb.username=cas",
+        "cas.authn.couchdb.password=password",
+        "cas.authn.pac4j.typedIdUsed=false"
     })
-@TestPropertySource(properties = {
-    "cas.authn.couchDb.dbName=authentication",
-    "cas.authn.couchDb.attributes=loc,state",
-    "cas.authn.couchDb.usernameAttribute=username",
-    "cas.authn.couchDb.passwordAttribute=password",
-    "cas.authn.couchDb.username=cas",
-    "cas.authn.couchdb.password=password",
-    "cas.authn.pac4j.typedIdUsed=false"
-})
 @Tag("CouchDb")
 public class CouchDbAuthenticationHandlerTests {
     @Autowired

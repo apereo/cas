@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -25,8 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class,
     PasswordManagementConfiguration.class,
     CasCoreUtilConfiguration.class
-})
-@TestPropertySource(properties = {
+}, properties = {
     "cas.authn.pm.enabled=true",
     "cas.authn.pm.history.enabled=true",
     "cas.authn.pm.policyPattern=^Th!.+{8,10}"

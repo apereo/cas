@@ -1,6 +1,7 @@
 package org.apereo.cas.trusted.authentication.storage;
 
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
+import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCouchDbCoreConfiguration;
 import org.apereo.cas.config.CouchDbMultifactorAuthenticationTrustConfiguration;
 import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
@@ -20,7 +21,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.TestPropertySource;
 
 /**
  * This is {@link CouchDbMultifactorAuthenticationTrustStorageTests}.
@@ -34,13 +34,14 @@ import org.springframework.test.context.TestPropertySource;
     CouchDbMultifactorAuthenticationTrustConfiguration.class,
     CasCouchDbCoreConfiguration.class,
     CasCoreAuditConfiguration.class,
+    CasCoreServicesConfiguration.class,
     MultifactorAuthnTrustWebflowConfiguration.class,
     MultifactorAuthnTrustConfiguration.class,
-    MultifactorAuthnTrustedDeviceFingerprintConfiguration.class})
-@TestPropertySource(properties = {
-    "cas.authn.mfa.trusted.couchDb.username=cas",
-    "cas.authn.mfa.trusted.couchdb.password=password"
-})
+    MultifactorAuthnTrustedDeviceFingerprintConfiguration.class},
+    properties = {
+        "cas.authn.mfa.trusted.couchDb.username=cas",
+        "cas.authn.mfa.trusted.couchdb.password=password"
+    })
 @Getter
 @EnabledIfContinuousIntegration
 public class CouchDbMultifactorAuthenticationTrustStorageTests extends AbstractMultifactorAuthenticationTrustStorageTests {

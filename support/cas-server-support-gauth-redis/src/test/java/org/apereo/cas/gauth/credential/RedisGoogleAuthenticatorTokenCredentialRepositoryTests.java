@@ -42,7 +42,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -62,7 +61,6 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreLogoutConfiguration.class,
     CasCoreHttpConfiguration.class,
     CasCoreServicesConfiguration.class,
-    CasCoreTicketIdGeneratorsConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreAuthenticationConfiguration.class,
     CasCoreServicesAuthenticationConfiguration.class,
@@ -84,13 +82,12 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCookieConfiguration.class,
     CasWebflowContextConfiguration.class,
     CasCoreWebConfiguration.class
-})
-@EnableTransactionManagement(proxyTargetClass = true)
-@EnableAspectJAutoProxy(proxyTargetClass = true)
-@TestPropertySource(properties = {
+}, properties = {
     "cas.authn.mfa.gauth.redis.host=localhost",
     "cas.authn.mfa.gauth.redis.port=6379"
 })
+@EnableTransactionManagement(proxyTargetClass = true)
+@EnableAspectJAutoProxy(proxyTargetClass = true)
 @EnableScheduling
 @Tag("Redis")
 @EnabledIfContinuousIntegration

@@ -7,6 +7,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.radius.RadiusClientProperties;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
@@ -18,6 +19,7 @@ import net.jradius.dictionary.Attr_ReplyMessage;
 import net.jradius.dictionary.Attr_State;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.binding.expression.support.LiteralExpression;
@@ -27,7 +29,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.engine.support.DefaultTargetStateResolver;
@@ -43,9 +44,11 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @SpringBootTest(classes = {
+    CasCoreMultifactorAuthenticationConfiguration.class,
     CasMultifactorAuthenticationWebflowConfiguration.class,
     CasWebflowContextConfiguration.class,
     CasCoreWebflowConfiguration.class,
+    CasPersonDirectoryTestConfiguration.class,
     RadiusConfiguration.class,
     CasCoreConfiguration.class,
     CasCoreLogoutConfiguration.class,
@@ -54,18 +57,20 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreUtilConfiguration.class,
     CasCoreWebConfiguration.class,
     CasCoreHttpConfiguration.class,
+    CasCoreAuthenticationConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
     CasCoreAuthenticationSupportConfiguration.class,
     CasCoreAuthenticationMetadataConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class,
+    CasCookieConfiguration.class,
     RefreshAutoConfiguration.class
-})
-@TestPropertySource(properties = {
-    "cas.authn.radius.client.sharedSecret=NoSecret",
-    "cas.authn.radius.client.inetAddress=localhost,localguest",
-    "cas.authn.mfa.radius.id=" + TestMultifactorAuthenticationProvider.ID
-})
+},
+    properties = {
+        "cas.authn.radius.client.sharedSecret=NoSecret",
+        "cas.authn.radius.client.inetAddress=localhost,localguest",
+        "cas.authn.mfa.radius.id=" + TestMultifactorAuthenticationProvider.ID
+    })
 @Tag("Radius")
 public class RadiusConfigurationTests {
     @Autowired
@@ -73,11 +78,11 @@ public class RadiusConfigurationTests {
 
     @Autowired
     @Qualifier("radiusConfiguration")
-    private RadiusConfiguration radiusConfiguration;
+    private ObjectProvider<RadiusConfiguration> radiusConfiguration;
 
     @Autowired
     @Qualifier("radiusAccessChallengedAuthenticationWebflowEventResolver")
-    private CasWebflowEventResolver radiusAccessChallengedAuthenticationWebflowEventResolver;
+    private ObjectProvider<CasWebflowEventResolver> radiusAccessChallengedAuthenticationWebflowEventResolver;
 
     @Autowired
     private ConfigurableApplicationContext applicationContext;
@@ -102,13 +107,13 @@ public class RadiusConfigurationTests {
 
     @Test
     public void radiusServer() {
-        assertNotNull(radiusConfiguration.radiusServer());
+        assertNotNull(radiusConfiguration.getObject().radiusServer());
     }
 
     @Test
     public void radiusServers() {
         assertEquals("localhost,localguest", casProperties.getAuthn().getRadius().getClient().getInetAddress());
-        val servers = radiusConfiguration.radiusServers();
+        val servers = radiusConfiguration.getObject().radiusServers();
         assertNotNull(servers);
         assertEquals(2, servers.size());
     }
@@ -120,7 +125,7 @@ public class RadiusConfigurationTests {
         val response = new MockHttpServletResponse();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
 
-        var result = radiusAccessChallengedAuthenticationWebflowEventResolver.resolve(context);
+        var result = radiusAccessChallengedAuthenticationWebflowEventResolver.getObject().resolve(context);
         assertNull(result);
 
         val principal = CoreAuthenticationTestUtils.getPrincipal("casuser",
@@ -133,7 +138,7 @@ public class RadiusConfigurationTests {
         val transition = new Transition(new DefaultTransitionCriteria(new LiteralExpression(TestMultifactorAuthenticationProvider.ID)), targetResolver);
         context.getRootFlow().getGlobalTransitionSet().add(transition);
 
-        result = radiusAccessChallengedAuthenticationWebflowEventResolver.resolve(context);
+        result = radiusAccessChallengedAuthenticationWebflowEventResolver.getObject().resolve(context);
         assertEquals(1, result.size());
         assertEquals(TestMultifactorAuthenticationProvider.ID, result.iterator().next().getId());
     }

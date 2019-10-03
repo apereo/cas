@@ -12,6 +12,7 @@ import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
+import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
@@ -28,7 +29,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.execution.Action;
 
 /**
@@ -49,8 +49,8 @@ import org.springframework.webflow.execution.Action;
     CasCoreAuthenticationSupportConfiguration.class,
     CasCoreAuthenticationHandlersConfiguration.class,
     CasPersonDirectoryTestConfiguration.class,
-    CasRegisteredServicesTestConfiguration.class,
     CasCoreTicketsConfiguration.class,
+    CasCoreTicketIdGeneratorsConfiguration.class,
     CasCoreLogoutConfiguration.class,
     CasCoreWebConfiguration.class,
     CasCoreConfiguration.class,
@@ -63,8 +63,8 @@ import org.springframework.webflow.execution.Action;
     CasCookieConfiguration.class,
     CasCoreHttpConfiguration.class,
     CasCoreUtilConfiguration.class
-})
-@TestPropertySource(properties = "cas.authn.gua.resource.location=classpath:image.jpg")
+},
+    properties = "cas.authn.gua.resource.location=classpath:image.jpg")
 public abstract class AbstractGraphicalAuthenticationActionTests {
     @Autowired
     @Qualifier("initializeLoginAction")

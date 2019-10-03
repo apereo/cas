@@ -5,6 +5,7 @@ import org.apereo.cas.util.CollectionUtils;
 import lombok.val;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.TestPropertySource;
 
@@ -20,11 +21,12 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.acceptableUsagePolicy.jdbc.tableName=aup_table",
     "cas.acceptableUsagePolicy.aupAttributeName=accepted"
 })
+@Tag("JDBC")
 public class JdbcAcceptableUsagePolicyRepositoryTests extends BaseJdbcAcceptableUsagePolicyRepositoryTests {
 
     @BeforeEach
     public void initialize() throws Exception {
-        try (val c = this.acceptableUsagePolicyDataSource.getConnection()) {
+        try (val c = this.acceptableUsagePolicyDataSource.getObject().getConnection()) {
             try (val s = c.createStatement()) {
                 c.setAutoCommit(true);
                 s.execute("CREATE TABLE aup_table (id int primary key, username varchar(255), accepted boolean)");
@@ -35,7 +37,7 @@ public class JdbcAcceptableUsagePolicyRepositoryTests extends BaseJdbcAcceptable
     
     @AfterEach
     public void cleanup() throws Exception {
-        try (val c = this.acceptableUsagePolicyDataSource.getConnection()) {
+        try (val c = this.acceptableUsagePolicyDataSource.getObject().getConnection()) {
             try (val s = c.createStatement()) {
                 c.setAutoCommit(true);
                 s.execute("DROP TABLE aup_table;");

@@ -48,7 +48,7 @@ public class CasAcceptableUsagePolicyWebflowConfiguration {
     private ObjectProvider<FlowDefinitionRegistry> loginFlowDefinitionRegistry;
 
     @Autowired
-    private FlowBuilderServices flowBuilderServices;
+    private ObjectProvider<FlowBuilderServices> flowBuilderServices;
 
     @Autowired
     @Qualifier("defaultTicketRegistrySupport")
@@ -82,7 +82,7 @@ public class CasAcceptableUsagePolicyWebflowConfiguration {
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer acceptableUsagePolicyWebflowConfigurer() {
-        return new AcceptableUsagePolicyWebflowConfigurer(flowBuilderServices,
+        return new AcceptableUsagePolicyWebflowConfigurer(flowBuilderServices.getObject(),
             loginFlowDefinitionRegistry.getIfAvailable(), applicationContext, casProperties);
     }
 

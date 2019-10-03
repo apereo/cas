@@ -120,13 +120,13 @@ public class CasOAuthUmaConfiguration implements WebMvcConfigurer {
         val jwks = uma.getRequestingPartyToken().getJwksFile();
         val signingService = new UmaRequestingPartyTokenSigningService(jwks, uma.getIssuer());
         val context = OAuth20ConfigurationContext.builder()
-            .ticketRegistry(ticketRegistry.getIfAvailable())
-            .servicesManager(servicesManager.getIfAvailable())
+            .ticketRegistry(ticketRegistry.getObject())
+            .servicesManager(servicesManager.getObject())
             .idTokenSigningAndEncryptionService(signingService)
-            .sessionStore(oauthDistributedSessionStore.getIfAvailable())
+            .sessionStore(oauthDistributedSessionStore.getObject())
             .casProperties(casProperties)
-            .accessTokenJwtBuilder(accessTokenJwtBuilder.getIfAvailable())
-            .accessTokenGenerator(oauthTokenGenerator.getIfAvailable())
+            .accessTokenJwtBuilder(accessTokenJwtBuilder.getObject())
+            .accessTokenGenerator(oauthTokenGenerator.getObject())
             .build();
         return new UmaIdTokenGeneratorService(context);
     }
@@ -226,13 +226,13 @@ public class CasOAuthUmaConfiguration implements WebMvcConfigurer {
 
     @Bean
     public SecurityInterceptor umaRequestingPartyTokenSecurityInterceptor() {
-        val authenticator = new UmaRequestingPartyTokenAuthenticator(ticketRegistry.getIfAvailable());
+        val authenticator = new UmaRequestingPartyTokenAuthenticator(ticketRegistry.getObject());
         return getSecurityInterceptor(authenticator, "CAS_UMA_CLIENT_RPT_AUTH");
     }
 
     @Bean
     public SecurityInterceptor umaAuthorizationApiTokenSecurityInterceptor() {
-        val authenticator = new UmaAuthorizationApiTokenAuthenticator(ticketRegistry.getIfAvailable());
+        val authenticator = new UmaAuthorizationApiTokenAuthenticator(ticketRegistry.getObject());
         return getSecurityInterceptor(authenticator, "CAS_UMA_CLIENT_AAT_AUTH");
     }
 
@@ -241,7 +241,7 @@ public class CasOAuthUmaConfiguration implements WebMvcConfigurer {
         headerClient.setName(clientName);
         val clients = Stream.of(headerClient.getName()).collect(Collectors.joining(","));
         val config = new Config(OAuth20Utils.casOAuthCallbackUrl(casProperties.getServer().getPrefix()), headerClient);
-        config.setSessionStore(oauthDistributedSessionStore.getIfAvailable());
+        config.setSessionStore(oauthDistributedSessionStore.getObject());
         val interceptor = new SecurityInterceptor(config, clients, JEEHttpActionAdapter.INSTANCE);
         interceptor.setAuthorizers(StringUtils.EMPTY);
         return interceptor;
@@ -264,13 +264,13 @@ public class CasOAuthUmaConfiguration implements WebMvcConfigurer {
 
     private UmaConfigurationContext.UmaConfigurationContextBuilder buildConfigurationContext() {
         return UmaConfigurationContext.builder()
-            .accessTokenGenerator(oauthTokenGenerator.getIfAvailable())
+            .accessTokenGenerator(oauthTokenGenerator.getObject())
             .casProperties(casProperties)
             .claimPermissionExaminer(umaResourceSetClaimPermissionExaminer())
             .requestingPartyTokenGenerator(umaRequestingPartyTokenGenerator())
-            .servicesManager(servicesManager.getIfAvailable())
-            .sessionStore(oauthDistributedSessionStore.getIfAvailable())
-            .ticketRegistry(ticketRegistry.getIfAvailable())
+            .servicesManager(servicesManager.getObject())
+            .sessionStore(oauthDistributedSessionStore.getObject())
+            .ticketRegistry(ticketRegistry.getObject())
             .umaPermissionTicketFactory(defaultUmaPermissionTicketFactory())
             .umaResourceSetRepository(umaResourceSetRepository());
     }

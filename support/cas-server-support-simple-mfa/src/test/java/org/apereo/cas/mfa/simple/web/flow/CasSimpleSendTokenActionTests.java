@@ -13,6 +13,7 @@ import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.CasSimpleMultifactorAuthenticationComponentSerializationConfiguration;
 import org.apereo.cas.config.CasSimpleMultifactorAuthenticationConfiguration;
@@ -46,7 +47,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.RequestContextHolder;
@@ -73,7 +73,6 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreLogoutConfiguration.class,
     CasWebflowContextConfiguration.class,
     CasCoreWebflowConfiguration.class,
-    CasWebflowContextConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreWebConfiguration.class,
     CasCoreHttpConfiguration.class,
@@ -88,17 +87,18 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreAuthenticationSupportConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
+    CasPersonDirectoryConfiguration.class,
     CasCoreUtilConfiguration.class
-})
-@TestPropertySource(properties = {
-    "spring.mail.host=localhost",
-    "spring.mail.port=25000",
-    "spring.mail.testConnection=true",
-    "cas.authn.mfa.simple.mail.from=admin@example.org",
-    "cas.authn.mfa.simple.mail.subject=CAS Token",
-    "cas.authn.mfa.simple.mail.text=CAS Token is %s",
-    "cas.authn.mfa.simple.sms.from=347746512"
-})
+},
+    properties = {
+        "spring.mail.host=localhost",
+        "spring.mail.port=25000",
+        "spring.mail.testConnection=true",
+        "cas.authn.mfa.simple.mail.from=admin@example.org",
+        "cas.authn.mfa.simple.mail.subject=CAS Token",
+        "cas.authn.mfa.simple.mail.text=CAS Token is %s",
+        "cas.authn.mfa.simple.sms.from=347746512"
+    })
 @EnabledIfPortOpen(port = 25000)
 @EnabledIfContinuousIntegration
 @Tag("Mail")

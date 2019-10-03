@@ -14,6 +14,7 @@ import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.CoreSamlConfiguration;
 import org.apereo.cas.config.SamlIdPMetadataConfiguration;
@@ -34,7 +35,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -45,7 +45,6 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.0.0
  */
 @SpringBootTest(classes = {
-    RefreshAutoConfiguration.class,
     RefreshAutoConfiguration.class,
     CasCoreWebflowConfiguration.class,
     CasWebflowContextConfiguration.class,
@@ -66,11 +65,11 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     CasCoreUtilConfiguration.class,
     CoreSamlConfiguration.class,
+    CasPersonDirectoryConfiguration.class,
     AmazonS3SamlMetadataConfiguration.class,
     AmazonS3SamlIdPMetadataConfiguration.class,
     SamlIdPMetadataConfiguration.class
-})
-@TestPropertySource(properties = {
+}, properties = {
     "cas.authn.samlIdp.metadata.amazonS3.idpMetadataBucketName=thebucket",
     "cas.authn.samlIdp.metadata.amazonS3.endpoint=http://127.0.0.1:4572",
     "cas.authn.samlIdp.metadata.amazonS3.credentialAccessKey=test",
