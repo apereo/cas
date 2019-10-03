@@ -180,9 +180,8 @@ public class RequestParameterPolicyEnforcementFilter extends AbstractSecurityFil
      * @throws IllegalArgumentException when the init param value is out of spec
      */
     public static Set<String> parseParametersList(final String initParamValue, final boolean allowWildcard) {
-        val parameterNames = new HashSet<String>();
         if (null == initParamValue) {
-            return parameterNames;
+            return new HashSet<>();
         }
         if (initParamValue.trim().isEmpty()) {
             logException(new IllegalArgumentException('[' + initParamValue + "] had no tokens but should have had at least one token."));
@@ -193,9 +192,9 @@ public class RequestParameterPolicyEnforcementFilter extends AbstractSecurityFil
         }
 
         if (1 == tokens.size() && "*".equals(tokens.get(0)) && allowWildcard) {
-            return parameterNames;
+            return new HashSet<>();
         }
-
+        val parameterNames = new HashSet<String>();
         for (val parameterName : tokens) {
             if ("*".equals(parameterName)) {
                 logException(new IllegalArgumentException("Star token encountered among other tokens in parsing [" + initParamValue + ']'));
