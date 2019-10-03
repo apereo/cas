@@ -36,7 +36,6 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.test.MockRequestContext;
@@ -57,8 +56,6 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreWebflowConfiguration.class,
     CasWebflowContextConfiguration.class,
     CasCoreLogoutConfiguration.class,
-    CasCoreWebflowConfiguration.class,
-    CasWebflowContextConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreWebConfiguration.class,
     CasCoreHttpConfiguration.class,
@@ -76,8 +73,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreAuthenticationPrincipalConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     CasCoreUtilConfiguration.class
-})
-@TestPropertySource(properties = {
+}, properties = {
     "cas.google-analytics.cookie.attribute-name=membership",
     "cas.google-analytics.cookie.attribute-value-pattern=^(faculty|staff).*"
 })

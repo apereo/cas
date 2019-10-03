@@ -1,11 +1,15 @@
 package org.apereo.cas.support.saml.idp.metadata;
 
+import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasCouchDbCoreConfiguration;
 import org.apereo.cas.config.CoreSamlConfiguration;
 import org.apereo.cas.config.CouchDbSamlIdPFactoryConfiguration;
 import org.apereo.cas.config.CouchDbSamlIdPMetadataConfiguration;
 import org.apereo.cas.config.SamlIdPCouchDbRegisteredServiceMetadataConfiguration;
 import org.apereo.cas.config.SamlIdPMetadataConfiguration;
+import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
 import org.apereo.cas.couchdb.saml.SamlIdPMetadataCouchDbRepository;
@@ -22,7 +26,6 @@ import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -40,15 +43,19 @@ import static org.junit.jupiter.api.Assertions.*;
     SamlIdPMetadataConfiguration.class,
     RefreshAutoConfiguration.class,
     AopAutoConfiguration.class,
+    CasCoreServicesConfiguration.class,
+    CasCoreHttpConfiguration.class,
+    CasWebApplicationServiceFactoryConfiguration.class,
+    CasCoreWebConfiguration.class,
     CoreSamlConfiguration.class
+    },
+    properties = {
+        "cas.authn.samlIdp.metadata.couchDb.dbName=saml_generator",
+        "cas.authn.samlIdp.metadata.couchDb.idpMetadataEnabled=true",
+        "cas.authn.samlIdp.metadata.couchDb.username=cas",
+        "cas.authn.samlIdp.metadata.couchdb.password=password"
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@TestPropertySource(properties = {
-    "cas.authn.samlIdp.metadata.couchDb.dbName=saml_generator",
-    "cas.authn.samlIdp.metadata.couchDb.idpMetadataEnabled=true",
-    "cas.authn.samlIdp.metadata.couchDb.username=cas",
-    "cas.authn.samlIdp.metadata.couchdb.password=password"
-})
 @Tag("CouchDb")
 public class CouchDbSamlIdPMetadataGeneratorTests {
     @Autowired

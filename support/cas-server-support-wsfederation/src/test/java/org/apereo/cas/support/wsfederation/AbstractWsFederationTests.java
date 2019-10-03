@@ -30,6 +30,7 @@ import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.config.CasProtocolViewsConfiguration;
 import org.apereo.cas.web.config.CasValidationConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
+import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -37,7 +38,6 @@ import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestPropertySource;
 
 import java.util.Collection;
 
@@ -66,11 +66,10 @@ import java.util.Collection;
     CoreSamlConfiguration.class,
     CasCoreWebConfiguration.class,
     CasCoreWebflowConfiguration.class,
+    CasWebflowContextConfiguration.class,
     RefreshAutoConfiguration.class,
     AopAutoConfiguration.class,
     CasCookieConfiguration.class,
-    CasCoreAuthenticationConfiguration.class,
-    CasCoreServicesAuthenticationConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
     CasCoreLogoutConfiguration.class,
@@ -80,18 +79,18 @@ import java.util.Collection;
     CasCoreConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     CasPersonDirectoryConfiguration.class,
-    CasCoreUtilConfiguration.class})
-@TestPropertySource(properties = {
-    "cas.authn.wsfed[0].identityProviderUrl=https://adfs.example.com/adfs/ls/",
-    "cas.authn.wsfed[0].identityProviderIdentifier=http://adfs.example.com/adfs/services/trust",
-    "cas.authn.wsfed[0].relyingPartyIdentifier=urn:federation:cas",
-    "cas.authn.wsfed[0].attributesType=WSFED",
-    "cas.authn.wsfed[0].signingCertificateResources=classpath:adfs-signing.crt",
-    "cas.authn.wsfed[0].identityAttribute=upn",
-    "cas.authn.wsfed[0].attributeResolverEnabled=true",
-    "cas.authn.wsfed[0].autoRedirect=false",
-    "cas.authn.wsfed[0].name=Test ADFS1"
-})
+    CasCoreUtilConfiguration.class},
+    properties = {
+        "cas.authn.wsfed[0].identityProviderUrl=https://adfs.example.com/adfs/ls/",
+        "cas.authn.wsfed[0].identityProviderIdentifier=http://adfs.example.com/adfs/services/trust",
+        "cas.authn.wsfed[0].relyingPartyIdentifier=urn:federation:cas",
+        "cas.authn.wsfed[0].attributesType=WSFED",
+        "cas.authn.wsfed[0].signingCertificateResources=classpath:adfs-signing.crt",
+        "cas.authn.wsfed[0].identityAttribute=upn",
+        "cas.authn.wsfed[0].attributeResolverEnabled=true",
+        "cas.authn.wsfed[0].autoRedirect=false",
+        "cas.authn.wsfed[0].name=Test ADFS1"
+    })
 @ContextConfiguration(locations = "classpath:/applicationContext.xml")
 public class AbstractWsFederationTests extends AbstractOpenSamlTests {
     @Autowired

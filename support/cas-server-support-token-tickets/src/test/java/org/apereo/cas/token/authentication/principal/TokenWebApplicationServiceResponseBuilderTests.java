@@ -31,6 +31,7 @@ import org.apereo.cas.token.cipher.JwtTicketCipherExecutor;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
+import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
 import com.nimbusds.jwt.JWTParser;
 import lombok.val;
@@ -43,7 +44,6 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.test.context.TestPropertySource;
 
 import java.nio.charset.StandardCharsets;
 
@@ -68,6 +68,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasPersonDirectoryConfiguration.class,
     CasCoreWebConfiguration.class,
     CasCoreWebflowConfiguration.class,
+    CasWebflowContextConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
     CasCoreLogoutConfiguration.class,
@@ -81,14 +82,13 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreAuthenticationHandlersConfiguration.class,
     CasCoreHttpConfiguration.class,
     CasCoreAuthenticationConfiguration.class
-})
-@EnableAspectJAutoProxy(proxyTargetClass = true)
-@EnableScheduling
-@TestPropertySource(properties = {
+}, properties = {
     "cas.server.name=http://localhost:8281",
     "cas.server.prefix=${cas.server.name}/cas",
     "cas.client.validatorType=CAS10"
 })
+@EnableAspectJAutoProxy(proxyTargetClass = true)
+@EnableScheduling
 public class TokenWebApplicationServiceResponseBuilderTests {
     @Autowired
     @Qualifier("webApplicationServiceResponseBuilder")

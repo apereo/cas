@@ -14,7 +14,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.TestPropertySource;
 
 import java.nio.charset.StandardCharsets;
 
@@ -29,8 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     ClickatellSmsConfiguration.class
-})
-@TestPropertySource(properties = {
+}, properties = {
     "cas.smsProvider.clickatell.serverUrl=http://localhost:8099",
     "cas.smsProvider.clickatell.token=DEMO_TOKEN"
 })

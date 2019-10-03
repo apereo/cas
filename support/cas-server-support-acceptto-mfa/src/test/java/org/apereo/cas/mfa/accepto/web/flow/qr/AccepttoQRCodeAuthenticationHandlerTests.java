@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.config.AccepttoMultifactorAuthenticationConfiguration;
 import org.apereo.cas.config.AccepttoMultifactorAuthenticationEventExecutionPlanConfiguration;
 import org.apereo.cas.config.AccepttoMultifactorAuthenticationMultifactorProviderBypassConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPolicyConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
@@ -30,7 +31,6 @@ import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -49,8 +49,8 @@ import static org.mockito.Mockito.*;
     CasWebflowContextConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreWebflowConfiguration.class,
-    CasWebflowContextConfiguration.class,
     CasCoreServicesConfiguration.class,
+    CasCoreAuthenticationConfiguration.class,
     CasCoreAuthenticationSupportConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class,
     CasCoreAuthenticationPolicyConfiguration.class,
@@ -61,21 +61,20 @@ import static org.mockito.Mockito.*;
     CasCoreLogoutConfiguration.class,
     CasCoreWebConfiguration.class,
     CasCookieConfiguration.class,
-    CasCoreHttpConfiguration.class,
     CasPersonDirectoryConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
     CasMultifactorAuthenticationWebflowConfiguration.class,
     CasCoreMultifactorAuthenticationConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class
-})
-@TestPropertySource(properties = {
-    "cas.authn.mfa.acceptto.apiUrl=http://localhost:5001",
-    "cas.authn.mfa.acceptto.application-id=thisisatestid",
-    "cas.authn.mfa.acceptto.secret=thisisasecret",
-    "cas.authn.mfa.acceptto.organization-id=thisisatestid",
-    "cas.authn.mfa.acceptto.organization-secret=thisisasecret",
-    "cas.authn.mfa.acceptto.registration-api-public-key.location=classpath:publickey.pem"
-})
+},
+    properties = {
+        "cas.authn.mfa.acceptto.apiUrl=http://localhost:5001",
+        "cas.authn.mfa.acceptto.application-id=thisisatestid",
+        "cas.authn.mfa.acceptto.secret=thisisasecret",
+        "cas.authn.mfa.acceptto.organization-id=thisisatestid",
+        "cas.authn.mfa.acceptto.organization-secret=thisisasecret",
+        "cas.authn.mfa.acceptto.registration-api-public-key.location=classpath:publickey.pem"
+    })
 public class AccepttoQRCodeAuthenticationHandlerTests {
     @Test
     public void verifyOperation() throws Exception {

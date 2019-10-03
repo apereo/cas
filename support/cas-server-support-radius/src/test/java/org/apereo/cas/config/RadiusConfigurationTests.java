@@ -29,7 +29,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.engine.support.DefaultTargetStateResolver;
@@ -49,6 +48,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasMultifactorAuthenticationWebflowConfiguration.class,
     CasWebflowContextConfiguration.class,
     CasCoreWebflowConfiguration.class,
+    CasPersonDirectoryTestConfiguration.class,
     RadiusConfiguration.class,
     CasCoreConfiguration.class,
     CasCoreLogoutConfiguration.class,
@@ -57,6 +57,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreUtilConfiguration.class,
     CasCoreWebConfiguration.class,
     CasCoreHttpConfiguration.class,
+    CasCoreAuthenticationConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
     CasCoreAuthenticationSupportConfiguration.class,
@@ -64,12 +65,12 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreAuthenticationPrincipalConfiguration.class,
     CasCookieConfiguration.class,
     RefreshAutoConfiguration.class
-})
-@TestPropertySource(properties = {
-    "cas.authn.radius.client.sharedSecret=NoSecret",
-    "cas.authn.radius.client.inetAddress=localhost,localguest",
-    "cas.authn.mfa.radius.id=" + TestMultifactorAuthenticationProvider.ID
-})
+},
+    properties = {
+        "cas.authn.radius.client.sharedSecret=NoSecret",
+        "cas.authn.radius.client.inetAddress=localhost,localguest",
+        "cas.authn.mfa.radius.id=" + TestMultifactorAuthenticationProvider.ID
+    })
 @Tag("Radius")
 public class RadiusConfigurationTests {
     @Autowired

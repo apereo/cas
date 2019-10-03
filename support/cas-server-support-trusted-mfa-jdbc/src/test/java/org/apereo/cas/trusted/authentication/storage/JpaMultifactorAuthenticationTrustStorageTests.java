@@ -11,6 +11,7 @@ import org.apereo.cas.trusted.util.MultifactorAuthenticationTrustUtils;
 
 import lombok.val;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -18,7 +19,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import java.time.LocalDateTime;
@@ -40,11 +40,12 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreUtilConfiguration.class,
     CasCoreAuditConfiguration.class,
     RefreshAutoConfiguration.class
-})
+},
+    properties = "cas.jdbc.physicalTableNames.MultifactorAuthenticationTrustRecord=mfaauthntrustedrec")
 @EnableTransactionManagement(proxyTargetClass = true)
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @EnableScheduling
-@TestPropertySource(properties = "cas.jdbc.physicalTableNames.MultifactorAuthenticationTrustRecord=mfaauthntrustedrec")
+@Tag("JDBC")
 public class JpaMultifactorAuthenticationTrustStorageTests {
     private static final String PRINCIPAL = "principal";
     private static final String PRINCIPAL2 = "principal2";

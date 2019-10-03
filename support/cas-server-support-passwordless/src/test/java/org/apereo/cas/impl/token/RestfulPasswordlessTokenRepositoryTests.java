@@ -41,7 +41,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.TestPropertySource;
 
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
@@ -70,7 +69,6 @@ import static org.junit.jupiter.api.Assertions.*;
     CasPersonDirectoryTestConfiguration.class,
     CasCoreAuthenticationConfiguration.class,
     CasCoreWebConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreServicesAuthenticationConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreWebflowConfiguration.class,
@@ -83,8 +81,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreTicketIdGeneratorsConfiguration.class,
     CasMultifactorAuthenticationWebflowConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class
-})
-@TestPropertySource(properties = "cas.authn.passwordless.tokens.rest.url=http://localhost:9293")
+}, properties = "cas.authn.passwordless.tokens.rest.url=http://localhost:9293")
 @Tag("RestfulApi")
 public class RestfulPasswordlessTokenRepositoryTests {
     @Autowired

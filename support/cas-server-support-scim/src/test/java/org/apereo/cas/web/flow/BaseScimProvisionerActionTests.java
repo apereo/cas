@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
@@ -10,8 +11,11 @@ import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasScimConfiguration;
+import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
+import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
@@ -29,7 +33,10 @@ import org.springframework.webflow.execution.Action;
  */
 @SpringBootTest(classes = {
     CasCoreWebflowConfiguration.class,
+    CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreWebConfiguration.class,
+    CasCookieConfiguration.class,
+    CasPersonDirectoryTestConfiguration.class,
     CasWebflowContextConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreUtilConfiguration.class,
@@ -41,6 +48,7 @@ import org.springframework.webflow.execution.Action;
     CasCoreTicketsConfiguration.class,
     CasCoreLogoutConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class,
+    CasCoreAuthenticationConfiguration.class,
     CasCoreAuthenticationSupportConfiguration.class,
     CasScimConfiguration.class
 })

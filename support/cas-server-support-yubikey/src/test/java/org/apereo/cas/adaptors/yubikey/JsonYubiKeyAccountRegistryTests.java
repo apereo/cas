@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.yubikey;
 
+import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
@@ -34,7 +35,6 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
-import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -54,6 +54,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreHttpConfiguration.class,
     AopAutoConfiguration.class,
     CasThemesConfiguration.class,
+    CasCoreAuthenticationConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreLogoutConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
@@ -66,18 +67,17 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCookieConfiguration.class,
     CasCoreUtilConfiguration.class,
     CasCoreWebConfiguration.class,
-    CasCoreHttpConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
     CasDefaultServiceTicketIdGeneratorsConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
     RefreshAutoConfiguration.class
-})
+},
+    properties = {
+        "cas.authn.mfa.yubikey.clientId=18423",
+        "cas.authn.mfa.yubikey.secretKey=zAIqhjui12mK8x82oe9qzBEb0As=",
+        "cas.authn.mfa.yubikey.jsonFile=file:/tmp/yubikey.json"
+    })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@TestPropertySource(properties = {
-    "cas.authn.mfa.yubikey.clientId=18423",
-    "cas.authn.mfa.yubikey.secretKey=zAIqhjui12mK8x82oe9qzBEb0As=",
-    "cas.authn.mfa.yubikey.jsonFile=file:/tmp/yubikey.json"
-})
 public class JsonYubiKeyAccountRegistryTests {
     private static final String BAD_TOKEN = "123456";
 

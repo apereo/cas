@@ -1,6 +1,8 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
@@ -21,7 +23,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -43,12 +44,14 @@ import static org.mockito.Mockito.*;
     CasCoreWebConfiguration.class,
     CasRegisteredServicesTestConfiguration.class,
     CasCoreTicketsConfiguration.class,
+    CasCoreAuthenticationConfiguration.class,
+    CasCoreAuthenticationSupportConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class,
     CasPersonDirectoryTestConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
     CasCoreHttpConfiguration.class
-})
-@TestPropertySource(properties = "cas.authn.surrogate.simple.surrogates.casuser=cassurrogate")
+},
+    properties = "cas.authn.surrogate.simple.surrogates.casuser=cassurrogate")
 public class SurrogateAuthenticationPostProcessorTests {
     @Autowired
     @Qualifier("surrogateAuthenticationPostProcessor")

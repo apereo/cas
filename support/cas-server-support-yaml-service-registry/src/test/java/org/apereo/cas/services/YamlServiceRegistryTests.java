@@ -2,6 +2,7 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingStrategy;
+import org.apereo.cas.util.io.WatcherService;
 
 import lombok.SneakyThrows;
 import org.springframework.context.ApplicationEventPublisher;
@@ -21,7 +22,8 @@ public class YamlServiceRegistryTests extends AbstractResourceBasedServiceRegist
     @Override
     @SneakyThrows
     public ServiceRegistry getNewServiceRegistry() {
-        dao = new YamlServiceRegistry(RESOURCE, false,
+        dao = new YamlServiceRegistry(RESOURCE,
+            WatcherService.noOp(),
             mock(ApplicationEventPublisher.class),
             new NoOpRegisteredServiceReplicationStrategy(),
             new DefaultRegisteredServiceResourceNamingStrategy(),

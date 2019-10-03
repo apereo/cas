@@ -52,6 +52,8 @@ public class OAuth20ProofKeyCodeExchangeAuthenticatorTests extends BaseOAuth20Au
             new MockTicketGrantingTicket("casuser"),
             new ArrayList<>(), "ABCD123",
             "plain", "clientid12345", new HashMap<>()));
+        request.addParameter(OAuth20Constants.CODE_VERIFIER, "ABCD123");
+        request.addParameter(OAuth20Constants.CLIENT_SECRET, "secret");
         request.addParameter(OAuth20Constants.CODE, "CODE-1234567890");
         val ctx = new JEEContext(request, new MockHttpServletResponse());
         authenticator.validate(credentials, ctx);
@@ -70,6 +72,8 @@ public class OAuth20ProofKeyCodeExchangeAuthenticatorTests extends BaseOAuth20Au
             new MockTicketGrantingTicket("casuser"),
             new ArrayList<>(), hash, "s256", "clientid12345", new HashMap<>());
         ticketRegistry.addTicket(ticket);
+        request.addParameter(OAuth20Constants.CODE_VERIFIER, "ABCD123");
+        request.addParameter(OAuth20Constants.CLIENT_SECRET, "secret");
         request.addParameter(OAuth20Constants.CODE, ticket.getId());
         val ctx = new JEEContext(request, new MockHttpServletResponse());
         authenticator.validate(credentials, ctx);
@@ -88,6 +92,8 @@ public class OAuth20ProofKeyCodeExchangeAuthenticatorTests extends BaseOAuth20Au
             new ArrayList<>(),
             "something-else", "s256", "clientid12345", new HashMap<>());
         ticketRegistry.addTicket(ticket);
+        request.addParameter(OAuth20Constants.CODE_VERIFIER, "ABCD123");
+        request.addParameter(OAuth20Constants.CLIENT_SECRET, "secret");
         request.addParameter(OAuth20Constants.CODE, ticket.getId());
         val ctx = new JEEContext(request, new MockHttpServletResponse());
         assertThrows(CredentialsException.class, () -> authenticator.validate(credentials, ctx));

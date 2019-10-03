@@ -31,7 +31,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.TestPropertySource;
 
 /**
  * This is {@link CassandraTicketRegistryTests}.
@@ -64,8 +63,7 @@ import org.springframework.test.context.TestPropertySource;
     CasCoreAuthenticationSupportConfiguration.class,
     CasPersonDirectoryConfiguration.class,
     RefreshAutoConfiguration.class
-})
-@TestPropertySource(properties = {
+}, properties = {
     "cas.ticket.registry.cassandra.keyspace=cas",
     "cas.ticket.registry.cassandra.drop-tables-on-startup=true"
 })

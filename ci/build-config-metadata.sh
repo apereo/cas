@@ -10,10 +10,9 @@ else
     exit 1
 fi
 
-prepCommand="echo 'Running command...'; "
 gradle="./gradlew $@"
 gradleBuild=""
-gradleBuildOptions="--stacktrace --build-cache --configure-on-demand --no-daemon "
+gradleBuildOptions="--build-cache --configure-on-demand --no-daemon "
 
 echo -e "***********************************************"
 echo -e "Gradle build started at `date`"
@@ -40,7 +39,6 @@ if [ -z "$gradleBuild" ]; then
 else
     tasks="$gradle $gradleBuildOptions $gradleBuild"
     echo -e "***************************************************************************************"
-    echo $prepCommand
     echo $tasks
     echo -e "***************************************************************************************"
 
@@ -48,7 +46,6 @@ else
     eval $waitloop
     waitRetVal=$?
 
-    eval $prepCommand
     eval $tasks
     retVal=$?
 

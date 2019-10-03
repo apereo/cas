@@ -23,7 +23,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -48,12 +47,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
     CasPersonDirectoryConfiguration.class,
     CasCoreAuthenticationConfiguration.class,
     CasCoreWebConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreServicesAuthenticationConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
     CasCoreServicesConfiguration.class
-})
-@TestPropertySource(properties="cas.authn.x509.crlFetcher=resource")
+}, properties="cas.authn.x509.crlFetcher=resource")
 public class DefaultX509ConfigTests {
 
     @Autowired

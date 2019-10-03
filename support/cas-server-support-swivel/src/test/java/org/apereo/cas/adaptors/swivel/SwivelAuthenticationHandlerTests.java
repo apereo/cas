@@ -44,7 +44,6 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.RequestContextHolder;
 import org.springframework.webflow.test.MockRequestContext;
@@ -75,7 +74,6 @@ import static org.junit.jupiter.api.Assertions.*;
     CasPersonDirectoryTestConfiguration.class,
     CasCoreAuthenticationConfiguration.class,
     CasCoreWebConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreServicesAuthenticationConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreWebflowConfiguration.class,
@@ -86,12 +84,12 @@ import static org.junit.jupiter.api.Assertions.*;
     CasThemesConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     SwivelConfiguration.class,
-    SwivelAuthenticationEventExecutionPlanConfiguration.class})
-@TestPropertySource(properties = {
-    "cas.authn.mfa.swivel.swivelUrl=http://localhost:9191",
-    "cas.authn.mfa.swivel.sharedSecret=$ecret",
-    "cas.authn.mfa.swivel.ignoreSslErrors=true"
-})
+    SwivelAuthenticationEventExecutionPlanConfiguration.class},
+    properties = {
+        "cas.authn.mfa.swivel.swivelUrl=http://localhost:9191",
+        "cas.authn.mfa.swivel.sharedSecret=$ecret",
+        "cas.authn.mfa.swivel.ignoreSslErrors=true"
+    })
 public class SwivelAuthenticationHandlerTests {
     @Autowired
     @Qualifier("swivelAuthenticationHandler")
