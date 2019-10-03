@@ -2,6 +2,7 @@ package org.apereo.cas.adaptors.yubikey.dao;
 
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountRegistry;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
+import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
@@ -9,6 +10,7 @@ import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
+import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
@@ -58,17 +60,18 @@ import static org.junit.jupiter.api.Assertions.*;
     CasThemesConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreLogoutConfiguration.class,
-    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-    CasCoreAuthenticationPrincipalConfiguration.class,
     CasCoreWebflowConfiguration.class,
     CasCoreConfiguration.class,
     CasPersonDirectoryTestConfiguration.class,
+    CasCoreAuthenticationConfiguration.class,
     CasCoreAuthenticationSupportConfiguration.class,
+    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
+    CasCoreAuthenticationPrincipalConfiguration.class,
     CasCookieConfiguration.class,
     CasCoreUtilConfiguration.class,
     CasCoreWebConfiguration.class,
-    CasCoreHttpConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
+    CasCoreTicketIdGeneratorsConfiguration.class,
     CasDefaultServiceTicketIdGeneratorsConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
     RefreshAutoConfiguration.class

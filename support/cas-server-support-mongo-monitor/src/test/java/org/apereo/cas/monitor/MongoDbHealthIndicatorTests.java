@@ -12,6 +12,7 @@ import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
+import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
@@ -50,6 +51,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     MongoDbMonitoringConfiguration.class,
     CasCoreTicketsConfiguration.class,
+    CasCoreTicketIdGeneratorsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
     CasCoreUtilConfiguration.class,
     CasPersonDirectoryConfiguration.class,
@@ -66,7 +68,6 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     CasCoreServicesConfiguration.class,
-    CasCoreLogoutConfiguration.class,
     CasCoreWebConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class
 },

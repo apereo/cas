@@ -118,15 +118,12 @@ jobs:
       name: "Validate CAS Shell"
     - stage: validate
       script: ./ci/tests/webapp/validate-embedded-webapp.sh tomcat
-      if: type != pull_request and (branch =~ /^\d+\.\d+\.x$/ or branch = master)
       name: "Validate Web Application Server via Apache Tomcat"
     - stage: validate
       script: ./ci/tests/webapp/validate-embedded-webapp.sh jetty
-      if: type != pull_request and (branch =~ /^\d+\.\d+\.x$/ or branch = master)
       name: "Validate Web Application Server via Jetty"
     - stage: validate
       script: ./ci/tests/webapp/validate-embedded-webapp.sh undertow
-      if: type != pull_request and (branch =~ /^\d+\.\d+\.x$/ or branch = master)
       name: "Validate Web Application Server via Undertow"
       ############################################
     - stage: test
@@ -162,6 +159,9 @@ jobs:
     - stage: test
       script: ./ci/tests/filesystem/run-tests-filesystem.sh
       name: "FileSystem Tests"
+    - stage: test
+      script: ./ci/tests/jdbc/run-tests-jdbc.sh
+      name: "JDBC Tests"
     - stage: test
       script: ./ci/tests/ignite/run-tests-ignite.sh
       name: "Apache Ignite Tests"
@@ -214,8 +214,8 @@ jobs:
       script: ./ci/tests/redis/run-tests-redis.sh
       name: "Redis Tests"
     - stage: test
-      script: ./ci/tests/redis/run-tests-jms.sh
-      name: "JMS Tests"
+      script: ./ci/tests/activemq/run-tests-activemq.sh
+      name: "ActiveMQ Tests"
       ############################################
     - stage: finalize
       if: NOT (head_branch =~ env(DEPENDENCY_BOT_BRANCH) and type = pull_request)

@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.config.CasAcceptableUsagePolicyWebflowConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
@@ -45,6 +46,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
     CasCoreTicketCatalogConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class,
+    CasCoreAuthenticationConfiguration.class,
     CasCoreAuthenticationSupportConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
     CasPersonDirectoryTestConfiguration.class
