@@ -262,7 +262,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
     @Test
     public void verifyValidServiceTicketWithSecurePgtUrl() throws Exception {
         this.serviceValidateController.getServiceValidateConfigurationContext().setProxyHandler(new Cas10ProxyHandler());
-        val modelAndView = getModelAndViewUponServiceValidationWithSecurePgtUrl();
+        val modelAndView = getModelAndViewUponServiceValidationWithSecurePgtUrl(SERVICE);
         assertTrue(Objects.requireNonNull(modelAndView.getView()).toString().contains(SUCCESS));
     }
 
@@ -322,13 +322,13 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
     /*
     Helper methods.
      */
-    protected ModelAndView getModelAndViewUponServiceValidationWithSecurePgtUrl() throws Exception {
-        val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), DEFAULT_SERVICE);
+    protected ModelAndView getModelAndViewUponServiceValidationWithSecurePgtUrl(final Service service) throws Exception {
+        val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), service);
         val tId = getCentralAuthenticationService().getObject().createTicketGrantingTicket(ctx);
-        val sId = getCentralAuthenticationService().getObject().grantServiceTicket(tId.getId(), DEFAULT_SERVICE, ctx);
+        val sId = getCentralAuthenticationService().getObject().grantServiceTicket(tId.getId(), service, ctx);
 
         val request = new MockHttpServletRequest();
-        request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, DEFAULT_SERVICE.getId());
+        request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
         request.addParameter(CasProtocolConstants.PARAMETER_TICKET, sId.getId());
         request.addParameter(CasProtocolConstants.PARAMETER_PROXY_GRANTING_TICKET_URL, GITHUB_URL);
 
