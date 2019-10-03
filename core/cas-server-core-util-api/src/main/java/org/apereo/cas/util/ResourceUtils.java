@@ -230,4 +230,15 @@ public class ResourceUtils {
     public static boolean isFile(final String resource) {
         return StringUtils.isNotBlank(resource) && resource.startsWith(FILE_URL_PREFIX);
     }
+
+    public static boolean isJarResource(final Resource resource) {
+        try {
+            return "jar".equals(resource.getURI().getScheme());
+        } catch (final IOException e) {
+            if (LOGGER.isTraceEnabled()) {
+                LOGGER.trace(e.getMessage(), e);
+            }
+        }
+        return false;
+    }
 }
