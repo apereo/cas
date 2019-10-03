@@ -184,7 +184,7 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
     }
 
     protected Map<?, ?> renderView() throws Exception {
-        val modelAndView = this.getModelAndViewUponServiceValidationWithSecurePgtUrl();
+        val modelAndView = this.getModelAndViewUponServiceValidationWithSecurePgtUrl(DEFAULT_SERVICE);
         LOGGER.debug("Retrieved model and view [{}]", modelAndView.getModel());
 
         val req = new MockHttpServletRequest(new MockServletContext());
