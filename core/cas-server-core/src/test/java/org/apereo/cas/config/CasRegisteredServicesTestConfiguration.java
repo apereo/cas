@@ -213,7 +213,6 @@ public class CasRegisteredServicesTestConfiguration {
         svc23.setAccessStrategy(strategy23);
         l.add(svc23);
 
-        // like svc5 with setAuthorizedToReleaseProxyGrantingTicket=false
         val svc24 = RegisteredServiceTestUtils.getRegisteredService("https://www.casinthecloud.com");
         svc24.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy(".+"));
         svc24.setPublicKey(new RegisteredServicePublicKeyImpl("classpath:keys/RSA4096Public.key", "RSA"));
