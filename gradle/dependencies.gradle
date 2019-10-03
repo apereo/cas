@@ -427,7 +427,7 @@ ext.libraries = [
                     force = true
                 }
         ],
-        findbugscontrib         : dependencies.create("com.mebigfatguy.fb-contrib:fb-contrib:$findbugsContribVersion") {
+        findbugscontrib         : dependencies.create("com.mebigfatguy.sb-contrib:sb-contrib:$spotbugsContribVersion") {
             force = true
         },
         findbugs                : dependencies.create("com.github.spotbugs:spotbugs:$spotbugsVersion") {

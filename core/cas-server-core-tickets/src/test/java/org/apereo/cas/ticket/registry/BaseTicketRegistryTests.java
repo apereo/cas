@@ -57,8 +57,7 @@ import static org.junit.jupiter.api.Assumptions.*;
     CasCoreTicketsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
-    CasCoreTicketsSerializationConfiguration.class,
-    CasCoreTicketIdGeneratorsConfiguration.class
+    CasCoreTicketsSerializationConfiguration.class
 })
 public abstract class BaseTicketRegistryTests {
 

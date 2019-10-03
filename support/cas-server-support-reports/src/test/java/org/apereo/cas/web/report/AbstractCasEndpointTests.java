@@ -80,8 +80,6 @@ import org.springframework.test.annotation.DirtiesContext;
     CasCoreLogoutConfiguration.class,
     CasCookieConfiguration.class,
     RefreshAutoConfiguration.class,
-    CasCoreAuthenticationConfiguration.class,
-    CasCoreServicesAuthenticationConfiguration.class,
     AopAutoConfiguration.class,
     CasPersonDirectoryTestConfiguration.class,
     CasWebflowContextConfiguration.class,

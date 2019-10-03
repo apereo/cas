@@ -29,7 +29,7 @@ public class RegisteredServiceYamlHttpMessageConverter<T> extends AbstractHttpMe
 
     @Override
     protected boolean supports(final Class<?> clazz) {
-        return Collection.class.isAssignableFrom(clazz);
+        return Collection.class.isAssignableFrom(clazz) || RegisteredService.class.isAssignableFrom(clazz);
     }
 
     @Override
@@ -46,6 +46,8 @@ public class RegisteredServiceYamlHttpMessageConverter<T> extends AbstractHttpMe
                     .stream()
                     .filter(object -> object instanceof RegisteredService)
                     .forEach(service -> serializer.to(writer, RegisteredService.class.cast(service)));
+            } else if (t instanceof RegisteredService) {
+                serializer.to(writer, RegisteredService.class.cast(t));
             }
         }
     }
