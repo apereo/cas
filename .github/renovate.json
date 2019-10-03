@@ -199,6 +199,13 @@
       "packagePatterns": [
         "^io.swagger:"
       ]
+    },
+    {
+      "groupName": "Jersey",
+      "packagePatterns": [
+        "^org.glassfish.jersey.security:",
+        "^org.glassfish.jersey.inject:"
+      ]
     }
   ]
 }
