@@ -99,8 +99,6 @@ import static org.mockito.Mockito.*;
     SamlIdPMetadataConfiguration.class,
     RefreshAutoConfiguration.class,
     AopAutoConfiguration.class,
-    CasCoreAuthenticationConfiguration.class,
-    CasCoreServicesAuthenticationConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
     CasCoreLogoutConfiguration.class,
