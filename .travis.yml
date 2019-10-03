@@ -118,15 +118,12 @@ jobs:
       name: "Validate CAS Shell"
     - stage: validate
       script: ./ci/tests/webapp/validate-embedded-webapp.sh tomcat
-      if: type != pull_request and (branch =~ /^\d+\.\d+\.x$/ or branch = master)
       name: "Validate Web Application Server via Apache Tomcat"
     - stage: validate
       script: ./ci/tests/webapp/validate-embedded-webapp.sh jetty
-      if: type != pull_request and (branch =~ /^\d+\.\d+\.x$/ or branch = master)
       name: "Validate Web Application Server via Jetty"
     - stage: validate
       script: ./ci/tests/webapp/validate-embedded-webapp.sh undertow
-      if: type != pull_request and (branch =~ /^\d+\.\d+\.x$/ or branch = master)
       name: "Validate Web Application Server via Undertow"
       ############################################
     - stage: test

@@ -41,7 +41,6 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 @SpringBootTest(classes = {
     CasJdbcThrottlingConfiguration.class,
     CasThrottlingConfiguration.class,
-    CasThrottlingConfiguration.class,
     CasCoreAuditConfiguration.class,
     CasCoreConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
