@@ -37,12 +37,12 @@ public class CasPullRequestListener implements PullRequestListener {
 
     private boolean processInvalidPullRequest(final PullRequest givenPullRequest) {
         val pr = this.repository.getPullRequest(givenPullRequest.getNumber());
-        if (pr.getCommits() > 100 || pr.getChangedFiles() > 100) {
+        if (pr.getChangedFiles() > 100) {
             log.info("Closing invalid pull request {} with large number of changes", pr);
             repository.labelPullRequestAs(pr, CasLabels.LABEL_PROPOSAL_DECLINED);
             repository.labelPullRequestAs(pr, CasLabels.LABEL_SEE_CONTRIBUTOR_GUIDELINES);
             repository.addComment(pr, "Thank you very much for submitting this pull request! \n\nThis patch contains "
-                + "a very large number of commits and changed files and is quite impractical to evaluate and review. "
+                + "a very large number of commits or changed files and is quite impractical to evaluate and review. "
                 + "Please make sure your changes are broken down into smaller pull requests so that members can assist and review "
                 + "as quickly as possible. Furthermore, make sure your patch is based on the appropriate branch, is a feature branch and "
                 + "targets the correct CAS branch here to avoid conflicts. \n"
