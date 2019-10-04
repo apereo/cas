@@ -17,6 +17,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.credentials.authenticator.Authenticator;
@@ -117,7 +118,7 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator<U
             LOGGER.debug("Checking if the OAuth code issued contains code challenge");
             val token = this.ticketRegistry.getTicket(code.get(), OAuthCode.class);
 
-            if (token != null && token.getCodeChallenge() != null) {
+            if (token != null && StringUtils.isNotEmpty(token.getCodeChallenge())) {
                 LOGGER.debug("The OAuth code [{}] issued contains code challenge which requires PKCE Authentication", code.get());
                 return false;
             }
