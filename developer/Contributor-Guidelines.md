@@ -132,6 +132,27 @@ Typically, `SNAPSHOT` releases are published by the automatic [Travis CI process
 
 This practically usually involves running the build with a `-U` or `--refresh-dependencies` command for Apache Maven and Gradle respectively.
 
+## Why isn't my proposal accepted and merged yet?
+
+Patches submitted to the codebase in form of pull requests are generally reviewed as quickly as possible and most are often accepted. If you find your contribution to take longer
+than *usual* to be merged, it's possible that the proposed changeset violates one or more of the following principals:
+
+- The patch fails to pass automated unit or integration tests.
+- The patch fails to adhere to the project's styleing guidelines.
+- The patch has remained stale for quite a while without any sign of contributor activity.
+- The patch modifies system behavior without consensus, collective feedback or interval validation as unit or integration tests.
+- The patch modifies a large number files, more than one could practically review in a timely manner.
+- The patch presents a feature or behavior that is deemed too specialized or custom with unwarranted assumptions.
+- The patch introduces (i.e. formatting) changes that reasonable are not related to the proposal's objective.
+- The patch violates the general design principals of the codebase or introduces inconsistent or contradictory concepts that would be difficult to maintain.
+
+<div class="alert alert-success">
+  <strong>Remember</strong><br/>If you need help, please ask and seek clarification as often as you prefer. The shared objective of a pull request is not to judge or point fingers, but to collaborate together and make progress. Remain positive, optimistic with a healthy attitude towards comments and constructive feedback.
+</div>
+
+There may be accidental mistakes or infrastructure mishaps along the way. You're most welcome to ping the pull request and provide an 
+explanation and/or comment. In most, if not all, cases the patch is accepted.
+
 ## Functional Build
 
 Before you do anything else, make sure you have a [functional build](Build-Process.html). 
