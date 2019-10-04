@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.authenticator;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.principal.ServiceFactory;
@@ -117,7 +118,7 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator<U
             LOGGER.debug("Checking if the OAuth code issued contains code challenge");
             val token = this.ticketRegistry.getTicket(code.get(), OAuthCode.class);
 
-            if (token != null && token.getCodeChallenge() != null) {
+            if (token != null && StringUtils.isNotEmpty(token.getCodeChallenge())) {
                 LOGGER.debug("The OAuth code [{}] issued contains code challenge which requires PKCE Authentication", code.get());
                 return false;
             }
