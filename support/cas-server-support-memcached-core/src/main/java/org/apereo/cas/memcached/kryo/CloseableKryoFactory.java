@@ -63,6 +63,7 @@ import org.apereo.cas.ticket.support.ThrottledUseAndTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.support.TicketGrantingTicketExpirationPolicy;
 import org.apereo.cas.ticket.support.TimeoutExpirationPolicy;
 import org.apereo.cas.util.crypto.PublicKeyFactoryBean;
+import org.apereo.cas.validation.ValidationResponseType;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.pool.KryoFactory;
@@ -246,6 +247,7 @@ public class CloseableKryoFactory implements KryoFactory {
         kryo.register(UnauthorizedServiceException.class);
         kryo.register(UnauthorizedServiceForPrincipalException.class);
         kryo.register(UnauthorizedSsoServiceException.class);
+        kryo.register(ValidationResponseType.class);
     }
 
     private static void registerCasTicketsWithKryo(final Kryo kryo) {
