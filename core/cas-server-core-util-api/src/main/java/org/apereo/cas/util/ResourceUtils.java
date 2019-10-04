@@ -26,6 +26,7 @@ import java.util.jar.JarFile;
 
 import static org.springframework.util.ResourceUtils.CLASSPATH_URL_PREFIX;
 import static org.springframework.util.ResourceUtils.FILE_URL_PREFIX;
+import static org.springframework.util.ResourceUtils.JAR_URL_PREFIX;
 
 /**
  * Utility class to assist with resource operations.
@@ -229,5 +230,22 @@ public class ResourceUtils {
      */
     public static boolean isFile(final String resource) {
         return StringUtils.isNotBlank(resource) && resource.startsWith(FILE_URL_PREFIX);
+    }
+
+    /**
+     * Is the resource in the jar?
+     *
+     * @param resource the resource
+     * @return the boolean
+     */
+    public static boolean isJarResource(final Resource resource) {
+        try {
+            return JAR_URL_PREFIX.equals(resource.getURI().getScheme());
+        } catch (final IOException e) {
+            if (LOGGER.isTraceEnabled()) {
+                LOGGER.trace(e.getMessage(), e);
+            }
+        }
+        return false;
     }
 }

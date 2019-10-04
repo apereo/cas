@@ -5,9 +5,11 @@ import org.apereo.cas.util.scripting.ScriptingUtils;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 import static org.junit.Assert.*;
@@ -33,21 +35,41 @@ public class ScriptingUtilsTests {
     @Test
     public void verifyGroovyScriptShellExecution() {
         val result = ScriptingUtils.executeGroovyShellScript("return name", CollectionUtils.wrap("name", "casuser"), String.class);
-        assertEquals("casuser", result.toString());
+        assertEquals("casuser", result);
     }
 
     @Test
-    public void verifyGroovyResourceExecution() {
-        try {
-            val file = File.createTempFile("test", ".groovy");
-            FileUtils.write(file, "def process(String name) { return name }", StandardCharsets.UTF_8);
-            val resource = new FileSystemResource(file);
+    public void verifyGroovyResourceFileExecution() throws IOException {
+        val file = File.createTempFile("test", ".groovy");
+        FileUtils.write(file, "def process(String name) { return name }", StandardCharsets.UTF_8);
+        val resource = new FileSystemResource(file);
 
-            val result = ScriptingUtils.executeGroovyScript(resource, "process", String.class, "casuser");
-            assertEquals("casuser", result);
-        } catch (final Exception e) {
-            throw new AssertionError(e.getMessage(), e);
-        }
+        val result = ScriptingUtils.executeGroovyScript(resource, "process", String.class, "casuser");
+        assertEquals("casuser", result);
+    }
+
+    @Test
+    public void verifyGroovyResourceFileNotFound() {
+        val resource = new FileSystemResource(new File("missing.groovy"));
+
+        val result = ScriptingUtils.executeGroovyScript(resource, "process", String.class, "casuser");
+        assertNull(result);
+    }
+
+    @Test
+    public void verifyGroovyResourceClasspathExecution() {
+        val resource = new ClassPathResource("ScriptingUtilsTestGroovyScript.groovy");
+
+        val result = ScriptingUtils.executeGroovyScript(resource, "process", String.class, "casuser");
+        assertEquals("casuser", result);
+    }
+
+    @Test
+    public void verifyGroovyResourceClasspathNotFound() {
+        val resource = new ClassPathResource("missing.groovy");
+
+        val result = ScriptingUtils.executeGroovyScript(resource, "process", String.class, "casuser");
+        assertNull(result);
     }
 
     @Test
@@ -57,15 +79,11 @@ public class ScriptingUtilsTests {
     }
 
     @Test
-    public void verifyResourceScriptEngineExecution() {
-        try {
-            val file = File.createTempFile("test", ".groovy");
-            FileUtils.write(file, "def run(String name) { return name }", StandardCharsets.UTF_8);
+    public void verifyResourceScriptEngineExecution() throws IOException {
+        val file = File.createTempFile("test", ".groovy");
+        FileUtils.write(file, "def run(String name) { return name }", StandardCharsets.UTF_8);
 
-            val result = ScriptingUtils.executeScriptEngine(file.getCanonicalPath(), new Object[]{"casuser"}, String.class);
-            assertEquals("casuser", result.toString());
-        } catch (final Exception e) {
-            throw new AssertionError(e.getMessage(), e);
-        }
+        val result = ScriptingUtils.executeScriptEngine(file.getCanonicalPath(), new Object[]{"casuser"}, String.class);
+        assertEquals("casuser", result);
     }
 }
