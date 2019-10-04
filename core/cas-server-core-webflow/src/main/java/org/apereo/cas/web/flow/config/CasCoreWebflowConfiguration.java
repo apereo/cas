@@ -214,7 +214,8 @@ public class CasCoreWebflowConfiguration {
         val defaultStrategy = new DefaultSingleSignOnParticipationStrategy(servicesManager.getObject(),
             sso.isCreateSsoCookieOnRenewAuthn(),
             sso.isRenewAuthnEnabled(),
-            ticketRegistrySupport.getObject());
+            ticketRegistrySupport.getObject(),
+            authenticationServiceSelectionPlan.getObject());
 
         chain.addStrategy(defaultStrategy);
         return chain;
