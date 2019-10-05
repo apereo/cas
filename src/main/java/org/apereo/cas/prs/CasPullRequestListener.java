@@ -3,6 +3,7 @@ package org.apereo.cas.prs;
 import org.apereo.cas.CasLabels;
 import org.apereo.cas.MonitoredRepository;
 import org.apereo.cas.PullRequestListener;
+import org.apereo.cas.github.CombinedCommitStatus;
 import org.apereo.cas.github.Milestone;
 import org.apereo.cas.github.PullRequest;
 import org.apereo.cas.github.PullRequestFile;
@@ -31,8 +32,18 @@ public class CasPullRequestListener implements PullRequestListener {
         processLabelPendingUpdateProperty(pr);
         processMilestoneAssignment(pr);
         processLabelsByFeatures(pr);
-
         removeLabelWorkInProgress(pr);
+
+        mergePullRequestIfPossible(pr);
+    }
+
+    private void mergePullRequestIfPossible(final PullRequest pr) {
+        if (pr.isLabeledAs(CasLabels.LABEL_BOT) && pr.isLabeledAs(CasLabels.LABEL_DEPENDENCIES_MODULES)) {
+            val checkRun = this.repository.getCombinedPullRequestCommitStatuses(pr);
+            if (checkRun.hasCompletedCheckSuccessfully(CombinedCommitStatus.TRAVIS_CI)) {
+                this.repository.mergePullRequestIntoBase(pr);
+            }
+        }
     }
 
     private boolean processInvalidPullRequest(final PullRequest givenPullRequest) {

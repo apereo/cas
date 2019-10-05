@@ -57,6 +57,11 @@ public class PullRequest {
     private final long additions;
     private final long commits;
 
+    private final String statusesUrl;
+
+    private final boolean mergeable;
+    private final boolean locked;
+
     @JsonCreator
     public PullRequest(@JsonProperty("url") final String url,
                        @JsonProperty("comments_url") final String commentsUrl,
@@ -72,7 +77,10 @@ public class PullRequest {
                        @JsonProperty("changed_files") final long changedFiles,
                        @JsonProperty("deletions") final long deletions,
                        @JsonProperty("additions") final long additions,
-                       @JsonProperty("commits") final long commits) {
+                       @JsonProperty("commits") final long commits,
+                       @JsonProperty("statuses_url") final String statusesUrl,
+                       @JsonProperty("mergeable") final String mergeable,
+                       @JsonProperty("locked") final Boolean locked) {
         this.url = url;
         this.commentsUrl = commentsUrl;
         this.user = user;
@@ -89,6 +97,15 @@ public class PullRequest {
         this.deletions = deletions;
         this.additions = additions;
         this.commits = commits;
+
+        this.statusesUrl = statusesUrl;
+
+        this.mergeable = mergeable != null && Boolean.parseBoolean(mergeable);
+        this.locked = locked;
+    }
+
+    private static Predicate<Label> getLabelPredicateByName(final CasLabels name) {
+        return l -> l.getName().contains(name.getTitle());
     }
 
     public boolean isOpen() {
@@ -105,10 +122,6 @@ public class PullRequest {
 
     public boolean isTargetedAtMasterBranch() {
         return this.base.getRef().equalsIgnoreCase("master");
-    }
-
-    private static Predicate<Label> getLabelPredicateByName(final CasLabels name) {
-        return l -> l.getName().contains(name.getTitle());
     }
 
     public boolean isLabeledAs(final CasLabels labelName) {

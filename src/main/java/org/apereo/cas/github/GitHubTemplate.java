@@ -16,8 +16,11 @@
 
 package org.apereo.cas.github;
 
+import lombok.val;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpRequest;
@@ -32,6 +35,8 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.util.Base64Utils;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.util.StreamUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.DefaultResponseErrorHandler;
@@ -47,6 +52,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -150,14 +157,56 @@ public class GitHubTemplate implements GitHubOperations {
 
     @Override
     public Page<PullRequestFile> getPullRequestFiles(final String organization, final String repository, final String number) {
-        final String url = "https://api.github.com/repos/" + organization + '/' + repository + "/pulls/" + number + "/files";
+        val url = "https://api.github.com/repos/" + organization + '/' + repository + "/pulls/" + number + "/files";
         return getPage(url, PullRequestFile[].class);
+    }
+
+    @Override
+    public Page<CommitStatus> getPullRequestCommitStatus(final String organization, final String repository, final String number) {
+        val pr = getPullRequest(organization, repository, number);
+        return getPullRequestCommitStatus(pr);
+    }
+
+    @Override
+    public Page<CommitStatus> getPullRequestCommitStatus(final PullRequest pr) {
+        return getPage(pr.getStatusesUrl(), CommitStatus[].class);
+    }
+
+    @Override
+    public CombinedCommitStatus getCombinedPullRequestCommitStatus(final String organization, final String repository, String ref) {
+        final String url = "https://api.github.com/repos/" + organization + '/' + repository + "/commits/" + ref + "/status";
+        return getSinglePage(url, CombinedCommitStatus.class);
     }
 
     @Override
     public Page<Commit> getPullRequestCommits(final String organization, final String repository, final String number) {
         final String url = "https://api.github.com/repos/" + organization + '/' + repository + "/pulls/" + number + "/commits";
         return getPage(url, Commit[].class);
+    }
+
+    @Override
+    public boolean mergeIntoBase(final String organization, final String repository, final PullRequest pr,
+                                 final String commitTitle, final String commitMessage,
+                                 final String shaToMatch, final String method) {
+        final String url = "https://api.github.com/repos/" + organization + '/' + repository + "/pulls/" + pr.getNumber() + "/merge";
+
+        val map = new LinkedHashMap<>();
+        if (StringUtils.hasText(commitTitle)) {
+            map.put("commit_title", commitTitle);
+        }
+        if (StringUtils.hasText(commitMessage)) {
+            map.put("commit_message", commitMessage);
+        }
+        if (StringUtils.hasText(shaToMatch)) {
+            map.put("sha", shaToMatch);
+        }
+        if (StringUtils.hasText(method)) {
+            map.put("merge_method", method);
+        } else {
+            map.put("merge_method", "squash");
+        }
+        val responseEntity = this.rest.exchange(url, HttpMethod.PUT, new HttpEntity<>(map), Map.class);
+        return responseEntity.getStatusCode().is2xxSuccessful();
     }
 
     @Override
@@ -180,9 +229,9 @@ public class GitHubTemplate implements GitHubOperations {
 
         final ResponseEntity response = this.rest.exchange(new RequestEntity(body, HttpMethod.POST, uri), Map.class);
         if (response.getStatusCode() == HttpStatus.NO_CONTENT) {
-            log.debug("Pull request [{}] already contains the [{}]; nothing to mergeWithBase", targetBranch, pr);
+            log.debug("Pull request [{}] already contains the [{}]; nothing to merge", targetBranch, pr);
         } else if (response.getStatusCode() == HttpStatus.CONFLICT) {
-            log.warn("Pull request [{}] has a mergeWithBase conflict and cannot be merged with [{}]", pr, targetBranch);
+            log.warn("Pull request [{}] has a merge conflict and cannot be merged with [{}]", pr, targetBranch);
         } else if (response.getStatusCode() == HttpStatus.CREATED) {
             log.info("Pull request [{}] is successfully merged with head [{}]", pr, targetBranch);
         } else {
@@ -217,20 +266,38 @@ public class GitHubTemplate implements GitHubOperations {
         }
     }
 
-    private <T> Page<T> getPage(final String url, final Class<T[]> type) {
+    private <T> Page<T> getPage(final String url, final Class<T[]> type, final Map params) {
         if (!StringUtils.hasText(url)) {
             return null;
         }
-        final ResponseEntity<T[]> contents = this.rest.getForEntity(url, type);
+        final ResponseEntity<T[]> contents = this.rest.getForEntity(url, type, params);
         return new StandardPage<T>(Arrays.asList(contents.getBody()),
             () -> getPage(getNextUrl(contents), type));
     }
 
+    private <T> Page<T> getPage(final String url, final Class<T[]> type) {
+        return getPage(url, type, Map.of());
+    }
+
     private <T> T getSinglePage(final String url, final Class<T> type) {
+        return getSinglePage(url, type, Map.of());
+    }
+
+
+    private <T> T getSinglePage(final String url, final Class<T> type, final Map params) {
         if (!StringUtils.hasText(url)) {
             return null;
         }
-        final ResponseEntity<T> contents = this.rest.getForEntity(url, type);
+        final ResponseEntity<T> contents = this.rest.getForEntity(url, type, params);
+        return contents.getBody();
+    }
+
+    private <T> T getSinglePage(final String url, final Class<T> type, final Map params, final MultiValueMap headers) {
+        if (!StringUtils.hasText(url)) {
+            return null;
+        }
+        final HttpHeaders hd = new HttpHeaders(headers);
+        final ResponseEntity<T> contents = this.rest.exchange(url, HttpMethod.GET, new HttpEntity<>(hd), type, params);
         return contents.getBody();
     }
 
@@ -332,6 +399,24 @@ public class GitHubTemplate implements GitHubOperations {
                 + response.getStatusCode());
         }
         return response.getBody();
+    }
+
+    @Override
+    public CheckRun getCheckRunsFor(final String organization, final String repository, final String ref,
+                                    final String checkName, final String status, final String filter) {
+        final Map<String, String> params = new HashMap<>();
+        if (StringUtils.hasText(checkName)) {
+            params.put("check_name", checkName);
+        }
+        if (StringUtils.hasText(status)) {
+            params.put("status", status);
+        }
+        if (StringUtils.hasText(filter)) {
+            params.put("filter", filter);
+        }
+        final String url = "https://api.github.com/repos/" + organization + '/' + repository + "/commits/" + ref + "/check-runs";
+        return getSinglePage(url, CheckRun.class, params,
+            new LinkedMultiValueMap(Map.of("Accept", List.of("application/vnd.github.antiope-preview+json"))));
     }
 
     private static final class ErrorLoggingMappingJackson2HttpMessageConverter

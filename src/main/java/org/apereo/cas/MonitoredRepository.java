@@ -1,22 +1,9 @@
-/*
- * Copyright 2015 the original author or authors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package org.apereo.cas;
 
+import org.apereo.cas.github.CheckRun;
+import org.apereo.cas.github.CombinedCommitStatus;
 import org.apereo.cas.github.Commit;
+import org.apereo.cas.github.CommitStatus;
 import org.apereo.cas.github.GitHubOperations;
 import org.apereo.cas.github.Label;
 import org.apereo.cas.github.Milestone;
@@ -54,6 +41,10 @@ public class MonitoredRepository implements InitializingBean {
     private final List<Label> labels = new ArrayList<>();
 
     private Version currentVersionInMaster;
+
+    private static Predicate<Label> getLabelPredicateByName(final CasLabels name) {
+        return l -> l.getName().contains(name.getTitle());
+    }
 
     @Override
     public void afterPropertiesSet() throws Exception {
@@ -106,12 +97,13 @@ public class MonitoredRepository implements InitializingBean {
             .findFirst();
     }
 
-    public PullRequest mergePullRequest(final PullRequest pr) {
+    public PullRequest mergePullRequestWithBase(final PullRequest pr) {
         return this.gitHub.mergeWithBase(getOrganization(), getName(), pr);
     }
 
-    private static Predicate<Label> getLabelPredicateByName(final CasLabels name) {
-        return l -> l.getName().contains(name.getTitle());
+    public boolean mergePullRequestIntoBase(final PullRequest pr) {
+        return this.gitHub.mergeIntoBase(getOrganization(), getName(), pr, pr.getTitle(), pr.getBody(),
+            pr.getHead().getSha(), "squash");
     }
 
     public void labelPullRequestAs(final PullRequest pr, final CasLabels labelName) {
@@ -123,6 +115,7 @@ public class MonitoredRepository implements InitializingBean {
     public void addComment(final PullRequest pr, final String comment) {
         this.gitHub.addComment(pr, comment);
     }
+
     public void removeLabelFrom(final PullRequest pr, final CasLabels labelName) {
         this.gitHub.removeLabel(pr, labelName.getTitle());
     }
@@ -153,5 +146,28 @@ public class MonitoredRepository implements InitializingBean {
             pages = pages.next();
         }
         return commits;
+    }
+
+    public CheckRun getLatestCompletedCheckRunsFor(final PullRequest pr, String checkName) {
+        return this.gitHub.getCheckRunsFor(getOrganization(), getName(),
+            pr.getHead().getSha(), checkName, "completed", "latest");
+    }
+
+    public CheckRun getLatestCompletedCheckRun(final PullRequest pr) {
+        return getLatestCompletedCheckRunsFor(pr, null);
+    }
+
+    public List<CommitStatus> getPullRequestCommitStatuses(final PullRequest pr) {
+        final List<CommitStatus> results = new ArrayList<>();
+        Page<CommitStatus> pages = this.gitHub.getPullRequestCommitStatus(pr);
+        while (pages != null) {
+            results.addAll(pages.getContent());
+            pages = pages.next();
+        }
+        return results;
+    }
+
+    public CombinedCommitStatus getCombinedPullRequestCommitStatuses(final PullRequest pr) {
+        return this.gitHub.getCombinedPullRequestCommitStatus(getOrganization(), getName(), pr.getHead().getSha());
     }
 }

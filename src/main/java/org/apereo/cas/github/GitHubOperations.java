@@ -50,9 +50,22 @@ public interface GitHubOperations {
 
     PullRequest mergeWithBase(String organization, String repository, PullRequest pr);
 
+    boolean mergeIntoBase(String organization, String repository, PullRequest pr,
+                          String commitTitle, String commitMessage,
+                          String shaToMatch, String method);
+
     Page<PullRequestFile> getPullRequestFiles(String organization, String repository, String number);
+
+    Page<CommitStatus> getPullRequestCommitStatus(String organization, String repository, String number);
+
+    Page<CommitStatus> getPullRequestCommitStatus(PullRequest pr);
+
+    CombinedCommitStatus getCombinedPullRequestCommitStatus(final String organization, final String repository, String ref);
 
     Page<Commit> getPullRequestCommits(String organization, String repository, String number);
 
     void closePullRequest(String organization, String repository, String number);
+
+    CheckRun getCheckRunsFor(String organization, String repository, String ref,
+                             String checkName, String status, String filter);
 }

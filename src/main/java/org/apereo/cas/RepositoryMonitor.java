@@ -79,7 +79,7 @@ class RepositoryMonitor {
             while (page != null) {
                 for (final PullRequest pr : page.getContent()) {
                     if (!pr.getTitle().contains("WIP") && !pr.isLabeledAs(CasLabels.LABEL_PENDING) && !pr.isLabeledAs(CasLabels.LABEL_BOT)) {
-                        repository.mergePullRequest(pr);
+                        repository.mergePullRequestWithBase(pr);
                     }
                 }
                 page = page.next();
