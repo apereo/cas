@@ -21,10 +21,14 @@ public class OpenActivator implements Activator<Connection> {
 
     public boolean activate(final Connection c) {
         try {
-            if (c != null && !c.isOpen()) {
-                c.open();
+            if (c == null) {
+                return false;
+            }
+            if (c.isOpen()) {
                 return true;
             }
+            c.open();
+            return true;
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
