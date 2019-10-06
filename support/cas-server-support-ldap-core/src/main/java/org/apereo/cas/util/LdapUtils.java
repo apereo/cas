@@ -1,5 +1,6 @@
 package org.apereo.cas.util;
 
+import org.apereo.cas.authentication.OpenActivator;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
 import org.apereo.cas.configuration.support.Beans;
@@ -968,7 +969,7 @@ public class LdapUtils {
             switch (pass) {
                 case CLOSE:
                     cp.setPassivator(new ClosePassivator());
-                    cp.setActivator(new ConnectActivator());
+                    cp.setActivator(new OpenActivator());
 
                     LOGGER.debug("Created [{}] passivator for [{}]", l.getPoolPassivator(), l.getLdapUrl());
                     break;
