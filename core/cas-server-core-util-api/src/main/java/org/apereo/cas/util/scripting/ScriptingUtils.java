@@ -22,6 +22,10 @@ import org.springframework.core.io.Resource;
 import javax.script.Invocable;
 import javax.script.ScriptEngineManager;
 import javax.script.SimpleBindings;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.security.AccessController;
@@ -344,17 +348,12 @@ public class ScriptingUtils {
         return AccessController.doPrivileged((PrivilegedAction<GroovyObject>) () -> {
             val parent = ScriptingUtils.class.getClassLoader();
             try (val loader = new GroovyClassLoader(parent)) {
-
-                if (ResourceUtils.isFile(groovyScript)) {
-                    val groovyFile = groovyScript.getFile();
-                    if (groovyFile.exists()) {
-                        val groovyClass = loader.parseClass(groovyFile);
-                        LOGGER.trace("Creating groovy object instance from class [{}]", groovyFile.getCanonicalPath());
-                        return (GroovyObject) groovyClass.getDeclaredConstructor().newInstance();
-                    }
-                    LOGGER.trace("Groovy script at [{}] does not exist", groovyScript);
-                    return null;
+                val groovyClass = loadGroovyClass(groovyScript, loader);
+                if (groovyClass != null) {
+                    LOGGER.trace("Creating groovy object instance from class [{}]", groovyScript.getURI().getPath());
+                    return (GroovyObject) groovyClass.getDeclaredConstructor().newInstance();
                 }
+                LOGGER.warn("Groovy script at [{}] does not exist", groovyScript.getURI().getPath());
             } catch (final Exception e) {
                 if (failOnError) {
                     throw new RuntimeException(e);
@@ -363,6 +362,21 @@ public class ScriptingUtils {
             }
             return null;
         });
+    }
+
+    private Class loadGroovyClass(final Resource groovyScript,
+                                  final GroovyClassLoader loader) throws IOException {
+        if (ResourceUtils.isJarResource(groovyScript)) {
+            try (val groovyReader = new BufferedReader(new InputStreamReader(groovyScript.getInputStream(), StandardCharsets.UTF_8))) {
+                return loader.parseClass(groovyReader, groovyScript.getFilename());
+            }
+        }
+
+        val groovyFile = groovyScript.getFile();
+        if (groovyFile.exists()) {
+            return loader.parseClass(groovyFile);
+        }
+        return null;
     }
 
 

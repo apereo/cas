@@ -47,7 +47,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
     CasPersonDirectoryConfiguration.class,
     CasCoreAuthenticationConfiguration.class,
     CasCoreWebConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreServicesAuthenticationConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
     CasCoreServicesConfiguration.class

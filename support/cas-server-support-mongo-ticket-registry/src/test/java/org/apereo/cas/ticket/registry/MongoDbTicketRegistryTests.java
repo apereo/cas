@@ -12,6 +12,7 @@ import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
+import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
@@ -46,6 +47,7 @@ import org.springframework.test.annotation.DirtiesContext;
     CasCoreUtilConfiguration.class,
     AopAutoConfiguration.class,
     MongoDbTicketRegistryTicketCatalogConfiguration.class,
+    CasCoreTicketIdGeneratorsConfiguration.class,
     MongoDbTicketRegistryConfiguration.class,
     CasCoreAuthenticationConfiguration.class,
     CasCoreServicesAuthenticationConfiguration.class,

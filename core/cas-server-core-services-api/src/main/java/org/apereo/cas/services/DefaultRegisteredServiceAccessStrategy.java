@@ -105,15 +105,16 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
         this.ssoEnabled = ssoEnabled;
     }
 
-    public DefaultRegisteredServiceAccessStrategy(final Map<String, Set<String>> requiredAttributes, final Map<String, Set<String>> rejectedAttributes) {
+    public DefaultRegisteredServiceAccessStrategy(final Map<String, Set<String>> requiredAttributes,
+                                                  final Map<String, Set<String>> rejectedAttributes) {
         this();
-        this.requiredAttributes = requiredAttributes;
-        this.rejectedAttributes = rejectedAttributes;
+        this.requiredAttributes = ObjectUtils.defaultIfNull(requiredAttributes, new HashMap<>());
+        this.rejectedAttributes = ObjectUtils.defaultIfNull(rejectedAttributes, new HashMap<>());
     }
 
     public DefaultRegisteredServiceAccessStrategy(final Map<String, Set<String>> requiredAttributes) {
         this();
-        this.requiredAttributes = requiredAttributes;
+        this.requiredAttributes = ObjectUtils.defaultIfNull(requiredAttributes, new HashMap<>());
     }
 
     /**
@@ -123,6 +124,8 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
     public void postLoad() {
         this.delegatedAuthenticationPolicy = ObjectUtils.defaultIfNull(this.delegatedAuthenticationPolicy,
             new DefaultRegisteredServiceDelegatedAuthenticationPolicy());
+        this.requiredAttributes = ObjectUtils.defaultIfNull(requiredAttributes, new HashMap<>());
+        this.rejectedAttributes = ObjectUtils.defaultIfNull(rejectedAttributes, new HashMap<>());
     }
 
     /**
@@ -189,7 +192,8 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
      * @param requiredAttributes  the required attributes
      * @return the boolean
      */
-    protected boolean doRequiredAttributesAllowPrincipalAccess(final Map<String, Object> principalAttributes, final Map<String, Set<String>> requiredAttributes) {
+    protected boolean doRequiredAttributesAllowPrincipalAccess(final Map<String, Object> principalAttributes,
+                                                               final Map<String, Set<String>> requiredAttributes) {
         LOGGER.debug("These required attributes [{}] are examined against [{}] before service can proceed.", requiredAttributes, principalAttributes);
         return requiredAttributes.isEmpty() || requiredAttributesFoundInMap(principalAttributes, requiredAttributes);
     }

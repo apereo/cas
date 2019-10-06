@@ -55,10 +55,8 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
     CasCoreTicketIdGeneratorsConfiguration.class,
     RefreshAutoConfiguration.class,
     CasCoreConfiguration.class,
-    CasCoreTicketIdGeneratorsConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     CasCoreServicesConfiguration.class,
-    CasCoreLogoutConfiguration.class,
     CasCoreWebConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class
 },

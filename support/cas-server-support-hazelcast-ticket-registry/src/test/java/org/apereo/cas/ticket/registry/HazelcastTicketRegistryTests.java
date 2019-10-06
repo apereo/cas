@@ -54,7 +54,6 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
     CasCoreConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     CasCoreServicesConfiguration.class,
-    CasCoreLogoutConfiguration.class,
     CasCoreWebConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class
 }, properties = "cas.ticket.registry.hazelcast.cluster.instanceName=testlocalhostinstance")

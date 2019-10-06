@@ -11,6 +11,7 @@ import org.apereo.cas.trusted.util.MultifactorAuthenticationTrustUtils;
 
 import lombok.val;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -44,6 +45,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnableTransactionManagement(proxyTargetClass = true)
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @EnableScheduling
+@Tag("JDBC")
 public class JpaMultifactorAuthenticationTrustStorageTests {
     private static final String PRINCIPAL = "principal";
     private static final String PRINCIPAL2 = "principal2";

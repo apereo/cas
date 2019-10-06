@@ -26,6 +26,7 @@ import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguratio
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 
 import lombok.Getter;
+import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -39,7 +40,6 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
  */
 @SpringBootTest(classes = {
     CasJdbcThrottlingConfiguration.class,
-    CasThrottlingConfiguration.class,
     CasThrottlingConfiguration.class,
     CasCoreAuditConfiguration.class,
     CasCoreConfiguration.class,
@@ -69,6 +69,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
     "cas.authn.throttle.failure.code=AUTHENTICATION_FAILED",
     "cas.audit.jdbc.asynchronous=false"})
 @Getter
+@Tag("JDBC")
 public class JdbcThrottledSubmissionHandlerInterceptorAdapterTests extends BaseThrottledSubmissionHandlerInterceptorAdapterTests {
 
     @Autowired

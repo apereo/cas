@@ -1,7 +1,5 @@
 package org.apereo.cas.authentication.principal.cache;
 
-import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
-import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 
@@ -9,11 +7,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.Bean;
 import org.springframework.test.annotation.DirtiesContext;
 
 import java.io.File;
@@ -29,8 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
-    CasCoreUtilConfiguration.class,
-    CasCoreAuthenticationSupportConfiguration.class
+    CachingPrincipalAttributesRepositoryTests.CachingPrincipalAttributeRepositoryTestConfiguration.class
 })
 @DirtiesContext
 public class CachingPrincipalAttributesRepositoryTests extends AbstractCachingPrincipalAttributesRepositoryTests {
@@ -41,12 +41,16 @@ public class CachingPrincipalAttributesRepositoryTests extends AbstractCachingPr
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 
+    @BeforeEach
+    public void setup() {
+        ApplicationContextProvider.holdApplicationContext(applicationContext);
+        CachingPrincipalAttributesRepository.getCacheInstanceFromApplicationContext().invalidateAll();
+    }
+
     @Override
     protected AbstractPrincipalAttributesRepository getPrincipalAttributesRepository(final String unit, final long duration) {
         ApplicationContextProvider.registerBeanIntoApplicationContext(this.applicationContext, this.dao, "attributeRepository");
-        val repository = new CachingPrincipalAttributesRepository(unit, duration);
-        repository.getCacheInstanceFromApplicationContext().invalidateAll();
-        return repository;
+        return new CachingPrincipalAttributesRepository(unit, duration);
     }
 
     @Test
@@ -57,5 +61,13 @@ public class CachingPrincipalAttributesRepositoryTests extends AbstractCachingPr
         MAPPER.writeValue(JSON_FILE, repositoryWritten);
         val repositoryRead = MAPPER.readValue(JSON_FILE, CachingPrincipalAttributesRepository.class);
         assertEquals(repositoryWritten, repositoryRead);
+    }
+
+    @TestConfiguration
+    public static class CachingPrincipalAttributeRepositoryTestConfiguration {
+        @Bean
+        public PrincipalAttributesRepositoryCache principalAttributesRepositoryCache() {
+            return new PrincipalAttributesRepositoryCache();
+        }
     }
 }

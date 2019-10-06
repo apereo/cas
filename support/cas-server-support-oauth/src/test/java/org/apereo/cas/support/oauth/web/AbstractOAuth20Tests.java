@@ -139,11 +139,9 @@ import static org.junit.jupiter.api.Assertions.*;
     CasOAuthThrottleConfiguration.class,
     CasThrottlingConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     CasOAuthAuthenticationServiceSelectionStrategyConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
     CasCoreTicketComponentSerializationConfiguration.class,
-    CasOAuth20TestAuthenticationEventExecutionPlanConfiguration.class,
     CasCoreUtilSerializationConfiguration.class,
     CasPersonDirectoryConfiguration.class,
     AbstractOAuth20Tests.OAuth20TestConfiguration.class,
@@ -176,6 +174,8 @@ public abstract class AbstractOAuth20Tests {
     public static final String PASSWORD = "password";
     public static final String GOOD_USERNAME = "test";
     public static final String GOOD_PASSWORD = "test";
+    public static final String CODE_CHALLENGE = "myclientcode";
+    public static final String CODE_CHALLENGE_METHOD_PLAIN = "plain";
     public static final String FIRST_NAME_ATTRIBUTE = "firstName";
     public static final String FIRST_NAME = "jerome";
     public static final String LAST_NAME_ATTRIBUTE = "lastName";
@@ -299,12 +299,17 @@ public abstract class AbstractOAuth20Tests {
     }
 
     protected OAuthCode addCode(final Principal principal, final OAuthRegisteredService registeredService) {
+        return addCodeWithChallenge(principal, registeredService, null, null);
+    }
+
+    protected OAuthCode addCodeWithChallenge(final Principal principal, final OAuthRegisteredService registeredService,
+                                             final String codeChallenge, final String codeChallengeMethod) {
         val authentication = getAuthentication(principal);
         val factory = new WebApplicationServiceFactory();
         val service = factory.createService(registeredService.getClientId());
         val code = oAuthCodeFactory.create(service, authentication,
-            new MockTicketGrantingTicket("casuser"), new ArrayList<>(),
-            null, null, CLIENT_ID, new HashMap<>());
+                new MockTicketGrantingTicket("casuser"), new ArrayList<>(),
+                codeChallenge, codeChallengeMethod, CLIENT_ID, new HashMap<>());
         this.ticketRegistry.addTicket(code);
         return code;
     }

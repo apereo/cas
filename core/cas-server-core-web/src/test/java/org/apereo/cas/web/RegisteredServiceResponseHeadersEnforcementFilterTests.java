@@ -121,7 +121,7 @@ public class RegisteredServiceResponseHeadersEnforcementFilterTests {
         val filter = getFilterForProperty(Pair.of(RegisteredServiceProperties.HTTP_HEADER_ENABLE_XFRAME_OPTIONS, "true"),
             Pair.of(RegisteredServiceProperties.HTTP_HEADER_XFRAME_OPTIONS, "sameorigin"));
 
-        filter.setXFrameOptions("some-other-value");
+        filter.setXframeOptions("some-other-value");
         filter.setEnableXFrameOptions(true);
 
         var response = new MockHttpServletResponse();
@@ -140,7 +140,7 @@ public class RegisteredServiceResponseHeadersEnforcementFilterTests {
     public void verifyXframeOptionsDisabled() throws Exception {
         val filter = getFilterForProperty(Pair.of(RegisteredServiceProperties.HTTP_HEADER_ENABLE_XFRAME_OPTIONS, "false"));
 
-        filter.setXFrameOptions("some-other-value");
+        filter.setXframeOptions("some-other-value");
         filter.setEnableXFrameOptions(true);
 
         var response = new MockHttpServletResponse();

@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
+import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
@@ -59,6 +60,7 @@ import static org.mockito.Mockito.*;
     CasWebflowContextConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreMultifactorAuthenticationConfiguration.class,
+    CasCoreAuthenticationConfiguration.class,
     CasCoreAuthenticationSupportConfiguration.class,
     CasMultifactorAuthenticationWebflowConfiguration.class,
     CasCoreMultifactorAuthenticationAuditConfiguration.class,

@@ -6,6 +6,7 @@ import org.apereo.cas.services.ServicesManager;
 
 import lombok.SneakyThrows;
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -32,6 +33,7 @@ import static org.mockito.Mockito.*;
     "database.name:cas-bindmode-authentications",
     "database.password=Mellon"})
 @DirtiesContext
+@Tag("JDBC")
 public class BindModeSearchDatabaseAuthenticationHandlerTests {
     @Autowired
     @Qualifier("dataSource")

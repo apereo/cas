@@ -73,14 +73,11 @@ import java.util.List;
     CasCoreAuthenticationConfiguration.class,
     CasCoreAuthenticationMetadataConfiguration.class,
     CasCoreAuthenticationPolicyConfiguration.class,
-    CasCoreAuthenticationPrincipalConfiguration.class,
     CasRegisteredServicesTestConfiguration.class,
     CasAuthenticationEventExecutionPlanTestConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
     CasDefaultServiceTicketIdGeneratorsConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
-    CasRestTokensConfiguration.class,
-    CasRestConfiguration.class,
     CasCoreTicketsConfiguration.class
 })
 public abstract class BaseTicketResourceEntityResponseFactoryTests {

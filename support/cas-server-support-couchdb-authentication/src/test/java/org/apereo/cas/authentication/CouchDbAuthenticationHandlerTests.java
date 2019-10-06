@@ -69,7 +69,6 @@ import static org.junit.jupiter.api.Assertions.*;
         CasWebApplicationServiceFactoryConfiguration.class,
         CasPersonDirectoryConfiguration.class,
         CasCoreWebConfiguration.class,
-        CasWebApplicationServiceFactoryConfiguration.class,
         RefreshAutoConfiguration.class
     },
     properties = {

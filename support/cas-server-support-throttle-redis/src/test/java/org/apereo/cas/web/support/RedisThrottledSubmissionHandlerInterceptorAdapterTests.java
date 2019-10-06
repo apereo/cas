@@ -13,6 +13,7 @@ import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
+import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
@@ -23,17 +24,14 @@ import org.apereo.cas.config.CasThrottlingConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
+import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.Getter;
-import lombok.SneakyThrows;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import redis.embedded.RedisServer;
 
 /**
  * This is  {@link RedisThrottledSubmissionHandlerInterceptorAdapterTests}.
@@ -51,6 +49,7 @@ import redis.embedded.RedisServer;
     CasCoreServicesConfiguration.class,
     CasCoreUtilConfiguration.class,
     CasCoreTicketsConfiguration.class,
+    CasCoreTicketIdGeneratorsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
     CasCoreLogoutConfiguration.class,
     RefreshAutoConfiguration.class,
@@ -69,29 +68,15 @@ import redis.embedded.RedisServer;
     properties = {
         "cas.authn.throttle.usernameParameter=username",
         "cas.audit.redis.host=localhost",
-        "cas.audit.redis.port=6385"
+        "cas.audit.redis.port=6379"
     })
 @Getter
 @EnabledIfContinuousIntegration
-public class RedisThrottledSubmissionHandlerInterceptorAdapterTests extends
-    BaseThrottledSubmissionHandlerInterceptorAdapterTests {
-
-    private static RedisServer REDIS_SERVER;
+@EnabledIfPortOpen(port = 6379)
+public class RedisThrottledSubmissionHandlerInterceptorAdapterTests extends BaseThrottledSubmissionHandlerInterceptorAdapterTests {
 
     @Autowired
     @Qualifier("authenticationThrottle")
     private ThrottledSubmissionHandlerInterceptor throttle;
-
-    @BeforeAll
-    @SneakyThrows
-    public static void startRedis() {
-        REDIS_SERVER = new RedisServer(6385);
-        REDIS_SERVER.start();
-    }
-
-    @AfterAll
-    public static void stopRedis() {
-        REDIS_SERVER.stop();
-    }
 
 }

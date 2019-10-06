@@ -80,7 +80,7 @@ public class CasRemoteAuthenticationConfiguration {
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer remoteAddressWebflowConfigurer() {
         return new RemoteAddressWebflowConfigurer(flowBuilderServices.getObject(),
-            loginFlowDefinitionRegistry.getIfAvailable(), applicationContext, casProperties);
+            loginFlowDefinitionRegistry.getObject(), applicationContext, casProperties);
     }
 
     @Bean
@@ -88,7 +88,7 @@ public class CasRemoteAuthenticationConfiguration {
     public AuthenticationHandler remoteAddressAuthenticationHandler() {
         val remoteAddress = casProperties.getAuthn().getRemoteAddress();
         val bean = new RemoteAddressAuthenticationHandler(remoteAddress.getName(),
-            servicesManager.getIfAvailable(),
+            servicesManager.getObject(),
             remoteAddressPrincipalFactory(),
             remoteAddress.getOrder());
         bean.configureIpNetworkRange(remoteAddress.getIpAddressRange());
@@ -97,9 +97,9 @@ public class CasRemoteAuthenticationConfiguration {
 
     @Bean
     public Action remoteAddressCheck() {
-        return new RemoteAddressNonInteractiveCredentialsAction(initialAuthenticationAttemptWebflowEventResolver.getIfAvailable(),
-            serviceTicketRequestWebflowEventResolver.getIfAvailable(),
-            adaptiveAuthenticationPolicy.getIfAvailable());
+        return new RemoteAddressNonInteractiveCredentialsAction(initialAuthenticationAttemptWebflowEventResolver.getObject(),
+            serviceTicketRequestWebflowEventResolver.getObject(),
+            adaptiveAuthenticationPolicy.getObject());
     }
 
     @ConditionalOnMissingBean(name = "remoteAddressPrincipalFactory")
@@ -111,7 +111,7 @@ public class CasRemoteAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "remoteAddressAuthenticationEventExecutionPlanConfigurer")
     @Bean
     public AuthenticationEventExecutionPlanConfigurer remoteAddressAuthenticationEventExecutionPlanConfigurer() {
-        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(remoteAddressAuthenticationHandler(), defaultPrincipalResolver.getIfAvailable());
+        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(remoteAddressAuthenticationHandler(), defaultPrincipalResolver.getObject());
     }
 
     @Bean

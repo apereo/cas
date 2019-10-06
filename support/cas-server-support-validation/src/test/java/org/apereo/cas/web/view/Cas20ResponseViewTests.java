@@ -5,6 +5,7 @@ import org.apereo.cas.CasViewConstants;
 import org.apereo.cas.authentication.DefaultAuthenticationAttributeReleasePolicy;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.support.NoOpProtocolAttributeEncoder;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.validation.DefaultServiceTicketValidationAuthorizersExecutionPlan;
 import org.apereo.cas.web.AbstractServiceValidateController;
@@ -65,7 +66,8 @@ public class Cas20ResponseViewTests extends AbstractServiceValidateControllerTes
 
     @Test
     public void verifyView() throws Exception {
-        val modelAndView = this.getModelAndViewUponServiceValidationWithSecurePgtUrl();
+        val modelAndView = this.getModelAndViewUponServiceValidationWithSecurePgtUrl(RegisteredServiceTestUtils
+                .getService("https://www.casinthecloud.com"));
         val req = new MockHttpServletRequest(new MockServletContext());
         req.setAttribute(RequestContext.WEB_APPLICATION_CONTEXT_ATTRIBUTE, new GenericWebApplicationContext(req.getServletContext()));
 

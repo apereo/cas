@@ -5,6 +5,7 @@ import org.apereo.cas.util.CollectionUtils;
 import lombok.val;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.TestPropertySource;
 
@@ -20,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.acceptableUsagePolicy.jdbc.tableName=aup_table",
     "cas.acceptableUsagePolicy.aupAttributeName=accepted"
 })
+@Tag("JDBC")
 public class JdbcAcceptableUsagePolicyRepositoryTests extends BaseJdbcAcceptableUsagePolicyRepositoryTests {
 
     @BeforeEach

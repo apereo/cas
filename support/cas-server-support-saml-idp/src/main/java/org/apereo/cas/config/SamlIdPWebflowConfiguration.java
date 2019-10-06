@@ -61,8 +61,8 @@ public class SamlIdPWebflowConfiguration {
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer samlIdPMetadataUIWebConfigurer() {
-        return new SamlIdPMetadataUIWebflowConfigurer(flowBuilderServices.getIfAvailable(),
-            loginFlowDefinitionRegistry.getIfAvailable(),
+        return new SamlIdPMetadataUIWebflowConfigurer(flowBuilderServices.getObject(),
+            loginFlowDefinitionRegistry.getObject(),
             samlIdPMetadataUIParserAction(),
             applicationContext,
             casProperties);
@@ -71,9 +71,9 @@ public class SamlIdPWebflowConfiguration {
     @ConditionalOnMissingBean(name = "samlIdPMetadataUIParserAction")
     @Bean
     public Action samlIdPMetadataUIParserAction() {
-        return new SamlIdPMetadataUIAction(servicesManager.getIfAvailable(),
-            defaultSamlRegisteredServiceCachingMetadataResolver.getIfAvailable(),
-            selectionStrategies.getIfAvailable());
+        return new SamlIdPMetadataUIAction(servicesManager.getObject(),
+            defaultSamlRegisteredServiceCachingMetadataResolver.getObject(),
+            selectionStrategies.getObject());
     }
 
     @Bean

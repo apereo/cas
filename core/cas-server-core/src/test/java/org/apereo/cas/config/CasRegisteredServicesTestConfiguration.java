@@ -213,7 +213,18 @@ public class CasRegisteredServicesTestConfiguration {
         svc23.setAccessStrategy(strategy23);
         l.add(svc23);
 
+        val svc24 = RegisteredServiceTestUtils.getRegisteredService("https://www.casinthecloud.com");
+        svc24.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy(".+"));
+        svc24.setPublicKey(new RegisteredServicePublicKeyImpl("classpath:keys/RSA4096Public.key", "RSA"));
+        val policy24 = new ReturnAllowedAttributeReleasePolicy();
+        policy24.setAuthorizedToReleaseCredentialPassword(true);
+        policy24.setAuthorizedToReleaseProxyGrantingTicket(false);
+        policy24.setAllowedAttributes(CollectionUtils.wrap("binaryAttribute"));
+        svc24.setAttributeReleasePolicy(policy24);
+        svc24.setUsernameAttributeProvider(new DefaultRegisteredServiceUsernameProvider());
+        svc24.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(new HashMap<>()));
+        l.add(svc24);
+
         return l;
     }
-
 }

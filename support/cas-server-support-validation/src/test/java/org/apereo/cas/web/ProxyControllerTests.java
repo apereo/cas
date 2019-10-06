@@ -30,6 +30,7 @@ import org.apereo.cas.ticket.ProxyGrantingTicketImpl;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.validation.config.CasCoreValidationConfiguration;
 import org.apereo.cas.web.config.CasCookieConfiguration;
+import org.apereo.cas.web.config.CasProtocolViewsConfiguration;
 import org.apereo.cas.web.config.CasValidationConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
@@ -43,6 +44,7 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
+import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -60,6 +62,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = {
     AopAutoConfiguration.class,
+    ThymeleafAutoConfiguration.class,
     RefreshAutoConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasAuthenticationEventExecutionPlanTestConfiguration.class,
@@ -70,7 +73,6 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreTicketIdGeneratorsConfiguration.class,
     CasCoreUtilConfiguration.class,
     CasCoreAuthenticationConfiguration.class,
-    CasCoreServicesAuthenticationConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class,
     CasCoreAuthenticationPolicyConfiguration.class,
     CasCoreAuthenticationMetadataConfiguration.class,
@@ -87,11 +89,11 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreWebflowConfiguration.class,
     CasCoreLogoutConfiguration.class,
     CasCookieConfiguration.class,
-    CasCoreAuthenticationConfiguration.class,
     CasCoreMultifactorAuthenticationConfiguration.class,
     CasMultifactorAuthenticationWebflowConfiguration.class,
     CasPersonDirectoryTestConfiguration.class,
     CasCoreValidationConfiguration.class,
+    CasProtocolViewsConfiguration.class,
     CasValidationConfiguration.class
 })
 public class ProxyControllerTests extends AbstractCentralAuthenticationServiceTests {

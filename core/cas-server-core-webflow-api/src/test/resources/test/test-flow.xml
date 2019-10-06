@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+    <view-state id="foodForm">
+        <transition on="submit" to="checkFoodSelection"/>
+    </view-state>
+
+    <decision-state id="checkFoodSelection">
+        <if test="requestParameters.vegan == '1'" then="tofurkeyDinner" else="lasagnaDinner"/>
+    </decision-state>
+
+    <end-state id="tofurkeyDinner"/>
+
+    <end-state id="lasagnaDinner"/>
+
+</flow>

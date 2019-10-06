@@ -34,6 +34,7 @@ import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.SamlRegi
 import org.apereo.cas.validation.config.CasCoreValidationConfiguration;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
+import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,14 +69,13 @@ import org.springframework.data.mongodb.core.MongoTemplate;
     CasCoreServicesConfiguration.class,
     CasCoreWebConfiguration.class,
     CasCoreWebflowConfiguration.class,
+    CasWebflowContextConfiguration.class,
     SamlIdPConfiguration.class,
     SamlIdPAuthenticationServiceSelectionStrategyConfiguration.class,
     SamlIdPEndpointsConfiguration.class,
     SamlIdPMetadataConfiguration.class,
     RefreshAutoConfiguration.class,
     AopAutoConfiguration.class,
-    CasCoreAuthenticationConfiguration.class,
-    CasCoreServicesAuthenticationConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
     CasCoreLogoutConfiguration.class,
@@ -85,7 +85,8 @@ import org.springframework.data.mongodb.core.MongoTemplate;
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     CoreSamlConfiguration.class,
     CasPersonDirectoryConfiguration.class,
-    CasCoreUtilConfiguration.class})
+    CasCoreUtilConfiguration.class
+})
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public abstract class BaseMongoDbSamlMetadataTests {
     @Autowired

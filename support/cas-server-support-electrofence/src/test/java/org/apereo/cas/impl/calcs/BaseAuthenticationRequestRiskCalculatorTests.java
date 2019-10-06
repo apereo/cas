@@ -34,6 +34,7 @@ import org.apereo.cas.util.MockSmsSender;
 import org.apereo.cas.util.io.SmsSender;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
+import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,13 +72,12 @@ import org.springframework.test.annotation.DirtiesContext;
     GoogleMapsGeoCodingConfiguration.class,
     CasCoreWebConfiguration.class,
     CasCoreWebflowConfiguration.class,
+    CasWebflowContextConfiguration.class,
     CasCoreConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     CasCoreTicketsConfiguration.class,
-    CasDefaultServiceTicketIdGeneratorsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
-    CasDefaultServiceTicketIdGeneratorsConfiguration.class,
     CasCoreLogoutConfiguration.class,
     CasCookieConfiguration.class,
     CasCoreUtilConfiguration.class,
