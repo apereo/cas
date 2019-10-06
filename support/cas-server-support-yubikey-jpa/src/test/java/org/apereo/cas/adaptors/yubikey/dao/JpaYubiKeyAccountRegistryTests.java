@@ -2,6 +2,7 @@ package org.apereo.cas.adaptors.yubikey.dao;
 
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountRegistry;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
+import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
@@ -26,6 +27,7 @@ import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -62,11 +64,11 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreWebflowConfiguration.class,
     CasCoreConfiguration.class,
     CasPersonDirectoryTestConfiguration.class,
+    CasCoreAuthenticationConfiguration.class,
     CasCoreAuthenticationSupportConfiguration.class,
     CasCookieConfiguration.class,
     CasCoreUtilConfiguration.class,
     CasCoreWebConfiguration.class,
-    CasCoreHttpConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
     CasDefaultServiceTicketIdGeneratorsConfiguration.class,
@@ -76,6 +78,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.mfa.yubikey.clientId=18423",
     "cas.authn.mfa.yubikey.secretKey=zAIqhjui12mK8x82oe9qzBEb0As="
 })
+@Tag("JDBC")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class JpaYubiKeyAccountRegistryTests {
     private static final String BAD_TOKEN = "123456";

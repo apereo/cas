@@ -130,7 +130,7 @@ public class CoreAuthenticationUtils {
                     }
                 };
             default:
-                throw new IllegalArgumentException("Unsupported merging policy [" + mergingPolicy + "]");
+                throw new IllegalArgumentException("Unsupported merging policy [" + mergingPolicy + ']');
         }
     }
 

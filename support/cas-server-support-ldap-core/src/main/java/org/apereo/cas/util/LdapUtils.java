@@ -70,7 +70,6 @@ import org.ldaptive.pool.BindPassivator;
 import org.ldaptive.pool.BlockingConnectionPool;
 import org.ldaptive.pool.ClosePassivator;
 import org.ldaptive.pool.CompareValidator;
-import org.ldaptive.pool.ConnectActivator;
 import org.ldaptive.pool.ConnectionPool;
 import org.ldaptive.pool.IdlePruneStrategy;
 import org.ldaptive.pool.PoolConfig;
@@ -258,7 +257,7 @@ public class LdapUtils {
         try (val connection = createConnection(connectionFactory)) {
             val request = LdapUtils.newLdaptiveSearchRequest(baseDn, filter, binaryAttributes, returnAttributes);
             request.setReferralHandler(new SearchReferralHandler());
-            if (pageSize <=0) {
+            if (pageSize <= 0) {
                 val searchOperation = new SearchOperation(connection);
                 return searchOperation.execute(request);
             }
@@ -969,12 +968,7 @@ public class LdapUtils {
             switch (pass) {
                 case CLOSE:
                     cp.setPassivator(new ClosePassivator());
-                    cp.setActivator(new OpenActivator());
-/* 
-   if we setup CLOSE passivator, I think, we need to specify an activator, 
-   if we do not want to have exceptions thrown on a closed connection taken from the pool  
-   We cannot use ConnectActivator from ldaptive, as it does not check if connection is already opened.
-*/                    
+                    cp.setActivator(new ConnectActivator());
 
                     LOGGER.debug("Created [{}] passivator for [{}]", l.getPoolPassivator(), l.getLdapUrl());
                     break;

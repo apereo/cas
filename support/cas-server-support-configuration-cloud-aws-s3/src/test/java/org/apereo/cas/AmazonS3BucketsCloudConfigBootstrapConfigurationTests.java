@@ -8,6 +8,7 @@ import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.internal.SkipMd5CheckStrategy;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import lombok.val;
@@ -55,6 +56,11 @@ public class AmazonS3BucketsCloudConfigBootstrapConfigurationTests {
     @Autowired
     private CasConfigurationProperties casProperties;
 
+    static {
+        System.setProperty(SkipMd5CheckStrategy.DISABLE_GET_OBJECT_MD5_VALIDATION_PROPERTY, "true");
+        System.setProperty(SkipMd5CheckStrategy.DISABLE_PUT_OBJECT_MD5_VALIDATION_PROPERTY, "true");
+    }
+    
     @BeforeAll
     public static void initialize() {
         val environment = new MockEnvironment();

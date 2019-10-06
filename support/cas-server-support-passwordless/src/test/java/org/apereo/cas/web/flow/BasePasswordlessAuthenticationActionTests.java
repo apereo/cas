@@ -65,8 +65,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
     CasRegisteredServicesTestConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
     CasAuthenticationEventExecutionPlanTestConfiguration.class,
-    CasDefaultServiceTicketIdGeneratorsConfiguration.class,
-    CasCoreAuthenticationPrincipalConfiguration.class
+    CasDefaultServiceTicketIdGeneratorsConfiguration.class
 })
 public class BasePasswordlessAuthenticationActionTests {
 }

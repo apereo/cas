@@ -23,6 +23,7 @@ import org.apereo.cas.pm.PasswordHistoryService;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.config.PasswordManagementConfiguration;
 
+import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -53,7 +54,6 @@ import javax.sql.DataSource;
     CasCoreAuthenticationConfiguration.class,
     CasCoreServicesAuthenticationConfiguration.class,
     CasCoreWebConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreUtilConfiguration.class,
     JdbcPasswordManagementConfiguration.class,
@@ -68,6 +68,7 @@ import javax.sql.DataSource;
     "cas.authn.pm.jdbc.sqlFindPhone=SELECT phone FROM pm_table_accounts WHERE userid=?",
     "cas.authn.pm.jdbc.sqlChangePassword=UPDATE pm_table_accounts SET password=? WHERE userid=?"
 })
+@Tag("JDBC")
 public abstract class BaseJdbcPasswordManagementServiceTests {
     @Autowired
     @Qualifier("passwordChangeService")

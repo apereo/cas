@@ -141,7 +141,7 @@ public class CoreWsSecurityIdentityProviderConfiguration {
     @RefreshScope
     @ConditionalOnMissingBean(name = "wsFederationAuthenticationServiceSelectionStrategy")
     public AuthenticationServiceSelectionStrategy wsFederationAuthenticationServiceSelectionStrategy() {
-        return new WSFederationAuthenticationServiceSelectionStrategy(webApplicationServiceFactory.getIfAvailable());
+        return new WSFederationAuthenticationServiceSelectionStrategy(webApplicationServiceFactory.getObject());
     }
 
     @Bean
@@ -168,17 +168,17 @@ public class CoreWsSecurityIdentityProviderConfiguration {
 
     private WSFederationRequestConfigurationContext.WSFederationRequestConfigurationContextBuilder getConfigurationContext() {
         return WSFederationRequestConfigurationContext.builder()
-            .servicesManager(servicesManager.getIfAvailable())
-            .webApplicationServiceFactory(webApplicationServiceFactory.getIfAvailable())
+            .servicesManager(servicesManager.getObject())
+            .webApplicationServiceFactory(webApplicationServiceFactory.getObject())
             .casProperties(casProperties)
-            .ticketValidator(casClientTicketValidator.getIfAvailable())
-            .securityTokenServiceTokenFetcher(securityTokenServiceTokenFetcher.getIfAvailable())
+            .ticketValidator(casClientTicketValidator.getObject())
+            .securityTokenServiceTokenFetcher(securityTokenServiceTokenFetcher.getObject())
             .serviceSelectionStrategy(wsFederationAuthenticationServiceSelectionStrategy())
-            .httpClient(httpClient.getIfAvailable())
-            .securityTokenTicketFactory(securityTokenTicketFactory.getIfAvailable())
-            .ticketGrantingTicketCookieGenerator(ticketGrantingTicketCookieGenerator.getIfAvailable())
-            .ticketRegistry(ticketRegistry.getIfAvailable())
-            .ticketRegistrySupport(ticketRegistrySupport.getIfAvailable())
+            .httpClient(httpClient.getObject())
+            .securityTokenTicketFactory(securityTokenTicketFactory.getObject())
+            .ticketGrantingTicketCookieGenerator(ticketGrantingTicketCookieGenerator.getObject())
+            .ticketRegistry(ticketRegistry.getObject())
+            .ticketRegistrySupport(ticketRegistrySupport.getObject())
             .callbackService(wsFederationCallbackService());
     }
 }

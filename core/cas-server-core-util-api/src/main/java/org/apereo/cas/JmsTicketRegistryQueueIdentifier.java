@@ -5,12 +5,13 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.io.Serializable;
 import java.util.UUID;
 
 /**
- * This is {@link StringBean}. Allows one to declare strings as Spring beans.
+ * This is {@link JmsTicketRegistryQueueIdentifier}. Allows one to declare strings as Spring beans.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
@@ -20,10 +21,9 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
-public class StringBean implements Serializable {
-
+@ToString
+public class JmsTicketRegistryQueueIdentifier implements Serializable {
     private static final long serialVersionUID = -2216572507148074902L;
 
     private String id = UUID.randomUUID().toString();
-
 }
