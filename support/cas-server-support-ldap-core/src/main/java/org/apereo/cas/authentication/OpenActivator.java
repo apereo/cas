@@ -19,6 +19,7 @@ import org.ldaptive.pool.Activator;
 @Slf4j
 public class OpenActivator implements Activator<Connection> {
 
+    @Override
     public boolean activate(final Connection c) {
         try {
             if (c == null) {
