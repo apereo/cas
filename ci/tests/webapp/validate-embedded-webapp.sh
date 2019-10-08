@@ -32,7 +32,6 @@ else
 
     echo $tasks
     echo -e "***************************************************************************************"
-    
 
     eval $tasks
     retVal=$?
@@ -42,17 +41,27 @@ else
     echo -e "***************************************************************************************"
 
     if [ $retVal == 0 ]; then
-        echo "Gradle build finished successfully."
+        echo -e "Gradle build finished successfully.\nPreparing CAS web application WAR artifact..."
+        mv webapp/cas-server-webapp-"${webAppServerType}"/build/libs/cas-server-webapp-"${webAppServerType}"-*.war \
+          webapp/cas-server-webapp-"${webAppServerType}"/build/libs/cas.war
 
-        echo "Preparing CAS web application WAR artifact..."
-        mv webapp/cas-server-webapp-"${webAppServerType}"/build/libs/cas-server-webapp-"${webAppServerType}"-*.war webapp/cas-server-webapp-"${webAppServerType}"/build/libs/cas.war
+        dname="${dname:-CN=cas.example.org,OU=Example,OU=Org,C=US}"
+        subjectAltName="${subjectAltName:-dns:example.org,dns:localhost,ip:127.0.0.1}"
+        keystore="./thekeystore"
+        echo "Generating keystore ${keystore} for CAS with DN=${dname}, SAN=${subjectAltName}"
+        [ -f "${keystore}" ] && rm "${keystore}"
+        keytool -genkey -noprompt -alias cas -keyalg RSA -keypass changeit -storepass changeit \
+          -keystore "${keystore}" -dname "${dname}" -ext SAN="${subjectAltName}"
+
         echo "Launching CAS web application ${webAppServerType} server..."
-        java -jar webapp/cas-server-webapp-"${webAppServerType}"/build/libs/cas.war --server.ssl.enabled=false --server.port=8080 &> /dev/null &
+        java -jar webapp/cas-server-webapp-"${webAppServerType}"/build/libs/cas.war \
+          --server.ssl.key-store="${keystore}" &> /dev/null &
         pid=$!
         echo "Launched CAS with pid ${pid}. Waiting for CAS server to come online..."
         sleep 60
-        cmd=`curl --connect-timeout 60 -s -o /dev/null -I -w "%{http_code}" http://localhost:8080/cas/login`
+        cmd=`curl -k --connect-timeout 60 -s -o /dev/null -I -w "%{http_code}" https://localhost:8443/cas/login`
         kill -9 "${pid}"
+        [ -f "${keystore}" ] && rm "${keystore}"
         echo "CAS server is responding with HTTP status code ${cmd}."
         if [ "$cmd" == 200 ]; then
           echo "CAS server with ${webAppServerType} is successfully up and running."
