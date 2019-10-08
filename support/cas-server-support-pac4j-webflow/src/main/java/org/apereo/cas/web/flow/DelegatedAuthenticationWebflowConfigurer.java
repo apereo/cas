@@ -51,7 +51,6 @@ public class DelegatedAuthenticationWebflowConfigurer extends AbstractCasWebflow
     protected void createClientActionActionState(final Flow flow) {
         val actionState = createActionState(flow, CasWebflowConstants.STATE_ID_DELEGATED_AUTHENTICATION,
             createEvaluateAction(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION));
-        actionState.getExitActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_CLEAR_WEBFLOW_CREDENTIALS));
         
         val transitionSet = actionState.getTransitionSet();
         transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_CREATE_TICKET_GRANTING_TICKET));
