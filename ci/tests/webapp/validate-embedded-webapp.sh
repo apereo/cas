@@ -44,7 +44,7 @@ else
         echo -e "Gradle build finished successfully.\nPreparing CAS web application WAR artifact..."
         mv webapp/cas-server-webapp-"${webAppServerType}"/build/libs/cas-server-webapp-"${webAppServerType}"-*.war \
           webapp/cas-server-webapp-"${webAppServerType}"/build/libs/cas.war
-          
+
         dname="${dname:-CN=cas.example.org,OU=Example,OU=Org,C=US}"
         subjectAltName="${subjectAltName:-dns:example.org,dns:localhost,ip:127.0.0.1}"
         keystore="./thekeystore"
@@ -55,7 +55,7 @@ else
 
         echo "Launching CAS web application ${webAppServerType} server..."
         java -jar webapp/cas-server-webapp-"${webAppServerType}"/build/libs/cas.war \
-          --server.ssl.key-store=file:"${keystore}" &> /dev/null &
+          --server.ssl.key-store="${keystore}" &> /dev/null &
         pid=$!
         echo "Launched CAS with pid ${pid}. Waiting for CAS server to come online..."
         sleep 60
