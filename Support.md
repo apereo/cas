@@ -36,7 +36,7 @@ Commercial support for CAS is provided by the following entities:
     
   <td>
     <a href="https://fawnoos.com">
-      <img valign="middle" width="280" src="https://user-images.githubusercontent.com/1205228/66507685-b6164f00-eae0-11e9-804b-0526b7134fb3.png">
+      <img valign="middle" width="240" src="https://user-images.githubusercontent.com/1205228/66507685-b6164f00-eae0-11e9-804b-0526b7134fb3.png">
     </a>
   </td>
     
