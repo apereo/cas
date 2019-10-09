@@ -46,11 +46,6 @@ Commercial support for CAS is provided by the following entities:
     </a>
   </td>
     
-  <td>
-    <a href="https://www.cirrusidentity.com/">
-      <img valign="middle" width="290" src="https://user-images.githubusercontent.com/1205228/45105678-0686e480-b14a-11e8-9468-0a97b816ce91.png">
-    </a>
-  </td>
     
   <td>
     <a href="https://www.tirasa.net/">
