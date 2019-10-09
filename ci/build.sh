@@ -1,9 +1,26 @@
 #!/bin/bash
+source ./ci/functions.sh
 
+runBuild=false
+echo "Reviewing changes that might affect the Gradle build..."
+currentChangeSetAffectsBuild
+retval=$?
+if [ "$retval" == 0 ]
+then
+    echo "Found changes that require the build to run."
+    runBuild=true
+else
+    echo "Changes do NOT affect the project build."
+    runBuild=false
+fi
+
+if [ "$runBuild" = false ]; then
+    exit 0
+fi
 
 gradle="./gradlew $@"
 gradleBuild=""
-gradleBuildOptions="--build-cache --configure-on-demand --no-daemon --scan "
+gradleBuildOptions="--build-cache --configure-on-demand --no-daemon - "
 
 echo -e "***********************************************"
 echo -e "Gradle build started at `date`"
