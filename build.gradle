@@ -7,11 +7,26 @@ buildscript {
     repositories {
         mavenLocal()
         jcenter()
-        maven { url "https://maven.eveoh.nl/content/repositories/releases" }
-        maven { url "https://plugins.gradle.org/m2/" }
-        maven { url "https://repo.spring.io/plugins-release" }
-        maven { url "https://repo.spring.io/libs-milestone" }
-        maven { url "http://repo.spring.io/snapshot" }
+        maven {
+            url "https://maven.eveoh.nl/content/repositories/releases"
+            mavenContent { releasesOnly() }
+        }
+        maven {
+            url "https://plugins.gradle.org/m2/"
+            mavenContent { releasesOnly() }
+        }
+        maven {
+            url "https://repo.spring.io/plugins-release"
+            mavenContent { releasesOnly() }
+        }
+        maven {
+            url "https://repo.spring.io/libs-milestone"
+            mavenContent { releasesOnly() }
+        }
+        maven {
+            url "http://repo.spring.io/snapshot"
+            mavenContent { snapshotsOnly() }
+        }
     }
 
     dependencies {
@@ -94,7 +109,6 @@ if (rootProject.continuousIntegrationBuild) {
 
 apply plugin: "org.owasp.dependencycheck"
 dependencyCheck {
-    //logging.captureStandardOutput LogLevel.DEBUG
     /*
      * Specifies if the build should be failed if a CVSS score equal
      * to or above a specified level is identified.
@@ -174,8 +188,14 @@ allprojects {
         mavenLocal()
         mavenCentral()
         jcenter()
-        maven { url "https://repo.spring.io/libs-milestone" }
-        maven { url "$sonatypeReleasesRepositoryUrl" }
+        maven {
+            url "https://repo.spring.io/libs-milestone"
+            mavenContent { releasesOnly() }
+        }
+        maven {
+            url "$sonatypeReleasesRepositoryUrl"
+            mavenContent { releasesOnly() }
+        }
     }
 
     javadoc {
@@ -226,20 +246,51 @@ subprojects {
     repositories {
         mavenLocal()
         mavenCentral()
-        maven { url "https://build.shibboleth.net/nexus/content/repositories/releases" }
-        maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
-        maven { url "https://oss.sonatype.org/content/repositories/releases" }
-        maven { url "https://repo.spring.io/plugins-release/" }
-        maven { url "https://repo.spring.io/milestone/" }
+        maven {
+            url "https://build.shibboleth.net/nexus/content/repositories/releases"
+            content {
+                includeGroupByRegex "org\\.opensaml.*"
+                includeGroupByRegex "net\\.shibboleth.*"
+            }
+        }
+        maven {
+            url "https://oss.sonatype.org/content/repositories/snapshots"
+            mavenContent { snapshotsOnly() }
+        }
+        maven {
+            url "https://oss.sonatype.org/content/repositories/releases"
+            mavenContent { releasesOnly() }
+        }
+        maven {
+            url "https://repo.spring.io/plugins-release/"
+            mavenContent { releasesOnly() }
+        }
+        maven {
+            url "https://repo.spring.io/milestone/"
+            mavenContent { releasesOnly() }
+        }
         maven { url "https://repo.spring.io/snapshot/" }
-        maven { url "https://repo.spring.io/libs-milestone" }
-        maven { url "https://dl.bintray.com/uniconiam/maven" }
-        maven { url "https://jitpack.io" }
-        maven { url "https://oss.jfrog.org/artifactory/oss-snapshot-local" }
+        maven {
+            url "https://repo.spring.io/libs-milestone"
+            mavenContent { releasesOnly() }
+        }
+        maven {
+            url "https://dl.bintray.com/uniconiam/maven"
+            mavenContent { releasesOnly() }
+        }
+        maven {
+            url "https://jitpack.io"
+            content {
+                includeGroupByRegex "com\\.github\\.coova.*"
+            }
+        }
+        maven {
+            url "https://oss.jfrog.org/artifactory/oss-snapshot-local"
+            mavenContent { snapshotsOnly() }
+        }
         jcenter()
     }
-
-
+    
     configurations {
         tests
         developmentOnly
