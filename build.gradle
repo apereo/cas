@@ -281,7 +281,7 @@ subprojects {
         maven {
             url "https://jitpack.io"
             content {
-                includeGroup "com.github.coova"
+                includeGroupByRegex "com\\.github\\.coova.*"
             }
         }
         maven {
