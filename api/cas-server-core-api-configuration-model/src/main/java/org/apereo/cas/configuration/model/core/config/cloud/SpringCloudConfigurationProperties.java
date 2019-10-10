@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.core.config.cloud;
 
+import org.apereo.cas.configuration.model.support.aws.BaseAmazonWebServicesProperties;
+import org.apereo.cas.configuration.model.support.dynamodb.AbstractDynamoDbProperties;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -45,6 +47,11 @@ public class SpringCloudConfigurationProperties implements Serializable {
          * AWS config settings.
          */
         private AmazonWebServicesConfiguration aws = new AmazonWebServicesConfiguration();
+
+        /**
+         * AWS DynamoDb config settings.
+         */
+        private AmazonDynamoDb dynamoDb = new AmazonDynamoDb();
     }
 
     @RequiresModule(name = "cas-server-support-configuration-cloud-mongo")
@@ -93,47 +100,6 @@ public class SpringCloudConfigurationProperties implements Serializable {
     @RequiresModule(name = "cas-server-support-aws")
     @Getter
     @Setter
-    public static class BaseAmazonConfiguration implements Serializable {
-        private static final long serialVersionUID = -103104249388429120L;
-
-        /**
-         * Local address.
-         */
-        private String localAddress;
-
-        /**
-         * Credential secret key.
-         */
-        @RequiredProperty
-        private String credentialSecretKey;
-
-        /**
-         * Credential access key.
-         */
-        @RequiredProperty
-        private String credentialAccessKey;
-
-        /**
-         * Region.
-         */
-        @RequiredProperty
-        private String region;
-
-        /**
-         * region override.
-         */
-        private String regionOverride;
-
-        /**
-         * Endpoint.
-         */
-        @RequiredProperty
-        private String endpoint;
-    }
-
-    @RequiresModule(name = "cas-server-support-aws")
-    @Getter
-    @Setter
     public static class AmazonWebServicesConfiguration implements Serializable {
         private static final long serialVersionUID = -124404249388429120L;
 
@@ -156,14 +122,14 @@ public class SpringCloudConfigurationProperties implements Serializable {
     @RequiresModule(name = "cas-server-support-configuration-cloud-aws-secretsmanager")
     @Getter
     @Setter
-    public static class AmazonSecretsManager extends BaseAmazonConfiguration {
+    public static class AmazonSecretsManager extends BaseAmazonWebServicesProperties {
         private static final long serialVersionUID = -124404249387429120L;
     }
 
     @RequiresModule(name = "cas-server-support-configuration-cloud-aws-s3")
     @Getter
     @Setter
-    public static class AmazonS3 extends BaseAmazonConfiguration {
+    public static class AmazonS3 extends BaseAmazonWebServicesProperties {
         private static final long serialVersionUID = -124404249387429120L;
         /**
          * Bucket name that holds the settings.
@@ -174,14 +140,8 @@ public class SpringCloudConfigurationProperties implements Serializable {
     @RequiresModule(name = "cas-server-support-configuration-cloud-dynamodb")
     @Getter
     @Setter
-    public static class AmazonDynamoDb extends BaseAmazonConfiguration {
+    public static class AmazonDynamoDb extends AbstractDynamoDbProperties {
         private static final long serialVersionUID = -123404249388429120L;
-
-        /**
-         * Does not create tables on startup, if true.
-         */
-        private boolean preventTableCreationOnStartup;
     }
-
-
+    
 }

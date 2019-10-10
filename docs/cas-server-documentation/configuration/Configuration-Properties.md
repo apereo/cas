@@ -255,7 +255,7 @@ under the configuration key `cas.spring.cloud.aws.s3`.
 ### DynamoDb
 
 Common AWS settings for this feature are available [here](Configuration-Properties-Common.html#amazon-integration-settings)
-under the configuration key `cas.spring.cloud.dynamodb`. 
+under the configuration key `cas.spring.cloud.dynamoDb`. 
 
 ### JDBC
 

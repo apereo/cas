@@ -10,7 +10,6 @@ import com.amazonaws.services.secretsmanager.AWSSecretsManagerClientBuilder;
 import com.amazonaws.services.secretsmanager.model.PutSecretValueRequest;
 import lombok.val;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +17,8 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.mock.env.MockEnvironment;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link AmazonSecretsManagerCloudConfigBootstrapConfigurationTests}.
@@ -36,7 +37,6 @@ import org.springframework.mock.env.MockEnvironment;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnabledIfContinuousIntegration
 @Tag("AmazonWebServices")
-@Disabled
 public class AmazonSecretsManagerCloudConfigBootstrapConfigurationTests {
 
     static final String ENDPOINT = "http://127.0.0.1:4584";
@@ -66,5 +66,6 @@ public class AmazonSecretsManagerCloudConfigBootstrapConfigurationTests {
 
     @Test
     public void verifyOperation() {
+        assertEquals(STATIC_AUTHN_USERS, casProperties.getAuthn().getAccept().getUsers());
     }
 }
