@@ -185,9 +185,9 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService {
     /**
      * Generate access token hash string.
      *
-     * @param accessToken        the access token
-     * @param registeredService  the service
-     * @param claims             the claims
+     * @param accessToken       the access token
+     * @param registeredService the service
+     * @param claims            the claims
      */
     protected void generateAccessTokenHash(final AccessToken accessToken,
                                            final OidcRegisteredService registeredService,
