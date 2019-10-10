@@ -68,13 +68,13 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService {
     /**
      * Produce claims as jwt.
      *
-     * @param request            the request
-     * @param accessToken        the access token
-     * @param timeoutInSeconds   the timeoutInSeconds
-     * @param service            the service
-     * @param profile            the user profile
-     * @param context            the context
-     * @param responseType       the response type
+     * @param request          the request
+     * @param accessToken      the access token
+     * @param timeoutInSeconds the timeoutInSeconds
+     * @param service          the service
+     * @param profile          the user profile
+     * @param context          the context
+     * @param responseType     the response type
      * @return the jwt claims
      */
     protected JwtClaims buildJwtClaims(final HttpServletRequest request,
