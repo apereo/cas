@@ -8,6 +8,7 @@ import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20AccessTokenAtHashGenerator;
+import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoder;
 import org.apereo.cas.ticket.BaseIdTokenGeneratorService;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
@@ -45,7 +46,6 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService {
     public String generate(final HttpServletRequest request,
                            final HttpServletResponse response,
                            final AccessToken accessToken,
-                           final String encodedAccessToken,
                            final long timeoutInSeconds,
                            final OAuth20ResponseTypes responseType,
                            final OAuthRegisteredService registeredService) {
@@ -58,7 +58,7 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService {
         val context = new JEEContext(request, response, getConfigurationContext().getSessionStore());
         LOGGER.trace("Attempting to produce claims for the id token [{}]", accessToken);
         val authenticatedProfile = getAuthenticatedProfile(request, response);
-        val claims = buildJwtClaims(request, accessToken, encodedAccessToken, timeoutInSeconds,
+        val claims = buildJwtClaims(request, accessToken, timeoutInSeconds,
             oidcRegisteredService, authenticatedProfile, context, responseType);
 
         return encodeAndFinalizeToken(claims, oidcRegisteredService, accessToken);
@@ -70,7 +70,6 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService {
      *
      * @param request            the request
      * @param accessToken        the access token
-     * @param encodedAccessToken the encoded access token
      * @param timeoutInSeconds   the timeoutInSeconds
      * @param service            the service
      * @param profile            the user profile
@@ -80,7 +79,6 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService {
      */
     protected JwtClaims buildJwtClaims(final HttpServletRequest request,
                                        final AccessToken accessToken,
-                                       final String encodedAccessToken,
                                        final long timeoutInSeconds,
                                        final OidcRegisteredService service,
                                        final UserProfile profile,
@@ -127,7 +125,7 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService {
         if (attributes.containsKey(OAuth20Constants.NONCE)) {
             claims.setClaim(OAuth20Constants.NONCE, attributes.get(OAuth20Constants.NONCE).get(0));
         }
-        generateAccessTokenHash(encodedAccessToken, service, claims);
+        generateAccessTokenHash(accessToken, service, claims);
 
         LOGGER.trace("Comparing principal attributes [{}] with supported claims [{}]", principal.getAttributes(), oidc.getClaims());
 
@@ -187,13 +185,21 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService {
     /**
      * Generate access token hash string.
      *
-     * @param encodedAccessToken the encoded access token
+     * @param accessToken        the access token
      * @param registeredService  the service
      * @param claims             the claims
      */
-    protected void generateAccessTokenHash(final String encodedAccessToken,
+    protected void generateAccessTokenHash(final AccessToken accessToken,
                                            final OidcRegisteredService registeredService,
                                            final JwtClaims claims) {
+
+        val encodedAccessToken = OAuth20JwtAccessTokenEncoder.builder()
+                .accessToken(accessToken)
+                .registeredService(registeredService)
+                .service(accessToken.getService())
+                .accessTokenJwtBuilder(getConfigurationContext().getAccessTokenJwtBuilder())
+                .build()
+                .encode();
 
         val alg = getConfigurationContext().getIdTokenSigningAndEncryptionService().getJsonWebKeySigningAlgorithm(registeredService);
         val hash = OAuth20AccessTokenAtHashGenerator.builder()
