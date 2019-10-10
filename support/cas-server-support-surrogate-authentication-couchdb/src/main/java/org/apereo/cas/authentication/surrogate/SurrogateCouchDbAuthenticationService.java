@@ -7,7 +7,7 @@ import org.apereo.cas.services.ServicesManager;
 
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.List;
+import java.util.Collection;
 
 /**
  * This is {@link SurrogateCouchDbAuthenticationService}.
@@ -31,7 +31,7 @@ public class SurrogateCouchDbAuthenticationService extends BaseSurrogateAuthenti
     }
 
     @Override
-    public List<String> getEligibleAccountsForSurrogateToProxy(final String username) {
+    public Collection<String> getEligibleAccountsForSurrogateToProxy(final String username) {
         return couchDb.findByPrincipal(username);
     }
 }

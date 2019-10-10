@@ -15,6 +15,7 @@ import org.apache.http.HttpResponse;
 import org.springframework.http.HttpStatus;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
@@ -58,7 +59,7 @@ public class SurrogateRestAuthenticationService extends BaseSurrogateAuthenticat
     }
 
     @Override
-    public List<String> getEligibleAccountsForSurrogateToProxy(final String username) {
+    public Collection<String> getEligibleAccountsForSurrogateToProxy(final String username) {
         HttpResponse response = null;
         try {
             response = HttpUtils.execute(properties.getUrl(), properties.getMethod(),

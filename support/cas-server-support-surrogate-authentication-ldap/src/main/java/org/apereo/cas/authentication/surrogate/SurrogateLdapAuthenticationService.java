@@ -13,7 +13,7 @@ import lombok.val;
 import org.ldaptive.ConnectionFactory;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 
@@ -59,7 +59,7 @@ public class SurrogateLdapAuthenticationService extends BaseSurrogateAuthenticat
     }
 
     @Override
-    public List<String> getEligibleAccountsForSurrogateToProxy(final String username) {
+    public Collection<String> getEligibleAccountsForSurrogateToProxy(final String username) {
         val eligible = new ArrayList<String>();
         try {
             val filter = LdapUtils.newLdaptiveSearchFilter(ldapProperties.getSearchFilter(), CollectionUtils.wrap(username));

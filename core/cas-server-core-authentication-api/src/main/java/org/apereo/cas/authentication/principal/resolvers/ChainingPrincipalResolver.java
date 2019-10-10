@@ -99,7 +99,7 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
      */
     @Override
     public boolean supports(final Credential credential) {
-        return this.chain.get(0).supports(credential);
+        return this.chain.stream().anyMatch(r -> r.supports(credential));
     }
 
     @Override

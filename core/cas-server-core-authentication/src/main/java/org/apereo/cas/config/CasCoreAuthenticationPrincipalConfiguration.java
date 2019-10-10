@@ -104,8 +104,9 @@ public class CasCoreAuthenticationPrincipalConfiguration {
         });
         plan.registerPrincipalResolver(new EchoingPrincipalResolver());
 
+        val registeredPrincipalResolvers = plan.getRegisteredPrincipalResolvers();
         val resolver = new ChainingPrincipalResolver();
-        resolver.setChain(plan.getRegisteredPrincipalResolvers());
+        resolver.setChain(registeredPrincipalResolvers);
         return resolver;
     }
 
