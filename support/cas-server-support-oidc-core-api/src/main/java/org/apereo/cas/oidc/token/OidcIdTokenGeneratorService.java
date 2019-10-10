@@ -194,12 +194,12 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService {
                                            final JwtClaims claims) {
 
         val encodedAccessToken = OAuth20JwtAccessTokenEncoder.builder()
-                .accessToken(accessToken)
-                .registeredService(registeredService)
-                .service(accessToken.getService())
-                .accessTokenJwtBuilder(getConfigurationContext().getAccessTokenJwtBuilder())
-                .build()
-                .encode();
+            .accessToken(accessToken)
+            .registeredService(registeredService)
+            .service(accessToken.getService())
+            .accessTokenJwtBuilder(getConfigurationContext().getAccessTokenJwtBuilder())
+            .build()
+            .encode();
 
         val alg = getConfigurationContext().getIdTokenSigningAndEncryptionService().getJsonWebKeySigningAlgorithm(registeredService);
         val hash = OAuth20AccessTokenAtHashGenerator.builder()
