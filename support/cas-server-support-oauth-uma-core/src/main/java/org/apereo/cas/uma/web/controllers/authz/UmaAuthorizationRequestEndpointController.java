@@ -201,7 +201,7 @@ public class UmaAuthorizationRequestEndpointController extends BaseUmaEndpointCo
         request.setAttribute(UmaPermissionTicket.class.getName(), permissionTicket);
         request.setAttribute(ResourceSet.class.getName(), resourceSet);
         val idToken = getUmaConfigurationContext().getRequestingPartyTokenGenerator().generate(request, response,
-            accessToken, encodedAccessToken, timeout, OAuth20ResponseTypes.CODE, registeredService);
+            accessToken, timeout, OAuth20ResponseTypes.CODE, registeredService);
         accessToken.setIdToken(idToken);
         getUmaConfigurationContext().getTicketRegistry().updateTicket(accessToken);
 
