@@ -7,6 +7,7 @@ import org.apereo.cas.services.ServicesManager;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -45,6 +46,9 @@ public class SimpleSurrogateAuthenticationService extends BaseSurrogateAuthentic
 
     @Override
     public Collection<String> getEligibleAccountsForSurrogateToProxy(final String username) {
-        return this.eligibleAccounts.get(username);
+        if (this.eligibleAccounts.containsKey(username)) {
+            return this.eligibleAccounts.get(username);
+        }
+        return new ArrayList<>();
     }
 }
