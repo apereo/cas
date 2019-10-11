@@ -439,15 +439,6 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
     }
 
     /**
-     * Resume webflow event.
-     *
-     * @return the event
-     */
-    protected Event resumeWebflow() {
-        return new Event(this, CasWebflowConstants.TRANSITION_ID_RESUME);
-    }
-
-    /**
      * Restore authentication request in context service (return null for a logout call).
      *
      * @param requestContext the request context
