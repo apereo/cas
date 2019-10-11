@@ -35,6 +35,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.webflow.context.ExternalContextHolder;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
+import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.RequestContextHolder;
@@ -415,6 +416,14 @@ public class WebUtils {
         }
     }
 
+    /**
+     * Remove credential.
+     *
+     * @param context the context
+     */
+    public static void removeCredential(final RequestContext context) {
+        putCredential(context, null);
+    }
 
     /**
      * Is authenticating at a public workstation?
@@ -1096,5 +1105,17 @@ public class WebUtils {
         return queryString == null
             ? requestURL.toString()
             : requestURL.append('?').append(queryString).toString();
+    }
+
+    /**
+     * Create credential.
+     *
+     * @param requestContext the request context
+     */
+    public static void createCredential(final RequestContext requestContext) {
+        removeCredential(requestContext);
+        val flow = (Flow) requestContext.getFlowExecutionContext().getDefinition();
+        val var = flow.getVariable(CasWebflowConstants.VAR_ID_CREDENTIAL);
+        var.create(requestContext);
     }
 }
