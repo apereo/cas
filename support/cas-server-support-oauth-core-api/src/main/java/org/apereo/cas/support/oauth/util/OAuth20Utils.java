@@ -12,6 +12,7 @@ import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.ticket.OAuthToken;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -179,7 +180,7 @@ public class OAuth20Utils {
      * @return the model and view
      */
     public static ModelAndView produceErrorView(final Exception e) {
-        return new ModelAndView(OAuth20Constants.ERROR_VIEW, CollectionUtils.wrap("rootCauseException", e));
+        return new ModelAndView(CasWebflowConstants.VIEW_ID_SERVICE_ERROR, CollectionUtils.wrap("rootCauseException", e));
     }
 
     /**

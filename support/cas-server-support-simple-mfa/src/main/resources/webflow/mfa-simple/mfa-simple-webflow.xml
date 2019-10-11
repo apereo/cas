@@ -17,6 +17,7 @@
     <action-state id="sendSimpleToken">
         <evaluate expression="mfaSimpleMultifactorSendTokenAction" />
         <transition on="success" to="viewLoginForm"/>
+        <transition on="error" to="unavailable"/>
     </action-state>
 
     <view-state id="viewLoginForm" view="casSimpleMfaLoginView" model="credential">
@@ -27,6 +28,7 @@
             <set name="viewScope.principal" value="conversationScope.authentication.principal" />
         </on-entry>
         <transition on="submit" bind="true" validate="true" to="realSubmit"/>
+        <transition on="resend" bind="false" validate="false" to="sendSimpleToken"/>
 
     </view-state>
 
@@ -37,4 +39,5 @@
     </action-state>
 
     <end-state id="success" />
+    <end-state id="unavailable" />
 </flow>

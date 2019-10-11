@@ -19,10 +19,12 @@ import org.apereo.cas.config.CasSimpleMultifactorAuthenticationComponentSerializ
 import org.apereo.cas.config.CasSimpleMultifactorAuthenticationConfiguration;
 import org.apereo.cas.config.CasSimpleMultifactorAuthenticationEventExecutionPlanConfiguration;
 import org.apereo.cas.config.CasSimpleMultifactorAuthenticationMultifactorProviderBypassConfiguration;
+import org.apereo.cas.config.CasSimpleMultifactorAuthenticationTicketCatalogConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.mfa.simple.CasSimpleMultifactorTokenCredential;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockSmsSender;
 import org.apereo.cas.util.io.SmsSender;
@@ -67,6 +69,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasSimpleMultifactorAuthenticationComponentSerializationConfiguration.class,
     CasSimpleMultifactorAuthenticationConfiguration.class,
     CasSimpleMultifactorAuthenticationEventExecutionPlanConfiguration.class,
+    CasSimpleMultifactorAuthenticationTicketCatalogConfiguration.class,
     CasSimpleMultifactorAuthenticationMultifactorProviderBypassConfiguration.class,
     MailSenderAutoConfiguration.class,
     RefreshAutoConfiguration.class,
@@ -111,6 +114,10 @@ public class CasSimpleSendTokenActionTests {
     @Qualifier("casSimpleMultifactorAuthenticationHandler")
     private AuthenticationHandler authenticationHandler;
 
+    @Autowired
+    @Qualifier("ticketRegistry")
+    private TicketRegistry ticketRegistry;
+
     @Test
     public void verifyOperation() throws Exception {
         val context = new MockRequestContext();
@@ -125,10 +132,12 @@ public class CasSimpleSendTokenActionTests {
         WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(principal), context);
         val event = mfaSimpleMultifactorSendTokenAction.execute(context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, event.getId());
-
-        val token = new CasSimpleMultifactorTokenCredential(event.getAttributes().getString("token"));
+        val theToken = event.getAttributes().getString("token");
+        assertNotNull(this.ticketRegistry.getTicket(theToken));
+        val token = new CasSimpleMultifactorTokenCredential(theToken);
         val result = authenticationHandler.authenticate(token);
         assertNotNull(result);
+        assertNull(this.ticketRegistry.getTicket(theToken));
     }
 
     @TestConfiguration

@@ -172,11 +172,6 @@ public interface OAuth20Constants {
     String DEVICE_CODE_APPROVED_VIEW = "oauthDeviceCodeApprovedView";
 
     /**
-     * The error view.
-     */
-    String ERROR_VIEW = "casServiceErrorView";
-
-    /**
      * The invalid client.
      */
     String INVALID_CLIENT = "invalid_client";
