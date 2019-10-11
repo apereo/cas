@@ -3876,6 +3876,7 @@ that will ping on the LDAP monitor connection pool.
 # cas.monitor.ldap.maxWait=5000
 # cas.monitor.ldap.pool.minSize=6
 # cas.monitor.ldap.pool.maxSize=18
+# cas.monitor.ldap.pool.enabled=true
 ```
 
 ### Memory
