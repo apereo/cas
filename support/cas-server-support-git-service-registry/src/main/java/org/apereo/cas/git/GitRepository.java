@@ -160,12 +160,14 @@ public class GitRepository {
      */
     @SneakyThrows
     public boolean pull() {
+        val providers = this.credentialsProvider.toArray(CredentialsProvider[]::new);
         val remotes = this.gitInstance.getRepository().getRemoteNames();
         return !remotes.isEmpty() && this.gitInstance.pull()
             .setTimeout(TIMEOUT_SECONDS)
             .setFastForward(MergeCommand.FastForwardMode.FF_ONLY)
             .setRebase(false)
             .setProgressMonitor(new LoggingGitProgressMonitor())
+            .setCredentialsProvider(new ChainingCredentialsProvider(providers))
             .call()
             .isSuccessful();
     }
