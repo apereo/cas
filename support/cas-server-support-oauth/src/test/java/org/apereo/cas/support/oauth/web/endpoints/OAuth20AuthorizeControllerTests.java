@@ -7,6 +7,7 @@ import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.AbstractOAuth20Tests;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.code.OAuthCode;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -63,7 +64,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
         val mockResponse = new MockHttpServletResponse();
 
         val modelAndView = oAuth20AuthorizeEndpointController.handleRequest(mockRequest, mockResponse);
-        assertEquals(OAuth20Constants.ERROR_VIEW, modelAndView.getViewName());
+        assertEquals(CasWebflowConstants.VIEW_ID_SERVICE_ERROR, modelAndView.getViewName());
     }
 
     @Test
@@ -73,7 +74,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
         val mockResponse = new MockHttpServletResponse();
 
         val modelAndView = oAuth20AuthorizeEndpointController.handleRequest(mockRequest, mockResponse);
-        assertEquals(OAuth20Constants.ERROR_VIEW, modelAndView.getViewName());
+        assertEquals(CasWebflowConstants.VIEW_ID_SERVICE_ERROR, modelAndView.getViewName());
     }
 
     @Test
@@ -84,7 +85,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
         val mockResponse = new MockHttpServletResponse();
 
         val modelAndView = oAuth20AuthorizeEndpointController.handleRequest(mockRequest, mockResponse);
-        assertEquals(OAuth20Constants.ERROR_VIEW, modelAndView.getViewName());
+        assertEquals(CasWebflowConstants.VIEW_ID_SERVICE_ERROR, modelAndView.getViewName());
     }
 
     @Test
@@ -96,7 +97,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
         val mockResponse = new MockHttpServletResponse();
 
         val modelAndView = oAuth20AuthorizeEndpointController.handleRequest(mockRequest, mockResponse);
-        assertEquals(OAuth20Constants.ERROR_VIEW, modelAndView.getViewName());
+        assertEquals(CasWebflowConstants.VIEW_ID_SERVICE_ERROR, modelAndView.getViewName());
     }
 
     @Test
@@ -108,7 +109,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
         val mockResponse = new MockHttpServletResponse();
 
         val modelAndView = oAuth20AuthorizeEndpointController.handleRequest(mockRequest, mockResponse);
-        assertEquals(OAuth20Constants.ERROR_VIEW, modelAndView.getViewName());
+        assertEquals(CasWebflowConstants.VIEW_ID_SERVICE_ERROR, modelAndView.getViewName());
     }
 
     @Test
@@ -122,7 +123,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
         this.servicesManager.save(getRegisteredService(OTHER_REDIRECT_URI, CLIENT_ID));
 
         val modelAndView = oAuth20AuthorizeEndpointController.handleRequest(mockRequest, mockResponse);
-        assertEquals(OAuth20Constants.ERROR_VIEW, modelAndView.getViewName());
+        assertEquals(CasWebflowConstants.VIEW_ID_SERVICE_ERROR, modelAndView.getViewName());
     }
 
     @Test
@@ -146,7 +147,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
         mockRequest.setSession(session);
 
         val modelAndView = oAuth20AuthorizeEndpointController.handleRequest(mockRequest, mockResponse);
-        assertEquals(OAuth20Constants.ERROR_VIEW, modelAndView.getViewName());
+        assertEquals(CasWebflowConstants.VIEW_ID_SERVICE_ERROR, modelAndView.getViewName());
     }
 
     @Test
