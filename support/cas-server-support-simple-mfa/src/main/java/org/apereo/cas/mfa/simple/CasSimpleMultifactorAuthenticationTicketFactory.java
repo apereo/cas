@@ -23,6 +23,11 @@ import java.util.Map;
  */
 @RequiredArgsConstructor
 public class CasSimpleMultifactorAuthenticationTicketFactory implements TransientSessionTicketFactory {
+    /**
+     * MFA ticket prefix.
+     */
+    public static final String PREFIX = "CASMFA";
+
     private final ExpirationPolicyBuilder expirationPolicy;
     private final UniqueTicketIdGenerator ticketIdGenerator = new CasSimpleMultifactorAuthenticationUniqueTicketIdGenerator();
 
@@ -35,7 +40,7 @@ public class CasSimpleMultifactorAuthenticationTicketFactory implements Transien
      */
     @Override
     public TransientSessionTicket create(final Service service, final Map<String, Serializable> properties) {
-        val id = ticketIdGenerator.getNewTicketId("CAS");
+        val id = ticketIdGenerator.getNewTicketId(PREFIX);
         return new TransientSessionTicketImpl(id, expirationPolicy.buildTicketExpirationPolicy(), service, properties);
     }
 
