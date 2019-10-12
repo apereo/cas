@@ -16,6 +16,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.concurrent.ThreadPoolExecutorFactoryBean;
 
 import java.util.concurrent.ExecutorService;
@@ -26,7 +27,7 @@ import java.util.concurrent.ExecutorService;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration(value = "ldapMonitorConfiguration", proxyBeanMethods = false)
+@Configuration(value = "ldapMonitorConfiguration", proxyBeanMethods = true)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnProperty(prefix = "cas.monitor.ldap", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class LdapMonitorConfiguration {
