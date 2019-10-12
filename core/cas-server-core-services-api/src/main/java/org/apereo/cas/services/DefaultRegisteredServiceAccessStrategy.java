@@ -237,7 +237,8 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
      * @param requiredAttributes  the required attributes
      * @return true /false
      */
-    protected boolean enoughRequiredAttributesAvailableToProcess(final Map<String, Object> principalAttributes, final Map<String, Set<String>> requiredAttributes) {
+    protected boolean enoughRequiredAttributesAvailableToProcess(final Map<String, Object> principalAttributes,
+                                                                 final Map<String, Set<String>> requiredAttributes) {
         if (principalAttributes.isEmpty() && !requiredAttributes.isEmpty()) {
             LOGGER.debug("No principal attributes are found to satisfy defined attribute requirements");
             return false;
@@ -257,8 +258,12 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
      * @param requiredAttributes  the attributes
      * @return the boolean
      */
-    protected boolean requiredAttributesFoundInMap(final Map<String, Object> principalAttributes, final Map<String, Set<String>> requiredAttributes) {
-        val difference = requiredAttributes.keySet().stream().filter(a -> principalAttributes.keySet().contains(a)).collect(Collectors.toSet());
+    protected boolean requiredAttributesFoundInMap(final Map<String, Object> principalAttributes,
+                                                   final Map<String, Set<String>> requiredAttributes) {
+        val difference = requiredAttributes.keySet()
+            .stream()
+            .filter(a -> principalAttributes.keySet().contains(a))
+            .collect(Collectors.toSet());
         LOGGER.debug("Difference of checking required attributes: [{}]", difference);
         if (this.requireAllAttributes && difference.size() < requiredAttributes.size()) {
             return false;
@@ -269,12 +274,14 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
         return difference.stream().anyMatch(key -> requiredAttributeFound(key, principalAttributes, requiredAttributes));
     }
     
-    private boolean requiredAttributeFound(final String attributeName, final Map<String, Object> principalAttributes, final Map<String, Set<String>> requiredAttributes) {
+    private boolean requiredAttributeFound(final String attributeName,
+                                           final Map<String, Object> principalAttributes,
+                                           final Map<String, Set<String>> requiredAttributes) {
         val values = requiredAttributes.get(attributeName);
         val availableValues = CollectionUtils.toCollection(principalAttributes.get(attributeName));
         val pattern = RegexUtils.concatenate(values, this.caseInsensitive);
         LOGGER.debug("Checking [{}] against [{}] with pattern [{}] for attribute [{}]", values, availableValues, pattern, attributeName);
-        if (pattern != RegexUtils.MATCH_NOTHING_PATTERN) {
+        if (!pattern.equals(RegexUtils.MATCH_NOTHING_PATTERN)) {
             return availableValues.stream().map(Object::toString).anyMatch(pattern.asPredicate());
         }
         return availableValues.stream().anyMatch(values::contains);
