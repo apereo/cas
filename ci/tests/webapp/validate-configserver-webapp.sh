@@ -56,7 +56,7 @@ else
           --spring.security.user.password=Mellon --server.ssl.key-store="${keystore}" &> /dev/null &
         pid=$!
         echo "Launched CAS config server with pid ${pid}. Waiting for CAS config server to come online..."
-        sleep 45
+        sleep 60
         cmd=`curl -k --user casuser:Mellon --connect-timeout 60 -s -o /dev/null -I \
         -w "%{http_code}" https://localhost:8888/casconfigserver/login`
         kill -9 "${pid}"
