@@ -1,6 +1,7 @@
 description = "Apereo CAS Spring Cloud Configuration Server API"
 
 dependencies {
+    implementation libraries.snakeyaml
     implementation libraries.springsecurityweb
     implementation libraries.springsecurityconfig
     implementation libraries.springcloudconfigserver
