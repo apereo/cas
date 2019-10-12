@@ -99,7 +99,7 @@ jobs:
     - stage: validate
       if: NOT (head_branch =~ env(DEPENDENCY_BOT_BRANCH) and type = pull_request)
       script: ./ci/build-javadocs.sh
-      name: "Build Javadocs"
+      name: "Validate Javadocs"
     - stage: validate
       if: NOT (head_branch =~ env(DEPENDENCY_BOT_BRANCH) and type = pull_request)
       script: ./ci/build-config-metadata.sh
@@ -125,10 +125,16 @@ jobs:
     - stage: validate
       script: ./ci/tests/webapp/validate-embedded-webapp.sh undertow
       name: "Validate Web Application Server via Undertow"
-      ############################################
-    - stage: test
+    - stage: validate
+      script: ./ci/tests/webapp/validate-configserver-webapp.sh
+      name: "Validate Spring Cloud Configuration Server"
+    - stage: validate
+      script: ./ci/tests/webapp/validate-eurekaserver-webapp.sh
+      name: "Validate Eureka Discovery Server"
+    - stage: validate
       script: ./ci/tests/validate-tests.sh
       name: "Validate Tests & Suites"
+      ############################################
     - stage: test
       script: ./ci/tests/run-tests-simple.sh
       name: "Simple Unit Tests"
