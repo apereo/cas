@@ -16,6 +16,7 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
+import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.ClientCredential;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
@@ -50,6 +51,10 @@ import org.pac4j.core.context.session.JEESessionStore;
 import org.pac4j.oauth.client.FacebookClient;
 import org.pac4j.oauth.client.TwitterClient;
 import org.pac4j.oauth.credentials.OAuth20Credentials;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpMethod;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -58,7 +63,12 @@ import org.springframework.web.servlet.theme.ThemeChangeInterceptor;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
+import org.springframework.webflow.engine.Flow;
+import org.springframework.webflow.engine.FlowVariable;
+import org.springframework.webflow.engine.support.BeanFactoryVariableValueFactory;
 import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.test.MockFlowExecutionContext;
+import org.springframework.webflow.test.MockFlowSession;
 import org.springframework.webflow.test.MockRequestContext;
 
 import java.util.Arrays;
@@ -76,6 +86,7 @@ import static org.mockito.Mockito.*;
  * @author Jerome Leleu
  * @since 3.5.2
  */
+@SpringBootTest(classes = RefreshAutoConfiguration.class)
 public class DelegatedClientAuthenticationActionTests {
 
     private static final String TGT_ID = "TGT-00-xxxxxxxxxxxxxxxxxxxxxxxxxx.cas0";
@@ -90,6 +101,9 @@ public class DelegatedClientAuthenticationActionTests {
 
     private static final String MY_THEME = "my_theme";
     private static final List<String> CLIENTS = Arrays.asList("FacebookClient", "TwitterClient");
+
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
 
     @Test
     public void verifyStartAuthenticationNoService() {
@@ -116,7 +130,12 @@ public class DelegatedClientAuthenticationActionTests {
         when(servletExternalContext.getNativeRequest()).thenReturn(mockRequest);
         when(servletExternalContext.getNativeResponse()).thenReturn(mockResponse);
 
+        val flow = new Flow("mockFlow");
+        flow.addVariable(new FlowVariable("credential",
+            new BeanFactoryVariableValueFactory(UsernamePasswordCredential.class, applicationContext.getAutowireCapableBeanFactory())));
         val mockRequestContext = new MockRequestContext();
+        val mockExecutionContext = new MockFlowExecutionContext(new MockFlowSession(flow));
+        mockRequestContext.setFlowExecutionContext(mockExecutionContext);
         mockRequestContext.setExternalContext(servletExternalContext);
 
         if (service != null) {
