@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class CasSimpleMultifactorAuthenticationUniqueTicketIdGeneratorTests {
     @Test
     public void verifyOperation() {
-        val gen = new CasSimpleMultifactorAuthenticationUniqueTicketIdGenerator();
+        val gen = new CasSimpleMultifactorAuthenticationUniqueTicketIdGenerator(6);
         assertNotNull(gen.getNewTicketId("CAS"));
     }
 }

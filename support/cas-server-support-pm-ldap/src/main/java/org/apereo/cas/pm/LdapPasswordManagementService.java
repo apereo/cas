@@ -39,7 +39,7 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
     public String findUsername(final String email) {
         try {
             val ldap = properties.getLdap();
-            val filter = LdapUtils.newLdaptiveSearchFilter(ldap.getSearchFilterUsername(),
+            val filter = LdapUtils.newLdaptiveSearchFilter(ldap.getSearchFilter(),
                 LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
                 CollectionUtils.wrap(email));
             LOGGER.debug("Constructed LDAP filter [{}] to locate user account", filter);
@@ -68,7 +68,7 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
         }
         return null;
     }
-    
+
     @Override
     public String findEmail(final String username) {
         try {
