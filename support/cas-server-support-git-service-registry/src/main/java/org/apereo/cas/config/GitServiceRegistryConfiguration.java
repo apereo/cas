@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.git.GitRepository;
 import org.apereo.cas.git.GitRepositoryBuilder;
 import org.apereo.cas.services.GitServiceRegistry;
@@ -17,6 +18,7 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -32,6 +34,7 @@ import java.util.Collection;
  * @since 6.1.0
  */
 @Configuration("gitServiceRegistryConfiguration")
+@ConditionalOnProperty(prefix = "cas.serviceRegistry.git", name = "repositoryUrl")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class GitServiceRegistryConfiguration {
     @Autowired
@@ -58,6 +61,10 @@ public class GitServiceRegistryConfiguration {
             .branchesToClone(registry.getBranchesToClone())
             .credentialProvider(registry.getUsername(), registry.getPassword())
             .repositoryDirectory(registry.getCloneDirectory())
+            .privateKeyPassphrase(registry.getPrivateKeyPassphrase())
+            .privateKeyPath(registry.getPrivateKeyPath())
+            .sshSessionPassword(registry.getSshSessionPassword())
+            .timeoutInSeconds(Beans.newDuration(registry.getTimeout()).toSeconds())
             .build();
     }
 

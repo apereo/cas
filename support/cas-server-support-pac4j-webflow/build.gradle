@@ -12,6 +12,7 @@ dependencies {
     implementation project(":core:cas-server-core-services-api")
     implementation project(":core:cas-server-core-cookie-api")
     implementation project(":core:cas-server-core-services-authentication")
+    
     implementation project(":support:cas-server-support-pac4j-api")
     implementation project(":support:cas-server-support-pac4j")
     implementation project(":support:cas-server-support-saml-core")

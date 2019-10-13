@@ -9,6 +9,7 @@ import lombok.val;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.MergeCommand;
+import org.eclipse.jgit.api.TransportConfigCallback;
 import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.revwalk.RevWalk;
@@ -32,17 +33,13 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 public class GitRepository {
-    /**
-     * The constant TIMEOUT_SECONDS.
-     */
-    private static final int TIMEOUT_SECONDS = 5;
-
-    /**
-     * The Git instance.
-     */
     private final Git gitInstance;
 
     private final List<CredentialsProvider> credentialsProvider;
+
+    private final TransportConfigCallback transportConfigCallback;
+
+    private final long timeoutInSeconds;
 
     /**
      * Gets repository directory.
@@ -144,7 +141,8 @@ public class GitRepository {
         if (!this.credentialsProvider.isEmpty()) {
             val providers = this.credentialsProvider.toArray(CredentialsProvider[]::new);
             this.gitInstance.push()
-                .setTimeout(TIMEOUT_SECONDS)
+                .setTimeout((int) timeoutInSeconds)
+                .setTransportConfigCallback(this.transportConfigCallback)
                 .setPushAll()
                 .setCredentialsProvider(new ChainingCredentialsProvider(providers))
                 .call();
@@ -160,12 +158,15 @@ public class GitRepository {
      */
     @SneakyThrows
     public boolean pull() {
+        val providers = this.credentialsProvider.toArray(CredentialsProvider[]::new);
         val remotes = this.gitInstance.getRepository().getRemoteNames();
         return !remotes.isEmpty() && this.gitInstance.pull()
-            .setTimeout(TIMEOUT_SECONDS)
+            .setTimeout((int) timeoutInSeconds)
             .setFastForward(MergeCommand.FastForwardMode.FF_ONLY)
             .setRebase(false)
+            .setTransportConfigCallback(this.transportConfigCallback)
             .setProgressMonitor(new LoggingGitProgressMonitor())
+            .setCredentialsProvider(new ChainingCredentialsProvider(providers))
             .call()
             .isSuccessful();
     }

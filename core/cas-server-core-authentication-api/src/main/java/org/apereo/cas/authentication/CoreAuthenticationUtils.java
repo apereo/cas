@@ -158,6 +158,7 @@ public class CoreAuthenticationUtils {
      */
     public static Map<String, List<Object>> mergeAttributes(final Map<String, List<Object>> currentAttributes, final Map<String, List<Object>> attributesToMerge) {
         val merger = new MultivaluedAttributeMerger();
+        merger.setDistinctValues(true);
 
         val toModify = currentAttributes.entrySet()
             .stream()

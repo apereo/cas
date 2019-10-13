@@ -15,6 +15,9 @@ import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.util.ArrayList;
+import java.util.stream.Collectors;
+
 /**
  * This is {@link LoadSurrogatesListAction}.
  *
@@ -56,10 +59,16 @@ public class LoadSurrogatesListAction extends AbstractAction {
         if (c instanceof UsernamePasswordCredential) {
             val username = c.getId();
             LOGGER.debug("Loading eligible accounts for [{}] to proxy", username);
-            val surrogates = surrogateService.getEligibleAccountsForSurrogateToProxy(username);
+            val surrogates = surrogateService.getEligibleAccountsForSurrogateToProxy(username)
+                .stream()
+                .sorted()
+                .distinct()
+                .collect(Collectors.toCollection(ArrayList::new));
             LOGGER.debug("Surrogate accounts found are [{}]", surrogates);
-            if (surrogates != null && !surrogates.isEmpty()) {
-                surrogates.add(0, username);
+            if (!surrogates.isEmpty()) {
+                if (!surrogates.contains(username)) {
+                    surrogates.add(0, username);
+                }
                 WebUtils.putSurrogateAuthenticationAccounts(requestContext, surrogates);
                 return true;
             }

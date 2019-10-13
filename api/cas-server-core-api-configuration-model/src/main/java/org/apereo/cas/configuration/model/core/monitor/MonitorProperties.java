@@ -147,6 +147,11 @@ public class MonitorProperties implements Serializable {
         private String maxWait = "PT5S";
 
         /**
+         * Whether LDAP monitoring should be enabled.
+         */
+        private boolean enabled = true;
+
+        /**
          * Options that define the thread pool that will ping on the ldap pool.
          */
         @NestedConfigurationProperty

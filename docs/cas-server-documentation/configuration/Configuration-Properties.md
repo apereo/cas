@@ -3876,6 +3876,7 @@ that will ping on the LDAP monitor connection pool.
 # cas.monitor.ldap.maxWait=5000
 # cas.monitor.ldap.pool.minSize=6
 # cas.monitor.ldap.pool.maxSize=18
+# cas.monitor.ldap.pool.enabled=true
 ```
 
 ### Memory
@@ -4061,6 +4062,10 @@ Works with git repository to fetch and manage service registry definitions.
 # cas.serviceRegistry.git.password=
 # cas.serviceRegistry.git.cloneDirectory=file:/tmp/cas-service-registry
 # cas.serviceRegistry.git.pushChanges=false
+# cas.serviceRegistry.git.privateKeyPassphrase=
+# cas.serviceRegistry.git.privateKeyPath=
+# cas.serviceRegistry.git.sshSessionPassword=
+# cas.serviceRegistry.git.timeout=PT10S
 ```
 
 To learn more about this topic, [please review this guide](../services/Git-Service-Management.html).
