@@ -18,6 +18,7 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -33,6 +34,7 @@ import java.util.Collection;
  * @since 6.1.0
  */
 @Configuration("gitServiceRegistryConfiguration")
+@ConditionalOnProperty(prefix = "cas.serviceRegistry.git", name = "repositoryUrl")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class GitServiceRegistryConfiguration {
     @Autowired
