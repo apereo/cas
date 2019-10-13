@@ -70,8 +70,8 @@ public class AccountsPreDefinedLoginModule implements LoginModule {
         }
 
         val username = nameCallback.getName();
-        val password = new String(passwordCallback.getPassword());
         if (accounts.containsKey(username)) {
+            val password = new String(passwordCallback.getPassword());
             this.succeeded = accounts.get(username).equals(password);
             subject.getPrincipals().add(new StaticPrincipal(username));
             return true;
