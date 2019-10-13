@@ -114,26 +114,26 @@ public class GitHubTemplate implements GitHubOperations {
 
     @Override
     public Page<Issue> getIssues(final String organization, final String repository) {
-        final String url = "https://api.github.com/repos/" + organization + '/' + repository
+        val url = "https://api.github.com/repos/" + organization + '/' + repository
             + "/issues";
         return getPage(url, Issue[].class);
     }
 
     @Override
     public Page<PullRequest> getPullRequests(final String organization, final String repository) {
-        final String url = "https://api.github.com/repos/" + organization + '/' + repository + "/pulls?state=open";
+        val url = "https://api.github.com/repos/" + organization + '/' + repository + "/pulls?state=open";
         return getPage(url, PullRequest[].class);
     }
 
     @Override
     public PullRequest getPullRequest(final String organization, final String repository, final String number) {
-        final String url = "https://api.github.com/repos/" + organization + '/' + repository + "/pulls/" + number;
+        val url = "https://api.github.com/repos/" + organization + '/' + repository + "/pulls/" + number;
         return getSinglePage(url, PullRequest.class);
     }
 
     @Override
     public void closePullRequest(final String organization, final String repository, final String number) {
-        final String url = "https://api.github.com/repos/" + organization + '/' + repository + "/pulls/" + number;
+        val url = "https://api.github.com/repos/" + organization + '/' + repository + "/pulls/" + number;
         final URI uri = URI.create(url);
         log.info("Closing to pull request {}", uri);
 
@@ -174,13 +174,13 @@ public class GitHubTemplate implements GitHubOperations {
 
     @Override
     public CombinedCommitStatus getCombinedPullRequestCommitStatus(final String organization, final String repository, String ref) {
-        final String url = "https://api.github.com/repos/" + organization + '/' + repository + "/commits/" + ref + "/status";
+        val url = "https://api.github.com/repos/" + organization + '/' + repository + "/commits/" + ref + "/status";
         return getSinglePage(url, CombinedCommitStatus.class);
     }
 
     @Override
     public Page<Commit> getPullRequestCommits(final String organization, final String repository, final String number) {
-        final String url = "https://api.github.com/repos/" + organization + '/' + repository + "/pulls/" + number + "/commits";
+        val url = "https://api.github.com/repos/" + organization + '/' + repository + "/pulls/" + number + "/commits";
         return getPage(url, Commit[].class);
     }
 
@@ -188,7 +188,7 @@ public class GitHubTemplate implements GitHubOperations {
     public boolean mergeIntoBase(final String organization, final String repository, final PullRequest pr,
                                  final String commitTitle, final String commitMessage,
                                  final String shaToMatch, final String method) {
-        final String url = "https://api.github.com/repos/" + organization + '/' + repository + "/pulls/" + pr.getNumber() + "/merge";
+        val url = "https://api.github.com/repos/" + organization + '/' + repository + "/pulls/" + pr.getNumber() + "/merge";
 
         val map = new LinkedHashMap<>();
         if (StringUtils.hasText(commitTitle)) {
@@ -212,17 +212,26 @@ public class GitHubTemplate implements GitHubOperations {
     @Override
     public PullRequest mergeWithBase(final String organization, final String repository, final PullRequest pr) {
         if (pr.getHead().getRepository().isFork()) {
-            log.info("Unable to merge pull request [{}] with base on a forked repository [{}]", pr, pr.getHead().getRepository());
+            val url = "https://api.github.com/repos/" + organization + '/' + repository + "/pulls/" + pr.getNumber() + "/update-branch";
+            final Map<String, String> params = new HashMap<>();
+            params.put("expected_head_sha", pr.getHead().getSha());
+            val responseEntity = this.rest.exchange(url, HttpMethod.PUT,
+                new HttpEntity<>(new LinkedMultiValueMap(Map.of("Accept", List.of("application/vnd.github.lydian-preview+json")))), Map.class);
+            if (responseEntity.getStatusCode().is2xxSuccessful()) {
+                log.info("Merged pull request {} with base", pr);
+            } else {
+                log.error("Unable to merge pull request {} with base {}", pr, responseEntity);
+            }
             return pr;
         }
 
-        final String url = "https://api.github.com/repos/" + organization + '/' + repository + "/merges";
+        val url = "https://api.github.com/repos/" + organization + '/' + repository + "/merges";
         final URI uri = URI.create(url);
         final Map<String, String> body = new HashMap<>();
-        final String prBranch = pr.getHead().getRef();
+        val prBranch = pr.getHead().getRef();
         body.put("base", prBranch);
 
-        final String targetBranch = pr.getBase().getRef();
+        val targetBranch = pr.getBase().getRef();
         body.put("head", targetBranch);
 
         body.put("commit_message", "Merged branch " + targetBranch + " into " + prBranch);
@@ -242,13 +251,13 @@ public class GitHubTemplate implements GitHubOperations {
 
     @Override
     public Page<Milestone> getMilestones(final String organization, final String name) {
-        final String url = "https://api.github.com/repos/" + organization + '/' + name + "/milestones?state=open";
+        val url = "https://api.github.com/repos/" + organization + '/' + name + "/milestones?state=open";
         return getPage(url, Milestone[].class);
     }
 
     @Override
     public Page<Label> getLabels(final String organization, final String name) {
-        final String url = "https://api.github.com/repos/" + organization + '/' + name + "/labels";
+        val url = "https://api.github.com/repos/" + organization + '/' + name + "/labels";
         return getPage(url, Label[].class);
     }
 
@@ -414,7 +423,7 @@ public class GitHubTemplate implements GitHubOperations {
         if (StringUtils.hasText(filter)) {
             params.put("filter", filter);
         }
-        final String url = "https://api.github.com/repos/" + organization + '/' + repository + "/commits/" + ref + "/check-runs";
+        val url = "https://api.github.com/repos/" + organization + '/' + repository + "/commits/" + ref + "/check-runs";
         return getSinglePage(url, CheckRun.class, params,
             new LinkedMultiValueMap(Map.of("Accept", List.of("application/vnd.github.antiope-preview+json"))));
     }
@@ -462,7 +471,7 @@ public class GitHubTemplate implements GitHubOperations {
         @Override
         public ClientHttpResponse intercept(final HttpRequest request, final byte[] body,
                                             final ClientHttpRequestExecution execution) throws IOException {
-            final String token = Base64Utils.encodeToString(
+            val token = Base64Utils.encodeToString(
                 (this.username + ':' + this.password).getBytes(UTF_8));
             request.getHeaders().add("Authorization", "Basic " + token);
             return execution.execute(request, body);

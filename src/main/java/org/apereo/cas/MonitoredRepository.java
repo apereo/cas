@@ -170,4 +170,8 @@ public class MonitoredRepository implements InitializingBean {
     public CombinedCommitStatus getCombinedPullRequestCommitStatuses(final PullRequest pr) {
         return this.gitHub.getCombinedPullRequestCommitStatus(getOrganization(), getName(), pr.getHead().getSha());
     }
+
+    public String getCurrentCommitSha() {
+        return null;
+    }
 }

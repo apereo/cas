@@ -16,11 +16,13 @@
 
 package org.apereo.cas;
 
+import org.apereo.cas.github.CombinedCommitStatus;
 import org.apereo.cas.github.GitHubOperations;
 import org.apereo.cas.github.Page;
 import org.apereo.cas.github.PullRequest;
 
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import java.util.List;
@@ -71,7 +73,7 @@ class RepositoryMonitor {
         log.info("Monitoring of {}/{} completed", this.repository.getOrganization(), this.repository.getName());
     }
 
-    @Scheduled(fixedRate = 60 * 60 * 1000)
+    @Scheduled(fixedRate = 90 * 60 * 1000)
     void monitorHourly() {
         log.info("Hourly task of monitoring {}/{}", this.repository.getOrganization(), this.repository.getName());
         try {
@@ -79,7 +81,10 @@ class RepositoryMonitor {
             while (page != null) {
                 for (final PullRequest pr : page.getContent()) {
                     if (!pr.getTitle().contains("WIP") && !pr.isLabeledAs(CasLabels.LABEL_PENDING) && !pr.isLabeledAs(CasLabels.LABEL_BOT)) {
-                        repository.mergePullRequestWithBase(pr);
+                        val runs = this.repository.getCombinedPullRequestCommitStatuses(pr);
+                        if (runs.isCheckStatusFailure(CombinedCommitStatus.TRAVIS_CI)) {
+                            repository.mergePullRequestWithBase(pr);
+                        }
                     }
                 }
                 page = page.next();

@@ -40,7 +40,7 @@ public class CasPullRequestListener implements PullRequestListener {
     private void mergePullRequestIfPossible(final PullRequest pr) {
         if (pr.isLabeledAs(CasLabels.LABEL_BOT) && pr.isLabeledAs(CasLabels.LABEL_DEPENDENCIES_MODULES)) {
             val checkRun = this.repository.getCombinedPullRequestCommitStatuses(pr);
-            if (checkRun.hasCompletedCheckSuccessfully(CombinedCommitStatus.TRAVIS_CI)) {
+            if (checkRun.isCheckStatusSuccess(CombinedCommitStatus.TRAVIS_CI)) {
                 this.repository.mergePullRequestIntoBase(pr);
             }
         }

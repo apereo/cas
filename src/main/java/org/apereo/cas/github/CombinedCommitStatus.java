@@ -32,9 +32,18 @@ public class CombinedCommitStatus {
         this.sha = sha;
     }
 
-    public boolean hasCompletedCheckSuccessfully(final String name) {
+    public boolean isCheckStatusSuccess(final String name) {
         return this.statuses.stream().anyMatch(r -> r.getContext().equalsIgnoreCase(name)
             && r.getState().equalsIgnoreCase("success"));
     }
 
+    public boolean isCheckStatusPending(final String name) {
+        return this.statuses.stream().anyMatch(r -> r.getContext().equalsIgnoreCase(name)
+            && r.getState().equalsIgnoreCase("pending"));
+    }
+
+    public boolean isCheckStatusFailure(final String name) {
+        return this.statuses.stream().anyMatch(r -> r.getContext().equalsIgnoreCase(name)
+            && r.getState().equalsIgnoreCase("failure"));
+    }
 }
