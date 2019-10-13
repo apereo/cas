@@ -2682,6 +2682,7 @@ To learn more about this topic, [please review this guide](../mfa/Simple-Multifa
 # cas.authn.mfa.simple.name=
 # cas.authn.mfa.simple.order=
 # cas.authn.mfa.simple.timeToKillInSeconds=30
+# cas.authn.mfa.simple.tokenLength=6
 ```
 
 Email notifications settings for this feature are available [here](Configuration-Properties-Common.html#email-notifications) 

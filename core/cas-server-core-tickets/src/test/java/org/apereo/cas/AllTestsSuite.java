@@ -24,6 +24,7 @@ import org.apereo.cas.ticket.registry.DefaultTicketRegistryTests;
 import org.apereo.cas.ticket.registry.DistributedTicketRegistryTests;
 import org.apereo.cas.ticket.serialization.DefaultTicketStringSerializationManagerTests;
 import org.apereo.cas.util.DefaultUniqueTicketIdGeneratorTests;
+import org.apereo.cas.util.GroovyUniqueTicketIdGeneratorTests;
 import org.apereo.cas.util.TicketEncryptionDecryptionTests;
 
 import org.junit.platform.runner.JUnitPlatform;
@@ -61,6 +62,7 @@ import org.junit.runner.RunWith;
     DefaultTicketRegistryCleanerTests.class,
     TicketSerializersTests.class,
     Cas20ProxyHandlerTests.class,
+    GroovyUniqueTicketIdGeneratorTests.class,
     DefaultTicketCatalogTests.class
 })
 @RunWith(JUnitPlatform.class)
