@@ -5108,7 +5108,6 @@ under the configuration key `cas.authn.pm.ldap`.
 ```properties
 # cas.authn.pm.ldap.type=AD|GENERIC|EDirectory|FreeIPA
 # cas.authn.pm.ldap.usernameAttribute=uid
-# cas.authn.pm.ldap.searchFilterUsername=email={user}
 
 # Attributes that should be fetched to indicate security questions and answers
 # cas.authn.pm.ldap.securityQuestionsAttributes.attrQuestion1=attrAnswer1
