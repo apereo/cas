@@ -29,7 +29,7 @@ public class CasSimpleMultifactorAuthenticationTicketFactory implements Transien
     public static final String PREFIX = "CASMFA";
 
     private final ExpirationPolicyBuilder expirationPolicy;
-    private final UniqueTicketIdGenerator ticketIdGenerator = new CasSimpleMultifactorAuthenticationUniqueTicketIdGenerator();
+    private final UniqueTicketIdGenerator ticketIdGenerator;
 
     /**
      * Create delegated authentication request ticket.

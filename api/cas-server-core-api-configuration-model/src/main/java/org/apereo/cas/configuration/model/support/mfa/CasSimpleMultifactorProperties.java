@@ -31,6 +31,11 @@ public class CasSimpleMultifactorProperties extends BaseMultifactorProviderPrope
     private long timeToKillInSeconds = 30;
 
     /**
+     * The length of the generated token.
+     */
+    private int tokenLength = 6;
+
+    /**
      * Email settings for notifications.
      */
     @NestedConfigurationProperty

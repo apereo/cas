@@ -3,11 +3,13 @@ package org.apereo.cas.config;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mfa.simple.CasSimpleMultifactorAuthenticationTicketExpirationPolicyBuilder;
 import org.apereo.cas.mfa.simple.CasSimpleMultifactorAuthenticationTicketFactory;
+import org.apereo.cas.mfa.simple.CasSimpleMultifactorAuthenticationUniqueTicketIdGenerator;
 import org.apereo.cas.mfa.simple.web.flow.CasSimpleMultifactorTrustWebflowConfigurer;
 import org.apereo.cas.mfa.simple.web.flow.CasSimpleMultifactorWebflowConfigurer;
 import org.apereo.cas.mfa.simple.web.flow.CasSimpleSendTokenAction;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.TransientSessionTicketFactory;
+import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.io.CommunicationsManager;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
@@ -109,11 +111,20 @@ public class CasSimpleMultifactorAuthenticationConfiguration {
         return new CasSimpleMultifactorAuthenticationTicketExpirationPolicyBuilder(casProperties);
     }
 
+    @ConditionalOnMissingBean(name = "casSimpleMultifactorAuthenticationUniqueTicketIdGenerator")
+    @Bean
+    @RefreshScope
+    public UniqueTicketIdGenerator casSimpleMultifactorAuthenticationUniqueTicketIdGenerator() {
+        val simple = casProperties.getAuthn().getMfa().getSimple();
+        return new CasSimpleMultifactorAuthenticationUniqueTicketIdGenerator(simple.getTokenLength());
+    }
+
     @ConditionalOnMissingBean(name = "casSimpleMultifactorAuthenticationTicketFactory")
     @Bean
     @RefreshScope
     public TransientSessionTicketFactory casSimpleMultifactorAuthenticationTicketFactory() {
-        return new CasSimpleMultifactorAuthenticationTicketFactory(casSimpleMultifactorAuthenticationTicketExpirationPolicy());
+        return new CasSimpleMultifactorAuthenticationTicketFactory(casSimpleMultifactorAuthenticationTicketExpirationPolicy(),
+            casSimpleMultifactorAuthenticationUniqueTicketIdGenerator());
     }
 
     /**
