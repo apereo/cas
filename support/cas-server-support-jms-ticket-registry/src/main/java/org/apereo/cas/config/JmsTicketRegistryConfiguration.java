@@ -112,7 +112,8 @@ public class JmsTicketRegistryConfiguration {
     private TicketRegistry getJmsTicketRegistryWithPublisher(final JmsTicketRegistryPublisher publisher) {
         val jms = casProperties.getTicket().getRegistry().getJms();
         val cipher = CoreTicketUtils.newTicketRegistryCipherExecutor(jms.getCrypto(), "jms");
-        LOGGER.debug("Configuring JMS ticket registry with identifier [{}]", messageQueueTicketRegistryIdentifier());
-        return new JmsTicketRegistry(publisher, messageQueueTicketRegistryIdentifier(), cipher);
+        val messageQueueTicketRegistryIdentifier = messageQueueTicketRegistryIdentifier();
+        LOGGER.debug("Configuring JMS ticket registry with identifier [{}]", messageQueueTicketRegistryIdentifier);
+        return new JmsTicketRegistry(publisher, messageQueueTicketRegistryIdentifier, cipher);
     }
 }

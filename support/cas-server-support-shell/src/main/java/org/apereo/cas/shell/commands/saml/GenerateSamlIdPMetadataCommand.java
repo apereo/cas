@@ -71,24 +71,25 @@ public class GenerateSamlIdPMetadataCommand {
             writer.setUriSubjectAltNames(Arrays.asList(StringUtils.split(subjectAltNames, ",")));
         }
 
-        val context = SamlIdPMetadataGeneratorConfigurationContext.builder()
-            .samlIdPMetadataLocator(locator)
-            .samlIdPCertificateAndKeyWriter(writer)
-            .entityId(entityId)
-            .resourceLoader(resourceLoader)
-            .casServerPrefix(serverPrefix)
-            .scope(scope)
-            .metadataCipherExecutor(CipherExecutor.noOpOfStringToString())
-            .build();
-        val generator = new FileSystemSamlIdPMetadataGenerator(context);
-
         val generateMetadata = FunctionUtils.doIf(locator.exists(),
             () -> Boolean.TRUE,
             () -> {
                 LOGGER.warn("Metadata artifacts are available at the specified location: [{}]", metadataLocation);
                 return force;
             }).get();
+
         if (generateMetadata) {
+            val context = SamlIdPMetadataGeneratorConfigurationContext.builder()
+                .samlIdPMetadataLocator(locator)
+                .samlIdPCertificateAndKeyWriter(writer)
+                .entityId(entityId)
+                .resourceLoader(resourceLoader)
+                .casServerPrefix(serverPrefix)
+                .scope(scope)
+                .metadataCipherExecutor(CipherExecutor.noOpOfStringToString())
+                .build();
+
+            val generator = new FileSystemSamlIdPMetadataGenerator(context);
             generator.initialize();
             generator.generate();
             LOGGER.info("Generated metadata is available at [{}]", locator.getMetadata());

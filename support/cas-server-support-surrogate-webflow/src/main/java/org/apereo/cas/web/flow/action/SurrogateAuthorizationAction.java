@@ -27,12 +27,12 @@ public class SurrogateAuthorizationAction extends AbstractAction {
     protected Event doExecute(final RequestContext requestContext) {
         val ca = AuthenticationCredentialsThreadLocalBinder.getCurrentAuthentication();
         try {
-            val service = WebUtils.getService(requestContext);
-            val authentication = WebUtils.getAuthentication(requestContext);
             val svc = WebUtils.getRegisteredService(requestContext);
             if (svc != null) {
+                val authentication = WebUtils.getAuthentication(requestContext);
                 AuthenticationCredentialsThreadLocalBinder.bindCurrent(authentication);
 
+                val service = WebUtils.getService(requestContext);
                 val audit = AuditableContext.builder().service(service)
                     .service(service)
                     .authentication(authentication)
