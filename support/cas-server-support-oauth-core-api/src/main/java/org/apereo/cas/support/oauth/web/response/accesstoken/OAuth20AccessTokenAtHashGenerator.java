@@ -24,7 +24,7 @@ import java.util.Arrays;
 @Getter
 @Slf4j
 public class OAuth20AccessTokenAtHashGenerator {
-    private final String accessTokenId;
+    private final String encodedAccessToken;
     private final String algorithm;
     private final RegisteredService registeredService;
 
@@ -35,7 +35,7 @@ public class OAuth20AccessTokenAtHashGenerator {
      */
     public String generate() {
         val alg = determineSigningHashAlgorithm();
-        val tokenBytes = accessTokenId.getBytes(StandardCharsets.UTF_8);
+        val tokenBytes = encodedAccessToken.getBytes(StandardCharsets.UTF_8);
         if (AlgorithmIdentifiers.NONE.equalsIgnoreCase(alg)) {
             LOGGER.debug("Signing algorithm specified by service [{}] is unspecified", registeredService.getServiceId());
             return EncodingUtils.encodeUrlSafeBase64(tokenBytes);

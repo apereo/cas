@@ -202,7 +202,7 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService {
 
         val alg = getConfigurationContext().getIdTokenSigningAndEncryptionService().getJsonWebKeySigningAlgorithm(registeredService);
         val hash = OAuth20AccessTokenAtHashGenerator.builder()
-            .accessTokenId(encodedAccessToken)
+            .encodedAccessToken(encodedAccessToken)
             .algorithm(alg)
             .registeredService(registeredService)
             .build()
