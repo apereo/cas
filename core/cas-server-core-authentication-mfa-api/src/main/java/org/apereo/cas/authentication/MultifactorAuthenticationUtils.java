@@ -95,10 +95,11 @@ public class MultifactorAuthenticationUtils {
                                                                  final Optional<RequestContext> context,
                                                                  final MultifactorAuthenticationProvider provider,
                                                                  final Predicate<String> predicate) {
-        val events = new HashSet<Event>();
+
         if (attributeValue instanceof Collection) {
             LOGGER.debug("Attribute value [{}] is a multi-valued attribute", attributeValue);
             val values = (Collection<String>) attributeValue;
+            val events = new HashSet<Event>();
             values.forEach(value -> {
                 val id = provider.getId();
                 try {
