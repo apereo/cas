@@ -13,8 +13,15 @@
 <main role="main" class="container mt-3 mb-3">
     <div layout:fragment="content" id="login">
         <form method="post" id="fm1" class="fm-v clearfix" th:object="${credential}" th:action="@{/login}">
-            <div id="msg" class="errors" th:if="${#fields.hasErrors('*')}">
-                <span th:each="err : ${#fields.errors('*')}" th:utext="${err}"/>
+            
+            <div class="alert alert-danger alert-dismissible fade show" th:if="${flowRequestContext.messageContext.hasErrorMessages()}">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                <p th:each="message : ${flowRequestContext.messageContext.allMessages}" th:utext="#{${message.text}}">Message Text</p>
+            </div>
+
+            <div class="alert alert-info alert-dismissible fade show" th:unless="${flowRequestContext.messageContext.hasErrorMessages()}">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                <p th:each="message : ${flowRequestContext.messageContext.allMessages}" th:utext="#{${message.text}}">Message Text</p>
             </div>
 
             <div class="form-group">
@@ -26,9 +33,10 @@
                     <p/>
                 </div>
             </div>
-            <input class="btn btn-submit" accesskey="l"
-                   th:value="#{screen.welcome.button.login}" tabindex="4" type="submit"/>
-            <input type="hidden" name="_eventId_submit" value="Login" />
+            <input type="hidden" id="eventId" name="_eventId" value="submit" />
+            <input class="btn btn-submit" accesskey="l" th:value="#{screen.welcome.button.login}" tabindex="4" type="submit"/>
+            &nbsp;
+            <input class="btn btn-submit" type="submit" name="resend" th:value="#{cas.mfa.simple.label.resend}" onclick="$('#eventId').val('resend');" />
             <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
             <input type="hidden" name="geolocation"/>
         </form>

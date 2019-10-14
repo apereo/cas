@@ -54,6 +54,28 @@ public class GitServiceRegistryProperties implements Serializable {
      */
     private boolean pushChanges;
     /**
+     * Path to the SSH private key identity.
+     */
+    private String privateKeyPassphrase;
+
+    /**
+     * Password for the SSH private key.
+     */
+    private File privateKeyPath;
+
+    /**
+     * As with using SSH with public keys, an SSH session
+     * with {@code ssh://user@example.com/repo.git}
+     * must be specified to use password-secured SSH connections.
+     */
+    private String sshSessionPassword;
+
+    /**
+     * Timeout for git operations such as push and pull in seconds.
+     */
+    private String timeout = "PT10S";
+
+    /**
      * Directory into which the repository would be cloned.
      */
     private File cloneDirectory = new File(FileUtils.getTempDirectory(), "cas-service-registry");

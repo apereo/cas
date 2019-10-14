@@ -57,7 +57,8 @@ public class DelegatedAuthenticationWebflowConfigurer extends AbstractCasWebflow
 
         val currentStartState = getStartState(flow).getId();
         transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_ERROR, currentStartState));
-        transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_RESUME, currentStartState));
+        
+        transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_RESUME, CasWebflowConstants.STATE_ID_CREATE_TICKET_GRANTING_TICKET));
         transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, DECISION_STATE_CHECK_DELEGATED_AUTHN_FAILURE));
         transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_STOP, CasWebflowConstants.STATE_ID_STOP_WEBFLOW));
         transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_WARN, CasWebflowConstants.STATE_ID_WARN));

@@ -78,7 +78,6 @@ public class TimedMultifactorAuthenticationTrigger implements MultifactorAuthent
             .map(style -> dow.getDisplayName(style, Locale.getDefault()))
             .collect(Collectors.toList());
 
-        val providerMap = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(ApplicationContextProvider.getApplicationContext());
         val timed = timedMultifactor.stream()
             .filter(t -> {
                 var providerEvent = false;
@@ -97,6 +96,7 @@ public class TimedMultifactorAuthenticationTrigger implements MultifactorAuthent
             .orElse(null);
 
         if (timed != null) {
+            val providerMap = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(ApplicationContextProvider.getApplicationContext());
             val providerFound = MultifactorAuthenticationUtils.resolveProvider(providerMap, timed.getProviderId());
             if (providerFound.isEmpty()) {
                 LOGGER.error("Adaptive authentication is configured to require [{}] for [{}], yet [{}] absent in the configuration.",

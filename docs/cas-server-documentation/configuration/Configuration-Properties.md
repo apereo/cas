@@ -255,7 +255,7 @@ under the configuration key `cas.spring.cloud.aws.s3`.
 ### DynamoDb
 
 Common AWS settings for this feature are available [here](Configuration-Properties-Common.html#amazon-integration-settings)
-under the configuration key `cas.spring.cloud.dynamodb`. 
+under the configuration key `cas.spring.cloud.dynamoDb`. 
 
 ### JDBC
 
@@ -2682,6 +2682,7 @@ To learn more about this topic, [please review this guide](../mfa/Simple-Multifa
 # cas.authn.mfa.simple.name=
 # cas.authn.mfa.simple.order=
 # cas.authn.mfa.simple.timeToKillInSeconds=30
+# cas.authn.mfa.simple.tokenLength=6
 ```
 
 Email notifications settings for this feature are available [here](Configuration-Properties-Common.html#email-notifications) 
@@ -3876,6 +3877,7 @@ that will ping on the LDAP monitor connection pool.
 # cas.monitor.ldap.maxWait=5000
 # cas.monitor.ldap.pool.minSize=6
 # cas.monitor.ldap.pool.maxSize=18
+# cas.monitor.ldap.pool.enabled=true
 ```
 
 ### Memory
@@ -4061,6 +4063,10 @@ Works with git repository to fetch and manage service registry definitions.
 # cas.serviceRegistry.git.password=
 # cas.serviceRegistry.git.cloneDirectory=file:/tmp/cas-service-registry
 # cas.serviceRegistry.git.pushChanges=false
+# cas.serviceRegistry.git.privateKeyPassphrase=
+# cas.serviceRegistry.git.privateKeyPath=
+# cas.serviceRegistry.git.sshSessionPassword=
+# cas.serviceRegistry.git.timeout=PT10S
 ```
 
 To learn more about this topic, [please review this guide](../services/Git-Service-Management.html).
@@ -5102,7 +5108,6 @@ under the configuration key `cas.authn.pm.ldap`.
 ```properties
 # cas.authn.pm.ldap.type=AD|GENERIC|EDirectory|FreeIPA
 # cas.authn.pm.ldap.usernameAttribute=uid
-# cas.authn.pm.ldap.searchFilterUsername=email={user}
 
 # Attributes that should be fetched to indicate security questions and answers
 # cas.authn.pm.ldap.securityQuestionsAttributes.attrQuestion1=attrAnswer1

@@ -8,14 +8,14 @@
   dependencies match that of CAS. 
  */
 ext["hibernateVersion"] = "5.4.4.Final"
-ext["hazelcastVersion"] = "3.12.2"
+ext["hazelcastVersion"] = "3.12.3"
 ext["infinispanVersion"] = "9.4.15.Final"
 
 ext["springVersion"] = "5.2.0.RELEASE"
 ext["springSessionVersion"] = "2.2.0.M4"
 ext["springSessionMongoVersion"] = "2.2.0.RC2"
 
-ext["springBootTomcatVersion"] = "9.0.24"
+ext["springBootTomcatVersion"] = "9.0.27"
 
 ext["jacksonVersion"] = "2.10.0.pr2"
 ext["jacksonCoreVersion"] = "2.10.0.pr2"
@@ -23,7 +23,7 @@ ext["thymeleafVersion"] = "3.0.11.RELEASE"
 ext["thymeleafDialectVersion"] = "2.4.1"
 ext["hsqlVersion"] = "2.5.0"
 ext["httpCoreVersion"] = "4.4.12"
-ext["hikariVersion"] = "3.4.0"
+ext["hikariVersion"] = "3.4.1"
 ext["groovyVersion"] = "3.0.0-beta-3"
 ext["log4jVersion"] = "2.12.1"
 ext["commonsBeansVersion"] = "1.9.4"

@@ -196,11 +196,6 @@ public class PasswordManagementProperties implements Serializable {
          * Username attribute required by LDAP.
          */
         private String usernameAttribute = "uid";
-
-        /**
-         * Search filter used to look up usernames by email.
-         */
-        private String searchFilterUsername;
     }
 
     @RequiresModule(name = "cas-server-support-pm-webflow")

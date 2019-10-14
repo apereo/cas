@@ -42,7 +42,7 @@ public class AmazonSecretsManagerCloudConfigBootstrapConfiguration implements Pr
             val listRequest = new ListSecretsRequest();
             val listResults = secretsManager.listSecrets(listRequest);
             val secretList = listResults.getSecretList();
-            if (secretList != null && secretList.isEmpty()) {
+            if (secretList != null && !secretList.isEmpty()) {
                 LOGGER.debug("Fetched [{}] secret(s)", secretList.size());
                 secretList
                     .stream()

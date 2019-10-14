@@ -60,8 +60,8 @@ after_script:
   - ./ci/stop.sh
 stages:
   - initialize
-  - publish
   - build
+  - publish
   - validate
   - test
   - finalize
@@ -71,51 +71,51 @@ jobs:
       script: ./ci/download-dependencies.sh
       name: "Initialize Build System"
       ############################################
+    - stage: build
+      script: ./ci/build.sh
+      name: "Build CAS"
+      ############################################
     - stage: publish
       if: NOT commit_message =~ ^\[skip\s+snapshots\] and type != pull_request and (branch =~ /^\d+\.\d+\.x$/ or branch = master)
       script: ./ci/publish-snapshots-release.sh
       name: "Publish SNAPSHOT Artifacts"
-      ############################################
-    - stage: build
-      script: ./ci/build.sh
-      name: "Build CAS"
-    - stage: build
-      script: ./ci/html-proofer-docs.sh
-      if: NOT (head_branch =~ env(DEPENDENCY_BOT_BRANCH) and type = pull_request) and (branch =~ /^\d+\.\d+\.x$/ or branch = master)
-      name: "Validate Documentation"
-      ############################################
-    - stage: validate
-      script: ./ci/analyze-sonarqube.sh
-      if: type != pull_request
-      name: "SonarCloud Analysis"
-    - stage: validate
-      if: NOT (head_branch =~ env(DEPENDENCY_BOT_BRANCH) and type = pull_request)
-      script: ./ci/analyze-style.sh
-      name: "Checkstyle Analysis"
     - stage: validate
       script: ./ci/push-docs-ghpages.sh
       if: type != pull_request and (branch =~ /^\d+\.\d+\.x$/ or branch = master)
       name: "Publish Documentation"
+      ############################################
+    - stage: validate
+      script: ./ci/html-proofer-docs.sh
+      if: NOT (head_branch =~ env(DEPENDENCY_BOT_BRANCH) and type = pull_request) and (branch =~ /^\d+\.\d+\.x$/ or branch = master)
+      name: "Validate Documentation"
+    - stage: validate
+      script: ./ci/analyze-sonarqube.sh
+      if: type != pull_request
+      name: "Validate Code Quality via SonarCloud"
+    - stage: validate
+      if: NOT (head_branch =~ env(DEPENDENCY_BOT_BRANCH) and type = pull_request)
+      script: ./ci/analyze-style.sh
+      name: "Validate Style via Checkstyle"
     - stage: validate
       if: NOT (head_branch =~ env(DEPENDENCY_BOT_BRANCH) and type = pull_request)
       script: ./ci/build-javadocs.sh
-      name: "Build Javadocs"
+      name: "Validate Javadocs"
     - stage: validate
       if: NOT (head_branch =~ env(DEPENDENCY_BOT_BRANCH) and type = pull_request)
       script: ./ci/build-config-metadata.sh
-      name: "Configuration Metadata Analysis"
+      name: "Validate Spring Configuration Metadata"
     - stage: validate
       if: NOT (head_branch =~ env(DEPENDENCY_BOT_BRANCH) and type = pull_request)
       script: ./ci/analyze-config-proxying.sh
-      name: "Configuration Proxying Analysis"
+      name: "Validate Spring Configuration Proxying"
     - stage: validate
       if: NOT (head_branch =~ env(DEPENDENCY_BOT_BRANCH) and type = pull_request)
       script: ./ci/check-config-factories.sh
-      name: "Configuration Factory Analysis"
+      name: "Validate Spring Configuration Factories"
     - stage: validate
       if: NOT (head_branch =~ env(DEPENDENCY_BOT_BRANCH) and type = pull_request)
       script: ./ci/tests/shell/validate-shell.sh
-      name: "Validate CAS Shell"
+      name: "Validate CAS Command-line Shell"
     - stage: validate
       script: ./ci/tests/webapp/validate-embedded-webapp.sh tomcat
       name: "Validate Web Application Server via Apache Tomcat"
@@ -125,10 +125,16 @@ jobs:
     - stage: validate
       script: ./ci/tests/webapp/validate-embedded-webapp.sh undertow
       name: "Validate Web Application Server via Undertow"
-      ############################################
-    - stage: test
+    - stage: validate
+      script: ./ci/tests/webapp/validate-configserver-webapp.sh
+      name: "Validate Spring Cloud Configuration Server"
+    - stage: validate
+      script: ./ci/tests/webapp/validate-eurekaserver-webapp.sh
+      name: "Validate Eureka Discovery Server"
+    - stage: validate
       script: ./ci/tests/validate-tests.sh
-      name: "Validate Tests & Suites"
+      name: "Validate Tests & Test Suites"
+      ############################################
     - stage: test
       script: ./ci/tests/run-tests-simple.sh
       name: "Simple Unit Tests"

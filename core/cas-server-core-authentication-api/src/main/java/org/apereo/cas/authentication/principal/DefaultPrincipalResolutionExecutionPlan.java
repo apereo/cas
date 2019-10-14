@@ -2,6 +2,7 @@ package org.apereo.cas.authentication.principal;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,5 +21,6 @@ public class DefaultPrincipalResolutionExecutionPlan implements PrincipalResolut
     @Override
     public void registerPrincipalResolver(final PrincipalResolver principalResolver) {
         registeredPrincipalResolvers.add(principalResolver);
+        AnnotationAwareOrderComparator.sortIfNecessary(this.registeredPrincipalResolvers);
     }
 }

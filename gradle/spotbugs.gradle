@@ -1,4 +1,4 @@
-task outputSpotbugsReports(description: "Display Spotbugs output") {
+    task outputSpotbugsReports(description: "Display Spotbugs output") {
     doFirst {
         printSpotbugsReportToConsole(spotbugsMain.reports.xml.destination)
     }
