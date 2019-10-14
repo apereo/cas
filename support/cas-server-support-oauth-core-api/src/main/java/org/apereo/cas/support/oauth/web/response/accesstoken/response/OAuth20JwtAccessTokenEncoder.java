@@ -11,9 +11,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.val;
 
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-
 /**
  * This is {@link OAuth20JwtAccessTokenEncoder}.
  *
@@ -32,7 +29,7 @@ public class OAuth20JwtAccessTokenEncoder {
         val oAuthRegisteredService = OAuthRegisteredService.class.cast(this.registeredService);
         val authentication = accessToken.getAuthentication();
         if (oAuthRegisteredService != null && oAuthRegisteredService.isJwtAccessToken()) {
-            val dt = ZonedDateTime.now(ZoneOffset.UTC).plusSeconds(accessToken.getExpirationPolicy().getTimeToLive());
+            val dt = authentication.getAuthenticationDate().plusSeconds(accessToken.getExpirationPolicy().getTimeToLive());
             val builder = JwtBuilder.JwtRequest.builder();
 
             val request = builder

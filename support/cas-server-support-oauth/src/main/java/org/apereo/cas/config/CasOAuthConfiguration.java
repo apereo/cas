@@ -342,12 +342,6 @@ public class CasOAuthConfiguration {
         return new OAuth20AccessTokenAuthenticator(ticketRegistry.getObject());
     }
 
-    @ConditionalOnMissingBean(name = "oauthAccessTokenResponseGenerator")
-    @Bean
-    public OAuth20AccessTokenResponseGenerator oauthAccessTokenResponseGenerator() {
-        return new OAuth20DefaultAccessTokenResponseGenerator(accessTokenJwtBuilder());
-    }
-
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "defaultAccessTokenFactory")

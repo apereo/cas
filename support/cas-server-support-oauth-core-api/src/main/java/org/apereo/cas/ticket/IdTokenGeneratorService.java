@@ -20,7 +20,7 @@ public interface IdTokenGeneratorService {
      *
      * @param request           the request
      * @param response          the response
-     * @param accessTokenId     the access token id
+     * @param accessToken       the access token
      * @param timeoutInSeconds  the timeoutInSeconds
      * @param responseType      the response type
      * @param registeredService the registered service
@@ -28,7 +28,7 @@ public interface IdTokenGeneratorService {
      */
     String generate(HttpServletRequest request,
                     HttpServletResponse response,
-                    AccessToken accessTokenId,
+                    AccessToken accessToken,
                     long timeoutInSeconds,
                     OAuth20ResponseTypes responseType,
                     OAuthRegisteredService registeredService);

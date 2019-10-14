@@ -69,7 +69,7 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService {
      * Produce claims as jwt.
      *
      * @param request          the request
-     * @param accessTokenId    the access token id
+     * @param accessToken      the access token
      * @param timeoutInSeconds the timeoutInSeconds
      * @param service          the service
      * @param profile          the user profile
@@ -78,26 +78,26 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService {
      * @return the jwt claims
      */
     protected JwtClaims buildJwtClaims(final HttpServletRequest request,
-                                       final AccessToken accessTokenId,
+                                       final AccessToken accessToken,
                                        final long timeoutInSeconds,
                                        final OidcRegisteredService service,
                                        final UserProfile profile,
                                        final JEEContext context,
                                        final OAuth20ResponseTypes responseType) {
-        val authentication = accessTokenId.getAuthentication();
+        val authentication = accessToken.getAuthentication();
 
         val principal = this.getConfigurationContext().getProfileScopeToAttributesFilter()
-            .filter(accessTokenId.getService(), authentication.getPrincipal(), service, context, accessTokenId);
+            .filter(accessToken.getService(), authentication.getPrincipal(), service, context, accessToken);
 
         val oidc = getConfigurationContext().getCasProperties().getAuthn().getOidc();
 
         val claims = new JwtClaims();
 
-        val jwtId = getJwtId(accessTokenId.getTicketGrantingTicket());
+        val jwtId = getJwtId(accessToken.getTicketGrantingTicket());
         claims.setJwtId(jwtId);
 
         claims.setIssuer(oidc.getIssuer());
-        claims.setAudience(accessTokenId.getClientId());
+        claims.setAudience(accessToken.getClientId());
 
         val expirationDate = NumericDate.now();
         expirationDate.addSeconds(timeoutInSeconds);
@@ -125,7 +125,7 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService {
         if (attributes.containsKey(OAuth20Constants.NONCE)) {
             claims.setClaim(OAuth20Constants.NONCE, attributes.get(OAuth20Constants.NONCE).get(0));
         }
-        generateAccessTokenHash(accessTokenId, service, claims);
+        generateAccessTokenHash(accessToken, service, claims);
 
         LOGGER.trace("Comparing principal attributes [{}] with supported claims [{}]", principal.getAttributes(), oidc.getClaims());
 
@@ -185,7 +185,7 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService {
     /**
      * Generate access token hash string.
      *
-     * @param accessToken       the access token id
+     * @param accessToken       the access token
      * @param registeredService the service
      * @param claims            the claims
      */
@@ -200,10 +200,9 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService {
             .build()
             .encode();
 
-        claims.setClaim(OAuth20Constants.ACCESS_TOKEN, encodedAccessToken);
         val alg = getConfigurationContext().getIdTokenSigningAndEncryptionService().getJsonWebKeySigningAlgorithm(registeredService);
         val hash = OAuth20AccessTokenAtHashGenerator.builder()
-            .accessTokenId(encodedAccessToken)
+            .encodedAccessToken(encodedAccessToken)
             .algorithm(alg)
             .registeredService(registeredService)
             .build()
