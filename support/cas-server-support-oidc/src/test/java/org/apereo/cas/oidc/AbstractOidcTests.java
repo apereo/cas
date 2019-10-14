@@ -54,6 +54,7 @@ import org.apereo.cas.ticket.device.DeviceTokenFactory;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.ticket.refreshtoken.RefreshToken;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.web.config.CasCookieConfiguration;
@@ -214,6 +215,10 @@ public abstract class AbstractOidcTests {
     @Autowired
     @Qualifier("oidcIdTokenGenerator")
     protected IdTokenGeneratorService oidcIdTokenGenerator;
+
+    @Autowired
+    @Qualifier("accessTokenJwtBuilder")
+    protected JwtBuilder accessTokenJwtBuilder;
 
     protected static OidcRegisteredService getOidcRegisteredService() {
         return getOidcRegisteredService(true, true);

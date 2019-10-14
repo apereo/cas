@@ -136,7 +136,7 @@ public class OAuth20TokenAuthorizationResponseBuilder implements OAuth20Authoriz
 
         LOGGER.debug("Redirecting to URL [{}]", url);
         val parameters = new LinkedHashMap<String, String>();
-        parameters.put(OAuth20Constants.ACCESS_TOKEN, accessToken.getId());
+        parameters.put(OAuth20Constants.ACCESS_TOKEN, encodedAccessToken);
         if (refreshToken != null) {
             parameters.put(OAuth20Constants.REFRESH_TOKEN, refreshToken.getId());
         }

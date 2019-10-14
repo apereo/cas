@@ -13,6 +13,7 @@ import org.apereo.cas.services.PairwiseOidcRegisteredServiceUsernameAttributePro
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.BaseOAuth20Controller;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
+import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoder;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.RandomUtils;
@@ -149,7 +150,16 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuth20
             val clientResponse = OidcClientRegistrationUtils.getClientRegistrationResponse(registeredService, prefix);
 
             val accessToken = generateRegistrationAccessToken(request, response, registeredService, registrationRequest);
-            clientResponse.setRegistrationAccessToken(accessToken.getId());
+
+            val encodedAccessToken = OAuth20JwtAccessTokenEncoder.builder()
+                .accessToken(accessToken)
+                .registeredService(registeredService)
+                .service(accessToken.getService())
+                .accessTokenJwtBuilder(getOAuthConfigurationContext().getAccessTokenJwtBuilder())
+                .build()
+                .encode();
+
+            clientResponse.setRegistrationAccessToken(encodedAccessToken);
 
             registeredService.setScopes(supportedScopes);
             val processedScopes = new LinkedHashSet<String>(supportedScopes);
