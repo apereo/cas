@@ -203,13 +203,13 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
         publishEvent(new CasAuthenticationTransactionSuccessfulEvent(this, credential));
         var principal = result.getPrincipal();
 
-        val resolverName = resolver != null ? resolver.getName(): "N/A";
         if (resolver == null) {
             LOGGER.debug("No principal resolution is configured for [{}]. Falling back to handler principal [{}]", authenticationHandlerName, principal);
         } else {
             principal = resolvePrincipal(handler, resolver, credential, principal);
             if (principal == null) {
                 if (this.principalResolutionFailureFatal) {
+                    val resolverName = resolver != null ? resolver.getName(): "N/A";
                     LOGGER.warn("Principal resolution handled by [{}] produced a null principal for: [{}]"
                         + "CAS is configured to treat principal resolution failures as fatal.", resolverName, credential);
                     throw new UnresolvedPrincipalException();
