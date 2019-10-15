@@ -97,7 +97,6 @@ public class InitialFlowSetupAction extends AbstractAction {
     }
 
     private void configureWebflowForServices(final RequestContext context) {
-        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         val service = WebUtils.getService(this.argumentExtractors, context);
         if (service != null) {
             LOGGER.debug("Placing service in context scope: [{}]", service.getId());
@@ -119,6 +118,7 @@ public class InitialFlowSetupAction extends AbstractAction {
                 }
             }
         } else if (!casProperties.getSso().isAllowMissingServiceParameter()) {
+            val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
             LOGGER.warn("No service authentication request is available at [{}]. CAS is configured to disable the flow.",
                 request.getRequestURL());
             throw new NoSuchFlowExecutionException(context.getFlowExecutionContext().getKey(),

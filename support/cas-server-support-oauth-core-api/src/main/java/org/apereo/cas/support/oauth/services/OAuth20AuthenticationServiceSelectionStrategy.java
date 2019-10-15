@@ -83,13 +83,13 @@ public class OAuth20AuthenticationServiceSelectionStrategy implements Authentica
     @Override
     public Service resolveServiceFrom(final Service service) {
         val clientId = resolveClientIdFromService(service);
-        val redirectUri = resolveRedirectUri(service);
-        val grantType = resolveGrantType(service);
 
         if (clientId.isPresent()) {
+            val redirectUri = resolveRedirectUri(service);
             if (redirectUri.isPresent()) {
                 return this.webApplicationServiceFactory.createService(redirectUri.get().getValue());
             }
+            val grantType = resolveGrantType(service);
             if (grantType.isPresent()) {
                 var id = StringUtils.EMPTY;
                 val grantValue = grantType.get().getValue();

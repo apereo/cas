@@ -52,8 +52,6 @@ public class RegisteredServicesEventListener {
             LOGGER.debug("No contacts are defined to be notified for policy changes to service [{}]", serviceName);
             return;
         }
-        val mail = serviceRegistry.getMail();
-        val sms = serviceRegistry.getSms();
 
         if (event.isDeleted()) {
             LOGGER.info("Sending notification to [{}] as registered service [{}] is deleted from service registry", contacts, serviceName);
@@ -63,6 +61,7 @@ public class RegisteredServicesEventListener {
 
         communicationsManager.validate();
         if (communicationsManager.isMailSenderDefined()) {
+            val mail = serviceRegistry.getMail();
             val message = mail.getFormattedBody(serviceName);
             contacts
                 .stream()
@@ -70,6 +69,7 @@ public class RegisteredServicesEventListener {
                 .forEach(c -> communicationsManager.email(mail, c.getEmail(), message));
         }
         if (communicationsManager.isSmsSenderDefined()) {
+            val sms = serviceRegistry.getSms();
             val message = sms.getFormattedText(serviceName);
             contacts
                 .stream()

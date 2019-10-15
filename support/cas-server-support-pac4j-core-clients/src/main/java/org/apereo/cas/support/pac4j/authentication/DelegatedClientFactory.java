@@ -175,8 +175,8 @@ public class DelegatedClientFactory {
     protected void configureGoogleClient(final Collection<IndirectClient> properties) {
         val pac4jProperties = casProperties.getAuthn().getPac4j();
         val google = pac4jProperties.getGoogle();
-        val client = new Google2Client(google.getId(), google.getSecret());
         if (google.isEnabled() && StringUtils.isNotBlank(google.getId()) && StringUtils.isNotBlank(google.getSecret())) {
+            val client = new Google2Client(google.getId(), google.getSecret());
             configureClient(client, google);
             if (StringUtils.isNotBlank(google.getScope())) {
                 client.setScope(Google2Client.Google2Scope.valueOf(google.getScope().toUpperCase()));
@@ -339,8 +339,8 @@ public class DelegatedClientFactory {
                 cfg.setPrefixUrl(StringUtils.appendIfMissing(prefix, "/"));
                 val client = new CasClient(cfg);
 
-                val count = index.intValue();
                 if (StringUtils.isBlank(cas.getClientName())) {
+                    val count = index.intValue();
                     client.setName(client.getClass().getSimpleName() + count);
                 }
                 client.setCallbackUrlResolver(new PathParameterCallbackUrlResolver());
@@ -435,8 +435,8 @@ public class DelegatedClientFactory {
 
                 val client = new SAML2Client(cfg);
 
-                val count = index.intValue();
                 if (StringUtils.isBlank(saml.getClientName())) {
+                    val count = index.intValue();
                     client.setName(client.getClass().getSimpleName() + count);
                 }
                 configureClient(client, saml);
@@ -471,8 +471,8 @@ public class DelegatedClientFactory {
                 client.setTokenUrl(oauth.getTokenUrl());
                 client.setAuthUrl(oauth.getAuthUrl());
                 client.setCustomParams(oauth.getCustomParams());
-                val count = index.intValue();
                 if (StringUtils.isBlank(oauth.getClientName())) {
+                    val count = index.intValue();
                     client.setName(client.getClass().getSimpleName() + count);
                 }
                 client.setCallbackUrlResolver(new PathParameterCallbackUrlResolver());

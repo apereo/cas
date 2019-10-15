@@ -31,12 +31,12 @@ public class SurrogateSelectionAction extends AbstractAction {
     @Override
     protected Event doExecute(final RequestContext requestContext) {
         val credential = WebUtils.getCredential(requestContext);
-        val registeredService = WebUtils.getRegisteredService(requestContext);
         if (credential instanceof UsernamePasswordCredential) {
             val target = requestContext.getExternalContext().getRequestParameterMap().get("surrogateTarget");
 
             LOGGER.debug("Located surrogate target as [{}]", target);
             if (StringUtils.isNotBlank(target)) {
+                val registeredService = WebUtils.getRegisteredService(requestContext);
                 val authenticationResultBuilder = WebUtils.getAuthenticationResultBuilder(requestContext);
                 val result = surrogatePrincipalBuilder.buildSurrogateAuthenticationResult(authenticationResultBuilder, credential, target, registeredService);
                 result.ifPresent(authenticationResultBuilder1 -> WebUtils.putAuthenticationResultBuilder(authenticationResultBuilder1, requestContext));

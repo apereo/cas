@@ -55,6 +55,7 @@ public class CompressionUtils {
         deflater.finish();
         val buffer = new byte[data.length()];
         val resultSize = deflater.deflate(buffer);
+        deflater.end();
         val output = new byte[resultSize];
         System.arraycopy(buffer, 0, output, 0, resultSize);
         return EncodingUtils.encodeBase64(output);
