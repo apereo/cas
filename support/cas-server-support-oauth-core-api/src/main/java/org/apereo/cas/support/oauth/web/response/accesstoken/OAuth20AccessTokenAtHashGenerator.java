@@ -52,7 +52,6 @@ public class OAuth20AccessTokenAtHashGenerator {
      * @return the signing hash algorithm
      */
     protected String determineSigningHashAlgorithm() {
-
         LOGGER.debug("Signing algorithm specified is [{}]", this.algorithm);
         if (AlgorithmIdentifiers.RSA_USING_SHA512.equalsIgnoreCase(algorithm)) {
             return MessageDigestAlgorithms.SHA_512;

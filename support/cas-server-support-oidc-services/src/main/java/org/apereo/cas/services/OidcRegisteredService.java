@@ -14,6 +14,8 @@ import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Lob;
+import javax.persistence.Transient;
+
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.HashSet;
@@ -84,8 +86,12 @@ public class OidcRegisteredService extends OAuthRegisteredService {
     @Column
     private boolean dynamicallyRegistered;
 
+    @JsonIgnore
     @Column
-    private boolean implicit;
+    @Deprecated
+    @Transient
+    @org.springframework.data.annotation.Transient
+    private transient boolean implicit;
 
     @Column(name = "DYNAMIC_REG_TIME")
     private ZonedDateTime dynamicRegistrationDateTime;

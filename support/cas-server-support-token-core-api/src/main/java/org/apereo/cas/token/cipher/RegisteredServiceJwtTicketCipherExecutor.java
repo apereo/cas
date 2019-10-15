@@ -66,6 +66,7 @@ public class RegisteredServiceJwtTicketCipherExecutor extends JwtTicketCipherExe
     public JwtTicketCipherExecutor getTokenTicketCipherExecutorForService(final RegisteredService registeredService) {
         val encryptionKey = getEncryptionKey(registeredService).orElse(StringUtils.EMPTY);
         val signingKey = getSigningKey(registeredService).orElse(StringUtils.EMPTY);
+        
         return createCipherExecutorInstance(encryptionKey, signingKey);
     }
 

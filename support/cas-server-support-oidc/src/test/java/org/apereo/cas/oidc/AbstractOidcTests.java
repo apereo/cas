@@ -291,10 +291,10 @@ public abstract class AbstractOidcTests {
     }
 
     protected static AccessToken getAccessToken() {
-        return getAccessToken(StringUtils.EMPTY);
+        return getAccessToken(StringUtils.EMPTY, "clientId");
     }
 
-    protected static AccessToken getAccessToken(final String idToken) {
+    protected static AccessToken getAccessToken(final String idToken, final String clientId) {
         val principal = RegisteredServiceTestUtils.getPrincipal("casuser", CollectionUtils.wrap("email", List.of("casuser@example.org")));
         val accessToken = mock(AccessToken.class);
         when(accessToken.getAuthentication()).thenReturn(RegisteredServiceTestUtils.getAuthentication(principal));
@@ -302,7 +302,7 @@ public abstract class AbstractOidcTests {
         when(accessToken.getId()).thenReturn("AT-123456");
         when(accessToken.getExpirationPolicy()).thenReturn(NeverExpiresExpirationPolicy.INSTANCE);
         when(accessToken.getTicketGrantingTicket()).thenReturn(new MockTicketGrantingTicket("casuser"));
-        when(accessToken.getClientId()).thenReturn("clientid");
+        when(accessToken.getClientId()).thenReturn(clientId);
         when(accessToken.getScopes()).thenReturn(Set.of(OidcConstants.StandardScopes.EMAIL.getScope(),
             OidcConstants.StandardScopes.PROFILE.getScope(),
             OidcConstants.StandardScopes.OPENID.getScope()));

@@ -299,6 +299,14 @@ By default, OAuth access tokens are created as opaque identifiers. There is also
       "accessTokenAsJwtEncryptionKey" : {
            "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
            "values" : [ "java.util.HashSet", [ "..." ] ]
+      },
+      "accessTokenAsJwtSigningEnabled" : {
+         "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
+         "values" : [ "java.util.HashSet", [ "true" ] ]
+      },
+      "accessTokenAsJwtEncryptionEnabled" : {
+         "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
+         "values" : [ "java.util.HashSet", [ "true" ] ]
       }
     }
 }
