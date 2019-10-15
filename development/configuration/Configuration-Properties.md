@@ -2682,6 +2682,7 @@ To learn more about this topic, [please review this guide](../mfa/Simple-Multifa
 # cas.authn.mfa.simple.name=
 # cas.authn.mfa.simple.order=
 # cas.authn.mfa.simple.timeToKillInSeconds=30
+# cas.authn.mfa.simple.tokenLength=6
 ```
 
 Email notifications settings for this feature are available [here](Configuration-Properties-Common.html#email-notifications) 
@@ -5107,7 +5108,6 @@ under the configuration key `cas.authn.pm.ldap`.
 ```properties
 # cas.authn.pm.ldap.type=AD|GENERIC|EDirectory|FreeIPA
 # cas.authn.pm.ldap.usernameAttribute=uid
-# cas.authn.pm.ldap.searchFilterUsername=email={user}
 
 # Attributes that should be fetched to indicate security questions and answers
 # cas.authn.pm.ldap.securityQuestionsAttributes.attrQuestion1=attrAnswer1
