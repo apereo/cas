@@ -87,7 +87,7 @@ public class OAuth20Utils {
         if (StringUtils.isBlank(clientId)) {
             return null;
         }
-        return getRegisteredOAuthServiceByPredicate(servicesManager, s -> s.getClientId().equals(clientId));
+        return getRegisteredOAuthServiceByPredicate(servicesManager, s -> s.getClientId().equalsIgnoreCase(clientId));
     }
 
     /**

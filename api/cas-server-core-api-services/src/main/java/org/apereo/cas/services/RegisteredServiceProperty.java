@@ -106,6 +106,14 @@ public interface RegisteredServiceProperty extends Serializable {
          **/
         ACCESS_TOKEN_AS_JWT_SIGNING_KEY("accessTokenAsJwtSigningKey", StringUtils.EMPTY),
         /**
+         * Enable signing JWTs as a response when generating access tokens using the provided signing key.
+         **/
+        ACCESS_TOKEN_AS_JWT_SIGNING_ENABLED("accessTokenAsJwtSigningEnabled", "true"),
+        /**
+         * Enable encryption of JWTs as a response when generating access tokens using the provided encryption key.
+         **/
+        ACCESS_TOKEN_AS_JWT_ENCRYPTION_ENABLED("accessTokenAsJwtEncryptionEnabled", "false"),
+        /**
          * Produce an encrypted JWT as a response when generating access tokens using the provided encryption key.
          **/
         ACCESS_TOKEN_AS_JWT_ENCRYPTION_KEY("accessTokenAsJwtEncryptionKey", StringUtils.EMPTY),
