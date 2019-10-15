@@ -24,10 +24,10 @@ import java.util.Optional;
 public class FinalizeInterruptFlowAction extends AbstractAction {
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {
-        val registeredService = WebUtils.getRegisteredService(requestContext);
         val response = InterruptUtils.getInterruptFrom(requestContext);
 
         if (response.isBlock()) {
+            val registeredService = WebUtils.getRegisteredService(requestContext);
             val accessUrl = Optional.ofNullable(registeredService)
                 .map(service -> service.getAccessStrategy().getUnauthorizedRedirectUrl())
                 .orElse(null);

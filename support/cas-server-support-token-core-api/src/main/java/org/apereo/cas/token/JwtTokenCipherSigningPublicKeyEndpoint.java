@@ -49,7 +49,6 @@ public class JwtTokenCipherSigningPublicKeyEndpoint extends BaseCasActuatorEndpo
      */
     @ReadOperation(produces = MediaType.TEXT_PLAIN_VALUE)
     public String fetchPublicKey(@Nullable final String service) throws Exception {
-        val factory = KeyFactory.getInstance("RSA");
         var signingKey = tokenCipherExecutor.getSigningKey();
 
         if (StringUtils.isNotBlank(service)) {
@@ -66,6 +65,7 @@ public class JwtTokenCipherSigningPublicKeyEndpoint extends BaseCasActuatorEndpo
 
         if (signingKey instanceof RSAPrivateCrtKey) {
             val rsaSigningKey = (RSAPrivateCrtKey) signingKey;
+            val factory = KeyFactory.getInstance("RSA");
             val publicKey = factory.generatePublic(new RSAPublicKeySpec(rsaSigningKey.getModulus(), rsaSigningKey.getPublicExponent()));
             return EncodingUtils.encodeBase64(publicKey.getEncoded());
         }

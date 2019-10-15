@@ -296,10 +296,10 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
 
     private boolean isLdapAuthorizationActive() {
         val ldap = casProperties.getMonitor().getEndpoints().getLdap();
-        val authZ = ldap.getLdapAuthz();
         return StringUtils.isNotBlank(ldap.getBaseDn())
             && StringUtils.isNotBlank(ldap.getLdapUrl())
             && StringUtils.isNotBlank(ldap.getSearchFilter())
-            && (StringUtils.isNotBlank(authZ.getRoleAttribute()) || StringUtils.isNotBlank(authZ.getGroupAttribute()));
+            && (StringUtils.isNotBlank(ldap.getLdapAuthz().getRoleAttribute())
+               || StringUtils.isNotBlank(ldap.getLdapAuthz().getGroupAttribute()));
     }
 }

@@ -1,6 +1,8 @@
 package org.apereo.cas.mfa.simple.web.flow;
 
+import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.model.support.mfa.CasSimpleMultifactorProperties;
+import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TransientSessionTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.io.CommunicationsManager;
@@ -42,21 +44,8 @@ public class CasSimpleSendTokenAction extends AbstractAction {
 
         val authentication = WebUtils.getInProgressAuthentication();
         val principal = authentication.getPrincipal();
-
-        val smsProperties = properties.getSms();
-        val text = StringUtils.isNotBlank(smsProperties.getText())
-            ? smsProperties.getFormattedText(token.getId())
-            : token.getId();
-
-        val emailProperties = properties.getMail();
-        val body = emailProperties.getFormattedBody(token.getId());
-
-        val smsSent = communicationsManager.isSmsSenderDefined()
-            ? communicationsManager.sms(principal, smsProperties.getAttributeName(), text, smsProperties.getFrom())
-            : false;
-        val emailSent = communicationsManager.isMailSenderDefined()
-            ? communicationsManager.email(principal, emailProperties.getAttributeName(), emailProperties, body)
-            : false;
+        val smsSent = isSmsSent(communicationsManager, properties, principal, token);
+        val emailSent = isMailSent(communicationsManager, properties, principal, token);
 
         if (smsSent || emailSent) {
             ticketRegistry.addTicket(token);
@@ -74,5 +63,30 @@ public class CasSimpleSendTokenAction extends AbstractAction {
         }
         LOGGER.error("Both email and SMS communication strategies failed to submit token [{}] to user", token);
         return error();
+    }
+
+    private boolean isSmsSent(final CommunicationsManager communicationsManager,
+                              final CasSimpleMultifactorProperties properties,
+                              final Principal principal,
+                              final Ticket token) {
+        if (communicationsManager.isSmsSenderDefined()) {
+            val smsProperties = properties.getSms();
+            val smsText = StringUtils.isNotBlank(smsProperties.getText())
+                ? smsProperties.getFormattedText(token.getId())
+                : token.getId();
+            return communicationsManager.sms(principal, smsProperties.getAttributeName(), smsText, smsProperties.getFrom());
+        }
+        return false;
+    }
+
+    private boolean isMailSent(final CommunicationsManager communicationsManager,
+                              final CasSimpleMultifactorProperties properties,
+                              final Principal principal,
+                              final Ticket token) {
+        if (communicationsManager.isMailSenderDefined()) {
+            val mailProperties = properties.getMail();
+            return communicationsManager.email(principal, mailProperties.getAttributeName(), mailProperties, mailProperties.getFormattedBody(token.getId()));
+        }
+        return false;
     }
 }

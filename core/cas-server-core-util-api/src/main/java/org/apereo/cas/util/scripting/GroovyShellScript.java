@@ -26,8 +26,8 @@ public class GroovyShellScript implements ExecutableCompiledGroovyScript {
 
     @Override
     public void setBinding(final Map<String, Object> variables) {
-        val binding = this.groovyScript.getBinding();
         if (variables != null && !variables.isEmpty()) {
+            val binding = this.groovyScript.getBinding();
             variables.forEach(binding::setVariable);
         }
     }

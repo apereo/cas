@@ -51,11 +51,11 @@ public class SplunkAppender extends AbstractAppender {
 
     @Override
     public void append(final LogEvent logEvent) {
-        val newLogEvent = LoggingUtils.prepareLogEvent(logEvent);
         val refName = this.appenderRef.getRef();
         if (StringUtils.isNotBlank(refName)) {
             val appender = this.config.getAppender(refName);
             if (appender != null) {
+                val newLogEvent = LoggingUtils.prepareLogEvent(logEvent);
                 appender.append(newLogEvent);
             } else {
                 LOGGER.warn("No Splunk log appender could be found for [{}]", refName);

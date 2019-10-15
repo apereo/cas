@@ -41,7 +41,6 @@ public class OidcSecurityInterceptor extends SecurityInterceptor {
                              final HttpServletResponse response,
                              final Object handler) throws Exception {
         val ctx = new JEEContext(request, response, this.sessionStore);
-        val manager = new ProfileManager<>(ctx, ctx.getSessionStore());
 
         var clearCreds = false;
         val authentication = authorizationRequestSupport.isCasAuthenticationAvailable(ctx);
@@ -69,6 +68,7 @@ public class OidcSecurityInterceptor extends SecurityInterceptor {
         }
 
         if (clearCreds) {
+            val manager = new ProfileManager<>(ctx, ctx.getSessionStore());
             manager.remove(true);
         }
         return super.preHandle(request, response, handler);

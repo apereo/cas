@@ -108,7 +108,6 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
             return getErrorEvent("contact.failed", "Unable to send email as no mail sender is defined", requestContext);
         }
 
-        val pm = casProperties.getAuthn().getPm();
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         val username = request.getParameter("username");
 
@@ -127,6 +126,7 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
         val service = WebUtils.getService(requestContext);
         val url = buildPasswordResetUrl(username, passwordManagementService, casProperties, service);
         if (StringUtils.isNotBlank(url)) {
+            val pm = casProperties.getAuthn().getPm();
             LOGGER.debug("Generated password reset URL [{}]; Link is only active for the next [{}] minute(s)", url, pm.getReset().getExpirationMinutes());
             if (sendPasswordResetEmailToAccount(email, url) || sendPasswordResetSmsToAccount(phone, url)) {
                 return success();

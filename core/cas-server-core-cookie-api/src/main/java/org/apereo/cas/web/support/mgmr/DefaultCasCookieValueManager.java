@@ -37,10 +37,10 @@ public class DefaultCasCookieValueManager extends EncryptedCookieValueManager {
 
     @Override
     protected String buildCompoundCookieValue(final String givenCookieValue, final HttpServletRequest request) {
-        val clientInfo = ClientInfoHolder.getClientInfo();
         val builder = new StringBuilder(givenCookieValue);
 
         if (cookieProperties.isPinToSession()) {
+            val clientInfo = ClientInfoHolder.getClientInfo();
             builder.append(COOKIE_FIELD_SEPARATOR).append(clientInfo.getClientIpAddress());
 
             val userAgent = HttpRequestUtils.getHttpServletRequestUserAgent(request);

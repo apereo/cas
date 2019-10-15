@@ -81,8 +81,8 @@ public class RegisteredServiceMutantRegexAttributeFilter extends RegisteredServi
             val matches = isCompleteMatch() ? matcher.matches() : matcher.find();
             if (matches) {
                 LOGGER.debug("Found a successful match for [{}] while filtering attribute values with [{}]", v.toString(), pattern.pattern());
-                val count = matcher.groupCount();
                 if (StringUtils.isNotBlank(returnValue)) {
+                    val count = matcher.groupCount();
                     var resultValue = returnValue;
                     for (var i = 1; i <= count; i++) {
                         resultValue = resultValue.replace("$" + i, matcher.group(i));
