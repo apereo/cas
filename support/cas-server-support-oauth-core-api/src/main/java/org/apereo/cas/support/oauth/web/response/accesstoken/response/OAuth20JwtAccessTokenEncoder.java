@@ -39,6 +39,7 @@ public class OAuth20JwtAccessTokenEncoder {
                 .subject(authentication.getPrincipal().getId())
                 .validUntilDate(DateTimeUtils.dateOf(dt))
                 .attributes(authentication.getAttributes())
+                .registeredService(oAuthRegisteredService)
                 .build();
             return accessTokenJwtBuilder.build(request);
         }
