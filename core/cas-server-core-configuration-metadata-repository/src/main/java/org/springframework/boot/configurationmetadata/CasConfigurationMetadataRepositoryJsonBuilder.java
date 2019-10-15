@@ -9,6 +9,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * This is {@link CasConfigurationMetadataRepositoryJsonBuilder}
@@ -105,7 +106,7 @@ public class CasConfigurationMetadataRepositoryJsonBuilder {
         val name = idx > 0 ? item.getId().substring(0, idx) : StringUtils.EMPTY;
 
         return metadata.getSources().stream()
-            .filter(source -> source.getType().equals(item.getSourceType()) && name.equals(source.getGroupId()))
+            .filter(source -> Objects.equals(source.getType(), item.getSourceType()) && name.equals(source.getGroupId()))
             .findFirst()
             .orElse(null);
 
