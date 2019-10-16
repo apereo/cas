@@ -81,11 +81,7 @@ public class OAuth20JwtAccessTokenEncoderTests extends AbstractOAuth20Tests {
     @Test
     public void verifyAccessTokenIdEncodingWithJwtWithNoCipher() {
         val accessToken = getAccessToken();
-
-        val registeredService = getRegisteredService(accessToken.getService().getId(), "secret", new LinkedHashSet<>());
-        registeredService.setJwtAccessToken(true);
-        servicesManager.save(registeredService);
-
+        val registeredService = getRegisteredServiceForJwtAccessTokenWithoutKeys(accessToken);
         val builder = getCipherDisabledJwtBuilder();
 
         val encodedAccessToken1 = getAccessTokenEncoder(accessToken, builder, registeredService).encode();
@@ -95,14 +91,17 @@ public class OAuth20JwtAccessTokenEncoderTests extends AbstractOAuth20Tests {
         assertEquals(encodedAccessToken1, encodedAccessToken2);
     }
 
-    @Test
-    public void verifyAccessTokenIdEncodingWithJwtGlobally() {
-        val accessToken = getAccessToken();
-
+    private OAuthRegisteredService getRegisteredServiceForJwtAccessTokenWithoutKeys(final OAuth20AccessToken accessToken) {
         val registeredService = getRegisteredService(accessToken.getService().getId(), "secret", new LinkedHashSet<>());
         registeredService.setJwtAccessToken(true);
         servicesManager.save(registeredService);
+        return registeredService;
+    }
 
+    @Test
+    public void verifyAccessTokenIdEncodingWithJwtGlobally() {
+        val accessToken = getAccessToken();
+        val registeredService = getRegisteredServiceForJwtAccessTokenWithoutKeys(accessToken);
         val builder = getCipherEnabledJwtBuilder();
         val encoder = getAccessTokenEncoder(accessToken, builder, registeredService);
         val encodedAccessToken = encoder.encode();
@@ -116,7 +115,20 @@ public class OAuth20JwtAccessTokenEncoderTests extends AbstractOAuth20Tests {
     @Test
     public void verifyExtractionAsParameterForService() {
         val accessToken = getAccessToken();
-        val registeredService = getRegisteredServiceForJwtAccessToken(accessToken);
+        val registeredService = getRegisteredServiceForJwtAccessTokenWithKeys(accessToken);
+        val builder = getCipherEnabledJwtBuilder();
+        val encoder = getAccessTokenEncoder(accessToken, builder, registeredService);
+
+        val encodedAccessToken = encoder.encode();
+        val decoded = encoder.decode(encodedAccessToken);
+        assertNotNull(decoded);
+        assertEquals(accessToken.getId(), decoded);
+    }
+
+    @Test
+    public void verifyExtractionAsParameter() {
+        val accessToken = getAccessToken();
+        val registeredService = getRegisteredServiceForJwtAccessTokenWithoutKeys(accessToken);
         val builder = getCipherEnabledJwtBuilder();
         val encoder = getAccessTokenEncoder(accessToken, builder, registeredService);
 
@@ -129,7 +141,22 @@ public class OAuth20JwtAccessTokenEncoderTests extends AbstractOAuth20Tests {
     @Test
     public void verifyAccessTokenIdEncodingWithJwtForService() {
         val accessToken = getAccessToken();
-        val registeredService = getRegisteredServiceForJwtAccessToken(accessToken);
+        val registeredService = getRegisteredServiceForJwtAccessTokenWithKeys(accessToken);
+        val builder = getCipherEnabledJwtBuilder();
+        val encoder = getAccessTokenEncoder(accessToken, builder, registeredService);
+
+        val encodedAccessToken = encoder.encode();
+        assertNotNull(encodedAccessToken);
+
+        val decoded = encoder.decode(encodedAccessToken);
+        assertNotNull(decoded);
+        assertEquals(accessToken.getId(), decoded);
+    }
+
+    @Test
+    public void verifyAccessTokenIdEncodingWithJwt() {
+        val accessToken = getAccessToken();
+        val registeredService = getRegisteredServiceForJwtAccessTokenWithKeys(accessToken);
         val builder = getCipherEnabledJwtBuilder();
         val encoder = getAccessTokenEncoder(accessToken, builder, registeredService);
 
@@ -148,7 +175,7 @@ public class OAuth20JwtAccessTokenEncoderTests extends AbstractOAuth20Tests {
             new OAuth20RegisteredServiceJwtAccessTokenCipherExecutor());
     }
 
-    private OAuthRegisteredService getRegisteredServiceForJwtAccessToken(final OAuth20AccessToken accessToken) {
+    private OAuthRegisteredService getRegisteredServiceForJwtAccessTokenWithKeys(final OAuth20AccessToken accessToken) {
         val registeredService = getRegisteredService(accessToken.getService().getId(), "secret", new LinkedHashSet<>());
         registeredService.setProperties(Map.of(
             RegisteredServiceProperty.RegisteredServiceProperties.ACCESS_TOKEN_AS_JWT_ENCRYPTION_ENABLED.getPropertyName(),

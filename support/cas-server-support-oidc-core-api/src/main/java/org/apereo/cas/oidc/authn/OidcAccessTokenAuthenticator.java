@@ -6,6 +6,7 @@ import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.ticket.OAuth20TokenSigningAndEncryptionService;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.token.JwtBuilder;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -30,8 +31,9 @@ public class OidcAccessTokenAuthenticator extends OAuth20AccessTokenAuthenticato
 
     public OidcAccessTokenAuthenticator(final TicketRegistry ticketRegistry,
                                         final OAuth20TokenSigningAndEncryptionService signingAndEncryptionService,
-                                        final ServicesManager servicesManager) {
-        super(ticketRegistry);
+                                        final ServicesManager servicesManager,
+                                        final JwtBuilder accessTokenJwtBuilder) {
+        super(ticketRegistry, accessTokenJwtBuilder);
         this.idTokenSigningAndEncryptionService = signingAndEncryptionService;
         this.servicesManager = servicesManager;
     }
