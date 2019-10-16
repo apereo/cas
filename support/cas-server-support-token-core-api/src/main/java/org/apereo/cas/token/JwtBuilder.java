@@ -41,6 +41,49 @@ public class JwtBuilder {
     private final RegisteredServiceCipherExecutor registeredServiceCipherExecutor;
 
     /**
+     * Parse jwt.
+     *
+     * @param jwt the jwt
+     * @return the jwt
+     */
+    public static JWTClaimsSet parse(final String jwt) {
+        try {
+            return JWTClaimsSet.parse(jwt);
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            throw new IllegalArgumentException("Unable to parse JWT");
+        }
+    }
+
+    /**
+     * Unpack jwt.
+     *
+     * @param payload the payload
+     * @param jwtJson the jwt json
+     * @return the string
+     */
+    public JWTClaimsSet unpack(final JwtRequest payload, final String jwtJson) {
+        val serviceAudience = payload.getServiceAudience();
+        val registeredService = payload.getRegisteredService() == null
+            ? locateRegisteredService(serviceAudience)
+            : payload.getRegisteredService();
+        LOGGER.trace("Located service [{}] in service registry for [{}]", registeredService, serviceAudience);
+        RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
+
+        LOGGER.trace("Locating service specific signing and encryption keys for [{}] in service registry", serviceAudience);
+        if (registeredServiceCipherExecutor.supports(registeredService)) {
+            LOGGER.trace("Encoding JWT based on keys provided by service [{}]", registeredService.getServiceId());
+            return parse(registeredServiceCipherExecutor.decode(jwtJson, Optional.of(registeredService)));
+        }
+
+        if (defaultTokenCipherExecutor.isEnabled()) {
+            LOGGER.trace("Encoding JWT based on default global keys for [{}]", serviceAudience);
+            return parse(defaultTokenCipherExecutor.decode(jwtJson));
+        }
+        return parse(jwtJson);
+    }
+
+    /**
      * Build JWT.
      *
      * @param payload the payload
