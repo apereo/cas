@@ -7,7 +7,7 @@ import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.response.introspection.OAuth20IntrospectionAccessTokenResponse;
 import org.apereo.cas.ticket.InvalidTicketException;
-import org.apereo.cas.ticket.accesstoken.AccessToken;
+import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpRequestUtils;
 
@@ -93,9 +93,9 @@ public class OAuth20IntrospectionEndpointController extends BaseOAuth20Controlle
                     request.getParameter(OAuth20Constants.ACCESS_TOKEN));
 
                 LOGGER.debug("Located access token [{}] in the request", accessToken);
-                var ticket = (AccessToken) null;
+                var ticket = (OAuth20AccessToken) null;
                 try {
-                    ticket = getOAuthConfigurationContext().getCentralAuthenticationService().getTicket(accessToken, AccessToken.class);
+                    ticket = getOAuthConfigurationContext().getCentralAuthenticationService().getTicket(accessToken, OAuth20AccessToken.class);
                 } catch (final InvalidTicketException e) {
                     LOGGER.trace(e.getMessage(), e);
                     LOGGER.info("Unable to fetch access token [{}]: [{}]", accessToken, e.getMessage());
@@ -147,7 +147,7 @@ public class OAuth20IntrospectionEndpointController extends BaseOAuth20Controlle
      * @param ticket  the ticket
      * @return the OAuth introspection access token response
      */
-    protected OAuth20IntrospectionAccessTokenResponse createIntrospectionValidResponse(final OAuthRegisteredService service, final AccessToken ticket) {
+    protected OAuth20IntrospectionAccessTokenResponse createIntrospectionValidResponse(final OAuthRegisteredService service, final OAuth20AccessToken ticket) {
         val introspect = new OAuth20IntrospectionAccessTokenResponse();
         introspect.setClientId(service.getClientId());
         introspect.setScope("CAS");

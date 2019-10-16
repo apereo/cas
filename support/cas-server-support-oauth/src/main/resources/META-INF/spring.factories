@@ -1,6 +1,6 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.config.CasOAuthConfiguration,\
-  org.apereo.cas.config.CasOAuthAuthenticationServiceSelectionStrategyConfiguration,\
-  org.apereo.cas.config.CasOAuthComponentSerializationConfiguration,\
-  org.apereo.cas.config.CasOAuthThrottleConfiguration,\
-  org.apereo.cas.config.CasOAuthTicketSerializationConfiguration,\
-  org.apereo.cas.config.CasOAuthServicesConfiguration
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.config.CasOAuth20Configuration,\
+  org.apereo.cas.config.CasOAuth20AuthenticationServiceSelectionStrategyConfiguration,\
+  org.apereo.cas.config.CasOAuth20ComponentSerializationConfiguration,\
+  org.apereo.cas.config.CasOAuth20ThrottleConfiguration,\
+  org.apereo.cas.config.CasOAuth20TicketSerializationConfiguration,\
+  org.apereo.cas.config.CasOAuth20ServicesConfiguration

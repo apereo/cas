@@ -6,7 +6,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
-import org.apereo.cas.ticket.code.OAuthCode;
+import org.apereo.cas.ticket.code.OAuth20Code;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.EncodingUtils;
@@ -59,7 +59,7 @@ public class OAuth20ProofKeyCodeExchangeAuthenticator extends OAuth20ClientIdCli
         val code = context.getRequestParameter(OAuth20Constants.CODE)
             .map(String::valueOf).orElse(StringUtils.EMPTY);
 
-        val token = getTicketRegistry().getTicket(code, OAuthCode.class);
+        val token = getTicketRegistry().getTicket(code, OAuth20Code.class);
         if (token == null || token.isExpired()) {
             LOGGER.error("Provided code [{}] is either not found in the ticket registry or has expired", code);
             throw new CredentialsException("Invalid token: " + code);

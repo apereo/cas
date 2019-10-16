@@ -7,7 +7,7 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.AbstractOAuth20Tests;
-import org.apereo.cas.ticket.accesstoken.AccessToken;
+import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.accesstoken.OAuth20JwtBuilder;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.util.crypto.CipherExecutor;
@@ -30,7 +30,7 @@ import static org.mockito.Mockito.*;
 @Tag("OAuth")
 public class OAuth20JwtAccessTokenEncoderTests extends AbstractOAuth20Tests {
     private static String encodeAccessToken(final AbstractWebApplicationService service,
-                                            final AccessToken accessToken, final OAuth20JwtBuilder builder,
+                                            final OAuth20AccessToken accessToken, final OAuth20JwtBuilder builder,
                                             final OAuthRegisteredService registeredService) {
         return OAuth20JwtAccessTokenEncoder.builder()
             .accessToken(accessToken)
@@ -45,7 +45,7 @@ public class OAuth20JwtAccessTokenEncoderTests extends AbstractOAuth20Tests {
     public void verifyAccessTokenIdEncodingWithoutJwt() {
         val tgt = new MockTicketGrantingTicket("casuser");
         val service = RegisteredServiceTestUtils.getService();
-        val accessToken = mock(AccessToken.class);
+        val accessToken = mock(OAuth20AccessToken.class);
         when(accessToken.getId()).thenReturn("ABCD");
         when(accessToken.getTicketGrantingTicket()).thenReturn(tgt);
         when(accessToken.getService()).thenReturn(service);
@@ -71,7 +71,7 @@ public class OAuth20JwtAccessTokenEncoderTests extends AbstractOAuth20Tests {
         registeredService.setJwtAccessToken(true);
         servicesManager.save(registeredService);
 
-        val accessToken = mock(AccessToken.class);
+        val accessToken = mock(OAuth20AccessToken.class);
         when(accessToken.getId()).thenReturn("ABCD");
         when(accessToken.getTicketGrantingTicket()).thenReturn(tgt);
         when(accessToken.getAuthentication()).thenReturn(tgt.getAuthentication());

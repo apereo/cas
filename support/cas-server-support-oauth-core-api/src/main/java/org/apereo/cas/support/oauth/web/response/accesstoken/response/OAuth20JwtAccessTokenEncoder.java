@@ -3,7 +3,7 @@ package org.apereo.cas.support.oauth.web.response.accesstoken.response;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
-import org.apereo.cas.ticket.accesstoken.AccessToken;
+import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.DateTimeUtils;
 
@@ -21,7 +21,7 @@ import lombok.val;
 @Getter
 public class OAuth20JwtAccessTokenEncoder {
     private final JwtBuilder accessTokenJwtBuilder;
-    private final AccessToken accessToken;
+    private final OAuth20AccessToken accessToken;
     private final RegisteredService registeredService;
     private final Service service;
 

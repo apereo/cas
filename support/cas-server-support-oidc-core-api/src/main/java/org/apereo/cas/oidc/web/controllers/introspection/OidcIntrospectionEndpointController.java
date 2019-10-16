@@ -5,7 +5,7 @@ import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20IntrospectionEndpointController;
 import org.apereo.cas.support.oauth.web.response.introspection.OAuth20IntrospectionAccessTokenResponse;
-import org.apereo.cas.ticket.accesstoken.AccessToken;
+import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 
 import lombok.val;
 import org.springframework.http.MediaType;
@@ -60,7 +60,7 @@ public class OidcIntrospectionEndpointController extends OAuth20IntrospectionEnd
     }
 
     @Override
-    protected OAuth20IntrospectionAccessTokenResponse createIntrospectionValidResponse(final OAuthRegisteredService service, final AccessToken ticket) {
+    protected OAuth20IntrospectionAccessTokenResponse createIntrospectionValidResponse(final OAuthRegisteredService service, final OAuth20AccessToken ticket) {
         val r = super.createIntrospectionValidResponse(service, ticket);
         r.setScope(OidcConstants.StandardScopes.OPENID.getScope());
         return r;

@@ -13,8 +13,8 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.web.AbstractOAuth20Tests;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenCipherExecutor;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20RegisteredServiceJwtAccessTokenCipherExecutor;
-import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
-import org.apereo.cas.ticket.accesstoken.DefaultAccessTokenFactory;
+import org.apereo.cas.ticket.accesstoken.OAuth20AccessTokenFactory;
+import org.apereo.cas.ticket.accesstoken.OAuth20DefaultAccessTokenFactory;
 import org.apereo.cas.token.JwtBuilder;
 
 import lombok.val;
@@ -46,7 +46,7 @@ public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
 
     @Autowired
     @Qualifier("defaultAccessTokenFactory")
-    private AccessTokenFactory accessTokenFactory;
+    private OAuth20AccessTokenFactory accessTokenFactory;
 
     @Autowired
     @Qualifier("profileController")
@@ -100,7 +100,7 @@ public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
         val jwtBuilder = new JwtBuilder("cas.example.org",
             new OAuth20JwtAccessTokenCipherExecutor(), servicesManager,
             new OAuth20RegisteredServiceJwtAccessTokenCipherExecutor());
-        val expiringAccessTokenFactory = new DefaultAccessTokenFactory(
+        val expiringAccessTokenFactory = new OAuth20DefaultAccessTokenFactory(
             alwaysExpiresExpirationPolicyBuilder(), jwtBuilder, servicesManager);
         val accessToken = expiringAccessTokenFactory.create(RegisteredServiceTestUtils.getService(), authentication,
             new MockTicketGrantingTicket("casuser"), new ArrayList<>(), null, new HashMap<>());

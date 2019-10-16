@@ -6,7 +6,7 @@ import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
-import org.apereo.cas.ticket.OAuthToken;
+import org.apereo.cas.ticket.OAuth20Token;
 import org.apereo.cas.ticket.UnauthorizedScopeRequestException;
 
 import lombok.extern.slf4j.Slf4j;
@@ -88,7 +88,7 @@ public class AccessTokenRefreshTokenGrantRequestExtractor extends AccessTokenAut
      * @return scopes
      */
     @Override
-    protected Set<String> extractRequestedScopesByToken(final Set<String> requestedScopes, final OAuthToken token, final HttpServletRequest request) {
+    protected Set<String> extractRequestedScopesByToken(final Set<String> requestedScopes, final OAuth20Token token, final HttpServletRequest request) {
         if (!requestedScopes.isEmpty() && !requestedScopes.equals(token.getScopes())) {
             LOGGER.error("Requested scopes [{}} exceed the granted scopes [{}} for token [{}}", requestedScopes, token.getScopes(), token.getId());
             throw new UnauthorizedScopeRequestException(token.getId());

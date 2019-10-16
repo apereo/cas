@@ -8,15 +8,15 @@ import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilSerializationConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
-import org.apereo.cas.config.CasOAuthComponentSerializationConfiguration;
+import org.apereo.cas.config.CasOAuth20ComponentSerializationConfiguration;
 import org.apereo.cas.config.MemcachedTicketRegistryConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.mock.MockServiceTicket;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.ticket.code.DefaultOAuthCodeFactory;
-import org.apereo.cas.ticket.code.OAuthCode;
+import org.apereo.cas.ticket.code.OAuth20Code;
+import org.apereo.cas.ticket.code.OAuth20DefaultOAuthCodeFactory;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 import org.apereo.cas.util.serialization.ComponentSerializationPlan;
@@ -43,7 +43,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = {
     MemcachedTicketRegistryConfiguration.class,
-    CasOAuthComponentSerializationConfiguration.class,
+    CasOAuth20ComponentSerializationConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
     MemcachedTicketRegistryTests.MemcachedTicketRegistryTestConfiguration.class,
     RefreshAutoConfiguration.class,
@@ -72,7 +72,7 @@ public class MemcachedTicketRegistryTests extends BaseTicketRegistryTests {
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
-    
+
     @Override
     public TicketRegistry getNewTicketRegistry() {
         return registry;
@@ -85,7 +85,7 @@ public class MemcachedTicketRegistryTests extends BaseTicketRegistryTests {
 
     @RepeatedTest(2)
     public void verifyOAuthCodeIsAddedToMemcached() {
-        val factory = new DefaultOAuthCodeFactory(neverExpiresExpirationPolicyBuilder(), servicesManager);
+        val factory = new OAuth20DefaultOAuthCodeFactory(neverExpiresExpirationPolicyBuilder(), servicesManager);
         val code = factory.create(RegisteredServiceTestUtils.getService(),
             CoreAuthenticationTestUtils.getAuthentication(),
             new MockTicketGrantingTicket("casuser"),
@@ -93,7 +93,7 @@ public class MemcachedTicketRegistryTests extends BaseTicketRegistryTests {
             "code-challenge", "plain", "clientId123456",
             new HashMap<>());
         this.registry.addTicket(code);
-        val ticket = this.registry.getTicket(code.getId(), OAuthCode.class);
+        val ticket = this.registry.getTicket(code.getId(), OAuth20Code.class);
         assertNotNull(ticket);
     }
 

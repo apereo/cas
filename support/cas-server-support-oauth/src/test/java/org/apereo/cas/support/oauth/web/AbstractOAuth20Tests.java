@@ -27,10 +27,10 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreUtilSerializationConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
-import org.apereo.cas.config.CasOAuthAuthenticationServiceSelectionStrategyConfiguration;
-import org.apereo.cas.config.CasOAuthComponentSerializationConfiguration;
-import org.apereo.cas.config.CasOAuthConfiguration;
-import org.apereo.cas.config.CasOAuthThrottleConfiguration;
+import org.apereo.cas.config.CasOAuth20AuthenticationServiceSelectionStrategyConfiguration;
+import org.apereo.cas.config.CasOAuth20ComponentSerializationConfiguration;
+import org.apereo.cas.config.CasOAuth20Configuration;
+import org.apereo.cas.config.CasOAuth20ThrottleConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CasThrottlingConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
@@ -54,13 +54,13 @@ import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20Acc
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.Ticket;
-import org.apereo.cas.ticket.accesstoken.AccessToken;
-import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
-import org.apereo.cas.ticket.code.OAuthCode;
-import org.apereo.cas.ticket.code.OAuthCodeFactory;
+import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
+import org.apereo.cas.ticket.accesstoken.OAuth20AccessTokenFactory;
+import org.apereo.cas.ticket.code.OAuth20Code;
+import org.apereo.cas.ticket.code.OAuth20CodeFactory;
 import org.apereo.cas.ticket.expiration.AlwaysExpiresExpirationPolicy;
-import org.apereo.cas.ticket.refreshtoken.RefreshToken;
-import org.apereo.cas.ticket.refreshtoken.RefreshTokenFactory;
+import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
+import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
@@ -131,15 +131,15 @@ import static org.junit.jupiter.api.Assertions.*;
     CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreHttpConfiguration.class,
     CasCoreServicesConfiguration.class,
-    CasOAuthConfiguration.class,
+    CasOAuth20Configuration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreConfiguration.class,
     CasCookieConfiguration.class,
-    CasOAuthComponentSerializationConfiguration.class,
-    CasOAuthThrottleConfiguration.class,
+    CasOAuth20ComponentSerializationConfiguration.class,
+    CasOAuth20ThrottleConfiguration.class,
     CasThrottlingConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-    CasOAuthAuthenticationServiceSelectionStrategyConfiguration.class,
+    CasOAuth20AuthenticationServiceSelectionStrategyConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
     CasCoreTicketComponentSerializationConfiguration.class,
     CasCoreUtilSerializationConfiguration.class,
@@ -212,11 +212,11 @@ public abstract class AbstractOAuth20Tests {
 
     @Autowired
     @Qualifier("defaultOAuthCodeFactory")
-    protected OAuthCodeFactory oAuthCodeFactory;
+    protected OAuth20CodeFactory oAuthCodeFactory;
 
     @Autowired
     @Qualifier("defaultRefreshTokenFactory")
-    protected RefreshTokenFactory oAuthRefreshTokenFactory;
+    protected OAuth20RefreshTokenFactory oAuthRefreshTokenFactory;
 
     @Autowired
     @Qualifier("ticketRegistry")
@@ -228,7 +228,7 @@ public abstract class AbstractOAuth20Tests {
 
     @Autowired
     @Qualifier("defaultAccessTokenFactory")
-    protected AccessTokenFactory defaultAccessTokenFactory;
+    protected OAuth20AccessTokenFactory defaultAccessTokenFactory;
 
     @Autowired
     @Qualifier("oauthTokenGenerator")
@@ -298,12 +298,12 @@ public abstract class AbstractOAuth20Tests {
             .build();
     }
 
-    protected OAuthCode addCode(final Principal principal, final OAuthRegisteredService registeredService) {
+    protected OAuth20Code addCode(final Principal principal, final OAuthRegisteredService registeredService) {
         return addCodeWithChallenge(principal, registeredService, null, null);
     }
 
-    protected OAuthCode addCodeWithChallenge(final Principal principal, final OAuthRegisteredService registeredService,
-                                             final String codeChallenge, final String codeChallengeMethod) {
+    protected OAuth20Code addCodeWithChallenge(final Principal principal, final OAuthRegisteredService registeredService,
+                                               final String codeChallenge, final String codeChallengeMethod) {
         val authentication = getAuthentication(principal);
         val factory = new WebApplicationServiceFactory();
         val service = factory.createService(registeredService.getClientId());
@@ -314,7 +314,7 @@ public abstract class AbstractOAuth20Tests {
         return code;
     }
 
-    protected RefreshToken addRefreshToken(final Principal principal, final OAuthRegisteredService registeredService) {
+    protected OAuth20RefreshToken addRefreshToken(final Principal principal, final OAuthRegisteredService registeredService) {
         val authentication = getAuthentication(principal);
         val factory = new WebApplicationServiceFactory();
         val service = factory.createService(registeredService.getServiceId());
@@ -379,7 +379,7 @@ public abstract class AbstractOAuth20Tests {
         assertTrue(model.containsKey(OAuth20Constants.EXPIRES_IN));
         accessTokenId = model.get(OAuth20Constants.ACCESS_TOKEN).toString();
 
-        val accessToken = this.ticketRegistry.getTicket(accessTokenId, AccessToken.class);
+        val accessToken = this.ticketRegistry.getTicket(accessTokenId, OAuth20AccessToken.class);
         assertEquals(principal, accessToken.getAuthentication().getPrincipal());
 
         val timeLeft = Integer.parseInt(model.get(OAuth20Constants.EXPIRES_IN).toString());
@@ -389,14 +389,14 @@ public abstract class AbstractOAuth20Tests {
     }
 
     @SneakyThrows
-    protected Pair<AccessToken, RefreshToken> assertRefreshTokenOk(final OAuthRegisteredService service) {
+    protected Pair<OAuth20AccessToken, OAuth20RefreshToken> assertRefreshTokenOk(final OAuthRegisteredService service) {
         val principal = createPrincipal();
         val refreshToken = addRefreshToken(principal, service);
         return assertRefreshTokenOk(service, refreshToken, principal);
     }
 
-    protected Pair<AccessToken, RefreshToken> assertRefreshTokenOk(final OAuthRegisteredService service,
-                                                                   final RefreshToken refreshToken, final Principal principal) throws Exception {
+    protected Pair<OAuth20AccessToken, OAuth20RefreshToken> assertRefreshTokenOk(final OAuthRegisteredService service,
+                                                                                 final OAuth20RefreshToken refreshToken, final Principal principal) throws Exception {
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
         mockRequest.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.REFRESH_TOKEN.name().toLowerCase());
         mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
@@ -417,13 +417,13 @@ public abstract class AbstractOAuth20Tests {
             }
         }
         val newRefreshToken = service.isRenewRefreshToken()
-            ? this.ticketRegistry.getTicket(mv.getModel().get(OAuth20Constants.REFRESH_TOKEN).toString(), RefreshToken.class)
+            ? this.ticketRegistry.getTicket(mv.getModel().get(OAuth20Constants.REFRESH_TOKEN).toString(), OAuth20RefreshToken.class)
             : refreshToken;
 
         assertTrue(mv.getModel().containsKey(OAuth20Constants.EXPIRES_IN));
         accessTokenId = mv.getModel().get(OAuth20Constants.ACCESS_TOKEN).toString();
 
-        val accessToken = this.ticketRegistry.getTicket(accessTokenId, AccessToken.class);
+        val accessToken = this.ticketRegistry.getTicket(accessTokenId, OAuth20AccessToken.class);
         assertEquals(principal, accessToken.getAuthentication().getPrincipal());
 
         val timeLeft = Integer.parseInt(mv.getModel().get(OAuth20Constants.EXPIRES_IN).toString());

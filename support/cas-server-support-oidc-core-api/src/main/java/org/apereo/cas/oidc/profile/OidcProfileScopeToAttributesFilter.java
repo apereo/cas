@@ -11,7 +11,7 @@ import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.oauth.profile.DefaultOAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
-import org.apereo.cas.ticket.accesstoken.AccessToken;
+import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -59,7 +59,7 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
                             final Principal profile,
                             final RegisteredService registeredService,
                             final JEEContext context,
-                            final AccessToken accessToken) {
+                            final OAuth20AccessToken accessToken) {
         val principal = super.filter(service, profile, registeredService, context, accessToken);
         if (registeredService instanceof OidcRegisteredService) {
             val scopes = new LinkedHashSet<String>(accessToken.getScopes());
@@ -97,7 +97,7 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
                                                                      final Principal principal,
                                                                      final Service service,
                                                                      final OidcRegisteredService oidcService,
-                                                                     final AccessToken accessToken) {
+                                                                     final OAuth20AccessToken accessToken) {
         if (!oidcService.getScopes().isEmpty()) {
             scopes.retainAll(oidcService.getScopes());
             return filterAttributesByScope(scopes, principal, service, oidcService, accessToken);
@@ -114,7 +114,7 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
      * @param attributes  the attributes
      */
     protected void filterAttributesByAccessTokenRequestedClaims(final OidcRegisteredService oidcService,
-                                                                final AccessToken accessToken,
+                                                                final OAuth20AccessToken accessToken,
                                                                 final Principal principal,
                                                                 final Map<String, List<Object>> attributes) {
         val userInfo = OAuth20Utils.parseUserInfoRequestClaims(accessToken);
@@ -145,7 +145,7 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
                                                                 final Principal principal,
                                                                 final Service service,
                                                                 final RegisteredService registeredService,
-                                                                final AccessToken accessToken) {
+                                                                final OAuth20AccessToken accessToken) {
         if (scopes.isEmpty()) {
             val attributes = principal.getAttributes();
             LOGGER.trace("No defined scopes are available to instruct attribute release policies for [{}]. "

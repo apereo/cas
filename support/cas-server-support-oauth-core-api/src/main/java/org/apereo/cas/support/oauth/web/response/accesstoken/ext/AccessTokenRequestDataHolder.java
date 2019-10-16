@@ -5,7 +5,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
-import org.apereo.cas.ticket.OAuthToken;
+import org.apereo.cas.ticket.OAuth20Token;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 
 import lombok.Builder;
@@ -32,7 +32,7 @@ public class AccessTokenRequestDataHolder {
 
     private final Authentication authentication;
 
-    private final OAuthToken token;
+    private final OAuth20Token token;
 
     private final boolean generateRefreshToken;
 

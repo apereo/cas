@@ -5,7 +5,7 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
-import org.apereo.cas.ticket.code.OAuthCode;
+import org.apereo.cas.ticket.code.OAuth20Code;
 import org.apereo.cas.util.HttpRequestUtils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -49,7 +49,7 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidator extends Base
         if (valid) {
             val code = context.getRequestParameter(OAuth20Constants.CODE)
                 .map(String::valueOf).orElse(StringUtils.EMPTY);
-            val token = getConfigurationContext().getTicketRegistry().getTicket(code, OAuthCode.class);
+            val token = getConfigurationContext().getTicketRegistry().getTicket(code, OAuth20Code.class);
             if (token == null || token.isExpired()) {
                 LOGGER.warn("Request OAuth code [{}] is not found or has expired", code);
                 return false;

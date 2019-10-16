@@ -4,7 +4,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGenerator;
 import org.apereo.cas.ticket.IdTokenGeneratorService;
-import org.apereo.cas.ticket.OAuthTokenSigningAndEncryptionService;
+import org.apereo.cas.ticket.OAuth20TokenSigningAndEncryptionService;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.uma.claim.UmaResourceSetClaimPermissionExaminer;
@@ -29,7 +29,7 @@ import org.pac4j.core.context.session.SessionStore;
 @Setter
 @Builder
 public class UmaConfigurationContext {
-    private final OAuthTokenSigningAndEncryptionService signingService;
+    private final OAuth20TokenSigningAndEncryptionService signingService;
     private final ServicesManager servicesManager;
     private final TicketRegistry ticketRegistry;
     private final OAuth20TokenGenerator accessTokenGenerator;
