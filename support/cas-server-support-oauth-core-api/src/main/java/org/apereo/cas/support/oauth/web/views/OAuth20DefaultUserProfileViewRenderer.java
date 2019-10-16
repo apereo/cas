@@ -2,7 +2,7 @@ package org.apereo.cas.support.oauth.web.views;
 
 import org.apereo.cas.configuration.model.support.oauth.OAuthProperties;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
-import org.apereo.cas.ticket.accesstoken.AccessToken;
+import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +26,7 @@ public class OAuth20DefaultUserProfileViewRenderer implements OAuth20UserProfile
     private final OAuthProperties oauthProperties;
 
     @Override
-    public ResponseEntity render(final Map<String, Object> model, final AccessToken accessToken, final HttpServletResponse response) {
+    public ResponseEntity render(final Map<String, Object> model, final OAuth20AccessToken accessToken, final HttpServletResponse response) {
         val userProfile = getRenderedUserProfile(model, accessToken, response);
         return renderProfileForModel(userProfile, accessToken, response);
     }
@@ -39,7 +39,7 @@ public class OAuth20DefaultUserProfileViewRenderer implements OAuth20UserProfile
      * @param response    the response
      * @return the string
      */
-    protected ResponseEntity renderProfileForModel(final Map<String, Object> userProfile, final AccessToken accessToken, final HttpServletResponse response) {
+    protected ResponseEntity renderProfileForModel(final Map<String, Object> userProfile, final OAuth20AccessToken accessToken, final HttpServletResponse response) {
         val json = OAuth20Utils.toJson(userProfile);
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Final user profile is [{}]", json);
@@ -56,7 +56,7 @@ public class OAuth20DefaultUserProfileViewRenderer implements OAuth20UserProfile
      * @return the rendered user profile
      */
     protected Map<String, Object> getRenderedUserProfile(final Map<String, Object> model,
-                                                         final AccessToken accessToken,
+                                                         final OAuth20AccessToken accessToken,
                                                          final HttpServletResponse response) {
         if (oauthProperties.getUserProfileViewType() == OAuthProperties.UserProfileViewTypes.FLAT) {
             val flattened = new LinkedHashMap<String, Object>();

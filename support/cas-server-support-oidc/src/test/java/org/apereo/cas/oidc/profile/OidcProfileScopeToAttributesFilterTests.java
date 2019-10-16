@@ -5,7 +5,7 @@ import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.claims.OidcProfileScopeAttributeReleasePolicy;
-import org.apereo.cas.ticket.accesstoken.AccessToken;
+import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
@@ -30,7 +30,7 @@ public class OidcProfileScopeToAttributesFilterTests extends AbstractOidcTests {
     @Test
     public void verifyOperationFilterWithoutOpenId() {
         val service = getOidcRegisteredService();
-        val accessToken = mock(AccessToken.class);
+        val accessToken = mock(OAuth20AccessToken.class);
         val context = new JEEContext(new MockHttpServletRequest(), new MockHttpServletResponse());
         val original = CoreAuthenticationTestUtils.getPrincipal();
         val principal = profileScopeToAttributesFilter.filter(CoreAuthenticationTestUtils.getService(),
@@ -41,7 +41,7 @@ public class OidcProfileScopeToAttributesFilterTests extends AbstractOidcTests {
     @Test
     public void verifyOperationFilterWithOpenId() {
         val service = getOidcRegisteredService();
-        val accessToken = mock(AccessToken.class);
+        val accessToken = mock(OAuth20AccessToken.class);
         when(accessToken.getTicketGrantingTicket()).thenReturn(new MockTicketGrantingTicket("casuser"));
         when(accessToken.getScopes()).thenReturn(CollectionUtils.wrapSet(
             OidcConstants.StandardScopes.OPENID.getScope(),
@@ -70,7 +70,7 @@ public class OidcProfileScopeToAttributesFilterTests extends AbstractOidcTests {
     @Test
     public void verifyOperationFilterWithServiceDefinedScopes() {
         val service = getOidcRegisteredService();
-        val accessToken = mock(AccessToken.class);
+        val accessToken = mock(OAuth20AccessToken.class);
         when(accessToken.getTicketGrantingTicket()).thenReturn(new MockTicketGrantingTicket("casuser"));
         when(accessToken.getScopes()).thenReturn(CollectionUtils.wrapSet(
                 OidcConstants.StandardScopes.OPENID.getScope(),
@@ -96,7 +96,7 @@ public class OidcProfileScopeToAttributesFilterTests extends AbstractOidcTests {
     @Test
     public void verifyOperationFilterWithServiceDefinedReleasePolicy() {
         val service = getOidcRegisteredService();
-        val accessToken = mock(AccessToken.class);
+        val accessToken = mock(OAuth20AccessToken.class);
         when(accessToken.getTicketGrantingTicket()).thenReturn(new MockTicketGrantingTicket("casuser"));
         when(accessToken.getScopes()).thenReturn(CollectionUtils.wrapSet(
                 OidcConstants.StandardScopes.OPENID.getScope(),

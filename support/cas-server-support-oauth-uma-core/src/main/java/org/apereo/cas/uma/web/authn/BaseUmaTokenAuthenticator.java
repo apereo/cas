@@ -1,7 +1,7 @@
 package org.apereo.cas.uma.web.authn;
 
 import org.apereo.cas.support.oauth.OAuth20Constants;
-import org.apereo.cas.ticket.accesstoken.AccessToken;
+import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 
 import lombok.RequiredArgsConstructor;
@@ -29,7 +29,7 @@ public abstract class BaseUmaTokenAuthenticator implements Authenticator<TokenCr
     @Override
     public void validate(final TokenCredentials credentials, final WebContext webContext) {
         val token = credentials.getToken().trim();
-        val at = this.ticketRegistry.getTicket(token, AccessToken.class);
+        val at = this.ticketRegistry.getTicket(token, OAuth20AccessToken.class);
         if (at == null || at.isExpired()) {
             val err = String.format("Access token is not found or has expired. Unable to authenticate requesting party access token %s", token);
             throw new CredentialsException(err);
@@ -47,7 +47,7 @@ public abstract class BaseUmaTokenAuthenticator implements Authenticator<TokenCr
 
         profile.addAttributes(attributes);
         profile.addPermissions(at.getScopes());
-        profile.addAttribute(AccessToken.class.getName(), at);
+        profile.addAttribute(OAuth20AccessToken.class.getName(), at);
 
         LOGGER.debug("Authenticated access token [{}]", profile);
         credentials.setUserProfile(profile);

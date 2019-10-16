@@ -5,7 +5,7 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestDataHolder;
-import org.apereo.cas.ticket.OAuthToken;
+import org.apereo.cas.ticket.OAuth20Token;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
@@ -27,7 +27,7 @@ public class OAuth20AccessTokenGrantRequestAuditResourceResolverTests {
     @Test
     public void verifyAction() {
         val r = new OAuth20AccessTokenGrantRequestAuditResourceResolver();
-        val token = mock(OAuthToken.class);
+        val token = mock(OAuth20Token.class);
         when(token.getId()).thenReturn("CODE");
         when(token.getService()).thenReturn(RegisteredServiceTestUtils.getService());
 

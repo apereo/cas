@@ -3,8 +3,8 @@ package org.apereo.cas.oidc.authn;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.authenticator.OAuth20AccessTokenAuthenticator;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
-import org.apereo.cas.ticket.OAuthTokenSigningAndEncryptionService;
-import org.apereo.cas.ticket.accesstoken.AccessToken;
+import org.apereo.cas.ticket.OAuth20TokenSigningAndEncryptionService;
+import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 
 import lombok.extern.slf4j.Slf4j;
@@ -25,11 +25,11 @@ import java.util.Optional;
  */
 @Slf4j
 public class OidcAccessTokenAuthenticator extends OAuth20AccessTokenAuthenticator {
-    private final OAuthTokenSigningAndEncryptionService idTokenSigningAndEncryptionService;
+    private final OAuth20TokenSigningAndEncryptionService idTokenSigningAndEncryptionService;
     private final ServicesManager servicesManager;
 
     public OidcAccessTokenAuthenticator(final TicketRegistry ticketRegistry,
-                                        final OAuthTokenSigningAndEncryptionService signingAndEncryptionService,
+                                        final OAuth20TokenSigningAndEncryptionService signingAndEncryptionService,
                                         final ServicesManager servicesManager) {
         super(ticketRegistry);
         this.idTokenSigningAndEncryptionService = signingAndEncryptionService;
@@ -37,7 +37,7 @@ public class OidcAccessTokenAuthenticator extends OAuth20AccessTokenAuthenticato
     }
 
     @Override
-    protected CommonProfile buildUserProfile(final TokenCredentials tokenCredentials, final WebContext webContext, final AccessToken accessToken) {
+    protected CommonProfile buildUserProfile(final TokenCredentials tokenCredentials, final WebContext webContext, final OAuth20AccessToken accessToken) {
         try {
             val profile = super.buildUserProfile(tokenCredentials, webContext, accessToken);
             validateIdTokenIfAny(accessToken, profile);
@@ -55,7 +55,7 @@ public class OidcAccessTokenAuthenticator extends OAuth20AccessTokenAuthenticato
      * @param profile     the profile
      * @throws MalformedClaimException the malformed claim exception
      */
-    protected void validateIdTokenIfAny(final AccessToken accessToken, final CommonProfile profile) throws MalformedClaimException {
+    protected void validateIdTokenIfAny(final OAuth20AccessToken accessToken, final CommonProfile profile) throws MalformedClaimException {
         if (StringUtils.isNotBlank(accessToken.getIdToken())) {
             val service = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, accessToken.getClientId());
             val idTokenResult = idTokenSigningAndEncryptionService.decode(accessToken.getIdToken(), Optional.ofNullable(service));

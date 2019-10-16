@@ -2,7 +2,7 @@ package org.apereo.cas.support.oauth.web.response.accesstoken;
 
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.web.AbstractOAuth20Tests;
-import org.apereo.cas.ticket.accesstoken.AccessToken;
+import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 
 import lombok.val;
 import org.jose4j.jwt.JwtClaims;
@@ -52,6 +52,6 @@ public class OAuth20DefaultTokenGeneratorTests extends AbstractOAuth20Tests {
 
         val ticketId = jwt.getJwtId();
         assertNotNull(ticketId);
-        assertNotNull(this.ticketRegistry.getTicket(ticketId, AccessToken.class));
+        assertNotNull(this.ticketRegistry.getTicket(ticketId, OAuth20AccessToken.class));
     }
 }

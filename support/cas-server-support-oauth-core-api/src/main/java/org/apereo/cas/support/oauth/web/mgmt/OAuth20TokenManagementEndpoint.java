@@ -2,8 +2,8 @@ package org.apereo.cas.support.oauth.web.mgmt;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.Ticket;
-import org.apereo.cas.ticket.accesstoken.AccessToken;
-import org.apereo.cas.ticket.refreshtoken.RefreshToken;
+import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
+import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
@@ -45,7 +45,7 @@ public class OAuth20TokenManagementEndpoint extends BaseCasActuatorEndpoint {
      */
     @ReadOperation
     public Collection<Ticket> getTokens() {
-        return ticketRegistry.getTickets(ticket -> (ticket instanceof AccessToken || ticket instanceof RefreshToken) && !ticket.isExpired())
+        return ticketRegistry.getTickets(ticket -> (ticket instanceof OAuth20AccessToken || ticket instanceof OAuth20RefreshToken) && !ticket.isExpired())
             .sorted(Comparator.comparing(Ticket::getId))
             .collect(Collectors.toList());
     }
@@ -59,9 +59,9 @@ public class OAuth20TokenManagementEndpoint extends BaseCasActuatorEndpoint {
      */
     @ReadOperation
     public Ticket getToken(@Selector final String ticketId) {
-        var ticket = (Ticket) ticketRegistry.getTicket(ticketId, AccessToken.class);
+        var ticket = (Ticket) ticketRegistry.getTicket(ticketId, OAuth20AccessToken.class);
         if (ticket == null) {
-            ticket = ticketRegistry.getTicket(ticketId, RefreshToken.class);
+            ticket = ticketRegistry.getTicket(ticketId, OAuth20RefreshToken.class);
         }
         if (ticket == null) {
             LOGGER.debug("Ticket [{}] is not found", ticketId);

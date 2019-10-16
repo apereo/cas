@@ -18,9 +18,9 @@ import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.Ticket;
-import org.apereo.cas.ticket.code.DefaultOAuthCodeFactory;
-import org.apereo.cas.ticket.code.OAuthCode;
-import org.apereo.cas.ticket.code.OAuthCodeExpirationPolicy;
+import org.apereo.cas.ticket.code.OAuth20Code;
+import org.apereo.cas.ticket.code.OAuth20CodeExpirationPolicy;
+import org.apereo.cas.ticket.code.OAuth20DefaultOAuthCodeFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
 
@@ -70,16 +70,16 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests extends
 
             @Override
             public ExpirationPolicy buildTicketExpirationPolicy() {
-                return new OAuthCodeExpirationPolicy(1, 60);
+                return new OAuth20CodeExpirationPolicy(1, 60);
             }
 
             @Override
             public Class getTicketType() {
-                return OAuthCode.class;
+                return OAuth20Code.class;
             }
         };
 
-        val oauthCode = new DefaultOAuthCodeFactory(expirationPolicy, mock(ServicesManager.class))
+        val oauthCode = new OAuth20DefaultOAuthCodeFactory(expirationPolicy, mock(ServicesManager.class))
             .create(oauthCasAuthenticationBuilderService, RegisteredServiceTestUtils.getAuthentication(),
                 new MockTicketGrantingTicket("casuser"), new HashSet<>(),
                 null, null, "clientid12345",

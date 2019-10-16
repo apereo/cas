@@ -10,8 +10,8 @@ import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequ
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20TokenAuthorizationResponseBuilder;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.IdTokenGeneratorService;
-import org.apereo.cas.ticket.accesstoken.AccessToken;
-import org.apereo.cas.ticket.refreshtoken.RefreshToken;
+import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
+import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
 import org.apereo.cas.token.JwtBuilder;
 
 import lombok.extern.slf4j.Slf4j;
@@ -38,7 +38,7 @@ public class OidcImplicitIdTokenAuthorizationResponseBuilder extends OAuth20Toke
 
     public OidcImplicitIdTokenAuthorizationResponseBuilder(final IdTokenGeneratorService idTokenGenerator,
                                                            final OAuth20TokenGenerator accessTokenGenerator,
-                                                           final ExpirationPolicyBuilder<AccessToken> accessTokenExpirationPolicy,
+                                                           final ExpirationPolicyBuilder<OAuth20AccessToken> accessTokenExpirationPolicy,
                                                            final ExpirationPolicyBuilder idTokenExpirationPolicy,
                                                            final ServicesManager servicesManager,
                                                            final JwtBuilder accessTokenJwtBuilder) {
@@ -49,9 +49,9 @@ public class OidcImplicitIdTokenAuthorizationResponseBuilder extends OAuth20Toke
 
     @Override
     protected ModelAndView buildCallbackUrlResponseType(final AccessTokenRequestDataHolder holder,
-                                                        final String redirectUri, final AccessToken accessToken,
+                                                        final String redirectUri, final OAuth20AccessToken accessToken,
                                                         final List<NameValuePair> params,
-                                                        final RefreshToken refreshToken,
+                                                        final OAuth20RefreshToken refreshToken,
                                                         final JEEContext context) throws Exception {
 
         val idToken = this.idTokenGenerator.generate(context.getNativeRequest(),

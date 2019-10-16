@@ -10,10 +10,10 @@ import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.AbstractOAuth20Tests;
-import org.apereo.cas.ticket.accesstoken.AccessToken;
-import org.apereo.cas.ticket.code.DefaultOAuthCodeFactory;
-import org.apereo.cas.ticket.refreshtoken.DefaultRefreshTokenFactory;
-import org.apereo.cas.ticket.refreshtoken.RefreshToken;
+import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
+import org.apereo.cas.ticket.code.OAuth20DefaultOAuthCodeFactory;
+import org.apereo.cas.ticket.refreshtoken.OAuth20DefaultRefreshTokenFactory;
+import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.SneakyThrows;
@@ -366,7 +366,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
 
         val principal = CoreAuthenticationTestUtils.getPrincipal(ID, map);
         val authentication = getAuthentication(principal);
-        val expiringOAuthCodeFactory = new DefaultOAuthCodeFactory(alwaysExpiresExpirationPolicyBuilder(), servicesManager);
+        val expiringOAuthCodeFactory = new OAuth20DefaultOAuthCodeFactory(alwaysExpiresExpirationPolicyBuilder(), servicesManager);
         val factory = new WebApplicationServiceFactory();
         val service = factory.createService(registeredService.getServiceId());
         val code = expiringOAuthCodeFactory.create(service, authentication,
@@ -646,7 +646,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
 
         accessTokenId = mv.getModel().get(OAuth20Constants.ACCESS_TOKEN).toString();
 
-        val accessToken = this.ticketRegistry.getTicket(accessTokenId, AccessToken.class);
+        val accessToken = this.ticketRegistry.getTicket(accessTokenId, OAuth20AccessToken.class);
         assertEquals(GOOD_USERNAME, accessToken.getAuthentication().getPrincipal().getId());
 
         val timeLeft = Integer.parseInt(mv.getModel().get(OAuth20Constants.EXPIRES_IN).toString());
@@ -662,7 +662,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
         val authentication = getAuthentication(principal);
         val factory = new WebApplicationServiceFactory();
         val service = factory.createService(registeredService.getServiceId());
-        val expiringRefreshTokenFactory = new DefaultRefreshTokenFactory(alwaysExpiresExpirationPolicyBuilder(), servicesManager);
+        val expiringRefreshTokenFactory = new OAuth20DefaultRefreshTokenFactory(alwaysExpiresExpirationPolicyBuilder(), servicesManager);
         val refreshToken = expiringRefreshTokenFactory.create(service, authentication,
             new MockTicketGrantingTicket("casuser"), new ArrayList<>(), CLIENT_ID, new HashMap<>());
         this.ticketRegistry.addTicket(refreshToken);
@@ -753,7 +753,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
 
         val accessTokenId = mv.getModel().get(OAuth20Constants.ACCESS_TOKEN).toString();
 
-        val accessToken = this.ticketRegistry.getTicket(accessTokenId, AccessToken.class);
+        val accessToken = this.ticketRegistry.getTicket(accessTokenId, OAuth20AccessToken.class);
         assertEquals(principal, accessToken.getAuthentication().getPrincipal());
 
         val timeLeft = Integer.parseInt(mv.getModel().get(OAuth20Constants.EXPIRES_IN).toString());
@@ -833,21 +833,21 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
             assertTrue(mv.getModel().containsKey(OAuth20Constants.REFRESH_TOKEN));
         }
         val newRefreshToken = service.isRenewRefreshToken()
-            ? this.ticketRegistry.getTicket(mv.getModel().get(OAuth20Constants.REFRESH_TOKEN).toString(), RefreshToken.class)
+            ? this.ticketRegistry.getTicket(mv.getModel().get(OAuth20Constants.REFRESH_TOKEN).toString(), OAuth20RefreshToken.class)
             : refreshToken;
 
         assertTrue(mv.getModel().containsKey(OAuth20Constants.EXPIRES_IN));
         accessTokenId = mv.getModel().get(OAuth20Constants.ACCESS_TOKEN).toString();
 
-        val accessToken = this.ticketRegistry.getTicket(accessTokenId, AccessToken.class);
+        val accessToken = this.ticketRegistry.getTicket(accessTokenId, OAuth20AccessToken.class);
         assertEquals(principal, accessToken.getAuthentication().getPrincipal());
 
         val timeLeft = Integer.parseInt(mv.getModel().get(OAuth20Constants.EXPIRES_IN).toString());
         assertTrue(timeLeft >= TIMEOUT - 10 - DELTA);
     }
 
-    private RefreshToken addRefreshTokenWithScope(final Principal principal, final List<String> scopes,
-                                                  final OAuthRegisteredService registeredService) {
+    private OAuth20RefreshToken addRefreshTokenWithScope(final Principal principal, final List<String> scopes,
+                                                         final OAuthRegisteredService registeredService) {
         val authentication = getAuthentication(principal);
         val factory = new WebApplicationServiceFactory();
         val service = factory.createService(registeredService.getServiceId());

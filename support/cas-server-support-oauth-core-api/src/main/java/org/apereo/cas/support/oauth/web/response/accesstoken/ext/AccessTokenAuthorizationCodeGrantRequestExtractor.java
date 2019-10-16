@@ -8,7 +8,7 @@ import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.ticket.InvalidTicketException;
-import org.apereo.cas.ticket.OAuthToken;
+import org.apereo.cas.ticket.OAuth20Token;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -74,7 +74,7 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
      * @param request         the request
      * @return the set
      */
-    protected Set<String> extractRequestedScopesByToken(final Set<String> requestedScopes, final OAuthToken token, final HttpServletRequest request) {
+    protected Set<String> extractRequestedScopesByToken(final Set<String> requestedScopes, final OAuth20Token token, final HttpServletRequest request) {
         val scopes = new TreeSet<String>(requestedScopes);
         scopes.addAll(token.getScopes());
         return scopes;
@@ -132,8 +132,8 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
      * @param request the request
      * @return the OAuth token
      */
-    protected OAuthToken getOAuthTokenFromRequest(final HttpServletRequest request) {
-        val token = getOAuthConfigurationContext().getTicketRegistry().getTicket(getOAuthParameter(request), OAuthToken.class);
+    protected OAuth20Token getOAuthTokenFromRequest(final HttpServletRequest request) {
+        val token = getOAuthConfigurationContext().getTicketRegistry().getTicket(getOAuthParameter(request), OAuth20Token.class);
         if (token == null || token.isExpired()) {
             LOGGER.error("OAuth token indicated by parameter [{}] has expired or not found: [{}]",
                 getOAuthParameter(request), token);

@@ -26,7 +26,7 @@ import java.util.Optional;
 @Slf4j
 @RequiredArgsConstructor
 @Getter
-public abstract class BaseTokenSigningAndEncryptionService implements OAuthTokenSigningAndEncryptionService {
+public abstract class BaseTokenSigningAndEncryptionService implements OAuth20TokenSigningAndEncryptionService {
     private final String issuer;
 
     /**

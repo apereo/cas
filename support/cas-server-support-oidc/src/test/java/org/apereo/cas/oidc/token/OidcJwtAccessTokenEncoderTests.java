@@ -5,7 +5,7 @@ import org.apereo.cas.services.DefaultRegisteredServiceProperty;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoder;
-import org.apereo.cas.ticket.accesstoken.AccessToken;
+import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("OIDC")
 @TestPropertySource(properties = "cas.authn.oauth.accessToken.crypto.encryption-enabled=false")
 public class OidcJwtAccessTokenEncoderTests extends AbstractOidcTests {
-    private String encodeAccessToken(final AccessToken accessToken, final OidcRegisteredService registeredService) {
+    private String encodeAccessToken(final OAuth20AccessToken accessToken, final OidcRegisteredService registeredService) {
         return OAuth20JwtAccessTokenEncoder.builder()
             .accessToken(accessToken)
             .registeredService(registeredService)

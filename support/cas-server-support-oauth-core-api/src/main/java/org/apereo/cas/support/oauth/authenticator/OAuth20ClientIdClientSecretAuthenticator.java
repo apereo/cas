@@ -9,7 +9,7 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
-import org.apereo.cas.ticket.code.OAuthCode;
+import org.apereo.cas.ticket.code.OAuth20Code;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
@@ -116,7 +116,7 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator<U
 
         if (!code.isEmpty()) {
             LOGGER.debug("Checking if the OAuth code issued contains code challenge");
-            val token = this.ticketRegistry.getTicket(code.get(), OAuthCode.class);
+            val token = this.ticketRegistry.getTicket(code.get(), OAuth20Code.class);
 
             if (token != null && StringUtils.isNotEmpty(token.getCodeChallenge())) {
                 LOGGER.debug("The OAuth code [{}] issued contains code challenge which requires PKCE Authentication", code.get());

@@ -5,8 +5,8 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestDataHolder;
-import org.apereo.cas.ticket.code.OAuthCode;
-import org.apereo.cas.ticket.code.OAuthCodeFactory;
+import org.apereo.cas.ticket.code.OAuth20Code;
+import org.apereo.cas.ticket.code.OAuth20CodeFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 
 import lombok.RequiredArgsConstructor;
@@ -33,7 +33,7 @@ public class OAuth20AuthorizationCodeAuthorizationResponseBuilder implements OAu
      */
     protected final TicketRegistry ticketRegistry;
 
-    private final OAuthCodeFactory oAuthCodeFactory;
+    private final OAuth20CodeFactory oAuthCodeFactory;
 
     private final ServicesManager servicesManager;
 
@@ -70,7 +70,7 @@ public class OAuth20AuthorizationCodeAuthorizationResponseBuilder implements OAu
      */
     protected ModelAndView buildCallbackViewViaRedirectUri(final JEEContext context, final String clientId,
                                                            final Authentication authentication,
-                                                           final OAuthCode code) {
+                                                           final OAuth20Code code) {
         val attributes = authentication.getAttributes();
         val state = attributes.get(OAuth20Constants.STATE).get(0).toString();
         val nonce = attributes.get(OAuth20Constants.NONCE).get(0).toString();

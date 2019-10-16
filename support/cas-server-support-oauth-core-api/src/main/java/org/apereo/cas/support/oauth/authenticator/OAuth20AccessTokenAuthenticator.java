@@ -1,6 +1,6 @@
 package org.apereo.cas.support.oauth.authenticator;
 
-import org.apereo.cas.ticket.accesstoken.AccessToken;
+import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 
 import lombok.RequiredArgsConstructor;
@@ -31,7 +31,7 @@ public class OAuth20AccessTokenAuthenticator implements Authenticator<TokenCrede
         val token = tokenCredentials.getToken();
         LOGGER.trace("Received access token [{}] for authentication", token);
         
-        val accessToken = ticketRegistry.getTicket(token, AccessToken.class);
+        val accessToken = ticketRegistry.getTicket(token, OAuth20AccessToken.class);
         if (accessToken == null || accessToken.isExpired()) {
             LOGGER.error("Provided access token [{}] is either not found in the ticket registry or has expired", token);
             return;
@@ -53,7 +53,7 @@ public class OAuth20AccessTokenAuthenticator implements Authenticator<TokenCrede
      */
     protected CommonProfile buildUserProfile(final TokenCredentials tokenCredentials,
                                              final WebContext webContext,
-                                             final AccessToken accessToken) {
+                                             final OAuth20AccessToken accessToken) {
         val userProfile = new CommonProfile(true);
         val authentication = accessToken.getAuthentication();
         val principal = authentication.getPrincipal();

@@ -17,19 +17,19 @@ import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
-import org.apereo.cas.config.CasOAuthConfiguration;
+import org.apereo.cas.config.CasOAuth20Configuration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CasWsSecurityTokenTicketCatalogConfiguration;
 import org.apereo.cas.config.JpaTicketRegistryConfiguration;
 import org.apereo.cas.config.JpaTicketRegistryTicketCatalogConfiguration;
-import org.apereo.cas.config.OAuthProtocolTicketCatalogConfiguration;
+import org.apereo.cas.config.OAuth20ProtocolTicketCatalogConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketFactory;
-import org.apereo.cas.ticket.code.OAuthCodeFactory;
+import org.apereo.cas.ticket.code.OAuth20CodeFactory;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 
 import lombok.val;
@@ -60,7 +60,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 @SpringBootTest(classes = {
     JpaTicketRegistryTicketCatalogConfiguration.class,
     JpaTicketRegistryConfiguration.class,
-    CasOAuthConfiguration.class,
+    CasOAuth20Configuration.class,
     RefreshAutoConfiguration.class,
     AopAutoConfiguration.class,
     CasCoreUtilConfiguration.class,
@@ -82,7 +82,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
     CasCoreTicketIdGeneratorsConfiguration.class,
     CasCoreWebConfiguration.class,
     CasCookieConfiguration.class,
-    OAuthProtocolTicketCatalogConfiguration.class,
+    OAuth20ProtocolTicketCatalogConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
     CasWsSecurityTokenTicketCatalogConfiguration.class
 })
@@ -101,7 +101,7 @@ public class OauthJpaTicketRegistryTests {
 
     @Autowired
     @Qualifier("defaultOAuthCodeFactory")
-    private OAuthCodeFactory oAuthCodeFactory;
+    private OAuth20CodeFactory oAuthCodeFactory;
 
     @AfterEach
     public void cleanup() {

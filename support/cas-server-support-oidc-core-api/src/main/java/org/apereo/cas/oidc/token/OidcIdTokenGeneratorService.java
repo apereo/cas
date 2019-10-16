@@ -11,7 +11,7 @@ import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20AccessTokenA
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoder;
 import org.apereo.cas.ticket.BaseIdTokenGeneratorService;
 import org.apereo.cas.ticket.TicketGrantingTicket;
-import org.apereo.cas.ticket.accesstoken.AccessToken;
+import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.Getter;
@@ -45,7 +45,7 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService {
     @Override
     public String generate(final HttpServletRequest request,
                            final HttpServletResponse response,
-                           final AccessToken accessToken,
+                           final OAuth20AccessToken accessToken,
                            final long timeoutInSeconds,
                            final OAuth20ResponseTypes responseType,
                            final OAuthRegisteredService registeredService) {
@@ -78,7 +78,7 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService {
      * @return the jwt claims
      */
     protected JwtClaims buildJwtClaims(final HttpServletRequest request,
-                                       final AccessToken accessToken,
+                                       final OAuth20AccessToken accessToken,
                                        final long timeoutInSeconds,
                                        final OidcRegisteredService service,
                                        final UserProfile profile,
@@ -189,7 +189,7 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService {
      * @param registeredService the service
      * @param claims            the claims
      */
-    protected void generateAccessTokenHash(final AccessToken accessToken,
+    protected void generateAccessTokenHash(final OAuth20AccessToken accessToken,
                                            final OidcRegisteredService registeredService,
                                            final JwtClaims claims) {
         val encodedAccessToken = OAuth20JwtAccessTokenEncoder.builder()
