@@ -668,7 +668,8 @@ public class OidcConfiguration implements WebMvcConfigurer {
         return () -> {
             val accessTokenClient = new HeaderClient();
             accessTokenClient.setCredentialsExtractor(new BearerAuthExtractor());
-            accessTokenClient.setAuthenticator(new OidcClientConfigurationAccessTokenAuthenticator(ticketRegistry.getObject()));
+            accessTokenClient.setAuthenticator(new OidcClientConfigurationAccessTokenAuthenticator(ticketRegistry.getObject(),
+                accessTokenJwtBuilder.getObject()));
             accessTokenClient.setName(OidcConstants.CAS_OAUTH_CLIENT_CONFIG_ACCESS_TOKEN_AUTHN);
             accessTokenClient.init();
             return accessTokenClient;
@@ -712,7 +713,8 @@ public class OidcConfiguration implements WebMvcConfigurer {
     @Bean
     public Authenticator<TokenCredentials> oAuthAccessTokenAuthenticator() {
         return new OidcAccessTokenAuthenticator(ticketRegistry.getObject(),
-            oidcTokenSigningAndEncryptionService(), servicesManager.getObject());
+            oidcTokenSigningAndEncryptionService(), servicesManager.getObject(),
+            accessTokenJwtBuilder.getObject());
     }
 
     @ConditionalOnMissingBean(name = "oidcCasWebflowExecutionPlanConfigurer")

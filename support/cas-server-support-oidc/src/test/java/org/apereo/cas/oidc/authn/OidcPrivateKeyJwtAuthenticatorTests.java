@@ -20,6 +20,7 @@ import org.springframework.test.context.TestPropertySource;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -52,7 +53,7 @@ public class OidcPrivateKeyJwtAuthenticatorTests extends AbstractOidcTests {
         val claims = getClaims(registeredService.getClientId(), registeredService.getClientId(),
             registeredService.getClientId(), audience);
         val webKey = oidcServiceJsonWebKeystoreCache.get(registeredService).get();
-        val jwt = EncodingUtils.signJwsRSASha512(webKey.getRsaPrivateKey(), claims.toJson().getBytes(StandardCharsets.UTF_8));
+        val jwt = EncodingUtils.signJwsRSASha512(webKey.getRsaPrivateKey(), claims.toJson().getBytes(StandardCharsets.UTF_8), Map.of());
         val credentials = new UsernamePasswordCredentials(OAuth20Constants.CLIENT_ASSERTION_TYPE_JWT_BEARER,
             new String(jwt, StandardCharsets.UTF_8));
 
