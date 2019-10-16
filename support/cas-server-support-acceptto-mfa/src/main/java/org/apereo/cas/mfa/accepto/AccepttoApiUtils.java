@@ -205,7 +205,7 @@ public class AccepttoApiUtils {
         LOGGER.trace("Authorization payload is [{}]", payload);
         val signingKey = new AesKey(acceptto.getOrganizationSecret().getBytes(StandardCharsets.UTF_8));
         LOGGER.trace("Signing authorization payload...");
-        val signedBytes = EncodingUtils.signJwsHMACSha256(signingKey, payload.getBytes(StandardCharsets.UTF_8));
+        val signedBytes = EncodingUtils.signJwsHMACSha256(signingKey, payload.getBytes(StandardCharsets.UTF_8), Map.of());
         val authzPayload = new String(signedBytes, StandardCharsets.UTF_8);
         LOGGER.trace("Signed authorization payload is [{}]", authzPayload);
         return authzPayload;

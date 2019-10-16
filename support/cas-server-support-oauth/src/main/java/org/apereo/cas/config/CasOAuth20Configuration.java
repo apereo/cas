@@ -339,7 +339,7 @@ public class CasOAuth20Configuration {
     @ConditionalOnMissingBean(name = "oAuthAccessTokenAuthenticator")
     @Bean
     public Authenticator<TokenCredentials> oAuthAccessTokenAuthenticator() {
-        return new OAuth20AccessTokenAuthenticator(ticketRegistry.getObject());
+        return new OAuth20AccessTokenAuthenticator(ticketRegistry.getObject(), accessTokenJwtBuilder());
     }
 
     @Bean

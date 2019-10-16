@@ -1,17 +1,21 @@
 package org.apereo.cas.support.oauth.web.response.accesstoken.response;
 
-import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.DateTimeUtils;
 
+import com.nimbusds.jwt.JWTParser;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.val;
+
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * This is {@link OAuth20JwtAccessTokenEncoder}.
@@ -34,9 +38,8 @@ public class OAuth20JwtAccessTokenEncoder {
      */
     public String encode() {
         val oAuthRegisteredService = OAuthRegisteredService.class.cast(this.registeredService);
-        val authentication = accessToken.getAuthentication();
         if (oAuthRegisteredService != null && oAuthRegisteredService.isJwtAccessToken()) {
-            val request = getJwtRequestBuilder(oAuthRegisteredService, authentication);
+            val request = getJwtRequestBuilder(oAuthRegisteredService, accessToken);
             return accessTokenJwtBuilder.build(request);
         }
 
@@ -51,11 +54,15 @@ public class OAuth20JwtAccessTokenEncoder {
      */
     @SneakyThrows
     public String decode(final String tokenId) {
-        val oAuthRegisteredService = OAuthRegisteredService.class.cast(this.registeredService);
-        val authentication = accessToken.getAuthentication();
+        var oAuthRegisteredService = (OAuthRegisteredService) this.registeredService;
+        if (oAuthRegisteredService == null) {
+            val header = JWTParser.parse(tokenId).getHeader();
+            val serviceIdentifier = Long.parseLong(Objects.requireNonNull(header.getCustomParam(
+                RegisteredServiceCipherExecutor.CUSTOM_HEADER_REGISTERED_SERVICE_ID)).toString());
+            oAuthRegisteredService = accessTokenJwtBuilder.getServicesManager().findServiceBy(serviceIdentifier, OAuthRegisteredService.class);
+        }
         if (oAuthRegisteredService != null && oAuthRegisteredService.isJwtAccessToken()) {
-            val request = getJwtRequestBuilder(oAuthRegisteredService, authentication);
-            val claims = accessTokenJwtBuilder.unpack(request, tokenId);
+            val claims = accessTokenJwtBuilder.unpack(Optional.of(oAuthRegisteredService), tokenId);
             return claims.getJWTID();
         }
         return tokenId;
@@ -65,11 +72,12 @@ public class OAuth20JwtAccessTokenEncoder {
      * Gets jwt request builder.
      *
      * @param oAuthRegisteredService the o auth registered service
-     * @param authentication         the authentication
+     * @param accessToken            the access token
      * @return the jwt request builder
      */
     protected JwtBuilder.JwtRequest getJwtRequestBuilder(final OAuthRegisteredService oAuthRegisteredService,
-                                                         final Authentication authentication) {
+                                                         final OAuth20AccessToken accessToken) {
+        val authentication = accessToken.getAuthentication();
         val builder = JwtBuilder.JwtRequest.builder();
         val dt = authentication.getAuthenticationDate().plusSeconds(accessToken.getExpirationPolicy().getTimeToLive());
         return builder

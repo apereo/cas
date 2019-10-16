@@ -2,7 +2,7 @@ package org.apereo.cas.oidc.token;
 
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.services.DefaultRegisteredServiceProperty;
-import org.apereo.cas.services.OidcRegisteredService;
+import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoder;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
@@ -26,14 +26,14 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("OIDC")
 @TestPropertySource(properties = "cas.authn.oauth.accessToken.crypto.encryption-enabled=false")
 public class OidcJwtAccessTokenEncoderTests extends AbstractOidcTests {
-    private String encodeAccessToken(final OAuth20AccessToken accessToken, final OidcRegisteredService registeredService) {
+    private OAuth20JwtAccessTokenEncoder getAccessTokenEncoder(final OAuth20AccessToken accessToken,
+                                                               final RegisteredService registeredService) {
         return OAuth20JwtAccessTokenEncoder.builder()
             .accessToken(accessToken)
             .registeredService(registeredService)
             .service(accessToken.getService())
             .accessTokenJwtBuilder(accessTokenJwtBuilder)
-            .build()
-            .encode();
+            .build();
     }
 
     @Test
@@ -49,8 +49,8 @@ public class OidcJwtAccessTokenEncoderTests extends AbstractOidcTests {
         ));
         this.servicesManager.save(registeredService);
 
-        val token1 = encodeAccessToken(accessToken, registeredService);
-        val token2 = encodeAccessToken(accessToken, registeredService);
+        val token1 = getAccessTokenEncoder(accessToken, registeredService).encode();
+        val token2 = getAccessTokenEncoder(accessToken, registeredService).encode();
         assertEquals(token1, token2);
     }
 
@@ -69,8 +69,14 @@ public class OidcJwtAccessTokenEncoderTests extends AbstractOidcTests {
         ));
         this.servicesManager.save(registeredService);
 
-        val token1 = encodeAccessToken(accessToken, registeredService);
-        val token2 = encodeAccessToken(accessToken, registeredService);
+        val encoder = getAccessTokenEncoder(accessToken, registeredService);
+        val token1 = encoder.encode();
+        val token2 = encoder.encode();
         assertEquals(token1, token2);
+
+        val decoded1 = encoder.decode(token1);
+        val decoded2 = encoder.decode(token2);
+        assertEquals(decoded1, decoded2);
+        assertEquals(accessToken.getId(), decoded1);
     }
 }

@@ -58,28 +58,30 @@ public class JwtBuilder {
     /**
      * Unpack jwt.
      *
-     * @param payload the payload
+     * @param service the service
      * @param jwtJson the jwt json
      * @return the string
      */
-    public JWTClaimsSet unpack(final JwtRequest payload, final String jwtJson) {
-        val serviceAudience = payload.getServiceAudience();
-        val registeredService = payload.getRegisteredService() == null
-            ? locateRegisteredService(serviceAudience)
-            : payload.getRegisteredService();
-        LOGGER.trace("Located service [{}] in service registry for [{}]", registeredService, serviceAudience);
-        RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
+    public JWTClaimsSet unpack(final Optional<RegisteredService> service, final String jwtJson) {
+        service.ifPresent(svc -> {
+            LOGGER.trace("Located service [{}] in service registry for [{}]", svc);
+            RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(svc);
+        });
 
-        LOGGER.trace("Locating service specific signing and encryption keys for [{}] in service registry", serviceAudience);
-        if (registeredServiceCipherExecutor.supports(registeredService)) {
-            LOGGER.trace("Encoding JWT based on keys provided by service [{}]", registeredService.getServiceId());
-            return parse(registeredServiceCipherExecutor.decode(jwtJson, Optional.of(registeredService)));
+        if (service.isPresent()) {
+            val registeredService = service.get();
+            LOGGER.trace("Locating service specific signing and encryption keys for [{}] in service registry", registeredService);
+            if (registeredServiceCipherExecutor.supports(registeredService)) {
+                LOGGER.trace("Decoding JWT based on keys provided by service [{}]", registeredService.getServiceId());
+                return parse(registeredServiceCipherExecutor.decode(jwtJson, Optional.of(registeredService)));
+            }
         }
-
+        
         if (defaultTokenCipherExecutor.isEnabled()) {
-            LOGGER.trace("Encoding JWT based on default global keys for [{}]", serviceAudience);
+            LOGGER.trace("Decoding JWT based on default global keys");
             return parse(defaultTokenCipherExecutor.decode(jwtJson));
         }
+        
         return parse(jwtJson);
     }
 
