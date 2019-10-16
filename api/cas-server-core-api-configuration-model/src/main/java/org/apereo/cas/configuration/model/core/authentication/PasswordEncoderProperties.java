@@ -83,6 +83,10 @@ public class PasswordEncoderProperties implements Serializable {
          * Uses {@code org.apereo.cas.util.crypto.GlibcCryptPasswordEncoder}.
          * GNU libc crypt(3) compatible hash method.
          */
-        GLIBC_CRYPT
+        GLIBC_CRYPT,
+        /**
+         * Uses Spring Security's {@code LdapShaPasswordEncoder}.
+         */
+        SSHA
     }
 }
