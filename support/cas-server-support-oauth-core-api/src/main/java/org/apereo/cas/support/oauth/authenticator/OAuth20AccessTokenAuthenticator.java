@@ -2,6 +2,7 @@ package org.apereo.cas.support.oauth.authenticator;
 
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.token.JwtBuilder;
 
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -24,13 +25,18 @@ import java.util.HashMap;
 @RequiredArgsConstructor
 public class OAuth20AccessTokenAuthenticator implements Authenticator<TokenCredentials> {
     private final TicketRegistry ticketRegistry;
+    private final JwtBuilder accessTokenJwtBuilder;
+
+    private static String extractAccessTokenFrom(final TokenCredentials tokenCredentials) {
+        return tokenCredentials.getToken();
+    }
 
     @SneakyThrows
     @Override
     public void validate(final TokenCredentials tokenCredentials, final WebContext webContext) {
-        val token = tokenCredentials.getToken();
+        val token = extractAccessTokenFrom(tokenCredentials);
         LOGGER.trace("Received access token [{}] for authentication", token);
-        
+
         val accessToken = ticketRegistry.getTicket(token, OAuth20AccessToken.class);
         if (accessToken == null || accessToken.isExpired()) {
             LOGGER.error("Provided access token [{}] is either not found in the ticket registry or has expired", token);

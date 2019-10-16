@@ -1,6 +1,5 @@
 package org.apereo.cas.support.oauth.web.response.accesstoken.response;
 
-import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.DefaultRegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredService;
@@ -8,6 +7,7 @@ import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.AbstractOAuth20Tests;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.accesstoken.OAuth20JwtBuilder;
@@ -32,14 +32,13 @@ import static org.mockito.Mockito.*;
  */
 @Tag("OAuth")
 public class OAuth20JwtAccessTokenEncoderTests extends AbstractOAuth20Tests {
-    private static OAuth20JwtAccessTokenEncoder getAccessTokenEncoder(final Service service,
-                                                                      final OAuth20AccessToken accessToken,
+    private static OAuth20JwtAccessTokenEncoder getAccessTokenEncoder(final OAuth20AccessToken accessToken,
                                                                       final OAuth20JwtBuilder builder,
                                                                       final RegisteredService registeredService) {
         return OAuth20JwtAccessTokenEncoder.builder()
             .accessToken(accessToken)
             .registeredService(registeredService)
-            .service(service)
+            .service(accessToken.getService())
             .accessTokenJwtBuilder(builder)
             .build();
     }
@@ -58,20 +57,24 @@ public class OAuth20JwtAccessTokenEncoderTests extends AbstractOAuth20Tests {
         return accessToken;
     }
 
+    private static OAuth20JwtBuilder getCipherDisabledJwtBuilder() {
+        return new OAuth20JwtBuilder("http://cas.example.org/prefix",
+            CipherExecutor.noOp(),
+            mock(ServicesManager.class),
+            RegisteredServiceCipherExecutor.noOp());
+    }
+
     @Test
     public void verifyAccessTokenIdEncodingWithoutJwt() {
         val accessToken = getAccessToken();
 
-        val builder = new OAuth20JwtBuilder("http://cas.example.org/prefix",
-            CipherExecutor.noOp(),
-            mock(ServicesManager.class),
-            RegisteredServiceCipherExecutor.noOp());
+        val builder = getCipherDisabledJwtBuilder();
 
         val registeredService = getRegisteredService("example", "secret", new LinkedHashSet<>());
-        val encodedAccessToken1 = getAccessTokenEncoder(accessToken.getService(), accessToken, builder, registeredService).encode();
+        val encodedAccessToken1 = getAccessTokenEncoder(accessToken, builder, registeredService).encode();
         assertNotNull(encodedAccessToken1);
 
-        val encodedAccessToken2 = getAccessTokenEncoder(accessToken.getService(), accessToken, builder, registeredService).encode();
+        val encodedAccessToken2 = getAccessTokenEncoder(accessToken, builder, registeredService).encode();
         assertEquals(encodedAccessToken1, encodedAccessToken2);
     }
 
@@ -83,15 +86,12 @@ public class OAuth20JwtAccessTokenEncoderTests extends AbstractOAuth20Tests {
         registeredService.setJwtAccessToken(true);
         servicesManager.save(registeredService);
 
-        val builder = new OAuth20JwtBuilder("http://cas.example.org/prefix",
-            CipherExecutor.noOp(),
-            servicesManager,
-            RegisteredServiceCipherExecutor.noOp());
+        val builder = getCipherDisabledJwtBuilder();
 
-        val encodedAccessToken1 = getAccessTokenEncoder(accessToken.getService(), accessToken, builder, registeredService).encode();
+        val encodedAccessToken1 = getAccessTokenEncoder(accessToken, builder, registeredService).encode();
         assertNotNull(encodedAccessToken1);
 
-        val encodedAccessToken2 = getAccessTokenEncoder(accessToken.getService(), accessToken, builder, registeredService).encode();
+        val encodedAccessToken2 = getAccessTokenEncoder(accessToken, builder, registeredService).encode();
         assertEquals(encodedAccessToken1, encodedAccessToken2);
     }
 
@@ -103,13 +103,8 @@ public class OAuth20JwtAccessTokenEncoderTests extends AbstractOAuth20Tests {
         registeredService.setJwtAccessToken(true);
         servicesManager.save(registeredService);
 
-        val builder = new OAuth20JwtBuilder("http://cas.example.org/prefix",
-            new OAuth20JwtAccessTokenCipherExecutor(true, true),
-            servicesManager,
-            new OAuth20RegisteredServiceJwtAccessTokenCipherExecutor());
-
-        val encoder = getAccessTokenEncoder(accessToken.getService(), accessToken, builder, registeredService);
-
+        val builder = getCipherEnabledJwtBuilder();
+        val encoder = getAccessTokenEncoder(accessToken, builder, registeredService);
         val encodedAccessToken = encoder.encode();
         assertNotNull(encodedAccessToken);
 
@@ -119,9 +114,41 @@ public class OAuth20JwtAccessTokenEncoderTests extends AbstractOAuth20Tests {
     }
 
     @Test
+    public void verifyExtractionAsParameterForService() {
+        val accessToken = getAccessToken();
+        val registeredService = getRegisteredServiceForJwtAccessToken(accessToken);
+        val builder = getCipherEnabledJwtBuilder();
+        val encoder = getAccessTokenEncoder(accessToken, builder, registeredService);
+
+        val encodedAccessToken = encoder.encode();
+        val decoded = encoder.decode(encodedAccessToken);
+        assertNotNull(decoded);
+        assertEquals(accessToken.getId(), decoded);
+    }
+
+    @Test
     public void verifyAccessTokenIdEncodingWithJwtForService() {
         val accessToken = getAccessToken();
+        val registeredService = getRegisteredServiceForJwtAccessToken(accessToken);
+        val builder = getCipherEnabledJwtBuilder();
+        val encoder = getAccessTokenEncoder(accessToken, builder, registeredService);
 
+        val encodedAccessToken = encoder.encode();
+        assertNotNull(encodedAccessToken);
+
+        val decoded = encoder.decode(encodedAccessToken);
+        assertNotNull(decoded);
+        assertEquals(accessToken.getId(), decoded);
+    }
+
+    private OAuth20JwtBuilder getCipherEnabledJwtBuilder() {
+        return new OAuth20JwtBuilder("http://cas.example.org/prefix",
+            new OAuth20JwtAccessTokenCipherExecutor(true, true),
+            servicesManager,
+            new OAuth20RegisteredServiceJwtAccessTokenCipherExecutor());
+    }
+
+    private OAuthRegisteredService getRegisteredServiceForJwtAccessToken(final OAuth20AccessToken accessToken) {
         val registeredService = getRegisteredService(accessToken.getService().getId(), "secret", new LinkedHashSet<>());
         registeredService.setProperties(Map.of(
             RegisteredServiceProperty.RegisteredServiceProperties.ACCESS_TOKEN_AS_JWT_ENCRYPTION_ENABLED.getPropertyName(),
@@ -135,19 +162,6 @@ public class OAuth20JwtAccessTokenEncoderTests extends AbstractOAuth20Tests {
         ));
         registeredService.setJwtAccessToken(true);
         servicesManager.save(registeredService);
-
-        val builder = new OAuth20JwtBuilder("http://cas.example.org/prefix",
-            new OAuth20JwtAccessTokenCipherExecutor(true, true),
-            servicesManager,
-            new OAuth20RegisteredServiceJwtAccessTokenCipherExecutor());
-
-        val encoder = getAccessTokenEncoder(accessToken.getService(), accessToken, builder, registeredService);
-
-        val encodedAccessToken = encoder.encode();
-        assertNotNull(encodedAccessToken);
-
-        val decoded = encoder.decode(encodedAccessToken);
-        assertNotNull(decoded);
-        assertEquals(accessToken.getId(), decoded);
+        return registeredService;
     }
 }
