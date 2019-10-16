@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.web.support.ArgumentExtractor;
 
 import com.google.common.base.Splitter;
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -29,7 +30,7 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-
+@UtilityClass
 @Slf4j
 public class HttpRequestUtils {
     /**

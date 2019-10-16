@@ -145,6 +145,7 @@ The following options are supported:
 | `SCRYPT`                | Use the `SCryptPasswordEncoder`.
 | `PBKDF2`                | Use the `Pbkdf2PasswordEncoder` based on the `strength` provided and an optional `secret`.
 | `STANDARD`              | Use the `StandardPasswordEncoder` based on the `secret` provided.
+| `SSHA`                  | Use the `LdapShaPasswordEncoder` supports Ldap SHA and SSHA (salted-SHA). The values are base-64 encoded and have the label `{SHA}` (or `{SSHA}`) prepended to the encoded hash. 
 | `GLIBC_CRYPT`           | Use the `GlibcCryptPasswordEncoder` based on the [`encodingAlgorithm`](https://commons.apache.org/proper/commons-codec/archives/1.10/apidocs/org/apache/commons/codec/digest/Crypt.html), `strength` provided and an optional `secret`.
 | `org.example.MyEncoder` | An implementation of `PasswordEncoder` of your own choosing.
 | `file:///path/to/script.groovy` | Path to a Groovy script charged with handling password encoding operations.

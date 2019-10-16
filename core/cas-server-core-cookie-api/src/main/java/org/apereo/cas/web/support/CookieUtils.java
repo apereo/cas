@@ -9,6 +9,7 @@ import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.cookie.CookieGenerationContext;
 
 import lombok.NoArgsConstructor;
+import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
@@ -24,6 +25,7 @@ import java.util.Optional;
  * @since 5.1.0
  */
 @NoArgsConstructor
+@UtilityClass
 public class CookieUtils {
 
     /**
