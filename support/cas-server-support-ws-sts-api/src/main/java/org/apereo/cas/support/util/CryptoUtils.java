@@ -1,6 +1,5 @@
 package org.apereo.cas.support.util;
 
-import lombok.NoArgsConstructor;
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -13,7 +12,6 @@ import java.util.Properties;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@NoArgsConstructor
 @UtilityClass
 public class CryptoUtils {
 
