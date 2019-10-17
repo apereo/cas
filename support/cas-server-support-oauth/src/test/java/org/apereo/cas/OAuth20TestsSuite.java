@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import org.apereo.cas.support.oauth.authenticator.OAuth20AccessTokenAuthenticatorTests;
 import org.apereo.cas.support.oauth.authenticator.OAuth20ClientIdClientSecretAuthenticatorTests;
 import org.apereo.cas.support.oauth.authenticator.OAuth20ProofKeyCodeExchangeAuthenticatorTests;
 import org.apereo.cas.support.oauth.authenticator.OAuth20UsernamePasswordAuthenticatorTests;
@@ -23,10 +24,10 @@ import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20Def
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoderTests;
 import org.apereo.cas.support.oauth.web.views.OAuth20DefaultUserProfileViewRendererFlatTests;
 import org.apereo.cas.support.oauth.web.views.OAuth20DefaultUserProfileViewRendererNestedTests;
-import org.apereo.cas.ticket.accesstoken.OAuthAccessTokenExpirationPolicyTests;
-import org.apereo.cas.ticket.accesstoken.OAuthAccessTokenSovereignExpirationPolicyTests;
-import org.apereo.cas.ticket.refreshtoken.OAuthRefreshTokenExpirationPolicyTests;
-import org.apereo.cas.ticket.refreshtoken.OAuthRefreshTokenSovereignExpirationPolicyTests;
+import org.apereo.cas.ticket.accesstoken.OAuth20AccessTokenExpirationPolicyTests;
+import org.apereo.cas.ticket.accesstoken.OAuth20AccessTokenSovereignExpirationPolicyTests;
+import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshTokenExpirationPolicyTests;
+import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshTokenSovereignExpirationPolicyTests;
 
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
@@ -42,21 +43,22 @@ import org.junit.runner.RunWith;
     OAuth20AccessTokenControllerTests.class,
     OAuth20AccessTokenControllerNoGrantTypeTests.class,
     OAuth20AuthorizeControllerTests.class,
-    OAuthAccessTokenExpirationPolicyTests.class,
-    OAuthAccessTokenSovereignExpirationPolicyTests.class,
-    OAuthRefreshTokenExpirationPolicyTests.class,
+    OAuth20AccessTokenExpirationPolicyTests.class,
+    OAuth20AccessTokenSovereignExpirationPolicyTests.class,
+    OAuth20RefreshTokenExpirationPolicyTests.class,
     OAuth20DefaultTokenGeneratorTests.class,
     OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests.class,
     OAuth20PasswordGrantTypeTokenRequestValidatorTests.class,
     OAuth20ClientCredentialsGrantTypeTokenRequestValidatorTests.class,
     OAuth20RefreshTokenGrantTypeTokenRequestValidatorTests.class,
     OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidatorTests.class,
-    OAuthRefreshTokenSovereignExpirationPolicyTests.class,
+    OAuth20RefreshTokenSovereignExpirationPolicyTests.class,
     OAuth20ProfileControllerTests.class,
     OAuth20UtilsTests.class,
     OAuth20JwtAccessTokenEncoderTests.class,
     OAuth20WebApplicationServiceTests.class,
     OAuth20UsernamePasswordAuthenticatorTests.class,
+    OAuth20AccessTokenAuthenticatorTests.class,
     OAuth20ClientIdClientSecretAuthenticatorTests.class,
     OAuth20ProofKeyCodeExchangeAuthenticatorTests.class,
     OAuth20DefaultUserProfileViewRendererFlatTests.class,
