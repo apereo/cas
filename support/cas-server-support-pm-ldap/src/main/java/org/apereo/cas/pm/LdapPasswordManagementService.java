@@ -37,106 +37,59 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
 
     @Override
     public String findUsername(final String email) {
-        try {
-            val ldap = properties.getLdap();
-            val filter = LdapUtils.newLdaptiveSearchFilter(ldap.getSearchFilter(),
-                LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
-                CollectionUtils.wrap(email));
-            LOGGER.debug("Constructed LDAP filter [{}] to locate user account", filter);
-
-            val response = LdapUtils.executeSearchOperation(this.ldapConnectionFactory, ldap.getBaseDn(), filter, ldap.getPageSize());
-            LOGGER.debug("LDAP response to locate user account is [{}]", response);
-
-            if (LdapUtils.containsResultEntry(response)) {
-                val entry = response.getResult().getEntry();
-                LOGGER.debug("Found LDAP entry [{}] to use for the account email", entry);
-
-                val attributeName = ldap.getUsernameAttribute();
-                val attr = entry.getAttribute(attributeName);
-                if (attr != null) {
-                    val username = attr.getStringValue();
-                    LOGGER.debug("Found username [{}] for email [{}].", username, email);
-                    return username;
-                }
-                LOGGER.error("Could not locate an LDAP attribute [{}] for [{}] and base DN [{}]",
-                    attributeName, filter.format(), ldap.getBaseDn());
-                return null;
-            }
-            LOGGER.error("Could not locate an LDAP entry for [{}] and base DN [{}]", filter.format(), ldap.getBaseDn());
-        } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
-        }
-        return null;
+        return findAttribute(email, properties.getLdap().getUsernameAttribute());
     }
 
     @Override
     public String findEmail(final String username) {
-        try {
-            val ldap = properties.getLdap();
-            val filter = LdapUtils.newLdaptiveSearchFilter(ldap.getSearchFilter(),
-                LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
-                CollectionUtils.wrap(username));
-            LOGGER.debug("Constructed LDAP filter [{}] to locate account email", filter);
-
-            val response = LdapUtils.executeSearchOperation(this.ldapConnectionFactory, ldap.getBaseDn(), filter, ldap.getPageSize());
-            LOGGER.debug("LDAP response to locate account email is [{}]", response);
-
-            if (LdapUtils.containsResultEntry(response)) {
-                val entry = response.getResult().getEntry();
-                LOGGER.debug("Found LDAP entry [{}] to use for the account email", entry);
-
-                val attributeName = properties.getReset().getMail().getAttributeName();
-                val attr = entry.getAttribute(attributeName);
-                if (attr != null) {
-                    val email = attr.getStringValue();
-                    LOGGER.debug("Found email address [{}] for user [{}]. Validating...", email, username);
-                    if (EmailValidator.getInstance().isValid(email)) {
-                        LOGGER.debug("Email address [{}] matches a valid email address", email);
-                        return email;
-                    }
-                    LOGGER.error("Email [{}] is not a valid address", email);
-                } else {
-                    LOGGER.error("Could not locate an LDAP attribute [{}] for [{}] and base DN [{}]",
-                        attributeName, filter.format(), ldap.getBaseDn());
-                }
-                return null;
-            }
-            LOGGER.error("Could not locate an LDAP entry for [{}] and base DN [{}]", filter.format(), ldap.getBaseDn());
-        } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+        val email = findAttribute(username, properties.getReset().getMail().getAttributeName());
+        if (EmailValidator.getInstance().isValid(email)) {
+            LOGGER.debug("Email address [{}] for [{}] appears valid", email, username);
+            return email;
         }
+        LOGGER.warn("Email address [{}] for [{}] is not valid", email, username);
         return null;
     }
 
     @Override
     public String findPhone(final String username) {
+        return findAttribute(username, properties.getReset().getSms().getAttributeName());
+    }
+
+    /**
+     * Perform LDAP search by username, returning the requested attribute.
+     * 
+     * @param username
+     * @param attributeName
+     * @return  String value of attribute; null if user/attribute not present
+     */
+    public String findAttribute(final String username, final String attributeName) {
         try {
             val ldap = properties.getLdap();
             val filter = LdapUtils.newLdaptiveSearchFilter(ldap.getSearchFilter(),
                 LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
                 CollectionUtils.wrap(username));
-            LOGGER.debug("Constructed LDAP filter [{}] to locate account email", filter);
+            LOGGER.debug("Constructed LDAP filter [{}] to locate account [{}]", filter, attributeName);
 
             val response = LdapUtils.executeSearchOperation(this.ldapConnectionFactory, ldap.getBaseDn(), filter, ldap.getPageSize());
-            LOGGER.debug("LDAP response to locate account phone is [{}]", response);
+            LOGGER.debug("LDAP response to locate [{}] is [{}]", attributeName, response);
 
             if (LdapUtils.containsResultEntry(response)) {
                 val entry = response.getResult().getEntry();
-                LOGGER.debug("Found LDAP entry [{}] to use for the account phone number", entry);
+                LOGGER.debug("Found LDAP entry [{}] to use for [{}]", entry, attributeName);
 
-                val attributeName = properties.getReset().getSms().getAttributeName();
                 val attr = entry.getAttribute(attributeName);
                 if (attr != null) {
-                    val phoneNumber = attr.getStringValue();
-                    LOGGER.debug("Found phone number [{}] for user [{}].", phoneNumber, username);
-                    return phoneNumber;
+                    val attributeValue = attr.getStringValue();
+                    LOGGER.debug("Found [{}] [{}] for user [{}].", attributeName, attributeValue, username);
+                    return attributeValue;
                 } else {
-                    LOGGER.error("Could not locate an LDAP attribute [{}] for [{}] and base DN [{}]",
+                    LOGGER.info("Could not locate LDAP attribute [{}] for [{}] and base DN [{}]",
                         attributeName, filter.format(), ldap.getBaseDn());
                 }
                 return null;
             }
-            LOGGER.error("Could not locate an LDAP entry for [{}] and base DN [{}]", filter.format(), ldap.getBaseDn());
+            LOGGER.warn("Could not locate an LDAP entry for [{}] and base DN [{}]", filter.format(), ldap.getBaseDn());
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
