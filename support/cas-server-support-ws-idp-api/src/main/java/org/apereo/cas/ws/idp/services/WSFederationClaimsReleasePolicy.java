@@ -106,10 +106,10 @@ public class WSFederationClaimsReleasePolicy extends AbstractRegisteredServiceAt
             .stream()
             .filter(entry -> WSFederationClaims.contains(entry.getKey()))
             .forEach(entry -> {
-                val claim = WSFederationClaims.valueOf(entry.getKey().toUpperCase());
                 if (!attributeScriptCache.containsKey(entry.getValue())) {
                     val matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(entry.getValue());
                     val matcherFile = ScriptingUtils.getMatcherForExternalGroovyScript(entry.getValue());
+                    val claim = WSFederationClaims.valueOf(entry.getKey().toUpperCase());
                     if (matcherInline.find()) {
                         attributeScriptCache.put(claim.getUri(), new GroovyShellScript(matcherInline.group(1)));
                     } else if (matcherFile.find()) {

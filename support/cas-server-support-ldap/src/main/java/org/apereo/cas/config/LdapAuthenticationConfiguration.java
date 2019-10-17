@@ -118,8 +118,8 @@ public class LdapAuthenticationConfiguration {
                     l.getOrder(), authenticator, strategy);
                 handler.setCollectDnAttribute(l.isCollectDnAttribute());
 
-                val additionalAttributes = l.getAdditionalAttributes();
                 if (StringUtils.isNotBlank(l.getPrincipalAttributeId())) {
+                    val additionalAttributes = l.getAdditionalAttributes();
                     additionalAttributes.add(l.getPrincipalAttributeId());
                 }
                 if (StringUtils.isNotBlank(l.getPrincipalDnAttributeName())) {

@@ -4,6 +4,8 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.services.DefaultRegisteredServiceProperty;
+import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
@@ -16,15 +18,19 @@ import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
 import org.jose4j.jws.AlgorithmIdentifiers;
+import org.junit.jupiter.api.RepeatedTest;
+import org.junit.jupiter.api.RepetitionInfo;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.core.context.Pac4jConstants;
 import org.pac4j.core.profile.CommonProfile;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.test.context.TestPropertySource;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -41,6 +47,7 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @Tag("OIDC")
+@TestPropertySource(properties = "cas.authn.oauth.accessToken.crypto.encryption-enabled=false")
 public class OidcIdTokenGeneratorServiceTests extends AbstractOidcTests {
 
     private static final String OIDC_CLAIM_EMAIL = "email";
@@ -136,8 +143,8 @@ public class OidcIdTokenGeneratorServiceTests extends AbstractOidcTests {
         });
     }
 
-    @Test
-    public void verifyAccessTokenAsJwt() throws Exception {
+    @RepeatedTest(2)
+    public void verifyAccessTokenAsJwt(final RepetitionInfo repetitionInfo) throws Exception {
         val request = new MockHttpServletRequest();
         val profile = new CommonProfile();
         profile.setClientName("OIDC");
@@ -157,6 +164,14 @@ public class OidcIdTokenGeneratorServiceTests extends AbstractOidcTests {
         val registeredService = getOidcRegisteredService(accessToken.getClientId());
         registeredService.setJwtAccessToken(true);
         registeredService.setIdTokenSigningAlg(AlgorithmIdentifiers.RSA_USING_SHA256);
+        
+        registeredService.setProperties(Map.of(
+            RegisteredServiceProperty.RegisteredServiceProperties.ACCESS_TOKEN_AS_JWT_ENCRYPTION_ENABLED.getPropertyName(),
+            new DefaultRegisteredServiceProperty("false"),
+            RegisteredServiceProperty.RegisteredServiceProperties.ACCESS_TOKEN_AS_JWT_SIGNING_ENABLED.getPropertyName(),
+            new DefaultRegisteredServiceProperty(repetitionInfo.getCurrentRepetition() % 2 == 0 ? "false" : "true")
+        ));
+        
         this.servicesManager.save(registeredService);
         val idToken = oidcIdTokenGenerator.generate(request, response,
             accessToken, 30, OAuth20ResponseTypes.CODE, registeredService);

@@ -80,7 +80,6 @@ public class AccepttoMultifactorAuthenticationHandler extends AbstractPreAndPost
                         val results = MAPPER.readValue(response.getEntity().getContent(), Map.class);
                         LOGGER.debug("Received results as [{}]", results);
 
-                        val deviceId = results.get("device_id").toString();
                         val channelStatus = results.get("status").toString();
 
                         if ("expired".equalsIgnoreCase(channelStatus)) {
@@ -91,6 +90,7 @@ public class AccepttoMultifactorAuthenticationHandler extends AbstractPreAndPost
                         }
 
                         if ("approved".equalsIgnoreCase(channelStatus)) {
+                            val deviceId = results.get("device_id").toString();
                             val attr = CollectionUtils.<String, List<Object>>wrap(
                                 "accepttoChannel", CollectionUtils.wrapList(tokenCredential.getId()),
                                 "accepttoDeviceId", CollectionUtils.wrapList(deviceId),

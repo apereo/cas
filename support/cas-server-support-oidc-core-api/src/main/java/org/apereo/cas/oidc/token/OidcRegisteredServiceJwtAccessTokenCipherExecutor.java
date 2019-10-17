@@ -47,6 +47,9 @@ public class OidcRegisteredServiceJwtAccessTokenCipherExecutor extends OAuth20Re
 
     @Override
     public Optional<String> getSigningKey(final RegisteredService registeredService) {
+        if (!isSigningEnabledForRegisteredService(registeredService)) {
+            return Optional.empty();
+        }
         val result = super.getSigningKey(registeredService);
         if (result.isPresent()) {
             return result;
@@ -61,6 +64,9 @@ public class OidcRegisteredServiceJwtAccessTokenCipherExecutor extends OAuth20Re
 
     @Override
     public Optional<String> getEncryptionKey(final RegisteredService registeredService) {
+        if (!isEncryptionEnabledForRegisteredService(registeredService)) {
+            return Optional.empty();
+        }
         val svc = (OAuthRegisteredService) registeredService;
 
         val result = super.getEncryptionKey(registeredService);

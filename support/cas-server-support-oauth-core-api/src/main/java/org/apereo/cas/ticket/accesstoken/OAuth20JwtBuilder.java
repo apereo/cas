@@ -9,8 +9,6 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.Serializable;
-
 /**
  * This is {@link OAuth20JwtBuilder}.
  *
@@ -20,7 +18,7 @@ import java.io.Serializable;
 @Slf4j
 public class OAuth20JwtBuilder extends JwtBuilder {
     public OAuth20JwtBuilder(final String casSeverPrefix,
-                             final CipherExecutor<Serializable, String> defaultTokenCipherExecutor,
+                             final CipherExecutor defaultTokenCipherExecutor,
                              final ServicesManager servicesManager,
                              final RegisteredServiceCipherExecutor registeredServiceCipherExecutor) {
         super(casSeverPrefix, defaultTokenCipherExecutor, servicesManager, registeredServiceCipherExecutor);

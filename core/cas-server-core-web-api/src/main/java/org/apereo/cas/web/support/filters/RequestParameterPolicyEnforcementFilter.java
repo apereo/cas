@@ -191,7 +191,7 @@ public class RequestParameterPolicyEnforcementFilter extends AbstractSecurityFil
             logException(new IllegalArgumentException('[' + initParamValue + "] had no tokens but should have had at least one token."));
         }
 
-        if (1 == tokens.size() && "*".equals(tokens.get(0)) && allowWildcard) {
+        if (allowWildcard && 1 == tokens.size() && "*".equals(tokens.get(0))) {
             return new HashSet<>();
         }
         val parameterNames = new HashSet<String>();

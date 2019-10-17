@@ -65,7 +65,9 @@ public class JwtBuilder {
         LOGGER.debug("Generated JWT [{}]", JsonValue.readJSON(jwtJson).toString(Stringify.FORMATTED));
 
         LOGGER.trace("Locating service [{}] in service registry", serviceAudience);
-        val registeredService = locateRegisteredService(serviceAudience);
+        val registeredService = payload.getRegisteredService() == null
+            ? locateRegisteredService(serviceAudience)
+            : payload.getRegisteredService();
         RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
 
         LOGGER.trace("Locating service specific signing and encryption keys for [{}] in service registry", serviceAudience);
@@ -107,6 +109,7 @@ public class JwtBuilder {
         private final Date issueDate;
         private final String subject;
         private final Date validUntilDate;
+        private final RegisteredService registeredService;
 
         @Builder.Default
         private final Map<String, List<Object>> attributes = new LinkedHashMap<>();
