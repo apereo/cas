@@ -10,13 +10,13 @@ import org.springframework.test.context.TestPropertySource;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link OAuthRefreshTokenExpirationPolicyTests}.
+ * This is {@link OAuth20RefreshTokenExpirationPolicyTests}.
  *
  * @since 5.3.0
  */
 @TestPropertySource(properties = "cas.logout.removeDescendantTickets=true")
 @Tag("OAuth")
-public class OAuthRefreshTokenExpirationPolicyTests extends BaseOAuth20ExpirationPolicyTests {
+public class OAuth20RefreshTokenExpirationPolicyTests extends BaseOAuth20ExpirationPolicyTests {
     @Test
     public void verifyRefreshTokenExpiryWhenTgtIsExpired() {
         val tgt = newTicketGrantingTicket();

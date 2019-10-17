@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.principal.Service;
 
 import lombok.val;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -34,6 +35,15 @@ public interface ServicesManager {
      * @return newly persisted RegisteredService instance
      */
     RegisteredService save(RegisteredService registeredService, boolean publishEvent);
+
+    /**
+     * Save collection of services.
+     *
+     * @param services the services
+     */
+    default void save(final RegisteredService...services) {
+        Arrays.stream(services).forEach(s -> save(s));
+    }
 
     /**
      * Delete all entries in the underlying storage service.

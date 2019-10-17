@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.authenticator;
 
+import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoder;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.token.JwtBuilder;
@@ -27,8 +28,11 @@ public class OAuth20AccessTokenAuthenticator implements Authenticator<TokenCrede
     private final TicketRegistry ticketRegistry;
     private final JwtBuilder accessTokenJwtBuilder;
 
-    private static String extractAccessTokenFrom(final TokenCredentials tokenCredentials) {
-        return tokenCredentials.getToken();
+    private String extractAccessTokenFrom(final TokenCredentials tokenCredentials) {
+        return OAuth20JwtAccessTokenEncoder.builder()
+            .accessTokenJwtBuilder(accessTokenJwtBuilder)
+            .build()
+            .decode(tokenCredentials.getToken());
     }
 
     @SneakyThrows

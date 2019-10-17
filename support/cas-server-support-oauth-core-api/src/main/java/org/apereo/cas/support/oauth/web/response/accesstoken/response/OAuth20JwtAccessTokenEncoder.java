@@ -12,9 +12,10 @@ import com.nimbusds.jwt.JWTParser;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
-import java.util.Objects;
+import java.text.ParseException;
 import java.util.Optional;
 
 /**
@@ -25,6 +26,7 @@ import java.util.Optional;
  */
 @Builder
 @Getter
+@Slf4j
 public class OAuth20JwtAccessTokenEncoder {
     private final JwtBuilder accessTokenJwtBuilder;
     private final OAuth20AccessToken accessToken;
@@ -54,16 +56,21 @@ public class OAuth20JwtAccessTokenEncoder {
      */
     @SneakyThrows
     public String decode(final String tokenId) {
-        var oAuthRegisteredService = (OAuthRegisteredService) this.registeredService;
-        if (oAuthRegisteredService == null) {
+        try {
             val header = JWTParser.parse(tokenId).getHeader();
-            val serviceIdentifier = Long.parseLong(Objects.requireNonNull(header.getCustomParam(
-                RegisteredServiceCipherExecutor.CUSTOM_HEADER_REGISTERED_SERVICE_ID)).toString());
-            oAuthRegisteredService = accessTokenJwtBuilder.getServicesManager().findServiceBy(serviceIdentifier, OAuthRegisteredService.class);
-        }
-        if (oAuthRegisteredService != null && oAuthRegisteredService.isJwtAccessToken()) {
-            val claims = accessTokenJwtBuilder.unpack(Optional.of(oAuthRegisteredService), tokenId);
+            var oAuthRegisteredService = (OAuthRegisteredService) this.registeredService;
+            if (oAuthRegisteredService == null) {
+                val serviceId = header.getCustomParam(RegisteredServiceCipherExecutor.CUSTOM_HEADER_REGISTERED_SERVICE_ID);
+                if (serviceId != null) {
+                    val serviceIdentifier = Long.parseLong(serviceId.toString());
+                    oAuthRegisteredService = accessTokenJwtBuilder.getServicesManager()
+                        .findServiceBy(serviceIdentifier, OAuthRegisteredService.class);
+                }
+            }
+            val claims = accessTokenJwtBuilder.unpack(Optional.ofNullable(oAuthRegisteredService), tokenId);
             return claims.getJWTID();
+        } catch (final ParseException e) {
+            LOGGER.trace(e.getMessage(), e);
         }
         return tokenId;
     }

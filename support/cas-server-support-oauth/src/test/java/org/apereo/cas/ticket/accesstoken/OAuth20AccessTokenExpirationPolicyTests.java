@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @TestPropertySource(properties = "cas.logout.removeDescendantTickets=true")
 @Tag("OAuth")
-public class OAuthAccessTokenExpirationPolicyTests extends BaseOAuth20ExpirationPolicyTests {
+public class OAuth20AccessTokenExpirationPolicyTests extends BaseOAuth20ExpirationPolicyTests {
     @Test
     public void verifyAccessTokenExpiryWhenTgtIsExpired() {
         val tgt = newTicketGrantingTicket();
