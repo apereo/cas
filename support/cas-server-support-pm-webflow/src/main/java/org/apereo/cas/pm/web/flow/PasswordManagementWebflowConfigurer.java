@@ -66,8 +66,7 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
     }
 
     private void createAccountStatusViewStates(final Flow flow) {
-        val initialAction = getState(flow, CasWebflowConstants.STATE_ID_INITIAL_AUTHN_REQUEST_VALIDATION_CHECK, ActionState.class);
-        initialAction.getEntryActionList().add(requestContext -> {
+        flow.getStartActionList().add(requestContext -> {
             WebUtils.putPasswordManagementEnabled(requestContext, casProperties.getAuthn().getPm().isEnabled());
             return null;
         });
