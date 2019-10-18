@@ -42,7 +42,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 3.5.2
  */
 @Tag("OAuth")
-public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
+public class OAuth20UserProfileEndpointControllerTests extends AbstractOAuth20Tests {
 
     @Autowired
     @Qualifier("defaultAccessTokenFactory")

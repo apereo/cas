@@ -1,10 +1,12 @@
 package org.apereo.cas.support.oauth.web.mgmt;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoder;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
 import lombok.extern.slf4j.Slf4j;
@@ -27,15 +29,16 @@ import java.util.stream.Collectors;
 @Endpoint(id = "oauthTokens", enableByDefault = false)
 @Slf4j
 public class OAuth20TokenManagementEndpoint extends BaseCasActuatorEndpoint {
-    /**
-     * The Ticket registry.
-     */
+
     private final TicketRegistry ticketRegistry;
+    private final JwtBuilder accessTokenJwtBuilder;
 
     public OAuth20TokenManagementEndpoint(final CasConfigurationProperties casProperties,
-                                          final TicketRegistry ticketRegistry) {
+                                          final TicketRegistry ticketRegistry,
+                                          final JwtBuilder accessTokenJwtBuilder) {
         super(casProperties);
         this.ticketRegistry = ticketRegistry;
+        this.accessTokenJwtBuilder = accessTokenJwtBuilder;
     }
 
     /**
@@ -54,11 +57,12 @@ public class OAuth20TokenManagementEndpoint extends BaseCasActuatorEndpoint {
     /**
      * Gets access token.
      *
-     * @param ticketId the ticket id
+     * @param token the token id
      * @return the access token
      */
     @ReadOperation
-    public Ticket getToken(@Selector final String ticketId) {
+    public Ticket getToken(@Selector final String token) {
+        val ticketId = extractAccessTokenFrom(token);
         var ticket = (Ticket) ticketRegistry.getTicket(ticketId, OAuth20AccessToken.class);
         if (ticket == null) {
             ticket = ticketRegistry.getTicket(ticketId, OAuth20RefreshToken.class);
@@ -85,5 +89,12 @@ public class OAuth20TokenManagementEndpoint extends BaseCasActuatorEndpoint {
         if (ticket != null) {
             ticketRegistry.deleteTicket(ticket.getId());
         }
+    }
+
+    private String extractAccessTokenFrom(final String token) {
+        return OAuth20JwtAccessTokenEncoder.builder()
+            .accessTokenJwtBuilder(accessTokenJwtBuilder)
+            .build()
+            .decode(token);
     }
 }

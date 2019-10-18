@@ -15,10 +15,11 @@ import org.apereo.cas.support.oauth.validator.token.OAuth20RefreshTokenGrantType
 import org.apereo.cas.support.oauth.web.OAuth20RefreshTokenTests;
 import org.apereo.cas.support.oauth.web.audit.OAuth20AccessTokenGrantRequestAuditResourceResolverTests;
 import org.apereo.cas.support.oauth.web.audit.OAuth20UserProfileDataAuditResourceResolverTests;
-import org.apereo.cas.support.oauth.web.endpoints.OAuth20AccessTokenControllerNoGrantTypeTests;
-import org.apereo.cas.support.oauth.web.endpoints.OAuth20AccessTokenControllerTests;
-import org.apereo.cas.support.oauth.web.endpoints.OAuth20AuthorizeControllerTests;
-import org.apereo.cas.support.oauth.web.endpoints.OAuth20ProfileControllerTests;
+import org.apereo.cas.support.oauth.web.endpoints.OAuth20AccessTokenEndpointControllerTests;
+import org.apereo.cas.support.oauth.web.endpoints.OAuth20AuthorizeEndpointControllerTests;
+import org.apereo.cas.support.oauth.web.endpoints.OAuth20IntrospectionEndpointControllerTests;
+import org.apereo.cas.support.oauth.web.endpoints.OAuth20UserProfileEndpointControllerTests;
+import org.apereo.cas.support.oauth.web.mgmt.OAuth20TokenManagementEndpointTests;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20DefaultTokenGeneratorTests;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20DefaultAccessTokenResponseGeneratorTests;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoderTests;
@@ -40,9 +41,8 @@ import org.junit.runner.RunWith;
  * @since 4.0.0
  */
 @SelectClasses({
-    OAuth20AccessTokenControllerTests.class,
-    OAuth20AccessTokenControllerNoGrantTypeTests.class,
-    OAuth20AuthorizeControllerTests.class,
+    OAuth20AccessTokenEndpointControllerTests.class,
+    OAuth20AuthorizeEndpointControllerTests.class,
     OAuth20AccessTokenExpirationPolicyTests.class,
     OAuth20AccessTokenSovereignExpirationPolicyTests.class,
     OAuth20RefreshTokenExpirationPolicyTests.class,
@@ -53,8 +53,10 @@ import org.junit.runner.RunWith;
     OAuth20RefreshTokenGrantTypeTokenRequestValidatorTests.class,
     OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidatorTests.class,
     OAuth20RefreshTokenSovereignExpirationPolicyTests.class,
-    OAuth20ProfileControllerTests.class,
+    OAuth20UserProfileEndpointControllerTests.class,
     OAuth20UtilsTests.class,
+    OAuth20IntrospectionEndpointControllerTests.class,
+    OAuth20TokenManagementEndpointTests.class,
     OAuth20JwtAccessTokenEncoderTests.class,
     OAuth20WebApplicationServiceTests.class,
     OAuth20UsernamePasswordAuthenticatorTests.class,
