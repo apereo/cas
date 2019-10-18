@@ -15,6 +15,7 @@ import lombok.val;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -134,7 +135,8 @@ public class CasPullRequestListener implements PullRequestListener {
         var title = pr.getTitle().toLowerCase();
         Arrays.stream(CasLabels.values()).forEach(l -> {
             if (!pr.isLabeledAs(l)) {
-                if (title.matches('\b' + l.getTitle().toLowerCase() + '\b')) {
+                Pattern titlePattern = Pattern.compile("\\b" + l.getTitle().toLowerCase() + ":*\\b", Pattern.CASE_INSENSITIVE);
+                if (titlePattern.matcher(pr.getTitle()).find()) {
                     log.info("{} will be assigned the label {}", pr, l);
                     repository.labelPullRequestAs(pr, l);
                 } else if (l.getKeywords() != null && l.getKeywords().matcher(title).find()) {

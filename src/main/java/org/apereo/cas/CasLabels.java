@@ -11,6 +11,7 @@ import java.util.regex.Pattern;
 @Getter
 public enum CasLabels {
     LABEL_AWS_CLOUD_DIRECTORY("AWS Cloud Directory"),
+    LABEL_ACCEPTTO_MFA("Acceptto MFA", "acceptto"),
     LABEL_AWS_DYNAMODB("AWS DynamoDb", "dynamodb"),
     LABEL_ACCEPTABLE_USAGE_POLICY("Acceptable Usage Policy", "aup|terms of use"),
     LABEL_ANALYTICS__STATISTICS("Analytics & Statistics", "analytics|statistics|micrometer"),
@@ -44,7 +45,7 @@ public enum CasLabels {
     LABEL_DELEGATED_AUTHENTICATION_WS_FED("Delegated Authentication WS-FED", "adfs"),
     LABEL_DEPENDENCIES_MODULES("Dependencies & Modules", "renovatebot\\(deps\\)|gradle|dependency|bom|maven|dependencies|\\bversion\\b|upgrade|update.+to\\sv.+"),
     LABEL_DIGEST_AUTHENTICATION("Digest Authentication"),
-    LABEL_DOCUMENTATION("Documentation", "readme\\.md|docs|markdown|gh-pages|doc\\s+"),
+    LABEL_DOCUMENTATION("Documentation", "readme\\.md|docs|markdown|gh-pages|doc\\s+|documentations"),
     LABEL_EHCACHE("EhCache", "ehcache"),
     LABEL_ELECTROFENCE_RISK_BASED_AUTHN("Electrofence Risk-based AuthN", "adaptive"),
     LABEL_EMAIL_SMS_NOTIFICATIONS("Email & SMS Notifications", "nexmo|mail|twilio|email|sms"),
@@ -89,7 +90,7 @@ public enum CasLabels {
     LABEL_RADIUS("RADIUS"),
     LABEL_REST_PROTOCOL("REST Protocol & Integration", "rest"),
     LABEL_REDIS("Redis", "redis|sentinel"),
-    LABEL_REFACTORING_CODE_CLEANUP("Refactoring & Code CleanUp", "refactor:*\\s*|NPE|cleanup|CVE|spotbugs|checkstyle|codacy"),
+    LABEL_REFACTORING_CODE_CLEANUP("Refactoring & Code CleanUp", "refactor:*\\s*|NPE|cleanup|CVE|spotbugs|checkstyle|codacy|duplicate code"),
     LABEL_REMEMBER_ME("Remember-Me", "long-term|rememberme"),
     LABEL_SAML_CORE("SAML Core", "saml"),
     LABEL_SAML_MDUI("SAML MDUI", "mdui"),
