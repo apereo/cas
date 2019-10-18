@@ -48,7 +48,10 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.pm.ldap.useSsl=true",
     "cas.authn.pm.ldap.type=AD",
     "cas.authn.pm.ldap.securityQuestionsAttributes.department=company",
-    "cas.authn.pm.ldap.securityQuestionsAttributes.description=physicalDeliveryOfficeName"
+    "cas.authn.pm.ldap.securityQuestionsAttributes.description=physicalDeliveryOfficeName",
+    "cas.authn.pm.ldap.trustStore=file:/tmp/adcacerts.jks",
+    "cas.authn.pm.ldap.trustStoreType=JKS",
+    "cas.authn.pm.ldap.hostnameVerifier=DEFAULT"
 })
 @DirtiesContext
 @EnabledIfContinuousIntegration
