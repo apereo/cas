@@ -14,6 +14,7 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 
 import java.text.ParseException;
 import java.util.Optional;
@@ -57,6 +58,10 @@ public class OAuth20JwtAccessTokenEncoder {
     @SneakyThrows
     public String decode(final String tokenId) {
         try {
+            if (StringUtils.isBlank(tokenId)) {
+                LOGGER.warn("No access token is provided to decode");
+                return null;
+            }
             val header = JWTParser.parse(tokenId).getHeader();
             var oAuthRegisteredService = (OAuthRegisteredService) this.registeredService;
             if (oAuthRegisteredService == null) {

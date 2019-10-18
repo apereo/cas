@@ -226,13 +226,13 @@ public class CasOAuthUmaConfiguration implements WebMvcConfigurer {
 
     @Bean
     public SecurityInterceptor umaRequestingPartyTokenSecurityInterceptor() {
-        val authenticator = new UmaRequestingPartyTokenAuthenticator(ticketRegistry.getObject());
+        val authenticator = new UmaRequestingPartyTokenAuthenticator(ticketRegistry.getObject(), accessTokenJwtBuilder.getObject());
         return getSecurityInterceptor(authenticator, "CAS_UMA_CLIENT_RPT_AUTH");
     }
 
     @Bean
     public SecurityInterceptor umaAuthorizationApiTokenSecurityInterceptor() {
-        val authenticator = new UmaAuthorizationApiTokenAuthenticator(ticketRegistry.getObject());
+        val authenticator = new UmaAuthorizationApiTokenAuthenticator(ticketRegistry.getObject(), accessTokenJwtBuilder.getObject());
         return getSecurityInterceptor(authenticator, "CAS_UMA_CLIENT_AAT_AUTH");
     }
 
@@ -266,6 +266,7 @@ public class CasOAuthUmaConfiguration implements WebMvcConfigurer {
         return UmaConfigurationContext.builder()
             .accessTokenGenerator(oauthTokenGenerator.getObject())
             .casProperties(casProperties)
+            .accessTokenJwtBuilder(accessTokenJwtBuilder.getObject())
             .claimPermissionExaminer(umaResourceSetClaimPermissionExaminer())
             .requestingPartyTokenGenerator(umaRequestingPartyTokenGenerator())
             .servicesManager(servicesManager.getObject())

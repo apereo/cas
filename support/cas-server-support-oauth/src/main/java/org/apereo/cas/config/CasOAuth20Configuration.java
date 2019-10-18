@@ -740,7 +740,7 @@ public class CasOAuth20Configuration {
     @Bean
     @ConditionalOnAvailableEndpoint
     public OAuth20TokenManagementEndpoint oAuth20TokenManagementEndpoint() {
-        return new OAuth20TokenManagementEndpoint(casProperties, ticketRegistry.getObject());
+        return new OAuth20TokenManagementEndpoint(casProperties, ticketRegistry.getObject(), accessTokenJwtBuilder());
     }
 
     @Bean
