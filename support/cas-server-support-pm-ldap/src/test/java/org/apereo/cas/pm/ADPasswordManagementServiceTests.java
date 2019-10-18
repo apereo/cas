@@ -49,6 +49,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.pm.ldap.type=AD",
     "cas.authn.pm.ldap.securityQuestionsAttributes.department=company",
     "cas.authn.pm.ldap.securityQuestionsAttributes.description=physicalDeliveryOfficeName",
+    "cas.authn.pm.ldap.providerClass=org.ldaptive.provider.unboundid.UnboundIDProvider",
     "cas.authn.pm.ldap.trustStore=file:/tmp/adcacerts.jks",
     "cas.authn.pm.ldap.trustStoreType=JKS",
     "cas.authn.pm.ldap.hostnameVerifier=DEFAULT"
@@ -67,6 +68,17 @@ public class ADPasswordManagementServiceTests {
     public static void bootstrap() {
         ClientInfoHolder.setClientInfo(new ClientInfo(new MockHttpServletRequest()));
     }
+
+    @Test
+    public void verifyPasswordChange() {
+        val credential = new UsernamePasswordCredential("changepassword", "P@ssw0rd");
+        val bean = new PasswordChangeRequest();
+        bean.setConfirmedPassword("P@ssw0rdMellon");
+        bean.setPassword("P@ssw0rdMellon");
+        bean.setUsername(credential.getUsername());
+        assertTrue(passwordChangeService.change(credential, bean));
+    }
+
 
     @Test
     public void verifyPasswordReset() {
