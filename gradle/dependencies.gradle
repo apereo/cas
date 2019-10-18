@@ -3538,10 +3538,48 @@ ext.libraries = [
         wss4j                   : [
                 dependencies.create("org.apache.wss4j:wss4j-ws-security-dom:$wss4jVersion") {
                     exclude(group: "org.jvnet.mimepull", module: "mimepull")
+                    exclude(group: "org.opensaml", module: "opensaml-xacml-api")
+                    exclude(group: "org.opensaml", module: "opensaml-xacml-impl")
+                    exclude(group: "org.opensaml", module: "opensaml-security-api")
+                    exclude(group: "org.opensaml", module: "opensaml-security-impl")
+                    exclude(group: "org.opensaml", module: "opensaml-soap-api")
+                    exclude(group: "org.opensaml", module: "opensaml-soap-impl")
+                    exclude(group: "org.opensaml", module: "opensaml-storage-api")
+                    exclude(group: "org.opensaml", module: "opensaml-storage-impl")
+                    exclude(group: "org.opensaml", module: "opensaml-profile-api")
+                    exclude(group: "org.opensaml", module: "opensaml-profile-impl")
+                    exclude(group: "org.opensaml", module: "opensaml-messaging-api")
+                    exclude(group: "org.opensaml", module: "opensaml-messaging-impl")
+                    exclude(group: "org.opensaml", module: "opensaml-saml-api")
+                    exclude(group: "org.opensaml", module: "opensaml-saml-impl")
+                    exclude(group: "org.opensaml", module: "opensaml-xmlsec-api")
+                    exclude(group: "org.opensaml", module: "opensaml-xmlsec-impl")
+                    exclude(group: "org.opensaml", module: "opensaml-xacml-saml-impl")
+                    exclude(group: "org.opensaml", module: "opensaml-xacml-saml-api")
+                    exclude(group: "org.opensaml", module: "opensaml-core")
                     force = true
                 },
                 dependencies.create("org.apache.wss4j:wss4j-ws-security-common:$wss4jVersion") {
                     exclude(group: "org.jvnet.mimepull", module: "mimepull")
+                    exclude(group: "org.opensaml", module: "opensaml-xacml-api")
+                    exclude(group: "org.opensaml", module: "opensaml-xacml-impl")
+                    exclude(group: "org.opensaml", module: "opensaml-security-api")
+                    exclude(group: "org.opensaml", module: "opensaml-security-impl")
+                    exclude(group: "org.opensaml", module: "opensaml-soap-api")
+                    exclude(group: "org.opensaml", module: "opensaml-soap-impl")
+                    exclude(group: "org.opensaml", module: "opensaml-storage-api")
+                    exclude(group: "org.opensaml", module: "opensaml-storage-impl")
+                    exclude(group: "org.opensaml", module: "opensaml-profile-api")
+                    exclude(group: "org.opensaml", module: "opensaml-profile-impl")
+                    exclude(group: "org.opensaml", module: "opensaml-messaging-api")
+                    exclude(group: "org.opensaml", module: "opensaml-messaging-impl")
+                    exclude(group: "org.opensaml", module: "opensaml-saml-api")
+                    exclude(group: "org.opensaml", module: "opensaml-saml-impl")
+                    exclude(group: "org.opensaml", module: "opensaml-xmlsec-api")
+                    exclude(group: "org.opensaml", module: "opensaml-xmlsec-impl")
+                    exclude(group: "org.opensaml", module: "opensaml-xacml-saml-impl")
+                    exclude(group: "org.opensaml", module: "opensaml-xacml-saml-api")
+                    exclude(group: "org.opensaml", module: "opensaml-core")
                     force = true
                 },
                 dependencies.create("wsdl4j:wsdl4j:$wsdl4jVersion") {
