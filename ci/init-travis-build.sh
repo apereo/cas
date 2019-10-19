@@ -36,9 +36,17 @@ echo -e "Setting build environment...\n"
 sudo mkdir -p /etc/cas/config /etc/cas/saml /etc/cas/services
 
 echo -e "Installing Java...\n"
+url="https://github.com/AdoptOpenJDK/openjdk11-upstream-binaries/releases/download/jdk-11.0.5%2B10/OpenJDK11U-jdk_x64_linux_11.0.5_10.tar.gz"
 wget https://github.com/sormuras/bach/raw/master/install-jdk.sh && chmod +x install-jdk.sh
-export JAVA_HOME=$(./install-jdk.sh --emit-java-home -F 11 -c | tail --lines 1) &&
+export JAVA_HOME=$(./install-jdk.sh --emit-java-home --url ${url} -c | tail --lines 1) &&
 echo $JAVA_HOME
+
+echo -e "Installing Groovy...\n"
+groovyVersion=3.0.0-alpha-3
+wget https://dl.bintray.com/groovy/maven/apache-groovy-binary-${groovyVersion}.zip -O ./groovy.zip
+unzip ./groovy.zip -d $PWD/.groovy
+export PATH=$PWD/.groovy/groovy-${groovyVersion}/bin:$PATH
+groovy --version
 
 chmod -R 777 ./ci/*.sh
 
