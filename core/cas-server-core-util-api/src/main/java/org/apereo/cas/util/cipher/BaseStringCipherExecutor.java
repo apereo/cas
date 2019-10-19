@@ -95,8 +95,8 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
                                     final int signingKeyLength,
                                     final int encryptionKeyLength) {
 
-        this.encryptionEnabled = encryptionEnabled || StringUtils.isNotBlank(secretKeyEncryption);
         this.signingEnabled = signingEnabled || StringUtils.isNotBlank(secretKeySigning);
+        this.encryptionEnabled = this.signingEnabled && (encryptionEnabled || StringUtils.isNotBlank(secretKeyEncryption));
         this.signingKeySize = signingKeyLength <= 0 ? CipherExecutor.DEFAULT_STRINGABLE_SIGNING_KEY_SIZE : signingKeyLength;
         this.encryptionKeySize = encryptionKeyLength <= 0 ? CipherExecutor.DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE : encryptionKeyLength;
 

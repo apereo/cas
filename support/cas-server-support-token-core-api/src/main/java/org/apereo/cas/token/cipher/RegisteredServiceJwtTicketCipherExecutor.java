@@ -54,7 +54,7 @@ public class RegisteredServiceJwtTicketCipherExecutor extends JwtTicketCipherExe
 
     @Override
     public boolean supports(final RegisteredService registeredService) {
-        return getSigningKey(registeredService).isPresent() && getEncryptionKey(registeredService).isPresent();
+        return getSigningKey(registeredService).isPresent();
     }
 
     /**
