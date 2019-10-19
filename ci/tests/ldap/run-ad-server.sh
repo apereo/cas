@@ -102,10 +102,19 @@ docker exec samba bash -c "samba-tool user create aham $DEFAULT_TESTUSER_PASSWOR
 docker exec samba bash -c "samba-tool user create expireduser $DEFAULT_TESTUSER_PASSWORD --use-username-as-cn"
 docker exec samba bash -c "samba-tool user create disableduser $DEFAULT_TESTUSER_PASSWORD --use-username-as-cn"
 docker exec samba bash -c "samba-tool user create changepassword $DEFAULT_TESTUSER_PASSWORD --use-username-as-cn --mail-address=changepassword@example.org --telephone-number=1234567890 --department='DepartmentQuestion' --company='CompanyAnswer' --description='DescriptionQuestion' --physical-delivery-office=PhysicalDeliveryOfficeAnswer "
+docker exec samba bash -c "samba-tool user create changepasswordnoreset $DEFAULT_TESTUSER_PASSWORD --use-username-as-cn"
 docker exec samba bash -c "samba-tool user setexpiry --days 0 expireduser"
 docker exec samba bash -c "samba-tool user disable disableduser"
 docker exec samba bash -c "samba-tool user list"
 docker exec samba bash -c "samba-tool group addmembers 'Account Operators' admin"
+
+#Disable password history at the domain level.
+docker exec samba bash -c "samba-tool domain passwordsettings set --history-length=0"
+
+#Disable password min-age at the domain level
+docker exec samba bash -c "samba-tool domain passwordsettings set --min-pwd-age=0"
+
+
 
 # Copying certificate out of the container so it can be put in a Java certificate trust store.
 echo Putting cert in trust store for use by unit test
