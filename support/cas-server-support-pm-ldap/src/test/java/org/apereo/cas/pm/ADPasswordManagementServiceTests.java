@@ -52,6 +52,8 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.pm.ldap.providerClass=org.ldaptive.provider.unboundid.UnboundIDProvider",
     "cas.authn.pm.ldap.trustStore=file:/tmp/adcacerts.jks",
     "cas.authn.pm.ldap.trustStoreType=JKS",
+    "cas.authn.pm.ldap.trustStorePassword=changeit",
+    "cas.authn.pm.ldap.minPoolSize=0",
     "cas.authn.pm.ldap.hostnameVerifier=DEFAULT"
 })
 @DirtiesContext

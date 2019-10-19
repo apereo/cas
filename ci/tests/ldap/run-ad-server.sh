@@ -116,6 +116,7 @@ unset  MSYS_NO_PATHCONV
 if [[ -f ${TMPDIR}/adcacerts.jks ]] ; then
     rm ${TMPDIR}/adcacerts.jks
 fi
+echo Creating truststore: ${TMPDIR}/adcacerts.jks
 keytool -import -noprompt -trustcacerts -file ${ORG}.${DOMAIN}.crt -alias AD_CERT -keystore ${TMPDIR}/adcacerts.jks -storepass changeit
 rm ${ORG}.${DOMAIN}.crt
 
