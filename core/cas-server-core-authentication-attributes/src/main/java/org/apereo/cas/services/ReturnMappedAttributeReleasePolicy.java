@@ -73,6 +73,9 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
 
     @PostLoad
     private void initializeWatchableScriptIfNeeded() {
+        if (this.attributeScriptCache == null) {
+            this.attributeScriptCache = new LinkedHashMap<>();
+        }
         getAllowedAttributes().forEach((attributeName, value) -> {
             val mappedAttributes = CollectionUtils.wrap(value);
             mappedAttributes.forEach(mapped -> {
