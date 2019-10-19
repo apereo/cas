@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.*;
     PasswordManagementConfiguration.class,
     CasCoreAuditConfiguration.class,
     CasCoreUtilConfiguration.class
-}, properties = {
+    }, properties = {
     "cas.authn.pm.reset.sms.attributeName=telephoneNumber",
     "cas.authn.pm.ldap.ldapUrl=ldap://localhost:10636",
     "cas.authn.pm.ldap.bindDn=CN=admin,CN=Users,DC=cas,DC=example,DC=org",
