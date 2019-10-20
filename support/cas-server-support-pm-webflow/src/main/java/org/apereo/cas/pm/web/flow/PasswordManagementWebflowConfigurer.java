@@ -17,7 +17,6 @@ import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.ViewState;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
-import org.springframework.webflow.execution.RequestContext;
 
 /**
  * This is {@link PasswordManagementWebflowConfigurer}.
