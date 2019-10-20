@@ -101,9 +101,11 @@ docker exec samba bash -c "samba-tool user create aburr $DEFAULT_TESTUSER_PASSWO
 docker exec samba bash -c "samba-tool user create aham $DEFAULT_TESTUSER_PASSWORD --given-name=Alexander --surname=Hamilton"
 docker exec samba bash -c "samba-tool user create expireduser $DEFAULT_TESTUSER_PASSWORD --use-username-as-cn"
 docker exec samba bash -c "samba-tool user create disableduser $DEFAULT_TESTUSER_PASSWORD --use-username-as-cn"
+docker exec samba bash -c "samba-tool user create changepassword $DEFAULT_TESTUSER_PASSWORD --use-username-as-cn --mail-address=changepassword@example.org --telephone-number=1234567890 --department='DepartmentQuestion' --company='CompanyAnswer' --description='DescriptionQuestion' --physical-delivery-office=PhysicalDeliveryOfficeAnswer "
 docker exec samba bash -c "samba-tool user setexpiry --days 0 expireduser"
 docker exec samba bash -c "samba-tool user disable disableduser"
 docker exec samba bash -c "samba-tool user list"
+docker exec samba bash -c "samba-tool group addmembers 'Account Operators' admin"
 
 # Copying certificate out of the container so it can be put in a Java certificate trust store.
 echo Putting cert in trust store for use by unit test
@@ -114,6 +116,7 @@ unset  MSYS_NO_PATHCONV
 if [[ -f ${TMPDIR}/adcacerts.jks ]] ; then
     rm ${TMPDIR}/adcacerts.jks
 fi
+echo Creating truststore: ${TMPDIR}/adcacerts.jks
 keytool -import -noprompt -trustcacerts -file ${ORG}.${DOMAIN}.crt -alias AD_CERT -keystore ${TMPDIR}/adcacerts.jks -storepass changeit
 rm ${ORG}.${DOMAIN}.crt
 
