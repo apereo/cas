@@ -51,8 +51,7 @@ else
     waitloop="while sleep 9m; do echo -e '\n=====[ Gradle build is still running ]====='; done &"
     eval $waitloop
     waitRetVal=$?
-
-
+    
     eval $tasks
     retVal=$?
 
