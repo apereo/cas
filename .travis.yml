@@ -99,6 +99,10 @@ jobs:
       name: "Validate Style via Checkstyle"
     - stage: validate
       if: NOT (head_branch =~ env(DEPENDENCY_BOT_BRANCH) and type = pull_request)
+      script: ./ci/analyze-codebase.sh
+      name: "Validate Codebase via Groovy, etc"
+    - stage: validate
+      if: NOT (head_branch =~ env(DEPENDENCY_BOT_BRANCH) and type = pull_request)
       script: ./ci/build-javadocs.sh
       name: "Validate Javadocs"
     - stage: validate
