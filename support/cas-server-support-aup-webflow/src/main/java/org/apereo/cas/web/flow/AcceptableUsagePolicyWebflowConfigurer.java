@@ -23,6 +23,7 @@ public class AcceptableUsagePolicyWebflowConfigurer extends AbstractCasWebflowCo
 
     private static final String AUP_ACCEPTED_ACTION = "aupAcceptedAction";
     private static final String AUP_VERIFY_ACTION = "acceptableUsagePolicyVerifyAction";
+    private static final String AUP_VERIFY_SERVICE_ACTION = "acceptableUsagePolicyVerifyServiceAction";
 
     private static final String STATE_ID_AUP_CHECK = "acceptableUsagePolicyCheck";
 
@@ -103,5 +104,9 @@ public class AcceptableUsagePolicyWebflowConfigurer extends AbstractCasWebflowCo
         val ticketCreateState = getState(flow, CasWebflowConstants.STATE_ID_CREATE_TICKET_GRANTING_TICKET, ActionState.class);
         createEvaluateActionForExistingActionState(flow, ticketCreateState.getId(), AUP_VERIFY_ACTION);
         createTransitionForState(ticketCreateState, CasWebflowConstants.TRANSITION_ID_AUP_MUST_ACCEPT, VIEW_ID_ACCEPTABLE_USAGE_POLICY_VIEW);
+        
+        val genServiceTicketState = getState(flow, CasWebflowConstants.STATE_ID_GENERATE_SERVICE_TICKET, ActionState.class);
+        createEvaluateActionForExistingActionState(flow, genServiceTicketState.getId(), AUP_VERIFY_SERVICE_ACTION);
+        createTransitionForState(genServiceTicketState, CasWebflowConstants.TRANSITION_ID_AUP_MUST_ACCEPT, VIEW_ID_ACCEPTABLE_USAGE_POLICY_VIEW);
     }
 }

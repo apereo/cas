@@ -20,10 +20,10 @@ import org.springframework.webflow.execution.RequestContext;
  * Webflow action to receive and record the AUP response.
  *
  * @author Misagh Moayyed
- * @since 4.1
+ * @since 6.1
  */
 @RequiredArgsConstructor
-public class AcceptableUsagePolicyVerifyAction extends AbstractAction {
+public class AcceptableUsagePolicyVerifyServiceAction extends AbstractAction {
     private final AcceptableUsagePolicyRepository repository;
     private final AuditableExecution registeredServiceAccessStrategyEnforcer;
 
@@ -38,16 +38,12 @@ public class AcceptableUsagePolicyVerifyAction extends AbstractAction {
     private Event verify(final RequestContext context, final Credential credential,
                          final MessageContext messageContext) {
 
-        val res = repository.verify(context, credential);
-        WebUtils.putPrincipal(context, res.getPrincipal());
-        WebUtils.putAcceptableUsagePolicyStatusIntoFlowScope(context, res);
-
-        val eventFactorySupport = new EventFactorySupport();
         val registeredService = WebUtils.getRegisteredService(context);
-        
+        val authentication = WebUtils.getAuthentication(context);
+        val service = WebUtils.getService(context);
+        val eventFactorySupport = new EventFactorySupport();
+
         if (registeredService != null) {
-            val authentication = WebUtils.getAuthentication(context);
-            val service = WebUtils.getService(context);
             val audit = AuditableContext.builder()
                 .service(service)
                 .authentication(authentication)
@@ -57,16 +53,15 @@ public class AcceptableUsagePolicyVerifyAction extends AbstractAction {
             val accessResult = registeredServiceAccessStrategyEnforcer.execute(audit);
             accessResult.throwExceptionIfNeeded();
 
-            val aupEnabled = RegisteredServiceProperty.RegisteredServiceProperties
-                .ACCEPTABLE_USAGE_POLICY_ENABLED.getPropertyBooleanValue(registeredService);
-            if (!aupEnabled) {
-                return eventFactorySupport.event(this, CasWebflowConstants.TRANSITION_ID_AUP_ACCEPTED);
+            val property = RegisteredServiceProperty.RegisteredServiceProperties.ACCEPTABLE_USAGE_POLICY_ENABLED;
+            if (property.isAssignedTo(registeredService)) {
+                val aupEnabled = property.getPropertyBooleanValue(registeredService);
+                if (aupEnabled && !repository.verify(context, credential).isAccepted()) {
+                    return eventFactorySupport.event(this, CasWebflowConstants.TRANSITION_ID_AUP_MUST_ACCEPT);
+                }
             }
         }
-
-        return res.isAccepted()
-            ? eventFactorySupport.event(this, CasWebflowConstants.TRANSITION_ID_AUP_ACCEPTED)
-            : eventFactorySupport.event(this, CasWebflowConstants.TRANSITION_ID_AUP_MUST_ACCEPT);
+        return null;
     }
 
     @Audit(action = "AUP_VERIFY",
