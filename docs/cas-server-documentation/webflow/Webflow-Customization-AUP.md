@@ -34,6 +34,26 @@ such as cookies or browser storage, etc.</p></div>
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#acceptable-usage-policy).
 
+## AUP Per Service 
+
+Acceptable usage policy can be disabled and skipped on a per-service basis:
+
+```json
+{
+  "@class": "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId": "https://app.example.org",
+  "name": "Example",
+  "id": 1,
+  "properties" : {
+    "@class" : "java.util.HashMap",
+    "acceptableUsagePolicyEnabled" : {
+      "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
+      "values" : [ "java.util.HashSet", [ "false" ] ]
+    }
+  }
+}
+```                                             
+
 ## Storage Mechanism
 
 Usage policy user decisions are stored and remembered via the following ways. 
