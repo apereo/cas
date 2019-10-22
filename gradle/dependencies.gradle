@@ -37,7 +37,7 @@ ext.libraries = [
                     force = true
                 }
         ],
-        javamelody                 : [
+        javamelody              : [
                 dependencies.create("net.bull.javamelody:javamelody-spring-boot-starter:$javaMelodyVersion") {
                     exclude(group: "ch.qos.logback", module: "logback-core")
                     exclude(group: "ch.qos.logback", module: "logback-classic")
@@ -2199,31 +2199,7 @@ ext.libraries = [
                     force = true
                 }
         ],
-        pac4j                   : [
-                dependencies.create("org.pac4j:pac4j-oidc:$pac4jVersion") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "org.slf4j", module: "jcl-over-slf4j")
-                    exclude(group: "com.nimbusds", module: "nimbus-jose-jwt")
-                    exclude(group: "net.minidev", module: "json-smart")
-                    exclude(group: "com.nimbusds", module: "oauth2-oidc-sdk")
-                    exclude(group: "commons-collections", module: "commons-collections")
-                    exclude(group: "commons-codec", module: "commons-codec")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
-                    force = true
-                },
-                dependencies.create("org.pac4j:pac4j-oauth:$pac4jVersion") {
-                    exclude(group: "org.apache.commons", module: "commons-lang3")
-                    exclude(group: "commons-collections", module: "commons-collections")
-                    exclude(group: "org.apache.commons", module: "commons-codec")
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "org.slf4j", module: "jcl-over-slf4j")
-                    exclude(group: "joda-time", module: "joda-time")
-                    exclude(group: "com.nimbusds", module: "oauth2-oidc-sdk")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
-                    force = true
-                },
+        pac4jsaml               : [
                 dependencies.create("org.pac4j:pac4j-saml:$pac4jVersion") {
                     exclude(group: "org.apache.santuario", module: "xmlsec")
                     exclude(group: "org.apache.httpcomponents", module: "httpcore")
@@ -2287,6 +2263,32 @@ ext.libraries = [
                     exclude(group: "xalan", module: "serializer")
                     exclude(group: "org.springframework", module: "spring-expression")
                     exclude(group: "org.apache.velocity", module: "velocity")
+                    force = true
+                }
+        ],
+        pac4j                   : [
+                dependencies.create("org.pac4j:pac4j-oidc:$pac4jVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.slf4j", module: "jcl-over-slf4j")
+                    exclude(group: "com.nimbusds", module: "nimbus-jose-jwt")
+                    exclude(group: "net.minidev", module: "json-smart")
+                    exclude(group: "com.nimbusds", module: "oauth2-oidc-sdk")
+                    exclude(group: "commons-collections", module: "commons-collections")
+                    exclude(group: "commons-codec", module: "commons-codec")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
+                    force = true
+                },
+                dependencies.create("org.pac4j:pac4j-oauth:$pac4jVersion") {
+                    exclude(group: "org.apache.commons", module: "commons-lang3")
+                    exclude(group: "commons-collections", module: "commons-collections")
+                    exclude(group: "org.apache.commons", module: "commons-codec")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.slf4j", module: "jcl-over-slf4j")
+                    exclude(group: "joda-time", module: "joda-time")
+                    exclude(group: "com.nimbusds", module: "oauth2-oidc-sdk")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
                     force = true
                 }
         ],

@@ -24,6 +24,9 @@ dependencies {
     implementation libraries.shibidp
     implementation libraries.shibidpjavasupport
     implementation libraries.opensaml
+    implementation libraries.pac4jcore
+    implementation libraries.pac4jsaml
+    implementation libraries.nimbus
 
     runtimeOnly libraries.groovy
 
