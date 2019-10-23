@@ -64,7 +64,7 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
             }
             LOGGER.error("Could not locate an LDAP entry for [{}] and base DN [{}]", filter.format(), ldap.getBaseDn());
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGGER.error("Error finding username: {}", e.getMessage(), e);
         }
         return null;
     }
@@ -103,7 +103,7 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
             }
             LOGGER.error("Could not locate an LDAP entry for [{}] and base DN [{}]", filter.format(), ldap.getBaseDn());
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGGER.error("Error finding email: {}", e.getMessage(), e);
         }
         return null;
     }
@@ -138,7 +138,7 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
             }
             LOGGER.error("Could not locate an LDAP entry for [{}] and base DN [{}]", filter.format(), ldap.getBaseDn());
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGGER.error("Error finding phone: {}", e.getMessage(), e);
         }
         return null;
     }
@@ -148,12 +148,10 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
         try {
             val ldap = properties.getLdap();
             val c = (UsernamePasswordCredential) credential;
-
             val filter = LdapUtils.newLdaptiveSearchFilter(ldap.getSearchFilter(),
                 LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
                 CollectionUtils.wrap(c.getId()));
             LOGGER.debug("Constructed LDAP filter [{}] to update account password", filter);
-
 
             val response = LdapUtils.executeSearchOperation(this.ldapConnectionFactory, ldap.getBaseDn(), filter, ldap.getPageSize());
             LOGGER.debug("LDAP response to update password is [{}]", response);
@@ -171,7 +169,7 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
                 LOGGER.error("Could not locate an LDAP entry for [{}] and base DN [{}]", filter.format(), ldap.getBaseDn());
             }
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGGER.error("Error changing password: {}", e.getMessage(), e);
         }
         return false;
     }
@@ -211,7 +209,7 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
                 LOGGER.debug("LDAP response did not contain a result for security questions");
             }
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGGER.error("Error getting security questions: {}", e.getMessage(), e);
         }
         return set;
     }
