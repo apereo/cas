@@ -816,13 +816,13 @@ public class LdapUtils {
                 LOGGER.trace("Creating LDAP SSL configuration with truststore [{}]", l.getTrustStore());
                 cfg.setTrustStore(l.getTrustStore());
                 cfg.setTrustStoreType(l.getTrustStoreType());
-                cfg.setTrustStorePassword(getStorePassword(l.getTrustStoreType(), l.getTrustStorePassword()));
+                cfg.setTrustStorePassword(l.getTrustStorePassword());
             }
             if (l.getKeystore() != null) {
                 LOGGER.trace("Creating LDAP SSL configuration via keystore [{}]", l.getKeystore());
                 cfg.setKeyStore(l.getKeystore());
                 cfg.setKeyStoreType(l.getKeystoreType());
-                cfg.setKeyStorePassword(getStorePassword(l.getKeystoreType(), l.getKeystorePassword()));
+                cfg.setKeyStorePassword(l.getKeystorePassword());
             }
             cc.setSslConfig(new SslConfig(cfg));
         } else {
@@ -886,19 +886,6 @@ public class LdapUtils {
         val sc = new GssApiConfig();
         sc.setRealm(l.getSaslRealm());
         return sc;
-    }
-
-    /**
-     * Get default password depending on pki store type.
-     *
-     * @param storeType JKS or PKCS12
-     * @return storePassword password to access the pki material store
-     */
-    private static String getStorePassword(final String storeType, final String storePassword) {
-        if (StringUtils.isBlank(storePassword) && "JKS".equalsIgnoreCase(storeType)) {
-            return "changeit";
-        }
-        return storePassword;
     }
 
     /**
