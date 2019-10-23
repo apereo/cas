@@ -10,6 +10,7 @@ import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.SneakyThrows;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.BeforeAll;
@@ -72,8 +73,8 @@ public class ADPasswordManagementServiceTests {
     }
 
     @Test
-    public void verifyPasswordChange() {
-        val credential = new UsernamePasswordCredential("changepassword", "P@ssw0rd");
+    public void verifyPasswordReset() {
+        val credential = new UsernamePasswordCredential("changepassword", StringUtils.EMPTY);
         val bean = new PasswordChangeRequest();
         bean.setConfirmedPassword("P@ssw0rdMellon");
         bean.setPassword("P@ssw0rdMellon");
@@ -81,13 +82,12 @@ public class ADPasswordManagementServiceTests {
         assertTrue(passwordChangeService.change(credential, bean));
     }
 
-
     @Test
-    public void verifyPasswordReset() {
-        val credential = new UsernamePasswordCredential("changepassword", "P@ssw0rd");
+    public void verifyPasswordChange() {
+        val credential = new UsernamePasswordCredential("changepasswordnoreset", "P@ssw0rd");
         val bean = new PasswordChangeRequest();
-        bean.setConfirmedPassword("P@ssw0rdMellon");
-        bean.setPassword("P@ssw0rdMellon");
+        bean.setConfirmedPassword("P@ssw0rd2");
+        bean.setPassword("P@ssw0rd2");
         bean.setUsername(credential.getUsername());
         assertTrue(passwordChangeService.change(credential, bean));
     }

@@ -324,6 +324,12 @@ public class LdapUtils {
      * @param newPassword       the new password
      * @param type              the type
      * @return true /false
+     *
+     * AD NOTE: Resetting passwords requires binding to AD as user with privileges to reset other users passwords
+     * and it does not validate old password or respect directory policies such as history or minimum password age.
+     * Changing a password with the old password does respect directory policies and requires no account operator
+     * privileges on the bind user. Pass in blank old password if reset is in order (e.g. forgot password) vs.
+     * letting user change their own (e.g. expiring) password.
      */
     public static boolean executePasswordModifyOperation(final String currentDn,
                                                          final ConnectionFactory connectionFactory,
@@ -334,13 +340,23 @@ public class LdapUtils {
             if (!modifyConnection.getConnectionConfig().getUseSSL()
                 && !modifyConnection.getConnectionConfig().getUseStartTLS()) {
                 LOGGER.warn("Executing password modification op under a non-secure LDAP connection; "
-                    + "To modify password attributes, the connection to the LDAP server SHOULD be secured and/or encrypted.");
+                    + "To modify password attributes, the connection to the LDAP server {} be secured and/or encrypted.",
+                    type == AbstractLdapProperties.LdapType.AD ? "MUST" : "SHOULD");
             }
             if (type == AbstractLdapProperties.LdapType.AD) {
-                LOGGER.debug("Executing password modification op for active directory based on "
-                    + "[https://support.microsoft.com/en-us/kb/269190]");
+                LOGGER.debug("Executing password change op for active directory based on "
+                    + "[https://support.microsoft.com/en-us/kb/269190]"
+                    + "change type: [{}]", StringUtils.isBlank(oldPassword) ? "reset" : "change");
                 val operation = new ModifyOperation(modifyConnection);
-                val response = operation.execute(new ModifyRequest(currentDn, new AttributeModification(AttributeModificationType.REPLACE, new UnicodePwdAttribute(newPassword))));
+                val response = StringUtils.isBlank(oldPassword)
+                    ?
+                    operation.execute(new ModifyRequest(currentDn,
+                        new AttributeModification(AttributeModificationType.REPLACE, new UnicodePwdAttribute(newPassword))))
+                    :
+                    operation.execute(
+                        new ModifyRequest(currentDn,
+                            new AttributeModification(AttributeModificationType.REMOVE, new UnicodePwdAttribute(oldPassword)),
+                            new AttributeModification(AttributeModificationType.ADD, new UnicodePwdAttribute(newPassword))));
                 LOGGER.debug("Result code [{}], message: [{}]", response.getResult(), response.getMessage());
                 return response.getResultCode() == ResultCode.SUCCESS;
             }
@@ -805,8 +821,8 @@ public class LdapUtils {
             if (l.getKeystore() != null) {
                 LOGGER.trace("Creating LDAP SSL configuration via keystore [{}]", l.getKeystore());
                 cfg.setKeyStore(l.getKeystore());
-                cfg.setKeyStorePassword(l.getKeystorePassword());
                 cfg.setKeyStoreType(l.getKeystoreType());
+                cfg.setKeyStorePassword(l.getKeystorePassword());
             }
             cc.setSslConfig(new SslConfig(cfg));
         } else {
