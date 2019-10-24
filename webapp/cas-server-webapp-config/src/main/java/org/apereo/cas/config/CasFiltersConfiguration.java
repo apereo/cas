@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.core.web.security.HttpRequestProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.web.support.RegisteredServiceResponseHeadersEnforcementFilter;
 import org.apereo.cas.util.CollectionUtils;
@@ -134,14 +135,20 @@ public class CasFiltersConfiguration {
     @RefreshScope
     @Bean
     public FilterRegistrationBean requestParameterSecurityFilter() {
+        val httpWebRequest = casProperties.getHttpWebRequest();
         val initParams = new HashMap<String, String>();
         initParams.put(RequestParameterPolicyEnforcementFilter.PARAMETERS_TO_CHECK,
-            casProperties.getHttpWebRequest().getParamsToCheck());
+            httpWebRequest.getParamsToCheck());
         initParams.put(RequestParameterPolicyEnforcementFilter.CHARACTERS_TO_FORBID, "none");
         initParams.put(RequestParameterPolicyEnforcementFilter.ALLOW_MULTI_VALUED_PARAMETERS,
-            BooleanUtils.toStringTrueFalse(casProperties.getHttpWebRequest().isAllowMultiValueParameters()));
+            BooleanUtils.toStringTrueFalse(httpWebRequest.isAllowMultiValueParameters()));
         initParams.put(RequestParameterPolicyEnforcementFilter.ONLY_POST_PARAMETERS,
-            casProperties.getHttpWebRequest().getOnlyPostParams());
+            httpWebRequest.getOnlyPostParams());
+
+        if (StringUtils.isNotBlank(httpWebRequest.getPatternToBlock())) {
+            initParams.put(RequestParameterPolicyEnforcementFilter.PATTERN_TO_BLOCK,
+                httpWebRequest.getPatternToBlock());
+        }
 
         val bean = new FilterRegistrationBean<RequestParameterPolicyEnforcementFilter>();
         bean.setFilter(new RequestParameterPolicyEnforcementFilter());
