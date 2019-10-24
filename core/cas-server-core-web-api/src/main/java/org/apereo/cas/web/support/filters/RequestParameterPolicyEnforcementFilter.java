@@ -363,7 +363,9 @@ public class RequestParameterPolicyEnforcementFilter extends AbstractSecurityFil
         val initParamCharactersToForbid = filterConfig.getInitParameter(CHARACTERS_TO_FORBID);
 
         val initParamPatternToBlock = filterConfig.getInitParameter(PATTERN_TO_BLOCK);
-        this.patternToBlock = RegexUtils.createPattern(initParamPatternToBlock);
+        this.patternToBlock = StringUtils.isNotBlank(initParamPatternToBlock)
+            ? RegexUtils.createPattern(initParamPatternToBlock)
+            : null;
 
         this.allowMultiValueParameters = Boolean.parseBoolean(initParamAllowMultiValuedParameters);
         this.parametersToCheck = parseParametersList(initParamParametersToCheck, true);
@@ -410,7 +412,7 @@ public class RequestParameterPolicyEnforcementFilter extends AbstractSecurityFil
     }
 
     private void blockRequestIfNecessary(final HttpServletRequest httpServletRequest) {
-        if (StringUtils.isNotBlank(httpServletRequest.getRequestURI())) {
+        if (patternToBlock != null && StringUtils.isNotBlank(httpServletRequest.getRequestURI())) {
             val uri = UriComponentsBuilder.fromHttpRequest(new ServletServerHttpRequest(httpServletRequest))
                 .build()
                 .toUriString();

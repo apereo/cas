@@ -411,7 +411,7 @@ To see the relevant list of CAS properties, please [review this guide](../config
 
 #### REST UserInfo Repository
 
-The REST repository allows the CAS server to reach to a remote REST endpoint via the configured HTTP method to fetch user accout information.
+The REST repository allows the CAS server to reach to a remote REST endpoint via the configured HTTP method to fetch user account information.
 
 Query data is passed via either `email` or `username` HTTP headers. The response that is returned must be accompanied by a `200`
 status code where the body should contain `Map` representing the user account information. All other responses will lead to a `404` 
