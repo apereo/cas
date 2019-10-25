@@ -7,8 +7,8 @@ import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGenerat
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestDataHolder;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoder;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
-import org.apereo.cas.ticket.accesstoken.AccessToken;
-import org.apereo.cas.ticket.refreshtoken.RefreshToken;
+import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
+import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.EncodingUtils;
 
@@ -38,7 +38,7 @@ import java.util.List;
 @Getter
 public class OAuth20TokenAuthorizationResponseBuilder implements OAuth20AuthorizationResponseBuilder {
     private final OAuth20TokenGenerator accessTokenGenerator;
-    private final ExpirationPolicyBuilder<AccessToken> accessTokenExpirationPolicy;
+    private final ExpirationPolicyBuilder<OAuth20AccessToken> accessTokenExpirationPolicy;
     private final ServicesManager servicesManager;
     private final JwtBuilder accessTokenJwtBuilder;
 
@@ -74,9 +74,9 @@ public class OAuth20TokenAuthorizationResponseBuilder implements OAuth20Authoriz
      */
     protected ModelAndView buildCallbackUrlResponseType(final AccessTokenRequestDataHolder holder,
                                                         final String redirectUri,
-                                                        final AccessToken accessToken,
+                                                        final OAuth20AccessToken accessToken,
                                                         final List<NameValuePair> params,
-                                                        final RefreshToken refreshToken,
+                                                        final OAuth20RefreshToken refreshToken,
                                                         final JEEContext context) throws Exception {
         val attributes = holder.getAuthentication().getAttributes();
         val state = attributes.get(OAuth20Constants.STATE).get(0).toString();

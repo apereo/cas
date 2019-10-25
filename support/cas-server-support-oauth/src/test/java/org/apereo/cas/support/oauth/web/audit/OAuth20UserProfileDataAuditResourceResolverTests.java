@@ -5,7 +5,7 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.views.OAuth20UserProfileViewRenderer;
-import org.apereo.cas.ticket.accesstoken.AccessToken;
+import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
@@ -27,7 +27,7 @@ public class OAuth20UserProfileDataAuditResourceResolverTests {
     @Test
     public void verifyAction() {
         val r = new OAuth20UserProfileDataAuditResourceResolver();
-        val token = mock(AccessToken.class);
+        val token = mock(OAuth20AccessToken.class);
         when(token.getId()).thenReturn("CODE");
         when(token.getService()).thenReturn(RegisteredServiceTestUtils.getService());
 

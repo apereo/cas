@@ -41,6 +41,51 @@ public class JwtBuilder {
     private final RegisteredServiceCipherExecutor registeredServiceCipherExecutor;
 
     /**
+     * Parse jwt.
+     *
+     * @param jwt the jwt
+     * @return the jwt
+     */
+    public static JWTClaimsSet parse(final String jwt) {
+        try {
+            return JWTClaimsSet.parse(jwt);
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            throw new IllegalArgumentException("Unable to parse JWT");
+        }
+    }
+
+    /**
+     * Unpack jwt.
+     *
+     * @param service the service
+     * @param jwtJson the jwt json
+     * @return the string
+     */
+    public JWTClaimsSet unpack(final Optional<RegisteredService> service, final String jwtJson) {
+        service.ifPresent(svc -> {
+            LOGGER.trace("Located service [{}] in service registry for [{}]", svc);
+            RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(svc);
+        });
+
+        if (service.isPresent()) {
+            val registeredService = service.get();
+            LOGGER.trace("Locating service specific signing and encryption keys for [{}] in service registry", registeredService);
+            if (registeredServiceCipherExecutor.supports(registeredService)) {
+                LOGGER.trace("Decoding JWT based on keys provided by service [{}]", registeredService.getServiceId());
+                return parse(registeredServiceCipherExecutor.decode(jwtJson, Optional.of(registeredService)));
+            }
+        }
+
+        if (defaultTokenCipherExecutor.isEnabled()) {
+            LOGGER.trace("Decoding JWT based on default global keys");
+            return parse(defaultTokenCipherExecutor.decode(jwtJson));
+        }
+
+        return parse(jwtJson);
+    }
+
+    /**
      * Build JWT.
      *
      * @param payload the payload
@@ -60,10 +105,11 @@ public class JwtBuilder {
 
         val claimsSet = claims.build();
         val object = claimsSet.toJSONObject();
-
         val jwtJson = object.toJSONString();
-        LOGGER.debug("Generated JWT [{}]", JsonValue.readJSON(jwtJson).toString(Stringify.FORMATTED));
 
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Generated JWT [{}]", JsonValue.readJSON(jwtJson).toString(Stringify.FORMATTED));
+        }
         LOGGER.trace("Locating service [{}] in service registry", serviceAudience);
         val registeredService = payload.getRegisteredService() == null
             ? locateRegisteredService(serviceAudience)
@@ -82,6 +128,7 @@ public class JwtBuilder {
         }
         val header = new PlainHeader.Builder()
             .type(JOSEObjectType.JWT)
+            .customParam(RegisteredServiceCipherExecutor.CUSTOM_HEADER_REGISTERED_SERVICE_ID, registeredService.getId())
             .build();
         val token = new PlainJWT(header, claimsSet).serialize();
         LOGGER.trace("Generating plain JWT as the ticket: [{}]", token);

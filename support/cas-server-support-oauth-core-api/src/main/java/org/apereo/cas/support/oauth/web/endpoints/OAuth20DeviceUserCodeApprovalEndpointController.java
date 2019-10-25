@@ -1,7 +1,7 @@
 package org.apereo.cas.support.oauth.web.endpoints;
 
 import org.apereo.cas.support.oauth.OAuth20Constants;
-import org.apereo.cas.ticket.device.DeviceUserCode;
+import org.apereo.cas.ticket.device.OAuth20DeviceUserCode;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -59,7 +59,7 @@ public class OAuth20DeviceUserCodeApprovalEndpointController extends BaseOAuth20
             return codeNotfound;
         }
         val codeId = getOAuthConfigurationContext().getDeviceTokenFactory().generateDeviceUserCode(userCode);
-        val deviceUserCode = getOAuthConfigurationContext().getTicketRegistry().getTicket(codeId, DeviceUserCode.class);
+        val deviceUserCode = getOAuthConfigurationContext().getTicketRegistry().getTicket(codeId, OAuth20DeviceUserCode.class);
         if (deviceUserCode == null) {
             return codeNotfound;
         }
@@ -80,7 +80,7 @@ public class OAuth20DeviceUserCodeApprovalEndpointController extends BaseOAuth20
 
     private static Map getApprovalModel(final String errorCode) {
         val map = new LinkedHashMap<String, Object>();
-        map.put("prefix", DeviceUserCode.PREFIX);
+        map.put("prefix", OAuth20DeviceUserCode.PREFIX);
         if (StringUtils.isNotBlank(errorCode)) {
             map.put("error", errorCode);
         }

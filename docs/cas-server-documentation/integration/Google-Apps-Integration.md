@@ -13,7 +13,7 @@ integration point for external authentication services.
 <p>The Google Apps for Education integration described here allows CAS to act as a miniaturized SAML2 identity provider, 
 for deployments that may not be prepared to turn on and allow CAS to fully act as a SAML2 identity provider. It does not
 make much sense to turn on and use both features in CAS at the same time, as one outranks the other and it is likely
-that using both features in CAS simultanously would intefere with the functionality of both. If you can, consider using
+that using both features in CAS simultaneously would interfere with the functionality of both. If you can, consider using
 the SAML2 identity provider functionality in CAS to handle this integration as you would any other SAML2 service provider.</p>
 </div>
 

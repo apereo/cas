@@ -15,6 +15,7 @@ import org.jose4j.jwt.JwtClaims;
 
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
+import java.util.HashMap;
 import java.util.Optional;
 
 /**
@@ -26,7 +27,7 @@ import java.util.Optional;
 @Slf4j
 @RequiredArgsConstructor
 @Getter
-public abstract class BaseTokenSigningAndEncryptionService implements OAuthTokenSigningAndEncryptionService {
+public abstract class BaseTokenSigningAndEncryptionService implements OAuth20TokenSigningAndEncryptionService {
     private final String issuer;
 
     /**
@@ -45,7 +46,8 @@ public abstract class BaseTokenSigningAndEncryptionService implements OAuthToken
                                   final String keyIdHeaderValue,
                                   final Key publicKey,
                                   final String payload) {
-        return EncodingUtils.encryptValueAsJwt(publicKey, payload, encryptionAlg, encryptionEncoding, keyIdHeaderValue);
+        return EncodingUtils.encryptValueAsJwt(publicKey, payload, encryptionAlg,
+            encryptionEncoding, keyIdHeaderValue, new HashMap<>());
     }
 
     /**
@@ -60,7 +62,7 @@ public abstract class BaseTokenSigningAndEncryptionService implements OAuthToken
                                final JwtClaims claims,
                                final PublicJsonWebKey jsonWebKey) {
         LOGGER.debug("Service [{}] is set to sign id tokens", svc);
-        return EncodingUtils.signJws(claims, jsonWebKey, getJsonWebKeySigningAlgorithm(svc));
+        return EncodingUtils.signJws(claims, jsonWebKey, getJsonWebKeySigningAlgorithm(svc), new HashMap<>());
     }
 
     @Override

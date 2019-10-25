@@ -3,12 +3,13 @@ package org.apereo.cas.web.support.filters;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.mock.web.MockFilterChain;
+import org.springframework.mock.web.MockFilterConfig;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 
-import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -54,12 +55,8 @@ public class RequestParameterPolicyEnforcementFilterTests {
     @Test
     public void verifyUnrecognizedInitParamFailsFilterInit() {
 
-        val initParameterNames = new HashSet<String>();
-        initParameterNames.add("unrecognizedInitParameterName");
-        val parameterNamesEnumeration = Collections.enumeration(initParameterNames);
-
-        val filterConfig = mock(FilterConfig.class);
-        when(filterConfig.getInitParameterNames()).thenReturn(parameterNamesEnumeration);
+        val filterConfig = new MockFilterConfig();
+        filterConfig.addInitParameter("unrecognizedInitParameterName", "whatever");
 
         val filter = new RequestParameterPolicyEnforcementFilter();
         assertThrows(RuntimeException.class, () -> filter.init(filterConfig));
@@ -128,7 +125,6 @@ public class RequestParameterPolicyEnforcementFilterTests {
 
         val filter = new RequestParameterPolicyEnforcementFilter();
 
-
         val initParameterNames = new HashSet<String>();
         val parameterNamesEnumeration = Collections.enumeration(initParameterNames);
         val filterConfig = mock(FilterConfig.class);
@@ -151,11 +147,11 @@ public class RequestParameterPolicyEnforcementFilterTests {
         val requestParameterMap = new HashMap<String, String[]>();
         requestParameterMap.put("someName", new String[]{"someValue", "someOtherValue"});
 
-        val request = mock(HttpServletRequest.class);
-        when(request.getParameterMap()).thenReturn(requestParameterMap);
+        val request = new MockHttpServletRequest();
+        request.addParameters(requestParameterMap);
 
-        val response = mock(HttpServletResponse.class);
-        val chain = mock(FilterChain.class);
+        val response = new MockHttpServletResponse();
+        val chain = new MockFilterChain();
         assertThrows(RuntimeException.class, () -> filter.doFilter(request, response, chain));
     }
 
@@ -182,15 +178,14 @@ public class RequestParameterPolicyEnforcementFilterTests {
             fail("Should not have failed filter init.");
         }
 
-
         val requestParameterMap = new HashMap<String, String[]>();
         requestParameterMap.put("someName", new String[]{"someValue", "someOtherValue"});
 
-        val request = mock(HttpServletRequest.class);
-        when(request.getParameterMap()).thenReturn(requestParameterMap);
+        val request = new MockHttpServletRequest();
+        request.addParameters(requestParameterMap);
 
-        val response = mock(HttpServletResponse.class);
-        val chain = mock(FilterChain.class);
+        val response = new MockHttpServletResponse();
+        val chain = new MockFilterChain();
         filter.doFilter(request, response, chain);
     }
 
@@ -221,11 +216,11 @@ public class RequestParameterPolicyEnforcementFilterTests {
         val requestParameterMap = new HashMap<String, String[]>();
         requestParameterMap.put("someName", new String[]{"someValue%40gmail.com"});
 
-        val request = mock(HttpServletRequest.class);
-        when(request.getParameterMap()).thenReturn(requestParameterMap);
+        val request = new MockHttpServletRequest();
+        request.addParameters(requestParameterMap);
 
-        val response = mock(HttpServletResponse.class);
-        val chain = mock(FilterChain.class);
+        val response = new MockHttpServletResponse();
+        val chain = new MockFilterChain();
         assertThrows(RuntimeException.class, () -> filter.doFilter(request, response, chain));
     }
 
@@ -256,11 +251,11 @@ public class RequestParameterPolicyEnforcementFilterTests {
 
         val requestParameterMap = new HashMap<String, String[]>();
         requestParameterMap.put("uncheckedName", new String[]{"someValue%40gmail.com"});
-        val request = mock(HttpServletRequest.class);
-        when(request.getParameterMap()).thenReturn(requestParameterMap);
+        val request = new MockHttpServletRequest();
+        request.addParameters(requestParameterMap);
 
-        val response = mock(HttpServletResponse.class);
-        val chain = mock(FilterChain.class);
+        val response = new MockHttpServletResponse();
+        val chain = new MockFilterChain();
         filter.doFilter(request, response, chain);
     }
 
@@ -526,5 +521,27 @@ public class RequestParameterPolicyEnforcementFilterTests {
     @Test
     public void verifyOnlyPostParameterInGetRequest() {
         assertThrows(Exception.class, () -> internalTestOnlyPostParameter("GET"));
+    }
+
+    @Test
+    public void verifyBlocksRequestByPattern() throws Exception {
+        val filter = new RequestParameterPolicyEnforcementFilter();
+        val filterConfig = new MockFilterConfig();
+        filterConfig.addInitParameter(RequestParameterPolicyEnforcementFilter.PATTERN_TO_BLOCK, ".+example\\.(com|org).*#fragment$");
+        filter.init(filterConfig);
+
+        val requestParameterMap = new HashMap<String, String[]>();
+        requestParameterMap.put("someName", new String[]{"someValue"});
+
+        val request = new MockHttpServletRequest();
+        request.setRequestURI("https://www.example.biz?hello=world#fragment");
+        request.addParameters(requestParameterMap);
+        val response = new MockHttpServletResponse();
+        val chain = new MockFilterChain();
+        filter.doFilter(request, response, chain);
+        
+        request.setRequestURI("https://www.example.org?hello=world#fragment");
+        request.addParameters(requestParameterMap);
+        assertThrows(RuntimeException.class, () -> filter.doFilter(request, response, chain));
     }
 }

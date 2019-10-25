@@ -9,7 +9,7 @@ import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseModeTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
-import org.apereo.cas.ticket.OAuthToken;
+import org.apereo.cas.ticket.OAuth20Token;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -472,7 +472,7 @@ public class OAuth20Utils {
      * @param token the token
      * @return the set
      */
-    public static Set<String> parseUserInfoRequestClaims(final OAuthToken token) {
+    public static Set<String> parseUserInfoRequestClaims(final OAuth20Token token) {
         return token.getClaims().getOrDefault("userinfo", new HashMap<>()).keySet();
     }
 

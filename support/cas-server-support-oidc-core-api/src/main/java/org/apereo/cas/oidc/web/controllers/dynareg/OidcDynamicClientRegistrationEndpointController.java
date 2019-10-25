@@ -14,7 +14,7 @@ import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.BaseOAuth20Controller;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoder;
-import org.apereo.cas.ticket.accesstoken.AccessToken;
+import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.RandomUtils;
 
@@ -242,10 +242,10 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuth20
      * @return the access token
      */
     @SneakyThrows
-    protected AccessToken generateRegistrationAccessToken(final HttpServletRequest request,
-                                                          final HttpServletResponse response,
-                                                          final OidcRegisteredService registeredService,
-                                                          final OidcClientRegistrationRequest registrationRequest) {
+    protected OAuth20AccessToken generateRegistrationAccessToken(final HttpServletRequest request,
+                                                                 final HttpServletResponse response,
+                                                                 final OidcRegisteredService registeredService,
+                                                                 final OidcClientRegistrationRequest registrationRequest) {
         val authn = DefaultAuthenticationBuilder.newInstance()
             .setPrincipal(PrincipalFactoryUtils.newPrincipalFactory().createPrincipal(registeredService.getClientId()))
             .build();

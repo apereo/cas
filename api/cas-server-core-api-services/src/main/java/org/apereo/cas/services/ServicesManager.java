@@ -2,6 +2,9 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.principal.Service;
 
+import lombok.val;
+
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -34,6 +37,15 @@ public interface ServicesManager {
     RegisteredService save(RegisteredService registeredService, boolean publishEvent);
 
     /**
+     * Save collection of services.
+     *
+     * @param services the services
+     */
+    default void save(final RegisteredService...services) {
+        Arrays.stream(services).forEach(s -> save(s));
+    }
+
+    /**
      * Delete all entries in the underlying storage service.
      */
     void deleteAll();
@@ -45,7 +57,7 @@ public interface ServicesManager {
      * @return the registered service that was deleted, null if there was none.
      */
     RegisteredService delete(long id);
-    
+
     /**
      * Delete the entry for this RegisteredService.
      *
@@ -107,10 +119,27 @@ public interface ServicesManager {
     RegisteredService findServiceBy(long id);
 
     /**
+     * Find a RegisteredService by matching with the supplied id.
+     *
+     * @param <T>   the type parameter
+     * @param id    the id to match with.
+     * @param clazz the clazz
+     * @return the RegisteredService that matches the supplied service.
+     */
+    default <T extends RegisteredService> T findServiceBy(final long id, final Class<T> clazz) {
+        val service = findServiceBy(id);
+        if (service != null && clazz.isAssignableFrom(service.getClass())) {
+            return (T) service;
+        }
+        return null;
+    }
+
+    /**
      * Retrieve the collection of all registered services.
      * Services that are returned are valid, non-expired, etc.
      * Operation should perform no reloads, and must return a cached
      * copy of services that are already loaded.
+     *
      * @return the collection of all services.
      */
     Collection<RegisteredService> getAllServices();
@@ -135,7 +164,7 @@ public interface ServicesManager {
      * @return the collection
      */
     Collection<RegisteredService> load();
-    
+
     /**
      * Return a count of loaded services by this manager.
      *

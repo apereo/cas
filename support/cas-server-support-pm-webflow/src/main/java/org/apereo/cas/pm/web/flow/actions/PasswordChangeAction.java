@@ -19,6 +19,8 @@ import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.util.Objects;
+
 /**
  * This is {@link PasswordChangeAction}.
  *
@@ -44,15 +46,10 @@ public class PasswordChangeAction extends AbstractAction {
     @Override
     protected Event doExecute(final RequestContext requestContext) {
         try {
-            val c = (UsernamePasswordCredential) WebUtils.getCredential(requestContext);
-            val bean = requestContext.getFlowScope().get(PasswordManagementWebflowConfigurer.FLOW_VAR_ID_PASSWORD, PasswordChangeRequest.class);
-            bean.setUsername(c.getUsername());
+            val c = Objects.requireNonNull(WebUtils.getCredential(requestContext, UsernamePasswordCredential.class));
+            val bean = getPasswordChangeRequest(requestContext, c);
 
             LOGGER.debug("Attempting to validate the password change bean for username [{}]", c.getUsername());
-            if (!passwordValidationService.isValid(c, bean)) {
-                LOGGER.error("Failed to validate the provided password");
-                return getErrorEvent(requestContext, PASSWORD_VALIDATION_FAILURE_CODE, DEFAULT_MESSAGE);
-            }
             if (!passwordValidationService.isValid(c, bean)) {
                 LOGGER.error("Failed to validate the provided password");
                 return getErrorEvent(requestContext, PASSWORD_VALIDATION_FAILURE_CODE, DEFAULT_MESSAGE);
@@ -70,6 +67,19 @@ public class PasswordChangeAction extends AbstractAction {
             LOGGER.error(e.getMessage(), e);
         }
         return getErrorEvent(requestContext, "pm.updateFailure", DEFAULT_MESSAGE);
+    }
+
+    /**
+     * Gets password change request.
+     *
+     * @param requestContext the request context
+     * @param c              the c
+     * @return the password change request
+     */
+    protected PasswordChangeRequest getPasswordChangeRequest(final RequestContext requestContext, final UsernamePasswordCredential c) {
+        val bean = requestContext.getFlowScope().get(PasswordManagementWebflowConfigurer.FLOW_VAR_ID_PASSWORD, PasswordChangeRequest.class);
+        bean.setUsername(c.getUsername());
+        return bean;
     }
 
     private Event getErrorEvent(final RequestContext ctx, final String code, final String message, final Object... params) {

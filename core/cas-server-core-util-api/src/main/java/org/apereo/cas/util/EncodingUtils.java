@@ -305,7 +305,6 @@ public class EncodingUtils {
     }
 
 
-
     /**
      * Is json web key boolean.
      *
@@ -358,7 +357,7 @@ public class EncodingUtils {
         keys.put(EncodingUtils.JSON_WEB_KEY, secret);
         return generateJsonWebKey(keys);
     }
-    
+
     /**
      * Generate json web key.
      *
@@ -375,34 +374,37 @@ public class EncodingUtils {
     /**
      * Sign jws.
      *
-     * @param key   the key
-     * @param value the value
+     * @param key     the key
+     * @param value   the value
+     * @param headers the headers
      * @return the byte []
      */
-    public static byte[] signJwsHMACSha512(final Key key, final byte[] value) {
-        return signJws(key, value, AlgorithmIdentifiers.HMAC_SHA512);
+    public static byte[] signJwsHMACSha512(final Key key, final byte[] value, final Map<String, Object> headers) {
+        return signJws(key, value, AlgorithmIdentifiers.HMAC_SHA512, headers);
     }
 
     /**
      * Sign jws hmac sha 256.
      *
-     * @param key   the key
-     * @param value the value
+     * @param key     the key
+     * @param value   the value
+     * @param headers the headers
      * @return the byte [ ]
      */
-    public static byte[] signJwsHMACSha256(final Key key, final byte[] value) {
-        return signJws(key, value, AlgorithmIdentifiers.HMAC_SHA256);
+    public static byte[] signJwsHMACSha256(final Key key, final byte[] value, final Map<String, Object> headers) {
+        return signJws(key, value, AlgorithmIdentifiers.HMAC_SHA256, headers);
     }
 
     /**
      * Sign jws.
      *
-     * @param key   the key
-     * @param value the value
+     * @param key     the key
+     * @param value   the value
+     * @param headers the headers
      * @return the byte []
      */
-    public static byte[] signJwsRSASha512(final Key key, final byte[] value) {
-        return signJws(key, value, AlgorithmIdentifiers.RSA_USING_SHA512);
+    public static byte[] signJwsRSASha512(final Key key, final byte[] value, final Map<String, Object> headers) {
+        return signJws(key, value, AlgorithmIdentifiers.RSA_USING_SHA512, headers);
     }
 
     /**
@@ -411,18 +413,21 @@ public class EncodingUtils {
      * @param claims               the claims
      * @param jsonWebKey           the json web key
      * @param algorithmHeaderValue the algorithm header value
+     * @param headers              the headers
      * @return the string
      */
     @SneakyThrows
     public static String signJws(final JwtClaims claims,
                                  final PublicJsonWebKey jsonWebKey,
-                                 final String algorithmHeaderValue) {
+                                 final String algorithmHeaderValue,
+                                 final Map<String, Object> headers) {
         val jws = new JsonWebSignature();
         val jsonClaims = claims.toJson();
         jws.setPayload(jsonClaims);
         jws.setAlgorithmHeaderValue(AlgorithmIdentifiers.NONE);
         jws.setAlgorithmConstraints(AlgorithmConstraints.DISALLOW_NONE);
-
+        jws.setHeader("typ", "JWT");
+        headers.forEach((k, v) -> jws.setHeader(k, v.toString()));
         if (jsonWebKey != null) {
             jws.setKey(jsonWebKey.getPrivateKey());
             if (StringUtils.isNotBlank(jsonWebKey.getKeyId())) {
@@ -441,16 +446,19 @@ public class EncodingUtils {
      * @param key            the key
      * @param value          the value
      * @param algHeaderValue the alg header value
+     * @param headers        the headers
      * @return the byte [ ]
      */
     @SneakyThrows
-    public static byte[] signJws(final Key key, final byte[] value, final String algHeaderValue) {
+    public static byte[] signJws(final Key key, final byte[] value, final String algHeaderValue,
+                                 final Map<String, Object> headers) {
         val base64 = EncodingUtils.encodeUrlSafeBase64(value);
         val jws = new JsonWebSignature();
         jws.setEncodedPayload(base64);
         jws.setAlgorithmHeaderValue(algHeaderValue);
         jws.setKey(key);
         jws.setHeader("typ", "JWT");
+        headers.forEach((k, v) -> jws.setHeader(k, v.toString()));
         return jws.getCompactSerialization().getBytes(StandardCharsets.UTF_8);
     }
 
@@ -463,7 +471,7 @@ public class EncodingUtils {
      */
     public static String encryptValueAsJwtDirectAes128Sha256(final Key key, final Serializable value) {
         return encryptValueAsJwt(key, value, KeyManagementAlgorithmIdentifiers.DIRECT,
-            CipherExecutor.DEFAULT_CONTENT_ENCRYPTION_ALGORITHM);
+            CipherExecutor.DEFAULT_CONTENT_ENCRYPTION_ALGORITHM, new HashMap<>());
     }
 
     /**
@@ -475,7 +483,7 @@ public class EncodingUtils {
      */
     public static String encryptValueAsJwtRsaOeap256Aes256Sha512(final Key key, final Serializable value) {
         return encryptValueAsJwt(key, value, KeyManagementAlgorithmIdentifiers.RSA_OAEP_256,
-            CipherExecutor.DEFAULT_CONTENT_ENCRYPTION_ALGORITHM);
+            CipherExecutor.DEFAULT_CONTENT_ENCRYPTION_ALGORITHM, new HashMap<>());
     }
 
     /**
@@ -485,13 +493,16 @@ public class EncodingUtils {
      * @param value                           the value
      * @param algorithmHeaderValue            the algorithm header value
      * @param encryptionMethodHeaderParameter the encryption method header parameter
+     * @param customHeaders                   the custom headers
      * @return the string
      */
     public static String encryptValueAsJwt(final Key secretKeyEncryptionKey,
                                            final Serializable value,
                                            final String algorithmHeaderValue,
-                                           final String encryptionMethodHeaderParameter) {
-        return encryptValueAsJwt(secretKeyEncryptionKey, value, algorithmHeaderValue, encryptionMethodHeaderParameter, null);
+                                           final String encryptionMethodHeaderParameter,
+                                           final Map<String, Object> customHeaders) {
+        return encryptValueAsJwt(secretKeyEncryptionKey, value, algorithmHeaderValue,
+            encryptionMethodHeaderParameter, null, customHeaders);
     }
 
     /**
@@ -503,13 +514,15 @@ public class EncodingUtils {
      * @param algorithmHeaderValue            the algorithm header value
      * @param encryptionMethodHeaderParameter the content encryption algorithm identifier
      * @param keyIdHeaderValue                the key id header value
+     * @param customHeaders                   the custom headers
      * @return the encoded value
      */
     public static String encryptValueAsJwt(final Key secretKeyEncryptionKey,
                                            final Serializable value,
                                            final String algorithmHeaderValue,
                                            final String encryptionMethodHeaderParameter,
-                                           final String keyIdHeaderValue) {
+                                           final String keyIdHeaderValue,
+                                           final Map<String, Object> customHeaders) {
         try {
             val jwe = new JsonWebEncryption();
             jwe.setPayload(value.toString());
@@ -519,6 +532,8 @@ public class EncodingUtils {
             jwe.setKey(secretKeyEncryptionKey);
             jwe.setContentTypeHeaderValue("JWT");
             jwe.setHeader("typ", "JWT");
+
+            customHeaders.forEach((k, v) -> jwe.setHeader(k, v.toString()));
             if (StringUtils.isNotBlank(keyIdHeaderValue)) {
                 jwe.setKeyIdHeaderValue(keyIdHeaderValue);
             }

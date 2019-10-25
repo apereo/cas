@@ -17,18 +17,18 @@ import org.apereo.cas.config.CasCoreTicketsSchedulingConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
-import org.apereo.cas.config.CasOAuthConfiguration;
+import org.apereo.cas.config.CasOAuth20Configuration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.JpaTicketRegistryConfiguration;
 import org.apereo.cas.config.JpaTicketRegistryTicketCatalogConfiguration;
-import org.apereo.cas.config.OAuthProtocolTicketCatalogConfiguration;
+import org.apereo.cas.config.OAuth20ProtocolTicketCatalogConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketFactory;
-import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
+import org.apereo.cas.ticket.accesstoken.OAuth20AccessTokenFactory;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 
 import lombok.val;
@@ -60,7 +60,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 @SpringBootTest(classes = {
         JpaTicketRegistryTicketCatalogConfiguration.class,
         JpaTicketRegistryConfiguration.class,
-        CasOAuthConfiguration.class,
+        CasOAuth20Configuration.class,
         CasCoreTicketsSchedulingConfiguration.class,
         CasCoreTicketIdGeneratorsConfiguration.class,
         CasDefaultServiceTicketIdGeneratorsConfiguration.class,
@@ -83,7 +83,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
         CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
         CasCoreTicketsConfiguration.class,
         CasCoreWebConfiguration.class,
-        OAuthProtocolTicketCatalogConfiguration.class,
+        OAuth20ProtocolTicketCatalogConfiguration.class,
         CasWebApplicationServiceFactoryConfiguration.class
 })
 @Transactional(transactionManager = "ticketTransactionManager", isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
@@ -96,7 +96,7 @@ public class OauthJpaTicketRegistryCleanerTests {
 
     @Autowired
     @Qualifier("defaultAccessTokenFactory")
-    protected AccessTokenFactory accessTokenFactory;
+    protected OAuth20AccessTokenFactory accessTokenFactory;
 
     @Autowired
     @Qualifier("ticketRegistry")

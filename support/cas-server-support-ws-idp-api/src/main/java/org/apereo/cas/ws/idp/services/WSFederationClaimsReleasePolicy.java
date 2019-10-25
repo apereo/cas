@@ -101,6 +101,9 @@ public class WSFederationClaimsReleasePolicy extends AbstractRegisteredServiceAt
 
     @PostLoad
     private void initializeWatchableScriptIfNeeded() {
+        if (this.attributeScriptCache == null) {
+            this.attributeScriptCache = new LinkedHashMap<>();
+        }
         getAllowedAttributes()
             .entrySet()
             .stream()

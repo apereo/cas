@@ -3275,7 +3275,8 @@ To learn more about this topic, [please review this guide](../integration/Delega
 # cas.authn.pac4j.lazyInit=true
 ```
 
-The following external identity providers share [common blocks of settings](Configuration-Properties-Common.html#delegated-authentication-settings) under the listed configuration keys listed below:
+The following external identity providers share [common blocks of settings](Configuration-Properties-Common.html#delegated-authentication-settings) 
+under the listed configuration keys listed below:
 
 | Identity Provider         | Configuration Key
 |---------------------------|----------------------------------------------------------
@@ -3326,7 +3327,8 @@ Delegate authentication to an external CAS server.
 
 ### OAuth20
 
-Delegate authentication to an generic OAuth2 server. Common settings for this identity provider are available [here](Configuration-Properties-Common.html#delegated-authentication-settings) under the configuration key `cas.authn.pac4j.oauth2[0]`.
+Delegate authentication to an generic OAuth2 server. Common settings for this 
+identity provider are available [here](Configuration-Properties-Common.html#delegated-authentication-settings) under the configuration key `cas.authn.pac4j.oauth2[0]`.
 
 ```properties
 # cas.authn.pac4j.oauth2[0].authUrl=
@@ -3429,7 +3431,14 @@ prefixes for the `keystorePath` or `identityProviderMetadataPath` property).
 # cas.authn.pac4j.saml[0].mappedAttributes[0].mappedAs=displayName
 ```
 
-Examine the generated metadata after accessing the CAS login screen to ensure all ports and endpoints are correctly adjusted.  Finally, share the CAS SP metadata with the delegated IdP and register CAS as an authorized relying party.
+Examine the generated metadata after accessing the CAS login screen to ensure all 
+ports and endpoints are correctly adjusted. Finally, share the CAS SP metadata with the delegated IdP and register CAS as an authorized relying party.
+
+#### SAML2 Identity Provider Discovery
+
+```properties
+cas.authn.pac4j.samlDiscovery.resource[0].location=file:/etc/cas/config/json-feed.json
+```
 
 ### Facebook
 
@@ -3964,6 +3973,7 @@ Control how CAS should respond and validate incoming HTTP requests.
 # cas.httpWebRequest.allowMultiValueParameters=false
 # cas.httpWebRequest.onlyPostParams=username,password
 # cas.httpWebRequest.paramsToCheck=ticket,service,renew,gateway,warn,method,target,SAMLart,pgtUrl,pgt,pgtId,pgtIou,targetService,entityId,token
+# cas.httpWebRequest.patternToBlock=
 
 # cas.httpWebRequest.customHeaders.headerName1=headerValue1
 # cas.httpWebRequest.customHeaders.headerName2=headerValue2

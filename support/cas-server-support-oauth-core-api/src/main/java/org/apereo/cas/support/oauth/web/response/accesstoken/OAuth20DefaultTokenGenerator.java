@@ -12,14 +12,14 @@ import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequ
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketState;
-import org.apereo.cas.ticket.accesstoken.AccessToken;
-import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
-import org.apereo.cas.ticket.code.OAuthCode;
-import org.apereo.cas.ticket.device.DeviceToken;
-import org.apereo.cas.ticket.device.DeviceTokenFactory;
-import org.apereo.cas.ticket.device.DeviceUserCode;
-import org.apereo.cas.ticket.refreshtoken.RefreshToken;
-import org.apereo.cas.ticket.refreshtoken.RefreshTokenFactory;
+import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
+import org.apereo.cas.ticket.accesstoken.OAuth20AccessTokenFactory;
+import org.apereo.cas.ticket.code.OAuth20Code;
+import org.apereo.cas.ticket.device.OAuth20DeviceToken;
+import org.apereo.cas.ticket.device.OAuth20DeviceTokenFactory;
+import org.apereo.cas.ticket.device.OAuth20DeviceUserCode;
+import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
+import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.function.FunctionUtils;
 
@@ -47,17 +47,17 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
     /**
      * The Access token factory.
      */
-    protected final AccessTokenFactory accessTokenFactory;
+    protected final OAuth20AccessTokenFactory accessTokenFactory;
 
     /**
      * The device token factory.
      */
-    protected final DeviceTokenFactory deviceTokenFactory;
+    protected final OAuth20DeviceTokenFactory deviceTokenFactory;
 
     /**
      * The refresh token factory.
      */
-    protected final RefreshTokenFactory refreshTokenFactory;
+    protected final OAuth20RefreshTokenFactory refreshTokenFactory;
 
     /**
      * The Ticket registry.
@@ -134,8 +134,8 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
             .build();
     }
 
-    private DeviceUserCode getDeviceUserCodeFromRegistry(final DeviceToken deviceCodeTicket) {
-        val userCode = this.ticketRegistry.getTicket(deviceCodeTicket.getUserCode(), DeviceUserCode.class);
+    private OAuth20DeviceUserCode getDeviceUserCodeFromRegistry(final OAuth20DeviceToken deviceCodeTicket) {
+        val userCode = this.ticketRegistry.getTicket(deviceCodeTicket.getUserCode(), OAuth20DeviceUserCode.class);
         if (userCode == null) {
             LOGGER.error("Provided user code [{}] is invalid or expired and cannot be found in the ticket registry", deviceCodeTicket.getUserCode());
             throw new InvalidOAuth20DeviceTokenException(deviceCodeTicket.getUserCode());
@@ -148,8 +148,8 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
         return userCode;
     }
 
-    private DeviceToken getDeviceTokenFromTicketRegistry(final String deviceCode) {
-        val deviceCodeTicket = this.ticketRegistry.getTicket(deviceCode, DeviceToken.class);
+    private OAuth20DeviceToken getDeviceTokenFromTicketRegistry(final String deviceCode) {
+        val deviceCodeTicket = this.ticketRegistry.getTicket(deviceCode, OAuth20DeviceToken.class);
         if (deviceCodeTicket == null) {
             LOGGER.error("Provided device code [{}] is invalid or expired and cannot be found in the ticket registry", deviceCode);
             throw new InvalidOAuth20DeviceTokenException(deviceCode);
@@ -162,7 +162,7 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
         return deviceCodeTicket;
     }
 
-    private Pair<DeviceToken, DeviceUserCode> createDeviceTokensInTicketRegistry(final AccessTokenRequestDataHolder holder) {
+    private Pair<OAuth20DeviceToken, OAuth20DeviceUserCode> createDeviceTokensInTicketRegistry(final AccessTokenRequestDataHolder holder) {
         val deviceToken = deviceTokenFactory.createDeviceCode(holder.getService());
         LOGGER.debug("Created device code token [{}]", deviceToken.getId());
 
@@ -184,7 +184,7 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
      * @param holder the holder
      * @return the pair
      */
-    protected Pair<AccessToken, RefreshToken> generateAccessTokenOAuthGrantTypes(final AccessTokenRequestDataHolder holder) {
+    protected Pair<OAuth20AccessToken, OAuth20RefreshToken> generateAccessTokenOAuthGrantTypes(final AccessTokenRequestDataHolder holder) {
         LOGGER.debug("Creating access token for [{}]", holder.getService());
         val clientId = holder.getRegisteredService().getClientId();
         val authn = DefaultAuthenticationBuilder
@@ -223,7 +223,7 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
      * @param holder the holder
      */
     protected void updateOAuthCode(final AccessTokenRequestDataHolder holder) {
-        if (holder.getToken() instanceof OAuthCode) {
+        if (holder.getToken() instanceof OAuth20Code) {
             val codeState = TicketState.class.cast(holder.getToken());
             codeState.update();
 
@@ -266,7 +266,7 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
      * @param responseHolder the response holder
      * @return the refresh token
      */
-    protected RefreshToken generateRefreshToken(final AccessTokenRequestDataHolder responseHolder) {
+    protected OAuth20RefreshToken generateRefreshToken(final AccessTokenRequestDataHolder responseHolder) {
         LOGGER.debug("Creating refresh token for [{}]", responseHolder.getService());
         val refreshToken = this.refreshTokenFactory.create(responseHolder.getService(),
             responseHolder.getAuthentication(),
@@ -290,7 +290,7 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
     }
 
     private static OAuth20TokenGeneratedResult generateAccessTokenResult(final AccessTokenRequestDataHolder holder,
-                                                                         final Pair<AccessToken, RefreshToken> pair) {
+                                                                         final Pair<OAuth20AccessToken, OAuth20RefreshToken> pair) {
         return OAuth20TokenGeneratedResult.builder()
             .registeredService(holder.getRegisteredService())
             .accessToken(pair.getKey())

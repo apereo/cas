@@ -1,0 +1,48 @@
+description = "Apereo CAS SAML Identity Provider Discovery Support"
+dependencies {
+    api project(":api:cas-server-core-api-audit")
+    api project(":api:cas-server-core-api-webflow")
+    
+    implementation project(":core:cas-server-core-audit-api")
+    implementation project(":core:cas-server-core-services-api")
+    implementation project(":core:cas-server-core-services-authentication")
+    implementation project(":core:cas-server-core-logout-api")
+    implementation project(":core:cas-server-core-web-api")
+    implementation project(":core:cas-server-core-authentication-attributes")
+    implementation project(":core:cas-server-core-services-registry")
+    implementation project(":core:cas-server-core-authentication-api")
+    implementation project(":core:cas-server-core-webflow-api")
+    implementation project(":core:cas-server-core-tickets-api")
+    implementation project(":core:cas-server-core-util-api")
+    implementation project(":core:cas-server-core-configuration-api")
+    implementation project(":core:cas-server-core-cookie-api")
+
+    implementation project(":support:cas-server-support-saml-core")
+    implementation project(":support:cas-server-support-pac4j-core")
+    implementation project(":support:cas-server-support-saml-core-api")
+    implementation project(":support:cas-server-support-saml-mdui-core")
+    implementation project(":support:cas-server-support-saml-idp-core")
+    
+    implementation libraries.shibidp
+    implementation libraries.shibidpjavasupport
+    implementation libraries.opensaml
+    implementation libraries.pac4jcore
+    implementation libraries.pac4jsaml
+    implementation libraries.nimbus
+
+    runtimeOnly libraries.groovy
+
+    testImplementation project(":core:cas-server-core-web")
+    testImplementation project(":core:cas-server-core-web-api")
+    testImplementation project(":core:cas-server-core-services-authentication")
+    testImplementation project(":core:cas-server-core-services")
+    testImplementation project(":core:cas-server-core-authentication-attributes")
+    testImplementation project(":core:cas-server-core-authentication")
+    testImplementation project(":core:cas-server-core-util")
+
+    testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-tickets", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
+}

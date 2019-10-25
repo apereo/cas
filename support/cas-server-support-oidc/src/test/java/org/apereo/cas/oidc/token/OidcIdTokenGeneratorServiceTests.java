@@ -13,7 +13,7 @@ import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20AccessTokenAtHashGenerator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoder;
 import org.apereo.cas.ticket.TicketGrantingTicket;
-import org.apereo.cas.ticket.accesstoken.AccessToken;
+import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
@@ -83,7 +83,7 @@ public class OidcIdTokenGeneratorServiceTests extends AbstractOidcTests {
                 OAuth20Constants.NONCE, List.of("some-nonce")));
         when(tgt.getAuthentication()).thenReturn(authentication);
 
-        val accessToken = mock(AccessToken.class);
+        val accessToken = mock(OAuth20AccessToken.class);
         when(accessToken.getAuthentication()).thenReturn(authentication);
         when(accessToken.getTicketGrantingTicket()).thenReturn(tgt);
         when(accessToken.getId()).thenReturn(getClass().getSimpleName());
@@ -121,7 +121,7 @@ public class OidcIdTokenGeneratorServiceTests extends AbstractOidcTests {
                 OAuth20Constants.NONCE, List.of("some-nonce")));
         when(tgt.getAuthentication()).thenReturn(authentication);
 
-        val accessToken = mock(AccessToken.class);
+        val accessToken = mock(OAuth20AccessToken.class);
         when(accessToken.getAuthentication()).thenReturn(authentication);
         when(accessToken.getTicketGrantingTicket()).thenReturn(tgt);
         when(accessToken.getId()).thenReturn(getClass().getSimpleName());
@@ -136,7 +136,7 @@ public class OidcIdTokenGeneratorServiceTests extends AbstractOidcTests {
         assertThrows(IllegalArgumentException.class, () -> {
             val request = new MockHttpServletRequest();
             val response = new MockHttpServletResponse();
-            val accessToken = mock(AccessToken.class);
+            val accessToken = mock(OAuth20AccessToken.class);
             oidcIdTokenGenerator.generate(request, response, accessToken, 30,
                 OAuth20ResponseTypes.CODE,
                 OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, "clientid"));

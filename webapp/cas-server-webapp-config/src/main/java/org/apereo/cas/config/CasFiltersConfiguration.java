@@ -134,14 +134,20 @@ public class CasFiltersConfiguration {
     @RefreshScope
     @Bean
     public FilterRegistrationBean requestParameterSecurityFilter() {
+        val httpWebRequest = casProperties.getHttpWebRequest();
         val initParams = new HashMap<String, String>();
         initParams.put(RequestParameterPolicyEnforcementFilter.PARAMETERS_TO_CHECK,
-            casProperties.getHttpWebRequest().getParamsToCheck());
+            httpWebRequest.getParamsToCheck());
         initParams.put(RequestParameterPolicyEnforcementFilter.CHARACTERS_TO_FORBID, "none");
         initParams.put(RequestParameterPolicyEnforcementFilter.ALLOW_MULTI_VALUED_PARAMETERS,
-            BooleanUtils.toStringTrueFalse(casProperties.getHttpWebRequest().isAllowMultiValueParameters()));
+            BooleanUtils.toStringTrueFalse(httpWebRequest.isAllowMultiValueParameters()));
         initParams.put(RequestParameterPolicyEnforcementFilter.ONLY_POST_PARAMETERS,
-            casProperties.getHttpWebRequest().getOnlyPostParams());
+            httpWebRequest.getOnlyPostParams());
+
+        if (StringUtils.isNotBlank(httpWebRequest.getPatternToBlock())) {
+            initParams.put(RequestParameterPolicyEnforcementFilter.PATTERN_TO_BLOCK,
+                httpWebRequest.getPatternToBlock());
+        }
 
         val bean = new FilterRegistrationBean<RequestParameterPolicyEnforcementFilter>();
         bean.setFilter(new RequestParameterPolicyEnforcementFilter());

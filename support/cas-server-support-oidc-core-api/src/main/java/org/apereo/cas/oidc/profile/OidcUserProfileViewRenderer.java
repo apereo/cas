@@ -6,8 +6,8 @@ import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.views.OAuth20DefaultUserProfileViewRenderer;
-import org.apereo.cas.ticket.OAuthTokenSigningAndEncryptionService;
-import org.apereo.cas.ticket.accesstoken.AccessToken;
+import org.apereo.cas.ticket.OAuth20TokenSigningAndEncryptionService;
+import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -32,18 +32,18 @@ import java.util.UUID;
 @Slf4j
 public class OidcUserProfileViewRenderer extends OAuth20DefaultUserProfileViewRenderer {
     private final ServicesManager servicesManager;
-    private final OAuthTokenSigningAndEncryptionService signingAndEncryptionService;
+    private final OAuth20TokenSigningAndEncryptionService signingAndEncryptionService;
 
     public OidcUserProfileViewRenderer(final OAuthProperties oauthProperties,
                                        final ServicesManager servicesManager,
-                                       final OAuthTokenSigningAndEncryptionService signingAndEncryptionService) {
+                                       final OAuth20TokenSigningAndEncryptionService signingAndEncryptionService) {
         super(oauthProperties);
         this.servicesManager = servicesManager;
         this.signingAndEncryptionService = signingAndEncryptionService;
     }
 
     @Override
-    protected ResponseEntity renderProfileForModel(final Map<String, Object> userProfile, final AccessToken accessToken,
+    protected ResponseEntity renderProfileForModel(final Map<String, Object> userProfile, final OAuth20AccessToken accessToken,
                                                    final HttpServletResponse response) {
         val service = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, accessToken.getClientId());
         if (!(service instanceof OidcRegisteredService)) {

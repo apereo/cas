@@ -21,9 +21,9 @@ import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
-import org.apereo.cas.config.CasOAuthAuthenticationServiceSelectionStrategyConfiguration;
-import org.apereo.cas.config.CasOAuthConfiguration;
-import org.apereo.cas.config.CasOAuthThrottleConfiguration;
+import org.apereo.cas.config.CasOAuth20AuthenticationServiceSelectionStrategyConfiguration;
+import org.apereo.cas.config.CasOAuth20Configuration;
+import org.apereo.cas.config.CasOAuth20ThrottleConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.CasThrottlingConfiguration;
@@ -47,12 +47,12 @@ import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseGenerator;
 import org.apereo.cas.support.oauth.web.views.OAuth20UserProfileViewRenderer;
 import org.apereo.cas.ticket.IdTokenGeneratorService;
-import org.apereo.cas.ticket.OAuthTokenSigningAndEncryptionService;
-import org.apereo.cas.ticket.accesstoken.AccessToken;
-import org.apereo.cas.ticket.code.OAuthCodeFactory;
-import org.apereo.cas.ticket.device.DeviceTokenFactory;
+import org.apereo.cas.ticket.OAuth20TokenSigningAndEncryptionService;
+import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
+import org.apereo.cas.ticket.code.OAuth20CodeFactory;
+import org.apereo.cas.ticket.device.OAuth20DeviceTokenFactory;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
-import org.apereo.cas.ticket.refreshtoken.RefreshToken;
+import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.CollectionUtils;
@@ -119,12 +119,12 @@ import static org.mockito.Mockito.*;
     CasCoreAuthenticationPolicyConfiguration.class,
     CasCoreAuthenticationSupportConfiguration.class,
     CasCoreServicesAuthenticationConfiguration.class,
-    CasOAuthConfiguration.class,
+    CasOAuth20Configuration.class,
     CasThrottlingConfiguration.class,
-    CasOAuthThrottleConfiguration.class,
+    CasOAuth20ThrottleConfiguration.class,
     CasMultifactorAuthenticationWebflowConfiguration.class,
     CasCoreMultifactorAuthenticationConfiguration.class,
-    CasOAuthAuthenticationServiceSelectionStrategyConfiguration.class,
+    CasOAuth20AuthenticationServiceSelectionStrategyConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class
 },
     properties = {
@@ -147,7 +147,7 @@ public abstract class AbstractOidcTests {
 
     @Autowired
     @Qualifier("defaultDeviceTokenFactory")
-    protected DeviceTokenFactory deviceTokenFactory;
+    protected OAuth20DeviceTokenFactory deviceTokenFactory;
 
     @Autowired
     @Qualifier("oidcUserProfileDataCreator")
@@ -163,7 +163,7 @@ public abstract class AbstractOidcTests {
 
     @Autowired
     @Qualifier("defaultOAuthCodeFactory")
-    protected OAuthCodeFactory defaultOAuthCodeFactory;
+    protected OAuth20CodeFactory defaultOAuthCodeFactory;
 
     @Autowired
     @Qualifier("webApplicationServiceFactory")
@@ -178,7 +178,7 @@ public abstract class AbstractOidcTests {
 
     @Autowired
     @Qualifier("oidcTokenSigningAndEncryptionService")
-    protected OAuthTokenSigningAndEncryptionService oidcTokenSigningAndEncryptionService;
+    protected OAuth20TokenSigningAndEncryptionService oidcTokenSigningAndEncryptionService;
 
     @Autowired
     @Qualifier("oidcServiceJsonWebKeystoreCache")
@@ -290,13 +290,13 @@ public abstract class AbstractOidcTests {
         return claims;
     }
 
-    protected static AccessToken getAccessToken() {
+    protected static OAuth20AccessToken getAccessToken() {
         return getAccessToken(StringUtils.EMPTY, "clientId");
     }
 
-    protected static AccessToken getAccessToken(final String idToken, final String clientId) {
+    protected static OAuth20AccessToken getAccessToken(final String idToken, final String clientId) {
         val principal = RegisteredServiceTestUtils.getPrincipal("casuser", CollectionUtils.wrap("email", List.of("casuser@example.org")));
-        val accessToken = mock(AccessToken.class);
+        val accessToken = mock(OAuth20AccessToken.class);
         when(accessToken.getAuthentication()).thenReturn(RegisteredServiceTestUtils.getAuthentication(principal));
         when(accessToken.getService()).thenReturn(RegisteredServiceTestUtils.getService("https://oauth.example.org"));
         when(accessToken.getId()).thenReturn("AT-123456");
@@ -310,9 +310,9 @@ public abstract class AbstractOidcTests {
         return accessToken;
     }
 
-    protected static RefreshToken getRefreshToken() {
+    protected static OAuth20RefreshToken getRefreshToken() {
         val principal = RegisteredServiceTestUtils.getPrincipal("casuser", CollectionUtils.wrap("email", List.of("casuser@example.org")));
-        val token = mock(RefreshToken.class);
+        val token = mock(OAuth20RefreshToken.class);
         when(token.getAuthentication()).thenReturn(RegisteredServiceTestUtils.getAuthentication(principal));
         when(token.getService()).thenReturn(RegisteredServiceTestUtils.getService("https://oauth.example.org"));
         when(token.getId()).thenReturn("RT-123456");
