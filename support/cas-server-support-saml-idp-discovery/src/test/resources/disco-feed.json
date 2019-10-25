@@ -1,0 +1,23 @@
+[
+{
+ "entityID": "https://idp.shibboleth.net/idp/shibboleth",
+ "DisplayNames": [
+  {
+  "value": "Shibboleth.net",
+  "lang": "en"
+  }
+ ],
+ "Descriptions": [
+  {
+  "value": "An identity provider hosted and used by the developers of Shibboleth.",
+  "lang": "en"
+  }
+ ],
+ "Logos": [
+  {
+  "value": "https://shibboleth.net/images/gryphon_64x82.png",
+  "height": "90",
+  "width": "62"
+  }
+ ]
+}]

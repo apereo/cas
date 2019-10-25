@@ -15,15 +15,14 @@ dependencies {
     implementation project(":core:cas-server-core-services")
     implementation project(":core:cas-server-core-services-api")
     
-    
     implementation project(":support:cas-server-support-token-core-api")
     implementation project(":support:cas-server-support-oauth-core")
     implementation project(":support:cas-server-support-oauth-api")
     implementation project(":support:cas-server-support-oauth-core-api")
     implementation project(":support:cas-server-support-oauth-services")
     implementation project(":support:cas-server-support-throttle")
-
     implementation project(":support:cas-server-support-pac4j-api")
+
     implementation project(":core:cas-server-core-authentication-attributes")
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-authentication-throttle")
@@ -36,6 +35,7 @@ dependencies {
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-authentication")
+    testImplementation project(":core:cas-server-core-authentication-mfa")
     testImplementation project(":core:cas-server-core-configuration")
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":core:cas-server-core-services-authentication")

@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.audit.AuditTrailConstants;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
+import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.aup.AcceptableUsagePolicyRepository;
 import org.apereo.cas.aup.DefaultAcceptableUsagePolicyRepository;
 import org.apereo.cas.aup.GroovyAcceptableUsagePolicyRepository;
@@ -9,6 +10,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.flow.AcceptableUsagePolicySubmitAction;
 import org.apereo.cas.web.flow.AcceptableUsagePolicyVerifyAction;
+import org.apereo.cas.web.flow.AcceptableUsagePolicyVerifyServiceAction;
 import org.apereo.cas.web.flow.AcceptableUsagePolicyWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
@@ -64,6 +66,10 @@ public class CasAcceptableUsagePolicyWebflowConfiguration {
     @Qualifier("nullableReturnValueResourceResolver")
     private ObjectProvider<AuditResourceResolver> nullableReturnValueResourceResolver;
 
+    @Autowired
+    @Qualifier("registeredServiceAccessStrategyEnforcer")
+    private ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer;
+
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "acceptableUsagePolicySubmitAction")
@@ -75,7 +81,16 @@ public class CasAcceptableUsagePolicyWebflowConfiguration {
     @RefreshScope
     @ConditionalOnMissingBean(name = "acceptableUsagePolicyVerifyAction")
     public Action acceptableUsagePolicyVerifyAction() {
-        return new AcceptableUsagePolicyVerifyAction(acceptableUsagePolicyRepository());
+        return new AcceptableUsagePolicyVerifyAction(acceptableUsagePolicyRepository(),
+            registeredServiceAccessStrategyEnforcer.getObject());
+    }
+
+    @Bean
+    @RefreshScope
+    @ConditionalOnMissingBean(name = "acceptableUsagePolicyVerifyServiceAction")
+    public Action acceptableUsagePolicyVerifyServiceAction() {
+        return new AcceptableUsagePolicyVerifyServiceAction(acceptableUsagePolicyRepository(),
+            registeredServiceAccessStrategyEnforcer.getObject());
     }
 
     @ConditionalOnMissingBean(name = "acceptableUsagePolicyWebflowConfigurer")

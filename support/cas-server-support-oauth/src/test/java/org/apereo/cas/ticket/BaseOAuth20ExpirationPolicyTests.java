@@ -13,17 +13,17 @@ import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
-import org.apereo.cas.config.CasOAuthAuthenticationServiceSelectionStrategyConfiguration;
-import org.apereo.cas.config.CasOAuthComponentSerializationConfiguration;
-import org.apereo.cas.config.CasOAuthConfiguration;
+import org.apereo.cas.config.CasOAuth20AuthenticationServiceSelectionStrategyConfiguration;
+import org.apereo.cas.config.CasOAuth20ComponentSerializationConfiguration;
+import org.apereo.cas.config.CasOAuth20Configuration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
-import org.apereo.cas.ticket.accesstoken.AccessToken;
-import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
+import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
+import org.apereo.cas.ticket.accesstoken.OAuth20AccessTokenFactory;
 import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
-import org.apereo.cas.ticket.refreshtoken.RefreshToken;
-import org.apereo.cas.ticket.refreshtoken.RefreshTokenFactory;
+import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
+import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshTokenFactory;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 
@@ -47,7 +47,7 @@ import java.util.HashMap;
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
-    CasOAuthConfiguration.class,
+    CasOAuth20Configuration.class,
     CasCoreServicesConfiguration.class,
     CasCoreConfiguration.class,
     CasCoreTicketsConfiguration.class,
@@ -63,9 +63,9 @@ import java.util.HashMap;
     CasCoreAuthenticationPrincipalConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreLogoutConfiguration.class,
-    CasOAuthComponentSerializationConfiguration.class,
+    CasOAuth20ComponentSerializationConfiguration.class,
     CasDefaultServiceTicketIdGeneratorsConfiguration.class,
-    CasOAuthAuthenticationServiceSelectionStrategyConfiguration.class
+    CasOAuth20AuthenticationServiceSelectionStrategyConfiguration.class
 })
 public abstract class BaseOAuth20ExpirationPolicyTests {
     protected static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "oAuthTokenExpirationPolicy.json");
@@ -76,11 +76,11 @@ public abstract class BaseOAuth20ExpirationPolicyTests {
 
     @Autowired
     @Qualifier("defaultAccessTokenFactory")
-    protected AccessTokenFactory defaultAccessTokenFactory;
+    protected OAuth20AccessTokenFactory defaultAccessTokenFactory;
 
     @Autowired
     @Qualifier("defaultRefreshTokenFactory")
-    protected RefreshTokenFactory defaultRefreshTokenFactory;
+    protected OAuth20RefreshTokenFactory defaultRefreshTokenFactory;
 
     protected static TicketGrantingTicket newTicketGrantingTicket() {
         val principal = CoreAuthenticationTestUtils.getPrincipal("casuser");
@@ -90,12 +90,12 @@ public abstract class BaseOAuth20ExpirationPolicyTests {
             EXP_POLICY_TGT);
     }
 
-    protected AccessToken newAccessToken(final TicketGrantingTicket tgt) {
+    protected OAuth20AccessToken newAccessToken(final TicketGrantingTicket tgt) {
         val testService = CoreAuthenticationTestUtils.getService("https://service.example.com");
         return defaultAccessTokenFactory.create(testService, tgt.getAuthentication(), tgt, new ArrayList<>(), null, new HashMap<>());
     }
 
-    protected RefreshToken newRefreshToken(final AccessToken at) {
+    protected OAuth20RefreshToken newRefreshToken(final OAuth20AccessToken at) {
         val testService = CoreAuthenticationTestUtils.getService("https://service.example.com");
         val rt = defaultRefreshTokenFactory.create(testService, at.getAuthentication(),
             at.getTicketGrantingTicket(), new ArrayList<>(), "clientid12345",

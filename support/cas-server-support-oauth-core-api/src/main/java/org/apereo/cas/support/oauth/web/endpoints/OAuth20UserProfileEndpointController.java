@@ -3,7 +3,7 @@ package org.apereo.cas.support.oauth.web.endpoints;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.ticket.TicketState;
-import org.apereo.cas.ticket.accesstoken.AccessToken;
+import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -83,7 +83,7 @@ public class OAuth20UserProfileEndpointController extends BaseOAuth20Controller 
             LOGGER.error("Missing [{}] from the request", OAuth20Constants.ACCESS_TOKEN);
             return buildUnauthorizedResponseEntity(OAuth20Constants.MISSING_ACCESS_TOKEN);
         }
-        val accessTokenTicket = getOAuthConfigurationContext().getTicketRegistry().getTicket(accessToken, AccessToken.class);
+        val accessTokenTicket = getOAuthConfigurationContext().getTicketRegistry().getTicket(accessToken, OAuth20AccessToken.class);
 
         if (accessTokenTicket == null) {
             LOGGER.error("Access token [{}] cannot be found in the ticket registry.", accessToken);
@@ -115,7 +115,7 @@ public class OAuth20UserProfileEndpointController extends BaseOAuth20Controller 
      *
      * @param accessTokenTicket the access token
      */
-    protected void updateAccessTokenUsage(final AccessToken accessTokenTicket) {
+    protected void updateAccessTokenUsage(final OAuth20AccessToken accessTokenTicket) {
         val accessTokenState = TicketState.class.cast(accessTokenTicket);
         accessTokenState.update();
         if (accessTokenTicket.isExpired()) {
@@ -141,6 +141,6 @@ public class OAuth20UserProfileEndpointController extends BaseOAuth20Controller 
             }
         }
         LOGGER.debug("[{}]: [{}]", OAuth20Constants.ACCESS_TOKEN, accessToken);
-        return accessToken;
+        return extractAccessTokenFrom(accessToken);
     }
 }

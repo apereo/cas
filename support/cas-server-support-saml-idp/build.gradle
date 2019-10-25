@@ -35,7 +35,8 @@ dependencies {
     implementation libraries.shibidpjavasupport
 
     testImplementation libraries.pac4j
-    
+    testImplementation libraries.pac4jsaml
+
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")

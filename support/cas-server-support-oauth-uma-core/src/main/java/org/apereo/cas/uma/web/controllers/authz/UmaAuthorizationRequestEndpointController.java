@@ -7,7 +7,7 @@ import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestDataHolder;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoder;
-import org.apereo.cas.ticket.accesstoken.AccessToken;
+import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.uma.UmaConfigurationContext;
 import org.apereo.cas.uma.claim.UmaResourceSetClaimPermissionResult;
 import org.apereo.cas.uma.ticket.permission.UmaPermissionTicket;
@@ -161,7 +161,7 @@ public class UmaAuthorizationRequestEndpointController extends BaseUmaEndpointCo
     protected ResponseEntity generateRequestingPartyToken(final HttpServletRequest request, final HttpServletResponse response,
                                                           final CommonProfile profileResult, final UmaAuthorizationRequest umaRequest,
                                                           final UmaPermissionTicket permissionTicket, final ResourceSet resourceSet) {
-        val currentAat = profileResult.getAttribute(AccessToken.class.getName(), AccessToken.class);
+        val currentAat = profileResult.getAttribute(OAuth20AccessToken.class.getName(), OAuth20AccessToken.class);
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(getUmaConfigurationContext().getServicesManager(),
             OAuth20Utils.getClientIdFromAuthenticatedProfile(profileResult));
 

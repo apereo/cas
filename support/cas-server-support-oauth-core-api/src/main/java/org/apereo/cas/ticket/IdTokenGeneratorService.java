@@ -2,7 +2,7 @@ package org.apereo.cas.ticket;
 
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
-import org.apereo.cas.ticket.accesstoken.AccessToken;
+import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -28,7 +28,7 @@ public interface IdTokenGeneratorService {
      */
     String generate(HttpServletRequest request,
                     HttpServletResponse response,
-                    AccessToken accessToken,
+                    OAuth20AccessToken accessToken,
                     long timeoutInSeconds,
                     OAuth20ResponseTypes responseType,
                     OAuthRegisteredService registeredService);

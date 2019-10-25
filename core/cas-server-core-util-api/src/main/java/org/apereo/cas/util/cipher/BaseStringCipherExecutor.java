@@ -95,8 +95,8 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
                                     final int signingKeyLength,
                                     final int encryptionKeyLength) {
 
-        this.encryptionEnabled = encryptionEnabled || StringUtils.isNotBlank(secretKeyEncryption);
         this.signingEnabled = signingEnabled || StringUtils.isNotBlank(secretKeySigning);
+        this.encryptionEnabled = this.signingEnabled && (encryptionEnabled || StringUtils.isNotBlank(secretKeyEncryption));
         this.signingKeySize = signingKeyLength <= 0 ? CipherExecutor.DEFAULT_STRINGABLE_SIGNING_KEY_SIZE : signingKeyLength;
         this.encryptionKeySize = encryptionKeyLength <= 0 ? CipherExecutor.DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE : encryptionKeyLength;
 
@@ -166,7 +166,11 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
                 LOGGER.trace("Creating encryption key instance based on provided secret key");
                 setSecretKeyEncryptionKey(EncodingUtils.generateJsonWebKey(secretKeyToUse));
             }
-            setContentEncryptionAlgorithmIdentifier(contentEncryptionAlgorithmIdentifier);
+            if (StringUtils.isBlank(contentEncryptionAlgorithmIdentifier)) {
+                setContentEncryptionAlgorithmIdentifier(CipherExecutor.DEFAULT_CONTENT_ENCRYPTION_ALGORITHM);
+            } else {
+                setContentEncryptionAlgorithmIdentifier(contentEncryptionAlgorithmIdentifier);
+            }
             LOGGER.trace("Initialized cipher encryption sequence via content encryption [{}] and algorithm [{}]",
                 this.contentEncryptionAlgorithmIdentifier, this.encryptionAlgorithm);
         }
@@ -187,7 +191,8 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
     @Override
     public String encode(final Serializable value, final Object[] parameters) {
         val encoded = isEncryptionPossible()
-            ? EncodingUtils.encryptValueAsJwt(this.secretKeyEncryptionKey, value, this.encryptionAlgorithm, this.contentEncryptionAlgorithmIdentifier)
+            ? EncodingUtils.encryptValueAsJwt(this.secretKeyEncryptionKey, value,
+                this.encryptionAlgorithm, this.contentEncryptionAlgorithmIdentifier, getCustomHeaders())
             : value.toString();
 
         if (this.signingEnabled) {

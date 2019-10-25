@@ -25,6 +25,8 @@ import java.security.PublicKey;
 import java.security.Security;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.spec.RSAPublicKeySpec;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * Abstract cipher to provide common operations around signing objects.
@@ -46,6 +48,8 @@ public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, 
 
     private Key signingKey;
 
+    private Map<String, Object> customHeaders = new LinkedHashMap<>();
+    
     /**
      * Extract private key from resource private key.
      *
@@ -91,9 +95,9 @@ public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, 
             return value;
         }
         if ("RSA".equalsIgnoreCase(this.signingKey.getAlgorithm())) {
-            return EncodingUtils.signJwsRSASha512(this.signingKey, value);
+            return EncodingUtils.signJwsRSASha512(this.signingKey, value, this.customHeaders);
         }
-        return EncodingUtils.signJwsHMACSha512(this.signingKey, value);
+        return EncodingUtils.signJwsHMACSha512(this.signingKey, value, this.customHeaders);
 
     }
 

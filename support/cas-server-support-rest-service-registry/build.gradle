@@ -22,4 +22,5 @@ dependencies {
 
     testImplementation libraries.springboottomcat
     testImplementation libraries.pac4j
+    testImplementation libraries.pac4jsaml
 }

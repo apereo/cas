@@ -3,9 +3,10 @@ package org.apereo.cas.oidc.token;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.services.DefaultRegisteredServiceProperty;
 import org.apereo.cas.services.OidcRegisteredService;
+import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoder;
-import org.apereo.cas.ticket.accesstoken.AccessToken;
+import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -26,14 +27,14 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("OIDC")
 @TestPropertySource(properties = "cas.authn.oauth.accessToken.crypto.encryption-enabled=false")
 public class OidcJwtAccessTokenEncoderTests extends AbstractOidcTests {
-    private String encodeAccessToken(final AccessToken accessToken, final OidcRegisteredService registeredService) {
+    private OAuth20JwtAccessTokenEncoder getAccessTokenEncoder(final OAuth20AccessToken accessToken,
+                                                               final RegisteredService registeredService) {
         return OAuth20JwtAccessTokenEncoder.builder()
             .accessToken(accessToken)
             .registeredService(registeredService)
             .service(accessToken.getService())
             .accessTokenJwtBuilder(accessTokenJwtBuilder)
-            .build()
-            .encode();
+            .build();
     }
 
     @Test
@@ -41,22 +42,46 @@ public class OidcJwtAccessTokenEncoderTests extends AbstractOidcTests {
         val accessToken = getAccessToken();
         val registeredService = getOidcRegisteredService(accessToken.getClientId());
         registeredService.setJwtAccessToken(true);
-
-        val property = new DefaultRegisteredServiceProperty("false");
         registeredService.setProperties(Map.of(
             RegisteredServiceProperty.RegisteredServiceProperties.ACCESS_TOKEN_AS_JWT_ENCRYPTION_ENABLED.getPropertyName(),
-            property
+            new DefaultRegisteredServiceProperty("false")
         ));
         this.servicesManager.save(registeredService);
 
-        val token1 = encodeAccessToken(accessToken, registeredService);
-        val token2 = encodeAccessToken(accessToken, registeredService);
+        val token1 = getAccessTokenEncoder(accessToken, registeredService).encode();
+        val token2 = getAccessTokenEncoder(accessToken, registeredService).encode();
         assertEquals(token1, token2);
+    }
+
+    @Test
+    public void verifyExtractionAsParameterForService() {
+        val accessToken = getAccessToken();
+        val registeredService = getRegisteredServiceForJwtAccessTokenWithKeys(accessToken);
+        val encoder = getAccessTokenEncoder(accessToken, registeredService);
+
+        val encodedAccessToken = encoder.encode();
+        val decoded = encoder.decode(encodedAccessToken);
+        assertNotNull(decoded);
+        assertEquals(accessToken.getId(), decoded);
     }
 
     @Test
     public void verifyEncodingWithNoCiphersForService() {
         val accessToken = getAccessToken(StringUtils.EMPTY, "encoding-service-clientid");
+        val registeredService = getRegisteredServiceForJwtAccessTokenWithKeys(accessToken);
+
+        val encoder = getAccessTokenEncoder(accessToken, registeredService);
+        val token1 = encoder.encode();
+        val token2 = encoder.encode();
+        assertEquals(token1, token2);
+
+        val decoded1 = encoder.decode(token1);
+        val decoded2 = encoder.decode(token2);
+        assertEquals(decoded1, decoded2);
+        assertEquals(accessToken.getId(), decoded1);
+    }
+
+    private OidcRegisteredService getRegisteredServiceForJwtAccessTokenWithKeys(final OAuth20AccessToken accessToken) {
         val registeredService = getOidcRegisteredService(accessToken.getClientId());
         registeredService.setJwtAccessToken(true);
 
@@ -68,9 +93,6 @@ public class OidcJwtAccessTokenEncoderTests extends AbstractOidcTests {
             property
         ));
         this.servicesManager.save(registeredService);
-
-        val token1 = encodeAccessToken(accessToken, registeredService);
-        val token2 = encodeAccessToken(accessToken, registeredService);
-        assertEquals(token1, token2);
+        return registeredService;
     }
 }

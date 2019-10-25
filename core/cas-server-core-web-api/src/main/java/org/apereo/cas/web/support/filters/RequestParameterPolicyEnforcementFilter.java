@@ -1,10 +1,15 @@
 package org.apereo.cas.web.support.filters;
 
+import org.apereo.cas.util.RegexUtils;
+
 import com.google.common.base.Splitter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.http.server.ServletServerHttpRequest;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -20,6 +25,7 @@ import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 /**
  * This is a Java Servlet Filter that examines specified Request Parameters as to whether they contain specified
@@ -86,27 +92,42 @@ public class RequestParameterPolicyEnforcementFilter extends AbstractSecurityFil
      * Expressed as a whitespace delimited set of characters.
      */
     public static final String DEFAULT_CHARACTERS_BLOCKED = "? & # %";
+
     /**
      * The name of the optional Filter init-param specifying what request parameters ought to be checked.
      * The value is a whitespace delimited set of parameters.
      * The exact value '*' has the special meaning of matching all parameters, and is the default behavior.
      */
     public static final String PARAMETERS_TO_CHECK = "parametersToCheck";
+
     /**
      * The name of the optional Filter init-param specifying what characters are forbidden in the checked request
      * parameters.  The value is a whitespace delimited set of such characters.
      */
     public static final String CHARACTERS_TO_FORBID = "charactersToForbid";
+
     /**
      * The name of the optional Filter init-param specifying whether the checked request parameters are allowed
      * to have multiple values.  Allowable values for this init parameter are `true` and `false`.
      */
     public static final String ALLOW_MULTI_VALUED_PARAMETERS = "allowMultiValuedParameters";
+
+    /**
+     * Name of the setting to specify a pattern that would be checked against the request
+     * URL to block if a successful match is found.
+     */
+    public static final String PATTERN_TO_BLOCK = "patternToBlock";
+
     /**
      * The name of the optional Filter init-param specifying what request parameters ought to be send via POST requests only.
      */
     public static final String ONLY_POST_PARAMETERS = "onlyPostParameters";
 
+    /**
+     * Pattern to check against the full request URL
+     * and block if successful matches are found.
+     */
+    private Pattern patternToBlock;
 
     /**
      * Set of parameter names to check.
@@ -149,7 +170,7 @@ public class RequestParameterPolicyEnforcementFilter extends AbstractSecurityFil
         recognizedParameterNames.add(ONLY_POST_PARAMETERS);
         recognizedParameterNames.add(CHARACTERS_TO_FORBID);
         recognizedParameterNames.add(FAIL_SAFE);
-
+        recognizedParameterNames.add(PATTERN_TO_BLOCK);
 
         while (initParamNames.hasMoreElements()) {
             val initParamName = (String) initParamNames.nextElement();
@@ -341,38 +362,20 @@ public class RequestParameterPolicyEnforcementFilter extends AbstractSecurityFil
         val initParamOnlyPostParameters = filterConfig.getInitParameter(ONLY_POST_PARAMETERS);
         val initParamCharactersToForbid = filterConfig.getInitParameter(CHARACTERS_TO_FORBID);
 
-        try {
-            this.allowMultiValueParameters = Boolean.parseBoolean(initParamAllowMultiValuedParameters);
-        } catch (final Exception e) {
-            logException(new ServletException("Error parsing request parameter [" + ALLOW_MULTI_VALUED_PARAMETERS
-                + "] with value [" + initParamAllowMultiValuedParameters + ']', e));
-        }
+        val initParamPatternToBlock = filterConfig.getInitParameter(PATTERN_TO_BLOCK);
+        this.patternToBlock = StringUtils.isNotBlank(initParamPatternToBlock)
+            ? RegexUtils.createPattern(initParamPatternToBlock)
+            : null;
 
-        try {
-            this.parametersToCheck = parseParametersList(initParamParametersToCheck, true);
-        } catch (final Exception e) {
-            logException(new ServletException("Error parsing request parameter " + PARAMETERS_TO_CHECK + " with value ["
-                + initParamParametersToCheck + ']', e));
-        }
-        try {
-            this.onlyPostParameters = parseParametersList(initParamOnlyPostParameters, false);
-        } catch (final Exception e) {
-            logException(new ServletException("Error parsing request parameter " + ONLY_POST_PARAMETERS + " with value ["
-                + initParamOnlyPostParameters + ']', e));
-        }
-
-        try {
-            this.charactersToForbid = parseCharactersToForbid(initParamCharactersToForbid);
-        } catch (final Exception e) {
-            logException(new ServletException("Error parsing request parameter " + CHARACTERS_TO_FORBID + " with value ["
-                + initParamCharactersToForbid + ']', e));
-        }
+        this.allowMultiValueParameters = Boolean.parseBoolean(initParamAllowMultiValuedParameters);
+        this.parametersToCheck = parseParametersList(initParamParametersToCheck, true);
+        this.onlyPostParameters = parseParametersList(initParamOnlyPostParameters, false);
+        this.charactersToForbid = parseCharactersToForbid(initParamCharactersToForbid);
 
         if (this.allowMultiValueParameters && this.charactersToForbid.isEmpty()) {
             logException(new ServletException("Configuration to allow multi-value parameters and forbid no characters makes "
                 + getClass().getSimpleName() + " a no-op"));
         }
-
     }
 
     @Override
@@ -382,6 +385,9 @@ public class RequestParameterPolicyEnforcementFilter extends AbstractSecurityFil
             if (request instanceof HttpServletRequest) {
                 val httpServletRequest = (HttpServletRequest) request;
                 val parameterMap = httpServletRequest.getParameterMap();
+
+                blockRequestIfNecessary(httpServletRequest);
+
                 val parametersToCheckHere = new HashSet<String>();
                 if (this.parametersToCheck.isEmpty()) {
                     parametersToCheckHere.addAll(parameterMap.keySet());
@@ -403,6 +409,18 @@ public class RequestParameterPolicyEnforcementFilter extends AbstractSecurityFil
         }
 
         chain.doFilter(request, response);
+    }
+
+    private void blockRequestIfNecessary(final HttpServletRequest httpServletRequest) {
+        if (patternToBlock != null && StringUtils.isNotBlank(httpServletRequest.getRequestURI())) {
+            val uri = UriComponentsBuilder.fromHttpRequest(new ServletServerHttpRequest(httpServletRequest))
+                .build()
+                .toUriString();
+            if (!this.patternToBlock.equals(RegexUtils.MATCH_NOTHING_PATTERN)
+                && this.patternToBlock.matcher(uri).find()) {
+                logException(new ServletException("The request is blocked as it matches a prohibited pattern"));
+            }
+        }
     }
 
     @Override

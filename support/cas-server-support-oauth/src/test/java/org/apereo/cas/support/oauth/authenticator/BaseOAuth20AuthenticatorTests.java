@@ -1,31 +1,49 @@
 package org.apereo.cas.support.oauth.authenticator;
 
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
-import org.apereo.cas.authentication.DefaultAuthenticationEventExecutionPlan;
-import org.apereo.cas.authentication.DefaultAuthenticationSystemSupport;
-import org.apereo.cas.authentication.DefaultAuthenticationTransactionManager;
-import org.apereo.cas.authentication.DefaultPrincipalElectionStrategy;
-import org.apereo.cas.authentication.PolicyBasedAuthenticationManager;
-import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.config.CasAuthenticationEventExecutionPlanTestConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationPolicyConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
+import org.apereo.cas.config.CasCoreConfiguration;
+import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
+import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
+import org.apereo.cas.config.CasCoreTicketsConfiguration;
+import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasCoreWebConfiguration;
+import org.apereo.cas.config.CasOAuth20AuthenticationServiceSelectionStrategyConfiguration;
+import org.apereo.cas.config.CasOAuth20ComponentSerializationConfiguration;
+import org.apereo.cas.config.CasOAuth20Configuration;
+import org.apereo.cas.config.CasOAuth20ServicesConfiguration;
+import org.apereo.cas.config.CasOAuth20TicketSerializationConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
+import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
+import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
-import org.apereo.cas.ticket.registry.DefaultTicketRegistry;
+import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
+import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.spring.ApplicationContextProvider;
+import org.apereo.cas.token.JwtBuilder;
+import org.apereo.cas.web.config.CasCookieConfiguration;
 
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.test.annotation.DirtiesContext;
 
 import static org.mockito.Mockito.*;
@@ -38,37 +56,74 @@ import static org.mockito.Mockito.*;
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
-    AopAutoConfiguration.class
+    AopAutoConfiguration.class,
+    CasCoreHttpConfiguration.class,
+    CasCoreUtilConfiguration.class,
+    CasPersonDirectoryTestConfiguration.class,
+    CasCoreServicesConfiguration.class,
+    CasCoreAuthenticationConfiguration.class,
+    CasCoreAuthenticationPolicyConfiguration.class,
+    CasCoreAuthenticationPrincipalConfiguration.class,
+    CasCoreAuthenticationSupportConfiguration.class,
+    CasCoreAuthenticationHandlersConfiguration.class,
+    CasCoreTicketIdGeneratorsConfiguration.class,
+    CasCoreTicketCatalogConfiguration.class,
+    CasCoreTicketsConfiguration.class,
+    CasWebApplicationServiceFactoryConfiguration.class,
+    CasCoreLogoutConfiguration.class,
+    CasCoreWebConfiguration.class,
+    CasCookieConfiguration.class,
+    CasCoreConfiguration.class,
+    CasAuthenticationEventExecutionPlanTestConfiguration.class,
+    CasOAuth20AuthenticationServiceSelectionStrategyConfiguration.class,
+    CasOAuth20ComponentSerializationConfiguration.class,
+    CasOAuth20Configuration.class,
+    CasOAuth20ServicesConfiguration.class,
+    CasOAuth20TicketSerializationConfiguration.class
 })
 @DirtiesContext
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public abstract class BaseOAuth20AuthenticatorTests {
+    @Autowired
+    @Qualifier("servicesManager")
     protected ServicesManager servicesManager;
+
+    @Autowired
+    @Qualifier("defaultAuthenticationSystemSupport")
     protected AuthenticationSystemSupport authenticationSystemSupport;
+
+    @Autowired
+    @Qualifier("webApplicationServiceFactory")
     protected ServiceFactory serviceFactory;
+
+    @Autowired
+    @Qualifier("accessTokenJwtBuilder")
+    protected JwtBuilder accessTokenJwtBuilder;
+
     protected OAuthRegisteredService service;
+    protected OAuthRegisteredService serviceJwtAccessToken;
     protected OAuthRegisteredService serviceWithoutSecret;
+
+    @Autowired
+    @Qualifier("ticketRegistry")
     protected TicketRegistry ticketRegistry;
 
-    @Autowired
-    private ApplicationEventPublisher eventPublisher;
+    protected static OAuth20AccessToken getAccessToken() {
+        val tgt = new MockTicketGrantingTicket("casuser");
+        val service = RegisteredServiceTestUtils.getService();
 
-    @Autowired
-    private ApplicationContext applicationContext;
+        val accessToken = mock(OAuth20AccessToken.class);
+        when(accessToken.getId()).thenReturn("ABCD");
+        when(accessToken.getTicketGrantingTicket()).thenReturn(tgt);
+        when(accessToken.getAuthentication()).thenReturn(tgt.getAuthentication());
+        when(accessToken.getService()).thenReturn(service);
+        when(accessToken.getExpirationPolicy()).thenReturn(NeverExpiresExpirationPolicy.INSTANCE);
+
+        return accessToken;
+    }
 
     @BeforeEach
     public void initialize() {
-        ApplicationContextProvider.holdApplicationContext(applicationContext);
-        this.ticketRegistry = new DefaultTicketRegistry();
-
-        val plan = new DefaultAuthenticationEventExecutionPlan();
-        plan.registerAuthenticationHandler(new SimpleTestUsernamePasswordAuthenticationHandler());
-
-        authenticationSystemSupport = new DefaultAuthenticationSystemSupport(
-            new DefaultAuthenticationTransactionManager(eventPublisher,
-                new PolicyBasedAuthenticationManager(plan, true, eventPublisher)),
-            new DefaultPrincipalElectionStrategy());
-
         service = new OAuthRegisteredService();
         service.setName("OAuth");
         service.setId(1);
@@ -82,12 +137,14 @@ public abstract class BaseOAuth20AuthenticatorTests {
         serviceWithoutSecret.setServiceId("https://www.example2.org");
         serviceWithoutSecret.setClientId("clientWithoutSecret");
 
-
-        servicesManager = mock(ServicesManager.class);
-        when(servicesManager.getAllServices()).thenReturn(CollectionUtils.wrapList(service, serviceWithoutSecret));
-
-        serviceFactory = mock(ServiceFactory.class);
-        when(serviceFactory.createService(anyString())).thenReturn(RegisteredServiceTestUtils.getService());
-
+        serviceJwtAccessToken = new OAuthRegisteredService();
+        serviceJwtAccessToken.setName("The registered service name");
+        serviceJwtAccessToken.setServiceId("https://oauth.jwt.service");
+        serviceJwtAccessToken.setClientId("clientid");
+        serviceJwtAccessToken.setClientSecret("clientsecret");
+        serviceJwtAccessToken.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
+        serviceJwtAccessToken.setJwtAccessToken(true);
+        
+        servicesManager.save(service, serviceWithoutSecret, serviceJwtAccessToken);
     }
 }

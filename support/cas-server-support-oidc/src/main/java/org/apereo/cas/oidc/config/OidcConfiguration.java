@@ -87,10 +87,10 @@ import org.apereo.cas.support.oauth.web.views.OAuth20CallbackAuthorizeViewResolv
 import org.apereo.cas.support.oauth.web.views.OAuth20UserProfileViewRenderer;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.IdTokenGeneratorService;
-import org.apereo.cas.ticket.OAuthTokenSigningAndEncryptionService;
-import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
-import org.apereo.cas.ticket.code.OAuthCodeFactory;
-import org.apereo.cas.ticket.device.DeviceTokenFactory;
+import org.apereo.cas.ticket.OAuth20TokenSigningAndEncryptionService;
+import org.apereo.cas.ticket.accesstoken.OAuth20AccessTokenFactory;
+import org.apereo.cas.ticket.code.OAuth20CodeFactory;
+import org.apereo.cas.ticket.device.OAuth20DeviceTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.token.JwtBuilder;
@@ -270,11 +270,11 @@ public class OidcConfiguration implements WebMvcConfigurer {
 
     @Autowired
     @Qualifier("defaultAccessTokenFactory")
-    private ObjectProvider<AccessTokenFactory> defaultAccessTokenFactory;
+    private ObjectProvider<OAuth20AccessTokenFactory> defaultAccessTokenFactory;
 
     @Autowired
     @Qualifier("defaultDeviceTokenFactory")
-    private ObjectProvider<DeviceTokenFactory> defaultDeviceTokenFactory;
+    private ObjectProvider<OAuth20DeviceTokenFactory> defaultDeviceTokenFactory;
 
     @Autowired
     @Qualifier("servicesManager")
@@ -286,7 +286,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
 
     @Autowired
     @Qualifier("defaultOAuthCodeFactory")
-    private ObjectProvider<OAuthCodeFactory> defaultOAuthCodeFactory;
+    private ObjectProvider<OAuth20CodeFactory> defaultOAuthCodeFactory;
 
     @Autowired
     private ConfigurableApplicationContext applicationContext;
@@ -560,7 +560,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
     }
 
     @Bean
-    public OAuthTokenSigningAndEncryptionService oidcTokenSigningAndEncryptionService() {
+    public OAuth20TokenSigningAndEncryptionService oidcTokenSigningAndEncryptionService() {
         val oidc = casProperties.getAuthn().getOidc();
         return new OidcIdTokenSigningAndEncryptionService(oidcDefaultJsonWebKeystoreCache(),
             oidcServiceJsonWebKeystoreCache(),
@@ -568,7 +568,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
     }
 
     @Bean
-    public OAuthTokenSigningAndEncryptionService oidcUserProfileSigningAndEncryptionService() {
+    public OAuth20TokenSigningAndEncryptionService oidcUserProfileSigningAndEncryptionService() {
         val oidc = casProperties.getAuthn().getOidc();
         return new OidcUserProfileSigningAndEncryptionService(oidcDefaultJsonWebKeystoreCache(),
             oidcServiceJsonWebKeystoreCache(),
@@ -668,7 +668,8 @@ public class OidcConfiguration implements WebMvcConfigurer {
         return () -> {
             val accessTokenClient = new HeaderClient();
             accessTokenClient.setCredentialsExtractor(new BearerAuthExtractor());
-            accessTokenClient.setAuthenticator(new OidcClientConfigurationAccessTokenAuthenticator(ticketRegistry.getObject()));
+            accessTokenClient.setAuthenticator(new OidcClientConfigurationAccessTokenAuthenticator(ticketRegistry.getObject(),
+                accessTokenJwtBuilder.getObject()));
             accessTokenClient.setName(OidcConstants.CAS_OAUTH_CLIENT_CONFIG_ACCESS_TOKEN_AUTHN);
             accessTokenClient.init();
             return accessTokenClient;
@@ -712,7 +713,8 @@ public class OidcConfiguration implements WebMvcConfigurer {
     @Bean
     public Authenticator<TokenCredentials> oAuthAccessTokenAuthenticator() {
         return new OidcAccessTokenAuthenticator(ticketRegistry.getObject(),
-            oidcTokenSigningAndEncryptionService(), servicesManager.getObject());
+            oidcTokenSigningAndEncryptionService(), servicesManager.getObject(),
+            accessTokenJwtBuilder.getObject());
     }
 
     @ConditionalOnMissingBean(name = "oidcCasWebflowExecutionPlanConfigurer")
