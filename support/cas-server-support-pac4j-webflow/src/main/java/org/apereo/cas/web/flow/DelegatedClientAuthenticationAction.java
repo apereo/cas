@@ -71,7 +71,6 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
      */
     public static final String FLOW_ATTRIBUTE_PROVIDER_URLS = "delegatedAuthenticationProviderUrls";
 
-
     /**
      * The Clients.
      */
