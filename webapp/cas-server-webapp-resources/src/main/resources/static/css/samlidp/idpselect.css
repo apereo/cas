@@ -1,0 +1,210 @@
+/* Top level is idpSelectIdPSelector */
+#idpSelectIdPSelector
+{
+    width: 80%;
+    text-align: justify-all;
+    background-color: #FFFFFF;
+    /*border: 2px #0f253c dotted;*/
+    padding: 10px;
+}
+
+
+/** 
+ * The preferred IdP tile (if present) has a specified height, so
+ * we can fit the preselected * IdPs in there
+ */
+#idpSelectPreferredIdPTile
+{
+    height:138px;
+}
+#idpSelectPreferredIdPTileNoImg
+{
+    height:80px;
+}
+
+/***
+ *  The preselect buttons
+ */
+div.IdPSelectPreferredIdPButton
+{
+    margin: 3px;
+    width: 120px;
+    float: left;
+}
+
+/*
+ *  Make the entire box look like a hyperlink
+ */
+div.IdPSelectPreferredIdPButton a
+{
+    float: left;
+    width: 99%;
+    
+}
+div.IdPSelectTextDiv{
+    height: 3.5ex;
+    font-size: 15px;
+    clear: left;
+}
+
+div.IdPSelectPreferredIdPImg
+{
+/*  max-width: 95%; */
+    height: 69px; /* We need the absolute height to force all buttons to the same size */
+    margin: 2px;
+}
+
+img.IdPSelectIdPImg {
+   /*width:84px;*/
+   /*height:64px;*/
+    width:auto;
+}
+
+div.IdPSelectautoDispatchTile {
+    display: block;
+}
+
+div.IdPSelectautoDispatchArea {
+    margin-top: 30px ;
+}
+
+div.IdPSelectPreferredIdPButton img
+{
+    display: block;    /* Block display to allow auto centring */
+    max-width:  114px; /* Specify max to allow scaling, percent does work */
+    max-height: 64px;  /* Specify max to allow scaling, percent doesn't work */
+    margin-top: 3px ;
+    margin-bottom: 3px ;
+    border: solid 0px #000000;  /* Strip any embellishments the brower may give us */
+    margin-left: auto; /* Auto centring */
+    margin-right: auto;  /* Auto centring */
+
+}
+
+div.IdPSelectPreferredIdPButton div.IdPSelectTextDiv
+{
+    text-align: center;
+    font-size: 12px;
+    font-weight: normal;
+    max-width: 95%;
+    height: 30px;       /* Specify max height to allow two lines.  The 
+                         * Javascript controlls the max length of the
+                         * strings 
+                         */
+}
+
+/*
+ * Force the size of the selectors and the buttons
+ */
+#idpSelectInput, #idpSelectSelector
+{
+    width: 80%;
+}
+/*
+ * For some reason a <select> width includes the border and an
+ * <input> doesn't hence we have to force a margin onto the <select>
+ */
+#idpSelectSelector
+{
+    margin-left: 2px;
+    margin-right: 2px;
+
+}
+#idpSelectSelectButton, #idpSelectListButton
+{
+    padding-left: 4px;
+    padding-right: 2px;
+    margin-left: 5px;
+    width: 16%;
+    color: #fff;
+    background-color: #007bff;
+    border-color: #007bff;
+    border-radius: 0.2rem;
+}
+
+/*
+ * change underlining of HREFS
+ */
+#idpSelectIdPSelector a:link 
+{
+    text-decoration: none;
+}
+
+#idpSelectIdPSelector a:visited 
+{
+    text-decoration: none;
+}
+
+#idpSelectIdPSelector a:hover 
+{
+    text-decoration: underline;
+}
+
+
+
+/* 
+ * Arrange to have the dropdown/list aref on the left and the 
+ * help button on the right 
+ */
+
+a.IdPSelectDropDownToggle
+{
+    display: inline-block;
+    width: 80%;
+}
+
+a.IdPSelectHelpButton
+{
+    display: none;
+    text-align: right;
+    width: 20%;
+}
+
+/**
+ * Drop down (incremental search) stuff - see the associated javascript for reference
+ */
+ul.IdPSelectDropDown {
+    -moz-box-sizing: border-box;
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+    font-size: small;
+    box-sizing: border-box;
+    list-style: none;
+    padding-left: 0px;
+    border: 1px solid black;
+    z-index: 6;
+    position: absolute;   
+}
+
+ul.IdPSelectDropDown li {
+    background-color: white;
+    cursor: default;
+    padding: 0px 3px;
+}
+
+ul.IdPSelectDropDown li.IdPSelectCurrent {
+    background-color: #3366cc;
+    color: white;
+}
+
+/* Legacy */
+div.IdPSelectDropDown {
+    -moz-box-sizing: border-box;
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+    font-size: small;
+    box-sizing: border-box;
+    border: 1px solid black;
+    z-index: 6;
+    position: absolute;   
+}
+
+div.IdPSelectDropDown div {
+    background-color: white;
+    cursor: default;
+    padding: 0px 3px;
+}
+
+ div.IdPSelectDropDown div.IdPSelectCurrent {
+    background-color: #3366cc;
+    color: white;
+}
+/* END */
