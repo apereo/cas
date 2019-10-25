@@ -19,7 +19,7 @@ public class Pac4jAzureOidcClientProperties extends BasePac4jOidcClientPropertie
 
     /**
      * Azure AD tenant name.
-     * After tenant is configured, `discoveryUri` properties will be overrided.
+     * After tenant is configured, {@link #getDiscoveryUri()} property will be overridden.
      * <p>
      * Azure AD tenant name can take 4 different values:
      * <ul>
