@@ -34,7 +34,7 @@ such as cookies or browser storage, etc.</p></div>
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#acceptable-usage-policy).
 
-## AUP Per Service 
+## Per Service 
 
 Acceptable usage policy can be disabled and skipped on a per-service basis:
 
