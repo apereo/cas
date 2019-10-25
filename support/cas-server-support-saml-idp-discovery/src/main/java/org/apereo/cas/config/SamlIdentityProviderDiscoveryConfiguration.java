@@ -1,14 +1,19 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.entity.SamlIdentityProviderEntity;
 import org.apereo.cas.entity.SamlIdentityProviderEntityParser;
+import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.validation.DelegatedAuthenticationAccessStrategyHelper;
 import org.apereo.cas.web.SamlIdentityProviderDiscoveryFeedController;
+import org.apereo.cas.web.support.ArgumentExtractor;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.pac4j.core.client.Clients;
+import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.saml.client.SAML2Client;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,9 +42,32 @@ public class SamlIdentityProviderDiscoveryConfiguration {
     @Qualifier("builtClients")
     private ObjectProvider<Clients> builtClients;
 
+    @Autowired
+    @Qualifier("servicesManager")
+    private ObjectProvider<ServicesManager> servicesManager;
+
+    @Autowired
+    @Qualifier("registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer")
+    private ObjectProvider<AuditableExecution> registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer;
+
+    @Autowired
+    @Qualifier("argumentExtractor")
+    private ObjectProvider<ArgumentExtractor> argumentExtractor;
+
+    @Autowired
+    @Qualifier("delegatedClientDistributedSessionStore")
+    private ObjectProvider<SessionStore> delegatedClientDistributedSessionStore;
+
+
     @Bean
     public SamlIdentityProviderDiscoveryFeedController identityProviderDiscoveryFeedController() {
-        return new SamlIdentityProviderDiscoveryFeedController(samlIdentityProviderEntityParser());
+        return new SamlIdentityProviderDiscoveryFeedController(casProperties, samlIdentityProviderEntityParser(),
+            builtClients.getObject(),
+            new DelegatedAuthenticationAccessStrategyHelper(servicesManager.getObject(),
+                registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer.getObject()),
+            argumentExtractor.getObject(),
+            delegatedClientDistributedSessionStore.getObject()
+        );
     }
 
     @Bean
@@ -52,18 +80,16 @@ public class SamlIdentityProviderDiscoveryConfiguration {
             .filter(res -> res.getLocation() != null)
             .forEach(Unchecked.consumer(res -> parsers.add(new SamlIdentityProviderEntityParser(res.getLocation()))));
 
-        builtClients.ifAvailable(clients -> {
-            clients.findAllClients()
-                .stream()
-                .filter(c -> c instanceof SAML2Client)
-                .map(c -> SAML2Client.class.cast(c))
-                .forEach(c -> {
-                    c.init();
-                    val entity = new SamlIdentityProviderEntity();
-                    entity.setEntityID(c.getIdentityProviderResolvedEntityId());
-                    parsers.add(new SamlIdentityProviderEntityParser(entity));
-                });
-        });
+        builtClients.getObject().findAllClients()
+            .stream()
+            .filter(c -> c instanceof SAML2Client)
+            .map(SAML2Client.class::cast)
+            .forEach(c -> {
+                c.init();
+                val entity = new SamlIdentityProviderEntity();
+                entity.setEntityID(c.getIdentityProviderResolvedEntityId());
+                parsers.add(new SamlIdentityProviderEntityParser(entity));
+            });
         return parsers;
     }
 }

@@ -42,10 +42,6 @@ import javax.servlet.http.HttpServletResponse;
 @Slf4j
 @RequiredArgsConstructor
 public class DelegatedClientNavigationController {
-    /**
-     * Endpoint path controlled by this controller to make the redirect.
-     */
-    public static final String ENDPOINT_REDIRECT = "clientredirect";
 
     /**
      * Endpoint path controlled by this controller that receives the response to PAC4J.
@@ -67,7 +63,7 @@ public class DelegatedClientNavigationController {
      * @param response the response
      * @return the view
      */
-    @GetMapping(ENDPOINT_REDIRECT)
+    @GetMapping(DelegatedClientIdentityProviderConfigurationFactory.ENDPOINT_URL_REDIRECT)
     public View redirectToProvider(final HttpServletRequest request, final HttpServletResponse response) {
         var clientName = request.getParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER);
         if (StringUtils.isBlank(clientName)) {

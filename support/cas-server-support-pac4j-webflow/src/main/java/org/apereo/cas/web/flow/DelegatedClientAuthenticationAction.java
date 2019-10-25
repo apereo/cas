@@ -8,7 +8,6 @@ import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.principal.ClientCredential;
-import org.apereo.cas.authentication.principal.ClientCustomPropertyConstants;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -17,7 +16,8 @@ import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.validation.DelegatedAuthenticationAccessStrategyHelper;
-import org.apereo.cas.web.DelegatedClientNavigationController;
+import org.apereo.cas.web.DelegatedClientIdentityProviderConfiguration;
+import org.apereo.cas.web.DelegatedClientIdentityProviderConfigurationFactory;
 import org.apereo.cas.web.DelegatedClientWebflowManager;
 import org.apereo.cas.web.flow.actions.AbstractAuthenticationAction;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
@@ -25,10 +25,7 @@ import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.WebUtils;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -39,24 +36,20 @@ import org.pac4j.core.client.Clients;
 import org.pac4j.core.client.IndirectClient;
 import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.Pac4jConstants;
-import org.pac4j.core.context.WebContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.credentials.Credentials;
 import org.pac4j.saml.metadata.SAML2ServiceProviderMetadataResolver;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.util.UriComponentsBuilder;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.HttpServletRequest;
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 /**
@@ -78,8 +71,6 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
      */
     public static final String FLOW_ATTRIBUTE_PROVIDER_URLS = "delegatedAuthenticationProviderUrls";
 
-    private static final Pattern PAC4J_CLIENT_SUFFIX_PATTERN = Pattern.compile("Client\\d*");
-    private static final Pattern PAC4J_CLIENT_CSS_CLASS_SUBSTITUTION_PATTERN = Pattern.compile("\\W");
 
     /**
      * The Clients.
@@ -321,10 +312,16 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
             .forEach(client -> {
                 try {
                     client.init();
-                    val provider = buildProviderConfiguration(client, webContext, currentService);
+                    val provider = DelegatedClientIdentityProviderConfigurationFactory.builder()
+                        .client(client)
+                        .webContext(webContext)
+                        .service(currentService)
+                        .casProperties(casProperties)
+                        .build()
+                        .resolve();
+
                     provider.ifPresent(p -> {
                         urls.add(p);
-
                         determineAutoRedirectPolicyForProvider(context, service, p);
                     });
                 } catch (final Exception e) {
@@ -367,67 +364,6 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         }
     }
 
-    /**
-     * Build provider configuration optional.
-     *
-     * @param client     the client
-     * @param webContext the web context
-     * @param service    the service
-     * @return the optional
-     */
-    protected Optional<DelegatedClientIdentityProviderConfiguration> buildProviderConfiguration(final IndirectClient client,
-                                                                                                final WebContext webContext,
-                                                                                                final WebApplicationService service) {
-        val name = client.getName();
-        val matcher = PAC4J_CLIENT_SUFFIX_PATTERN.matcher(client.getClass().getSimpleName());
-        val type = matcher.replaceAll(StringUtils.EMPTY).toLowerCase();
-        val uriBuilder = UriComponentsBuilder
-            .fromUriString(DelegatedClientNavigationController.ENDPOINT_REDIRECT)
-            .queryParam(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, name);
-
-        if (service != null) {
-            val sourceParam = service.getSource();
-            val serviceParam = service.getOriginalUrl();
-            if (StringUtils.isNotBlank(sourceParam) && StringUtils.isNotBlank(serviceParam)) {
-                uriBuilder.queryParam(sourceParam, serviceParam);
-            }
-        }
-
-        val methodParam = webContext.getRequestParameter(CasProtocolConstants.PARAMETER_METHOD)
-            .map(String::valueOf).orElse(StringUtils.EMPTY);
-        if (StringUtils.isNotBlank(methodParam)) {
-            uriBuilder.queryParam(CasProtocolConstants.PARAMETER_METHOD, methodParam);
-        }
-        val localeParam = webContext.getRequestParameter(casProperties.getLocale().getParamName())
-            .map(String::valueOf).orElse(StringUtils.EMPTY);
-        if (StringUtils.isNotBlank(localeParam)) {
-            uriBuilder.queryParam(casProperties.getLocale().getParamName(), localeParam);
-        }
-        val themeParam = webContext.getRequestParameter(casProperties.getTheme().getParamName())
-            .map(String::valueOf).orElse(StringUtils.EMPTY);
-        if (StringUtils.isNotBlank(themeParam)) {
-            uriBuilder.queryParam(casProperties.getTheme().getParamName(), themeParam);
-        }
-        val redirectUrl = uriBuilder.toUriString();
-        val autoRedirect = (Boolean) client.getCustomProperties().getOrDefault(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_AUTO_REDIRECT, Boolean.FALSE);
-        val p = new DelegatedClientIdentityProviderConfiguration(name, redirectUrl, type, getCssClass(name), autoRedirect);
-        return Optional.of(p);
-    }
-
-    /**
-     * Get a valid CSS class for the given provider name.
-     *
-     * @param name Name of the provider
-     * @return the css class
-     */
-    protected String getCssClass(final String name) {
-        var computedCssClass = "fa fa-lock";
-        if (StringUtils.isNotBlank(name)) {
-            computedCssClass = computedCssClass.concat(' ' + PAC4J_CLIENT_CSS_CLASS_SUBSTITUTION_PATTERN.matcher(name).replaceAll("-"));
-        }
-        LOGGER.trace("CSS class for [{}] is [{}]", name, computedCssClass);
-        return computedCssClass;
-    }
 
     /**
      * Stop webflow event.
@@ -546,20 +482,4 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         return delegatedAuthenticationAccessStrategyHelper.isDelegatedClientAuthorizedForService(client, service);
     }
 
-    /**
-     * The Provider login page configuration.
-     */
-    @AllArgsConstructor
-    @Getter
-    @ToString
-    @Setter
-    public static class DelegatedClientIdentityProviderConfiguration implements Serializable {
-        private static final long serialVersionUID = 6216882278086699364L;
-
-        private final String name;
-        private final String redirectUrl;
-        private final String type;
-        private final String cssClass;
-        private boolean autoRedirect;
-    }
 }

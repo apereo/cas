@@ -10,16 +10,18 @@ dependencies {
     implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-authentication-attributes")
     implementation project(":core:cas-server-core-services-registry")
-    implementation project(":support:cas-server-support-saml-core")
-    implementation project(":support:cas-server-support-saml-core-api")
-    implementation project(":support:cas-server-support-saml-mdui-core")
-    implementation project(":support:cas-server-support-saml-idp-core")
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-webflow-api")
     implementation project(":core:cas-server-core-tickets-api")
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-cookie-api")
+
+    implementation project(":support:cas-server-support-saml-core")
+    implementation project(":support:cas-server-support-pac4j-core")
+    implementation project(":support:cas-server-support-saml-core-api")
+    implementation project(":support:cas-server-support-saml-mdui-core")
+    implementation project(":support:cas-server-support-saml-idp-core")
     
     implementation libraries.shibidp
     implementation libraries.shibidpjavasupport
