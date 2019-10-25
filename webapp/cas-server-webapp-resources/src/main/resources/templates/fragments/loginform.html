@@ -224,7 +224,12 @@
                     <script type="text/javascript" th:inline="javascript">
                         /*<![CDATA[*/
                         var i = /*[[@{#{screen.welcome.button.loginwip}}]]*/
+                        var j = /*[[@{#{screen.welcome.button.login}}]]*/
                             /*]]>*/
+                            $(window).on('pageshow', function(){
+                                $(':submit').prop('disabled', false);
+                                $(':submit').attr('value', j);
+                            });
                             $(document).ready(function () {
                                 $("#fm1").submit(function () {
                                     $(":submit").attr("disabled", true);
