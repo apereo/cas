@@ -77,4 +77,6 @@ The following endpoints are available:
 | `/idp/discovery/feed`            | Identity provider discovery JSON feed.
 | `/idp/discovery/redirect`        | Return endpoint to let CAS invoke the identity provider after selection. 
 
-Applications may directly invoke the discovery service via `[cas-server-prefix]/idp/discovery?service=...`. The discovery service may also be invoked using the discovery protocol via `[cas-server-prefix]/idp/discovery?entityID=[service-provider-entity-id]&return=[cas-server-prefix]/idp/discovery/redirect`
+Applications may directly invoke the discovery service via `[cas-server-prefix]/idp/discovery`. The discovery service may also 
+be invoked using the discovery protocol via `[cas-server-prefix]/idp/discovery?entityID=[service-provider-entity-id]&return=[cas-server-prefix]/idp/discovery/redirect`. 
+Additional parameters may be included as part of the `return` url and they all must be encoded.
