@@ -18,7 +18,10 @@ public class Pac4jAzureOidcClientProperties extends BasePac4jOidcClientPropertie
     private static final long serialVersionUID = 1259382317533639638L;
 
     /**
-     * Azure AD tenant name.
+     * Azure AD tenant name, it can take 4 different values: 
+     * `common`, `organizations`, `consumers` or specific tenant domain name or ID
+     *
+     * After tenant is configured, `discoveryUri` properties will be overrided
      */
     private String tenant;
 }
