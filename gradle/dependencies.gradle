@@ -3653,7 +3653,7 @@ ext.libraries = [
                 dependencies.create("org.webjars:jquery:$jqueryVersion") {
                     force = true
                 },
-                dependencies.create("org.webjars:zxcvbn:$zxcvbnVersion") {
+                dependencies.create("org.webjars.bowergithub.dropbox:zxcvbn:$zxcvbnVersion") {
                     force = true
                 },
                 dependencies.create("org.webjars:bootstrap:$bootstrapVersion") {
