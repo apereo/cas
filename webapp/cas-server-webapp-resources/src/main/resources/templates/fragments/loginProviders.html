@@ -54,6 +54,13 @@
                                 [[${entry.name}]]
                             </a>
                         </li>
+                        
+                        <li th:if="${identityProviderDiscoveryEnabled}">
+                            <a th:href="@{/idp/discovery}" class="btn btn-block btn-social btn-primary" th:inline="text">
+                                <span class="fas fa-shield-alt" aria-hidden="true"></span>
+                                SAML2 Identity Provider Discovery
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </div>

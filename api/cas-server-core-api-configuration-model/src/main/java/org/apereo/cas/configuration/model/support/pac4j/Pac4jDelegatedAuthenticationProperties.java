@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.model.support.pac4j.cas.Pac4jCasClientProper
 import org.apereo.cas.configuration.model.support.pac4j.oauth.Pac4jOAuth20ClientProperties;
 import org.apereo.cas.configuration.model.support.pac4j.oidc.Pac4jOidcClientProperties;
 import org.apereo.cas.configuration.model.support.pac4j.saml.Pac4jSamlClientProperties;
+import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPDiscoveryProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
@@ -152,6 +153,12 @@ public class Pac4jDelegatedAuthenticationProperties implements Serializable {
      * Order of the authentication handler in the chain.
      */
     private Integer order;
+
+    /**
+     * Settings related to handling saml2 discovery of IdPs.
+     */
+    @NestedConfigurationProperty
+    private SamlIdPDiscoveryProperties samlDiscovery = new SamlIdPDiscoveryProperties();
 
     @RequiresModule(name = "cas-server-support-pac4j-webflow")
     @Getter

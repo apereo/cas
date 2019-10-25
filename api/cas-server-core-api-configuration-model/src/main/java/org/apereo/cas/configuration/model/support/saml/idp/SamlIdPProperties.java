@@ -95,10 +95,4 @@ public class SamlIdPProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private SamlIdPProfileProperties profile = new SamlIdPProfileProperties();
-
-    /**
-     * Settings related to handling saml2 discovery of IdPs.
-     */
-    @NestedConfigurationProperty
-    private SamlIdPDiscoveryProperties discovery = new SamlIdPDiscoveryProperties();
 }

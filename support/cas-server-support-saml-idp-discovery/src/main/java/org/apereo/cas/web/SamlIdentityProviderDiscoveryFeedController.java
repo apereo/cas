@@ -68,7 +68,17 @@ public class SamlIdentityProviderDiscoveryFeedController {
     @GetMapping
     public ModelAndView home() {
         val model = new HashMap<String, Object>();
-        model.put("entityId", casProperties.getAuthn().getPac4j().getsa);
+
+        val entityIds = clients.findAllClients()
+            .stream()
+            .filter(c -> c instanceof SAML2Client)
+            .map(SAML2Client.class::cast)
+            .map(SAML2Client::getServiceProviderResolvedEntityId)
+            .collect(Collectors.toList());
+
+        LOGGER.debug("Using service provider entity id [{}]", entityIds);
+        model.put("entityIds", entityIds);
+
         model.put("casServerPrefix", casProperties.getServer().getPrefix());
         return new ModelAndView("casSamlIdPDiscoveryView", model);
     }
@@ -77,7 +87,10 @@ public class SamlIdentityProviderDiscoveryFeedController {
     public View redirect(@RequestParam("entityID") final String entityID,
                          final HttpServletRequest httpServletRequest,
                          final HttpServletResponse httpServletResponse) {
-        val idp = getDiscoveryFeed().stream().filter(entity -> entity.getEntityID().equals(entityID)).findFirst().orElseThrow();
+        val idp = getDiscoveryFeed().stream()
+            .filter(entity -> entity.getEntityID().equals(entityID))
+            .findFirst()
+            .orElseThrow();
         val samlClient = clients.findAllClients()
             .stream()
             .filter(c -> c instanceof SAML2Client)
