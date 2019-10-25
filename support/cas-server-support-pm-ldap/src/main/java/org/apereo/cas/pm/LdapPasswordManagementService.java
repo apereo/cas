@@ -36,11 +36,6 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
     }
 
     @Override
-    public String findUsername(final String email) {
-        return findAttribute(email, properties.getLdap().getUsernameAttribute());
-    }
-
-    @Override
     public String findEmail(final String username) {
         val email = findAttribute(username, properties.getReset().getMail().getAttributeName());
         if (EmailValidator.getInstance().isValid(email)) {
@@ -56,14 +51,59 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
         return findAttribute(username, properties.getReset().getSms().getAttributeName());
     }
 
+    @Override
+    public String findUsername(final String email) {
+        return findAttribute(email, properties.getLdap().getUsernameAttribute());
+    }
+
+    @Override
+    public Map<String, String> getSecurityQuestions(final String username) {
+        val set = new HashMap<String, String>();
+        try {
+            val ldap = properties.getLdap();
+            val filter = LdapUtils.newLdaptiveSearchFilter(ldap.getSearchFilter(),
+                LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
+                CollectionUtils.wrap(username));
+            LOGGER.debug("Constructed LDAP filter [{}] to locate security questions", filter);
+
+            val response = LdapUtils.executeSearchOperation(this.ldapConnectionFactory, ldap.getBaseDn(), filter, ldap.getPageSize());
+            LOGGER.debug("LDAP response for security questions [{}]", response);
+
+            if (LdapUtils.containsResultEntry(response)) {
+                val entry = response.getResult().getEntry();
+                LOGGER.debug("Located LDAP entry [{}] in the response", entry);
+                val questionsAndAnswers = properties.getLdap().getSecurityQuestionsAttributes();
+                LOGGER.debug("Security question attributes are defined to be [{}]", questionsAndAnswers);
+
+                questionsAndAnswers.forEach((k, v) -> {
+                    val questionAttribute = entry.getAttribute(k);
+                    val answerAttribute = entry.getAttribute(v);
+
+                    val question = questionAttribute.getStringValue();
+                    val answer = answerAttribute.getStringValue();
+
+                    if (questionAttribute != null && answerAttribute != null && StringUtils.isNotBlank(question) && StringUtils.isNotBlank(answer)) {
+                        LOGGER.debug("Added security question [{}] with answer [{}]", question, answer);
+                        set.put(question, answer);
+                    }
+                });
+            } else {
+                LOGGER.debug("LDAP response did not contain a result for security questions");
+            }
+        } catch (final Exception e) {
+            LOGGER.error("Error getting security questions: {}", e.getMessage(), e);
+        }
+        return set;
+    }
+
     /**
      * Perform LDAP search by username, returning the requested attribute.
-     * 
-     * @param username
-     * @param attributeName
-     * @return  String value of attribute; null if user/attribute not present
+     *
+     * @param username      username for whom an attribute should be found
+     * @param attributeName name of the attribute
+     * @return String value of attribute; null if user/attribute not present
      */
-    public String findAttribute(final String username, final String attributeName) {
+    private String findAttribute(final String username, final String attributeName) {
         try {
             val ldap = properties.getLdap();
             val filter = LdapUtils.newLdaptiveSearchFilter(ldap.getSearchFilter(),
@@ -84,7 +124,7 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
                     LOGGER.debug("Found [{}] [{}] for user [{}].", attributeName, attributeValue, username);
                     return attributeValue;
                 } else {
-                    LOGGER.info("Could not locate LDAP attribute [{}] for [{}] and base DN [{}]",
+                    LOGGER.warn("Could not locate LDAP attribute [{}] for [{}] and base DN [{}]",
                         attributeName, filter.format(), ldap.getBaseDn());
                 }
                 return null;
@@ -127,43 +167,4 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
         return false;
     }
 
-    @Override
-    public Map<String, String> getSecurityQuestions(final String username) {
-        val set = new HashMap<String, String>();
-        try {
-            val ldap = properties.getLdap();
-            val filter = LdapUtils.newLdaptiveSearchFilter(ldap.getSearchFilter(),
-                LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
-                CollectionUtils.wrap(username));
-            LOGGER.debug("Constructed LDAP filter [{}] to locate security questions", filter);
-
-            val response = LdapUtils.executeSearchOperation(this.ldapConnectionFactory, ldap.getBaseDn(), filter, ldap.getPageSize());
-            LOGGER.debug("LDAP response for security questions [{}]", response);
-
-            if (LdapUtils.containsResultEntry(response)) {
-                val entry = response.getResult().getEntry();
-                LOGGER.debug("Located LDAP entry [{}] in the response", entry);
-                val questionsAndAnswers = properties.getLdap().getSecurityQuestionsAttributes();
-                LOGGER.debug("Security question attributes are defined to be [{}]", questionsAndAnswers);
-
-                questionsAndAnswers.forEach((k, v) -> {
-                    val questionAttribute = entry.getAttribute(k);
-                    val answerAttribute = entry.getAttribute(v);
-
-                    val question = questionAttribute.getStringValue();
-                    val answer = answerAttribute.getStringValue();
-
-                    if (questionAttribute != null && answerAttribute != null && StringUtils.isNotBlank(question) && StringUtils.isNotBlank(answer)) {
-                        LOGGER.debug("Added security question [{}] with answer [{}]", question, answer);
-                        set.put(question, answer);
-                    }
-                });
-            } else {
-                LOGGER.debug("LDAP response did not contain a result for security questions");
-            }
-        } catch (final Exception e) {
-            LOGGER.error("Error getting security questions: {}", e.getMessage(), e);
-        }
-        return set;
-    }
 }
