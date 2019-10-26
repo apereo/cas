@@ -615,9 +615,9 @@ task jacocoRootReport(type: JacocoReport, group: 'Coverage reports') {
 
     dependsOn jacocoMerge
 
-    additionalSourceDirs = files(publishedProjects.sourceSets.main.allSource.srcDirs)
-    sourceDirectories = files(publishedProjects.sourceSets.main.allSource.srcDirs)
-    classDirectories = files(files(subprojects.sourceSets.main.output).collect {
+    additionalSourceDirs.from(files(publishedProjects.sourceSets.main.allSource.srcDirs))
+    sourceDirectories.from(files(publishedProjects.sourceSets.main.allSource.srcDirs))
+    classDirectories.from(files(subprojects.sourceSets.main.output)).collect {
         fileTree(dir: it,
                 include: '**/*.class',
                 exclude: [
@@ -625,19 +625,16 @@ task jacocoRootReport(type: JacocoReport, group: 'Coverage reports') {
                         '**/shell/cli/**',
                         '**/shell/commands/**',
                         '**/**Configuration$**',
-                        '**/**Controller**',
                         '**/**ConfigurationMetadataGenerator**',
                         '**/**Application.class',
                         '**/**Application$**',
-                        '**/**WebflowConfigurer.class',
-                        '**/**WebflowConfigurer$**',
                         '**/**Exception.class',
                         '**/**Banner.class',
                         '**/**Exception$**',
                         '**/**Properties.class',
                         '**/**Properties$**'
                 ])
-    })
+    }
     executionData jacocoMerge.destinationFile
     reports {
         html.enabled = false

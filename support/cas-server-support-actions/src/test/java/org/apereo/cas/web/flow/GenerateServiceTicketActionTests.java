@@ -118,6 +118,6 @@ public class GenerateServiceTicketActionTests extends AbstractWebflowActionsTest
         val tgt = mock(TicketGrantingTicket.class);
         when(tgt.getId()).thenReturn("bleh");
         WebUtils.putTicketGrantingTicketInScopes(context, tgt);
-        assertEquals(CasWebflowConstants.STATE_ID_GATEWAY, this.action.getObject().execute(context).getId());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_GATEWAY, this.action.getObject().execute(context).getId());
     }
 }

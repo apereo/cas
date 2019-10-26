@@ -236,12 +236,7 @@ public interface CasWebflowConstants {
      * The state 'realSubmit'.
      */
     String STATE_ID_REAL_SUBMIT = "realSubmit";
-
-    /**
-     * 'gateway' state id.
-     */
-    String STATE_ID_GATEWAY = "gateway";
-
+    
     /**
      * 'finishMfaTrustedAuth' state id.
      */
