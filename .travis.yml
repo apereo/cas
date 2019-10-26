@@ -7,7 +7,7 @@
 # Encrypted settings include GPG_PSW, SONATYPE_USER, GPG_PASSPHRASE, SONATYPE_PWD, GH_TOKEN, COVERITY_SCAN_TOKEN
 
 language: java
-sudo: required
+os: linux
 dist: trusty
 services:
   - docker
@@ -32,8 +32,6 @@ git:
 notifications:
   slack:
     secure: "gNFUOGd0isowSwPfQ9VqGQWhWRDAjzX9tfH0xGe2gyg1kiOhq3Odb8fdcUg9f3DhAbiMxGDu08IgmDbeEyncB42Zdqk/DFvD3F958WaVy0O9TF2iAzO+ftBG0+slFHPDZ8qAy97+mV/be7KBkLYP+BydYTVfO84NvpLNiylmOVU="
-matrix:
-  fast_finish: true
 env:
   global:
     - JAVA_OPTS="-Xms512m -Xmx4048m -Xss128m -XX:ReservedCodeCacheSize=512m -XX:+UseG1GC -Xverify:none -server"
