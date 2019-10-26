@@ -100,8 +100,8 @@ public class GenerateServiceTicketAction extends AbstractAction {
                 this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicket);
             }
             if (isGatewayPresent(context)) {
-                LOGGER.debug("Request indicates that it is gateway. Routing result to [{}] state", CasWebflowConstants.STATE_ID_GATEWAY);
-                return result(CasWebflowConstants.STATE_ID_GATEWAY);
+                LOGGER.debug("Request indicates that it is gateway. Routing result to [{}] state", CasWebflowConstants.TRANSITION_ID_GATEWAY);
+                return result(CasWebflowConstants.TRANSITION_ID_GATEWAY);
             }
             LOGGER.warn("Could not grant service ticket [{}]. Routing to [{}]", e.getMessage(), CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE);
             return newEvent(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, e);
