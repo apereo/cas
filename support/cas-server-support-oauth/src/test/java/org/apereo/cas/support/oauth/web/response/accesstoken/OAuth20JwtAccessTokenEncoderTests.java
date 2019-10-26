@@ -1,17 +1,17 @@
-package org.apereo.cas.support.oauth.web.response.accesstoken.response;
+package org.apereo.cas.support.oauth.web.response.accesstoken;
 
-import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.DefaultRegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.RegisteredServiceProperty;
-import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.AbstractOAuth20Tests;
+import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenCipherExecutor;
+import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoder;
+import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20RegisteredServiceJwtAccessTokenCipherExecutor;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.accesstoken.OAuth20JwtBuilder;
-import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.val;
@@ -41,20 +41,6 @@ public class OAuth20JwtAccessTokenEncoderTests extends AbstractOAuth20Tests {
             .service(accessToken.getService())
             .accessTokenJwtBuilder(builder)
             .build();
-    }
-
-    private static OAuth20AccessToken getAccessToken() {
-        val tgt = new MockTicketGrantingTicket("casuser");
-        val service = RegisteredServiceTestUtils.getService();
-
-        val accessToken = mock(OAuth20AccessToken.class);
-        when(accessToken.getId()).thenReturn("ABCD");
-        when(accessToken.getTicketGrantingTicket()).thenReturn(tgt);
-        when(accessToken.getAuthentication()).thenReturn(tgt.getAuthentication());
-        when(accessToken.getService()).thenReturn(service);
-        when(accessToken.getExpirationPolicy()).thenReturn(NeverExpiresExpirationPolicy.INSTANCE);
-
-        return accessToken;
     }
 
     private static OAuth20JwtBuilder getCipherDisabledJwtBuilder() {

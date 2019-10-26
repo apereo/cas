@@ -60,6 +60,7 @@ import org.apereo.cas.ticket.accesstoken.OAuth20AccessTokenFactory;
 import org.apereo.cas.ticket.code.OAuth20Code;
 import org.apereo.cas.ticket.code.OAuth20CodeFactory;
 import org.apereo.cas.ticket.expiration.AlwaysExpiresExpirationPolicy;
+import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -112,6 +113,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link AbstractOAuth20Tests}.
@@ -164,31 +166,55 @@ public abstract class AbstractOAuth20Tests {
         .configure(SerializationFeature.WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED, true);
 
     public static final String CONTEXT = OAuth20Constants.BASE_OAUTH20_URL + '/';
+
     public static final String CLIENT_ID = "1";
+
     public static final String CLIENT_SECRET = "secret";
+
     public static final String WRONG_CLIENT_SECRET = "wrongSecret";
+
     public static final String REDIRECT_URI = "http://someurl";
+
     public static final String OTHER_REDIRECT_URI = "http://someotherurl";
+
     public static final String ID = "casuser";
+
     public static final String NAME = "attributeName";
+
     public static final String ATTRIBUTES_PARAM = "attributes";
+
     public static final String NAME2 = "attributeName2";
+
     public static final String VALUE = "attributeValue";
+
     public static final String USERNAME = "username";
+
     public static final String PASSWORD = "password";
+
     public static final String GOOD_USERNAME = "test";
+
     public static final String GOOD_PASSWORD = "test";
+
     public static final String CODE_CHALLENGE = "myclientcode";
+
     public static final String CODE_CHALLENGE_METHOD_PLAIN = "plain";
+
     public static final String FIRST_NAME_ATTRIBUTE = "firstName";
+
     public static final String FIRST_NAME = "jerome";
+
     public static final String LAST_NAME_ATTRIBUTE = "lastName";
+
     public static final String LAST_NAME = "LELEU";
+
     public static final String CAS_SERVER = "casserver";
+
     public static final String CAS_SCHEME = "https";
+
     public static final int CAS_PORT = 443;
 
     public static final int DELTA = 2;
+
     public static final int TIMEOUT = 7200;
 
     @Autowired
@@ -242,6 +268,50 @@ public abstract class AbstractOAuth20Tests {
     @Qualifier("oauthTokenGenerator")
     protected OAuth20TokenGenerator oauthTokenGenerator;
 
+    public static ExpirationPolicyBuilder alwaysExpiresExpirationPolicyBuilder() {
+        return new ExpirationPolicyBuilder() {
+            private static final long serialVersionUID = -9043565995104313970L;
+
+            @Override
+            public ExpirationPolicy buildTicketExpirationPolicy() {
+                return new AlwaysExpiresExpirationPolicy();
+            }
+
+            @Override
+            public Class<Ticket> getTicketType() {
+                return null;
+            }
+        };
+    }
+
+    protected static OAuth20AccessToken getAccessToken() {
+        val tgt = new MockTicketGrantingTicket("casuser");
+        val service = RegisteredServiceTestUtils.getService();
+
+        val accessToken = mock(OAuth20AccessToken.class);
+        when(accessToken.getId()).thenReturn("ABCD");
+        when(accessToken.getTicketGrantingTicket()).thenReturn(tgt);
+        when(accessToken.getAuthentication()).thenReturn(tgt.getAuthentication());
+        when(accessToken.getService()).thenReturn(service);
+        when(accessToken.getExpirationPolicy()).thenReturn(NeverExpiresExpirationPolicy.INSTANCE);
+
+        return accessToken;
+    }
+
+    protected static OAuthRegisteredService getRegisteredService(final String serviceId,
+                                                                 final String secret,
+                                                                 final Set<OAuth20GrantTypes> grantTypes) {
+        val registeredServiceImpl = new OAuthRegisteredService();
+        registeredServiceImpl.setName("The registered service name");
+        registeredServiceImpl.setServiceId(serviceId);
+        registeredServiceImpl.setClientId(CLIENT_ID);
+        registeredServiceImpl.setClientSecret(secret);
+        registeredServiceImpl.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
+        registeredServiceImpl.setSupportedGrantTypes(
+            grantTypes.stream().map(OAuth20GrantTypes::getType).collect(Collectors.toCollection(HashSet::new)));
+        return registeredServiceImpl;
+    }
+
     protected static Principal createPrincipal() {
         val map = new HashMap<String, List<Object>>();
         map.put(NAME, List.of(VALUE));
@@ -265,46 +335,8 @@ public abstract class AbstractOAuth20Tests {
             .build();
     }
 
-    public static ExpirationPolicyBuilder alwaysExpiresExpirationPolicyBuilder() {
-        return new ExpirationPolicyBuilder() {
-            private static final long serialVersionUID = -9043565995104313970L;
-
-            @Override
-            public ExpirationPolicy buildTicketExpirationPolicy() {
-                return new AlwaysExpiresExpirationPolicy();
-            }
-
-            @Override
-            public Class<Ticket> getTicketType() {
-                return null;
-            }
-        };
-    }
-
-    protected static OAuthRegisteredService getRegisteredService(final String serviceId,
-                                                                 final String secret,
-                                                                 final Set<OAuth20GrantTypes> grantTypes) {
-        val registeredServiceImpl = new OAuthRegisteredService();
-        registeredServiceImpl.setName("The registered service name");
-        registeredServiceImpl.setServiceId(serviceId);
-        registeredServiceImpl.setClientId(CLIENT_ID);
-        registeredServiceImpl.setClientSecret(secret);
-        registeredServiceImpl.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
-        registeredServiceImpl.setSupportedGrantTypes(
-            grantTypes.stream().map(OAuth20GrantTypes::getType).collect(Collectors.toCollection(HashSet::new)));
-        return registeredServiceImpl;
-    }
-
     protected OAuthRegisteredService addRegisteredService(final Set<OAuth20GrantTypes> grantTypes) {
         return addRegisteredService(false, grantTypes);
-    }
-
-    protected OAuthRegisteredService addRegisteredService(final Set<OAuth20GrantTypes> grantTypes, final String clientSecret) {
-        return addRegisteredService(false, grantTypes, clientSecret);
-    }
-
-    protected OAuthRegisteredService addRegisteredService() {
-        return addRegisteredService(false, EnumSet.noneOf(OAuth20GrantTypes.class));
     }
 
     protected OAuthRegisteredService addRegisteredService(final boolean generateRefreshToken,
@@ -320,31 +352,12 @@ public abstract class AbstractOAuth20Tests {
         return registeredService;
     }
 
-    protected OAuth20Code addCode(final Principal principal, final OAuthRegisteredService registeredService) {
-        return addCodeWithChallenge(principal, registeredService, null, null);
+    protected OAuthRegisteredService addRegisteredService(final Set<OAuth20GrantTypes> grantTypes, final String clientSecret) {
+        return addRegisteredService(false, grantTypes, clientSecret);
     }
 
-    protected OAuth20Code addCodeWithChallenge(final Principal principal, final OAuthRegisteredService registeredService,
-                                               final String codeChallenge, final String codeChallengeMethod) {
-        val authentication = getAuthentication(principal);
-        val factory = new WebApplicationServiceFactory();
-        val service = factory.createService(registeredService.getClientId());
-        val code = oAuthCodeFactory.create(service, authentication,
-            new MockTicketGrantingTicket("casuser"), new ArrayList<>(),
-            codeChallenge, codeChallengeMethod, CLIENT_ID, new HashMap<>());
-        this.ticketRegistry.addTicket(code);
-        return code;
-    }
-
-    protected OAuth20RefreshToken addRefreshToken(final Principal principal, final OAuthRegisteredService registeredService) {
-        val authentication = getAuthentication(principal);
-        val factory = new WebApplicationServiceFactory();
-        val service = factory.createService(registeredService.getServiceId());
-        val refreshToken = oAuthRefreshTokenFactory.create(service, authentication,
-            new MockTicketGrantingTicket("casuser"),
-            new ArrayList<>(), CLIENT_ID, new HashMap<>());
-        this.ticketRegistry.addTicket(refreshToken);
-        return refreshToken;
+    protected OAuthRegisteredService addRegisteredService() {
+        return addRegisteredService(false, EnumSet.noneOf(OAuth20GrantTypes.class));
     }
 
     protected void clearAllServices() {
@@ -408,6 +421,46 @@ public abstract class AbstractOAuth20Tests {
         assertTrue(timeLeft >= TIMEOUT - 10 - DELTA);
 
         return Pair.of(accessTokenId, refreshTokenId);
+    }
+
+    protected OAuth20Code addCode(final Principal principal, final OAuthRegisteredService registeredService) {
+        return addCodeWithChallenge(principal, registeredService, null, null);
+    }
+
+    protected OAuth20Code addCodeWithChallenge(final Principal principal, final OAuthRegisteredService registeredService,
+                                               final String codeChallenge, final String codeChallengeMethod) {
+        val authentication = getAuthentication(principal);
+        val factory = new WebApplicationServiceFactory();
+        val service = factory.createService(registeredService.getClientId());
+        val code = oAuthCodeFactory.create(service, authentication,
+            new MockTicketGrantingTicket("casuser"), new ArrayList<>(),
+            codeChallenge, codeChallengeMethod, CLIENT_ID, new HashMap<>());
+        this.ticketRegistry.addTicket(code);
+        return code;
+    }
+
+    /**
+     * Extract access token from token.
+     *
+     * @param token the token
+     * @return the string
+     */
+    protected String extractAccessTokenFrom(final String token) {
+        return OAuth20JwtAccessTokenEncoder.builder()
+            .accessTokenJwtBuilder(accessTokenJwtBuilder)
+            .build()
+            .decode(token);
+    }
+
+    protected OAuth20RefreshToken addRefreshToken(final Principal principal, final OAuthRegisteredService registeredService) {
+        val authentication = getAuthentication(principal);
+        val factory = new WebApplicationServiceFactory();
+        val service = factory.createService(registeredService.getServiceId());
+        val refreshToken = oAuthRefreshTokenFactory.create(service, authentication,
+            new MockTicketGrantingTicket("casuser"),
+            new ArrayList<>(), CLIENT_ID, new HashMap<>());
+        this.ticketRegistry.addTicket(refreshToken);
+        return refreshToken;
     }
 
     @SneakyThrows
@@ -480,31 +533,18 @@ public abstract class AbstractOAuth20Tests {
         return accessTokenResponseGenerator.generate(mockRequest, mockResponse, result);
     }
 
-    /**
-     * Extract access token from token.
-     *
-     * @param token the token
-     * @return the string
-     */
-    protected String extractAccessTokenFrom(final String token) {
-        return OAuth20JwtAccessTokenEncoder.builder()
-            .accessTokenJwtBuilder(accessTokenJwtBuilder)
-            .build()
-            .decode(token);
-    }
-
     @TestConfiguration("OAuth20TestConfiguration")
     public static class OAuth20TestConfiguration implements ComponentSerializationPlanConfigurer, InitializingBean {
         @Autowired
         protected ApplicationContext applicationContext;
 
-        public void init() {
-            SchedulingUtils.prepScheduledAnnotationBeanPostProcessor(applicationContext);
-        }
-
         @Override
         public void afterPropertiesSet() {
             init();
+        }
+
+        public void init() {
+            SchedulingUtils.prepScheduledAnnotationBeanPostProcessor(applicationContext);
         }
 
         @Bean

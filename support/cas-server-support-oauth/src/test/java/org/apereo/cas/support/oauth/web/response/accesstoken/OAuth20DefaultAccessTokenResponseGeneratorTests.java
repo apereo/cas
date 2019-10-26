@@ -1,4 +1,4 @@
-package org.apereo.cas.support.oauth.web.response.accesstoken.response;
+package org.apereo.cas.support.oauth.web.response.accesstoken;
 
 import org.apereo.cas.services.DefaultRegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceProperty;
