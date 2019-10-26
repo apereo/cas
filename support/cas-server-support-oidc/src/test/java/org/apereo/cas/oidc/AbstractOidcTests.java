@@ -80,6 +80,8 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.webflow.execution.Action;
 
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -303,6 +305,7 @@ public abstract class AbstractOidcTests {
         when(accessToken.getExpirationPolicy()).thenReturn(NeverExpiresExpirationPolicy.INSTANCE);
         when(accessToken.getTicketGrantingTicket()).thenReturn(new MockTicketGrantingTicket("casuser"));
         when(accessToken.getClientId()).thenReturn(clientId);
+        when(accessToken.getCreationTime()).thenReturn(ZonedDateTime.now(ZoneOffset.UTC));
         when(accessToken.getScopes()).thenReturn(Set.of(OidcConstants.StandardScopes.EMAIL.getScope(),
             OidcConstants.StandardScopes.PROFILE.getScope(),
             OidcConstants.StandardScopes.OPENID.getScope()));
