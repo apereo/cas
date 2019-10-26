@@ -55,14 +55,10 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
     CasCoreServicesConfiguration.class,
     CasCoreWebConfiguration.class,
     CasCoreHttpConfiguration.class,
-    CasCoreAuthenticationConfiguration.class,
-    CasCoreTicketsConfiguration.class,
-    CasCoreTicketCatalogConfiguration.class,
     CasCookieConfiguration.class,
     CasPersonDirectoryTestConfiguration.class,
     CasCoreConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
-    CasCoreAuthenticationSupportConfiguration.class,
     CasCoreUtilConfiguration.class
 })
 @TestPropertySource(properties = {
