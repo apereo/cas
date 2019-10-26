@@ -27,7 +27,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 </dependency>
 ```
 
-<div class="alert alert-info"><strong>YAGNI</strong><p>You do not need to explicitly incude this component
+<div class="alert alert-info"><strong>YAGNI</strong><p>You do not need to explicitly include this component
 in your configuration and overlays. This is just to teach you that it exists. The security token service will be pulled 
 in automatically once you declare the identity provider. Only include this module in your overlay if you 
 need compile-time access to the components within.</p></div>

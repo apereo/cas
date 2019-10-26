@@ -159,22 +159,12 @@ Provisioning tasks can be carried out using an external REST endpoint expected t
 | `profileId`             | The identifier of the user profile extracted from the identity provider. 
 | `profileTypedId`        | The *typed* identifier of the user profile extracted from the identity provider. 
 | `profileAttributes`     | Collection of attributes extracted from the identity provider's response.
-| `clientName`            | The client name responsible for the exchange between CAS and the identity provider. 
+| `clientName`            | The client name responsible for the exchange between CAS and the identity provider.
 
-## Configuration
+## SAML2 Identity Providers
 
-### SAML2 Identity Providers
-
-In the event that CAS is configured to delegate authentication to an external identity provider, the service provider (CAS) metadata as well as the identity provider metadata automatically become available at the following endpoints. Note that you can use more than one external identity provider with CAS, where each integration may be done with a different set of metadata and keys for CAS acting as the service provider. Each integration (referred to as a client, since CAS itself becomes a client of the identity provider) may be given a name optionally.
-
-| Endpoint                   | Description
-|---------------------------|--------------------------------------------------------------------------------------------------------------------
-| `/sp/metadata`         | Displays the service provider (CAS) metadata. Works well if there is only one SAML2 IdP is defined.
-| `/sp/idp/metadata`         | Displays the identity provider metadata. Works well if there is only one SAML2 IdP is defined.
-| `/sp/{clientName}/metadata`         | Displays the service provider metadata for the requested client name.
-| `/sp/{clientName}/idp/metadata`         | Displays the identity provider metadata for the requested client name.
-
-Remember that the service provider (CAS) metadata is automatically generated once you access the above endpoints or view the CAS login screen. This is required because today, generating the metadata requires access to the HTTP request/response. In the event that metadata cannot be resolved, a status code of `406 - Not Acceptable` is returned.
+To learn more about delegating authentication to SAML2 identity providers, 
+please [review this guide](Delegate-Authentication-SAML.html).
 
 ## Troubleshooting
 
