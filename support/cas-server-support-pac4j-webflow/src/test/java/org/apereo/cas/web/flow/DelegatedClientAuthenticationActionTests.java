@@ -33,6 +33,8 @@ import org.apereo.cas.ticket.expiration.builder.TransientSessionTicketExpiration
 import org.apereo.cas.ticket.factory.DefaultTransientSessionTicketFactory;
 import org.apereo.cas.ticket.registry.DefaultTicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.web.DelegatedClientIdentityProviderConfiguration;
+import org.apereo.cas.web.DelegatedClientIdentityProviderConfigurationFactory;
 import org.apereo.cas.web.DelegatedClientNavigationController;
 import org.apereo.cas.web.DelegatedClientWebflowManager;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
@@ -174,7 +176,7 @@ public class DelegatedClientAuthenticationActionTests {
         assertEquals(Locale.getDefault().getCountry(), mockRequest.getAttribute(LocaleChangeInterceptor.DEFAULT_PARAM_NAME));
         assertEquals(HttpMethod.POST.name(), mockRequest.getAttribute(CasProtocolConstants.PARAMETER_METHOD));
         val flowScope = mockRequestContext.getFlowScope();
-        val urls = (Set<DelegatedClientAuthenticationAction.DelegatedClientIdentityProviderConfiguration>)
+        val urls = (Set<DelegatedClientIdentityProviderConfiguration>)
             flowScope.get(DelegatedClientAuthenticationAction.FLOW_ATTRIBUTE_PROVIDER_URLS);
 
         assertFalse(urls.isEmpty());
@@ -182,7 +184,7 @@ public class DelegatedClientAuthenticationActionTests {
         urls.stream()
             .map(url -> UriComponentsBuilder.fromUriString(url.getRedirectUrl()).build())
             .forEach(uriComponents -> {
-                assertEquals(DelegatedClientNavigationController.ENDPOINT_REDIRECT, uriComponents.getPath());
+                assertEquals(DelegatedClientIdentityProviderConfigurationFactory.ENDPOINT_URL_REDIRECT, uriComponents.getPath());
                 val clientName = uriComponents.getQueryParams().get(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER);
                 assertEquals(1, clientName.size());
                 assertTrue(CLIENTS.containsAll(clientName));
