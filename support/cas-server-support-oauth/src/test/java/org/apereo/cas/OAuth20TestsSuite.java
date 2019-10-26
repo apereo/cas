@@ -20,9 +20,10 @@ import org.apereo.cas.support.oauth.web.endpoints.OAuth20AuthorizeEndpointContro
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20IntrospectionEndpointControllerTests;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20UserProfileEndpointControllerTests;
 import org.apereo.cas.support.oauth.web.mgmt.OAuth20TokenManagementEndpointTests;
+import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20AccessTokenAtHashGeneratorTests;
+import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20DefaultAccessTokenResponseGeneratorTests;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20DefaultTokenGeneratorTests;
-import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20DefaultAccessTokenResponseGeneratorTests;
-import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoderTests;
+import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20JwtAccessTokenEncoderTests;
 import org.apereo.cas.support.oauth.web.views.OAuth20DefaultUserProfileViewRendererFlatTests;
 import org.apereo.cas.support.oauth.web.views.OAuth20DefaultUserProfileViewRendererNestedTests;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessTokenExpirationPolicyTests;
@@ -55,6 +56,7 @@ import org.junit.runner.RunWith;
     OAuth20RefreshTokenSovereignExpirationPolicyTests.class,
     OAuth20UserProfileEndpointControllerTests.class,
     OAuth20UtilsTests.class,
+    OAuth20AccessTokenAtHashGeneratorTests.class,
     OAuth20IntrospectionEndpointControllerTests.class,
     OAuth20TokenManagementEndpointTests.class,
     OAuth20JwtAccessTokenEncoderTests.class,

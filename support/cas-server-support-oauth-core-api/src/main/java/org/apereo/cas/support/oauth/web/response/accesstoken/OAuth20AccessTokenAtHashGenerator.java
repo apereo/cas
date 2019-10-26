@@ -25,7 +25,9 @@ import java.util.Arrays;
 @Slf4j
 public class OAuth20AccessTokenAtHashGenerator {
     private final String encodedAccessToken;
+
     private final String algorithm;
+
     private final RegisteredService registeredService;
 
     /**
@@ -34,12 +36,12 @@ public class OAuth20AccessTokenAtHashGenerator {
      * @return the string
      */
     public String generate() {
-        val alg = determineSigningHashAlgorithm();
         val tokenBytes = encodedAccessToken.getBytes(StandardCharsets.UTF_8);
-        if (AlgorithmIdentifiers.NONE.equalsIgnoreCase(alg)) {
-            LOGGER.debug("Signing algorithm specified by service [{}] is unspecified", registeredService.getServiceId());
+        if (AlgorithmIdentifiers.NONE.equalsIgnoreCase(this.algorithm)) {
+            LOGGER.debug("Signing algorithm specified by service [{}] is unspecified/none", registeredService.getServiceId());
             return EncodingUtils.encodeUrlSafeBase64(tokenBytes);
         }
+        val alg = determineSigningHashAlgorithm();
         LOGGER.debug("Digesting access token hash via algorithm [{}]", alg);
         val digested = DigestUtils.rawDigest(alg, tokenBytes);
         val hashBytesLeftHalf = Arrays.copyOf(digested, digested.length / 2);
@@ -53,13 +55,22 @@ public class OAuth20AccessTokenAtHashGenerator {
      */
     protected String determineSigningHashAlgorithm() {
         LOGGER.debug("Signing algorithm specified is [{}]", this.algorithm);
-        if (AlgorithmIdentifiers.RSA_USING_SHA512.equalsIgnoreCase(algorithm)) {
+        if (AlgorithmIdentifiers.HMAC_SHA512.equalsIgnoreCase(algorithm)
+            || AlgorithmIdentifiers.RSA_USING_SHA512.equalsIgnoreCase(algorithm)
+            || AlgorithmIdentifiers.RSA_PSS_USING_SHA512.equalsIgnoreCase(algorithm)
+            || AlgorithmIdentifiers.ECDSA_USING_P521_CURVE_AND_SHA512.equalsIgnoreCase(algorithm)) {
             return MessageDigestAlgorithms.SHA_512;
         }
-        if (AlgorithmIdentifiers.RSA_USING_SHA384.equalsIgnoreCase(algorithm)) {
+        if (AlgorithmIdentifiers.HMAC_SHA384.equalsIgnoreCase(algorithm)
+            || AlgorithmIdentifiers.RSA_USING_SHA384.equalsIgnoreCase(algorithm)
+            || AlgorithmIdentifiers.RSA_PSS_USING_SHA384.equalsIgnoreCase(algorithm)
+            || AlgorithmIdentifiers.ECDSA_USING_P384_CURVE_AND_SHA384.equalsIgnoreCase(algorithm)) {
             return MessageDigestAlgorithms.SHA_384;
         }
-        if (AlgorithmIdentifiers.RSA_USING_SHA256.equalsIgnoreCase(algorithm)) {
+        if (AlgorithmIdentifiers.HMAC_SHA256.equalsIgnoreCase(algorithm)
+            || AlgorithmIdentifiers.RSA_USING_SHA256.equalsIgnoreCase(algorithm)
+            || AlgorithmIdentifiers.RSA_PSS_USING_SHA256.equalsIgnoreCase(algorithm)
+            || AlgorithmIdentifiers.ECDSA_USING_P256_CURVE_AND_SHA256.equalsIgnoreCase(algorithm)) {
             return MessageDigestAlgorithms.SHA_256;
         }
         throw new IllegalArgumentException("Could not determine the hash algorithm for the id token");
