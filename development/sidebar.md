@@ -195,9 +195,11 @@ layout: null
     *   [Dynamic Themes](/$version/ux/User-Interface-Customization-Themes.html)
     *   [Dynamic Decorations](/$version/webflow/Webflow-Customization-Decorators.html)
 
-* [Acceptable Usage Policy](/$version/webflow/Webflow-Customization-AUP.html)
+* [Acceptable Usage Policy](#aup)
+    *   [Overview](/$version/webflow/Webflow-Customization-AUP.html)
 
-* [Interrupt Notifications](/$version/webflow/Webflow-Customization-Interrupt.html)
+* [Interrupt Notifications](#interrupt_notifications)
+    *   [Overview](/$version/webflow/Webflow-Customization-Interrupt.html)
         
 *   [Webflow Management](#webflowmgmt)
     *   [Overview](/$version/webflow/Webflow-Customization.html) 
