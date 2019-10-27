@@ -557,7 +557,6 @@ subprojects {
             errorproneJavac "com.google.errorprone:javac:$errorproneJavacVersion"
         }
         testImplementation libraries.tests
-        testImplementation libraries.groovy
         testImplementation libraries.log4j
         compileOnly libraries.findbugsannotations
     }

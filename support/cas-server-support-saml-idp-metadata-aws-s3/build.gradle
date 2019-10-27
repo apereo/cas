@@ -21,8 +21,6 @@ dependencies {
     implementation libraries.awss3
     implementation libraries.shibidp
     implementation libraries.shibidpjavasupport
-    
-    runtimeOnly libraries.groovy
 
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":core:cas-server-core-cookie")
