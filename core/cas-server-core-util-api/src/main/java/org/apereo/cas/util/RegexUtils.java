@@ -80,7 +80,7 @@ public class RegexUtils {
      */
     public static Pattern createPattern(final String pattern, final int flags) {
         if (StringUtils.isBlank(pattern)) {
-            LOGGER.debug("Pattern cannot be null/blank");
+            LOGGER.warn("Pattern cannot be null/blank");
             return MATCH_NOTHING_PATTERN;
         }
         try {
