@@ -15,6 +15,8 @@
         <h2 th:utext="#{screen.saml.idp.discovery}">SAML Identity Provider Discovery</h2>
 
         <link rel="stylesheet" type="text/css" href="../static/css/samlidp/idpselect.css" th:href="@{/css/samlidp/idpselect.css}"/>
+        <div id="errorDiv" class="alert alert-danger" role="alert" style="display:none;"></div>
+
         <div id="idpSelect"></div>
         <script type="text/javascript" th:inline="javascript">
 
