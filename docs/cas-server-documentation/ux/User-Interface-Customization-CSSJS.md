@@ -89,7 +89,7 @@ For developers modifying CAS, if adding or modifying a 3rd party library, the st
 For example:
 
 ```properties
-webjars.zxcvbn.js=/webjars/zxcvbn/${zxcvbnVersion}/dist/zxcvbn.js
+webjars.zxcvbn.js=/webjars/zxcvbn/dist/zxcvbn.js
 ```
 
 Then Reference the entry from `cas_common_messages.properties` in the relevant view (i.e HTML page) where the entry is `webjars.zxcvbn.js`:

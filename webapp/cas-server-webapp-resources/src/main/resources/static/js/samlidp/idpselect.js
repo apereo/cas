@@ -1384,11 +1384,15 @@ function IdPSelectUI() {
             var aM = document.createTextNode(aN);
             aJ.appendChild(aM)
         } else {
-            alert("FATAL (NoDiv):" + aN)
+            $('#errorDiv').show('true');
+            $('#errorDiv').empty();
+            $('#errorDiv').append(aN);
         }
     };
     var O = function (aM) {
-        alert("FATAL - DISCO UI:" + aM);
+        $('#errorDiv').show('true');
+        $('#errorDiv').empty();
+        $('#errorDiv').append(aM);
         if (aJ) {
             ae(aM)
         }
