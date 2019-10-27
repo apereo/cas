@@ -453,6 +453,10 @@ ext.libraries = [
                     exclude(group: "commons-cli", module: "commons-cli")
                     force = true
                 },
+                dependencies.create("org.codehaus.groovy:groovy:$groovyVersion") {
+                    exclude(group: "commons-cli", module: "commons-cli")
+                    force = true
+                },
                 dependencies.create("org.codehaus.groovy:groovy-datetime:$groovyVersion") {
                     exclude(group: "commons-cli", module: "commons-cli")
                     force = true
