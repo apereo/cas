@@ -11,8 +11,9 @@ import org.springframework.test.context.TestPropertySource;
  * The userPrincipalName attribute is the format UPN_PREFIX@UPN_SUFFIX where UPN_PREFIX is the "long" username
  * and UPN_SUFFIX is a domain in the Active Directory forest or a domain listed in upnSuffixes attribute.
  * UPN_PREFIX does not have to be unique but it is unique when combined with UPN_SUFFIX.
- * The {@link UnboundIDProvider} would fail this due to its DN validation.
- * This test currently uses no SSL or startTls due to bug JDK-8217606, turn on startTls once it is fixed.
+ * Issues:
+ *  - This configuration doesn't retrieve any attributes as part of the authentication.
+ *  - The {@link UnboundIDProvider} would fail this due to its DN validation.
  * @author Hal Deadman
  * @since 6.1.0
  */
@@ -20,7 +21,7 @@ import org.springframework.test.context.TestPropertySource;
     "cas.authn.ldap[0].type=AD",
     "cas.authn.ldap[0].ldapUrl=" + BaseActiveDirectoryLdapAuthenticationHandlerTests.AD_LDAP_URL,
     "cas.authn.ldap[0].useSsl=false",
-    "cas.authn.ldap[0].useStartTls=false",
+    "cas.authn.ldap[0].useStartTls=true",
     "cas.authn.ldap[0].subtreeSearch=true",
     "cas.authn.ldap[0].baseDn=cn=Users,dc=cas,dc=example,dc=org",
     "cas.authn.ldap[0].dnFormat=%s",
@@ -31,6 +32,7 @@ import org.springframework.test.context.TestPropertySource;
     "cas.authn.ldap[0].providerClass=org.ldaptive.provider.jndi.JndiProvider",
     "cas.authn.ldap[0].trustStore=" + BaseActiveDirectoryLdapAuthenticationHandlerTests.AD_TRUST_STORE,
     "cas.authn.ldap[0].trustStoreType=JKS",
+    "cas.authn.ldap[0].trustStorePassword=changeit",
     "cas.authn.ldap[0].hostnameVerifier=ANY"
 })
 @EnabledIfContinuousIntegration

@@ -2,6 +2,7 @@ package org.apereo.cas;
 
 import org.apereo.cas.authentication.ActiveDirectoryJndiSamAccountNameLdapAuthenticationHandlerTests;
 import org.apereo.cas.authentication.ActiveDirectoryJndiUPNLdapAuthenticationHandlerTests;
+import org.apereo.cas.authentication.ActiveDirectoryLdapAuthenticationHandlerPasswordPolicyTests;
 import org.apereo.cas.authentication.ActiveDirectoryUnboundIDBindDnSSLLdapAuthenticationHandlerTests;
 import org.apereo.cas.authentication.ActiveDirectoryUnboundIDTypeADAuthenticationHandlerTests;
 import org.apereo.cas.authentication.AuthenticatedLdapAuthenticationHandlerTests;
@@ -24,6 +25,7 @@ import org.junit.runner.RunWith;
     ActiveDirectoryUnboundIDTypeADAuthenticationHandlerTests.class,
     ActiveDirectoryJndiUPNLdapAuthenticationHandlerTests.class,
     ActiveDirectoryJndiSamAccountNameLdapAuthenticationHandlerTests.class,
+    ActiveDirectoryLdapAuthenticationHandlerPasswordPolicyTests.class,
     AuthenticatedLdapAuthenticationHandlerTests.class,
     PersonDirectoryPrincipalResolverLdaptiveTests.class,
     DirectLdapAuthenticationHandlerTests.class,
