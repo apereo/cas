@@ -107,6 +107,7 @@ public class YubiKeyConfiguration {
 
     @RefreshScope
     @Bean
+    @ConditionalOnMissingBean(name = "yubikeyAuthenticationWebflowAction")
     public Action yubikeyAuthenticationWebflowAction() {
         return new YubiKeyAuthenticationWebflowAction(yubikeyAuthenticationWebflowEventResolver());
     }
@@ -120,6 +121,7 @@ public class YubiKeyConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "yubikeyAuthenticationWebflowEventResolver")
     public CasWebflowEventResolver yubikeyAuthenticationWebflowEventResolver() {
         val context = CasWebflowEventResolutionConfigurationContext.builder()
             .authenticationSystemSupport(authenticationSystemSupport.getIfAvailable())
@@ -146,6 +148,7 @@ public class YubiKeyConfiguration {
 
     @Bean
     @RefreshScope
+    @ConditionalOnMissingBean(name = "yubikeyAccountCipherExecutor")
     public CipherExecutor yubikeyAccountCipherExecutor() {
         val crypto = casProperties.getAuthn().getMfa().getYubikey().getCrypto();
         if (crypto.isEnabled()) {
@@ -177,7 +180,9 @@ public class YubiKeyConfiguration {
         public CasWebflowConfigurer yubiMultifactorTrustWebflowConfigurer() {
             val deviceRegistrationEnabled = casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled();
             return new YubiKeyMultifactorTrustWebflowConfigurer(flowBuilderServices.getObject(),
-                deviceRegistrationEnabled, loginFlowDefinitionRegistry.getObject(), applicationContext, casProperties);
+                deviceRegistrationEnabled, yubikeyFlowRegistry(),
+                loginFlowDefinitionRegistry.getObject(),
+                applicationContext, casProperties);
         }
 
         @Bean
