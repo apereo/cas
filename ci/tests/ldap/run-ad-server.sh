@@ -93,6 +93,12 @@ docker run --detach \
 sleep 15 # Give it time to come up before we create users
 docker logs samba
 
+#Disable password history at the domain level.
+docker exec samba bash -c "samba-tool domain passwordsettings set --history-length=0"
+
+#Disable password min-age at the domain level
+docker exec samba bash -c "samba-tool domain passwordsettings set --min-pwd-age=0"
+
 # Create users that can be used by various tests (e.g. authenticiation tests, password change tests, etc.
 # If we aren't setting up brand new instance these will fail if they already exist but that is OK.
 echo Creating users for tests
@@ -108,11 +114,10 @@ docker exec samba bash -c "samba-tool user disable disableduser"
 docker exec samba bash -c "samba-tool user list"
 docker exec samba bash -c "samba-tool group addmembers 'Account Operators' admin"
 
-#Disable password history at the domain level.
-docker exec samba bash -c "samba-tool domain passwordsettings set --history-length=0"
-
-#Disable password min-age at the domain level
-docker exec samba bash -c "samba-tool domain passwordsettings set --min-pwd-age=0"
+# create a special password policy and apply it to a user
+docker exec samba bash -c "samba-tool user create expirestomorrow $DEFAULT_TESTUSER_PASSWORD --use-username-as-cn"
+docker exec samba bash -c "samba-tool domain passwordsettings pso create expirepasswordsoon 10 --max-pwd-age=2"
+docker exec samba bash -c "samba-tool domain passwordsettings pso apply expirepasswordsoon expirestomorrow"
 
 
 
