@@ -70,7 +70,7 @@ skip this step and move on to next section to build and release.</p></div>
 
 - Change `.travis.yml` to *only* build the newly-created release branch.
 - Examine all CI shell scripts under the `ci` folder to make sure nothing points to `development` or `master`. This is particularly applicable to how CAS documentation is published to the `gh-pages` branch.
-- Diable jobs in CI that report new dependency versions or update dependencies using Renovate, etc.
+- Disable jobs in CI that report new dependency versions or update dependencies using Renovate, etc.
  
 Do not forget to commit all changes and push changes upstream, creating a new remote branch to track the release.
 
@@ -136,9 +136,3 @@ This task is only relevant when dealing with major or minor releases.
 ### Update Demos
 
 A number of CAS demos today run on Heroku and are tracked in dedicated branches inside the codebase. Take a pass and updated each, when relevant.
-
-### Docker Image
-
-Release a new CAS [Docker image](https://github.com/apereo/cas-webapp-docker).
-This task is only relevant when dealing with GA official releases, regardless of release calibre. All major/feature/patch releases
-qualify for a Docker release.
