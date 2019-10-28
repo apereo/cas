@@ -70,6 +70,7 @@ skip this step and move on to next section to build and release.</p></div>
 
 - Change `.travis.yml` to *only* build the newly-created release branch.
 - Examine all CI shell scripts under the `ci` folder to make sure nothing points to `development` or `master`. This is particularly applicable to how CAS documentation is published to the `gh-pages` branch.
+- Diable jobs in CI that report new dependency versions or update dependencies using Renovate, etc.
  
 Do not forget to commit all changes and push changes upstream, creating a new remote branch to track the release.
 
