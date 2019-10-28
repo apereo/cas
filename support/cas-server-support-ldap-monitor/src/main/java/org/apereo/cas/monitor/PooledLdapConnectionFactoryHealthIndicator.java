@@ -5,6 +5,7 @@ import org.ldaptive.Connection;
 import org.ldaptive.pool.PooledConnectionFactory;
 import org.ldaptive.pool.Validator;
 import org.springframework.boot.actuate.health.Health;
+import org.springframework.boot.actuate.health.HealthContributor;
 
 import java.util.concurrent.ExecutorService;
 
@@ -14,7 +15,7 @@ import java.util.concurrent.ExecutorService;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
-public class PooledLdapConnectionFactoryHealthIndicator extends AbstractPoolHealthIndicator {
+public class PooledLdapConnectionFactoryHealthIndicator extends AbstractPoolHealthIndicator implements HealthContributor {
 
     /**
      * Source of connections to validate.

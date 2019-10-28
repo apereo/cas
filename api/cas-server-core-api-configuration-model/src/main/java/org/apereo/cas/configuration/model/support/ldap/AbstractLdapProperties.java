@@ -221,7 +221,7 @@ public abstract class AbstractLdapProperties implements Serializable {
     private LdapHostnameVerifierOptions hostnameVerifier = LdapHostnameVerifierOptions.DEFAULT;
 
     /**
-     * Name of the authentication handler.
+     * Name of the LDAP handler.
      */
     private String name;
 
