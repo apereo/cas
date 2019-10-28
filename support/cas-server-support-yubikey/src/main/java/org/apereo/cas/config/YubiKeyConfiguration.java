@@ -170,7 +170,9 @@ public class YubiKeyConfiguration implements CasWebflowExecutionPlanConfigurer {
         public CasWebflowConfigurer yubiMultifactorTrustWebflowConfigurer() {
             val deviceRegistrationEnabled = casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled();
             return new YubiKeyMultifactorTrustWebflowConfigurer(flowBuilderServices,
-                deviceRegistrationEnabled, loginFlowDefinitionRegistry.getIfAvailable(), applicationContext, casProperties);
+                deviceRegistrationEnabled, loginFlowDefinitionRegistry.getIfAvailable(),
+                yubikeyFlowRegistry(),
+                applicationContext, casProperties);
         }
 
         @Override
