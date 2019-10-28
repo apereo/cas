@@ -23,7 +23,18 @@ import java.math.BigDecimal;
  */
 @EnabledIfPortOpen(port = 25000)
 @EnabledIfContinuousIntegration
-@TestPropertySource(locations = "classpath:risk-electrofence.properties")
+@TestPropertySource(properties = {
+    "spring.mail.host=localhost",
+    "spring.mail.port=25000",
+    "spring.mail.testConnection=true",
+
+    "cas.authn.adaptive.risk.response.mail.from=cas@example.org",
+    "cas.authn.adaptive.risk.response.mail.text=Message",
+    "cas.authn.adaptive.risk.response.mail.subject=Subject",
+
+    "cas.authn.adaptive.risk.response.sms.text=Message",
+    "cas.authn.adaptive.risk.response.sms.from=3487244312"
+})
 @Import(MailSenderAutoConfiguration.class)
 public class AuthenticationRiskEmailNotifierTests extends BaseAuthenticationRequestRiskCalculatorTests {
     @Test
