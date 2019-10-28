@@ -9,6 +9,7 @@ This page documents the steps that a release engineer should take for cutting a 
 
 | Release               | Instructions
 |-----------------------|-------------------------------------------------------------
+| `6.2.x`               | The guidelines are [documented here](Release-Process-62X.html).
 | `6.1.x`               | The guidelines are [documented here](Release-Process-61X.html).
 | `6.0.x`               | The guidelines are [documented here](Release-Process-60X.html).
 | `5.3.x`               | The guidelines are [documented here](Release-Process-53X.html).
