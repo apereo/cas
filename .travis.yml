@@ -13,7 +13,7 @@ services:
   - docker
 branches:
   only:
-    - master
+    - 6.1.x
 before_cache:
   - rm -rf $HOME/.gradle/caches/5.*/
   - rm -rf $HOME/.gradle/caches/4.*/
@@ -230,14 +230,14 @@ jobs:
       if: NOT (head_branch =~ env(DEPENDENCY_BOT_BRANCH) and type = pull_request)
       script: ./ci/analyze-dependencies.sh
       name: "Dependency Security Analysis"
-    - stage: finalize
-      if: type != pull_request and (branch =~ /^\d+\.\d+\.x$/ or branch = master)
-      script: ./ci/report-dependency-updates.sh
-      name: "Dependency Update Report"
-    - stage: finalize
-      if: type != pull_request and (branch =~ /^\d+\.\d+\.x$/ or branch = master)
-      script: ./ci/update-dependencies.sh
-      name: "Renovate Dependency Updates"
+    # - stage: finalize
+    #   if: type != pull_request and (branch =~ /^\d+\.\d+\.x$/ or branch = master)
+    #   script: ./ci/report-dependency-updates.sh
+    #   name: "Dependency Update Report"
+    # - stage: finalize
+    #   if: type != pull_request and (branch =~ /^\d+\.\d+\.x$/ or branch = master)
+    #   script: ./ci/update-dependencies.sh
+    #   name: "Renovate Dependency Updates"
     - stage: finalize
       if: NOT (head_branch =~ env(DEPENDENCY_BOT_BRANCH) and type = pull_request)
       script: ./ci/analyze-bugs-main.sh
