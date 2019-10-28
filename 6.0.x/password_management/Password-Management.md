@@ -18,6 +18,16 @@ By default, after a user has successfully changed their password they will be re
 to enter their new password and log in. CAS can also be configured to automatically log the user in after
 a successful change. This behavior can be altered via CAS settings. 
 
+Support is enabled by including the following dependency in the WAR overlay:
+
+```xml
+<dependency>
+  <groupId>org.apereo.cas</groupId>
+  <artifactId>cas-server-support-pm-webflow</artifactId>
+  <version>${cas.version}</version>
+</dependency>
+```
+
 To learn more about available notification options, please [see this guide](../notifications/SMS-Messaging-Configuration.html) or [this guide](../notifications/Sending-Email-Configuration.html). To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#password-management).
 
 ## JSON
