@@ -1,4 +1,7 @@
-package org.apereo.cas.authentication.support;
+package org.apereo.cas.authentication;
+
+import org.apereo.cas.authentication.support.DefaultCasProtocolAttributeEncoderTests;
+import org.apereo.cas.authentication.support.ProtocolAttributeEncoderTests;
 
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
@@ -12,7 +15,8 @@ import org.junit.runner.RunWith;
  */
 @SelectClasses({
     DefaultCasProtocolAttributeEncoderTests.class,
-    ProtocolAttributeEncoderTests.class
+    ProtocolAttributeEncoderTests.class,
+    WebApplicationServiceResponseBuilderTests.class
 })
 @RunWith(JUnitPlatform.class)
 public class CasServicesAuthenticationTestsSuite {

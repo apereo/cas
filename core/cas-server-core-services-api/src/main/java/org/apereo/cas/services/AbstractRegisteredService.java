@@ -139,6 +139,9 @@ public abstract class AbstractRegisteredService implements RegisteredService {
     @Column(name = "logout_url")
     private String logoutUrl;
 
+    @Column(name = "redirect_url")
+    private String redirectUrl;
+
     @Lob
     @Column(name = "access_strategy", length = Integer.MAX_VALUE)
     private RegisteredServiceAccessStrategy accessStrategy = new DefaultRegisteredServiceAccessStrategy();
