@@ -18,7 +18,8 @@ dependencies {
     testImplementation project(":core:cas-server-core-services-registry")
     testImplementation project(":core:cas-server-core-services-api")
     testImplementation project(":core:cas-server-core-services-authentication")
-    
+    testRuntimeOnly libraries.webjars
+
     implementation libraries.pac4jcore
     implementation libraries.nimbus
 
