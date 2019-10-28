@@ -27,7 +27,7 @@ public class SamlIdentityProviderDiscoveryWebflowConfigurer extends AbstractCasW
         val flow = getLoginFlow();
         if (flow != null) {
             flow.getStartActionList().add(requestContext -> {
-                requestContext.getFlowScope().put("identityProviderDiscoveryEnabled", true);
+                requestContext.getFlowScope().put("identityProviderDiscoveryEnabled", Boolean.TRUE);
                 return null;
             });
         }
