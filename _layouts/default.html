@@ -18,7 +18,7 @@
     {% capture relative %}{% for i in (3..lvl) %}../{% endfor %}{% endcapture %}
     {% capture version %}{{ page.url | replace:'/',' ' | truncatewords: 1 | remove:'...' }}{% endcapture %}
 
-    {% assign versionArray = "development,6.0.x,5.3.x,5.2.x,5.1.x,5.0.x,4.2.x,4.1.x,4.0.x" | split:"," %}
+    {% assign versionArray = "development,6.1.x,6.0.x,5.3.x,5.2.x,5.1.x,5.0.x,4.2.x,4.1.x,4.0.x" | split:"," %}
 
     <script>
       (function (i, s, o, g, r, a, m) {
