@@ -303,7 +303,7 @@ public class RequestParameterPolicyEnforcementFilter extends AbstractSecurityFil
      *
      * @param parametersToCheck  Set of String request parameter names to look for
      * @param charactersToForbid Set of Character characters to forbid
-     * @param parameterMap       String --> String[] Map, in practice as read from ServletRequest
+     * @param parameterMap       String to String[] Map, in practice as read from ServletRequest
      */
     public static void enforceParameterContentCharacterRestrictions(
         final Set<String> parametersToCheck, final Set<Character> charactersToForbid, final Map parameterMap) {

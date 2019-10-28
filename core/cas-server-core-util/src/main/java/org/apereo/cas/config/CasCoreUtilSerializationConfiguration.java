@@ -17,7 +17,7 @@ import org.springframework.core.Ordered;
 import java.util.List;
 
 /**
- * This is {@link CasCoreUtilSerialiAdaptiveMultifactorAuthenticationTriggerzationConfiguration}.
+ * This is {@link CasCoreUtilSerializationConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
