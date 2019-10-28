@@ -11,6 +11,7 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -30,14 +31,10 @@ public class WebjarValidationTests {
             PropertiesLoaderUtils.loadProperties(new ClassPathResource("cas_common_messages.properties"))));
         compositePropertySource.addPropertySource(new PropertiesPropertySource("versions",
             PropertiesLoaderUtils.loadProperties(new FileSystemResource("../../gradle.properties"))));
-        for (val key : compositePropertySource.getPropertyNames()) {
-            if (key.startsWith("webjars.")) {
-                val path = compositePropertySource.getProperty(key);
-                LOGGER.info("Webjars  {} = {}", key, path);
-                val resource = new ClassPathResource("META-INF/resources" + path);
-                assertTrue(resource.exists(), "Webjar path bad: " + path);
-            }
-        }
+        Arrays.stream(compositePropertySource.getPropertyNames())
+            .filter(key -> key.startsWith("webjars."))
+            .map(key -> new ClassPathResource("META-INF/resources" + compositePropertySource.getProperty(key)))
+            .forEach(resource -> assertTrue(resource.exists(), "Webjar path bad: " + resource.getPath()));
     }
 
 }
