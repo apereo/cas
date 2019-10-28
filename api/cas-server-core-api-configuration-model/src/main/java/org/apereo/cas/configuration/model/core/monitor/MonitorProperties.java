@@ -17,7 +17,9 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.io.Resource;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -74,7 +76,7 @@ public class MonitorProperties implements Serializable {
     /**
      * Options for monitoring LDAP resources.
      */
-    private Ldap ldap = new Ldap();
+    private List<Ldap> ldap = new ArrayList<>();
 
     /**
      * Options for monitoring Memcached resources.

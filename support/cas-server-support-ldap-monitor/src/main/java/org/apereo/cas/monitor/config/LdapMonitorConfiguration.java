@@ -1,24 +1,25 @@
 package org.apereo.cas.monitor.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.core.monitor.MonitorProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.monitor.PooledLdapConnectionFactoryHealthIndicator;
 import org.apereo.cas.util.LdapUtils;
 
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.ldaptive.pool.SearchValidator;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.health.ConditionalOnEnabledHealthIndicator;
-import org.springframework.boot.actuate.health.HealthIndicator;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.actuate.health.CompositeHealthContributor;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.scheduling.concurrent.ThreadPoolExecutorFactoryBean;
 
-import java.util.concurrent.ExecutorService;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * This is {@link LdapMonitorConfiguration}.
@@ -26,26 +27,30 @@ import java.util.concurrent.ExecutorService;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration(value = "ldapMonitorConfiguration", proxyBeanMethods = true)
+@Configuration(value = "ldapMonitorConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnProperty(prefix = "cas.monitor.ldap", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class LdapMonitorConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
 
     @Bean
-    public ThreadPoolExecutorFactoryBean pooledConnectionFactoryMonitorExecutorService() {
-        return Beans.newThreadPoolExecutorFactoryBean(casProperties.getMonitor().getLdap().getPool());
-    }
-
-    @Autowired
-    @Bean
     @ConditionalOnEnabledHealthIndicator("pooledLdapConnectionFactoryHealthIndicator")
-    public HealthIndicator pooledLdapConnectionFactoryHealthIndicator(@Qualifier("pooledConnectionFactoryMonitorExecutorService") final ObjectProvider<ExecutorService> executor) {
-        val ldap = casProperties.getMonitor().getLdap();
-        val connectionFactory = LdapUtils.newLdaptivePooledConnectionFactory(ldap);
-        return new PooledLdapConnectionFactoryHealthIndicator(Beans.newDuration(ldap.getMaxWait()).toMillis(),
-            connectionFactory, executor.getObject(), new SearchValidator());
+    public CompositeHealthContributor pooledLdapConnectionFactoryHealthIndicator() {
+        val ldaps = casProperties.getMonitor().getLdap();
+        val contributors = new LinkedHashMap<>();
+        ldaps.stream()
+            .filter(MonitorProperties.Ldap::isEnabled)
+            .map(ldap -> {
+                val executor = Beans.newThreadPoolExecutorFactoryBean(ldap.getPool());
+                executor.afterPropertiesSet();
+                val connectionFactory = LdapUtils.newLdaptivePooledConnectionFactory(ldap);
+                val healthIndicator = new PooledLdapConnectionFactoryHealthIndicator(Beans.newDuration(ldap.getMaxWait()).toMillis(),
+                    connectionFactory, executor.getObject(), new SearchValidator());
+                val name = StringUtils.defaultIfBlank(ldap.getName(), UUID.randomUUID().toString());
+                return Pair.of(name, healthIndicator);
+            })
+            .forEach(it -> contributors.put(it.getKey(), it.getValue()));
+        return CompositeHealthContributor.fromMap((Map) contributors);
     }
 }
