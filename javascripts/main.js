@@ -178,11 +178,11 @@ function generateToolbarIcons() {
 
 
   if (activeVersion != CONST_CURRENT_VER && activeVersion != "") {
-    var linkToDev = "/cas/" + page.replace(activeVersion, CONST_CURRENT_VER);
+    var linkToDev = "/cas/" + page.replace(activeVersion, CONST_CURRENT_VER).replace("//", "/");
     linkToDev = linkToDev.replace("html/", "html");
 
     $('#toolbarIcons').append("<a href='" + linkToDev +
-      "'><i class='fa fa-cogs' title='See the latest version of this page'></i></a>");
+      "'><i class='fa fa-code' title='See the latest version of this page'></i></a>");
   }
 
   var baseLink = CAS_REPO_URL_GITHUB;
