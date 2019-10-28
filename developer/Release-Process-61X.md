@@ -136,9 +136,3 @@ This task is only relevant when dealing with major or minor releases.
 ### Update Demos
 
 A number of CAS demos today run on Heroku and are tracked in dedicated branches inside the codebase. Take a pass and updated each, when relevant.
-
-### Docker Image
-
-Release a new CAS [Docker image](https://github.com/apereo/cas-webapp-docker).
-This task is only relevant when dealing with GA official releases, regardless of release calibre. All major/feature/patch releases
-qualify for a Docker release.
