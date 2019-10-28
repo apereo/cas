@@ -382,6 +382,14 @@
             <property name="message"
                       value="Do not create a standalone instance of SecureRandom. Use RandomUtils instead."/>
         </module>
+        
+        <module name="RegexpSinglelineJava">
+            <property name="id" value="externalProperties"/>
+            <metadata name="net.sf.eclipsecs.core.comment" value="Consider using inline properties instead"/>
+            <property name="severity" value="error"/>
+            <property name="format" value="@TestPropertySource\(locations.*"/>
+            <property name="message" value="Consider using inline properties instead using the properties attribute"/>
+        </module>
 
         <module name="RegexpSinglelineJava">
             <property name="id" value="codeTagJavadocs"/>

@@ -39,7 +39,16 @@ import static org.mockito.Mockito.*;
  */
 @Import(SamlGoogleAppsConfiguration.class)
 @Tag("SAML")
-@TestPropertySource(locations = "classpath:/gapps.properties")
+@TestPropertySource(properties = {
+    "cas.server.name=http://localhost:8080",
+    "cas.server.prefix=${server.name}/cas",
+    "cas.samlCore.issuer=localhost",
+    "cas.samlCore.skewAllowance=200",
+    "cas.samlCore.ticketidSaml2=false",
+    "cas.googleApps.keyAlgorithm=DSA",
+    "cas.googleApps.publicKeyLocation=classpath:DSAPublicKey01.key",
+    "cas.googleApps.privateKeyLocation=classpath:DSAPrivateKey01.key"
+})
 public class GoogleAccountsServiceTests extends AbstractOpenSamlTests {
     private static final File FILE = new File(FileUtils.getTempDirectoryPath(), "service.json");
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
