@@ -45,6 +45,7 @@ Registered services present the following metadata:
 | `description`                     | Optional free-text description of the service. (`255` characters or less)
 | `informationUrl`                  | Optional free-text link to the service information guide.
 | `privacyUrl`                      | Optional free-text link to the service privacy policy.
+| `redirectUrl`                     | Optional URL to use when returning an authentication response back to applications.
 | `logo`                            | Optional path to an image file that is the logo for this service. The image will be displayed on the login page along with the service description and name. The value may be a relative path to the `images` directory of the CAS web application or it may be a full URL.
 | `serviceId`                       | Required [regular expression](http://docs.oracle.com/javase/tutorial/essential/regex/) describing a logical service. A logical service defines one or more URLs where a service or services are located. The definition of the url pattern must be **done carefully** because it can open security breaches.
 | `theme`                           | Optional theme name that may be used to customize the CAS UI when the service requests a ticket. See [this guide](../ux/User-Interface-Customization.html) for more details.
