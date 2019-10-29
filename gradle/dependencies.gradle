@@ -365,9 +365,6 @@ ext.libraries = [
                 dependencies.create("org.jooq:jool:$joolVersion") {
                     force = true
                 },
-                dependencies.create("com.github.lalyos:jfiglet:$jfigletVersion") {
-                    force = true
-                },
                 dependencies.create("commons-collections:commons-collections:$commonsCollections3Version") {
                     force = true
                 },

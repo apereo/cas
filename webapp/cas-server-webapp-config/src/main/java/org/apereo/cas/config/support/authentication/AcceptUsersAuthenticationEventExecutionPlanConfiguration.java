@@ -48,7 +48,7 @@ public class AcceptUsersAuthenticationEventExecutionPlanConfiguration {
                                 + "While this is generally useful for demo purposes, it is STRONGLY recommended "
                                 + "that you DISABLE this authentication method (by setting 'cas.authn.accept.users' "
                                 + "to a blank value) and switch to a mode that is more suitable for production.";
-                AsciiArtUtils.printAsciiArtWarning(LOGGER, "STOP!", header);
+                AsciiArtUtils.printAsciiArtWarning(LOGGER, header);
                 plan.registerAuthenticationHandlerWithPrincipalResolver(acceptUsersAuthenticationHandler, personDirectoryPrincipalResolver);
             }
         };

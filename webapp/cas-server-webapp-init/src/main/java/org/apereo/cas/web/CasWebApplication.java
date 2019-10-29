@@ -5,6 +5,7 @@ import org.apereo.cas.CasEmbeddedContainerUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.springframework.boot.Banner;
 import org.springframework.boot.actuate.autoconfigure.MetricsDropwizardAutoConfiguration;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.cassandra.CassandraAutoConfiguration;
 import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration;
@@ -52,6 +53,7 @@ import java.util.Map;
 @EnableTransactionManagement(proxyTargetClass = true)
 @EnableScheduling
 @NoArgsConstructor
+@Slf4j
 public class CasWebApplication {
 
     /**
