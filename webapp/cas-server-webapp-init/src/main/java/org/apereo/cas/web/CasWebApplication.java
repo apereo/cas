@@ -4,6 +4,7 @@ import org.apereo.cas.CasEmbeddedContainerUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.actuate.autoconfigure.jdbc.DataSourceHealthIndicatorAutoConfiguration;
@@ -52,6 +53,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableTransactionManagement(proxyTargetClass = true)
 @EnableScheduling
 @NoArgsConstructor
+@Slf4j
 public class CasWebApplication {
 
     /**
