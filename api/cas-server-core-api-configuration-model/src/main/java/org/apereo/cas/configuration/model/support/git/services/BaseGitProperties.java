@@ -1,4 +1,4 @@
-package org.apereo.cas.configuration.model.support.git;
+package org.apereo.cas.configuration.model.support.git.services;
 
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -10,15 +10,15 @@ import java.io.File;
 import java.io.Serializable;
 
 /**
- * This is {@link GitServiceRegistryProperties}.
+ * This is {@link BaseGitProperties}.
  *
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@RequiresModule(name = "cas-server-support-git-service-registry")
+@RequiresModule(name = "cas-server-support-git-core")
 @Getter
 @Setter
-public class GitServiceRegistryProperties implements Serializable {
+public abstract class BaseGitProperties implements Serializable {
     private static final long serialVersionUID = 4194689836396653458L;
 
     /**
@@ -53,6 +53,7 @@ public class GitServiceRegistryProperties implements Serializable {
      * Decide whether changes should be pushed back into the remote repository.
      */
     private boolean pushChanges;
+
     /**
      * Path to the SSH private key identity.
      */
@@ -78,5 +79,5 @@ public class GitServiceRegistryProperties implements Serializable {
     /**
      * Directory into which the repository would be cloned.
      */
-    private File cloneDirectory = new File(FileUtils.getTempDirectory(), "cas-service-registry");
+    private File cloneDirectory = new File(FileUtils.getTempDirectory(), "cas-git-clone");
 }
