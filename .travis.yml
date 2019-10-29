@@ -137,6 +137,9 @@ jobs:
     - stage: validate
       script: ./ci/tests/validate-tests.sh
       name: "Validate Tests & Test Suites"
+    - stage: validate
+      script: ./ci/validate-dependency-licenses.sh
+      name: "Validate Dependency Licenses"
       ############################################
     - stage: test
       script: ./ci/tests/run-tests-simple.sh

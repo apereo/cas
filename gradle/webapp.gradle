@@ -51,7 +51,8 @@ dependencies {
     implementation project(":webapp:cas-server-webapp-resources")
 
     implementation libraries.springcloudconfigclient
-
-    developmentOnly libraries.springbootdevtools
+    if (!rootProject.publishReleases && !rootProject.publishSnapshots) {
+        runtimeClasspath libraries.springbootdevtools
+    }
     runtimeOnly libraries.webjars
 }
