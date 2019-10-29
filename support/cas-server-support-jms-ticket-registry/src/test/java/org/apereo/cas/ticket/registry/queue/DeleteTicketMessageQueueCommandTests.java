@@ -1,6 +1,6 @@
 package org.apereo.cas.ticket.registry.queue;
 
-import org.apereo.cas.JmsTicketRegistryQueueIdentifier;
+import org.apereo.cas.JmsQueueIdentifier;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
@@ -28,7 +28,7 @@ public class DeleteTicketMessageQueueCommandTests extends AbstractTicketMessageQ
     public void verifyDeleteTicket() {
         val ticket = new TicketGrantingTicketImpl("TGT", CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);
         ticketRegistry.getObject().addTicket(ticket);
-        val cmd = new DeleteTicketMessageQueueCommand(new JmsTicketRegistryQueueIdentifier(), ticket.getId());
+        val cmd = new DeleteTicketMessageQueueCommand(new JmsQueueIdentifier(), ticket.getId());
         cmd.execute(ticketRegistry.getObject());
         assertTrue(ticketRegistry.getObject().getTickets().isEmpty());
     }

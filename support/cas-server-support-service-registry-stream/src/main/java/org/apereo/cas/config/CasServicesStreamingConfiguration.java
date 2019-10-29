@@ -1,6 +1,6 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.JmsTicketRegistryQueueIdentifier;
+import org.apereo.cas.JmsQueueIdentifier;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.CasServicesRegistryStreamingEventListener;
 import org.apereo.cas.services.publisher.CasRegisteredServiceNoOpStreamPublisher;
@@ -36,7 +36,7 @@ public class CasServicesStreamingConfiguration {
 
     @ConditionalOnMissingBean(name = "casRegisteredServiceStreamPublisherIdentifier")
     @Bean
-    public JmsTicketRegistryQueueIdentifier casRegisteredServiceStreamPublisherIdentifier() {
-        return new JmsTicketRegistryQueueIdentifier();
+    public JmsQueueIdentifier casRegisteredServiceStreamPublisherIdentifier() {
+        return new JmsQueueIdentifier();
     }
 }

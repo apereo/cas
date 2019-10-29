@@ -1,6 +1,6 @@
 package org.apereo.cas.ticket.registry.queue;
 
-import org.apereo.cas.JmsTicketRegistryQueueIdentifier;
+import org.apereo.cas.JmsQueueIdentifier;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -26,7 +26,7 @@ public abstract class BaseMessageQueueCommand implements Serializable {
 
     private static final long serialVersionUID = 7050449807845156228L;
 
-    private final JmsTicketRegistryQueueIdentifier id;
+    private final JmsQueueIdentifier id;
 
     /**
      * Execute.
