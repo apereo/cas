@@ -1,6 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
-import org.apereo.cas.JmsTicketRegistryQueueIdentifier;
+import org.apereo.cas.JmsQueueIdentifier;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.registry.queue.AddTicketMessageQueueCommand;
 import org.apereo.cas.ticket.registry.queue.DeleteTicketMessageQueueCommand;
@@ -22,9 +22,9 @@ public class JmsTicketRegistry extends DefaultTicketRegistry {
 
 
     private final JmsTicketRegistryPublisher ticketPublisher;
-    private final JmsTicketRegistryQueueIdentifier id;
+    private final JmsQueueIdentifier id;
 
-    public JmsTicketRegistry(final JmsTicketRegistryPublisher publisher, final JmsTicketRegistryQueueIdentifier id,
+    public JmsTicketRegistry(final JmsTicketRegistryPublisher publisher, final JmsQueueIdentifier id,
                              final CipherExecutor cipherExecutor) {
         super(cipherExecutor);
         this.ticketPublisher = publisher;

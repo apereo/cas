@@ -363,6 +363,12 @@ ext.libraries = [
                 dependencies.create("commons-io:commons-io:$commonsIoVersion") {
                     force = true
                 },
+                dependencies.create("org.apache.commons:commons-jexl3:$commonsJexlVersion") {
+                    exclude(group: "commons-logging", module: "commons-logging")
+                    exclude(group: "commons-lang", module: "commons-lang")
+                    exclude(group: "junit", module: "junit")
+                    force = true
+                },
                 dependencies.create("org.apache.commons:commons-text:$commonsTextVersion") {
                     exclude(group: "commons-lang", module: "commons-lang")
                     exclude(group: "org.apache.commons", module: "commons-lang3")
@@ -390,12 +396,6 @@ ext.libraries = [
                     force = true
                 },
                 dependencies.create("commons-codec:commons-codec:$commonsCodecVersion") {
-                    force = true
-                },
-                dependencies.create("commons-jexl:commons-jexl:$commonsJexlVersion") {
-                    exclude(group: "commons-logging", module: "commons-logging")
-                    exclude(group: "commons-lang", module: "commons-lang")
-                    exclude(group: "junit", module: "junit")
                     force = true
                 },
                 dependencies.create("org.apache.commons:commons-lang3:$commonsLangVersion") {

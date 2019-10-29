@@ -1,6 +1,6 @@
 package org.apereo.cas.services;
 
-import org.apereo.cas.JmsTicketRegistryQueueIdentifier;
+import org.apereo.cas.JmsQueueIdentifier;
 import org.apereo.cas.configuration.model.support.hazelcast.BaseHazelcastProperties;
 import org.apereo.cas.hz.HazelcastConfigurationFactory;
 import org.apereo.cas.services.publisher.CasRegisteredServiceHazelcastStreamPublisher;
@@ -65,7 +65,7 @@ public class RegisteredServiceHazelcastDistributedCacheManagerTests {
     @Test
     public void verifyPublisher() {
         val registeredService = RegisteredServiceTestUtils.getRegisteredService();
-        val publisher = new CasRegisteredServiceHazelcastStreamPublisher(mgr, new JmsTicketRegistryQueueIdentifier("123456"));
+        val publisher = new CasRegisteredServiceHazelcastStreamPublisher(mgr, new JmsQueueIdentifier("123456"));
         publisher.publish(registeredService, new CasRegisteredServiceDeletedEvent(this, registeredService));
         publisher.publish(registeredService, new CasRegisteredServiceSavedEvent(this, registeredService));
         publisher.publish(registeredService, new CasRegisteredServiceLoadedEvent(this, registeredService));

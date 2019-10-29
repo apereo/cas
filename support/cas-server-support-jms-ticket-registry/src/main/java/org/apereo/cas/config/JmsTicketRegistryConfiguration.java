@@ -1,6 +1,6 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.JmsTicketRegistryQueueIdentifier;
+import org.apereo.cas.JmsQueueIdentifier;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.registry.JmsTicketRegistry;
 import org.apereo.cas.ticket.registry.JmsTicketRegistryDefaultPublisher;
@@ -60,8 +60,8 @@ public class JmsTicketRegistryConfiguration {
 
     @ConditionalOnMissingBean(name = "messageQueueTicketRegistryIdentifier")
     @Bean
-    public JmsTicketRegistryQueueIdentifier messageQueueTicketRegistryIdentifier() {
-        val bean = new JmsTicketRegistryQueueIdentifier();
+    public JmsQueueIdentifier messageQueueTicketRegistryIdentifier() {
+        val bean = new JmsQueueIdentifier();
         val jms = casProperties.getTicket().getRegistry().getJms();
         if (StringUtils.isNotBlank(jms.getQueueIdentifier())) {
             bean.setId(jms.getQueueIdentifier());
