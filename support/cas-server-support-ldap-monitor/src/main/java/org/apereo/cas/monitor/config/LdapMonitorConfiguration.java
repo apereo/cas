@@ -1,7 +1,7 @@
 package org.apereo.cas.monitor.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.core.monitor.MonitorProperties;
+import org.apereo.cas.configuration.model.core.monitor.LdapMonitorProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.monitor.PooledLdapConnectionFactoryHealthIndicator;
 import org.apereo.cas.util.LdapUtils;
@@ -40,7 +40,7 @@ public class LdapMonitorConfiguration {
         val ldaps = casProperties.getMonitor().getLdap();
         val contributors = new LinkedHashMap<>();
         ldaps.stream()
-            .filter(MonitorProperties.Ldap::isEnabled)
+            .filter(LdapMonitorProperties::isEnabled)
             .map(ldap -> {
                 val executor = Beans.newThreadPoolExecutorFactoryBean(ldap.getPool());
                 executor.afterPropertiesSet();

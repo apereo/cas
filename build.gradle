@@ -30,8 +30,8 @@ buildscript {
     }
 
     dependencies {
-        classpath "com.gradle:build-scan-plugin:2.4.2"
         classpath "gradle.plugin.com.ewerk.gradle.plugins:jaxb2-plugin:1.0.9"
+        classpath "com.github.jk1:gradle-license-report:1.11"
         classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
         classpath "com.netflix.nebula:gradle-lint-plugin:$gradleLintVersion"
         classpath "gradle.plugin.com.gorylenko.gradle-git-properties:gradle-git-properties:$gradleGitVersion"
@@ -89,11 +89,6 @@ if (!Boolean.getBoolean("skipSonarqube")) {
 }
 
 if (rootProject.continuousIntegrationBuild) {
-    buildScan {
-        termsOfServiceUrl = 'https://gradle.com/terms-of-service'
-        termsOfServiceAgree = 'yes'
-    }
-
     apply plugin: "build-time-tracker"
     buildtimetracker {
         reporters {
@@ -117,7 +112,7 @@ dependencyCheck {
     skipTestGroups = true
     skipConfigurations = ['jacocoAgent', 'jacocoAnt', 'optional', 'provided', 'providedCompile', 'providedRuntime',
                           'signatures', 'spotbugs', 'spotbugsPlugins', 'checkstyle', 'errorprone', 'errorproneJavac',
-                          'annotationProcessor', 'archives', 'developmentOnly', 'compileOnly',
+                          'annotationProcessor', 'archives', 'compileOnly',
                           'tests', 'testRuntimeOnly', 'testRuntimeClasspath', 'testRuntime', 'testImplementation',
                           'testCompileOnly', 'testCompileClasspath', 'testCompile', 'testAnnotationProcessor',
                           'bootArchives', 'bootRunAnnotationProcessor']
@@ -293,11 +288,6 @@ subprojects {
     
     configurations {
         tests
-        developmentOnly
-
-        runtimeClasspath {
-            extendsFrom developmentOnly
-        }
     }
 
     configurations.all {
@@ -561,6 +551,31 @@ subprojects {
         compileOnly libraries.findbugsannotations
     }
 }
+
+task outputDependenciesWithoutLicense(description: "Output dependencies without approved license") {
+    doLast {
+        def results = file("${project.buildDir}/licenses/dependencies-without-allowed-license.json")
+        if (results.exists()) {
+            def slurper = new groovy.json.JsonSlurper()
+            def dependencies = slurper.parseText(results.text)
+            if (!dependencies.dependenciesWithoutAllowedLicenses.isEmpty()) {
+                println results.text
+                throw new GradleException("Dependencies found without allowed licenses")
+            }
+        }
+    }
+}
+
+apply plugin: "com.github.jk1.dependency-license-report"
+licenseReport {
+    outputDir = "$projectDir/build/licenses"
+    projects = [project] + project.subprojects
+    excludeOwnGroup = true
+    configurations = ['runtimeClasspath']
+    filters = [new com.github.jk1.license.filter.ExcludeTransitiveDependenciesFilter()]
+    allowedLicensesFile = new File("$projectDir/etc/allowed-licenses.json")
+}
+checkLicense.finalizedBy outputDependenciesWithoutLicense
 
 task javadoc(type: Javadoc, description: "Aggregate all Javadocs into a single directory", overwrite: true) {
     source subprojects.collect { project -> project.sourceSets.main.allJava }
