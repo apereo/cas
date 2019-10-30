@@ -1779,6 +1779,7 @@ ext.libraries = [
                 },
                 dependencies.create("io.micrometer:micrometer-registry-wavefront:$micrometerVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "com.signalfx.public", module: "signalfx-java")
                     force = true
                 },
                 dependencies.create("io.micrometer:micrometer-registry-new-relic:$micrometerVersion") {
@@ -1787,6 +1788,9 @@ ext.libraries = [
                 },
                 dependencies.create("io.micrometer:micrometer-registry-cloudwatch:$micrometerVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
+                    force = true
+                },
+                dependencies.create("com.signalfx.public:signalfx-java:$signalFxVersion") {
                     force = true
                 }
         ],
