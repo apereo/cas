@@ -48,7 +48,7 @@ class RepositoryMonitor {
         this.pullRequestListeners = pullRequestListeners;
     }
 
-    @Scheduled(fixedRate = 60 * 1000)
+    @Scheduled(fixedRate = 60000 * 1000)
     void monitor() {
         log.info("Monitoring {}/{}", this.repository.getOrganization(), this.repository.getName());
         try {
@@ -75,7 +75,7 @@ class RepositoryMonitor {
 
     @Scheduled(fixedRate = 90 * 60 * 1000)
     void monitorHourly() {
-        log.info("Hourly task of monitoring {}/{}", this.repository.getOrganization(), this.repository.getName());
+        log.info("Starting hourly monitoring {}/{}", this.repository.getOrganization(), this.repository.getName());
         try {
             Page<PullRequest> page = this.gitHub.getPullRequests(this.repository.getOrganization(), this.repository.getName());
             while (page != null) {
