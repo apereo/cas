@@ -13,25 +13,19 @@ import static org.junit.jupiter.api.Assertions.*;
 public class SpringSpelStringResolverTests {
     @Test
     public void verifyOperation() {
-        var resolver = new SpringSpelStringValueResolver("${'Hello World'}");
-        assertEquals("Hello World", resolver.resolve());
+        var resolver = new SpringSpelStringValueResolver();
 
-        resolver = new SpringSpelStringValueResolver("Literal Value");
-        assertEquals("Literal Value", resolver.resolve());
-        
-        resolver = new SpringSpelStringValueResolver("${'Hello World'.concat('!')}");
-        assertEquals("Hello World!", resolver.resolve());
+        assertEquals("Hello World", resolver.resolve("${'Hello World'}"));
+        assertEquals("Literal Value", resolver.resolve("Literal Value"));
+        assertEquals("Hello World!", resolver.resolve("${'Hello World'.concat('!')}"));
 
         System.setProperty("cas.user", "Apereo CAS");
-        resolver = new SpringSpelStringValueResolver("${#systemProperties['cas.user']}");
-        assertEquals("Apereo CAS", resolver.resolve());
-
-        resolver = new SpringSpelStringValueResolver("${#environmentVars['HOME']}");
-        assertNotNull(resolver.resolve());
+        assertEquals("Apereo CAS", resolver.resolve("${#systemProperties['cas.user']}"));
+        assertNotNull(resolver.resolve("${#environmentVars['HOME']}"));
 
         System.setProperty("cas.dir", "etc/cas/config");
-        resolver = new SpringSpelStringValueResolver("file://${#systemProperties['cas.dir']}/file.json");
-        assertEquals("file://etc/cas/config/file.json", resolver.resolve());
+        assertEquals("file://etc/cas/config/file.json",
+            resolver.resolve("file://${#systemProperties['cas.dir']}/file.json"));
 
     }
 }
