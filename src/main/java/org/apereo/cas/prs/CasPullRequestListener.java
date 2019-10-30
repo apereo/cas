@@ -117,7 +117,8 @@ public class CasPullRequestListener implements PullRequestListener {
     private void processMilestoneAssignment(final PullRequest pr) {
         if (pr.getMilestone() == null) {
             if (pr.isTargetedAtMasterBranch()) {
-                repository.getMilestoneForMaster().ifPresent(milestone -> {
+                Optional<Milestone> milestoneForMaster = repository.getMilestoneForMaster();
+                milestoneForMaster.ifPresent(milestone -> {
                     log.info("{} will be assigned the master milestone {}", pr, milestone);
                     repository.getGitHub().setMilestone(pr, milestone);
                 });

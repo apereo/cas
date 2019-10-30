@@ -14,6 +14,7 @@ import org.apereo.cas.github.PullRequestFile;
 import com.github.zafarkhaja.semver.Version;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
@@ -33,6 +34,7 @@ import java.util.function.Predicate;
  */
 @RequiredArgsConstructor
 @Getter
+@Slf4j
 public class MonitoredRepository implements InitializingBean {
     private final GitHubOperations gitHub;
     private final GitHubProperties gitHubProperties;
@@ -55,17 +57,21 @@ public class MonitoredRepository implements InitializingBean {
         properties.load(new StringReader(entity.getBody().toString()));
         currentVersionInMaster = Version.valueOf(properties.get("version").toString());
 
+        log.info("Current master version is {}", currentVersionInMaster);
+
         Page<Milestone> page = gitHub.getMilestones(getOrganization(), getName());
         while (page != null) {
             milestones.addAll(page.getContent());
             page = page.next();
         }
+        log.info("Available milestones are {}", this.milestones);
 
         Page<Label> lbl = gitHub.getLabels(getOrganization(), getName());
         while (lbl != null) {
             labels.addAll(lbl.getContent());
             lbl = lbl.next();
         }
+        log.info("Available labels are {}", this.labels);
     }
 
     public String getOrganization() {
@@ -77,13 +83,17 @@ public class MonitoredRepository implements InitializingBean {
     }
 
     public Optional<Milestone> getMilestoneForMaster() {
-        final String currentVersion = currentVersionInMaster.toString().replace("-SNAPSHOT", "");
-        return milestones.stream()
+        final Version currentVersion = Version.valueOf(currentVersionInMaster.toString().replace("-SNAPSHOT", ""));
+        Optional<Milestone> result = milestones
+            .stream()
+            .sorted()
             .filter(milestone -> {
-                final String milestoneVersion = Version.valueOf(milestone.getTitle()).toString();
-                return milestoneVersion.equalsIgnoreCase(currentVersion);
+                final Version masterVersion = Version.valueOf(milestone.getTitle());
+                return masterVersion.getMajorVersion() == currentVersion.getMajorVersion()
+                    && masterVersion.getMinorVersion() == currentVersion.getMinorVersion();
             })
             .findFirst();
+        return result;
     }
 
     public Optional<Milestone> getMilestoneForBranch(final String branch) {

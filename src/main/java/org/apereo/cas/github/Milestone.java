@@ -18,12 +18,17 @@ package org.apereo.cas.github;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 
+/**
+ * Note: this class has a natural ordering that is inconsistent with equals.
+ */
 @Getter
 @ToString(of = {"title"})
-public class Milestone {
+@EqualsAndHashCode(of = "number")
+public class Milestone implements Comparable<Milestone> {
 
     private final String title;
     private final String description;
@@ -41,4 +46,8 @@ public class Milestone {
         this.number = number;
     }
 
+    @Override
+    public int compareTo(final Milestone o) {
+        return this.number.compareTo(o.getNumber());
+    }
 }
