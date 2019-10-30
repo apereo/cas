@@ -43,7 +43,7 @@ public class DefaultCasEventListener {
      */
     @EventListener
     public void handleApplicationReadyEvent(final ApplicationReadyEvent event) {
-        AsciiArtUtils.printAsciiArtInfo(LOGGER, "READY", StringUtils.EMPTY);
+        AsciiArtUtils.printAsciiArtReady(LOGGER, StringUtils.EMPTY);
         LOGGER.info("Ready to process requests @ [{}]", DateTimeUtils.zonedDateTimeOf(event.getTimestamp()));
     }
     
