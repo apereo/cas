@@ -7,7 +7,7 @@ import lombok.ToString;
 import java.util.regex.Pattern;
 
 @RequiredArgsConstructor
-@ToString(of = "title")
+@ToString(of = {"title", "keywords"})
 @Getter
 public enum CasLabels {
     LABEL_AWS_CLOUD_DIRECTORY("AWS Cloud Directory"),

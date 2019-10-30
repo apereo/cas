@@ -43,7 +43,7 @@ public class MonitoredRepository implements InitializingBean {
     private Version currentVersionInMaster;
 
     private static Predicate<Label> getLabelPredicateByName(final CasLabels name) {
-        return l -> l.getName().contains(name.getTitle());
+        return l -> l.getName().equals(name.getTitle());
     }
 
     @Override
@@ -107,9 +107,7 @@ public class MonitoredRepository implements InitializingBean {
     }
 
     public void labelPullRequestAs(final PullRequest pr, final CasLabels labelName) {
-        this.labels.stream().filter(getLabelPredicateByName(labelName)).findFirst().ifPresent(l -> {
-            this.gitHub.addLabel(pr, l.getName());
-        });
+        this.gitHub.addLabel(pr, labelName.getTitle());
     }
 
     public void addComment(final PullRequest pr, final String comment) {
