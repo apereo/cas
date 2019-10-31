@@ -1,5 +1,9 @@
 #!/bin/bash
 
+GREEN=$(tput setaf 2)
+YELLOW=$(tput setaf 3)
+NORMAL=$(tput sgr0)
+
 clear
 java -version
 
@@ -29,20 +33,22 @@ echo
 read -s -p "Sonatype Password: " password
 echo
 
+./gradlew clean --parallel
 clear
-echo -e "\nBuilding CAS. Please be patient as this might take a while..."
-./gradlew clean assemble -x test -x check -DpublishReleases=true \
+
+echo -e "\n${GREEN}Building CAS. Please be patient as this might take a while...${NORMAL}\n"
+./gradlew assemble -x test -x check -DpublishReleases=true \
 -DsonatypeUsername="${username}" -DsonatypePassword="${password}"
 
-echo -e "\nPublishing CAS. Please be patient as this might take a while..."
+echo -e "\n${GREEN}Publishing CAS. Please be patient as this might take a while...${NORMAL}\n"
 ./gradlew publish -DpublishReleases=true -DsonatypeUsername="${username}" -DsonatypePassword="${password}" \
 -Dorg.gradle.internal.http.socketTimeout="${timeout}" -Dorg.gradle.internal.http.connectionTimeout="${timeout}"
 
-echo -e "\nDone! You may now finalize the release process via Sonatype:"
+echo -e "\n${YELLOW}Done! You may now finalize the release process via Sonatype:"
 echo -e "\t\tLog into https://oss.sonatype.org"
 echo -e "\t\tClick on 'Staged Repositories' and find the CAS release."
 echo -e "\t\t'Close' the repository via the toolbar button and ensure all checks pass."
 echo -e "\t\t'Release' the repository via the toolbar button when the repository is successfully closed."
 
-echo -e "\nThank you!"
+echo -e "\nThank you!${NORMAL}"
 exit 0

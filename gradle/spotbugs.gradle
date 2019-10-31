@@ -1,9 +1,8 @@
-    task outputSpotbugsReports(description: "Display Spotbugs output") {
+task outputSpotbugsReports(description: "Display Spotbugs output") {
     doFirst {
         printSpotbugsReportToConsole(spotbugsMain.reports.xml.destination)
     }
 }
-
 
 def printSpotbugsReportToConsole(File file) {
     println "Reviewing file $file"
@@ -19,7 +18,8 @@ def printSpotbugsReportToConsole(File file) {
                 bug.Class.each { clz ->
                     println "\tClass: " + clz.@classname
                     clz.SourceLine.each { line ->
-                        println "\tStart Line: " + line.@start + ", End Line: " + line.@end + ", Source Path: [" + line.@sourcepath + "], Source File: [" + line.@sourcefile + "]"
+                        println "\tStart Line: " + line.@start + ", End Line: " + line.@end
+                            + ", Source Path: [" + line.@sourcepath + "], Source File: [" + line.@sourcefile + "]"
                     }
                 }
                 println "\t----------------------METHOD-----------------------------"
@@ -45,11 +45,5 @@ def printSpotbugsReportToConsole(File file) {
         }
     } else {
         println "$file does not exist"
-    }
-}
-
-task spotbugs(type: FindBugs, description: "Set up classpath for Spotbugs") {
-    if (!Boolean.getBoolean("skipFindbugs")) {
-        pluginClasspath = project.configurations.spotbugsPlugins
     }
 }

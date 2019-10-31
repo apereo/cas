@@ -506,6 +506,7 @@ subprojects {
                 xml.enabled = true
                 html.enabled = false
             }
+            it.pluginClasspath = project.configurations.spotbugsPlugins
             it.finalizedBy outputSpotbugsReports
         }
     }
@@ -577,7 +578,7 @@ licenseReport {
 }
 checkLicense.finalizedBy outputDependenciesWithoutLicense
 
-task javadoc(type: Javadoc, description: "Aggregate all Javadocs into a single directory", overwrite: true) {
+tasks.withType(Javadoc) {
     source subprojects.collect { project -> project.sourceSets.main.allJava }
     destinationDir = new File(buildDir, "javadoc")
     classpath = files(subprojects.collect { project -> project.sourceSets.main.compileClasspath })
@@ -618,7 +619,7 @@ task jacocoMerge(type: JacocoMerge) {
     }
 }
 
-task jacocoRootReport(type: JacocoReport, group: 'Coverage reports') {
+task jacocoRootReport(type: JacocoReport, group: "Coverage reports") {
     description = 'Generates an aggregate report from all subprojects'
 
     subprojects.each {
