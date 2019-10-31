@@ -183,6 +183,8 @@ This policy allows a Groovy script to calculate the collection of released attri
 }
 ```
 
+The configuration of this component qualifies to use the [Spring Expression Language](Configuring-Spring-Expressions.html) syntax.
+
 The outline of the script may be designed as:
 
 ```groovy

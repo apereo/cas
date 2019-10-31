@@ -2,7 +2,7 @@ package org.apereo.cas.util;
 
 import org.apereo.cas.util.crypto.GlibcCryptPasswordEncoderTests;
 import org.apereo.cas.util.crypto.PublicKeyFactoryBeanTests;
-import org.apereo.cas.util.spring.SpringSpelStringResolverTests;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolverTests;
 import org.apereo.cas.util.transforms.GroovyPrincipalNameTransformerTests;
 import org.apereo.cas.util.transforms.RegexPrincipalNameTransformerTests;
 
@@ -18,7 +18,7 @@ import org.junit.runner.RunWith;
  */
 @SelectClasses({
     PublicKeyFactoryBeanTests.class,
-    SpringSpelStringResolverTests.class,
+    SpringExpressionLanguageValueResolverTests.class,
     GlibcCryptPasswordEncoderTests.class,
     RegexPrincipalNameTransformerTests.class,
     GroovyPrincipalNameTransformerTests.class

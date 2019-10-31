@@ -8,6 +8,7 @@ import org.apereo.cas.util.scripting.ExecutableCompiledGroovyScript;
 import org.apereo.cas.util.scripting.GroovyShellScript;
 import org.apereo.cas.util.scripting.ScriptingUtils;
 import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -87,7 +88,7 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
                         attributeScriptCache.put(mappedAttributeName, new GroovyShellScript(matcherInline.group(1)));
                     } else if (matcherFile.find()) {
                         try {
-                            val resource = ResourceUtils.getRawResourceFrom(matcherFile.group(2));
+                            val resource = ResourceUtils.getRawResourceFrom(SpringExpressionLanguageValueResolver.getInstance().resolve(matcherFile.group(2)));
                             attributeScriptCache.put(mappedAttributeName, new WatchableGroovyScriptResource(resource));
                         } catch (final Exception e) {
                             LOGGER.error(e.getMessage(), e);

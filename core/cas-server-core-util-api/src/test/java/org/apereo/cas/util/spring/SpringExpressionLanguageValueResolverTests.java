@@ -5,15 +5,15 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link SpringSpelStringResolverTests}.
+ * This is {@link SpringExpressionLanguageValueResolverTests}.
  *
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-public class SpringSpelStringResolverTests {
+public class SpringExpressionLanguageValueResolverTests {
     @Test
     public void verifyOperation() {
-        var resolver = new SpringSpelStringValueResolver();
+        var resolver = SpringExpressionLanguageValueResolver.getInstance();
 
         assertEquals("Hello World", resolver.resolve("${'Hello World'}"));
         assertEquals("Literal Value", resolver.resolve("Literal Value"));

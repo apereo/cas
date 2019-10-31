@@ -6,6 +6,7 @@ import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceSe
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.scripting.ScriptingUtils;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -48,7 +49,7 @@ public class GroovySamlRegisteredServiceAttributeReleasePolicy extends BaseSamlR
                                                                               final Service selectedService) {
         try {
             val args = new Object[] {attributes, registeredService, resolver, facade, entityDescriptor, applicationContext, LOGGER};
-            val resource = ResourceUtils.getResourceFrom(this.groovyScript);
+            val resource = ResourceUtils.getResourceFrom(SpringExpressionLanguageValueResolver.getInstance().resolve(this.groovyScript));
             return ScriptingUtils.executeGroovyScript(resource, args, Map.class, true);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
