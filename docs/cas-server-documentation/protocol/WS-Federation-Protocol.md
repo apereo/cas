@@ -198,7 +198,8 @@ as a dynamic attribute whose value is determined by the Groovy script attribute 
 }
 ```
 
-The script itself may have the following outline:
+The configuration of this component qualifies to use the [Spring Expression Language](../installation/Configuring-Spring-Expressions.html) syntax. The script 
+itself may have the following outline:
 
 ```groovy
 def run(final Object... args) {

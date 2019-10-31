@@ -8,6 +8,7 @@ import org.apereo.cas.util.scripting.ExecutableCompiledGroovyScript;
 import org.apereo.cas.util.scripting.GroovyShellScript;
 import org.apereo.cas.util.scripting.ScriptingUtils;
 import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -62,7 +63,8 @@ public class GroovyRegisteredServiceUsernameProvider extends BaseRegisteredServi
             val matcherFile = ScriptingUtils.getMatcherForExternalGroovyScript(groovyScript);
 
             if (matcherFile.find()) {
-                val resource = ResourceUtils.getRawResourceFrom(matcherFile.group(1));
+                val script = SpringExpressionLanguageValueResolver.getInstance().resolve(matcherFile.group(1));
+                val resource = ResourceUtils.getRawResourceFrom(script);
                 this.executableScript = new WatchableGroovyScriptResource(resource);
             } else if (matcherInline.find()) {
                 this.executableScript = new GroovyShellScript(matcherInline.group(1));

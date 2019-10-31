@@ -10,6 +10,7 @@ import org.apereo.cas.util.scripting.ExecutableCompiledGroovyScript;
 import org.apereo.cas.util.scripting.GroovyShellScript;
 import org.apereo.cas.util.scripting.ScriptingUtils;
 import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import org.apereo.cas.ws.idp.WSFederationClaims;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -117,7 +118,7 @@ public class WSFederationClaimsReleasePolicy extends AbstractRegisteredServiceAt
                         attributeScriptCache.put(claim.getUri(), new GroovyShellScript(matcherInline.group(1)));
                     } else if (matcherFile.find()) {
                         try {
-                            val resource = ResourceUtils.getRawResourceFrom(matcherFile.group(2));
+                            val resource = ResourceUtils.getRawResourceFrom(SpringExpressionLanguageValueResolver.getInstance().resolve(matcherFile.group(2)));
                             attributeScriptCache.put(claim.getUri(), new WatchableGroovyScriptResource(resource));
                         } catch (final Exception e) {
                             LOGGER.error(e.getMessage(), e);

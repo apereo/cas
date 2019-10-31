@@ -3,6 +3,7 @@ package org.apereo.cas.services;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.util.scripting.ScriptingUtils;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
@@ -37,7 +38,7 @@ public class ScriptedRegisteredServiceUsernameProvider extends BaseRegisteredSer
         try {
             LOGGER.debug("Found groovy script to execute");
             var args = new Object[]{principal.getAttributes(), principal.getId(), LOGGER};
-            val result = ScriptingUtils.executeScriptEngine(this.script, args, Object.class);
+            val result = ScriptingUtils.executeScriptEngine(SpringExpressionLanguageValueResolver.getInstance().resolve(this.script), args, Object.class);
             if (result != null) {
                 LOGGER.debug("Found username [{}] from script [{}]", result, this.script);
                 return result.toString();
