@@ -16,7 +16,6 @@ echo -e "***********************************************"
 echo -e "Gradle build started at `date`"
 echo -e "***********************************************"
 
-publishSnapshot=true
 if [[ "$casVersion" == *"-SNAPSHOT" ]]; then
     currentChangeSetAffectsSnapshots
     retval=$?
@@ -24,24 +23,12 @@ if [[ "$casVersion" == *"-SNAPSHOT" ]]; then
     then
         echo "Found changes that require snapshots to be published."
         runBuild=true
-        publishSnapshot=true
     else
         echo "Changes do NOT affect project snapshots."
         runBuild=false
-        publishSnapshot=false
     fi
 else
-    echo "Publishing CAS release for version $casVersion"
-    publishSnapshot=false
-    runBuild=true
-
-    echo "Fetching keys..."
-    openssl aes-256-cbc -k "$GPG_PSW" -in ./ci/gpg-keys.enc -out ./ci/gpg-keys.txt -d
-    openssl aes-256-cbc -k "$GPG_PSW" -in ./ci/gpg-ownertrust.enc -out ./ci/gpg-ownertrust.txt -d
-    echo "Loading keys..."
-    cat ./ci/gpg-keys.txt | base64 --decode | gpg --import
-    cat ./ci/gpg-ownertrust.txt | base64 --decode | gpg --import-ownertrust
-    rm -Rf ./ci/gpg-keys.txt ./ci/gpg-ownertrust.txt
+    runBuild=false
 fi
 
 if [ "$runBuild" = false ]; then
@@ -49,20 +36,12 @@ if [ "$runBuild" = false ]; then
     exit 0
 fi
 
-if [ "$publishSnapshot" = true ]; then
-    echo -e "The build will deploy SNAPSHOT artifacts to Sonatype under Travis job ${TRAVIS_JOB_NUMBER}"
-    gradleBuild="$gradleBuild assemble publish -x test -x javadoc -x check \
-            -DpublishSnapshots=true -DsonatypeUsername=${SONATYPE_USER} \
-            -DsonatypePassword=${SONATYPE_PWD} --parallel "
-else
-    echo -e "The build will deploy RELEASE artifacts to Sonatype under Travis job ${TRAVIS_JOB_NUMBER}"
-    gradleBuild="$gradleBuild assemble publish -x test -x javadoc -x check \
-                -Dorg.gradle.project.signing.password=${GPG_PASSPHRASE}\
-                -Dorg.gradle.project.signing.secretKeyRingFile=/home/travis/.gnupg/secring.gpg \
-                -Dorg.gradle.project.signing.keyId=6A2EF9AA \
-                -DpublishReleases=true -DsonatypeUsername=${SONATYPE_USER} \
-                -DsonatypePassword=${SONATYPE_PWD} "
-fi
+
+echo -e "The build will deploy SNAPSHOT artifacts to Sonatype under Travis job ${TRAVIS_JOB_NUMBER}"
+gradleBuild="$gradleBuild assemble publish -x test -x javadoc -x check \
+        -DpublishSnapshots=true -DsonatypeUsername=${SONATYPE_USER} \
+        -DsonatypePassword=${SONATYPE_PWD} --parallel "
+
 
 if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[show streams]"* ]]; then
     gradleBuild="$gradleBuild -DshowStandardStreams=true "

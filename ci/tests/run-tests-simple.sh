@@ -9,7 +9,7 @@ echo -e "***********************************************"
 echo -e "Gradle build started at `date`"
 echo -e "***********************************************"
 
-gradleBuild="$gradleBuild test jacocoRootReport --parallel -x javadoc -x check \
+gradleBuild="$gradleBuild assemble test jacocoRootReport --parallel -x javadoc -x check \
     -DskipGradleLint=true -DskipNestedConfigMetadataGen=true -DshowStandardStreams=true "
 
 if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[rerun tasks]"* ]]; then
