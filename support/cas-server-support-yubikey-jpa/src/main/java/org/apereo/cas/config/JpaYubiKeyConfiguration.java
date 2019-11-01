@@ -89,8 +89,8 @@ public class JpaYubiKeyConfiguration {
 
     @Bean
     public YubiKeyAccountRegistry yubiKeyAccountRegistry() {
-        val registry = new JpaYubiKeyAccountRegistry(yubiKeyAccountValidator.getIfAvailable());
-        registry.setCipherExecutor(yubikeyAccountCipherExecutor.getIfAvailable());
+        val registry = new JpaYubiKeyAccountRegistry(yubiKeyAccountValidator.getObject());
+        registry.setCipherExecutor(yubikeyAccountCipherExecutor.getObject());
         return registry;
     }
 }

@@ -46,7 +46,7 @@ public class CoreWsSecuritySecurityTokenServiceSamlConfiguration {
         WSProviderConfig.init();
 
         LOGGER.trace("Marking OpenSAML components as initialized...");
-        val openSaml = openSamlConfigBean.getIfAvailable();
+        val openSaml = openSamlConfigBean.getObject();
         findFieldAndSetValue("providerRegistry", openSaml.getXmlObjectProviderRegistry());
         findFieldAndSetValue("builderFactory", openSaml.getBuilderFactory());
         findFieldAndSetValue("marshallerFactory", openSaml.getMarshallerFactory());

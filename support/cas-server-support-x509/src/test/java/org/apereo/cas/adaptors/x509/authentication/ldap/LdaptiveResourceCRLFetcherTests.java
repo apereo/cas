@@ -28,6 +28,7 @@ import lombok.val;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,6 +81,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         "cas.authn.x509.ldap.bindCredential=Password"
     })
 @EnableScheduling
+@Tag("Ldap")
 public class LdaptiveResourceCRLFetcherTests extends AbstractX509LdapTests implements InitializingBean {
     private static final int LDAP_PORT = 1389;
 

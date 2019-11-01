@@ -32,6 +32,7 @@ import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -51,6 +52,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    MailSenderAutoConfiguration.class,
     CasCoreWebflowConfiguration.class,
     CasWebflowContextConfiguration.class,
     CasCoreServicesConfiguration.class,
@@ -81,7 +83,10 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.wsfed[0].identityProviderIdentifier=https://example.org/adfs/services/trust",
     "cas.authn.wsfed[0].relyingPartyIdentifier=urn:cas:example",
     "cas.authn.wsfed[0].signingCertificateResources=classpath:adfs-signing.cer",
-    "cas.authn.wsfed[0].identityAttribute=upn"
+    "cas.authn.wsfed[0].identityAttribute=upn",
+    "spring.mail.host=localhost",
+    "spring.mail.port=25000",
+    "spring.mail.testConnection=false"
 })
 public class WsFederationActionTests {
     @Autowired

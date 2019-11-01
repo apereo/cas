@@ -400,8 +400,8 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
     @Bean
     @RefreshScope
     public SecurityTokenServiceTokenFetcher securityTokenServiceTokenFetcher() {
-        return new SecurityTokenServiceTokenFetcher(servicesManager.getIfAvailable(),
-            wsFederationAuthenticationServiceSelectionStrategy.getIfAvailable(),
+        return new SecurityTokenServiceTokenFetcher(servicesManager.getObject(),
+            wsFederationAuthenticationServiceSelectionStrategy.getObject(),
             securityTokenServiceCredentialCipherExecutor(),
             securityTokenServiceClientBuilder());
     }
@@ -423,7 +423,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
     @Bean
     @RefreshScope
     public SecurityTokenTicketFactory securityTokenTicketFactory() {
-        return new DefaultSecurityTokenTicketFactory(securityTokenTicketIdGenerator(), grantingTicketExpirationPolicy.getIfAvailable());
+        return new DefaultSecurityTokenTicketFactory(securityTokenTicketIdGenerator(), grantingTicketExpirationPolicy.getObject());
     }
 
     @ConditionalOnMissingBean(name = "securityTokenTicketIdGenerator")
