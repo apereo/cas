@@ -37,6 +37,6 @@ public class CasAcceptableUsagePolicyRestConfiguration {
     @Bean
     public AcceptableUsagePolicyRepository acceptableUsagePolicyRepository() {
         val aup = casProperties.getAcceptableUsagePolicy();
-        return new RestAcceptableUsagePolicyRepository(ticketRegistrySupport.getIfAvailable(), aup.getAupAttributeName(), aup.getRest());
+        return new RestAcceptableUsagePolicyRepository(ticketRegistrySupport.getObject(), aup.getAupAttributeName(), aup.getRest());
     }
 }

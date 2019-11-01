@@ -76,7 +76,7 @@ public class AuthyAuthenticationEventExecutionPlanConfiguration {
     public AuthenticationHandler authyAuthenticationHandler() {
         val authy = casProperties.getAuthn().getMfa().getAuthy();
         val forceVerification = authy.isForceVerification();
-        return new AuthyAuthenticationHandler(authy.getName(), servicesManager.getIfAvailable(),
+        return new AuthyAuthenticationHandler(authy.getName(), servicesManager.getObject(),
             authyPrincipalFactory(), authyClientInstance(), forceVerification, authy.getOrder());
     }
 
@@ -90,10 +90,10 @@ public class AuthyAuthenticationEventExecutionPlanConfiguration {
     @RefreshScope
     public MultifactorAuthenticationProvider authyAuthenticatorMultifactorAuthenticationProvider() {
         val p = new AuthyMultifactorAuthenticationProvider();
-        p.setBypassEvaluator(authyBypassEvaluator.getIfAvailable());
+        p.setBypassEvaluator(authyBypassEvaluator.getObject());
         val authy = casProperties.getAuthn().getMfa().getAuthy();
         p.setFailureMode(authy.getFailureMode());
-        p.setFailureModeEvaluator(failureModeEvaluator.getIfAvailable());
+        p.setFailureModeEvaluator(failureModeEvaluator.getObject());
         p.setOrder(authy.getRank());
         p.setId(authy.getId());
         return p;
