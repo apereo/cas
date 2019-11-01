@@ -27,6 +27,7 @@ import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
@@ -57,12 +58,16 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreServicesConfiguration.class,
     CasCoreWebConfiguration.class,
     CasCoreUtilConfiguration.class,
+    MailSenderAutoConfiguration.class,
     PasswordManagementConfiguration.class
 },
     properties = {
         "cas.authn.pm.json.location=classpath:jsonResourcePassword.json",
         "cas.authn.pm.enabled=true",
-        "cas.authn.pm.policyPattern=^Test1.+"
+        "cas.authn.pm.policyPattern=^Test1.+",
+        "spring.mail.host=localhost",
+        "spring.mail.port=25000",
+        "spring.mail.testConnection=false"
     })
 public class JsonResourcePasswordManagementServiceTests {
     @Autowired

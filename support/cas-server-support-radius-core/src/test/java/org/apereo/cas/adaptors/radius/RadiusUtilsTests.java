@@ -4,6 +4,7 @@ import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
 import net.jradius.dictionary.Attr_ClientId;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import javax.security.auth.login.FailedLoginException;
@@ -18,6 +19,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@Tag("Radius")
 public class RadiusUtilsTests {
     @Test
     public void verifyActionPasses() throws Exception {
