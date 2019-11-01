@@ -40,7 +40,7 @@ public class CasSupportCouchDbAuditConfiguration {
     @RefreshScope
     @ConditionalOnMissingBean(name = "auditCouchDbFactory")
     public CouchDbConnectorFactory auditCouchDbFactory() {
-        return new CouchDbConnectorFactory(casProperties.getAudit().getCouchDb(), defaultObjectMapperFactory.getIfAvailable());
+        return new CouchDbConnectorFactory(casProperties.getAudit().getCouchDb(), defaultObjectMapperFactory.getObject());
     }
 
     @ConditionalOnMissingBean(name = "auditActionContextCouchDbRepository")

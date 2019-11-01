@@ -44,7 +44,7 @@ public class DefaultPrincipalAttributesRepositoryTests extends BaseCasCoreTests 
 
     @Test
     public void checkInitialAttributes() {
-        val p = this.principalFactory.getIfAvailable().createPrincipal("uid", Collections.singletonMap("mail", List.of("final@example.com")));
+        val p = this.principalFactory.getObject().createPrincipal("uid", Collections.singletonMap("mail", List.of("final@example.com")));
         val rep = new DefaultPrincipalAttributesRepository();
         val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
         assertEquals(1, rep.getAttributes(p, registeredService).size());

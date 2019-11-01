@@ -57,7 +57,7 @@ public class CasAcceptableUsagePolicyJdbcConfiguration {
             throw new BeanCreationException("SQL to update acceptable usage policy must be specified.");
         }
 
-        return new JdbcAcceptableUsagePolicyRepository(ticketRegistrySupport.getIfAvailable(),
+        return new JdbcAcceptableUsagePolicyRepository(ticketRegistrySupport.getObject(),
             casProperties.getAcceptableUsagePolicy().getAupAttributeName(),
             acceptableUsagePolicyDataSource(),
             properties);

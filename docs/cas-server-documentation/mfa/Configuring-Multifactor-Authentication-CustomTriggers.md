@@ -80,13 +80,13 @@ public class SomethingConfiguration {
     @RefreshScope
     public CasWebflowEventResolver exampleMultifactorAuthenticationWebflowEventResolver() {
         val r = new DefaultMultifactorAuthenticationProviderEventResolver(
-            authenticationSystemSupport.getIfAvailable(),
-            centralAuthenticationService.getIfAvailable(),
-            servicesManager.getIfAvailable(),
-            ticketRegistrySupport.getIfAvailable(),
-            warnCookieGenerator.getIfAvailable(),
-            authenticationRequestServiceSelectionStrategies.getIfAvailable(),
-            multifactorAuthenticationProviderSelector.getIfAvailable(),
+            authenticationSystemSupport.getObject(),
+            centralAuthenticationService.getObject(),
+            servicesManager.getObject(),
+            ticketRegistrySupport.getObject(),
+            warnCookieGenerator.getObject(),
+            authenticationRequestServiceSelectionStrategies.getObject(),
+            multifactorAuthenticationProviderSelector.getObject(),
             exampleMultifactorAuthenticationTrigger());
         this.initialAuthenticationAttemptWebflowEventResolver.addDelegate(r);
         return r;
