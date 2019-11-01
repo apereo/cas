@@ -31,6 +31,7 @@ import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
+import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
@@ -45,6 +46,7 @@ import org.springframework.context.annotation.Bean;
 @SpringBootTest(classes = {
     BaseSurrogateInitialAuthenticationActionTests.TestAuthenticationConfiguration.class,
     RefreshAutoConfiguration.class,
+    MailSenderAutoConfiguration.class,
     SurrogateAuthenticationConfiguration.class,
     SurrogateAuthenticationWebflowConfiguration.class,
     CasCoreServicesConfiguration.class,
@@ -72,7 +74,12 @@ import org.springframework.context.annotation.Bean;
     CasDefaultServiceTicketIdGeneratorsConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class
-}, properties = "cas.authn.surrogate.simple.surrogates.casuser=cassurrogate")
+}, properties = {
+    "cas.authn.surrogate.simple.surrogates.casuser=cassurrogate",
+    "spring.mail.host=localhost",
+    "spring.mail.port=25000",
+    "spring.mail.testConnection=false"
+})
 public class BaseSurrogateInitialAuthenticationActionTests {
     @TestConfiguration
     public static class TestAuthenticationConfiguration {

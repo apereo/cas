@@ -90,7 +90,7 @@ public class CasThrottlingConfiguration {
             .failureRangeInSeconds(throttle.getFailure().getRangeSeconds())
             .usernameParameter(throttle.getUsernameParameter())
             .authenticationFailureCode(throttle.getFailure().getCode())
-            .auditTrailExecutionPlan(auditTrailExecutionPlan.getIfAvailable())
+            .auditTrailExecutionPlan(auditTrailExecutionPlan.getObject())
             .applicationCode(throttle.getAppCode())
             .throttledRequestResponseHandler(throttledRequestResponseHandler())
             .throttledRequestExecutor(throttledRequestExecutor())

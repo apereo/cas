@@ -20,6 +20,7 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.SwivelAuthenticationEventExecutionPlanConfiguration;
+import org.apereo.cas.config.SwivelAuthenticationMultifactorProviderBypassConfiguration;
 import org.apereo.cas.config.SwivelConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
@@ -37,6 +38,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.io.ByteArrayResource;
@@ -60,6 +62,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    MailSenderAutoConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class,
     CasCoreAuthenticationPolicyConfiguration.class,
     CasCoreAuthenticationMetadataConfiguration.class,
@@ -84,11 +87,15 @@ import static org.junit.jupiter.api.Assertions.*;
     CasThemesConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     SwivelConfiguration.class,
+    SwivelAuthenticationMultifactorProviderBypassConfiguration.class,
     SwivelAuthenticationEventExecutionPlanConfiguration.class},
     properties = {
         "cas.authn.mfa.swivel.swivelUrl=http://localhost:9191",
         "cas.authn.mfa.swivel.sharedSecret=$ecret",
-        "cas.authn.mfa.swivel.ignoreSslErrors=true"
+        "cas.authn.mfa.swivel.ignoreSslErrors=true",
+        "spring.mail.host=localhost",
+        "spring.mail.port=25000",
+        "spring.mail.testConnection=false"
     })
 public class SwivelAuthenticationHandlerTests {
     @Autowired

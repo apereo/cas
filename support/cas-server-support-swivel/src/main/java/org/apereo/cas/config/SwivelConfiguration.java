@@ -105,7 +105,7 @@ public class SwivelConfiguration {
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer swivelMultifactorWebflowConfigurer() {
         return new SwivelMultifactorWebflowConfigurer(flowBuilderServices.getObject(),
-            loginFlowDefinitionRegistry.getIfAvailable(),
+            loginFlowDefinitionRegistry.getObject(),
             swivelAuthenticatorFlowRegistry(), applicationContext, casProperties);
     }
 
@@ -113,15 +113,15 @@ public class SwivelConfiguration {
     @RefreshScope
     public CasWebflowEventResolver swivelAuthenticationWebflowEventResolver() {
         val context = CasWebflowEventResolutionConfigurationContext.builder()
-            .authenticationSystemSupport(authenticationSystemSupport.getIfAvailable())
-            .centralAuthenticationService(centralAuthenticationService.getIfAvailable())
-            .servicesManager(servicesManager.getIfAvailable())
-            .ticketRegistrySupport(ticketRegistrySupport.getIfAvailable())
-            .warnCookieGenerator(warnCookieGenerator.getIfAvailable())
-            .authenticationRequestServiceSelectionStrategies(authenticationRequestServiceSelectionStrategies.getIfAvailable())
-            .registeredServiceAccessStrategyEnforcer(registeredServiceAccessStrategyEnforcer.getIfAvailable())
+            .authenticationSystemSupport(authenticationSystemSupport.getObject())
+            .centralAuthenticationService(centralAuthenticationService.getObject())
+            .servicesManager(servicesManager.getObject())
+            .ticketRegistrySupport(ticketRegistrySupport.getObject())
+            .warnCookieGenerator(warnCookieGenerator.getObject())
+            .authenticationRequestServiceSelectionStrategies(authenticationRequestServiceSelectionStrategies.getObject())
+            .registeredServiceAccessStrategyEnforcer(registeredServiceAccessStrategyEnforcer.getObject())
             .casProperties(casProperties)
-            .ticketRegistry(ticketRegistry.getIfAvailable())
+            .ticketRegistry(ticketRegistry.getObject())
             .eventPublisher(applicationContext)
             .applicationContext(applicationContext)
             .build();
@@ -159,7 +159,7 @@ public class SwivelConfiguration {
         @DependsOn("defaultWebflowConfigurer")
         public CasWebflowConfigurer swivelMultifactorTrustWebflowConfigurer() {
             return new SwivelMultifactorTrustWebflowConfigurer(flowBuilderServices.getObject(),
-                loginFlowDefinitionRegistry.getIfAvailable(),
+                loginFlowDefinitionRegistry.getObject(),
                 casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled(),
                 swivelAuthenticatorFlowRegistry(), applicationContext, casProperties);
         }

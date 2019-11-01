@@ -29,6 +29,7 @@ import org.apereo.cas.web.flow.config.SpnegoWebflowActionsConfiguration;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.webflow.execution.Action;
@@ -43,6 +44,7 @@ import org.springframework.webflow.execution.Action;
     SpnegoConfiguration.class,
     SpnegoWebflowActionsConfiguration.class,
     RefreshAutoConfiguration.class,
+    MailSenderAutoConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasPersonDirectoryConfiguration.class,
     CasCoreWebConfiguration.class,
@@ -67,6 +69,10 @@ import org.springframework.webflow.execution.Action;
     CasCoreAuthenticationHandlersConfiguration.class,
     CasCoreHttpConfiguration.class,
     CasCoreMultifactorAuthenticationConfiguration.class
+}, properties = {
+    "spring.mail.host=localhost",
+    "spring.mail.port=25000",
+    "spring.mail.testConnection=false"
 })
 public abstract class AbstractSpnegoTests {
     @Autowired

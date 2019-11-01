@@ -56,9 +56,9 @@ public class SpnegoWebflowActionsConfiguration {
     @RefreshScope
     public Action spnego() {
         val spnegoProperties = casProperties.getAuthn().getSpnego();
-        return new SpnegoCredentialsAction(initialAuthenticationAttemptWebflowEventResolver.getIfAvailable(),
-            serviceTicketRequestWebflowEventResolver.getIfAvailable(),
-            adaptiveAuthenticationPolicy.getIfAvailable(),
+        return new SpnegoCredentialsAction(initialAuthenticationAttemptWebflowEventResolver.getObject(),
+            serviceTicketRequestWebflowEventResolver.getObject(),
+            adaptiveAuthenticationPolicy.getObject(),
             spnegoProperties.isNtlm(),
             spnegoProperties.isSend401OnAuthenticationFailure());
     }
