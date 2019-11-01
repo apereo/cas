@@ -44,6 +44,7 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
+import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafProperties;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -62,6 +63,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = {
     AopAutoConfiguration.class,
+    MailSenderAutoConfiguration.class,
     ThymeleafAutoConfiguration.class,
     RefreshAutoConfiguration.class,
     CasCoreServicesConfiguration.class,
@@ -95,6 +97,10 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreValidationConfiguration.class,
     CasProtocolViewsConfiguration.class,
     CasValidationConfiguration.class
+}, properties = {
+    "spring.mail.host=localhost",
+    "spring.mail.port=25000",
+    "spring.mail.testConnection=false"
 })
 public class ProxyControllerTests extends AbstractCentralAuthenticationServiceTests {
 

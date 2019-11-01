@@ -59,7 +59,7 @@ public class CoreWsSecurityIdentityProviderWebflowConfiguration {
     @Bean
     @RefreshScope
     public Action wsFederationMetadataUIAction() {
-        return new WSFederationMetadataUIAction(servicesManager.getIfAvailable(), wsFederationAuthenticationServiceSelectionStrategy.getIfAvailable());
+        return new WSFederationMetadataUIAction(servicesManager.getObject(), wsFederationAuthenticationServiceSelectionStrategy.getObject());
     }
 
     @ConditionalOnMissingBean(name = "wsFederationWebflowConfigurer")
@@ -67,7 +67,7 @@ public class CoreWsSecurityIdentityProviderWebflowConfiguration {
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer wsFederationWebflowConfigurer() {
         return new WSFederationWebflowConfigurer(flowBuilderServices.getObject(),
-            loginFlowDefinitionRegistry.getIfAvailable(), wsFederationMetadataUIAction(),
+            loginFlowDefinitionRegistry.getObject(), wsFederationMetadataUIAction(),
             applicationContext, casProperties);
     }
 

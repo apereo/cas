@@ -59,10 +59,10 @@ public class MongoDbYubiKeyConfiguration {
     @Bean
     public YubiKeyAccountRegistry yubiKeyAccountRegistry() {
         val yubi = casProperties.getAuthn().getMfa().getYubikey();
-        val registry = new MongoDbYubiKeyAccountRegistry(yubiKeyAccountValidator.getIfAvailable(),
+        val registry = new MongoDbYubiKeyAccountRegistry(yubiKeyAccountValidator.getObject(),
             mongoYubiKeyTemplate(),
             yubi.getMongo().getCollection());
-        registry.setCipherExecutor(yubikeyAccountCipherExecutor.getIfAvailable());
+        registry.setCipherExecutor(yubikeyAccountCipherExecutor.getObject());
         return registry;
     }
 }

@@ -31,6 +31,7 @@ import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
@@ -44,6 +45,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    MailSenderAutoConfiguration.class,
     CasWsSecurityTokenTicketCatalogConfiguration.class,
     CoreWsSecuritySecurityTokenServiceConfiguration.class,
     CoreWsSecurityIdentityProviderConfiguration.class,
@@ -70,6 +72,10 @@ import static org.junit.jupiter.api.Assertions.*;
     properties = {
         "cas.authn.wsfedIdp.idp.realm=urn:org:apereo:cas:ws:idp:realm-CAS",
         "cas.authn.wsfedIdp.idp.realmName=CAS",
+
+        "spring.mail.host=localhost",
+        "spring.mail.port=25000",
+        "spring.mail.testConnection=false",
 
         "cas.authn.wsfedIdp.sts.signingKeystoreFile=classpath:ststrust.jks",
         "cas.authn.wsfedIdp.sts.signingKeystorePassword=storepass",

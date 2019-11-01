@@ -63,6 +63,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
+import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
@@ -95,45 +96,52 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @DirtiesContext
 @Slf4j
-@SpringBootTest(properties = {"cas.clearpass.cacheCredential=true", "cas.clearpass.crypto.enabled=false"},
+@SpringBootTest(properties = {
+    "cas.clearpass.cacheCredential=true",
+    "cas.clearpass.crypto.enabled=false",
+    "spring.mail.host=localhost",
+    "spring.mail.port=25000",
+    "spring.mail.testConnection=false"
+},
     classes = {
-    Cas30ResponseViewTests.AttributeRepositoryTestConfiguration.class,
-    AopAutoConfiguration.class,
-    CasProtocolViewsConfiguration.class,
-    RefreshAutoConfiguration.class,
-    CasCoreServicesConfiguration.class,
-    CasAuthenticationEventExecutionPlanTestConfiguration.class,
-    AbstractCentralAuthenticationServiceTests.CasTestConfiguration.class,
-    CasCoreServicesAuthenticationConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class,
-    CasDefaultServiceTicketIdGeneratorsConfiguration.class,
-    CasCoreTicketIdGeneratorsConfiguration.class,
-    CasCoreUtilConfiguration.class,
-    CasCoreAuthenticationConfiguration.class,
-    CasCoreServicesAuthenticationConfiguration.class,
-    CasCoreAuthenticationPrincipalConfiguration.class,
-    CasCoreAuthenticationPolicyConfiguration.class,
-    CasCoreAuthenticationMetadataConfiguration.class,
-    CasCoreAuthenticationSupportConfiguration.class,
-    CasCoreAuthenticationHandlersConfiguration.class,
-    CasCoreHttpConfiguration.class,
-    CasCoreConfiguration.class,
-    CasValidationConfiguration.class,
-    CasRegisteredServicesTestConfiguration.class,
-    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-    CasCoreTicketsConfiguration.class,
-    CasCoreTicketCatalogConfiguration.class,
-    CasCoreWebConfiguration.class,
-    CasWebflowContextConfiguration.class,
-    CasCoreWebflowConfiguration.class,
-    CasCoreLogoutConfiguration.class,
-    CasCookieConfiguration.class,
-    CasCoreAuthenticationConfiguration.class,
-    CasCoreMultifactorAuthenticationConfiguration.class,
-    CasMultifactorAuthenticationWebflowConfiguration.class,
-    CasPersonDirectoryTestConfiguration.class,
-    CasCoreValidationConfiguration.class
-})
+        Cas30ResponseViewTests.AttributeRepositoryTestConfiguration.class,
+        AopAutoConfiguration.class,
+        CasProtocolViewsConfiguration.class,
+        RefreshAutoConfiguration.class,
+        CasCoreServicesConfiguration.class,
+        CasAuthenticationEventExecutionPlanTestConfiguration.class,
+        AbstractCentralAuthenticationServiceTests.CasTestConfiguration.class,
+        CasCoreServicesAuthenticationConfiguration.class,
+        CasWebApplicationServiceFactoryConfiguration.class,
+        CasDefaultServiceTicketIdGeneratorsConfiguration.class,
+        CasCoreTicketIdGeneratorsConfiguration.class,
+        CasCoreUtilConfiguration.class,
+        CasCoreAuthenticationConfiguration.class,
+        CasCoreServicesAuthenticationConfiguration.class,
+        CasCoreAuthenticationPrincipalConfiguration.class,
+        CasCoreAuthenticationPolicyConfiguration.class,
+        CasCoreAuthenticationMetadataConfiguration.class,
+        CasCoreAuthenticationSupportConfiguration.class,
+        CasCoreAuthenticationHandlersConfiguration.class,
+        CasCoreHttpConfiguration.class,
+        CasCoreConfiguration.class,
+        CasValidationConfiguration.class,
+        CasRegisteredServicesTestConfiguration.class,
+        CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
+        CasCoreTicketsConfiguration.class,
+        CasCoreTicketCatalogConfiguration.class,
+        CasCoreWebConfiguration.class,
+        CasWebflowContextConfiguration.class,
+        CasCoreWebflowConfiguration.class,
+        CasCoreLogoutConfiguration.class,
+        CasCookieConfiguration.class,
+        CasCoreAuthenticationConfiguration.class,
+        CasCoreMultifactorAuthenticationConfiguration.class,
+        CasMultifactorAuthenticationWebflowConfiguration.class,
+        CasPersonDirectoryTestConfiguration.class,
+        CasCoreValidationConfiguration.class,
+        MailSenderAutoConfiguration.class
+    })
 public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTests {
 
     @Autowired
