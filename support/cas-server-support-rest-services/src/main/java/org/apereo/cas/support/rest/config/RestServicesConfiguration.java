@@ -60,9 +60,9 @@ public class RestServicesConfiguration {
             throw new BeanCreationException("No attribute value is defined to enforce authorization when adding services via CAS REST APIs. "
                 + "This is likely due to misconfiguration in CAS settings where the attribute value definition is absent");
         }
-        return new RegisteredServiceResource(authenticationSystemSupport.getIfAvailable(),
-            webApplicationServiceFactory.getIfAvailable(),
-            servicesManager.getIfAvailable(),
+        return new RegisteredServiceResource(authenticationSystemSupport.getObject(),
+            webApplicationServiceFactory.getObject(),
+            servicesManager.getObject(),
             rest.getAttributeName(),
             rest.getAttributeValue());
     }

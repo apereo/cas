@@ -68,7 +68,7 @@ public class SamlMetadataUIConfiguration {
         casProperties.getSamlMetadataUi().getResources().forEach(Unchecked.consumer(r -> configureResource(resources, chain, r)));
         adapter.setRequireValidMetadata(casProperties.getSamlMetadataUi().isRequireValidMetadata());
         adapter.setMetadataResources(resources);
-        adapter.setConfigBean(openSamlConfigBean.getIfAvailable());
+        adapter.setConfigBean(openSamlConfigBean.getObject());
         return adapter;
     }
 
