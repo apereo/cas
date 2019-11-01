@@ -52,7 +52,7 @@ public class AcceptUsersAuthenticationEventExecutionPlanConfiguration {
                         + "that you DISABLE this authentication method (by setting 'cas.authn.accept.users' "
                         + "to a blank value) and switch to a mode that is more suitable for production.";
                 AsciiArtUtils.printAsciiArtWarning(LOGGER, header);
-                plan.registerAuthenticationHandlerWithPrincipalResolver(acceptUsersAuthenticationHandler.getIfAvailable(), defaultPrincipalResolver.getIfAvailable());
+                plan.registerAuthenticationHandlerWithPrincipalResolver(acceptUsersAuthenticationHandler.getObject(), defaultPrincipalResolver.getObject());
             }
         };
     }

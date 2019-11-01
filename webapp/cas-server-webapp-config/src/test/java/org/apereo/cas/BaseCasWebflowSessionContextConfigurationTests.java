@@ -49,6 +49,7 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
+import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -86,6 +87,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.0.0
  */
 @SpringBootTest(classes = {
+    MailSenderAutoConfiguration.class,
     CasThemesConfiguration.class,
     CasFiltersConfiguration.class,
     CasPropertiesConfiguration.class,
@@ -122,7 +124,11 @@ import static org.junit.jupiter.api.Assertions.*;
     AopAutoConfiguration.class,
     RefreshAutoConfiguration.class,
     CasCoreMultifactorAuthenticationConfiguration.class
-}, properties = "spring.aop.proxy-target-class=true")
+}, properties = {
+    "spring.mail.host=localhost",
+    "spring.mail.port=25000",
+    "spring.mail.testConnection=false"
+})
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 public abstract class BaseCasWebflowSessionContextConfigurationTests {
