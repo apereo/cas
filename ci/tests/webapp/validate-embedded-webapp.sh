@@ -6,6 +6,51 @@ gradleBuildOptions="--build-cache --configure-on-demand --no-daemon "
 
 webAppServerType="$1"
 
+createConfig() {
+  configDir=$1
+  mkdir -p ${configDir}
+  cat > ${configDir}/cas.properties <<EOF
+management.endpoints.web.exposure.include=status,health
+management.endpoint.status.enabled=true
+management.endpoint.health.enabled=true
+cas.monitor.endpoints.endpoint.defaults.access[0]=IP_ADDRESS
+cas.monitor.endpoints.endpoint.defaults.requiredIpAddresses[0]=127\\.0\\.0\\.1
+management.endpoint.health.show-details=always
+management.health.memoryHealthIndicator.enabled=true
+EOF
+}
+
+dumpOutput() {
+  msg=$1
+  file=$2
+echo "Output Start [$msg]"
+cat $file
+echo "Output End [$msg]"
+}
+
+testUrl() {
+  uri=$1
+  requiredcontent=$2
+  echo "Testing https://localhost:8443/cas$uri"
+  output=/tmp/output
+  rc=`curl -k --connect-timeout 60 -o ${output} -w "%{http_code}" https://localhost:8443/cas$uri`
+  if [ "$rc" == 200 ]; then
+    grep ${requiredcontent} ${output}
+    if [[ $? -eq 0 ]] ; then
+      echo "Test of URI ${uri} contained required content"
+      return 0
+    else
+      echo "Test of URI ${uri} failed, it did not contain required content: ${requiredcontent}"
+      dumpOutput ${uri} ${output}
+      return 2
+    fi
+  else
+    echo "Test of URI ${uri} resulted in status code RC=$rc"
+    dumpOutput ${uri} ${output}
+    return 1
+  fi
+}
+
 echo -e "***********************************************"
 echo -e "Gradle build started at `date` for web application server ${webAppServerType}"
 echo -e "***********************************************"
@@ -54,24 +99,25 @@ else
           -keystore "${keystore}" -dname "${dname}" -ext SAN="${subjectAltName}"
 
         echo "Launching CAS web application ${webAppServerType} server..."
+        configDir="/tmp/config"
+        createConfig ${configDir}
         java -jar webapp/cas-server-webapp-"${webAppServerType}"/build/libs/cas.war \
-          --server.ssl.key-store="${keystore}" &> /dev/null &
+          --server.ssl.key-store="${keystore}" --cas.standalone.configurationDirectory=${configDir} &> /dev/null &
         pid=$!
         echo "Launched CAS with pid ${pid}. Waiting for CAS server to come online..."
         sleep 60
-        cmd=`curl -k --connect-timeout 60 -s -o /dev/null -I -w "%{http_code}" https://localhost:8443/cas/login`
+        echo "Testing status of server with pid ${pid}."
+        testUrl "/login" "Username" && testUrl "/actuator/health" "UP" && testUrl "/actuator/status" "UP"
+        retVal=$?
         kill -9 "${pid}"
         [ -f "${keystore}" ] && rm "${keystore}"
-        echo "CAS server is responding with HTTP status code ${cmd}."
-        if [ "$cmd" == 200 ]; then
-          echo "CAS server with ${webAppServerType} is successfully up and running."
-          exit 0
-        else
-          echo "CAS server with ${webAppServerType} failed to start successfully."
-          exit 1
-        fi
+        [ -d "${configDir}" ] && rm -rf "${configDir}"
+        exit $retVal
     else
         echo "Gradle build did NOT finish successfully."
         exit $retVal
     fi
 fi
+
+}
+}
