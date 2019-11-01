@@ -24,6 +24,7 @@ import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguratio
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
+import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -33,6 +34,7 @@ import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -44,12 +46,16 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
+
 import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.test.web.client.ExpectedCount.*;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.*;
+import static org.springframework.test.web.client.ExpectedCount.manyTimes;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 /**
  * This is {@link RestAuthenticationHandlerTests}.
@@ -106,14 +112,24 @@ public class RestAuthenticationHandlerTests {
     @Test
     public void verifySuccess() throws Exception {
         val principalWritten = new DefaultPrincipalFactory().createPrincipal("casuser");
-
         val writer = new StringWriter();
         MAPPER.writeValue(writer, principalWritten);
-
         server.andRespond(withSuccess(writer.toString(), MediaType.APPLICATION_JSON));
-
         val res = authenticationHandler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
         assertEquals("casuser", res.getPrincipal().getId());
+    }
+
+    @Test
+    public void verifySuccessRaw() throws Exception {
+        val response = IOUtils.toString(new ClassPathResource("rest-authn-response.json").getInputStream(), StandardCharsets.UTF_8);
+        server.andRespond(withSuccess(response, MediaType.APPLICATION_JSON));
+        val res = authenticationHandler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
+        assertEquals("casuser", res.getPrincipal().getId());
+        assertEquals(6, res.getPrincipal().getAttributes().size());
+        assertTrue(res.getPrincipal().getAttributes().containsKey("mail"));
+        assertTrue(res.getPrincipal().getAttributes().containsKey("givenName"));
+        assertTrue(res.getPrincipal().getAttributes().containsKey("displayName"));
+        assertTrue(res.getPrincipal().getAttributes().containsKey("eduPersonAffiliation"));
     }
 
     @Test
