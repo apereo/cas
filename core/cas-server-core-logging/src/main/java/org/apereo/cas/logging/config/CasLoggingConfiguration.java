@@ -52,8 +52,8 @@ public class CasLoggingConfiguration {
     @ConditionalOnProperty(prefix = "cas.logging", name = "mdcEnabled", havingValue = "true", matchIfMissing = true)
     @Bean
     public FilterRegistrationBean threadContextMDCServletFilter() {
-        val filter = new ThreadContextMDCServletFilter(ticketRegistrySupport.getIfAvailable(),
-            this.ticketGrantingTicketCookieGenerator.getIfAvailable());
+        val filter = new ThreadContextMDCServletFilter(ticketRegistrySupport.getObject(),
+            this.ticketGrantingTicketCookieGenerator.getObject());
         val initParams = new HashMap<String, String>();
         val bean = new FilterRegistrationBean<ThreadContextMDCServletFilter>();
         bean.setFilter(filter);

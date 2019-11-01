@@ -19,6 +19,7 @@ import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.annotation.DirtiesContext;
@@ -34,6 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.2.0
  */
 @SpringBootTest(classes = {
+    MailSenderAutoConfiguration.class,
     RefreshAutoConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
     CasDefaultServiceTicketIdGeneratorsConfiguration.class,
@@ -44,6 +46,10 @@ import static org.junit.jupiter.api.Assertions.*;
     CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
     CasCoreServicesConfiguration.class
+}, properties = {
+    "spring.mail.host=localhost",
+    "spring.mail.port=25000",
+    "spring.mail.testConnection=false"
 })
 @DirtiesContext
 public class UniquePrincipalAuthenticationPolicyTests {

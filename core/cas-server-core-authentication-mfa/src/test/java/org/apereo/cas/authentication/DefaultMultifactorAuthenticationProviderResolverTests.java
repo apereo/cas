@@ -25,6 +25,7 @@ import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.binding.expression.support.LiteralExpression;
+import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -52,6 +53,7 @@ import static org.mockito.Mockito.*;
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    ThymeleafAutoConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreHttpConfiguration.class,
