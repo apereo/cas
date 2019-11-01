@@ -20,6 +20,7 @@ import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
+import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
@@ -42,6 +43,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
     CasCookieConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     CasCoreConfiguration.class,
+    MailSenderAutoConfiguration.class,
     CasCoreLogoutConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
@@ -50,6 +52,10 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
     CasCoreAuthenticationSupportConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
     CasPersonDirectoryTestConfiguration.class
+}, properties = {
+    "spring.mail.host=localhost",
+    "spring.mail.port=25000",
+    "spring.mail.testConnection=false"
 })
 public abstract class BaseAcceptableUsagePolicyActionTests {
     public abstract void verifyAction() throws Exception;

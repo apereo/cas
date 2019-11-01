@@ -104,8 +104,8 @@ public class CasConsentCoreConfiguration {
     @Bean
     public AuditTrailRecordResolutionPlanConfigurer casConsentAuditTrailRecordResolutionPlanConfigurer() {
         return plan -> {
-            plan.registerAuditActionResolver("SAVE_CONSENT_ACTION_RESOLVER", authenticationActionResolver.getIfAvailable());
-            plan.registerAuditResourceResolver("SAVE_CONSENT_RESOURCE_RESOLVER", returnValueResourceResolver.getIfAvailable());
+            plan.registerAuditActionResolver("SAVE_CONSENT_ACTION_RESOLVER", authenticationActionResolver.getObject());
+            plan.registerAuditResourceResolver("SAVE_CONSENT_RESOURCE_RESOLVER", returnValueResourceResolver.getObject());
         };
     }
 

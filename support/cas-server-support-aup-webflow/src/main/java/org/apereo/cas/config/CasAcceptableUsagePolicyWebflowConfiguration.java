@@ -98,7 +98,7 @@ public class CasAcceptableUsagePolicyWebflowConfiguration {
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer acceptableUsagePolicyWebflowConfigurer() {
         return new AcceptableUsagePolicyWebflowConfigurer(flowBuilderServices.getObject(),
-            loginFlowDefinitionRegistry.getIfAvailable(), applicationContext, casProperties);
+            loginFlowDefinitionRegistry.getObject(), applicationContext, casProperties);
     }
 
     @ConditionalOnMissingBean(name = "acceptableUsagePolicyRepository")
@@ -111,7 +111,7 @@ public class CasAcceptableUsagePolicyWebflowConfiguration {
         }
 
         return new DefaultAcceptableUsagePolicyRepository(
-            ticketRegistrySupport.getIfAvailable(),
+            ticketRegistrySupport.getObject(),
             casProperties.getAcceptableUsagePolicy());
     }
 
@@ -120,12 +120,12 @@ public class CasAcceptableUsagePolicyWebflowConfiguration {
     public AuditTrailRecordResolutionPlanConfigurer casAcceptableUsagePolicyAuditTrailRecordResolutionPlanConfigurer() {
         return plan -> {
             plan.registerAuditResourceResolver("AUP_VERIFY_RESOURCE_RESOLVER",
-                nullableReturnValueResourceResolver.getIfAvailable());
+                nullableReturnValueResourceResolver.getObject());
             plan.registerAuditActionResolver("AUP_VERIFY_ACTION_RESOLVER",
                 new DefaultAuditActionResolver(AuditTrailConstants.AUDIT_ACTION_POSTFIX_TRIGGERED, StringUtils.EMPTY));
 
             plan.registerAuditResourceResolver("AUP_SUBMIT_RESOURCE_RESOLVER",
-                nullableReturnValueResourceResolver.getIfAvailable());
+                nullableReturnValueResourceResolver.getObject());
             plan.registerAuditActionResolver("AUP_SUBMIT_ACTION_RESOLVER",
                 new DefaultAuditActionResolver(AuditTrailConstants.AUDIT_ACTION_POSTFIX_TRIGGERED, StringUtils.EMPTY));
         };

@@ -50,7 +50,7 @@ public class CasCaptchaConfiguration {
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer captchaWebflowConfigurer() {
         return new CasCaptchaWebflowConfigurer(flowBuilderServices.getObject(),
-            loginFlowDefinitionRegistry.getIfAvailable(),
+            loginFlowDefinitionRegistry.getObject(),
             applicationContext, casProperties);
     }
 

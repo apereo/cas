@@ -71,7 +71,7 @@ public class CassandraAuthenticationConfiguration {
     @Bean
     public AuthenticationHandler cassandraAuthenticationHandler() {
         val cassandra = casProperties.getAuthn().getCassandra();
-        val handler = new CassandraAuthenticationHandler(cassandra.getName(), servicesManager.getIfAvailable(),
+        val handler = new CassandraAuthenticationHandler(cassandra.getName(), servicesManager.getObject(),
             cassandraPrincipalFactory(),
             cassandra.getOrder(), cassandra, cassandraRepository());
         handler.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(cassandra.getPrincipalTransformation()));
@@ -82,6 +82,6 @@ public class CassandraAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "cassandraAuthenticationEventExecutionPlanConfigurer")
     @Bean
     public AuthenticationEventExecutionPlanConfigurer cassandraAuthenticationEventExecutionPlanConfigurer() {
-        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(cassandraAuthenticationHandler(), defaultPrincipalResolver.getIfAvailable());
+        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(cassandraAuthenticationHandler(), defaultPrincipalResolver.getObject());
     }
 }
