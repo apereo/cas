@@ -53,7 +53,7 @@ public class GroovyAuthenticationEventExecutionPlanConfiguration {
     public AuthenticationHandler groovyResourceAuthenticationHandler() {
         val groovy = casProperties.getAuthn().getGroovy();
         return new GroovyAuthenticationHandler(groovy.getName(),
-            servicesManager.getIfAvailable(), groovyPrincipalFactory(),
+            servicesManager.getObject(), groovyPrincipalFactory(),
             groovy.getLocation(), groovy.getOrder());
     }
 
@@ -65,7 +65,7 @@ public class GroovyAuthenticationEventExecutionPlanConfiguration {
             if (file != null) {
                 LOGGER.debug("Activating Groovy authentication handler via [{}]", file);
                 plan.registerAuthenticationHandlerWithPrincipalResolver(groovyResourceAuthenticationHandler(),
-                    defaultPrincipalResolver.getIfAvailable());
+                    defaultPrincipalResolver.getObject());
             }
         };
     }

@@ -39,6 +39,7 @@ import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
@@ -55,6 +56,7 @@ import org.springframework.test.annotation.DirtiesContext;
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    MailSenderAutoConfiguration.class,
     BaseAuthenticationRequestRiskCalculatorTests.ElectronicFenceTestConfiguration.class,
     ElectronicFenceConfiguration.class,
     CasCoreAuthenticationConfiguration.class,
@@ -84,6 +86,10 @@ import org.springframework.test.annotation.DirtiesContext;
     CasCoreAuditConfiguration.class,
     CasEventsInMemoryRepositoryConfiguration.class,
     CasCoreEventsConfiguration.class
+}, properties = {
+    "spring.mail.host=localhost",
+    "spring.mail.port=25000",
+    "spring.mail.testConnection=false"
 })
 @DirtiesContext
 @EnableScheduling

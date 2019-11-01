@@ -63,7 +63,7 @@ public class JdbcPasswordHistoryManagementConfiguration {
                 jpaPasswordHistoryVendorAdapter(),
                 "jpaPasswordHistoryContext",
                 jpaPasswordHistoryPackagesToScan(),
-                jdbcPasswordManagementDataSource.getIfAvailable()),
+                jdbcPasswordManagementDataSource.getObject()),
             casProperties.getAuthn().getPm().getJdbc());
     }
 

@@ -73,6 +73,7 @@ import org.jose4j.jwt.NumericDate;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
@@ -97,6 +98,7 @@ import static org.mockito.Mockito.*;
 @SpringBootTest(classes = {
     OidcConfiguration.class,
     RefreshAutoConfiguration.class,
+    MailSenderAutoConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreUtilConfiguration.class,
     CasCoreWebflowConfiguration.class,
@@ -131,7 +133,10 @@ import static org.mockito.Mockito.*;
 },
     properties = {
         "cas.authn.oidc.issuer=https://sso.example.org/cas/oidc",
-        "cas.authn.oidc.jwksFile=classpath:keystore.jwks"
+        "cas.authn.oidc.jwksFile=classpath:keystore.jwks",
+        "spring.mail.host=localhost",
+        "spring.mail.port=25000",
+        "spring.mail.testConnection=false"
     })
 @DirtiesContext
 @EnableConfigurationProperties(CasConfigurationProperties.class)

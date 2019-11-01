@@ -27,6 +27,7 @@ import lombok.val;
 import net.sf.ehcache.distribution.CacheReplicator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
@@ -44,6 +45,7 @@ import static org.mockito.Mockito.*;
     EhCacheTicketRegistryTests.EhcacheTicketRegistryTestConfiguration.class,
     EhcacheTicketRegistryConfiguration.class,
     RefreshAutoConfiguration.class,
+    MailSenderAutoConfiguration.class,
     EhcacheTicketRegistryTicketCatalogConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
@@ -64,6 +66,10 @@ import static org.mockito.Mockito.*;
     CasCoreWebConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class
+}, properties = {
+    "spring.mail.host=localhost",
+    "spring.mail.port=25000",
+    "spring.mail.testConnection=false"
 })
 public class EhCacheTicketRegistryTests extends BaseTicketRegistryTests {
 

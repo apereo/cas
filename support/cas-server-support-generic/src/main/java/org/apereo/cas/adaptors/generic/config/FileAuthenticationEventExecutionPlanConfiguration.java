@@ -57,7 +57,7 @@ public class FileAuthenticationEventExecutionPlanConfiguration {
     @Bean
     public AuthenticationHandler fileAuthenticationHandler() {
         val fileProperties = casProperties.getAuthn().getFile();
-        val h = new FileAuthenticationHandler(fileProperties.getName(), servicesManager.getIfAvailable(), filePrincipalFactory(),
+        val h = new FileAuthenticationHandler(fileProperties.getName(), servicesManager.getObject(), filePrincipalFactory(),
             fileProperties.getFilename(), fileProperties.getSeparator());
 
         h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(fileProperties.getPasswordEncoder()));
@@ -74,7 +74,7 @@ public class FileAuthenticationEventExecutionPlanConfiguration {
             val file = casProperties.getAuthn().getFile().getFilename();
             if (file != null) {
                 LOGGER.debug("Added file-based authentication handler for the target file [{}]", file.getDescription());
-                plan.registerAuthenticationHandlerWithPrincipalResolver(fileAuthenticationHandler(), defaultPrincipalResolver.getIfAvailable());
+                plan.registerAuthenticationHandlerWithPrincipalResolver(fileAuthenticationHandler(), defaultPrincipalResolver.getObject());
             }
         };
     }

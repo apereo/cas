@@ -63,23 +63,23 @@ public class CasConsentWebflowConfiguration {
     @ConditionalOnMissingBean(name = "checkConsentRequiredAction")
     @Bean
     public Action checkConsentRequiredAction() {
-        return new CheckConsentRequiredAction(servicesManager.getIfAvailable(),
-            authenticationRequestServiceSelectionStrategies.getIfAvailable(), consentEngine.getIfAvailable(), casProperties);
+        return new CheckConsentRequiredAction(servicesManager.getObject(),
+            authenticationRequestServiceSelectionStrategies.getObject(), consentEngine.getObject(), casProperties);
     }
 
     @ConditionalOnMissingBean(name = "confirmConsentAction")
     @Bean
     public Action confirmConsentAction() {
-        return new ConfirmConsentAction(servicesManager.getIfAvailable(),
-            authenticationRequestServiceSelectionStrategies.getIfAvailable(),
-            consentEngine.getIfAvailable(), casProperties);
+        return new ConfirmConsentAction(servicesManager.getObject(),
+            authenticationRequestServiceSelectionStrategies.getObject(),
+            consentEngine.getObject(), casProperties);
     }
 
     @ConditionalOnMissingBean(name = "consentWebflowConfigurer")
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer consentWebflowConfigurer() {
-        return new ConsentWebflowConfigurer(flowBuilderServices.getObject(), loginFlowDefinitionRegistry.getIfAvailable(),
+        return new ConsentWebflowConfigurer(flowBuilderServices.getObject(), loginFlowDefinitionRegistry.getObject(),
             applicationContext, casProperties);
     }
 

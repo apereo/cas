@@ -45,10 +45,10 @@ public class JdbcPasswordManagementConfiguration {
     @RefreshScope
     @Bean
     public PasswordManagementService passwordChangeService() {
-        return new JdbcPasswordManagementService(passwordManagementCipherExecutor.getIfAvailable(),
+        return new JdbcPasswordManagementService(passwordManagementCipherExecutor.getObject(),
             casProperties.getServer().getPrefix(),
             casProperties.getAuthn().getPm(),
             jdbcPasswordManagementDataSource(),
-            passwordHistoryService.getIfAvailable());
+            passwordHistoryService.getObject());
     }
 }

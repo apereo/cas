@@ -27,6 +27,7 @@ import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.webflow.execution.Action;
@@ -60,11 +61,17 @@ import org.springframework.webflow.execution.Action;
     CasCoreWebflowConfiguration.class,
     CasWebflowContextConfiguration.class,
     RefreshAutoConfiguration.class,
+    MailSenderAutoConfiguration.class,
     CasCookieConfiguration.class,
     CasCoreHttpConfiguration.class,
     CasCoreUtilConfiguration.class
 },
-    properties = "cas.authn.gua.resource.location=classpath:image.jpg")
+    properties = {
+        "cas.authn.gua.resource.location=classpath:image.jpg",
+        "spring.mail.host=localhost",
+        "spring.mail.port=25000",
+        "spring.mail.testConnection=false"
+    })
 public abstract class AbstractGraphicalAuthenticationActionTests {
     @Autowired
     @Qualifier("initializeLoginAction")

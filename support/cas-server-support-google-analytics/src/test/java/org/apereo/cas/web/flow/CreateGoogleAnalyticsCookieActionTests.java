@@ -30,6 +30,7 @@ import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
@@ -53,6 +54,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     CasGoogleAnalyticsConfiguration.class,
     RefreshAutoConfiguration.class,
+    MailSenderAutoConfiguration.class,
     CasCoreWebflowConfiguration.class,
     CasWebflowContextConfiguration.class,
     CasCoreLogoutConfiguration.class,
@@ -75,7 +77,10 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreUtilConfiguration.class
 }, properties = {
     "cas.google-analytics.cookie.attribute-name=membership",
-    "cas.google-analytics.cookie.attribute-value-pattern=^(faculty|staff).*"
+    "cas.google-analytics.cookie.attribute-value-pattern=^(faculty|staff).*",
+    "spring.mail.host=localhost",
+    "spring.mail.port=25000",
+    "spring.mail.testConnection=false"
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CreateGoogleAnalyticsCookieActionTests {

@@ -37,9 +37,9 @@ public class LdapPasswordManagementConfiguration {
     @RefreshScope
     @Bean
     public PasswordManagementService passwordChangeService() {
-        return new LdapPasswordManagementService(passwordManagementCipherExecutor.getIfAvailable(),
+        return new LdapPasswordManagementService(passwordManagementCipherExecutor.getObject(),
             casProperties.getServer().getPrefix(),
             casProperties.getAuthn().getPm(),
-            passwordHistoryService.getIfAvailable());
+            passwordHistoryService.getObject());
     }
 }

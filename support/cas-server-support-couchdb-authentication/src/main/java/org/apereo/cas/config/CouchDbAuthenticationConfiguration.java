@@ -57,7 +57,7 @@ public class CouchDbAuthenticationConfiguration {
     @RefreshScope
     @ConditionalOnMissingBean(name = "authenticationCouchDbFactory")
     public CouchDbConnectorFactory authenticationCouchDbFactory() {
-        return new CouchDbConnectorFactory(casProperties.getAuthn().getCouchDb(), objectMapperFactory.getIfAvailable());
+        return new CouchDbConnectorFactory(casProperties.getAuthn().getCouchDb(), objectMapperFactory.getObject());
     }
 
     @ConditionalOnMissingBean(name = "authenticationCouchDbRepository")
@@ -74,7 +74,7 @@ public class CouchDbAuthenticationConfiguration {
     @Bean
     public AuthenticationEventExecutionPlanConfigurer couchDbAuthenticationEventExecutionPlanConfigurer(
         @Qualifier("couchDbAuthenticationHandler") final AuthenticationHandler authenticationHandler) {
-        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(authenticationHandler, defaultPrincipalResolver.getIfAvailable());
+        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(authenticationHandler, defaultPrincipalResolver.getObject());
     }
 
     @ConditionalOnMissingBean(name = "couchDbPrincipalFactory")
@@ -90,7 +90,7 @@ public class CouchDbAuthenticationConfiguration {
         @Qualifier("couchDbAuthenticatorProfileService") final CouchProfileService couchProfileService,
         @Qualifier("couchDbPrincipalFactory") final PrincipalFactory principalFactory) {
         val couchDb = casProperties.getAuthn().getCouchDb();
-        val handler = new CouchDbAuthenticationHandler(couchDb.getName(), servicesManager.getIfAvailable(), principalFactory, couchDb.getOrder());
+        val handler = new CouchDbAuthenticationHandler(couchDb.getName(), servicesManager.getObject(), principalFactory, couchDb.getOrder());
         handler.setAuthenticator(couchProfileService);
         handler.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(couchDb.getPrincipalTransformation()));
         return handler;

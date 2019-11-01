@@ -56,7 +56,7 @@ public class JsonResourceAuthenticationEventExecutionPlanConfiguration {
     @Bean
     public AuthenticationHandler jsonResourceAuthenticationHandler() {
         val jsonProps = casProperties.getAuthn().getJson();
-        val h = new JsonResourceAuthenticationHandler(jsonProps.getName(), servicesManager.getIfAvailable(), jsonPrincipalFactory(),
+        val h = new JsonResourceAuthenticationHandler(jsonProps.getName(), servicesManager.getObject(), jsonPrincipalFactory(),
             null, jsonProps.getLocation());
         h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(jsonProps.getPasswordEncoder()));
         if (jsonProps.getPasswordPolicy().isEnabled()) {
@@ -73,7 +73,7 @@ public class JsonResourceAuthenticationEventExecutionPlanConfiguration {
             val file = casProperties.getAuthn().getJson().getLocation();
             if (file != null) {
                 LOGGER.debug("Added JSON resource authentication handler for the target file [{}]", file.getFilename());
-                plan.registerAuthenticationHandlerWithPrincipalResolver(jsonResourceAuthenticationHandler(), defaultPrincipalResolver.getIfAvailable());
+                plan.registerAuthenticationHandlerWithPrincipalResolver(jsonResourceAuthenticationHandler(), defaultPrincipalResolver.getObject());
             }
         };
     }

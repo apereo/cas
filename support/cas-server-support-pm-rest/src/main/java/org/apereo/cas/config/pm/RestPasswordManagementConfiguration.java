@@ -43,10 +43,10 @@ public class RestPasswordManagementConfiguration {
     @Autowired
     public PasswordManagementService passwordChangeService(final RestTemplateBuilder restTemplateBuilder) {
         var pm = casProperties.getAuthn().getPm();
-        return new RestPasswordManagementService(passwordManagementCipherExecutor.getIfAvailable(),
+        return new RestPasswordManagementService(passwordManagementCipherExecutor.getObject(),
             casProperties.getServer().getPrefix(),
             buildRestTemplateBuilder(restTemplateBuilder),
-            pm, passwordHistoryService.getIfAvailable());
+            pm, passwordHistoryService.getObject());
     }
 
     private RestTemplate buildRestTemplateBuilder(final RestTemplateBuilder restTemplateBuilder) {
