@@ -44,7 +44,7 @@ public class CasAcceptableUsagePolicyCouchDbConfiguration {
     @Bean
     @RefreshScope
     public CouchDbConnectorFactory aupCouchDbFactory() {
-        return new CouchDbConnectorFactory(casProperties.getAcceptableUsagePolicy().getCouchDb(), objectMapperFactory.getIfAvailable());
+        return new CouchDbConnectorFactory(casProperties.getAcceptableUsagePolicy().getCouchDb(), objectMapperFactory.getObject());
     }
 
     @ConditionalOnMissingBean(name = "aupCouchDbRepository")
@@ -62,7 +62,7 @@ public class CasAcceptableUsagePolicyCouchDbConfiguration {
     @RefreshScope
     public AcceptableUsagePolicyRepository acceptableUsagePolicyRepository(
         @Qualifier("aupCouchDbRepository") final ProfileCouchDbRepository profileCouchDbRepository) {
-        return new CouchDbAcceptableUsagePolicyRepository(ticketRegistrySupport.getIfAvailable(),
+        return new CouchDbAcceptableUsagePolicyRepository(ticketRegistrySupport.getObject(),
             casProperties.getAcceptableUsagePolicy().getAupAttributeName(),
             profileCouchDbRepository,
             casProperties.getAcceptableUsagePolicy().getCouchDb().getRetries());

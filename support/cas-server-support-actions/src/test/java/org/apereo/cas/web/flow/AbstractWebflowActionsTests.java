@@ -5,7 +5,6 @@ import org.apereo.cas.web.config.CasSupportActionsConfiguration;
 
 import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.TestPropertySource;
 
 /**
  * This is {@link AbstractWebflowActionsTests}.
@@ -15,6 +14,5 @@ import org.springframework.test.context.TestPropertySource;
  */
 @Import(CasSupportActionsConfiguration.class)
 @DirtiesContext
-@TestPropertySource(properties = "spring.aop.proxy-target-class=true")
 public class AbstractWebflowActionsTests extends AbstractCentralAuthenticationServiceTests {
 }

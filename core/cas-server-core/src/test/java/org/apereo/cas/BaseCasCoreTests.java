@@ -36,6 +36,8 @@ import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
+import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
+import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
@@ -51,6 +53,8 @@ import org.springframework.test.annotation.DirtiesContext;
  * @since 6.0.0
  */
 @SpringBootTest(classes = {
+    MailSenderAutoConfiguration.class,
+    ThymeleafAutoConfiguration.class,
     AopAutoConfiguration.class,
     RefreshAutoConfiguration.class,
     CasCookieConfiguration.class,
@@ -82,6 +86,10 @@ import org.springframework.test.annotation.DirtiesContext;
     CasPersonDirectoryTestConfiguration.class,
     CasCoreValidationConfiguration.class,
     CasCoreConfiguration.class
+}, properties = {
+    "spring.mail.host=localhost",
+    "spring.mail.port=25000",
+    "spring.mail.testConnection=false"
 })
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @DirtiesContext

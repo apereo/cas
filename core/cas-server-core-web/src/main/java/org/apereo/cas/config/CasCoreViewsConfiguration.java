@@ -68,7 +68,7 @@ public class CasCoreViewsConfiguration {
     }
 
     private void configureTemplateViewResolver(final AbstractConfigurableTemplateResolver resolver) {
-        val props = thymeleafProperties.getIfAvailable();
+        val props = thymeleafProperties.getObject();
         resolver.setCacheable(props.isCache());
         resolver.setCharacterEncoding(props.getEncoding().name());
         resolver.setCheckExistence(props.isCheckTemplateLocation());

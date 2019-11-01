@@ -62,7 +62,7 @@ public class AccepttoMultifactorAuthenticationEventExecutionPlanConfiguration {
         val props = casProperties.getAuthn().getMfa().getAcceptto();
         validateConfigurationProperties();
         return new AccepttoMultifactorAuthenticationHandler(
-            servicesManager.getIfAvailable(),
+            servicesManager.getObject(),
             casAccepttoMultifactorPrincipalFactory(),
             props);
     }
@@ -72,9 +72,9 @@ public class AccepttoMultifactorAuthenticationEventExecutionPlanConfiguration {
     public MultifactorAuthenticationProvider casAccepttoMultifactorAuthenticationProvider() {
         val simple = casProperties.getAuthn().getMfa().getAcceptto();
         val p = new AccepttoMultifactorAuthenticationProvider();
-        p.setBypassEvaluator(casAccepttoMultifactorBypassEvaluator.getIfAvailable());
+        p.setBypassEvaluator(casAccepttoMultifactorBypassEvaluator.getObject());
         p.setFailureMode(simple.getFailureMode());
-        p.setFailureModeEvaluator(failureModeEvaluator.getIfAvailable());
+        p.setFailureModeEvaluator(failureModeEvaluator.getObject());
         p.setOrder(simple.getRank());
         p.setId(simple.getId());
         return p;
