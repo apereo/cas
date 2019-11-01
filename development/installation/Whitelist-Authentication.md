@@ -46,7 +46,7 @@ The password file may also be specified as a JSON resource instead which allows 
       "lastName" : ["CAS"]
     },
     "status" : "OK",
-    "expirationDate" : "2018-01-19"
+    "expirationDate" : "2050-01-01"
   }
 }
 ```
