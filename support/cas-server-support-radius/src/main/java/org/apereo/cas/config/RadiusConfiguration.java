@@ -149,7 +149,7 @@ public class RadiusConfiguration {
     @Bean
     public AuthenticationHandler radiusAuthenticationHandler() {
         val radius = casProperties.getAuthn().getRadius();
-        val h = new RadiusAuthenticationHandler(radius.getName(), servicesManager.getIfAvailable(),
+        val h = new RadiusAuthenticationHandler(radius.getName(), servicesManager.getObject(),
             radiusPrincipalFactory(), radiusServers(),
             radius.isFailoverOnException(), radius.isFailoverOnAuthenticationFailure());
 
@@ -182,29 +182,29 @@ public class RadiusConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "radiusAccessChallengedMultifactorAuthenticationTrigger")
     public MultifactorAuthenticationTrigger radiusAccessChallengedMultifactorAuthenticationTrigger() {
-        return new RadiusAccessChallengedMultifactorAuthenticationTrigger(casProperties, multifactorAuthenticationProviderResolver.getIfAvailable());
+        return new RadiusAccessChallengedMultifactorAuthenticationTrigger(casProperties, multifactorAuthenticationProviderResolver.getObject());
     }
 
     @RefreshScope
     @Bean
     public CasWebflowEventResolver radiusAccessChallengedAuthenticationWebflowEventResolver() {
         val context = CasWebflowEventResolutionConfigurationContext.builder()
-            .authenticationSystemSupport(authenticationSystemSupport.getIfAvailable())
-            .centralAuthenticationService(centralAuthenticationService.getIfAvailable())
-            .servicesManager(servicesManager.getIfAvailable())
-            .ticketRegistrySupport(ticketRegistrySupport.getIfAvailable())
-            .warnCookieGenerator(warnCookieGenerator.getIfAvailable())
-            .authenticationRequestServiceSelectionStrategies(authenticationRequestServiceSelectionStrategies.getIfAvailable())
-            .registeredServiceAccessStrategyEnforcer(registeredServiceAccessStrategyEnforcer.getIfAvailable())
+            .authenticationSystemSupport(authenticationSystemSupport.getObject())
+            .centralAuthenticationService(centralAuthenticationService.getObject())
+            .servicesManager(servicesManager.getObject())
+            .ticketRegistrySupport(ticketRegistrySupport.getObject())
+            .warnCookieGenerator(warnCookieGenerator.getObject())
+            .authenticationRequestServiceSelectionStrategies(authenticationRequestServiceSelectionStrategies.getObject())
+            .registeredServiceAccessStrategyEnforcer(registeredServiceAccessStrategyEnforcer.getObject())
             .casProperties(casProperties)
-            .ticketRegistry(ticketRegistry.getIfAvailable())
+            .ticketRegistry(ticketRegistry.getObject())
             .eventPublisher(applicationContext)
             .applicationContext(applicationContext)
             .build();
         final CasWebflowEventResolver r = new DefaultMultifactorAuthenticationProviderWebflowEventResolver(context,
             radiusAccessChallengedMultifactorAuthenticationTrigger());
         LOGGER.debug("Activating MFA event resolver based on RADIUS...");
-        this.initialAuthenticationAttemptWebflowEventResolver.getIfAvailable().addDelegate(r);
+        this.initialAuthenticationAttemptWebflowEventResolver.getObject().addDelegate(r);
         return r;
     }
 

@@ -39,7 +39,10 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.scim.target=http://localhost:8215",
     "cas.scim.version=1",
     "cas.scim.username=casuser",
-    "cas.scim.password=Mellon"
+    "cas.scim.password=Mellon",
+    "spring.mail.host=localhost",
+    "spring.mail.port=25000",
+    "spring.mail.testConnection=false"
 })
 public class PrincipalScimV1ProvisionerActionTests extends BaseScimProvisionerActionTests {
     @Test

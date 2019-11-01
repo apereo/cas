@@ -65,8 +65,8 @@ public class SamlMetadataUIWebflowConfiguration {
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer samlMetadataUIWebConfigurer() {
-        return new SamlMetadataUIWebflowConfigurer(flowBuilderServices.getIfAvailable(),
-            loginFlowDefinitionRegistry.getIfAvailable(), samlMetadataUIParserAction(),
+        return new SamlMetadataUIWebflowConfigurer(flowBuilderServices.getObject(),
+            loginFlowDefinitionRegistry.getObject(), samlMetadataUIParserAction(),
             applicationContext, casProperties);
     }
 
@@ -74,7 +74,7 @@ public class SamlMetadataUIWebflowConfiguration {
     @Bean
     public Action samlMetadataUIParserAction() {
         val parameter = StringUtils.defaultIfEmpty(casProperties.getSamlMetadataUi().getParameter(), SamlProtocolConstants.PARAMETER_ENTITY_ID);
-        return new SamlMetadataUIParserAction(parameter, chainingSamlMetadataUIMetadataResolverAdapter.getIfAvailable(), serviceFactory, servicesManager.getIfAvailable());
+        return new SamlMetadataUIParserAction(parameter, chainingSamlMetadataUIMetadataResolverAdapter.getObject(), serviceFactory, servicesManager.getObject());
     }
 
     @Bean

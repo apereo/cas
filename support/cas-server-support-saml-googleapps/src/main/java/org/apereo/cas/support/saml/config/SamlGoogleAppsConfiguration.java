@@ -59,7 +59,7 @@ public class SamlGoogleAppsConfiguration {
     @ConditionalOnMissingBean(name = "googleSaml20ObjectBuilder")
     @Bean
     public GoogleSaml20ObjectBuilder googleSaml20ObjectBuilder() {
-        return new GoogleSaml20ObjectBuilder(openSamlConfigBean.getIfAvailable());
+        return new GoogleSaml20ObjectBuilder(openSamlConfigBean.getObject());
     }
 
     @ConditionalOnMissingBean(name = "googleAccountsServiceResponseBuilder")
@@ -71,7 +71,7 @@ public class SamlGoogleAppsConfiguration {
             gApps.getPrivateKeyLocation(),
             gApps.getPublicKeyLocation(),
             gApps.getKeyAlgorithm(),
-            servicesManager.getIfAvailable(),
+            servicesManager.getObject(),
             googleSaml20ObjectBuilder(),
             casProperties.getSamlCore().getSkewAllowance(),
             casProperties.getServer().getPrefix());
