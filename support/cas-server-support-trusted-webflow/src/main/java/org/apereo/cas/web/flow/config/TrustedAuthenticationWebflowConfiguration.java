@@ -46,7 +46,7 @@ public class TrustedAuthenticationWebflowConfiguration {
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer trustedWebflowConfigurer() {
         return new TrustedAuthenticationWebflowConfigurer(flowBuilderServices.getObject(),
-            loginFlowDefinitionRegistry.getIfAvailable(),
+            loginFlowDefinitionRegistry.getObject(),
             applicationContext, casProperties);
     }
 

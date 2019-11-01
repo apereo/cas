@@ -32,6 +32,7 @@ import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -52,6 +53,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    MailSenderAutoConfiguration.class,
     CasCoreMultifactorAuthenticationConfiguration.class,
     CasMultifactorAuthenticationWebflowConfiguration.class,
     CasPersonDirectoryTestConfiguration.class,
@@ -75,7 +77,11 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreLogoutConfiguration.class,
     CasCoreHttpConfiguration.class,
     CasCoreUtilConfiguration.class
-}, properties = "cas.authn.mfa.u2f.json.location=file:src/test/resources/u2f-accounts.json")
+}, properties = {
+    "cas.authn.mfa.u2f.json.location=file:src/test/resources/u2f-accounts.json",
+    "spring.mail.host=localhost",
+    "spring.mail.port=25000",
+    "spring.mail.testConnection=false"})
 @DirtiesContext
 public class U2FAuthenticationHandlerTests {
     @Autowired
