@@ -1,0 +1,12 @@
+{
+  "@class": "org.apereo.cas.authentication.principal.SimplePrincipal",
+  "id": "casuser",
+  "attributes": {
+    "eduPersonAffiliation": ["employee", "member"],
+    "mail": "cas@test.com",
+    "sn": "Test",
+    "givenName": "Test",
+    "displayName": "test Test",
+    "isMemberOf": ["name@test.com"]
+  }
+}
