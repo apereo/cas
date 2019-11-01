@@ -3,6 +3,7 @@ package org.apereo.cas.adaptors.radius;
 import org.apereo.cas.adaptors.radius.server.BlockingRadiusServer;
 
 import net.jradius.exception.TimeoutException;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -14,6 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Tag("Radius")
 public class BlockingRadiusServerTests extends AbstractRadiusServerTests {
 
     public static final String XYZ = "xyz";
