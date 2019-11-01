@@ -89,7 +89,13 @@ public class ValidateCaptchaAction extends AbstractAction {
         return getError(requestContext);
     }
 
-    private String getRecaptchaResponse(final HttpServletRequest request) {
+    /**
+     * Gets recaptcha response.
+     *
+     * @param request the request
+     * @return the recaptcha response
+     */
+    protected String getRecaptchaResponse(final HttpServletRequest request) {
         return recaptchaProperties.getVersion() == GoogleRecaptchaProperties.RecaptchaVersions.V2
             ? request.getParameter(REQUEST_PARAM_RECAPTCHA_RESPONSE)
             : request.getParameter(REQUEST_PARAM_RECAPTCHA_TOKEN);

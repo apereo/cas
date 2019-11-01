@@ -70,6 +70,7 @@ public class GitServiceRegistryConfiguration {
 
     @Bean
     @RefreshScope
+    @ConditionalOnMissingBean(name = "gitServiceRegistry")
     public ServiceRegistry gitServiceRegistry() {
         val registry = casProperties.getServiceRegistry().getGit();
         return new GitServiceRegistry(applicationContext,
