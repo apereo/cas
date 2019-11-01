@@ -63,11 +63,17 @@ public class GroovyScriptMultifactorAuthenticationTrigger implements Multifactor
             LOGGER.debug("No authentication is available to determine event for principal");
             return Optional.empty();
         }
+        
         if (registeredService == null) {
             LOGGER.debug("No registered service is available to determine event for principal [{}]", authentication.getPrincipal());
             return Optional.empty();
         }
 
+        if (service == null) {
+            LOGGER.debug("No service is available to determine event for principal [{}]", authentication.getPrincipal());
+            return Optional.empty();
+        }
+        
         val providerMap = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(ApplicationContextProvider.getApplicationContext());
         if (providerMap.isEmpty()) {
             LOGGER.error("No multifactor authentication providers are available in the application context");
@@ -75,7 +81,7 @@ public class GroovyScriptMultifactorAuthenticationTrigger implements Multifactor
         }
 
         try {
-            val args = new Object[]{registeredService, registeredService, authentication, httpServletRequest, LOGGER};
+            val args = new Object[]{service, registeredService, authentication, httpServletRequest, LOGGER};
             val provider = this.watchableScript.execute(args, String.class);
             LOGGER.debug("Groovy script run for [{}] returned the provider id [{}]", registeredService, provider);
             if (StringUtils.isBlank(provider)) {
