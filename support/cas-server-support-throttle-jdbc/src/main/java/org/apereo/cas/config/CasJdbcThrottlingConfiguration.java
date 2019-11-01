@@ -64,10 +64,10 @@ public class CasJdbcThrottlingConfiguration {
             .failureRangeInSeconds(failure.getRangeSeconds())
             .usernameParameter(throttle.getUsernameParameter())
             .authenticationFailureCode(failure.getCode())
-            .auditTrailExecutionPlan(auditTrailManager.getIfAvailable())
+            .auditTrailExecutionPlan(auditTrailManager.getObject())
             .applicationCode(throttle.getAppCode())
-            .throttledRequestResponseHandler(throttledRequestResponseHandler.getIfAvailable())
-            .throttledRequestExecutor(throttledRequestExecutor.getIfAvailable())
+            .throttledRequestResponseHandler(throttledRequestResponseHandler.getObject())
+            .throttledRequestExecutor(throttledRequestExecutor.getObject())
             .build();
 
         return new JdbcThrottledSubmissionHandlerInterceptorAdapter(context, inspektrThrottleDataSource(),

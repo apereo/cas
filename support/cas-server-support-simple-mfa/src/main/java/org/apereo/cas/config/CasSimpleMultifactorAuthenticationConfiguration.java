@@ -97,10 +97,10 @@ public class CasSimpleMultifactorAuthenticationConfiguration {
     @RefreshScope
     public Action mfaSimpleMultifactorSendTokenAction() {
         val simple = casProperties.getAuthn().getMfa().getSimple();
-        if (!Objects.requireNonNull(communicationsManager.getIfAvailable()).validate()) {
+        if (!Objects.requireNonNull(communicationsManager.getObject()).validate()) {
             throw new BeanCreationException("Unable to submit tokens since no communication strategy is defined");
         }
-        return new CasSimpleSendTokenAction(ticketRegistry.getIfAvailable(), communicationsManager.getIfAvailable(),
+        return new CasSimpleSendTokenAction(ticketRegistry.getObject(), communicationsManager.getObject(),
             casSimpleMultifactorAuthenticationTicketFactory(), simple);
     }
 
@@ -140,7 +140,7 @@ public class CasSimpleMultifactorAuthenticationConfiguration {
         @DependsOn("defaultWebflowConfigurer")
         public CasWebflowConfigurer mfaSimpleMultifactorTrustWebflowConfigurer() {
             return new CasSimpleMultifactorTrustWebflowConfigurer(flowBuilderServices.getObject(),
-                loginFlowDefinitionRegistry.getIfAvailable(),
+                loginFlowDefinitionRegistry.getObject(),
                 casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled(),
                 mfaSimpleAuthenticatorFlowRegistry(),
                 applicationContext, casProperties);

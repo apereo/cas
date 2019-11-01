@@ -96,7 +96,7 @@ public class SpnegoConfiguration {
     public AuthenticationHandler spnegoHandler() {
         val spnegoProperties = casProperties.getAuthn().getSpnego();
         return new JcifsSpnegoAuthenticationHandler(spnegoProperties.getName(),
-            servicesManager.getIfAvailable(),
+            servicesManager.getObject(),
             spnegoPrincipalFactory(),
             spnegoAuthentications(),
             spnegoProperties.isPrincipalWithDomainName(),
@@ -110,7 +110,7 @@ public class SpnegoConfiguration {
     public AuthenticationHandler ntlmAuthenticationHandler() {
         val ntlmProperties = casProperties.getAuthn().getNtlm();
         return new NtlmAuthenticationHandler(ntlmProperties.getName(),
-            servicesManager.getIfAvailable(), ntlmPrincipalFactory(),
+            servicesManager.getObject(), ntlmPrincipalFactory(),
             ntlmProperties.isLoadBalance(),
             ntlmProperties.getDomainController(),
             ntlmProperties.getIncludePattern(),
@@ -131,7 +131,7 @@ public class SpnegoConfiguration {
         val spnegoProperties = casProperties.getAuthn().getSpnego();
         val spnegoPrincipal = spnegoProperties.getPrincipal();
         val principalAttribute = StringUtils.defaultIfBlank(spnegoPrincipal.getPrincipalAttribute(), personDirectory.getPrincipalAttribute());
-        return new SpnegoPrincipalResolver(attributeRepository.getIfAvailable(),
+        return new SpnegoPrincipalResolver(attributeRepository.getObject(),
             spnegoPrincipalFactory(),
             spnegoPrincipal.isReturnNull() || personDirectory.isReturnNull(),
             PrincipalNameTransformerUtils.newPrincipalNameTransformer(spnegoProperties.getPrincipalTransformation()),

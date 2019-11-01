@@ -24,6 +24,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.ResourceLock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.io.ByteArrayResource;
@@ -42,6 +43,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SuppressWarnings("unused")
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    MailSenderAutoConfiguration.class,
     SyncopeAuthenticationConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreAuthenticationConfiguration.class,
@@ -50,7 +52,12 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreHttpConfiguration.class,
     CasCoreUtilConfiguration.class,
     CasPersonDirectoryTestConfiguration.class
-}, properties = "cas.authn.syncope.url=http://localhost:8095")
+}, properties = {
+    "cas.authn.syncope.url=http://localhost:8095",
+    "spring.mail.host=localhost",
+    "spring.mail.port=25000",
+    "spring.mail.testConnection=false"
+})
 @Slf4j
 @ResourceLock("Syncope")
 public class SyncopeAuthenticationHandlerTests {
@@ -59,6 +66,16 @@ public class SyncopeAuthenticationHandlerTests {
     @Autowired
     @Qualifier("syncopeAuthenticationHandler")
     private AuthenticationHandler syncopeAuthenticationHandler;
+
+    @SneakyThrows
+    private static MockWebServer startMockSever(final UserTO user) {
+        val data = MAPPER.writeValueAsString(user);
+        val webServer = new MockWebServer(8095,
+            new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"),
+            MediaType.APPLICATION_JSON_VALUE);
+        webServer.start();
+        return webServer;
+    }
 
     @Test
     public void verifyHandlerPasses() {
@@ -92,15 +109,5 @@ public class SyncopeAuthenticationHandlerTests {
 
         assertThrows(AccountDisabledException.class,
             () -> syncopeAuthenticationHandler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser")));
-    }
-
-    @SneakyThrows
-    private static MockWebServer startMockSever(final UserTO user) {
-        val data = MAPPER.writeValueAsString(user);
-        val webServer = new MockWebServer(8095,
-            new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"),
-            MediaType.APPLICATION_JSON_VALUE);
-        webServer.start();
-        return webServer;
     }
 }

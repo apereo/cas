@@ -64,8 +64,8 @@ public class CasSimpleMultifactorAuthenticationEventExecutionPlanConfiguration {
     public AuthenticationHandler casSimpleMultifactorAuthenticationHandler() {
         val props = casProperties.getAuthn().getMfa().getSimple();
         return new CasSimpleMultifactorAuthenticationHandler(props.getName(),
-            servicesManager.getIfAvailable(), casSimpleMultifactorPrincipalFactory(),
-            ticketRegistry.getIfAvailable(), props.getOrder());
+            servicesManager.getObject(), casSimpleMultifactorPrincipalFactory(),
+            ticketRegistry.getObject(), props.getOrder());
     }
 
     @Bean
@@ -73,9 +73,9 @@ public class CasSimpleMultifactorAuthenticationEventExecutionPlanConfiguration {
     public MultifactorAuthenticationProvider casSimpleMultifactorAuthenticationProvider() {
         val simple = casProperties.getAuthn().getMfa().getSimple();
         val p = new CasSimpleMultifactorAuthenticationProvider();
-        p.setBypassEvaluator(casSimpleMultifactorBypassEvaluator.getIfAvailable());
+        p.setBypassEvaluator(casSimpleMultifactorBypassEvaluator.getObject());
         p.setFailureMode(simple.getFailureMode());
-        p.setFailureModeEvaluator(failureModeEvaluator.getIfAvailable());
+        p.setFailureModeEvaluator(failureModeEvaluator.getObject());
         p.setOrder(simple.getRank());
         p.setId(simple.getId());
         return p;
