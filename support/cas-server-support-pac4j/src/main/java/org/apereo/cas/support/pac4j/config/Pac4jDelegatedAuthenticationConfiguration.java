@@ -57,7 +57,7 @@ public class Pac4jDelegatedAuthenticationConfiguration {
 
     @Bean
     public ServiceTicketValidationAuthorizer pac4jServiceTicketValidationAuthorizer() {
-        return new DelegatedAuthenticationServiceTicketValidationAuthorizer(servicesManager.getIfAvailable(),
+        return new DelegatedAuthenticationServiceTicketValidationAuthorizer(servicesManager.getObject(),
             registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer());
     }
 

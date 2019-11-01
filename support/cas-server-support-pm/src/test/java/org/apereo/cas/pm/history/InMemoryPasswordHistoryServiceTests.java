@@ -9,6 +9,7 @@ import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
@@ -22,11 +23,15 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    MailSenderAutoConfiguration.class,
     PasswordManagementConfiguration.class,
     CasCoreUtilConfiguration.class
 }, properties = {
     "cas.authn.pm.enabled=true",
-    "cas.authn.pm.history.enabled=true"
+    "cas.authn.pm.history.enabled=true",
+    "spring.mail.host=localhost",
+    "spring.mail.port=25000",
+    "spring.mail.testConnection=false"
 })
 public class InMemoryPasswordHistoryServiceTests {
     @Autowired

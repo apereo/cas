@@ -25,6 +25,7 @@ import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.webflow.execution.Action;
@@ -37,6 +38,7 @@ import org.springframework.webflow.execution.Action;
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    MailSenderAutoConfiguration.class,
     CasConsentCoreConfiguration.class,
     CasConsentWebflowConfiguration.class,
     CasCoreAuditConfiguration.class,
@@ -59,6 +61,10 @@ import org.springframework.webflow.execution.Action;
     CasCoreAuthenticationConfiguration.class,
     CasCoreAuthenticationSupportConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class
+}, properties = {
+    "spring.mail.host=localhost",
+    "spring.mail.port=25000",
+    "spring.mail.testConnection=false"
 })
 public abstract class BaseConsentActionTests {
     @Autowired

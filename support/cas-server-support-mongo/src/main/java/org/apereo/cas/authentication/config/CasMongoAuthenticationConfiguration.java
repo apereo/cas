@@ -58,7 +58,7 @@ public class CasMongoAuthenticationConfiguration {
     @RefreshScope
     public AuthenticationHandler mongoAuthenticationHandler() {
         val mongo = casProperties.getAuthn().getMongo();
-        val handler = new MongoDbAuthenticationHandler(mongo.getName(), servicesManager.getIfAvailable(), mongoPrincipalFactory());
+        val handler = new MongoDbAuthenticationHandler(mongo.getName(), servicesManager.getObject(), mongoPrincipalFactory());
         handler.setAuthenticator(mongoAuthenticatorProfileService());
         handler.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(mongo.getPrincipalTransformation()));
         return handler;
@@ -67,7 +67,7 @@ public class CasMongoAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "mongoAuthenticationEventExecutionPlanConfigurer")
     @Bean
     public AuthenticationEventExecutionPlanConfigurer mongoAuthenticationEventExecutionPlanConfigurer() {
-        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(mongoAuthenticationHandler(), defaultPrincipalResolver.getIfAvailable());
+        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(mongoAuthenticationHandler(), defaultPrincipalResolver.getObject());
     }
 
     @ConditionalOnMissingBean(name = "mongoAuthenticatorProfileService")

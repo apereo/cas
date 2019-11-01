@@ -43,7 +43,7 @@ public class CasOAuth20AuthenticationServiceSelectionStrategyConfiguration {
     @ConditionalOnMissingBean(name = "oauth20AuthenticationRequestServiceSelectionStrategy")
     @RefreshScope
     public AuthenticationServiceSelectionStrategy oauth20AuthenticationRequestServiceSelectionStrategy() {
-        return new OAuth20AuthenticationServiceSelectionStrategy(servicesManager.getIfAvailable(),
+        return new OAuth20AuthenticationServiceSelectionStrategy(servicesManager.getObject(),
             webApplicationServiceFactory, OAuth20Utils.casOAuthCallbackUrl(casProperties.getServer().getPrefix()));
     }
 

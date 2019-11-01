@@ -45,7 +45,7 @@ public class OpenIdWebflowConfiguration {
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer openidWebflowConfigurer() {
         return new OpenIdWebflowConfigurer(flowBuilderServices.getObject(),
-            loginFlowDefinitionRegistry.getIfAvailable(), applicationContext, casProperties);
+            loginFlowDefinitionRegistry.getObject(), applicationContext, casProperties);
     }
 
     @Bean

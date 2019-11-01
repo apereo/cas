@@ -48,7 +48,7 @@ public class CouchDbEventsConfiguration {
     @Bean
     @RefreshScope
     public CouchDbConnectorFactory eventCouchDbFactory() {
-        return new CouchDbConnectorFactory(casProperties.getEvents().getCouchDb(), objectMapperFactory.getIfAvailable());
+        return new CouchDbConnectorFactory(casProperties.getEvents().getCouchDb(), objectMapperFactory.getObject());
     }
 
     @ConditionalOnMissingBean(name = "couchDbCasEventRepository")

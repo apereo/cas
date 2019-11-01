@@ -40,6 +40,7 @@ import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 import org.openid4java.server.ServerManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
@@ -82,10 +83,15 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
     CasCoreWebflowConfiguration.class,
     CasCoreUtilConfiguration.class,
     OpenIdConfiguration.class,
+    MailSenderAutoConfiguration.class,
     OpenIdUniqueTicketIdGeneratorConfiguration.class,
     OpenIdServiceFactoryConfiguration.class,
     OpenIdAuthenticationEventExecutionPlanConfiguration.class,
     ThymeleafAutoConfiguration.class
+}, properties = {
+    "spring.mail.host=localhost",
+    "spring.mail.port=25000",
+    "spring.mail.testConnection=false"
 })
 public class AbstractOpenIdTests {
     @Autowired

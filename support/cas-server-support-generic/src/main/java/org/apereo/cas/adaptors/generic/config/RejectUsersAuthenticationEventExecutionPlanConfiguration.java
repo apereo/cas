@@ -59,7 +59,7 @@ public class RejectUsersAuthenticationEventExecutionPlanConfiguration {
     public AuthenticationHandler rejectUsersAuthenticationHandler() {
         val rejectProperties = casProperties.getAuthn().getReject();
         val users = org.springframework.util.StringUtils.commaDelimitedListToSet(rejectProperties.getUsers());
-        val h = new RejectUsersAuthenticationHandler(rejectProperties.getName(), servicesManager.getIfAvailable(),
+        val h = new RejectUsersAuthenticationHandler(rejectProperties.getName(), servicesManager.getObject(),
             rejectUsersPrincipalFactory(), users);
         h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(rejectProperties.getPasswordEncoder()));
         h.setPasswordPolicyConfiguration(rejectPasswordPolicyConfiguration());
@@ -73,7 +73,7 @@ public class RejectUsersAuthenticationEventExecutionPlanConfiguration {
         return plan -> {
             val users = casProperties.getAuthn().getReject().getUsers();
             if (StringUtils.isNotBlank(users)) {
-                plan.registerAuthenticationHandlerWithPrincipalResolver(rejectUsersAuthenticationHandler(), defaultPrincipalResolver.getIfAvailable());
+                plan.registerAuthenticationHandlerWithPrincipalResolver(rejectUsersAuthenticationHandler(), defaultPrincipalResolver.getObject());
                 LOGGER.debug("Added rejecting authentication handler with the following users [{}]", users);
             }
         };

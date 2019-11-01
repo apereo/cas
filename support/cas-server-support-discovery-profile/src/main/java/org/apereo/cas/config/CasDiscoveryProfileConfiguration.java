@@ -49,21 +49,21 @@ public class CasDiscoveryProfileConfiguration {
 
     @Bean
     public CasServerProfileRegistrar casServerProfileRegistrar() {
-        return new CasServerProfileRegistrar(servicesManager.getIfAvailable(), casProperties,
-            this.builtClients.getIfAvailable(),
+        return new CasServerProfileRegistrar(servicesManager.getObject(), casProperties,
+            this.builtClients.getObject(),
             availableAttributes());
     }
 
     @Bean
     @ConditionalOnAvailableEndpoint
     public CasServerDiscoveryProfileEndpoint discoveryProfileEndpoint() {
-        return new CasServerDiscoveryProfileEndpoint(casProperties, servicesManager.getIfAvailable(), casServerProfileRegistrar());
+        return new CasServerDiscoveryProfileEndpoint(casProperties, servicesManager.getObject(), casServerProfileRegistrar());
     }
 
     @Bean
     public Set<String> availableAttributes() {
         val attributes = new LinkedHashSet<String>(0);
-        val possibleUserAttributeNames = attributeRepository.getIfAvailable().getPossibleUserAttributeNames(IPersonAttributeDaoFilter.alwaysChoose());
+        val possibleUserAttributeNames = attributeRepository.getObject().getPossibleUserAttributeNames(IPersonAttributeDaoFilter.alwaysChoose());
         if (possibleUserAttributeNames != null) {
             attributes.addAll(possibleUserAttributeNames);
         }

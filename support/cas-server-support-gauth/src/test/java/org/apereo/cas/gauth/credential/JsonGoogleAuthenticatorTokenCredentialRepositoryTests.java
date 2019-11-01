@@ -28,6 +28,7 @@ import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
+import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.io.FileSystemResource;
@@ -50,6 +51,7 @@ import java.io.File;
     CasPersonDirectoryTestConfiguration.class,
     CasCoreServicesConfiguration.class,
     AopAutoConfiguration.class,
+    MailSenderAutoConfiguration.class,
     RefreshAutoConfiguration.class,
     CasCoreAuthenticationConfiguration.class,
     CasCoreAuthenticationSupportConfiguration.class,
@@ -65,8 +67,13 @@ import java.io.File;
     CasCoreWebflowConfiguration.class,
     CasWebflowContextConfiguration.class,
     CasCoreUtilConfiguration.class
-    },
-    properties = "cas.authn.mfa.gauth.json.location=classpath:/repository.json")
+},
+    properties = {
+        "cas.authn.mfa.gauth.json.location=classpath:/repository.json",
+        "spring.mail.host=localhost",
+        "spring.mail.port=25000",
+        "spring.mail.testConnection=false"
+    })
 @Getter
 public class JsonGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTimeTokenCredentialRepositoryTests {
 

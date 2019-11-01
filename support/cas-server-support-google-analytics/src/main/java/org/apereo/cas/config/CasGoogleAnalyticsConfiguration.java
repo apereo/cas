@@ -63,9 +63,9 @@ public class CasGoogleAnalyticsConfiguration {
     @DependsOn({"defaultWebflowConfigurer", "defaultLogoutWebflowConfigurer"})
     public CasWebflowConfigurer casGoogleAnalyticsWebflowConfigurer() {
         val cfg = new CasGoogleAnalyticsWebflowConfigurer(flowBuilderServices.getObject(),
-            loginFlowDefinitionRegistry.getIfAvailable(),
+            loginFlowDefinitionRegistry.getObject(),
             applicationContext, casProperties);
-        cfg.setLogoutFlowDefinitionRegistry(logoutFlowDefinitionRegistry.getIfAvailable());
+        cfg.setLogoutFlowDefinitionRegistry(logoutFlowDefinitionRegistry.getObject());
         return cfg;
     }
 

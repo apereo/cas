@@ -314,7 +314,7 @@ public class CasOAuth20Configuration {
         return new OAuth20ClientIdClientSecretAuthenticator(servicesManager.getObject(),
             webApplicationServiceFactory.getObject(),
             registeredServiceAccessStrategyEnforcer.getObject(),
-            oauthRegisteredServiceCipherExecutor(), ticketRegistry.getIfAvailable());
+            oauthRegisteredServiceCipherExecutor(), ticketRegistry.getObject());
     }
 
     @ConditionalOnMissingBean(name = "oAuthProofKeyCodeExchangeAuthenticator")

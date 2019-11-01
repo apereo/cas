@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
@@ -23,11 +24,15 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     PasswordManagementConfiguration.class,
+    MailSenderAutoConfiguration.class,
     CasCoreUtilConfiguration.class
 }, properties = {
     "cas.authn.pm.enabled=true",
     "cas.authn.pm.history.enabled=true",
-    "cas.authn.pm.policyPattern=^Th!.+{8,10}"
+    "cas.authn.pm.policyPattern=^Th!.+{8,10}",
+    "spring.mail.host=localhost",
+    "spring.mail.port=25000",
+    "spring.mail.testConnection=false"
 })
 public class DefaultPasswordValidationServiceTests {
     @Autowired
