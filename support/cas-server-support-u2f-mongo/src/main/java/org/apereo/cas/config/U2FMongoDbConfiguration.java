@@ -49,7 +49,7 @@ public class U2FMongoDbConfiguration {
                 .build(key -> StringUtils.EMPTY);
         val repo = new U2FMongoDbDeviceRepository(requestStorage, mongoTemplate, u2f.getExpireRegistrations(),
             u2f.getExpireDevicesTimeUnit(), mongoProps.getCollection());
-        repo.setCipherExecutor(u2fRegistrationRecordCipherExecutor.getIfAvailable());
+        repo.setCipherExecutor(u2fRegistrationRecordCipherExecutor.getObject());
         return repo;
     }
 

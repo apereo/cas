@@ -38,6 +38,7 @@ import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
@@ -59,6 +60,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasRegisteredServicesTestConfiguration.class,
     TokenTicketsConfiguration.class,
     RefreshAutoConfiguration.class,
+    MailSenderAutoConfiguration.class,
     CasDefaultServiceTicketIdGeneratorsConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
@@ -85,7 +87,10 @@ import static org.junit.jupiter.api.Assertions.*;
 }, properties = {
     "cas.server.name=http://localhost:8281",
     "cas.server.prefix=${cas.server.name}/cas",
-    "cas.client.validatorType=CAS10"
+    "cas.client.validatorType=CAS10",
+    "spring.mail.host=localhost",
+    "spring.mail.port=25000",
+    "spring.mail.testConnection=false"
 })
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @EnableScheduling

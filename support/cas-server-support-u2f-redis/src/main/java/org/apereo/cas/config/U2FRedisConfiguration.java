@@ -60,7 +60,7 @@ public class U2FRedisConfiguration {
             .build(key -> StringUtils.EMPTY);
         val repo = new U2FRedisDeviceRepository(requestStorage, u2fRedisTemplate(), u2f.getExpireRegistrations(),
             u2f.getExpireDevicesTimeUnit());
-        repo.setCipherExecutor(u2fRegistrationRecordCipherExecutor.getIfAvailable());
+        repo.setCipherExecutor(u2fRegistrationRecordCipherExecutor.getObject());
         return repo;
     }
 }

@@ -33,7 +33,7 @@ public class TokenTicketsConfiguration {
 
     @Bean
     public ResponseBuilder webApplicationServiceResponseBuilder() {
-        return new TokenWebApplicationServiceResponseBuilder(servicesManager.getIfAvailable(), tokenTicketBuilder.getIfAvailable());
+        return new TokenWebApplicationServiceResponseBuilder(servicesManager.getObject(), tokenTicketBuilder.getObject());
     }
 
 }

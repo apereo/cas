@@ -17,7 +17,10 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @TestPropertySource(properties = {
     "cas.authn.token.crypto.encryptionEnabled=false",
-    "cas.authn.token.crypto.signingEnabled=false"
+    "cas.authn.token.crypto.signingEnabled=false",
+    "spring.mail.host=localhost",
+    "spring.mail.port=25000",
+    "spring.mail.testConnection=false"
 })
 public class JwtTokenTicketBuilderWithoutCryptoTests extends BaseJwtTokenTicketBuilderTests {
 

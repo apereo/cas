@@ -85,7 +85,7 @@ public class JdbcMultifactorAuthnTrustConfiguration {
     @Bean
     public MultifactorAuthenticationTrustStorage mfaTrustEngine() {
         val m = new JpaMultifactorAuthenticationTrustStorage();
-        m.setCipherExecutor(mfaTrustCipherExecutor.getIfAvailable());
+        m.setCipherExecutor(mfaTrustCipherExecutor.getObject());
         return m;
     }
 }
