@@ -49,7 +49,7 @@ public class CasCoreBootstrapStandaloneConfiguration implements PropertySourceLo
 
     @Override
     public PropertySource<?> locate(final Environment environment) {
-        return casConfigurationPropertiesSourceLocator.getIfAvailable().locate(environment, this.resourceLoader);
+        return casConfigurationPropertiesSourceLocator.getObject().locate(environment, this.resourceLoader);
     }
 
     @Override
