@@ -8,31 +8,38 @@ webAppServerType="$1"
 
 createConfig() {
   configDir=$1
+  echo "Creating config in ${configDir}"
   mkdir -p ${configDir}
   cat > ${configDir}/cas.properties <<EOF
-management.endpoints.web.exposure.include=status,health
+management.endpoints.web.exposure.include=status,health,info
 management.endpoint.status.enabled=true
 management.endpoint.health.enabled=true
+management.endpoint.info.enabled=true
 cas.monitor.endpoints.endpoint.defaults.access[0]=IP_ADDRESS
-cas.monitor.endpoints.endpoint.defaults.requiredIpAddresses[0]=127\\.0\\.0\\.1
+cas.monitor.endpoints.endpoint.defaults.requiredIpAddresses[0]=127\\\\.0\\\\.0\\\\.1|0:0:0:0:0:0:0:1
 management.endpoint.health.show-details=always
 management.health.memoryHealthIndicator.enabled=true
 EOF
+cat ${configDir}/cas.properties
 }
 
 dumpOutput() {
-  msg=$1
-  file=$2
-echo "Output Start [$msg]"
-cat $file
-echo "Output End [$msg]"
+  local msg=$1
+  local outputfile=$2
+  echo "Output Start [${msg}]"
+  if [[ -f "${outputfile}" ]]; then
+    cat ${outputfile}
+  else
+    echo "File [${outputfile}] not found."
+  fi
+  echo -e "\nOutput End [${msg}]"
 }
 
 testUrl() {
-  uri=$1
-  requiredcontent=$2
+  local uri=$1
+  local requiredcontent=$2
   echo "Testing https://localhost:8443/cas$uri"
-  output=/tmp/output
+  local output="/tmp/testoutput"
   rc=`curl -k --connect-timeout 60 -o ${output} -w "%{http_code}" https://localhost:8443/cas$uri`
   if [ "$rc" == 200 ]; then
     grep ${requiredcontent} ${output}
@@ -100,18 +107,34 @@ else
 
         echo "Launching CAS web application ${webAppServerType} server..."
         configDir="/tmp/config"
+        casOutput="/tmp/logs/cas.log"
+        [ ! -d /tmp/logs ] && mkdir /tmp/logs
         createConfig ${configDir}
-        java -jar webapp/cas-server-webapp-"${webAppServerType}"/build/libs/cas.war \
-          --server.ssl.key-store="${keystore}" --cas.standalone.configurationDirectory=${configDir} &> /dev/null &
+
+        cmd="java -jar webapp/cas-server-webapp-${webAppServerType}/build/libs/cas.war \\
+          --server.ssl.key-store=${keystore} --cas.standalone.configurationDirectory=${configDir}"
+        exec $cmd > ${casOutput} 2>&1 &
         pid=$!
         echo "Launched CAS with pid ${pid}. Waiting for CAS server to come online..."
         sleep 60
         echo "Testing status of server with pid ${pid}."
-        testUrl "/login" "Username" && testUrl "/actuator/health" "UP" && testUrl "/actuator/status" "UP"
+        testUrl "/login" "Username"
+        retValLogin=$?
+        testUrl "/actuator/health" "UP"
+        retValHealth=$?
+        testUrl "/actuator/status" "UP"
+        retValStatus=$?
+        testUrl "/actuator/info" "java"
+        retValInfo=$?
+        [[ ${retValLogin} -eq 0 ]] && [[ ${retValHealth} -eq 0 ]] && [[ ${retValStatus} -eq 0 ]] && [[ ${retValInfo} -eq 0 ]]
         retVal=$?
+        if [[ ${retVal} -ne 0 ]]; then
+          dumpOutput cas.log ${casOutput}
+        fi
         kill -9 "${pid}"
         [ -f "${keystore}" ] && rm "${keystore}"
         [ -d "${configDir}" ] && rm -rf "${configDir}"
+        [ -f "${casOutput}" ] && rm "${casOutput}"
         exit $retVal
     else
         echo "Gradle build did NOT finish successfully."
