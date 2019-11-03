@@ -11,13 +11,19 @@ createConfig() {
   echo "Creating config in ${configDir}"
   mkdir -p ${configDir}
   cat > ${configDir}/cas.properties <<EOF
-management.endpoints.web.exposure.include=status,health,info
-management.endpoint.status.enabled=true
+management.endpoints.web.exposure.include=health,info,env,loggers
 management.endpoint.health.enabled=true
 management.endpoint.info.enabled=true
 cas.monitor.endpoints.endpoint.defaults.access[0]=IP_ADDRESS
 cas.monitor.endpoints.endpoint.defaults.requiredIpAddresses[0]=127\\\\.0\\\\.0\\\\.1|0:0:0:0:0:0:0:1
 management.endpoint.health.show-details=always
+spring.cloud.discovery.client.composite-indicator.enabled=false
+management.health.defaults.enabled=false
+management.health.ping.enabled=true
+management.health.diskSpace.enabled=true
+management.endpoint.env.enabled=true
+management.endpoint.loggers.enabled=true
+# memoryHealthIndicator requires cas-server-core-monitor which is not present by default
 management.health.memoryHealthIndicator.enabled=true
 EOF
 cat ${configDir}/cas.properties
@@ -40,9 +46,9 @@ testUrl() {
   local requiredcontent=$2
   echo "Testing https://localhost:8443/cas$uri"
   local output="/tmp/testoutput"
-  rc=`curl -k --connect-timeout 60 -o ${output} -w "%{http_code}" https://localhost:8443/cas$uri`
+  rc=`curl --silent -k --connect-timeout 60 -o ${output} -w "%{http_code}" https://localhost:8443/cas$uri`
   if [ "$rc" == 200 ]; then
-    grep ${requiredcontent} ${output}
+    grep --count ${requiredcontent} ${output}
     if [[ $? -eq 0 ]] ; then
       echo "Test of URI ${uri} contained required content"
       return 0
@@ -122,11 +128,20 @@ else
         retValLogin=$?
         testUrl "/actuator/health" "UP"
         retValHealth=$?
-        testUrl "/actuator/status" "UP"
-        retValStatus=$?
+        testUrl "/actuator/health/ping" "{\"status\":\"UP\"}"
+        retValPing=$?
         testUrl "/actuator/info" "java"
         retValInfo=$?
-        [[ ${retValLogin} -eq 0 ]] && [[ ${retValHealth} -eq 0 ]] && [[ ${retValStatus} -eq 0 ]] && [[ ${retValInfo} -eq 0 ]]
+        testUrl "/actuator/loggers" "FATAL"
+        retValLoggers=$?
+        testUrl "/actuator/env" "systemProperties"
+        retValEnv=$?
+        [[ ${retValLogin} -eq 0 ]] && \
+        [[ ${retValHealth} -eq 0 ]] && \
+        [[ ${retValPing} -eq 0 ]] && \
+        [[ ${retValInfo} -eq 0 ]] && \
+        [[ ${retValLoggers} -eq 0 ]] && \
+        [[ ${retValEnv} -eq 0 ]]
         retVal=$?
         if [[ ${retVal} -ne 0 ]]; then
           dumpOutput cas.log ${casOutput}
