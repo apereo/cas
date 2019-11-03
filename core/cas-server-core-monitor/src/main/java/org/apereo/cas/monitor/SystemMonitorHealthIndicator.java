@@ -57,7 +57,8 @@ public class SystemMonitorHealthIndicator extends AbstractHealthIndicator {
     }
 
     private double getMetricsFor(final String key, final List<String> tag, final int measure) {
-        val measures = metrics.metric(key, tag).getMeasurements();
+        val metric = metrics.metric(key, tag);
+        val measures = metric != null ? metric.getMeasurements() : null;
         return measures != null ? measures.get(measure).getValue() : 0;
     }
 }

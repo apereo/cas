@@ -8,8 +8,6 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
-import java.io.Serializable;
-
 /**
  * This is {@link LdapMonitorProperties}.
  *
