@@ -31,7 +31,8 @@ echo
 
 clear
 echo -e "\nBuilding CAS. Please be patient as this might take a while..."
-./gradlew clean assemble -x test -x check -DpublishReleases=true \
+./gradlew clean
+./gradlew assemble -x test -x check -DpublishReleases=true \
 -DsonatypeUsername="${username}" -DsonatypePassword="${password}"
 
 echo -e "\nPublishing CAS. Please be patient as this might take a while..."
