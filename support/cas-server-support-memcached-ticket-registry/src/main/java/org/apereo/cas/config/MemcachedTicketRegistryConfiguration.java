@@ -43,7 +43,7 @@ public class MemcachedTicketRegistryConfiguration {
     @Bean
     public Transcoder memcachedTicketRegistryTranscoder() {
         val memcached = casProperties.getTicket().getRegistry().getMemcached();
-        return MemcachedUtils.newTranscoder(memcached, componentSerializationPlan.getIfAvailable().getRegisteredClasses());
+        return MemcachedUtils.newTranscoder(memcached, componentSerializationPlan.getObject().getRegisteredClasses());
     }
 
     @ConditionalOnMissingBean(name = "memcachedPooledClientConnectionFactory")

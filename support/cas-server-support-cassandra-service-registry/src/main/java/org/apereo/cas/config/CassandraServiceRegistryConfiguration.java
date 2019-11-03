@@ -45,7 +45,7 @@ public class CassandraServiceRegistryConfiguration {
     public ServiceRegistry cassandraServiceRegistry() {
         val cassandra = casProperties.getServiceRegistry().getCassandra();
         return new CassandraServiceRegistry(cassandraServiceRegistrySessionFactory(), cassandra,
-            applicationContext, serviceRegistryListeners.getIfAvailable());
+            applicationContext, serviceRegistryListeners.getObject());
     }
 
     @Bean

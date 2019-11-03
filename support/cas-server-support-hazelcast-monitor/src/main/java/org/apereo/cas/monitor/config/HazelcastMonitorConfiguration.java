@@ -39,7 +39,7 @@ public class HazelcastMonitorConfiguration implements DisposableBean {
     @RefreshScope
     @ConditionalOnEnabledHealthIndicator("hazelcastHealthIndicator")
     public HealthIndicator hazelcastHealthIndicator() {
-        val hazelcastInstance = casTicketRegistryHazelcastInstance.getIfAvailable();
+        val hazelcastInstance = casTicketRegistryHazelcastInstance.getObject();
         val warn = casProperties.getMonitor().getWarn();
         return new HazelcastHealthIndicator(
             warn.getEvictionThreshold(),
@@ -50,7 +50,7 @@ public class HazelcastMonitorConfiguration implements DisposableBean {
 
     @Override
     public void destroy() {
-        val hazelcastInstance = casTicketRegistryHazelcastInstance.getIfAvailable();
+        val hazelcastInstance = casTicketRegistryHazelcastInstance.getObject();
         if (hazelcastInstance != null) {
             hazelcastInstance.shutdown();
         }

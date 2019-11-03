@@ -51,7 +51,7 @@ public class SamlIdPJpaRegisteredServiceMetadataConfiguration implements SamlReg
     @Bean
     public SamlRegisteredServiceMetadataResolver jpaSamlRegisteredServiceMetadataResolver() {
         val idp = casProperties.getAuthn().getSamlIdp();
-        return new JpaSamlRegisteredServiceMetadataResolver(idp, openSamlConfigBean.getIfAvailable());
+        return new JpaSamlRegisteredServiceMetadataResolver(idp, openSamlConfigBean.getObject());
     }
 
     @RefreshScope

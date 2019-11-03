@@ -43,7 +43,7 @@ public class CouchDbMultifactorAuthenticationTrustConfiguration {
     @Bean
     @RefreshScope
     public CouchDbConnectorFactory mfaTrustCouchDbFactory() {
-        return new CouchDbConnectorFactory(casProperties.getAuthn().getMfa().getTrusted().getCouchDb(), objectMapperFactory.getIfAvailable());
+        return new CouchDbConnectorFactory(casProperties.getAuthn().getMfa().getTrusted().getCouchDb(), objectMapperFactory.getObject());
     }
 
     @ConditionalOnMissingBean(name = "couchDbTrustRecordRepository")
@@ -61,7 +61,7 @@ public class CouchDbMultifactorAuthenticationTrustConfiguration {
     public MultifactorAuthenticationTrustStorage mfaTrustEngine(
         @Qualifier("couchDbTrustRecordRepository") final MultifactorAuthenticationTrustRecordCouchDbRepository couchDbTrustRecordRepository) {
         val c = new CouchDbMultifactorAuthenticationTrustStorage(couchDbTrustRecordRepository);
-        c.setCipherExecutor(mfaTrustCipherExecutor.getIfAvailable());
+        c.setCipherExecutor(mfaTrustCipherExecutor.getObject());
         return c;
     }
 }

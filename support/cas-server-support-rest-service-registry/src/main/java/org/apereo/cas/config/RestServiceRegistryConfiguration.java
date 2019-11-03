@@ -62,7 +62,7 @@ public class RestServiceRegistryConfiguration {
         headers.add("Content-Type", MediaType.APPLICATION_JSON_VALUE);
         headers.add("Accept", MediaType.APPLICATION_JSON_VALUE);
 
-        return new RestfulServiceRegistry(applicationContext, restTemplate, registry.getUrl(), headers, serviceRegistryListeners.getIfAvailable());
+        return new RestfulServiceRegistry(applicationContext, restTemplate, registry.getUrl(), headers, serviceRegistryListeners.getObject());
     }
 
     @Bean

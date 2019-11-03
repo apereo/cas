@@ -57,7 +57,7 @@ public class CasServicesStreamingHazelcastConfiguration {
     @Bean
     public CasRegisteredServiceStreamPublisher casRegisteredServiceStreamPublisher() {
         return new CasRegisteredServiceHazelcastStreamPublisher(registeredServiceDistributedCacheManager(),
-            casRegisteredServiceStreamPublisherIdentifier.getIfAvailable());
+            casRegisteredServiceStreamPublisherIdentifier.getObject());
     }
 
 

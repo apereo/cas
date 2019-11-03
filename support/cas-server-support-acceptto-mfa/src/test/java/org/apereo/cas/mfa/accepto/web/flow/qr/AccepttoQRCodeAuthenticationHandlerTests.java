@@ -16,6 +16,7 @@ import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
+import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
@@ -29,6 +30,7 @@ import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
 import lombok.val;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
@@ -43,6 +45,7 @@ import static org.mockito.Mockito.*;
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    MailSenderAutoConfiguration.class,
     AccepttoMultifactorAuthenticationConfiguration.class,
     AccepttoMultifactorAuthenticationEventExecutionPlanConfiguration.class,
     AccepttoMultifactorAuthenticationMultifactorProviderBypassConfiguration.class,
@@ -61,6 +64,7 @@ import static org.mockito.Mockito.*;
     CasCoreLogoutConfiguration.class,
     CasCoreWebConfiguration.class,
     CasCookieConfiguration.class,
+    CasCoreUtilConfiguration.class,
     CasPersonDirectoryConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
     CasMultifactorAuthenticationWebflowConfiguration.class,
@@ -73,7 +77,9 @@ import static org.mockito.Mockito.*;
         "cas.authn.mfa.acceptto.secret=thisisasecret",
         "cas.authn.mfa.acceptto.organization-id=thisisatestid",
         "cas.authn.mfa.acceptto.organization-secret=thisisasecret",
-        "cas.authn.mfa.acceptto.registration-api-public-key.location=classpath:publickey.pem"
+        "spring.mail.host=localhost",
+        "spring.mail.port=25000",
+        "spring.mail.testConnection=false"
     })
 public class AccepttoQRCodeAuthenticationHandlerTests {
     @Test

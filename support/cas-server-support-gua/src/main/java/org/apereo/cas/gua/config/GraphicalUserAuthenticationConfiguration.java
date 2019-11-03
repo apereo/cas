@@ -61,7 +61,7 @@ public class GraphicalUserAuthenticationConfiguration {
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer graphicalUserAuthenticationWebflowConfigurer() {
         return new GraphicalUserAuthenticationWebflowConfigurer(flowBuilderServices.getObject(),
-            loginFlowDefinitionRegistry.getIfAvailable(), applicationContext, casProperties);
+            loginFlowDefinitionRegistry.getObject(), applicationContext, casProperties);
     }
 
     @Bean
@@ -100,7 +100,7 @@ public class GraphicalUserAuthenticationConfiguration {
     @Bean
     @RefreshScope
     public Action initializeLoginAction() {
-        return new PrepareForGraphicalAuthenticationAction(servicesManager.getIfAvailable());
+        return new PrepareForGraphicalAuthenticationAction(servicesManager.getObject());
     }
 
     @Bean

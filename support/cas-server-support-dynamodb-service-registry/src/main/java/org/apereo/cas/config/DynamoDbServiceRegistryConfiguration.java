@@ -52,7 +52,7 @@ public class DynamoDbServiceRegistryConfiguration {
     @Bean
     @RefreshScope
     public ServiceRegistry dynamoDbServiceRegistry() {
-        return new DynamoDbServiceRegistry(applicationContext, dynamoDbServiceRegistryFacilitator(), serviceRegistryListeners.getIfAvailable());
+        return new DynamoDbServiceRegistry(applicationContext, dynamoDbServiceRegistryFacilitator(), serviceRegistryListeners.getObject());
     }
 
     @Bean

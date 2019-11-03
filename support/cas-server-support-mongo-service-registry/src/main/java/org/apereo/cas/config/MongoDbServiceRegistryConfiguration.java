@@ -57,7 +57,7 @@ public class MongoDbServiceRegistryConfiguration {
             applicationContext,
             mongoDbServiceRegistryTemplate(),
             mongo.getCollection(),
-            serviceRegistryListeners.getIfAvailable());
+            serviceRegistryListeners.getObject());
     }
 
     @Bean

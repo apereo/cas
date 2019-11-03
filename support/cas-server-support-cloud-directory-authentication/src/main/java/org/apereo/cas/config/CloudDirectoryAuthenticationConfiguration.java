@@ -62,7 +62,7 @@ public class CloudDirectoryAuthenticationConfiguration {
 
         val cloud = casProperties.getAuthn().getCloudDirectory();
 
-        val handler = new CloudDirectoryAuthenticationHandler(cloud.getName(), servicesManager.getIfAvailable(),
+        val handler = new CloudDirectoryAuthenticationHandler(cloud.getName(), servicesManager.getObject(),
             cloudDirectoryPrincipalFactory(), cloudDirectoryRepository(), cloud);
         handler.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(cloud.getPrincipalTransformation()));
         handler.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(cloud.getPasswordEncoder()));
@@ -99,6 +99,6 @@ public class CloudDirectoryAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "cloudDirectoryAuthenticationEventExecutionPlanConfigurer")
     @Bean
     public AuthenticationEventExecutionPlanConfigurer cloudDirectoryAuthenticationEventExecutionPlanConfigurer() {
-        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(cloudDirectoryAuthenticationHandler(), defaultPrincipalResolver.getIfAvailable());
+        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(cloudDirectoryAuthenticationHandler(), defaultPrincipalResolver.getObject());
     }
 }

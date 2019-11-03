@@ -47,7 +47,7 @@ public class SamlIdPCouchDbRegisteredServiceMetadataConfiguration implements Sam
     @RefreshScope
     public SamlMetadataDocumentCouchDbRepository samlMetadataDocumentCouchDbRepository() {
         val couch = casProperties.getAuthn().getSamlIdp().getMetadata().getCouchDb();
-        val repository = new SamlMetadataDocumentCouchDbRepository(samlMetadataCouchDbFactory.getIfAvailable().getCouchDbConnector(), couch.isCreateIfNotExists());
+        val repository = new SamlMetadataDocumentCouchDbRepository(samlMetadataCouchDbFactory.getObject().getCouchDbConnector(), couch.isCreateIfNotExists());
         repository.initStandardDesignDocument();
         return repository;
     }
@@ -57,7 +57,7 @@ public class SamlIdPCouchDbRegisteredServiceMetadataConfiguration implements Sam
     @RefreshScope
     public SamlRegisteredServiceMetadataResolver couchDbSamlRegisteredServiceMetadataResolver() {
         val idp = casProperties.getAuthn().getSamlIdp();
-        return new CouchDbSamlRegisteredServiceMetadataResolver(idp, openSamlConfigBean.getIfAvailable(), samlMetadataDocumentCouchDbRepository());
+        return new CouchDbSamlRegisteredServiceMetadataResolver(idp, openSamlConfigBean.getObject(), samlMetadataDocumentCouchDbRepository());
     }
 
     @Override

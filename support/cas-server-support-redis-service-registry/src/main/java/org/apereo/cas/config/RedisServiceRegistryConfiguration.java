@@ -58,7 +58,7 @@ public class RedisServiceRegistryConfiguration {
     @Bean
     @RefreshScope
     public ServiceRegistry redisServiceRegistry() {
-        return new RedisServiceRegistry(applicationContext, registeredServiceRedisTemplate(), serviceRegistryListeners.getIfAvailable());
+        return new RedisServiceRegistry(applicationContext, registeredServiceRedisTemplate(), serviceRegistryListeners.getObject());
     }
 
     @Bean

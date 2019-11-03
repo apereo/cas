@@ -24,7 +24,12 @@ import java.io.IOException;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@TestPropertySource(properties = "cas.authn.mfa.trusted.json.location=file:/tmp/trusted-device.json")
+@TestPropertySource(properties = {
+    "cas.authn.mfa.trusted.json.location=file:/tmp/trusted-device.json",
+    "spring.mail.host=localhost",
+    "spring.mail.port=25000",
+    "spring.mail.testConnection=false"
+})
 @Tag("FileSystem")
 @Getter
 public class JsonMultifactorAuthenticationTrustStorageTests extends AbstractMultifactorAuthenticationTrustStorageTests {

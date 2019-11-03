@@ -99,7 +99,7 @@ public class AmazonCognitoAuthenticationConfiguration {
     public AuthenticationHandler amazonCognitoAuthenticationHandler() {
         val cognito = casProperties.getAuthn().getCognito();
         val handler = new AmazonCognitoAuthenticationAuthenticationHandler(cognito.getName(),
-            servicesManager.getIfAvailable(),
+            servicesManager.getObject(),
             amazonCognitoPrincipalFactory(),
             amazonCognitoIdentityProvider(),
             cognito,
@@ -112,7 +112,7 @@ public class AmazonCognitoAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "amazonCognitoAuthenticationEventExecutionPlanConfigurer")
     @Bean
     public AuthenticationEventExecutionPlanConfigurer amazonCognitoAuthenticationEventExecutionPlanConfigurer() {
-        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(amazonCognitoAuthenticationHandler(), defaultPrincipalResolver.getIfAvailable());
+        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(amazonCognitoAuthenticationHandler(), defaultPrincipalResolver.getObject());
     }
 
     @ConditionalOnMissingBean(name = "amazonCognitoAuthenticationJwtProcessor")

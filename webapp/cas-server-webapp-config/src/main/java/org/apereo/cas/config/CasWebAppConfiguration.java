@@ -133,7 +133,7 @@ public class CasWebAppConfiguration implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(final InterceptorRegistry registry) {
-        registry.addInterceptor(localeChangeInterceptor.getIfAvailable())
+        registry.addInterceptor(localeChangeInterceptor.getObject())
             .addPathPatterns("/**");
     }
 }

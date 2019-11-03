@@ -57,7 +57,7 @@ public class SyncopeAuthenticationConfiguration {
         if (StringUtils.isBlank(syncope.getUrl())) {
             throw new BeanCreationException("Syncope URL must be defined");
         }
-        val h = new SyncopeAuthenticationHandler(syncope.getName(), servicesManager.getIfAvailable(),
+        val h = new SyncopeAuthenticationHandler(syncope.getName(), servicesManager.getObject(),
             syncopePrincipalFactory(), syncope.getUrl(), syncope.getDomain());
 
         h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(syncope.getPasswordEncoder()));
@@ -71,7 +71,7 @@ public class SyncopeAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "syncopeAuthenticationEventExecutionPlanConfigurer")
     @Bean
     public AuthenticationEventExecutionPlanConfigurer syncopeAuthenticationEventExecutionPlanConfigurer() {
-        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(syncopeAuthenticationHandler(), defaultPrincipalResolver.getIfAvailable());
+        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(syncopeAuthenticationHandler(), defaultPrincipalResolver.getObject());
     }
 
     @ConditionalOnMissingBean(name = "syncopePasswordPolicyConfiguration")

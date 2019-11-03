@@ -56,7 +56,7 @@ public class CouchDbServiceRegistryConfiguration {
     @RefreshScope
     @ConditionalOnMissingBean(name = "serviceRegistryCouchDbFactory")
     public CouchDbConnectorFactory serviceRegistryCouchDbFactory() {
-        return new CouchDbConnectorFactory(casProperties.getServiceRegistry().getCouchDb(), objectMapperFactory.getIfAvailable());
+        return new CouchDbConnectorFactory(casProperties.getServiceRegistry().getCouchDb(), objectMapperFactory.getObject());
     }
 
     @Bean
@@ -74,7 +74,7 @@ public class CouchDbServiceRegistryConfiguration {
     @RefreshScope
     @ConditionalOnMissingBean(name = "couchDbServiceRegistry")
     public ServiceRegistry couchDbServiceRegistry() {
-        return new CouchDbServiceRegistry(applicationContext, serviceRegistryCouchDbRepository(), serviceRegistryListeners.getIfAvailable());
+        return new CouchDbServiceRegistry(applicationContext, serviceRegistryCouchDbRepository(), serviceRegistryListeners.getObject());
     }
 
     @Bean

@@ -40,7 +40,7 @@ public class SamlIdPAmazonS3RegisteredServiceMetadataConfiguration implements Sa
     @Bean
     public SamlRegisteredServiceMetadataResolver amazonS3SamlRegisteredServiceMetadataResolver() {
         val idp = casProperties.getAuthn().getSamlIdp();
-        return new AmazonS3SamlRegisteredServiceMetadataResolver(idp, openSamlConfigBean.getIfAvailable(), amazonS3Client.getIfAvailable());
+        return new AmazonS3SamlRegisteredServiceMetadataResolver(idp, openSamlConfigBean.getObject(), amazonS3Client.getObject());
     }
 
     @Override

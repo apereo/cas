@@ -59,7 +59,7 @@ public class MongoDbMultifactorAuthenticationTrustConfiguration {
             new MongoDbMultifactorAuthenticationTrustStorage(
                 mongodb.getCollection(),
                 mongoMfaTrustedAuthnTemplate());
-        m.setCipherExecutor(mfaTrustCipherExecutor.getIfAvailable());
+        m.setCipherExecutor(mfaTrustCipherExecutor.getObject());
         return m;
     }
 }

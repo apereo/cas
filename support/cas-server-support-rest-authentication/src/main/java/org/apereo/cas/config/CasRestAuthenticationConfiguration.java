@@ -105,7 +105,7 @@ public class CasRestAuthenticationConfiguration {
     public AuthenticationEventExecutionPlanConfigurer casRestAuthenticationEventExecutionPlanConfigurer() {
         return plan -> {
             if (StringUtils.isNotBlank(casProperties.getAuthn().getRest().getUri())) {
-                plan.registerAuthenticationHandlerWithPrincipalResolver(restAuthenticationHandler(), defaultPrincipalResolver.getIfAvailable());
+                plan.registerAuthenticationHandlerWithPrincipalResolver(restAuthenticationHandler(), defaultPrincipalResolver.getObject());
             }
         };
     }
