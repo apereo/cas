@@ -43,7 +43,7 @@ public class SamlRegisteredServiceCacheKey implements Serializable {
      * @return the string
      */
     public static String buildRegisteredServiceCacheKey(final SamlRegisteredService service) {
-        val key = service.getMetadataLocation();
+        val key = service.getServiceId();
         LOGGER.trace("Determined cache key for service [{}] as [{}]", service.getName(), key);
         val hashedKey = DigestUtils.sha512(key);
         LOGGER.trace("Hashed service cache key as [{}]", hashedKey);
