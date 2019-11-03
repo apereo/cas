@@ -78,6 +78,8 @@
         <AsyncLogger name="org.springframework.boot.autoconfigure.security" level="${sys:spring.security.log.level}" />
         <AsyncLogger name="org.springframework.boot.devtools" level="debug" />
 
+
+        <AsyncLogger name="org.springframework.boot.actuate" level="trace" includeLocation="true" />
         <AsyncLogger name="org.springframework" level="warn" includeLocation="true" />
         <AsyncLogger name="org.springframework.webflow" level="${sys:spring.webflow.log.level}" includeLocation="true"/>
         <AsyncLogger name="org.springframework.aop" level="warn" includeLocation="true" />
