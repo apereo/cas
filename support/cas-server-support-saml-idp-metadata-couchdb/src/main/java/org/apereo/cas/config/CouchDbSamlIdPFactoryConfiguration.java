@@ -33,6 +33,6 @@ public class CouchDbSamlIdPFactoryConfiguration {
     @RefreshScope
     @Bean
     public CouchDbConnectorFactory samlMetadataCouchDbFactory() {
-        return new CouchDbConnectorFactory(casProperties.getAuthn().getSamlIdp().getMetadata().getCouchDb(), objectMapperFactory.getIfAvailable());
+        return new CouchDbConnectorFactory(casProperties.getAuthn().getSamlIdp().getMetadata().getCouchDb(), objectMapperFactory.getObject());
     }
 }

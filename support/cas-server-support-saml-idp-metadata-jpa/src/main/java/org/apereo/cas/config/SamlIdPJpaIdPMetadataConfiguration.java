@@ -131,7 +131,7 @@ public class SamlIdPJpaIdPMetadataConfiguration {
 
         val context = SamlIdPMetadataGeneratorConfigurationContext.builder()
             .samlIdPMetadataLocator(samlIdPMetadataLocator())
-            .samlIdPCertificateAndKeyWriter(samlSelfSignedCertificateWriter.getIfAvailable())
+            .samlIdPCertificateAndKeyWriter(samlSelfSignedCertificateWriter.getObject())
             .entityId(idp.getEntityId())
             .resourceLoader(resourceLoader)
             .casServerPrefix(casProperties.getServer().getPrefix())

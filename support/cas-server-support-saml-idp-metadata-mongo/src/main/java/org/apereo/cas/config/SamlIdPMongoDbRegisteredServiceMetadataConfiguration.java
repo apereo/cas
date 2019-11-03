@@ -38,7 +38,7 @@ public class SamlIdPMongoDbRegisteredServiceMetadataConfiguration implements Sam
     @Bean
     public SamlRegisteredServiceMetadataResolver mongoDbSamlRegisteredServiceMetadataResolver() {
         val idp = casProperties.getAuthn().getSamlIdp();
-        return new MongoDbSamlRegisteredServiceMetadataResolver(idp, openSamlConfigBean.getIfAvailable(), mongoDbSamlMetadataResolverTemplate());
+        return new MongoDbSamlRegisteredServiceMetadataResolver(idp, openSamlConfigBean.getObject(), mongoDbSamlMetadataResolverTemplate());
     }
 
     @ConditionalOnMissingBean(name = "mongoDbSamlMetadataResolverTemplate")

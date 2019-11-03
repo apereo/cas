@@ -103,7 +103,7 @@ public class JpaServiceRegistryConfiguration {
     @Bean
     @RefreshScope
     public ServiceRegistry jpaServiceRegistry() {
-        return new JpaServiceRegistry(applicationContext, serviceRegistryListeners.getIfAvailable());
+        return new JpaServiceRegistry(applicationContext, serviceRegistryListeners.getObject());
     }
 
     @Bean

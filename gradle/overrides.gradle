@@ -11,7 +11,7 @@ ext["hibernateVersion"] = "5.4.7.Final"
 ext["hazelcastVersion"] = "3.12.3"
 ext["infinispanVersion"] = "9.4.16.Final"
 
-ext["springVersion"] = "5.2.0.RELEASE"
+ext["springVersion"] = "5.2.1.RELEASE"
 ext["springSessionVersion"] = "2.2.0.RELEASE"
 ext["springSessionMongoVersion"] = "2.2.1.RELEASE"
 

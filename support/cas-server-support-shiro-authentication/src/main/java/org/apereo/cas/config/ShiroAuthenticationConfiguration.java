@@ -55,7 +55,7 @@ public class ShiroAuthenticationConfiguration {
     @Bean
     public AuthenticationHandler shiroAuthenticationHandler() {
         val shiro = casProperties.getAuthn().getShiro();
-        val h = new ShiroAuthenticationHandler(shiro.getName(), servicesManager.getIfAvailable(), shiroPrincipalFactory(),
+        val h = new ShiroAuthenticationHandler(shiro.getName(), servicesManager.getObject(), shiroPrincipalFactory(),
             shiro.getRequiredRoles(), shiro.getRequiredPermissions());
 
         h.loadShiroConfiguration(shiro.getLocation());
@@ -72,7 +72,7 @@ public class ShiroAuthenticationConfiguration {
             val shiroConfigFile = casProperties.getAuthn().getShiro().getLocation();
             if (shiroConfigFile != null) {
                 LOGGER.debug("Injecting shiro authentication handler configured at [{}]", shiroConfigFile.getDescription());
-                plan.registerAuthenticationHandlerWithPrincipalResolver(shiroAuthenticationHandler(), defaultPrincipalResolver.getIfAvailable());
+                plan.registerAuthenticationHandlerWithPrincipalResolver(shiroAuthenticationHandler(), defaultPrincipalResolver.getObject());
             }
         };
     }

@@ -57,7 +57,7 @@ public class CouchbaseServiceRegistryConfiguration {
     @RefreshScope
     public ServiceRegistry couchbaseServiceRegistry() {
         return new CouchbaseServiceRegistry(applicationContext, serviceRegistryCouchbaseClientFactory(),
-            new RegisteredServiceJsonSerializer(), serviceRegistryListeners.getIfAvailable());
+            new RegisteredServiceJsonSerializer(), serviceRegistryListeners.getObject());
     }
 
     @Bean

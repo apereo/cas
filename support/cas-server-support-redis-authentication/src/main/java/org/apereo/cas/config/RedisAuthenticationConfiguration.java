@@ -73,7 +73,7 @@ public class RedisAuthenticationConfiguration {
     public AuthenticationHandler redisAuthenticationHandler() {
         val redis = casProperties.getAuthn().getRedis();
         val handler = new RedisAuthenticationHandler(redis.getName(),
-            servicesManager.getIfAvailable(),
+            servicesManager.getObject(),
             redisPrincipalFactory(), redis.getOrder(),
             authenticationRedisTemplate());
 
@@ -86,7 +86,7 @@ public class RedisAuthenticationConfiguration {
     @Bean
     public AuthenticationEventExecutionPlanConfigurer redisAuthenticationEventExecutionPlanConfigurer() {
         return plan ->
-            plan.registerAuthenticationHandlerWithPrincipalResolver(redisAuthenticationHandler(), defaultPrincipalResolver.getIfAvailable());
+            plan.registerAuthenticationHandlerWithPrincipalResolver(redisAuthenticationHandler(), defaultPrincipalResolver.getObject());
     }
 
     @ConditionalOnMissingBean(name = "redisPersonAttributeDaos")

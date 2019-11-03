@@ -114,7 +114,7 @@ public class LdapAuthenticationConfiguration {
 
                 LOGGER.debug("Creating LDAP authentication handler for [{}]", l.getLdapUrl());
                 val handler = new LdapAuthenticationHandler(l.getName(),
-                    servicesManager.getIfAvailable(), ldapPrincipalFactory(),
+                    servicesManager.getObject(), ldapPrincipalFactory(),
                     l.getOrder(), authenticator, strategy);
                 handler.setCollectDnAttribute(l.isCollectDnAttribute());
 
@@ -253,7 +253,7 @@ public class LdapAuthenticationConfiguration {
     public AuthenticationEventExecutionPlanConfigurer ldapAuthenticationEventExecutionPlanConfigurer() {
         return plan -> ldapAuthenticationHandlers().forEach(handler -> {
             LOGGER.info("Registering LDAP authentication for [{}]", handler.getName());
-            plan.registerAuthenticationHandlerWithPrincipalResolver(handler, defaultPrincipalResolver.getIfAvailable());
+            plan.registerAuthenticationHandlerWithPrincipalResolver(handler, defaultPrincipalResolver.getObject());
         });
     }
 }

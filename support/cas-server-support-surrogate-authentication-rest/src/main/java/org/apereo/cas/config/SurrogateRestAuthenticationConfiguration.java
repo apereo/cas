@@ -39,6 +39,6 @@ public class SurrogateRestAuthenticationConfiguration {
         val su = casProperties.getAuthn().getSurrogate();
         LOGGER.debug("Using REST endpoint [{}] with method [{}] to locate surrogate accounts",
             su.getRest().getUrl(), su.getRest().getMethod());
-        return new SurrogateRestAuthenticationService(su.getRest(), servicesManager.getIfAvailable());
+        return new SurrogateRestAuthenticationService(su.getRest(), servicesManager.getObject());
     }
 }

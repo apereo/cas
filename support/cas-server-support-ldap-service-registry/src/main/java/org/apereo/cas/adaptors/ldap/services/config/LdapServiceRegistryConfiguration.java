@@ -57,7 +57,7 @@ public class LdapServiceRegistryConfiguration {
         val ldap = casProperties.getServiceRegistry().getLdap();
         val connectionFactory = LdapUtils.newLdaptivePooledConnectionFactory(ldap);
         return new LdapServiceRegistry(connectionFactory, ldap.getBaseDn(), ldapServiceRegistryMapper(),
-            ldap, applicationContext, serviceRegistryListeners.getIfAvailable());
+            ldap, applicationContext, serviceRegistryListeners.getObject());
     }
 
     @Bean

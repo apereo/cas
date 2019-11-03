@@ -44,7 +44,7 @@ public class CassandraTicketRegistryConfiguration {
         val cassandra = casProperties.getTicket().getRegistry().getCassandra();
         val sessionFactory = cassandraTicketRegistrySessionFactory();
         val registry = new CassandraTicketRegistry(ticketCatalog, sessionFactory,
-            cassandra, ticketSerializationManager.getIfAvailable());
+            cassandra, ticketSerializationManager.getObject());
         registry.setCipherExecutor(CoreTicketUtils.newTicketRegistryCipherExecutor(cassandra.getCrypto(), "cassandra"));
         return registry;
     }

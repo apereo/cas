@@ -12,6 +12,7 @@ import org.eclipse.jgit.api.Git;
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
@@ -28,16 +29,18 @@ import java.io.File;
     CasCoreServicesConfiguration.class,
     CasCoreUtilConfiguration.class,
     CasCoreAuthenticationMetadataConfiguration.class,
-    RefreshAutoConfiguration.class
+    RefreshAutoConfiguration.class,
+    MailSenderAutoConfiguration.class
 },
-    properties = "cas.serviceRegistry.git.repositoryUrl=file:/tmp/cas-sample-data.git")
+    properties = {
+        "spring.mail.host=localhost",
+        "spring.mail.port=25000",
+        "spring.mail.testConnection=false",
+        "cas.serviceRegistry.git.repositoryUrl=file:/tmp/cas-sample-data.git"
+    })
 @Slf4j
 @Tag("FileSystem")
 public class GitServiceRegistryTests extends AbstractServiceRegistryTests {
-
-    @Autowired
-    @Qualifier("serviceRegistry")
-    private ServiceRegistry serviceRegistry;
 
     static {
         try {
@@ -52,6 +55,10 @@ public class GitServiceRegistryTests extends AbstractServiceRegistryTests {
             LOGGER.error(e.getMessage(), e);
         }
     }
+
+    @Autowired
+    @Qualifier("serviceRegistry")
+    private ServiceRegistry serviceRegistry;
 
     @Override
     public ServiceRegistry getNewServiceRegistry() {

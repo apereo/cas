@@ -65,7 +65,7 @@ public class SoapAuthenticationConfiguration {
     public AuthenticationHandler soapAuthenticationAuthenticationHandler() {
         val soap = casProperties.getAuthn().getSoap();
         val handler = new SoapAuthenticationHandler(soap.getName(),
-            servicesManager.getIfAvailable(),
+            servicesManager.getObject(),
             soapAuthenticationPrincipalFactory(),
             soap.getOrder(),
             soapAuthenticationClient());
@@ -77,7 +77,7 @@ public class SoapAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "soapAuthenticationEventExecutionPlanConfigurer")
     @Bean
     public AuthenticationEventExecutionPlanConfigurer soapAuthenticationEventExecutionPlanConfigurer() {
-        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(soapAuthenticationAuthenticationHandler(), defaultPrincipalResolver.getIfAvailable());
+        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(soapAuthenticationAuthenticationHandler(), defaultPrincipalResolver.getObject());
     }
 
     @ConditionalOnMissingBean(name = "soapAuthenticationMarshaller")

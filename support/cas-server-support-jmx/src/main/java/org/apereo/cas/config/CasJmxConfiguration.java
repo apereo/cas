@@ -36,11 +36,11 @@ public class CasJmxConfiguration {
 
     @Bean
     public ServicesManagerManagedResource servicesManagerManagedResource() {
-        return new ServicesManagerManagedResource(servicesManager.getIfAvailable());
+        return new ServicesManagerManagedResource(servicesManager.getObject());
     }
 
     @Bean
     public TicketRegistryManagedResource ticketRegistryManagedResource() {
-        return new TicketRegistryManagedResource(ticketRegistry.getIfAvailable());
+        return new TicketRegistryManagedResource(ticketRegistry.getObject());
     }
 }

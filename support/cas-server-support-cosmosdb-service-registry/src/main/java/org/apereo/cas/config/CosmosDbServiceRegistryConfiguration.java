@@ -75,7 +75,7 @@ public class CosmosDbServiceRegistryConfiguration {
         db.createCollectionIfNotExists(cosmosDb.getCollection(), PARTITION_KEY_FIELD_NAME,
             cosmosDb.getThroughput(), indexingPolicy);
         return new CosmosDbServiceRegistry(db, dbFactory, cosmosDb.getCollection(),
-            cosmosDb.getDatabase(), applicationContext, serviceRegistryListeners.getIfAvailable());
+            cosmosDb.getDatabase(), applicationContext, serviceRegistryListeners.getObject());
     }
 
     @Bean

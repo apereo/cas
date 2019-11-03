@@ -36,7 +36,7 @@ public class RestMultifactorAuthenticationTrustConfiguration {
     @Bean
     public MultifactorAuthenticationTrustStorage mfaTrustEngine() {
         val m = new RestMultifactorAuthenticationTrustStorage(new RestTemplate(), casProperties);
-        m.setCipherExecutor(mfaTrustCipherExecutor.getIfAvailable());
+        m.setCipherExecutor(mfaTrustCipherExecutor.getObject());
         return m;
     }
 }

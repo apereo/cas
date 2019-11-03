@@ -72,7 +72,7 @@ public class CouchbaseAuthenticationConfiguration {
     public AuthenticationHandler couchbaseAuthenticationHandler() {
         val couchbase = casProperties.getAuthn().getCouchbase();
         val handler = new CouchbaseAuthenticationHandler(
-            servicesManager.getIfAvailable(), couchbasePrincipalFactory(),
+            servicesManager.getObject(), couchbasePrincipalFactory(),
             authenticationCouchbaseClientFactory(),
             couchbase);
         handler.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(couchbase.getPrincipalTransformation()));
@@ -86,7 +86,7 @@ public class CouchbaseAuthenticationConfiguration {
         return plan -> {
             val couchbase = casProperties.getAuthn().getCouchbase();
             if (StringUtils.isNotBlank(couchbase.getPasswordAttribute()) && StringUtils.isNotBlank(couchbase.getUsernameAttribute())) {
-                plan.registerAuthenticationHandlerWithPrincipalResolver(couchbaseAuthenticationHandler(), defaultPrincipalResolver.getIfAvailable());
+                plan.registerAuthenticationHandlerWithPrincipalResolver(couchbaseAuthenticationHandler(), defaultPrincipalResolver.getObject());
             } else {
                 LOGGER.debug("No couchbase username/password is defined, so couchbase authentication will not be registered in the execution plan");
             }

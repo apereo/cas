@@ -31,7 +31,7 @@ public class SamlRestConfiguration {
 
     @Bean
     public ServiceTicketResourceEntityResponseFactory samlRestServiceTicketResourceEntityResponseFactory() {
-        return new SamlRestServiceTicketResourceEntityResponseFactory(samlServiceTicketUniqueIdGenerator.getIfAvailable());
+        return new SamlRestServiceTicketResourceEntityResponseFactory(samlServiceTicketUniqueIdGenerator.getObject());
     }
 
     @Bean

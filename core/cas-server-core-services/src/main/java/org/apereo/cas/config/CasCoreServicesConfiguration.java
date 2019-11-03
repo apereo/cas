@@ -151,7 +151,7 @@ public class CasCoreServicesConfiguration {
 
     @Bean
     public RegisteredServicesEventListener registeredServicesEventListener() {
-        return new RegisteredServicesEventListener(servicesManager(), casProperties, communicationsManager.getIfAvailable());
+        return new RegisteredServicesEventListener(servicesManager(), casProperties, communicationsManager.getObject());
     }
 
     @ConditionalOnMissingBean(name = "registeredServiceReplicationStrategy")

@@ -76,7 +76,7 @@ public class AmazonS3SamlIdPMetadataConfiguration {
         val idp = casProperties.getAuthn().getSamlIdp();
         val context = SamlIdPMetadataGeneratorConfigurationContext.builder()
             .samlIdPMetadataLocator(samlIdPMetadataLocator())
-            .samlIdPCertificateAndKeyWriter(samlSelfSignedCertificateWriter.getIfAvailable())
+            .samlIdPCertificateAndKeyWriter(samlSelfSignedCertificateWriter.getObject())
             .entityId(idp.getEntityId())
             .resourceLoader(resourceLoader)
             .casServerPrefix(casProperties.getServer().getPrefix())
@@ -85,7 +85,7 @@ public class AmazonS3SamlIdPMetadataConfiguration {
             .build();
 
         return new AmazonS3SamlIdPMetadataGenerator(context,
-            amazonS3Client.getIfAvailable(),
+            amazonS3Client.getObject(),
             idp.getMetadata().getAmazonS3().getIdpMetadataBucketName());
     }
 
@@ -95,7 +95,7 @@ public class AmazonS3SamlIdPMetadataConfiguration {
         val idp = casProperties.getAuthn().getSamlIdp();
         return new AmazonS3SamlIdPMetadataLocator(amazonS3SamlIdPMetadataCipherExecutor(),
             idp.getMetadata().getAmazonS3().getIdpMetadataBucketName(),
-            amazonS3Client.getIfAvailable());
+            amazonS3Client.getObject());
     }
 
 }

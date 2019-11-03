@@ -79,9 +79,9 @@ public class GitServiceRegistryConfiguration {
                 new RegisteredServiceJsonSerializer(),
                 new RegisteredServiceYamlSerializer()
             ),
-            resourceNamingStrategy.getIfAvailable(),
+            resourceNamingStrategy.getObject(),
             registry.isPushChanges(),
-            serviceRegistryListeners.getIfAvailable()
+            serviceRegistryListeners.getObject()
         );
     }
 
