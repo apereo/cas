@@ -224,7 +224,9 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
     public boolean supports(final SamlRegisteredService service) {
         try {
             val metadataLocation = getMetadataLocationForService(service, new CriteriaSet());
-            return StringUtils.isNotBlank(metadataLocation) && StringUtils.startsWith(metadataLocation, "http");
+            return StringUtils.isNotBlank(metadataLocation)
+                    && StringUtils.startsWith(metadataLocation, "http")
+                    && !StringUtils.endsWith(metadataLocation, "{0}");
         } catch (final Exception e) {
             LOGGER.trace(e.getMessage(), e);
         }
