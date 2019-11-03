@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.SimplePrincipal;
 import org.apereo.cas.util.HttpUtils;
 
+import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -16,18 +17,13 @@ import org.springframework.web.client.RestTemplate;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@RequiredArgsConstructor
 public class RestAuthenticationApi {
 
     private final transient RestTemplate restTemplate;
     private final String authenticationUri;
     private final String charset;
-
-    public RestAuthenticationApi(final RestTemplate restTemplate, final String authenticationUri, final String charset) {
-        this.restTemplate = restTemplate;
-        this.authenticationUri = authenticationUri;
-        this.charset = charset;
-    }
-
+    
     /**
      * Authenticate and receive entity from the rest template.
      *
