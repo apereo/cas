@@ -5,6 +5,7 @@ category: Ticketing
 ---
 
 # Ticket Registry Replication Encryption
+
 The following ticket registries are able to support secure ticket replication
 by encrypting and signing tickets:
 
@@ -13,6 +14,8 @@ by encrypting and signing tickets:
 * [Ignite](../ticketing/Ignite-Ticket-Registry.html)
 * [CouchDb](../ticketing/CouchDb-Ticket-Registry.html)
 * [Memcached](../ticketing/Memcached-Ticket-Registry.html)
+* [Redis](../ticketing/Redis-Ticket-Registry.html)
+* [MongoDb](../ticketing/MongoDb-Ticket-Registry.html)
 
 <div class="alert alert-info"><strong>Default Behavior</strong><p>Encryption by default is turned off
 when you use the above ticket registries. It requires explicit configuration before it can be used.</p></div>

@@ -51,7 +51,7 @@ openssl rsa -pubout -in private.key -out public.key -inform PEM -outform DER
 openssl pkcs8 -topk8 -inform PER -outform DER -nocrypt -in private.key -out private.p8
 ```
 
-The public key is then configured for a regex service definition in CAS:
+The public key is then configured for a service definition in CAS:
 
 ```json
 {
@@ -70,7 +70,9 @@ The public key is then configured for a regex service definition in CAS:
     "algorithm" : "RSA"
   }
 }
-```
+``` 
+
+The configuration of the public key component qualifies to use the [Spring Expression Language](../installation/Configuring-Spring-Expressions.html) syntax.
 
 The application can then proceed to decrypt the username using its own private key.
 The following sample code demonstrates how that might be done in Java:
@@ -210,6 +212,8 @@ Sample Groovy script follows:
 logger.info("Choosing username attribute out of attributes $attributes")
 return "newPrincipalId"
 ```
+
+The configuration of this component qualifies to use the [Spring Expression Language](../installation/Configuring-Spring-Expressions.html) syntax.
 
 ## Anonymous / Transient
 
