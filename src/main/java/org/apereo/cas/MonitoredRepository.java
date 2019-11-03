@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * A repository that should be monitored.
@@ -71,7 +72,7 @@ public class MonitoredRepository implements InitializingBean {
             labels.addAll(lbl.getContent());
             lbl = lbl.next();
         }
-        log.info("Available labels are {}", this.labels);
+        log.info("Available labels are {}", this.labels.stream().map(Object::toString).collect(Collectors.joining(",")));
     }
 
     public String getOrganization() {

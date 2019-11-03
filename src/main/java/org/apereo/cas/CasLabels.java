@@ -97,7 +97,7 @@ public enum CasLabels {
     LABEL_SAML1_PROTOCOL("SAML1 Protocol", "saml1|samlValidate"),
     LABEL_SAML2_ECP("SAML2 ECP", "ecp"),
     LABEL_SAML2_GOOGLE_APPS("SAML2 Google Apps", "googleapps"),
-    LABEL_SAML2_PROTOCOL("SAML2 Protocol", "saml2"),
+    LABEL_SAML2_PROTOCOL("SAML2 Protocol", "saml2|metadata|MDQ"),
     LABEL_SAML2_SP("SAML2 SP", "service provider|saml sp"),
     LABEL_SPNEGO("SPNEGO"),
     LABEL_SSO_COOKIES("SSO & Cookies", "sso sessions|sso session|tgc"),
