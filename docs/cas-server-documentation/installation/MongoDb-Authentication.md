@@ -30,3 +30,5 @@ Accounts are expected to be found as such in collections:
 	"last_name": "smith"
 }
 ```
+
+<div class="alert alert-warning"><p>The `attributes` properties is required for MongoDb Authentication, error will occur if `attributes` properties is unset or blank</p></div>
