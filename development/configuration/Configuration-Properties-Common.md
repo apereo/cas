@@ -389,9 +389,11 @@ In Jetty, a pool can be put in JNDI with a `jetty.xml` or `jetty-env.xml` file l
 
 ## Signing & Encryption
 
-A number of components in CAS accept signing and encryption keys. In most scenarios if keys are not provided, CAS will auto-generate them. The following instructions apply if you wish to manually and beforehand create the signing and encryption keys.
+A number of components in CAS accept signing and encryption keys. In most scenarios if keys are not provided, CAS will 
+auto-generate them. The following instructions apply if you wish to manually and beforehand create the signing and encryption keys.
 
-Note that if you are asked to create a [JWK](https://tools.ietf.org/html/rfc7517) of a certain size for the key, you are to use the following set of commands to generate the token:
+Note that if you are asked to create a [JWK](https://tools.ietf.org/html/rfc7517) of a certain size for the key, you are to use 
+the following set of commands to generate the token:
 
 ```bash
 wget https://raw.githubusercontent.com/apereo/cas/master/etc/jwk-gen.jar
@@ -408,11 +410,14 @@ The outcome would be similar to:
 }
 ```
 
-The generated value for `k` needs to be assigned to the relevant CAS settings. Note that keys generated via the above algorithm are processed by CAS using the Advanced Encryption Standard (`AES`) algorithm which is a specification for the encryption of electronic data established by the U.S. National Institute of Standards and Technology.
+The generated value for `k` needs to be assigned to the relevant CAS settings. Note that keys generated via 
+the above algorithm are processed by CAS using the Advanced Encryption Standard (`AES`) algorithm which is a 
+specification for the encryption of electronic data established by the U.S. National Institute of Standards and Technology.
 
 ### Settings
 
-The following crypto options apply equally to relevant CAS components (ticket registries, etc) given the component's *configuration key*:
+The following crypto options apply equally to relevant CAS 
+components (ticket registries, etc) given the component's *configuration key*:
 
 ```properties
 # ${configurationKey}.crypto.signing.key=
@@ -422,8 +427,17 @@ The following crypto options apply equally to relevant CAS components (ticket re
 # ${configurationKey}.crypto.encryption.keySize=
 
 # ${configurationKey}.crypto.alg=AES
-# ${configurationKey}.crypto.enabled=false
+# ${configurationKey}.crypto.enabled=false   
+
+# ${configurationKey}.crypto.strategyType=ENCRYPT_AND_SIGN|SIGN_AND_ENCRYPT
 ```
+
+The following cipher strategy types are available:
+
+| Type                | Description
+|---------------------|---------------------------------------------------
+| `ENCRYPT_AND_SIGN`  | Default strategy; encrypt values, and then sign. 
+| `SIGN_AND_ENCRYPT`  | Sign values, and then encrypt.
 
 ### RSA Keys
 

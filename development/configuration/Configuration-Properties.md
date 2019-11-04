@@ -3515,7 +3515,8 @@ The signing and encryption keys [are both JWKs](Configuration-Properties-Common.
 
 Allows CAS to act as an OAuth2 provider. Here you can control how long various tokens issued by CAS should last, etc.
 
-Signing & encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.authn.oauth`.
+Signing & encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) 
+under the configuration key `cas.authn.oauth`.
 
 To learn more about this topic, [please review this guide](../installation/OAuth-OpenId-Authentication.html).
 
@@ -3563,11 +3564,14 @@ To learn more about this topic, [please review this guide](../installation/OAuth
 ### OAuth2 JWT Access Tokens
 
 ```properties
+# cas.authn.oauth.accessToken.createAsJwt=false
 # cas.authn.oauth.accessToken.crypto.encryptionEnabled=true
 # cas.authn.oauth.accessToken.crypto.signingEnabled=true
 ```
 
-The signing key and the encryption key [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`. Signing & encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.authn.oauth.accessToken`.
+The signing key and the encryption key [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`.
+Signing & encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) 
+under the configuration key `cas.authn.oauth.accessToken`.
 
 ### OAuth2 UMA
 
