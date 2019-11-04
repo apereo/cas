@@ -197,6 +197,7 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService {
             .registeredService(registeredService)
             .service(accessToken.getService())
             .accessTokenJwtBuilder(getConfigurationContext().getAccessTokenJwtBuilder())
+            .casProperties(getConfigurationContext().getCasProperties())
             .build()
             .encode();
 

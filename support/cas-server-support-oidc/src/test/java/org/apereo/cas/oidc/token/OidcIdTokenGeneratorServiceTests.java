@@ -184,6 +184,7 @@ public class OidcIdTokenGeneratorServiceTests extends AbstractOidcTests {
             .accessToken(accessToken)
             .registeredService(registeredService)
             .service(accessToken.getService())
+            .casProperties(casProperties)
             .accessTokenJwtBuilder(accessTokenJwtBuilder)
             .build()
             .encode();

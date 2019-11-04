@@ -54,10 +54,15 @@ public class JwtBuilder {
      */
     public static JWTClaimsSet parse(final String jwt) {
         try {
-            return JWTClaimsSet.parse(jwt);
+            return JWTParser.parse(jwt).getJWTClaimsSet();
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
-            throw new IllegalArgumentException("Unable to parse JWT");
+            LOGGER.trace("Unable to parse [{}] JWT; trying JWT claim set...", jwt);
+            try {
+                return JWTClaimsSet.parse(jwt);
+            } catch (final Exception ex) {
+                LOGGER.error(e.getMessage(), ex);
+                throw new IllegalArgumentException("Unable to parse JWT");
+            }
         }
     }
 
@@ -71,7 +76,7 @@ public class JwtBuilder {
     @SneakyThrows
     public JWTClaimsSet unpack(final Optional<RegisteredService> service, final String jwtJson) {
         service.ifPresent(svc -> {
-            LOGGER.trace("Located service [{}] in service registry for [{}]", svc);
+            LOGGER.trace("Located service [{}] in service registry", svc);
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(svc);
         });
 
@@ -89,7 +94,7 @@ public class JwtBuilder {
             return parse(defaultTokenCipherExecutor.decode(jwtJson));
         }
 
-        return JWTParser.parse(jwtJson).getJWTClaimsSet();
+        return parse(jwtJson);
     }
 
     /**

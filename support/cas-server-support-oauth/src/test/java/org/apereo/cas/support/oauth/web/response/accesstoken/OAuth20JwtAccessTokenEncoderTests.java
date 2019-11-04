@@ -32,7 +32,7 @@ import static org.mockito.Mockito.*;
  */
 @Tag("OAuth")
 public class OAuth20JwtAccessTokenEncoderTests extends AbstractOAuth20Tests {
-    private static OAuth20JwtAccessTokenEncoder getAccessTokenEncoder(final OAuth20AccessToken accessToken,
+    private OAuth20JwtAccessTokenEncoder getAccessTokenEncoder(final OAuth20AccessToken accessToken,
                                                                       final OAuth20JwtBuilder builder,
                                                                       final RegisteredService registeredService) {
         return OAuth20JwtAccessTokenEncoder.builder()
@@ -40,6 +40,7 @@ public class OAuth20JwtAccessTokenEncoderTests extends AbstractOAuth20Tests {
             .registeredService(registeredService)
             .service(accessToken.getService())
             .accessTokenJwtBuilder(builder)
+            .casProperties(casProperties)
             .build();
     }
 

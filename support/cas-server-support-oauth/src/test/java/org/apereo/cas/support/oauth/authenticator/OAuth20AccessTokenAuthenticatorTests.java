@@ -38,6 +38,7 @@ public class OAuth20AccessTokenAuthenticatorTests extends BaseOAuth20Authenticat
             .registeredService(serviceJwtAccessToken)
             .service(accessToken.getService())
             .accessTokenJwtBuilder(accessTokenJwtBuilder)
+            .casProperties(casProperties)
             .build();
 
         val credentials = new TokenCredentials(encoder.encode());
@@ -57,6 +58,7 @@ public class OAuth20AccessTokenAuthenticatorTests extends BaseOAuth20Authenticat
             .registeredService(service)
             .service(accessToken.getService())
             .accessTokenJwtBuilder(accessTokenJwtBuilder)
+            .casProperties(casProperties)
             .build();
 
         val credentials = new TokenCredentials(encoder.encode());

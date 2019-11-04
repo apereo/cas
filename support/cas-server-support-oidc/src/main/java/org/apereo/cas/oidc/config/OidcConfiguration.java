@@ -376,7 +376,8 @@ public class OidcConfiguration implements WebMvcConfigurer {
     @Bean
     @RefreshScope
     public OAuth20AccessTokenResponseGenerator oidcAccessTokenResponseGenerator() {
-        return new OidcAccessTokenResponseGenerator(oidcIdTokenGenerator(), accessTokenJwtBuilder.getObject());
+        return new OidcAccessTokenResponseGenerator(oidcIdTokenGenerator(),
+            accessTokenJwtBuilder.getObject(), casProperties);
     }
 
     @Bean
@@ -645,14 +646,14 @@ public class OidcConfiguration implements WebMvcConfigurer {
     public OAuth20AuthorizationResponseBuilder oidcImplicitIdTokenCallbackUrlBuilder() {
         return new OidcImplicitIdTokenAuthorizationResponseBuilder(oidcIdTokenGenerator(), oauthTokenGenerator.getObject(),
             accessTokenExpirationPolicy.getObject(), grantingTicketExpirationPolicy.getObject(),
-            servicesManager.getObject(), accessTokenJwtBuilder.getObject());
+            servicesManager.getObject(), accessTokenJwtBuilder.getObject(), casProperties);
     }
 
     @Bean
     public OAuth20AuthorizationResponseBuilder oidcImplicitIdTokenAndTokenCallbackUrlBuilder() {
         return new OidcImplicitIdTokenAndTokenAuthorizationResponseBuilder(oidcIdTokenGenerator(), oauthTokenGenerator.getObject(),
             accessTokenExpirationPolicy.getObject(), grantingTicketExpirationPolicy.getObject(),
-            servicesManager.getObject(), accessTokenJwtBuilder.getObject());
+            servicesManager.getObject(), accessTokenJwtBuilder.getObject(), casProperties);
     }
 
     @Bean

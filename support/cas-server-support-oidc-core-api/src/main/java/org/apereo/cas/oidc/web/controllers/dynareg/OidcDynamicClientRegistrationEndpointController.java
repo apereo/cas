@@ -156,6 +156,7 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuth20
                 .registeredService(registeredService)
                 .service(accessToken.getService())
                 .accessTokenJwtBuilder(getOAuthConfigurationContext().getAccessTokenJwtBuilder())
+                .casProperties(getOAuthConfigurationContext().getCasProperties())
                 .build()
                 .encode();
 
