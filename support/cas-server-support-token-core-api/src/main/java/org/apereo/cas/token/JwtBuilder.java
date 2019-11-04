@@ -9,6 +9,7 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import com.nimbusds.jose.JOSEObjectType;
 import com.nimbusds.jose.PlainHeader;
 import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.JWTParser;
 import com.nimbusds.jwt.PlainJWT;
 import lombok.Builder;
 import lombok.Getter;
@@ -82,7 +83,7 @@ public class JwtBuilder {
             return parse(defaultTokenCipherExecutor.decode(jwtJson));
         }
 
-        return parse(jwtJson);
+        return JWTParser.parse(jwtJson).getJWTClaimsSet();
     }
 
     /**
