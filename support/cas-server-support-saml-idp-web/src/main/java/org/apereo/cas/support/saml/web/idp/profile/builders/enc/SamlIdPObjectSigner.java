@@ -48,6 +48,10 @@ import org.opensaml.xmlsec.config.impl.DefaultSecurityConfigurationBootstrap;
 import org.opensaml.xmlsec.context.SecurityParametersContext;
 import org.opensaml.xmlsec.criterion.SignatureSigningConfigurationCriterion;
 import org.opensaml.xmlsec.impl.BasicSignatureSigningConfiguration;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
+import org.springframework.util.ResourceUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -196,7 +200,7 @@ public class SamlIdPObjectSigner {
     protected SignatureSigningParameters buildSignatureSigningParameters(final RoleDescriptor descriptor,
                                                                          final SamlRegisteredService service) {
         val criteria = new CriteriaSet();
-        val signatureSigningConfiguration = getSignatureSigningConfiguration(descriptor, service);
+        val signatureSigningConfiguration = getSignatureSigningConfiguration(service);
         criteria.add(new SignatureSigningConfigurationCriterion(signatureSigningConfiguration));
         criteria.add(new RoleDescriptorCriterion(descriptor));
         val resolver = new SAMLMetadataSignatureSigningParametersResolver();
@@ -222,17 +226,15 @@ public class SamlIdPObjectSigner {
     /**
      * Gets signature signing configuration.
      *
-     * @param roleDescriptor the role descriptor
      * @param service        the service
      * @return the signature signing configuration
      * @throws Exception the exception
      */
-    protected SignatureSigningConfiguration getSignatureSigningConfiguration(final RoleDescriptor roleDescriptor,
-                                                                             final SamlRegisteredService service) throws Exception {
+    protected SignatureSigningConfiguration getSignatureSigningConfiguration(final SamlRegisteredService service) throws Exception {
         val config = configureSignatureSigningSecurityConfiguration(service);
 
         val samlIdp = casProperties.getAuthn().getSamlIdp();
-        val privateKey = getSigningPrivateKey();
+        val privateKey = getSigningPrivateKey(service);
 
         val kekCredentialResolver = new MetadataCredentialResolver();
         val roleDescriptorResolver = SamlIdPUtils.getRoleDescriptorResolver(casSamlIdPMetadataResolver, samlIdp.getMetadata().isRequireValidMetadata());
@@ -381,17 +383,43 @@ public class SamlIdPObjectSigner {
     /**
      * Gets signing private key.
      *
+     * @param service - the service being requested
      * @return the signing private key
      * @throws Exception the exception
      */
-    protected PrivateKey getSigningPrivateKey() throws Exception {
+    protected PrivateKey getSigningPrivateKey(final SamlRegisteredService service) throws Exception {
         val samlIdp = casProperties.getAuthn().getSamlIdp();
-        val signingKey = samlIdPMetadataLocator.getSigningKey();
+        val signingKey = createServicePrivateKeyResource(service.getIssuerSigningKeyLocation());
         val privateKeyFactoryBean = new PrivateKeyFactoryBean();
         privateKeyFactoryBean.setLocation(signingKey);
-        privateKeyFactoryBean.setAlgorithm(samlIdp.getMetadata().getPrivateKeyAlgName());
+        if (StringUtils.isBlank(service.getIssuerSigningKeyLocation())) {
+            privateKeyFactoryBean.setAlgorithm(samlIdp.getMetadata().getPrivateKeyAlgName());
+        } else {
+            privateKeyFactoryBean.setAlgorithm(service.getIssuerSigningAlgorithm());
+        }
         privateKeyFactoryBean.setSingleton(false);
         LOGGER.debug("Locating signature signing key from [{}]", signingKey);
         return privateKeyFactoryBean.getObject();
+    }
+
+    /**
+     * Create the private key.
+     *
+     * @param location - resource location of private key
+     * @return - Resource
+     * @throws Exception if key creation ran into an error
+     */
+    protected Resource createServicePrivateKeyResource(final String location) throws Exception {
+        if (StringUtils.isBlank(location)) {
+            return samlIdPMetadataLocator.getSigningKey();
+        }
+
+        if (location.startsWith(ResourceUtils.CLASSPATH_URL_PREFIX)) {
+            return new ClassPathResource(StringUtils.removeStart(location, ResourceUtils.CLASSPATH_URL_PREFIX));
+        }
+        if (location.startsWith(ResourceUtils.FILE_URL_PREFIX)) {
+            return new FileSystemResource(StringUtils.removeStart(location, ResourceUtils.FILE_URL_PREFIX));
+        }
+        return new FileSystemResource(location);
     }
 }
