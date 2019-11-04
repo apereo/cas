@@ -27,6 +27,7 @@ import org.springframework.context.event.EventListener;
     CouchbaseServiceRegistryTests.CouchbaseServiceRegistryTestConfiguration.class,
     RefreshAutoConfiguration.class,
     CasCoreServicesConfiguration.class,
+    CasCoreUtilConfiguration.class,
     CouchbaseServiceRegistryConfiguration.class
 },
     properties = {
