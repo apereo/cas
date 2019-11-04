@@ -13,6 +13,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
@@ -152,12 +153,7 @@ public class YubiKeyConfiguration {
     public CipherExecutor yubikeyAccountCipherExecutor() {
         val crypto = casProperties.getAuthn().getMfa().getYubikey().getCrypto();
         if (crypto.isEnabled()) {
-            return new YubikeyAccountCipherExecutor(
-                crypto.getEncryption().getKey(),
-                crypto.getSigning().getKey(),
-                crypto.getAlg(),
-                crypto.getSigning().getKeySize(),
-                crypto.getEncryption().getKeySize());
+            return CipherExecutorUtils.newStringCipherExecutor(crypto, YubikeyAccountCipherExecutor.class);
         }
         LOGGER.info("YubiKey account encryption/signing is turned off and "
             + "MAY NOT be safe in a production environment. "

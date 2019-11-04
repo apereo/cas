@@ -1,7 +1,6 @@
 package org.apereo.cas.mfa.accepto;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.config.AccepttoMultifactorAuthenticationConfiguration;
 import org.apereo.cas.config.AccepttoMultifactorAuthenticationEventExecutionPlanConfiguration;

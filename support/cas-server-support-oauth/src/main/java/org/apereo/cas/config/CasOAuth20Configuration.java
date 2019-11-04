@@ -99,6 +99,7 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
+import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
@@ -761,13 +762,7 @@ public class CasOAuth20Configuration {
             .get();
 
         if (enabled) {
-            return new OAuth20JwtAccessTokenCipherExecutor(crypto.getEncryption().getKey(),
-                crypto.getSigning().getKey(),
-                crypto.getAlg(),
-                crypto.isEncryptionEnabled(),
-                crypto.isSigningEnabled(),
-                crypto.getSigning().getKeySize(),
-                crypto.getEncryption().getKeySize());
+            return CipherExecutorUtils.newStringCipherExecutor(crypto, OAuth20JwtAccessTokenCipherExecutor.class);
         }
         LOGGER.info("OAuth access token encryption/signing is turned off for JWTs, if/when needed. This "
             + "MAY NOT be safe in a production environment.");

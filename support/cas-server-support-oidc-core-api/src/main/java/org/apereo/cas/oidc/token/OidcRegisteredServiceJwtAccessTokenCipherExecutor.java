@@ -117,7 +117,8 @@ public class OidcRegisteredServiceJwtAccessTokenCipherExecutor extends OAuth20Re
 
     @Override
     protected JwtTicketCipherExecutor createCipherExecutorInstance(final String encryptionKey, final String signingKey,
-                                                                   final RegisteredService registeredService) {
+                                                                   final RegisteredService registeredService,
+                                                                   final CipherOperationsStrategyType type) {
         val cipher = new JwtTicketCipherExecutor(encryptionKey, signingKey,
             StringUtils.isNotBlank(encryptionKey), StringUtils.isNotBlank(signingKey), 0, 0) {
             @Override
@@ -133,6 +134,7 @@ public class OidcRegisteredServiceJwtAccessTokenCipherExecutor extends OAuth20Re
             cipher.setEncryptionAlgorithm(KeyManagementAlgorithmIdentifiers.RSA_OAEP_256);
         }
         cipher.setCustomHeaders(CollectionUtils.wrap(CUSTOM_HEADER_REGISTERED_SERVICE_ID, registeredService.getId()));
+        cipher.setStrategyType(type);
         return cipher;
     }
 }

@@ -14,6 +14,7 @@ import org.apereo.cas.pm.impl.NoOpPasswordManagementService;
 import org.apereo.cas.pm.impl.history.AmnesiacPasswordHistoryService;
 import org.apereo.cas.pm.impl.history.GroovyPasswordHistoryService;
 import org.apereo.cas.pm.impl.history.InMemoryPasswordHistoryService;
+import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.io.CommunicationsManager;
 
@@ -55,12 +56,7 @@ public class PasswordManagementConfiguration implements InitializingBean {
         val pm = casProperties.getAuthn().getPm();
         val crypto = pm.getReset().getCrypto();
         if (pm.isEnabled() && crypto.isEnabled()) {
-            return new PasswordResetTokenCipherExecutor(
-                crypto.getEncryption().getKey(),
-                crypto.getSigning().getKey(),
-                crypto.getAlg(),
-                crypto.getSigning().getKeySize(),
-                crypto.getEncryption().getKeySize());
+            return CipherExecutorUtils.newStringCipherExecutor(crypto, PasswordResetTokenCipherExecutor.class);
         }
         return CipherExecutor.noOp();
     }

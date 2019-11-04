@@ -10,6 +10,7 @@ import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerat
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGeneratorConfigurationContext;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.idp.metadata.writer.SamlIdPCertificateAndKeyWriter;
+import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.SneakyThrows;
@@ -89,12 +90,7 @@ public class CouchDbSamlIdPMetadataConfiguration {
         val crypto = idp.getMetadata().getCouchDb().getCrypto();
 
         if (crypto.isEnabled()) {
-            return new CouchDbSamlIdPMetadataCipherExecutor(
-                crypto.getEncryption().getKey(),
-                crypto.getSigning().getKey(),
-                crypto.getAlg(),
-                crypto.getSigning().getKeySize(),
-                crypto.getEncryption().getKeySize());
+            return CipherExecutorUtils.newStringCipherExecutor(crypto, CouchDbSamlIdPMetadataCipherExecutor.class);
         }
         LOGGER.info("CouchDb SAML IdP metadata encryption/signing is turned off and "
             + "MAY NOT be safe in a production environment. "

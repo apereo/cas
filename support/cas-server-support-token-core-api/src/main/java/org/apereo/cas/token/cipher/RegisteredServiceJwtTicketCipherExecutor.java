@@ -66,23 +66,41 @@ public class RegisteredServiceJwtTicketCipherExecutor extends JwtTicketCipherExe
     public JwtTicketCipherExecutor getTokenTicketCipherExecutorForService(final RegisteredService registeredService) {
         val encryptionKey = getEncryptionKey(registeredService).orElse(StringUtils.EMPTY);
         val signingKey = getSigningKey(registeredService).orElse(StringUtils.EMPTY);
-
-        return createCipherExecutorInstance(encryptionKey, signingKey, registeredService);
+        val order = getCipherOperationsStrategyType(registeredService).orElse(CipherOperationsStrategyType.ENCRYPT_AND_SIGN);
+        return createCipherExecutorInstance(encryptionKey, signingKey, registeredService, order);
     }
 
+    /**
+     * Gets cipher operations order.
+     *
+     * @param registeredService the registered service
+     * @return the cipher operations order
+     */
+    protected Optional<CipherOperationsStrategyType> getCipherOperationsStrategyType(final RegisteredService registeredService) {
+        val property = getCipherStrategyTypeRegisteredServiceProperty(registeredService);
+        if (property.isAssignedTo(registeredService)) {
+            val order = property.getPropertyValue(registeredService).getValue();
+            return Optional.of(CipherOperationsStrategyType.valueOf(order));
+        }
+        return Optional.empty();
+    }
+    
     /**
      * Create cipher executor instance.
      *
      * @param encryptionKey     the encryption key
      * @param signingKey        the signing key
      * @param registeredService the registered service
+     * @param order             the order
      * @return the jwt ticket cipher executor
      */
     protected JwtTicketCipherExecutor createCipherExecutorInstance(final String encryptionKey, final String signingKey,
-                                                                   final RegisteredService registeredService) {
+                                                                   final RegisteredService registeredService,
+                                                                   final CipherOperationsStrategyType order) {
         val cipher = new JwtTicketCipherExecutor(encryptionKey, signingKey,
             StringUtils.isNotBlank(encryptionKey), StringUtils.isNotBlank(signingKey), 0, 0);
         cipher.setCustomHeaders(CollectionUtils.wrap(CUSTOM_HEADER_REGISTERED_SERVICE_ID, registeredService.getId()));
+        cipher.setStrategyType(order);
         return cipher;
     }
 
@@ -115,6 +133,17 @@ public class RegisteredServiceJwtTicketCipherExecutor extends JwtTicketCipherExe
         }
         return Optional.empty();
     }
+
+    /**
+     * Gets cipher operations registered service property.
+     *
+     * @param registeredService the registered service
+     * @return the cipher operations order registered service property
+     */
+    protected RegisteredServiceProperties getCipherStrategyTypeRegisteredServiceProperty(final RegisteredService registeredService) {
+        return RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET_CIPHER_STRATEGY_TYPE;
+    }
+
 
     /**
      * Gets signing key registered service property.

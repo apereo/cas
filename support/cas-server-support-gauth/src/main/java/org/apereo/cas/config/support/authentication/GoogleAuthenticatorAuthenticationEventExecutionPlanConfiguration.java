@@ -25,6 +25,7 @@ import org.apereo.cas.otp.repository.token.OneTimeTokenRepositoryCleaner;
 import org.apereo.cas.otp.web.flow.OneTimeTokenAccountCheckRegistrationAction;
 import org.apereo.cas.otp.web.flow.OneTimeTokenAccountSaveRegistrationAction;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import com.warrenstrange.googleauth.GoogleAuthenticator;
@@ -182,12 +183,7 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
     public CipherExecutor googleAuthenticatorAccountCipherExecutor() {
         val crypto = casProperties.getAuthn().getMfa().getGauth().getCrypto();
         if (crypto.isEnabled()) {
-            return new OneTimeTokenAccountCipherExecutor(
-                crypto.getEncryption().getKey(),
-                crypto.getSigning().getKey(),
-                crypto.getAlg(),
-                crypto.getSigning().getKeySize(),
-                crypto.getEncryption().getKeySize());
+            return CipherExecutorUtils.newStringCipherExecutor(crypto, OneTimeTokenAccountCipherExecutor.class);
         }
         LOGGER.warn("Google Authenticator one-time token account encryption/signing is turned off. "
             + "Consider turning on encryption, signing to securely and safely store one-time token accounts.");

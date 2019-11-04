@@ -19,6 +19,7 @@ import org.apereo.cas.impl.token.InMemoryPasswordlessTokenRepository;
 import org.apereo.cas.impl.token.PasswordlessTokenCipherExecutor;
 import org.apereo.cas.impl.token.RestfulPasswordlessTokenRepository;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.io.CommunicationsManager;
 import org.apereo.cas.web.flow.AcceptPasswordlessAuthenticationAction;
@@ -152,12 +153,7 @@ public class PasswordlessAuthenticationConfiguration {
         val tokens = casProperties.getAuthn().getPasswordless().getTokens();
         val crypto = tokens.getRest().getCrypto();
         if (crypto.isEnabled()) {
-            return new PasswordlessTokenCipherExecutor(
-                crypto.getEncryption().getKey(),
-                crypto.getSigning().getKey(),
-                crypto.getAlg(),
-                crypto.getSigning().getKeySize(),
-                crypto.getEncryption().getKeySize());
+            return CipherExecutorUtils.newStringCipherExecutor(crypto, PasswordlessTokenCipherExecutor.class);
         }
         return CipherExecutor.noOpOfSerializableToString();
     }
