@@ -72,7 +72,7 @@ public enum CasLabels {
     LABEL_MFA_YUBIKEY("MFA YubiKey", "yubikey"),
     LABEL_MEMCACHED("Memcached", "memcached|kryo"),
     LABEL_MONGODB("MongoDb", "mongo"),
-    LABEL_MONITORING("Monitoring", "healthcheck|status|@(Delete|Read|Write)Operation|HealthIndicator|monitors"),
+    LABEL_MONITORING("Monitoring", "health|healthcheck|status|@(Delete|Read|Write)Operation|HealthIndicator|monitors|actuator"),
     LABEL_OAUTH2_PROTOCOL("OAuth2 Protocol", "oauth|client_id|client_secret|pkce|uma|access\\s+token|refresh\\s+token"),
     LABEL_OPENID_CONNECT_PROTOCOL("OpenID Connect Protocol", "oidc|idtoken|client_id|client_secret|pkce|openid\\sconnect|access\\s+token|refresh\\s+token"),
     LABEL_OPENID_PROTOCOL("OpenID Protocol"),
