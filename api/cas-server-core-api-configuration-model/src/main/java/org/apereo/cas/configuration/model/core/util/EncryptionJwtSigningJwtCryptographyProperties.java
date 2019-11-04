@@ -53,5 +53,5 @@ public class EncryptionJwtSigningJwtCryptographyProperties implements Serializab
      *     <li>{@code SIGN_AND_ENCRYPT}: Sign the value first, and then encrypt.</li>
      * </ul>
      */
-    private String order = "ENCRYPT_AND_SIGN";
+    private String strategyType = "ENCRYPT_AND_SIGN";
 }

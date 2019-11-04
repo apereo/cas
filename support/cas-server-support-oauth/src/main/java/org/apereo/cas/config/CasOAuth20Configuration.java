@@ -796,13 +796,7 @@ public class CasOAuth20Configuration {
             .get();
 
         if (enabled) {
-            return new OAuth20RegisteredServiceCipherExecutor(crypto.getEncryption().getKey(),
-                crypto.getSigning().getKey(),
-                crypto.getAlg(),
-                crypto.isEncryptionEnabled(),
-                crypto.isSigningEnabled(),
-                crypto.getSigning().getKeySize(),
-                crypto.getEncryption().getKeySize());
+            return CipherExecutorUtils.newStringCipherExecutor(crypto, OAuth20RegisteredServiceCipherExecutor.class);
         }
         LOGGER.info("Relying party secret encryption/signing is turned off for OAuth/OIDC services. This "
             + "MAY NOT be safe in a production environment. Consider using other choices to handle encryption, "
