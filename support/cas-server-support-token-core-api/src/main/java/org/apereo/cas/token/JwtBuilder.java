@@ -4,6 +4,7 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import com.nimbusds.jose.JOSEObjectType;
@@ -101,7 +102,13 @@ public class JwtBuilder {
             .issueTime(payload.getIssueDate())
             .subject(payload.getSubject());
 
-        payload.getAttributes().forEach(claims::claim);
+        payload.getAttributes().forEach((k, v) -> {
+            if (v.size() == 1) {
+                claims.claim(k, CollectionUtils.firstElement(v).get());
+            } else {
+                claims.claim(k, v);
+            }
+        });
         claims.expirationTime(payload.getValidUntilDate());
 
         val claimsSet = claims.build();
