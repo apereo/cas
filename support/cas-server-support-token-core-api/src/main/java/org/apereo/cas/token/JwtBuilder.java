@@ -15,6 +15,7 @@ import com.nimbusds.jwt.PlainJWT;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.hjson.JsonValue;
@@ -64,6 +65,7 @@ public class JwtBuilder {
      * @param jwtJson the jwt json
      * @return the string
      */
+    @SneakyThrows
     public JWTClaimsSet unpack(final Optional<RegisteredService> service, final String jwtJson) {
         service.ifPresent(svc -> {
             LOGGER.trace("Located service [{}] in service registry", svc);
