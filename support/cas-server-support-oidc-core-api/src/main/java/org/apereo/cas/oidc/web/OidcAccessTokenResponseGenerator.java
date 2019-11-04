@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.web;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseResult;
@@ -25,8 +26,9 @@ public class OidcAccessTokenResponseGenerator extends OAuth20DefaultAccessTokenR
     private final IdTokenGeneratorService idTokenGenerator;
 
     public OidcAccessTokenResponseGenerator(final IdTokenGeneratorService idTokenGenerator,
-                                            final JwtBuilder jwtBuilder) {
-        super(jwtBuilder);
+                                            final JwtBuilder jwtBuilder,
+                                            final CasConfigurationProperties casProperties) {
+        super(jwtBuilder, casProperties);
         this.idTokenGenerator = idTokenGenerator;
     }
 

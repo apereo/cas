@@ -108,6 +108,9 @@ public abstract class BaseOAuth20AuthenticatorTests {
     @Qualifier("ticketRegistry")
     protected TicketRegistry ticketRegistry;
 
+    @Autowired
+    protected CasConfigurationProperties casProperties;
+
     protected static OAuth20AccessToken getAccessToken() {
         val tgt = new MockTicketGrantingTicket("casuser");
         val service = RegisteredServiceTestUtils.getService();

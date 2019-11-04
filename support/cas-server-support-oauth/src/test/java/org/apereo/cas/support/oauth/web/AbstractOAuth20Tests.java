@@ -268,6 +268,9 @@ public abstract class AbstractOAuth20Tests {
     @Qualifier("oauthTokenGenerator")
     protected OAuth20TokenGenerator oauthTokenGenerator;
 
+    @Autowired
+    protected CasConfigurationProperties casProperties;
+
     public static ExpirationPolicyBuilder alwaysExpiresExpirationPolicyBuilder() {
         return new ExpirationPolicyBuilder() {
             private static final long serialVersionUID = -9043565995104313970L;

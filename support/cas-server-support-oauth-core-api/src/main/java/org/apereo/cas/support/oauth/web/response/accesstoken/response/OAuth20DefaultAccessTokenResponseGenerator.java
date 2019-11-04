@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.web.response.accesstoken.response;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
@@ -35,6 +36,8 @@ public class OAuth20DefaultAccessTokenResponseGenerator implements OAuth20Access
      * JWT builder.
      */
     protected final JwtBuilder accessTokenJwtBuilder;
+
+    private final CasConfigurationProperties casProperties;
 
     private static boolean shouldGenerateDeviceFlowResponse(final OAuth20AccessTokenResponseResult result) {
         val generatedToken = result.getGeneratedToken();
@@ -147,6 +150,7 @@ public class OAuth20DefaultAccessTokenResponseGenerator implements OAuth20Access
             .registeredService(result.getRegisteredService())
             .service(result.getService())
             .accessTokenJwtBuilder(accessTokenJwtBuilder)
+            .casProperties(casProperties)
             .build()
             .encode();
     }

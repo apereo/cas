@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.web.response.callback;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
@@ -41,6 +42,7 @@ public class OAuth20TokenAuthorizationResponseBuilder implements OAuth20Authoriz
     private final ExpirationPolicyBuilder<OAuth20AccessToken> accessTokenExpirationPolicy;
     private final ServicesManager servicesManager;
     private final JwtBuilder accessTokenJwtBuilder;
+    private final CasConfigurationProperties casProperties;
 
     @Override
     @SneakyThrows
@@ -90,6 +92,7 @@ public class OAuth20TokenAuthorizationResponseBuilder implements OAuth20Authoriz
             .registeredService(holder.getRegisteredService())
             .service(holder.getService())
             .accessTokenJwtBuilder(accessTokenJwtBuilder)
+            .casProperties(casProperties)
             .build()
             .encode();
 

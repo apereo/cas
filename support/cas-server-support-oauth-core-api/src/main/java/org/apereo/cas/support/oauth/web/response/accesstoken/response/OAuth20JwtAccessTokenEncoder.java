@@ -1,6 +1,7 @@
 package org.apereo.cas.support.oauth.web.response.accesstoken.response;
 
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
@@ -35,6 +36,7 @@ public class OAuth20JwtAccessTokenEncoder {
     private final OAuth20AccessToken accessToken;
     private final RegisteredService registeredService;
     private final Service service;
+    private final CasConfigurationProperties casProperties;
 
     /**
      * Encode access token as JWT.

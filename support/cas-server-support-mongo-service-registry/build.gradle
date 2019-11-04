@@ -13,6 +13,7 @@ dependencies {
     
     testImplementation project(":core:cas-server-core-authentication-api")
     testImplementation project(":core:cas-server-core-tickets")
+    testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core-configuration")
     testImplementation project(":core:cas-server-core-logout-api")
 
