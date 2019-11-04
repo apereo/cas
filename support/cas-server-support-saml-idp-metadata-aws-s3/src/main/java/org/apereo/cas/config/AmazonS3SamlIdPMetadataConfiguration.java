@@ -8,6 +8,7 @@ import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerat
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGeneratorConfigurationContext;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.idp.metadata.writer.SamlIdPCertificateAndKeyWriter;
+import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import com.amazonaws.services.s3.AmazonS3;
@@ -56,12 +57,7 @@ public class AmazonS3SamlIdPMetadataConfiguration {
         val crypto = idp.getMetadata().getAmazonS3().getCrypto();
 
         if (crypto.isEnabled()) {
-            return new AmazonS3SamlIdPMetadataCipherExecutor(
-                crypto.getEncryption().getKey(),
-                crypto.getSigning().getKey(),
-                crypto.getAlg(),
-                crypto.getSigning().getKeySize(),
-                crypto.getEncryption().getKeySize());
+            return CipherExecutorUtils.newStringCipherExecutor(crypto, AmazonS3SamlIdPMetadataCipherExecutor.class);
         }
         LOGGER.info("Amazon S3 SAML IdP metadata encryption/signing is turned off and "
             + "MAY NOT be safe in a production environment. "

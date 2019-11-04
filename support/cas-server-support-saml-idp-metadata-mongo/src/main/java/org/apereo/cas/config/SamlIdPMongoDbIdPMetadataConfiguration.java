@@ -9,6 +9,7 @@ import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerat
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGeneratorConfigurationContext;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.idp.metadata.writer.SamlIdPCertificateAndKeyWriter;
+import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.SneakyThrows;
@@ -54,12 +55,7 @@ public class SamlIdPMongoDbIdPMetadataConfiguration {
         val crypto = idp.getMetadata().getMongo().getCrypto();
 
         if (crypto.isEnabled()) {
-            return new MongoDbSamlIdPMetadataCipherExecutor(
-                crypto.getEncryption().getKey(),
-                crypto.getSigning().getKey(),
-                crypto.getAlg(),
-                crypto.getSigning().getKeySize(),
-                crypto.getEncryption().getKeySize());
+            return CipherExecutorUtils.newStringCipherExecutor(crypto, MongoDbSamlIdPMetadataCipherExecutor.class);
         }
         LOGGER.info("MongoDb SAML IdP metadata encryption/signing is turned off and "
             + "MAY NOT be safe in a production environment. "

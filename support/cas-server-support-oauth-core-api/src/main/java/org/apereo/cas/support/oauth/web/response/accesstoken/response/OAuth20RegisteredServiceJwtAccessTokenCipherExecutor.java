@@ -27,6 +27,12 @@ public class OAuth20RegisteredServiceJwtAccessTokenCipherExecutor extends Regist
     }
 
     @Override
+    protected RegisteredServiceProperty.RegisteredServiceProperties getCipherStrategyTypeRegisteredServiceProperty(
+        final RegisteredService registeredService) {
+        return RegisteredServiceProperty.RegisteredServiceProperties.ACCESS_TOKEN_AS_JWT_CIPHER_STRATEGY_TYPE;
+    }
+
+    @Override
     public Optional<String> getSigningKey(final RegisteredService registeredService) {
         if (isSigningEnabledForRegisteredService(registeredService)) {
             return super.getSigningKey(registeredService);

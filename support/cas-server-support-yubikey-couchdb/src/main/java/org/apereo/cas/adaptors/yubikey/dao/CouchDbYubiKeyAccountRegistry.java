@@ -47,7 +47,8 @@ public class CouchDbYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     public Optional<YubiKeyAccount> getAccount(final String uid) {
         val account = couchDb.findByUsername(uid);
         if (account != null) {
-            return Optional.of(new YubiKeyAccount(account.getId(), getCipherExecutor().decode(account.getPublicId()), account.getUsername()));
+            return Optional.of(new YubiKeyAccount(account.getId(),
+                getCipherExecutor().decode(account.getPublicId()), account.getUsername()));
         }
         return Optional.empty();
     }

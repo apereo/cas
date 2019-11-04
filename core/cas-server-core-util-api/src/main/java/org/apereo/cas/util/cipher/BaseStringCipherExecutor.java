@@ -31,6 +31,8 @@ import java.security.Key;
 @Setter
 @Getter
 public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Serializable, String> {
+    private CipherOperationsStrategyType strategyType = CipherOperationsStrategyType.ENCRYPT_AND_SIGN;
+
     private String encryptionAlgorithm = KeyManagementAlgorithmIdentifiers.DIRECT;
 
     private String contentEncryptionAlgorithmIdentifier;
@@ -79,13 +81,13 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
         this(secretKeyEncryption, secretKeySigning, contentEncryptionAlgorithmIdentifier, true, true, signingKeySize, encryptionKeySize);
     }
 
-
     public BaseStringCipherExecutor(final String secretKeyEncryption, final String secretKeySigning,
                                     final int signingKeySize,
                                     final int encryptionKeySize) {
         this(secretKeyEncryption, secretKeySigning, CipherExecutor.DEFAULT_CONTENT_ENCRYPTION_ALGORITHM,
             true, true, signingKeySize, encryptionKeySize);
     }
+
 
     public BaseStringCipherExecutor(final String secretKeyEncryption,
                                     final String secretKeySigning,
@@ -190,20 +192,31 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
 
     @Override
     public String encode(final Serializable value, final Object[] parameters) {
-        val encoded = isEncryptionPossible()
-            ? EncodingUtils.encryptValueAsJwt(this.secretKeyEncryptionKey, value,
-                this.encryptionAlgorithm, this.contentEncryptionAlgorithmIdentifier, getCustomHeaders())
-            : value.toString();
-
-        if (this.signingEnabled) {
-            val signed = sign(encoded.getBytes(StandardCharsets.UTF_8));
-            return new String(signed, StandardCharsets.UTF_8);
+        if (strategyType == CipherOperationsStrategyType.ENCRYPT_AND_SIGN) {
+            return encryptAndSign(value);
         }
-        return encoded;
+        return signAndEncrypt(value);
     }
 
     @Override
     public String decode(final Serializable value, final Object[] parameters) {
+        if (strategyType == CipherOperationsStrategyType.ENCRYPT_AND_SIGN) {
+            return verifyAndDecrypt(value);
+        }
+        return decryptAndVerify(value);
+    }
+
+    private String decryptAndVerify(final Serializable value) {
+        var encodedObj = value.toString();
+        if (isEncryptionPossible()) {
+            encodedObj = EncodingUtils.decryptJwtValue(this.secretKeyEncryptionKey, encodedObj);
+        }
+        val currentValue = encodedObj.getBytes(StandardCharsets.UTF_8);
+        val encoded = this.signingEnabled ? verifySignature(currentValue) : currentValue;
+        return new String(encoded, StandardCharsets.UTF_8);
+    }
+
+    private String verifyAndDecrypt(final Serializable value) {
         val currentValue = value.toString().getBytes(StandardCharsets.UTF_8);
         val encoded = this.signingEnabled ? verifySignature(currentValue) : currentValue;
 
@@ -216,6 +229,32 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
             return encodedObj;
         }
         return null;
+    }
+
+    private String encryptAndSign(final Serializable value) {
+        val encoded = isEncryptionPossible()
+            ? EncodingUtils.encryptValueAsJwt(this.secretKeyEncryptionKey, value,
+            this.encryptionAlgorithm, this.contentEncryptionAlgorithmIdentifier, getCustomHeaders())
+            : value.toString();
+
+        if (this.signingEnabled) {
+            val signed = sign(encoded.getBytes(StandardCharsets.UTF_8));
+            return new String(signed, StandardCharsets.UTF_8);
+        }
+        return encoded;
+    }
+
+    private String signAndEncrypt(final Serializable value) {
+        var encoded = value.toString();
+        if (this.signingEnabled) {
+            val signed = sign(value.toString().getBytes(StandardCharsets.UTF_8));
+            encoded = new String(signed, StandardCharsets.UTF_8);
+        }
+
+        return isEncryptionPossible()
+            ? EncodingUtils.encryptValueAsJwt(this.secretKeyEncryptionKey, encoded,
+            this.encryptionAlgorithm, this.contentEncryptionAlgorithmIdentifier, getCustomHeaders())
+            : encoded;
     }
 
     /**
@@ -245,4 +284,17 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
         return "N/A";
     }
 
+    /**
+     * Define the order of cipher operations.
+     */
+    public enum CipherOperationsStrategyType {
+        /**
+         * Encrypt the value first, and then sign.
+         */
+        ENCRYPT_AND_SIGN,
+        /**
+         * Sign the value first, and then encrypt.
+         */
+        SIGN_AND_ENCRYPT
+    }
 }

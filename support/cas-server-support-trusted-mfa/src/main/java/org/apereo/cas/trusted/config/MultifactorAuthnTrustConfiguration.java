@@ -11,6 +11,7 @@ import org.apereo.cas.trusted.authentication.storage.InMemoryMultifactorAuthenti
 import org.apereo.cas.trusted.authentication.storage.JsonMultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.authentication.storage.MultifactorAuthenticationTrustStorageCleaner;
 import org.apereo.cas.trusted.web.MultifactorTrustedDevicesReportEndpoint;
+import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
 
@@ -95,12 +96,7 @@ public class MultifactorAuthnTrustConfiguration {
     public CipherExecutor mfaTrustCipherExecutor() {
         val crypto = casProperties.getAuthn().getMfa().getTrusted().getCrypto();
         if (crypto.isEnabled()) {
-            return new MultifactorAuthenticationTrustCipherExecutor(
-                crypto.getEncryption().getKey(),
-                crypto.getSigning().getKey(),
-                crypto.getAlg(),
-                crypto.getSigning().getKeySize(),
-                crypto.getEncryption().getKeySize());
+            return CipherExecutorUtils.newStringCipherExecutor(crypto, MultifactorAuthenticationTrustCipherExecutor.class);
         }
         LOGGER.info("Multifactor trusted authentication record encryption/signing is turned off and "
             + "MAY NOT be safe in a production environment. "

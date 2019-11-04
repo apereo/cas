@@ -1,5 +1,7 @@
 package org.apereo.cas.token.cipher;
 
+import org.apereo.cas.util.cipher.BaseStringCipherExecutor;
+
 import lombok.val;
 import org.junit.jupiter.api.Test;
 
@@ -34,6 +36,15 @@ public class JwtTicketCipherExecutorTests {
     @Test
     public void verifyCipheredTokenWithoutEncryptionAndSigning() {
         val c = new JwtTicketCipherExecutor();
+        c.setStrategyType(BaseStringCipherExecutor.CipherOperationsStrategyType.ENCRYPT_AND_SIGN);
+        val token = c.encode(ST);
+        assertEquals(ST, c.decode(token));
+    }
+
+    @Test
+    public void verifyCipheredTokenWithSignAndEncrypt() {
+        val c = new JwtTicketCipherExecutor(null, null, true, 0, 0);
+        c.setStrategyType(BaseStringCipherExecutor.CipherOperationsStrategyType.SIGN_AND_ENCRYPT);
         val token = c.encode(ST);
         assertEquals(ST, c.decode(token));
     }
