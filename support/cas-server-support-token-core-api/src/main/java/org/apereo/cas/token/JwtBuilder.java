@@ -65,7 +65,7 @@ public class JwtBuilder {
      */
     public JWTClaimsSet unpack(final Optional<RegisteredService> service, final String jwtJson) {
         service.ifPresent(svc -> {
-            LOGGER.trace("Located service [{}] in service registry for [{}]", svc);
+            LOGGER.trace("Located service [{}] in service registry", svc);
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(svc);
         });
 
