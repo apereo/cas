@@ -432,6 +432,8 @@ components (ticket registries, etc) given the component's *configuration key*:
 # ${configurationKey}.crypto.strategyType=ENCRYPT_AND_SIGN|SIGN_AND_ENCRYPT
 ```
 
+The following cipher strategy types are available:
+
 | Type                | Description
 |---------------------|---------------------------------------------------
 | `ENCRYPT_AND_SIGN`  | Default strategy; encrypt values, and then sign. 

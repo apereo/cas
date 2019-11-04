@@ -307,10 +307,21 @@ By default, OAuth access tokens are created as opaque identifiers. There is also
       "accessTokenAsJwtEncryptionEnabled" : {
          "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
          "values" : [ "java.util.HashSet", [ "true" ] ]
-      }
+      },
+      "accessTokenAsJwtCipherStrategyType" : {
+         "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
+         "values" : [ "java.util.HashSet", [ "ENCRYPT_AND_SIGN" ] ]
+      } 
     }
 }
 ```
+
+The following cipher strategy types are available:
+
+| Type                | Description
+|---------------------|---------------------------------------------------
+| `ENCRYPT_AND_SIGN`  | Default strategy; encrypt values, and then sign. 
+| `SIGN_AND_ENCRYPT`  | Sign values, and then encrypt.
 
 Signing and encryption keys may also be defined on a per-service basis, or globally via CAS settings.
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#oauth2).
