@@ -27,7 +27,7 @@ public class CipherExecutorUtils {
             crypto.getAlg(),
             crypto.getSigning().getKeySize(),
             crypto.getEncryption().getKeySize());
-        cipher.setStrategyType(BaseStringCipherExecutor.CipherOperationsStrategyType.valueOf(crypto.getOrder()));
+        cipher.setStrategyType(BaseStringCipherExecutor.CipherOperationsStrategyType.valueOf(crypto.getStrategyType()));
         return cipher;
     }
 
@@ -43,7 +43,7 @@ public class CipherExecutorUtils {
             crypto.isSigningEnabled(),
             crypto.getSigning().getKeySize(),
             crypto.getEncryption().getKeySize());
-        cipher.setStrategyType(BaseStringCipherExecutor.CipherOperationsStrategyType.valueOf(crypto.getOrder()));
+        cipher.setStrategyType(BaseStringCipherExecutor.CipherOperationsStrategyType.valueOf(crypto.getStrategyType()));
         return cipher;
     }
 }

@@ -47,9 +47,8 @@ public class RegisteredServiceAccessStrategyUtils {
      */
     public static void ensureServiceAccessIsAllowed(final String service, final RegisteredService registeredService) {
         if (registeredService == null) {
-            val msg = String.format("Unauthorized Service Access. Service [%s] is not found in service registry.", service);
-            LOGGER.warn(msg);
-            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);
+            LOGGER.warn("Unauthorized Service Access. Service {} is not found in service registry.", service);
+            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, "Service is not found in service registry.");
         }
         if (!registeredService.getAccessStrategy().isServiceAccessAllowed()) {
             val msg = String.format("Unauthorized Service Access. Service [%s] is not enabled in service registry.", service);
@@ -57,7 +56,7 @@ public class RegisteredServiceAccessStrategyUtils {
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);
         }
         if (!ensureServiceIsNotExpired(registeredService)) {
-            val msg = String.format("Expired Service Access. Service [%s] has been expired", service);
+            val msg = String.format("Expired service access is denied. Service [%s] has been expired", service);
             LOGGER.warn(msg);
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_EXPIRED_SERVICE, msg);
         }
