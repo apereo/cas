@@ -1,6 +1,7 @@
 package org.apereo.cas.mfa.accepto;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.config.AccepttoMultifactorAuthenticationConfiguration;
 import org.apereo.cas.config.AccepttoMultifactorAuthenticationEventExecutionPlanConfiguration;
@@ -16,6 +17,7 @@ import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
+import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
@@ -60,6 +62,7 @@ import static org.mockito.Mockito.*;
 @Tag("RestfulApi")
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    CasCoreUtilConfiguration.class,
     AccepttoMultifactorAuthenticationConfiguration.class,
     AccepttoMultifactorAuthenticationEventExecutionPlanConfiguration.class,
     AccepttoMultifactorAuthenticationMultifactorProviderBypassConfiguration.class,
