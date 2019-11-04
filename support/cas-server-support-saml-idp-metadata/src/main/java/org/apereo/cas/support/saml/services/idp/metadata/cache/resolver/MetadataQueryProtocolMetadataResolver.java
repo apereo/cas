@@ -6,26 +6,26 @@ import org.apereo.cas.support.saml.InMemoryResourceMetadataResolver;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.SamlUtils;
-import org.apereo.cas.support.saml.StaticXmlObjectMetadataResolver;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.HttpUtils;
 
-import com.google.common.io.ByteStreams;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.util.EntityUtils;
 import org.opensaml.core.criterion.EntityIdCriterion;
-import org.opensaml.core.xml.XMLObject;
-import org.opensaml.core.xml.util.XMLObjectSource;
 import org.opensaml.saml.metadata.resolver.impl.AbstractMetadataResolver;
 import org.springframework.http.HttpStatus;
 
 import java.io.File;
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Optional;
@@ -56,11 +56,19 @@ public class MetadataQueryProtocolMetadataResolver extends UrlResourceMetadataRe
     }
 
     @Override
-    protected HttpResponse fetchMetadata(final String metadataLocation, final CriteriaSet criteriaSet) {
+    protected HttpResponse fetchMetadata(final String metadataLocation, final CriteriaSet criteriaSet, final File backupFile) {
         val metadata = samlIdPProperties.getMetadata();
         val headers = new LinkedHashMap<String, Object>();
         headers.put("Content-Type", metadata.getSupportedContentTypes());
         headers.put("Accept", "*/*");
+        if (Files.exists(backupFile.toPath())) {
+            try {
+                val etag = new String((byte[]) Files.getAttribute(backupFile.toPath(), "user:ETag"), StandardCharsets.UTF_8).trim();
+                headers.put("If-None-Match", etag);
+            } catch (final Exception e) {
+                LOGGER.error("Failed to read ETag Attribute - " + e.getMessage(), e);
+            }
+        }
 
         LOGGER.debug("Fetching dynamic metadata via MDQ for [{}]", metadataLocation);
         val response = HttpUtils.executeGet(metadataLocation, metadata.getBasicAuthnUsername(),
@@ -72,38 +80,38 @@ public class MetadataQueryProtocolMetadataResolver extends UrlResourceMetadataRe
         return response;
     }
 
-    /**
-     * Is dynamic metadata query configured ?
-     *
-     * @param service the service
-     * @return true/false
-     */
-    protected boolean isDynamicMetadataQueryConfigured(final SamlRegisteredService service) {
-        return service.getMetadataLocation().trim().endsWith("/entities/{0}");
-    }
-
     @Override
     public boolean supports(final SamlRegisteredService service) {
-        return isDynamicMetadataQueryConfigured(service);
+        return SamlUtils.isDynamicMetadataQueryConfigured(service.getMetadataLocation());
     }
 
     @Override
     protected boolean shouldHttpResponseStatusBeProcessed(final HttpStatus status) {
-        return super.shouldHttpResponseStatusBeProcessed(status) || status == HttpStatus.NOT_MODIFIED;
+        return true;
     }
 
     @Override
     protected AbstractMetadataResolver getMetadataResolverFromResponse(final HttpResponse response, final File backupFile) throws Exception {
-        if (response.getStatusLine().getStatusCode() == HttpStatus.NOT_MODIFIED.value()) {
-            return new InMemoryResourceMetadataResolver(backupFile, this.configBean);
+        if (!HttpStatus.valueOf(response.getStatusLine().getStatusCode()).is2xxSuccessful()) {
+            if (Files.exists(backupFile.toPath())) {
+                return new InMemoryResourceMetadataResolver(backupFile, this.configBean);
+            } else {
+                throw new Exception("Unable to get entity from MDQ server and a backup file does not exist.");
+            }
         }
         val entity = response.getEntity();
-        val ins = entity.getContent();
-        val source = ByteStreams.toByteArray(ins);
-        val xmlObject = SamlUtils.transformSamlObject(configBean, source, XMLObject.class);
-        xmlObject.getObjectMetadata().put(new XMLObjectSource(source));
+        val result = IOUtils.toString(entity.getContent(), StandardCharsets.UTF_8);
+        val path = backupFile.toPath();
+        LOGGER.trace("Writing metadata to file at [{}]", path);
+        try (val output = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
+            IOUtils.write(result, output);
+            output.flush();
+            output.close();
+            val etag = response.getFirstHeader("ETag").getValue();
+            Files.setAttribute(backupFile.toPath(), "user:ETag", ByteBuffer.wrap(etag.getBytes()));
+        }
         EntityUtils.consume(entity);
-        return new StaticXmlObjectMetadataResolver(xmlObject);
+        return new InMemoryResourceMetadataResolver(backupFile, configBean);
     }
 
     @Override

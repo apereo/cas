@@ -258,4 +258,14 @@ public class SamlUtils {
             throw new SamlException(e.getMessage(), e);
         }
     }
+
+    /**
+     * Is dynamic metadata query configured ?
+     *
+     * @param metadataLocation - the location of the metadata to resolve
+     * @return true/false
+     */
+    public static boolean isDynamicMetadataQueryConfigured(final String metadataLocation) {
+        return metadataLocation.trim().endsWith("/entities/{0}");
+    }
 }
