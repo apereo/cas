@@ -17,6 +17,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
 import java.text.ParseException;
+import java.util.HashMap;
 import java.util.Optional;
 
 /**
@@ -90,6 +91,9 @@ public class OAuth20JwtAccessTokenEncoder {
     protected JwtBuilder.JwtRequest getJwtRequestBuilder(final OAuthRegisteredService oAuthRegisteredService,
                                                          final OAuth20AccessToken accessToken) {
         val authentication = accessToken.getAuthentication();
+        val attributes = new HashMap<String, List<Object>>(authentication.getAttributes());
+        attributes.putAll(authentication.getPrincipal().getAttributes());
+        
         val builder = JwtBuilder.JwtRequest.builder();
         val dt = authentication.getAuthenticationDate().plusSeconds(accessToken.getExpirationPolicy().getTimeToLive());
         return builder
@@ -98,7 +102,7 @@ public class OAuth20JwtAccessTokenEncoder {
             .jwtId(accessToken.getId())
             .subject(authentication.getPrincipal().getId())
             .validUntilDate(DateTimeUtils.dateOf(dt))
-            .attributes(authentication.getAttributes())
+            .attributes(attributes)
             .registeredService(oAuthRegisteredService)
             .build();
     }
