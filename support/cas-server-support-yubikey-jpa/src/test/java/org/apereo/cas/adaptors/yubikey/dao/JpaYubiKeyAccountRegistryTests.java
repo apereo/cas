@@ -27,6 +27,7 @@ import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.services.web.config.CasThemesConfiguration;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
+import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
 import org.junit.jupiter.api.Tag;
@@ -70,6 +71,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreAuthenticationConfiguration.class,
     CasCoreAuthenticationSupportConfiguration.class,
     CasCoreMultifactorAuthenticationConfiguration.class,
+    CasMultifactorAuthenticationWebflowConfiguration.class,
     CasCookieConfiguration.class,
     CasCoreUtilConfiguration.class,
     CasCoreWebConfiguration.class,
