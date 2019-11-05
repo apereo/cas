@@ -1,6 +1,7 @@
 description = "Apereo CAS YubiKey Jpa Support"
 dependencies {
     implementation libraries.yubicoapi
+
     runtimeOnly project(":support:cas-server-support-jdbc-drivers")
 
     implementation project(":core:cas-server-core-util-api")
@@ -18,6 +19,7 @@ dependencies {
     testImplementation project(":core:cas-server-core-cookie")
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-authentication")
+    testImplementation project(":core:cas-server-core-authentication-mfa")
     testImplementation project(":core:cas-server-core-configuration")
     testImplementation project(":core:cas-server-core-tickets")
     testImplementation project(":core:cas-server-core-services")
