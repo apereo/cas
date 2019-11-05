@@ -2,6 +2,7 @@ package org.apereo.cas.token;
 
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.DateTimeUtils;
@@ -18,6 +19,7 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * This is {@link JwtTokenTicketBuilder}.
@@ -32,7 +34,8 @@ public class JwtTokenTicketBuilder implements TokenTicketBuilder {
     private final TicketValidator ticketValidator;
     private final ExpirationPolicyBuilder expirationPolicy;
     private final JwtBuilder jwtBuilder;
-
+    private final ServicesManager servicesManager;
+    
     @Override
     @SneakyThrows
     public String build(final String serviceTicketId, final Service service) {
@@ -44,13 +47,15 @@ public class JwtTokenTicketBuilder implements TokenTicketBuilder {
             assertion.getValidUntilDate() != null,
             assertion::getValidUntilDate,
             () -> {
-                val dt = ZonedDateTime.now(ZoneOffset.UTC).plusSeconds(expirationPolicy.buildTicketExpirationPolicy().getTimeToLive());
+                val dt = ZonedDateTime.now(ZoneOffset.UTC)
+                    .plusSeconds(expirationPolicy.buildTicketExpirationPolicy().getTimeToLive());
                 return DateTimeUtils.dateOf(dt);
             })
             .get();
 
         val builder = JwtBuilder.JwtRequest.builder();
         val request = builder
+            .registeredService(Optional.ofNullable(servicesManager.findServiceBy(service)))
             .serviceAudience(service.getId())
             .issueDate(assertion.getAuthenticationDate())
             .jwtId(serviceTicketId)
