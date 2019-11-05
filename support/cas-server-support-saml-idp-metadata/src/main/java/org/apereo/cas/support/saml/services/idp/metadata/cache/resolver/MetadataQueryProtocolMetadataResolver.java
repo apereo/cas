@@ -95,9 +95,8 @@ public class MetadataQueryProtocolMetadataResolver extends UrlResourceMetadataRe
         if (!HttpStatus.valueOf(response.getStatusLine().getStatusCode()).is2xxSuccessful()) {
             if (Files.exists(backupFile.toPath())) {
                 return new InMemoryResourceMetadataResolver(backupFile, this.configBean);
-            } else {
-                throw new Exception("Unable to get entity from MDQ server and a backup file does not exist.");
             }
+            throw new Exception("Unable to get entity from MDQ server and a backup file does not exist.");
         }
         val entity = response.getEntity();
         val result = IOUtils.toString(entity.getContent(), StandardCharsets.UTF_8);
@@ -106,7 +105,6 @@ public class MetadataQueryProtocolMetadataResolver extends UrlResourceMetadataRe
         try (val output = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
             IOUtils.write(result, output);
             output.flush();
-            output.close();
             val etag = response.getFirstHeader("ETag").getValue();
             Files.setAttribute(backupFile.toPath(), "user:ETag", ByteBuffer.wrap(etag.getBytes()));
         }
