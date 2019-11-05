@@ -17,6 +17,7 @@ import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
+import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
@@ -83,6 +84,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreWebConfiguration.class,
     CasCookieConfiguration.class,
     CasPersonDirectoryConfiguration.class,
+    CasCoreUtilConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
     CasMultifactorAuthenticationWebflowConfiguration.class,
     CasCoreMultifactorAuthenticationConfiguration.class,

@@ -16,6 +16,9 @@ dependencies {
     implementation project(":support:cas-server-support-couchdb-core")
 
     testImplementation project(":core:cas-server-core-services")
+    testImplementation project(":core:cas-server-core-util")
+    testImplementation project(":core:cas-server-core-authentication")
+    testImplementation project(":core:cas-server-core-authentication-mfa")
     testImplementation project(":support:cas-server-support-oauth-services")
     testImplementation project(":support:cas-server-support-saml-idp-core")
     testImplementation project(":support:cas-server-support-oidc-services")
