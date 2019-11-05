@@ -86,7 +86,8 @@ public class TokenCoreConfiguration {
     public TokenTicketBuilder tokenTicketBuilder() {
         return new JwtTokenTicketBuilder(casClientTicketValidator.getObject(),
             grantingTicketExpirationPolicy.getObject(),
-            tokenTicketJwtBuilder());
+            tokenTicketJwtBuilder(),
+            servicesManager.getObject());
     }
 
     @RefreshScope
