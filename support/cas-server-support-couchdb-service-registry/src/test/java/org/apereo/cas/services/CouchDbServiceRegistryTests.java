@@ -1,6 +1,7 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCouchDbCoreConfiguration;
 import org.apereo.cas.config.CouchDbServiceRegistryConfiguration;
 import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
@@ -19,6 +20,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    CasCoreUtilConfiguration.class,
     CasCouchDbCoreConfiguration.class,
     CasCoreServicesConfiguration.class,
     CouchDbServiceRegistryConfiguration.class
