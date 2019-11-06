@@ -206,7 +206,7 @@ public class DelegatedClientAuthenticationActionTests {
             });
     }
 
-    private TransientSessionTicketExpirationPolicyBuilder getExpirationPolicyBuilder() {
+    private static TransientSessionTicketExpirationPolicyBuilder getExpirationPolicyBuilder() {
         val props = new CasConfigurationProperties();
         props.getTicket().getTst().setTimeToKillInSeconds(60);
         return new TransientSessionTicketExpirationPolicyBuilder(props);

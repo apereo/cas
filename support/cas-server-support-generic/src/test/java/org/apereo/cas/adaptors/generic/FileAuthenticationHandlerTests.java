@@ -10,6 +10,7 @@ import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderPro
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
 
@@ -24,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Scott Battaglia
  * @since 3.0.0
  */
+@Tag("FileSystem")
 public class FileAuthenticationHandlerTests {
     private FileAuthenticationHandler authenticationHandler;
 

@@ -42,7 +42,7 @@ public interface ServicesManager {
      * @param services the services
      */
     default void save(final RegisteredService...services) {
-        Arrays.stream(services).forEach(s -> save(s));
+        Arrays.stream(services).forEach(this::save);
     }
 
     /**
