@@ -2,6 +2,7 @@ package org.apereo.cas.support.saml.idp.metadata;
 
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasCouchDbCoreConfiguration;
 import org.apereo.cas.config.CoreSamlConfiguration;
@@ -23,6 +24,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
+import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
@@ -42,6 +44,8 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCouchDbCoreConfiguration.class,
     SamlIdPMetadataConfiguration.class,
     RefreshAutoConfiguration.class,
+    CasCoreUtilConfiguration.class,
+    MailSenderAutoConfiguration.class,
     AopAutoConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreHttpConfiguration.class,

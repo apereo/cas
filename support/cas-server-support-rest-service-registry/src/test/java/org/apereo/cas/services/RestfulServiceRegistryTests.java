@@ -1,6 +1,7 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.RestServiceRegistryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 
@@ -36,6 +37,7 @@ import static org.mockito.Mockito.*;
     RestfulServiceRegistryTests.RestServicesTestConfiguration.class,
     CasCoreServicesConfiguration.class,
     RestServiceRegistryConfiguration.class,
+    CasCoreUtilConfiguration.class,
     RefreshAutoConfiguration.class
 },
     properties = {"server.port=9303", "cas.serviceRegistry.rest.url=http://localhost:9303", "cas.serviceRegistry.initFromJson=false"},
