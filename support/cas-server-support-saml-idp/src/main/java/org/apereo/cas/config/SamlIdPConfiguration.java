@@ -14,6 +14,7 @@ import org.apereo.cas.logout.slo.SingleLogoutServiceMessageHandler;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
+import org.apereo.cas.support.saml.services.SamlIdpAttributeResolver;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.support.saml.web.idp.audit.SamlRequestAuditResourceResolver;
 import org.apereo.cas.support.saml.web.idp.audit.SamlResponseAuditPrincipalIdProvider;
@@ -311,7 +312,8 @@ public class SamlIdPConfiguration {
             openSamlConfigBean.getObject(),
             samlAttributeEncoder(),
             casProperties.getAuthn().getSamlIdp(),
-            samlObjectEncrypter());
+            samlObjectEncrypter(),
+            samlIdpAttributeResolver());
     }
 
     @ConditionalOnMissingBean(name = "samlAttributeEncoder")
@@ -395,6 +397,11 @@ public class SamlIdPConfiguration {
             plan.registerAuditActionResolver("SAML2_REQUEST_ACTION_RESOLVER",
                 new DefaultAuditActionResolver(AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED, AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED));
         };
+    }
+
+    @Bean(name = "samlIdpAttributeResolver")
+    public SamlIdpAttributeResolver samlIdpAttributeResolver() {
+        return new SamlIdpAttributeResolver(casProperties);
     }
 
     private SamlProfileSamlResponseBuilderConfigurationContext.SamlProfileSamlResponseBuilderConfigurationContextBuilder getSamlResponseBuilderConfigurationContextBuilder() {

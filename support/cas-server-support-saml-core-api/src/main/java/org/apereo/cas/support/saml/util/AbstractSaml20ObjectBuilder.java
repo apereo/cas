@@ -243,6 +243,7 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
      *
      * @param attributes             the attributes
      * @param attributeFriendlyNames the attribute friendly names
+     * @param attributeNames         the qualified attribute names
      * @param attributeValueTypes    the attribute value types
      * @param configuredNameFormats  the configured name formats
      * @param defaultNameFormat      the default name format
@@ -251,6 +252,7 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
      */
     public AttributeStatement newAttributeStatement(final Map<String, Object> attributes,
                                                     final Map<String, String> attributeFriendlyNames,
+                                                    final Map<String, String> attributeNames,
                                                     final Map<String, String> attributeValueTypes,
                                                     final Map<String, String> configuredNameFormats,
                                                     final String defaultNameFormat,
@@ -261,12 +263,12 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
                 LOGGER.info("Skipping attribute [{}] because it does not have any values.", e.getKey());
                 continue;
             }
-            val friendlyName = attributeFriendlyNames.getOrDefault(e.getKey(), null);
-            val attribute = newAttribute(friendlyName, e.getKey(), e.getValue(),
+            val friendlyName = StringUtils.isNotBlank(attributeFriendlyNames.get(e.getKey())) ? attributeFriendlyNames.get(e.getKey()) : null;
+            val name = StringUtils.isNotBlank(attributeNames.get(e.getKey())) ? attributeNames.get(e.getKey()) : e.getKey();
+            val attribute = newAttribute(friendlyName, name, e.getValue(),
                 configuredNameFormats, defaultNameFormat, attributeValueTypes);
             builder.build(attrStatement, attribute);
         }
-
         return attrStatement;
     }
 
@@ -275,6 +277,7 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
      *
      * @param attributes             the attributes
      * @param attributeFriendlyNames the attribute friendly names
+     * @param attributeNames         the qualified attribute names
      * @param attributeValueTypes    the attribute value types
      * @param configuredNameFormats  the configured name formats
      * @param defaultNameFormat      the default name format
@@ -282,10 +285,11 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
      */
     public AttributeStatement newAttributeStatement(final Map<String, Object> attributes,
                                                     final Map<String, String> attributeFriendlyNames,
+                                                    final Map<String, String> attributeNames,
                                                     final Map<String, String> attributeValueTypes,
                                                     final Map<String, String> configuredNameFormats,
                                                     final String defaultNameFormat) {
-        return newAttributeStatement(attributes, attributeFriendlyNames, attributeValueTypes,
+        return newAttributeStatement(attributes, attributeFriendlyNames, attributeNames, attributeValueTypes,
             configuredNameFormats, defaultNameFormat, new DefaultSaml20AttributeBuilder());
     }
 

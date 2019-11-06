@@ -90,6 +90,64 @@ specially if the original attribute is *mapped* to a different name.
 }
 ```
 
+## SAML IdP Attribute Definitions
+
+### Definitions
+
+Attributes for release can be defined and mapped in a JSON file that is watched and reloaded dynamically when changes occur.
+```json
+{
+   "eduPersonPrincipalName": {
+      "attribute": "uid",
+      "friendlyName": "eduPersonPrincipalName",
+      "scoped": true,
+      "name": "urn:oid:1.3.6.1.4.1.5923.1.1.1.6"
+    },
+    ....
+}
+```
+
+The following attribute definition options are available:
+
+| Type              | Description
+|-------------------|---------------------------------------------------------------------------------------
+| `attribute`       | Maps the to use as the value for this field(Optional if map key is same as attribute key)
+| `friendlyName`    | Value to populate `friendlyName` attribute in the SAML response(Optional).
+| `name`            | Value to populate the `name` attribute in the SAML response(Optional).
+| `scoped`          | When `true` the configured SAML IdP `scope` value will be appended to the attribute value.
+| `template`        | String in Message format that will insert attribute value into the template(`{0}`).
+| `script`          | Resource location to a Groovy script that will return the value for the attribute.
+
+Enable the attribute definitions by configuring a location to you JSON definition file:
+
+```properties
+cas.authn.samlIdp.attributesDefinition=file:/etc/cas/attributes.json
+```
+
+### Releasing SAML IdP Attributes
+
+Releasing attributes defined from the attribute definitions requires using SamlIdpRegisteredServiceAttributeReleasePolicy as follows:
+
+```json
+{
+  "@class": "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId": "entity-ids-allowed-via-regex",
+  "name": "SAML",
+  "id": 10,
+  "metadataLocation": "path/to/incommon/metadata.xml",
+  "attributeReleasePolicy": {
+    "@class": "org.apereo.cas.support.saml.services.SamlIdpRegisteredServiceAttributeReleasePolicy",
+    "allowedAttributes": [ "java.util.ArrayList",
+      [
+        "eduPersonPrincipalName"
+      ]
+    ]
+  }
+}
+```
+Attributes resolved with this policy are not cached into any defined attribute repository and are calculated each time
+they are resolved.  Only attributes that are part of the release policy will be computed, so unnecessary scripts will not be run
+for attributes that are not being released.
 
 ## InCommon Research and Scholarship
 

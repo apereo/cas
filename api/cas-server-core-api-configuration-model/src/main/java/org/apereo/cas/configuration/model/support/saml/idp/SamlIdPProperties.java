@@ -7,6 +7,8 @@ import org.apereo.cas.configuration.support.RequiresModule;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -95,4 +97,9 @@ public class SamlIdPProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private SamlIdPProfileProperties profile = new SamlIdPProfileProperties();
+
+    /**
+     * Resource location of idp attribute json definition.
+     */
+    private transient Resource attributesDefinition = new ClassPathResource("attributes.json");
 }

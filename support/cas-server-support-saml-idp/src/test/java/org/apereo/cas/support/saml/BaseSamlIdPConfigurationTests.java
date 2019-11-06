@@ -30,6 +30,7 @@ import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.idp.metadata.locator.FileSystemSamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
+import org.apereo.cas.support.saml.services.SamlIdpAttributeResolver;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
@@ -150,6 +151,10 @@ public abstract class BaseSamlIdPConfigurationTests {
     @Autowired
     @Qualifier("samlObjectSignatureValidator")
     protected SamlObjectSignatureValidator samlObjectSignatureValidator;
+
+    @Autowired
+    @Qualifier("samlIdpAttributeResolver")
+    protected SamlIdpAttributeResolver samlIdpAttributeResolver;
 
     @Autowired
     protected CasConfigurationProperties casProperties;

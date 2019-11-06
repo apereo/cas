@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlException;
+import org.apereo.cas.support.saml.services.SamlIdpAttributeResolver;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.util.AbstractSaml20ObjectBuilder;
@@ -32,15 +33,18 @@ public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20Obje
     private final transient ProtocolAttributeEncoder samlAttributeEncoder;
     private final SamlIdPProperties samlIdPProperties;
     private final SamlIdPObjectEncrypter samlObjectEncrypter;
+    private final SamlIdpAttributeResolver atrributeResolver;
 
     public SamlProfileSamlAttributeStatementBuilder(final OpenSamlConfigBean configBean,
                                                     final ProtocolAttributeEncoder samlAttributeEncoder,
                                                     final SamlIdPProperties samlIdPProperties,
-                                                    final SamlIdPObjectEncrypter samlObjectEncrypter) {
+                                                    final SamlIdPObjectEncrypter samlObjectEncrypter,
+                                                    final SamlIdpAttributeResolver atrributeResolver) {
         super(configBean);
         this.samlAttributeEncoder = samlAttributeEncoder;
         this.samlIdPProperties = samlIdPProperties;
         this.samlObjectEncrypter = samlObjectEncrypter;
+        this.atrributeResolver = atrributeResolver;
     }
 
     @Override
@@ -73,9 +77,13 @@ public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20Obje
         val globalFriendlyNames = samlIdPProperties.getAttributeFriendlyNames();
         val friendlyNames = new HashMap<String, String>(CollectionUtils.convertDirectedListToMap(globalFriendlyNames));
         friendlyNames.putAll(service.getAttributeFriendlyNames());
-
+        atrributeResolver.getAttributeDefinitions().entrySet()
+                .forEach(e -> friendlyNames.put(e.getKey(), e.getValue().getFriendlyName()));
+        val names = new HashMap<String, String>();
+        atrributeResolver.getAttributeDefinitions().entrySet()
+                .forEach(e -> names.put(e.getKey(), e.getValue().getName()));
         val attrBuilder = new SamlProfileSamlRegisteredServiceAttributeBuilder(service, adaptor, messageContext, samlObjectEncrypter);
-        return newAttributeStatement(encodedAttrs, friendlyNames,
+        return newAttributeStatement(encodedAttrs, friendlyNames, names,
             service.getAttributeValueTypes(),
             nameFormats,
             resp.getDefaultAttributeNameFormat(),
