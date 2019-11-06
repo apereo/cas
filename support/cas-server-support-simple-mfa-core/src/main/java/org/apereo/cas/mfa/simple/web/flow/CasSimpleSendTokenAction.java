@@ -65,10 +65,10 @@ public class CasSimpleSendTokenAction extends AbstractAction {
         return error();
     }
 
-    private boolean isSmsSent(final CommunicationsManager communicationsManager,
-                              final CasSimpleMultifactorProperties properties,
-                              final Principal principal,
-                              final Ticket token) {
+    private static boolean isSmsSent(final CommunicationsManager communicationsManager,
+                                     final CasSimpleMultifactorProperties properties,
+                                     final Principal principal,
+                                     final Ticket token) {
         if (communicationsManager.isSmsSenderDefined()) {
             val smsProperties = properties.getSms();
             val smsText = StringUtils.isNotBlank(smsProperties.getText())
@@ -79,10 +79,10 @@ public class CasSimpleSendTokenAction extends AbstractAction {
         return false;
     }
 
-    private boolean isMailSent(final CommunicationsManager communicationsManager,
-                              final CasSimpleMultifactorProperties properties,
-                              final Principal principal,
-                              final Ticket token) {
+    private static boolean isMailSent(final CommunicationsManager communicationsManager,
+                                      final CasSimpleMultifactorProperties properties,
+                                      final Principal principal,
+                                      final Ticket token) {
         if (communicationsManager.isMailSenderDefined()) {
             val mailProperties = properties.getMail();
             return communicationsManager.email(principal, mailProperties.getAttributeName(), mailProperties, mailProperties.getFormattedBody(token.getId()));
