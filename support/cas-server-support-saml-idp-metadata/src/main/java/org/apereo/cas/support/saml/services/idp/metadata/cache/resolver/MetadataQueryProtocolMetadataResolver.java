@@ -106,7 +106,8 @@ public class MetadataQueryProtocolMetadataResolver extends UrlResourceMetadataRe
             IOUtils.write(result, output);
             output.flush();
             val etag = response.getFirstHeader("ETag").getValue();
-            Files.setAttribute(backupFile.toPath(), "user:ETag", ByteBuffer.wrap(etag.getBytes()));
+            Files.setAttribute(backupFile.toPath(), "user:ETag",
+                ByteBuffer.wrap(etag.getBytes(StandardCharsets.UTF_8)));
         }
         EntityUtils.consume(entity);
         return new InMemoryResourceMetadataResolver(backupFile, configBean);
