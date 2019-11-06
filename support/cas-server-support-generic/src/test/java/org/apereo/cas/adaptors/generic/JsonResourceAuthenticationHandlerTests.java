@@ -15,13 +15,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import lombok.SneakyThrows;
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
 import javax.security.auth.login.AccountExpiredException;
 import javax.security.auth.login.AccountLockedException;
 import javax.security.auth.login.AccountNotFoundException;
+
 import java.io.File;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
@@ -36,6 +39,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@Tag("FileSystem")
 public class JsonResourceAuthenticationHandlerTests {
     private final JsonResourceAuthenticationHandler handler;
 
@@ -109,6 +113,21 @@ public class JsonResourceAuthenticationHandlerTests {
         this.handler.setPasswordPolicyConfiguration(new PasswordPolicyContext(15));
     }
 
+    @Test
+    @SneakyThrows
+    public void verifyOkAccountFromExternalFile() {
+        val resource = new ClassPathResource("sample-users.json");
+        val creds = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "Mellon");
+        val jsonHandler = new JsonResourceAuthenticationHandler(null, mock(ServicesManager.class),
+            new DefaultPrincipalFactory(), null, resource);
+        val result = jsonHandler.authenticate(creds);
+        assertNotNull(result);
+        assertEquals("casuser", result.getPrincipal().getId());
+        assertFalse(result.getPrincipal().getAttributes().isEmpty());
+        assertTrue(result.getPrincipal().getAttributes().containsKey("firstName"));
+        assertEquals("Apereo", result.getPrincipal().getAttributes().get("firstName").get(0));
+    }
+    
     @Test
     @SneakyThrows
     public void verifyExpiringAccount() {
