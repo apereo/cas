@@ -42,8 +42,8 @@ The password file may also be specified as a JSON resource instead which allows 
     "password" : "Mellon",
     "attributes" : {
       "@class" : "java.util.LinkedHashMap",
-      "firstName" : ["Apereo"],
-      "lastName" : ["CAS"]
+      "firstName" : [ "java.util.List", ["Apereo"]],
+      "lastName" : [ "java.util.List", ["CAS"]]
     },
     "status" : "OK",
     "expirationDate" : "2050-01-01"
