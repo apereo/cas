@@ -1,8 +1,8 @@
 package org.apereo.cas.support.saml.idp.metadata.locator;
 
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
-import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -20,13 +20,16 @@ import java.nio.charset.StandardCharsets;
  * @since 5.3.0
  */
 @Slf4j
-@RequiredArgsConstructor
-public class FileSystemSamlIdPMetadataLocator implements SamlIdPMetadataLocator {
+public class FileSystemSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocator {
     private final File metadataLocation;
 
-    @SneakyThrows
-    public FileSystemSamlIdPMetadataLocator(final Resource metadataResource) {
-        this.metadataLocation = metadataResource.getFile();
+    public FileSystemSamlIdPMetadataLocator(final Resource resource) throws Exception {
+        this(resource.getFile());
+    }
+
+    public FileSystemSamlIdPMetadataLocator(final File resource) {
+        super(CipherExecutor.noOpOfStringToString());
+        this.metadataLocation = resource;
     }
 
     @Override
@@ -72,7 +75,7 @@ public class FileSystemSamlIdPMetadataLocator implements SamlIdPMetadataLocator 
 
     @SneakyThrows
     @Override
-    public SamlIdPMetadataDocument fetch() {
+    protected SamlIdPMetadataDocument fetchInternal() {
         val doc = new SamlIdPMetadataDocument();
         doc.setMetadata(IOUtils.toString(getMetadata().getInputStream(), StandardCharsets.UTF_8));
         doc.setEncryptionCertificate(IOUtils.toString(getEncryptionCertificate().getInputStream(), StandardCharsets.UTF_8));
