@@ -28,6 +28,7 @@ import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguratio
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.locator.FileSystemSamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
@@ -158,6 +159,14 @@ public abstract class BaseSamlIdPConfigurationTests {
     @Autowired
     @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
     protected SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver;
+
+    @Autowired
+    @Qualifier("samlIdPMetadataLocator")
+    protected SamlIdPMetadataLocator samlIdPMetadataLocator;
+    
+    @Autowired
+    @Qualifier("samlIdPMetadataGenerator")
+    protected SamlIdPMetadataGenerator samlIdPMetadataGenerator;
 
     @BeforeAll
     public static void beforeClass() {

@@ -16,21 +16,21 @@ public interface SamlIdPMetadataLocator {
      *
      * @return the signing cert file
      */
-    Resource getSigningCertificate();
+    Resource resolveSigningCertificate();
 
     /**
      * Gets signing key file.
      *
      * @return the signing key file
      */
-    Resource getSigningKey();
+    Resource resolveSigningKey();
 
     /**
      * Gets idp metadata file.
      *
      * @return the metadata file
      */
-    Resource getMetadata();
+    Resource resolveMetadata();
 
     /**
      * Gets encryption cert file.
@@ -44,7 +44,7 @@ public interface SamlIdPMetadataLocator {
      *
      * @return the encryption key file
      */
-    Resource getEncryptionKey();
+    Resource resolveEncryptionKey();
 
     /**
      * Initialize.

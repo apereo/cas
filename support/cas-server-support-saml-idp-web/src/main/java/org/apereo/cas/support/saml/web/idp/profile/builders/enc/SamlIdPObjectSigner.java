@@ -348,7 +348,7 @@ public class SamlIdPObjectSigner {
                         LOGGER.debug("Locating signature signing certificate from credential [{}]", CertUtils.toString(certificate));
                         return finalizeSigningCredential(new BasicX509Credential(certificate, privateKey), c);
                     }
-                    val signingCert = samlIdPMetadataLocator.getSigningCertificate();
+                    val signingCert = samlIdPMetadataLocator.resolveSigningCertificate();
                     LOGGER.debug("Locating signature signing certificate file from [{}]", signingCert);
                     val certificate = SamlUtils.readCertificate(signingCert);
                     return finalizeSigningCredential(new BasicX509Credential(certificate, privateKey), c);
@@ -386,7 +386,7 @@ public class SamlIdPObjectSigner {
      */
     protected PrivateKey getSigningPrivateKey() throws Exception {
         val samlIdp = casProperties.getAuthn().getSamlIdp();
-        val signingKey = samlIdPMetadataLocator.getSigningKey();
+        val signingKey = samlIdPMetadataLocator.resolveSigningKey();
         val privateKeyFactoryBean = new PrivateKeyFactoryBean();
         privateKeyFactoryBean.setLocation(signingKey);
         privateKeyFactoryBean.setAlgorithm(samlIdp.getMetadata().getPrivateKeyAlgName());

@@ -33,17 +33,17 @@ public class FileSystemSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLoc
     }
 
     @Override
-    public Resource getSigningCertificate() {
+    public Resource resolveSigningCertificate() {
         return new FileSystemResource(new File(metadataLocation, "/idp-signing.crt"));
     }
 
     @Override
-    public Resource getSigningKey() {
+    public Resource resolveSigningKey() {
         return new FileSystemResource(new File(metadataLocation, "/idp-signing.key"));
     }
 
     @Override
-    public Resource getMetadata() {
+    public Resource resolveMetadata() {
         return new FileSystemResource(new File(metadataLocation, "idp-metadata.xml"));
     }
 
@@ -53,7 +53,7 @@ public class FileSystemSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLoc
     }
 
     @Override
-    public Resource getEncryptionKey() {
+    public Resource resolveEncryptionKey() {
         return new FileSystemResource(new File(metadataLocation, "/idp-encryption.key"));
     }
 
@@ -70,18 +70,18 @@ public class FileSystemSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLoc
 
     @Override
     public boolean exists() {
-        return getMetadata().exists();
+        return resolveMetadata().exists();
     }
 
     @SneakyThrows
     @Override
     protected SamlIdPMetadataDocument fetchInternal() {
         val doc = new SamlIdPMetadataDocument();
-        doc.setMetadata(IOUtils.toString(getMetadata().getInputStream(), StandardCharsets.UTF_8));
+        doc.setMetadata(IOUtils.toString(resolveMetadata().getInputStream(), StandardCharsets.UTF_8));
         doc.setEncryptionCertificate(IOUtils.toString(getEncryptionCertificate().getInputStream(), StandardCharsets.UTF_8));
-        doc.setEncryptionKey(IOUtils.toString(getEncryptionKey().getInputStream(), StandardCharsets.UTF_8));
-        doc.setSigningCertificate(IOUtils.toString(getSigningCertificate().getInputStream(), StandardCharsets.UTF_8));
-        doc.setSigningKey(IOUtils.toString(getSigningKey().getInputStream(), StandardCharsets.UTF_8));
+        doc.setEncryptionKey(IOUtils.toString(resolveEncryptionKey().getInputStream(), StandardCharsets.UTF_8));
+        doc.setSigningCertificate(IOUtils.toString(resolveSigningCertificate().getInputStream(), StandardCharsets.UTF_8));
+        doc.setSigningKey(IOUtils.toString(resolveSigningKey().getInputStream(), StandardCharsets.UTF_8));
         return doc;
     }
 }

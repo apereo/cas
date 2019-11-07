@@ -23,7 +23,6 @@ public class CouchDbSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocato
 
     @Override
     public SamlIdPMetadataDocument fetchInternal() {
-        setMetadataDocument(couchDb.getOne());
-        return getMetadataDocument();
+        return couchDb.getOne();
     }
 }

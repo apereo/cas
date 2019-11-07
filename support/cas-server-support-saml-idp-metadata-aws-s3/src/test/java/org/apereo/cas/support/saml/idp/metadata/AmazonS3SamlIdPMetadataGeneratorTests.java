@@ -96,10 +96,10 @@ public class AmazonS3SamlIdPMetadataGeneratorTests {
     @Test
     public void verifyOperation() {
         samlIdPMetadataGenerator.generate();
-        assertNotNull(samlIdPMetadataLocator.getMetadata());
+        assertNotNull(samlIdPMetadataLocator.resolveMetadata());
         assertNotNull(samlIdPMetadataLocator.getEncryptionCertificate());
-        assertNotNull(samlIdPMetadataLocator.getEncryptionKey());
-        assertNotNull(samlIdPMetadataLocator.getSigningCertificate());
-        assertNotNull(samlIdPMetadataLocator.getSigningKey());
+        assertNotNull(samlIdPMetadataLocator.resolveEncryptionKey());
+        assertNotNull(samlIdPMetadataLocator.resolveSigningCertificate());
+        assertNotNull(samlIdPMetadataLocator.resolveSigningKey());
     }
 }

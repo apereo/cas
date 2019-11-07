@@ -1,5 +1,10 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationPolicyConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.RestServiceRegistryConfiguration;
@@ -47,6 +52,11 @@ import static org.mockito.Mockito.*;
 @EnableAutoConfiguration(exclude = {
     CasCoreServicesConfiguration.class,
     CasCoreUtilConfiguration.class,
+    CasCoreAuthenticationPrincipalConfiguration.class,
+    CasCoreAuthenticationPolicyConfiguration.class,
+    CasCoreAuthenticationMetadataConfiguration.class,
+    CasCoreAuthenticationSupportConfiguration.class,
+    CasCoreAuthenticationHandlersConfiguration.class,
     MailSenderAutoConfiguration.class,
     MetricsAutoConfiguration.class
 })
@@ -61,7 +71,6 @@ public class RestfulServiceRegistryTests extends AbstractServiceRegistryTests {
     public ServiceRegistry getNewServiceRegistry() {
         return dao;
     }
-
 
     @TestConfiguration
     public static class RestServicesTestConfiguration {
