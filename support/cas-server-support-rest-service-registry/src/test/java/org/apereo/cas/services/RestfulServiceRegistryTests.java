@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.metrics.MetricsAutoConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -45,6 +46,8 @@ import static org.mockito.Mockito.*;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableAutoConfiguration(exclude = {
     CasCoreServicesConfiguration.class,
+    CasCoreUtilConfiguration.class,
+    MailSenderAutoConfiguration.class,
     MetricsAutoConfiguration.class
 })
 @Tag("RestfulApi")

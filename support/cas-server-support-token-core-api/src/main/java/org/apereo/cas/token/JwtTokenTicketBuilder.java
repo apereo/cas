@@ -78,6 +78,7 @@ public class JwtTokenTicketBuilder implements TokenTicketBuilder {
 
         val builder = JwtBuilder.JwtRequest.builder();
         val request = builder.serviceAudience(jwtBuilder.getCasSeverPrefix())
+            .registeredService(Optional.empty())
             .issueDate(DateTimeUtils.dateOf(ticketGrantingTicket.getCreationTime()))
             .jwtId(ticketGrantingTicket.getId())
             .subject(authentication.getPrincipal().getId())
