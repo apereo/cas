@@ -2,6 +2,7 @@ package org.apereo.cas.trusted.authentication.storage;
 
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCouchDbCoreConfiguration;
 import org.apereo.cas.config.CouchDbMultifactorAuthenticationTrustConfiguration;
 import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
@@ -19,6 +20,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
@@ -31,9 +33,11 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 @Tag("CouchDb")
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    MailSenderAutoConfiguration.class,
     CouchDbMultifactorAuthenticationTrustConfiguration.class,
     CasCouchDbCoreConfiguration.class,
     CasCoreAuditConfiguration.class,
+    CasCoreUtilConfiguration.class,
     CasCoreServicesConfiguration.class,
     MultifactorAuthnTrustWebflowConfiguration.class,
     MultifactorAuthnTrustConfiguration.class,
