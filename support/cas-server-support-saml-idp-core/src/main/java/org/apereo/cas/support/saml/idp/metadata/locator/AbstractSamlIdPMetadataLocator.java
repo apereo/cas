@@ -29,6 +29,8 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor
 public abstract class AbstractSamlIdPMetadataLocator implements SamlIdPMetadataLocator {
 
+    private static final String CACHE_KEY_METADATA = "CasSamlIdentityProviderMetadata";
+
     /**
      * Cipher executor to encrypt/sign metadata.
      */
@@ -40,7 +42,6 @@ public abstract class AbstractSamlIdPMetadataLocator implements SamlIdPMetadataL
     protected SamlIdPMetadataDocument metadataDocument = new SamlIdPMetadataDocument();
 
     private Cache<String, SamlIdPMetadataDocument> metadataCache;
-
 
     @Override
     public Resource getSigningCertificate() {
@@ -105,12 +106,12 @@ public abstract class AbstractSamlIdPMetadataLocator implements SamlIdPMetadataL
         initializeCache();
 
         val map = metadataCache.asMap();
-        if (map.containsKey("CasSamlIdentityProviderMetadata")) {
-            return map.get("CasSamlIdentityProviderMetadata");
+        if (map.containsKey(CACHE_KEY_METADATA)) {
+            return map.get(CACHE_KEY_METADATA);
         }
         val document = fetchInternal();
         if (isMetadataDocumentValid()) {
-            map.put("CasSamlIdentityProviderMetadata", this.metadataDocument);
+            map.put(CACHE_KEY_METADATA, this.metadataDocument);
         }
         return document;
     }

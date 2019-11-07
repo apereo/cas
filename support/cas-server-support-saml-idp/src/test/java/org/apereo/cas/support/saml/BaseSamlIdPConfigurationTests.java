@@ -43,6 +43,7 @@ import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
 import lombok.Data;
+import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -212,6 +213,7 @@ public abstract class BaseSamlIdPConfigurationTests {
 
     @TestConfiguration
     public static class SamlIdPMetadataTestConfiguration {
+        @SneakyThrows
         @Bean
         public SamlIdPMetadataLocator samlIdPMetadataLocator() {
             return new FileSystemSamlIdPMetadataLocator(METADATA_DIRECTORY);
