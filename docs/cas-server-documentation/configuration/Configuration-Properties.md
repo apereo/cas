@@ -1051,7 +1051,7 @@ Retrieve attributes from a REST endpoint. RESTful settings for this feature are 
 # cas.authn.attributeRepository.rest[0].caseInsensitive=false
 ```
 
-The authenticating user id is passed in form of a request parameter under `username.` The response is expected
+The authenticating user id is passed in form of a request parameter under `username`. The response is expected
 to be a JSON map as such:
 
 ```json
