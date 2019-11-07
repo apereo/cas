@@ -179,7 +179,8 @@ public class JwtBuilder {
 
         private final Date validUntilDate;
 
-        private final Optional<RegisteredService> registeredService;
+        @Builder.Default
+        private Optional<RegisteredService> registeredService = Optional.empty();
 
         @Builder.Default
         private final Map<String, List<Object>> attributes = new LinkedHashMap<>();

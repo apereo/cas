@@ -201,8 +201,7 @@ public class RadiusConfiguration {
             .eventPublisher(applicationContext)
             .applicationContext(applicationContext)
             .build();
-        final CasWebflowEventResolver r = new DefaultMultifactorAuthenticationProviderWebflowEventResolver(context,
-            radiusAccessChallengedMultifactorAuthenticationTrigger());
+        val r = new DefaultMultifactorAuthenticationProviderWebflowEventResolver(context, radiusAccessChallengedMultifactorAuthenticationTrigger());
         LOGGER.debug("Activating MFA event resolver based on RADIUS...");
         this.initialAuthenticationAttemptWebflowEventResolver.getObject().addDelegate(r);
         return r;
