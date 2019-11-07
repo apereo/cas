@@ -35,11 +35,11 @@ public class JpaSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocator {
     public SamlIdPMetadataDocument fetchInternal() {
         try {
             val query = this.entityManager.createQuery("SELECT r FROM SamlIdPMetadataDocument r", SamlIdPMetadataDocument.class);
-            setMetadataDocument(query.setMaxResults(1).getSingleResult());
+            return query.setMaxResults(1).getSingleResult();
         } catch (final NoResultException e) {
             LOGGER.debug(e.getMessage(), e);
         }
-        return getMetadataDocument();
+        return new SamlIdPMetadataDocument();
     }
 }
 

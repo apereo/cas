@@ -36,16 +36,12 @@ public abstract class AbstractSamlIdPMetadataLocator implements SamlIdPMetadataL
      */
     protected final CipherExecutor<String, String> metadataCipherExecutor;
 
-    /**
-     * The idp metadata document fetched from storage.
-     */
-    protected SamlIdPMetadataDocument metadataDocument = new SamlIdPMetadataDocument();
-
     private Cache<String, SamlIdPMetadataDocument> metadataCache;
 
     @Override
-    public Resource getSigningCertificate() {
-        if (exists()) {
+    public Resource resolveSigningCertificate() {
+        val metadataDocument = fetch();
+        if (metadataDocument != null && metadataDocument.isValid()) {
             val cert = metadataDocument.getSigningCertificateDecoded();
             return new InputStreamResource(new ByteArrayInputStream(cert.getBytes(StandardCharsets.UTF_8)));
         }
@@ -53,8 +49,9 @@ public abstract class AbstractSamlIdPMetadataLocator implements SamlIdPMetadataL
     }
 
     @Override
-    public Resource getSigningKey() {
-        if (exists()) {
+    public Resource resolveSigningKey() {
+        val metadataDocument = fetch();
+        if (metadataDocument != null && metadataDocument.isValid()) {
             val data = metadataDocument.getSigningKey();
             val cert = metadataCipherExecutor.decode(data);
             return new InputStreamResource(new ByteArrayInputStream(cert.getBytes(StandardCharsets.UTF_8)));
@@ -63,8 +60,9 @@ public abstract class AbstractSamlIdPMetadataLocator implements SamlIdPMetadataL
     }
 
     @Override
-    public Resource getMetadata() {
-        if (exists()) {
+    public Resource resolveMetadata() {
+        val metadataDocument = fetch();
+        if (metadataDocument != null && metadataDocument.isValid()) {
             val data = metadataDocument.getMetadataDecoded();
             return new InputStreamResource(new ByteArrayInputStream(data.getBytes(StandardCharsets.UTF_8)));
         }
@@ -73,7 +71,8 @@ public abstract class AbstractSamlIdPMetadataLocator implements SamlIdPMetadataL
 
     @Override
     public Resource getEncryptionCertificate() {
-        if (exists()) {
+        val metadataDocument = fetch();
+        if (metadataDocument != null && metadataDocument.isValid()) {
             val cert = metadataDocument.getEncryptionCertificateDecoded();
             return new InputStreamResource(new ByteArrayInputStream(cert.getBytes(StandardCharsets.UTF_8)));
         }
@@ -81,8 +80,9 @@ public abstract class AbstractSamlIdPMetadataLocator implements SamlIdPMetadataL
     }
 
     @Override
-    public Resource getEncryptionKey() {
-        if (exists()) {
+    public Resource resolveEncryptionKey() {
+        val metadataDocument = fetch();
+        if (metadataDocument != null && metadataDocument.isValid()) {
             val data = metadataDocument.getEncryptionKey();
             val cert = metadataCipherExecutor.decode(data);
             return new InputStreamResource(new ByteArrayInputStream(cert.getBytes(StandardCharsets.UTF_8)));
@@ -91,14 +91,9 @@ public abstract class AbstractSamlIdPMetadataLocator implements SamlIdPMetadataL
     }
 
     @Override
-    public void initialize() {
-        fetch();
-    }
-
-    @Override
     public boolean exists() {
-        fetch();
-        return isMetadataDocumentValid();
+        val metadataDocument = fetch();
+        return metadataDocument != null && metadataDocument.isValid();
     }
 
     @Override
@@ -109,11 +104,11 @@ public abstract class AbstractSamlIdPMetadataLocator implements SamlIdPMetadataL
         if (map.containsKey(CACHE_KEY_METADATA)) {
             return map.get(CACHE_KEY_METADATA);
         }
-        val document = fetchInternal();
-        if (isMetadataDocumentValid()) {
-            map.put(CACHE_KEY_METADATA, this.metadataDocument);
+        val metadataDocument = fetchInternal();
+        if (metadataDocument != null && metadataDocument.isValid()) {
+            map.put(CACHE_KEY_METADATA, metadataDocument);
         }
-        return document;
+        return metadataDocument;
     }
 
     /**
@@ -122,10 +117,6 @@ public abstract class AbstractSamlIdPMetadataLocator implements SamlIdPMetadataL
      * @return the saml id p metadata document
      */
     protected abstract SamlIdPMetadataDocument fetchInternal();
-
-    private boolean isMetadataDocumentValid() {
-        return metadataDocument != null && metadataDocument.isValid();
-    }
 
     private void initializeCache() {
         if (metadataCache == null) {

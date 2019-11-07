@@ -26,7 +26,7 @@ public class FileSystemSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGener
         val encCert = getSamlIdPMetadataGeneratorConfigurationContext().getSamlIdPMetadataLocator()
             .getEncryptionCertificate().getFile();
         val encKey = getSamlIdPMetadataGeneratorConfigurationContext().getSamlIdPMetadataLocator()
-            .getEncryptionKey().getFile();
+            .resolveEncryptionKey().getFile();
         writeCertificateAndKey(encCert, encKey);
         return Pair.of(FileUtils.readFileToString(encCert, StandardCharsets.UTF_8), FileUtils.readFileToString(encKey, StandardCharsets.UTF_8));
     }
@@ -35,9 +35,9 @@ public class FileSystemSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGener
     @SneakyThrows
     public Pair<String, String> buildSelfSignedSigningCert() {
         val signingCert = getSamlIdPMetadataGeneratorConfigurationContext().getSamlIdPMetadataLocator()
-            .getSigningCertificate().getFile();
+            .resolveSigningCertificate().getFile();
         val signingKey = getSamlIdPMetadataGeneratorConfigurationContext().getSamlIdPMetadataLocator()
-            .getSigningKey().getFile();
+            .resolveSigningKey().getFile();
         writeCertificateAndKey(signingCert, signingKey);
         return Pair.of(FileUtils.readFileToString(signingCert, StandardCharsets.UTF_8),
             FileUtils.readFileToString(signingKey, StandardCharsets.UTF_8));
@@ -47,7 +47,7 @@ public class FileSystemSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGener
     @SneakyThrows
     protected String writeMetadata(final String metadata) {
         FileUtils.write(getSamlIdPMetadataGeneratorConfigurationContext().getSamlIdPMetadataLocator()
-            .getMetadata().getFile(), metadata, StandardCharsets.UTF_8);
+            .resolveMetadata().getFile(), metadata, StandardCharsets.UTF_8);
         return metadata;
     }
 

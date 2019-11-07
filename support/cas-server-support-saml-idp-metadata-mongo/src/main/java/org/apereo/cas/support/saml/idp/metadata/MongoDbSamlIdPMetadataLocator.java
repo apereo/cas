@@ -15,6 +15,7 @@ import org.springframework.data.mongodb.core.query.Query;
  */
 public class MongoDbSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocator {
     private final transient MongoTemplate mongoTemplate;
+
     private final String collectionName;
 
     public MongoDbSamlIdPMetadataLocator(final CipherExecutor<String, String> metadataCipherExecutor,
@@ -28,7 +29,6 @@ public class MongoDbSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocato
 
     @Override
     public SamlIdPMetadataDocument fetchInternal() {
-        setMetadataDocument(mongoTemplate.findOne(new Query(), SamlIdPMetadataDocument.class, this.collectionName));
-        return getMetadataDocument();
+        return mongoTemplate.findOne(new Query(), SamlIdPMetadataDocument.class, this.collectionName);
     }
 }

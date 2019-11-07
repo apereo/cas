@@ -92,7 +92,7 @@ public class GenerateSamlIdPMetadataCommand {
             val generator = new FileSystemSamlIdPMetadataGenerator(context);
             generator.initialize();
             generator.generate();
-            LOGGER.info("Generated metadata is available at [{}]", locator.getMetadata());
+            LOGGER.info("Generated metadata is available at [{}]", locator.resolveMetadata());
         } else {
             LOGGER.info("No metadata was generated; it might already exist at the specified path");
         }

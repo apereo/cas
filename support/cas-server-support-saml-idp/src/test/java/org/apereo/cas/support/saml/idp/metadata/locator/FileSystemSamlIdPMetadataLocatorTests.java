@@ -1,29 +1,29 @@
-package org.apereo.cas.support.saml.idp.metadata;
+package org.apereo.cas.support.saml.idp.metadata.locator;
 
-import org.apereo.cas.support.saml.BaseJpaSamlMetadataTests;
+import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link JpaSamlIdPMetadataGeneratorTests}.
+ * This is {@link FileSystemSamlIdPMetadataLocatorTests}.
  *
  * @author Misagh Moayyed
- * @since 6.0.0
+ * @since 6.2.0
  */
-@TestPropertySource(properties = "cas.authn.samlIdp.metadata.jpa.idpMetadataEnabled=true")
 @Tag("SAML")
-public class JpaSamlIdPMetadataGeneratorTests extends BaseJpaSamlMetadataTests {
+public class FileSystemSamlIdPMetadataLocatorTests extends BaseSamlIdPConfigurationTests {
     @Test
     public void verifyOperation() {
-        this.samlIdPMetadataGenerator.generate();
+        samlIdPMetadataLocator.initialize();
+        assertNotNull(samlIdPMetadataGenerator.generate());
         assertNotNull(samlIdPMetadataLocator.resolveMetadata());
         assertNotNull(samlIdPMetadataLocator.getEncryptionCertificate());
         assertNotNull(samlIdPMetadataLocator.resolveEncryptionKey());
         assertNotNull(samlIdPMetadataLocator.resolveSigningCertificate());
         assertNotNull(samlIdPMetadataLocator.resolveSigningKey());
+        assertTrue(samlIdPMetadataLocator.exists());
     }
 }

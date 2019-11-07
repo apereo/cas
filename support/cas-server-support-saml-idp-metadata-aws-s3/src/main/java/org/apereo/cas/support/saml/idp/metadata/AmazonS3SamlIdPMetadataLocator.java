@@ -29,11 +29,13 @@ public class AmazonS3SamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocat
 
     @Override
     public SamlIdPMetadataDocument fetchInternal() {
+        val metadataDocument = new SamlIdPMetadataDocument();
+
         try {
             LOGGER.debug("Locating S3 object(s) from bucket [{}]...", bucketName);
             if (!s3Client.doesBucketExistV2(bucketName)) {
                 LOGGER.debug("S3 bucket [{}] does not exist", bucketName);
-                return getMetadataDocument();
+                return metadataDocument;
             }
 
             val result = s3Client.listObjectsV2(bucketName);
@@ -64,7 +66,7 @@ public class AmazonS3SamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocat
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
-        return getMetadataDocument();
+        return metadataDocument;
     }
 }
 

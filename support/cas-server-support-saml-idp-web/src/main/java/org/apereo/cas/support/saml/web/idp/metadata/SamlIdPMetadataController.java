@@ -48,7 +48,7 @@ public class SamlIdPMetadataController implements InitializingBean {
     @GetMapping(path = SamlIdPConstants.ENDPOINT_IDP_METADATA)
     public void generateMetadataForIdp(final HttpServletResponse response) throws IOException {
         this.metadataAndCertificatesGenerationService.generate();
-        val md = this.samlIdPMetadataLocator.getMetadata().getInputStream();
+        val md = this.samlIdPMetadataLocator.resolveMetadata().getInputStream();
         val contents = IOUtils.toString(md, StandardCharsets.UTF_8);
         response.setContentType(CONTENT_TYPE);
         response.setStatus(HttpServletResponse.SC_OK);
