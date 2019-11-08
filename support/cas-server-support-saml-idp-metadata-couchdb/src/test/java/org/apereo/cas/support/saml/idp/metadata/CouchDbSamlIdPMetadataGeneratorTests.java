@@ -29,6 +29,8 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -92,10 +94,10 @@ public class CouchDbSamlIdPMetadataGeneratorTests {
     @Test
     public void verifyOperation() {
         this.samlIdPMetadataGenerator.generate();
-        assertNotNull(samlIdPMetadataLocator.resolveMetadata());
-        assertNotNull(samlIdPMetadataLocator.getEncryptionCertificate());
-        assertNotNull(samlIdPMetadataLocator.resolveEncryptionKey());
-        assertNotNull(samlIdPMetadataLocator.resolveSigningCertificate());
-        assertNotNull(samlIdPMetadataLocator.resolveSigningKey());
+        assertNotNull(samlIdPMetadataLocator.resolveMetadata(Optional.empty()));
+        assertNotNull(samlIdPMetadataLocator.getEncryptionCertificate(Optional.empty()));
+        assertNotNull(samlIdPMetadataLocator.resolveEncryptionKey(Optional.empty()));
+        assertNotNull(samlIdPMetadataLocator.resolveSigningCertificate(Optional.empty()));
+        assertNotNull(samlIdPMetadataLocator.resolveSigningKey(Optional.empty()));
     }
 }

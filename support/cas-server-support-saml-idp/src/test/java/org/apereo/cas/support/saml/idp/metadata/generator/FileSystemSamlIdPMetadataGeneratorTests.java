@@ -5,6 +5,8 @@ import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -18,10 +20,10 @@ public class FileSystemSamlIdPMetadataGeneratorTests extends BaseSamlIdPConfigur
     @Test
     public void verifyOperation() {
         assertNotNull(samlIdPMetadataGenerator.generate());
-        assertNotNull(samlIdPMetadataLocator.resolveMetadata());
-        assertNotNull(samlIdPMetadataLocator.getEncryptionCertificate());
-        assertNotNull(samlIdPMetadataLocator.resolveEncryptionKey());
-        assertNotNull(samlIdPMetadataLocator.resolveSigningCertificate());
-        assertNotNull(samlIdPMetadataLocator.resolveSigningKey());
+        assertNotNull(samlIdPMetadataLocator.resolveMetadata(Optional.empty()));
+        assertNotNull(samlIdPMetadataLocator.getEncryptionCertificate(Optional.empty()));
+        assertNotNull(samlIdPMetadataLocator.resolveEncryptionKey(Optional.empty()));
+        assertNotNull(samlIdPMetadataLocator.resolveSigningCertificate(Optional.empty()));
+        assertNotNull(samlIdPMetadataLocator.resolveSigningKey(Optional.empty()));
     }
 }

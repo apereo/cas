@@ -1,11 +1,14 @@
 package org.apereo.cas.support.saml.idp.metadata;
 
 import org.apereo.cas.support.saml.idp.metadata.locator.AbstractSamlIdPMetadataLocator;
+import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
+
+import java.util.Optional;
 
 /**
  * This is {@link MongoDbSamlIdPMetadataLocator}.
@@ -28,7 +31,7 @@ public class MongoDbSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocato
 
 
     @Override
-    public SamlIdPMetadataDocument fetchInternal() {
+    public SamlIdPMetadataDocument fetchInternal(final Optional<SamlRegisteredService> registeredService) {
         return mongoTemplate.findOne(new Query(), SamlIdPMetadataDocument.class, this.collectionName);
     }
 }
