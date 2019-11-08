@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.idp.metadata.locator;
 
+import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
@@ -12,6 +13,7 @@ import org.springframework.core.io.Resource;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
+import java.util.Optional;
 
 /**
  * This is {@link FileSystemSamlIdPMetadataLocator}.
@@ -33,27 +35,27 @@ public class FileSystemSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLoc
     }
 
     @Override
-    public Resource resolveSigningCertificate() {
+    public Resource resolveSigningCertificate(final Optional<SamlRegisteredService> registeredService) {
         return new FileSystemResource(new File(metadataLocation, "/idp-signing.crt"));
     }
 
     @Override
-    public Resource resolveSigningKey() {
+    public Resource resolveSigningKey(final Optional<SamlRegisteredService> registeredService) {
         return new FileSystemResource(new File(metadataLocation, "/idp-signing.key"));
     }
 
     @Override
-    public Resource resolveMetadata() {
+    public Resource resolveMetadata(final Optional<SamlRegisteredService> registeredService) {
         return new FileSystemResource(new File(metadataLocation, "idp-metadata.xml"));
     }
 
     @Override
-    public Resource getEncryptionCertificate() {
+    public Resource getEncryptionCertificate(final Optional<SamlRegisteredService> registeredService) {
         return new FileSystemResource(new File(metadataLocation, "/idp-encryption.crt"));
     }
 
     @Override
-    public Resource resolveEncryptionKey() {
+    public Resource resolveEncryptionKey(final Optional<SamlRegisteredService> registeredService) {
         return new FileSystemResource(new File(metadataLocation, "/idp-encryption.key"));
     }
 
@@ -69,19 +71,19 @@ public class FileSystemSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLoc
     }
 
     @Override
-    public boolean exists() {
-        return resolveMetadata().exists();
+    public boolean exists(final Optional<SamlRegisteredService> registeredService) {
+        return resolveMetadata(registeredService).exists();
     }
 
     @SneakyThrows
     @Override
-    protected SamlIdPMetadataDocument fetchInternal() {
+    protected SamlIdPMetadataDocument fetchInternal(final Optional<SamlRegisteredService> registeredService) {
         val doc = new SamlIdPMetadataDocument();
-        doc.setMetadata(IOUtils.toString(resolveMetadata().getInputStream(), StandardCharsets.UTF_8));
-        doc.setEncryptionCertificate(IOUtils.toString(getEncryptionCertificate().getInputStream(), StandardCharsets.UTF_8));
-        doc.setEncryptionKey(IOUtils.toString(resolveEncryptionKey().getInputStream(), StandardCharsets.UTF_8));
-        doc.setSigningCertificate(IOUtils.toString(resolveSigningCertificate().getInputStream(), StandardCharsets.UTF_8));
-        doc.setSigningKey(IOUtils.toString(resolveSigningKey().getInputStream(), StandardCharsets.UTF_8));
+        doc.setMetadata(IOUtils.toString(resolveMetadata(registeredService).getInputStream(), StandardCharsets.UTF_8));
+        doc.setEncryptionCertificate(IOUtils.toString(getEncryptionCertificate(registeredService).getInputStream(), StandardCharsets.UTF_8));
+        doc.setEncryptionKey(IOUtils.toString(resolveEncryptionKey(registeredService).getInputStream(), StandardCharsets.UTF_8));
+        doc.setSigningCertificate(IOUtils.toString(resolveSigningCertificate(registeredService).getInputStream(), StandardCharsets.UTF_8));
+        doc.setSigningKey(IOUtils.toString(resolveSigningKey(registeredService).getInputStream(), StandardCharsets.UTF_8));
         return doc;
     }
 }

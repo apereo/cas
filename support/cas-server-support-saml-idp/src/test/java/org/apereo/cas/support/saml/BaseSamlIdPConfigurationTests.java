@@ -174,7 +174,7 @@ public abstract class BaseSamlIdPConfigurationTests {
     }
 
     protected static Assertion getAssertion() {
-        val attributes = new LinkedHashMap<>(CoreAuthenticationTestUtils.getAttributes());
+        val attributes = new LinkedHashMap<String, Object>(CoreAuthenticationTestUtils.getAttributes());
         val permissions = new ArrayList<>();
         permissions.add(new PermissionSamlAttributeValue("admin", "cas-admins", "super-cas"));
         permissions.add(new PermissionSamlAttributeValue("designer", "cas-designers", "cas-ux"));

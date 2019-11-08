@@ -21,14 +21,17 @@ public class InMemoryResourceMetadataResolver extends DOMMetadataResolver {
 
     public InMemoryResourceMetadataResolver(final Resource metadataResource, final OpenSamlConfigBean configBean) throws IOException {
         super(getMetadataRootElement(metadataResource.getInputStream(), configBean));
+        setParserPool(configBean.getParserPool());
     }
 
     public InMemoryResourceMetadataResolver(final InputStream metadataResource, final OpenSamlConfigBean configBean) {
         super(getMetadataRootElement(metadataResource, configBean));
+        setParserPool(configBean.getParserPool());
     }
 
     public InMemoryResourceMetadataResolver(final File metadataResource, final OpenSamlConfigBean configBean) throws IOException {
         super(getMetadataRootElement(Files.newInputStream(metadataResource.toPath()), configBean));
+        setParserPool(configBean.getParserPool());
     }
 
     @SneakyThrows

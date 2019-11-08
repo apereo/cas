@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml.idp.metadata;
 
 import org.apereo.cas.support.saml.idp.metadata.locator.AbstractSamlIdPMetadataLocator;
+import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
@@ -8,6 +9,8 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.util.IOUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+
+import java.util.Optional;
 
 /**
  * This is {@link AmazonS3SamlIdPMetadataLocator}.
@@ -28,7 +31,7 @@ public class AmazonS3SamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocat
     }
 
     @Override
-    public SamlIdPMetadataDocument fetchInternal() {
+    public SamlIdPMetadataDocument fetchInternal(final Optional<SamlRegisteredService> registeredService) {
         val metadataDocument = new SamlIdPMetadataDocument();
 
         try {

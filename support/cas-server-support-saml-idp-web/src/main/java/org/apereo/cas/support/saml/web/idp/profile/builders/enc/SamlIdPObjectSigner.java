@@ -54,6 +54,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.security.PrivateKey;
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 /**
@@ -232,7 +233,7 @@ public class SamlIdPObjectSigner {
         val config = configureSignatureSigningSecurityConfiguration(service);
 
         val samlIdp = casProperties.getAuthn().getSamlIdp();
-        val privateKey = getSigningPrivateKey();
+        val privateKey = getSigningPrivateKey(service);
 
         val kekCredentialResolver = new MetadataCredentialResolver();
         val roleDescriptorResolver = SamlIdPUtils.getRoleDescriptorResolver(casSamlIdPMetadataResolver, samlIdp.getMetadata().isRequireValidMetadata());
@@ -348,7 +349,7 @@ public class SamlIdPObjectSigner {
                         LOGGER.debug("Locating signature signing certificate from credential [{}]", CertUtils.toString(certificate));
                         return finalizeSigningCredential(new BasicX509Credential(certificate, privateKey), c);
                     }
-                    val signingCert = samlIdPMetadataLocator.resolveSigningCertificate();
+                    val signingCert = samlIdPMetadataLocator.resolveSigningCertificate(Optional.of(service));
                     LOGGER.debug("Locating signature signing certificate file from [{}]", signingCert);
                     val certificate = SamlUtils.readCertificate(signingCert);
                     return finalizeSigningCredential(new BasicX509Credential(certificate, privateKey), c);
@@ -381,12 +382,13 @@ public class SamlIdPObjectSigner {
     /**
      * Gets signing private key.
      *
+     * @param registeredService the registered service
      * @return the signing private key
      * @throws Exception the exception
      */
-    protected PrivateKey getSigningPrivateKey() throws Exception {
+    protected PrivateKey getSigningPrivateKey(final SamlRegisteredService registeredService) throws Exception {
         val samlIdp = casProperties.getAuthn().getSamlIdp();
-        val signingKey = samlIdPMetadataLocator.resolveSigningKey();
+        val signingKey = samlIdPMetadataLocator.resolveSigningKey(Optional.of(registeredService));
         val privateKeyFactoryBean = new PrivateKeyFactoryBean();
         privateKeyFactoryBean.setLocation(signingKey);
         privateKeyFactoryBean.setAlgorithm(samlIdp.getMetadata().getPrivateKeyAlgName());
