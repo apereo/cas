@@ -419,7 +419,7 @@ subprojects {
 
     [compileTestJava, compileJava].each {
         it.options.fork = false
-        it.options.incremental = false
+        it.options.incremental = true
 
         def casCompilerArgs = ["-parameters"]
 
