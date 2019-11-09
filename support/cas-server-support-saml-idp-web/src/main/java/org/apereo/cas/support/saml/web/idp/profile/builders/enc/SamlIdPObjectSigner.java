@@ -48,13 +48,10 @@ import org.opensaml.xmlsec.config.impl.DefaultSecurityConfigurationBootstrap;
 import org.opensaml.xmlsec.context.SecurityParametersContext;
 import org.opensaml.xmlsec.criterion.SignatureSigningConfigurationCriterion;
 import org.opensaml.xmlsec.impl.BasicSignatureSigningConfiguration;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.Resource;
-import org.springframework.util.ResourceUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import java.security.PrivateKey;
 import java.util.ArrayList;
 import java.util.Objects;
@@ -75,6 +72,25 @@ public class SamlIdPObjectSigner {
     private final CasConfigurationProperties casProperties;
 
     private final SamlIdPMetadataLocator samlIdPMetadataLocator;
+
+    private static boolean doesCredentialFingerprintMatch(final AbstractCredential credential, final SamlRegisteredService samlRegisteredService) {
+        val fingerprint = samlRegisteredService.getSigningCredentialFingerprint();
+        if (StringUtils.isNotBlank(fingerprint)) {
+            val digest = DigestUtils.digest("SHA-1", Objects.requireNonNull(credential.getPublicKey()).getEncoded());
+            val pattern = RegexUtils.createPattern(fingerprint, Pattern.CASE_INSENSITIVE);
+            LOGGER.debug("Matching credential fingerprint [{}] against filter [{}] for service [{}]", digest, fingerprint, samlRegisteredService.getName());
+            return pattern.matcher(digest).find();
+        }
+        return true;
+    }
+
+    private static AbstractCredential finalizeSigningCredential(final MutableCredential credential, final Credential original) {
+        credential.setEntityId(original.getEntityId());
+        credential.setUsageType(original.getUsageType());
+        Objects.requireNonNull(original.getCredentialContextSet())
+            .forEach(ctx -> Objects.requireNonNull(credential.getCredentialContextSet()).add(ctx));
+        return (AbstractCredential) credential;
+    }
 
     /**
      * Encode a given saml object by invoking a number of outbound security handlers on the context.
@@ -227,7 +243,7 @@ public class SamlIdPObjectSigner {
     /**
      * Gets signature signing configuration.
      *
-     * @param service        the service
+     * @param service the service
      * @return the signature signing configuration
      * @throws Exception the exception
      */
@@ -330,9 +346,8 @@ public class SamlIdPObjectSigner {
 
     private AbstractCredential getResolvedSigningCredential(final Credential c, final PrivateKey privateKey,
                                                             final SamlRegisteredService service) {
-        val samlIdp = casProperties.getAuthn().getSamlIdp();
-
         try {
+            val samlIdp = casProperties.getAuthn().getSamlIdp();
             val credType = SamlIdPResponseProperties.SignatureCredentialTypes.valueOf(
                 StringUtils.defaultIfBlank(service.getSigningCredentialType(), samlIdp.getResponse().getCredentialType().name()).toUpperCase());
             LOGGER.trace("Requested credential type [{}] is found for service [{}]", credType, service.getName());
@@ -362,25 +377,6 @@ public class SamlIdPObjectSigner {
         return null;
     }
 
-    private static boolean doesCredentialFingerprintMatch(final AbstractCredential credential, final SamlRegisteredService samlRegisteredService) {
-        val fingerprint = samlRegisteredService.getSigningCredentialFingerprint();
-        if (StringUtils.isNotBlank(fingerprint)) {
-            val digest = DigestUtils.digest("SHA-1", Objects.requireNonNull(credential.getPublicKey()).getEncoded());
-            val pattern = RegexUtils.createPattern(fingerprint, Pattern.CASE_INSENSITIVE);
-            LOGGER.debug("Matching credential fingerprint [{}] against filter [{}] for service [{}]", digest, fingerprint, samlRegisteredService.getName());
-            return pattern.matcher(digest).find();
-        }
-        return true;
-    }
-
-    private static AbstractCredential finalizeSigningCredential(final MutableCredential credential, final Credential original) {
-        credential.setEntityId(original.getEntityId());
-        credential.setUsageType(original.getUsageType());
-        Objects.requireNonNull(original.getCredentialContextSet())
-            .forEach(ctx -> Objects.requireNonNull(credential.getCredentialContextSet()).add(ctx));
-        return (AbstractCredential) credential;
-    }
-
     /**
      * Gets signing private key.
      *
@@ -393,34 +389,14 @@ public class SamlIdPObjectSigner {
         val signingKey = samlIdPMetadataLocator.resolveSigningKey(Optional.of(registeredService));
         val privateKeyFactoryBean = new PrivateKeyFactoryBean();
         privateKeyFactoryBean.setLocation(signingKey);
-        if (StringUtils.isBlank(service.getIssuerSigningKeyLocation())) {
+        if (StringUtils.isBlank(registeredService.getSigningKeyAlgorithm())) {
             privateKeyFactoryBean.setAlgorithm(samlIdp.getMetadata().getPrivateKeyAlgName());
         } else {
-            privateKeyFactoryBean.setAlgorithm(service.getIssuerSigningAlgorithm());
+            privateKeyFactoryBean.setAlgorithm(registeredService.getSigningKeyAlgorithm());
         }
         privateKeyFactoryBean.setSingleton(false);
-        LOGGER.debug("Locating signature signing key from [{}]", signingKey);
+        LOGGER.debug("Locating signature signing key for [{}] using algorithm [{}}",
+            registeredService, privateKeyFactoryBean.getAlgorithm());
         return privateKeyFactoryBean.getObject();
-    }
-
-    /**
-     * Create the private key.
-     *
-     * @param location - resource location of private key
-     * @return - Resource
-     * @throws Exception if key creation ran into an error
-     */
-    protected Resource createServicePrivateKeyResource(final String location) throws Exception {
-        if (StringUtils.isBlank(location)) {
-            return samlIdPMetadataLocator.getSigningKey();
-        }
-
-        if (location.startsWith(ResourceUtils.CLASSPATH_URL_PREFIX)) {
-            return new ClassPathResource(StringUtils.removeStart(location, ResourceUtils.CLASSPATH_URL_PREFIX));
-        }
-        if (location.startsWith(ResourceUtils.FILE_URL_PREFIX)) {
-            return new FileSystemResource(StringUtils.removeStart(location, ResourceUtils.FILE_URL_PREFIX));
-        }
-        return new FileSystemResource(location);
     }
 }

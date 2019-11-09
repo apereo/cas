@@ -2,6 +2,7 @@ package org.apereo.cas.support.saml.idp.metadata;
 
 import org.apereo.cas.support.saml.idp.metadata.generator.BaseSamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGeneratorConfigurationContext;
+import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
 
 import lombok.SneakyThrows;
@@ -17,6 +18,8 @@ import org.springframework.transaction.support.TransactionTemplate;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+
+import java.util.Optional;
 
 /**
  * This is {@link JpaSamlIdPMetadataGenerator}.
@@ -40,7 +43,7 @@ public class JpaSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGenerator {
 
     @Override
     @SneakyThrows
-    public Pair<String, String> buildSelfSignedEncryptionCert() {
+    public Pair<String, String> buildSelfSignedEncryptionCert(final Optional<SamlRegisteredService> registeredService) {
         val results = generateCertificateAndKey();
         val doc = getSamlIdPMetadataDocument();
         doc.setEncryptionCertificate(results.getKey());
@@ -50,7 +53,7 @@ public class JpaSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGenerator {
 
     @Override
     @SneakyThrows
-    public Pair<String, String> buildSelfSignedSigningCert() {
+    public Pair<String, String> buildSelfSignedSigningCert(final Optional<SamlRegisteredService> registeredService) {
         val results = generateCertificateAndKey();
         val doc = getSamlIdPMetadataDocument();
         doc.setSigningCertificate(results.getKey());
@@ -68,14 +71,14 @@ public class JpaSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGenerator {
     }
 
     @Override
-    public String writeMetadata(final String metadata) {
+    public String writeMetadata(final String metadata, final Optional<SamlRegisteredService> registeredService) {
         val doc = getSamlIdPMetadataDocument();
         doc.setMetadata(metadata);
         return metadata;
     }
 
     @Override
-    protected SamlIdPMetadataDocument finalizeMetadataDocument(final SamlIdPMetadataDocument doc) {
+    protected SamlIdPMetadataDocument finalizeMetadataDocument(final SamlIdPMetadataDocument doc, final Optional<SamlRegisteredService> registeredService) {
         saveSamlIdPMetadataDocument(doc);
         return doc;
     }

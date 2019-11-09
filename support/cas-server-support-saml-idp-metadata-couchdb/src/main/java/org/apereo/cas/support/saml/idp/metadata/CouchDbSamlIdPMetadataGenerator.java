@@ -4,11 +4,13 @@ import org.apereo.cas.couchdb.saml.CouchDbSamlIdPMetadataDocument;
 import org.apereo.cas.couchdb.saml.SamlIdPMetadataCouchDbRepository;
 import org.apereo.cas.support.saml.idp.metadata.generator.BaseSamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGeneratorConfigurationContext;
+import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
 
 import lombok.SneakyThrows;
-import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
+
+import java.util.Optional;
 
 /**
  * This is {@link CouchDbSamlIdPMetadataGenerator}.
@@ -20,57 +22,37 @@ public class CouchDbSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGenerato
 
     private final SamlIdPMetadataCouchDbRepository couchDb;
 
-    public CouchDbSamlIdPMetadataGenerator(final SamlIdPMetadataGeneratorConfigurationContext samlIdPMetadataGeneratorConfigurationContext, final SamlIdPMetadataCouchDbRepository couchDb) {
-        super(samlIdPMetadataGeneratorConfigurationContext);
+    public CouchDbSamlIdPMetadataGenerator(final SamlIdPMetadataGeneratorConfigurationContext context,
+                                           final SamlIdPMetadataCouchDbRepository couchDb) {
+        super(context);
         this.couchDb = couchDb;
     }
 
     @Override
-    @SneakyThrows
-    public Pair<String, String> buildSelfSignedEncryptionCert() {
-        val results = generateCertificateAndKey();
-        val doc = getSamlIdPMetadataDocument();
-        doc.setEncryptionCertificate(results.getKey());
-        doc.setEncryptionKey(results.getValue());
-        saveSamlIdPMetadataDocument(doc);
-        return results;
-    }
-
-    @Override
-    @SneakyThrows
-    public Pair<String, String> buildSelfSignedSigningCert() {
-        val results = generateCertificateAndKey();
-        val doc = getSamlIdPMetadataDocument();
-        doc.setSigningCertificate(results.getKey());
-        doc.setSigningKey(results.getValue());
-        saveSamlIdPMetadataDocument(doc);
-        return results;
-    }
-
-    @Override
-    protected String writeMetadata(final String metadata) {
-        val doc = getSamlIdPMetadataDocument();
-        doc.setMetadata(metadata);
-        saveSamlIdPMetadataDocument(doc);
-        return metadata;
-    }
-
-    private void saveSamlIdPMetadataDocument(final SamlIdPMetadataDocument doc) {
-        val couchDoc = couchDb.getOne();
+    protected SamlIdPMetadataDocument finalizeMetadataDocument(final SamlIdPMetadataDocument doc,
+                                                               final Optional<SamlRegisteredService> registeredService) {
+        var couchDoc = registeredService.isPresent()
+            ? couchDb.getForService(registeredService)
+            : couchDb.getForAll();
         if (couchDoc == null) {
-            couchDb.add(new CouchDbSamlIdPMetadataDocument(doc));
+            couchDoc = new CouchDbSamlIdPMetadataDocument(doc);
+            couchDoc.setAppliesTo(couchDb.getAppliesToFor(registeredService));
+            couchDb.add(couchDoc);
         } else {
             couchDb.update(couchDoc.merge(doc));
         }
+        return couchDoc;
     }
 
-    private CouchDbSamlIdPMetadataDocument getSamlIdPMetadataDocument() {
-        val metadata = couchDb.getOne();
-        if (metadata == null) {
-            return new CouchDbSamlIdPMetadataDocument();
-        }
-        return metadata;
+    @Override
+    @SneakyThrows
+    public Pair<String, String> buildSelfSignedEncryptionCert(final Optional<SamlRegisteredService> registeredService) {
+        return generateCertificateAndKey();
     }
 
-
+    @Override
+    @SneakyThrows
+    public Pair<String, String> buildSelfSignedSigningCert(final Optional<SamlRegisteredService> registeredService) {
+        return generateCertificateAndKey();
+    }
 }

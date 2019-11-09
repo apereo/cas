@@ -86,10 +86,7 @@ public class SamlRegisteredService extends RegexRegisteredService {
     private String issuerEntityId;
 
     @Column
-    private String issuerSigningKeyLocation;
-
-    @Column
-    private String issuerSigningAlgorithm;
+    private String signingKeyAlgorithm;
 
     @Column
     private boolean signAssertions;
