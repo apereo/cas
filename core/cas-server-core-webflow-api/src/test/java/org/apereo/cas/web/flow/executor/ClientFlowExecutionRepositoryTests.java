@@ -57,7 +57,7 @@ public class ClientFlowExecutionRepositoryTests {
             val key = ClientFlowExecutionKey.parse(launchResult.getPausedKey());
             assertEquals(key.toString(), launchResult.getPausedKey());
         } catch (final BadlyFormattedFlowExecutionKeyException e) {
-            fail("Error parsing flow execution key: " + e.getMessage());
+            fail(() -> "Error parsing flow execution key: " + e.getMessage());
         }
         val context = new MockExternalContext();
         context.setEventId("submit");

@@ -110,7 +110,7 @@ public class JsonResourceAuthenticationHandler extends AbstractUsernamePasswordA
     private Map<String, CasUserAccount> readAccountsFromResource() throws PreventedException {
         try {
             return mapper.readValue(resource.getInputStream(),
-                new TypeReference<Map<String, CasUserAccount>>() {
+                new TypeReference<>() {
                 });
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);

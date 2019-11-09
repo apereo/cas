@@ -7,6 +7,7 @@ import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.integration.pac4j.DistributedJ2ESessionStore;
@@ -156,6 +157,10 @@ import java.util.Set;
 public class CasOAuth20Configuration {
     @Autowired
     private ResourceLoader resourceLoader;
+
+    @Autowired
+    @Qualifier("defaultPrincipalResolver")
+    private ObjectProvider<PrincipalResolver> defaultPrincipalResolver;
 
     @Autowired
     @Qualifier("registeredServiceAccessStrategyEnforcer")
@@ -315,7 +320,9 @@ public class CasOAuth20Configuration {
         return new OAuth20ClientIdClientSecretAuthenticator(servicesManager.getObject(),
             webApplicationServiceFactory.getObject(),
             registeredServiceAccessStrategyEnforcer.getObject(),
-            oauthRegisteredServiceCipherExecutor(), ticketRegistry.getObject());
+            oauthRegisteredServiceCipherExecutor(),
+            ticketRegistry.getObject(),
+            defaultPrincipalResolver.getObject());
     }
 
     @ConditionalOnMissingBean(name = "oAuthProofKeyCodeExchangeAuthenticator")
@@ -325,7 +332,8 @@ public class CasOAuth20Configuration {
             webApplicationServiceFactory.getObject(),
             registeredServiceAccessStrategyEnforcer.getObject(),
             ticketRegistry.getObject(),
-            oauthRegisteredServiceCipherExecutor());
+            oauthRegisteredServiceCipherExecutor(),
+            defaultPrincipalResolver.getObject());
     }
 
     @ConditionalOnMissingBean(name = "oAuthUserAuthenticator")

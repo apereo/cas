@@ -40,7 +40,8 @@ public class OAuth20ProofKeyCodeExchangeAuthenticatorTests extends BaseOAuth20Au
     public void init() {
         authenticator = new OAuth20ProofKeyCodeExchangeAuthenticator(servicesManager, serviceFactory,
             new RegisteredServiceAccessStrategyAuditableEnforcer(), ticketRegistry,
-            new OAuth20RegisteredServiceCipherExecutor());
+            new OAuth20RegisteredServiceCipherExecutor(),
+            defaultPrincipalResolver);
     }
 
     @Test
