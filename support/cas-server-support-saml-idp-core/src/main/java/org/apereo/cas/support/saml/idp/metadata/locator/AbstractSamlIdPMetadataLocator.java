@@ -102,12 +102,14 @@ public abstract class AbstractSamlIdPMetadataLocator implements SamlIdPMetadataL
         initializeCache();
 
         val map = metadataCache.asMap();
-        if (map.containsKey(CACHE_KEY_METADATA)) {
-            return map.get(CACHE_KEY_METADATA);
+        val key = buildCacheKey(registeredService);
+
+        if (map.containsKey(key)) {
+            return map.get(key);
         }
         val metadataDocument = fetchInternal(registeredService);
         if (metadataDocument != null && metadataDocument.isValid()) {
-            map.put(CACHE_KEY_METADATA, metadataDocument);
+            map.put(key, metadataDocument);
         }
         return metadataDocument;
     }
@@ -128,5 +130,13 @@ public abstract class AbstractSamlIdPMetadataLocator implements SamlIdPMetadataL
                 .expireAfterAccess(1, TimeUnit.HOURS)
                 .build();
         }
+    }
+
+    private static String buildCacheKey(final Optional<SamlRegisteredService> registeredService) {
+        if (registeredService.isEmpty()) {
+            return CACHE_KEY_METADATA;
+        }
+        val samlRegisteredService = registeredService.get();
+        return CACHE_KEY_METADATA + '_' + samlRegisteredService.getId() + '_' + samlRegisteredService.getName();
     }
 }

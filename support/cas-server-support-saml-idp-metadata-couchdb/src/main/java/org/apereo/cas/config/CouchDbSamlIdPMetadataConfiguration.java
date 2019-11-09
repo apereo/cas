@@ -29,6 +29,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ResourceLoader;
 
+import java.util.Optional;
+
 /**
  * This is {@link CouchDbSamlIdPMetadataConfiguration}.
  *
@@ -99,7 +101,7 @@ public class CouchDbSamlIdPMetadataConfiguration {
     }
 
     @ConditionalOnMissingBean(name = "couchDbSamlIdPMetadataGenerator")
-    @Bean(initMethod = "generate")
+    @Bean
     public SamlIdPMetadataGenerator samlIdPMetadataGenerator() {
         val idp = casProperties.getAuthn().getSamlIdp();
 
@@ -113,7 +115,9 @@ public class CouchDbSamlIdPMetadataConfiguration {
             .metadataCipherExecutor(couchDbSamlIdPMetadataCipherExecutor())
             .build();
 
-        return new CouchDbSamlIdPMetadataGenerator(context, samlIdPMetadataRepository.getObject());
+        val generator = new CouchDbSamlIdPMetadataGenerator(context, samlIdPMetadataRepository.getObject());
+        generator.generate(Optional.empty());
+        return generator;
     }
 
     @ConditionalOnMissingBean(name = "couchDbSamlIdPMetadataLocator")

@@ -45,6 +45,10 @@ public class SamlIdPMetadataDocument {
     @JsonProperty
     private long id = -1;
 
+    @Column(name = "appliesTo", unique = true, length = 2_000)
+    @JsonProperty
+    private String appliesTo = "CAS";
+
     /**
      * The Metadata.
      */

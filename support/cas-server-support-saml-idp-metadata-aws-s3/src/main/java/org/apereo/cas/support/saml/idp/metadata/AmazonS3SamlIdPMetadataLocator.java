@@ -24,7 +24,8 @@ public class AmazonS3SamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocat
 
     private final String bucketName;
 
-    public AmazonS3SamlIdPMetadataLocator(final CipherExecutor<String, String> metadataCipherExecutor, final String bucketName, final AmazonS3 s3Client) {
+    public AmazonS3SamlIdPMetadataLocator(final CipherExecutor<String, String> metadataCipherExecutor,
+                                          final String bucketName, final AmazonS3 s3Client) {
         super(metadataCipherExecutor);
         this.bucketName = bucketName;
         this.s3Client = s3Client;
@@ -35,22 +36,23 @@ public class AmazonS3SamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocat
         val metadataDocument = new SamlIdPMetadataDocument();
 
         try {
-            LOGGER.debug("Locating S3 object(s) from bucket [{}]...", bucketName);
-            if (!s3Client.doesBucketExistV2(bucketName)) {
-                LOGGER.debug("S3 bucket [{}] does not exist", bucketName);
+            val bucketToUse = AmazonS3SamlIdPMetadataUtils.determineBucketNameFor(registeredService, this.bucketName);
+            LOGGER.debug("Locating S3 object(s) from bucket [{}]...", bucketToUse);
+            if (!s3Client.doesBucketExistV2(bucketToUse)) {
+                LOGGER.debug("S3 bucket [{}] does not exist", bucketToUse);
                 return metadataDocument;
             }
 
-            val result = s3Client.listObjectsV2(bucketName);
+            val result = s3Client.listObjectsV2(bucketToUse);
             val objects = result.getObjectSummaries();
-            LOGGER.debug("Located [{}] S3 object(s) from bucket [{}]", objects.size(), bucketName);
+            LOGGER.debug("Located [{}] S3 object(s) from bucket [{}]", objects.size(), bucketToUse);
 
             if (objects.isEmpty()) {
-                throw new IllegalArgumentException("No objects found in bucket " + bucketName);
+                throw new IllegalArgumentException("No objects found in bucket " + bucketToUse);
             }
             val obj = objects.get(0);
             val objectKey = obj.getKey();
-            LOGGER.debug("Fetching object [{}] from bucket [{}]", objectKey, bucketName);
+            LOGGER.debug("Fetching object [{}] from bucket [{}]", objectKey, bucketToUse);
             val object = s3Client.getObject(obj.getBucketName(), objectKey);
 
             val objectMetadata = object.getObjectMetadata();

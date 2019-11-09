@@ -4,7 +4,7 @@
 # while sleep 9m; do echo -e '\n=====[ Gradle build is still running ]====='; done &
 
 echo "Running CouchDb docker image..."
-docker run -d -p 5984:5984 --name="couchdb-server" apache/couchdb:2.3.1
+docker run -d -p 5984:5984 -p 9100:9100 -p 3469:4369 --name="couchdb-server" apache/couchdb:2.3.1
 
 docker ps | grep "couchdb-server"
 retVal=$?

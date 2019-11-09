@@ -171,6 +171,7 @@ The following fields are available for SAML services:
 | `signingCredentialFingerprint` | `SHA-1` digest of the signing credential's public key, parsed as a regular expression, used for the purposes of key rotation when dealing with multiple credentials.
 | `signingCredentialType` | Acceptable values are `BASIC` and `X509`. This setting controls the type of the signature block produced in the final SAML response for this application. The latter, being the default, encodes the signature in `PEM` format inside a `X509Data` block while the former encodes the signature based on the resolved public key under a `DEREncodedKeyValue` block.
 | `signingSignatureReferenceDigestMethods` | Collection of signing signature reference digest methods, if any, to override the global defaults.
+| `signingKeyAlgorithm` | Signing key algorithm to forcibly use for signing operations when loading the private key. Default is `RSA`.
 | `signingSignatureAlgorithms` | Collection of signing signature algorithms, if any, to override the global defaults.
 | `signingSignatureBlackListedAlgorithms` | Collection of signing signature blacklisted algorithms, if any, to override the global defaults.
 | `signingSignatureWhiteListedAlgorithms` | Collection of signing signature whitelisted algorithms, if any, to override the global defaults.

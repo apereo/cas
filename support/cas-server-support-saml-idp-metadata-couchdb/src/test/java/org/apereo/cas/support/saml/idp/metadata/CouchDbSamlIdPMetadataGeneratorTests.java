@@ -16,7 +16,9 @@ import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
 import org.apereo.cas.couchdb.saml.SamlIdPMetadataCouchDbRepository;
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
+import org.apereo.cas.support.saml.services.SamlRegisteredService;
 
+import lombok.val;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -93,11 +95,26 @@ public class CouchDbSamlIdPMetadataGeneratorTests {
 
     @Test
     public void verifyOperation() {
-        this.samlIdPMetadataGenerator.generate();
+        this.samlIdPMetadataGenerator.generate(Optional.empty());
         assertNotNull(samlIdPMetadataLocator.resolveMetadata(Optional.empty()));
         assertNotNull(samlIdPMetadataLocator.getEncryptionCertificate(Optional.empty()));
         assertNotNull(samlIdPMetadataLocator.resolveEncryptionKey(Optional.empty()));
         assertNotNull(samlIdPMetadataLocator.resolveSigningCertificate(Optional.empty()));
         assertNotNull(samlIdPMetadataLocator.resolveSigningKey(Optional.empty()));
+    }
+
+    @Test
+    public void verifyService() {
+        val service = new SamlRegisteredService();
+        service.setName("TestShib");
+        service.setId(1000);
+        val registeredService = Optional.of(service);
+
+        samlIdPMetadataGenerator.generate(registeredService);
+        assertNotNull(samlIdPMetadataLocator.resolveMetadata(registeredService));
+        assertNotNull(samlIdPMetadataLocator.getEncryptionCertificate(registeredService));
+        assertNotNull(samlIdPMetadataLocator.resolveEncryptionKey(registeredService));
+        assertNotNull(samlIdPMetadataLocator.resolveSigningCertificate(registeredService));
+        assertNotNull(samlIdPMetadataLocator.resolveSigningKey(registeredService));
     }
 }

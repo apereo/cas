@@ -2,6 +2,7 @@ package org.apereo.cas.support.saml.idp.metadata;
 
 import org.apereo.cas.support.saml.idp.metadata.generator.BaseSamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGeneratorConfigurationContext;
+import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
 
 import lombok.SneakyThrows;
@@ -10,6 +11,8 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
+
+import java.util.Optional;
 
 /**
  * This is {@link MongoDbSamlIdPMetadataGenerator}.
@@ -30,7 +33,7 @@ public class MongoDbSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGenerato
 
     @Override
     @SneakyThrows
-    public Pair<String, String> buildSelfSignedEncryptionCert() {
+    public Pair<String, String> buildSelfSignedEncryptionCert(final Optional<SamlRegisteredService> registeredService) {
         val results = generateCertificateAndKey();
         var update = Update.update("encryptionCertificate", results.getKey()).addToSet("encryptionKey", results.getValue());
         this.mongoTemplate.upsert(new Query(), update, SamlIdPMetadataDocument.class, this.collectionName);
@@ -39,7 +42,7 @@ public class MongoDbSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGenerato
 
     @Override
     @SneakyThrows
-    public Pair<String, String> buildSelfSignedSigningCert() {
+    public Pair<String, String> buildSelfSignedSigningCert(final Optional<SamlRegisteredService> registeredService) {
         val results = generateCertificateAndKey();
         val update = Update.update("signingCertificate", results.getKey()).addToSet("signingKey", results.getValue());
         this.mongoTemplate.upsert(new Query(), update, SamlIdPMetadataDocument.class, this.collectionName);
@@ -47,7 +50,7 @@ public class MongoDbSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGenerato
     }
 
     @Override
-    protected String writeMetadata(final String metadata) {
+    protected String writeMetadata(final String metadata, final Optional<SamlRegisteredService> registeredService) {
         val update = Update.update("metadata", metadata);
         this.mongoTemplate.upsert(new Query(), update, SamlIdPMetadataDocument.class, this.collectionName);
         return metadata;
