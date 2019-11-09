@@ -1,5 +1,8 @@
 package org.apereo.cas.git;
 
+import org.apereo.cas.configuration.model.support.git.services.BaseGitProperties;
+import org.apereo.cas.configuration.support.Beans;
+
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
@@ -41,7 +44,8 @@ public class GitRepositoryBuilder {
     private String privateKeyPassphrase;
     private String sshSessionPassword;
     private long timeoutInSeconds;
-
+    private boolean signCommits;
+    
     private static String getBranchPath(final String branchName) {
         return "refs/heads/" + branchName;
     }
@@ -100,6 +104,11 @@ public class GitRepositoryBuilder {
         return this;
     }
 
+    public GitRepositoryBuilder signCommits(final boolean value) {
+        this.signCommits = value;
+        return this;
+    }
+
     /**
      * Credential provider for repositories that require access.
      *
@@ -154,10 +163,12 @@ public class GitRepositoryBuilder {
             val providers = this.credentialsProviders.toArray(CredentialsProvider[]::new);
             if (this.repositoryDirectory.exists()) {
                 val git = Git.open(this.repositoryDirectory);
+                LOGGER.debug("Checking out the branch [{}] at [{}]", this.activeBranch, this.repositoryDirectory);
                 git.checkout()
                     .setName(this.activeBranch)
                     .call();
-                return new GitRepository(git, this.credentialsProviders, transportCallback, this.timeoutInSeconds);
+                return new GitRepository(git, this.credentialsProviders, transportCallback,
+                    this.timeoutInSeconds, this.signCommits);
             }
 
             val cloneCommand = Git.cloneRepository()
@@ -177,9 +188,30 @@ public class GitRepositoryBuilder {
                     .map(GitRepositoryBuilder::getBranchPath)
                     .collect(Collectors.toList()));
             }
-            return new GitRepository(cloneCommand.call(), credentialsProviders, transportCallback, this.timeoutInSeconds);
+            LOGGER.debug("Cloning repository at [{}] with branch [{}]", this.activeBranch, this.repositoryDirectory);
+            return new GitRepository(cloneCommand.call(), credentialsProviders,
+                transportCallback, this.timeoutInSeconds, this.signCommits);
         } catch (final Exception e) {
             throw new IllegalArgumentException(e.getMessage(), e);
         }
+    }
+
+    /**
+     * New instance of git repository builder.
+     *
+     * @param props the registry
+     * @return the git repository builder
+     */
+    public static GitRepositoryBuilder newInstance(final BaseGitProperties props) {
+        return new GitRepositoryBuilder(props.getRepositoryUrl())
+            .activeBranch(props.getActiveBranch())
+            .branchesToClone(props.getBranchesToClone())
+            .credentialProvider(props.getUsername(), props.getPassword())
+            .repositoryDirectory(props.getCloneDirectory())
+            .privateKeyPassphrase(props.getPrivateKeyPassphrase())
+            .privateKeyPath(props.getPrivateKeyPath())
+            .sshSessionPassword(props.getSshSessionPassword())
+            .timeoutInSeconds(Beans.newDuration(props.getTimeout()).toSeconds())
+            .signCommits(props.isSignCommits());
     }
 }
