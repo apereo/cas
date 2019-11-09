@@ -500,7 +500,7 @@ public class CollectionUtils {
      * @return the set
      */
     public static <T> HashSet<T> wrapHashSet(final Collection<T> source) {
-        return new HashSet<T>(source);
+        return new HashSet<>(source);
     }
 
     /**

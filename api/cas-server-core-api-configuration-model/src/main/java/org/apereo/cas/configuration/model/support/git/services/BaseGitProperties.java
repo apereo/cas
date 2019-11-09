@@ -55,6 +55,11 @@ public abstract class BaseGitProperties implements Serializable {
     private boolean pushChanges;
 
     /**
+     * Whether or not commits should be signed.
+     */
+    private boolean signCommits;
+
+    /**
      * Path to the SSH private key identity.
      */
     private String privateKeyPassphrase;
