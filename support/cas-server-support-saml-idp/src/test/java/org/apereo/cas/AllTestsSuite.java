@@ -2,6 +2,8 @@ package org.apereo.cas;
 
 import org.apereo.cas.support.saml.SamlAttributeEncoderTests;
 import org.apereo.cas.support.saml.SamlIdPConfigurationTests;
+import org.apereo.cas.support.saml.idp.metadata.generator.FileSystemSamlIdPMetadataGeneratorTests;
+import org.apereo.cas.support.saml.idp.metadata.locator.FileSystemSamlIdPMetadataLocatorTests;
 import org.apereo.cas.support.saml.services.EduPersonTargetedIdAttributeReleasePolicyTests;
 import org.apereo.cas.support.saml.services.GroovySamlRegisteredServiceAttributeReleasePolicyTests;
 import org.apereo.cas.support.saml.services.InCommonRSAttributeReleasePolicyTests;
@@ -46,6 +48,8 @@ import org.junit.runner.RunWith;
     GroovySamlRegisteredServiceAttributeReleasePolicyTests.class,
     SamlRegisteredServiceJpaPostgresTests.class,
     SamlIdPUtilsTests.class,
+    FileSystemSamlIdPMetadataLocatorTests.class,
+    FileSystemSamlIdPMetadataGeneratorTests.class,
     DefaultSamlAttributeQueryTicketFactoryTests.class,
     DefaultSSOSamlHttpRequestExtractorTests.class,
     InCommonRSAttributeReleasePolicyTests.class,

@@ -18,6 +18,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.NumericDate;
 import org.pac4j.core.context.JEEContext;
@@ -26,6 +27,7 @@ import org.pac4j.core.profile.UserProfile;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import java.util.Objects;
 import java.util.stream.Stream;
 
 /**
@@ -126,7 +128,6 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService {
             claims.setClaim(OAuth20Constants.NONCE, attributes.get(OAuth20Constants.NONCE).get(0));
         }
         generateAccessTokenHash(accessToken, service, claims);
-
         LOGGER.trace("Comparing principal attributes [{}] with supported claims [{}]", principal.getAttributes(), oidc.getClaims());
 
         principal.getAttributes().entrySet()
@@ -136,14 +137,18 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService {
                     LOGGER.trace("Found supported claim [{}]", entry.getKey());
                     return true;
                 }
-                LOGGER.warn("Claim [{}] is not defined as a supported claim in CAS configuration. Skipping...", entry.getKey());
+                LOGGER.warn("Claim [{}] is not defined as a supported claim among [{}]. Skipping...",
+                    entry.getKey(), oidc.getClaims());
                 return false;
             })
             .forEach(entry -> {
                 val claimValue = CollectionUtils.toCollection(entry.getValue());
                 if (claimValue.size() == 1) {
                     val value = CollectionUtils.firstElement(claimValue);
-                    value.ifPresent(v -> claims.setClaim(entry.getKey(), v));
+                    value.ifPresent(v -> {
+                        val bool = BooleanUtils.toBooleanObject(v.toString());
+                        claims.setClaim(entry.getKey(), Objects.requireNonNullElse(bool, v));
+                    });
                 } else {
                     claims.setClaim(entry.getKey(), claimValue);
                 }
