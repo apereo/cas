@@ -41,6 +41,8 @@ public class GitRepository {
 
     private final long timeoutInSeconds;
 
+    private final boolean signCommits;
+
     /**
      * Gets repository directory.
      *
@@ -129,6 +131,7 @@ public class GitRepository {
         this.gitInstance.commit()
             .setMessage(message)
             .setAll(true)
+            .setSign(this.signCommits)
             .setAuthor("CAS", "cas@apereo.org")
             .call();
     }

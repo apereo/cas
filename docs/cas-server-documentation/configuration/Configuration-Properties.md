@@ -4073,6 +4073,7 @@ Works with git repository to fetch and manage service registry definitions.
 # cas.serviceRegistry.git.repositoryUrl=https://github.com/repository
 # cas.serviceRegistry.git.branchesToClone=master
 # cas.serviceRegistry.git.activeBranch=master
+# cas.serviceRegistry.git.signCommits=false
 # cas.serviceRegistry.git.username=
 # cas.serviceRegistry.git.password=
 # cas.serviceRegistry.git.cloneDirectory=file:/tmp/cas-service-registry
