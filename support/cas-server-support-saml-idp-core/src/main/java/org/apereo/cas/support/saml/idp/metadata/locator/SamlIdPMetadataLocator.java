@@ -1,8 +1,11 @@
 package org.apereo.cas.support.saml.idp.metadata.locator;
 
+import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
 
 import org.springframework.core.io.Resource;
+
+import java.util.Optional;
 
 /**
  * This is {@link SamlIdPMetadataLocator}.
@@ -14,37 +17,42 @@ public interface SamlIdPMetadataLocator {
     /**
      * Gets full location of signing cert file.
      *
+     * @param registeredService the registered service
      * @return the signing cert file
      */
-    Resource getSigningCertificate();
+    Resource resolveSigningCertificate(Optional<SamlRegisteredService> registeredService);
 
     /**
      * Gets signing key file.
      *
+     * @param registeredService the registered service
      * @return the signing key file
      */
-    Resource getSigningKey();
+    Resource resolveSigningKey(Optional<SamlRegisteredService> registeredService);
 
     /**
      * Gets idp metadata file.
      *
+     * @param registeredService the registered service
      * @return the metadata file
      */
-    Resource getMetadata();
+    Resource resolveMetadata(Optional<SamlRegisteredService> registeredService);
 
     /**
      * Gets encryption cert file.
      *
+     * @param registeredService the registered service
      * @return the encryption cert file
      */
-    Resource getEncryptionCertificate();
+    Resource getEncryptionCertificate(Optional<SamlRegisteredService> registeredService);
 
     /**
      * Gets encryption key file.
      *
+     * @param registeredService the registered service
      * @return the encryption key file
      */
-    Resource getEncryptionKey();
+    Resource resolveEncryptionKey(Optional<SamlRegisteredService> registeredService);
 
     /**
      * Initialize.
@@ -54,14 +62,16 @@ public interface SamlIdPMetadataLocator {
     /**
      * Metadata exists?
      *
+     * @param registeredService the registered service
      * @return the boolean
      */
-    boolean exists();
+    boolean exists(Optional<SamlRegisteredService> registeredService);
 
     /**
      * Fetch metadata document.
      *
+     * @param registeredService the registered service
      * @return the saml id p metadata document
      */
-    SamlIdPMetadataDocument fetch();
+    SamlIdPMetadataDocument fetch(Optional<SamlRegisteredService> registeredService);
 }

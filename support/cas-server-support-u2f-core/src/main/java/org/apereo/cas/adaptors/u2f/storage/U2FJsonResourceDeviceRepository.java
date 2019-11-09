@@ -51,7 +51,7 @@ public class U2FJsonResourceDeviceRepository extends BaseResourceU2FDeviceReposi
             return new HashMap<>(0);
         }
         return MAPPER.readValue(jsonResource.getInputStream(),
-            new TypeReference<Map<String, List<U2FDeviceRegistration>>>() {
+            new TypeReference<>() {
             });
     }
 

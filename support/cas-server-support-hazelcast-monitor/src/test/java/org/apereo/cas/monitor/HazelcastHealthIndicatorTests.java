@@ -86,7 +86,7 @@ public class HazelcastHealthIndicatorTests {
         val health = hazelcastHealthIndicator.health();
         val status = health.getStatus();
         assertTrue(Arrays.asList(Status.UP, Status.OUT_OF_SERVICE).contains(status),
-            "Status should be UP or OUT_OF_SERVICE but was" + status);
+            () -> "Status should be UP or OUT_OF_SERVICE but was" + status);
 
         val details = health.getDetails();
         assertTrue(details.containsKey("name"));

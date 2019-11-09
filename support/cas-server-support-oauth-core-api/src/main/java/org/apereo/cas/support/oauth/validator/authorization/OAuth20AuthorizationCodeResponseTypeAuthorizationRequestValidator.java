@@ -68,11 +68,14 @@ public class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator i
 
         val responseType = request.getParameter(OAuth20Constants.RESPONSE_TYPE);
         if (!OAuth20Utils.checkResponseTypes(responseType, OAuth20ResponseTypes.values())) {
-            LOGGER.warn("Response type [{}] is not supported.", responseType);
+            LOGGER.warn("Response type [{}] is not found in the list of supported values [{}].",
+                responseType, OAuth20ResponseTypes.values());
             return false;
         }
 
         val clientId = request.getParameter(OAuth20Constants.CLIENT_ID);
+        LOGGER.debug("Locating registered service for client id [{}]", clientId);
+        
         val registeredService = getRegisteredServiceByClientId(clientId);
         val service = Optional.ofNullable(registeredService)
             .map(svc -> webApplicationServiceServiceFactory.createService(svc.getServiceId()))

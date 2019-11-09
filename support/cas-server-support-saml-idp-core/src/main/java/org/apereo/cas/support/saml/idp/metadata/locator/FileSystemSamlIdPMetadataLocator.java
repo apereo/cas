@@ -1,8 +1,9 @@
 package org.apereo.cas.support.saml.idp.metadata.locator;
 
+import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
-import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -12,6 +13,7 @@ import org.springframework.core.io.Resource;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
+import java.util.Optional;
 
 /**
  * This is {@link FileSystemSamlIdPMetadataLocator}.
@@ -20,37 +22,40 @@ import java.nio.charset.StandardCharsets;
  * @since 5.3.0
  */
 @Slf4j
-@RequiredArgsConstructor
-public class FileSystemSamlIdPMetadataLocator implements SamlIdPMetadataLocator {
+public class FileSystemSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocator {
     private final File metadataLocation;
 
-    @SneakyThrows
-    public FileSystemSamlIdPMetadataLocator(final Resource metadataResource) {
-        this.metadataLocation = metadataResource.getFile();
+    public FileSystemSamlIdPMetadataLocator(final Resource resource) throws Exception {
+        this(resource.getFile());
+    }
+
+    public FileSystemSamlIdPMetadataLocator(final File resource) {
+        super(CipherExecutor.noOpOfStringToString());
+        this.metadataLocation = resource;
     }
 
     @Override
-    public Resource getSigningCertificate() {
+    public Resource resolveSigningCertificate(final Optional<SamlRegisteredService> registeredService) {
         return new FileSystemResource(new File(metadataLocation, "/idp-signing.crt"));
     }
 
     @Override
-    public Resource getSigningKey() {
+    public Resource resolveSigningKey(final Optional<SamlRegisteredService> registeredService) {
         return new FileSystemResource(new File(metadataLocation, "/idp-signing.key"));
     }
 
     @Override
-    public Resource getMetadata() {
+    public Resource resolveMetadata(final Optional<SamlRegisteredService> registeredService) {
         return new FileSystemResource(new File(metadataLocation, "idp-metadata.xml"));
     }
 
     @Override
-    public Resource getEncryptionCertificate() {
+    public Resource getEncryptionCertificate(final Optional<SamlRegisteredService> registeredService) {
         return new FileSystemResource(new File(metadataLocation, "/idp-encryption.crt"));
     }
 
     @Override
-    public Resource getEncryptionKey() {
+    public Resource resolveEncryptionKey(final Optional<SamlRegisteredService> registeredService) {
         return new FileSystemResource(new File(metadataLocation, "/idp-encryption.key"));
     }
 
@@ -66,19 +71,19 @@ public class FileSystemSamlIdPMetadataLocator implements SamlIdPMetadataLocator 
     }
 
     @Override
-    public boolean exists() {
-        return getMetadata().exists();
+    public boolean exists(final Optional<SamlRegisteredService> registeredService) {
+        return resolveMetadata(registeredService).exists();
     }
 
     @SneakyThrows
     @Override
-    public SamlIdPMetadataDocument fetch() {
+    protected SamlIdPMetadataDocument fetchInternal(final Optional<SamlRegisteredService> registeredService) {
         val doc = new SamlIdPMetadataDocument();
-        doc.setMetadata(IOUtils.toString(getMetadata().getInputStream(), StandardCharsets.UTF_8));
-        doc.setEncryptionCertificate(IOUtils.toString(getEncryptionCertificate().getInputStream(), StandardCharsets.UTF_8));
-        doc.setEncryptionKey(IOUtils.toString(getEncryptionKey().getInputStream(), StandardCharsets.UTF_8));
-        doc.setSigningCertificate(IOUtils.toString(getSigningCertificate().getInputStream(), StandardCharsets.UTF_8));
-        doc.setSigningKey(IOUtils.toString(getSigningKey().getInputStream(), StandardCharsets.UTF_8));
+        doc.setMetadata(IOUtils.toString(resolveMetadata(registeredService).getInputStream(), StandardCharsets.UTF_8));
+        doc.setEncryptionCertificate(IOUtils.toString(getEncryptionCertificate(registeredService).getInputStream(), StandardCharsets.UTF_8));
+        doc.setEncryptionKey(IOUtils.toString(resolveEncryptionKey(registeredService).getInputStream(), StandardCharsets.UTF_8));
+        doc.setSigningCertificate(IOUtils.toString(resolveSigningCertificate(registeredService).getInputStream(), StandardCharsets.UTF_8));
+        doc.setSigningKey(IOUtils.toString(resolveSigningKey(registeredService).getInputStream(), StandardCharsets.UTF_8));
         return doc;
     }
 }

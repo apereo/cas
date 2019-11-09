@@ -58,6 +58,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.security.PrivateKey;
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 /**
@@ -350,7 +351,7 @@ public class SamlIdPObjectSigner {
                         LOGGER.debug("Locating signature signing certificate from credential [{}]", CertUtils.toString(certificate));
                         return finalizeSigningCredential(new BasicX509Credential(certificate, privateKey), c);
                     }
-                    val signingCert = samlIdPMetadataLocator.getSigningCertificate();
+                    val signingCert = samlIdPMetadataLocator.resolveSigningCertificate(Optional.of(service));
                     LOGGER.debug("Locating signature signing certificate file from [{}]", signingCert);
                     val certificate = SamlUtils.readCertificate(signingCert);
                     return finalizeSigningCredential(new BasicX509Credential(certificate, privateKey), c);
@@ -383,13 +384,13 @@ public class SamlIdPObjectSigner {
     /**
      * Gets signing private key.
      *
-     * @param service - the service being requested
+     * @param registeredService the registered service
      * @return the signing private key
      * @throws Exception the exception
      */
-    protected PrivateKey getSigningPrivateKey(final SamlRegisteredService service) throws Exception {
+    protected PrivateKey getSigningPrivateKey(final SamlRegisteredService registeredService) throws Exception {
         val samlIdp = casProperties.getAuthn().getSamlIdp();
-        val signingKey = createServicePrivateKeyResource(service.getIssuerSigningKeyLocation());
+        val signingKey = samlIdPMetadataLocator.resolveSigningKey(Optional.of(registeredService));
         val privateKeyFactoryBean = new PrivateKeyFactoryBean();
         privateKeyFactoryBean.setLocation(signingKey);
         if (StringUtils.isBlank(service.getIssuerSigningKeyLocation())) {

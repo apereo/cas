@@ -8,6 +8,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.Optional;
 
 /**
  * A metadata generator based on a predefined template.
@@ -24,9 +25,9 @@ public class FileSystemSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGener
     @SneakyThrows
     public Pair<String, String> buildSelfSignedEncryptionCert() {
         val encCert = getSamlIdPMetadataGeneratorConfigurationContext().getSamlIdPMetadataLocator()
-            .getEncryptionCertificate().getFile();
+            .getEncryptionCertificate(Optional.empty()).getFile();
         val encKey = getSamlIdPMetadataGeneratorConfigurationContext().getSamlIdPMetadataLocator()
-            .getEncryptionKey().getFile();
+            .resolveEncryptionKey(Optional.empty()).getFile();
         writeCertificateAndKey(encCert, encKey);
         return Pair.of(FileUtils.readFileToString(encCert, StandardCharsets.UTF_8), FileUtils.readFileToString(encKey, StandardCharsets.UTF_8));
     }
@@ -35,9 +36,9 @@ public class FileSystemSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGener
     @SneakyThrows
     public Pair<String, String> buildSelfSignedSigningCert() {
         val signingCert = getSamlIdPMetadataGeneratorConfigurationContext().getSamlIdPMetadataLocator()
-            .getSigningCertificate().getFile();
+            .resolveSigningCertificate(Optional.empty()).getFile();
         val signingKey = getSamlIdPMetadataGeneratorConfigurationContext().getSamlIdPMetadataLocator()
-            .getSigningKey().getFile();
+            .resolveSigningKey(Optional.empty()).getFile();
         writeCertificateAndKey(signingCert, signingKey);
         return Pair.of(FileUtils.readFileToString(signingCert, StandardCharsets.UTF_8),
             FileUtils.readFileToString(signingKey, StandardCharsets.UTF_8));
@@ -47,7 +48,7 @@ public class FileSystemSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGener
     @SneakyThrows
     protected String writeMetadata(final String metadata) {
         FileUtils.write(getSamlIdPMetadataGeneratorConfigurationContext().getSamlIdPMetadataLocator()
-            .getMetadata().getFile(), metadata, StandardCharsets.UTF_8);
+            .resolveMetadata(Optional.empty()).getFile(), metadata, StandardCharsets.UTF_8);
         return metadata;
     }
 

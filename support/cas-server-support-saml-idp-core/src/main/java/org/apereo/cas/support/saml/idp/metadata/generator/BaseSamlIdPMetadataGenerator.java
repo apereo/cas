@@ -12,6 +12,7 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
+import java.util.Optional;
 
 /**
  * A metadata generator based on a predefined template.
@@ -30,7 +31,7 @@ public abstract class BaseSamlIdPMetadataGenerator implements SamlIdPMetadataGen
     @SneakyThrows
     public SamlIdPMetadataDocument generate() {
         LOGGER.debug("Preparing to generate metadata for entityId [{}]", samlIdPMetadataGeneratorConfigurationContext.getEntityId());
-        if (!samlIdPMetadataGeneratorConfigurationContext.getSamlIdPMetadataLocator().exists()) {
+        if (!samlIdPMetadataGeneratorConfigurationContext.getSamlIdPMetadataLocator().exists(Optional.empty())) {
             LOGGER.trace("Metadata does not exist. Creating...");
 
             LOGGER.info("Creating self-signed certificate for signing...");
@@ -51,7 +52,7 @@ public abstract class BaseSamlIdPMetadataGenerator implements SamlIdPMetadataGen
             return finalizeMetadataDocument(doc);
         }
 
-        return samlIdPMetadataGeneratorConfigurationContext.getSamlIdPMetadataLocator().fetch();
+        return samlIdPMetadataGeneratorConfigurationContext.getSamlIdPMetadataLocator().fetch(Optional.empty());
     }
 
     /**

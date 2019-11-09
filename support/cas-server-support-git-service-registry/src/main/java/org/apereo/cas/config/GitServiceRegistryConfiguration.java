@@ -1,7 +1,6 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.git.GitRepository;
 import org.apereo.cas.git.GitRepositoryBuilder;
 import org.apereo.cas.services.GitServiceRegistry;
@@ -56,16 +55,7 @@ public class GitServiceRegistryConfiguration {
     @ConditionalOnMissingBean(name = "gitRepositoryInstance")
     public GitRepository gitRepositoryInstance() {
         val registry = casProperties.getServiceRegistry().getGit();
-        return new GitRepositoryBuilder(registry.getRepositoryUrl())
-            .activeBranch(registry.getActiveBranch())
-            .branchesToClone(registry.getBranchesToClone())
-            .credentialProvider(registry.getUsername(), registry.getPassword())
-            .repositoryDirectory(registry.getCloneDirectory())
-            .privateKeyPassphrase(registry.getPrivateKeyPassphrase())
-            .privateKeyPath(registry.getPrivateKeyPath())
-            .sshSessionPassword(registry.getSshSessionPassword())
-            .timeoutInSeconds(Beans.newDuration(registry.getTimeout()).toSeconds())
-            .build();
+        return GitRepositoryBuilder.newInstance(registry).build();
     }
 
     @Bean

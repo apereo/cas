@@ -2,6 +2,8 @@ package org.apereo.cas.support.oauth.authenticator;
 
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecution;
+import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.ServicesManager;
@@ -36,7 +38,9 @@ import java.io.Serializable;
 @RequiredArgsConstructor
 public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator<UsernamePasswordCredentials> {
     private final ServicesManager servicesManager;
+
     private final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory;
+
     private final AuditableExecution registeredServiceAccessStrategyEnforcer;
 
     @Getter
@@ -45,6 +49,7 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator<U
     @Getter
     private final TicketRegistry ticketRegistry;
 
+    private final PrincipalResolver principalResolver;
 
     @Override
     public void validate(final UsernamePasswordCredentials credentials, final WebContext context) throws CredentialsException {
@@ -59,16 +64,21 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator<U
         if (canAuthenticate(context)) {
             val service = this.webApplicationServiceServiceFactory.createService(registeredService.getServiceId());
             val audit = AuditableContext.builder()
-                    .service(service)
-                    .registeredService(registeredService)
-                    .build();
+                .service(service)
+                .registeredService(registeredService)
+                .build();
             val accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
             accessResult.throwExceptionIfNeeded();
 
             validateCredentials(credentials, registeredService, context);
 
+            val credential = new UsernamePasswordCredential(credentials.getUsername(), credentials.getPassword());
+            val principal = principalResolver.resolve(credential);
+
             val profile = new CommonProfile();
             profile.setId(id);
+            principal.getAttributes().forEach(profile::addAttribute);
+
             credentials.setUserProfile(profile);
             LOGGER.debug("Authenticated user profile [{}]", profile);
         }
@@ -91,16 +101,15 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator<U
 
     /**
      * Check if authentication can be performed for a given context.
-     *
+     * <p>
      * ClientCredential authentication can be performed if {@code client_id} & {@code client_secret} are provided.
      * Exception to this will be
      * 1. When the grant type is {@code password}, in which case the authentication will be performed by {@code OAuth20UsernamePasswordAuthenticator}
      * 2. When request contains OAuth {@code code} which was issued with a {@code code_challenge}, in which case the authentication will be
-     *    performed by {{@code OAuth20ProofKeyCodeExchangeAuthenticator}
+     * performed by {{@code OAuth20ProofKeyCodeExchangeAuthenticator}
      *
      * @param context the context
      * @return true if authenticator can validate credentials.
-     *
      * @see <a href="https://tools.ietf.org/html/rfc7636#section-4.3"> PKCE Auth Code Request</a>
      * @see <a href="https://tools.ietf.org/html/rfc7636#section-4.5"> PKCE Token request</a>
      */

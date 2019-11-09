@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml.idp.metadata;
 
 import org.apereo.cas.support.saml.idp.metadata.locator.AbstractSamlIdPMetadataLocator;
+import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
@@ -12,6 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+
+import java.util.Optional;
 
 /**
  * This is {@link JpaSamlIdPMetadataLocator}.
@@ -32,14 +35,14 @@ public class JpaSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocator {
     }
 
     @Override
-    public SamlIdPMetadataDocument fetchInternal() {
+    public SamlIdPMetadataDocument fetchInternal(final Optional<SamlRegisteredService> registeredService) {
         try {
             val query = this.entityManager.createQuery("SELECT r FROM SamlIdPMetadataDocument r", SamlIdPMetadataDocument.class);
-            setMetadataDocument(query.setMaxResults(1).getSingleResult());
+            return query.setMaxResults(1).getSingleResult();
         } catch (final NoResultException e) {
             LOGGER.debug(e.getMessage(), e);
         }
-        return getMetadataDocument();
+        return new SamlIdPMetadataDocument();
     }
 }
 

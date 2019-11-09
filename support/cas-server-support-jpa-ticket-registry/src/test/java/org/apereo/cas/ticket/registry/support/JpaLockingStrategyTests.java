@@ -125,7 +125,7 @@ public class JpaLockingStrategyTests {
                 throw new RuntimeException(e.getMessage(), e);
             }
         }).count();
-        assertTrue(lockCount <= 1, "Lock count should be <= 1 but was " + lockCount);
+        assertTrue(lockCount <= 1, () -> "Lock count should be <= 1 but was " + lockCount);
         
         val releaseCount = executor.invokeAll(lockers).stream().filter(result -> {
             try {
@@ -134,7 +134,7 @@ public class JpaLockingStrategyTests {
                 throw new RuntimeException(e.getMessage(), e);
             }
         }).count();
-        assertTrue(releaseCount <= 1, "Release count should be <= 1 but was " + releaseCount);
+        assertTrue(releaseCount <= 1, () -> "Release count should be <= 1 but was " + releaseCount);
     }
 
     /**

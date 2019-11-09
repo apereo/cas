@@ -30,7 +30,9 @@ public class OAuth20ClientIdClientSecretAuthenticatorTests extends BaseOAuth20Au
     public void init() {
         authenticator = new OAuth20ClientIdClientSecretAuthenticator(servicesManager, serviceFactory,
             new RegisteredServiceAccessStrategyAuditableEnforcer(),
-            new OAuth20RegisteredServiceCipherExecutor(), ticketRegistry);
+            new OAuth20RegisteredServiceCipherExecutor(),
+            ticketRegistry,
+            defaultPrincipalResolver);
     }
 
     @Test
