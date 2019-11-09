@@ -37,12 +37,27 @@ public class JpaSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocator {
     @Override
     public SamlIdPMetadataDocument fetchInternal(final Optional<SamlRegisteredService> registeredService) {
         try {
-            val query = this.entityManager.createQuery("SELECT r FROM SamlIdPMetadataDocument r", SamlIdPMetadataDocument.class);
+            var sql = "SELECT r FROM SamlIdPMetadataDocument r ";
+            if (registeredService.isPresent()) {
+                sql += " WHERE r.appliesTo = :appliesTo";
+            }
+            val query = this.entityManager.createQuery(sql, SamlIdPMetadataDocument.class);
+            if (registeredService.isPresent()) {
+                query.setParameter("appliesTo", getAppliesToFor(registeredService));
+            }
             return query.setMaxResults(1).getSingleResult();
         } catch (final NoResultException e) {
             LOGGER.debug(e.getMessage(), e);
         }
         return new SamlIdPMetadataDocument();
+    }
+
+    private static String getAppliesToFor(final Optional<SamlRegisteredService> result) {
+        if (result.isPresent()) {
+            val registeredService = result.get();
+            return registeredService.getName() + '-' + registeredService.getId();
+        }
+        return "CAS";
     }
 }
 

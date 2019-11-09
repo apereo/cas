@@ -75,7 +75,7 @@ public class SamlIdPMongoDbIdPMetadataConfiguration {
         return mongoTemplate;
     }
 
-    @Bean(initMethod = "generate")
+    @Bean
     @SneakyThrows
     public SamlIdPMetadataGenerator samlIdPMetadataGenerator() {
         val idp = casProperties.getAuthn().getSamlIdp();
