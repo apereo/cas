@@ -3,9 +3,11 @@ package org.apereo.cas.support.saml.idp.metadata.generator;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.beans.factory.InitializingBean;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
@@ -18,18 +20,19 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class FileSystemSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGenerator {
-    public FileSystemSamlIdPMetadataGenerator(final SamlIdPMetadataGeneratorConfigurationContext samlIdPMetadataGeneratorConfigurationContext) {
-        super(samlIdPMetadataGeneratorConfigurationContext);
+@Slf4j
+public class FileSystemSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGenerator implements InitializingBean {
+    public FileSystemSamlIdPMetadataGenerator(final SamlIdPMetadataGeneratorConfigurationContext context) {
+        super(context);
     }
 
     @Override
     @SneakyThrows
     public Pair<String, String> buildSelfSignedEncryptionCert(final Optional<SamlRegisteredService> registeredService) {
         val encCert = getConfigurationContext().getSamlIdPMetadataLocator()
-            .getEncryptionCertificate(Optional.empty()).getFile();
+            .getEncryptionCertificate(registeredService).getFile();
         val encKey = getConfigurationContext().getSamlIdPMetadataLocator()
-            .resolveEncryptionKey(Optional.empty()).getFile();
+            .resolveEncryptionKey(registeredService).getFile();
         writeCertificateAndKey(encCert, encKey);
         return Pair.of(FileUtils.readFileToString(encCert, StandardCharsets.UTF_8),
             FileUtils.readFileToString(encKey, StandardCharsets.UTF_8));
@@ -39,9 +42,9 @@ public class FileSystemSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGener
     @SneakyThrows
     public Pair<String, String> buildSelfSignedSigningCert(final Optional<SamlRegisteredService> registeredService) {
         val signingCert = getConfigurationContext().getSamlIdPMetadataLocator()
-            .resolveSigningCertificate(Optional.empty()).getFile();
+            .resolveSigningCertificate(registeredService).getFile();
         val signingKey = getConfigurationContext().getSamlIdPMetadataLocator()
-            .resolveSigningKey(Optional.empty()).getFile();
+            .resolveSigningKey(registeredService).getFile();
         writeCertificateAndKey(signingCert, signingKey);
         return Pair.of(FileUtils.readFileToString(signingCert, StandardCharsets.UTF_8),
             FileUtils.readFileToString(signingKey, StandardCharsets.UTF_8));
@@ -51,7 +54,7 @@ public class FileSystemSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGener
     @SneakyThrows
     protected String writeMetadata(final String metadata, final Optional<SamlRegisteredService> registeredService) {
         FileUtils.write(getConfigurationContext().getSamlIdPMetadataLocator()
-            .resolveMetadata(Optional.empty()).getFile(), metadata, StandardCharsets.UTF_8);
+            .resolveMetadata(registeredService).getFile(), metadata, StandardCharsets.UTF_8);
         return metadata;
     }
 
@@ -70,11 +73,17 @@ public class FileSystemSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGener
         }
     }
 
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        generate(Optional.empty());
+    }
+
     /**
      * Initializes a new Generate saml metadata.
      */
     @SneakyThrows
     public void initialize() {
         getConfigurationContext().getSamlIdPMetadataLocator().initialize();
+        generate(Optional.empty());
     }
 }
