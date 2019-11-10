@@ -25,6 +25,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ResourceLoader;
 
+import java.util.Optional;
+
 /**
  * This is {@link AmazonS3SamlIdPMetadataConfiguration}.
  *
@@ -66,7 +68,7 @@ public class AmazonS3SamlIdPMetadataConfiguration {
         return CipherExecutor.noOp();
     }
 
-    @Bean(initMethod = "generate")
+    @Bean
     @SneakyThrows
     public SamlIdPMetadataGenerator samlIdPMetadataGenerator() {
         val idp = casProperties.getAuthn().getSamlIdp();
@@ -79,10 +81,11 @@ public class AmazonS3SamlIdPMetadataConfiguration {
             .scope(idp.getScope())
             .metadataCipherExecutor(amazonS3SamlIdPMetadataCipherExecutor())
             .build();
-
-        return new AmazonS3SamlIdPMetadataGenerator(context,
+        val generator = new AmazonS3SamlIdPMetadataGenerator(context,
             amazonS3Client.getObject(),
             idp.getMetadata().getAmazonS3().getIdpMetadataBucketName());
+        generator.generate(Optional.empty());
+        return generator;
     }
 
     @Bean
