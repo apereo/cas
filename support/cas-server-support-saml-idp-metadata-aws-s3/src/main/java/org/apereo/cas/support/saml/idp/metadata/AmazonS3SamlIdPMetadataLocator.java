@@ -61,6 +61,7 @@ public class AmazonS3SamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocat
                 metadataDocument.setSigningCertificate(objectMetadata.getUserMetaDataOf("signingCertificate"));
                 metadataDocument.setEncryptionKey(objectMetadata.getUserMetaDataOf("encryptionKey"));
                 metadataDocument.setSigningKey(objectMetadata.getUserMetaDataOf("signingKey"));
+                metadataDocument.setAppliesTo(bucketToUse);
             }
 
             try (val is = object.getObjectContent()) {

@@ -81,6 +81,16 @@ Here is a generated metadata file as an example:
 
 SAML2 identity provider metadata can be managed in dynamics ways as well. To learn more, please [review this guide](Configuring-SAML2-DynamicMetadata.html).
 
+### Per Service
+
+Identity provider metadata, certificates and keys can also be defined on a per-service basis to override the global defaults.
+Metadata artifacts that would be applicable to a specific service definition and managed via the file system need to be stored
+in a directory location named after the service definition's name inside the canonical metadata directory. For example,
+if global metadata artifacts are managed on disk at `/etc/cas/config/saml/metadata`, then metadata applicable to a service definition
+whose name is configured as `SampleService` are expected to be found at `/etc/cas/config/saml/metadata/SampleService`.
+
+SAML2 identity provider metadata can be managed in dynamics ways as well. To learn more, please [review this guide](Configuring-SAML2-DynamicMetadata.html).
+
 ## Configuration
 
 Support is enabled by including the following dependency in the WAR overlay:
