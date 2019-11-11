@@ -2,6 +2,7 @@ package org.apereo.cas.support.saml.idp.metadata;
 
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 
+import com.amazonaws.services.s3.AmazonS3;
 import lombok.experimental.UtilityClass;
 import lombok.val;
 
@@ -20,16 +21,23 @@ public class AmazonS3SamlIdPMetadataUtils {
      *
      * @param result     the result
      * @param bucketName the bucket name
+     * @param s3Client   the s 3 client
      * @return the bucket name
      */
     public static String determineBucketNameFor(final Optional<SamlRegisteredService> result,
-                                                final String bucketName) {
-        if (result.isEmpty()) {
-            return bucketName;
+                                                final String bucketName,
+                                                final AmazonS3 s3Client) {
+        if (result.isPresent()) {
+            val bucket = getBucketForService(result.get());
+            if (s3Client.doesBucketExistV2(bucket)) {
+                return bucket;
+            }
         }
-        val registeredService = result.get();
-        return bucketName
-            + registeredService.getName().toLowerCase()
-            + registeredService.getId();
+        return bucketName;
     }
+
+    private static String getBucketForService(final SamlRegisteredService registeredService) {
+        return registeredService.getName().toLowerCase() + registeredService.getId();
+    }
+
 }
