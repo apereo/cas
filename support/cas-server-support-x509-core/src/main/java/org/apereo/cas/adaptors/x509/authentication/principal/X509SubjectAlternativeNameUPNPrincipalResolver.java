@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
 
 import java.security.cert.CertificateParsingException;
@@ -16,6 +17,7 @@ import java.util.Set;
  * Extracts Subject Alternative Name UPN extension from the provided certificate if available as a resolved principal id.
  *
  * @author Dmitriy Kopylenko
+ * @author Hal Deadman
  * @since 4.1.0
  */
 @Slf4j
@@ -39,8 +41,8 @@ public class X509SubjectAlternativeNameUPNPrincipalResolver extends AbstractX509
     protected String resolvePrincipalInternal(final X509Certificate certificate) {
         LOGGER.debug("Resolving principal from Subject Alternative Name UPN for [{}]", certificate);
         try {
-            val upnString = X509UPNExtractor.extractUPNString(certificate);
-            return upnString != null ? upnString : getAlternatePrincipal(certificate);
+            val upnString = X509UPNExtractorUtils.extractUPNString(certificate);
+            return StringUtils.isNotBlank(upnString) ? upnString : getAlternatePrincipal(certificate);
         } catch (final CertificateParsingException e) {
             LOGGER.error("Error is encountered while trying to retrieve subject alternative names collection from certificate", e);
             return getAlternatePrincipal(certificate);

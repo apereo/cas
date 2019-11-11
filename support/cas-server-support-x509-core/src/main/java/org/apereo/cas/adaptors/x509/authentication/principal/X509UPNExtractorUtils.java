@@ -3,6 +3,7 @@ package org.apereo.cas.adaptors.x509.authentication.principal;
 import org.apereo.cas.util.function.FunctionUtils;
 
 import com.google.common.base.Predicates;
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
@@ -25,15 +26,23 @@ import java.util.List;
  * from the provided certificate if available as a resolved principal id.
  *
  * @author Dmitriy Kopylenko
+ * @author Hal Deadman
  * @since 4.1.0
  */
 @Slf4j
-public class X509UPNExtractor {
+@UtilityClass
+public class X509UPNExtractorUtils {
 
     /**
      * ObjectID for upn altName for windows smart card logon.
      */
-    public static final String UPN_OBJECTID = "1.3.6.1.4.1.311.20.2.3";
+    private static final String UPN_OBJECTID = "1.3.6.1.4.1.311.20.2.3";
+
+    /**
+     * Integer representing the type of the subject alt name known as OtherName or ANY.
+     */
+    private static final int SAN_TYPE_OTHER = 0;
+
 
     /**
      * Get UPN String.
@@ -42,7 +51,7 @@ public class X509UPNExtractor {
      *            First element is the object identifier, second is the object itself.
      * @return UPN string or null
      */
-    private static String getUPNStringFromSequence(final ASN1Sequence seq) {
+    private String getUPNStringFromSequence(final ASN1Sequence seq) {
         if (seq == null) {
             return null;
         }
@@ -67,23 +76,24 @@ public class X509UPNExtractor {
     }
 
     /**
-     * Get alt name seq.
+     * Get the alt name sequence if it is of type OtherName, otherwise return null.
      *
      * @param sanItem subject alternative name value encoded as a two elements List with elem(0) representing object id and elem(1)
      *                representing object (subject alternative name) itself.
      * @return ASN1Sequence abstraction representing subject alternative name or null if the passed in
-     * List doesn't contain at least two elements.
+     * List doesn't contain at least two elements and the type of the element is not the type OtherName.
      * as expected to be returned by implementation of {@code X509Certificate.html#getSubjectAlternativeNames}
-     * @see <a href="http://docs.oracle.com/javase/7/docs/api/java/security/cert/X509Certificate.html#getSubjectAlternativeNames()">
+     * @see <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/security/cert/X509Certificate.html#getSubjectAlternativeNames()">
      * X509Certificate#getSubjectAlternativeNames</a>
      */
-    private static ASN1Sequence getAltnameSequence(final List sanItem) {
+    private ASN1Sequence getOtherNameTypeSAN(final List<?> sanItem) {
         //Should not be the case, but still, a extra "safety" check
         if (sanItem.size() < 2) {
             LOGGER.error("Subject Alternative Name List does not contain at least two required elements. Returning null principal id...");
+            return null;
         }
         val itemType = (Integer) sanItem.get(0);
-        if (itemType == 0) {
+        if (itemType == SAN_TYPE_OTHER) {
             val altName = (byte[]) sanItem.get(1);
             return getAltnameSequence(altName);
         }
@@ -95,10 +105,10 @@ public class X509UPNExtractor {
      *
      * @param sanValue subject alternative name value encoded as byte[]
      * @return ASN1Sequence abstraction representing subject alternative name
-     * @see <a href="http://docs.oracle.com/javase/7/docs/api/java/security/cert/X509Certificate.html#getSubjectAlternativeNames()">
+     * @see <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/security/cert/X509Certificate.html#getSubjectAlternativeNames()">
      * X509Certificate#getSubjectAlternativeNames</a>
      */
-    private static ASN1Sequence getAltnameSequence(final byte[] sanValue) {
+    private ASN1Sequence getAltnameSequence(final byte[] sanValue) {
         try (val bInput = new ByteArrayInputStream(sanValue);
              val input = new ASN1InputStream(bInput)) {
             return ASN1Sequence.getInstance(input.readObject());
@@ -108,13 +118,31 @@ public class X509UPNExtractor {
         return null;
     }
 
-    public static String extractUPNString(final X509Certificate certificate) throws CertificateParsingException {
+    /**
+     * Return the first {@code X509UPNExtractorUtils.UPN_OBJECTID} found in the subject alternative names (SAN) extension field of the certificate.
+     * @param certificate X509 certificate
+     * @return User principal name, or null if no SAN found matching UPN type.
+     * @throws CertificateParsingException if Java retrieval of subject alt names fails.
+     */
+    public String extractUPNString(final X509Certificate certificate) throws CertificateParsingException {
         val subjectAltNames = certificate.getSubjectAlternativeNames();
         if (subjectAltNames != null) {
             for (val sanItem : subjectAltNames) {
-                val seq = getAltnameSequence(sanItem);
+                if (LOGGER.isTraceEnabled()) {
+                    if (sanItem.size() == 2) {
+                        val name = sanItem.get(1);
+                        LOGGER.trace("Found subject alt name of type [{}] with value [{}]",
+                            sanItem.get(0), name instanceof String ? name : name instanceof byte[] ? getAltnameSequence((byte[]) name) : name);
+                    } else {
+                        LOGGER.trace("SAN item of unexpected size found: [{}]", sanItem);
+                    }
+                }
+                val seq = getOtherNameTypeSAN(sanItem);
                 val upnString = getUPNStringFromSequence(seq);
                 if (upnString != null) {
+                    if (LOGGER.isDebugEnabled()) {
+                        LOGGER.debug("Found user principal name in certificate {}", upnString);
+                    }
                     return upnString;
                 }
             }
