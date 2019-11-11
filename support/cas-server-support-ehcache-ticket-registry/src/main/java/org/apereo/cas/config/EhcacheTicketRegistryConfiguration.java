@@ -31,6 +31,8 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.Objects;
+
 /**
  * This is {@link EhcacheTicketRegistryConfiguration}.
  *
@@ -135,11 +137,18 @@ public class EhcacheTicketRegistryConfiguration {
         return bean.getObject();
     }
 
+    /**
+     * Using the spring ehcache wrapper bean so it can be initialized after the caches are built.
+     * @param manager Spring EhCache manager bean, wraps EhCache manager and is used for cache actuator endpoint.
+     * @param ticketCatalog Ticket Catalog
+     * @return Ticket Registry
+     */
     @Autowired
     @Bean
     @RefreshScope
-    public TicketRegistry ticketRegistry(@Qualifier("ehcacheTicketCacheManager") final CacheManager manager,
+    public TicketRegistry ticketRegistry(@Qualifier("ehCacheCacheManager") final EhCacheCacheManager manager,
                                          @Qualifier("ticketCatalog") final TicketCatalog ticketCatalog) {
+        val ehCacheManager = Objects.requireNonNull(manager.getCacheManager());
         val crypto = casProperties.getTicket().getRegistry().getEhcache().getCrypto();
 
         val definitions = ticketCatalog.findAll();
@@ -147,7 +156,6 @@ public class EhcacheTicketRegistryConfiguration {
             val ehcache = buildCache(t);
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Created Ehcache cache [{}] for [{}]", ehcache.getName(), t);
-
 
                 val config = ehcache.getCacheConfiguration();
                 LOGGER.debug("TicketCache.maxEntriesLocalHeap=[{}]", config.getMaxEntriesLocalHeap());
@@ -159,13 +167,16 @@ public class EhcacheTicketRegistryConfiguration {
                 LOGGER.debug("TicketCache.timeToIdle=[{}]", config.getTimeToIdleSeconds());
                 LOGGER.debug("TicketCache.cacheManager=[{}]", ehcache.getCacheManager().getName());
             }
-            manager.addDecoratedCacheIfAbsent(ehcache);
+            ehCacheManager.addDecoratedCacheIfAbsent(ehcache);
         });
 
+        manager.initializeCaches();
+
         if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("The following caches are available: [{}]", (Object[]) manager.getCacheNames());
+            LOGGER.debug("The following caches are available: [{}]", manager.getCacheNames());
         }
-        return new EhCacheTicketRegistry(ticketCatalog, manager, CoreTicketUtils.newTicketRegistryCipherExecutor(crypto, "ehcache"));
+
+        return new EhCacheTicketRegistry(ticketCatalog, ehCacheManager, CoreTicketUtils.newTicketRegistryCipherExecutor(crypto, "ehcache"));
     }
 
     /**
