@@ -113,7 +113,7 @@ public class X509UPNExtractorUtils {
              val input = new ASN1InputStream(bInput)) {
             return ASN1Sequence.getInstance(input.readObject());
         } catch (final IOException e) {
-            LOGGER.error("An error has occurred while reading the subject alternative name value", e);
+            LOGGER.error("An error has occurred while reading the subject alternative name value: {}", e.getMessage(), e);
         }
         return null;
     }
@@ -140,9 +140,7 @@ public class X509UPNExtractorUtils {
                 val seq = getOtherNameTypeSAN(sanItem);
                 val upnString = getUPNStringFromSequence(seq);
                 if (upnString != null) {
-                    if (LOGGER.isDebugEnabled()) {
-                        LOGGER.debug("Found user principal name in certificate {}", upnString);
-                    }
+                    LOGGER.debug("Found user principal name in certificate: [{}]", upnString);
                     return upnString;
                 }
             }
