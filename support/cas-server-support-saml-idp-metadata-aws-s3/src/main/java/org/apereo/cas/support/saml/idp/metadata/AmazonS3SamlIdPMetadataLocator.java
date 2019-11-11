@@ -36,7 +36,7 @@ public class AmazonS3SamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocat
         val metadataDocument = new SamlIdPMetadataDocument();
 
         try {
-            val bucketToUse = AmazonS3SamlIdPMetadataUtils.determineBucketNameFor(registeredService, this.bucketName);
+            val bucketToUse = AmazonS3SamlIdPMetadataUtils.determineBucketNameFor(registeredService, this.bucketName, s3Client);
             LOGGER.debug("Locating S3 object(s) from bucket [{}]...", bucketToUse);
             if (!s3Client.doesBucketExistV2(bucketToUse)) {
                 LOGGER.debug("S3 bucket [{}] does not exist", bucketToUse);
