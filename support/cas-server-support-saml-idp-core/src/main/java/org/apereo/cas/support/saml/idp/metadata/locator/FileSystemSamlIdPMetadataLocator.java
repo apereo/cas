@@ -44,27 +44,27 @@ public class FileSystemSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLoc
 
     @Override
     public Resource resolveSigningCertificate(final Optional<SamlRegisteredService> registeredService) {
-        return new FileSystemResource(new File(determineMetadataLocationFor(registeredService), "/idp-signing.crt"));
+        return getMetadataArtifact(registeredService, "idp-signing.crt");
     }
 
     @Override
     public Resource resolveSigningKey(final Optional<SamlRegisteredService> registeredService) {
-        return new FileSystemResource(new File(determineMetadataLocationFor(registeredService), "/idp-signing.key"));
+        return getMetadataArtifact(registeredService, "idp-signing.key");
     }
 
     @Override
     public Resource resolveMetadata(final Optional<SamlRegisteredService> registeredService) {
-        return new FileSystemResource(new File(determineMetadataLocationFor(registeredService), "idp-metadata.xml"));
+        return getMetadataArtifact(registeredService, "idp-metadata.xml");
     }
 
     @Override
     public Resource getEncryptionCertificate(final Optional<SamlRegisteredService> registeredService) {
-        return new FileSystemResource(new File(determineMetadataLocationFor(registeredService), "/idp-encryption.crt"));
+        return getMetadataArtifact(registeredService, "idp-encryption.crt");
     }
 
     @Override
     public Resource resolveEncryptionKey(final Optional<SamlRegisteredService> registeredService) {
-        return new FileSystemResource(new File(determineMetadataLocationFor(registeredService), "/idp-encryption.key"));
+        return getMetadataArtifact(registeredService, "idp-encryption.key");
     }
 
     @Override
@@ -96,17 +96,17 @@ public class FileSystemSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLoc
         LOGGER.info("Metadata directory location is at [{}]", this.metadataLocation);
     }
 
-    private File determineMetadataLocationFor(final Optional<SamlRegisteredService> result) {
+    private Resource getMetadataArtifact(final Optional<SamlRegisteredService> result, final String artifactName) {
         if (result.isEmpty()) {
-            if (!this.metadataLocation.exists() && !this.metadataLocation.mkdirs()) {
-                throw new IllegalArgumentException("Metadata directory location " + this.metadataLocation + " cannot be located/created");
+            val serviceDirectory = new File(this.metadataLocation, getAppliesToFor(result));
+            if (serviceDirectory.exists()) {
+                val artifact = new File(serviceDirectory, artifactName);
+                if (artifact.exists()) {
+                    return new FileSystemResource(artifact);
+                }
             }
-            return this.metadataLocation;
         }
-        val serviceDirectory = new File(this.metadataLocation, getAppliesToFor(result));
-        if (!serviceDirectory.exists() && !serviceDirectory.mkdirs()) {
-            throw new IllegalArgumentException("Metadata directory location " + serviceDirectory + " cannot be located/created");
-        }
-        return serviceDirectory;
+        initialize();
+        return new FileSystemResource(new File(this.metadataLocation, artifactName));
     }
 }

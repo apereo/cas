@@ -30,9 +30,9 @@ public class AmazonS3SamlIdPMetadataGenerator extends BaseSamlIdPMetadataGenerat
 
     private final String bucketName;
 
-    public AmazonS3SamlIdPMetadataGenerator(final SamlIdPMetadataGeneratorConfigurationContext samlIdPMetadataGeneratorConfigurationContext,
+    public AmazonS3SamlIdPMetadataGenerator(final SamlIdPMetadataGeneratorConfigurationContext context,
                                             final AmazonS3 s3Client, final String bucketName) {
-        super(samlIdPMetadataGeneratorConfigurationContext);
+        super(context);
         this.s3Client = s3Client;
         this.bucketName = bucketName;
     }
@@ -40,7 +40,7 @@ public class AmazonS3SamlIdPMetadataGenerator extends BaseSamlIdPMetadataGenerat
     @Override
     protected SamlIdPMetadataDocument finalizeMetadataDocument(final SamlIdPMetadataDocument doc,
                                                                final Optional<SamlRegisteredService> registeredService) {
-        val bucketNameToUse = AmazonS3SamlIdPMetadataUtils.determineBucketNameFor(registeredService, this.bucketName);
+        val bucketNameToUse = AmazonS3SamlIdPMetadataUtils.determineBucketNameFor(registeredService, this.bucketName, s3Client);
         if (!s3Client.doesBucketExistV2(bucketNameToUse)) {
             LOGGER.trace("Bucket [{}] does not exist. Creating...", bucketNameToUse);
             val bucket = s3Client.createBucket(bucketNameToUse);

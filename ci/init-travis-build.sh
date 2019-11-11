@@ -48,13 +48,6 @@ for i in {1..5}; do
 done
 echo JAVA_HOME=${JAVA_HOME}
 
-echo -e "Installing Groovy...\n"
-groovyVersion=3.0.0-alpha-3
-wget https://dl.bintray.com/groovy/maven/apache-groovy-binary-${groovyVersion}.zip -O ./groovy.zip
-unzip ./groovy.zip -d $PWD/.groovy
-export PATH=$PWD/.groovy/groovy-${groovyVersion}/bin:$PATH
-groovy --version
-
 chmod -R 777 ./ci/*.sh
 
 echo -e "Configuring Gradle wrapper...\n"
