@@ -16,6 +16,15 @@ if (hasTestsOfCategory(project, "CosmosDb")) {
     }
 }
 
+if (hasTestsOfCategory(project, "ZooKeeper")) {
+    task testZooKeeper(type: Test) {
+        enabled = shouldTest(project, "ZooKeeper")
+        useJUnitPlatform {
+            includeTags "ZooKeeper"
+        }
+    }
+}
+
 if (hasTestsOfCategory(project, "ActiveMQ")) {
     task testActiveMQ(type: Test) {
         enabled = shouldTest(project, "ActiveMQ")
@@ -264,7 +273,8 @@ test {
                 "Ldap", "Mail", "MariaDb", "Memcached", "JDBC",
                 "MongoDb", "MsSqlServer", "MySQL", "Postgres", "Redis",
                 "Radius", "AmazonWebServices", "RestfulApi", "Groovy",
-                "OAuth", "OIDC", "SAML", "UMA", "Oracle", "ActiveMQ"
+                "OAuth", "OIDC", "SAML", "UMA", "Oracle", "ActiveMQ",
+                "ZooKeeper"
     }
     enabled = "SIMPLE".equalsIgnoreCase(rootProject.testCategoryType) && !Boolean.getBoolean("skipTests")
 }
