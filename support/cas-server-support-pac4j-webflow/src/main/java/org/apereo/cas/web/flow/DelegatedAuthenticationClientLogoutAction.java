@@ -2,6 +2,8 @@ package org.apereo.cas.web.flow;
 
 import org.apereo.cas.web.support.WebUtils;
 
+import java.util.Optional;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -43,7 +45,7 @@ public class DelegatedAuthenticationClientLogoutAction extends AbstractAction {
             val context = new JEEContext(request, response, this.sessionStore);
 
             val currentProfile = findCurrentProfile(context);
-            val clientResult = clients.findClient(currentProfile.getClientName());
+            val clientResult = currentProfile == null ? Optional.empty() : clients.findClient(currentProfile.getClientName());
             if (clientResult.isPresent()) {
                 val client = clientResult.get();
                 LOGGER.debug("Located client [{}]", client);
@@ -52,6 +54,8 @@ public class DelegatedAuthenticationClientLogoutAction extends AbstractAction {
                     val action = (HttpAction) actionResult.get();
                     new JEEHttpActionAdapter().adapt(action, context);
                 }
+            } else {
+                LOGGER.debug("The current client cannot be found at all, no logout action will be executed.");
             }
         } catch (final Exception e) {
             LOGGER.warn(e.getMessage(), e);
