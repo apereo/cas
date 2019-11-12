@@ -6,6 +6,9 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+
 import java.util.Optional;
 
 /**
@@ -14,6 +17,7 @@ import java.util.Optional;
  * @author Timur Duehr
  * @since 6.0.0
  */
+@Slf4j
 public class CouchDbSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocator {
 
     private final SamlIdPMetadataCouchDbRepository couchDb;
@@ -26,6 +30,12 @@ public class CouchDbSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocato
 
     @Override
     public SamlIdPMetadataDocument fetchInternal(final Optional<SamlRegisteredService> registeredService) {
-        return couchDb.getOne();
+        if (registeredService.isPresent()) {
+            val doc = couchDb.getForService(registeredService);
+            if (doc != null && doc.isValid()) {
+                return doc;
+            }
+        }
+        return couchDb.getForAll();
     }
 }

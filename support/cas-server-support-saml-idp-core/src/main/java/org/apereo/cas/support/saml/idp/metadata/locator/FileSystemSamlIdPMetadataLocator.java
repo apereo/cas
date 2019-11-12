@@ -34,40 +34,37 @@ public class FileSystemSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLoc
         this.metadataLocation = resource;
     }
 
+    private static String getAppliesToFor(final Optional<SamlRegisteredService> result) {
+        if (result.isPresent()) {
+            val registeredService = result.get();
+            return registeredService.getName() + '-' + registeredService.getId();
+        }
+        return "CAS";
+    }
+
     @Override
     public Resource resolveSigningCertificate(final Optional<SamlRegisteredService> registeredService) {
-        return new FileSystemResource(new File(metadataLocation, "/idp-signing.crt"));
+        return getMetadataArtifact(registeredService, "idp-signing.crt");
     }
 
     @Override
     public Resource resolveSigningKey(final Optional<SamlRegisteredService> registeredService) {
-        return new FileSystemResource(new File(metadataLocation, "/idp-signing.key"));
+        return getMetadataArtifact(registeredService, "idp-signing.key");
     }
 
     @Override
     public Resource resolveMetadata(final Optional<SamlRegisteredService> registeredService) {
-        return new FileSystemResource(new File(metadataLocation, "idp-metadata.xml"));
+        return getMetadataArtifact(registeredService, "idp-metadata.xml");
     }
 
     @Override
     public Resource getEncryptionCertificate(final Optional<SamlRegisteredService> registeredService) {
-        return new FileSystemResource(new File(metadataLocation, "/idp-encryption.crt"));
+        return getMetadataArtifact(registeredService, "idp-encryption.crt");
     }
 
     @Override
     public Resource resolveEncryptionKey(final Optional<SamlRegisteredService> registeredService) {
-        return new FileSystemResource(new File(metadataLocation, "/idp-encryption.key"));
-    }
-
-    @Override
-    public void initialize() {
-        if (!this.metadataLocation.exists()) {
-            LOGGER.debug("Metadata directory [{}] does not exist. Creating...", this.metadataLocation);
-            if (!this.metadataLocation.mkdir()) {
-                throw new IllegalArgumentException("Metadata directory location " + this.metadataLocation + " cannot be located/created");
-            }
-        }
-        LOGGER.info("Metadata directory location is at [{}]", this.metadataLocation);
+        return getMetadataArtifact(registeredService, "idp-encryption.key");
     }
 
     @Override
@@ -84,6 +81,32 @@ public class FileSystemSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLoc
         doc.setEncryptionKey(IOUtils.toString(resolveEncryptionKey(registeredService).getInputStream(), StandardCharsets.UTF_8));
         doc.setSigningCertificate(IOUtils.toString(resolveSigningCertificate(registeredService).getInputStream(), StandardCharsets.UTF_8));
         doc.setSigningKey(IOUtils.toString(resolveSigningKey(registeredService).getInputStream(), StandardCharsets.UTF_8));
+        doc.setAppliesTo(getAppliesToFor(registeredService));
         return doc;
+    }
+
+    @Override
+    public void initialize() {
+        if (!this.metadataLocation.exists()) {
+            LOGGER.debug("Metadata directory [{}] does not exist. Creating...", this.metadataLocation);
+            if (!this.metadataLocation.mkdir()) {
+                throw new IllegalArgumentException("Metadata directory location " + this.metadataLocation + " cannot be located/created");
+            }
+        }
+        LOGGER.info("Metadata directory location is at [{}]", this.metadataLocation);
+    }
+
+    private Resource getMetadataArtifact(final Optional<SamlRegisteredService> result, final String artifactName) {
+        if (result.isEmpty()) {
+            val serviceDirectory = new File(this.metadataLocation, getAppliesToFor(result));
+            if (serviceDirectory.exists()) {
+                val artifact = new File(serviceDirectory, artifactName);
+                if (artifact.exists()) {
+                    return new FileSystemResource(artifact);
+                }
+            }
+        }
+        initialize();
+        return new FileSystemResource(new File(this.metadataLocation, artifactName));
     }
 }

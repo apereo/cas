@@ -132,7 +132,7 @@ public class SamlIdPMetadataConfiguration {
     }
 
     @ConditionalOnMissingBean(name = "samlIdPMetadataGenerator")
-    @Bean(initMethod = "initialize")
+    @Bean
     @SneakyThrows
     public SamlIdPMetadataGenerator samlIdPMetadataGenerator() {
         val idp = casProperties.getAuthn().getSamlIdp();

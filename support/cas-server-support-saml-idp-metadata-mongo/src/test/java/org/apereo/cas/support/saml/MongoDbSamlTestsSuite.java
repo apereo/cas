@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml;
 
 import org.apereo.cas.support.saml.idp.metadata.MongoDbSamlIdPMetadataGeneratorTests;
+import org.apereo.cas.support.saml.idp.metadata.MongoDbSamlIdPMetadataLocatorTests;
 import org.apereo.cas.support.saml.metadata.resolver.MongoDbSamlRegisteredServiceMetadataResolverTests;
 
 import org.junit.platform.runner.JUnitPlatform;
@@ -15,6 +16,7 @@ import org.junit.runner.RunWith;
  */
 @SelectClasses({
     MongoDbSamlIdPMetadataGeneratorTests.class,
+    MongoDbSamlIdPMetadataLocatorTests.class,
     MongoDbSamlRegisteredServiceMetadataResolverTests.class
 })
 @RunWith(JUnitPlatform.class)

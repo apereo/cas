@@ -28,6 +28,7 @@ import org.apereo.cas.config.SamlIdPMongoDbRegisteredServiceMetadataConfiguratio
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.SamlRegisteredServiceMetadataResolver;
@@ -99,6 +100,10 @@ public abstract class BaseMongoDbSamlMetadataTests {
     @Autowired
     @Qualifier("mongoDbSamlRegisteredServiceMetadataResolver")
     protected SamlRegisteredServiceMetadataResolver resolver;
+
+    @Autowired
+    @Qualifier("servicesManager")
+    protected ServicesManager servicesManager;
 
     @Autowired
     @Qualifier("samlIdPMetadataGenerator")
