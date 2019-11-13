@@ -247,7 +247,7 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
     private String signAndEncrypt(final Serializable value) {
         var encoded = value.toString();
         if (this.signingEnabled) {
-            val signed = sign(value.toString().getBytes(StandardCharsets.UTF_8));
+            val signed = sign(encoded.getBytes(StandardCharsets.UTF_8));
             encoded = new String(signed, StandardCharsets.UTF_8);
         }
 
