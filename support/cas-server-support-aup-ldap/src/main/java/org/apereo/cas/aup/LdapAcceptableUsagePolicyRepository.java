@@ -1,19 +1,28 @@
 package org.apereo.cas.aup;
 
 import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.model.support.aup.AcceptableUsagePolicyProperties;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapUtils;
+import org.apereo.cas.web.support.WebUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.ldaptive.ConnectionFactory;
+import org.ldaptive.LdapAttribute;
+import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
 import org.ldaptive.Response;
+import org.ldaptive.ReturnAttributes;
+import org.ldaptive.SearchFilter;
+import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResult;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.Set;
 
 /**
@@ -41,6 +50,34 @@ public class LdapAcceptableUsagePolicyRepository extends AbstractPrincipalAttrib
         this.connectionFactory = connectionFactory;
         this.ldapProperties = ldapProperties;
     }
+    
+    @Override
+    public AcceptableUsagePolicyStatus verify(final RequestContext requestContext, final Credential credential) {
+    	val principal = WebUtils.getAuthentication(requestContext).getPrincipal();
+        if (isUsagePolicyAcceptedBy(principal)) {
+            LOGGER.debug("Usage policy has been accepted by [{}]", principal.getId());
+            return AcceptableUsagePolicyStatus.accepted(principal);
+        }    	
+        try {
+        	    LOGGER.debug("AUP Attempt direct ldap call for [{}]", principal.getId());
+                String[] returnAttributes = {aupAttributeName};
+				Response<SearchResult> result = LdapUtils.executeSearchOperation(connectionFactory, ldapProperties.getBaseDn(), new SearchFilter("cn=" + credential.getId()), ldapProperties.getPageSize(),null,returnAttributes);
+				for (Iterator<LdapEntry> iter = result.getResult().getEntries().iterator(); iter.hasNext(); ) {
+				    LdapEntry element = iter.next();
+				    if ( !(element.getAttribute() == null) && element.getAttribute().getName().equalsIgnoreCase(aupAttributeName)) {
+				    	LOGGER.debug("Evaluating attribute value [{}] found for [{}]", element.getAttribute().getStringValue(), this.aupAttributeName);
+		                if (element.getAttribute().getStringValue().toString().toUpperCase().equals("TRUE")) {
+		                	LOGGER.debug("Usage policy has been accepted by [{}]", principal.getId());
+		                	return AcceptableUsagePolicyStatus.accepted(principal);
+		                }
+				    }
+				}
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        LOGGER.warn("Usage policy has not been accepted by [{}]", principal.getId());        
+        return AcceptableUsagePolicyStatus.denied(principal);
+    }    
 
     @Override
     public boolean submit(final RequestContext requestContext, final Credential credential) {
@@ -72,4 +109,24 @@ public class LdapAcceptableUsagePolicyRepository extends AbstractPrincipalAttrib
             CollectionUtils.wrap(id));
         return LdapUtils.executeSearchOperation(this.connectionFactory, ldapProperties.getBaseDn(), filter, ldapProperties.getPageSize());
     }
+    
+    /**
+     * Is usage policy accepted by user?
+     * Looks into the attributes collected by the principal to find {@link #aupAttributeName}.
+     * If the attribute contains {@code true}, then the policy is determined as accepted.
+     *
+     * @param principal the principal
+     * @return true if accepted, false otherwise.
+     */
+    protected boolean isUsagePolicyAcceptedBy(final Principal principal) {
+        val attributes = principal.getAttributes();
+        LOGGER.debug("Principal attributes found for [{}] are [{}]", principal.getId(), attributes);
+
+        if (attributes != null && attributes.containsKey(this.aupAttributeName)) {
+            val value = CollectionUtils.toCollection(attributes.get(this.aupAttributeName));
+            LOGGER.debug("Evaluating attribute value [{}] found for [{}]", value, this.aupAttributeName);
+            return value.stream().anyMatch(v -> v.toString().equalsIgnoreCase(Boolean.TRUE.toString()));
+        }
+        return false;
+    }    
 }
