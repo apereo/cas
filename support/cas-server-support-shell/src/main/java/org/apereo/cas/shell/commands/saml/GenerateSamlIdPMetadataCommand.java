@@ -19,6 +19,7 @@ import org.springframework.shell.standard.ShellOption;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.Optional;
 
 /**
  * This is {@link GenerateSamlIdPMetadataCommand}.
@@ -71,7 +72,7 @@ public class GenerateSamlIdPMetadataCommand {
             writer.setUriSubjectAltNames(Arrays.asList(StringUtils.split(subjectAltNames, ",")));
         }
 
-        val generateMetadata = FunctionUtils.doIf(locator.exists(),
+        val generateMetadata = FunctionUtils.doIf(locator.exists(Optional.empty()),
             () -> Boolean.TRUE,
             () -> {
                 LOGGER.warn("Metadata artifacts are available at the specified location: [{}]", metadataLocation);
@@ -91,8 +92,8 @@ public class GenerateSamlIdPMetadataCommand {
 
             val generator = new FileSystemSamlIdPMetadataGenerator(context);
             generator.initialize();
-            generator.generate();
-            LOGGER.info("Generated metadata is available at [{}]", locator.getMetadata());
+            generator.generate(Optional.empty());
+            LOGGER.info("Generated metadata is available at [{}]", locator.resolveMetadata(Optional.empty()));
         } else {
             LOGGER.info("No metadata was generated; it might already exist at the specified path");
         }

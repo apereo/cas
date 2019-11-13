@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.model.support.ConnectionPoolingProperties;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.val;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.NamedStubPersonAttributeDao;
@@ -56,7 +57,15 @@ public class Beans {
         val stub = p.getStub();
         stub.getAttributes().forEach((key, value) -> {
             val vals = StringUtils.commaDelimitedListToStringArray(value);
-            pdirMap.put(key, Arrays.stream(vals).collect(Collectors.toList()));
+            pdirMap.put(key, Arrays.stream(vals)
+                .map(v -> {
+                    val bool = BooleanUtils.toBooleanObject(v);
+                    if (bool != null) {
+                        return bool;
+                    }
+                    return v;
+                })
+                .collect(Collectors.toList()));
         });
         dao.setBackingMap(pdirMap);
         if (StringUtils.hasText(stub.getId())) {

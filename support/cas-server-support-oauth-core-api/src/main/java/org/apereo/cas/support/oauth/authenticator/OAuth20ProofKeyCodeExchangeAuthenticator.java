@@ -1,6 +1,7 @@
 package org.apereo.cas.support.oauth.authenticator;
 
 import org.apereo.cas.audit.AuditableExecution;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
@@ -35,8 +36,10 @@ public class OAuth20ProofKeyCodeExchangeAuthenticator extends OAuth20ClientIdCli
                                                     final ServiceFactory webApplicationServiceFactory,
                                                     final AuditableExecution registeredServiceAccessStrategyEnforcer,
                                                     final TicketRegistry ticketRegistry,
-                                                    final CipherExecutor<Serializable, String> registeredServiceCipherExecutor) {
-        super(servicesManager, webApplicationServiceFactory, registeredServiceAccessStrategyEnforcer, registeredServiceCipherExecutor, ticketRegistry);
+                                                    final CipherExecutor<Serializable, String> registeredServiceCipherExecutor,
+                                                    final PrincipalResolver principalResolver) {
+        super(servicesManager, webApplicationServiceFactory, registeredServiceAccessStrategyEnforcer,
+            registeredServiceCipherExecutor, ticketRegistry, principalResolver);
     }
 
     @Override

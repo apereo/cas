@@ -60,6 +60,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.core.io.ResourceLoader;
 
 import java.net.URL;
+import java.util.Optional;
 
 /**
  * This is {@link SamlIdPMetadataConfiguration}.
@@ -116,8 +117,8 @@ public class SamlIdPMetadataConfiguration {
     @Autowired
     public MetadataResolver casSamlIdPMetadataResolver(@Qualifier("samlIdPMetadataLocator") final SamlIdPMetadataLocator samlMetadataLocator) {
         val idp = casProperties.getAuthn().getSamlIdp();
-        val resolver = new InMemoryResourceMetadataResolver(samlMetadataLocator.getMetadata(), openSamlConfigBean.getObject());
-        resolver.setParserPool(openSamlConfigBean.getObject().getParserPool());
+        val resolver = new InMemoryResourceMetadataResolver(samlMetadataLocator.resolveMetadata(Optional.empty()),
+            openSamlConfigBean.getObject());
         resolver.setFailFastInitialization(idp.getMetadata().isFailFast());
         resolver.setRequireValidMetadata(idp.getMetadata().isRequireValidMetadata());
         resolver.setId(idp.getEntityId());
@@ -131,7 +132,7 @@ public class SamlIdPMetadataConfiguration {
     }
 
     @ConditionalOnMissingBean(name = "samlIdPMetadataGenerator")
-    @Bean(initMethod = "initialize")
+    @Bean
     @SneakyThrows
     public SamlIdPMetadataGenerator samlIdPMetadataGenerator() {
         val idp = casProperties.getAuthn().getSamlIdp();
