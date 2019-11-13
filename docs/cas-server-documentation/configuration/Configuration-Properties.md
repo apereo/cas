@@ -2304,7 +2304,7 @@ For the ```CN_EDIPI```,```SUBJECT_ALT_NAME```, and ```RFC822_EMAIL``` principal 
 you may specify the following property in order to have a different attribute from the certificate used as the principal.  
 If no alternative attribute is specified then the principal will be null and CAS will fail auth or use a different authenticator.
 ```properties
-# cas.authn.x509.alternatePrincipalAttribute=subjectDn|sigAlgOid|subjectX500Principal|x509Rfc822Email
+# cas.authn.x509.alternatePrincipalAttribute=subjectDn|sigAlgOid|subjectX500Principal|x509Rfc822Email|x509subjectUPN
 ```
 
 ### CRL Fetching / Revocation
@@ -2389,10 +2389,10 @@ To fetch CRLs, the following options are available:
 # cas.authn.x509.subjectAltName.alternatePrincipalAttribute=[sigAlgOid|subjectDn|subjectX500Principal|x509Rfc822Email]
 
 # CN_EDIPI 
-# cas.authn.x509.cnEdipi.alternatePrincipalAttribute=[sigAlgOid|subjectDn|subjectX500Principal|x509Rfc822Email]
+# cas.authn.x509.cnEdipi.alternatePrincipalAttribute=[sigAlgOid|subjectDn|subjectX500Principal|x509Rfc822Email|x509subjectUPN]
 
 # RFC822_EMAIL 
-# cas.authn.x509.rfc822Email.alternatePrincipalAttribute=[sigAlgOid|subjectDn|subjectX500Principal]
+# cas.authn.x509.rfc822Email.alternatePrincipalAttribute=[sigAlgOid|subjectDn|subjectX500Principal|x509subjectUPN]
 ```
 
 ### X509 Certificate Extraction
