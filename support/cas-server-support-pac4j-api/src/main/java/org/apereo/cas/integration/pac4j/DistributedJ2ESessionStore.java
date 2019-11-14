@@ -31,10 +31,9 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Slf4j
 public class DistributedJ2ESessionStore extends JEESessionStore implements HttpSessionListener, LogoutPostProcessor {
-    private static final String SESSIONID_NAME = "JSESSIONID";
-
     private final TicketRegistry ticketRegistry;
     private final TicketFactory ticketFactory;
+    private final String sessionCookieName;
 
     @Override
     public Optional get(final JEEContext context, final String key) {
@@ -75,10 +74,10 @@ public class DistributedJ2ESessionStore extends JEESessionStore implements HttpS
         String id = null;
         val cookies = context.getRequestCookies();
         if (cookies != null && !cookies.isEmpty()) {
-            id = cookies.stream().filter(c -> SESSIONID_NAME.equals(c.getName())).map(c -> c.getValue()).findFirst().orElse(null);
+            id = cookies.stream().filter(c -> this.sessionCookieName.equals(c.getName())).map(c -> c.getValue()).findFirst().orElse(null);
         }
         if (id != null) {
-            LOGGER.trace("Session identifier found from {} cookie [{}]", SESSIONID_NAME, id);
+            LOGGER.trace("Session identifier found from {} cookie [{}]", this.sessionCookieName, id);
         } else {
             id = getOrCreateSessionId(context);
             LOGGER.trace("Session identifier created for HTTP session [{}]", id);

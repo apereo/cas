@@ -63,7 +63,7 @@ public class DistributedJ2ESessionStoreTests {
     public void verifyOperation() {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
-        val store = new DistributedJ2ESessionStore(this.ticketRegistry, this.ticketFactory);
+        val store = new DistributedJ2ESessionStore(this.ticketRegistry, this.ticketFactory, "JSESSIONID");
         val context = new JEEContext(request, response, store);
 
         assertNotNull(request.getSession());
