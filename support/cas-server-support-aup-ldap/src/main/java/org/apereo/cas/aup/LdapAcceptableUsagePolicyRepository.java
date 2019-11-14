@@ -59,19 +59,19 @@ public class LdapAcceptableUsagePolicyRepository extends AbstractPrincipalAttrib
             return AcceptableUsagePolicyStatus.accepted(principal);
         }    	
         try {
-        	    LOGGER.debug("AUP Attempt direct ldap call for [{}]", principal.getId());
-                String[] returnAttributes = {aupAttributeName};
-				Response<SearchResult> result = LdapUtils.executeSearchOperation(connectionFactory, ldapProperties.getBaseDn(), new SearchFilter("cn=" + credential.getId()), ldapProperties.getPageSize(),null,returnAttributes);
-				for (Iterator<LdapEntry> iter = result.getResult().getEntries().iterator(); iter.hasNext(); ) {
-				    LdapEntry element = iter.next();
-				    if ( !(element.getAttribute() == null) && element.getAttribute().getName().equalsIgnoreCase(aupAttributeName)) {
-				    	LOGGER.debug("Evaluating attribute value [{}] found for [{}]", element.getAttribute().getStringValue(), this.aupAttributeName);
-		                if (element.getAttribute().getStringValue().toString().toUpperCase().equals("TRUE")) {
-		                	LOGGER.debug("Usage policy has been accepted by [{}]", principal.getId());
-		                	return AcceptableUsagePolicyStatus.accepted(principal);
+            LOGGER.debug("AUP Attempt direct ldap call for [{}]", principal.getId());
+            String[] returnAttributes = {aupAttributeName};
+			Response<SearchResult> result = LdapUtils.executeSearchOperation(connectionFactory, ldapProperties.getBaseDn(), new SearchFilter("cn=" + credential.getId()), ldapProperties.getPageSize(),null,returnAttributes);
+            for (Iterator<LdapEntry> iter = result.getResult().getEntries().iterator(); iter.hasNext();) {
+                LdapEntry element = iter.next();
+                if (!(element.getAttribute() == null) && element.getAttribute().getName().equalsIgnoreCase(aupAttributeName)) {
+                    LOGGER.debug("Evaluating attribute value [{}] found for [{}]", element.getAttribute().getStringValue(), this.aupAttributeName);
+		            if (element.getAttribute().getStringValue().toString().toUpperCase().equals("TRUE")) {
+		                LOGGER.debug("Usage policy has been accepted by [{}]", principal.getId());
+		                return AcceptableUsagePolicyStatus.accepted(principal);
 		                }
 				    }
-				}
+            }
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
