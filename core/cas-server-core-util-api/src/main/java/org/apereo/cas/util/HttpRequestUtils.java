@@ -80,13 +80,25 @@ public class HttpRequestUtils {
         val loc = new GeoLocationRequest();
         if (request != null) {
             val geoLocationParam = request.getParameter("geolocation");
-            if (StringUtils.isNotBlank(geoLocationParam)) {
-                val geoLocation = Splitter.on(",").splitToList(geoLocationParam);
-                loc.setLatitude(geoLocation.get(GEO_LOC_LAT_INDEX));
-                loc.setLongitude(geoLocation.get(GEO_LOC_LONG_INDEX));
-                loc.setAccuracy(geoLocation.get(GEO_LOC_ACCURACY_INDEX));
-                loc.setTimestamp(geoLocation.get(GEO_LOC_TIME_INDEX));
-            }
+            return getHttpServletRequestGeoLocation(geoLocationParam);
+        }
+        return loc;
+    }
+
+    /**
+     * Gets http servlet request geo location.
+     *
+     * @param geoLocationParam the geo location param
+     * @return the http servlet request geo location
+     */
+    public static GeoLocationRequest getHttpServletRequestGeoLocation(final String geoLocationParam) {
+        val loc = new GeoLocationRequest();
+        if (StringUtils.isNotBlank(geoLocationParam)) {
+            val geoLocation = Splitter.on(",").splitToList(geoLocationParam);
+            loc.setLatitude(geoLocation.get(GEO_LOC_LAT_INDEX));
+            loc.setLongitude(geoLocation.get(GEO_LOC_LONG_INDEX));
+            loc.setAccuracy(geoLocation.get(GEO_LOC_ACCURACY_INDEX));
+            loc.setTimestamp(geoLocation.get(GEO_LOC_TIME_INDEX));
         }
         return loc;
     }
