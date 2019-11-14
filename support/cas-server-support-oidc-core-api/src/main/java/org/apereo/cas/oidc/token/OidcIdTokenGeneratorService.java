@@ -119,6 +119,8 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService {
         }
 
         claims.setStringClaim(OAuth20Constants.CLIENT_ID, service.getClientId());
+        claims.setClaim(OidcConstants.CLAIM_AUTH_TIME, accessToken.getAuthentication().getAuthenticationDate().toEpochSecond());
+        
         if (attributes.containsKey(OAuth20Constants.STATE)) {
             claims.setClaim(OAuth20Constants.STATE, attributes.get(OAuth20Constants.STATE).get(0));
         }
