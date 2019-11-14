@@ -198,7 +198,7 @@ public class WebUtils {
      * @param map         the map
      * @param ticketValue the ticket value
      */
-    public static void putTicketGrantingTicketIntoMap(final MutableAttributeMap map, final String ticketValue) {
+    public static void putTicketGrantingTicketIntoMap(final MutableAttributeMap<String> map, final String ticketValue) {
         map.put(PARAMETER_TICKET_GRANTING_TICKET_ID, ticketValue);
     }
 
@@ -220,8 +220,8 @@ public class WebUtils {
      * @param scopeMap the scope map
      * @return the ticket granting ticket id from
      */
-    public static String getTicketGrantingTicketIdFrom(final MutableAttributeMap scopeMap) {
-        return (String) scopeMap.get(PARAMETER_TICKET_GRANTING_TICKET_ID);
+    public static String getTicketGrantingTicketIdFrom(final MutableAttributeMap<String> scopeMap) {
+        return scopeMap.get(PARAMETER_TICKET_GRANTING_TICKET_ID);
     }
 
     /**
