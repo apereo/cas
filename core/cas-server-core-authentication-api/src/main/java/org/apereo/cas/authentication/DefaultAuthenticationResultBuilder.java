@@ -63,7 +63,9 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
             LOGGER.warn("Authentication chain is empty as no authentications have been collected");
         }
 
-        return this.authentications.stream().findFirst();
+        synchronized (this.authentications) {
+            return this.authentications.stream().findFirst();
+        }
     }
 
     @Override
@@ -122,9 +124,12 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
         val authenticationBuilder = DefaultAuthenticationBuilder.newInstance();
 
         buildAuthenticationHistory(this.authentications, authenticationAttributes, principalAttributes, authenticationBuilder);
-        val primaryPrincipal = getPrimaryPrincipal(principalElectionStrategy, this.authentications, principalAttributes);
-        authenticationBuilder.setPrincipal(primaryPrincipal);
-        LOGGER.debug("Determined primary authentication principal to be [{}]", primaryPrincipal);
+
+        synchronized (this.authentications) {
+            val primaryPrincipal = getPrimaryPrincipal(principalElectionStrategy, this.authentications, principalAttributes);
+            authenticationBuilder.setPrincipal(primaryPrincipal);
+            LOGGER.debug("Determined primary authentication principal to be [{}]", primaryPrincipal);
+        }
 
         authenticationBuilder.setAttributes(authenticationAttributes);
         LOGGER.trace("Collected authentication attributes for this result are [{}]", authenticationAttributes);
