@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.idp.metadata.locator;
 
+import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
@@ -15,6 +16,7 @@ import org.springframework.core.io.Resource;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -29,102 +31,96 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor
 public abstract class AbstractSamlIdPMetadataLocator implements SamlIdPMetadataLocator {
 
+    private static final String CACHE_KEY_METADATA = "CasSamlIdentityProviderMetadata";
+
     /**
      * Cipher executor to encrypt/sign metadata.
      */
     protected final CipherExecutor<String, String> metadataCipherExecutor;
 
-    /**
-     * The idp metadata document fetched from storage.
-     */
-    protected SamlIdPMetadataDocument metadataDocument = new SamlIdPMetadataDocument();
-
     private Cache<String, SamlIdPMetadataDocument> metadataCache;
 
+    private static Resource getResource(final String data) {
+        return new InputStreamResource(new ByteArrayInputStream(data.getBytes(StandardCharsets.UTF_8)));
+    }
 
     @Override
-    public Resource getSigningCertificate() {
-        if (exists()) {
-            val cert = metadataDocument.getSigningCertificateDecoded();
-            return new InputStreamResource(new ByteArrayInputStream(cert.getBytes(StandardCharsets.UTF_8)));
+    public Resource resolveSigningCertificate(final Optional<SamlRegisteredService> registeredService) {
+        val metadataDocument = fetch(registeredService);
+        if (metadataDocument != null && metadataDocument.isValid()) {
+            return getResource(metadataDocument.getSigningCertificateDecoded());
         }
         return null;
     }
 
     @Override
-    public Resource getSigningKey() {
-        if (exists()) {
+    public Resource resolveSigningKey(final Optional<SamlRegisteredService> registeredService) {
+        val metadataDocument = fetch(registeredService);
+        if (metadataDocument != null && metadataDocument.isValid()) {
             val data = metadataDocument.getSigningKey();
-            val cert = metadataCipherExecutor.decode(data);
-            return new InputStreamResource(new ByteArrayInputStream(cert.getBytes(StandardCharsets.UTF_8)));
+            return getResource(metadataCipherExecutor.decode(data));
         }
         return null;
     }
 
     @Override
-    public Resource getMetadata() {
-        if (exists()) {
-            val data = metadataDocument.getMetadataDecoded();
-            return new InputStreamResource(new ByteArrayInputStream(data.getBytes(StandardCharsets.UTF_8)));
+    public Resource resolveMetadata(final Optional<SamlRegisteredService> registeredService) {
+        val metadataDocument = fetch(registeredService);
+        if (metadataDocument != null && metadataDocument.isValid()) {
+            return getResource(metadataDocument.getMetadataDecoded());
         }
         return null;
     }
 
     @Override
-    public Resource getEncryptionCertificate() {
-        if (exists()) {
-            val cert = metadataDocument.getEncryptionCertificateDecoded();
-            return new InputStreamResource(new ByteArrayInputStream(cert.getBytes(StandardCharsets.UTF_8)));
+    public Resource getEncryptionCertificate(final Optional<SamlRegisteredService> registeredService) {
+        val metadataDocument = fetch(registeredService);
+        if (metadataDocument != null && metadataDocument.isValid()) {
+            return getResource(metadataDocument.getEncryptionCertificateDecoded());
         }
         return null;
     }
 
     @Override
-    public Resource getEncryptionKey() {
-        if (exists()) {
+    public Resource resolveEncryptionKey(final Optional<SamlRegisteredService> registeredService) {
+        val metadataDocument = fetch(registeredService);
+        if (metadataDocument != null && metadataDocument.isValid()) {
             val data = metadataDocument.getEncryptionKey();
-            val cert = metadataCipherExecutor.decode(data);
-            return new InputStreamResource(new ByteArrayInputStream(cert.getBytes(StandardCharsets.UTF_8)));
+            return getResource(metadataCipherExecutor.decode(data));
         }
         return null;
     }
 
     @Override
-    public void initialize() {
-        fetch();
+    public boolean exists(final Optional<SamlRegisteredService> registeredService) {
+        val metadataDocument = fetch(registeredService);
+        return metadataDocument != null && metadataDocument.isValid();
     }
 
     @Override
-    public boolean exists() {
-        fetch();
-        return isMetadataDocumentValid();
-    }
-
-    @Override
-    public final SamlIdPMetadataDocument fetch() {
+    public final SamlIdPMetadataDocument fetch(final Optional<SamlRegisteredService> registeredService) {
         initializeCache();
 
         val map = metadataCache.asMap();
-        if (map.containsKey("CasSamlIdentityProviderMetadata")) {
-            return map.get("CasSamlIdentityProviderMetadata");
+        val key = buildCacheKey(registeredService);
+
+        if (map.containsKey(key)) {
+            return map.get(key);
         }
-        val document = fetchInternal();
-        if (isMetadataDocumentValid()) {
-            map.put("CasSamlIdentityProviderMetadata", this.metadataDocument);
+        val metadataDocument = fetchInternal(registeredService);
+        if (metadataDocument != null && metadataDocument.isValid()) {
+            map.put(key, metadataDocument);
         }
-        return document;
+        return metadataDocument;
     }
 
     /**
      * Fetch saml idp metadata document.
      *
-     * @return the saml id p metadata document
+     * @param registeredService the registered service
+     * @return the saml idp metadata document
      */
-    protected abstract SamlIdPMetadataDocument fetchInternal();
-
-    private boolean isMetadataDocumentValid() {
-        return metadataDocument != null && metadataDocument.isValid();
-    }
+    protected abstract SamlIdPMetadataDocument fetchInternal(Optional<SamlRegisteredService> registeredService);
 
     private void initializeCache() {
         if (metadataCache == null) {
@@ -134,5 +130,13 @@ public abstract class AbstractSamlIdPMetadataLocator implements SamlIdPMetadataL
                 .expireAfterAccess(1, TimeUnit.HOURS)
                 .build();
         }
+    }
+
+    private static String buildCacheKey(final Optional<SamlRegisteredService> registeredService) {
+        if (registeredService.isEmpty()) {
+            return CACHE_KEY_METADATA;
+        }
+        val samlRegisteredService = registeredService.get();
+        return CACHE_KEY_METADATA + '_' + samlRegisteredService.getId() + '_' + samlRegisteredService.getName();
     }
 }

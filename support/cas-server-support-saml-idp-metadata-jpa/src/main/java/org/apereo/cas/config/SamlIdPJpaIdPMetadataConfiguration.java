@@ -120,7 +120,7 @@ public class SamlIdPJpaIdPMetadataConfiguration {
     }
 
     @Autowired
-    @Bean(initMethod = "generate")
+    @Bean
     public SamlIdPMetadataGenerator samlIdPMetadataGenerator(@Qualifier("transactionManagerSamlMetadataIdP") final PlatformTransactionManager mgr) {
         val idp = casProperties.getAuthn().getSamlIdp();
         val transactionTemplate = new TransactionTemplate(mgr);

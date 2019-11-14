@@ -22,6 +22,7 @@ import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguratio
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
+import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 import org.apereo.cas.web.config.CasCookieConfiguration;
@@ -29,12 +30,15 @@ import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
 import com.amazonaws.services.s3.internal.SkipMd5CheckStrategy;
+import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -89,17 +93,33 @@ public class AmazonS3SamlIdPMetadataGeneratorTests {
     @Autowired
     @Qualifier("samlIdPMetadataLocator")
     protected SamlIdPMetadataLocator samlIdPMetadataLocator;
+
     @Autowired
     @Qualifier("samlIdPMetadataGenerator")
     private SamlIdPMetadataGenerator samlIdPMetadataGenerator;
 
     @Test
     public void verifyOperation() {
-        samlIdPMetadataGenerator.generate();
-        assertNotNull(samlIdPMetadataLocator.getMetadata());
-        assertNotNull(samlIdPMetadataLocator.getEncryptionCertificate());
-        assertNotNull(samlIdPMetadataLocator.getEncryptionKey());
-        assertNotNull(samlIdPMetadataLocator.getSigningCertificate());
-        assertNotNull(samlIdPMetadataLocator.getSigningKey());
+        samlIdPMetadataGenerator.generate(Optional.empty());
+        assertNotNull(samlIdPMetadataLocator.resolveMetadata(Optional.empty()));
+        assertNotNull(samlIdPMetadataLocator.getEncryptionCertificate(Optional.empty()));
+        assertNotNull(samlIdPMetadataLocator.resolveEncryptionKey(Optional.empty()));
+        assertNotNull(samlIdPMetadataLocator.resolveSigningCertificate(Optional.empty()));
+        assertNotNull(samlIdPMetadataLocator.resolveSigningKey(Optional.empty()));
+    }
+
+    @Test
+    public void verifyService() {
+        val service = new SamlRegisteredService();
+        service.setName("TestShib");
+        service.setId(1000);
+        val registeredService = Optional.of(service);
+
+        samlIdPMetadataGenerator.generate(registeredService);
+        assertNotNull(samlIdPMetadataLocator.resolveMetadata(registeredService));
+        assertNotNull(samlIdPMetadataLocator.getEncryptionCertificate(registeredService));
+        assertNotNull(samlIdPMetadataLocator.resolveEncryptionKey(registeredService));
+        assertNotNull(samlIdPMetadataLocator.resolveSigningCertificate(registeredService));
+        assertNotNull(samlIdPMetadataLocator.resolveSigningKey(registeredService));
     }
 }

@@ -34,7 +34,7 @@ public class WebjarValidationTests {
         Arrays.stream(compositePropertySource.getPropertyNames())
             .filter(key -> key.startsWith("webjars."))
             .map(key -> new ClassPathResource("META-INF/resources" + compositePropertySource.getProperty(key)))
-            .forEach(resource -> assertTrue(resource.exists(), "Webjar path bad: " + resource.getPath()));
+            .forEach(resource -> assertTrue(resource.exists(), () -> "Webjar path bad: " + resource.getPath()));
     }
 
 }

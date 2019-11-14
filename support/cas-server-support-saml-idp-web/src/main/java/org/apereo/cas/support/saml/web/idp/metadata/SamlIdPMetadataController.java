@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Optional;
 
 /**
  * The {@link SamlIdPMetadataController} will attempt
@@ -35,7 +36,7 @@ public class SamlIdPMetadataController implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() {
-        this.metadataAndCertificatesGenerationService.generate();
+        this.metadataAndCertificatesGenerationService.generate(Optional.empty());
     }
 
     /**
@@ -47,8 +48,8 @@ public class SamlIdPMetadataController implements InitializingBean {
      */
     @GetMapping(path = SamlIdPConstants.ENDPOINT_IDP_METADATA)
     public void generateMetadataForIdp(final HttpServletResponse response) throws IOException {
-        this.metadataAndCertificatesGenerationService.generate();
-        val md = this.samlIdPMetadataLocator.getMetadata().getInputStream();
+        this.metadataAndCertificatesGenerationService.generate(Optional.empty());
+        val md = this.samlIdPMetadataLocator.resolveMetadata(Optional.empty()).getInputStream();
         val contents = IOUtils.toString(md, StandardCharsets.UTF_8);
         response.setContentType(CONTENT_TYPE);
         response.setStatus(HttpServletResponse.SC_OK);

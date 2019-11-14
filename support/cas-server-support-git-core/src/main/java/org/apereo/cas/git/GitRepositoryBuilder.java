@@ -1,9 +1,13 @@
 package org.apereo.cas.git;
 
+import org.apereo.cas.configuration.model.support.git.services.BaseGitProperties;
+import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.util.CollectionUtils;
+
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
-import lombok.RequiredArgsConstructor;
+import lombok.Builder;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -12,6 +16,7 @@ import org.eclipse.jgit.api.TransportConfigCallback;
 import org.eclipse.jgit.transport.ChainingCredentialsProvider;
 import org.eclipse.jgit.transport.CredentialsProvider;
 import org.eclipse.jgit.transport.JschConfigSessionFactory;
+import org.eclipse.jgit.transport.NetRCCredentialsProvider;
 import org.eclipse.jgit.transport.OpenSshConfig;
 import org.eclipse.jgit.transport.SshTransport;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
@@ -29,89 +34,61 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@RequiredArgsConstructor
+@Builder
 @Slf4j
 public class GitRepositoryBuilder {
-    private final String repositoryUri;
+    @Builder.Default
     private final List<CredentialsProvider> credentialsProviders = new ArrayList<>();
-    private File repositoryDirectory;
-    private String branchesToClone;
-    private String activeBranch;
-    private String privateKeyPath;
-    private String privateKeyPassphrase;
-    private String sshSessionPassword;
-    private long timeoutInSeconds;
+
+    private final String repositoryUri;
+
+    private final File repositoryDirectory;
+
+    private final String branchesToClone;
+
+    private final String activeBranch;
+
+    private final String privateKeyPath;
+
+    private final String privateKeyPassphrase;
+
+    private final String sshSessionPassword;
+
+    private final long timeoutInSeconds;
+
+    private final boolean signCommits;
 
     private static String getBranchPath(final String branchName) {
         return "refs/heads/" + branchName;
     }
 
+    /**
+     * New instance of git repository builder.
+     *
+     * @param props the registry
+     * @return the git repository builder
+     */
     @SneakyThrows
-    public GitRepositoryBuilder privateKeyPath(final File value) {
-        this.privateKeyPath = value != null ? value.getCanonicalPath() : null;
-        return this;
-    }
-
-    public GitRepositoryBuilder privateKeyPassphrase(final String value) {
-        this.privateKeyPassphrase = value;
-        return this;
-    }
-
-    public GitRepositoryBuilder sshSessionPassword(final String value) {
-        this.sshSessionPassword = value;
-        return this;
-    }
-
-    public GitRepositoryBuilder timeoutInSeconds(final long value) {
-        this.timeoutInSeconds = value;
-        return this;
-    }
-
-    /**
-     * Location of the repository, or where the repository should be cloned.
-     *
-     * @param directory the directory
-     * @return the git repository builder
-     */
-    public GitRepositoryBuilder repositoryDirectory(final File directory) {
-        this.repositoryDirectory = directory;
-        return this;
-    }
-
-    /**
-     * Branches to clone.
-     *
-     * @param value the value
-     * @return the git repository builder
-     */
-    public GitRepositoryBuilder branchesToClone(final String value) {
-        this.branchesToClone = value;
-        return this;
-    }
-
-    /**
-     * Active branch to checkout and use.
-     *
-     * @param value the value
-     * @return the git repository builder
-     */
-    public GitRepositoryBuilder activeBranch(final String value) {
-        this.activeBranch = value;
-        return this;
-    }
-
-    /**
-     * Credential provider for repositories that require access.
-     *
-     * @param username the username
-     * @param password the password
-     * @return the git repository builder
-     */
-    public GitRepositoryBuilder credentialProvider(final String username, final String password) {
-        if (StringUtils.hasText(username)) {
-            this.credentialsProviders.add(new UsernamePasswordCredentialsProvider(username, password));
+    public static GitRepositoryBuilder newInstance(final BaseGitProperties props) {
+        val builder = GitRepositoryBuilder.builder()
+            .repositoryUri(props.getRepositoryUrl())
+            .activeBranch(props.getActiveBranch())
+            .branchesToClone(props.getBranchesToClone())
+            .repositoryDirectory(props.getCloneDirectory())
+            .privateKeyPassphrase(props.getPrivateKeyPassphrase())
+            .sshSessionPassword(props.getSshSessionPassword())
+            .timeoutInSeconds(Beans.newDuration(props.getTimeout()).toSeconds())
+            .signCommits(props.isSignCommits());
+        if (StringUtils.hasText(props.getUsername())) {
+            val providers = CollectionUtils.wrapList(
+                new UsernamePasswordCredentialsProvider(props.getUsername(), props.getPassword()),
+                new NetRCCredentialsProvider());
+            builder.credentialsProviders(providers);
         }
-        return this;
+        if (props.getPrivateKeyPath() != null) {
+            builder.privateKeyPath(props.getPrivateKeyPath().getCanonicalPath());
+        }
+        return builder.build();
     }
 
     /**
@@ -154,10 +131,12 @@ public class GitRepositoryBuilder {
             val providers = this.credentialsProviders.toArray(CredentialsProvider[]::new);
             if (this.repositoryDirectory.exists()) {
                 val git = Git.open(this.repositoryDirectory);
+                LOGGER.debug("Checking out the branch [{}] at [{}]", this.activeBranch, this.repositoryDirectory);
                 git.checkout()
                     .setName(this.activeBranch)
                     .call();
-                return new GitRepository(git, this.credentialsProviders, transportCallback, this.timeoutInSeconds);
+                return new GitRepository(git, this.credentialsProviders, transportCallback,
+                    this.timeoutInSeconds, this.signCommits);
             }
 
             val cloneCommand = Git.cloneRepository()
@@ -177,7 +156,9 @@ public class GitRepositoryBuilder {
                     .map(GitRepositoryBuilder::getBranchPath)
                     .collect(Collectors.toList()));
             }
-            return new GitRepository(cloneCommand.call(), credentialsProviders, transportCallback, this.timeoutInSeconds);
+            LOGGER.debug("Cloning repository at [{}] with branch [{}]", this.activeBranch, this.repositoryDirectory);
+            return new GitRepository(cloneCommand.call(), credentialsProviders,
+                transportCallback, this.timeoutInSeconds, this.signCommits);
         } catch (final Exception e) {
             throw new IllegalArgumentException(e.getMessage(), e);
         }
