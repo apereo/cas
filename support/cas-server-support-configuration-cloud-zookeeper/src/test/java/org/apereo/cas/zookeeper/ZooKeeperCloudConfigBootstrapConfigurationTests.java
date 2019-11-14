@@ -6,8 +6,11 @@ import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.val;
 import org.apache.curator.framework.CuratorFramework;
+import org.apache.curator.framework.CuratorFrameworkFactory;
+import org.apache.curator.retry.RetryNTimes;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.ZooDefs;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,8 +20,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.cloud.zookeeper.config.ZookeeperConfigAutoConfiguration;
 import org.springframework.cloud.zookeeper.config.ZookeeperConfigBootstrapConfiguration;
-
-import java.nio.charset.StandardCharsets;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -49,11 +50,33 @@ public class ZooKeeperCloudConfigBootstrapConfigurationTests {
     @Qualifier("curatorFramework")
     private CuratorFramework curatorFramework;
 
+    @Autowired
+    private CasConfigurationProperties casProperties;
+
+    @BeforeAll
+    public static void setup() throws Exception {
+        val curator = CuratorFrameworkFactory.newClient("localhost:2181",
+            5000, 5000, new RetryNTimes(2, 100));
+        curator.start();
+        val path = "/config/cas/cas/server/name";
+
+        val zk = curator.getZookeeperClient().getZooKeeper();
+        if (zk.exists(path, false) != null) {
+            curator.delete().forPath(path);
+        }
+        curator
+            .create()
+            .creatingParentContainersIfNeeded()
+            .withMode(CreateMode.PERSISTENT)
+            .withACL(ZooDefs.Ids.OPEN_ACL_UNSAFE)
+            .forPath(path, "apereocas".getBytes());
+        curator.close();
+    }
+
     @Test
     public void verifyOperation() throws Exception {
         val zk = curatorFramework.getZookeeperClient().getZooKeeper();
         assertNotNull(zk);
-        zk.create("/cas/config/cas/server/name", "ApereoCAS".getBytes(StandardCharsets.UTF_8),
-            ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+        assertEquals("apereocas", casProperties.getServer().getName());
     }
 }
