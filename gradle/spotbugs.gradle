@@ -18,8 +18,7 @@ def printSpotbugsReportToConsole(File file) {
                 bug.Class.each { clz ->
                     println "\tClass: " + clz.@classname
                     clz.SourceLine.each { line ->
-                        println "\tStart Line: " + line.@start + ", End Line: " + line.@end
-                            + ", Source Path: [" + line.@sourcepath + "], Source File: [" + line.@sourcefile + "]"
+                        println "\tStart Line: " + line.@start + ", End Line: " + line.@end + ", Source Path: [" + line.@sourcepath + "], Source File: [" + line.@sourcefile + "]"
                     }
                 }
                 println "\t----------------------METHOD-----------------------------"
