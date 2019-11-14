@@ -69,7 +69,7 @@ public class LdapAcceptableUsagePolicyRepository extends AbstractPrincipalAttrib
                     if (element.getAttribute().getStringValue().toString().toUpperCase().equals("TRUE")) {
                         LOGGER.debug("Usage policy has been accepted by [{}]", principal.getId());
                         return AcceptableUsagePolicyStatus.accepted(principal);
-		                }
+            }
                 }
             }
         } catch (final Exception e) {
