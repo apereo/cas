@@ -8,8 +8,8 @@ import org.apereo.cas.support.events.authentication.adaptive.CasRiskyAuthenticat
 import org.apereo.cas.support.events.dao.CasEvent;
 import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketCreatedEvent;
 import org.apereo.cas.util.DateTimeUtils;
+import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.serialization.TicketIdSanitizationUtils;
-import org.apereo.cas.web.support.WebUtils;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -43,12 +43,9 @@ public class DefaultCasEventListener {
         val clientInfo = ClientInfoHolder.getClientInfo();
         dto.putClientIpAddress(clientInfo.getClientIpAddress());
         dto.putServerIpAddress(clientInfo.getServerIpAddress());
-        dto.putAgent(WebUtils.getHttpServletRequestUserAgentFromRequestContext());
-
-        val location = WebUtils.getHttpServletRequestGeoLocationFromRequestContext();
-        if (location != null) {
-            dto.putGeoLocation(location);
-        }
+        dto.putAgent(clientInfo.getUserAgent());
+        val location = HttpRequestUtils.getHttpServletRequestGeoLocation(clientInfo.getGeoLocation());
+        dto.putGeoLocation(location);
         return dto;
     }
 
