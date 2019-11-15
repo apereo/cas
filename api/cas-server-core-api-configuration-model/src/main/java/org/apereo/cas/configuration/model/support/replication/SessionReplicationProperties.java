@@ -5,6 +5,8 @@ import org.apereo.cas.configuration.support.RequiresModule;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
+
 /**
  * This is the properties for the session replication.
  *
@@ -14,7 +16,9 @@ import lombok.Setter;
 @RequiresModule(name = "cas-server-support-pac4j-api", automated = true)
 @Getter
 @Setter
-public class SessionReplicationProperties {
+public class SessionReplicationProperties implements Serializable {
+
+    private static final long serialVersionUID = -3839399712674610962L;
 
     /**
      * The name of the session cookie.
