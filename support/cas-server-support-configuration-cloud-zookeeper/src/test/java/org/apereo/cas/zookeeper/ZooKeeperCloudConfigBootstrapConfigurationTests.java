@@ -21,6 +21,8 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.cloud.zookeeper.config.ZookeeperConfigAutoConfiguration;
 import org.springframework.cloud.zookeeper.config.ZookeeperConfigBootstrapConfiguration;
 
+import java.nio.charset.StandardCharsets;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -32,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     ZookeeperConfigBootstrapConfiguration.class,
-    ZookeeperConfigAutoConfiguration.class,
+    ZookeeperConfigAutoConfiguration.class
 }, properties = {
     "spring.cloud.zookeeper.enabled=true",
     "spring.cloud.zookeeper.config.watcher.enabled=true",
@@ -69,7 +71,7 @@ public class ZooKeeperCloudConfigBootstrapConfigurationTests {
             .creatingParentContainersIfNeeded()
             .withMode(CreateMode.PERSISTENT)
             .withACL(ZooDefs.Ids.OPEN_ACL_UNSAFE)
-            .forPath(path, "apereocas".getBytes());
+            .forPath(path, "apereocas".getBytes(StandardCharsets.UTF_8));
         curator.close();
     }
 

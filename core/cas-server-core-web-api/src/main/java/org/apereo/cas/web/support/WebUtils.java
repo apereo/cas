@@ -598,18 +598,6 @@ public class WebUtils {
     }
 
     /**
-     * Gets http servlet request geo location from request context.
-     *
-     * @param context the context
-     * @return the http servlet request geo location from request context
-     */
-    public static GeoLocationRequest getHttpServletRequestGeoLocationFromRequestContext(final RequestContext context) {
-        val servletRequest = getHttpServletRequestFromExternalWebflowContext(context);
-        return getHttpServletRequestGeoLocation(servletRequest);
-    }
-
-
-    /**
      * Gets http servlet request geo location.
      *
      * @param servletRequest the servlet request
