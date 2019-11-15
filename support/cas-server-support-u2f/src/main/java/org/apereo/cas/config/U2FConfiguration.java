@@ -13,6 +13,7 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -36,7 +37,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration(value = "u2fConfiguration", proxyBeanMethods = false)
+@Configuration(value = "u2fConfiguration", proxyBeanMethods = true)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class U2FConfiguration {
@@ -109,12 +110,9 @@ public class U2FConfiguration {
     /**
      * The device cleaner scheduler.
      */
+    @RequiredArgsConstructor
     public static class U2FDeviceRepositoryCleanerScheduler {
         private final U2FDeviceRepository repository;
-
-        public U2FDeviceRepositoryCleanerScheduler(final U2FDeviceRepository repository) {
-            this.repository = repository;
-        }
 
         @Scheduled(initialDelayString = "${cas.authn.mfa.u2f.cleaner.schedule.startDelay:PT20S}",
             fixedDelayString = "${cas.authn.mfa.u2f.cleaner.schedule.repeatInterval:PT15M}")
