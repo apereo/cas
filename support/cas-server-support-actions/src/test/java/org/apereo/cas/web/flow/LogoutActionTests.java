@@ -55,7 +55,7 @@ public class LogoutActionTests extends AbstractWebflowActionsTests {
         when(this.requestContext.getExternalContext()).thenReturn(servletExternalContext);
         when(servletExternalContext.getNativeRequest()).thenReturn(request);
         when(servletExternalContext.getNativeResponse()).thenReturn(new MockHttpServletResponse());
-        when(this.requestContext.getFlowScope()).thenReturn(new LocalAttributeMap());
+        when(this.requestContext.getFlowScope()).thenReturn(new LocalAttributeMap<>());
 
         val publisher = mock(ApplicationEventPublisher.class);
         this.serviceManager = new DefaultServicesManager(new InMemoryServiceRegistry(publisher), publisher, new HashSet<>());

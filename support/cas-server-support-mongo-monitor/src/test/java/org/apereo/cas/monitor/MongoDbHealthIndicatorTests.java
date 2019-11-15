@@ -106,7 +106,7 @@ public class MongoDbHealthIndicatorTests {
 
         details.values().forEach(value -> {
             if (value instanceof Map) {
-                val map = (Map) value;
+                val map = (Map<String, ?>) value;
                 assertTrue(map.containsKey("size"));
                 assertTrue(map.containsKey("capacity"));
                 assertTrue(map.containsKey("evictions"));

@@ -66,7 +66,7 @@ public class MockWebServer implements AutoCloseable {
         }
     }
 
-    public MockWebServer(final int port, final Function funcExec) {
+    public MockWebServer(final int port, final Function<Socket, Object> funcExec) {
         try {
             this.worker = new Worker(new ServerSocket(port), funcExec);
         } catch (final IOException e) {
@@ -135,7 +135,7 @@ public class MockWebServer implements AutoCloseable {
         private final String contentType;
         private final Function<Socket, Object> functionToExecute;
         private boolean running;
-        private HttpStatus status = HttpStatus.OK;
+        private final HttpStatus status;
 
         Worker(final ServerSocket sock, final Resource resource, final String contentType) {
             this(sock, resource, contentType, HttpStatus.OK);
