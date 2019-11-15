@@ -60,7 +60,7 @@ public class LdapAcceptableUsagePolicyRepository extends AbstractPrincipalAttrib
             val filter = new SearchFilter("cn=" + credential.getId());
             Response<SearchResult> result = LdapUtils.executeSearchOperation(connectionFactory, ldapProperties.getBaseDn(), filter, ldapProperties.getPageSize(), null, returnAttributes);
             for (Iterator<LdapEntry> iter = result.getResult().getEntries().iterator(); iter.hasNext();) {
-                LdapEntry element = iter.next();
+                val element = iter.next();
                 if (!(element.getAttribute() == null) && element.getAttribute().getName().equalsIgnoreCase(aupAttributeName)) {
                     LOGGER.debug("Evaluating attribute value [{}] found for [{}]", element.getAttribute().getStringValue(), this.aupAttributeName);
                     if (element.getAttribute().getStringValue().toString().toUpperCase().equals("TRUE")) {
