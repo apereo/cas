@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     ZookeeperConfigBootstrapConfiguration.class,
-    ZookeeperConfigAutoConfiguration.class,
+    ZookeeperConfigAutoConfiguration.class
 }, properties = {
     "spring.cloud.zookeeper.enabled=true",
     "spring.cloud.zookeeper.config.watcher.enabled=true",
