@@ -38,8 +38,9 @@ public class OidcServiceRegistryListener implements ServiceRegistryListener {
                                                   final String givenScope,
                                                   final OidcRegisteredService registeredService) {
         LOGGER.debug("Mapped [{}] to attribute release policy [{}]", givenScope, policyToAdd.getClass().getSimpleName());
-        val consentPolicy = registeredService.getAttributeReleasePolicy().getConsentPolicy();
-        policyToAdd.setConsentPolicy(consentPolicy);
+        val attributeReleasePolicy = registeredService.getAttributeReleasePolicy();
+        policyToAdd.setConsentPolicy(attributeReleasePolicy.getConsentPolicy());
+        policyToAdd.setPrincipalAttributesRepository(attributeReleasePolicy.getPrincipalAttributesRepository());
         chain.getPolicies().add(policyToAdd);
     }
 
