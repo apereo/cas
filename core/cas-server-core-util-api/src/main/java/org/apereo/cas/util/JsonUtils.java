@@ -52,7 +52,7 @@ public class JsonUtils {
      * @param response the response
      */
     public static void renderException(final Exception ex, final HttpServletResponse response) {
-        val map = new HashMap<String, String>();
+        val map = new HashMap<String, Object>();
         map.put("error", ex.getMessage());
         map.put("stacktrace", Arrays.deepToString(ex.getStackTrace()));
         renderException(map, response);
@@ -64,7 +64,7 @@ public class JsonUtils {
      * @param model    the model
      * @param response the response
      */
-    private static void renderException(final Map model, final HttpServletResponse response) {
+    private static void renderException(final Map<String, Object> model, final HttpServletResponse response) {
         response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         model.put("status", HttpServletResponse.SC_BAD_REQUEST);
         render(model, response);
