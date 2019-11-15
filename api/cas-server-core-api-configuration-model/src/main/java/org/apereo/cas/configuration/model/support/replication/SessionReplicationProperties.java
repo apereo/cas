@@ -9,7 +9,7 @@ import lombok.Setter;
  * This is the properties for the session replication.
  *
  * @author Jerome LELEU
- * @since 6.1.1
+ * @since 6.1.2
  */
 @RequiresModule(name = "cas-server-support-pac4j-api", automated = true)
 @Getter
