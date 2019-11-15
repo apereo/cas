@@ -58,7 +58,6 @@ public class DefaultCasEventListener {
      * @param event the event
      */
     @EventListener
-    @Async
     public void handleCasTicketGrantingTicketCreatedEvent(final CasTicketGrantingTicketCreatedEvent event) {
         if (this.casEventRepository != null) {
             val dto = prepareCasEvent(event);
