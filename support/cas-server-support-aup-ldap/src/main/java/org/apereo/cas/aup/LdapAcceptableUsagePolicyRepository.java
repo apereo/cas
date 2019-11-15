@@ -11,17 +11,13 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.ldaptive.ConnectionFactory;
-import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
 import org.ldaptive.Response;
-import org.ldaptive.ReturnAttributes;
 import org.ldaptive.SearchFilter;
-import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResult;
 import org.springframework.webflow.execution.RequestContext;
 
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -53,15 +49,16 @@ public class LdapAcceptableUsagePolicyRepository extends AbstractPrincipalAttrib
     
     @Override
     public AcceptableUsagePolicyStatus verify(final RequestContext requestContext, final Credential credential) {
-    	val principal = WebUtils.getAuthentication(requestContext).getPrincipal();
+        val principal = WebUtils.getAuthentication(requestContext).getPrincipal();
         if (isUsagePolicyAcceptedBy(principal)) {
             LOGGER.debug("Usage policy has been accepted by [{}]", principal.getId());
             return AcceptableUsagePolicyStatus.accepted(principal);
-        }    	
+        }
         try {
             LOGGER.debug("AUP Attempt direct ldap call for [{}]", principal.getId());
-            String[] returnAttributes = {aupAttributeName};
-            Response<SearchResult> result = LdapUtils.executeSearchOperation(connectionFactory, ldapProperties.getBaseDn(), new SearchFilter("cn=" + credential.getId()), ldapProperties.getPageSize(),null,returnAttributes);
+            val returnAttributes = new String[]{aupAttributeName};
+            val filter = new SearchFilter("cn=" + credential.getId());
+            Response<SearchResult> result = LdapUtils.executeSearchOperation(connectionFactory, ldapProperties.getBaseDn(), filter, ldapProperties.getPageSize(), null, returnAttributes);
             for (Iterator<LdapEntry> iter = result.getResult().getEntries().iterator(); iter.hasNext();) {
                 LdapEntry element = iter.next();
                 if (!(element.getAttribute() == null) && element.getAttribute().getName().equalsIgnoreCase(aupAttributeName)) {
@@ -77,7 +74,7 @@ public class LdapAcceptableUsagePolicyRepository extends AbstractPrincipalAttrib
         }
         LOGGER.warn("Usage policy has not been accepted by [{}]", principal.getId());        
         return AcceptableUsagePolicyStatus.denied(principal);
-    }    
+    }
 
     @Override
     public boolean submit(final RequestContext requestContext, final Credential credential) {
@@ -128,5 +125,5 @@ public class LdapAcceptableUsagePolicyRepository extends AbstractPrincipalAttrib
             return value.stream().anyMatch(v -> v.toString().equalsIgnoreCase(Boolean.TRUE.toString()));
         }
         return false;
-    }    
+    }
 }
