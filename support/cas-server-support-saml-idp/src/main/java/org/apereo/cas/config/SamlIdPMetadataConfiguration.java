@@ -128,7 +128,7 @@ public class SamlIdPMetadataConfiguration {
     @Bean
     @RefreshScope
     public SamlIdPMetadataController samlIdPMetadataController() {
-        return new SamlIdPMetadataController(samlIdPMetadataGenerator(), samlIdPMetadataLocator());
+        return new SamlIdPMetadataController(samlIdPMetadataGenerator(), samlIdPMetadataLocator(), servicesManager.getObject());
     }
 
     @ConditionalOnMissingBean(name = "samlIdPMetadataGenerator")
