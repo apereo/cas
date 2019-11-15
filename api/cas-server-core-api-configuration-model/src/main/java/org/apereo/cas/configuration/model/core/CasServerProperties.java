@@ -40,11 +40,6 @@ public class CasServerProperties implements Serializable {
     private String prefix = name.concat("/cas");
 
     /**
-     * The name of the session cookie.
-     */
-    private String sessionCookieName = "JSESSIONID";
-
-    /**
      * Configuration settings that control the embedded Apache Tomcat container.
      */
     @NestedConfigurationProperty
