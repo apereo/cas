@@ -33,6 +33,7 @@ import java.util.Optional;
 public class DistributedJ2ESessionStore extends JEESessionStore implements HttpSessionListener, LogoutPostProcessor {
     private final TicketRegistry ticketRegistry;
     private final TicketFactory ticketFactory;
+    private final String sessionCookieName;
 
     @Override
     public Optional get(final JEEContext context, final String key) {
@@ -70,8 +71,17 @@ public class DistributedJ2ESessionStore extends JEESessionStore implements HttpS
     }
 
     private TransientSessionTicket getTransientSessionTicketForSession(final JEEContext context) {
-        val id = getOrCreateSessionId(context);
-        LOGGER.trace("Session identifier is set to [{}]", id);
+        String id = null;
+        val cookies = context.getRequestCookies();
+        if (cookies != null && !cookies.isEmpty()) {
+            id = cookies.stream().filter(c -> this.sessionCookieName.equals(c.getName())).map(c -> c.getValue()).findFirst().orElse(null);
+        }
+        if (id != null) {
+            LOGGER.trace("Session identifier found from {} cookie [{}]", this.sessionCookieName, id);
+        } else {
+            id = getOrCreateSessionId(context);
+            LOGGER.trace("Session identifier created for HTTP session [{}]", id);
+        }
         val ticketId = TransientSessionTicketFactory.normalizeTicketId(id);
 
         LOGGER.trace("Fetching session ticket via identifier [{}]", ticketId);
