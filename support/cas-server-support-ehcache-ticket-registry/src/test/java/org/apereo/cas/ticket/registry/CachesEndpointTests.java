@@ -9,20 +9,22 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.EhcacheTicketRegistryConfiguration;
 import org.apereo.cas.config.EhcacheTicketRegistryTicketCatalogConfiguration;
 
+import lombok.val;
 import net.sf.ehcache.CacheManager;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.actuate.cache.CachesEndpoint;
 import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cache.ehcache.EhCacheCacheManager;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * Ensure cache names array initialized in Spring CacheManager.
+ * Ensure CachesEndpoint is aware of all the CAS ehcache caches.
  *
  * @author Hal Deadman
  * @since 6.1.0
@@ -46,7 +48,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
     "spring.mail.port=25000",
     "spring.mail.testConnection=false"
 })
-public class EhCacheActuatorTests {
+public class CachesEndpointTests {
 
     @Autowired
     @Qualifier("ehcacheTicketCacheManager")
@@ -57,7 +59,9 @@ public class EhCacheActuatorTests {
     private EhCacheCacheManager ehCacheCacheManager;
 
     @Test
-    public void ensureSpringCacheWrapperIsInitialized() {
-        assertEquals(ehCacheCacheManager.getCacheNames().size(), ehcacheTicketCacheManager.getCacheNames().length);
+    void ensureCachesEndpointLoaded() {
+        val endpoint = new CachesEndpoint(Collections.singletonMap("test", ehCacheCacheManager));
+        assertEquals(endpoint.caches().getCacheManagers().get("test").getCaches().size(), ehcacheTicketCacheManager.getCacheNames().length);
     }
+
 }

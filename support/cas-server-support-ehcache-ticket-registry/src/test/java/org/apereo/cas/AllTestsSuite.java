@@ -1,6 +1,6 @@
 package org.apereo.cas;
 
-import org.apereo.cas.ticket.registry.EhCacheActuatorTests;
+import org.apereo.cas.ticket.registry.CachesEndpointTests;
 import org.apereo.cas.ticket.registry.EhCacheTicketRegistryTests;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
@@ -14,7 +14,7 @@ import org.junit.runner.RunWith;
  * @since 6.1.0
  */
 @SelectClasses({
-    EhCacheActuatorTests.class,
+    CachesEndpointTests.class,
     EhCacheTicketRegistryTests.class
 })
 @RunWith(JUnitPlatform.class)
