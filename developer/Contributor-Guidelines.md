@@ -140,10 +140,10 @@ than *usual* to be merged, it's possible that the proposed changeset violates on
 - The patch fails to pass automated unit or integration tests.
 - The patch fails to adhere to the project's styleing guidelines.
 - The patch has remained stale for quite a while without any sign of contributor activity.
-- The patch modifies system behavior without consensus, collective feedback or interval validation as unit or integration tests.
+- The patch modifies system behavior without consensus, collective feedback or internal validation as unit or integration tests.
 - The patch modifies a large number files, more than one could practically review in a timely manner.
 - The patch presents a feature or behavior that is deemed too specialized or custom with unwarranted assumptions.
-- The patch introduces (i.e. formatting) changes that reasonable are not related to the proposal's objective.
+- The patch introduces (i.e. formatting) changes that are not related to the proposal's objective.
 - The patch violates the general design principals of the codebase or introduces inconsistent or contradictory concepts that would be difficult to maintain.
 
 <div class="alert alert-success">
