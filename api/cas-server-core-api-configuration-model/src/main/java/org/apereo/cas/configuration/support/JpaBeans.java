@@ -123,7 +123,6 @@ public class JpaBeans {
             bean.setPersistenceUnitName(config.getPersistenceUnitName());
         }
         bean.setPackagesToScan(config.getPackagesToScan().toArray(ArrayUtils.EMPTY_STRING_ARRAY));
-
         if (config.getDataSource() != null) {
             bean.setDataSource(config.getDataSource());
         }

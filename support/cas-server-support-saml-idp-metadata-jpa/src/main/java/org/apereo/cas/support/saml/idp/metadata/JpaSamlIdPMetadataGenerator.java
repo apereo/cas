@@ -2,6 +2,7 @@ package org.apereo.cas.support.saml.idp.metadata;
 
 import org.apereo.cas.support.saml.idp.metadata.generator.BaseSamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGeneratorConfigurationContext;
+import org.apereo.cas.support.saml.idp.metadata.jpa.JpaSamlIdPMetadataDocumentFactory;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
 
@@ -42,6 +43,14 @@ public class JpaSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGenerator im
         this.transactionTemplate = transactionTemplate;
     }
 
+    private static String getAppliesToFor(final Optional<SamlRegisteredService> result) {
+        if (result.isPresent()) {
+            val registeredService = result.get();
+            return registeredService.getName() + '-' + registeredService.getId();
+        }
+        return "CAS";
+    }
+
     private void saveSamlIdPMetadataDocument(final SamlIdPMetadataDocument doc) {
         this.transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             @Override
@@ -52,19 +61,22 @@ public class JpaSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGenerator im
     }
 
     @Override
+    public void afterPropertiesSet() {
+        generate(Optional.empty());
+    }
+
+    @Override
+    protected SamlIdPMetadataDocument newSamlIdPMetadataDocument() {
+        val jpa = getConfigurationContext().getCasProperties().getAuthn().getSamlIdp().getMetadata().getJpa();
+        return new JpaSamlIdPMetadataDocumentFactory(jpa).newInstance();
+    }
+
+    @Override
     protected SamlIdPMetadataDocument finalizeMetadataDocument(final SamlIdPMetadataDocument doc,
                                                                final Optional<SamlRegisteredService> registeredService) {
         doc.setAppliesTo(getAppliesToFor(registeredService));
         saveSamlIdPMetadataDocument(doc);
         return doc;
-    }
-
-    private static String getAppliesToFor(final Optional<SamlRegisteredService> result) {
-        if (result.isPresent()) {
-            val registeredService = result.get();
-            return registeredService.getName() + '-' + registeredService.getId();
-        }
-        return "CAS";
     }
 
     @Override
@@ -77,11 +89,6 @@ public class JpaSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGenerator im
     @SneakyThrows
     public Pair<String, String> buildSelfSignedSigningCert(final Optional<SamlRegisteredService> registeredService) {
         return generateCertificateAndKey();
-    }
-
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        generate(Optional.empty());
     }
 }
 

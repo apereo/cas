@@ -5,6 +5,7 @@ import org.apereo.cas.util.EncodingUtils;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,11 +16,10 @@ import org.hibernate.annotations.Type;
 import org.springframework.data.annotation.Id;
 
 import javax.persistence.Column;
-import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Lob;
-import javax.persistence.Table;
+import javax.persistence.MappedSuperclass;
 
 /**
  * This is {@link SamlIdPMetadataDocument}.
@@ -27,11 +27,11 @@ import javax.persistence.Table;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Entity
-@Table(name = "SamlIdPMetadataDocument")
+@MappedSuperclass
 @Getter
 @Setter
 @AllArgsConstructor
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public class SamlIdPMetadataDocument {
 
     /**
@@ -45,7 +45,7 @@ public class SamlIdPMetadataDocument {
     @JsonProperty
     private long id = -1;
 
-    @Column(name = "appliesTo", unique = true, length = 2_000)
+    @Column(name = "appliesTo", unique = true, length = 512)
     @JsonProperty
     private String appliesTo = "CAS";
 

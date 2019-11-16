@@ -8,9 +8,9 @@ import org.apereo.cas.support.saml.idp.metadata.JpaSamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.JpaSamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGeneratorConfigurationContext;
+import org.apereo.cas.support.saml.idp.metadata.jpa.JpaSamlIdPMetadataDocumentFactory;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.idp.metadata.writer.SamlIdPCertificateAndKeyWriter;
-import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
@@ -38,6 +38,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
+
 import java.util.List;
 
 /**
@@ -78,7 +79,9 @@ public class SamlIdPJpaIdPMetadataConfiguration {
 
     @Bean
     public List<String> jpaSamlMetadataIdPPackagesToScan() {
-        return CollectionUtils.wrapList(SamlIdPMetadataDocument.class.getPackage().getName());
+        val idp = casProperties.getAuthn().getSamlIdp().getMetadata();
+        val type = new JpaSamlIdPMetadataDocumentFactory(idp.getJpa()).getType();
+        return CollectionUtils.wrapList(type.getPackage().getName());
     }
 
     @Lazy
@@ -122,16 +125,13 @@ public class SamlIdPJpaIdPMetadataConfiguration {
     @Autowired
     @Bean
     public SamlIdPMetadataGenerator samlIdPMetadataGenerator(@Qualifier("transactionManagerSamlMetadataIdP") final PlatformTransactionManager mgr) {
-        val idp = casProperties.getAuthn().getSamlIdp();
         val transactionTemplate = new TransactionTemplate(mgr);
 
         val context = SamlIdPMetadataGeneratorConfigurationContext.builder()
             .samlIdPMetadataLocator(samlIdPMetadataLocator())
             .samlIdPCertificateAndKeyWriter(samlSelfSignedCertificateWriter.getObject())
-            .entityId(idp.getEntityId())
             .resourceLoader(resourceLoader)
-            .casServerPrefix(casProperties.getServer().getPrefix())
-            .scope(idp.getScope())
+            .casProperties(casProperties)
             .metadataCipherExecutor(jpaSamlIdPMetadataCipherExecutor())
             .build();
 
