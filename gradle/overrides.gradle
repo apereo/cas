@@ -9,7 +9,7 @@
  */
 ext["hibernateVersion"] = "5.4.7.Final"
 ext["hazelcastVersion"] = "3.12.3"
-ext["infinispanVersion"] = "9.4.16.Final"
+ext["infinispanVersion"] = "10.0.1.Final"
 
 ext["springVersion"] = "5.2.1.RELEASE"
 ext["springSessionVersion"] = "2.2.0.RELEASE"
@@ -17,8 +17,8 @@ ext["springSessionMongoVersion"] = "2.2.1.RELEASE"
 
 ext["springBootTomcatVersion"] = "9.0.27"
 
-ext["jacksonVersion"] = "2.10.0.pr2"
-ext["jacksonCoreVersion"] = "2.10.0"
+ext["jacksonVersion"] = "2.10.1"
+ext["jacksonCoreVersion"] = "2.10.1"
 ext["thymeleafVersion"] = "3.0.11.RELEASE"
 ext["thymeleafDialectVersion"] = "2.4.1"
 ext["hsqlVersion"] = "2.5.0"
@@ -29,14 +29,14 @@ ext["log4jVersion"] = "2.12.1"
 ext["commonsBeansVersion"] = "1.9.4"
 ext["logbackVersion"] = "1.3.0-alpha5"
 ext["caffeinVersion"] = "2.8.0"
-ext["couchbaseVersion"] = "2.7.4"
+ext["couchbaseVersion"] = "2.7.10"
 
 ext["mysqlVersion"] = "8.0.18"
 ext["postgresqlVersion"] = "42.2.8"
 ext["mariaDbVersion"] = "2.5.1"
 ext["jtdsVersion"] = "1.3.1"
 ext["mssqlServerVersion"] = "7.2.1.jre11"
-ext["mongoDriverVersion"] = "3.11.0"
+ext["mongoDriverVersion"] = "3.11.2"
 ext["oracleJdbcVersion"] = "19.3.0.0"
 
 ext["couchbase-client.version"] = ext["couchbaseVersion"]
