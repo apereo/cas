@@ -67,6 +67,7 @@ import static org.mockito.Mockito.*;
     CasCoreTicketIdGeneratorsConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class
 }, properties = {
+    "cas.ticket.registry.ehcache.shared=true",
     "spring.mail.host=localhost",
     "spring.mail.port=25000",
     "spring.mail.testConnection=false"
