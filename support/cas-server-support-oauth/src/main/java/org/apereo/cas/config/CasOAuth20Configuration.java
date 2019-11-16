@@ -782,7 +782,8 @@ public class CasOAuth20Configuration {
     public SessionStore<JEEContext> oauthDistributedSessionStore() {
         val replicate = casProperties.getAuthn().getOauth().isReplicateSessions();
         if (replicate) {
-            return new DistributedJ2ESessionStore(ticketRegistry.getObject(), ticketFactory.getObject());
+            return new DistributedJ2ESessionStore(ticketRegistry.getObject(), ticketFactory.getObject(),
+                    casProperties.getSessionReplication().getSessionCookieName());
         }
         return new JEESessionStore();
     }
