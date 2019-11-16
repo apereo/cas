@@ -582,6 +582,14 @@ If none is specified, one is automatically detected and used by CAS.
 # cas.host.name=
 ```
 
+## Session replication
+
+The `sessionCookieName` property defines the session cookie name for the session replication.
+
+```properties
+# cas.sessionReplication.sessionCookieName=JSESSIONID
+```
+
 ## CAS Banner
 
 On startup, CAS will display a banner along with some diagnostics info.
