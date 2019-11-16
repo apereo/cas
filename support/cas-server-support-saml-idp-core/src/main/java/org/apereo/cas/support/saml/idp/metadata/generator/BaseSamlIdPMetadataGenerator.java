@@ -31,7 +31,8 @@ public abstract class BaseSamlIdPMetadataGenerator implements SamlIdPMetadataGen
     @Override
     @SneakyThrows
     public SamlIdPMetadataDocument generate(final Optional<SamlRegisteredService> registeredService) {
-        LOGGER.debug("Preparing to generate metadata for entityId [{}]", configurationContext.getEntityId());
+        val idp = configurationContext.getCasProperties().getAuthn().getSamlIdp();
+        LOGGER.debug("Preparing to generate metadata for entityId [{}]", idp.getEntityId());
         val samlIdPMetadataLocator = configurationContext.getSamlIdPMetadataLocator();
         if (!samlIdPMetadataLocator.exists(registeredService)) {
             LOGGER.trace("Metadata does not exist. Creating...");
@@ -45,7 +46,7 @@ public abstract class BaseSamlIdPMetadataGenerator implements SamlIdPMetadataGen
             LOGGER.info("Creating metadata...");
             val metadata = buildMetadataGeneratorParameters(signing, encryption, registeredService);
 
-            val doc = new SamlIdPMetadataDocument();
+            val doc = newSamlIdPMetadataDocument();
             doc.setEncryptionCertificate(encryption.getKey());
             doc.setEncryptionKey(encryption.getValue());
             doc.setSigningCertificate(signing.getKey());
@@ -55,6 +56,10 @@ public abstract class BaseSamlIdPMetadataGenerator implements SamlIdPMetadataGen
         }
 
         return samlIdPMetadataLocator.fetch(registeredService);
+    }
+
+    protected SamlIdPMetadataDocument newSamlIdPMetadataDocument() {
+        return new SamlIdPMetadataDocument();
     }
 
     /**
@@ -70,7 +75,7 @@ public abstract class BaseSamlIdPMetadataGenerator implements SamlIdPMetadataGen
     }
 
     private String getIdPEndpointUrl() {
-        return configurationContext.getCasServerPrefix().concat("/idp");
+        return configurationContext.getCasProperties().getServer().getPrefix().concat("/idp");
     }
 
     /**
@@ -106,11 +111,12 @@ public abstract class BaseSamlIdPMetadataGenerator implements SamlIdPMetadataGen
         val signingCert = SamlIdPMetadataGenerator.cleanCertificate(signing.getKey());
         val encryptionCert = SamlIdPMetadataGenerator.cleanCertificate(encryption.getKey());
 
+        val idp = configurationContext.getCasProperties().getAuthn().getSamlIdp();
         try (val writer = new StringWriter()) {
             IOUtils.copy(template.getInputStream(), writer, StandardCharsets.UTF_8);
             val metadata = writer.toString()
-                .replace("${entityId}", configurationContext.getEntityId())
-                .replace("${scope}", configurationContext.getScope())
+                .replace("${entityId}", idp.getEntityId())
+                .replace("${scope}", idp.getScope())
                 .replace("${idpEndpointUrl}", getIdPEndpointUrl())
                 .replace("${encryptionKey}", encryptionCert)
                 .replace("${signingKey}", signingCert);

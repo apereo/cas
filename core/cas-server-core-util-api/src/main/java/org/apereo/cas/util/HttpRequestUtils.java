@@ -93,12 +93,13 @@ public class HttpRequestUtils {
      */
     public static GeoLocationRequest getHttpServletRequestGeoLocation(final String geoLocationParam) {
         val loc = new GeoLocationRequest();
-        if (StringUtils.isNotBlank(geoLocationParam)) {
+        if (StringUtils.isNotBlank(geoLocationParam) && !StringUtils.equalsIgnoreCase(geoLocationParam, "unknown")) {
             val geoLocation = Splitter.on(",").splitToList(geoLocationParam);
             loc.setLatitude(geoLocation.get(GEO_LOC_LAT_INDEX));
             loc.setLongitude(geoLocation.get(GEO_LOC_LONG_INDEX));
             loc.setAccuracy(geoLocation.get(GEO_LOC_ACCURACY_INDEX));
             loc.setTimestamp(geoLocation.get(GEO_LOC_TIME_INDEX));
+
         }
         return loc;
     }

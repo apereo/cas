@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.idp.metadata.generator;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.idp.metadata.writer.SamlIdPCertificateAndKeyWriter;
 import org.apereo.cas.util.crypto.CipherExecutor;
@@ -24,8 +25,6 @@ public class SamlIdPMetadataGeneratorConfigurationContext {
     private final SamlIdPMetadataLocator samlIdPMetadataLocator;
     private final SamlIdPCertificateAndKeyWriter samlIdPCertificateAndKeyWriter;
     private final CipherExecutor<String, String> metadataCipherExecutor;
-    private final String entityId;
     private final ResourceLoader resourceLoader;
-    private final String casServerPrefix;
-    private final String scope;
+    private final CasConfigurationProperties casProperties;
 }

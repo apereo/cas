@@ -75,10 +75,8 @@ public class AmazonS3SamlIdPMetadataConfiguration {
         val context = SamlIdPMetadataGeneratorConfigurationContext.builder()
             .samlIdPMetadataLocator(samlIdPMetadataLocator())
             .samlIdPCertificateAndKeyWriter(samlSelfSignedCertificateWriter.getObject())
-            .entityId(idp.getEntityId())
             .resourceLoader(resourceLoader)
-            .casServerPrefix(casProperties.getServer().getPrefix())
-            .scope(idp.getScope())
+            .casProperties(casProperties)
             .metadataCipherExecutor(amazonS3SamlIdPMetadataCipherExecutor())
             .build();
         val generator = new AmazonS3SamlIdPMetadataGenerator(context,

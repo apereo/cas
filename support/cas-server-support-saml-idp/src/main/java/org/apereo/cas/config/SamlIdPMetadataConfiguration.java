@@ -135,15 +135,12 @@ public class SamlIdPMetadataConfiguration {
     @Bean
     @SneakyThrows
     public SamlIdPMetadataGenerator samlIdPMetadataGenerator() {
-        val idp = casProperties.getAuthn().getSamlIdp();
         val context = SamlIdPMetadataGeneratorConfigurationContext.builder()
             .samlIdPMetadataLocator(samlIdPMetadataLocator())
             .samlIdPCertificateAndKeyWriter(samlSelfSignedCertificateWriter())
-            .entityId(idp.getEntityId())
             .resourceLoader(resourceLoader)
-            .casServerPrefix(casProperties.getServer().getPrefix())
-            .scope(idp.getScope())
             .metadataCipherExecutor(CipherExecutor.noOpOfStringToString())
+            .casProperties(casProperties)
             .build();
         return new FileSystemSamlIdPMetadataGenerator(context);
     }
