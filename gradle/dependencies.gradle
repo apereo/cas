@@ -1295,6 +1295,17 @@ ext.libraries = [
                     exclude(group: "org.apache.httpcomponents", module: "httpcore")
                     exclude(group: "com.github.ben-manes.caffein", module: "caffein")
                     force = true
+                },
+                dependencies.create("org.infinispan:infinispan-component-annotations:$infinispanVersion") {
+                    exclude(group: "com.google.guava", module: "guava")
+                    exclude(group: "org.jboss.logging", module: "jboss-logging")
+                    exclude(group: "commons-cli", module: "commons-cli")
+                    exclude(group: "commons-beanutils", module: "commons-beanutils")
+                    exclude(group: "com.fasterxml", module: "classmate")
+                    exclude(group: "commons-collections", module: "commons-collections")
+                    exclude(group: "org.apache.httpcomponents", module: "httpcore")
+                    exclude(group: "com.github.ben-manes.caffein", module: "caffein")
+                    force = true
                 }
         ],
         inspektr                : [
