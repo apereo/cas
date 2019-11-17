@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 @Slf4j
 public class NeverAllowMultifactorAuthenticationProviderBypassEvaluator extends BaseMultifactorAuthenticationProviderBypassEvaluator {
     private static final long serialVersionUID = -2433888418344342672L;
-    private static volatile MultifactorAuthenticationProviderBypassEvaluator INSTANCE;
+    private static MultifactorAuthenticationProviderBypassEvaluator INSTANCE;
 
     protected NeverAllowMultifactorAuthenticationProviderBypassEvaluator() {
         super(NeverAllowMultifactorAuthenticationProviderBypassEvaluator.class.getSimpleName());

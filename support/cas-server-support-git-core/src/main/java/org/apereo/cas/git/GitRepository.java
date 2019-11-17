@@ -17,6 +17,7 @@ import org.eclipse.jgit.transport.ChainingCredentialsProvider;
 import org.eclipse.jgit.transport.CredentialsProvider;
 import org.eclipse.jgit.treewalk.TreeWalk;
 import org.eclipse.jgit.treewalk.filter.TreeFilter;
+import org.springframework.beans.factory.DisposableBean;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
@@ -32,7 +33,7 @@ import java.util.List;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class GitRepository {
+public class GitRepository implements DisposableBean {
     private final Git gitInstance;
 
     private final List<CredentialsProvider> credentialsProvider;
@@ -172,6 +173,13 @@ public class GitRepository {
             .setCredentialsProvider(new ChainingCredentialsProvider(providers))
             .call()
             .isSuccessful();
+    }
+
+    @Override
+    public void destroy() throws Exception {
+        if (this.gitInstance != null) {
+            this.gitInstance.close();
+        }
     }
 
     /**

@@ -350,7 +350,9 @@ public class OidcConfiguration implements WebMvcConfigurer {
     @Bean
     public HandlerInterceptorAdapter requiresAuthenticationAuthorizeInterceptor() {
         val name = oauthSecConfig.getObject().getClients()
-            .findClient(CasClient.class).get().getName();
+            .findClient(CasClient.class)
+            .orElseThrow()
+            .getName();
         val interceptor = new OidcSecurityInterceptor(oauthSecConfig.getObject(), name,
             oidcAuthorizationRequestSupport(),
             oauthDistributedSessionStore.getObject());

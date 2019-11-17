@@ -230,6 +230,7 @@ public class CloudWatchAppender extends AbstractAppender {
                         }
                     } catch (final InterruptedException e) {
                         LOGGER.error(e.getMessage(), e);
+                        Thread.currentThread().interrupt();
                     }
                 }
             }

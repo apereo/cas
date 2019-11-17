@@ -79,6 +79,7 @@ public class PathWatcherService implements WatcherService, Runnable, Closeable, 
             }
         } catch (final InterruptedException | ClosedWatchServiceException e) {
             LOGGER.trace(e.getMessage(), e);
+            Thread.currentThread().interrupt();
         }
     }
 

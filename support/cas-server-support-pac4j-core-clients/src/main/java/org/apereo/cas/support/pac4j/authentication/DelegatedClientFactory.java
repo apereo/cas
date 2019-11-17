@@ -77,7 +77,6 @@ public class DelegatedClientFactory {
         if (github.isEnabled() && StringUtils.isNotBlank(github.getId()) && StringUtils.isNotBlank(github.getSecret())) {
             val client = new GitHubClient(github.getId(), github.getSecret());
             configureClient(client, github);
-
             LOGGER.debug("Created client [{}] with identifier [{}]", client.getName(), client.getKey());
             properties.add(client);
         }
@@ -594,7 +593,6 @@ public class DelegatedClientFactory {
             customProperties.put(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_PRINCIPAL_ATTRIBUTE_ID, props.getPrincipalAttributeId());
         }
         client.setCallbackUrl(casProperties.getServer().getLoginUrl());
-
         if (!casProperties.getAuthn().getPac4j().isLazyInit()) {
             client.init();
         }
