@@ -39,7 +39,7 @@
           </elementProp>
           <elementProp name="IdPHost" elementType="Argument">
             <stringProp name="Argument.name">IdPHost</stringProp>
-            <stringProp name="Argument.value">https://mmoayyed.unicon.net:8443</stringProp>
+            <stringProp name="Argument.value">https://example.net:8443</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
             <stringProp name="Argument.desc">The main URL of your CAS Instance</stringProp>
           </elementProp>
@@ -63,7 +63,7 @@
       </Arguments>
       <hashTree/>
       <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="CSV Get Users/Passwords" enabled="true">
-        <stringProp name="filename">/Users/Misagh/Workspace/GitWorkspace/cas-server/etc/loadtests/jmeter/cas-users.csv</stringProp>
+        <stringProp name="filename">/etc/loadtests/jmeter/cas-users.csv</stringProp>
         <stringProp name="fileEncoding"></stringProp>
         <stringProp name="variableNames">User,Password</stringProp>
         <stringProp name="delimiter">,</stringProp>
