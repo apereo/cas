@@ -22,6 +22,7 @@ import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
@@ -34,6 +35,7 @@ import java.util.List;
  * @since 5.2.0
  */
 @Configuration("jdbcPasswordHistoryManagementConfiguration")
+@EnableTransactionManagement(proxyTargetClass = true)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnProperty(prefix = "cas.authn.pm.history", name = "enabled", havingValue = "true")
 public class JdbcPasswordHistoryManagementConfiguration {

@@ -3796,8 +3796,6 @@ under the configuration key `cas.audit.jdbc`.
 # cas.audit.jdbc.asynchronous=true
 # cas.audit.jdbc.maxAgeDays=180
 # cas.audit.jdbc.columnLength=100
-# cas.audit.jdbc.isolationLevelName=ISOLATION_READ_COMMITTED
-# cas.audit.jdbc.propagationBehaviorName=PROPAGATION_REQUIRED
 ```
 
 Scheduler settings for this feature are available [here](Configuration-Properties-Common.html#job-scheduling) under the configuration key `cas.audit.jdbc`.

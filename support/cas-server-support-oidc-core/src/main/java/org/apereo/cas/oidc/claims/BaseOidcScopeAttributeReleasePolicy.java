@@ -92,6 +92,9 @@ public abstract class BaseOidcScopeAttributeReleasePolicy extends AbstractRegist
                 val value = resolvedAttributes.get(mappedAttr);
                 LOGGER.debug("Found mapped attribute [{}] with value [{}] for claim [{}]", mappedAttr, value, claim);
                 return Pair.of(claim, value);
+            } else {
+                LOGGER.warn("Located claim [{}] mapped to attribute [{}], yet resolved attributes [{}] do not contain this attribute",
+                    claim, mappedAttr, resolvedAttributes);
             }
         }
         val value = resolvedAttributes.get(claim);
