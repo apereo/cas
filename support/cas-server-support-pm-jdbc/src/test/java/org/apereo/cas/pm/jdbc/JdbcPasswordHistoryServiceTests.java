@@ -5,6 +5,7 @@ import org.apereo.cas.pm.PasswordChangeRequest;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -15,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @Tag("JDBC")
+@TestPropertySource(properties = "cas.authn.pm.history.enabled=true")
 public class JdbcPasswordHistoryServiceTests extends BaseJdbcPasswordManagementServiceTests {
     @Test
     public void verifyOperation() {

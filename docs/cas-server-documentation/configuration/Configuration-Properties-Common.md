@@ -280,7 +280,7 @@ The following options related to JPA/JDBC support in CAS apply equally to a numb
 # ${configurationKey}.dialect=org.hibernate.dialect.HSQLDialect
 
 # ${configurationKey}.failFastTimeout=1
-# ${configurationKey}.isolationLevelName=ISOLATION_READ_COMMITTED
+# ${configurationKey}.isolationLevelName=ISOLATION_READ_COMMITTED 
 # ${configurationKey}.healthQuery=
 # ${configurationKey}.isolateInternalQueries=false
 # ${configurationKey}.leakThreshold=10
