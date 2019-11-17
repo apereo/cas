@@ -67,7 +67,7 @@ import org.springframework.jms.annotation.EnableJms;
 @EnableJms
 @EnabledIfContinuousIntegration
 @EnabledIfPortOpen(port = 61616)
-@Tag("JMS")
+@Tag("ActiveMQ")
 public class JmsTicketRegistryTests extends BaseTicketRegistryTests {
     @Autowired
     @Qualifier("ticketRegistry")
