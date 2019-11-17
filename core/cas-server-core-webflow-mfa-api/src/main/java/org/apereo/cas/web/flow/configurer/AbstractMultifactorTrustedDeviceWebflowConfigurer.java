@@ -51,7 +51,7 @@ public abstract class AbstractMultifactorTrustedDeviceWebflowConfigurer extends 
         validateFlowDefinitionConfiguration(flowDefinitionRegistry);
 
         LOGGER.trace("Flow definitions found in the registry are [{}]", (Object[]) flowDefinitionRegistry.getFlowDefinitionIds());
-        val flowId = Arrays.stream(flowDefinitionRegistry.getFlowDefinitionIds()).findFirst().get();
+        val flowId = Arrays.stream(flowDefinitionRegistry.getFlowDefinitionIds()).findFirst().orElseThrow();
         LOGGER.trace("Processing flow definition [{}]", flowId);
 
         val flow = (Flow) flowDefinitionRegistry.getFlowDefinition(flowId);

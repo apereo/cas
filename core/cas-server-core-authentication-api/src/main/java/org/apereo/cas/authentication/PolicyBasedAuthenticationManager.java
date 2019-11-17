@@ -209,7 +209,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
             principal = resolvePrincipal(handler, resolver, credential, principal);
             if (principal == null) {
                 if (this.principalResolutionFailureFatal) {
-                    val resolverName = resolver != null ? resolver.getName(): "N/A";
+                    val resolverName = resolver.getName();
                     LOGGER.warn("Principal resolution handled by [{}] produced a null principal for: [{}]"
                         + "CAS is configured to treat principal resolution failures as fatal.", resolverName, credential);
                     throw new UnresolvedPrincipalException();
@@ -281,7 +281,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
 
         val builder = new DefaultAuthenticationBuilder(NullPrincipal.getInstance());
         credentials.forEach(cred -> builder.addCredential(new BasicCredentialMetaData(cred)));
-        
+
         val handlerSet = this.authenticationEventExecutionPlan.getAuthenticationHandlersForTransaction(transaction);
         LOGGER.debug("Candidate resolved authentication handlers for this transaction are [{}]", handlerSet);
 

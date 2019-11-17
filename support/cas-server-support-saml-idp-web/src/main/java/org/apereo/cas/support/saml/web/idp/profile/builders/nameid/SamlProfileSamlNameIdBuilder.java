@@ -342,8 +342,9 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
                                                                    final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) {
         val encoder = new SAML2StringNameIDEncoder();
         encoder.setNameFormat(nameFormat);
-        if (getNameIDPolicy(authnRequest) != null) {
-            val qualifier = getNameIDPolicy(authnRequest).getSPNameQualifier();
+        val nameIDPolicy = getNameIDPolicy(authnRequest);
+        if (nameIDPolicy != null) {
+            val qualifier = nameIDPolicy.getSPNameQualifier();
             LOGGER.debug("NameID qualifier is set to [{}]", qualifier);
             encoder.setNameQualifier(qualifier);
         }

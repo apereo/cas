@@ -4,6 +4,15 @@
         <cve>CVE-2019-13139</cve>
     </suppress>
     <suppress>
+        <cve>CVE-2017-15089</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2016-0750</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2019-12419</cve>
+    </suppress>
+    <suppress>
         <cve>CVE-2019-17531</cve>
     </suppress>
     <suppress>

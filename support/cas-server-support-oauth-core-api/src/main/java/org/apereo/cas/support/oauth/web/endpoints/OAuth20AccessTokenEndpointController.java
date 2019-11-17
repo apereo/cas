@@ -134,7 +134,7 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
             .accessTokenTimeout(atPolicy.buildTicketExpirationPolicy().getTimeToLive())
             .deviceRefreshInterval(deviceRefreshInterval)
             .deviceTokenTimeout(dtPolicy.buildTicketExpirationPolicy().getTimeToLive())
-            .responseType(result.getResponseType().isPresent() ? result.getResponseType().get() : OAuth20ResponseTypes.NONE)
+            .responseType(result.getResponseType().orElse(OAuth20ResponseTypes.NONE))
             .casProperties(getOAuthConfigurationContext().getCasProperties())
             .generatedToken(result)
             .build();

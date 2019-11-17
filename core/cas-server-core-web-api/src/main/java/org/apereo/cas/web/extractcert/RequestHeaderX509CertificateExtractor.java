@@ -13,6 +13,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.cert.X509Certificate;
+import java.util.Objects;
 
 /**
  * This class is adapted from the Tomcat SSLValve class and uses its parsing
@@ -92,7 +93,7 @@ public class RequestHeaderX509CertificateExtractor implements X509CertificateExt
             return null;
         }
 
-        if (certHeaderValue.length() < X509_HEADER.length()) {
+        if (Objects.requireNonNull(certHeaderValue).length() < X509_HEADER.length()) {
             LOGGER.debug("Header [{}] found but it is too short to parse. Header value: [{}]", sslClientCertHeader, certHeaderValue);
             return null;
         }
