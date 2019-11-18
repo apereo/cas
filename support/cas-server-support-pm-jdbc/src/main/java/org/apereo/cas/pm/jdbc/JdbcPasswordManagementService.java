@@ -2,7 +2,6 @@ package org.apereo.cas.pm.jdbc;
 
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
-import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
 import org.apereo.cas.configuration.model.support.pm.PasswordManagementProperties;
 import org.apereo.cas.pm.BasePasswordManagementService;
 import org.apereo.cas.pm.PasswordChangeRequest;
@@ -16,6 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.annotation.Nonnull;
@@ -35,26 +35,27 @@ import java.util.Map;
 public class JdbcPasswordManagementService extends BasePasswordManagementService {
 
     private final JdbcTemplate jdbcTemplate;
-
     private final TransactionTemplate transactionTemplate;
-
+    private final PasswordEncoder passwordEncoder;
+    
     public JdbcPasswordManagementService(final CipherExecutor<Serializable, String> cipherExecutor,
                                          final String issuer,
                                          final PasswordManagementProperties passwordManagementProperties,
                                          @Nonnull final DataSource dataSource,
                                          @Nonnull final TransactionTemplate transactionTemplate,
-                                         final PasswordHistoryService passwordHistoryService) {
+                                         final PasswordHistoryService passwordHistoryService,
+                                         final PasswordEncoder passwordEncoder) {
         super(passwordManagementProperties, cipherExecutor, issuer, passwordHistoryService);
         this.jdbcTemplate = new JdbcTemplate(dataSource);
         this.transactionTemplate = transactionTemplate;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
     public boolean changeInternal(final Credential credential, final PasswordChangeRequest bean) {
         val result = (Boolean) this.transactionTemplate.execute(action -> {
             val c = (UsernamePasswordCredential) credential;
-            val encoder = PasswordEncoderUtils.newPasswordEncoder(properties.getJdbc().getPasswordEncoder());
-            val password = encoder.encode(bean.getPassword());
+            val password = passwordEncoder.encode(bean.getPassword());
             val count = this.jdbcTemplate.update(properties.getJdbc().getSqlChangePassword(), password, c.getId());
             return count > 0;
         });

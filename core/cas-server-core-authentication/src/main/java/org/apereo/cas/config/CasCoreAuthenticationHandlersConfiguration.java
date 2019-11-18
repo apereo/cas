@@ -28,6 +28,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -63,6 +64,9 @@ public class CasCoreAuthenticationHandlersConfiguration {
     @Qualifier("servicesManager")
     private ObjectProvider<ServicesManager> servicesManager;
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+
     @ConditionalOnProperty(prefix = "cas.sso", name = "proxyAuthnEnabled", havingValue = "true", matchIfMissing = true)
     @Bean
     public AuthenticationHandler proxyAuthenticationHandler() {
@@ -93,7 +97,7 @@ public class CasCoreAuthenticationHandlersConfiguration {
             acceptUsersPrincipalFactory(),
             null,
             getParsedUsers());
-        h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(props.getPasswordEncoder()));
+        h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(props.getPasswordEncoder(), applicationContext));
         h.setPasswordPolicyConfiguration(acceptPasswordPolicyConfiguration());
         h.setCredentialSelectionPredicate(CoreAuthenticationUtils.newCredentialSelectionPredicate(props.getCredentialCriteria()));
         h.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(props.getPrincipalTransformation()));
@@ -194,7 +198,7 @@ public class CasCoreAuthenticationHandlersConfiguration {
                     h.setKerberosKdcSystemProperty(jaas.getKerberosKdcSystemProperty());
                     h.setKerberosRealmSystemProperty(jaas.getKerberosRealmSystemProperty());
                     h.setRealm(jaas.getRealm());
-                    h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(jaas.getPasswordEncoder()));
+                    h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(jaas.getPasswordEncoder(), applicationContext));
 
                     if (StringUtils.isNotBlank(jaas.getLoginConfigType())) {
                         h.setLoginConfigType(jaas.getLoginConfigType());
