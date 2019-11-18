@@ -11,7 +11,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.grouper.GrouperFacade;
 import org.apereo.cas.grouper.GrouperGroupField;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import edu.internet2.middleware.grouperClientExt.org.apache.commons.lang3.StringUtils;
 import lombok.Getter;
@@ -19,9 +18,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.context.ApplicationContext;
 import org.springframework.core.Ordered;
 
 import javax.servlet.http.HttpServletRequest;
+
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -39,8 +40,12 @@ import java.util.stream.Stream;
 @RequiredArgsConstructor
 public class GrouperMultifactorAuthenticationTrigger implements MultifactorAuthenticationTrigger {
     private final CasConfigurationProperties casProperties;
+
     private final MultifactorAuthenticationProviderResolver multifactorAuthenticationProviderResolver;
+
     private final GrouperFacade grouperFacade;
+
+    private final ApplicationContext applicationContext;
 
     private int order = Ordered.LOWEST_PRECEDENCE;
 
@@ -65,7 +70,7 @@ public class GrouperMultifactorAuthenticationTrigger implements MultifactorAuthe
             return Optional.empty();
         }
 
-        val providerMap = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(ApplicationContextProvider.getApplicationContext());
+        val providerMap = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
         if (providerMap.isEmpty()) {
             LOGGER.error("No multifactor authentication providers are available in the application context");
             throw new AuthenticationException();

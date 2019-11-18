@@ -46,10 +46,10 @@ public class AccessTokenRequestDataHolder {
     private final OAuth20GrantTypes grantType = OAuth20GrantTypes.NONE;
 
     @Builder.Default
-    private final Set<String> scopes = new LinkedHashSet<>();
+    private final Set<String> scopes = new LinkedHashSet<>(0);
 
     @Builder.Default
-    private final Map<String, Map<String, Object>> claims = new HashMap<>();
+    private final Map<String, Map<String, Object>> claims = new HashMap<>(0);
 
     @Builder.Default
     private final OAuth20ResponseTypes responseType = OAuth20ResponseTypes.NONE;

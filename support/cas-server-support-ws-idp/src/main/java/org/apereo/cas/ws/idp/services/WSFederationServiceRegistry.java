@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 public class WSFederationServiceRegistry extends ImmutableInMemoryServiceRegistry {
     public WSFederationServiceRegistry(final List<RegisteredService> services,
                                        final ApplicationEventPublisher eventPublisher) {
-        super(services, eventPublisher, new ArrayList<>());
+        super(services, eventPublisher, new ArrayList<>(0));
     }
 
     public WSFederationServiceRegistry(final ApplicationEventPublisher eventPublisher,

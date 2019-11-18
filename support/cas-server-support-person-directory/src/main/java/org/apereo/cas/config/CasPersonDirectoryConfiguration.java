@@ -111,7 +111,7 @@ public class CasPersonDirectoryConfiguration {
         list.addAll(stubAttributeRepositories());
 
         val configurers = (List<PersonDirectoryAttributeRepositoryPlanConfigurer>)
-            ObjectUtils.defaultIfNull(attributeRepositoryConfigurers.getIfAvailable(), new ArrayList<>());
+            ObjectUtils.defaultIfNull(attributeRepositoryConfigurers.getIfAvailable(), new ArrayList<>(0));
         val plan = new DefaultPersonDirectoryAttributeRepositoryPlan();
         configurers.forEach(c -> c.configureAttributeRepositoryPlan(plan));
         list.addAll(plan.getAttributeRepositories());

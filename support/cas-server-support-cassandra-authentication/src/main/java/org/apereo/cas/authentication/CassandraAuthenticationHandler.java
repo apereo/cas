@@ -57,6 +57,6 @@ public class CassandraAuthenticationHandler extends AbstractUsernamePasswordAuth
             throw new FailedLoginException();
         }
         return createHandlerResult(credential,
-            this.principalFactory.createPrincipal(username, attributes), new ArrayList<>());
+            this.principalFactory.createPrincipal(username, attributes), new ArrayList<>(0));
     }
 }

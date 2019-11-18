@@ -63,7 +63,7 @@ public class CasEvent {
     @MapKeyColumn(name = "name")
     @Column(name = "value")
     @CollectionTable(name = "events_properties", joinColumns = @JoinColumn(name = "eventId"))
-    private Map<String, String> properties = new HashMap<>();
+    private Map<String, String> properties = new HashMap<>(0);
 
     /**
      * Instantiates a new CAS event.

@@ -46,7 +46,7 @@ import java.util.TreeMap;
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServiceAttributeReleasePolicy {
-
+    private static final int MAP_SIZE = 8;
     private static final long serialVersionUID = -6249488544306639050L;
 
     private Map<String, Object> allowedAttributes = new TreeMap<>();
@@ -54,7 +54,7 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
     @JsonIgnore
     @Transient
     @org.springframework.data.annotation.Transient
-    private transient Map<String, ExecutableCompiledGroovyScript> attributeScriptCache = new LinkedHashMap<>();
+    private transient Map<String, ExecutableCompiledGroovyScript> attributeScriptCache = new LinkedHashMap<>(0);
 
     @JsonCreator
     public ReturnMappedAttributeReleasePolicy(@JsonProperty("allowedAttributes") final Map<String, Object> attributes) {
@@ -75,7 +75,7 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
     @PostLoad
     private void initializeWatchableScriptIfNeeded() {
         if (this.attributeScriptCache == null) {
-            this.attributeScriptCache = new LinkedHashMap<>();
+            this.attributeScriptCache = new LinkedHashMap<>(MAP_SIZE);
         }
         getAllowedAttributes().forEach((attributeName, value) -> {
             val mappedAttributes = CollectionUtils.wrap(value);

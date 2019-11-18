@@ -27,6 +27,6 @@ public class SamlIdPDiscoveryProperties implements Serializable {
      * Locate discovery feed json file.
      */
     @NestedConfigurationProperty
-    private List<SpringResourceProperties> resource = new ArrayList<>();
+    private List<SpringResourceProperties> resource = new ArrayList<>(0);
 
 }

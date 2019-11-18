@@ -35,7 +35,7 @@ public class SpnegoProperties implements Serializable {
      * Individual authentication settings for spengo that are grouped
      * and fed to the spnego authentication object to form a collection.
      */
-    private final List<SpnegoAuthenticationProperties> properties = new ArrayList<>();
+    private final List<SpnegoAuthenticationProperties> properties = new ArrayList<>(0);
 
     /**
      * If specified, will create the principal by ths name on successful authentication.

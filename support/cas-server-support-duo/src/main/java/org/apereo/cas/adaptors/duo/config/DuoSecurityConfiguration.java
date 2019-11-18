@@ -79,7 +79,7 @@ public class DuoSecurityConfiguration {
     @ConditionalOnMissingBean(name = "duoNonWebAuthenticationAction")
     @Bean
     public Action duoNonWebAuthenticationAction() {
-        return new DuoSecurityDirectAuthenticationAction();
+        return new DuoSecurityDirectAuthenticationAction(applicationContext);
     }
 
     @ConditionalOnMissingBean(name = "duoAuthenticationWebflowAction")

@@ -8,6 +8,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 
 import lombok.val;
 import org.junit.jupiter.api.Test;
+import org.springframework.context.ApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -23,7 +24,7 @@ public class AdaptiveMultifactorAuthenticationTriggerTests extends BaseMultifact
     public void verifyOperationByRequestIP() {
         val props = new CasConfigurationProperties();
         props.getAuthn().getAdaptive().getRequireMultifactor().put("mfa-dummy", "185.86.151.11");
-        val trigger = new AdaptiveMultifactorAuthenticationTrigger(this.geoLocationService, props);
+        val trigger = new AdaptiveMultifactorAuthenticationTrigger(this.geoLocationService, props, mock(ApplicationContext.class));
         val result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
         assertTrue(result.isPresent());
     }
@@ -32,7 +33,7 @@ public class AdaptiveMultifactorAuthenticationTriggerTests extends BaseMultifact
     public void verifyOperationByRequestUserAgent() {
         val props = new CasConfigurationProperties();
         props.getAuthn().getAdaptive().getRequireMultifactor().put("mfa-dummy", "^Mozilla.+");
-        val trigger = new AdaptiveMultifactorAuthenticationTrigger(this.geoLocationService, props);
+        val trigger = new AdaptiveMultifactorAuthenticationTrigger(this.geoLocationService, props, mock(ApplicationContext.class));
         val result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
         assertTrue(result.isPresent());
     }
@@ -44,7 +45,7 @@ public class AdaptiveMultifactorAuthenticationTriggerTests extends BaseMultifact
         val geoResponse = new GeoLocationResponse();
         geoResponse.addAddress("123 Main St London UK");
         when(this.geoLocationService.locate(anyString(), any(GeoLocationRequest.class))).thenReturn(geoResponse);
-        val trigger = new AdaptiveMultifactorAuthenticationTrigger(this.geoLocationService, props);
+        val trigger = new AdaptiveMultifactorAuthenticationTrigger(this.geoLocationService, props, mock(ApplicationContext.class));
         val result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
         assertTrue(result.isPresent());
     }

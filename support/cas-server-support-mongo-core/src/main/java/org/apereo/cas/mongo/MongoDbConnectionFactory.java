@@ -61,7 +61,7 @@ public class MongoDbConnectionFactory {
     private final MongoCustomConversions customConversions;
 
     public MongoDbConnectionFactory() {
-        this(new ArrayList<>());
+        this(new ArrayList<>(0));
     }
 
     public MongoDbConnectionFactory(final Converter... converters) {
@@ -287,7 +287,7 @@ public class MongoDbConnectionFactory {
             throw new BeanCreationException("Unable to build a MongoDb client without any hosts/servers defined");
         }
 
-        List<ServerAddress> servers = new ArrayList<>();
+        List<ServerAddress> servers = new ArrayList<>(0);
         if (serverAddresses.length > 1) {
             LOGGER.debug("Multiple MongoDb server addresses are defined. Ignoring port [{}], "
                 + "assuming ports are defined as part of the address", mongo.getPort());

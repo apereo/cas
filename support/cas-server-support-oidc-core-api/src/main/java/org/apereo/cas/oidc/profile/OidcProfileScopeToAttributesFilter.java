@@ -38,7 +38,8 @@ import java.util.Map;
  */
 @Slf4j
 public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileScopeToAttributesFilter {
-    private final Map<String, BaseOidcScopeAttributeReleasePolicy> attributeReleasePolicies = new LinkedHashMap<>();
+    private static final int MAP_SIZE = 8;
+    private final Map<String, BaseOidcScopeAttributeReleasePolicy> attributeReleasePolicies = new LinkedHashMap<>(MAP_SIZE);
 
     private final PrincipalFactory principalFactory;
     private final CasConfigurationProperties casProperties;

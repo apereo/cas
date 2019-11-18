@@ -88,7 +88,7 @@ public class CasAddonsRegisteredServicesJsonSerializer extends RegisteredService
         if (anonymousAccess) {
             service.setUsernameAttributeProvider(new AnonymousRegisteredServiceUsernameAttributeProvider());
         }
-        val attributes = (List<String>) serviceDataMap.getOrDefault("allowedAttributes", new ArrayList<>());
+        val attributes = (List<String>) serviceDataMap.getOrDefault("allowedAttributes", new ArrayList<>(0));
         service.setAttributeReleasePolicy(new ReturnAllowedAttributeReleasePolicy(attributes));
         return service;
     }

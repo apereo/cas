@@ -230,7 +230,7 @@ public class DelegatedAuthenticationWebflowConfiguration {
                         delegatedClientWebflowManager(),
                         delegatedClientDistributedSessionStore.getObject()));
             }
-            return new ArrayList<>();
+            return new ArrayList<>(0);
         };
     }
 }

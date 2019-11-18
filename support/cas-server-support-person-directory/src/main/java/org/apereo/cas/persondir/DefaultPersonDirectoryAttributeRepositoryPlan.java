@@ -18,7 +18,7 @@ import java.util.List;
 @Slf4j
 @Getter
 public class DefaultPersonDirectoryAttributeRepositoryPlan implements PersonDirectoryAttributeRepositoryPlan {
-    private final List<IPersonAttributeDao> attributeRepositories = new ArrayList<>();
+    private final List<IPersonAttributeDao> attributeRepositories = new ArrayList<>(0);
 
     @Override
     public void registerAttributeRepository(final IPersonAttributeDao repository) {

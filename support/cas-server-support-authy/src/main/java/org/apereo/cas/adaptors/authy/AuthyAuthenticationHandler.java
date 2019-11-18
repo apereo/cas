@@ -60,7 +60,7 @@ public class AuthyAuthenticationHandler extends AbstractPreAndPostProcessingAuth
             throw new FailedLoginException(AuthyClientInstance.getErrorMessage(verification.getError()));
         }
 
-        return createHandlerResult(tokenCredential, principal, new ArrayList<>());
+        return createHandlerResult(tokenCredential, principal, new ArrayList<>(0));
     }
 
     @SneakyThrows

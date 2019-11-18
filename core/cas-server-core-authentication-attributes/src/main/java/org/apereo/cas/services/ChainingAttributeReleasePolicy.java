@@ -36,7 +36,7 @@ public class ChainingAttributeReleasePolicy implements RegisteredServiceAttribut
 
     private static final long serialVersionUID = 3795054936775326709L;
 
-    private List<RegisteredServiceAttributeReleasePolicy> policies = new ArrayList<>();
+    private List<RegisteredServiceAttributeReleasePolicy> policies = new ArrayList<>(0);
 
     private String mergingPolicy = "replace";
 

@@ -50,7 +50,7 @@ public class AcceptUsersAuthenticationHandler extends AbstractUsernamePasswordAu
      * @param name the name
      */
     public AcceptUsersAuthenticationHandler(final String name) {
-        this(name, null, new DefaultPrincipalFactory(), Integer.MAX_VALUE, new HashMap<>());
+        this(name, null, new DefaultPrincipalFactory(), Integer.MAX_VALUE, new HashMap<>(0));
     }
 
     /**

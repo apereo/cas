@@ -29,7 +29,7 @@ public class PrincipalAttributesRepositoryCache implements Closeable {
 
     private static final String DEFAULT_CACHE_EXPIRATION_UNIT = TimeUnit.HOURS.name();
 
-    private final Map<String, Cache<String, Map<String, List<Object>>>> registeredServicesCache = new HashMap<>();
+    private final Map<String, Cache<String, Map<String, List<Object>>>> registeredServicesCache = new HashMap<>(0);
 
     @Override
     public void close() {

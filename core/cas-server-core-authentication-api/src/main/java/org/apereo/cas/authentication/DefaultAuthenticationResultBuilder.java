@@ -29,8 +29,8 @@ import java.util.Set;
 public class DefaultAuthenticationResultBuilder implements AuthenticationResultBuilder {
 
     private static final long serialVersionUID = 6180465589526463843L;
-    private final Set<Authentication> authentications = Collections.synchronizedSet(new LinkedHashSet<>());
-    private final List<Credential> providedCredentials = new ArrayList<>();
+    private final Set<Authentication> authentications = Collections.synchronizedSet(new LinkedHashSet<>(0));
+    private final List<Credential> providedCredentials = new ArrayList<>(0);
 
     private static void buildAuthenticationHistory(final Set<Authentication> authentications,
                                                    final Map<String, List<Object>> authenticationAttributes,

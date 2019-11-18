@@ -29,7 +29,7 @@ public class ServiceValidationViewFactory {
     /**
      * The Registered views.
      */
-    private final Map<String, Pair<View, View>> registeredViews = new HashMap<>();
+    private final Map<String, Pair<View, View>> registeredViews = new HashMap<>(0);
 
     /**
      * Register view.

@@ -18,8 +18,8 @@ import java.util.List;
 @Slf4j
 public class DefaultLogoutExecutionPlan implements LogoutExecutionPlan {
 
-    private final List<LogoutPostProcessor> handlers = new ArrayList<>();
-    private final List<SingleLogoutServiceMessageHandler> singleLogoutServiceMessageHandlers = new ArrayList<>();
+    private final List<LogoutPostProcessor> handlers = new ArrayList<>(0);
+    private final List<SingleLogoutServiceMessageHandler> singleLogoutServiceMessageHandlers = new ArrayList<>(0);
 
     @Override
     public void registerLogoutPostProcessor(final LogoutPostProcessor handler) {

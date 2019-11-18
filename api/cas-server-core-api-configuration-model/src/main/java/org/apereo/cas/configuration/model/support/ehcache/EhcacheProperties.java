@@ -163,7 +163,7 @@ public class EhcacheProperties implements Serializable {
      * Allows system properties to be set prior to ehcache.xml parsing.
      * EhCache will interpolate system properties in the ehcache xml config file e.g. ${ehCacheMulticastAddress}.
      */
-    private final Map<String, String> systemProps = new HashMap<>();
+    private final Map<String, String> systemProps = new HashMap<>(0);
 
     /**
      * Crypto settings for the registry.

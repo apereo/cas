@@ -58,7 +58,7 @@ public abstract class AbstractMetadataResolverAdapter implements MetadataResolve
      * Instantiates a new abstract metadata resolver adapter.
      */
     public AbstractMetadataResolverAdapter() {
-        this.metadataResources = new HashMap<>();
+        this.metadataResources = new HashMap<>(0);
     }
 
     /**

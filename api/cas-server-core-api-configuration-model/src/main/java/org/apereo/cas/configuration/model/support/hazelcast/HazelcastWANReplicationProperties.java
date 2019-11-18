@@ -34,5 +34,5 @@ public class HazelcastWANReplicationProperties implements Serializable {
     /**
      * List of target clusters to be used for synchronization and replication.
      */
-    private List<HazelcastWANReplicationTargetClusterProperties> targets = new ArrayList<>();
+    private List<HazelcastWANReplicationTargetClusterProperties> targets = new ArrayList<>(0);
 }

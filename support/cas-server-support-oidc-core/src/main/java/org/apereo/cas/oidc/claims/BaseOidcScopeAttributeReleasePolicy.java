@@ -58,7 +58,7 @@ public abstract class BaseOidcScopeAttributeReleasePolicy extends AbstractRegist
         val applicationContext = ApplicationContextProvider.getApplicationContext();
         if (applicationContext == null) {
             LOGGER.warn("Could not locate the application context to process attributes");
-            return new HashMap<>();
+            return new HashMap<>(0);
         }
         val resolvedAttributes = new TreeMap<String, List<Object>>(String.CASE_INSENSITIVE_ORDER);
         resolvedAttributes.putAll(attributes);

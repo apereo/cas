@@ -182,7 +182,8 @@ public class RadiusConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "radiusAccessChallengedMultifactorAuthenticationTrigger")
     public MultifactorAuthenticationTrigger radiusAccessChallengedMultifactorAuthenticationTrigger() {
-        return new RadiusAccessChallengedMultifactorAuthenticationTrigger(casProperties, multifactorAuthenticationProviderResolver.getObject());
+        return new RadiusAccessChallengedMultifactorAuthenticationTrigger(casProperties,
+            multifactorAuthenticationProviderResolver.getObject(), this.applicationContext);
     }
 
     @RefreshScope

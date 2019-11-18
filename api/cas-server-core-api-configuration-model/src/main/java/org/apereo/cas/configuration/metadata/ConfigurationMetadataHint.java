@@ -17,7 +17,7 @@ import java.util.List;
 @Getter
 @Setter
 public class ConfigurationMetadataHint {
-    private final List<ValueHint> values = new ArrayList<>();
-    private final List<ValueProvider> providers = new ArrayList<>();
+    private final List<ValueHint> values = new ArrayList<>(0);
+    private final List<ValueProvider> providers = new ArrayList<>(0);
     private String name;
 }

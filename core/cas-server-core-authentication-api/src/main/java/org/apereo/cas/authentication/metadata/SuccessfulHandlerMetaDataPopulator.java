@@ -27,7 +27,7 @@ public class SuccessfulHandlerMetaDataPopulator extends BaseAuthenticationMetaDa
     public void populateAttributes(final AuthenticationBuilder builder, final AuthenticationTransaction transaction) {
         var successes = builder.getSuccesses().keySet();
         if (successes.isEmpty()) {
-            builder.mergeAttribute(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS, new HashSet<>());
+            builder.mergeAttribute(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS, new HashSet<>(0));
         } else {
             builder.mergeAttribute(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS, CollectionUtils.wrap(successes));
         }

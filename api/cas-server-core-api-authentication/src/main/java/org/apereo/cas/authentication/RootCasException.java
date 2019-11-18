@@ -25,7 +25,7 @@ public abstract class RootCasException extends RuntimeException {
 
     private final String code;
 
-    private final List<Object> args = new ArrayList<>();
+    private final List<Object> args = new ArrayList<>(0);
     
     public RootCasException(final String code, final String msg) {
         super(msg);

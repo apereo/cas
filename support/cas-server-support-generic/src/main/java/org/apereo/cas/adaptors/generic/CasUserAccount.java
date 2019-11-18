@@ -20,10 +20,11 @@ import java.util.Map;
 @Getter
 @Setter
 public class CasUserAccount implements Serializable {
-
+    private static final int MAP_SIZE = 8;
     private static final long serialVersionUID = 7579594722197541062L;
+
     private String password;
-    private Map<String, List<Object>> attributes = new LinkedHashMap<>();
+    private Map<String, List<Object>> attributes = new LinkedHashMap<>(MAP_SIZE);
     private AccountStatus status = AccountStatus.OK;
     private LocalDate expirationDate;
 

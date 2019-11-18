@@ -74,7 +74,7 @@ public class MonitorProperties implements Serializable {
     /**
      * Options for monitoring LDAP resources.
      */
-    private List<LdapMonitorProperties> ldap = new ArrayList<>();
+    private List<LdapMonitorProperties> ldap = new ArrayList<>(0);
 
     /**
      * Options for monitoring Memcached resources.
@@ -180,7 +180,7 @@ public class MonitorProperties implements Serializable {
          * and exposes shortcuts so security and capability of endpoints
          * can be globally controlled from one spot and then overridden elsewhere.
          */
-        private Map<String, ActuatorEndpointProperties> endpoint = new HashMap<>();
+        private Map<String, ActuatorEndpointProperties> endpoint = new HashMap<>(0);
 
         /**
          * Enable Spring Security's JAAS authentication provider

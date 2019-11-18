@@ -70,7 +70,7 @@ public class JpaGoogleAuthenticatorTokenCredentialRepository extends BaseGoogleA
         } catch (final Exception e) {
             LOGGER.debug(e.getMessage(), e);
         }
-        return new ArrayList<>();
+        return new ArrayList<>(0);
     }
 
     @Override

@@ -5,9 +5,9 @@ import org.apereo.cas.services.RegisteredServiceMultifactorPolicyFailureModes;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.context.ApplicationContext;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -19,10 +19,14 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 5.3.4
  */
 @Slf4j
-@RequiredArgsConstructor
 public class MultifactorAuthenticationFailureAction extends AbstractMultifactorAuthenticationAction {
 
     private final CasConfigurationProperties casProperties;
+
+    public MultifactorAuthenticationFailureAction(final CasConfigurationProperties casProperties, final ApplicationContext applicationContext) {
+        super(applicationContext);
+        this.casProperties = casProperties;
+    }
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {

@@ -138,7 +138,7 @@ public class WsFederationProperties implements Serializable {
          * Collection of fully-qualified claims prefixed with the appropriate
          * namespace that are expected to be released via attribute release policy.
          */
-        private List<String> customClaims = new ArrayList<>();
+        private List<String> customClaims = new ArrayList<>(0);
 
         @Getter
         @Setter

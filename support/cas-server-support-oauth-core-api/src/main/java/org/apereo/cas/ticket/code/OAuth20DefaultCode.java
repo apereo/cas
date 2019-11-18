@@ -47,11 +47,11 @@ public class OAuth20DefaultCode extends AbstractTicket implements OAuth20Code {
 
     @Lob
     @Column(name = "scopes", length = Integer.MAX_VALUE)
-    private HashSet<String> scopes = new HashSet<>();
+    private HashSet<String> scopes = new HashSet<>(0);
 
     @Lob
     @Column(name = "claims", length = Integer.MAX_VALUE)
-    private HashMap<String, Map<String, Object>> claims = new HashMap<>();
+    private HashMap<String, Map<String, Object>> claims = new HashMap<>(0);
 
     /**
      * The {@link TicketGrantingTicket} this is associated with.
@@ -125,6 +125,6 @@ public class OAuth20DefaultCode extends AbstractTicket implements OAuth20Code {
 
     @Override
     public Set<String> getScopes() {
-        return ObjectUtils.defaultIfNull(this.scopes, new HashSet<>());
+        return ObjectUtils.defaultIfNull(this.scopes, new HashSet<>(0));
     }
 }

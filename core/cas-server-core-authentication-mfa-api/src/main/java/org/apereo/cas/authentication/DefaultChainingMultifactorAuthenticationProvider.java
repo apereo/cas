@@ -26,7 +26,7 @@ import java.util.List;
 public class DefaultChainingMultifactorAuthenticationProvider implements ChainingMultifactorAuthenticationProvider {
     private static final long serialVersionUID = -3199297701531604341L;
 
-    private final List<MultifactorAuthenticationProvider> multifactorAuthenticationProviders = new ArrayList<>();
+    private final List<MultifactorAuthenticationProvider> multifactorAuthenticationProviders = new ArrayList<>(0);
 
     private final MultifactorAuthenticationFailureModeEvaluator failureModeEvaluator;
 

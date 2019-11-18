@@ -25,7 +25,7 @@ public class SurrogateRegisteredServiceAccessStrategy extends BaseSurrogateRegis
 
     private boolean surrogateEnabled;
 
-    private Map<String, Set<String>> surrogateRequiredAttributes = new HashMap<>();
+    private Map<String, Set<String>> surrogateRequiredAttributes = new HashMap<>(0);
 
     @Override
     public boolean doPrincipalAttributesAllowServiceAccess(final String principal, final Map<String, Object> attributes) {

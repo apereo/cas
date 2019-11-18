@@ -26,6 +26,8 @@ import java.util.Objects;
  */
 @Endpoint(id = "duoAccountStatus", enableByDefault = false)
 public class DuoSecurityUserAccountStatusEndpoint extends BaseCasActuatorEndpoint {
+    private static final int MAP_SIZE = 8;
+
     private final ApplicationContext applicationContext;
 
     public DuoSecurityUserAccountStatusEndpoint(final CasConfigurationProperties casProperties,
@@ -43,7 +45,7 @@ public class DuoSecurityUserAccountStatusEndpoint extends BaseCasActuatorEndpoin
      */
     @ReadOperation(produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<?, ?> fetchAccountStatus(@Selector final String username, @Nullable final String providerId) {
-        val results = new LinkedHashMap<>();
+        val results = new LinkedHashMap<>(MAP_SIZE);
         val providers = applicationContext.getBeansOfType(DuoSecurityMultifactorAuthenticationProvider.class).values();
         providers
             .stream()

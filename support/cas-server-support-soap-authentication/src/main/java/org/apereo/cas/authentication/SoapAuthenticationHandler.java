@@ -52,7 +52,7 @@ public class SoapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
             val attributes = new LinkedHashMap<String, List<Object>>();
             response.getAttributes().forEach(item -> attributes.put(item.getKey().toString(), CollectionUtils.toCollection(item.getValue(), ArrayList.class)));
             val principal = principalFactory.createPrincipal(response.getUsername(), attributes);
-            return createHandlerResult(credential, principal, new ArrayList<>());
+            return createHandlerResult(credential, principal, new ArrayList<>(0));
         }
         val httpStatus = HttpStatus.valueOf(response.getStatus());
         if (httpStatus.equals(HttpStatus.FORBIDDEN)) {

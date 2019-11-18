@@ -209,7 +209,7 @@ public class OAuth20IntrospectionEndpointController extends BaseOAuth20Controlle
             introspect.setRealmName(realmNames);
             introspect.setTokenType(OAuth20Constants.TOKEN_TYPE_BEARER);
 
-            val grant = authentication.getAttributes().getOrDefault(OAuth20Constants.GRANT_TYPE, new ArrayList<>());
+            val grant = authentication.getAttributes().getOrDefault(OAuth20Constants.GRANT_TYPE, new ArrayList<>(0));
             if (!grant.isEmpty()) {
                 introspect.setGrantType(grant.get(0).toString().toLowerCase());
             }

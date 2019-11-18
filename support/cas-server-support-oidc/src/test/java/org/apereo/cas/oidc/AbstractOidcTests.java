@@ -77,6 +77,7 @@ import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.webflow.execution.Action;
@@ -141,6 +142,9 @@ import static org.mockito.Mockito.*;
 @DirtiesContext
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public abstract class AbstractOidcTests {
+    @Autowired
+    protected ConfigurableApplicationContext applicationContext;
+
     @Autowired
     protected ResourceLoader resourceLoader;
 

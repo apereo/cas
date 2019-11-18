@@ -54,10 +54,10 @@ public class Pac4jOAuth20ClientProperties extends Pac4jIdentifiableClientPropert
     /**
      * Profile attributes to request and collect in form of key-value pairs.
      */
-    private Map<String, String> profileAttrs = new LinkedHashMap<>();
+    private Map<String, String> profileAttrs = new LinkedHashMap<>(1);
 
     /**
      * Custom parameters in form of key-value pairs sent along in authZ requests, etc.
      */
-    private Map<String, String> customParams = new LinkedHashMap<>();
+    private Map<String, String> customParams = new LinkedHashMap<>(1);
 }

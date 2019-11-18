@@ -30,7 +30,7 @@ import java.util.LinkedHashMap;
 @EqualsAndHashCode(of = "id")
 @NoArgsConstructor
 public class ResourceSetPolicyPermission implements Serializable {
-
+    private static final int MAP_SIZE = 8;
     private static final long serialVersionUID = 1664113523427391736L;
 
     @org.springframework.data.annotation.Id
@@ -44,9 +44,9 @@ public class ResourceSetPolicyPermission implements Serializable {
 
     @Lob
     @Column(length = Integer.MAX_VALUE)
-    private HashSet<String> scopes = new HashSet<>();
+    private HashSet<String> scopes = new HashSet<>(MAP_SIZE);
 
     @Lob
     @Column(length = Integer.MAX_VALUE)
-    private LinkedHashMap<String, Object> claims = new LinkedHashMap<>();
+    private LinkedHashMap<String, Object> claims = new LinkedHashMap<>(MAP_SIZE);
 }

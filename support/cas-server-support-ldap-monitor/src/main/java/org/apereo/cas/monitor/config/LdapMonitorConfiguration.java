@@ -30,6 +30,7 @@ import java.util.UUID;
 @Configuration(value = "ldapMonitorConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class LdapMonitorConfiguration {
+    private static final int MAP_SIZE = 8;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -38,7 +39,7 @@ public class LdapMonitorConfiguration {
     @ConditionalOnEnabledHealthIndicator("pooledLdapConnectionFactoryHealthIndicator")
     public CompositeHealthContributor pooledLdapConnectionFactoryHealthIndicator() {
         val ldaps = casProperties.getMonitor().getLdap();
-        val contributors = new LinkedHashMap<>();
+        val contributors = new LinkedHashMap<>(MAP_SIZE);
         ldaps.stream()
             .filter(LdapMonitorProperties::isEnabled)
             .map(ldap -> {

@@ -18,6 +18,7 @@ import org.jose4j.jwt.consumer.JwtConsumerBuilder;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.profile.CommonProfile;
+import org.springframework.context.ApplicationContext;
 
 /**
  * This is {@link OidcPrivateKeyJwtAuthenticator}.
@@ -32,9 +33,10 @@ public class OidcPrivateKeyJwtAuthenticator extends BaseOidcJwtAuthenticator {
                                           final AuditableExecution registeredServiceAccessStrategyEnforcer,
                                           final TicketRegistry ticketRegistry,
                                           final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
-                                          final CasConfigurationProperties casProperties) {
+                                          final CasConfigurationProperties casProperties,
+                                          final ApplicationContext applicationContext) {
         super(servicesManager, registeredServiceAccessStrategyEnforcer,
-            ticketRegistry, webApplicationServiceServiceFactory, casProperties);
+            ticketRegistry, webApplicationServiceServiceFactory, casProperties, applicationContext);
     }
 
     @Override
@@ -55,7 +57,7 @@ public class OidcPrivateKeyJwtAuthenticator extends BaseOidcJwtAuthenticator {
         val clientId = registeredService.getClientId();
         val audience = casProperties.getServer().getPrefix().concat('/'
             + OidcConstants.BASE_OIDC_URL + '/' + OAuth20Constants.ACCESS_TOKEN_URL);
-        val keys = OidcJsonWebKeySetUtils.getJsonWebKeySet(registeredService);
+        val keys = OidcJsonWebKeySetUtils.getJsonWebKeySet(registeredService, this.applicationContext);
         keys.ifPresent(jwks ->
             jwks.getJsonWebKeys().forEach(jsonWebKey -> {
                 val consumer = new JwtConsumerBuilder()

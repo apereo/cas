@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 @Getter
 @Slf4j
 public class DefaultServiceRegistryExecutionPlan implements ServiceRegistryExecutionPlan {
-    private final Collection<ServiceRegistry> serviceRegistries = new ArrayList<>();
+    private final Collection<ServiceRegistry> serviceRegistries = new ArrayList<>(0);
 
     @Override
     public ServiceRegistryExecutionPlan registerServiceRegistry(final ServiceRegistry registry) {

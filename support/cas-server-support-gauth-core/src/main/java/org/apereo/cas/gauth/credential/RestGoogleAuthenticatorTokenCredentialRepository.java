@@ -57,7 +57,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
                 return results.stream().map(this::decode).collect(Collectors.toList());
             }
         }
-        return new ArrayList<>();
+        return new ArrayList<>(0);
     }
 
     @Override

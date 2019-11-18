@@ -20,6 +20,8 @@ import java.util.Optional;
  */
 @Builder
 public class OAuth20TokenGeneratedResult {
+    private static final int MAP_SIZE = 8;
+
     private OAuth20AccessToken accessToken;
     private OAuth20RefreshToken refreshToken;
     private OAuth20ResponseTypes responseType;
@@ -29,7 +31,7 @@ public class OAuth20TokenGeneratedResult {
     private String userCode;
 
     @Builder.Default
-    private Map<String, Object> details = new LinkedHashMap<>();
+    private Map<String, Object> details = new LinkedHashMap<>(MAP_SIZE);
 
     public Optional<OAuth20AccessToken> getAccessToken() {
         return Optional.ofNullable(accessToken);

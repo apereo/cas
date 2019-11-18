@@ -258,7 +258,7 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuth20
                 authn,
                 List.of(OidcConstants.CLIENT_REGISTRATION_SCOPE),
                 registeredService.getClientId(),
-                new HashMap<>());
+                new HashMap<>(0));
         getOAuthConfigurationContext().getTicketRegistry().addTicket(accessToken);
         return accessToken;
     }

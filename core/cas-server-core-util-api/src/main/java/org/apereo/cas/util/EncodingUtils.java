@@ -471,7 +471,7 @@ public class EncodingUtils {
      */
     public static String encryptValueAsJwtDirectAes128Sha256(final Key key, final Serializable value) {
         return encryptValueAsJwt(key, value, KeyManagementAlgorithmIdentifiers.DIRECT,
-            CipherExecutor.DEFAULT_CONTENT_ENCRYPTION_ALGORITHM, new HashMap<>());
+            CipherExecutor.DEFAULT_CONTENT_ENCRYPTION_ALGORITHM, new HashMap<>(0));
     }
 
     /**
@@ -483,7 +483,7 @@ public class EncodingUtils {
      */
     public static String encryptValueAsJwtRsaOeap256Aes256Sha512(final Key key, final Serializable value) {
         return encryptValueAsJwt(key, value, KeyManagementAlgorithmIdentifiers.RSA_OAEP_256,
-            CipherExecutor.DEFAULT_CONTENT_ENCRYPTION_ALGORITHM, new HashMap<>());
+            CipherExecutor.DEFAULT_CONTENT_ENCRYPTION_ALGORITHM, new HashMap<>(0));
     }
 
     /**

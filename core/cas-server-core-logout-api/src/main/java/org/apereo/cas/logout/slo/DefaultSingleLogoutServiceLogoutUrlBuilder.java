@@ -45,6 +45,6 @@ public class DefaultSingleLogoutServiceLogoutUrlBuilder implements SingleLogoutS
             return CollectionUtils.wrap(new SingleLogoutUrl(originalUrl, registeredService.getLogoutType()));
         }
         LOGGER.debug("Logout request will not be sent; The URL [{}] for service [{}] is not valid", originalUrl, singleLogoutService);
-        return new ArrayList<>();
+        return new ArrayList<>(0);
     }
 }

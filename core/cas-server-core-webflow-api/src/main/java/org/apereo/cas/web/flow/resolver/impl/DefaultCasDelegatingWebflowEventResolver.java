@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class DefaultCasDelegatingWebflowEventResolver extends AbstractCasWebflowEventResolver implements CasDelegatingWebflowEventResolver {
 
-    private final List<CasWebflowEventResolver> orderedResolvers = new ArrayList<>();
+    private final List<CasWebflowEventResolver> orderedResolvers = new ArrayList<>(0);
     private final CasWebflowEventResolver selectiveResolver;
 
     public DefaultCasDelegatingWebflowEventResolver(final CasWebflowEventResolutionConfigurationContext webflowEventResolutionConfigurationContext,

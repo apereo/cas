@@ -15,6 +15,7 @@ import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.validation.ValidationContext;
 
 import javax.validation.constraints.Size;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -37,6 +38,8 @@ public class UsernamePasswordCredential implements Credential {
      **/
     public static final String AUTHENTICATION_ATTRIBUTE_PASSWORD = "credential";
 
+    private static final int MAP_SIZE = 8;
+
     private static final long serialVersionUID = -700605081472810939L;
 
     private @Size(min = 1, message = "username.required") String username;
@@ -45,7 +48,7 @@ public class UsernamePasswordCredential implements Credential {
 
     private String source;
 
-    private Map<String, Object> customFields = new LinkedHashMap<>();
+    private Map<String, Object> customFields = new LinkedHashMap<>(MAP_SIZE);
 
     public UsernamePasswordCredential(final String username, final String password) {
         this.username = username;

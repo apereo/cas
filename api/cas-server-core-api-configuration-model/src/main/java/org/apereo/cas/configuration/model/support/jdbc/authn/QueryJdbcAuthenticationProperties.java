@@ -47,5 +47,5 @@ public class QueryJdbcAuthenticationProperties extends BaseJdbcAuthenticationPro
     /**
      * List of column names to fetch as user attributes.
      */
-    private List<String> principalAttributeList = new ArrayList<>();
+    private List<String> principalAttributeList = new ArrayList<>(0);
 }

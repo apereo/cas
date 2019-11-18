@@ -30,12 +30,12 @@ public class ShiroAuthenticationProperties extends SpringResourceProperties {
     /**
      * Required roles that should be authorized by Shiro.
      */
-    private Set<String> requiredRoles = new HashSet<>();
+    private Set<String> requiredRoles = new HashSet<>(0);
 
     /**
      * Required permissions that should be authorized by Shiro.
      */
-    private Set<String> requiredPermissions = new HashSet<>();
+    private Set<String> requiredPermissions = new HashSet<>(0);
 
     /**
      * Password encoder properties.

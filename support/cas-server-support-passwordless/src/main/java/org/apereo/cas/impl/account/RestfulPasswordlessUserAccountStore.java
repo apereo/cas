@@ -40,7 +40,7 @@ public class RestfulPasswordlessUserAccountStore implements PasswordlessUserAcco
 
             response = HttpUtils.execute(restProperties.getUrl(), restProperties.getMethod(),
                 restProperties.getBasicAuthUsername(), restProperties.getBasicAuthPassword(),
-                parameters, new HashMap<>());
+                parameters, new HashMap<>(0));
             if (response != null && response.getEntity() != null) {
                 val account = MAPPER.readValue(response.getEntity().getContent(), PasswordlessUserAccount.class);
                 return Optional.ofNullable(account);

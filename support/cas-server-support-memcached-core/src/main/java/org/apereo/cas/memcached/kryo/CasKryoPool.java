@@ -20,7 +20,7 @@ public class CasKryoPool implements KryoPool {
     private final KryoPool kryoPoolRef;
 
     public CasKryoPool() {
-        this(new ArrayList<>(), true, true, false, false);
+        this(new ArrayList<>(0), true, true, false, false);
     }
 
     public CasKryoPool(final Collection<Class> classesToRegister) {

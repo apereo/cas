@@ -98,7 +98,7 @@ public class OidcRegisteredService extends OAuthRegisteredService {
 
     @Lob
     @Column(name = "scopes", length = Integer.MAX_VALUE)
-    private HashSet<String> scopes = new HashSet<>();
+    private HashSet<String> scopes = new HashSet<>(0);
 
     /**
      * Gets subject type.
@@ -132,7 +132,7 @@ public class OidcRegisteredService extends OAuthRegisteredService {
      */
     public Set<String> getScopes() {
         if (this.scopes == null) {
-            this.scopes = new HashSet<>();
+            this.scopes = new HashSet<>(0);
         }
         return scopes;
     }
@@ -151,7 +151,7 @@ public class OidcRegisteredService extends OAuthRegisteredService {
     public void initialize() {
         super.initialize();
         if (this.scopes == null) {
-            this.scopes = new HashSet<>();
+            this.scopes = new HashSet<>(0);
         }
     }
 

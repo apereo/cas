@@ -17,7 +17,7 @@ import java.util.List;
  */
 @Slf4j
 public class ChainingDelegatedClientUserProfileProvisioner extends BaseDelegatedClientUserProfileProvisioner {
-    private final List<DelegatedClientUserProfileProvisioner> provisioners = new ArrayList<>();
+    private final List<DelegatedClientUserProfileProvisioner> provisioners = new ArrayList<>(0);
 
     @Override
     public void execute(final Principal principal, final CommonProfile profile, final BaseClient client) {

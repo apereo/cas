@@ -47,7 +47,7 @@ public class WsFederationConfiguration implements Serializable {
     private String identityProviderIdentifier;
     private String identityProviderUrl;
 
-    private transient List<Resource> signingCertificateResources = new ArrayList<>();
+    private transient List<Resource> signingCertificateResources = new ArrayList<>(0);
 
     private String relyingPartyIdentifier;
 

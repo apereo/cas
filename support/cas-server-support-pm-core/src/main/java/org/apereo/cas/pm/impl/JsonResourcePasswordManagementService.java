@@ -128,6 +128,6 @@ public class JsonResourcePasswordManagementService extends BasePasswordManagemen
 
         private String phone;
         
-        private Map<String, String> securityQuestions = new HashMap<>();
+        private Map<String, String> securityQuestions = new HashMap<>(0);
     }
 }

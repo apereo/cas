@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor(force = true)
 @RequiredArgsConstructor
 public class ChainingCasProtocolValidationSpecification implements CasProtocolValidationSpecification {
-    private final List<CasProtocolValidationSpecification> specifications = new ArrayList<>();
+    private final List<CasProtocolValidationSpecification> specifications = new ArrayList<>(0);
 
     private final boolean canBeSatisfiedByAnySpecification;
 

@@ -81,14 +81,14 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
      * Collection of required attributes
      * for this service to proceed.
      */
-    protected Map<String, Set<String>> requiredAttributes = new HashMap<>();
+    protected Map<String, Set<String>> requiredAttributes = new HashMap<>(0);
 
     /**
      * Collection of attributes
      * that will be rejected which will cause this
      * policy to refuse access.
      */
-    protected Map<String, Set<String>> rejectedAttributes = new HashMap<>();
+    protected Map<String, Set<String>> rejectedAttributes = new HashMap<>(0);
 
     /**
      * Indicates whether matching on required attribute values
@@ -108,13 +108,13 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
     public DefaultRegisteredServiceAccessStrategy(final Map<String, Set<String>> requiredAttributes,
                                                   final Map<String, Set<String>> rejectedAttributes) {
         this();
-        this.requiredAttributes = ObjectUtils.defaultIfNull(requiredAttributes, new HashMap<>());
-        this.rejectedAttributes = ObjectUtils.defaultIfNull(rejectedAttributes, new HashMap<>());
+        this.requiredAttributes = ObjectUtils.defaultIfNull(requiredAttributes, new HashMap<>(0));
+        this.rejectedAttributes = ObjectUtils.defaultIfNull(rejectedAttributes, new HashMap<>(0));
     }
 
     public DefaultRegisteredServiceAccessStrategy(final Map<String, Set<String>> requiredAttributes) {
         this();
-        this.requiredAttributes = ObjectUtils.defaultIfNull(requiredAttributes, new HashMap<>());
+        this.requiredAttributes = ObjectUtils.defaultIfNull(requiredAttributes, new HashMap<>(0));
     }
 
     /**
@@ -124,8 +124,8 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
     public void postLoad() {
         this.delegatedAuthenticationPolicy = ObjectUtils.defaultIfNull(this.delegatedAuthenticationPolicy,
             new DefaultRegisteredServiceDelegatedAuthenticationPolicy());
-        this.requiredAttributes = ObjectUtils.defaultIfNull(requiredAttributes, new HashMap<>());
-        this.rejectedAttributes = ObjectUtils.defaultIfNull(rejectedAttributes, new HashMap<>());
+        this.requiredAttributes = ObjectUtils.defaultIfNull(requiredAttributes, new HashMap<>(0));
+        this.rejectedAttributes = ObjectUtils.defaultIfNull(rejectedAttributes, new HashMap<>(0));
     }
 
     /**
