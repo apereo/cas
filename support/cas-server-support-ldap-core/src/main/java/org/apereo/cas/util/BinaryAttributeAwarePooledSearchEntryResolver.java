@@ -18,7 +18,7 @@ import java.util.List;
  */
 @Setter
 public class BinaryAttributeAwarePooledSearchEntryResolver extends PooledSearchEntryResolver {
-    private List<String> binaryAttributes = new ArrayList<>();
+    private List<String> binaryAttributes = new ArrayList<>(0);
 
     @Override
     protected SearchRequest createSearchRequest(final AuthenticationCriteria ac) {

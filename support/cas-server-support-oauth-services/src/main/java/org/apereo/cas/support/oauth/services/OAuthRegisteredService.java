@@ -67,11 +67,11 @@ public class OAuthRegisteredService extends RegexRegisteredService {
 
     @Lob
     @Column(name = "supported_grants", length = Integer.MAX_VALUE)
-    private HashSet<String> supportedGrantTypes = new HashSet<>();
+    private HashSet<String> supportedGrantTypes = new HashSet<>(0);
 
     @Lob
     @Column(name = "supported_responses", length = Integer.MAX_VALUE)
-    private HashSet<String> supportedResponseTypes = new HashSet<>();
+    private HashSet<String> supportedResponseTypes = new HashSet<>(0);
 
     @Override
     protected AbstractRegisteredService newInstance() {
@@ -82,10 +82,10 @@ public class OAuthRegisteredService extends RegexRegisteredService {
     public void initialize() {
         super.initialize();
         if (this.supportedGrantTypes == null) {
-            this.supportedGrantTypes = new HashSet<>();
+            this.supportedGrantTypes = new HashSet<>(0);
         }
         if (this.supportedResponseTypes == null) {
-            this.supportedResponseTypes = new HashSet<>();
+            this.supportedResponseTypes = new HashSet<>(0);
         }
     }
 

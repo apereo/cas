@@ -41,7 +41,7 @@ public class OidcClientSecretJwtAuthenticatorTests extends AbstractOidcTests {
     public void verifyAction() {
         val auth = new OidcClientSecretJwtAuthenticator(servicesManager,
             registeredServiceAccessStrategyEnforcer, ticketRegistry,
-            webApplicationServiceFactory, casProperties);
+            webApplicationServiceFactory, casProperties, applicationContext);
 
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

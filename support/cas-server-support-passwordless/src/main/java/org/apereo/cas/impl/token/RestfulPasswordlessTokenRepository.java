@@ -42,7 +42,7 @@ public class RestfulPasswordlessTokenRepository extends BasePasswordlessTokenRep
             parameters.put("username", username);
             response = HttpUtils.execute(restProperties.getUrl(), HttpMethod.GET.name(),
                 restProperties.getBasicAuthUsername(), restProperties.getBasicAuthPassword(),
-                parameters, new HashMap<>());
+                parameters, new HashMap<>(0));
             if (response != null && response.getEntity() != null) {
                 val token = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
                 val result = cipherExecutor.decode(token).toString();
@@ -64,7 +64,7 @@ public class RestfulPasswordlessTokenRepository extends BasePasswordlessTokenRep
             parameters.put("username", username);
             response = HttpUtils.execute(restProperties.getUrl(), HttpMethod.DELETE.name(),
                 restProperties.getBasicAuthUsername(), restProperties.getBasicAuthPassword(),
-                parameters, new HashMap<>());
+                parameters, new HashMap<>(0));
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         } finally {
@@ -81,7 +81,7 @@ public class RestfulPasswordlessTokenRepository extends BasePasswordlessTokenRep
             parameters.put("token", cipherExecutor.encode(token).toString());
             response = HttpUtils.execute(restProperties.getUrl(), HttpMethod.DELETE.name(),
                 restProperties.getBasicAuthUsername(), restProperties.getBasicAuthPassword(),
-                parameters, new HashMap<>());
+                parameters, new HashMap<>(0));
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         } finally {
@@ -98,7 +98,7 @@ public class RestfulPasswordlessTokenRepository extends BasePasswordlessTokenRep
             parameters.put("token", cipherExecutor.encode(token).toString());
             response = HttpUtils.execute(restProperties.getUrl(), HttpMethod.POST.name(),
                 restProperties.getBasicAuthUsername(), restProperties.getBasicAuthPassword(),
-                parameters, new HashMap<>());
+                parameters, new HashMap<>(0));
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         } finally {

@@ -160,7 +160,7 @@ public class CloseableKryoFactory implements KryoFactory {
 
     private final CasKryoPool kryoPool;
 
-    private Collection<Class> classesToRegister = new ArrayList<>();
+    private Collection<Class> classesToRegister = new ArrayList<>(0);
     private boolean warnUnregisteredClasses = true;
     private boolean registrationRequired;
     private boolean replaceObjectsByReferences;

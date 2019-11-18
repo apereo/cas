@@ -179,7 +179,7 @@ public class AuthenticationProperties implements Serializable {
      * Collection of settings related to LDAP authentication.
      * These settings are required to be indexed (i.e. ldap[0].xyz).
      */
-    private List<LdapAuthenticationProperties> ldap = new ArrayList<>();
+    private List<LdapAuthenticationProperties> ldap = new ArrayList<>(0);
 
     /**
      * Authentication throttling settings.
@@ -257,7 +257,7 @@ public class AuthenticationProperties implements Serializable {
      * Collection of settings related to JAAS authentication.
      * These settings are required to be indexed (i.e. jaas[0].xyz).
      */
-    private List<JaasAuthenticationProperties> jaas = new ArrayList<>();
+    private List<JaasAuthenticationProperties> jaas = new ArrayList<>(0);
 
     /**
      * JDBC authentication settings.
@@ -335,7 +335,7 @@ public class AuthenticationProperties implements Serializable {
      * Collection of settings related to WsFed delegated authentication.
      * These settings are required to be indexed (i.e. wsfed[0].xyz).
      */
-    private List<WsFederationDelegationProperties> wsfed = new ArrayList<>();
+    private List<WsFederationDelegationProperties> wsfed = new ArrayList<>(0);
 
     /**
      * WS-FED IdP authentication settings.

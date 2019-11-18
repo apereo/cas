@@ -24,7 +24,7 @@ public class CasConfigurationMetadataRepositoryJsonBuilder {
 
     private final JsonReader reader = new JsonReader();
 
-    private final List<SimpleConfigurationMetadataRepository> repositories = new ArrayList<>();
+    private final List<SimpleConfigurationMetadataRepository> repositories = new ArrayList<>(0);
 
     CasConfigurationMetadataRepositoryJsonBuilder(final Charset defaultCharset) {
         this.defaultCharset = defaultCharset;

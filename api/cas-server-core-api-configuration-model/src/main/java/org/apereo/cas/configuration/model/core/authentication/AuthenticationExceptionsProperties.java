@@ -32,5 +32,5 @@ public class AuthenticationExceptionsProperties implements Serializable {
      * To map custom exceptions, one would need map the exception, they can be defined here
      * and then linked to custom messages.
      */
-    private List<Class<? extends Exception>> exceptions = new ArrayList<>();
+    private List<Class<? extends Exception>> exceptions = new ArrayList<>(0);
 }

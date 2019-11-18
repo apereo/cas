@@ -73,7 +73,7 @@ public abstract class AbstractLdapAuthenticationProperties extends AbstractLdapS
     /**
      * Search entry to define on the authenticator.
      */
-    private List<LdapSearchEntryHandlersProperties> searchEntryHandlers = new ArrayList<>();
+    private List<LdapSearchEntryHandlersProperties> searchEntryHandlers = new ArrayList<>(0);
 
     /**
      * The enum Authentication types.

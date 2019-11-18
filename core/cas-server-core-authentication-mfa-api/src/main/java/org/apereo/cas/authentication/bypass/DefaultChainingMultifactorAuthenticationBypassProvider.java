@@ -26,7 +26,7 @@ public class DefaultChainingMultifactorAuthenticationBypassProvider implements C
     private static final long serialVersionUID = 2397239625822397286L;
 
     private final List<MultifactorAuthenticationProviderBypassEvaluator> multifactorAuthenticationProviderBypassEvaluators
-        = new ArrayList<>();
+        = new ArrayList<>(0);
 
     @Audit(action = "MFA_BYPASS",
         actionResolverName = "MFA_BYPASS_ACTION_RESOLVER",

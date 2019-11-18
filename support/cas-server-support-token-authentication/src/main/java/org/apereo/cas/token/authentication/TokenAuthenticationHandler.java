@@ -86,7 +86,7 @@ public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticati
             val serviceSigningAlg = getRegisteredServiceJwtProperty(service,
                 RegisteredServiceProperties.TOKEN_SECRET_SIGNING_ALG);
 
-            Set<Algorithm> sets = new HashSet<>();
+            Set<Algorithm> sets = new HashSet<>(0);
             sets.addAll(JWSAlgorithm.Family.EC);
             sets.addAll(JWSAlgorithm.Family.HMAC_SHA);
             sets.addAll(JWSAlgorithm.Family.RSA);
@@ -104,7 +104,7 @@ public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticati
 
             val encryptionSecret = getRegisteredServiceJwtEncryptionSecret(service);
             if (StringUtils.isNotBlank(encryptionSecret)) {
-                sets = new HashSet<>();
+                sets = new HashSet<>(0);
                 sets.addAll(JWEAlgorithm.Family.AES_GCM_KW);
                 sets.addAll(JWEAlgorithm.Family.AES_KW);
                 sets.addAll(JWEAlgorithm.Family.ASYMMETRIC);
@@ -119,7 +119,7 @@ public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticati
                 val encryptionSecretAlg = StringUtils.defaultString(encryptionAlg, JWEAlgorithm.DIR.getName());
                 val encAlg = findAlgorithmFamily(sets, encryptionSecretAlg, JWEAlgorithm.class);
 
-                sets = new HashSet<>();
+                sets = new HashSet<>(0);
                 sets.addAll(EncryptionMethod.Family.AES_CBC_HMAC_SHA);
                 sets.addAll(EncryptionMethod.Family.AES_GCM);
 

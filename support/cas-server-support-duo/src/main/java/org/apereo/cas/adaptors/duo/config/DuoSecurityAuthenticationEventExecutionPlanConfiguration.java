@@ -101,13 +101,13 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
 
     @Bean
     public Action prepareDuoWebLoginFormAction() {
-        return new DuoSecurityPrepareWebLoginFormAction();
+        return new DuoSecurityPrepareWebLoginFormAction(applicationContext);
     }
 
     @ConditionalOnMissingBean(name = "determineDuoUserAccountAction")
     @Bean
     public Action determineDuoUserAccountAction() {
-        return new DuoSecurityDetermineUserAccountAction();
+        return new DuoSecurityDetermineUserAccountAction(applicationContext);
     }
 
     @ConditionalOnMissingBean(name = "duoProviderFactory")

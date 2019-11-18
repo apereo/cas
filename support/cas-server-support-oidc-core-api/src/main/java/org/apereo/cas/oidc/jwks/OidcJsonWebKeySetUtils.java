@@ -2,7 +2,6 @@ package org.apereo.cas.oidc.jwks;
 
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.util.ResourceUtils;
-import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
@@ -14,6 +13,7 @@ import org.jose4j.jwk.JsonWebKeySet;
 import org.jose4j.jwk.RsaJsonWebKey;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
@@ -32,14 +32,16 @@ public class OidcJsonWebKeySetUtils {
     /**
      * Gets json web key set.
      *
-     * @param service the service
+     * @param service        the service
+     * @param resourceLoader the resource loader
      * @return the json web key set
      */
-    public static Optional<JsonWebKeySet> getJsonWebKeySet(final OidcRegisteredService service) {
+    public static Optional<JsonWebKeySet> getJsonWebKeySet(final OidcRegisteredService service,
+                                                           final ResourceLoader resourceLoader) {
         try {
             LOGGER.trace("Loading JSON web key from [{}]", service.getJwks());
 
-            val resource = getJsonWebKeySetResource(service);
+            val resource = getJsonWebKeySetResource(service, resourceLoader);
             if (resource == null) {
                 LOGGER.warn("No JSON web keys or keystore resource could be found for [{}]", service);
                 return Optional.empty();
@@ -119,10 +121,11 @@ public class OidcJsonWebKeySetUtils {
         return jsonWebKeySet;
     }
 
-    private static Resource getJsonWebKeySetResource(final OidcRegisteredService service) {
+    private static Resource getJsonWebKeySetResource(final OidcRegisteredService service,
+                                                     final ResourceLoader resourceLoader) {
         if (StringUtils.isNotBlank(service.getJwks())) {
             if (ResourceUtils.doesResourceExist(service.getJwks())) {
-                return ApplicationContextProvider.getResourceLoader().getResource(service.getJwks());
+                return resourceLoader.getResource(service.getJwks());
             }
             return new InputStreamResource(new ByteArrayInputStream(service.getJwks().getBytes(StandardCharsets.UTF_8)), "JWKS");
         }

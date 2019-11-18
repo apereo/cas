@@ -98,7 +98,7 @@ public abstract class AbstractJpaProperties implements Serializable {
      *
      * @see AvailableSettings
      */
-    private Map<String, String> properties = new HashMap<>();
+    private Map<String, String> properties = new HashMap<>(0);
 
     /**
      * Database connection pooling settings.

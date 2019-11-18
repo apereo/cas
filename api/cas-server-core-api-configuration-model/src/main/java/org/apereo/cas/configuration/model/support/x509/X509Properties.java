@@ -105,7 +105,7 @@ public class X509Properties implements Serializable {
     /**
      * List of CRL resources to use for fetching.
      */
-    private List<String> crlResources = new ArrayList<>();
+    private List<String> crlResources = new ArrayList<>(0);
     /**
      * When CRLs are cached, indicate maximum number of elements kept in memory.
      */

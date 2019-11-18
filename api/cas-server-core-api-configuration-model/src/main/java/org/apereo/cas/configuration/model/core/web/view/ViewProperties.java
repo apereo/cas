@@ -39,12 +39,12 @@ public class ViewProperties implements Serializable {
      * to carry additional metadata and tags.
      * Key is the name of the custom field.
      */
-    private Map<String, CustomLoginField> customLoginFormFields = new LinkedHashMap<>();
+    private Map<String, CustomLoginField> customLoginFormFields = new LinkedHashMap<>(0);
 
     /**
      * Comma separated paths to where CAS templates may be found.
      */
-    private List<String> templatePrefixes = new ArrayList<>();
+    private List<String> templatePrefixes = new ArrayList<>(1);
 
     /**
      * CAS1 views and locations.

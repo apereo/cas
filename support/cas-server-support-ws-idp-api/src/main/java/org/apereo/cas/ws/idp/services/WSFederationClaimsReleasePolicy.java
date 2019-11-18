@@ -41,18 +41,18 @@ import java.util.TreeMap;
 @Setter
 @EqualsAndHashCode(callSuper = true)
 public class WSFederationClaimsReleasePolicy extends AbstractRegisteredServiceAttributeReleasePolicy {
-
+    private static final int MAP_SIZE = 8;
     private static final long serialVersionUID = -2814928645221579489L;
 
-    private Map<String, String> allowedAttributes = new LinkedHashMap<>();
+    private Map<String, String> allowedAttributes = new LinkedHashMap<>(MAP_SIZE);
 
     @JsonIgnore
     @Transient
     @org.springframework.data.annotation.Transient
-    private transient Map<String, ExecutableCompiledGroovyScript> attributeScriptCache = new LinkedHashMap<>();
+    private transient Map<String, ExecutableCompiledGroovyScript> attributeScriptCache = new LinkedHashMap<>(MAP_SIZE);
 
     public WSFederationClaimsReleasePolicy() {
-        this.allowedAttributes = new LinkedHashMap<>();
+        this.allowedAttributes = new LinkedHashMap<>(MAP_SIZE);
         initializeWatchableScriptIfNeeded();
     }
 
@@ -103,7 +103,7 @@ public class WSFederationClaimsReleasePolicy extends AbstractRegisteredServiceAt
     @PostLoad
     private void initializeWatchableScriptIfNeeded() {
         if (this.attributeScriptCache == null) {
-            this.attributeScriptCache = new LinkedHashMap<>();
+            this.attributeScriptCache = new LinkedHashMap<>(MAP_SIZE);
         }
         getAllowedAttributes()
             .entrySet()

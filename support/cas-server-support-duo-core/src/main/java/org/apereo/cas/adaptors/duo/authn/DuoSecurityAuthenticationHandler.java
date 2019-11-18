@@ -60,7 +60,7 @@ public class DuoSecurityAuthenticationHandler extends AbstractPreAndPostProcessi
             if (duoAuthenticationService.authenticate(creds).getKey()) {
                 val principal = creds.getAuthentication().getPrincipal();
                 LOGGER.debug("Duo has successfully authenticated [{}]", principal.getId());
-                return createHandlerResult(credential, principal, new ArrayList<>());
+                return createHandlerResult(credential, principal, new ArrayList<>(0));
             }
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
@@ -87,7 +87,7 @@ public class DuoSecurityAuthenticationHandler extends AbstractPreAndPostProcessi
                 LOGGER.info("Successful Duo authentication for [{}]", primaryCredentialsUsername);
 
                 val principal = this.principalFactory.createPrincipal(duoVerifyResponse);
-                return createHandlerResult(credential, principal, new ArrayList<>());
+                return createHandlerResult(credential, principal, new ArrayList<>(0));
             }
             throw new FailedLoginException("Duo authentication username "
                 + primaryCredentialsUsername + " does not match Duo response: " + duoVerifyResponse);

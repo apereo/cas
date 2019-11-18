@@ -25,6 +25,7 @@ import java.util.Objects;
  */
 @Endpoint(id = "duoPing", enableByDefault = false)
 public class DuoSecurityPingEndpoint extends BaseCasActuatorEndpoint {
+    private static final int MAP_SIZE = 8;
     private final ApplicationContext applicationContext;
 
     public DuoSecurityPingEndpoint(final CasConfigurationProperties casProperties,
@@ -41,7 +42,7 @@ public class DuoSecurityPingEndpoint extends BaseCasActuatorEndpoint {
      */
     @ReadOperation(produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<?, ?> pingDuo(@Nullable final String providerId) {
-        val results = new LinkedHashMap<>();
+        val results = new LinkedHashMap<>(MAP_SIZE);
         val providers = applicationContext.getBeansOfType(DuoSecurityMultifactorAuthenticationProvider.class).values();
         providers
             .stream()

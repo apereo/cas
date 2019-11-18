@@ -20,7 +20,7 @@ public interface PrincipalFactory extends Serializable {
      * @return the principal
      */
     default Principal createPrincipal(final String id) {
-        return createPrincipal(id, new HashMap<>());
+        return createPrincipal(id, new HashMap<>(0));
     }
 
     /**

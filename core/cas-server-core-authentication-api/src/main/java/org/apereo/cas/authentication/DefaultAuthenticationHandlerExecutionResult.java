@@ -53,16 +53,16 @@ public class DefaultAuthenticationHandlerExecutionResult implements Authenticati
     /**
      * List of warnings issued by the authentication source while authenticating the credential.
      */
-    private List<MessageDescriptor> warnings = new ArrayList<>();
+    private List<MessageDescriptor> warnings = new ArrayList<>(0);
 
     public DefaultAuthenticationHandlerExecutionResult(final AuthenticationHandler source, final CredentialMetaData metaData) {
-        this(source, metaData, null, new ArrayList<>());
+        this(source, metaData, null, new ArrayList<>(0));
     }
 
 
     public DefaultAuthenticationHandlerExecutionResult(final AuthenticationHandler source, final CredentialMetaData metaData,
                                                        final Principal p) {
-        this(source, metaData, p, new ArrayList<>());
+        this(source, metaData, p, new ArrayList<>(0));
     }
 
 

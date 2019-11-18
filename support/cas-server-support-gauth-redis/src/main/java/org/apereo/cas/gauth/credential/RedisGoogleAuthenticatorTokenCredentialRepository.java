@@ -68,7 +68,7 @@ public class RedisGoogleAuthenticatorTokenCredentialRepository extends BaseGoogl
         } catch (final Exception e) {
             LOGGER.error("No record could be found for google authenticator", e);
         }
-        return new ArrayList<>();
+        return new ArrayList<>(0);
     }
 
     @Override

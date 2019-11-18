@@ -30,11 +30,11 @@ public class AuthenticationAttributeReleaseProperties implements Serializable {
     /**
      * List of authentication attributes that should never be released.
      */
-    private List<String> neverRelease = new ArrayList<>();
+    private List<String> neverRelease = new ArrayList<>(0);
 
     /**
      * List of authentication attributes that should be the only ones released. An empty list indicates all attributes
      * should be released.
      */
-    private List<String> onlyRelease = new ArrayList<>();
+    private List<String> onlyRelease = new ArrayList<>(0);
 }

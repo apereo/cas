@@ -43,7 +43,7 @@ import java.util.stream.StreamSupport;
  * <p>
  * Example:
  * {@code
- * private List<SomeClassProperties> list = new ArrayList<>()
+ * private List<SomeClassProperties> list = new ArrayList<>(0)
  * }
  * The generator additionally adds hints to the metadata generated to indicate
  * required properties and modules.
@@ -101,8 +101,8 @@ public class ConfigurationMetadataGenerator {
         final Set<ConfigurationMetadataProperty> properties = jsonMap.get("properties");
         final Set<ConfigurationMetadataProperty> groups = jsonMap.get("groups");
 
-        final Set<ConfigurationMetadataProperty> collectedProps = new HashSet<>();
-        final Set<ConfigurationMetadataProperty> collectedGroups = new HashSet<>();
+        final Set<ConfigurationMetadataProperty> collectedProps = new HashSet<>(0);
+        final Set<ConfigurationMetadataProperty> collectedGroups = new HashSet<>(0);
 
         properties.stream()
             .filter(p -> NESTED_TYPE_PATTERN.matcher(p.getType()).matches())
@@ -204,7 +204,7 @@ public class ConfigurationMetadataGenerator {
     private static Set<ConfigurationMetadataHint> processHints(final Collection<ConfigurationMetadataProperty> props,
                                                                final Collection<ConfigurationMetadataProperty> groups) {
 
-        final Set<ConfigurationMetadataHint> hints = new LinkedHashSet<>();
+        final Set<ConfigurationMetadataHint> hints = new LinkedHashSet<>(0);
 
         val nonDeprecatedErrors = props.stream()
             .filter(p -> p.getDeprecation() == null

@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
  */
 @Getter
 public class DefaultAuditTrailExecutionPlan implements AuditTrailExecutionPlan {
-    private final List<AuditTrailManager> auditTrailManagers = new ArrayList<>();
+    private final List<AuditTrailManager> auditTrailManagers = new ArrayList<>(0);
 
     @Override
     public void registerAuditTrailManager(final AuditTrailManager manager) {

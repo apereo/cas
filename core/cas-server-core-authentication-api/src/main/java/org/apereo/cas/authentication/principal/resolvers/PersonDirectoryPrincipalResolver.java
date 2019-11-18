@@ -91,7 +91,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
     protected final Set<String> activeAttributeRepositoryIdentifiers;
 
     public PersonDirectoryPrincipalResolver() {
-        this(new StubPersonAttributeDao(new HashMap<>()), PrincipalFactoryUtils.newPrincipalFactory(), false,
+        this(new StubPersonAttributeDao(new HashMap<>(0)), PrincipalFactoryUtils.newPrincipalFactory(), false,
             String::trim, null,
             false, true,
             CollectionUtils.wrapSet(IPersonAttributeDao.WILDCARD));
@@ -111,7 +111,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
     }
 
     public PersonDirectoryPrincipalResolver(final boolean returnNullIfNoAttributes, final String principalAttributeNames) {
-        this(new StubPersonAttributeDao(new HashMap<>()), PrincipalFactoryUtils.newPrincipalFactory(),
+        this(new StubPersonAttributeDao(new HashMap<>(0)), PrincipalFactoryUtils.newPrincipalFactory(),
             returnNullIfNoAttributes, String::trim, principalAttributeNames,
             false, true,
             CollectionUtils.wrapSet(IPersonAttributeDao.WILDCARD));

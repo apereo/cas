@@ -9,7 +9,6 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +16,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.ApplicationContext;
 import org.springframework.core.Ordered;
 
 import javax.servlet.http.HttpServletRequest;
@@ -36,6 +36,7 @@ import java.util.regex.Pattern;
 public class RegisteredServicePrincipalAttributeMultifactorAuthenticationTrigger implements MultifactorAuthenticationTrigger {
     private final CasConfigurationProperties casProperties;
     private final MultifactorAuthenticationProviderResolver multifactorAuthenticationProviderResolver;
+    private final ApplicationContext applicationContext;
 
     private int order = Ordered.LOWEST_PRECEDENCE;
 
@@ -72,7 +73,7 @@ public class RegisteredServicePrincipalAttributeMultifactorAuthenticationTrigger
             if (id.isEmpty()) {
                 return Optional.empty();
             }
-            return MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderById(id.get().toString(), ApplicationContextProvider.getApplicationContext());
+            return MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderById(id.get().toString(), this.applicationContext);
         }
         return Optional.empty();
     }

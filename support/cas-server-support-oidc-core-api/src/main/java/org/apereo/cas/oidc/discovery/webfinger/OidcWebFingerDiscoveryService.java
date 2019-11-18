@@ -101,7 +101,7 @@ public class OidcWebFingerDiscoveryService {
         val body = new LinkedHashMap<String, Object>();
         body.put("subject", resource);
 
-        val links = new ArrayList<>();
+        val links = new ArrayList<>(0);
         links.add(CollectionUtils.wrap("rel", OidcConstants.WEBFINGER_REL, "href", issuer));
         body.put("links", links);
 

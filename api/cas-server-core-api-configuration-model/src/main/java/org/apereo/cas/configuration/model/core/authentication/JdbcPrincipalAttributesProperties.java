@@ -75,12 +75,12 @@ public class JdbcPrincipalAttributesProperties extends AbstractJpaProperties {
      * Then a column mapping must be specified to teach CAS to use {@code attr_name}
      * and {@code attr_value} for attribute names and values.
      */
-    private Map<String, String> columnMappings = new HashMap<>();
+    private Map<String, String> columnMappings = new HashMap<>(0);
 
     /**
      * Username attribute(s) to use when running the SQL query.
      */
-    private List<String> username = new ArrayList<>();
+    private List<String> username = new ArrayList<>(0);
 
     /**
      * The order of this attribute repository in the chain of repositories.
@@ -102,5 +102,5 @@ public class JdbcPrincipalAttributesProperties extends AbstractJpaProperties {
      * from the data source and the value is the attribute name CAS should
      * use for virtual renames.
      */
-    private Map<String, String> attributes = new HashMap<>();
+    private Map<String, String> attributes = new HashMap<>(0);
 }

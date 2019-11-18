@@ -53,7 +53,7 @@ public class SamlIdPResponseProperties implements Serializable {
      * Each individual attribute can be mapped to a particular name-format.
      * Example: {@code attributeName->basic|uri|unspecified|custom-format-etc,...}.
      */
-    private List<String> attributeNameFormats = new ArrayList<>();
+    private List<String> attributeNameFormats = new ArrayList<>(0);
 
     /**
      * Configure attribute name formats and build a map.

@@ -61,7 +61,7 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
 
     @Getter
     @Setter
-    private Set<String> attributeRepositoryIds = new LinkedHashSet<>();
+    private Set<String> attributeRepositoryIds = new LinkedHashSet<>(0);
 
     @Getter
     @Setter

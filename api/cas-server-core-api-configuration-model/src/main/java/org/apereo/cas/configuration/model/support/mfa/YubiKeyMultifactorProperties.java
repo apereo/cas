@@ -58,12 +58,12 @@ public class YubiKeyMultifactorProperties extends BaseMultifactorProviderPropert
      * This is done using a key-value structure where the key is the user
      * the value is the whitelisted collection of yubikey device ids.
      */
-    private Map<String, String> allowedDevices = new LinkedHashMap<>();
+    private Map<String, String> allowedDevices = new LinkedHashMap<>(1);
 
     /**
      * YubiKey API urls to contact for verification of credentials.
      */
-    private List<String> apiUrls = new ArrayList<>();
+    private List<String> apiUrls = new ArrayList<>(0);
 
     /**
      * Indicates whether this provider should support trusted devices.

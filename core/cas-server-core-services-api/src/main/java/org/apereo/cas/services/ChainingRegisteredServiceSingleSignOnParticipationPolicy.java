@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 public class ChainingRegisteredServiceSingleSignOnParticipationPolicy implements RegisteredServiceSingleSignOnParticipationPolicy {
     private static final long serialVersionUID = -2923946898337761319L;
 
-    private List<RegisteredServiceSingleSignOnParticipationPolicy> policies = new ArrayList<>();
+    private List<RegisteredServiceSingleSignOnParticipationPolicy> policies = new ArrayList<>(0);
 
     /**
      * Add provider.

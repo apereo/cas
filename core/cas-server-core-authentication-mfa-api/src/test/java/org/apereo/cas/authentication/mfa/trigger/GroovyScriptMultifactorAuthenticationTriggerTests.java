@@ -24,7 +24,7 @@ public class GroovyScriptMultifactorAuthenticationTriggerTests extends BaseMulti
     public void verifyOperationByProvider() {
         val props = new CasConfigurationProperties();
         props.getAuthn().getMfa().setGroovyScript(new ClassPathResource("GroovyMfaTrigger.groovy"));
-        val trigger = new GroovyScriptMultifactorAuthenticationTrigger(props);
+        val trigger = new GroovyScriptMultifactorAuthenticationTrigger(props, applicationContext);
         val result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
         assertTrue(result.isPresent());
     }

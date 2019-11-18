@@ -75,7 +75,7 @@ public class Pac4jSamlClientProperties extends Pac4jBaseClientProperties {
      * An example might be to fetch {@code givenName} from credential and rename it to {@code urn:oid:2.5.4.42} or vice versa.
      * Note that this setting only applies to attribute names, and not friendly-names.
      */
-    private List<ServiceProviderMappedAttribute> mappedAttributes = new ArrayList<>();
+    private List<ServiceProviderMappedAttribute> mappedAttributes = new ArrayList<>(0);
 
     /**
      * The entity id of the SP/CAS that is used in the SP metadata generation process.
@@ -102,7 +102,7 @@ public class Pac4jSamlClientProperties extends Pac4jBaseClientProperties {
     /**
      * Requested authentication context class in authn requests.
      */
-    private List<String> authnContextClassRef = new ArrayList<>();
+    private List<String> authnContextClassRef = new ArrayList<>(0);
 
     /**
      * Specifies the comparison rule that should be used to evaluate the specified authentication methods.
@@ -188,22 +188,22 @@ public class Pac4jSamlClientProperties extends Pac4jBaseClientProperties {
      * List of attributes requested by the service provider
      * that would be put into the service provider metadata.
      */
-    private List<ServiceProviderRequestedAttribute> requestedAttributes = new ArrayList<>();
+    private List<ServiceProviderRequestedAttribute> requestedAttributes = new ArrayList<>(0);
 
     /**
      * Collection of signing signature blacklisted algorithms, if any, to override the global defaults.
      */
-    private List<String> blackListedSignatureSigningAlgorithms = new ArrayList<>();
+    private List<String> blackListedSignatureSigningAlgorithms = new ArrayList<>(0);
 
     /**
      * Collection of signing signature algorithms, if any, to override the global defaults.
      */
-    private List<String> signatureAlgorithms = new ArrayList<>();
+    private List<String> signatureAlgorithms = new ArrayList<>(0);
 
     /**
      * Collection of signing signature reference digest methods, if any, to override the global defaults.
      */
-    private List<String> signatureReferenceDigestMethods = new ArrayList<>();
+    private List<String> signatureReferenceDigestMethods = new ArrayList<>(0);
     /**
      * The signing signature canonicalization algorithm, if any, to override the global defaults.
      */

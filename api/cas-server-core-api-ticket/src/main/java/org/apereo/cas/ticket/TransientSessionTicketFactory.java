@@ -38,7 +38,7 @@ public interface TransientSessionTicketFactory extends TicketFactory {
      * @return the delegated authentication request ticket
      */
     default TransientSessionTicket create(final Service service) {
-        return create(service, new LinkedHashMap<>());
+        return create(service, new LinkedHashMap<>(0));
     }
 
     /**

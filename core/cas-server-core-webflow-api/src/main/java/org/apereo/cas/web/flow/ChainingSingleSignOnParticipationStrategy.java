@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
 public class ChainingSingleSignOnParticipationStrategy implements SingleSignOnParticipationStrategy {
-    private final List<SingleSignOnParticipationStrategy> providers = new ArrayList<>();
+    private final List<SingleSignOnParticipationStrategy> providers = new ArrayList<>(0);
 
     /**
      * Add provider.

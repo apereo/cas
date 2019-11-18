@@ -43,7 +43,7 @@ public class X509SerialNumberAndIssuerDNPrincipalResolver extends AbstractX509Pr
     private final String valueDelimiter;
 
     public X509SerialNumberAndIssuerDNPrincipalResolver(final String serialNumberPrefix, final String valueDelimiter) {
-        this(new StubPersonAttributeDao(new HashMap<>()), new DefaultPrincipalFactory(), false,
+        this(new StubPersonAttributeDao(new HashMap<>(0)), new DefaultPrincipalFactory(), false,
             null, serialNumberPrefix, valueDelimiter, false, true,
             CollectionUtils.wrapSet(IPersonAttributeDao.WILDCARD));
     }

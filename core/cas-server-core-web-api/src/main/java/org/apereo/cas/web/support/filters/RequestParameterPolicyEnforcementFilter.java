@@ -202,7 +202,7 @@ public class RequestParameterPolicyEnforcementFilter extends AbstractSecurityFil
      */
     public static Set<String> parseParametersList(final String initParamValue, final boolean allowWildcard) {
         if (null == initParamValue) {
-            return new HashSet<>();
+            return new HashSet<>(0);
         }
         if (initParamValue.trim().isEmpty()) {
             logException(new IllegalArgumentException('[' + initParamValue + "] had no tokens but should have had at least one token."));
@@ -213,7 +213,7 @@ public class RequestParameterPolicyEnforcementFilter extends AbstractSecurityFil
         }
 
         if (allowWildcard && 1 == tokens.size() && "*".equals(tokens.get(0))) {
-            return new HashSet<>();
+            return new HashSet<>(0);
         }
         val parameterNames = new HashSet<String>();
         for (val parameterName : tokens) {

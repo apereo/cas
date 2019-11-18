@@ -41,7 +41,7 @@ public class MetadataEntityAttributesAttributeReleasePolicy extends BaseSamlRegi
 
     private String entityAttributeFormat;
 
-    private Set<String> entityAttributeValues = new LinkedHashSet<>();
+    private Set<String> entityAttributeValues = new LinkedHashSet<>(0);
 
     @Override
     protected Map<String, List<Object>> getAttributesForSamlRegisteredService(final Map<String, List<Object>> attributes,

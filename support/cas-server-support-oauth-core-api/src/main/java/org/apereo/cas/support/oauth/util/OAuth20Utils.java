@@ -461,7 +461,7 @@ public class OAuth20Utils {
     public static Map<String, Map<String, Object>> parseRequestClaims(final JEEContext context) throws Exception {
         val claims = context.getRequestParameter(OAuth20Constants.CLAIMS).map(String::valueOf).orElse(StringUtils.EMPTY);
         if (StringUtils.isBlank(claims)) {
-            return new HashMap<>();
+            return new HashMap<>(0);
         }
         return MAPPER.readValue(claims, Map.class);
     }
@@ -473,7 +473,7 @@ public class OAuth20Utils {
      * @return the set
      */
     public static Set<String> parseUserInfoRequestClaims(final OAuth20Token token) {
-        return token.getClaims().getOrDefault("userinfo", new HashMap<>()).keySet();
+        return token.getClaims().getOrDefault("userinfo", new HashMap<>(0)).keySet();
     }
 
     /**
@@ -485,6 +485,6 @@ public class OAuth20Utils {
      */
     public static Set<String> parseUserInfoRequestClaims(final JEEContext context) throws Exception {
         val requestedClaims = parseRequestClaims(context);
-        return requestedClaims.getOrDefault("userinfo", new HashMap<>()).keySet();
+        return requestedClaims.getOrDefault("userinfo", new HashMap<>(0)).keySet();
     }
 }

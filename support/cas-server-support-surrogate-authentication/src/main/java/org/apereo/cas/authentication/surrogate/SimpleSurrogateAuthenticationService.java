@@ -49,6 +49,6 @@ public class SimpleSurrogateAuthenticationService extends BaseSurrogateAuthentic
         if (this.eligibleAccounts.containsKey(username)) {
             return this.eligibleAccounts.get(username);
         }
-        return new ArrayList<>();
+        return new ArrayList<>(0);
     }
 }

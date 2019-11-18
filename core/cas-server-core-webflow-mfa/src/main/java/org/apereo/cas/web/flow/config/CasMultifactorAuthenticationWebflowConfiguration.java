@@ -160,14 +160,14 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
     @Bean
     @RefreshScope
     public MultifactorAuthenticationTrigger adaptiveMultifactorAuthenticationTrigger() {
-        return new AdaptiveMultifactorAuthenticationTrigger(geoLocationService.getIfAvailable(), casProperties);
+        return new AdaptiveMultifactorAuthenticationTrigger(geoLocationService.getIfAvailable(), casProperties, applicationContext);
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "timedMultifactorAuthenticationTrigger")
     @RefreshScope
     public MultifactorAuthenticationTrigger timedMultifactorAuthenticationTrigger() {
-        return new TimedMultifactorAuthenticationTrigger(casProperties);
+        return new TimedMultifactorAuthenticationTrigger(casProperties, this.applicationContext);
     }
 
     @ConditionalOnMissingBean(name = "timedAuthenticationPolicyWebflowEventResolver")
@@ -321,7 +321,7 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
     @Bean
     @RefreshScope
     public MultifactorAuthenticationTrigger groovyScriptMultifactorAuthenticationTrigger() {
-        return new GroovyScriptMultifactorAuthenticationTrigger(casProperties);
+        return new GroovyScriptMultifactorAuthenticationTrigger(casProperties, this.applicationContext);
     }
 
     @ConditionalOnMissingBean(name = "groovyScriptAuthenticationPolicyWebflowEventResolver")
@@ -351,7 +351,7 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
     @Bean
     @RefreshScope
     public MultifactorAuthenticationTrigger httpRequestMultifactorAuthenticationTrigger() {
-        return new HttpRequestMultifactorAuthenticationTrigger(casProperties);
+        return new HttpRequestMultifactorAuthenticationTrigger(casProperties, this.applicationContext);
     }
 
     @ConditionalOnMissingBean(name = "httpRequestAuthenticationPolicyWebflowEventResolver")
@@ -366,7 +366,8 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
     @ConditionalOnMissingBean(name = "registeredServicePrincipalAttributeMultifactorAuthenticationTrigger")
     @RefreshScope
     public MultifactorAuthenticationTrigger registeredServicePrincipalAttributeMultifactorAuthenticationTrigger() {
-        return new RegisteredServicePrincipalAttributeMultifactorAuthenticationTrigger(casProperties, multifactorAuthenticationProviderResolver());
+        return new RegisteredServicePrincipalAttributeMultifactorAuthenticationTrigger(casProperties,
+            multifactorAuthenticationProviderResolver(), applicationContext);
     }
 
     @ConditionalOnMissingBean(name = "registeredServicePrincipalAttributeAuthenticationPolicyWebflowEventResolver")
@@ -396,21 +397,21 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
     @RefreshScope
     @ConditionalOnMissingBean(name = "mfaAvailableAction")
     public MultifactorAuthenticationAvailableAction mfaAvailableAction() {
-        return new MultifactorAuthenticationAvailableAction();
+        return new MultifactorAuthenticationAvailableAction(applicationContext);
     }
 
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "mfaBypassAction")
     public MultifactorAuthenticationBypassAction mfaBypassAction() {
-        return new MultifactorAuthenticationBypassAction();
+        return new MultifactorAuthenticationBypassAction(applicationContext);
     }
 
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "mfaFailureAction")
     public MultifactorAuthenticationFailureAction mfaFailureAction() {
-        return new MultifactorAuthenticationFailureAction(casProperties);
+        return new MultifactorAuthenticationFailureAction(casProperties, applicationContext);
     }
 
     @Bean
