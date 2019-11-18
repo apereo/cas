@@ -129,6 +129,11 @@ public class Pac4jSamlClientProperties extends Pac4jBaseClientProperties {
     private boolean wantsAssertionsSigned;
 
     /**
+     * Whether logout requests and responses should be signed.
+     */
+    private boolean signLogoutRequests;
+
+    /**
      * AttributeConsumingServiceIndex attribute of AuthnRequest element.
      * The given index points out a specific AttributeConsumingService structure, declared into the
      * Service Provider (SP)'s metadata, to be used to specify all the attributes that the Service Provider
