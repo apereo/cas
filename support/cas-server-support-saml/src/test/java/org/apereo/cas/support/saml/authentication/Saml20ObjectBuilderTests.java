@@ -1,8 +1,7 @@
 package org.apereo.cas.support.saml.authentication;
 
 import org.apereo.cas.support.saml.AbstractOpenSamlTests;
-import org.apereo.cas.support.saml.util.AbstractSaml20ObjectBuilder;
-import org.apereo.cas.support.saml.util.NonInflatingSaml20ObjectBuilder;
+import org.apereo.cas.support.saml.util.BaseSaml20ObjectBuilder;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -11,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Tests the {@link AbstractSaml20ObjectBuilder}.
+ * Tests the {@link BaseSaml20ObjectBuilder}.
  *
  * @author Jerome Leleu
  * @since 5.2.9
@@ -36,7 +35,7 @@ public class Saml20ObjectBuilderTests extends AbstractOpenSamlTests {
 
     @Test
     public void decodeNonInflatedSamlAuthnRequest() {
-        val builder = new NonInflatingSaml20ObjectBuilder(this.configBean);
+        val builder = new BaseSaml20ObjectBuilder(this.configBean);
         val decoded = builder.decodeSamlAuthnRequest(BASE64_SAML_AUTHN_REQUEST);
         assertEquals(SAML_AUTHN_REQUEST, decoded);
     }

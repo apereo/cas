@@ -125,7 +125,6 @@ public class CompressionUtils {
             }
             return new String(baos.toByteArray(), StandardCharsets.UTF_8);
         } catch (final Exception e) {
-            LOGGER.error("Base64 decoding failed", e);
             return null;
         }
     }

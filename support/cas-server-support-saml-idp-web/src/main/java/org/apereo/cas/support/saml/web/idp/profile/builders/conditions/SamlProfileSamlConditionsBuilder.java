@@ -5,7 +5,7 @@ import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
-import org.apereo.cas.support.saml.util.AbstractSaml20ObjectBuilder;
+import org.apereo.cas.support.saml.util.BaseSaml20ObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 
 import lombok.val;
@@ -27,7 +27,7 @@ import java.util.ArrayList;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class SamlProfileSamlConditionsBuilder extends AbstractSaml20ObjectBuilder implements SamlProfileObjectBuilder<Conditions> {
+public class SamlProfileSamlConditionsBuilder extends BaseSaml20ObjectBuilder implements SamlProfileObjectBuilder<Conditions> {
     private static final long serialVersionUID = 126393045912318783L;
 
     private final CasConfigurationProperties casProperties;

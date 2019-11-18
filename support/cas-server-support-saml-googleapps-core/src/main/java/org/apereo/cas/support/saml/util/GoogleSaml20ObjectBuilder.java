@@ -21,7 +21,7 @@ import javax.xml.namespace.QName;
  * @since 4.1.0
  */
 @EqualsAndHashCode(callSuper = true)
-public class GoogleSaml20ObjectBuilder extends AbstractSaml20ObjectBuilder {
+public class GoogleSaml20ObjectBuilder extends BaseSaml20ObjectBuilder {
     private static final long serialVersionUID = 2979638064754730668L;
 
     public GoogleSaml20ObjectBuilder(final OpenSamlConfigBean configBean) {

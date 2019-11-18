@@ -46,17 +46,17 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * This is {@link AbstractSaml20ObjectBuilder}.
+ * This is {@link BaseSaml20ObjectBuilder}.
  * to build saml2 objects.
  *
  * @author Misagh Moayyed
  * @since 4.1
  */
 @Slf4j
-public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuilder {
+public class BaseSaml20ObjectBuilder extends AbstractSamlObjectBuilder {
     private static final long serialVersionUID = -4325127376598205277L;
 
-    public AbstractSaml20ObjectBuilder(final OpenSamlConfigBean configBean) {
+    public BaseSaml20ObjectBuilder(final OpenSamlConfigBean configBean) {
         super(configBean);
     }
 
@@ -498,16 +498,6 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
             return null;
         }
 
-        return inflateAuthnRequest(decodedBytes);
-    }
-
-    /**
-     * Inflate authn request string.
-     *
-     * @param decodedBytes the decoded bytes
-     * @return the string
-     */
-    protected String inflateAuthnRequest(final byte[] decodedBytes) {
         val inflated = CompressionUtils.inflate(decodedBytes);
         if (!StringUtils.isEmpty(inflated)) {
             return inflated;

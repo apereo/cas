@@ -29,7 +29,7 @@ import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.UrlResou
 import org.apereo.cas.support.saml.services.idp.metadata.plan.DefaultSamlRegisteredServiceMetadataResolutionPlan;
 import org.apereo.cas.support.saml.services.idp.metadata.plan.SamlRegisteredServiceMetadataResolutionPlan;
 import org.apereo.cas.support.saml.services.idp.metadata.plan.SamlRegisteredServiceMetadataResolutionPlanConfigurer;
-import org.apereo.cas.support.saml.util.NonInflatingSaml20ObjectBuilder;
+import org.apereo.cas.support.saml.util.BaseSaml20ObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.metadata.SamlIdPMetadataController;
 import org.apereo.cas.support.saml.web.idp.metadata.SamlRegisteredServiceCachedMetadataEndpoint;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
@@ -235,6 +235,6 @@ public class SamlIdPMetadataConfiguration {
             PrincipalFactoryUtils.newPrincipalFactory(),
             samlProfileSamlResponseBuilder.getObject(),
             defaultSamlRegisteredServiceCachingMetadataResolver(),
-            new NonInflatingSaml20ObjectBuilder(openSamlConfigBean.getObject()));
+            new BaseSaml20ObjectBuilder(openSamlConfigBean.getObject()));
     }
 }

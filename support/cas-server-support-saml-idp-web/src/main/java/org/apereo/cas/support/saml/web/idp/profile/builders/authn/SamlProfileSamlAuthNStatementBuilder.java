@@ -7,7 +7,7 @@ import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
-import org.apereo.cas.support.saml.util.AbstractSaml20ObjectBuilder;
+import org.apereo.cas.support.saml.util.BaseSaml20ObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.InetAddressUtils;
@@ -33,7 +33,7 @@ import javax.servlet.http.HttpServletResponse;
  * @since 5.0.0
  */
 @Slf4j
-public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBuilder implements SamlProfileObjectBuilder<AuthnStatement> {
+public class SamlProfileSamlAuthNStatementBuilder extends BaseSaml20ObjectBuilder implements SamlProfileObjectBuilder<AuthnStatement> {
 
     private static final long serialVersionUID = 8761566449790497226L;
     private final transient AuthnContextClassRefBuilder authnContextClassRefBuilder;

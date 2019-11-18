@@ -14,7 +14,7 @@ import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
-import org.apereo.cas.support.saml.util.AbstractSaml20ObjectBuilder;
+import org.apereo.cas.support.saml.util.BaseSaml20ObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
@@ -57,7 +57,7 @@ public class SSOSamlPostProfileHandlerEndpoint extends BaseCasActuatorEndpoint {
     private final PrincipalFactory principalFactory;
     private final SamlProfileObjectBuilder<? extends SAMLObject> responseBuilder;
     private final SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver;
-    private final AbstractSaml20ObjectBuilder saml20ObjectBuilder;
+    private final BaseSaml20ObjectBuilder saml20ObjectBuilder;
 
 
     public SSOSamlPostProfileHandlerEndpoint(final CasConfigurationProperties casProperties,
@@ -67,7 +67,7 @@ public class SSOSamlPostProfileHandlerEndpoint extends BaseCasActuatorEndpoint {
                                              final PrincipalFactory principalFactory,
                                              final SamlProfileObjectBuilder<? extends SAMLObject> responseBuilder,
                                              final SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver,
-                                             final AbstractSaml20ObjectBuilder saml20ObjectBuilder) {
+                                             final BaseSaml20ObjectBuilder saml20ObjectBuilder) {
         super(casProperties);
         this.servicesManager = servicesManager;
         this.authenticationSystemSupport = authenticationSystemSupport;
