@@ -153,7 +153,7 @@ public class EhcacheProperties implements Serializable {
      * <ul>
      * <li>LOCALTEMPSWAP: Standard open source (non fault-tolerant) on-disk persistence.</li>
      * <li>DISTRIBUTED: Terracotta clustered persistence (requires a Terracotta clustered cache)</li>
-     * <li>LOCALRESTARTABL: Enterprise fault tolerant persistence</li>
+     * <li>LOCALRESTARTABLE: Enterprise fault tolerant persistence</li>
      * <li>NONE: No persistence</li>
      * </ul>
      */

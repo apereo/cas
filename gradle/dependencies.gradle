@@ -425,6 +425,21 @@ ext.libraries = [
                     force = true
                 }
         ],
+        ehcache3                 : [
+                dependencies.create("org.ehcache:ehcache:$ehcache3Version") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.glassfish.jaxb", module: "jaxb-runtime")
+                    force = true
+                },
+                dependencies.create("org.ehcache.modules:ehcache-client:$ehcache3Version") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    force = true
+                },
+                dependencies.create("org.ehcache.modules:ehcache-common:$ehcache3Version") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    force = true
+                }
+        ],
         findbugscontrib         : dependencies.create("com.mebigfatguy.sb-contrib:sb-contrib:$spotbugsContribVersion") {
             force = true
         },
