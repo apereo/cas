@@ -62,6 +62,7 @@ public class JpaYubiKeyConfiguration {
         return JpaBeans.newDataSource(casProperties.getAuthn().getMfa().getYubikey().getJpa());
     }
 
+    @Bean
     public List<String> jpaYubiKeyPackagesToScan() {
         return CollectionUtils.wrapList(YubiKeyAccount.class.getPackage().getName());
     }

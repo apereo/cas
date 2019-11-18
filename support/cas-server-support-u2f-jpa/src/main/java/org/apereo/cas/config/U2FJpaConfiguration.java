@@ -60,6 +60,7 @@ public class U2FJpaConfiguration {
         return JpaBeans.newDataSource(casProperties.getAuthn().getMfa().getU2f().getJpa());
     }
 
+    @Bean
     public List<String> jpaU2fPackagesToScan() {
         return CollectionUtils.wrapList(U2FDeviceRegistration.class.getPackage().getName());
     }
