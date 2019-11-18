@@ -40,7 +40,7 @@ public class HttpUtils {
     private static final int MAX_CONNECTIONS = 200;
     private static final int MAX_CONNECTIONS_PER_ROUTE = 20;
 
-    private static final HttpClient HTTP_CLIENT = HttpClientBuilder.create()
+    private static HttpClient HTTP_CLIENT = HttpClientBuilder.create()
         .setMaxConnTotal(MAX_CONNECTIONS)
         .setMaxConnPerRoute(MAX_CONNECTIONS_PER_ROUTE)
         .build();
@@ -515,5 +515,13 @@ public class HttpUtils {
             acceptHeaders.set(org.springframework.http.HttpHeaders.AUTHORIZATION, "Basic " + basic);
         }
         return acceptHeaders;
+    }
+
+    public static HttpClient getHttpClient() {
+        return HTTP_CLIENT;
+    }
+
+    public static void setHttpClient(final HttpClient httpClient) {
+        HTTP_CLIENT = httpClient;
     }
 }
