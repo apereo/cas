@@ -141,7 +141,22 @@ public abstract class AbstractX509PrincipalResolver extends PersonDirectoryPrinc
                     attributes.put("x509Rfc822Email", CollectionUtils.wrapList(rfc822Email));
                 }
             } catch (final CertificateParsingException e) {
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.warn("Error parsing subject alternative names to get rfc822 email", e);
+                }
                 LOGGER.warn("Error parsing subject alternative names to get rfc822 email [{}]", e.getMessage());
+            }
+            try {
+                val x509subjectUPN = X509UPNExtractorUtils.extractUPNString(certificate);
+                if (x509subjectUPN != null) {
+                    attributes.put("x509subjectUPN", CollectionUtils.wrapList(x509subjectUPN));
+                }
+            } catch (final CertificateParsingException e) {
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.warn("Error parsing subject alternative names to get User Principal Name as an attribute", e);
+                } else {
+                    LOGGER.warn("Error parsing subject alternative names to get User Principal Name as an attribute [{}]", e.getMessage());
+                }
             }
         }
         return attributes;
