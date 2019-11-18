@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -43,6 +44,9 @@ public class JdbcPasswordHistoryManagementConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Autowired
+    private ConfigurableApplicationContext applicationContext;
+
+    @Autowired
     @Qualifier("jdbcPasswordManagementDataSource")
     private ObjectProvider<DataSource> jdbcPasswordManagementDataSource;
 
@@ -66,7 +70,8 @@ public class JdbcPasswordHistoryManagementConfiguration {
                 "jpaPasswordHistoryContext",
                 jpaPasswordHistoryPackagesToScan(),
                 jdbcPasswordManagementDataSource.getObject()),
-            casProperties.getAuthn().getPm().getJdbc());
+            casProperties.getAuthn().getPm().getJdbc(),
+            applicationContext);
     }
 
     @Autowired

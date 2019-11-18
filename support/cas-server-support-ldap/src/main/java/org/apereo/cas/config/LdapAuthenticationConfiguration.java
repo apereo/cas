@@ -40,6 +40,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -64,6 +65,9 @@ import java.util.function.Predicate;
 public class LdapAuthenticationConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
+
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
 
     @Autowired
     @Qualifier("defaultPrincipalResolver")
@@ -127,7 +131,7 @@ public class LdapAuthenticationConfiguration {
                 }
                 handler.setAllowMultiplePrincipalAttributeValues(l.isAllowMultiplePrincipalAttributeValues());
                 handler.setAllowMissingPrincipalAttributeValue(l.isAllowMissingPrincipalAttributeValue());
-                handler.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(l.getPasswordEncoder()));
+                handler.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(l.getPasswordEncoder(), applicationContext));
                 handler.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(l.getPrincipalTransformation()));
 
                 if (StringUtils.isNotBlank(l.getCredentialCriteria())) {

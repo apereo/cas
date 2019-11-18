@@ -84,7 +84,8 @@ public class JpaServiceRegistryConfiguration {
                 "jpaServiceRegistryContext",
                 jpaServicePackagesToScan(),
                 dataSourceService()),
-            casProperties.getServiceRegistry().getJpa());
+            casProperties.getServiceRegistry().getJpa(),
+            applicationContext);
     }
 
     @Autowired

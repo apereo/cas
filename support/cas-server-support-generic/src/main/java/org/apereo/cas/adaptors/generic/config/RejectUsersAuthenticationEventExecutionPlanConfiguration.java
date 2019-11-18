@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -35,7 +36,8 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class RejectUsersAuthenticationEventExecutionPlanConfiguration {
-
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
 
     @Autowired
     @Qualifier("servicesManager")
@@ -61,7 +63,7 @@ public class RejectUsersAuthenticationEventExecutionPlanConfiguration {
         val users = org.springframework.util.StringUtils.commaDelimitedListToSet(rejectProperties.getUsers());
         val h = new RejectUsersAuthenticationHandler(rejectProperties.getName(), servicesManager.getObject(),
             rejectUsersPrincipalFactory(), users);
-        h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(rejectProperties.getPasswordEncoder()));
+        h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(rejectProperties.getPasswordEncoder(), applicationContext));
         h.setPasswordPolicyConfiguration(rejectPasswordPolicyConfiguration());
         h.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(rejectProperties.getPrincipalTransformation()));
         return h;

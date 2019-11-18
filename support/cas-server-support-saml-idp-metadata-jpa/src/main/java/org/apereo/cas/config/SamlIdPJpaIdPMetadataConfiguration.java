@@ -25,10 +25,10 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
@@ -59,10 +59,10 @@ public class SamlIdPJpaIdPMetadataConfiguration {
     private ObjectProvider<SamlIdPCertificateAndKeyWriter> samlSelfSignedCertificateWriter;
 
     @Autowired
-    private ResourceLoader resourceLoader;
+    private CasConfigurationProperties casProperties;
 
     @Autowired
-    private CasConfigurationProperties casProperties;
+    private ConfigurableApplicationContext applicationContext;
 
     @RefreshScope
     @Bean
@@ -93,7 +93,8 @@ public class SamlIdPJpaIdPMetadataConfiguration {
                 jpaSamlMetadataIdPVendorAdapter(),
                 "jpaSamlMetadataIdPContext",
                 jpaSamlMetadataIdPPackagesToScan(),
-                dataSourceSamlMetadataIdP()), idp.getJpa());
+                dataSourceSamlMetadataIdP()), idp.getJpa(),
+            applicationContext);
     }
 
     @Autowired
@@ -130,7 +131,7 @@ public class SamlIdPJpaIdPMetadataConfiguration {
         val context = SamlIdPMetadataGeneratorConfigurationContext.builder()
             .samlIdPMetadataLocator(samlIdPMetadataLocator())
             .samlIdPCertificateAndKeyWriter(samlSelfSignedCertificateWriter.getObject())
-            .resourceLoader(resourceLoader)
+            .resourceLoader(applicationContext)
             .casProperties(casProperties)
             .metadataCipherExecutor(jpaSamlIdPMetadataCipherExecutor())
             .build();

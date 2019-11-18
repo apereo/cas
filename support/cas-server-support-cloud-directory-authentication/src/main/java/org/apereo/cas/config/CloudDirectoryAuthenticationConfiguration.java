@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -37,6 +38,8 @@ import org.springframework.context.annotation.Configuration;
 @Configuration("cloudDirectoryAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CloudDirectoryAuthenticationConfiguration {
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
 
     @Autowired
     @Qualifier("servicesManager")
@@ -65,7 +68,7 @@ public class CloudDirectoryAuthenticationConfiguration {
         val handler = new CloudDirectoryAuthenticationHandler(cloud.getName(), servicesManager.getObject(),
             cloudDirectoryPrincipalFactory(), cloudDirectoryRepository(), cloud);
         handler.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(cloud.getPrincipalTransformation()));
-        handler.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(cloud.getPasswordEncoder()));
+        handler.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(cloud.getPasswordEncoder(), applicationContext));
         return handler;
     }
 

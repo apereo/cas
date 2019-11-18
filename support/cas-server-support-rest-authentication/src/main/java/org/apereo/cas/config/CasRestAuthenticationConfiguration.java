@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -55,6 +56,9 @@ public class CasRestAuthenticationConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
+
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
 
     @Bean
     @RefreshScope
@@ -96,7 +100,7 @@ public class CasRestAuthenticationConfiguration {
         val rest = casProperties.getAuthn().getRest();
         val r = new RestAuthenticationHandler(rest.getName(), restAuthenticationApi(),
             servicesManager.getObject(), restAuthenticationPrincipalFactory());
-        r.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(rest.getPasswordEncoder()));
+        r.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(rest.getPasswordEncoder(), applicationContext));
         return r;
     }
 

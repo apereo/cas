@@ -18,6 +18,7 @@ import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointR
 import org.springframework.boot.actuate.endpoint.web.PathMappedEndpoints;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
+import org.springframework.context.ApplicationContext;
 import org.springframework.security.authentication.jaas.JaasAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -45,6 +46,7 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
     private final CasWebSecurityExpressionHandler casWebSecurityExpressionHandler;
     private final WebEndpointProperties webEndpointProperties;
     private final PathMappedEndpoints pathMappedEndpoints;
+    private final ApplicationContext applicationContext;
 
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
@@ -130,7 +132,7 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
         cfg.usersByUsernameQuery(jdbc.getQuery());
         cfg.rolePrefix(jdbc.getRolePrefix());
         cfg.dataSource(JpaBeans.newDataSource(jdbc));
-        cfg.passwordEncoder(PasswordEncoderUtils.newPasswordEncoder(jdbc.getPasswordEncoder()));
+        cfg.passwordEncoder(PasswordEncoderUtils.newPasswordEncoder(jdbc.getPasswordEncoder(), applicationContext));
     }
 
     /**

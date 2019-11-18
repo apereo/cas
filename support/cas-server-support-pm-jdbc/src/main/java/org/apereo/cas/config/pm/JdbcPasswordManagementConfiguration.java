@@ -1,5 +1,6 @@
 package org.apereo.cas.config.pm;
 
+import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.pm.PasswordHistoryService;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
@@ -36,6 +38,9 @@ public class JdbcPasswordManagementConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+    
     @Autowired
     @Qualifier("passwordManagementCipherExecutor")
     private ObjectProvider<CipherExecutor> passwordManagementCipherExecutor;
@@ -66,11 +71,13 @@ public class JdbcPasswordManagementConfiguration {
     @RefreshScope
     @Bean
     public PasswordManagementService passwordChangeService() {
+        val encoder = PasswordEncoderUtils.newPasswordEncoder(casProperties.getAuthn().getPm().getJdbc().getPasswordEncoder(), applicationContext);
         return new JdbcPasswordManagementService(passwordManagementCipherExecutor.getObject(),
             casProperties.getServer().getPrefix(),
             casProperties.getAuthn().getPm(),
             jdbcPasswordManagementDataSource(),
             jdbcPasswordManagementTransactionTemplate(),
-            passwordHistoryService.getObject());
+            passwordHistoryService.getObject(),
+            encoder);
     }
 }

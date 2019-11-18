@@ -20,6 +20,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
@@ -43,6 +44,8 @@ import javax.sql.DataSource;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement(proxyTargetClass = true)
 public class CasSupportJdbcAuditConfiguration {
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -84,7 +87,8 @@ public class CasSupportJdbcAuditConfiguration {
                 "jpaInspektrAuditContext",
                 CollectionUtils.wrap(AuditTrailEntity.class.getPackage().getName()),
                 inspektrAuditTrailDataSource()),
-            casProperties.getAudit().getJdbc());
+            casProperties.getAudit().getJdbc(),
+            applicationContext);
     }
 
     @ConditionalOnMissingBean(name = "auditCleanupCriteria")

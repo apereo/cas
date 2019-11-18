@@ -82,7 +82,8 @@ public class JpaTicketRegistryConfiguration {
                 "jpaTicketRegistryContext",
                 ticketPackagesToScan(),
                 dataSourceTicket()),
-            casProperties.getTicket().getRegistry().getJpa());
+            casProperties.getTicket().getRegistry().getJpa(),
+            applicationContext);
     }
 
     @Bean

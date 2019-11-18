@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
@@ -44,6 +45,9 @@ import java.util.HashMap;
 public class SoapAuthenticationConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
+
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
 
     @Autowired
     @Qualifier("servicesManager")
@@ -70,7 +74,7 @@ public class SoapAuthenticationConfiguration {
             soap.getOrder(),
             soapAuthenticationClient());
         handler.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(soap.getPrincipalTransformation()));
-        handler.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(soap.getPasswordEncoder()));
+        handler.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(soap.getPasswordEncoder(), applicationContext));
         return handler;
     }
 

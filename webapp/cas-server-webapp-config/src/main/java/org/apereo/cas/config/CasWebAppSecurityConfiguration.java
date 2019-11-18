@@ -12,6 +12,7 @@ import org.springframework.boot.actuate.endpoint.web.PathMappedEndpoints;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
@@ -28,6 +29,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration("casWebAppSecurityConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasWebAppSecurityConfiguration implements WebMvcConfigurer {
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -51,7 +54,9 @@ public class CasWebAppSecurityConfiguration implements WebMvcConfigurer {
     @ConditionalOnMissingBean(name = "casWebSecurityConfigurerAdapter")
     public WebSecurityConfigurerAdapter casWebSecurityConfigurerAdapter() {
         return new CasWebSecurityConfigurerAdapter(casProperties, securityProperties,
-            casWebSecurityExpressionHandler(), webEndpointProperties, pathMappedEndpoints.getObject());
+            casWebSecurityExpressionHandler(), webEndpointProperties,
+            pathMappedEndpoints.getObject(),
+            applicationContext);
     }
 
     @Override

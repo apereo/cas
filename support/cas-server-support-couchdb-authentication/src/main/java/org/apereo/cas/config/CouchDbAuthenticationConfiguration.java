@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -52,6 +53,9 @@ public class CouchDbAuthenticationConfiguration {
     @Autowired
     @Qualifier("servicesManager")
     private ObjectProvider<ServicesManager> servicesManager;
+
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
 
     @Bean
     @RefreshScope
@@ -103,7 +107,7 @@ public class CouchDbAuthenticationConfiguration {
 
         LOGGER.info("Connected to CouchDb instance @ [{}] using database [{}]", couchDb.getUrl(), couchDb.getDbName());
 
-        val encoder = new SpringSecurityPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(couchDb.getPasswordEncoder()));
+        val encoder = new SpringSecurityPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(couchDb.getPasswordEncoder(), applicationContext));
         val auth = new CouchProfileService(authenticationCouchDbFactory.getCouchDbConnector(), couchDb.getAttributes());
         auth.setUsernameAttribute(couchDb.getUsernameAttribute());
         auth.setPasswordAttribute(couchDb.getPasswordAttribute());

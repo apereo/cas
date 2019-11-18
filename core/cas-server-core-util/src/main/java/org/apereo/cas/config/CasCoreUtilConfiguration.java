@@ -119,7 +119,7 @@ public class CasCoreUtilConfiguration implements InitializingBean {
      * It's important to invoke the {@link #applicationContextProvider()}
      * method here forcefully and not rely on the {@link #applicationContext}.
      * Certain tests in the CAS context require access to the application context
-     * from the the {@link #applicationContextProvider()}.
+     * from the {@link #applicationContextProvider()}.
      */
     @Override
     @SuppressFBWarnings("NIR_NEEDLESS_INSTANCE_RETRIEVAL")

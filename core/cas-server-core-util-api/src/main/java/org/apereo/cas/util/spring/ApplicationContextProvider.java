@@ -7,8 +7,6 @@ import org.apereo.services.persondir.IPersonAttributeDao;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.ResourceLoaderAware;
-import org.springframework.core.io.ResourceLoader;
 
 import java.util.Optional;
 
@@ -18,14 +16,17 @@ import java.util.Optional;
  * holds the application context
  * @since 3.0.0.
  */
-public class ApplicationContextProvider implements ApplicationContextAware, ResourceLoaderAware {
+public class ApplicationContextProvider implements ApplicationContextAware {
 
     private static ApplicationContext CONTEXT;
 
-    private static ResourceLoader RESOURCE_LOADER;
-
     public static ApplicationContext getApplicationContext() {
         return CONTEXT;
+    }
+
+    @Override
+    public void setApplicationContext(final ApplicationContext ctx) {
+        CONTEXT = ctx;
     }
 
     /**
@@ -34,11 +35,6 @@ public class ApplicationContextProvider implements ApplicationContextAware, Reso
      * @param ctx the ctx
      */
     public static void holdApplicationContext(final ApplicationContext ctx) {
-        CONTEXT = ctx;
-    }
-
-    @Override
-    public void setApplicationContext(final ApplicationContext ctx) {
         CONTEXT = ctx;
     }
 
@@ -83,16 +79,6 @@ public class ApplicationContextProvider implements ApplicationContextAware, Reso
     }
 
     /**
-     * Gets resource loader.
-     *
-     * @return the resource loader
-     */
-    public static ResourceLoader getResourceLoader() {
-        return RESOURCE_LOADER;
-    }
-
-
-    /**
      * Gets cas properties.
      *
      * @return the cas properties
@@ -114,11 +100,6 @@ public class ApplicationContextProvider implements ApplicationContextAware, Reso
             return Optional.of(CONTEXT.getBean("attributeRepository", IPersonAttributeDao.class));
         }
         return Optional.empty();
-    }
-
-    @Override
-    public void setResourceLoader(final ResourceLoader resourceLoader) {
-        RESOURCE_LOADER = resourceLoader;
     }
 
     public static ConfigurableApplicationContext getConfigurableApplicationContext() {

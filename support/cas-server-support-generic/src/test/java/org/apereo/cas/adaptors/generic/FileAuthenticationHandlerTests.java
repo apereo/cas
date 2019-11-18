@@ -12,14 +12,17 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * @author Scott Battaglia
@@ -37,7 +40,7 @@ public class FileAuthenticationHandlerTests {
         p.setType(PasswordEncoderProperties.PasswordEncoderTypes.DEFAULT.name());
         p.setEncodingAlgorithm("MD5");
         p.setCharacterEncoding("UTF-8");
-        this.authenticationHandler.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(p));
+        this.authenticationHandler.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(p, mock(ApplicationContext.class)));
     }
 
     @Test

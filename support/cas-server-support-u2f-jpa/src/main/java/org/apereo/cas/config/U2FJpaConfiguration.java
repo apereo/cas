@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -41,6 +42,8 @@ import java.util.List;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement(proxyTargetClass = true)
 public class U2FJpaConfiguration {
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -60,6 +63,7 @@ public class U2FJpaConfiguration {
         return JpaBeans.newDataSource(casProperties.getAuthn().getMfa().getU2f().getJpa());
     }
 
+    @Bean
     public List<String> jpaU2fPackagesToScan() {
         return CollectionUtils.wrapList(U2FDeviceRegistration.class.getPackage().getName());
     }
@@ -67,14 +71,14 @@ public class U2FJpaConfiguration {
     @Lazy
     @Bean
     public LocalContainerEntityManagerFactoryBean u2fEntityManagerFactory() {
-
         return JpaBeans.newHibernateEntityManagerFactoryBean(
             new JpaConfigDataHolder(
                 jpaU2fVendorAdapter(),
                 "jpaU2fRegistryContext",
                 jpaU2fPackagesToScan(),
                 dataSourceU2f()),
-            casProperties.getAuthn().getMfa().getU2f().getJpa());
+            casProperties.getAuthn().getMfa().getU2f().getJpa(),
+            applicationContext);
     }
 
     @Autowired
