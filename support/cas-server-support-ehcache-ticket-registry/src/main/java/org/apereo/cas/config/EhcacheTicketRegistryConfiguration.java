@@ -102,10 +102,9 @@ public class EhcacheTicketRegistryConfiguration {
     }
 
     private Ehcache buildCache(final TicketDefinition ticketDefinition) {
-        val cache = casProperties.getTicket().getRegistry().getEhcache();
-        val configExists = ResourceUtils.doesResourceExist(cache.getConfigLocation());
-
         val ehcacheProperties = casProperties.getTicket().getRegistry().getEhcache();
+        val configExists = ResourceUtils.doesResourceExist(ehcacheProperties.getConfigLocation());
+
         val bean = new EhCacheFactoryBean();
 
         bean.setCacheName(ticketDefinition.getProperties().getStorageName());
@@ -117,7 +116,7 @@ public class EhcacheTicketRegistryConfiguration {
         } else {
             LOGGER.warn("In registering ticket definition [{}], Ehcache configuration file [{}] cannot be found "
                 + "so no cache event listeners will be configured to bootstrap. "
-                + "The ticket registry will operate in standalone mode", ticketDefinition.getPrefix(), cache.getConfigLocation());
+                + "The ticket registry will operate in standalone mode", ticketDefinition.getPrefix(), ehcacheProperties.getConfigLocation());
         }
 
         bean.setTimeToIdle((int) ticketDefinition.getProperties().getStorageTimeout());
