@@ -14,7 +14,8 @@ dependencies {
     implementation project(":core:cas-server-core-services-registry")
     implementation project(":core:cas-server-core-services")
     implementation project(":core:cas-server-core-services-api")
-    
+    implementation project(":core:cas-server-core-services-authentication")
+
     implementation project(":support:cas-server-support-token-core-api")
     implementation project(":support:cas-server-support-oauth-core")
     implementation project(":support:cas-server-support-oauth-api")

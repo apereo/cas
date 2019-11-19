@@ -192,4 +192,43 @@ public interface ServicesManager {
     default Collection<String> getDomains() {
         return Stream.of("default").collect(Collectors.toList());
     }
+
+    /**
+     * Returns true if this manager supports the type of service passed.
+     *
+     * @param service - the service
+     * @return - true if supported
+     */
+    default boolean supports(final Service service) {
+        return true;
+    }
+
+    /**
+     * Returns true if this manager supports the type of registered service.
+     *
+     * @param service - the registered service
+     * @return - true if supported
+     */
+    default boolean supports(final RegisteredService service) {
+        return true;
+    }
+
+    /**
+     * Deletes all services of a given type handeled by this manager.
+     *
+     * @param service - service type
+     */
+    default void deleteAllByType(final Service service) {
+        deleteAll();
+    }
+
+    /**
+     * Returns a collection of services for the passed type handled by this manager.
+     *
+     * @param service - service type
+     * @return - Collection of RegisteredService
+     */
+    default Collection<RegisteredService> getAllServicesByType(final Service service) {
+        return getAllServices();
+    }
 }

@@ -5,12 +5,9 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.services.RegexRegisteredService;
-import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlIdPConstants;
-import org.apereo.cas.support.saml.services.SamlIdPServiceRegistry;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.support.saml.web.idp.profile.HttpServletRequestXMLMessageDecodersMap;
 import org.apereo.cas.support.saml.web.idp.profile.IdentityProviderInitiatedProfileHandlerController;
@@ -33,7 +30,6 @@ import org.apereo.cas.support.saml.web.idp.profile.sso.request.SSOSamlHttpReques
 import org.apereo.cas.ticket.artifact.SamlArtifactTicketFactory;
 import org.apereo.cas.ticket.query.SamlAttributeQueryTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 
 import lombok.extern.slf4j.Slf4j;
@@ -53,7 +49,6 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.Ordered;
 import org.springframework.http.HttpMethod;
 
 /**
@@ -77,7 +72,7 @@ public class SamlIdPEndpointsConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Autowired
-    @Qualifier("servicesManager")
+    @Qualifier("samlServicesManager")
     private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
@@ -308,22 +303,6 @@ public class SamlIdPEndpointsConfiguration {
     public Service samlIdPCallbackService() {
         val service = casProperties.getServer().getPrefix().concat(SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_POST_CALLBACK);
         return this.webApplicationServiceFactory.getObject().createService(service);
-    }
-
-    @Bean
-    @ConditionalOnMissingBean(name = "samlIdPServiceRegistryExecutionPlanConfigurer")
-    public ServiceRegistryExecutionPlanConfigurer samlIdPServiceRegistryExecutionPlanConfigurer() {
-        return plan -> {
-            val callbackService = samlIdPCallbackService().getId().concat(".*");
-            LOGGER.debug("Initializing SAML IdP callback service [{}]", callbackService);
-            val service = new RegexRegisteredService();
-            service.setId(RandomUtils.nextLong());
-            service.setEvaluationOrder(Ordered.HIGHEST_PRECEDENCE);
-            service.setName(service.getClass().getSimpleName());
-            service.setDescription("SAML Authentication Request Callback");
-            service.setServiceId(callbackService);
-            plan.registerServiceRegistry(new SamlIdPServiceRegistry(applicationContext, service));
-        };
     }
 
     private SamlProfileHandlerConfigurationContext.SamlProfileHandlerConfigurationContextBuilder getSamlProfileHandlerConfigurationContextBuilder() {

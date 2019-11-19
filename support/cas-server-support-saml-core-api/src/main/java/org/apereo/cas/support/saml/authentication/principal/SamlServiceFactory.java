@@ -132,4 +132,10 @@ public class SamlServiceFactory extends AbstractServiceFactory<SamlService> {
         }
         return artifactElement.getValue().trim();
     }
+
+    @Override
+    public int getOrder() {
+        return HIGHEST_PRECEDENCE;
+    }
+
 }

@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.authentication.principal.Service;
 import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.Collection;
@@ -40,5 +41,22 @@ public class DefaultServicesManager extends AbstractServicesManager {
     protected void loadInternal() {
         this.orderedServices.clear();
         this.orderedServices.addAll(getAllServices());
+    }
+
+    @Override
+    protected boolean filterInternal(final RegisteredService registeredService) {
+        return supports(registeredService);
+    }
+
+    @Override
+    public boolean supports(final Service service) {
+        return service != null
+                && !service.getClass().getCanonicalName().equals("org.apereo.cas.support.oauth.authentication.principal.OAuthWebApplicationService")
+                && !service.getClass().getCanonicalName().equals("org.apereo.cas.support.saml.authentication.principal.Saml20WebApplicationService");
+    }
+
+    @Override
+    public boolean supports(final RegisteredService service) {
+        return service != null && service.getClass().getCanonicalName().equals(RegexRegisteredService.class.getCanonicalName());
     }
 }

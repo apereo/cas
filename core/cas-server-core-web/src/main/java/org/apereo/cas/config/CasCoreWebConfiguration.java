@@ -89,7 +89,7 @@ public class CasCoreWebConfiguration {
     public ArgumentExtractor argumentExtractor(final List<ServiceFactoryConfigurer> configurers) {
         val serviceFactoryList = new ArrayList<ServiceFactory<? extends WebApplicationService>>();
         configurers.forEach(c -> serviceFactoryList.addAll(c.buildServiceFactories()));
-        AnnotationAwareOrderComparator.sortIfNecessary(configurers);
+        AnnotationAwareOrderComparator.sortIfNecessary(serviceFactoryList);
         return new DefaultArgumentExtractor(serviceFactoryList);
     }
 

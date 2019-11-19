@@ -9,10 +9,11 @@ import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdG
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.authentication.principal.WebApplicationServiceResponseBuilder;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.core.services.ServiceRegistryProperties;
 import org.apereo.cas.services.ChainingServiceRegistry;
+import org.apereo.cas.services.ChainingServicesManager;
 import org.apereo.cas.services.DefaultServiceRegistryExecutionPlan;
 import org.apereo.cas.services.DefaultServicesManager;
+import org.apereo.cas.services.DefaultServicesManagerExecutionPlan;
 import org.apereo.cas.services.ImmutableServiceRegistry;
 import org.apereo.cas.services.InMemoryServiceRegistry;
 import org.apereo.cas.services.RegisteredService;
@@ -24,6 +25,8 @@ import org.apereo.cas.services.ServiceRegistryExecutionPlan;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServiceRegistryListener;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.services.ServicesManagerExecutionPlan;
+import org.apereo.cas.services.ServicesManagerExecutionPlanConfigurer;
 import org.apereo.cas.services.ServicesManagerScheduledLoader;
 import org.apereo.cas.services.domain.DefaultRegisteredServiceDomainExtractor;
 import org.apereo.cas.services.domain.DomainServicesManager;
@@ -40,6 +43,7 @@ import com.google.common.base.Predicates;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.RegExUtils;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -49,6 +53,7 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -82,6 +87,9 @@ public class CasCoreServicesConfiguration {
     private ObjectProvider<CommunicationsManager> communicationsManager;
 
     @Autowired
+    private ApplicationEventPublisher eventPublisher;
+
+    @Autowired
     private CasConfigurationProperties casProperties;
 
     @Autowired
@@ -92,6 +100,9 @@ public class CasCoreServicesConfiguration {
 
     @Autowired
     private ObjectProvider<List<ServiceRegistryExecutionPlanConfigurer>> serviceRegistryDaoConfigurers;
+
+    @Autowired
+    private ObjectProvider<List<ServicesManagerExecutionPlanConfigurer>> servicesManagersConfigurers;
 
     @RefreshScope
     @Bean
@@ -129,19 +140,77 @@ public class CasCoreServicesConfiguration {
         return new RegisteredServiceAccessStrategyAuditableEnforcer();
     }
 
+    @Bean
+    @Lazy(false)
+    public ServicesManagerExecutionPlan servicesManagerExecutionPlan() {
+        val configurers = ObjectUtils.defaultIfNull(servicesManagersConfigurers.getIfAvailable(),
+                new ArrayList<ServicesManagerExecutionPlanConfigurer>(0));
+        val plan = new DefaultServicesManagerExecutionPlan();
+        configurers.forEach(c -> {
+            val name = RegExUtils.removePattern(c.getClass().getSimpleName(), "\\$.+");
+            LOGGER.trace("Configuring services manager [{}]", name);
+            c.configureServicesManager(plan);
+        });
+        return plan;
+    }
+
     @ConditionalOnMissingBean(name = "servicesManager")
     @Bean
     @RefreshScope
+    @Lazy(false)
     public ServicesManager servicesManager() {
-        val managementType = casProperties.getServiceRegistry().getManagementType();
+        val plan = servicesManagerExecutionPlan();
+        val chainingManagers = new ChainingServicesManager();
+        if (plan.getServicesManagers().isEmpty()) {
+            LOGGER.warn("No Service Managers were registered, creating DefaultServicesManager");
+            val activeProfiles = Arrays.stream(environment.getActiveProfiles()).collect(Collectors.toSet());
+            chainingManagers.addServiceManager(new DefaultServicesManager(serviceRegistry(), eventPublisher, activeProfiles));
+        }
+        plan.getServicesManagers().forEach(chainingManagers::addServiceManager);
+        return chainingManagers;
+    }
+
+    @ConditionalOnProperty(prefix = "cas.serviceRegistry", name = "managementType", havingValue = "DOMAIN")
+    @Bean
+    @RefreshScope
+    public ServicesManager domainServicesManager() {
         val activeProfiles = Arrays.stream(environment.getActiveProfiles()).collect(Collectors.toSet());
-        if (managementType == ServiceRegistryProperties.ServiceManagementTypes.DOMAIN) {
-            LOGGER.trace("Managing CAS service definitions via domains");
-            return new DomainServicesManager(serviceRegistry(), applicationContext,
+        LOGGER.trace("Managing CAS service definitions via domains");
+        return new DomainServicesManager(serviceRegistry(), eventPublisher,
                 new DefaultRegisteredServiceDomainExtractor(),
                 activeProfiles);
-        }
-        return new DefaultServicesManager(serviceRegistry(), applicationContext, activeProfiles);
+    }
+
+    @ConditionalOnProperty(prefix = "cas.serviceRegistry", name = "managementType", havingValue = "DOMAIN")
+    @Bean
+    @RefreshScope
+    public ServicesManagerExecutionPlanConfigurer domainServicesManagerExecutionPlanConfigurer() {
+        return new ServicesManagerExecutionPlanConfigurer() {
+            @Override
+            public void configureServicesManager(final ServicesManagerExecutionPlan plan) {
+                plan.registerServicesManager(domainServicesManager());
+            }
+        };
+    }
+
+    @ConditionalOnProperty(prefix = "cas.serviceRegistry", name = "managementType", havingValue = "DEFAULT", matchIfMissing = true)
+    @Bean
+    @RefreshScope
+    public ServicesManager defaultServicesManager() {
+        val activeProfiles = Arrays.stream(environment.getActiveProfiles()).collect(Collectors.toSet());
+        return new DefaultServicesManager(serviceRegistry(), eventPublisher, activeProfiles);
+    }
+
+    @ConditionalOnProperty(prefix = "cas.serviceRegistry", name = "managementType", havingValue = "DEFAULT", matchIfMissing = true)
+    @Bean
+    @RefreshScope
+    public ServicesManagerExecutionPlanConfigurer defaultServicesManagerExecutionPlanConfigurer() {
+        return new ServicesManagerExecutionPlanConfigurer() {
+            @Override
+            public void configureServicesManager(final ServicesManagerExecutionPlan plan) {
+                plan.registerServicesManager(defaultServicesManager());
+            }
+        };
     }
 
     @Bean

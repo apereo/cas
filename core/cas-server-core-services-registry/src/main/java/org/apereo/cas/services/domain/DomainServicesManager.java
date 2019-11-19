@@ -1,6 +1,8 @@
 package org.apereo.cas.services.domain;
 
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.AbstractServicesManager;
+import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServicesManager;
@@ -80,6 +82,11 @@ public class DomainServicesManager extends AbstractServicesManager {
     }
 
     @Override
+    protected boolean filterInternal(final RegisteredService registeredService) {
+        return supports(registeredService);
+    }
+
+    @Override
     public List<String> getDomains() {
         return this.domains.keySet().stream().sorted().collect(Collectors.toList());
     }
@@ -94,8 +101,21 @@ public class DomainServicesManager extends AbstractServicesManager {
         val services = map.containsKey(domain)
             ? map.get(domain)
             : new TreeSet<RegisteredService>();
-        LOGGER.debug("Added service [{}] mapped to domain definition [{}]", r, domain);
+        LOGGER.trace("Added service [{}] mapped to domain definition [{}]", r, domain);
+        services.remove(r);
         services.add(r);
         map.put(domain, services);
+    }
+
+    @Override
+    public boolean supports(final Service service) {
+        return service != null
+                && !service.getClass().getCanonicalName().equals("org.apereo.cas.support.oauth.authentication.principal.OAuthWebApplicationService")
+                && !service.getClass().getCanonicalName().equals("org.apereo.cas.support.saml.authentication.principal.Saml20WebApplicationService");
+    }
+
+    @Override
+    public boolean supports(final RegisteredService service) {
+        return service != null && service.getClass().getCanonicalName().equals(RegexRegisteredService.class.getCanonicalName());
     }
 }

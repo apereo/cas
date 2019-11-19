@@ -11,9 +11,13 @@ import org.apereo.cas.logout.LogoutExecutionPlanConfigurer;
 import org.apereo.cas.logout.slo.SingleLogoutMessageCreator;
 import org.apereo.cas.logout.slo.SingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.logout.slo.SingleLogoutServiceMessageHandler;
+import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.services.ServicesManagerExecutionPlan;
+import org.apereo.cas.services.ServicesManagerExecutionPlanConfigurer;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
+import org.apereo.cas.support.saml.services.SamlServicesManager;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.support.saml.web.idp.audit.SamlRequestAuditResourceResolver;
 import org.apereo.cas.support.saml.web.idp.audit.SamlResponseAuditPrincipalIdProvider;
@@ -72,10 +76,14 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 
+import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * The {@link SamlIdPConfiguration}.
@@ -111,8 +119,8 @@ public class SamlIdPConfiguration {
     private ObjectProvider<PersistentIdGenerator> shibbolethCompatiblePersistentIdGenerator;
 
     @Autowired
-    @Qualifier("servicesManager")
-    private ObjectProvider<ServicesManager> servicesManager;
+    @Qualifier("serviceRegistry")
+    private ObjectProvider<ServiceRegistry> serviceRegistry;
 
     @Autowired
     @Qualifier("shibboleth.OpenSAMLConfig")
@@ -142,12 +150,18 @@ public class SamlIdPConfiguration {
     @Qualifier("authenticationServiceSelectionPlan")
     private ObjectProvider<AuthenticationServiceSelectionPlan> authenticationServiceSelectionPlan;
 
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
+
+    @Autowired
+    private Environment environment;
+
     @ConditionalOnMissingBean(name = "samlSingleLogoutServiceLogoutUrlBuilder")
     @Bean
     public SingleLogoutServiceLogoutUrlBuilder samlSingleLogoutServiceLogoutUrlBuilder() {
-        return new SamlIdPSingleLogoutServiceLogoutUrlBuilder(servicesManager.getObject(),
-            defaultSamlRegisteredServiceCachingMetadataResolver.getObject(),
-            urlValidator.getObject());
+        return new SamlIdPSingleLogoutServiceLogoutUrlBuilder(samlServicesManager(),
+            defaultSamlRegisteredServiceCachingMetadataResolver.getIfAvailable(),
+            urlValidator.getIfAvailable());
     }
 
     @ConditionalOnMissingBean(name = "samlLogoutBuilder")
@@ -155,7 +169,7 @@ public class SamlIdPConfiguration {
     public SingleLogoutMessageCreator samlLogoutBuilder() {
         return new SamlProfileSingleLogoutMessageCreator(
             openSamlConfigBean.getObject(),
-            servicesManager.getObject(),
+            samlServicesManager(),
             defaultSamlRegisteredServiceCachingMetadataResolver.getObject(),
             casProperties.getAuthn().getSamlIdp(),
             samlObjectSigner());
@@ -166,7 +180,7 @@ public class SamlIdPConfiguration {
     public SingleLogoutServiceMessageHandler samlSingleLogoutServiceMessageHandler() {
         return new SamlIdPSingleLogoutServiceMessageHandler(httpClient.getObject(),
             samlLogoutBuilder(),
-            servicesManager.getObject(),
+            samlServicesManager(),
             samlSingleLogoutServiceLogoutUrlBuilder(),
             casProperties.getSlo().isAsynchronous(),
             authenticationServiceSelectionPlan.getObject(),
@@ -377,6 +391,25 @@ public class SamlIdPConfiguration {
     @Bean
     public SamlResponseAuditPrincipalIdProvider samlResponseAuditPrincipalIdProvider() {
         return new SamlResponseAuditPrincipalIdProvider();
+    }
+
+    @Bean(name = "samlServicesManager")
+    @RefreshScope
+    @ConditionalOnMissingBean(name = "samlServicesManager")
+    public ServicesManager samlServicesManager() {
+        val activeProfiles = Arrays.stream(environment.getActiveProfiles()).collect(Collectors.toSet());
+        return new SamlServicesManager(serviceRegistry.getIfAvailable(), eventPublisher, activeProfiles);
+    }
+
+    @Bean
+    @RefreshScope
+    public ServicesManagerExecutionPlanConfigurer samlServicesManagerExecutionPlanConfigurer() {
+        return new ServicesManagerExecutionPlanConfigurer() {
+            @Override
+            public void configureServicesManager(final ServicesManagerExecutionPlan plan) {
+                plan.registerServicesManager(samlServicesManager());
+            }
+        };
     }
 
     @Bean

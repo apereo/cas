@@ -181,8 +181,9 @@ public abstract class AbstractServicesManager implements ServicesManager {
         LOGGER.trace("Loading services from [{}]", serviceRegistry.getName());
         this.services = this.serviceRegistry.load()
             .stream()
+            .filter(r -> filterInternal(r))
             .collect(Collectors.toConcurrentMap(r -> {
-                LOGGER.debug("Adding registered service [{}] with name [{}] and internal identifier [{}]", r.getServiceId(), r.getName(), r.getId());
+                LOGGER.trace("Adding registered service [{}]", r.getServiceId());
                 return r.getId();
             }, Function.identity(), (r, s) -> s));
         loadInternal();
@@ -275,6 +276,16 @@ public abstract class AbstractServicesManager implements ServicesManager {
      * Load internal.
      */
     protected void loadInternal() {
+    }
+
+    /**
+     * Method filters which services will be loaded into the ServicesManager.
+     *
+     * @param service - the service
+     * @return - true if included in this manager.
+     */
+    protected boolean filterInternal(final RegisteredService service) {
+        return true;
     }
 
     private void publishEvent(final ApplicationEvent event) {
