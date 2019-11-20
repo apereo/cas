@@ -10,7 +10,7 @@ import org.junit.runner.RunWith;
  * Test suite that runs all test in a batch.
  *
  * @author Hal Deadman
- * @since 6.1.0
+ * @since 6.2.0
  */
 @SelectClasses({
     EhCache3TicketRegistryTests.class

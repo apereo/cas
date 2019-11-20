@@ -1,34 +1,39 @@
 package org.apereo.cas.configuration.model.support.ehcache;
 
-import lombok.Getter;
-import lombok.Setter;
 import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
+
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.Resource;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * This is {@link Ehcache3Properties}.
  *
- * @author Misagh Moayyed
- * @since 5.0.0
+ * @author Hal Deadman
+ * @since 6.2.0
  */
 @RequiresModule(name = "cas-server-support-ehcache3-ticket-registry")
 @Getter
 @Setter
 public class Ehcache3Properties implements Serializable {
 
-    private static final long serialVersionUID = 7772510035918976450L;
-
+    /**
+     * EhCache autocreate mode for creating config in Terracotta cluster.
+     * Creates config as specified if not present.
+     */
     public static final String CONNECTION_MODE_AUTOCREATE = "AUTOCREATE";
+
+    /**
+     * EhCache configless mode  for creating config in Terracotta cluster.
+     * Requires config to already be defined on Terracotta cluster.
+     */
     public static final String CONNECTION_MODE_CONFIGLESS = "CONFIGLESS";
+
+    private static final long serialVersionUID = 7772510035918976450L;
 
     /**
      * The name of the cache manager instance.
@@ -41,12 +46,24 @@ public class Ehcache3Properties implements Serializable {
      */
     private int maxElementsInMemory = 10_000;
 
-    private int maxSizeOnDisk = 100;
+    /**
+     * Size of disk cache.
+     */
+    private int maxSizeOnDisk = 200;
 
+    /**
+     * Disk cache size units as defined by EhCache. (e.g. MB, GB)
+     */
     private String maxSizeOnDiskUnits = "MB";
 
+    /**
+     * Size of heap cache.
+     */
     private int maxSizeOffHeap = 100;
 
+    /**
+     * Heap cache size units as defined by EhCache. (e.g. MB, GB)
+     */
     private String maxSizeOffHeapUnits = "MB";
 
     /**
@@ -62,13 +79,24 @@ public class Ehcache3Properties implements Serializable {
      */
     private String terracottaClusterUri;
 
-
+    /**
+     * Name of default server resource on Terracotta cluster.
+     */
     private String defaultServerResource = "cas-ticket-registry";
 
+    /**
+     * Name of resource pool on Terracotta cluster.
+     */
     private String resourcePoolName = "cas-ticket-registry-resource-pool";
 
+    /**
+     * Size of resource pool on terracotta cluster.
+     */
     private int resourcePoolSize = 100;
 
+    /**
+     * Units for size of resource pool on terracotta cluster.
+     */
     private String resourcePoolUnits = "MB";
 
     /**
@@ -76,7 +104,8 @@ public class Ehcache3Properties implements Serializable {
      * Acceptable values are:
      * <ul>
      * <li>AUTOCREATE: In auto-create mode if no cluster tier manager exists then one is created with the supplied configuration.
-     * If it exists and its configuration matches the supplied configuration then a connection is established. If the supplied configuration does not match then the cache manager will fail to initialize.</li>
+     * If it exists and its configuration matches the supplied configuration then a connection is established.
+     * If the supplied configuration does not match then the cache manager will fail to initialize.</li>
      * <li>CONFIGLESS: In config-less mode if a cluster tier manager exists then a connection is established without regard to its configuration.
      * If it does not exist then the cache manager will fail to initialize</li>
      * </ul>

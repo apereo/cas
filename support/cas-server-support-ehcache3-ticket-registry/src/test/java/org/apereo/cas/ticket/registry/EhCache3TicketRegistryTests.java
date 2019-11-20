@@ -22,27 +22,20 @@ import org.apereo.cas.config.Ehcache3TicketRegistryTicketCatalogConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 
-import lombok.SneakyThrows;
-import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.context.annotation.Bean;
-
-import static org.mockito.Mockito.*;
 
 /**
- * Unit test for {@link EhCacheTicketRegistry}.
+ * Unit test for {@link EhCache3TicketRegistry}.
  *
- * @author Scott Battaglia
- * @since 3.0.0
+ * @author Hal Deadman
+ * @since 6.2.0
  */
 @SpringBootTest(classes = {
-    EhCacheTicketRegistryTests.EhcacheTicketRegistryTestConfiguration.class,
-    EhcacheTicketRegistryConfiguration.class,
+    Ehcache3TicketRegistryConfiguration.class,
     RefreshAutoConfiguration.class,
     MailSenderAutoConfiguration.class,
     Ehcache3TicketRegistryTicketCatalogConfiguration.class,
@@ -70,7 +63,7 @@ import static org.mockito.Mockito.*;
     "spring.mail.port=25000",
     "spring.mail.testConnection=false"
 })
-public class EhCacheTicketRegistryTests extends BaseTicketRegistryTests {
+public class EhCache3TicketRegistryTests extends BaseTicketRegistryTests {
 
     @Autowired
     @Qualifier("ticketRegistry")

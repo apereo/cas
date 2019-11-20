@@ -1,2 +1,2 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.config.EhcacheTicketRegistryConfiguration,\
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.config.Ehcache3TicketRegistryConfiguration,\
   org.apereo.cas.config.Ehcache3TicketRegistryTicketCatalogConfiguration

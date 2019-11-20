@@ -11,10 +11,10 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.ehcache.Cache;
 import org.ehcache.CacheManager;
-import org.ehcache.core.spi.service.StatisticsService;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -35,8 +35,6 @@ public class EhCache3TicketRegistry extends AbstractTicketRegistry {
 
     private final CacheManager cacheManager;
 
-    private final StatisticsService statisticsService;
-
     /**
      * Instantiates a new EhCache ticket registry.
      *
@@ -46,11 +44,9 @@ public class EhCache3TicketRegistry extends AbstractTicketRegistry {
      */
     public EhCache3TicketRegistry(final TicketCatalog ticketCatalog,
                                   final CacheManager cacheManager,
-                                  final StatisticsService statisticsService,
                                   final CipherExecutor cipher) {
         this.ticketCatalog = ticketCatalog;
         this.cacheManager = cacheManager;
-        this.statisticsService = statisticsService;
         setCipherExecutor(cipher);
         LOGGER.info("Setting up Ehcache Ticket Registry...");
     }
@@ -78,7 +74,7 @@ public class EhCache3TicketRegistry extends AbstractTicketRegistry {
         val metadata = this.ticketCatalog.find(ticket);
         val cache = getTicketCacheFor(metadata);
 
-        val encodedTicketKey = encodeTicketId(ticket.getId()));
+        val encodedTicketKey = encodeTicketId(ticket.getId());
         if (cache.containsKey(encodedTicketKey)) {
             cache.remove(encodedTicketKey);
             LOGGER.debug("Ticket [{}] is removed", ticket.getId());
@@ -88,16 +84,11 @@ public class EhCache3TicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public long deleteAll() {
-        return ticketCatalog.findAll().stream()
+        ticketCatalog.findAll().stream()
             .map(this::getTicketCacheFor)
             .filter(Objects::nonNull)
-            .mapToLong(instance -> {
-                val mapName = ticketCatalog.getProperties().getStorageName();
-                statisticsService.getCacheStatistics().getTierStatistics().get("OnHeap").getMappings(),
-                val size = instance.
-                instance.clear();
-                return size;
-            }).sum();
+            .forEach(Cache::clear);
+        return -1; // TODO try to get count
     }
 
     @Override
@@ -117,20 +108,16 @@ public class EhCache3TicketRegistry extends AbstractTicketRegistry {
         }
 
         val ehcache = getTicketCacheFor(metadata);
-        val element = ehcache.get(ticketId);
+        val encodedTicket = ehcache.get(ticketId);
 
-        if (element == null) {
+        if (encodedTicket == null) {
             LOGGER.debug("No ticket by id [{}] is found in the registry", ticketId);
             return null;
         }
-        val ticket = decodeTicket((Ticket) element.getObjectValue());
 
-        val config = new CacheConfiguration();
-        val expirationPolicy = ticket.getExpirationPolicy();
-        config.setTimeToIdleSeconds(expirationPolicy.getTimeToIdle());
-        config.setTimeToLiveSeconds(expirationPolicy.getTimeToLive());
+        val ticket = decodeTicket(encodedTicket);
 
-        if (!element.isExpired(config) && predicate.test(ticket)) {
+        if (predicate.test(ticket)) {
             return ticket;
         }
         return null;
@@ -140,8 +127,7 @@ public class EhCache3TicketRegistry extends AbstractTicketRegistry {
     public Collection<? extends Ticket> getTickets() {
         return this.ticketCatalog.findAll().stream()
             .map(this::getTicketCacheFor)
-            .flatMap(map -> getAllExpired(map).values().stream())
-            .map(e -> (Ticket) e.getObjectValue())
+            .flatMap(map -> getAllUnexpired(map).values().stream())
             .map(this::decodeTicket)
             .collect(Collectors.toSet());
     }
@@ -158,9 +144,11 @@ public class EhCache3TicketRegistry extends AbstractTicketRegistry {
         return this.cacheManager.getCache(mapName, String.class, Ticket.class);
     }
 
-    private static Map<Object, Element> getAllExpired(final Ehcache map) {
+    private static Map<String, Ticket> getAllUnexpired(final Cache<String, Ticket> map) {
         try {
-            return map.getAll(map.getKeysWithExpiryCheck());
+            val returnMap = new HashMap<String, Ticket>();
+            map.iterator().forEachRemaining(entry -> returnMap.put(entry.getKey(), entry.getValue()));
+            return returnMap;
         } catch (final Exception e) {
             LOGGER.warn(e.getMessage(), e);
             return new HashMap<>(0);

@@ -13,6 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.ehcache.CacheManager;
+import org.ehcache.PersistentCacheManager;
+import org.ehcache.Status;
 import org.ehcache.clustered.client.config.builders.ClusteredResourcePoolBuilder;
 import org.ehcache.clustered.client.config.builders.ClusteringServiceConfigurationBuilder;
 import org.ehcache.config.CacheConfiguration;
@@ -23,7 +25,6 @@ import org.ehcache.config.builders.CacheManagerConfiguration;
 import org.ehcache.config.builders.ExpiryPolicyBuilder;
 import org.ehcache.config.builders.ResourcePoolsBuilder;
 import org.ehcache.config.units.MemoryUnit;
-import org.ehcache.core.spi.service.StatisticsService;
 import org.ehcache.core.statistics.DefaultStatisticsService;
 import org.ehcache.event.CacheEvent;
 import org.ehcache.event.CacheEventListener;
@@ -55,7 +56,7 @@ public class Ehcache3TicketRegistryConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public CacheManagerConfiguration ehcache3CacheManagerConfiguration() {
+    public CacheManagerConfiguration<PersistentCacheManager> ehcache3CacheManagerConfiguration() {
         val ehcacheProperties = casProperties.getTicket().getRegistry().getEhcache3();
 
         val terracottaClusterUri = ehcacheProperties.getTerracottaClusterUri();
@@ -79,11 +80,11 @@ public class Ehcache3TicketRegistryConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public CacheManager ehcache3TicketCacheManager(
-        @Qualifier ("ehcache3CacheManagerConfiguration") final CacheManagerConfiguration cacheManagerConfiguration) {
+        @Qualifier ("ehcache3CacheManagerConfiguration") final CacheManagerConfiguration<PersistentCacheManager> cacheManagerConfiguration) {
         val beanBuilder = CacheManagerBuilder.newCacheManagerBuilder();
-        StatisticsService statisticsService = new DefaultStatisticsService();
+        val statisticsService = new DefaultStatisticsService();
         beanBuilder.with(cacheManagerConfiguration)
-        .using(statisticsService);
+            .using(statisticsService);
 
         return beanBuilder.build();
     }
@@ -111,9 +112,8 @@ public class Ehcache3TicketRegistryConfiguration {
 
         val cacheConfigBuilder = CacheConfigurationBuilder.newCacheConfigurationBuilder(String.class,
             Ticket.class,
-            ResourcePoolsBuilder.newResourcePoolsBuilder()
+            ResourcePoolsBuilder.heap(ehcacheProperties.getMaxElementsInMemory())
                 .with(ClusteredResourcePoolBuilder.clustered())
-                .heap(ehcacheProperties.getMaxElementsInMemory())
                 .offheap(ehcacheProperties.getMaxSizeOffHeap(), MemoryUnit.valueOf(ehcacheProperties.getMaxSizeOffHeapUnits()))
                 .disk(ehcacheProperties.getMaxSizeOnDisk(), MemoryUnit.valueOf(ehcacheProperties.getMaxSizeOnDiskUnits())))
             .withExpiry(expiryPolicy)
@@ -135,25 +135,28 @@ public class Ehcache3TicketRegistryConfiguration {
     /**
      * Create ticket registry bean with all nececessary caches.
      * Using the spring ehcache wrapper bean so it can be initialized after the caches are built.
-     * @param manager Spring EhCache manager bean, wraps EhCache manager and is used for cache actuator endpoint.
+     * @param ehcacheManager Spring EhCache manager bean, wraps EhCache manager and is used for cache actuator endpoint.
      * @param ticketCatalog Ticket Catalog
      * @return Ticket Registry
      */
     @Autowired
     @Bean
     @RefreshScope
-    public TicketRegistry ticketRegistry(@Qualifier("ehcache3TicketCacheManager") final CacheManager manager,
+    public TicketRegistry ticketRegistry(@Qualifier("ehcache3TicketCacheManager") final CacheManager ehcacheManager,
                                          @Qualifier("ticketCatalog") final TicketCatalog ticketCatalog) {
         val crypto = casProperties.getTicket().getRegistry().getEhcache().getCrypto();
+
+        if (Status.UNINITIALIZED.equals(ehcacheManager.getStatus())) {
+            ehcacheManager.init();
+        }
 
         val definitions = ticketCatalog.findAll();
         definitions.forEach(t -> {
             val ehcacheConfiguration = buildCache(t);
-
-            manager.createCache(t.getProperties().getStorageName(), ehcacheConfiguration);
+            ehcacheManager.createCache(t.getProperties().getStorageName(), ehcacheConfiguration);
         });
 
-        return new EhCache3TicketRegistry(ticketCatalog, manager, CoreTicketUtils.newTicketRegistryCipherExecutor(crypto, "ehcache"));
+        return new EhCache3TicketRegistry(ticketCatalog, ehcacheManager, CoreTicketUtils.newTicketRegistryCipherExecutor(crypto, "ehcache"));
     }
 
 }
