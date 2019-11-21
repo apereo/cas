@@ -8,6 +8,7 @@ import org.apereo.cas.ticket.TicketDefinition;
 import org.apereo.cas.ticket.registry.EhCache3TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CoreTicketUtils;
+import org.apereo.cas.util.ResourceUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -37,6 +38,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.io.File;
 import java.net.URI;
 import java.time.Duration;
 
@@ -73,7 +75,15 @@ public class Ehcache3TicketRegistryConfiguration {
             }
             return clusterConfigBuilder.build();
         }
-        return CacheManagerBuilder.persistence(ehcacheProperties.getRootDirectory());
+        val rootDirectory = ehcacheProperties.getRootDirectory();
+        if (!ResourceUtils.doesResourceExist(rootDirectory)) {
+            LOGGER.debug("Creating folder for ehcache ticket registry disk cache [{}]", rootDirectory);
+            val mkdirResult = new File(rootDirectory).mkdirs();
+            if (!mkdirResult) {
+                LOGGER.warn("Unable to create folder for ehcache ticket registry disk cache [{}]", rootDirectory);
+            }
+        }
+        return CacheManagerBuilder.persistence(rootDirectory);
     }
 
 
@@ -91,6 +101,7 @@ public class Ehcache3TicketRegistryConfiguration {
 
     private CacheConfiguration<String, Ticket> buildCache(final TicketDefinition ticketDefinition) {
         val ehcacheProperties = casProperties.getTicket().getRegistry().getEhcache3();
+        val terracottaClusterUri = ehcacheProperties.getTerracottaClusterUri();
 
         CacheEventListenerConfigurationBuilder cacheEventListenerConfiguration = CacheEventListenerConfigurationBuilder
             .newEventListenerConfiguration(new CasCacheEventListener(),
@@ -107,17 +118,17 @@ public class Ehcache3TicketRegistryConfiguration {
             .access(Duration.ofSeconds(storageTimeout))
             .update(Duration.ofSeconds(storageTimeout)).build();
 
-        val resourcePoolsBuilder = ResourcePoolsBuilder.newResourcePoolsBuilder();
-        resourcePoolsBuilder.with(ClusteredResourcePoolBuilder.clustered());
+        var resourcePools = ResourcePoolsBuilder.heap(ehcacheProperties.getMaxElementsInMemory());
+        if (StringUtils.isNotBlank(terracottaClusterUri)) {
+            resourcePools = resourcePools.with(ClusteredResourcePoolBuilder.clustered());
+        }
+        resourcePools
+            .offheap(ehcacheProperties.getMaxSizeOffHeap(), MemoryUnit.valueOf(ehcacheProperties.getMaxSizeOffHeapUnits()))
+            .disk(ehcacheProperties.getMaxSizeOnDisk(), MemoryUnit.valueOf(ehcacheProperties.getMaxSizeOnDiskUnits()));
 
         val cacheConfigBuilder = CacheConfigurationBuilder.newCacheConfigurationBuilder(String.class,
-            Ticket.class,
-            ResourcePoolsBuilder.heap(ehcacheProperties.getMaxElementsInMemory())
-                .with(ClusteredResourcePoolBuilder.clustered())
-                .offheap(ehcacheProperties.getMaxSizeOffHeap(), MemoryUnit.valueOf(ehcacheProperties.getMaxSizeOffHeapUnits()))
-                .disk(ehcacheProperties.getMaxSizeOnDisk(), MemoryUnit.valueOf(ehcacheProperties.getMaxSizeOnDiskUnits())))
-            .withExpiry(expiryPolicy)
-            .withService(cacheEventListenerConfiguration);
+            Ticket.class, resourcePools).withExpiry(expiryPolicy)
+                .withService(cacheEventListenerConfiguration);
 
         return cacheConfigBuilder.build();
     }
