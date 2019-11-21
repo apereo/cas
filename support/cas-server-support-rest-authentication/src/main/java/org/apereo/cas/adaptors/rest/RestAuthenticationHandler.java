@@ -93,7 +93,7 @@ public class RestAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      * @return The warnings for the created {@link AuthenticationHandlerExecutionResult}
      */
     protected List<MessageDescriptor> getWarnings(final ResponseEntity<?> authenticationResponse) {
-        val messageDescriptors = new ArrayList<MessageDescriptor>();
+        val messageDescriptors = new ArrayList<MessageDescriptor>(2);
 
         val passwordExpirationDate = authenticationResponse.getHeaders().getFirstZonedDateTime("X-CAS-PasswordExpirationDate");
         if (passwordExpirationDate != null) {

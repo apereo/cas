@@ -169,7 +169,7 @@ public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCa
                     CasWebflowConstants.TRANSITION_ID_UNAVAILABLE, s);
                 val targetUnavailable = actionState.getTransition(CasWebflowConstants.TRANSITION_ID_UNAVAILABLE).getTargetStateId();
 
-                val mappings = new ArrayList<DefaultMapping>();
+                val mappings = new ArrayList<DefaultMapping>(0);
                 val inputMapper = createMapperToSubflowState(mappings);
                 val subflowMapper = createSubflowAttributeMapper(inputMapper, null);
                 subflowState.setAttributeMapper(subflowMapper);
