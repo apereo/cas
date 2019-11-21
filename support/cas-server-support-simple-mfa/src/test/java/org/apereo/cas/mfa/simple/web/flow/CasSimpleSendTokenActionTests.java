@@ -39,6 +39,7 @@ import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
+import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,8 +54,11 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Action;
+import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.RequestContextHolder;
 import org.springframework.webflow.test.MockRequestContext;
+
+import javax.security.auth.login.FailedLoginException;
 
 import java.util.List;
 
@@ -124,6 +128,34 @@ public class CasSimpleSendTokenActionTests {
 
     @Test
     public void verifyOperation() throws Exception {
+        val theToken = createToken("casuser").getKey();
+        assertNotNull(this.ticketRegistry.getTicket(theToken));
+        val token = new CasSimpleMultifactorTokenCredential(theToken);
+        val result = authenticationHandler.authenticate(token);
+        assertNotNull(result);
+        assertNull(this.ticketRegistry.getTicket(theToken));
+    }
+
+    @Test
+    public void verifyFailsForUser() throws Exception {
+        val theToken1 = createToken("casuser1");
+        assertNotNull(theToken1);
+        
+        val theToken2 = createToken("casuser2");
+        assertNotNull(theToken2);
+        val token = new CasSimpleMultifactorTokenCredential(theToken1.getKey());
+        assertThrows(FailedLoginException.class, () -> authenticationHandler.authenticate(token));
+
+    }
+
+    protected Pair<String, RequestContext> createToken(final String user) throws Exception {
+        val context = buildRequestContextFor(user);
+        val event = mfaSimpleMultifactorSendTokenAction.execute(context);
+        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, event.getId());
+        return Pair.of(event.getAttributes().getString("token"), context);
+    }
+
+    private static MockRequestContext buildRequestContextFor(final String user) {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -131,17 +163,10 @@ public class CasSimpleSendTokenActionTests {
         RequestContextHolder.setRequestContext(context);
         WebUtils.putServiceIntoFlashScope(context, RegisteredServiceTestUtils.getService());
 
-        val principal = RegisteredServiceTestUtils.getPrincipal("casuser",
+        val principal = RegisteredServiceTestUtils.getPrincipal(user,
             CollectionUtils.wrap("phone", List.of("123456789"), "mail", List.of("cas@example.org")));
         WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(principal), context);
-        val event = mfaSimpleMultifactorSendTokenAction.execute(context);
-        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, event.getId());
-        val theToken = event.getAttributes().getString("token");
-        assertNotNull(this.ticketRegistry.getTicket(theToken));
-        val token = new CasSimpleMultifactorTokenCredential(theToken);
-        val result = authenticationHandler.authenticate(token);
-        assertNotNull(result);
-        assertNull(this.ticketRegistry.getTicket(theToken));
+        return context;
     }
 
     @TestConfiguration

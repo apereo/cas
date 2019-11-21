@@ -3,6 +3,7 @@ package org.apereo.cas.mfa.simple;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
+import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TransientSessionTicket;
@@ -24,6 +25,11 @@ import java.security.GeneralSecurityException;
  */
 @Slf4j
 public class CasSimpleMultifactorAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
+    /**
+     * Property name for principal linked to token.
+     */
+    public static final String PROPERTY_PRINCIPAL = "principal";
+
     private final TicketRegistry ticketRegistry;
 
     public CasSimpleMultifactorAuthenticationHandler(final String name,
@@ -48,6 +54,17 @@ public class CasSimpleMultifactorAuthenticationHandler extends AbstractPreAndPos
 
         if (acct == null) {
             LOGGER.warn("Authorization of token [{}] has failed. Token is not found in registry", tokenCredential.getId());
+            throw new FailedLoginException("Failed to authenticate code " + tokenCredential.getId());
+        }
+        if (!acct.getProperties().containsKey(PROPERTY_PRINCIPAL)) {
+            LOGGER.warn("Unable to locate principal for token [{}]", tokenCredential.getId());
+            this.ticketRegistry.deleteTicket(acct.getId());
+            throw new FailedLoginException("Failed to authenticate code " + tokenCredential.getId());
+        }
+        val principal = Principal.class.cast(acct.getProperties().get(PROPERTY_PRINCIPAL));
+        if (!principal.equals(authentication.getPrincipal())) {
+            LOGGER.warn("Principal assigned to token [{}] is unauthorized for of token [{}]", principal.getId(), tokenCredential.getId());
+            this.ticketRegistry.deleteTicket(acct.getId());
             throw new FailedLoginException("Failed to authenticate code " + tokenCredential.getId());
         }
         if (acct.isExpired()) {
