@@ -29,7 +29,7 @@ public class ResourceCRLFetcher implements CRLFetcher {
 
     @Override
     public Collection<X509CRL> fetch(final Collection<Resource> crls) throws IOException, CRLException {
-        val results = new HashSet<X509CRL>();
+        val results = new HashSet<X509CRL>(crls.size());
         for (val r : crls) {
             LOGGER.debug("Fetching CRL data from [{}]", r);
             try (val ins = r.getInputStream()) {

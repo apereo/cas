@@ -520,7 +520,7 @@ public class CasOAuth20Configuration {
     @Bean
     @RefreshScope
     public Set<OAuth20AuthorizationRequestValidator> oauthAuthorizationRequestValidators() {
-        val validators = new LinkedHashSet<OAuth20AuthorizationRequestValidator>();
+        val validators = new LinkedHashSet<OAuth20AuthorizationRequestValidator>(5);
         validators.add(oauthProofKeyCodeExchangeResponseTypeAuthorizationRequestValidator());
         validators.add(oauthAuthorizationCodeResponseTypeRequestValidator());
         validators.add(oauthIdTokenResponseTypeRequestValidator());
@@ -586,7 +586,7 @@ public class CasOAuth20Configuration {
     @Bean
     @RefreshScope
     public Collection<OAuth20TokenRequestValidator> oauthTokenRequestValidators() {
-        val validators = new ArrayList<OAuth20TokenRequestValidator>();
+        val validators = new ArrayList<OAuth20TokenRequestValidator>(6);
 
         validators.add(oauth20AuthorizationCodeGrantTypeProofKeyCodeExchangeTokenRequestValidator());
         validators.add(oauthAuthorizationCodeGrantTypeTokenRequestValidator());

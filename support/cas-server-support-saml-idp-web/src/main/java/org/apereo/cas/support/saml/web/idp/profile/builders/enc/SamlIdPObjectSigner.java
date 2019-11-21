@@ -266,7 +266,7 @@ public class SamlIdPObjectSigner {
         criteriaSet.add(new EntityRoleCriterion(IDPSSODescriptor.DEFAULT_ELEMENT_NAME));
 
         val credentials = Sets.<Credential>newLinkedHashSet(kekCredentialResolver.resolve(criteriaSet));
-        val creds = new ArrayList<Credential>();
+        val creds = new ArrayList<Credential>(2);
 
         credentials.forEach(c -> {
             val cred = getResolvedSigningCredential(c, privateKey, service);

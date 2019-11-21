@@ -53,8 +53,9 @@ public class ValidateEndpointCommand {
             var trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
             trustManagerFactory.init((KeyStore) null);
             LOGGER.info("Detected Truststore: [{}]", trustManagerFactory.getProvider().getName());
-            val x509TrustManagers = new ArrayList<X509TrustManager>();
-            for (val trustManager : trustManagerFactory.getTrustManagers()) {
+            val trustManagers = trustManagerFactory.getTrustManagers();
+            val x509TrustManagers = new ArrayList<X509TrustManager>(trustManagers.length);
+            for (val trustManager : trustManagers) {
                 if (trustManager instanceof X509TrustManager) {
                     val x509TrustManager = (X509TrustManager) trustManager;
                     LOGGER.info("Trusted issuers found: [{}]", x509TrustManager.getAcceptedIssuers().length);

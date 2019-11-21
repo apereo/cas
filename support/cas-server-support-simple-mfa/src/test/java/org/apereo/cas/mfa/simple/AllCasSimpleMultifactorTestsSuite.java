@@ -15,7 +15,8 @@ import org.junit.runner.RunWith;
 @SelectClasses({
     CasSimpleMultifactorAuthenticationProviderTests.class,
     CasSimpleMultifactorAuthenticationUniqueTicketIdGeneratorTests.class,
-    CasSimpleSendTokenActionTests.class
+    CasSimpleSendTokenActionTests.class,
+    CasSimpleMultifactorAuthenticationHandlerTests.class
 })
 @RunWith(JUnitPlatform.class)
 public class AllCasSimpleMultifactorTestsSuite {

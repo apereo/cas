@@ -192,7 +192,7 @@ public class SamlUtils {
             return null;
         }
 
-        val keyInfoProviderList = new ArrayList<KeyInfoProvider>();
+        val keyInfoProviderList = new ArrayList<KeyInfoProvider>(4);
         keyInfoProviderList.add(new RSAKeyValueProvider());
         keyInfoProviderList.add(new DSAKeyValueProvider());
         keyInfoProviderList.add(new DEREncodedKeyValueProvider());

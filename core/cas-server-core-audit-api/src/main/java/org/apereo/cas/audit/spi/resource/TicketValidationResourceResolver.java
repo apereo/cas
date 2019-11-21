@@ -28,7 +28,7 @@ public class TicketValidationResourceResolver extends TicketAsFirstParameterReso
 
     @Override
     public String[] resolveFrom(final JoinPoint joinPoint, final Object object) {
-        val auditResourceResults = new ArrayList<String>();
+        val auditResourceResults = new ArrayList<String>(2);
 
         val args = AopUtils.unWrapJoinPoint(joinPoint).getArgs();
         if (args != null && args.length > 0) {

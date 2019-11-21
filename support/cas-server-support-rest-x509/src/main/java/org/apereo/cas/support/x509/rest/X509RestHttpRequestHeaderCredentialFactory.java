@@ -32,12 +32,13 @@ public class X509RestHttpRequestHeaderCredentialFactory implements RestHttpReque
 
     @Override
     public List<Credential> fromRequest(final HttpServletRequest request, final MultiValueMap<String, String> requestBody) {
-        val credentials = new ArrayList<Credential>();
         val certFromHeader = certificateExtractor.extract(request);
         if (certFromHeader != null) {
             LOGGER.debug("Certificate found in HTTP request via [{}]", certificateExtractor.getClass().getName());
+            val credentials = new ArrayList<Credential>(1);
             credentials.add(new X509CertificateCredential(certFromHeader));
+            return credentials;
         }
-        return credentials;
+        return new ArrayList<Credential>(0);
     }
 }

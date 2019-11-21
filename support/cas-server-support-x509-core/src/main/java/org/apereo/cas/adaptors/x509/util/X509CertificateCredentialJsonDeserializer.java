@@ -30,8 +30,9 @@ public class X509CertificateCredentialJsonDeserializer extends JsonDeserializer<
         val oc = jp.getCodec();
         val node = JsonNode.class.cast(oc.readTree(jp));
 
-        val certs = new ArrayList<X509Certificate>();
-        node.findValues("certificates").forEach(n -> {
+        val certificates = node.findValues("certificates");
+        val certs = new ArrayList<X509Certificate>(certificates.size());
+        certificates.forEach(n -> {
             val cert = n.get(0).textValue();
             val data = EncodingUtils.decodeBase64(cert);
             certs.add(CertUtils.readCertificate(new InputStreamResource(new ByteArrayInputStream(data))));

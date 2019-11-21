@@ -75,7 +75,6 @@ public class RadiusTokenAuthenticationEventExecutionPlanConfiguration {
     @RefreshScope
     @Bean
     public List<RadiusServer> radiusTokenServers() {
-        val list = new ArrayList<RadiusServer>();
         val radius = casProperties.getAuthn().getMfa().getRadius();
         val client = radius.getClient();
         val server = radius.getServer();
@@ -97,6 +96,7 @@ public class RadiusTokenAuthenticationEventExecutionPlanConfiguration {
             .nasPortType(server.getNasPortType())
             .build();
         val impl = new NonBlockingRadiusServer(context);
+        val list = new ArrayList<RadiusServer>(1);
         list.add(impl);
         return list;
     }

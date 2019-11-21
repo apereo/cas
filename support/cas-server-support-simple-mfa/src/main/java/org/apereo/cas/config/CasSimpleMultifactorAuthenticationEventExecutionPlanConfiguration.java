@@ -38,7 +38,6 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class CasSimpleMultifactorAuthenticationEventExecutionPlanConfiguration {
-
     @Autowired
     private CasConfigurationProperties casProperties;
 

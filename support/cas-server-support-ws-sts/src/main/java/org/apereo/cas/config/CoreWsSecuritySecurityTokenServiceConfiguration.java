@@ -126,7 +126,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
     @RefreshScope
     @Bean
     public List<TokenDelegationHandler> delegationHandlers() {
-        val handlers = new ArrayList<TokenDelegationHandler>();
+        val handlers = new ArrayList<TokenDelegationHandler>(2);
         handlers.add(new SAMLDelegationHandler());
         handlers.add(new X509TokenDelegationHandler());
         return handlers;
@@ -222,7 +222,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
     @RefreshScope
     @Bean
     public List transportTokenValidators() {
-        val list = new ArrayList<Object>();
+        val list = new ArrayList<Object>(4);
         list.add(transportSamlTokenValidator());
         list.add(transportJwtTokenValidator());
         list.add(transportSecureContextTokenValidator());
@@ -234,7 +234,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
     @RefreshScope
     @Bean
     public List transportTokenProviders() {
-        val list = new ArrayList<Object>();
+        val list = new ArrayList<Object>(3);
         list.add(transportSamlTokenProvider());
         list.add(transportJwtTokenProvider());
         list.add(transportSecureContextTokenProvider());

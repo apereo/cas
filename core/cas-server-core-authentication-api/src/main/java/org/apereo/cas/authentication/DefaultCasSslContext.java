@@ -155,14 +155,14 @@ public class DefaultCasSslContext {
 
         @Override
         public String[] getClientAliases(final String keyType, final Principal[] issuers) {
-            val aliases = new ArrayList<String>();
+            val aliases = new ArrayList<String>(keyManagers.size());
             this.keyManagers.forEach(keyManager -> aliases.addAll(CollectionUtils.wrapList(keyManager.getClientAliases(keyType, issuers))));
             return aliases.toArray(ArrayUtils.EMPTY_STRING_ARRAY);
         }
 
         @Override
         public String[] getServerAliases(final String keyType, final Principal[] issuers) {
-            val aliases = new ArrayList<String>();
+            val aliases = new ArrayList<String>(keyManagers.size());
             this.keyManagers.forEach(keyManager -> aliases.addAll(CollectionUtils.wrapList(keyManager.getServerAliases(keyType, issuers))));
             return aliases.toArray(ArrayUtils.EMPTY_STRING_ARRAY);
         }
@@ -225,7 +225,7 @@ public class DefaultCasSslContext {
 
         @Override
         public X509Certificate[] getAcceptedIssuers() {
-            val certificates = new ArrayList<X509Certificate>();
+            val certificates = new ArrayList<X509Certificate>(trustManagers.size());
             this.trustManagers.forEach(trustManager -> certificates.addAll(CollectionUtils.wrapList(trustManager.getAcceptedIssuers())));
             return certificates.toArray(X509Certificate[]::new);
         }
