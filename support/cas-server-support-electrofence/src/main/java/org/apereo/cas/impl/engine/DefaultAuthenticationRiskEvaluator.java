@@ -42,7 +42,7 @@ public class DefaultAuthenticationRiskEvaluator implements AuthenticationRiskEva
             return new AuthenticationRiskScore(AuthenticationRequestRiskCalculator.HIGHEST_RISK_SCORE);
         }
 
-        val scores = new ArrayList<AuthenticationRiskScore>();
+        val scores = new ArrayList<AuthenticationRiskScore>(this.calculators.size());
         this.calculators.forEach(r -> scores.add(r.calculate(authentication, service, request)));
         val sum = scores.stream().map(AuthenticationRiskScore::getScore).reduce(BigDecimal.ZERO, BigDecimal::add);
         val score = sum.divide(BigDecimal.valueOf(this.calculators.size()), 2, RoundingMode.UP);

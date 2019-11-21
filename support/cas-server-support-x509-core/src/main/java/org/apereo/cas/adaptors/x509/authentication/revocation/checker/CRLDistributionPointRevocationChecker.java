@@ -116,7 +116,7 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
     private static URI[] getDistributionPoints(final X509Certificate cert) {
         try {
             val points = new ExtensionReader(cert).readCRLDistributionPoints();
-            val urls = new ArrayList<URI>();
+            val urls = new ArrayList<URI>(points.size());
             if (points != null) {
                 points.stream().map(DistributionPoint::getDistributionPoint).filter(Objects::nonNull).forEach(pointName -> {
                     val nameSequence = ASN1Sequence.getInstance(pointName.getName());

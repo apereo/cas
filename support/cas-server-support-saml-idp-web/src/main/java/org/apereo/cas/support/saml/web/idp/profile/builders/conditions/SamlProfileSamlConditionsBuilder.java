@@ -71,7 +71,7 @@ public class SamlProfileSamlConditionsBuilder extends AbstractSaml20ObjectBuilde
             skewAllowance = casProperties.getSamlCore().getSkewAllowance();
         }
 
-        val audienceUrls = new ArrayList<String>();
+        val audienceUrls = new ArrayList<String>(2);
         audienceUrls.add(adaptor.getEntityId());
         if (StringUtils.isNotBlank(service.getAssertionAudiences())) {
             val audiences = org.springframework.util.StringUtils.commaDelimitedListToSet(service.getAssertionAudiences());

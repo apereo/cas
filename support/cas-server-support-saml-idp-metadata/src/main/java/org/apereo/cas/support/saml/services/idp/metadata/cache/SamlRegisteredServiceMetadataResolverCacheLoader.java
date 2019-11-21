@@ -48,11 +48,12 @@ public class SamlRegisteredServiceMetadataResolverCacheLoader implements CacheLo
     public ChainingMetadataResolver load(final SamlRegisteredServiceCacheKey cacheKey) {
 
         val metadataResolver = new ChainingMetadataResolver();
-        val metadataResolvers = new ArrayList<MetadataResolver>();
 
         val service = cacheKey.getRegisteredService();
         val availableResolvers = this.metadataResolutionPlan.getRegisteredMetadataResolvers();
-        LOGGER.debug("There are [{}] metadata resolver(s) available in the chain", availableResolvers.size());
+        val size = availableResolvers.size();
+        val metadataResolvers = new ArrayList<MetadataResolver>(size);
+        LOGGER.debug("There are [{}] metadata resolver(s) available in the chain", size);
         availableResolvers
             .stream()
             .filter(Objects::nonNull)
@@ -71,7 +72,7 @@ public class SamlRegisteredServiceMetadataResolverCacheLoader implements CacheLo
                 + " with metadata location " + service.getMetadataLocation());
         }
         metadataResolver.setId(ChainingMetadataResolver.class.getCanonicalName());
-        LOGGER.trace("There are [{}] eligible metadata resolver(s) for this request", availableResolvers.size());
+        LOGGER.trace("There are [{}] eligible metadata resolver(s) for this request", size);
         metadataResolver.setResolvers(metadataResolvers);
         metadataResolver.initialize();
 
