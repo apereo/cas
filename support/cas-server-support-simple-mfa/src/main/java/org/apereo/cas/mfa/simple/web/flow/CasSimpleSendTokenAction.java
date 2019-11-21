@@ -2,8 +2,10 @@ package org.apereo.cas.mfa.simple.web.flow;
 
 import org.apereo.cas.authentication.adaptive.UnauthorizedAuthenticationException;
 import org.apereo.cas.configuration.model.support.mfa.CasSimpleMultifactorProperties;
+import org.apereo.cas.mfa.simple.CasSimpleMultifactorAuthenticationHandler;
 import org.apereo.cas.ticket.TransientSessionTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.io.CommunicationsManager;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -32,11 +34,10 @@ public class CasSimpleSendTokenAction extends AbstractAction {
     @Override
     protected Event doExecute(final RequestContext requestContext) {
         val service = WebUtils.getService(requestContext);
-        val token = ticketFactory.create(service);
-
         val authentication = WebUtils.getInProgressAuthentication();
         val principal = authentication.getPrincipal();
-
+        val token = ticketFactory.create(service, CollectionUtils.wrap(CasSimpleMultifactorAuthenticationHandler.PROPERTY_PRINCIPAL, principal));
+        
         val smsProperties = properties.getSms();
         val text = StringUtils.isNotBlank(smsProperties.getText())
             ? String.format(smsProperties.getText(), token.getId())
