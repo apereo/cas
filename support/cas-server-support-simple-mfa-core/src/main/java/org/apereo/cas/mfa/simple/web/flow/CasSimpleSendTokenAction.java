@@ -2,9 +2,11 @@ package org.apereo.cas.mfa.simple.web.flow;
 
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.model.support.mfa.CasSimpleMultifactorProperties;
+import org.apereo.cas.mfa.simple.CasSimpleMultifactorAuthenticationHandler;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TransientSessionTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.io.CommunicationsManager;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
@@ -39,7 +41,7 @@ public class CasSimpleSendTokenAction extends AbstractAction {
     @Override
     protected Event doExecute(final RequestContext requestContext) {
         val service = WebUtils.getService(requestContext);
-        val token = ticketFactory.create(service);
+        val token = ticketFactory.create(service, CollectionUtils.wrap(CasSimpleMultifactorAuthenticationHandler.PROPERTY_PRINCIPAL, principal));
         LOGGER.debug("Created multifactor authentication token [{}] for service [{}]", token, service);
 
         val authentication = WebUtils.getInProgressAuthentication();
