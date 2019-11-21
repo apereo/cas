@@ -51,7 +51,7 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
 
     @Override
     public Principal resolve(final Credential credential, final Optional<Principal> principal, final Optional<AuthenticationHandler> handler) {
-        val principals = new ArrayList<Principal>();
+        val principals = new ArrayList<Principal>(chain.size());
         chain.stream()
             .filter(resolver -> resolver.supports(credential))
             .forEach(resolver -> {

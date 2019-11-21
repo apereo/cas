@@ -32,7 +32,7 @@ public class ByCredentialSourceAuthenticationHandlerResolver implements Authenti
 
     @Override
     public Set<AuthenticationHandler> resolve(final Set<AuthenticationHandler> candidateHandlers, final AuthenticationTransaction transaction) {
-        val finalHandlers = new LinkedHashSet<AuthenticationHandler>();
+        val finalHandlers = new LinkedHashSet<AuthenticationHandler>(candidateHandlers.size());
         val upcs = transaction.getCredentialsOfType(UsernamePasswordCredential.class);
         candidateHandlers
             .stream()

@@ -36,6 +36,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @UtilityClass
 public class CollectionUtils {
+    private static final int MAP_SIZE = 8;
 
     /**
      * Converts the provided object into a collection
@@ -78,7 +79,7 @@ public class CollectionUtils {
      * @return The collection instance containing the object provided
      */
     public static Set<Object> toCollection(final Object obj) {
-        val c = new LinkedHashSet<Object>();
+        val c = new LinkedHashSet<Object>(MAP_SIZE);
         if (obj == null) {
             LOGGER.trace("Converting null obj to empty collection");
         } else if (obj instanceof Collection) {
@@ -400,7 +401,7 @@ public class CollectionUtils {
      * @return the list
      */
     public static <T> List<T> wrap(final T source) {
-        val list = new ArrayList<T>();
+        val list = new ArrayList<T>(MAP_SIZE);
         if (source != null) {
             if (source instanceof Collection) {
                 val it = ((Collection) source).iterator();
@@ -429,7 +430,7 @@ public class CollectionUtils {
      * @return the list
      */
     public static <T> List<T> wrap(final List<T> source) {
-        val list = new ArrayList<T>();
+        val list = new ArrayList<T>(MAP_SIZE);
         if (source != null && !source.isEmpty()) {
             list.addAll(source);
         }
@@ -444,7 +445,7 @@ public class CollectionUtils {
      * @return the set
      */
     public static <T> Set<T> wrap(final Set<T> source) {
-        val list = new LinkedHashSet<T>();
+        val list = new LinkedHashSet<T>(MAP_SIZE);
         if (source != null && !source.isEmpty()) {
             list.addAll(source);
         }
@@ -459,7 +460,7 @@ public class CollectionUtils {
      * @return the set
      */
     public static <T> Set<T> wrapSet(final T source) {
-        val list = new LinkedHashSet<T>();
+        val list = new LinkedHashSet<T>(MAP_SIZE);
         if (source != null) {
             list.add(source);
         }
@@ -474,7 +475,7 @@ public class CollectionUtils {
      * @return the set
      */
     public static <T> Set<T> wrapSet(final T... source) {
-        val list = new LinkedHashSet<T>();
+        val list = new LinkedHashSet<T>(MAP_SIZE);
         addToCollection(list, source);
         return list;
     }
@@ -487,7 +488,7 @@ public class CollectionUtils {
      * @return the set
      */
     public static <T> HashSet<T> wrapHashSet(final T... source) {
-        val list = new HashSet<T>();
+        val list = new HashSet<T>(MAP_SIZE);
         addToCollection(list, source);
         return list;
     }
@@ -511,7 +512,7 @@ public class CollectionUtils {
      * @return the set
      */
     public static <T> List<T> wrapList(final T... source) {
-        val list = new ArrayList<T>();
+        val list = new ArrayList<T>(MAP_SIZE);
         addToCollection(list, source);
         return list;
     }
@@ -524,7 +525,7 @@ public class CollectionUtils {
      * @return the array list
      */
     public static <T> ArrayList<T> wrapArrayList(final T... source) {
-        val list = new ArrayList<T>();
+        val list = new ArrayList<T>(MAP_SIZE);
         addToCollection(list, source);
         return list;
     }

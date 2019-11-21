@@ -310,13 +310,13 @@ public class DuoSecurityMultifactorWebflowConfigurer extends AbstractMultifactor
     }
 
     private static void createDuoFlowStartActions(final DynamicFlowModelBuilder modelBuilder) {
-        val starts = new ArrayList<AbstractActionModel>();
+        val starts = new ArrayList<AbstractActionModel>(1);
         starts.add(new EvaluateModel(CasWebflowConstants.ACTION_ID_INITIAL_FLOW_SETUP));
         modelBuilder.setOnStartActions(starts);
     }
 
     private static void createDuoFlowVariables(final DynamicFlowModelBuilder modelBuilder) {
-        val vars = new ArrayList<VarModel>();
+        val vars = new ArrayList<VarModel>(1);
         vars.add(new VarModel(CasWebflowConstants.VAR_ID_CREDENTIAL, DuoSecurityCredential.class.getName()));
         modelBuilder.setVars(vars);
     }

@@ -75,7 +75,7 @@ public class CouchbasePersonAttributeDao extends BasePersonAttributeDao {
 
     @Override
     public Set<IPersonAttributes> getPeopleWithMultivaluedAttributes(final Map<String, List<Object>> map, final IPersonAttributeDaoFilter filter) {
-        val people = new LinkedHashSet<IPersonAttributes>();
+        val people = new LinkedHashSet<IPersonAttributes>(map.size());
         val username = this.usernameAttributeProvider.getUsernameFromQuery(map);
         val person = this.getPerson(username, filter);
         if (person != null) {

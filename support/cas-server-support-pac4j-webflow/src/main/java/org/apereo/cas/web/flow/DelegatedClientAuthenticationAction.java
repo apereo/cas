@@ -302,9 +302,9 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
         val webContext = new JEEContext(request, response, this.sessionStore);
 
-        val urls = new LinkedHashSet<DelegatedClientIdentityProviderConfiguration>();
-        this.clients
-            .findAllClients()
+        val allClients = this.clients.findAllClients();
+        val urls = new LinkedHashSet<DelegatedClientIdentityProviderConfiguration>(allClients.size());
+        allClients
             .stream()
             .filter(client -> client instanceof IndirectClient && isDelegatedClientAuthorizedForService(client, service))
             .map(IndirectClient.class::cast)

@@ -370,7 +370,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
     protected Pair<Boolean, Set<Throwable>> evaluateAuthenticationPolicies(final Authentication authentication,
                                                                            final AuthenticationTransaction transaction,
                                                                            final Set<AuthenticationHandler> authenticationHandlers) {
-        val failures = new LinkedHashSet<Throwable>();
+        val failures = new LinkedHashSet<Throwable>(authenticationHandlers.size());
         val policies = authenticationEventExecutionPlan.getAuthenticationPolicies(transaction);
 
         policies.forEach(p -> {

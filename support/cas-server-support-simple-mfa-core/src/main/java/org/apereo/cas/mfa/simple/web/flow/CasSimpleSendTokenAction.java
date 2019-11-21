@@ -39,11 +39,11 @@ public class CasSimpleSendTokenAction extends AbstractAction {
     @Override
     protected Event doExecute(final RequestContext requestContext) {
         val service = WebUtils.getService(requestContext);
+        val authentication = WebUtils.getInProgressAuthentication();
+        val principal = authentication.getPrincipal();
         val token = ticketFactory.create(service);
         LOGGER.debug("Created multifactor authentication token [{}] for service [{}]", token, service);
 
-        val authentication = WebUtils.getInProgressAuthentication();
-        val principal = authentication.getPrincipal();
         val smsSent = isSmsSent(communicationsManager, properties, principal, token);
         val emailSent = isMailSent(communicationsManager, properties, principal, token);
 

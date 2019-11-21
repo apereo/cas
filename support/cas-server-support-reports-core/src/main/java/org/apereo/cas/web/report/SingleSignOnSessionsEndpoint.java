@@ -110,7 +110,7 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
         val totalTicketGrantingTickets = new AtomicLong();
         val totalProxyGrantingTickets = new AtomicLong();
         val totalUsageCount = new AtomicLong();
-        val uniquePrincipals = new HashSet<Object>();
+        val uniquePrincipals = new HashSet<Object>(activeSsoSessions.size());
         for (val activeSsoSession : activeSsoSessions) {
             if (activeSsoSession.containsKey(SsoSessionAttributeKeys.IS_PROXIED.toString())) {
                 val isProxied = Boolean.valueOf(activeSsoSession.get(SsoSessionAttributeKeys.IS_PROXIED.toString()).toString());

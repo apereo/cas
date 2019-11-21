@@ -33,8 +33,9 @@ public class HazelcastHealthIndicator extends AbstractCacheHealthIndicator {
 
     @Override
     protected CacheStatistics[] getStatistics() {
-        val statsList = new ArrayList<CacheStatistics>();
-        instance.getConfig().getMapConfigs().keySet().forEach(key -> {
+        val stats = instance.getConfig().getMapConfigs().keySet();
+        val statsList = new ArrayList<CacheStatistics>(stats.size());
+        stats.forEach(key -> {
             val map = instance.getMap(key);
             val memoryStats = instance.getOriginal().getMemoryStats();
             LOGGER.debug("Starting to collect hazelcast statistics for map [{}] identified by key [{}]...", map, key);

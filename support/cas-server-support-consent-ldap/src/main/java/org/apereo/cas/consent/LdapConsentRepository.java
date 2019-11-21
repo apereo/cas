@@ -108,8 +108,8 @@ public class LdapConsentRepository implements ConsentRepository {
     @Override
     public Collection<? extends ConsentDecision> findConsentDecisions() {
         val entries = readConsentEntries();
-        if (entries != null && !entries.isEmpty()) {
-            val decisions = new HashSet<ConsentDecision>();
+        if (!entries.isEmpty()) {
+            val decisions = new HashSet<ConsentDecision>(entries.size());
             entries
                 .stream()
                 .map(e -> e.getAttribute(this.ldap.getConsentAttributeName()))
@@ -184,11 +184,11 @@ public class LdapConsentRepository implements ConsentRepository {
             LOGGER.debug("Merged consent decision [{}] with LDAP attribute [{}]", decision, ldapConsent.getName());
             return CollectionUtils.wrap(result);
         }
-        val result = new HashSet<String>();
         val json = mapToJson(decision);
         if (StringUtils.isBlank(json)) {
             throw new IllegalArgumentException("Could not map consent decision to JSON");
         }
+        val result = new HashSet<String>(1);
         result.add(json);
         return result;
     }
@@ -201,7 +201,7 @@ public class LdapConsentRepository implements ConsentRepository {
      * @return the new decision set
      */
     private static Set<String> removeDecision(final LdapAttribute ldapConsent, final long decisionId) {
-        val result = new HashSet<String>();
+        val result = new HashSet<String>(ldapConsent.size());
         if (ldapConsent.size() != 0) {
             ldapConsent.getStringValues()
                 .stream()

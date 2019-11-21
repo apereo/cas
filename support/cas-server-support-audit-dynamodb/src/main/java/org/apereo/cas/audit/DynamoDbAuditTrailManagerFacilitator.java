@@ -128,7 +128,7 @@ public class DynamoDbAuditTrailManagerFacilitator {
 
     private Set<AuditActionContext> getRecordsByKeys(final Map<String, AttributeValue> keys,
                                                      final ComparisonOperator operator) {
-        val results = new HashSet<AuditActionContext>();
+        val results = new HashSet<AuditActionContext>(keys.size());
         try {
             val scanRequest = new ScanRequest(dynamoDbProperties.getTableName());
             keys.forEach((k, v) -> {
