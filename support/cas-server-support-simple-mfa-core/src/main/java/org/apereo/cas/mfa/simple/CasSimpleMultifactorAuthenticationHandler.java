@@ -25,11 +25,6 @@ import java.security.GeneralSecurityException;
  */
 @Slf4j
 public class CasSimpleMultifactorAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
-    /**
-     * Property name for principal linked to token.
-     */
-    public static final String PROPERTY_PRINCIPAL = "principal";
-
     private final TicketRegistry ticketRegistry;
 
     public CasSimpleMultifactorAuthenticationHandler(final String name,
@@ -52,16 +47,17 @@ public class CasSimpleMultifactorAuthenticationHandler extends AbstractPreAndPos
         LOGGER.debug("Received principal id [{}]. Attempting to locate token in registry...", uid);
         val acct = this.ticketRegistry.getTicket(tokenCredential.getId(), TransientSessionTicket.class);
 
-        if (acct == null || !((TransientSessionTicket) acct).getProperties().get("principalId").equals(uid)) {
+        if (acct == null) {
             LOGGER.warn("Authorization of token [{}] has failed. Token is not found in registry", tokenCredential.getId());
             throw new FailedLoginException("Failed to authenticate code " + tokenCredential.getId());
         }
-        if (!acct.getProperties().containsKey(PROPERTY_PRINCIPAL)) {
+        val properties = acct.getProperties();
+        if (!properties.containsKey(CasSimpleMultifactorAuthenticationConstants.PROPERTY_PRINCIPAL)) {
             LOGGER.warn("Unable to locate principal for token [{}]", tokenCredential.getId());
             this.ticketRegistry.deleteTicket(acct.getId());
             throw new FailedLoginException("Failed to authenticate code " + tokenCredential.getId());
         }
-        val principal = Principal.class.cast(acct.getProperties().get(PROPERTY_PRINCIPAL));
+        val principal = Principal.class.cast(properties.get(CasSimpleMultifactorAuthenticationConstants.PROPERTY_PRINCIPAL));
         if (!principal.equals(authentication.getPrincipal())) {
             LOGGER.warn("Principal assigned to token [{}] is unauthorized for of token [{}]", principal.getId(), tokenCredential.getId());
             this.ticketRegistry.deleteTicket(acct.getId());
