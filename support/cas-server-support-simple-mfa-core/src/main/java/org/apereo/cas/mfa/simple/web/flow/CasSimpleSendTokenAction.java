@@ -22,6 +22,9 @@ import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.io.Serializable;
+import java.util.HashMap;
+
 /**
  * This is {@link CasSimpleSendTokenAction}.
  *
@@ -40,9 +43,13 @@ public class CasSimpleSendTokenAction extends AbstractAction {
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
-        val service = WebUtils.getService(requestContext);
         val authentication = WebUtils.getInProgressAuthentication();
         val principal = authentication.getPrincipal();
+        val service = WebUtils.getService(requestContext);
+        val userProperties = new HashMap<String, Serializable>();
+        userProperties.put("principalId", principal.getId());
+
+        val token = ticketFactory.create(service, userProperties);
         val token = ticketFactory.create(service, CollectionUtils.wrap(CasSimpleMultifactorAuthenticationHandler.PROPERTY_PRINCIPAL, principal));
         LOGGER.debug("Created multifactor authentication token [{}] for service [{}]", token, service);
 
