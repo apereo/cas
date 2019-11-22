@@ -2,6 +2,14 @@ package org.apereo.cas.authentication;
 
 import org.apereo.cas.services.RegisteredService;
 
+import com.google.common.collect.Maps;
+import lombok.SneakyThrows;
+import lombok.val;
+import org.apache.commons.codec.binary.Hex;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 /**
@@ -16,8 +24,13 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 4.1
  */
-@FunctionalInterface
 public interface ProtocolAttributeEncoder {
+    Logger LOGGER = LoggerFactory.getLogger(ProtocolAttributeEncoder.class);
+
+    /**
+     * The constant ENCODED_ATTRIBUTE_PREFIX.
+     */
+    String ENCODED_ATTRIBUTE_PREFIX = "_";
 
     /**
      * Encodes attributes that are ready to be released.
@@ -32,6 +45,47 @@ public interface ProtocolAttributeEncoder {
      * @return collection of attributes after encryption ready for release.
      * @since 4.1
      */
-    Map<String, Object> encodeAttributes(Map<String, Object> attributes, RegisteredService service);
+    default Map<String, Object> encodeAttributes(final Map<String, Object> attributes, final RegisteredService service) {
+        val finalAttributes = Maps.<String, Object>newHashMapWithExpectedSize(attributes.size());
+        attributes.forEach((k, v) -> {
+            val attributeName = decodeAttribute(k);
+            LOGGER.debug("Decoded attribute [{}] to [{}] with value(s) [{}]", k, attributeName, v);
+            finalAttributes.put(attributeName, v);
+        });
+        return finalAttributes;
+    }
 
+    /**
+     * Is attribute name encoded boolean.
+     *
+     * @param name the name
+     * @return the boolean
+     */
+    static boolean isAttributeNameEncoded(final String name) {
+        return name.startsWith(ENCODED_ATTRIBUTE_PREFIX);
+    }
+
+    /**
+     * Encode attribute string.
+     *
+     * @param s the s
+     * @return the string
+     */
+    static String encodeAttribute(final String s) {
+        return ENCODED_ATTRIBUTE_PREFIX + new String(Hex.encodeHex(s.getBytes(StandardCharsets.UTF_8)));
+    }
+
+    /**
+     * Decode attribute string.
+     *
+     * @param s the s
+     * @return the string
+     */
+    @SneakyThrows
+    static String decodeAttribute(final String s) {
+        if (isAttributeNameEncoded(s)) {
+            return new String(Hex.decodeHex(s.substring(1)), StandardCharsets.UTF_8);
+        }
+        return s;
+    }
 }
