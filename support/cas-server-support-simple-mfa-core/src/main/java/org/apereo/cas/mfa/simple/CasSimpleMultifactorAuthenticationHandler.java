@@ -52,7 +52,7 @@ public class CasSimpleMultifactorAuthenticationHandler extends AbstractPreAndPos
         LOGGER.debug("Received principal id [{}]. Attempting to locate token in registry...", uid);
         val acct = this.ticketRegistry.getTicket(tokenCredential.getId(), TransientSessionTicket.class);
 
-        if (acct == null) {
+        if (acct == null || !((TransientSessionTicket) acct).getProperties().get("principalId").equals(uid)) {
             LOGGER.warn("Authorization of token [{}] has failed. Token is not found in registry", tokenCredential.getId());
             throw new FailedLoginException("Failed to authenticate code " + tokenCredential.getId());
         }
