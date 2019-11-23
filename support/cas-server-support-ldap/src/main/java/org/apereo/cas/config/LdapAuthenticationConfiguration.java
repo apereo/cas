@@ -165,7 +165,7 @@ public class LdapAuthenticationConfiguration {
         return handlers;
     }
 
-    private static AuthenticationPasswordPolicyHandlingStrategy<AuthenticationResponse, PasswordPolicyContext>
+    private AuthenticationPasswordPolicyHandlingStrategy<AuthenticationResponse, PasswordPolicyContext>
         createLdapPasswordPolicyHandlingStrategy(final LdapAuthenticationProperties l) {
         if (l.getPasswordPolicy().getStrategy() == LdapPasswordPolicyProperties.PasswordPolicyHandlingOptions.REJECT_RESULT_CODE) {
             LOGGER.debug("Created LDAP password policy handling strategy based on blacklisted authentication result codes");
@@ -175,7 +175,7 @@ public class LdapAuthenticationConfiguration {
         val location = l.getPasswordPolicy().getGroovy().getLocation();
         if (l.getPasswordPolicy().getStrategy() == LdapPasswordPolicyProperties.PasswordPolicyHandlingOptions.GROOVY && location != null) {
             LOGGER.debug("Created LDAP password policy handling strategy based on Groovy script [{}]", location);
-            return new GroovyPasswordPolicyHandlingStrategy(location);
+            return new GroovyPasswordPolicyHandlingStrategy(location, applicationContext);
         }
 
         LOGGER.debug("Created default LDAP password policy handling strategy");

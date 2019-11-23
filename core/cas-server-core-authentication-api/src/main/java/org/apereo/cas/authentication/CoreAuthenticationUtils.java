@@ -32,6 +32,7 @@ import org.apereo.services.persondir.support.merger.MultivaluedAttributeMerger;
 import org.apereo.services.persondir.support.merger.NoncollidingAttributeAdder;
 import org.apereo.services.persondir.support.merger.ReplacingAttributeAdder;
 import org.codehaus.groovy.control.CompilerConfiguration;
+import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.DefaultResourceLoader;
 
 import java.nio.charset.StandardCharsets;
@@ -254,23 +255,25 @@ public class CoreAuthenticationUtils {
     /**
      * New password policy handling strategy.
      *
-     * @param properties the properties
+     * @param properties         the properties
+     * @param applicationContext the application context
      * @return the authentication password policy handling strategy
      */
-    public static AuthenticationPasswordPolicyHandlingStrategy newPasswordPolicyHandlingStrategy(final PasswordPolicyProperties properties) {
+    public static AuthenticationPasswordPolicyHandlingStrategy newPasswordPolicyHandlingStrategy(final PasswordPolicyProperties properties,
+                                                                                                 final ApplicationContext applicationContext) {
         if (properties.getStrategy() == PasswordPolicyProperties.PasswordPolicyHandlingOptions.REJECT_RESULT_CODE) {
             LOGGER.debug("Created password policy handling strategy based on blacklisted authentication result codes");
-            return new RejectResultCodePasswordPolicyHandlingStrategy();
+            return new RejectResultCodePasswordPolicyHandlingStrategy<>();
         }
 
         val location = properties.getGroovy().getLocation();
         if (properties.getStrategy() == PasswordPolicyProperties.PasswordPolicyHandlingOptions.GROOVY && location != null) {
             LOGGER.debug("Created password policy handling strategy based on Groovy script [{}]", location);
-            return new GroovyPasswordPolicyHandlingStrategy(location);
+            return new GroovyPasswordPolicyHandlingStrategy<>(location, applicationContext);
         }
 
         LOGGER.trace("Created default password policy handling strategy");
-        return new DefaultPasswordPolicyHandlingStrategy();
+        return new DefaultPasswordPolicyHandlingStrategy<>();
     }
 
     /**

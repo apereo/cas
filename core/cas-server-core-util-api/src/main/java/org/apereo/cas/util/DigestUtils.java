@@ -152,7 +152,6 @@ public class DigestUtils {
         }
     }
 
-
     /**
      * Raw digest byte [ ].
      *

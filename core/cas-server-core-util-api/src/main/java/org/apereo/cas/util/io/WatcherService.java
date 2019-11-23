@@ -1,12 +1,14 @@
 package org.apereo.cas.util.io;
 
+import java.io.Closeable;
+
 /**
  * This is {@link WatcherService}.
  *
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-public interface WatcherService {
+public interface WatcherService extends Closeable, AutoCloseable {
 
     /**
      * No op watcher service.

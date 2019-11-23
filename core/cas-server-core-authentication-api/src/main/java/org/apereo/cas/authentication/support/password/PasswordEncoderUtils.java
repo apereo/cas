@@ -48,7 +48,7 @@ public class PasswordEncoderUtils {
         if (type.endsWith(".groovy")) {
             LOGGER.debug("Creating Groovy-based password encoder at [{}]", type);
             val resource = applicationContext.getResource(type);
-            return new GroovyPasswordEncoder(resource);
+            return new GroovyPasswordEncoder(resource, applicationContext);
         }
 
         if (type.contains(".")) {

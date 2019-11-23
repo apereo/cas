@@ -102,7 +102,7 @@ public class CasCoreAuthenticationHandlersConfiguration {
         h.setCredentialSelectionPredicate(CoreAuthenticationUtils.newCredentialSelectionPredicate(props.getCredentialCriteria()));
         h.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(props.getPrincipalTransformation()));
         val passwordPolicy = props.getPasswordPolicy();
-        h.setPasswordPolicyHandlingStrategy(CoreAuthenticationUtils.newPasswordPolicyHandlingStrategy(passwordPolicy));
+        h.setPasswordPolicyHandlingStrategy(CoreAuthenticationUtils.newPasswordPolicyHandlingStrategy(passwordPolicy, applicationContext));
         if (passwordPolicy.isEnabled()) {
             val cfg = new PasswordPolicyContext(passwordPolicy);
             if (passwordPolicy.isAccountStateHandlingEnabled()) {
@@ -207,7 +207,7 @@ public class CasCoreAuthenticationHandlersConfiguration {
                         h.setLoginConfigurationFile(new File(jaas.getLoginConfigurationFile()));
                     }
                     val passwordPolicy = jaas.getPasswordPolicy();
-                    h.setPasswordPolicyHandlingStrategy(CoreAuthenticationUtils.newPasswordPolicyHandlingStrategy(passwordPolicy));
+                    h.setPasswordPolicyHandlingStrategy(CoreAuthenticationUtils.newPasswordPolicyHandlingStrategy(passwordPolicy, applicationContext));
                     if (passwordPolicy.isEnabled()) {
                         LOGGER.debug("Password policy is enabled for JAAS. Constructing password policy configuration for [{}]", jaas.getRealm());
                         val cfg = new PasswordPolicyContext(passwordPolicy);
