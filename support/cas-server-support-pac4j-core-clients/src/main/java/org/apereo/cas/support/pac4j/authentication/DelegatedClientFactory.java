@@ -530,7 +530,7 @@ public class DelegatedClientFactory {
         if (oidc.getGeneric().isEnabled()) {
             LOGGER.debug("Building generic OpenID Connect client...");
             val generic = getOidcConfigurationForClient(oidc.getGeneric(), OidcConfiguration.class);
-            val oc = new OidcClient(generic);
+            val oc = new OidcClient<>(generic);
             oc.setCallbackUrlResolver(new PathParameterCallbackUrlResolver());
             configureClient(oc, oidc.getGeneric());
             return oc;
