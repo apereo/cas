@@ -16,9 +16,6 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
  * @since 4.2
  */
 public class OpenIdWebflowConfigurer extends AbstractCasWebflowConfigurer {
-
-    private static final String OPEN_ID_SINGLE_SIGN_ON_ACTION = "openIdSingleSignOnAction";
-
     public OpenIdWebflowConfigurer(final FlowBuilderServices flowBuilderServices, final FlowDefinitionRegistry loginFlowDefinitionRegistry,
                                    final ApplicationContext applicationContext,
                                    final CasConfigurationProperties casProperties) {
@@ -38,19 +35,20 @@ public class OpenIdWebflowConfigurer extends AbstractCasWebflowConfigurer {
         if (flow != null) {
             val condition = getOpenIdModeCondition();
 
-            val decisionState = createDecisionState(flow, "selectFirstAction",
-                condition, OPEN_ID_SINGLE_SIGN_ON_ACTION,
+            val decisionState = createDecisionState(flow, CasWebflowConstants.DECISION_STATE_OPEN_ID_SELECT_FIRST_ACTION,
+                condition, CasWebflowConstants.STATE_ID_OPEN_ID_SINGLE_SIGN_ON_ACTION,
                 getStartState(flow).getId());
 
-            val actionState = createActionState(flow, OPEN_ID_SINGLE_SIGN_ON_ACTION,
-                createEvaluateAction(OPEN_ID_SINGLE_SIGN_ON_ACTION));
+            val actionState = createActionState(flow, CasWebflowConstants.STATE_ID_OPEN_ID_SINGLE_SIGN_ON_ACTION,
+                createEvaluateAction(CasWebflowConstants.ACTION_ID_OPEN_ID_SINGLE_SIGN_ON_ACTION));
 
-            actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS,
+            val transitionSet = actionState.getTransitionSet();
+            transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS,
                 CasWebflowConstants.STATE_ID_CREATE_TICKET_GRANTING_TICKET));
-            actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_ERROR, getStartState(flow).getId()));
-            actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_WARN,
+            transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_ERROR, getStartState(flow).getId()));
+            transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_WARN,
                 CasWebflowConstants.TRANSITION_ID_WARN));
-            actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE,
+            transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE,
                 CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM));
             actionState.getExitActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_CLEAR_WEBFLOW_CREDENTIALS));
 

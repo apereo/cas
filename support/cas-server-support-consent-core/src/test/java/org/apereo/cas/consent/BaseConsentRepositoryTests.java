@@ -66,6 +66,8 @@ public abstract class BaseConsentRepositoryTests {
         val d = repo.findConsentDecision(SVC, REG_SVC, CoreAuthenticationTestUtils.getAuthentication(CASUSER_2));
         assertNotNull(d);
         assertEquals(CASUSER_2, d.getPrincipal());
+        assertFalse(repo.findConsentDecisions().isEmpty());
+        assertFalse(repo.findConsentDecisions(CASUSER_2).isEmpty());
 
         assertTrue(repo.deleteConsentDecision(d.getId(), d.getPrincipal()));
         assertNull(repo.findConsentDecision(SVC, REG_SVC, CoreAuthenticationTestUtils.getAuthentication(CASUSER_2)));

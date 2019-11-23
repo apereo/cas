@@ -87,6 +87,11 @@ public class PrincipalAttributesProperties implements Serializable {
     private List<JdbcPrincipalAttributesProperties> jdbc = new ArrayList<>(0);
 
     /**
+     * Retrieve attributes from multiple Microsoft Graph instances.
+     */
+    private List<MicrosoftGraphAttributesProperties> microsoftGraph = new ArrayList<>(0);
+
+    /**
      * Retrieve attributes from multiple REST endpoints.
      */
     private List<RestPrincipalAttributesProperties> rest = new ArrayList<>(0);

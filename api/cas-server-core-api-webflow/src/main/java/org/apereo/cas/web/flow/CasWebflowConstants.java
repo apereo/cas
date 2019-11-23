@@ -471,6 +471,12 @@ public interface CasWebflowConstants {
      * The view state 'showAuthenticationWarningMessages'.
      */
     String STATE_ID_SHOW_AUTHN_WARNING_MSGS = "showAuthenticationWarningMessages";
+
+    /**
+     * State id 'openIdSingleSignOnAction'.
+     */
+    String STATE_ID_OPEN_ID_SINGLE_SIGN_ON_ACTION = "openIdSingleSignOnAction";
+
     /*
      ****************************************
      * Views.
@@ -600,12 +606,6 @@ public interface CasWebflowConstants {
      * Decisions.
      ****************************************
      */
-
-    /**
-     * The decision state 'checkRegistrationRequired'.
-     */
-    String DECISION_STATE_REQUIRE_REGISTRATION = "checkRegistrationRequired";
-
     /**
      * The decision state 'finishLogout'.
      */
@@ -615,6 +615,11 @@ public interface CasWebflowConstants {
      * Action to check if login should redirect to password reset subflow.
      */
     String DECISION_STATE_CHECK_FOR_PASSWORD_RESET_TOKEN_ACTION = "checkForPswdResetToken";
+
+    /**
+     * Action state 'selectFirstAction'.
+     */
+    String DECISION_STATE_OPEN_ID_SELECT_FIRST_ACTION = "selectFirstAction";
 
     /*
      ****************************************
@@ -732,4 +737,11 @@ public interface CasWebflowConstants {
      * Action id `renewAuthenticationRequestCheckAction`.
      */
     String ACTION_ID_RENEW_AUTHN_REQUEST = "renewAuthenticationRequestCheckAction";
+
+    /**
+     * Action id 'openIdSingleSignOnAction .
+     */
+    String ACTION_ID_OPEN_ID_SINGLE_SIGN_ON_ACTION = "openIdSingleSignOnAction";
+
+
 }

@@ -103,8 +103,6 @@ public class CouchDbSamlIdPMetadataConfiguration {
     @ConditionalOnMissingBean(name = "couchDbSamlIdPMetadataGenerator")
     @Bean
     public SamlIdPMetadataGenerator samlIdPMetadataGenerator() {
-        val idp = casProperties.getAuthn().getSamlIdp();
-
         val context = SamlIdPMetadataGeneratorConfigurationContext.builder()
             .samlIdPMetadataLocator(samlIdPMetadataLocator())
             .samlIdPCertificateAndKeyWriter(samlSelfSignedCertificateWriter.getObject())

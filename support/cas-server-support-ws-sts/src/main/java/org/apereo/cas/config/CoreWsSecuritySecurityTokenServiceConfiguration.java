@@ -188,7 +188,6 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
     @Bean
     public IssueOperation transportIssueDelegate() {
         val wsfed = casProperties.getAuthn().getWsfedIdp().getSts();
-        val idp = casProperties.getAuthn().getWsfedIdp().getIdp();
         val op = new TokenIssueOperation();
         op.setTokenProviders(transportTokenProviders());
         op.setServices(CollectionUtils.wrap(transportService()));
