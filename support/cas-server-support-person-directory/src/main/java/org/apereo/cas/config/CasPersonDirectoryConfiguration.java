@@ -27,6 +27,7 @@ import org.apereo.services.persondir.support.GroovyPersonAttributeDao;
 import org.apereo.services.persondir.support.GrouperPersonAttributeDao;
 import org.apereo.services.persondir.support.JsonBackedComplexStubPersonAttributeDao;
 import org.apereo.services.persondir.support.MergingPersonAttributeDaoImpl;
+import org.apereo.services.persondir.support.MicrosoftGraphPersonAttributeDao;
 import org.apereo.services.persondir.support.RestfulPersonAttributeDao;
 import org.apereo.services.persondir.support.ScriptEnginePersonAttributeDao;
 import org.apereo.services.persondir.support.jdbc.AbstractJdbcPersonAttributeDao;
@@ -108,6 +109,7 @@ public class CasPersonDirectoryConfiguration {
         list.addAll(grouperAttributeRepositories());
         list.addAll(restfulAttributeRepositories());
         list.addAll(scriptedAttributeRepositories());
+        list.addAll(microsoftGraphAttributeRepositories());
         list.addAll(stubAttributeRepositories());
 
         val configurers = (List<PersonDirectoryAttributeRepositoryPlanConfigurer>)
@@ -212,6 +214,37 @@ public class CasPersonDirectoryConfiguration {
             val dao = Beans.newStubAttributeRepository(casProperties.getAuthn().getAttributeRepository());
             list.add(dao);
         }
+        return list;
+    }
+
+    @ConditionalOnMissingBean(name = "microsopftGraphAttributeRepositories")
+    @Bean
+    @RefreshScope
+    public List<IPersonAttributeDao> microsoftGraphAttributeRepositories() {
+        val list = new ArrayList<IPersonAttributeDao>();
+        val attrs = casProperties.getAuthn().getAttributeRepository();
+        attrs.getMicrosoftGraph()
+            .stream()
+            .filter(msft -> StringUtils.isNotBlank(msft.getClientId()) && StringUtils.isNotBlank(msft.getClientSecret()))
+            .forEach(msft -> {
+                val dao = new MicrosoftGraphPersonAttributeDao();
+                FunctionUtils.doIfNotNull(msft.getId(), dao::setId);
+                FunctionUtils.doIfNotNull(msft.getDomain(), dao::setDomain);
+                FunctionUtils.doIfNotNull(msft.getApiBaseUrl(), dao::setApiBaseUrl);
+                FunctionUtils.doIfNotNull(msft.getGrantType(), dao::setGrantType);
+                FunctionUtils.doIfNotNull(msft.getLoginBaseUrl(), dao::setLoginBaseUrl);
+                FunctionUtils.doIfNotNull(msft.getLoggingLevel(), dao::setLoggingLevel);
+                FunctionUtils.doIfNotNull(msft.getAttributes(), dao::setProperties);
+                FunctionUtils.doIfNotNull(msft.getResource(), dao::setResource);
+                FunctionUtils.doIfNotNull(msft.getScope(), dao::setScope);
+                FunctionUtils.doIfNotNull(msft.getTenant(), dao::setTenant);
+
+                dao.setClientSecret(msft.getClientSecret());
+                dao.setClientId(msft.getClientId());
+
+                dao.setOrder(msft.getOrder());
+                list.add(dao);
+            });
         return list;
     }
 
