@@ -934,7 +934,7 @@ The story in plain english is:
 
 Note that attribute repository sources, if/when defined, execute in a specific order.
 This is important to take into account when attribute merging may take place.
-By default, the execution order is the following but can be adjusted per source:
+By default, the execution order (when defined) is the following but can be adjusted per source:
 
 1. LDAP
 2. JDBC
@@ -943,7 +943,8 @@ By default, the execution order is the following but can be adjusted per source:
 5. [Internet2 Grouper](http://www.internet2.edu/products-services/trust-identity/grouper/)
 6. REST
 7. Script
-8. Stubbed/Static
+8. Microsoft Graph
+9. Stubbed/Static
 
 Note that if no *explicit* attribute mappings are defined, all permitted attributes on the record
 may be retrieved by CAS from the attribute repository source and made available to the principal. On the other hand,
@@ -1195,6 +1196,28 @@ under the configuration key `cas.authn.attributeRepository.redis`.
 ```properties
 # cas.authn.attributeRepository.redis.order=0
 # cas.authn.attributeRepository.redis.id=
+```
+
+### Microsoft Graph
+
+This option will fetch attributes from Microsoft Azure Active Directory using the Microsoft Graph API.
+
+```properties
+# cas.authn.attributeRepository.microsoftGraph[0].clientId=
+# cas.authn.attributeRepository.microsoftGraph[0].clientSecret=
+# cas.authn.attributeRepository.microsoftGraph[0].clientSecret=
+# cas.authn.attributeRepository.microsoftGraph[0].tenant=
+
+# cas.authn.attributeRepository.microsoftGraph[0].id=
+# cas.authn.attributeRepository.microsoftGraph[0].order=0
+# cas.authn.attributeRepository.microsoftGraph[0].caseInsensitive=false
+# cas.authn.attributeRepository.microsoftGraph[0].resource=
+# cas.authn.attributeRepository.microsoftGraph[0].scope=
+# cas.authn.attributeRepository.microsoftGraph[0].grantType=
+# cas.authn.attributeRepository.microsoftGraph[0].apiBaseUrl=
+# cas.authn.attributeRepository.microsoftGraph[0].attributes=
+# cas.authn.attributeRepository.microsoftGraph[0].domain=
+# cas.authn.attributeRepository.microsoftGraph[0].loggingLevel=
 ```
 
 ### Shibboleth Integrations
