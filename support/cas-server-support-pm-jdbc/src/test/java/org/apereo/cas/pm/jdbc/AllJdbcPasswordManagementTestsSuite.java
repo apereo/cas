@@ -14,6 +14,7 @@ import org.junit.runner.RunWith;
     JdbcPasswordHistoryServiceTests.class,
     MySQLJdbcPasswordHistoryServiceTests.class,
     JdbcPasswordManagementServiceTests.class,
+    PostgresJdbcPasswordHistoryServiceTests.class,
     MySQLJdbcPasswordManagementServiceTests.class
 })
 @RunWith(JUnitPlatform.class)
