@@ -20,7 +20,7 @@ static void main(String[] args) {
     directory.eachFileRecurse(FileType.FILES) { file ->
         def text = file.text
         if (file.name.endsWith("Tests.java")) {
-            println("Checking file ${file.name}\n")
+            //println("Checking file ${file.name}")
             def matcher = pattern.matcher(text)
             if (matcher.find() && text.contains("@SpringBootTest")) {
                 def parent = parentClasses.get(matcher.group(2))
@@ -59,11 +59,7 @@ static void main(String[] args) {
                     if (foundDups) {
                         println()
                         println """
-The child class ${getFileSimpleName(file)} should be annotated as
-@SpringBootTest(classes = ${getFileSimpleName(parent)}.SharedTestConfiguration.class)
-and must only contain required configuration for the test.
-Shared/duplicate test configuration must be pushed to ${getFileSimpleName(parent)}.SharedTestConfiguration instead,
-if it's not already defined.
+The child class ${getFileSimpleName(file)} should be annotated as @SpringBootTest(classes = ${getFileSimpleName(parent)}.SharedTestConfiguration.class) and must only contain required configuration for the test. Shared/duplicate test configuration must be pushed to ${getFileSimpleName(parent)}.SharedTestConfiguration instead, if it's not already defined.
 """
                     }
                 }
