@@ -33,7 +33,7 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
  */
 public class X509WebflowConfigurer extends AbstractCasWebflowConfigurer {
 
-    private static final String EVENT_ID_START_X509 = "startX509Authenticate";
+    static final String STATE_ID_START_X509 = "startX509Authenticate";
 
     public X509WebflowConfigurer(final FlowBuilderServices flowBuilderServices,
                                  final FlowDefinitionRegistry loginFlowDefinitionRegistry,
@@ -46,7 +46,7 @@ public class X509WebflowConfigurer extends AbstractCasWebflowConfigurer {
     protected void doInitialize() {
         val flow = getLoginFlow();
         if (flow != null) {
-            val actionState = createActionState(flow, EVENT_ID_START_X509, createEvaluateAction("x509Check"));
+            val actionState = createActionState(flow, STATE_ID_START_X509, createEvaluateAction("x509Check"));
             val transitionSet = actionState.getTransitionSet();
             transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_CREATE_TICKET_GRANTING_TICKET));
             transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_WARN, CasWebflowConstants.TRANSITION_ID_WARN));
@@ -56,7 +56,7 @@ public class X509WebflowConfigurer extends AbstractCasWebflowConfigurer {
             actionState.getExitActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_CLEAR_WEBFLOW_CREDENTIALS));
 
             val state = getState(flow, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM, ActionState.class);
-            createTransitionForState(state, CasWebflowConstants.TRANSITION_ID_SUCCESS, EVENT_ID_START_X509, true);
+            createTransitionForState(state, CasWebflowConstants.TRANSITION_ID_SUCCESS, STATE_ID_START_X509, true);
         }
     }
 }

@@ -501,6 +501,6 @@ public abstract class BaseTicketRegistryTests {
         CasCoreWebConfiguration.class,
         CasWebApplicationServiceFactoryConfiguration.class
     })
-    interface SharedTestConfiguration {
+    static class SharedTestConfiguration {
     }
 }

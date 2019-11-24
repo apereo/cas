@@ -21,8 +21,8 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 5.1.0
  */
 public class ConsentWebflowConfigurer extends AbstractCasWebflowConfigurer {
-    private static final String VIEW_ID_CONSENT_VIEW = "casConsentView";
-    private static final String STATE_ID_CONSENT_CONFIRM = "confirmAttributeConsent";
+    static final String VIEW_ID_CONSENT_VIEW = "casConsentView";
+    static final String STATE_ID_CONSENT_CONFIRM = "confirmAttributeConsent";
     private static final String ACTION_GEN_SERVICE_TICKET_AFTER_CONSENT = "generateServiceTicketAfterConsent";
 
     public ConsentWebflowConfigurer(final FlowBuilderServices flowBuilderServices,

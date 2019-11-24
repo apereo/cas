@@ -174,6 +174,6 @@ public abstract class AbstractOpenSamlTests {
         CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
         CasCoreConfiguration.class
     })
-    public interface SharedTestConfiguration {
+    public static class SharedTestConfiguration {
     }
 }

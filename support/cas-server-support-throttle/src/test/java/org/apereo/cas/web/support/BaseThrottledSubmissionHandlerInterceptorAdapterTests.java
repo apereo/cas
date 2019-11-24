@@ -192,6 +192,6 @@ public abstract class BaseThrottledSubmissionHandlerInterceptorAdapterTests {
         CasCoreAuditConfiguration.class,
         CasThrottlingConfiguration.class
     })
-    interface SharedTestConfiguration {
+    static class SharedTestConfiguration {
     }
 }
