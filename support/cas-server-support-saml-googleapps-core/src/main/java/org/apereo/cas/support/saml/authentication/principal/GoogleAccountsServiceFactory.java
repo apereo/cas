@@ -17,9 +17,11 @@ import javax.servlet.http.HttpServletRequest;
  *
  * @author Misagh Moayyed
  * @since 4.2
+ * @deprecated Since 6.2, to be replaced with CAS SAML2 identity provider functionality.
  */
 @Slf4j
 @RequiredArgsConstructor
+@Deprecated
 public class GoogleAccountsServiceFactory extends AbstractServiceFactory<GoogleAccountsService> {
     private final GoogleSaml20ObjectBuilder googleSaml20ObjectBuilder;
 
