@@ -27,7 +27,8 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
     CasCoreAuditConfiguration.class,
     CasCouchDbCoreConfiguration.class,
     CasConsentCoreConfiguration.class,
-    RefreshAutoConfiguration.class},
+    RefreshAutoConfiguration.class
+},
     properties = {
         "cas.consent.couchDb.username=cas",
         "cas.consent.couchdb.password=password"

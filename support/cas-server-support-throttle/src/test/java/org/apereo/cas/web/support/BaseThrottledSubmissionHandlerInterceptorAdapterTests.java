@@ -32,6 +32,7 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.test.MockRequestContext;
 
 import javax.servlet.http.HttpServletResponse;
+
 import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -42,12 +43,17 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
-@SpringBootTest(classes = {RefreshAutoConfiguration.class,
+@SpringBootTest(classes = {
+    RefreshAutoConfiguration.class,
     CasCoreUtilConfiguration.class,
     CasCoreAuditConfiguration.class,
     AopAutoConfiguration.class,
     CasThrottlingConfiguration.class},
-    properties = {"spring.aop.proxy-target-class=true", "cas.authn.throttle.failure.rangeSeconds=1", "cas.authn.throttle.failure.threshold=2"})
+    properties = {
+        "spring.aop.proxy-target-class=true",
+        "cas.authn.throttle.failure.rangeSeconds=1",
+        "cas.authn.throttle.failure.threshold=2"
+    })
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @EnableScheduling
 @Slf4j
@@ -57,6 +63,13 @@ public abstract class BaseThrottledSubmissionHandlerInterceptorAdapterTests {
     @Autowired
     @Qualifier("casAuthenticationManager")
     protected AuthenticationManager authenticationManager;
+
+    private static UsernamePasswordCredential badCredentials(final String username) {
+        val credentials = new UsernamePasswordCredential();
+        credentials.setUsername(username);
+        credentials.setPassword("badpassword");
+        return credentials;
+    }
 
     @BeforeEach
     public void initialize() {
@@ -127,13 +140,6 @@ public abstract class BaseThrottledSubmissionHandlerInterceptorAdapterTests {
             return response;
         }
         throw new AssertionError("Expected AbstractAuthenticationException");
-    }
-
-    private static UsernamePasswordCredential badCredentials(final String username) {
-        val credentials = new UsernamePasswordCredential();
-        credentials.setUsername(username);
-        credentials.setPassword("badpassword");
-        return credentials;
     }
 
     public abstract ThrottledSubmissionHandlerInterceptor getThrottle();

@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Import({
-    BaseWebflowConfigurerTests.TestContext.class,
+    BaseWebflowConfigurerTests.SharedTestConfiguration.class,
     CasMultifactorAuthenticationWebflowConfiguration.class,
     CasCoreMultifactorAuthenticationConfiguration.class,
     CasCoreValidationConfiguration.class,
