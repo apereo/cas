@@ -16,9 +16,13 @@ import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.SpringBootConfiguration;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
+import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.annotation.Import;
 import org.springframework.webflow.execution.Action;
 
 import java.time.LocalDateTime;
@@ -33,17 +37,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@SpringBootTest(classes = {
-    RefreshAutoConfiguration.class,
-    CasCoreUtilConfiguration.class,
-    MailSenderAutoConfiguration.class,
-    CasCoreServicesConfiguration.class,
-    CasRegisteredServicesTestConfiguration.class,
-    CasCoreAuditConfiguration.class,
-    MultifactorAuthnTrustWebflowConfiguration.class,
-    MultifactorAuthnTrustConfiguration.class,
-    MultifactorAuthnTrustedDeviceFingerprintConfiguration.class
-})
+@SpringBootTest(classes = AbstractMultifactorAuthenticationTrustStorageTests.SharedTestConfiguration.class)
 public abstract class AbstractMultifactorAuthenticationTrustStorageTests {
     @Autowired
     @Qualifier("mfaVerifyTrustAction")
@@ -78,4 +72,22 @@ public abstract class AbstractMultifactorAuthenticationTrustStorageTests {
     }
 
     public abstract MultifactorAuthenticationTrustStorage getMfaTrustEngine();
+
+    @ImportAutoConfiguration({
+        RefreshAutoConfiguration.class,
+        MailSenderAutoConfiguration.class,
+        AopAutoConfiguration.class
+    })
+    @SpringBootConfiguration
+    @Import({
+        CasCoreUtilConfiguration.class,
+        CasCoreServicesConfiguration.class,
+        CasRegisteredServicesTestConfiguration.class,
+        CasCoreAuditConfiguration.class,
+        MultifactorAuthnTrustWebflowConfiguration.class,
+        MultifactorAuthnTrustConfiguration.class,
+        MultifactorAuthnTrustedDeviceFingerprintConfiguration.class
+    })
+    public interface SharedTestConfiguration {
+    }
 }

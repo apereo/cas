@@ -12,7 +12,7 @@ static void main(String[] args) {
             parentClasses.put(getFileSimpleName(file), file)
         }
     }
-    println "Found ${parentClasses.size()} parent test classes"
+    //println "Found ${parentClasses.size()} parent test classes"
     def patternClasses = Pattern.compile("@SpringBootTest\\(classes\\s*=\\s*\\{(.*?)\\}", Pattern.DOTALL)
 
     def pattern = Pattern.compile($/public class (\w+) extends (\w+)/$);
@@ -22,7 +22,12 @@ static void main(String[] args) {
             //println("Checking file ${file.name}")
             def matcher = pattern.matcher(text)
             if (matcher.find() && text.contains("@SpringBootTest")) {
-                def parent = parentClasses.get(matcher.group(2))
+                    def group = matcher.group(2)
+                if (!parentClasses.containsKey(group)) {
+                    println "Unable to find ${group} as a parent class"
+                    System.exit(1);
+                }
+                def parent = parentClasses.get(group)
                 def parentText = parent.text
                 if (parentText.contains("@SpringBootTest")) {
                     //println "Checking duplicate configuration in ${file.name} inherited from ${parent.name}"
