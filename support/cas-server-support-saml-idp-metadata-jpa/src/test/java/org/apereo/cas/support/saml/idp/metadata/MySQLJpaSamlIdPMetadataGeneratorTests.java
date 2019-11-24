@@ -19,7 +19,7 @@ import org.springframework.test.context.TestPropertySource;
     "cas.authn.samlIdp.metadata.jpa.url=jdbc:mysql://localhost:3306/mysql?allowPublicKeyRetrieval=true&characterEncoding=UTF-8&useSSL=FALSE",
     "cas.authn.samlIdp.metadata.jpa.dialect=org.hibernate.dialect.MySQL8Dialect"
 })
-@EnabledIfPortOpen(port = 3305)
+@EnabledIfPortOpen(port = 3306)
 @EnabledIfContinuousIntegration
 @Tag("MySQL")
 public class MySQLJpaSamlIdPMetadataGeneratorTests extends JpaSamlIdPMetadataGeneratorTests {
