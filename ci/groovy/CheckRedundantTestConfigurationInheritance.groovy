@@ -3,7 +3,7 @@ import groovy.io.FileType
 import java.util.regex.Pattern
 
 static void main(String[] args) {
-    def directory = new File("/Users/Misagh/Workspace/GitWorkspace/cas-server")
+    def directory = new File(".")
     def failBuild = false
     def parentClasses = new TreeMap<String, File>();
     directory.eachFileRecurse(FileType.FILES) { file ->
