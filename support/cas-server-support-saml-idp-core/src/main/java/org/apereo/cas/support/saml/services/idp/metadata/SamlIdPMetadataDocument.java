@@ -12,7 +12,6 @@ import lombok.Setter;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Type;
 import org.springframework.data.annotation.Id;
 
 import javax.persistence.Column;
@@ -53,8 +52,7 @@ public class SamlIdPMetadataDocument {
      * The Metadata.
      */
     @Lob
-    @Type(type = "org.hibernate.type.StringNVarcharType")
-    @Column(name = "metadata", length = 8_000)
+    @Column(name = "metadata", length = 10_000)
     @JsonProperty
     private String metadata;
 
@@ -62,7 +60,6 @@ public class SamlIdPMetadataDocument {
      * The Signing certificate.
      */
     @Lob
-    @Type(type = "org.hibernate.type.StringNVarcharType")
     @Column(name = "signingCertificate", length = 3_000)
     @JsonProperty
     private String signingCertificate;
@@ -71,7 +68,6 @@ public class SamlIdPMetadataDocument {
      * The Signing key.
      */
     @Lob
-    @Type(type = "org.hibernate.type.StringNVarcharType")
     @Column(name = "signingKey", length = 3_000)
     @JsonProperty
     private String signingKey;
@@ -80,7 +76,6 @@ public class SamlIdPMetadataDocument {
      * The Encryption certificate.
      */
     @Lob
-    @Type(type = "org.hibernate.type.StringNVarcharType")
     @Column(name = "encryptionCertificate", length = 3_000)
     @JsonProperty
     private String encryptionCertificate;
@@ -89,7 +84,6 @@ public class SamlIdPMetadataDocument {
      * The Encryption key.
      */
     @Lob
-    @Type(type = "org.hibernate.type.StringNVarcharType")
     @Column(name = "encryptionKey", length = 3_000)
     @JsonProperty
     private String encryptionKey;

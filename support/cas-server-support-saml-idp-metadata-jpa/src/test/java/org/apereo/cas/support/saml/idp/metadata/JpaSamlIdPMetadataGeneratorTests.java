@@ -18,7 +18,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@TestPropertySource(properties = "cas.authn.samlIdp.metadata.jpa.idpMetadataEnabled=true")
+@TestPropertySource(properties = {
+    "cas.authn.samlIdp.metadata.jpa.idpMetadataEnabled=true",
+    "cas.jdbc.showSql=true"
+})
 @Tag("SAML")
 public class JpaSamlIdPMetadataGeneratorTests extends BaseJpaSamlMetadataTests {
     @Test
