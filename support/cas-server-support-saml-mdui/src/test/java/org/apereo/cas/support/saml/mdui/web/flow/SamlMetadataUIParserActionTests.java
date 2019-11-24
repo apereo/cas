@@ -16,7 +16,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -33,11 +33,12 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-@Import({
+@SpringBootTest(classes = {
     CasCoreWebflowConfiguration.class,
     CasWebflowContextConfiguration.class,
     SamlMetadataUIConfiguration.class,
-    SamlMetadataUIWebflowConfiguration.class
+    SamlMetadataUIWebflowConfiguration.class,
+    AbstractOpenSamlTests.SharedTestConfiguration.class
 })
 @Tag("SAML")
 @TestPropertySource(properties = "cas.samlMetadataUi.resources=classpath:sample-metadata.xml::classpath:inc-md-pub.pem")
