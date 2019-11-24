@@ -11,7 +11,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -22,7 +22,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
-@Import(SamlGoogleAppsConfiguration.class)
+@SpringBootTest(classes = {
+    SamlGoogleAppsConfiguration.class,
+    AbstractOpenSamlTests.SharedTestConfiguration.class
+})
 @Tag("SAML")
 @TestPropertySource(properties = {
     "cas.server.name=http://localhost:8080",

@@ -91,6 +91,6 @@ public abstract class BaseConsentRepositoryTests {
         CasCoreAuditConfiguration.class,
         CasCoreUtilConfiguration.class
     })
-    static class SharedTestConfiguration {
+    interface SharedTestConfiguration {
     }
 }

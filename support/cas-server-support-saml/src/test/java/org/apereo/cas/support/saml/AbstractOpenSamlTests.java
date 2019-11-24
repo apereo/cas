@@ -38,12 +38,17 @@ import org.opensaml.core.xml.io.UnmarshallerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.SpringBootConfiguration;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
+import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
+import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -54,36 +59,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 4.1
  */
-@SpringBootTest(classes = {
-    AbstractOpenSamlTests.SamlTestConfiguration.class,
-    CasRegisteredServicesTestConfiguration.class,
-    CoreSamlConfiguration.class,
-    RefreshAutoConfiguration.class,
-    CasCoreWebConfiguration.class,
-    CasPersonDirectoryConfiguration.class,
-    CasCoreServicesConfiguration.class,
-    CasCoreValidationConfiguration.class,
-    CasProtocolViewsConfiguration.class,
-    CasValidationConfiguration.class,
-    CasCoreAuthenticationConfiguration.class,
-    CasCoreServicesAuthenticationConfiguration.class,
-    CasCoreAuthenticationPrincipalConfiguration.class,
-    CasCoreAuthenticationPolicyConfiguration.class,
-    CasCoreAuthenticationMetadataConfiguration.class,
-    CasCoreAuthenticationSupportConfiguration.class,
-    CasCoreAuthenticationHandlersConfiguration.class,
-    CasDefaultServiceTicketIdGeneratorsConfiguration.class,
-    CasCoreTicketIdGeneratorsConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class,
-    CasCoreHttpConfiguration.class,
-    CasCoreTicketsConfiguration.class,
-    CasCoreTicketCatalogConfiguration.class,
-    CasCoreLogoutConfiguration.class,
-    CasCoreUtilConfiguration.class,
-    CasCookieConfiguration.class,
-    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-    CasCoreConfiguration.class
-})
+@SpringBootTest(classes = AbstractOpenSamlTests.SharedTestConfiguration.class)
 @Tag("SAML")
 public abstract class AbstractOpenSamlTests {
     protected static final String SAML_REQUEST = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
@@ -160,5 +136,44 @@ public abstract class AbstractOpenSamlTests {
         public void afterPropertiesSet() {
             SchedulingUtils.prepScheduledAnnotationBeanPostProcessor(applicationContext);
         }
+    }
+
+    @ImportAutoConfiguration({
+        RefreshAutoConfiguration.class,
+        MailSenderAutoConfiguration.class,
+        AopAutoConfiguration.class
+    })
+    @SpringBootConfiguration
+    @Import({
+        AbstractOpenSamlTests.SamlTestConfiguration.class,
+        CasRegisteredServicesTestConfiguration.class,
+        CoreSamlConfiguration.class,
+        RefreshAutoConfiguration.class,
+        CasCoreWebConfiguration.class,
+        CasPersonDirectoryConfiguration.class,
+        CasCoreServicesConfiguration.class,
+        CasCoreValidationConfiguration.class,
+        CasProtocolViewsConfiguration.class,
+        CasValidationConfiguration.class,
+        CasCoreAuthenticationConfiguration.class,
+        CasCoreServicesAuthenticationConfiguration.class,
+        CasCoreAuthenticationPrincipalConfiguration.class,
+        CasCoreAuthenticationPolicyConfiguration.class,
+        CasCoreAuthenticationMetadataConfiguration.class,
+        CasCoreAuthenticationSupportConfiguration.class,
+        CasCoreAuthenticationHandlersConfiguration.class,
+        CasDefaultServiceTicketIdGeneratorsConfiguration.class,
+        CasCoreTicketIdGeneratorsConfiguration.class,
+        CasWebApplicationServiceFactoryConfiguration.class,
+        CasCoreHttpConfiguration.class,
+        CasCoreTicketsConfiguration.class,
+        CasCoreTicketCatalogConfiguration.class,
+        CasCoreLogoutConfiguration.class,
+        CasCoreUtilConfiguration.class,
+        CasCookieConfiguration.class,
+        CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
+        CasCoreConfiguration.class
+    })
+    public interface SharedTestConfiguration {
     }
 }

@@ -12,8 +12,7 @@ static void main(String[] args) {
             parentClasses.put(getFileSimpleName(file), file)
         }
     }
-    //println "Found ${parentClasses.size()} parent test classes"
-
+    println "Found ${parentClasses.size()} parent test classes"
     def patternClasses = Pattern.compile("@SpringBootTest\\(classes\\s*=\\s*\\{(.*?)\\}", Pattern.DOTALL)
 
     def pattern = Pattern.compile($/public class (\w+) extends (\w+)/$);
@@ -59,7 +58,11 @@ static void main(String[] args) {
                     if (foundDups) {
                         println()
                         println """
-The child class ${getFileSimpleName(file)} should be annotated as @SpringBootTest(classes = ${getFileSimpleName(parent)}.SharedTestConfiguration.class) and must only contain required configuration for the test. Shared/duplicate test configuration must be pushed to ${getFileSimpleName(parent)}.SharedTestConfiguration instead, if it's not already defined.
+The child class ${getFileSimpleName(file)} should be annotated as 
+@SpringBootTest(classes = ${getFileSimpleName(parent)}.SharedTestConfiguration.class) 
+and must only contain required configuration for the test. Shared/duplicate test 
+configuration must be pushed to ${getFileSimpleName(parent)}.SharedTestConfiguration 
+instead, if it's not already defined.
 """
                     }
                 }
