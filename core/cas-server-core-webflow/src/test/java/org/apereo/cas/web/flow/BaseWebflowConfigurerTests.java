@@ -39,7 +39,7 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@SpringBootTest(classes = BaseWebflowConfigurerTests.TestContext.class)
+@SpringBootTest(classes = BaseWebflowConfigurerTests.SharedTestConfiguration.class)
 @TestPropertySource(properties = {
     "cas.webflow.crypto.encryption.key=qLhvLuaobvfzMmbo9U_bYA",
     "cas.webflow.crypto.signing.key=oZeAR5pEXsolruu4OQYsQKxf-FCvFzSsKlsVaKmfIl6pNzoPm6zPW94NRS1af7vT-0bb3DpPBeksvBXjloEsiA",
@@ -87,6 +87,6 @@ public class BaseWebflowConfigurerTests {
         CasWebApplicationServiceFactoryConfiguration.class,
         CasCoreUtilConfiguration.class
     })
-    static class TestContext {
+    static class SharedTestConfiguration {
     }
 }

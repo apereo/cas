@@ -1,12 +1,27 @@
 package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationPolicyConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
+import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
+import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
+import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasCoreWebConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryConfiguration;
+import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
+import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.AbstractTicket;
 import org.apereo.cas.ticket.ExpirationPolicy;
@@ -34,7 +49,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.RepetitionInfo;
+import org.springframework.boot.SpringBootConfiguration;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
+import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.util.AopTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -52,26 +72,40 @@ import static org.junit.jupiter.api.Assumptions.*;
  * @since 5.3.0
  */
 @Slf4j
-@SpringBootTest(classes = {
-    CasCoreHttpConfiguration.class,
-    CasCoreTicketsConfiguration.class,
-    CasCoreTicketCatalogConfiguration.class,
-    CasCoreTicketIdGeneratorsConfiguration.class,
-    CasCoreTicketsSerializationConfiguration.class
-})
+@SpringBootTest(classes = BaseTicketRegistryTests.SharedTestConfiguration.class)
 public abstract class BaseTicketRegistryTests {
 
     private static final int TICKETS_IN_REGISTRY = 1;
+
     private static final String TICKET_SHOULD_BE_NULL_USE_ENCRYPTION = "Ticket should be null. useEncryption[";
 
     protected boolean useEncryption;
 
     protected String ticketGrantingTicketId;
+
     protected String serviceTicketId;
+
     protected String transientSessionTicketId;
+
     protected String proxyGrantingTicketId;
 
     private TicketRegistry ticketRegistry;
+
+    protected static ExpirationPolicyBuilder neverExpiresExpirationPolicyBuilder() {
+        return new ExpirationPolicyBuilder() {
+            private static final long serialVersionUID = -9043565995104313970L;
+
+            @Override
+            public ExpirationPolicy buildTicketExpirationPolicy() {
+                return NeverExpiresExpirationPolicy.INSTANCE;
+            }
+
+            @Override
+            public Class<Ticket> getTicketType() {
+                return null;
+            }
+        };
+    }
 
     @BeforeEach
     public void initialize(final RepetitionInfo info) {
@@ -312,7 +346,6 @@ public abstract class BaseTicketRegistryTests {
             "The serviceTicketCount is not the same as the collection.");
     }
 
-
     @RepeatedTest(2)
     @Transactional
     public void verifyDeleteTicketWithChildren() {
@@ -385,7 +418,6 @@ public abstract class BaseTicketRegistryTests {
         assertNull(tgt);
     }
 
-
     @RepeatedTest(2)
     @Transactional
     public void verifyDeleteTicketWithPGT() {
@@ -442,18 +474,33 @@ public abstract class BaseTicketRegistryTests {
         assertEquals(6, c);
     }
 
-    protected static ExpirationPolicyBuilder neverExpiresExpirationPolicyBuilder() {
-        return new ExpirationPolicyBuilder() {
-            private static final long serialVersionUID = -9043565995104313970L;
-            @Override
-            public ExpirationPolicy buildTicketExpirationPolicy() {
-                return NeverExpiresExpirationPolicy.INSTANCE;
-            }
-
-            @Override
-            public Class<Ticket> getTicketType() {
-                return null;
-            }
-        };
+    @ImportAutoConfiguration({
+        RefreshAutoConfiguration.class,
+        MailSenderAutoConfiguration.class
+    })
+    @SpringBootConfiguration
+    @Import({
+        CasCoreHttpConfiguration.class,
+        CasCoreTicketsConfiguration.class,
+        CasCoreTicketCatalogConfiguration.class,
+        CasCoreTicketIdGeneratorsConfiguration.class,
+        CasCoreTicketsSerializationConfiguration.class,
+        CasCoreUtilConfiguration.class,
+        CasPersonDirectoryConfiguration.class,
+        CasCoreLogoutConfiguration.class,
+        CasCoreAuthenticationConfiguration.class,
+        CasCoreServicesAuthenticationConfiguration.class,
+        CasCoreAuthenticationPrincipalConfiguration.class,
+        CasCoreAuthenticationPolicyConfiguration.class,
+        CasCoreAuthenticationMetadataConfiguration.class,
+        CasCoreAuthenticationSupportConfiguration.class,
+        CasCoreAuthenticationHandlersConfiguration.class,
+        CasCoreConfiguration.class,
+        CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
+        CasCoreServicesConfiguration.class,
+        CasCoreWebConfiguration.class,
+        CasWebApplicationServiceFactoryConfiguration.class
+    })
+    static class SharedTestConfiguration {
     }
 }
