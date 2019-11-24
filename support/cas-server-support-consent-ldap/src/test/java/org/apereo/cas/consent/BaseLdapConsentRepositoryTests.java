@@ -21,7 +21,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
 import java.time.LocalDateTime;
 
@@ -35,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = {
     CasConsentLdapConfiguration.class,
-    RefreshAutoConfiguration.class
+    BaseConsentRepositoryTests.SharedTestConfiguration.class
 })
 @Tag("Ldap")
 @Getter
