@@ -87,6 +87,6 @@ public class BaseWebflowConfigurerTests {
         CasWebApplicationServiceFactoryConfiguration.class,
         CasCoreUtilConfiguration.class
     })
-    interface SharedTestConfiguration {
+    public static class SharedTestConfiguration {
     }
 }

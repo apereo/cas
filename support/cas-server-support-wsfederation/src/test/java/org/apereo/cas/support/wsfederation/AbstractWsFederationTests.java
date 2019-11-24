@@ -61,7 +61,7 @@ public abstract class AbstractWsFederationTests extends AbstractOpenSamlTests {
         WsFedAuthenticationEventExecutionPlanConfiguration.class,
         AbstractOpenSamlTests.SharedTestConfiguration.class
     })
-    public interface SharedTestConfiguration {
+    public static class SharedTestConfiguration {
     }
 }
 

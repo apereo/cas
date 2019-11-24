@@ -6,8 +6,9 @@ dependencies {
     implementation project(":support:cas-server-support-trusted")
     implementation project(":core:cas-server-core-authentication-mfa-api")
 
-    
 
+    testImplementation project(path: ":core:cas-server-core-webflow", configuration: "tests")
+    
     api project(":api:cas-server-core-api-webflow")
     api project(":api:cas-server-core-api-web")
     api project(":api:cas-server-core-api-util")

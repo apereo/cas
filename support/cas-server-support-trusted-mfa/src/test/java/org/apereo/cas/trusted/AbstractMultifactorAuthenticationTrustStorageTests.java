@@ -88,6 +88,6 @@ public abstract class AbstractMultifactorAuthenticationTrustStorageTests {
         MultifactorAuthnTrustConfiguration.class,
         MultifactorAuthnTrustedDeviceFingerprintConfiguration.class
     })
-    public interface SharedTestConfiguration {
+    public static class SharedTestConfiguration {
     }
 }

@@ -113,6 +113,6 @@ public abstract class BaseJpaSamlMetadataTests {
         CasPersonDirectoryConfiguration.class,
         CasCoreUtilConfiguration.class
     })
-    interface SharedTestConfiguration {
+    static class SharedTestConfiguration {
     }
 }
