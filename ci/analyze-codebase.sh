@@ -58,6 +58,14 @@ if [ $retVal != 0 ]; then
     exit $retVal
 fi
 
+echo -e "Checking for duplicate test configuration in inheritance hierarchy"
+groovy ./ci/groovy/CheckRedundantTestConfigurationInheritance.groovy
+retVal=$?
+if [ $retVal != 0 ]; then
+    echo -e "Groovy analysis has found issues with test configuration classes."
+    exit $retVal
+fi
+
 echo -e "***************************************************************************************"
 echo -e "Build finished at `date`"
 echo -e "***************************************************************************************"
