@@ -1,4 +1,5 @@
 description = "Apereo CAS Ehcache3 Integration"
+
 dependencies {
     implementation libraries.ehcache3
     implementation project(":core:cas-server-core-configuration-api")

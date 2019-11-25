@@ -57,6 +57,17 @@ public class Ehcache3Properties implements Serializable {
     private String maxSizeOnDiskUnits = "MB";
 
     /**
+     * Per cache size of disk cache.
+     */
+    private int perCacheSizeOnDisk = 20;
+
+    /**
+     * Per cache disk cache size units as defined by EhCache. (e.g. MB, GB)
+     */
+    private String perCacheSizeOnDiskUnits = "MB";
+
+
+    /**
      * Size of heap cache.
      */
     private int maxSizeOffHeap = 100;
@@ -82,17 +93,17 @@ public class Ehcache3Properties implements Serializable {
     /**
      * Name of default server resource on Terracotta cluster.
      */
-    private String defaultServerResource = "cas-ticket-registry";
+    private String defaultServerResource = "main";
 
     /**
-     * Name of resource pool on Terracotta cluster.
+     * Name of resource pool to use on Terracotta cluster.
      */
-    private String resourcePoolName = "cas-ticket-registry-resource-pool";
+    private String resourcePoolName = "cas-ticket-pool";
 
     /**
      * Size of resource pool on terracotta cluster.
      */
-    private int resourcePoolSize = 100;
+    private int resourcePoolSize = 15;
 
     /**
      * Units for size of resource pool on terracotta cluster.
