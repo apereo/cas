@@ -15,7 +15,7 @@ import org.junit.runner.RunWith;
  */
 @SelectClasses({
     CasCaptchaWebflowConfigurerTests.class,
-    ValidateCaptchaActionTests.class,
+    ValidateCaptchaActionTests.class
 })
 @RunWith(JUnitPlatform.class)
 public class AllTestsSuite {

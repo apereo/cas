@@ -56,8 +56,8 @@ after_script:
 stages:
   - initialize
   - build
-  - publish
   - validate
+  - publish
   - test
   - finalize
 jobs:
