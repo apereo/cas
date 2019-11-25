@@ -1,6 +1,7 @@
 package org.apereo.cas.consent;
 
 import org.apereo.cas.config.CasConsentCouchDbConfiguration;
+import org.apereo.cas.config.CasCouchDbCoreConfiguration;
 import org.apereo.cas.couchdb.consent.ConsentDecisionCouchDbRepository;
 import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
 
@@ -19,6 +20,7 @@ import org.springframework.boot.test.context.SpringBootTest;
  * @since 6.0.0
  */
 @SpringBootTest(classes = {
+    CasCouchDbCoreConfiguration.class,
     CasConsentCouchDbConfiguration.class,
     BaseConsentRepositoryTests.SharedTestConfiguration.class
 },

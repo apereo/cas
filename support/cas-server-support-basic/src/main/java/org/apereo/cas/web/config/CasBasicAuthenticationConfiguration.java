@@ -60,6 +60,7 @@ public class CasBasicAuthenticationConfiguration {
     private ObjectProvider<FlowBuilderServices> flowBuilderServices;
 
     @Bean
+    @ConditionalOnMissingBean(name = "basicAuthenticationAction")
     public Action basicAuthenticationAction() {
         return new BasicAuthenticationAction(initialAuthenticationAttemptWebflowEventResolver.getObject(),
             serviceTicketRequestWebflowEventResolver.getObject(),

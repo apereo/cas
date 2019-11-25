@@ -16,6 +16,8 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
  */
 public class BasicAuthenticationWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
+    static final String STATE_ID_BASIC_AUTHENTICATION_CHECK = "basicAuthenticationCheck";
+
     public BasicAuthenticationWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
                                                 final FlowDefinitionRegistry loginFlowDefinitionRegistry,
                                                 final ApplicationContext applicationContext,
@@ -27,9 +29,10 @@ public class BasicAuthenticationWebflowConfigurer extends AbstractCasWebflowConf
     protected void doInitialize() {
         val flow = getLoginFlow();
         if (flow != null) {
-            val actionState = createActionState(flow, "basicAuthenticationCheck", createEvaluateAction("basicAuthenticationAction"));
-            actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_CREATE_TICKET_GRANTING_TICKET));
-            actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_WARN, CasWebflowConstants.TRANSITION_ID_WARN));
+            val actionState = createActionState(flow, STATE_ID_BASIC_AUTHENTICATION_CHECK, createEvaluateAction("basicAuthenticationAction"));
+            val transitionSet = actionState.getTransitionSet();
+            transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_CREATE_TICKET_GRANTING_TICKET));
+            transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_WARN, CasWebflowConstants.TRANSITION_ID_WARN));
             actionState.getExitActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_CLEAR_WEBFLOW_CREDENTIALS));
 
             createStateDefaultTransition(actionState, getStartState(flow).getId());
