@@ -7,6 +7,8 @@ CAS v6  Locust
 --------------
 These script files were created as a starting point for users to test the various protocols supported by CAS with the Python Locust load testing framework.  Feel free to use and update to meet your needs.
 
+The Python version used to create these script = Python 3.7.5
+
 There are 4 example scripts available for your use.
 
 - old_locustfile.py - This file is the old locust script file used for CAS v5 testing.  This still can be used and is included as a comparison file to the other 3.  Created with Locust 0.8a2
