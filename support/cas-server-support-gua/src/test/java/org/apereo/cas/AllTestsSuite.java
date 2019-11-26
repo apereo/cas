@@ -2,6 +2,7 @@
 package org.apereo.cas;
 
 import org.apereo.cas.web.flow.DisplayUserGraphicsBeforeAuthenticationActionTests;
+import org.apereo.cas.web.flow.GraphicalUserAuthenticationWebflowConfigurerTests;
 import org.apereo.cas.web.flow.PrepareForGraphicalAuthenticationActionTests;
 
 import org.junit.platform.runner.JUnitPlatform;
@@ -16,6 +17,7 @@ import org.junit.runner.RunWith;
  */
 @SelectClasses({
     PrepareForGraphicalAuthenticationActionTests.class,
+    GraphicalUserAuthenticationWebflowConfigurerTests.class,
     DisplayUserGraphicsBeforeAuthenticationActionTests.class
 })
 @RunWith(JUnitPlatform.class)
