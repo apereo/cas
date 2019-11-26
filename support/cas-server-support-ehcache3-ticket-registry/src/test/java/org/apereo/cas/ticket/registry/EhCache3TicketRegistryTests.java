@@ -22,6 +22,7 @@ import org.apereo.cas.config.Ehcache3TicketRegistryTicketCatalogConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 
+import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
@@ -63,6 +64,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
     "spring.mail.port=25000",
     "spring.mail.testConnection=false"
 })
+@Tag("Ehcache3")
 public class EhCache3TicketRegistryTests extends BaseTicketRegistryTests {
 
     @Autowired

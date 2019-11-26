@@ -115,6 +115,15 @@ if (hasTestsOfCategory(project, "DynamoDb")) {
     }
 }
 
+if (hasTestsOfCategory(project, "Ehcache3")) {
+    task testEhcache3(type: Test) {
+        enabled = shouldTest(project, "Ehcache3")
+        useJUnitPlatform {
+            includeTags "Ehcache3"
+        }
+    }
+}
+
 if (hasTestsOfCategory(project, "FileSystem")) {
     task testFileSystem(type: Test) {
         enabled = shouldTest(project, "FileSystem")

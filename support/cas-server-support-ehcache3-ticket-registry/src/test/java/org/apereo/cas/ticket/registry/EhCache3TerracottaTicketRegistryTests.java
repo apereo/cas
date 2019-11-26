@@ -21,6 +21,8 @@ import org.apereo.cas.config.Ehcache3TicketRegistryConfiguration;
 import org.apereo.cas.config.Ehcache3TicketRegistryTicketCatalogConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
+import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
+import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
@@ -64,6 +66,8 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
     "cas.ticket.registry.ehcache3.terracottaClusterUri=terracotta://localhost:9410/cas-application",
     "cas.ticket.registry.ehcache3.connectionMode=AUTOCREATE"
 })
+@EnabledIfContinuousIntegration
+@Tag("Ehcache3")
 public class EhCache3TerracottaTicketRegistryTests extends BaseTicketRegistryTests {
 
     @Autowired
