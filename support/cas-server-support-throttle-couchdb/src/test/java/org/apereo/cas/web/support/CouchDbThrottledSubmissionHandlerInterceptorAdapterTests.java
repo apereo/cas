@@ -2,6 +2,7 @@ package org.apereo.cas.web.support;
 
 import org.apereo.cas.config.CasCouchDbCoreConfiguration;
 import org.apereo.cas.config.CasCouchDbThrottlingConfiguration;
+import org.apereo.cas.config.CasSupportCouchDbAuditConfiguration;
 import org.apereo.cas.couchdb.audit.AuditActionContextCouchDbRepository;
 import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
 
@@ -22,6 +23,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 @Tag("CouchDb")
 @SpringBootTest(classes = {
     CasCouchDbThrottlingConfiguration.class,
+    CasSupportCouchDbAuditConfiguration.class,
     CasCouchDbCoreConfiguration.class,
     BaseThrottledSubmissionHandlerInterceptorAdapterTests.SharedTestConfiguration.class
 },

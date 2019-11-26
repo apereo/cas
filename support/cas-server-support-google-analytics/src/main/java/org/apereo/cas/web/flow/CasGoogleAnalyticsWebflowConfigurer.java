@@ -20,8 +20,11 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 6.1.0
  */
 public class CasGoogleAnalyticsWebflowConfigurer extends AbstractCasWebflowConfigurer {
-    private static final String ATTRIBUTE_FLOWSCOPE_GOOGLE_ANALYTICS_TRACKING_ID = "googleAnalyticsTrackingId";
 
+    static final String ACTION_ID_CREATE_GOOGLE_ANALYTICS_COOKIE = "createGoogleAnalyticsCookieAction";
+    static final String ACTION_ID_REMOVE_GOOGLE_ANALYTICS_COOKIE = "removeGoogleAnalyticsCookieAction";
+    static final String ATTRIBUTE_FLOWSCOPE_GOOGLE_ANALYTICS_TRACKING_ID = "googleAnalyticsTrackingId";
+    
     public CasGoogleAnalyticsWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
                                                final FlowDefinitionRegistry loginFlowDefinitionRegistry,
                                                final ApplicationContext applicationContext,
@@ -46,7 +49,7 @@ public class CasGoogleAnalyticsWebflowConfigurer extends AbstractCasWebflowConfi
 
     private void createRemoveGoogleAnalyticsCookieLogoutAction(final Flow logoutFlow) {
         val logoutSetup = getState(logoutFlow, CasWebflowConstants.STATE_ID_TERMINATE_SESSION);
-        logoutSetup.getExitActionList().add(createEvaluateAction("removeGoogleAnalyticsCookieAction"));
+        logoutSetup.getExitActionList().add(createEvaluateAction(ACTION_ID_REMOVE_GOOGLE_ANALYTICS_COOKIE));
     }
 
     private void injectGoogleAnalyticsIdIntoLogoutView(final Flow logoutFlow) {
@@ -56,7 +59,7 @@ public class CasGoogleAnalyticsWebflowConfigurer extends AbstractCasWebflowConfi
 
     private void createSendGoogleAnalyticsCookieAction(final Flow flow) {
         val sendTgt = getState(flow, CasWebflowConstants.STATE_ID_SEND_TICKET_GRANTING_TICKET);
-        sendTgt.getExitActionList().add(createEvaluateAction("createGoogleAnalyticsCookieAction"));
+        sendTgt.getExitActionList().add(createEvaluateAction(ACTION_ID_CREATE_GOOGLE_ANALYTICS_COOKIE));
     }
 
     private void injectGoogleAnalyticsTrackingIdToFlowStart(final Flow flow) {
