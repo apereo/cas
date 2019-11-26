@@ -25,7 +25,7 @@ dependencies {
     testImplementation project(":core:cas-server-core-authentication")
     testImplementation project(":core:cas-server-core-authentication-mfa")
     testImplementation project(":core:cas-server-core-cookie")
-    testImplementation project(":core:cas-server-core-core")
+    testImplementation project(":core:cas-server-core")
 
     testImplementation project(":support:cas-server-support-oauth-core")
     testImplementation project(":support:cas-server-support-oauth")

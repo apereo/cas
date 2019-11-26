@@ -1,6 +1,7 @@
 
 package org.apereo.cas;
 
+import org.apereo.cas.web.flow.CompositeProviderSelectionMultifactorWebflowConfigurerTests;
 import org.apereo.cas.web.flow.authentication.GroovyScriptMultifactorAuthenticationProviderSelectorTests;
 import org.apereo.cas.web.flow.authentication.RankedMultifactorAuthenticationProviderSelectorTests;
 import org.apereo.cas.web.flow.resolver.impl.SelectiveMultifactorAuthenticationProviderWebflowEventResolverTests;
@@ -22,6 +23,7 @@ import org.junit.runner.RunWith;
     AuthenticationAttributeMultifactorAuthenticationPolicyEventResolverTests.class,
     AdaptiveMultifactorAuthenticationPolicyEventResolverTests.class,
     MultifactorAuthenticationTests.class,
+    CompositeProviderSelectionMultifactorWebflowConfigurerTests.class,
     SelectiveMultifactorAuthenticationProviderWebflowEventResolverTests.class,
     GroovyScriptMultifactorAuthenticationProviderSelectorTests.class,
     RankedMultifactorAuthenticationProviderSelectorTests.class,

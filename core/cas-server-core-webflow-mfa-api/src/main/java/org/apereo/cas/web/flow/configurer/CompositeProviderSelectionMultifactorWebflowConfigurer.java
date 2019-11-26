@@ -24,6 +24,10 @@ public class CompositeProviderSelectionMultifactorWebflowConfigurer extends Abst
      */
     public static final String MFA_COMPOSITE_EVENT_ID = "mfa-composite";
 
+    static final String ACTION_ID_PREPARE_MULTIFACTOR_PROVIDER_SELECTION = "prepareMultifactorProviderSelectionAction";
+
+    static final String ACTION_ID_MULTIFACTOR_PROVIDER_SELECTED = "multifactorProviderSelectedAction";
+
     public CompositeProviderSelectionMultifactorWebflowConfigurer(
         final FlowBuilderServices flowBuilderServices,
         final FlowDefinitionRegistry loginFlowDefinitionRegistry,
@@ -40,12 +44,12 @@ public class CompositeProviderSelectionMultifactorWebflowConfigurer extends Abst
             createTransitionForState(realSubmit, MFA_COMPOSITE_EVENT_ID, MFA_COMPOSITE_EVENT_ID);
 
             val viewState = createViewState(flow, MFA_COMPOSITE_EVENT_ID, "casCompositeMfaProviderSelectionView");
-            viewState.getEntryActionList().add(createEvaluateAction("prepareMultifactorProviderSelectionAction"));
+            viewState.getEntryActionList().add(createEvaluateAction(ACTION_ID_PREPARE_MULTIFACTOR_PROVIDER_SELECTION));
 
             createTransitionForState(viewState, CasWebflowConstants.TRANSITION_ID_SUBMIT,
                 CasWebflowConstants.ACTION_ID_MFA_PROVIDER_SELECTED);
             val selectedState = createActionState(flow, CasWebflowConstants.ACTION_ID_MFA_PROVIDER_SELECTED,
-                createEvaluateAction("multifactorProviderSelectedAction"));
+                createEvaluateAction(ACTION_ID_MULTIFACTOR_PROVIDER_SELECTED));
 
             val providers = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(applicationContext).values();
             providers.forEach(p -> createTransitionForState(selectedState, p.getId(), p.getId()));

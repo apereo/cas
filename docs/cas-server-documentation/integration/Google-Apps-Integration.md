@@ -9,7 +9,7 @@ category: Integration
 Google Apps for Education (or any of the Google Apps) utilizes SAML 2.0 to provide an
 integration point for external authentication services.
 
-<div class="alert alert-warn"><strong>Usage</strong>
+<div class="alert alert-warning"><strong>Usage</strong>
 <p>The Google Apps for Education integration described here allows CAS to act as a miniaturized SAML2 identity provider, 
 for deployments that may not be prepared to turn on and allow CAS to fully act as a SAML2 identity provider. 
 <strong>This feature is deprecated and is scheduled to be removed in the future.</strong> It does not
