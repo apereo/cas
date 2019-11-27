@@ -7,7 +7,7 @@ idna==2.8
 itsdangerous==1.1.0
 Jinja2==2.9.6
 locustio==0.13.2
-MarkupSafe==1.0
+MarkupSafe==1.1.1
 msgpack-python==0.5.6
 pip==19.3.1
 pyzmq==18.1.0
