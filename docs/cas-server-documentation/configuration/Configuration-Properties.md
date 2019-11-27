@@ -2386,9 +2386,10 @@ To fetch CRLs, the following options are available:
 
 # cas.authn.x509.cacheMaxElementsInMemory=1000
 # cas.authn.x509.cacheDiskOverflow=false
+# cas.authn.x509.cacheDiskSize=100
+# cas.authn.x509.cacheDiskSizeUnits=MB
 # cas.authn.x509.cacheEternal=false
 # cas.authn.x509.cacheTimeToLiveSeconds=7200
-# cas.authn.x509.cacheTimeToIdleSeconds=1800
 
 # cas.authn.x509.checkKeyUsage=false
 # cas.authn.x509.revocationPolicyThreshold=172800
