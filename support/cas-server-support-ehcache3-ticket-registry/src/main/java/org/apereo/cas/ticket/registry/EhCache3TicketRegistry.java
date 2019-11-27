@@ -88,7 +88,7 @@ public class EhCache3TicketRegistry extends AbstractTicketRegistry {
             .map(this::getTicketCacheFor)
             .filter(Objects::nonNull)
             .forEach(Cache::clear);
-        return -1; // TODO try to get count
+        return -1;
     }
 
     @Override

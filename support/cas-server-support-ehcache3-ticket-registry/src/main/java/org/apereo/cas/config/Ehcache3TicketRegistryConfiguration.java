@@ -50,9 +50,10 @@ import java.time.Duration;
  * @author Hal Deadman
  * @since 6.2.0
  */
-@Configuration("ehcache3TicketRegistryConfiguration")
+@Configuration(value = "ehcache3TicketRegistryConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnProperty(prefix = "cas.ticket.registry.ehcache3", name = "enabled", havingValue = "true", matchIfMissing = true)
+@
 @Slf4j
 public class Ehcache3TicketRegistryConfiguration {
 
@@ -73,7 +74,6 @@ public class Ehcache3TicketRegistryConfiguration {
                     s.defaultServerResource(ehcacheProperties.getDefaultServerResource())
                      .resourcePool(ehcacheProperties.getResourcePoolName(), ehcacheProperties.getResourcePoolSize(), MemoryUnit.valueOf(ehcacheProperties.getResourcePoolUnits())));
             } else if (Ehcache3Properties.CONNECTION_MODE_CONFIGLESS.equals(connectionMode)) {
-                // TODO not sure what this is
                 LOGGER.debug("Connecting to terracotta in config-less mode, cluster tier manager must already exist.");
             }
             return clusterConfigBuilder.build();
