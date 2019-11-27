@@ -1,6 +1,8 @@
 package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.config.CasCoreTicketComponentSerializationConfiguration;
+import org.apereo.cas.config.CasCoreUtilSerializationConfiguration;
 import org.apereo.cas.config.CasOAuth20ComponentSerializationConfiguration;
 import org.apereo.cas.config.MemcachedTicketRegistryConfiguration;
 import org.apereo.cas.mock.MockServiceTicket;
@@ -34,6 +36,8 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = {
     MemcachedTicketRegistryConfiguration.class,
+    CasCoreUtilSerializationConfiguration.class,
+    CasCoreTicketComponentSerializationConfiguration.class,
     CasOAuth20ComponentSerializationConfiguration.class,
     MemcachedTicketRegistryTests.MemcachedTicketRegistryTestConfiguration.class,
     BaseTicketRegistryTests.SharedTestConfiguration.class
