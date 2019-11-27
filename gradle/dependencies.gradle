@@ -439,10 +439,6 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     force = true
                 },
-                dependencies.create("org.ehcache.modules:ehcache-common:$ehcache3Version") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    force = true
-                },
                 dependencies.create("org.ehcache:ehcache-clustered:$ehcache3Version") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     force = true
