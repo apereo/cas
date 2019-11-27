@@ -68,12 +68,12 @@ public class Ehcache3Properties implements Serializable {
 
 
     /**
-     * Size of heap cache.
+     * Size of off heap cache.
      */
     private int maxSizeOffHeap = 100;
 
     /**
-     * Heap cache size units as defined by EhCache. (e.g. MB, GB)
+     * Off heap cache size units as defined by EhCache. (e.g. MB, GB)
      */
     private String maxSizeOffHeapUnits = "MB";
 
