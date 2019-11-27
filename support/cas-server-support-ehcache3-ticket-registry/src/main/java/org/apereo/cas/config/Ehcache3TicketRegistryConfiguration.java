@@ -53,7 +53,6 @@ import java.time.Duration;
 @Configuration(value = "ehcache3TicketRegistryConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnProperty(prefix = "cas.ticket.registry.ehcache3", name = "enabled", havingValue = "true", matchIfMissing = true)
-@
 @Slf4j
 public class Ehcache3TicketRegistryConfiguration {
 
