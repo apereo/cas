@@ -14,5 +14,5 @@ pyzmq==18.1.0
 requests==2.22.0
 setuptools==42.0.1
 six==1.13.0
-urllib3==1.25.6
+urllib3==1.25.7
 Werkzeug==0.12.1
