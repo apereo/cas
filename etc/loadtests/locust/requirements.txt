@@ -12,7 +12,7 @@ msgpack-python==0.5.6
 pip==19.2.3
 pyzmq==18.1.0
 requests==2.22.0
-setuptools==41.2.0
+setuptools==42.0.1
 six==1.13.0
 urllib3==1.25.6
 Werkzeug==0.12.1
