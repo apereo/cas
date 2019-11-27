@@ -33,7 +33,8 @@ replication with Ehcache, [see this resource](http://ehcache.org/documentation/u
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#ehcache-ticket-registry).
 
-The Ehcache configuration for `ehcache-replicated.xml` mentioned in the config follows.
+The Ehcache configuration for `ehcache-replicated.xml` mentioned in the config follows. 
+Note that ${ehcache.otherServer} would be replaced by a system property: -Dehcache.otherserver=cas2
 
 ```xml
 
@@ -54,7 +55,8 @@ The Ehcache configuration for `ehcache-replicated.xml` mentioned in the config f
         <!-- Manual Peer Discovery -->
         <cacheManagerPeerProviderFactory
             class="net.sf.ehcache.distribution.RMICacheManagerPeerProviderFactory"
-            properties="peerDiscovery=manual,rmiUrls=//localhost:41001/org.apereo.cas.ticket.TicketCache" />
+            properties="peerDiscovery=manual,rmiUrls=//${ehcache.otherServer}:41001/proxyGrantingTicketsCache|//${ehcache.otherServer}:41001/ticketGrantingTicketsCache|//${ehcache.otherServer}:41001/proxyTicketsCache|//${ehcache.otherServer}:41001/oauthCodesCache|//${ehcache.otherServer}:41001/samlArtifactsCache|//${ehcache.otherServer}:41001/oauthDeviceUserCodesCache|//${ehcache.otherServer}:41001/samlAttributeQueryCache|//${ehcache.otherServer}:41001/oauthAccessTokensCache|//${ehcache.otherServer}:41001/serviceTicketsCache|//${ehcache.otherServer}:41001/oauthRefreshTokensCache|//${ehcache.otherServer}:41001/transientSessionTicketsCache|//${ehcache.otherServer}:41001/oauthDeviceTokensCache" />
+
         <cacheManagerPeerListenerFactory
             class="net.sf.ehcache.distribution.RMICacheManagerPeerListenerFactory"
             properties="port=41001,remoteObjectPort=41002" />
