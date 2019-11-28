@@ -15,7 +15,7 @@ import org.junit.runner.RunWith;
  */
 @SelectClasses({
     EhCache3TicketRegistryTests.class,
-    EhCache3TerracottaTicketRegistryTests.class,
+    EhCache3TerracottaTicketRegistryTests.class
 })
 @RunWith(JUnitPlatform.class)
 public class AllTestsSuite {
