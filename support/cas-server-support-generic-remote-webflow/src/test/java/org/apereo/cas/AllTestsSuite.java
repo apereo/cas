@@ -3,6 +3,7 @@ package org.apereo.cas;
 
 import org.apereo.cas.adaptors.generic.remote.RemoteAddressAuthenticationHandlerTests;
 import org.apereo.cas.adaptors.generic.remote.RemoteAddressCredentialTests;
+import org.apereo.cas.web.flow.RemoteAddressWebflowConfigurerTests;
 
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
@@ -16,6 +17,7 @@ import org.junit.runner.RunWith;
  */
 @SelectClasses({
     RemoteAddressCredentialTests.class,
+    RemoteAddressWebflowConfigurerTests.class,
     RemoteAddressAuthenticationHandlerTests.class
 })
 @RunWith(JUnitPlatform.class)
