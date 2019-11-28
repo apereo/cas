@@ -18,7 +18,7 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasOAuth20AuthenticationServiceSelectionStrategyConfiguration;
-import org.apereo.cas.config.CasOAuthWebflowConfiguration;
+import org.apereo.cas.config.CasOAuth20WebflowConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
@@ -81,7 +81,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreServicesAuthenticationConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     CasOAuth20AuthenticationServiceSelectionStrategyConfiguration.class,
-    CasOAuthWebflowConfiguration.class})
+    CasOAuth20WebflowConfiguration.class})
 @Tag("UMA")
 public class OAuth20RegisteredServiceUIActionTests {
     @Autowired
