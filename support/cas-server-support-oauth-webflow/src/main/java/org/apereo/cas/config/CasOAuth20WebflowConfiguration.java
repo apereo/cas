@@ -23,14 +23,14 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
 
 /**
- * This is {@link CasOAuthWebflowConfiguration}.
+ * This is {@link CasOAuth20WebflowConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration("casOAuthWebflowConfiguration")
+@Configuration("casOAuth20WebflowConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class CasOAuthWebflowConfiguration {
+public class CasOAuth20WebflowConfiguration {
 
     @Autowired
     @Qualifier("servicesManager")

@@ -20,15 +20,13 @@ public class PasswordlessAuthenticationWebflowConfigurer extends AbstractCasWebf
     /**
      * Transition to obtain username.
      */
-    public static final String TRANSITION_ID_PASSWORDLESS_GET_USERID = "passwordlessGetUserId";
+    static final String TRANSITION_ID_PASSWORDLESS_GET_USERID = "passwordlessGetUserId";
     
-    private static final String STATE_ID_PASSWORDLESS_DISPLAY = "passwordlessDisplayUser";
-    private static final String STATE_ID_PASSWORDLESS_VERIFY_ACCOUNT = "passwordlessVerifyAccount";
-
-    private static final String STATE_ID_ACCEPT_PASSWORDLESS_AUTHENTICATION = "acceptPasswordlessAuthentication";
-    private static final String STATE_ID_PASSWORDLESS_GET_USERID = "passwordlessGetUserIdView";
-
-
+    static final String STATE_ID_PASSWORDLESS_DISPLAY = "passwordlessDisplayUser";
+    static final String STATE_ID_PASSWORDLESS_VERIFY_ACCOUNT = "passwordlessVerifyAccount";
+    static final String STATE_ID_ACCEPT_PASSWORDLESS_AUTHENTICATION = "acceptPasswordlessAuthentication";
+    static final String STATE_ID_PASSWORDLESS_GET_USERID = "passwordlessGetUserIdView";
+    
     public PasswordlessAuthenticationWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
                                                        final FlowDefinitionRegistry loginFlowDefinitionRegistry,
                                                        final ApplicationContext applicationContext,

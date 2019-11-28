@@ -32,6 +32,7 @@ import org.apereo.cas.oidc.web.controllers.OidcIntrospectionEndpointControllerTe
 import org.apereo.cas.oidc.web.controllers.OidcWellKnownEndpointControllerTests;
 import org.apereo.cas.oidc.web.flow.OidcAuthenticationContextWebflowEventResolverTests;
 import org.apereo.cas.oidc.web.flow.OidcRegisteredServiceUIActionTests;
+import org.apereo.cas.oidc.web.flow.OidcWebflowConfigurerTests;
 
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
@@ -74,6 +75,7 @@ import org.junit.runner.RunWith;
     OidcProfileScopeAttributeReleasePolicyTests.class,
     OidcDefaultAttributeToScopeClaimMapperTests.class,
     OidcAccessTokenAuthenticatorTests.class,
+    OidcWebflowConfigurerTests.class,
     OidcRegisteredServiceJwtAccessTokenCipherExecutorTests.class,
     OidcClientConfigurationAccessTokenAuthenticatorTests.class
 })

@@ -1,0 +1,8 @@
+codecov:
+  max_report_age: off
+  strict_yaml_branch: master
+
+coverage:
+  round: up
+  range: "70...100"
+  precision: 5
