@@ -11,6 +11,8 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.ehcache.Cache;
 import org.ehcache.CacheManager;
+import org.ehcache.Status;
+import org.springframework.beans.factory.DisposableBean;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -28,7 +30,7 @@ import java.util.stream.Collectors;
  * @since 6.2
  */
 @Slf4j
-public class EhCache3TicketRegistry extends AbstractTicketRegistry {
+public class EhCache3TicketRegistry extends AbstractTicketRegistry implements DisposableBean {
 
 
     private final TicketCatalog ticketCatalog;
@@ -152,6 +154,13 @@ public class EhCache3TicketRegistry extends AbstractTicketRegistry {
         } catch (final Exception e) {
             LOGGER.warn(e.getMessage(), e);
             return new HashMap<>(0);
+        }
+    }
+
+    @Override
+    public void destroy() throws Exception {
+        if (Status.AVAILABLE.equals(this.cacheManager.getStatus())) {
+            this.cacheManager.close();
         }
     }
 }

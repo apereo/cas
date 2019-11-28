@@ -174,8 +174,11 @@ public class Ehcache3TicketRegistryConfiguration {
 
         val definitions = ticketCatalog.findAll();
         definitions.forEach(t -> {
-            val ehcacheConfiguration = buildCache(t);
-            ehcacheManager.createCache(t.getProperties().getStorageName(), ehcacheConfiguration);
+            val cacheName = t.getProperties().getStorageName();
+            if (ehcacheManager.getCache(cacheName, String.class, Ticket.class) == null) {
+                val ehcacheConfiguration = buildCache(t);
+                ehcacheManager.createCache(cacheName, ehcacheConfiguration);
+            }
         });
 
         return new EhCache3TicketRegistry(ticketCatalog, ehcacheManager, CoreTicketUtils.newTicketRegistryCipherExecutor(crypto, "ehcache"));

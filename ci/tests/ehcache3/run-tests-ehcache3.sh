@@ -27,8 +27,6 @@ echo -e "***********************************************"
 echo -e "Gradle build started at `date`"
 echo -e "***********************************************"
 
-./ci/tests/ehcache3/run-terracotta-server.sh
-
 gradleBuild="$gradleBuild testEhcache3 jacocoRootReport -x test -x javadoc -x check \
     -DskipGradleLint=true \
     -DskipNestedConfigMetadataGen=true "
@@ -58,9 +56,12 @@ else
     eval $waitloop
     waitRetVal=$?
 
+    ./ci/tests/ehcache3/run-terracotta-server.sh
 
     eval $tasks
     retVal=$?
+
+    docker stop tc-server
 
     echo -e "***************************************************************************************"
     echo -e "Gradle build finished at `date` with exit code $retVal"
