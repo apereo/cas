@@ -12,7 +12,7 @@ terracotta/terracotta-server-oss:5.6.4
 for i in {1..10}
 do
   sleep 1
-  docker logs tc-server | grep -i "server started";
+  docker logs tc-server | grep -i "server started"
   if [[ $? -eq 0 ]] ; then
     break;
   fi
