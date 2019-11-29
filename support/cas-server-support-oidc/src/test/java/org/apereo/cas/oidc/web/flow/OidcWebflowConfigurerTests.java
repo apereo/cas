@@ -13,9 +13,11 @@ import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.engine.Flow;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -39,6 +41,8 @@ import static org.junit.jupiter.api.Assertions.*;
     CasMultifactorAuthenticationWebflowConfiguration.class,
     BaseWebflowConfigurerTests.SharedTestConfiguration.class
 })
+@TestPropertySource(properties = "cas.authn.oidc.jwksFile=classpath:keystore.jwks")
+@Tag("OIDC")
 public class OidcWebflowConfigurerTests extends BaseWebflowConfigurerTests {
 
     @Test

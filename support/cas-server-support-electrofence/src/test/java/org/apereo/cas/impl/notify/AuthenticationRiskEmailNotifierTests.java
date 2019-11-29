@@ -8,6 +8,7 @@ import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.context.annotation.Import;
@@ -36,6 +37,7 @@ import java.math.BigDecimal;
     "cas.authn.adaptive.risk.response.sms.from=3487244312"
 })
 @Import(MailSenderAutoConfiguration.class)
+@Tag("Mail")
 public class AuthenticationRiskEmailNotifierTests extends BaseAuthenticationRequestRiskCalculatorTests {
     @Test
     public void verifyOperation() {
