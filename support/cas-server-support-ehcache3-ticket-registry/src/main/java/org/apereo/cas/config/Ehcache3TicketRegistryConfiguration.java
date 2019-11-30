@@ -1,20 +1,17 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.ehcache.Ehcache3Properties;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
 import org.apereo.cas.ticket.registry.EhCache3TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CoreTicketUtils;
-import org.apereo.cas.util.ResourceUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.ehcache.CacheManager;
-import org.ehcache.Status;
+
 import org.ehcache.clustered.client.config.builders.ClusteredResourcePoolBuilder;
 import org.ehcache.clustered.client.config.builders.ClusteredStoreConfigurationBuilder;
 import org.ehcache.clustered.client.config.builders.ClusteringServiceConfigurationBuilder;
@@ -22,27 +19,35 @@ import org.ehcache.clustered.common.Consistency;
 import org.ehcache.config.CacheConfiguration;
 import org.ehcache.config.builders.CacheConfigurationBuilder;
 import org.ehcache.config.builders.CacheEventListenerConfigurationBuilder;
-import org.ehcache.config.builders.CacheManagerBuilder;
-import org.ehcache.config.builders.CacheManagerConfiguration;
 import org.ehcache.config.builders.ExpiryPolicyBuilder;
 import org.ehcache.config.builders.ResourcePoolsBuilder;
 import org.ehcache.config.units.MemoryUnit;
-import org.ehcache.core.statistics.DefaultStatisticsService;
+import org.ehcache.core.config.DefaultConfiguration;
 import org.ehcache.event.CacheEvent;
 import org.ehcache.event.CacheEventListener;
 import org.ehcache.event.EventType;
+import org.ehcache.impl.config.persistence.DefaultPersistenceConfiguration;
+import org.ehcache.jsr107.Eh107Configuration;
+import org.ehcache.jsr107.EhcacheCachingProvider;
+import org.ehcache.jsr107.config.ConfigurationElementState;
+import org.ehcache.jsr107.config.Jsr107Configuration;
+import org.ehcache.spi.service.ServiceCreationConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cache.jcache.JCacheCacheManager;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import javax.cache.Caching;
+
 import java.io.File;
 import java.net.URI;
 import java.time.Duration;
+import java.util.HashMap;
 
 /**
  * This is {@link Ehcache3TicketRegistryConfiguration}.
@@ -61,45 +66,46 @@ public class Ehcache3TicketRegistryConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public CacheManagerConfiguration<? extends CacheManager> ehcache3CacheManagerConfiguration() {
+    public ServiceCreationConfiguration ehcache3CacheManagerConfiguration() {
         val ehcacheProperties = casProperties.getTicket().getRegistry().getEhcache3();
-
         val terracottaClusterUri = ehcacheProperties.getTerracottaClusterUri();
         if (StringUtils.isNotBlank(terracottaClusterUri)) {
-            var clusterConfigBuilder = ClusteringServiceConfigurationBuilder.cluster(URI.create(terracottaClusterUri));
-            val connectionMode = ehcacheProperties.getConnectionMode();
-            if (Ehcache3Properties.CONNECTION_MODE_AUTOCREATE.equals(connectionMode)) {
-                clusterConfigBuilder = clusterConfigBuilder.autoCreate(s ->
-                    s.defaultServerResource(ehcacheProperties.getDefaultServerResource())
-                     .resourcePool(ehcacheProperties.getResourcePoolName(), ehcacheProperties.getResourcePoolSize(), MemoryUnit.valueOf(ehcacheProperties.getResourcePoolUnits())));
-            } else if (Ehcache3Properties.CONNECTION_MODE_CONFIGLESS.equals(connectionMode)) {
-                LOGGER.debug("Connecting to terracotta in config-less mode, cluster tier manager must already exist.");
-            }
+            var clusterConfigBuilder = ClusteringServiceConfigurationBuilder.cluster(URI.create(terracottaClusterUri))
+                .autoCreate(s -> s.defaultServerResource(ehcacheProperties.getDefaultServerResource())
+                .resourcePool(ehcacheProperties.getResourcePoolName(), ehcacheProperties.getResourcePoolSize(), MemoryUnit.valueOf(ehcacheProperties.getResourcePoolUnits())));
             return clusterConfigBuilder.build();
-        }
-        val rootDirectory = ehcacheProperties.getRootDirectory();
-        if (!ResourceUtils.doesResourceExist(rootDirectory)) {
-            LOGGER.debug("Creating folder for ehcache ticket registry disk cache [{}]", rootDirectory);
-            val mkdirResult = new File(rootDirectory).mkdirs();
-            if (!mkdirResult) {
-                LOGGER.warn("Unable to create folder for ehcache ticket registry disk cache [{}]", rootDirectory);
+        } else {
+            val rootDirectory = ehcacheProperties.getRootDirectory();
+            val rootDirectoryFile = new File(rootDirectory);
+            if (!rootDirectoryFile.exists()) {
+                LOGGER.debug("Creating folder for ehcache ticket registry disk cache [{}]", rootDirectory);
+                val mkdirResult = rootDirectoryFile.mkdirs();
+                if (!mkdirResult) {
+                    LOGGER.warn("Unable to create folder for ehcache ticket registry disk cache [{}]", rootDirectory);
+                }
             }
+            return new DefaultPersistenceConfiguration(rootDirectoryFile);
         }
-        return CacheManagerBuilder.persistence(rootDirectory);
     }
-
 
     @Bean
     @ConditionalOnMissingBean
-    public CacheManager ehcache3TicketCacheManager(
-        @Qualifier ("ehcache3CacheManagerConfiguration") final CacheManagerConfiguration<? extends CacheManager> cacheManagerConfiguration) {
-        var beanBuilder = CacheManagerBuilder.newCacheManagerBuilder().with(cacheManagerConfiguration);
-        val statisticsService = new DefaultStatisticsService();
-        beanBuilder = beanBuilder.using(statisticsService);
-        return beanBuilder.build();
+    public javax.cache.CacheManager ehcache3TicketCacheManager(
+        @Qualifier ("ehcache3CacheManagerConfiguration") final ServiceCreationConfiguration ehcache3CacheManagerConfiguration) {
+        val ehcacheProperties = casProperties.getTicket().getRegistry().getEhcache3();
+        val cachingProvider = Caching.getCachingProvider(EhcacheCachingProvider.class.getName());
+        val ehcacheProvider = (EhcacheCachingProvider) cachingProvider;
+        val statisticsAllEnabled = ehcacheProperties.isEnableStatistics() ? ConfigurationElementState.ENABLED : ConfigurationElementState.DISABLED;
+        val managementAllAllEnabled = ehcacheProperties.isEnableManagement() ? ConfigurationElementState.ENABLED : ConfigurationElementState.DISABLED;
+        val jsr107Config = new Jsr107Configuration(null, new HashMap<>(),
+            false, managementAllAllEnabled, statisticsAllEnabled);
+        val configuration = new DefaultConfiguration(ehcacheProvider.getDefaultClassLoader(),
+            ehcache3CacheManagerConfiguration,
+            jsr107Config);
+        return ehcacheProvider.getCacheManager(ehcacheProvider.getDefaultURI(), configuration);
     }
 
-    private CacheConfiguration<String, Ticket> buildCache(final TicketDefinition ticketDefinition) {
+    private CacheConfiguration<String, Ticket> buildCacheConfiguration(final TicketDefinition ticketDefinition) {
         val ehcacheProperties = casProperties.getTicket().getRegistry().getEhcache3();
         val terracottaClusterUri = ehcacheProperties.getTerracottaClusterUri();
 
@@ -164,24 +170,31 @@ public class Ehcache3TicketRegistryConfiguration {
     @Autowired
     @Bean
     @RefreshScope
-    public TicketRegistry ticketRegistry(@Qualifier("ehcache3TicketCacheManager") final CacheManager ehcacheManager,
+    public TicketRegistry ticketRegistry(@Qualifier("ehcache3TicketCacheManager") final javax.cache.CacheManager ehcacheManager,
                                          @Qualifier("ticketCatalog") final TicketCatalog ticketCatalog) {
-        val crypto = casProperties.getTicket().getRegistry().getEhcache().getCrypto();
-
-        if (Status.UNINITIALIZED.equals(ehcacheManager.getStatus())) {
-            ehcacheManager.init();
-        }
+        val ehcacheProperties = casProperties.getTicket().getRegistry().getEhcache3();
+        val crypto = ehcacheProperties.getCrypto();
 
         val definitions = ticketCatalog.findAll();
         definitions.forEach(t -> {
             val cacheName = t.getProperties().getStorageName();
             if (ehcacheManager.getCache(cacheName, String.class, Ticket.class) == null) {
-                val ehcacheConfiguration = buildCache(t);
-                ehcacheManager.createCache(cacheName, ehcacheConfiguration);
+                val ehcacheConfiguration = buildCacheConfiguration(t);
+                ehcacheManager.createCache(cacheName, Eh107Configuration.fromEhcacheCacheConfiguration(ehcacheConfiguration));
             }
         });
 
         return new EhCache3TicketRegistry(ticketCatalog, ehcacheManager, CoreTicketUtils.newTicketRegistryCipherExecutor(crypto, "ehcache"));
     }
 
+    /**
+     * This bean is used by the spring boot cache actuator which spring boot admin can use to clear caches.
+     * Actuator needs to be exposed in order for this bean to be used.
+     * @param ehcache3TicketCacheManager JSR107 wrapper of EhCache cache manager to be wrapped by spring cache manager.
+     * @return Spring EhCacheCacheManager that wraps EhCache JSR107 CacheManager
+     */
+    @Bean
+    public JCacheCacheManager ehCacheJCacheCacheManager(@Qualifier("ehcache3TicketCacheManager") final javax.cache.CacheManager ehcache3TicketCacheManager) {
+        return new JCacheCacheManager(ehcache3TicketCacheManager);
+    }
 }

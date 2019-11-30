@@ -9,10 +9,10 @@ import com.google.common.base.Predicates;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.ehcache.Cache;
-import org.ehcache.CacheManager;
-import org.ehcache.Status;
 import org.springframework.beans.factory.DisposableBean;
+
+import javax.cache.Cache;
+import javax.cache.CacheManager;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -67,7 +67,7 @@ public class EhCache3TicketRegistry extends AbstractTicketRegistry implements Di
 
     @Override
     public boolean deleteSingleTicket(final String ticketId) {
-        val ticket = getTicket(ticketId, Predicates.alwaysTrue());
+        val ticket = getTicket(ticketId);
         if (ticket == null) {
             LOGGER.debug("Ticket [{}] cannot be retrieved from the cache", ticketId);
             return true;
@@ -159,7 +159,7 @@ public class EhCache3TicketRegistry extends AbstractTicketRegistry implements Di
 
     @Override
     public void destroy() throws Exception {
-        if (Status.AVAILABLE.equals(this.cacheManager.getStatus())) {
+        if (!this.cacheManager.isClosed()) {
             this.cacheManager.close();
         }
     }

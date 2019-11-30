@@ -21,19 +21,13 @@ import java.io.Serializable;
 @Setter
 public class Ehcache3Properties implements Serializable {
 
-    /**
-     * EhCache autocreate mode for creating config in Terracotta cluster.
-     * Creates config as specified if not present.
-     */
-    public static final String CONNECTION_MODE_AUTOCREATE = "AUTOCREATE";
-
-    /**
-     * EhCache configless mode  for creating config in Terracotta cluster.
-     * Requires config to already be defined on Terracotta cluster.
-     */
-    public static final String CONNECTION_MODE_CONFIGLESS = "CONFIGLESS";
-
     private static final long serialVersionUID = 7772510035918976450L;
+
+    /**
+     * Enabled allows this registry to be disabled on startup (so registry choice can be made at runtime).
+     */
+    @RequiredProperty
+    private boolean enabled = true;
 
     /**
      * The name of the cache manager instance.
@@ -85,6 +79,16 @@ public class Ehcache3Properties implements Serializable {
     private boolean eternal;
 
     /**
+     * Sets whether statistics are enabled for all caches.
+     */
+    private boolean enableStatistics;
+
+    /**
+     * Sets whether JMX management beans are enabled for all caches.
+     */
+    private boolean enableManagement;
+
+    /**
      * URI in format something like "terracotta://localhost/my-application".
      * Default port for terracotta (9410) is ussed if not specified in URI.
      */
@@ -111,24 +115,9 @@ public class Ehcache3Properties implements Serializable {
     private String resourcePoolUnits = "MB";
 
     /**
-     * Sets the connection mode to the terracotta cluster.
-     * Acceptable values are:
-     * <ul>
-     * <li>AUTOCREATE: In auto-create mode if no cluster tier manager exists then one is created with the supplied configuration.
-     * If it exists and its configuration matches the supplied configuration then a connection is established.
-     * If the supplied configuration does not match then the cache manager will fail to initialize.</li>
-     * <li>CONFIGLESS: In config-less mode if a cluster tier manager exists then a connection is established without regard to its configuration.
-     * If it does not exist then the cache manager will fail to initialize</li>
-     * </ul>
-     */
-    private String connectionMode = CONNECTION_MODE_AUTOCREATE;
-
-
-    /**
      * Root directory to store data if not using terracotta cluster.
      */
     private String rootDirectory = "/tmp/cas/ehcache3";
-
 
     /**
      * Crypto settings for the registry.
@@ -139,6 +128,5 @@ public class Ehcache3Properties implements Serializable {
     public Ehcache3Properties() {
         this.crypto.setEnabled(false);
     }
-
 }
 

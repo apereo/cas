@@ -28,6 +28,12 @@ public class EhcacheProperties implements Serializable {
     private static final long serialVersionUID = 7772510035918976450L;
 
     /**
+     * Enabled allows this registry to be disabled on startup (so registry choice can be made at runtime).
+     */
+    @RequiredProperty
+    private boolean enabled = true;
+
+    /**
      * Sets the persistence write mode.
      */
     private boolean synchronousWrites;

@@ -71,6 +71,7 @@ else
         echo "Uploading test coverage results..."
         bash <(curl -s https://codecov.io/bash)
         echo "Gradle build finished successfully."
+        exit 0
     else
         echo "Gradle build did NOT finish successfully."
         exit $retVal
