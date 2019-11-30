@@ -66,6 +66,39 @@ import java.util.stream.Collectors;
 public class DelegatedClientFactory {
     private final CasConfigurationProperties casProperties;
 
+    @SneakyThrows
+    private static <T extends OidcConfiguration> T getOidcConfigurationForClient(final BasePac4jOidcClientProperties oidc, final Class<T> clazz) {
+        val cfg = clazz.getDeclaredConstructor().newInstance();
+        if (StringUtils.isNotBlank(oidc.getScope())) {
+            cfg.setScope(oidc.getScope());
+        }
+        cfg.setUseNonce(oidc.isUseNonce());
+        cfg.setSecret(oidc.getSecret());
+        cfg.setClientId(oidc.getId());
+        cfg.setReadTimeout((int) Beans.newDuration(oidc.getReadTimeout()).toMillis());
+        cfg.setConnectTimeout((int) Beans.newDuration(oidc.getConnectTimeout()).toMillis());
+        if (StringUtils.isNotBlank(oidc.getPreferredJwsAlgorithm())) {
+            cfg.setPreferredJwsAlgorithm(JWSAlgorithm.parse(oidc.getPreferredJwsAlgorithm().toUpperCase()));
+        }
+        cfg.setMaxClockSkew(oidc.getMaxClockSkew());
+        cfg.setDiscoveryURI(oidc.getDiscoveryUri());
+        cfg.setCustomParams(oidc.getCustomParams());
+        cfg.setLogoutUrl(oidc.getLogoutUrl());
+
+        cfg.setExpireSessionWithToken(oidc.isExpireSessionWithToken());
+        if (StringUtils.isNotBlank(oidc.getTokenExpirationAdvance())) {
+            cfg.setTokenExpirationAdvance((int) Beans.newDuration(oidc.getTokenExpirationAdvance()).toSeconds());
+        }
+
+        if (StringUtils.isNotBlank(oidc.getResponseMode())) {
+            cfg.setResponseMode(oidc.getResponseMode());
+        }
+        if (StringUtils.isNotBlank(oidc.getResponseType())) {
+            cfg.setResponseType(oidc.getResponseType());
+        }
+        return cfg;
+    }
+
     /**
      * Configure github client.
      *
@@ -221,13 +254,8 @@ public class DelegatedClientFactory {
         if (ln.isEnabled() && StringUtils.isNotBlank(ln.getId()) && StringUtils.isNotBlank(ln.getSecret())) {
             val client = new LinkedIn2Client(ln.getId(), ln.getSecret());
             configureClient(client, ln);
-
             if (StringUtils.isNotBlank(ln.getScope())) {
                 client.setScope(ln.getScope());
-            }
-
-            if (StringUtils.isNotBlank(ln.getFields())) {
-                client.setFields(ln.getFields());
             }
             LOGGER.debug("Created client [{}] with identifier [{}]", client.getName(), client.getKey());
             properties.add(client);
@@ -423,6 +451,8 @@ public class DelegatedClientFactory {
                 if (!StringUtils.isNotBlank(saml.getSignatureCanonicalizationAlgorithm())) {
                     cfg.setSignatureCanonicalizationAlgorithm(saml.getSignatureCanonicalizationAlgorithm());
                 }
+                cfg.setProviderName(saml.getProviderName());
+                cfg.setNameIdPolicyAllowCreate(saml.getNameIdPolicyAllowCreate().toBoolean());
 
                 val mappedAttributes = saml.getMappedAttributes();
                 if (!mappedAttributes.isEmpty()) {
@@ -536,39 +566,6 @@ public class DelegatedClientFactory {
             return oc;
         }
         return null;
-    }
-
-    @SneakyThrows
-    private static <T extends OidcConfiguration> T getOidcConfigurationForClient(final BasePac4jOidcClientProperties oidc, final Class<T> clazz) {
-        val cfg = clazz.getDeclaredConstructor().newInstance();
-        if (StringUtils.isNotBlank(oidc.getScope())) {
-            cfg.setScope(oidc.getScope());
-        }
-        cfg.setUseNonce(oidc.isUseNonce());
-        cfg.setSecret(oidc.getSecret());
-        cfg.setClientId(oidc.getId());
-        cfg.setReadTimeout((int) Beans.newDuration(oidc.getReadTimeout()).toMillis());
-        cfg.setConnectTimeout((int) Beans.newDuration(oidc.getConnectTimeout()).toMillis());
-        if (StringUtils.isNotBlank(oidc.getPreferredJwsAlgorithm())) {
-            cfg.setPreferredJwsAlgorithm(JWSAlgorithm.parse(oidc.getPreferredJwsAlgorithm().toUpperCase()));
-        }
-        cfg.setMaxClockSkew(oidc.getMaxClockSkew());
-        cfg.setDiscoveryURI(oidc.getDiscoveryUri());
-        cfg.setCustomParams(oidc.getCustomParams());
-        cfg.setLogoutUrl(oidc.getLogoutUrl());
-
-        cfg.setExpireSessionWithToken(oidc.isExpireSessionWithToken());
-        if (StringUtils.isNotBlank(oidc.getTokenExpirationAdvance())) {
-            cfg.setTokenExpirationAdvance((int) Beans.newDuration(oidc.getTokenExpirationAdvance()).toSeconds());
-        }
-
-        if (StringUtils.isNotBlank(oidc.getResponseMode())) {
-            cfg.setResponseMode(oidc.getResponseMode());
-        }
-        if (StringUtils.isNotBlank(oidc.getResponseType())) {
-            cfg.setResponseType(oidc.getResponseType());
-        }
-        return cfg;
     }
 
     /**

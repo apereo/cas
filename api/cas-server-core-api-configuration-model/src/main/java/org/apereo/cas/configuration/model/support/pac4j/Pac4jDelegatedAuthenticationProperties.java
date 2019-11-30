@@ -172,11 +172,6 @@ public class Pac4jDelegatedAuthenticationProperties implements Serializable {
          */
         private String scope;
 
-        /**
-         * Custom fields to include in the request.
-         */
-        private String fields;
-
         public LinkedIn() {
             setClientName("LinkedIn");
         }
