@@ -15,6 +15,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * This is {@link AuthenticationRiskEmailNotifierTests}.
@@ -43,7 +44,7 @@ public class AuthenticationRiskEmailNotifierTests extends BaseAuthenticationRequ
     public void verifyOperation() {
         try {
             authenticationRiskEmailNotifier.setRegisteredService(CoreAuthenticationTestUtils.getRegisteredService());
-            val principal = CoreAuthenticationTestUtils.getPrincipal(CollectionUtils.wrap("mail", "cas@example.org"));
+            val principal = CoreAuthenticationTestUtils.getPrincipal(CollectionUtils.wrap("mail", List.of("cas@example.org")));
             val authentication = CoreAuthenticationTestUtils.getAuthentication(principal);
             authenticationRiskEmailNotifier.setAuthentication(authentication);
             authenticationRiskEmailNotifier.setAuthenticationRiskScore(new AuthenticationRiskScore(BigDecimal.ONE));
