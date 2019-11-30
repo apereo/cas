@@ -3,6 +3,7 @@ package org.apereo.cas.configuration.model.support.pac4j.saml;
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jBaseClientProperties;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
+import org.apereo.cas.util.model.TriStateBoolean;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -137,6 +138,12 @@ public class Pac4jSamlClientProperties extends Pac4jBaseClientProperties {
     private String nameIdPolicyFormat;
 
     /**
+     * Flag to indicate whether the allow-create flags
+     * for nameid policies should be set to true, false or ignored/defined.
+     */
+    private TriStateBoolean nameIdPolicyAllowCreate = TriStateBoolean.TRUE;
+
+    /**
      * Whether metadata should be marked to request sign assertions.
      */
     private boolean wantsAssertionsSigned;
@@ -209,10 +216,18 @@ public class Pac4jSamlClientProperties extends Pac4jBaseClientProperties {
      * Collection of signing signature reference digest methods, if any, to override the global defaults.
      */
     private List<String> signatureReferenceDigestMethods = new ArrayList<>();
+
     /**
      * The signing signature canonicalization algorithm, if any, to override the global defaults.
      */
     private String signatureCanonicalizationAlgorithm;
+
+    /**
+     * Provider name set for the saml authentication request.
+     * Sets the human-readable name of the requester for use by
+     * the presenter's user agent or the identity provider.
+     */
+    private String providerName;
 
     @RequiresModule(name = "cas-server-support-pac4j-webflow")
     @Getter

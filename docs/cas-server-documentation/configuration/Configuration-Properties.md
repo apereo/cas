@@ -3422,6 +3422,8 @@ prefixes for the `keystorePath` or `identityProviderMetadataPath` property).
 # cas.authn.pac4j.saml[0].useNameQualifier=true
 # cas.authn.pac4j.saml[0].attributeConsumingServiceIndex=
 # cas.authn.pac4j.saml[0].assertionConsumerServiceIndex=-1
+# cas.authn.pac4j.saml[0].provider-name=
+# cas.authn.pac4j.saml[0].nameIdPolicyAllowCreate=TRUE|FALSE|UNDEFINED
 
 # properties to configure how signing AuthnRequest
 # cas.authn.pac4j.saml[0].signAuthnRequest=false
@@ -3471,7 +3473,6 @@ Delegate authentication to HiOrg Server. Common settings for this identity provi
 Delegate authentication to LinkedIn. Common settings for this identity provider are available [here](Configuration-Properties-Common.html#delegated-authentication-settings) under the configuration key `cas.authn.pac4j.linkedin`.
 
 ```properties
-# cas.authn.pac4j.linkedIn.fields=
 # cas.authn.pac4j.linkedIn.scope=
 ```
 
