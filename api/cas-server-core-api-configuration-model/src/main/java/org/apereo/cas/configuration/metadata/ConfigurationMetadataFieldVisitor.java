@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.model.core.authentication.PasswordPolicyProp
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
 import org.apereo.cas.configuration.model.support.ldap.LdapSearchEntryHandlersProperties;
+import org.apereo.cas.util.model.TriStateBoolean;
 
 import com.github.javaparser.ast.Modifier;
 import com.github.javaparser.ast.body.FieldDeclaration;
@@ -82,6 +83,7 @@ public class ConfigurationMetadataFieldVisitor extends VoidVisitorAdapter<Config
                 + QueryType.class.getSimpleName() + '|'
                 + AbstractLdapProperties.LdapType.class.getSimpleName() + '|'
                 + CaseCanonicalizationMode.class.getSimpleName() + '|'
+                + TriStateBoolean.class.getSimpleName() + '|'
                 + PasswordPolicyProperties.PasswordPolicyHandlingOptions.class.getSimpleName() + '|'
                 + LdapSearchEntryHandlersProperties.SearchEntryHandlerTypes.class.getSimpleName() + '|'
                 + Map.class.getSimpleName() + '|'
