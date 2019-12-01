@@ -4,8 +4,8 @@ title: CAS - Ehcache 3 Ticket Registry
 category: Ticketing
 ---
 
-# Ehcache3 Ticket Registry
-Ehcache3 integration is enabled by including the following dependency in the WAR overlay:
+# Ehcache 3 Ticket Registry
+Ehcache 3.x integration is enabled by including the following dependency in the WAR overlay:
 
 ```xml
 <dependency>
@@ -28,7 +28,7 @@ to create the Terracotta cluster configuration. If that isn't appropriate
 
 #### Configuration
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#ehcache3-ticket-registry).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#ehcache-3-ticket-registry).
 CAS currently doesn't support or require an XML configuration to configure Ehcache. 
 
 ### Eviction Policy
