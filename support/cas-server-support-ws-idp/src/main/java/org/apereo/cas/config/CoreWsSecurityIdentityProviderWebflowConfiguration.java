@@ -6,8 +6,8 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
+import org.apereo.cas.ws.idp.web.flow.WSFederationIdentityProviderWebflowConfigurer;
 import org.apereo.cas.ws.idp.web.flow.WSFederationMetadataUIAction;
-import org.apereo.cas.ws.idp.web.flow.WSFederationWebflowConfigurer;
 
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,7 +66,7 @@ public class CoreWsSecurityIdentityProviderWebflowConfiguration {
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer wsFederationWebflowConfigurer() {
-        return new WSFederationWebflowConfigurer(flowBuilderServices.getObject(),
+        return new WSFederationIdentityProviderWebflowConfigurer(flowBuilderServices.getObject(),
             loginFlowDefinitionRegistry.getObject(), wsFederationMetadataUIAction(),
             applicationContext, casProperties);
     }
