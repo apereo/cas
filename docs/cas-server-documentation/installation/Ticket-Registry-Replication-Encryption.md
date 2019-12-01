@@ -11,6 +11,7 @@ by encrypting and signing tickets:
 
 * [Hazelcast](../ticketing/Hazelcast-Ticket-Registry.html)
 * [Ehcache](../ticketing/Ehcache-Ticket-Registry.html)
+* [Ehcache 3](../ticketing/Ehcache3-Ticket-Registry.html)
 * [Ignite](../ticketing/Ignite-Ticket-Registry.html)
 * [CouchDb](../ticketing/CouchDb-Ticket-Registry.html)
 * [Memcached](../ticketing/Memcached-Ticket-Registry.html)

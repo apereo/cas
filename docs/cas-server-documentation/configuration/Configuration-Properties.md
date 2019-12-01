@@ -4389,6 +4389,37 @@ To learn more about this topic, [please review this guide](../ticketing/Ehcache-
 
 Signing & encryption settings for this registry are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.ticket.registry.ehcache`.
 
+### Ehcache 3 Ticket Registry
+
+To learn more about this topic, [please review this guide](../ticketing/Ehcache3-Ticket-Registry.html).
+
+```properties
+# cas.ticket.registry.ehcache3.enabled=true
+# cas.ticket.registry.ehcache3.maxElementsInMemory=10000
+# cas.ticket.registry.ehcache3.maxSizeOnDisk=200
+# cas.ticket.registry.ehcache3.maxSizeOnDiskUnits=MB
+# cas.ticket.registry.ehcache3.perCacheSizeOnDisk=20
+# cas.ticket.registry.ehcache3.perCacheSizeOnDiskUnits=MB
+# cas.ticket.registry.ehcache3.maxSizeOffHeap=100
+# cas.ticket.registry.ehcache3.maxSizeOffHeapUnits=MB
+# cas.ticket.registry.ehcache3.eternal=false
+# cas.ticket.registry.ehcache3.enableStatistics=true
+# cas.ticket.registry.ehcache3.enableManagement=true
+# cas.ticket.registry.ehcache3.terracottaClusterUri=
+# cas.ticket.registry.ehcache3.defaultServerResource=main
+# cas.ticket.registry.ehcache3.resourcePoolName=cas-ticket-pool
+# cas.ticket.registry.ehcache3.resourcePoolSize=15
+# cas.ticket.registry.ehcache3.resourcePoolUnits=MB
+# cas.ticket.registry.ehcache3.rootDirectory=/tmp/cas/ehcache3
+# cas.ticket.registry.ehcache3.clusterConnectTimeout=150
+# cas.ticket.registry.ehcache3.clusterReadWriteTimeout=5
+
+```
+There is no default value for the Terracota Cluster URI but the format is `terracotta://host1.company.org:9410,host2.company.org:9410/cas-application`
+
+Signing & encryption settings for this registry are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.ticket.registry.ehcache`.
+
+
 ### Ignite Ticket Registry
 
 To learn more about this topic, [please review this guide](../ticketing/Ignite-Ticket-Registry.html).

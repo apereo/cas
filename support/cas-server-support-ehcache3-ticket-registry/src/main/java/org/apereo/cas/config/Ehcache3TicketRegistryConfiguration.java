@@ -15,6 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.ehcache.clustered.client.config.builders.ClusteredResourcePoolBuilder;
 import org.ehcache.clustered.client.config.builders.ClusteredStoreConfigurationBuilder;
 import org.ehcache.clustered.client.config.builders.ClusteringServiceConfigurationBuilder;
+import org.ehcache.clustered.client.config.builders.TimeoutsBuilder;
 import org.ehcache.clustered.common.Consistency;
 import org.ehcache.config.CacheConfiguration;
 import org.ehcache.config.builders.CacheConfigurationBuilder;
@@ -71,6 +72,10 @@ public class Ehcache3TicketRegistryConfiguration {
         val terracottaClusterUri = ehcacheProperties.getTerracottaClusterUri();
         if (StringUtils.isNotBlank(terracottaClusterUri)) {
             var clusterConfigBuilder = ClusteringServiceConfigurationBuilder.cluster(URI.create(terracottaClusterUri))
+                .timeouts(TimeoutsBuilder.timeouts()
+                    .connection(Duration.ofSeconds(ehcacheProperties.getClusterConnectionTimeout()))
+                    .read(Duration.ofSeconds(ehcacheProperties.getClusterReadWriteTimeout()))
+                    .write(Duration.ofSeconds(ehcacheProperties.getClusterReadWriteTimeout())).build())
                 .autoCreate(s -> s.defaultServerResource(ehcacheProperties.getDefaultServerResource())
                 .resourcePool(ehcacheProperties.getResourcePoolName(), ehcacheProperties.getResourcePoolSize(), MemoryUnit.valueOf(ehcacheProperties.getResourcePoolUnits())));
             return clusterConfigBuilder.build();

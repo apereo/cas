@@ -60,7 +60,6 @@ public class Ehcache3Properties implements Serializable {
      */
     private String perCacheSizeOnDiskUnits = "MB";
 
-
     /**
      * Size of off heap cache.
      */
@@ -81,16 +80,16 @@ public class Ehcache3Properties implements Serializable {
     /**
      * Sets whether statistics are enabled for all caches.
      */
-    private boolean enableStatistics;
+    private boolean enableStatistics = true;
 
     /**
      * Sets whether JMX management beans are enabled for all caches.
      */
-    private boolean enableManagement;
+    private boolean enableManagement = true;
 
     /**
-     * URI in format something like "terracotta://localhost/my-application".
-     * Default port for terracotta (9410) is ussed if not specified in URI.
+     * URI in format something like "terracotta://host1.company.org:9410,host2.company.org:9410/cas-application".
+     * Default port for terracotta (9410) is used if not specified in URI.
      */
     private String terracottaClusterUri;
 
@@ -118,6 +117,17 @@ public class Ehcache3Properties implements Serializable {
      * Root directory to store data if not using terracotta cluster.
      */
     private String rootDirectory = "/tmp/cas/ehcache3";
+
+    /**
+     * Timeout when reading or writing to/from Terracotta cluster.
+     */
+    private long clusterReadWriteTimeout = 5L;
+
+    /**
+     * Timeout when connecting to Terracotta cluster.
+     */
+    private long clusterConnectionTimeout = 150L;
+
 
     /**
      * Crypto settings for the registry.

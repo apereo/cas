@@ -126,6 +126,7 @@ layout: null
         *   [JMS](/$version/ticketing/Messaging-JMS-Ticket-Registry.html)
         *   [Hazelcast](/$version/ticketing/Hazelcast-Ticket-Registry.html)
         *   [Ehcache](/$version/ticketing/Ehcache-Ticket-Registry.html)
+        *   [Ehcache 3](/$version/ticketing/Ehcache3-Ticket-Registry.html)
         *   [Memcached](/$version/ticketing/Memcached-Ticket-Registry.html)
         *   [JPA](/$version/ticketing/JPA-Ticket-Registry.html)
         *   [Ignite](/$version/ticketing/Ignite-Ticket-Registry.html)
