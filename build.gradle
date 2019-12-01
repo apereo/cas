@@ -258,20 +258,21 @@ subprojects {
             url "https://repo.spring.io/milestone/"
             mavenContent { releasesOnly() }
         }
-        maven { url "https://repo.spring.io/snapshot/" }
+        maven {
+            url "https://repo.spring.io/snapshot/"
+            mavenContent { snapshotsOnly() }
+        }
         maven {
             url "https://repo.spring.io/libs-milestone"
             mavenContent { releasesOnly() }
         }
         maven {
-            url "https://dl.bintray.com/uniconiam/maven"
+            url "https://splunk.jfrog.io/splunk/ext-releases-local"
             mavenContent { releasesOnly() }
         }
         maven {
-            url "https://jitpack.io"
-            content {
-                includeGroupByRegex "com\\.github\\.coova.*"
-            }
+            url "https://dl.bintray.com/uniconiam/maven"
+            mavenContent { releasesOnly() }
         }
         maven {
             url "https://oss.jfrog.org/artifactory/oss-snapshot-local"
@@ -293,15 +294,6 @@ subprojects {
 
             cacheDynamicVersionsFor 5, 'days'
             cacheChangingModulesFor 5, 'days'
-
-            /**
-             * Required for all JRadius modules
-             */
-            eachDependency { DependencyResolveDetails details ->
-                if (details.requested.group == "gnu-getopt") {
-                    details.useTarget group: "gnu.getopt", name: "java-getopt", version: details.requested.version
-                }
-            }
         }
         exclude(group: "cglib", module: "cglib")
         exclude(group: "cglib", module: "cglib-full")

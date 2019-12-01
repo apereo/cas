@@ -25,14 +25,14 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
 
     testImplementation project(":core:cas-server-core-util")
-    testImplementation project(":core:cas-server-core-services")
+    
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-validation")
     testImplementation project(":core:cas-server-core-validation-api")
     testImplementation project(":core:cas-server-core-authentication")
     testImplementation project(":core:cas-server-core-configuration")
     testImplementation project(":core:cas-server-core-services-authentication")
-    testImplementation project(":core:cas-server-core-authentication-attributes")
+    
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":core:cas-server-core-logout-api")
     testImplementation project(":core:cas-server-core-logout")
@@ -43,7 +43,7 @@ dependencies {
     testImplementation project(":support:cas-server-support-json-service-registry")
     testImplementation project(":core:cas-server-core-cookie")
     testImplementation project(":core:cas-server-core-web")
-    testImplementation project(":core:cas-server-core-web-api")
+    
     testImplementation project(":core:cas-server-core-tickets")
     testImplementation project(":core:cas-server-core-tickets-api")
 }

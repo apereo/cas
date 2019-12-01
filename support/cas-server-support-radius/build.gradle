@@ -16,11 +16,9 @@ dependencies {
     implementation project(":core:cas-server-core-webflow-api")
     implementation project(":core:cas-server-core-webflow-mfa-api")
 
-    testImplementation project(":core:cas-server-core-configuration-api")
     testImplementation project(":core:cas-server-core-configuration")
     testImplementation project(":core:cas-server-core-web")
     testImplementation project(":core:cas-server-core-webflow-mfa")
-    testImplementation project(":core:cas-server-core-webflow-api")
     testImplementation project(":core:cas-server-core-webflow")
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-util")

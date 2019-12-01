@@ -36,12 +36,12 @@ dependencies {
     testImplementation project(":core:cas-server-core-services-authentication")
     testImplementation project(":core:cas-server-core-web")
     testImplementation project(":core:cas-server-core-audit")
-    testImplementation project(":core:cas-server-core-web-api")
+    
     testImplementation project(":core:cas-server-core-logout")
     testImplementation project(":core:cas-server-core-logout-api")
     testImplementation project(":core:cas-server-core-tickets")
     testImplementation project(":core:cas-server-core-cookie")
-    testImplementation project(":core:cas-server-core-cookie-api")
+    
 
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")

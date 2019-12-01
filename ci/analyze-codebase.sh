@@ -66,6 +66,14 @@ if [ $retVal != 0 ]; then
     exit $retVal
 fi
 
+echo -e "Checking for duplicate configurations in Gradle build files"
+groovy ./ci/groovy/CheckDuplicateGradleConfiguration.groovy
+retVal=$?
+if [ $retVal != 0 ]; then
+    echo -e "Groovy analysis has found issues with Gradle configurations."
+    exit $retVal
+fi
+
 echo -e "Groovy analysis has successfully examined the codebase."
 echo -e "***************************************************************************************"
 echo -e "Build finished at `date`"
