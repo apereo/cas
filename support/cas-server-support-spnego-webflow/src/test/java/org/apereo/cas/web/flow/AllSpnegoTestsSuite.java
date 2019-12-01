@@ -19,6 +19,7 @@ import org.junit.runner.RunWith;
     LdapContinuousIntegrationSpnegoKnownClientSystemsFilterActionTests.class,
     LdapSpnegoKnownClientSystemsFilterActionTests.class,
     SpnegoNegotiateCredentialsActionTests.class,
+    SpengoWebflowConfigurerTests.class,
     SpnegoCredentialsActionTests.class
 })
 @RunWith(JUnitPlatform.class)

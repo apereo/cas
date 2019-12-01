@@ -12,19 +12,19 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
 
 /**
- * This is {@link WSFederationWebflowConfigurer}.
+ * This is {@link WSFederationIdentityProviderWebflowConfigurer}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public class WSFederationWebflowConfigurer extends AbstractCasWebflowConfigurer {
+public class WSFederationIdentityProviderWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
     private final Action wsfedAction;
 
-    public WSFederationWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
-                                         final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-                                         final Action wsfedAction, final ApplicationContext applicationContext,
-                                         final CasConfigurationProperties casProperties) {
+    public WSFederationIdentityProviderWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
+                                                         final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+                                                         final Action wsfedAction, final ApplicationContext applicationContext,
+                                                         final CasConfigurationProperties casProperties) {
         super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
         this.wsfedAction = wsfedAction;
     }

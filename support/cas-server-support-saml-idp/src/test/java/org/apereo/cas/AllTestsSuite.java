@@ -23,6 +23,7 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.nameid.SamlProfileSa
 import org.apereo.cas.support.saml.web.idp.profile.builders.response.SamlProfileSaml2ResponseBuilderTests;
 import org.apereo.cas.support.saml.web.idp.profile.sso.request.DefaultSSOSamlHttpRequestExtractorTests;
 import org.apereo.cas.ticket.query.DefaultSamlAttributeQueryTicketFactoryTests;
+import org.apereo.cas.web.flow.SamlIdPMetadataUIWebflowConfigurerTests;
 
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
@@ -48,6 +49,7 @@ import org.junit.runner.RunWith;
     GroovySamlRegisteredServiceAttributeReleasePolicyTests.class,
     SamlRegisteredServiceJpaPostgresTests.class,
     SamlIdPUtilsTests.class,
+    SamlIdPMetadataUIWebflowConfigurerTests.class,
     FileSystemSamlIdPMetadataLocatorTests.class,
     FileSystemSamlIdPMetadataGeneratorTests.class,
     DefaultSamlAttributeQueryTicketFactoryTests.class,

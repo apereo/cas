@@ -12,12 +12,11 @@ import org.apereo.cas.web.flow.PrincipalScimProvisionerAction;
 import org.apereo.cas.web.flow.ScimWebflowConfigurer;
 
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationContext;
@@ -38,6 +37,7 @@ import org.springframework.webflow.execution.Action;
 @Configuration("casScimConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
+@ConditionalOnProperty(name = "cas.scim.target")
 public class CasScimConfiguration {
     @Autowired
     @Qualifier("loginFlowRegistry")
@@ -79,10 +79,6 @@ public class CasScimConfiguration {
     @ConditionalOnMissingBean(name = "scimProvisioner")
     public PrincipalProvisioner scimProvisioner() {
         val scim = casProperties.getScim();
-        if (StringUtils.isBlank(scim.getTarget())) {
-            throw new BeanCreationException("Scim target cannot be blank");
-        }
-
         if (casProperties.getScim().getVersion() == 1) {
             return new ScimV1PrincipalProvisioner(scim.getTarget(),
                 scim.getOauthToken(),

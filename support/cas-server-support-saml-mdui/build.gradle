@@ -16,12 +16,13 @@ dependencies {
 
     implementation libraries.opensaml
 
-    testImplementation project(path: ":core:cas-server-core", configuration: "tests")
     testImplementation project(path: ":support:cas-server-support-saml", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-webflow", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
 
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-util")
