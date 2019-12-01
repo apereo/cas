@@ -33,6 +33,12 @@
       ]
     },
     {
+      "groupName": "AspectJ",
+      "packagePatterns": [
+        "^org.aspectj:"
+      ]
+    },
+    {
       "groupName": "Spring",
       "packagePatterns": [
         "^org.springframework:"
