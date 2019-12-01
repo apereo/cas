@@ -1553,25 +1553,15 @@ ext.libraries = [
             force = true
         },
         jradius                 : [
-                dependencies.create("com.github.coova:jradius:$jradiusVersion") {
-                    exclude(group: "commons-logging", module: "commons-logging")
-                    exclude(group: "log4j", module: "log4j")
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "commons-collections", module: "commons-collections")
-                    exclude(group: "commons-beanutils", module: "commons-beanutils")
-                    exclude(group: "org.bouncycastle", module: "bcprov-jdk15")
-                    exclude(group: "org.slf4j", module: "slf4j-log4j12")
-                    exclude(group: "org.springframework", module: "spring-beans")
-                    exclude(group: "org.springframework", module: "spring-context")
-                    exclude(group: "org.springframework", module: "spring-context-support")
-                    exclude(group: "org.springframework", module: "spring-core")
-                    exclude(group: "commons-lang", module: "commons-lang")
-                    exclude(group: "net.sf.ehcache", module: "ehcache-core")
-                    force = true
-                },
-                dependencies.create("gnu.getopt:java-getopt:1.0.13") {
-                    force = true
-                }
+                createJRadiusDependency(
+                        "net.jradius:jradius-extras:$jradiusVersion",
+                        "net.jradius:jradius-apps:$jradiusVersion",
+                        "net.jradius:jradius-dictionary:$jradiusVersion",
+                        "net.jradius:jradius-client:$jradiusVersion",
+                        "net.jradius:jradius-extended:$jradiusVersion",
+                        "net.jradius:jradius-core:$jradiusVersion",
+                        "net.jradius:jradius-server:$jradiusVersion"
+                )
         ],
         tests                   : [
                 dependencies.create("com.github.kstyrc:embedded-redis:$embeddedRedisVersion") {
@@ -3690,3 +3680,24 @@ ext.libraries = [
                 }
         ]
 ]
+
+def createJRadiusDependency(String... coordinates) {
+    coordinates.each {
+        dependencies.create(it) {
+            exclude(group: "commons-logging", module: "commons-logging")
+            exclude(group: "log4j", module: "log4j")
+            exclude(group: "org.slf4j", module: "slf4j-api")
+            exclude(group: "commons-collections", module: "commons-collections")
+            exclude(group: "commons-beanutils", module: "commons-beanutils")
+            exclude(group: "org.bouncycastle", module: "bcprov-jdk15")
+            exclude(group: "org.slf4j", module: "slf4j-log4j12")
+            exclude(group: "org.springframework", module: "spring-beans")
+            exclude(group: "org.springframework", module: "spring-context")
+            exclude(group: "org.springframework", module: "spring-context-support")
+            exclude(group: "org.springframework", module: "spring-core")
+            exclude(group: "commons-lang", module: "commons-lang")
+            exclude(group: "net.sf.ehcache", module: "ehcache-core")
+            force = true
+        }
+    }
+}
