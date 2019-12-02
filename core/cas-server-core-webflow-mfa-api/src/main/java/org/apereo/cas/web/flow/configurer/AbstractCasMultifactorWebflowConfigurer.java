@@ -200,7 +200,7 @@ public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCa
 
     private void registerMultifactorProviderFailureAction(final Flow flow, final Flow mfaFlow) {
         if (flow != null) {
-            val failureAction = createActionState(mfaFlow, CasWebflowConstants.TRANSITION_ID_MFA_FAILURE, createEvaluateAction(MFA_CHECK_FAILURE_BEAN_ID));
+            val failureAction = createActionState(mfaFlow, CasWebflowConstants.STATE_ID_MFA_FAILURE, createEvaluateAction(MFA_CHECK_FAILURE_BEAN_ID));
             createTransitionForState(failureAction, CasWebflowConstants.TRANSITION_ID_UNAVAILABLE, CasWebflowConstants.TRANSITION_ID_UNAVAILABLE);
             createTransitionForState(failureAction, CasWebflowConstants.TRANSITION_ID_BYPASS, CasWebflowConstants.TRANSITION_ID_SUCCESS);
 

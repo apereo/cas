@@ -3,6 +3,7 @@ package org.apereo.cas;
 
 import org.apereo.cas.adaptors.yubikey.JsonYubiKeyAccountRegistryTests;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAuthenticationHandlerTests;
+import org.apereo.cas.adaptors.yubikey.YubiKeyMultifactorWebflowConfigurerTests;
 
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
@@ -16,7 +17,8 @@ import org.junit.runner.RunWith;
  */
 @SelectClasses({
     JsonYubiKeyAccountRegistryTests.class,
-    YubiKeyAuthenticationHandlerTests.class
+    YubiKeyAuthenticationHandlerTests.class,
+    YubiKeyMultifactorWebflowConfigurerTests.class
 })
 @RunWith(JUnitPlatform.class)
 public class AllTestsSuite {
