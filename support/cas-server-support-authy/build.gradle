@@ -18,6 +18,7 @@ dependencies {
     implementation project(":core:cas-server-core-webflow-mfa-api")
     implementation project(":core:cas-server-core-web-api")
 
+    testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":support:cas-server-support-trusted-mfa")
     
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")

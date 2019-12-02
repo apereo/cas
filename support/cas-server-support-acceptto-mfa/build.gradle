@@ -21,7 +21,7 @@ dependencies {
     implementation project(":support:cas-server-support-pac4j-api")
     implementation project(":support:cas-server-support-actions")
     implementation project(":support:cas-server-support-trusted-mfa-core")
-    testImplementation project(":support:cas-server-support-trusted-mfa")
+    
 
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-util", configuration: "tests")
@@ -35,6 +35,7 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-webflow-mfa", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-webflow-mfa-api", configuration: "tests")
 
+    testImplementation project(":support:cas-server-support-trusted-mfa")
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":core:cas-server-core-tickets")
     testImplementation project(":core:cas-server-core-authentication")
