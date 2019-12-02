@@ -328,6 +328,11 @@ public interface CasWebflowConstants {
     String STATE_ID_VIEW_REDIR_UNAUTHZ_URL = "viewRedirectToUnauthorizedUrlView";
 
     /**
+     * The state 'mfaFailure'.
+     */
+    String STATE_ID_MFA_FAILURE = "mfaFailure";
+
+    /**
      * The state 'serviceUnauthorizedCheck'.
      */
     String STATE_ID_SERVICE_UNAUTHZ_CHECK = "serviceUnauthorizedCheck";
@@ -477,15 +482,16 @@ public interface CasWebflowConstants {
      */
     String STATE_ID_OPEN_ID_SINGLE_SIGN_ON_ACTION = "openIdSingleSignOnAction";
 
+    /**
+     * The view id 'registerDeviceView'.
+     */
+    String STATE_ID_REGISTER_DEVICE = "registerDeviceView";
+
     /*
      ****************************************
      * Views.
      ****************************************
      */
-    /**
-     * The view id 'registerDeviceView'.
-     */
-    String VIEW_ID_REGISTER_DEVICE = "registerDeviceView";
 
     /**
      * The view state 'casPac4jStopWebflow'.
@@ -742,6 +748,5 @@ public interface CasWebflowConstants {
      * Action id 'openIdSingleSignOnAction .
      */
     String ACTION_ID_OPEN_ID_SINGLE_SIGN_ON_ACTION = "openIdSingleSignOnAction";
-
 
 }
