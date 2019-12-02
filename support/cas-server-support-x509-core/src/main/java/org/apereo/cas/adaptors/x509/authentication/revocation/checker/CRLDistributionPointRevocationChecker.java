@@ -20,7 +20,6 @@ import org.ehcache.UserManagedCache;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.core.io.ByteArrayResource;
 
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
