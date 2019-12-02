@@ -31,7 +31,7 @@ buildscript {
 
     dependencies {
         classpath "gradle.plugin.com.ewerk.gradle.plugins:jaxb2-plugin:1.0.9"
-        classpath "com.github.jk1:gradle-license-report:1.11"
+        classpath "com.github.jk1:gradle-license-report:$gradleLicenseVersion"
         classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
         classpath "com.netflix.nebula:gradle-lint-plugin:$gradleLintVersion"
         classpath "gradle.plugin.com.gorylenko.gradle-git-properties:gradle-git-properties:$gradleGitVersion"
