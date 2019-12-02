@@ -34,7 +34,7 @@ public class CasSimpleMultifactorAuthenticationTicketCatalogConfiguration extend
     public void configureTicketCatalog(final TicketCatalog plan) {
         LOGGER.debug("Registering core WS security token ticket definitions...");
         val definition = buildTicketDefinition(plan, CasSimpleMultifactorAuthenticationTicketFactory.PREFIX,
-            TransientSessionTicket.class, Ordered.HIGHEST_PRECEDENCE);
+            TransientSessionTicketImpl.class, Ordered.HIGHEST_PRECEDENCE);
         val properties = definition.getProperties();
         properties.setStorageName("casSimpleMultifactorAuthenticationTicketsCache");
         val timeToLive = casSimpleMultifactorAuthenticationTicketExpirationPolicy.getObject().buildTicketExpirationPolicy().getTimeToLive();
