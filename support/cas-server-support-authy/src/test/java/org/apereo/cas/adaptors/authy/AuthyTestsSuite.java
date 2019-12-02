@@ -1,6 +1,7 @@
 package org.apereo.cas.adaptors.authy;
 
 import org.apereo.cas.adaptors.authy.web.flow.AuthyAuthenticationRegistrationWebflowActionTests;
+import org.apereo.cas.adaptors.authy.web.flow.AuthyMultifactorWebflowConfigurerTests;
 
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
@@ -14,6 +15,7 @@ import org.junit.runner.RunWith;
  */
 @SelectClasses({
     AuthyAuthenticationHandlerTests.class,
+    AuthyMultifactorWebflowConfigurerTests.class,
     AuthyAuthenticationRegistrationWebflowActionTests.class
 })
 @RunWith(JUnitPlatform.class)
