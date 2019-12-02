@@ -20,6 +20,7 @@ import org.ehcache.UserManagedCache;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.core.io.ByteArrayResource;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
@@ -45,7 +46,7 @@ import java.util.stream.IntStream;
  * @since 3.4.6
  */
 @Slf4j
-public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocationChecker implements DisposableBean {
+public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocationChecker implements DisposableBean, AutoCloseable {
 
     private final UserManagedCache<URI, byte[]> crlCache;
     private final CRLFetcher fetcher;
@@ -243,5 +244,10 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
         } catch (final StateTransitionException e) {
             LOGGER.warn("Error closing CRL cache {}", e.getMessage(), e);
         }
+    }
+
+    @Override
+    public void close() {
+        destroy();
     }
 }

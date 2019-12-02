@@ -37,28 +37,8 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
  */
 @SpringBootTest(classes = {
     Ehcache3TicketRegistryConfiguration.class,
-    RefreshAutoConfiguration.class,
-    MailSenderAutoConfiguration.class,
     Ehcache3TicketRegistryTicketCatalogConfiguration.class,
-    CasCoreTicketsConfiguration.class,
-    CasCoreTicketCatalogConfiguration.class,
-    CasCoreUtilConfiguration.class,
-    CasPersonDirectoryConfiguration.class,
-    CasCoreLogoutConfiguration.class,
-    CasCoreAuthenticationConfiguration.class,
-    CasCoreServicesAuthenticationConfiguration.class,
-    CasCoreAuthenticationPrincipalConfiguration.class,
-    CasCoreAuthenticationPolicyConfiguration.class,
-    CasCoreAuthenticationMetadataConfiguration.class,
-    CasCoreAuthenticationSupportConfiguration.class,
-    CasCoreAuthenticationHandlersConfiguration.class,
-    CasCoreHttpConfiguration.class,
-    CasCoreConfiguration.class,
-    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-    CasCoreServicesConfiguration.class,
-    CasCoreWebConfiguration.class,
-    CasCoreTicketIdGeneratorsConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class
+    BaseTicketRegistryTests.SharedTestConfiguration.class
 }, properties = {
     "spring.mail.host=localhost",
     "spring.mail.port=25000",
@@ -66,7 +46,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
     "cas.ticket.registry.ehcache3.terracottaClusterUri=terracotta://localhost:9410/cas-application"
 })
 @EnabledIfContinuousIntegration
-@Tag("Ehcache3")
+@Tag("Ehcache")
 public class EhCache3TerracottaTicketRegistryTests extends BaseTicketRegistryTests {
 
     @Autowired

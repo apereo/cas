@@ -128,6 +128,27 @@ public class Ehcache3Properties implements Serializable {
      */
     private long clusterConnectionTimeout = 150L;
 
+    /**
+     * Cluster consistency may be STRONG or EVENTUAL.
+     */
+    private Consistency clusteredCacheConsistency = Consistency.STRONG;
+
+    /**
+     *
+     * Enumeration of the different consistency levels supported in clustered caches.
+     */
+    public enum Consistency {
+
+        /**
+         * Indicates that the visibility of mutative operations is not guaranteed on operation completion.
+         */
+        EVENTUAL,
+        /**
+         * Indicates that the visibility of mutative operations is guaranteed on operation completion.
+         */
+        STRONG
+
+    }
 
     /**
      * Crypto settings for the registry.

@@ -21,7 +21,7 @@ fi
 
 gradle="./gradlew $@"
 gradleBuild=""
-gradleBuildOptions="--build-cache --configure-on-demand --no-daemon -DtestCategoryType=EHCACHE3"
+gradleBuildOptions="--build-cache --configure-on-demand --no-daemon -DtestCategoryType=EHCACHE"
 
 echo -e "***********************************************"
 echo -e "Gradle build started at `date`"

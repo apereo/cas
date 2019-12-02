@@ -4355,6 +4355,7 @@ under the configuration key `cas.ticket.registry.jms`.
 
 ### Ehcache Ticket Registry
 
+Theses properties are for the module that uses version 2.x of the Ehcache library. 
 To learn more about this topic, [please review this guide](../ticketing/Ehcache-Ticket-Registry.html).
 
 ```properties
@@ -4391,7 +4392,7 @@ Signing & encryption settings for this registry are available [here](Configurati
 
 ### Ehcache 3 Ticket Registry
 
-To learn more about this topic, [please review this guide](../ticketing/Ehcache3-Ticket-Registry.html).
+To learn more about this topic, [please review this guide](../ticketing/Ehcache-Ticket-Registry.html).
 
 ```properties
 # cas.ticket.registry.ehcache3.enabled=true
@@ -4413,7 +4414,7 @@ To learn more about this topic, [please review this guide](../ticketing/Ehcache3
 # cas.ticket.registry.ehcache3.rootDirectory=/tmp/cas/ehcache3
 # cas.ticket.registry.ehcache3.clusterConnectTimeout=150
 # cas.ticket.registry.ehcache3.clusterReadWriteTimeout=5
-
+# cas.ticket.registry.ehcache3.clusteredCacheConsistency=STRONG
 ```
 There is no default value for the Terracota Cluster URI but the format is `terracotta://host1.company.org:9410,host2.company.org:9410/cas-application`
 

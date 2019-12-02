@@ -165,8 +165,8 @@ jobs:
       script: ./ci/tests/dynamodb/run-tests-dynamodb.sh
       name: "DynamoDb Tests"
     - stage: test
-      script: ./ci/tests/ehcache3/run-tests-ehcache3.sh
-      name: "Ehcache3 Tests"
+      script: ./ci/tests/ehcache/run-tests-ehcache.sh
+      name: "Ehcache Tests"
     - stage: test
       script: ./ci/tests/filesystem/run-tests-filesystem.sh
       name: "FileSystem Tests"

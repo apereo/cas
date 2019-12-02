@@ -115,11 +115,11 @@ if (hasTestsOfCategory(project, "DynamoDb")) {
     }
 }
 
-if (hasTestsOfCategory(project, "Ehcache3")) {
-    task testEhcache3(type: Test) {
-        enabled = shouldTest(project, "Ehcache3")
+if (hasTestsOfCategory(project, "Ehcache")) {
+    task testEhcache(type: Test) {
+        enabled = shouldTest(project, "Ehcache")
         useJUnitPlatform {
-            includeTags "Ehcache3"
+            includeTags "Ehcache"
         }
     }
 }
@@ -278,7 +278,7 @@ if (hasTestsOfCategory(project, "JDBC")) {
 test {
     useJUnitPlatform {
         excludeTags "Cassandra", "CosmosDb", "Couchbase", "CouchDb", "DynamoDb",
-                "Ehcache3", "FileSystem", "Ignite", "InfluxDb",
+                "Ehcache", "FileSystem", "Ignite", "InfluxDb",
                 "Ldap", "Mail", "MariaDb", "Memcached", "JDBC",
                 "MongoDb", "MsSqlServer", "MySQL", "Postgres", "Redis",
                 "Radius", "AmazonWebServices", "RestfulApi", "Groovy",
