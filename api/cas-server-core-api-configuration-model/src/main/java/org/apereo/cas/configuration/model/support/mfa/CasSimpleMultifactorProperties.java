@@ -31,6 +31,11 @@ public class CasSimpleMultifactorProperties extends BaseMultifactorProviderPrope
     private long timeToKillInSeconds = 30;
 
     /**
+     * Indicates whether this provider should support trusted devices.
+     */
+    private boolean trustedDeviceEnabled;
+    
+    /**
      * The length of the generated token.
      */
     private int tokenLength = 6;
