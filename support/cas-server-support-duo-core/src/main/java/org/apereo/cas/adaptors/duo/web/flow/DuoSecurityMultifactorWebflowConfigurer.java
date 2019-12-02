@@ -1,4 +1,4 @@
-package org.apereo.cas.adaptors.duo.web.flow.config;
+package org.apereo.cas.adaptors.duo.web.flow;
 
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityCredential;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -41,11 +41,11 @@ import java.util.List;
 @Slf4j
 public class DuoSecurityMultifactorWebflowConfigurer extends AbstractMultifactorTrustedDeviceWebflowConfigurer {
 
-    private static final String STATE_ID_VIEW_LOGIN_FORM_DUO = "viewLoginFormDuo";
-    private static final String STATE_ID_FINALIZE_AUTHENTICATION = "finalizeAuthentication";
-    private static final String STATE_ID_DETERMINE_DUO_USER_ACCOUNT = "determineDuoUserAccount";
-    private static final String STATE_ID_DUO_NON_WEB_AUTHENTICATION = "doNonWebAuthentication";
-    private static final String STATE_ID_DETERMINE_DUO_REQUEST = "determineDuoRequest";
+    static final String STATE_ID_VIEW_LOGIN_FORM_DUO = "viewLoginFormDuo";
+    static final String STATE_ID_FINALIZE_AUTHENTICATION = "finalizeAuthentication";
+    static final String STATE_ID_DETERMINE_DUO_USER_ACCOUNT = "determineDuoUserAccount";
+    static final String STATE_ID_DUO_NON_WEB_AUTHENTICATION = "doNonWebAuthentication";
+    static final String STATE_ID_DETERMINE_DUO_REQUEST = "determineDuoRequest";
 
     private static final String ACTION_CHECK_WEB_AUTHENTICATION_REQUEST = "checkWebAuthenticationRequestAction";
     private static final String ACTION_DUO_AUTHENTICATION_WEBFLOW = "duoAuthenticationWebflowAction";
