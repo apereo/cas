@@ -7,7 +7,6 @@ import org.apereo.cas.web.flow.config.SpnegoWebflowActionsConfiguration;
 import org.apereo.cas.web.flow.config.SpnegoWebflowConfiguration;
 
 import lombok.val;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration;
 import org.springframework.context.annotation.Import;

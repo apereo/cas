@@ -15,7 +15,7 @@ import org.junit.runner.RunWith;
  */
 @SelectClasses({
     WSFederationIdentityProviderWebflowConfigurerTests.class,
-    SecurityTokenServiceTokenFetcherTests.class,
+    SecurityTokenServiceTokenFetcherTests.class
 })
 @RunWith(JUnitPlatform.class)
 public class AllWsFederationTestsSuite {

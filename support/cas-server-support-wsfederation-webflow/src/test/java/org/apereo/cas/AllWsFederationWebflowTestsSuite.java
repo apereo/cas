@@ -15,7 +15,7 @@ import org.junit.runner.RunWith;
  */
 @SelectClasses({
     WsFederationActionTests.class,
-    WsFederationWebflowConfigurerTests.class,
+    WsFederationWebflowConfigurerTests.class
 })
 @RunWith(JUnitPlatform.class)
 public class AllWsFederationWebflowTestsSuite {
