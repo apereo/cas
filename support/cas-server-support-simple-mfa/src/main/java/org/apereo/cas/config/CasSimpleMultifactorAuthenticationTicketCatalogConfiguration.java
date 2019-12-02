@@ -5,7 +5,7 @@ import org.apereo.cas.mfa.simple.CasSimpleMultifactorAuthenticationTicketFactory
 import org.apereo.cas.ticket.BaseTicketCatalogConfigurer;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.TicketCatalog;
-import org.apereo.cas.ticket.TransientSessionTicket;
+import org.apereo.cas.ticket.TransientSessionTicketImpl;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
