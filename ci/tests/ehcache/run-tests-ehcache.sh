@@ -27,7 +27,7 @@ echo -e "***********************************************"
 echo -e "Gradle build started at `date`"
 echo -e "***********************************************"
 
-gradleBuild="$gradleBuild testEhcache3 jacocoRootReport -x test -x javadoc -x check \
+gradleBuild="$gradleBuild testEhcache jacocoRootReport -x test -x javadoc -x check \
     -DskipGradleLint=true \
     -DskipNestedConfigMetadataGen=true "
 
@@ -56,7 +56,7 @@ else
     eval $waitloop
     waitRetVal=$?
 
-    ./ci/tests/ehcache3/run-terracotta-server.sh
+    ./ci/tests/ehcache/run-terracotta-server.sh
 
     eval $tasks
     retVal=$?
