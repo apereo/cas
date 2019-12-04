@@ -119,7 +119,7 @@ public class Ehcache3TicketRegistryConfiguration {
 
         val storageTimeout = ticketDefinition.getProperties().getStorageTimeout();
         val expiryPolicy = ehcacheProperties.isEternal() ? ExpiryPolicyBuilder.noExpiration()
-            : ExpiryPolicyBuilder.timeToIdleExpiration(Duration.ofSeconds(storageTimeout));
+            : ExpiryPolicyBuilder.timeToLiveExpiration(Duration.ofSeconds(storageTimeout));
 
         var resourcePools = ResourcePoolsBuilder.heap(ehcacheProperties.getMaxElementsInMemory());
         if (StringUtils.isNotBlank(terracottaClusterUri)) {
