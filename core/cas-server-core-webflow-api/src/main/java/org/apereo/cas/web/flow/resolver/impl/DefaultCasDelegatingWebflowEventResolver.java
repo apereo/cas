@@ -83,7 +83,8 @@ public class DefaultCasDelegatingWebflowEventResolver extends AbstractCasWebflow
         } catch (final Exception e) {
             var event = returnAuthenticationExceptionEventIfNeeded(e);
             if (event == null) {
-                LOGGER.warn(e.getMessage(), e);
+                LOGGER.warn("{}: {}", e.getClass(), e.getMessage());
+                LOGGER.debug(e.getMessage(), e);
                 event = newEvent(CasWebflowConstants.TRANSITION_ID_ERROR, e);
             }
             val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
@@ -163,13 +164,15 @@ public class DefaultCasDelegatingWebflowEventResolver extends AbstractCasWebflow
 
     private Event returnAuthenticationExceptionEventIfNeeded(final Exception e) {
         if (e instanceof AuthenticationException || e instanceof AbstractTicketException) {
-            LOGGER.warn(e.getMessage(), e);
+            LOGGER.warn("{}: {}", e.getClass(), e.getMessage());
+            LOGGER.debug(e.getMessage(), e);
             return newEvent(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, e);
         }
 
         if (e.getCause() instanceof AuthenticationException || e.getCause() instanceof AbstractTicketException) {
             val ex = e.getCause();
-            LOGGER.warn(ex.getMessage(), ex);
+            LOGGER.warn("{}: {}", ex.getClass(), ex.getMessage());
+            LOGGER.debug(ex.getMessage(), ex);
             return newEvent(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, ex);
         }
         return null;
