@@ -1533,6 +1533,18 @@ ext.libraries = [
                     force = true
                 }
         ],
+        azuread : [
+                dependencies.create("com.microsoft.azure:adal4j:$azureadVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.apache.commons", module: "commons-lang3")
+                    exclude(group: "org.slf4j", module: "slf4j-log4j12")
+                    exclude(group: "com.google.code.gson", module: "gson")
+                    exclude(group: "com.nimbusds", module: "oauth2-oidc-sdk")
+                },
+                dependencies.create("org.json:json:$jsonVersion") {
+                    force = true
+                }
+        ],
         cosmosdb                : [
                 dependencies.create("com.microsoft.azure:azure-documentdb:$cosmosdbVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")

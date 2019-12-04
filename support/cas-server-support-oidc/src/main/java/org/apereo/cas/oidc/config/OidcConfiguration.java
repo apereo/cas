@@ -142,11 +142,11 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
 
+import java.time.Duration;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -590,7 +590,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
     public LoadingCache<String, Optional<RsaJsonWebKey>> oidcDefaultJsonWebKeystoreCache() {
         val oidc = casProperties.getAuthn().getOidc();
         return Caffeine.newBuilder().maximumSize(1)
-            .expireAfterWrite(oidc.getJwksCacheInMinutes(), TimeUnit.MINUTES)
+            .expireAfterWrite(Duration.ofMinutes(oidc.getJwksCacheInMinutes()))
             .build(oidcDefaultJsonWebKeystoreCacheLoader());
     }
 

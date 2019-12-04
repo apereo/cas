@@ -26,6 +26,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.data.util.StreamUtils;
 
+import java.time.Duration;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -281,7 +282,8 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
 
         LOGGER.trace("Creating indices on collection [{}] to auto-expire documents...", collectionName);
         val collection = mongoTemplate.getCollection(collectionName);
-        val index = new Index().on(TicketHolder.FIELD_NAME_EXPIRE_AT, Sort.Direction.ASC).expire(ticket.getProperties().getStorageTimeout());
+        val index = new Index().on(TicketHolder.FIELD_NAME_EXPIRE_AT, Sort.Direction.ASC)
+            .expire(Duration.ofSeconds(ticket.getProperties().getStorageTimeout()));
         removeDifferingIndexIfAny(collection, index);
         mongoTemplate.indexOps(collectionName).ensureIndex(index);
         return collection;

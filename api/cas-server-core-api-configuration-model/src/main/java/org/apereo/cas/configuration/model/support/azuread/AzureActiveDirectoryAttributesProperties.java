@@ -1,4 +1,4 @@
-package org.apereo.cas.configuration.model.core.authentication;
+package org.apereo.cas.configuration.model.support.azuread;
 
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
@@ -9,15 +9,15 @@ import lombok.Setter;
 import java.io.Serializable;
 
 /**
- * This is {@link MicrosoftGraphAttributesProperties}.
+ * This is {@link AzureActiveDirectoryAttributesProperties}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@RequiresModule(name = "cas-server-support-person-directory", automated = true)
+@RequiresModule(name = "cas-server-support-azuread-authentication", automated = true)
 @Getter
 @Setter
-public class MicrosoftGraphAttributesProperties implements Serializable {
+public class AzureActiveDirectoryAttributesProperties implements Serializable {
 
     private static final long serialVersionUID = -12055975558426360L;
 

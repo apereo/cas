@@ -5,8 +5,6 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.couchdb.surrogate.SurrogateAuthorizationCouchDbRepository;
 import org.apereo.cas.services.ServicesManager;
 
-import lombok.extern.slf4j.Slf4j;
-
 import java.util.Collection;
 
 /**
@@ -15,7 +13,6 @@ import java.util.Collection;
  * @author Timur Duehr
  * @since 6.0.0
  */
-@Slf4j
 public class SurrogateCouchDbAuthenticationService extends BaseSurrogateAuthenticationService {
 
     private final SurrogateAuthorizationCouchDbRepository couchDb;

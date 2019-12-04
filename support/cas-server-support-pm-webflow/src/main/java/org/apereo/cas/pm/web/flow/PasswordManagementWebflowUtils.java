@@ -1,7 +1,6 @@
 package org.apereo.cas.pm.web.flow;
 
 import lombok.experimental.UtilityClass;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -14,7 +13,6 @@ import java.util.List;
  * @since 6.1.0
  */
 @UtilityClass
-@Slf4j
 public class PasswordManagementWebflowUtils {
     /**
      * Param name for the token.

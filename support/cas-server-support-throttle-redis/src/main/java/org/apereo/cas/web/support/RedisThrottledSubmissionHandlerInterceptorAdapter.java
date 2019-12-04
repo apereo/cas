@@ -2,7 +2,6 @@ package org.apereo.cas.web.support;
 
 import org.apereo.cas.audit.RedisAuditTrailManager;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.audit.AuditActionContext;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
@@ -23,7 +22,6 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Slf4j
 public class RedisThrottledSubmissionHandlerInterceptorAdapter extends AbstractInspektrAuditHandlerInterceptorAdapter {
     private final transient RedisTemplate redisTemplate;
 

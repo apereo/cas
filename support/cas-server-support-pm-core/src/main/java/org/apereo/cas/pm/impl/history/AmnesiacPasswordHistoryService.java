@@ -2,8 +2,6 @@ package org.apereo.cas.pm.impl.history;
 
 import org.apereo.cas.pm.PasswordChangeRequest;
 
-import lombok.extern.slf4j.Slf4j;
-
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -13,7 +11,6 @@ import java.util.Collection;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Slf4j
 public class AmnesiacPasswordHistoryService extends BasePasswordHistoryService {
     @Override
     public boolean exists(final PasswordChangeRequest changeRequest) {

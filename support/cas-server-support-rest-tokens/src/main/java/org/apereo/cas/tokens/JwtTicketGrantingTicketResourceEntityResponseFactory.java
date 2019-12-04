@@ -1,7 +1,6 @@
 package org.apereo.cas.tokens;
 
 import org.apereo.cas.rest.factory.DefaultTicketGrantingTicketResourceEntityResponseFactory;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.token.TokenConstants;
 import org.apereo.cas.token.TokenTicketBuilder;
@@ -27,7 +26,6 @@ import javax.servlet.http.HttpServletRequest;
 @Slf4j
 @RequiredArgsConstructor
 public class JwtTicketGrantingTicketResourceEntityResponseFactory extends DefaultTicketGrantingTicketResourceEntityResponseFactory {
-    private final ServicesManager servicesManager;
     private final TokenTicketBuilder tokenTicketBuilder;
 
     @Override

@@ -76,7 +76,6 @@ public class CRLDistributionPointRevocationCheckerTests extends BaseCRLRevocatio
     public static Stream<Arguments> getTestParameters() {
         CacheManager.getInstance().removeAllCaches();
         val params = new ArrayList<Arguments>();
-        var cache = (Cache) null;
         val defaultPolicy = new ThresholdExpiredCRLRevocationPolicy(0);
         val zeroThresholdPolicy = new ThresholdExpiredCRLRevocationPolicy(0);
 
@@ -84,7 +83,7 @@ public class CRLDistributionPointRevocationCheckerTests extends BaseCRLRevocatio
          * Test case #0
          * Valid certificate on valid CRL data with encoded url
          */
-        cache = new Cache("crlCache-0", 100, false, false, 20, 10);
+        var cache = new Cache("crlCache-0", 100, false, false, 20, 10);
         CacheManager.getInstance().addCache(cache);
         params.add(arguments(
             new CRLDistributionPointRevocationChecker(cache, defaultPolicy, null),

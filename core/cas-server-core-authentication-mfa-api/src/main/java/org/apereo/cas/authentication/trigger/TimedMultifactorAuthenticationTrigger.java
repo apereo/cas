@@ -21,6 +21,7 @@ import org.springframework.core.Ordered;
 import javax.servlet.http.HttpServletRequest;
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.TextStyle;
 import java.util.Arrays;
 import java.util.Locale;
@@ -66,14 +67,19 @@ public class TimedMultifactorAuthenticationTrigger implements MultifactorAuthent
             throw new AuthenticationException(new MultifactorAuthenticationProviderAbsentException());
         }
 
-        return checkTimedMultifactorProvidersForRequest(registeredService, authentication);
+        return checkTimedMultifactorProvidersForRequest(registeredService);
     }
 
-    private Optional<MultifactorAuthenticationProvider> checkTimedMultifactorProvidersForRequest(final RegisteredService service,
-                                                                                                 final Authentication authentication) {
+    /**
+     * Check timed multifactor providers for request optional.
+     *
+     * @param service        the service
+     * @return the provider
+     */
+    protected Optional<MultifactorAuthenticationProvider> checkTimedMultifactorProvidersForRequest(final RegisteredService service) {
 
         val timedMultifactor = casProperties.getAuthn().getAdaptive().getRequireTimedMultifactor();
-        val now = LocalDateTime.now();
+        val now = LocalDateTime.now(ZoneId.systemDefault());
         val dow = DayOfWeek.from(now);
         val dayNamesForToday = Arrays.stream(TextStyle.values())
             .map(style -> dow.getDisplayName(style, Locale.getDefault()))

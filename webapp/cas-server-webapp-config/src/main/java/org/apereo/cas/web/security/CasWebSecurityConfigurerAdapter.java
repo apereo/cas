@@ -13,7 +13,6 @@ import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
-import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties;
 import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
 import org.springframework.boot.actuate.endpoint.web.PathMappedEndpoints;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
@@ -44,7 +43,6 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
     private final CasConfigurationProperties casProperties;
     private final SecurityProperties securityProperties;
     private final CasWebSecurityExpressionHandler casWebSecurityExpressionHandler;
-    private final WebEndpointProperties webEndpointProperties;
     private final PathMappedEndpoints pathMappedEndpoints;
     private final ApplicationContext applicationContext;
 

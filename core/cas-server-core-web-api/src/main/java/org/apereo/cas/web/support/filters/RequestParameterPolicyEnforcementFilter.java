@@ -5,7 +5,6 @@ import org.apereo.cas.util.RegexUtils;
 import com.google.common.base.Splitter;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.server.ServletServerHttpRequest;
@@ -82,7 +81,6 @@ import java.util.regex.Pattern;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Slf4j
 @Setter
 @Getter
 public class RequestParameterPolicyEnforcementFilter extends AbstractSecurityFilter implements Filter {
@@ -411,6 +409,10 @@ public class RequestParameterPolicyEnforcementFilter extends AbstractSecurityFil
         chain.doFilter(request, response);
     }
 
+    @Override
+    public void destroy() {
+    }
+
     private void blockRequestIfNecessary(final HttpServletRequest httpServletRequest) {
         if (patternToBlock != null && StringUtils.isNotBlank(httpServletRequest.getRequestURI())) {
             val uri = UriComponentsBuilder.fromHttpRequest(new ServletServerHttpRequest(httpServletRequest))
@@ -421,9 +423,5 @@ public class RequestParameterPolicyEnforcementFilter extends AbstractSecurityFil
                 logException(new ServletException("The request is blocked as it matches a prohibited pattern"));
             }
         }
-    }
-
-    @Override
-    public void destroy() {
     }
 }

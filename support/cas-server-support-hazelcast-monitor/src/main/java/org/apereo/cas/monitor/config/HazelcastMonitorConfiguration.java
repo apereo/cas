@@ -4,7 +4,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.monitor.HazelcastHealthIndicator;
 
 import com.hazelcast.core.HazelcastInstance;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.ObjectProvider;
@@ -25,7 +24,6 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration(value = "hazelcastMonitorConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class HazelcastMonitorConfiguration implements DisposableBean {
 
     @Autowired

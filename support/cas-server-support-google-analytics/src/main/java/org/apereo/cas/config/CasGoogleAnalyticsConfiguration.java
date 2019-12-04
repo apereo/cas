@@ -78,7 +78,7 @@ public class CasGoogleAnalyticsConfiguration {
     @ConditionalOnMissingBean(name = "removeGoogleAnalyticsCookieAction")
     @Bean
     public Action removeGoogleAnalyticsCookieAction() {
-        return new RemoveGoogleAnalyticsCookieAction(casProperties, casGoogleAnalyticsCookieGenerator());
+        return new RemoveGoogleAnalyticsCookieAction(casGoogleAnalyticsCookieGenerator());
     }
 
     @ConditionalOnMissingBean(name = "casGoogleAnalyticsWebflowExecutionPlanConfigurer")

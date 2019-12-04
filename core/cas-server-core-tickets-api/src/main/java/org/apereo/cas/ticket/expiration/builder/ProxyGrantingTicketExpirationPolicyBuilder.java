@@ -10,7 +10,6 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * This is {@link ProxyGrantingTicketExpirationPolicyBuilder}.
@@ -21,7 +20,6 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @ToString
-@Slf4j
 @Getter
 public class ProxyGrantingTicketExpirationPolicyBuilder implements ExpirationPolicyBuilder<ProxyGrantingTicket> {
     private static final long serialVersionUID = -1597980180617072826L;

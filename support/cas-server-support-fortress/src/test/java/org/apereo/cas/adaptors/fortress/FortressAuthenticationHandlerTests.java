@@ -3,7 +3,6 @@ package org.apereo.cas.adaptors.fortress;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 
 import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.directory.fortress.core.AccessMgr;
 import org.apache.directory.fortress.core.GlobalErrIds;
@@ -31,7 +30,6 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author yudhi.k.surtan
  * @since 5.2.0
  */
-@Slf4j
 public class FortressAuthenticationHandlerTests {
     @Mock
     private AccessMgr accessManager;

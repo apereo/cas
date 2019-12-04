@@ -8,7 +8,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 
 import java.time.ZonedDateTime;
 import java.util.concurrent.TimeUnit;
@@ -25,7 +24,6 @@ import java.util.concurrent.TimeUnit;
 @Setter
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-@Slf4j
 public class AuthenticationDateRegisteredServiceSingleSignOnParticipationPolicy extends BaseDateTimeRegisteredServiceSingleSignOnParticipationPolicy {
     private static final long serialVersionUID = -5923946898337761319L;
 

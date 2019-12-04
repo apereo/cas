@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -48,7 +49,7 @@ public abstract class BaseResourceU2FDeviceRepository extends BaseU2FDeviceRepos
 
             if (!devices.isEmpty()) {
                 val devs = devices.get(MAP_KEY_DEVICES);
-                val expirationDate = LocalDate.now().minus(this.expirationTime, DateTimeUtils.toChronoUnit(this.expirationTimeUnit));
+                val expirationDate = LocalDate.now(ZoneId.systemDefault()).minus(this.expirationTime, DateTimeUtils.toChronoUnit(this.expirationTimeUnit));
                 LOGGER.debug("Filtering devices for [{}] based on device expiration date [{}]", username, expirationDate);
                 val list = devs
                     .stream()
@@ -91,7 +92,7 @@ public abstract class BaseResourceU2FDeviceRepository extends BaseU2FDeviceRepos
             val device = new U2FDeviceRegistration();
             device.setUsername(username);
             device.setRecord(registration.toJson());
-            device.setCreatedDate(LocalDate.now());
+            device.setCreatedDate(LocalDate.now(ZoneId.systemDefault()));
 
             val devices = readDevicesFromResource();
             val list = new ArrayList<U2FDeviceRegistration>(0);
@@ -123,7 +124,7 @@ public abstract class BaseResourceU2FDeviceRepository extends BaseU2FDeviceRepos
                 val devs = devices.get(MAP_KEY_DEVICES);
                 LOGGER.debug("Located [{}] devices in repository", devs.size());
 
-                val expirationDate = LocalDate.now().minus(this.expirationTime, DateTimeUtils.toChronoUnit(this.expirationTimeUnit));
+                val expirationDate = LocalDate.now(ZoneId.systemDefault()).minus(this.expirationTime, DateTimeUtils.toChronoUnit(this.expirationTimeUnit));
                 LOGGER.debug("Filtering devices based on device expiration date [{}]", expirationDate);
                 val list = devs.stream()
                     .filter(d -> d.getCreatedDate().isAfter(expirationDate))

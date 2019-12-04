@@ -137,7 +137,7 @@ public class HazelcastConfigurationFactory {
 
         val joinConfig = cluster.getDiscovery().isEnabled()
             ? createDiscoveryJoinConfig(config, cluster, networkConfig)
-            : createDefaultJoinConfig(config, cluster);
+            : createDefaultJoinConfig(cluster);
         LOGGER.trace("Created Hazelcast join configuration [{}]", joinConfig);
         networkConfig.setJoin(joinConfig);
 
@@ -221,7 +221,7 @@ public class HazelcastConfigurationFactory {
         throw new IllegalArgumentException("Could not create discovery strategy configuration. No discovery provider is defined");
     }
 
-    private static JoinConfig createDefaultJoinConfig(final Config config, final HazelcastClusterProperties cluster) {
+    private static JoinConfig createDefaultJoinConfig(final HazelcastClusterProperties cluster) {
         val tcpIpConfig = new TcpIpConfig()
             .setEnabled(cluster.isTcpipEnabled())
             .setMembers(cluster.getMembers())

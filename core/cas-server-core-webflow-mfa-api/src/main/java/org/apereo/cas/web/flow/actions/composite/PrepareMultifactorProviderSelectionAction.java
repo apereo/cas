@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.web.support.WebUtils;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
@@ -19,7 +18,6 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Slf4j
 public class PrepareMultifactorProviderSelectionAction extends AbstractAction {
     @Override
     protected Event doExecute(final RequestContext requestContext) {

@@ -6,7 +6,6 @@ import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.context.ApplicationContext;
 import org.springframework.webflow.action.AbstractAction;
@@ -20,7 +19,6 @@ import org.springframework.webflow.execution.RequestContext;
  * @author Travis Schmidt
  * @since 5.3.4
  */
-@Slf4j
 @RequiredArgsConstructor
 public abstract class AbstractMultifactorAuthenticationAction<T extends MultifactorAuthenticationProvider> extends AbstractAction {
     /**

@@ -12,7 +12,6 @@ import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.SamlIdentityProviderDiscoveryWebflowConfigurer;
 import org.apereo.cas.web.support.ArgumentExtractor;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.pac4j.core.client.Clients;
@@ -42,7 +41,6 @@ import java.util.List;
  */
 @Configuration(value = "samlIdentityProviderDiscoveryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class SamlIdentityProviderDiscoveryConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;

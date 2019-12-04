@@ -18,6 +18,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -66,10 +67,11 @@ public class DynamoDbMultifactorAuthenticationTrustStorageTests {
     @Test
     public void verifyExpireByDate() {
         val r = MultifactorAuthenticationTrustRecord.newInstance("castest", "geography", "fingerprint");
-        r.setRecordDate(LocalDateTime.now().minusDays(2));
+        val now = LocalDateTime.now(ZoneId.systemDefault());
+        r.setRecordDate(now.minusDays(2));
         mfaTrustEngine.set(r);
         assertFalse(mfaTrustEngine.get(r.getPrincipal()).isEmpty());
-        assertEquals(1, mfaTrustEngine.get(LocalDateTime.now().minusDays(30)).size());
-        assertEquals(0, mfaTrustEngine.get(LocalDateTime.now().minusDays(2)).size());
+        assertEquals(1, mfaTrustEngine.get(now.minusDays(30)).size());
+        assertEquals(0, mfaTrustEngine.get(now.minusDays(2)).size());
     }
 }

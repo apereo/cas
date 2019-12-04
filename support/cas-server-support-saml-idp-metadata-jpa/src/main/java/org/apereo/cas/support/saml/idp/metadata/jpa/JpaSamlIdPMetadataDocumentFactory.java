@@ -10,7 +10,6 @@ import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * This is {@link JpaSamlIdPMetadataDocumentFactory}.
@@ -18,7 +17,6 @@ import lombok.extern.slf4j.Slf4j;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Slf4j
 @RequiredArgsConstructor
 @Getter
 public class JpaSamlIdPMetadataDocumentFactory {

@@ -10,6 +10,7 @@ import org.ldaptive.LdapEntry;
 import org.ldaptive.auth.AccountState;
 import org.ldaptive.auth.AuthenticationResponse;
 
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 
@@ -36,7 +37,7 @@ public class OptionalWarningLdapAccountStateHandlerTests {
         val messages = new ArrayList<MessageDescriptor>();
         val config = new PasswordPolicyContext();
         config.setPasswordWarningNumberOfDays(5);
-        h.handleWarning(new AccountState.DefaultWarning(ZonedDateTime.now(), 1),
+        h.handleWarning(new AccountState.DefaultWarning(ZonedDateTime.now(ZoneId.systemDefault()), 1),
             response, config, messages);
         assertEquals(2, messages.size());
     }
@@ -54,7 +55,7 @@ public class OptionalWarningLdapAccountStateHandlerTests {
         val messages = new ArrayList<MessageDescriptor>();
         val config = new PasswordPolicyContext();
         config.setAlwaysDisplayPasswordExpirationWarning(true);
-        h.handleWarning(new AccountState.DefaultWarning(ZonedDateTime.now(), 1),
+        h.handleWarning(new AccountState.DefaultWarning(ZonedDateTime.now(ZoneId.systemDefault()), 1),
             response, config, messages);
         assertEquals(2, messages.size());
     }
@@ -72,7 +73,7 @@ public class OptionalWarningLdapAccountStateHandlerTests {
         val messages = new ArrayList<MessageDescriptor>();
         val config = new PasswordPolicyContext();
         config.setPasswordWarningNumberOfDays(5);
-        h.handleWarning(new AccountState.DefaultWarning(ZonedDateTime.now(), 1),
+        h.handleWarning(new AccountState.DefaultWarning(ZonedDateTime.now(ZoneId.systemDefault()), 1),
             response, config, messages);
         assertEquals(0, messages.size());
     }
