@@ -647,14 +647,13 @@ public class OAuth20AccessTokenEndpointControllerTests extends AbstractOAuth20Te
         requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
         val mv = controller.handleRequest(mockRequest, mockResponse);
         assertEquals(200, mockResponse.getStatus());
-        var accessTokenId = StringUtils.EMPTY;
         assertTrue(mv.getModel().containsKey(OAuth20Constants.ACCESS_TOKEN));
         if (refreshToken) {
             assertTrue(mv.getModel().containsKey(OAuth20Constants.REFRESH_TOKEN));
         }
         assertTrue(mv.getModel().containsKey(OAuth20Constants.EXPIRES_IN));
 
-        accessTokenId = mv.getModel().get(OAuth20Constants.ACCESS_TOKEN).toString();
+        val accessTokenId = mv.getModel().get(OAuth20Constants.ACCESS_TOKEN).toString();
 
         val accessToken = this.ticketRegistry.getTicket(accessTokenId, OAuth20AccessToken.class);
         assertEquals(GOOD_USERNAME, accessToken.getAuthentication().getPrincipal().getId());
@@ -834,7 +833,6 @@ public class OAuth20AccessTokenEndpointControllerTests extends AbstractOAuth20Te
 
         val mv = controller.handleRequest(mockRequest, mockResponse);
         assertEquals(HttpStatus.SC_OK, mockResponse.getStatus());
-        var accessTokenId = StringUtils.EMPTY;
         assertTrue(mv.getModel().containsKey(OAuth20Constants.ACCESS_TOKEN));
 
         if (!service.isRenewRefreshToken()) {
@@ -845,9 +843,9 @@ public class OAuth20AccessTokenEndpointControllerTests extends AbstractOAuth20Te
         val newRefreshToken = service.isRenewRefreshToken()
             ? this.ticketRegistry.getTicket(mv.getModel().get(OAuth20Constants.REFRESH_TOKEN).toString(), OAuth20RefreshToken.class)
             : refreshToken;
-
+        assertNotNull(newRefreshToken);
         assertTrue(mv.getModel().containsKey(OAuth20Constants.EXPIRES_IN));
-        accessTokenId = mv.getModel().get(OAuth20Constants.ACCESS_TOKEN).toString();
+        val accessTokenId = mv.getModel().get(OAuth20Constants.ACCESS_TOKEN).toString();
 
         val accessToken = this.ticketRegistry.getTicket(accessTokenId, OAuth20AccessToken.class);
         assertEquals(principal, accessToken.getAuthentication().getPrincipal());

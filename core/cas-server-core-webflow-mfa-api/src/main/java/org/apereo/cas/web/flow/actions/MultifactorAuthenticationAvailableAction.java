@@ -2,7 +2,6 @@ package org.apereo.cas.web.flow.actions;
 
 import org.apereo.cas.web.support.WebUtils;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import org.springframework.context.ApplicationContext;
@@ -16,7 +15,6 @@ import org.springframework.webflow.execution.RequestContext;
  * @author Travis Schmidt
  * @since 5.3.4
  */
-@Slf4j
 public class MultifactorAuthenticationAvailableAction extends AbstractMultifactorAuthenticationAction {
 
     public MultifactorAuthenticationAvailableAction(final ApplicationContext applicationContext) {

@@ -5,7 +5,6 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -19,7 +18,6 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Slf4j
 public class MongoDbSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocator {
     private final transient MongoTemplate mongoTemplate;
 

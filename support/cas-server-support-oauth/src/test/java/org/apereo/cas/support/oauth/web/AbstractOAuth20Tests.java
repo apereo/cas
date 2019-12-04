@@ -404,7 +404,6 @@ public abstract class AbstractOAuth20Tests {
         assertNull(this.ticketRegistry.getTicket(code.getId()));
         assertEquals(HttpStatus.SC_OK, mockResponse.getStatus());
 
-        var accessTokenId = StringUtils.EMPTY;
         var refreshTokenId = StringUtils.EMPTY;
 
         val model = mv.getModel();
@@ -415,7 +414,7 @@ public abstract class AbstractOAuth20Tests {
             refreshTokenId = model.get(OAuth20Constants.REFRESH_TOKEN).toString();
         }
         assertTrue(model.containsKey(OAuth20Constants.EXPIRES_IN));
-        accessTokenId = extractAccessTokenFrom(model.get(OAuth20Constants.ACCESS_TOKEN).toString());
+        val accessTokenId = extractAccessTokenFrom(model.get(OAuth20Constants.ACCESS_TOKEN).toString());
 
         val accessToken = this.ticketRegistry.getTicket(accessTokenId, OAuth20AccessToken.class);
         assertEquals(principal, accessToken.getAuthentication().getPrincipal());
@@ -485,7 +484,6 @@ public abstract class AbstractOAuth20Tests {
         val mv = controller.handleRequest(mockRequest, mockResponse);
         assertEquals(HttpStatus.SC_OK, mockResponse.getStatus());
 
-        var accessTokenId = StringUtils.EMPTY;
         assertTrue(mv.getModel().containsKey(OAuth20Constants.ACCESS_TOKEN));
 
         if (service.isGenerateRefreshToken()) {
@@ -499,7 +497,7 @@ public abstract class AbstractOAuth20Tests {
             : refreshToken;
 
         assertTrue(mv.getModel().containsKey(OAuth20Constants.EXPIRES_IN));
-        accessTokenId = mv.getModel().get(OAuth20Constants.ACCESS_TOKEN).toString();
+        val accessTokenId = mv.getModel().get(OAuth20Constants.ACCESS_TOKEN).toString();
 
         val accessToken = this.ticketRegistry.getTicket(accessTokenId, OAuth20AccessToken.class);
         assertEquals(principal, accessToken.getAuthentication().getPrincipal());

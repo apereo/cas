@@ -16,6 +16,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,7 +40,7 @@ public class DefaultConsentDecisionBuilder implements ConsentDecisionBuilder {
     public ConsentDecision update(final ConsentDecision consent, final Map<String, List<Object>> attributes) {
         val encodedNames = buildAndEncodeConsentAttributes(attributes);
         consent.setAttributes(encodedNames);
-        consent.setCreatedDate(LocalDateTime.now());
+        consent.setCreatedDate(LocalDateTime.now(ZoneId.systemDefault()));
         return consent;
     }
 

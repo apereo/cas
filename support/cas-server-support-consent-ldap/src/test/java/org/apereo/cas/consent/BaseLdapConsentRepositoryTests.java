@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -141,7 +142,7 @@ public abstract class BaseLdapConsentRepositoryTests extends BaseConsentReposito
         val mod = new Modification(ModificationType.ADD, ATTR_NAME, MAPPER.writeValueAsString(decision));
         assertEquals(ResultCode.SUCCESS, getConnection().modify(USER_DN, mod).getResultCode());
 
-        val t = LocalDateTime.now();
+        val t = LocalDateTime.now(ZoneId.systemDefault());
         assertNotEquals(t, decision.getCreatedDate());
         decision.setCreatedDate(t);
         this.repository.storeConsentDecision(decision);

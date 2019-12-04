@@ -87,7 +87,7 @@ public class DateTimeUtils {
         if (result == null) {
             try {
                 val ld = LocalDate.parse(value, DateTimeFormatter.ofPattern("MM/dd/yyyy"));
-                result = LocalDateTime.of(ld, LocalTime.now());
+                result = LocalDateTime.of(ld, LocalTime.now(ZoneId.systemDefault()));
             } catch (final Exception e) {
                 result = null;
             }
@@ -96,7 +96,7 @@ public class DateTimeUtils {
         if (result == null) {
             try {
                 val ld = LocalDate.parse(value);
-                result = LocalDateTime.of(ld, LocalTime.now());
+                result = LocalDateTime.of(ld, LocalTime.now(ZoneId.systemDefault()));
             } catch (final Exception e) {
                 result = null;
             }

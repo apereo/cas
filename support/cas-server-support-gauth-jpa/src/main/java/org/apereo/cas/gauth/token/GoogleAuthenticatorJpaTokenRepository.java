@@ -12,6 +12,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 /**
  * This is {@link GoogleAuthenticatorJpaTokenRepository}.
@@ -36,7 +37,7 @@ public class GoogleAuthenticatorJpaTokenRepository extends BaseOneTimeTokenRepos
     public void cleanInternal() {
         val count = this.entityManager.createQuery("DELETE FROM " + GoogleAuthenticatorToken.class.getSimpleName()
             + " r WHERE r.issuedDateTime>= :expired")
-            .setParameter("expired", LocalDateTime.now().minusSeconds(this.expireTokensInSeconds))
+            .setParameter("expired", LocalDateTime.now(ZoneId.systemDefault()).minusSeconds(this.expireTokensInSeconds))
             .executeUpdate();
         LOGGER.debug("Deleted [{}] expired previously used token record(s)", count);
     }

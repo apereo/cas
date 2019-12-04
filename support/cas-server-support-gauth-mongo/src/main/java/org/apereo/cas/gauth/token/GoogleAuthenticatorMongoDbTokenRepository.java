@@ -12,6 +12,7 @@ import org.springframework.data.mongodb.core.query.Query;
 
 import javax.persistence.NoResultException;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 /**
  * This is {@link GoogleAuthenticatorMongoDbTokenRepository}.
@@ -58,7 +59,7 @@ public class GoogleAuthenticatorMongoDbTokenRepository extends BaseOneTimeTokenR
     protected void cleanInternal() {
         try {
             val query = new Query();
-            query.addCriteria(Criteria.where("issuedDateTime").gte(LocalDateTime.now().minusSeconds(this.expireTokensInSeconds)));
+            query.addCriteria(Criteria.where("issuedDateTime").gte(LocalDateTime.now(ZoneId.systemDefault()).minusSeconds(this.expireTokensInSeconds)));
             this.mongoTemplate.remove(query, GoogleAuthenticatorToken.class, this.collectionName);
         } catch (final Exception e) {
             LOGGER.warn(e.getMessage(), e);

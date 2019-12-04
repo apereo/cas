@@ -4,7 +4,6 @@ import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.boot.configurationmetadata.ConfigurationMetadataProperty;
 
@@ -18,7 +17,6 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Slf4j
 @RequiredArgsConstructor
 public class ConfigurationMetadataUnitParser {
     private final String sourcePath;
@@ -40,7 +38,6 @@ public class ConfigurationMetadataUnitParser {
                                      final String typePath,
                                      final String typeName,
                                      final boolean indexNameWithBrackets) {
-
         try (val is = Files.newInputStream(Paths.get(typePath))) {
             val cu = StaticJavaParser.parse(is);
             new ConfigurationMetadataFieldVisitor(collectedProps, collectedGroups, indexNameWithBrackets, typeName, sourcePath).visit(cu, p);

@@ -44,7 +44,7 @@ public class CasRestTokensConfiguration {
 
     @Bean
     public TicketGrantingTicketResourceEntityResponseFactory ticketGrantingTicketResourceEntityResponseFactory() {
-        return new JwtTicketGrantingTicketResourceEntityResponseFactory(servicesManager.getObject(), tokenTicketBuilder.getObject());
+        return new JwtTicketGrantingTicketResourceEntityResponseFactory(tokenTicketBuilder.getObject());
     }
 
     @Bean

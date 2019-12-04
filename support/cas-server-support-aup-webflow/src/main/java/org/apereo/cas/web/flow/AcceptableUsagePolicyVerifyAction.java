@@ -10,7 +10,6 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apereo.inspektr.audit.annotation.Audit;
-import org.springframework.binding.message.MessageContext;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
@@ -25,18 +24,17 @@ import org.springframework.webflow.execution.RequestContext;
 @RequiredArgsConstructor
 public class AcceptableUsagePolicyVerifyAction extends AbstractAction {
     private final AcceptableUsagePolicyRepository repository;
+
     private final AuditableExecution registeredServiceAccessStrategyEnforcer;
 
     /**
      * Verify whether the policy is accepted.
      *
-     * @param context        the context
-     * @param credential     the credential
-     * @param messageContext the message context
+     * @param context    the context
+     * @param credential the credential
      * @return success if policy is accepted. {@link CasWebflowConstants#TRANSITION_ID_AUP_MUST_ACCEPT} otherwise.
      */
-    private Event verify(final RequestContext context, final Credential credential,
-                         final MessageContext messageContext) {
+    private Event verify(final RequestContext context, final Credential credential) {
 
         val res = repository.verify(context, credential);
         WebUtils.putPrincipal(context, res.getPrincipal());
@@ -44,7 +42,7 @@ public class AcceptableUsagePolicyVerifyAction extends AbstractAction {
 
         val eventFactorySupport = new EventFactorySupport();
         val registeredService = WebUtils.getRegisteredService(context);
-        
+
         if (registeredService != null) {
             val authentication = WebUtils.getAuthentication(context);
             val service = WebUtils.getService(context);
@@ -74,6 +72,6 @@ public class AcceptableUsagePolicyVerifyAction extends AbstractAction {
         resourceResolverName = "AUP_VERIFY_RESOURCE_RESOLVER")
     @Override
     public Event doExecute(final RequestContext requestContext) {
-        return verify(requestContext, WebUtils.getCredential(requestContext), requestContext.getMessageContext());
+        return verify(requestContext, WebUtils.getCredential(requestContext));
     }
 }

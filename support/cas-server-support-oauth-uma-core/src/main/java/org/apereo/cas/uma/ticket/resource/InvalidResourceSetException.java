@@ -1,5 +1,6 @@
 package org.apereo.cas.uma.ticket.resource;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 
@@ -10,6 +11,7 @@ import org.springframework.http.HttpStatus;
  * @since 6.0.0
  */
 @RequiredArgsConstructor
+@Getter
 public class InvalidResourceSetException extends RuntimeException {
     private static final long serialVersionUID = 7631083183310661586L;
 

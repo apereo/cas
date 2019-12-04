@@ -943,8 +943,7 @@ By default, the execution order (when defined) is the following but can be adjus
 5. [Internet2 Grouper](http://www.internet2.edu/products-services/trust-identity/grouper/)
 6. REST
 7. Script
-8. Microsoft Graph
-9. Stubbed/Static
+8. Stubbed/Static
 
 Note that if no *explicit* attribute mappings are defined, all permitted attributes on the record
 may be retrieved by CAS from the attribute repository source and made available to the principal. On the other hand,
@@ -1198,26 +1197,38 @@ under the configuration key `cas.authn.attributeRepository.redis`.
 # cas.authn.attributeRepository.redis.id=
 ```
 
-### Microsoft Graph
+### Microsoft Graph / Azure Active Directory
 
 This option will fetch attributes from Microsoft Azure Active Directory using the Microsoft Graph API.
 
-```properties
-# cas.authn.attributeRepository.microsoftGraph[0].clientId=
-# cas.authn.attributeRepository.microsoftGraph[0].clientSecret=
-# cas.authn.attributeRepository.microsoftGraph[0].clientSecret=
-# cas.authn.attributeRepository.microsoftGraph[0].tenant=
+Support is enabled by adding the following module into the overlay:
 
-# cas.authn.attributeRepository.microsoftGraph[0].id=
-# cas.authn.attributeRepository.microsoftGraph[0].order=0
-# cas.authn.attributeRepository.microsoftGraph[0].caseInsensitive=false
-# cas.authn.attributeRepository.microsoftGraph[0].resource=
-# cas.authn.attributeRepository.microsoftGraph[0].scope=
-# cas.authn.attributeRepository.microsoftGraph[0].grantType=
-# cas.authn.attributeRepository.microsoftGraph[0].apiBaseUrl=
-# cas.authn.attributeRepository.microsoftGraph[0].attributes=
-# cas.authn.attributeRepository.microsoftGraph[0].domain=
-# cas.authn.attributeRepository.microsoftGraph[0].loggingLevel=
+```xml
+<dependency>
+    <groupId>org.apereo.cas</groupId>
+    <artifactId>cas-server-support-azuread-authentication</artifactId>
+    <version>${cas.version}</version>
+</dependency>
+```
+
+The following settings are available:
+
+```properties
+# cas.authn.attributeRepository.azureActiveDirectory[0].clientId=
+# cas.authn.attributeRepository.azureActiveDirectory[0].clientSecret=
+# cas.authn.attributeRepository.azureActiveDirectory[0].clientSecret=
+# cas.authn.attributeRepository.azureActiveDirectory[0].tenant=
+
+# cas.authn.attributeRepository.azureActiveDirectory[0].id=
+# cas.authn.attributeRepository.azureActiveDirectory[0].order=0
+# cas.authn.attributeRepository.azureActiveDirectory[0].caseInsensitive=false
+# cas.authn.attributeRepository.azureActiveDirectory[0].resource=
+# cas.authn.attributeRepository.azureActiveDirectory[0].scope=
+# cas.authn.attributeRepository.azureActiveDirectory[0].grantType=
+# cas.authn.attributeRepository.azureActiveDirectory[0].apiBaseUrl=
+# cas.authn.attributeRepository.azureActiveDirectory[0].attributes=
+# cas.authn.attributeRepository.azureActiveDirectory[0].domain=
+# cas.authn.attributeRepository.azureActiveDirectory[0].loggingLevel=
 ```
 
 ### Shibboleth Integrations

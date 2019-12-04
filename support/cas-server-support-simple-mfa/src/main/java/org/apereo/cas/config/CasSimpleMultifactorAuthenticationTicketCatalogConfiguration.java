@@ -32,7 +32,7 @@ public class CasSimpleMultifactorAuthenticationTicketCatalogConfiguration extend
 
     @Override
     public void configureTicketCatalog(final TicketCatalog plan) {
-        LOGGER.debug("Registering core WS security token ticket definitions...");
+        LOGGER.debug("Registering ticket definitions...");
         val definition = buildTicketDefinition(plan, CasSimpleMultifactorAuthenticationTicketFactory.PREFIX,
             TransientSessionTicket.class, Ordered.HIGHEST_PRECEDENCE);
         val properties = definition.getProperties();

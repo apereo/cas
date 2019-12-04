@@ -5,7 +5,6 @@ import org.apereo.cas.config.CasEmbeddedContainerTomcatConfiguration;
 import org.apereo.cas.config.CasEmbeddedContainerTomcatFiltersConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +43,6 @@ import org.springframework.boot.web.servlet.server.ConfigurableServletWebServerF
     },
     webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @EnableConfigurationProperties({CasConfigurationProperties.class, ServerProperties.class})
-@Slf4j
 public class CasTomcatServletWebServerFactoryTests {
     @Autowired
     protected CasConfigurationProperties casProperties;

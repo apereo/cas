@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.principal.SimplePrincipal;
 import org.apereo.cas.util.HttpUtils;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -19,7 +18,6 @@ import org.springframework.web.client.RestTemplate;
  * @since 5.0.0
  */
 @RequiredArgsConstructor
-@Slf4j
 public class RestAuthenticationApi {
 
     private final transient RestTemplate restTemplate;

@@ -9,7 +9,6 @@ import org.apereo.cas.uma.UmaConfigurationContext;
 import org.apereo.cas.uma.ticket.permission.UmaPermissionTicket;
 import org.apereo.cas.uma.web.controllers.BaseUmaEndpointController;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
@@ -29,7 +28,6 @@ import javax.servlet.http.HttpServletResponse;
  * @since 6.0.0
  */
 @Controller("umaRequestingPartyClaimsCollectionEndpointController")
-@Slf4j
 public class UmaRequestingPartyClaimsCollectionEndpointController extends BaseUmaEndpointController {
     public UmaRequestingPartyClaimsCollectionEndpointController(final UmaConfigurationContext umaConfigurationContext) {
         super(umaConfigurationContext);

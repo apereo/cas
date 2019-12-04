@@ -9,6 +9,7 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import java.util.Collection;
 
 /**
@@ -22,7 +23,6 @@ public class OidcHandlerInterceptorAdapter extends OAuth20HandlerInterceptorAdap
     private final HandlerInterceptorAdapter requiresAuthenticationDynamicRegistrationInterceptor;
     private final HandlerInterceptorAdapter requiresAuthenticationClientConfigurationInterceptor;
     private final OidcConstants.DynamicClientRegistrationMode dynamicClientRegistrationMode;
-    private final Collection<AccessTokenGrantRequestExtractor> accessTokenGrantRequestExtractors;
 
     public OidcHandlerInterceptorAdapter(final HandlerInterceptorAdapter requiresAuthenticationAccessTokenInterceptor,
                                          final HandlerInterceptorAdapter requiresAuthenticationAuthorizeInterceptor,
@@ -33,7 +33,6 @@ public class OidcHandlerInterceptorAdapter extends OAuth20HandlerInterceptorAdap
         super(requiresAuthenticationAccessTokenInterceptor, requiresAuthenticationAuthorizeInterceptor, accessTokenGrantRequestExtractors);
         this.requiresAuthenticationDynamicRegistrationInterceptor = requiresAuthenticationDynamicRegistrationInterceptor;
         this.dynamicClientRegistrationMode = dynamicClientRegistrationMode;
-        this.accessTokenGrantRequestExtractors = accessTokenGrantRequestExtractors;
         this.requiresAuthenticationClientConfigurationInterceptor = requiresAuthenticationClientConfigurationInterceptor;
     }
 

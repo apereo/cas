@@ -99,9 +99,19 @@ public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPart
         }
     }
 
-    private static void writeAttributeValue(final W3CDOMStreamWriter writer, final String uri,
+    /**
+     * Write attribute value.
+     *
+     * @param writer         the writer
+     * @param uri            the uri
+     * @param attributeValue the attribute value
+     * @param service        the service
+     * @throws Exception the exception
+     */
+    protected void writeAttributeValue(final W3CDOMStreamWriter writer, final String uri,
                                             final Object attributeValue,
                                             final WSFederationRegisteredService service) throws Exception {
+        LOGGER.trace("Mapping attribute [{}] with value [{}] for service [{}]", uri, attributeValue, service.getServiceId());
         writer.writeStartElement("ic", "ClaimValue", WSFederationConstants.HTTP_SCHEMAS_XMLSOAP_ORG_WS_2005_05_IDENTITY);
         writer.writeAttribute("Uri", uri);
         writer.writeAttribute("Optional", Boolean.TRUE.toString());

@@ -28,6 +28,7 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -60,7 +61,7 @@ public class OAuth20UserProfileEndpointControllerTests extends AbstractOAuth20Te
         return DefaultAuthenticationBuilder.newInstance()
             .setPrincipal(principal)
             .addCredential(metadata)
-            .setAuthenticationDate(ZonedDateTime.now())
+            .setAuthenticationDate(ZonedDateTime.now(ZoneId.systemDefault()))
             .addSuccess(principal.getClass().getCanonicalName(), handlerResult)
             .build();
     }

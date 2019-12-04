@@ -26,6 +26,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -107,8 +109,8 @@ public class IdentityProviderInitiatedProfileHandlerController extends AbstractS
         authnRequest.setNameIDPolicy(nameIDPolicy);
 
         if (NumberUtils.isCreatable(time)) {
-            authnRequest.setIssueInstant(new DateTime(TimeUnit.SECONDS.convert(Long.parseLong(time), TimeUnit.MILLISECONDS),
-                ISOChronology.getInstanceUTC()));
+            val converted = TimeUnit.SECONDS.convert(Duration.ofMillis(Long.parseLong(time)));
+            authnRequest.setIssueInstant(new DateTime(converted, ISOChronology.getInstanceUTC()));
         } else {
             authnRequest.setIssueInstant(new DateTime(DateTime.now(), ISOChronology.getInstanceUTC()));
         }
@@ -125,7 +127,8 @@ public class IdentityProviderInitiatedProfileHandlerController extends AbstractS
                 facade, response, request, SAMLConstants.SAML2_POST_BINDING_URI, authnRequest);
         }
         ctx.setMessage(authnRequest);
-        ctx.getSubcontext(SAMLBindingContext.class, true).setHasBindingSignature(false);
+        val bindingContext = ctx.getSubcontext(SAMLBindingContext.class, true);
+        bindingContext.setHasBindingSignature(false);
         SAMLBindingSupport.setRelayState(ctx, target);
 
         val pair = Pair.<SignableSAMLObject, MessageContext>of(authnRequest, ctx);

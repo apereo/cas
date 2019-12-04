@@ -8,7 +8,6 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 /**
@@ -20,7 +19,6 @@ import lombok.val;
 @RequiredArgsConstructor
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @ToString
-@Slf4j
 @Getter
 public class OAuth20CodeExpirationPolicyBuilder implements ExpirationPolicyBuilder<OAuth20Code> {
     private static final long serialVersionUID = -3597980180617072826L;

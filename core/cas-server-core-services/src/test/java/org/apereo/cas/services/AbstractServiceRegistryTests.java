@@ -26,6 +26,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.net.URI;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -224,7 +225,7 @@ public abstract class AbstractServiceRegistryTests {
     @MethodSource(GET_PARAMETERS)
     public void verifyExpiredServiceDeleted(final Class<? extends RegisteredService> registeredServiceClass) {
         val r = buildRegisteredServiceInstance(RandomUtils.nextInt(), registeredServiceClass);
-        r.setExpirationPolicy(new DefaultRegisteredServiceExpirationPolicy(true, LocalDateTime.now().minusSeconds(1)));
+        r.setExpirationPolicy(new DefaultRegisteredServiceExpirationPolicy(true, LocalDateTime.now(ZoneId.systemDefault()).minusSeconds(1)));
         val r2 = this.serviceRegistry.save(r);
         DateTimeUtils.setCurrentMillisFixed(System.currentTimeMillis() + 2000);
         this.serviceRegistry.load();
@@ -236,7 +237,7 @@ public abstract class AbstractServiceRegistryTests {
     @MethodSource(GET_PARAMETERS)
     public void verifyExpiredServiceDisabled(final Class<? extends RegisteredService> registeredServiceClass) {
         val r = buildRegisteredServiceInstance(RandomUtils.nextInt(), registeredServiceClass);
-        val expirationDate = LocalDateTime.now().plusSeconds(1);
+        val expirationDate = LocalDateTime.now(ZoneId.systemDefault()).plusSeconds(1);
         r.setExpirationPolicy(new DefaultRegisteredServiceExpirationPolicy(false, expirationDate));
         val r2 = this.serviceRegistry.save(r);
         val svc = this.serviceRegistry.findServiceByExactServiceName(r2.getName());
@@ -344,7 +345,7 @@ public abstract class AbstractServiceRegistryTests {
     @MethodSource(GET_PARAMETERS)
     public void verifyServiceExpirationPolicy(final Class<? extends RegisteredService> registeredServiceClass) {
         val r = buildRegisteredServiceInstance(RandomUtils.nextInt(), registeredServiceClass);
-        r.setExpirationPolicy(new DefaultRegisteredServiceExpirationPolicy(true, LocalDate.now()));
+        r.setExpirationPolicy(new DefaultRegisteredServiceExpirationPolicy(true, LocalDate.now(ZoneId.systemDefault())));
         val r2 = this.serviceRegistry.save(r);
         val r3 = this.serviceRegistry.findServiceById(r2.getId());
         assertEquals(r2, r3);

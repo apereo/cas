@@ -12,7 +12,6 @@ import org.apereo.cas.web.support.WebUtils;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.webflow.action.AbstractAction;
@@ -36,7 +35,6 @@ import java.util.regex.Pattern;
  * @author Scott Battaglia
  * @since 3.1
  */
-@Slf4j
 @RequiredArgsConstructor
 @Getter
 public class VerifyRequiredServiceAction extends AbstractAction {

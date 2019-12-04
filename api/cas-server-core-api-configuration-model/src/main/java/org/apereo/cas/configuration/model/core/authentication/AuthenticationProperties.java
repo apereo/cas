@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
 import org.apereo.cas.configuration.model.core.authentication.passwordsync.PasswordSynchronizationProperties;
+import org.apereo.cas.configuration.model.support.azuread.AzureActiveDirectoryAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.cassandra.authentication.CassandraAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.clouddirectory.CloudDirectoryProperties;
 import org.apereo.cas.configuration.model.support.cognito.AmazonCognitoAuthenticationProperties;
@@ -96,6 +97,12 @@ public class AuthenticationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private SyncopeAuthenticationProperties syncope = new SyncopeAuthenticationProperties();
+
+    /**
+     * Azure AD authentication settings.
+     */
+    @NestedConfigurationProperty
+    private AzureActiveDirectoryAuthenticationProperties azureActiveDirectory = new AzureActiveDirectoryAuthenticationProperties();
 
     /**
      * Couchbase authentication settings.

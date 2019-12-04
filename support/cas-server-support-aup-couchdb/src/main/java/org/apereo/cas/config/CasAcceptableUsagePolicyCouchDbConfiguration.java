@@ -7,7 +7,6 @@ import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
 import org.apereo.cas.couchdb.core.ProfileCouchDbRepository;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.ektorp.impl.ObjectMapperFactory;
 import org.springframework.beans.factory.ObjectProvider;
@@ -27,7 +26,6 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration(value = "casAcceptableUsagePolicyCoucbDbConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class CasAcceptableUsagePolicyCouchDbConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;

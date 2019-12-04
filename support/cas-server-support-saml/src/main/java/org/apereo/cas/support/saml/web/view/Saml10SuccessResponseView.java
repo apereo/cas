@@ -8,7 +8,6 @@ import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.validation.CasProtocolAttributesRenderer;
 import org.apereo.cas.web.support.ArgumentExtractor;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.opensaml.saml.saml1.core.Response;
 
@@ -29,7 +28,6 @@ import java.util.Map;
  * @author Marvin S. Addison
  * @since 3.1
  */
-@Slf4j
 public class Saml10SuccessResponseView extends AbstractSaml10ResponseView {
 
     public Saml10SuccessResponseView(final ProtocolAttributeEncoder protocolAttributeEncoder,

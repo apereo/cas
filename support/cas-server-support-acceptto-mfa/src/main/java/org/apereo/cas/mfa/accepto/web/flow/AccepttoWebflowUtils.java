@@ -3,7 +3,6 @@ package org.apereo.cas.mfa.accepto.web.flow;
 import org.apereo.cas.authentication.Authentication;
 
 import lombok.experimental.UtilityClass;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.context.JEEContext;
@@ -18,7 +17,6 @@ import java.util.Optional;
  * @since 6.1.0
  */
 @UtilityClass
-@Slf4j
 public class AccepttoWebflowUtils {
     /**
      * Session attribute to hold the authentication channel.

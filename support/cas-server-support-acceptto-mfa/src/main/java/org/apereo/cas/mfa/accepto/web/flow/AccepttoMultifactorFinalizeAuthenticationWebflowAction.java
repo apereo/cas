@@ -3,7 +3,6 @@ package org.apereo.cas.mfa.accepto.web.flow;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -15,7 +14,6 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 6.1.0
  */
 @RequiredArgsConstructor
-@Slf4j
 public class AccepttoMultifactorFinalizeAuthenticationWebflowAction extends AbstractAction {
     private final CasWebflowEventResolver casWebflowEventResolver;
 

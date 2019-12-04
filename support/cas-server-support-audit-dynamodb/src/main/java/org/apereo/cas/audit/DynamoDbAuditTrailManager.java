@@ -4,7 +4,6 @@ import org.apereo.cas.audit.spi.AbstractAuditTrailManager;
 
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.inspektr.audit.AuditActionContext;
 
 import java.time.LocalDate;
@@ -16,7 +15,6 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Slf4j
 @Setter
 @RequiredArgsConstructor
 public class DynamoDbAuditTrailManager extends AbstractAuditTrailManager {

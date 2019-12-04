@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.saml2.core.Attribute;
 import org.opensaml.saml.saml2.core.AttributeStatement;
 
@@ -23,8 +22,9 @@ import org.opensaml.saml.saml2.core.AttributeStatement;
 @Slf4j
 public class SamlProfileSamlRegisteredServiceAttributeBuilder extends DefaultSaml20AttributeBuilder {
     private final SamlRegisteredService service;
+
     private final SamlRegisteredServiceServiceProviderMetadataFacade adaptor;
-    private final MessageContext messageContext;
+
     private final SamlIdPObjectEncrypter samlObjectEncrypter;
 
     @Override

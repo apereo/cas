@@ -40,7 +40,7 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
         super(oAuthConfigurationContext);
     }
 
-    private static boolean isRequestAuthenticated(final ProfileManager manager, final JEEContext context) {
+    private static boolean isRequestAuthenticated(final ProfileManager manager) {
         val opt = manager.get(true);
         return opt.isPresent();
     }
@@ -59,7 +59,7 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
         val context = new JEEContext(request, response, getOAuthConfigurationContext().getSessionStore());
         val manager = new ProfileManager<CommonProfile>(context, context.getSessionStore());
 
-        if (!verifyAuthorizeRequest(context) || !isRequestAuthenticated(manager, context)) {
+        if (!verifyAuthorizeRequest(context) || !isRequestAuthenticated(manager)) {
             LOGGER.error("Authorize request verification failed. Authorization request is missing required parameters, "
                 + "or the request is not authenticated and contains no authenticated profile/principal.");
             return OAuth20Utils.produceUnauthorizedErrorView();

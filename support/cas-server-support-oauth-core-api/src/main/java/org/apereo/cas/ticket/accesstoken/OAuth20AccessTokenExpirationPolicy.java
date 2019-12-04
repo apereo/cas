@@ -100,7 +100,6 @@ public class OAuth20AccessTokenExpirationPolicy extends AbstractCasExpirationPol
      * by this policy, the parent ticket's expiration policy is not consulted, making the AT independent.
      */
     @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-    @Slf4j
     @NoArgsConstructor
     @EqualsAndHashCode(callSuper = true)
     @ToString(callSuper = true)

@@ -25,6 +25,7 @@ import org.opensaml.saml.saml2.core.StatusCode;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 
@@ -37,8 +38,7 @@ import java.time.ZonedDateTime;
 @Slf4j
 public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponseBuilder<Response> {
     private static final long serialVersionUID = 1488837627964481272L;
-
-
+    
     public SamlProfileSaml2ResponseBuilder(final SamlProfileSamlResponseBuilderConfigurationContext samlResponseBuilderConfigurationContext) {
         super(samlResponseBuilderConfigurationContext);
     }
@@ -111,11 +111,9 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
                               final Object assertion) throws SamlException {
         LOGGER.trace("Constructing encoder based on binding [{}] for [{}]", binding, adaptor.getEntityId());
         if (binding.equalsIgnoreCase(SAMLConstants.SAML2_ARTIFACT_BINDING_URI)) {
-            val encoder = new SamlResponseArtifactEncoder(getSamlResponseBuilderConfigurationContext().getVelocityEngineFactory(),
-                adaptor, httpRequest, httpResponse, authnRequest,
-                getSamlResponseBuilderConfigurationContext().getTicketRegistry(),
-                getSamlResponseBuilderConfigurationContext().getSamlArtifactTicketFactory(),
-                getSamlResponseBuilderConfigurationContext().getTicketGrantingTicketCookieGenerator(),
+            val encoder = new SamlResponseArtifactEncoder(
+                getSamlResponseBuilderConfigurationContext().getVelocityEngineFactory(),
+                adaptor, httpRequest, httpResponse,
                 getSamlResponseBuilderConfigurationContext().getSamlArtifactMap());
             return encoder.encode(authnRequest, samlResponse, relayState);
         }

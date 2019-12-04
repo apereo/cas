@@ -6,7 +6,6 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.validation.CasProtocolAttributesRenderer;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.servlet.View;
 
 import javax.servlet.http.HttpServletRequest;
@@ -21,7 +20,6 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-@Slf4j
 public class Cas30ResponseView extends Cas20ResponseView {
     public Cas30ResponseView(final boolean successResponse,
                              final ProtocolAttributeEncoder protocolAttributeEncoder,

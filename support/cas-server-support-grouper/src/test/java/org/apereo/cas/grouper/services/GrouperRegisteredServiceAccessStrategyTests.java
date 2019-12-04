@@ -6,7 +6,6 @@ import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrat
 import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingStrategy;
 import org.apereo.cas.util.io.WatcherService;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeAll;
@@ -33,7 +32,6 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@Slf4j
 public class GrouperRegisteredServiceAccessStrategyTests {
 
     private static final ClassPathResource RESOURCE = new ClassPathResource("services");

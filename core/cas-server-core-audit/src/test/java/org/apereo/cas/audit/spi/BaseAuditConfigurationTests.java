@@ -7,6 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -29,7 +30,7 @@ public abstract class BaseAuditConfigurationTests {
     @Test
     public void verifyAuditManager() {
         val auditTrailManager = getAuditTrailManager();
-        val time = LocalDate.now().minusDays(2);
+        val time = LocalDate.now(ZoneId.systemDefault()).minusDays(2);
         val ctx = new AuditActionContext("casuser", "TEST", "TEST",
             "CAS", new Date(), "1.2.3.4",
             "1.2.3.4");

@@ -13,6 +13,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
@@ -48,7 +49,7 @@ public class U2FJpaDeviceRepository extends BaseU2FDeviceRepository {
     @Override
     public Collection<? extends DeviceRegistration> getRegisteredDevices(final String username) {
         try {
-            val expirationDate = LocalDate.now().minus(this.expirationTime, DateTimeUtils.toChronoUnit(this.expirationTimeUnit));
+            val expirationDate = LocalDate.now(ZoneId.systemDefault()).minus(this.expirationTime, DateTimeUtils.toChronoUnit(this.expirationTimeUnit));
             return this.entityManager.createQuery(
                 SELECT_QUERY.concat("where r.username = :username and r.createdDate >= :expdate"), U2FDeviceRegistration.class)
                 .setParameter("username", username)
@@ -83,7 +84,7 @@ public class U2FJpaDeviceRepository extends BaseU2FDeviceRepository {
         val jpa = new U2FDeviceRegistration();
         jpa.setUsername(username);
         jpa.setRecord(getCipherExecutor().encode(registration.toJson()));
-        jpa.setCreatedDate(LocalDate.now());
+        jpa.setCreatedDate(LocalDate.now(ZoneId.systemDefault()));
         this.entityManager.merge(jpa);
     }
 
@@ -95,7 +96,7 @@ public class U2FJpaDeviceRepository extends BaseU2FDeviceRepository {
     @Override
     public void clean() {
         try {
-            val expirationDate = LocalDate.now().minus(this.expirationTime, DateTimeUtils.toChronoUnit(this.expirationTimeUnit));
+            val expirationDate = LocalDate.now(ZoneId.systemDefault()).minus(this.expirationTime, DateTimeUtils.toChronoUnit(this.expirationTimeUnit));
             LOGGER.debug("Cleaning up expired U2F device registrations based on expiration date [{}]", expirationDate);
             this.entityManager.createQuery(
                 DELETE_QUERY.concat("where r.createdDate <= :expdate"))

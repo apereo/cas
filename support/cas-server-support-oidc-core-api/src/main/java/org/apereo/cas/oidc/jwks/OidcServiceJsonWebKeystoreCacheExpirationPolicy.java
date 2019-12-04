@@ -6,7 +6,6 @@ import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 
 import com.github.benmanes.caffeine.cache.Expiry;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jose4j.jwk.RsaJsonWebKey;
@@ -20,7 +19,6 @@ import java.util.concurrent.TimeUnit;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Slf4j
 @RequiredArgsConstructor
 public class OidcServiceJsonWebKeystoreCacheExpirationPolicy implements Expiry<OAuthRegisteredService, Optional<RsaJsonWebKey>> {
     private final CasConfigurationProperties casProperties;
@@ -29,14 +27,14 @@ public class OidcServiceJsonWebKeystoreCacheExpirationPolicy implements Expiry<O
     public long expireAfterCreate(final OAuthRegisteredService oidcRegisteredService,
                                   final Optional<RsaJsonWebKey> rsaJsonWebKey,
                                   final long currentTime) {
-        return getExpiration(oidcRegisteredService, currentTime);
+        return getExpiration(oidcRegisteredService);
     }
 
     @Override
     public long expireAfterUpdate(final OAuthRegisteredService oidcRegisteredService,
                                   final Optional<RsaJsonWebKey> rsaJsonWebKey,
                                   final long currentTime, final long currentDuration) {
-        return getExpiration(oidcRegisteredService, currentDuration);
+        return getExpiration(oidcRegisteredService);
     }
 
     @Override
@@ -44,10 +42,10 @@ public class OidcServiceJsonWebKeystoreCacheExpirationPolicy implements Expiry<O
                                 final Optional<RsaJsonWebKey> rsaJsonWebKey,
                                 final long currentTime,
                                 final long currentDuration) {
-        return getExpiration(oidcRegisteredService, currentDuration);
+        return getExpiration(oidcRegisteredService);
     }
 
-    private long getExpiration(final OAuthRegisteredService givenService, final long currentTime) {
+    private long getExpiration(final OAuthRegisteredService givenService) {
         if (givenService instanceof OidcRegisteredService) {
             val service = (OidcRegisteredService) givenService;
             if (service.getJwksCacheDuration() > 0 && StringUtils.isNotBlank(service.getJwksCacheTimeUnit())) {

@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
+import org.apereo.cas.configuration.model.support.azuread.AzureActiveDirectoryAttributesProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
@@ -89,7 +90,7 @@ public class PrincipalAttributesProperties implements Serializable {
     /**
      * Retrieve attributes from multiple Microsoft Graph instances.
      */
-    private List<MicrosoftGraphAttributesProperties> microsoftGraph = new ArrayList<>(0);
+    private List<AzureActiveDirectoryAttributesProperties> azureActiveDirectory = new ArrayList<>(0);
 
     /**
      * Retrieve attributes from multiple REST endpoints.

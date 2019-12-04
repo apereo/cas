@@ -9,15 +9,14 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 
 /**
  * This is {@link AbstractSamlIdPMetadataLocator}.
@@ -25,7 +24,6 @@ import java.util.concurrent.TimeUnit;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Slf4j
 @Getter
 @Setter
 @RequiredArgsConstructor
@@ -127,7 +125,7 @@ public abstract class AbstractSamlIdPMetadataLocator implements SamlIdPMetadataL
             metadataCache = Caffeine.newBuilder()
                 .initialCapacity(1)
                 .maximumSize(1)
-                .expireAfterAccess(1, TimeUnit.HOURS)
+                .expireAfterAccess(Duration.ofHours(1))
                 .build();
         }
     }

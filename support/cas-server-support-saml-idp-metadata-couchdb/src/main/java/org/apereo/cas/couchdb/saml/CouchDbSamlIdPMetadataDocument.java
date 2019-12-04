@@ -4,6 +4,7 @@ import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
@@ -13,6 +14,7 @@ import lombok.NoArgsConstructor;
  * @since 6.0.0
  */
 @NoArgsConstructor
+@Getter
 public class CouchDbSamlIdPMetadataDocument extends SamlIdPMetadataDocument {
     @JsonProperty("_id")
     private String cid;
@@ -52,6 +54,7 @@ public class CouchDbSamlIdPMetadataDocument extends SamlIdPMetadataDocument {
         setSigningKey(doc.getSigningKey());
         setEncryptionCertificate(doc.getEncryptionCertificate());
         setEncryptionKey(doc.getEncryptionKey());
+        setAppliesTo(doc.getAppliesTo());
         return this;
     }
 }

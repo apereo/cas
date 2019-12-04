@@ -16,7 +16,6 @@ import org.apereo.cas.mfa.accepto.AccepttoMultifactorAuthenticationProvider;
 import org.apereo.cas.mfa.accepto.AccepttoMultifactorTokenCredential;
 import org.apereo.cas.services.ServicesManager;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.BeanCreationException;
@@ -37,7 +36,6 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("accepttoMultifactorAuthenticationEventExecutionPlanConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class AccepttoMultifactorAuthenticationEventExecutionPlanConfiguration {
 
     @Autowired

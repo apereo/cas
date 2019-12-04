@@ -22,6 +22,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -70,20 +71,21 @@ public class JpaMultifactorAuthenticationTrustStorageTests {
 
     @Test
     public void verifyRetrieveAndExpireByDate() {
+        val now = LocalDateTime.now(ZoneId.systemDefault());
         Stream.of(PRINCIPAL, PRINCIPAL2).forEach(p -> {
             for (var offset = 0; offset < 3; offset++) {
                 val record =
                     MultifactorAuthenticationTrustRecord.newInstance(p, GEOGRAPHY, DEVICE_FINGERPRINT);
-                record.setRecordDate(LocalDateTime.now().minusDays(offset));
+                record.setRecordDate(now.minusDays(offset));
                 mfaTrustEngine.set(record);
             }
         });
-        assertEquals(6, mfaTrustEngine.get(LocalDateTime.now().minusDays(30)).size());
-        assertEquals(2, mfaTrustEngine.get(LocalDateTime.now().minusSeconds(1)).size());
+        assertEquals(6, mfaTrustEngine.get(now.minusDays(30)).size());
+        assertEquals(2, mfaTrustEngine.get(now.minusSeconds(1)).size());
 
-        mfaTrustEngine.expire(LocalDateTime.now().minusDays(1));
-        assertEquals(2, mfaTrustEngine.get(LocalDateTime.now().minusDays(30)).size());
-        assertEquals(2, mfaTrustEngine.get(LocalDateTime.now().minusSeconds(1)).size());
+        mfaTrustEngine.expire(now.minusDays(1));
+        assertEquals(2, mfaTrustEngine.get(now.minusDays(30)).size());
+        assertEquals(2, mfaTrustEngine.get(now.minusSeconds(1)).size());
     }
 
     @Test

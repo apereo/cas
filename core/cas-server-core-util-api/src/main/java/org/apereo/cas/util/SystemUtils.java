@@ -17,6 +17,7 @@ import org.springframework.core.io.support.PropertiesLoaderUtils;
 
 import java.net.URL;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -87,7 +88,7 @@ public class SystemUtils {
         info.put("OS Architecture", properties.get("os.arch"));
         info.put("OS Name", properties.get("os.name"));
         info.put("OS Version", properties.get("os.version"));
-        info.put("OS Date/Time", LocalDateTime.now());
+        info.put("OS Date/Time", LocalDateTime.now(ZoneId.systemDefault()));
         info.put("OS Temp Directory", FileUtils.getTempDirectoryPath());
 
         injectUpdateInfoIntoBannerIfNeeded(info);

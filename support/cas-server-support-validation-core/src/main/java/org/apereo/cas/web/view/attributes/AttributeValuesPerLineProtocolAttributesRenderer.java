@@ -3,7 +3,6 @@ package org.apereo.cas.web.view.attributes;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.validation.CasProtocolAttributesRenderer;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import java.util.ArrayList;
@@ -17,7 +16,6 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Slf4j
 public class AttributeValuesPerLineProtocolAttributesRenderer implements CasProtocolAttributesRenderer {
     @Override
     public Collection<String> render(final Map<String, Object> attributes) {

@@ -1,6 +1,5 @@
 package org.apereo.cas.mfa.accepto.web.flow;
 
-import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mfa.accepto.AccepttoApiUtils;
 import org.apereo.cas.mfa.accepto.AccepttoEmailCredential;
@@ -29,7 +28,6 @@ import org.springframework.webflow.execution.RequestContext;
 public class AccepttoMultifactorValidateUserDeviceRegistrationAction extends AbstractAction {
 
     private final CasConfigurationProperties casProperties;
-    private final AuthenticationSystemSupport authenticationSystemSupport;
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {

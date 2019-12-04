@@ -27,7 +27,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.OrderComparator;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.web.servlet.ThemeResolver;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.theme.CookieThemeResolver;
@@ -44,6 +43,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link CasThemesConfiguration}.
@@ -55,10 +56,6 @@ import java.util.Set;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Import(ThymeleafAutoConfiguration.class)
 public class CasThemesConfiguration {
-
-    @Autowired
-    private ResourceLoader resourceLoader;
-
     @Autowired
     @Qualifier("authenticationServiceSelectionPlan")
     private ObjectProvider<AuthenticationServiceSelectionPlan> authenticationRequestServiceSelectionStrategies;
@@ -111,7 +108,7 @@ public class CasThemesConfiguration {
     @ConditionalOnMissingBean(name = "themeViewResolverFactory")
     @Bean
     public ThemeViewResolverFactory themeViewResolverFactory() {
-        val factory = new ThemeViewResolver.Factory(nonCachingThymeleafViewResolver(), thymeleafProperties, casProperties);
+        val factory = new ThemeViewResolver.Factory(nonCachingThymeleafViewResolver(), thymeleafProperties);
         factory.setApplicationContext(applicationContext);
         return factory;
     }
@@ -123,7 +120,7 @@ public class CasThemesConfiguration {
     }
 
     @Bean
-    public Map serviceThemeResolverSupportedBrowsers() {
+    public Map<String, String> serviceThemeResolverSupportedBrowsers() {
         val map = new HashMap<String, String>();
         map.put(".*Android.*", "android");
         map.put(".*Safari.*Pre.*", "safari");
@@ -153,10 +150,11 @@ public class CasThemesConfiguration {
         cookieThemeResolver.setCookieSecure(tgc.isSecure());
 
         val serviceThemeResolver = new RegisteredServiceThemeResolver(servicesManager.getObject(),
-            serviceThemeResolverSupportedBrowsers(),
             authenticationRequestServiceSelectionStrategies.getObject(),
-            this.resourceLoader,
-            new CasConfigurationProperties());
+            new CasConfigurationProperties(),
+            serviceThemeResolverSupportedBrowsers().entrySet()
+                .stream()
+                .collect(Collectors.toMap(entry -> Pattern.compile(entry.getKey()), Map.Entry::getValue)));
         serviceThemeResolver.setDefaultThemeName(defaultThemeName);
 
         val header = new RequestHeaderThemeResolver(casProperties.getTheme().getParamName());

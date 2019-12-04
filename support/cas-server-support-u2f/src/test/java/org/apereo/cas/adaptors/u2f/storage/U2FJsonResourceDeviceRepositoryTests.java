@@ -3,7 +3,6 @@ package org.apereo.cas.adaptors.u2f.storage;
 import org.apereo.cas.config.U2FConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +26,6 @@ import java.io.File;
     RefreshAutoConfiguration.class
 }, properties = "cas.authn.mfa.u2f.json.location=file:/tmp/u2f.json")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class U2FJsonResourceDeviceRepositoryTests extends AbstractU2FDeviceRepositoryTests {
     @Autowired
     @Qualifier("u2fDeviceRepository")

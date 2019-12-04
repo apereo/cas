@@ -209,7 +209,7 @@ public class AccepttoMultifactorAuthenticationConfiguration {
     @Bean
     @RefreshScope
     public Action mfaAccepttoMultifactorValidateUserDeviceRegistrationAction() {
-        return new AccepttoMultifactorValidateUserDeviceRegistrationAction(casProperties, authenticationSystemSupport.getObject());
+        return new AccepttoMultifactorValidateUserDeviceRegistrationAction(casProperties);
     }
 
     @RefreshScope

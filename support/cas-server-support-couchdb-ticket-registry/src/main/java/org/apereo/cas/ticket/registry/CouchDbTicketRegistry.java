@@ -3,7 +3,6 @@ package org.apereo.cas.ticket.registry;
 import org.apereo.cas.couchdb.tickets.TicketDocument;
 import org.apereo.cas.couchdb.tickets.TicketRepository;
 import org.apereo.cas.ticket.Ticket;
-import org.apereo.cas.ticket.TicketCatalog;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,8 +26,8 @@ import java.util.stream.Collectors;
 @Slf4j
 public class CouchDbTicketRegistry extends AbstractTicketRegistry {
 
-    private final TicketCatalog ticketCatalog;
     private final TicketRepository couchDb;
+
     private final int conflictRetries;
 
     @Override

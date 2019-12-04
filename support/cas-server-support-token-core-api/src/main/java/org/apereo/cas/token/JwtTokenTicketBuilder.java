@@ -11,7 +11,6 @@ import org.apereo.cas.util.function.FunctionUtils;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jasig.cas.client.validation.TicketValidator;
 
@@ -27,7 +26,6 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Slf4j
 @Getter
 @RequiredArgsConstructor
 public class JwtTokenTicketBuilder implements TokenTicketBuilder {

@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
 import java.util.ArrayList;
@@ -29,7 +28,6 @@ import java.util.stream.Collectors;
 @Getter
 @Setter
 @EqualsAndHashCode
-@Slf4j
 @NoArgsConstructor
 @JsonIgnoreProperties("order")
 public class ChainingRegisteredServiceSingleSignOnParticipationPolicy implements RegisteredServiceSingleSignOnParticipationPolicy {

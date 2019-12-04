@@ -2,7 +2,6 @@ package org.apereo.cas.authentication.principal.provision;
 
 import org.apereo.cas.authentication.principal.Principal;
 
-import lombok.extern.slf4j.Slf4j;
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.profile.CommonProfile;
 
@@ -15,7 +14,6 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Slf4j
 public class ChainingDelegatedClientUserProfileProvisioner extends BaseDelegatedClientUserProfileProvisioner {
     private final List<DelegatedClientUserProfileProvisioner> provisioners = new ArrayList<>(0);
 

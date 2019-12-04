@@ -25,6 +25,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 
 import javax.security.auth.login.AccountNotFoundException;
+
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -87,7 +89,7 @@ public class CasKryoTranscoderTests {
         val bldr = new DefaultAuthenticationBuilder(new DefaultPrincipalFactory()
             .createPrincipal("user", new HashMap<>(this.principalAttributes)));
         bldr.setAttributes(new HashMap<>(this.principalAttributes));
-        bldr.setAuthenticationDate(ZonedDateTime.now());
+        bldr.setAuthenticationDate(ZonedDateTime.now(ZoneId.systemDefault()));
         bldr.addCredential(new BasicCredentialMetaData(userPassCredential));
         bldr.addFailure("error", new AccountNotFoundException());
         bldr.addSuccess("authn", new DefaultAuthenticationHandlerExecutionResult(

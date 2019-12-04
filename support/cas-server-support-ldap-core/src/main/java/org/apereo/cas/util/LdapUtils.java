@@ -324,7 +324,7 @@ public class LdapUtils {
      * @param newPassword       the new password
      * @param type              the type
      * @return true /false
-     *
+     * <p>
      * AD NOTE: Resetting passwords requires binding to AD as user with privileges to reset other users passwords
      * and it does not validate old password or respect directory policies such as history or minimum password age.
      * Changing a password with the old password does respect directory policies and requires no account operator
@@ -340,7 +340,7 @@ public class LdapUtils {
             if (!modifyConnection.getConnectionConfig().getUseSSL()
                 && !modifyConnection.getConnectionConfig().getUseStartTLS()) {
                 LOGGER.warn("Executing password modification op under a non-secure LDAP connection; "
-                    + "To modify password attributes, the connection to the LDAP server {} be secured and/or encrypted.",
+                        + "To modify password attributes, the connection to the LDAP server {} be secured and/or encrypted.",
                     type == AbstractLdapProperties.LdapType.AD ? "MUST" : "SHOULD");
             }
             if (type == AbstractLdapProperties.LdapType.AD) {
@@ -700,7 +700,7 @@ public class LdapUtils {
         }
 
         val auth = StringUtils.isBlank(l.getPrincipalAttributePassword())
-            ? new Authenticator(resolver, getPooledBindAuthenticationHandler(l, newLdaptivePooledConnectionFactory(l)))
+            ? new Authenticator(resolver, getPooledBindAuthenticationHandler(newLdaptivePooledConnectionFactory(l)))
             : new Authenticator(resolver, getPooledCompareAuthenticationHandler(l, newLdaptivePooledConnectionFactory(l)));
 
         if (l.isEnhanceWithEntryResolver()) {
@@ -725,7 +725,7 @@ public class LdapUtils {
 
     private static Authenticator getAuthenticatorViaDnFormat(final AbstractLdapAuthenticationProperties l) {
         val resolver = new FormatDnResolver(l.getDnFormat());
-        val authenticator = new Authenticator(resolver, getPooledBindAuthenticationHandler(l, newLdaptivePooledConnectionFactory(l)));
+        val authenticator = new Authenticator(resolver, getPooledBindAuthenticationHandler(newLdaptivePooledConnectionFactory(l)));
 
         if (l.isEnhanceWithEntryResolver()) {
             authenticator.setEntryResolver(newLdaptiveSearchEntryResolver(l, newLdaptivePooledConnectionFactory(l)));
@@ -733,8 +733,7 @@ public class LdapUtils {
         return authenticator;
     }
 
-    private static PooledBindAuthenticationHandler getPooledBindAuthenticationHandler(final AbstractLdapAuthenticationProperties l,
-                                                                                      final PooledConnectionFactory factory) {
+    private static PooledBindAuthenticationHandler getPooledBindAuthenticationHandler(final PooledConnectionFactory factory) {
         val handler = new PooledBindAuthenticationHandler(factory);
         handler.setAuthenticationControls(new PasswordPolicyControl());
         return handler;
@@ -1015,7 +1014,7 @@ public class LdapUtils {
         cp.initialize();
         return cp;
     }
-         
+
 
     /**
      * New dn resolver entry resolver.

@@ -8,7 +8,6 @@ import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorProp
 import org.apereo.cas.util.http.HttpClient;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 /**
@@ -19,7 +18,6 @@ import lombok.val;
  * @since 6.0
  */
 @RequiredArgsConstructor
-@Slf4j
 public class DuoSecurityMultifactorAuthenticationProviderFactory implements
     MultifactorAuthenticationProviderFactoryBean<DuoSecurityMultifactorAuthenticationProvider, DuoSecurityMultifactorProperties> {
 

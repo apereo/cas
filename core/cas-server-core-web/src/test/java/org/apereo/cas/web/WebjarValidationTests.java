@@ -1,6 +1,5 @@
 package org.apereo.cas.web;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import org.junit.jupiter.api.Test;
@@ -21,7 +20,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author Hal Deadman
  * @since 6.1.0
  */
-@Slf4j
 public class WebjarValidationTests {
 
     @Test

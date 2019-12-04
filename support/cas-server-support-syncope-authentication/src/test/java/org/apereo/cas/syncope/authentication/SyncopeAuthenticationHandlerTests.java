@@ -17,7 +17,6 @@ import org.apereo.cas.util.MockWebServer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Cleanup;
 import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.syncope.common.lib.to.UserTO;
 import org.junit.jupiter.api.Test;
@@ -58,7 +57,6 @@ import static org.junit.jupiter.api.Assertions.*;
     "spring.mail.port=25000",
     "spring.mail.testConnection=false"
 })
-@Slf4j
 @ResourceLock("Syncope")
 public class SyncopeAuthenticationHandlerTests {
     private static final ObjectMapper MAPPER = new IgnoringJaxbModuleJacksonObjectMapper().findAndRegisterModules();

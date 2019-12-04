@@ -20,8 +20,8 @@ import org.springframework.http.HttpMethod;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 /**
  * This is {@link BaseDuoSecurityAuthenticationService}.
@@ -71,7 +71,7 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
         this.userAccountCache = Caffeine.newBuilder()
             .initialCapacity(USER_ACCOUNT_CACHE_INITIAL_SIZE)
             .maximumSize(USER_ACCOUNT_CACHE_MAX_SIZE)
-            .expireAfterWrite(USER_ACCOUNT_CACHE_EXPIRATION_SECONDS, TimeUnit.SECONDS)
+            .expireAfterWrite(Duration.ofSeconds(USER_ACCOUNT_CACHE_EXPIRATION_SECONDS))
             .build();
         this.userAccountCachedMap = this.userAccountCache.asMap();
     }

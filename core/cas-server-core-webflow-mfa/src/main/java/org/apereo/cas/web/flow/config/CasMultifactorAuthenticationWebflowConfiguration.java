@@ -49,7 +49,6 @@ import org.apereo.cas.web.flow.resolver.impl.RankedMultifactorAuthenticationProv
 import org.apereo.cas.web.flow.resolver.impl.SelectiveMultifactorAuthenticationProviderWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.mfa.DefaultMultifactorAuthenticationProviderWebflowEventResolver;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,7 +76,6 @@ import java.util.List;
 @Configuration("casMfaWebflowConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnWebApplication
-@Slf4j
 public class CasMultifactorAuthenticationWebflowConfiguration {
     @Autowired
     @Qualifier("loginFlowRegistry")
@@ -411,7 +409,7 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
     @RefreshScope
     @ConditionalOnMissingBean(name = "mfaFailureAction")
     public MultifactorAuthenticationFailureAction mfaFailureAction() {
-        return new MultifactorAuthenticationFailureAction(casProperties, applicationContext);
+        return new MultifactorAuthenticationFailureAction(applicationContext);
     }
 
     @Bean

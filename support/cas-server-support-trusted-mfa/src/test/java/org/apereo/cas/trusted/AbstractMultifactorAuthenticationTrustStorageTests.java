@@ -26,6 +26,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.webflow.execution.Action;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 import static org.apereo.cas.trusted.BeanNames.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -57,7 +58,7 @@ public abstract class AbstractMultifactorAuthenticationTrustStorageTests {
         record.setName("DeviceName");
         record.setPrincipal("casuser");
         record.setId(1000);
-        record.setRecordDate(LocalDateTime.now().plusDays(1));
+        record.setRecordDate(LocalDateTime.now(ZoneId.systemDefault()).plusDays(1));
         record.setRecordKey("RecordKey");
         return record;
     }
@@ -67,8 +68,9 @@ public abstract class AbstractMultifactorAuthenticationTrustStorageTests {
         val record = getMultifactorAuthenticationTrustRecord();
         getMfaTrustEngine().set(record);
         assertFalse(getMfaTrustEngine().get(record.getPrincipal()).isEmpty());
-        assertFalse(getMfaTrustEngine().get(LocalDateTime.now()).isEmpty());
-        assertFalse(getMfaTrustEngine().get(record.getPrincipal(), LocalDateTime.now()).isEmpty());
+        val now = LocalDateTime.now(ZoneId.systemDefault());
+        assertFalse(getMfaTrustEngine().get(now).isEmpty());
+        assertFalse(getMfaTrustEngine().get(record.getPrincipal(), now).isEmpty());
     }
 
     public abstract MultifactorAuthenticationTrustStorage getMfaTrustEngine();

@@ -4,7 +4,6 @@ import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
@@ -46,7 +45,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class CasServerProfileRegistrar implements ApplicationContextAware {
     private final ServicesManager servicesManager;
-    private final CasConfigurationProperties casProperties;
     private final Clients clients;
     private final Set<String> availableAttributes;
     private ApplicationContext applicationContext;

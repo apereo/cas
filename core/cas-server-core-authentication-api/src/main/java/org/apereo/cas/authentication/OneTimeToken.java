@@ -16,6 +16,7 @@ import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 /**
  * This is {@link OneTimeToken}.
@@ -47,7 +48,7 @@ public class OneTimeToken implements Serializable, Comparable<OneTimeToken> {
     private String userId;
 
     @Column(nullable = false)
-    private LocalDateTime issuedDateTime = LocalDateTime.now();
+    private LocalDateTime issuedDateTime = LocalDateTime.now(ZoneId.systemDefault());
 
     public OneTimeToken() {
         setId(System.currentTimeMillis());

@@ -3,8 +3,6 @@ package org.apereo.cas.uma.ticket.resource.repository.impl;
 import org.apereo.cas.uma.ticket.resource.ResourceSet;
 import org.apereo.cas.uma.ticket.resource.repository.BaseResourceSetRepository;
 
-import lombok.extern.slf4j.Slf4j;
-
 import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
@@ -16,7 +14,6 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Slf4j
 public class DefaultResourceSetRepository extends BaseResourceSetRepository {
     private final Map<Long, ResourceSet> repository = new ConcurrentHashMap<>();
 

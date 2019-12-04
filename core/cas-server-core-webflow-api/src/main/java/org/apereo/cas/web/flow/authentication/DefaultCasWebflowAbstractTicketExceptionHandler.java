@@ -5,7 +5,6 @@ import org.apereo.cas.ticket.AbstractTicketException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.webflow.action.EventFactorySupport;
@@ -22,7 +21,6 @@ import java.util.Set;
  */
 @Getter
 @Setter
-@Slf4j
 @RequiredArgsConstructor
 public class DefaultCasWebflowAbstractTicketExceptionHandler implements CasWebflowExceptionHandler<AbstractTicketException> {
     private int order = Integer.MAX_VALUE;
