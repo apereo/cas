@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.support.azuread;
 
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
+import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
@@ -43,4 +44,20 @@ public class AzureActiveDirectoryAuthenticationProperties implements Serializabl
      */
     @NestedConfigurationProperty
     private PrincipalTransformationProperties principalTransformation = new PrincipalTransformationProperties();
+
+    /**
+     * Client id of the application.
+     */
+    @RequiredProperty
+    private String clientId;
+
+    /**
+     * Login url including the tenant id.
+     */
+    private String loginUrl = "https://login.microsoftonline.com/common/";
+
+    /**
+     * Resource url for the graph API to fetch attributes.
+     */
+    private String resource = "https://graph.microsoft.com/";
 }

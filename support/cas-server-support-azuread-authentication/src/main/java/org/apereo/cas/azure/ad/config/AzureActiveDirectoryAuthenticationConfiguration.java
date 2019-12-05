@@ -105,7 +105,10 @@ public class AzureActiveDirectoryAuthenticationConfiguration {
         val handler = new AzureActiveDirectoryAuthenticationHandler(azure.getName(),
             servicesManager.getObject(),
             microsoftAzureActiveDirectoryPrincipalFactory(),
-            azure.getOrder());
+            azure.getOrder(),
+            azure.getClientId(),
+            azure.getLoginUrl(),
+            azure.getResource());
         handler.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(azure.getPrincipalTransformation()));
         handler.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(azure.getPasswordEncoder(), applicationContext));
         return handler;
