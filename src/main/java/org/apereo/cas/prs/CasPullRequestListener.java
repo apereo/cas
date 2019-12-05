@@ -59,7 +59,9 @@ public class CasPullRequestListener implements PullRequestListener {
                 + "as quickly as possible. Furthermore, make sure your patch is based on the appropriate branch, is a feature branch and "
                 + "targets the correct CAS branch here to avoid conflicts. \n"
                 + "If you believe this to be an error, please post your explanation here as a comment and it will be reviewed as quickly as possible. \n"
-                + "For additional details, please review https://apereo.github.io/cas/developer/Contributor-Guidelines.html");
+                + "For additional details, please review https://apereo.github.io/cas/developer/Contributor-Guidelines.html"
+                + "\n\nIf you are seeking assistance and have a question about your CAS deployment, "
+                + "please visit https://apereo.github.io/cas/Support.html to learn more about support options.");
             repository.close(pr);
             return true;
         }
@@ -99,7 +101,9 @@ public class CasPullRequestListener implements PullRequestListener {
                 repository.labelPullRequestAs(pr, CasLabels.LABEL_PROPOSAL_DECLINED);
                 repository.addComment(pr, "Thank you very much for submitting this pull request! Please note that this patch "
                     + "is targeted at a CAS branch that is no longer maintained and as such cannot be accepted or merged. "
-                    + "For additional details, please review https://apereo.github.io/cas/developer/Maintenance-Policy.html");
+                    + "For additional details, please review https://apereo.github.io/cas/developer/Maintenance-Policy.html"
+                    + "\n\nIf you are seeking assistance or have a question about your CAS deployment, "
+                    + "please visit https://apereo.github.io/cas/Support.html for support options.");
                 repository.close(pr);
                 return true;
             }

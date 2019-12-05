@@ -87,7 +87,7 @@ public enum CasLabels {
     LABEL_PROPOSAL_DECLINED("Proposal Declined"),
     LABEL_SEE_CONTRIBUTOR_GUIDELINES("See Contributor Guidelines"),
     LABEL_PROXY_AUTHENTICATION("Proxy Authentication", "pgt|proxy callback"),
-    LABEL_RADIUS("RADIUS"),
+    LABEL_RADIUS("RADIUS", "jradius"),
     LABEL_REST_PROTOCOL("REST Protocol & Integration", "rest"),
     LABEL_REDIS("Redis", "redis|sentinel"),
     LABEL_REFACTORING_CODE_CLEANUP("Refactoring & Code CleanUp", "refactor:*\\s*|NPE|cleanup|CVE|spotbugs|checkstyle|codacy|duplicate code"),
