@@ -15,6 +15,7 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -53,6 +54,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "spring.mail.port=25000",
     "spring.mail.testConnection=false"
 })
+@Tag("Ehcache")
 public class EhCacheHealthIndicatorTests {
     @Autowired
     @Qualifier("ticketRegistry")
