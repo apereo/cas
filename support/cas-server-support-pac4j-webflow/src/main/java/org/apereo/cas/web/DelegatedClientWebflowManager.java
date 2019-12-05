@@ -210,6 +210,10 @@ public class DelegatedClientWebflowManager {
             if (client instanceof SAML2Client) {
                 LOGGER.debug("Client identifier could not found as part of the request parameters. Looking at relay-state for the SAML2 client");
                 clientId = webContext.getRequestParameter("RelayState");
+                if (clientId.isEmpty() || StringUtils.isBlank(clientId.get())) {
+                    val sessionStore = webContext.getSessionStore();
+                    clientId = sessionStore.get(webContext, SAML2StateGenerator.SAML_RELAY_STATE_ATTRIBUTE);
+                }
             }
             if (client instanceof OAuth20Client || client instanceof OidcClient) {
                 LOGGER.debug("Client identifier could not found as part of the request parameters. Looking at state for the OAuth2/Oidc client");
