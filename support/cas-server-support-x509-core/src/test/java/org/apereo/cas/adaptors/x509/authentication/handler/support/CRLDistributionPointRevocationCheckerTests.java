@@ -82,7 +82,6 @@ public class CRLDistributionPointRevocationCheckerTests extends BaseCRLRevocatio
      */
     public static Stream<Arguments> getTestParameters() {
         val params = new ArrayList<Arguments>();
-        var cache = (UserManagedCache<URI, byte[]>) null;
         val defaultPolicy = new ThresholdExpiredCRLRevocationPolicy(0);
         val zeroThresholdPolicy = new ThresholdExpiredCRLRevocationPolicy(0);
 
@@ -90,7 +89,7 @@ public class CRLDistributionPointRevocationCheckerTests extends BaseCRLRevocatio
          * Test case #0
          * Valid certificate on valid CRL data with encoded url
          */
-        cache = getCache(100);
+        var cache = getCache(100);
         params.add(arguments(
             new CRLDistributionPointRevocationChecker(cache, defaultPolicy, null),
             new String[]{"uservalid-encoded-crl.crt"},
