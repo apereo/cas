@@ -1572,6 +1572,9 @@ ext.libraries = [
                 },
                 dependencies.create("org.json:json:$jsonVersion") {
                     force = true
+                },
+                dependencies.create("com.google.code.gson:gson:$gsonVersion") {
+                    force = true
                 }
         ],
         cosmosdb                : [

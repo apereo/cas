@@ -1197,19 +1197,9 @@ under the configuration key `cas.authn.attributeRepository.redis`.
 # cas.authn.attributeRepository.redis.id=
 ```
 
-### Microsoft Graph / Azure Active Directory
+### Microsoft Azure Active Directory
 
 This option will fetch attributes from Microsoft Azure Active Directory using the Microsoft Graph API.
-
-Support is enabled by adding the following module into the overlay:
-
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-azuread-authentication</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
 
 The following settings are available:
 
@@ -2282,6 +2272,23 @@ AWS settings for this feature are available [here](Configuration-Properties-Comm
 # cas.authn.cognito.userPoolId=
 ```
 
+## Microsoft Azure Active Directory Authentication
+
+To learn more about this topic, [please review this guide](../installation/Azure-ActiveDirectory-Authentication.html).
+
+Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.azure-active-directory`.
+Password encoding  settings for this feature are available [here](Configuration-Properties-Common.html#password-encoding) under the configuration key `cas.authn.azure-active-directory`.
+
+AWS settings for this feature are available [here](Configuration-Properties-Common.html#amazon-integration-settings) under the configuration key `cas.authn.azure-active-directory`.
+
+```properties
+# cas.authn.azure-active-directory.name=
+# cas.authn.azure-active-directory.order=
+
+# cas.authn.azure-active-directory.clientId=
+# cas.authn.azure-active-directory.loginUrl=https://login.microsoftonline.com/common/
+# cas.authn.azure-active-directory.resource=https://graph.microsoft.com/
+```
 
 ## SOAP Authentication
 
