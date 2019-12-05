@@ -11,6 +11,7 @@ import org.apereo.cas.config.EhcacheTicketRegistryTicketCatalogConfiguration;
 
 import lombok.val;
 import net.sf.ehcache.CacheManager;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -48,6 +49,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
     "spring.mail.port=25000",
     "spring.mail.testConnection=false"
 })
+@Tag("Ehcache")
 public class CachesEndpointTests {
 
     @Autowired

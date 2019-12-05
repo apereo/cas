@@ -419,9 +419,38 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     force = true
                 },
-                dependencies.create("org.ehcache:jcache:$jcacheVersion") {
+                dependencies.create("org.ehcache:jcache:$ehcacheJcacheVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "net.sf.ehcache", module: "ehcache")
+                    force = true
+                }
+        ],
+        ehcache3                 : [
+                dependencies.create("org.ehcache:ehcache:$ehcache3Version") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.glassfish.jaxb", module: "jaxb-runtime")
+                    force = true
+                },
+                dependencies.create("org.ehcache:ehcache-clustered:$ehcache3Version") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    force = true
+                },
+                dependencies.create("org.ehcache.modules:ehcache-client:$ehcache3Version") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    force = true
+                },
+                dependencies.create("org.ehcache.modules:ehcache-common:$ehcache3Version") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    force = true
+                },
+                dependencies.create("org.ehcache.modules:ehcache-107:$ehcache3Version") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.ehcache.modules", module: "ehcache-impl")
+                    exclude(group: "org.ehcache.modules", module: "ehcache-xml")
+                    exclude(group: "org.ehcache.modules", module: "ehcache-api")
+                    force = true
+                },
+                dependencies.create("javax.cache:cache-api:$jcacheVersion") {
                     force = true
                 }
         ],
