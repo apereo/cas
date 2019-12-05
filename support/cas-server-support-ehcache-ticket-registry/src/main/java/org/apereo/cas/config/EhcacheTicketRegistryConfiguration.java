@@ -6,6 +6,7 @@ import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
 import org.apereo.cas.ticket.registry.EhCacheTicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.util.AsciiArtUtils;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.CoreTicketUtils;
 import org.apereo.cas.util.ResourceUtils;
@@ -20,9 +21,11 @@ import net.sf.ehcache.distribution.CacheReplicator;
 import net.sf.ehcache.distribution.RMIAsynchronousCacheReplicator;
 import net.sf.ehcache.distribution.RMIBootstrapCacheLoader;
 import net.sf.ehcache.distribution.RMISynchronousCacheReplicator;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cache.ehcache.EhCacheCacheManager;
 import org.springframework.cache.ehcache.EhCacheFactoryBean;
@@ -38,11 +41,14 @@ import java.util.Objects;
  *
  * @author Misagh Moayyed
  * @since 5.0.0
+ * @deprecated Since 6.2, due to Ehcache 2.x being unmaintained. Other registries are available, including Ehcache 3.x.
  */
 @Configuration("ehcacheTicketRegistryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ConditionalOnProperty(prefix = "cas.ticket.registry.ehcache", name = "enabled", havingValue = "true", matchIfMissing = true)
+@Deprecated
 @Slf4j
-public class EhcacheTicketRegistryConfiguration {
+public class EhcacheTicketRegistryConfiguration implements InitializingBean {
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -102,10 +108,9 @@ public class EhcacheTicketRegistryConfiguration {
     }
 
     private Ehcache buildCache(final TicketDefinition ticketDefinition) {
-        val cache = casProperties.getTicket().getRegistry().getEhcache();
-        val configExists = ResourceUtils.doesResourceExist(cache.getConfigLocation());
-
         val ehcacheProperties = casProperties.getTicket().getRegistry().getEhcache();
+        val configExists = ResourceUtils.doesResourceExist(ehcacheProperties.getConfigLocation());
+
         val bean = new EhCacheFactoryBean();
 
         bean.setCacheName(ticketDefinition.getProperties().getStorageName());
@@ -117,7 +122,7 @@ public class EhcacheTicketRegistryConfiguration {
         } else {
             LOGGER.warn("In registering ticket definition [{}], Ehcache configuration file [{}] cannot be found "
                 + "so no cache event listeners will be configured to bootstrap. "
-                + "The ticket registry will operate in standalone mode", ticketDefinition.getPrefix(), cache.getConfigLocation());
+                + "The ticket registry will operate in standalone mode", ticketDefinition.getPrefix(), ehcacheProperties.getConfigLocation());
         }
 
         bean.setTimeToIdle((int) ticketDefinition.getProperties().getStorageTimeout());
@@ -189,5 +194,11 @@ public class EhcacheTicketRegistryConfiguration {
     @Bean
     public EhCacheCacheManager ehCacheCacheManager(@Autowired final CacheManager ehcacheTicketCacheManager) {
         return new EhCacheCacheManager(ehcacheTicketCacheManager);
+    }
+
+    @Override
+    public void afterPropertiesSet() {
+        AsciiArtUtils.printAsciiArtWarning(LOGGER,
+            "CAS Integration with ehcache 2.x will be discontinued after 6.2.x. Please consider migrating to another type of registry.");
     }
 }
