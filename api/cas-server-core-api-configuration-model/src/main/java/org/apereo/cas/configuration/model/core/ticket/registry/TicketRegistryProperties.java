@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.model.support.cassandra.ticketregistry.Cassa
 import org.apereo.cas.configuration.model.support.couchbase.ticketregistry.CouchbaseTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.couchdb.ticketregistry.CouchDbTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.dynamodb.DynamoDbTicketRegistryProperties;
+import org.apereo.cas.configuration.model.support.ehcache.Ehcache3Properties;
 import org.apereo.cas.configuration.model.support.ehcache.EhcacheProperties;
 import org.apereo.cas.configuration.model.support.hazelcast.HazelcastTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.ignite.IgniteProperties;
@@ -71,6 +72,13 @@ public class TicketRegistryProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private EhcacheProperties ehcache = new EhcacheProperties();
+
+    /**
+     * Ehcache3 registry settings.
+     */
+    @NestedConfigurationProperty
+    private Ehcache3Properties ehcache3 = new Ehcache3Properties();
+
 
     /**
      * Hazelcast registry settings.

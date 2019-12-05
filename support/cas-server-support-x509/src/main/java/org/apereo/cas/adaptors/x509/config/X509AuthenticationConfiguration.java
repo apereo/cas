@@ -31,9 +31,15 @@ import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.RegexUtils;
 
 import lombok.val;
-import net.sf.ehcache.Cache;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
+
+import org.ehcache.config.builders.ExpiryPolicyBuilder;
+import org.ehcache.config.builders.ResourcePoolsBuilder;
+import org.ehcache.config.builders.UserManagedCacheBuilder;
+import org.ehcache.config.units.EntryUnit;
+import org.ehcache.config.units.MemoryUnit;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -44,7 +50,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ResourceLoader;
 
-import java.util.UUID;
+import java.net.URI;
+import java.time.Duration;
 import java.util.stream.Collectors;
 
 /**
@@ -100,12 +107,24 @@ public class X509AuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "crlDistributionPointRevocationChecker")
     public RevocationChecker crlDistributionPointRevocationChecker() {
         val x509 = casProperties.getAuthn().getX509();
-        val cache = new Cache("CRL".concat(UUID.randomUUID().toString()),
-            x509.getCacheMaxElementsInMemory(),
-            x509.isCacheDiskOverflow(),
-            x509.isCacheEternal(),
-            x509.getCacheTimeToLiveSeconds(),
-            x509.getCacheTimeToIdleSeconds());
+        var builder = UserManagedCacheBuilder.newUserManagedCacheBuilder(URI.class, byte[].class);
+
+        if (x509.isCacheDiskOverflow()) {
+            builder = builder.withResourcePools(ResourcePoolsBuilder.newResourcePoolsBuilder()
+                .disk(x509.getCacheDiskSize(), MemoryUnit.valueOf(x509.getCacheDiskSizeUnits()), false));
+        }
+
+        builder = builder.withResourcePools(
+            ResourcePoolsBuilder.newResourcePoolsBuilder()
+                .heap(x509.getCacheMaxElementsInMemory(), EntryUnit.ENTRIES));
+
+        if (x509.isCacheEternal()) {
+            builder = builder.withExpiry(ExpiryPolicyBuilder.noExpiration());
+        } else {
+            builder = builder.withExpiry(ExpiryPolicyBuilder
+                .timeToLiveExpiration(Duration.ofSeconds(x509.getCacheTimeToLiveSeconds())));
+        }
+        var cache = builder.build(true);
 
         return new CRLDistributionPointRevocationChecker(
             x509.isCheckAll(),
