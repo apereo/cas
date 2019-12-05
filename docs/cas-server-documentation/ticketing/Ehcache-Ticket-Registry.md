@@ -4,7 +4,53 @@ title: CAS - Ehcache Ticket Registry
 category: Ticketing
 ---
 
-# Ehcache Ticket Registry
+# Ehcache 3 Ticket Registry
+Ehcache 3.x integration is enabled by including the following dependency in the WAR overlay:
+
+```xml
+<dependency>
+     <groupId>org.apereo.cas</groupId>
+     <artifactId>cas-server-support-ehcache3-ticket-registry</artifactId>
+     <version>${cas.version}</version>
+</dependency>
+```
+
+This registry stores tickets using the [Ehcache 3.x](http://ehcache.org/) caching library and an optional Terracotta cluster.
+
+## In-memory store with disk persistence
+Ehcache 3.x doesn't support distributing caching without Terracotta so using it without pointing at a Terracotta 
+server or cluster doesn't support using more than one CAS server at a time, but the registry should survive restarts due 
+to the disk persistence.
+
+### Terracotta Clustering
+By pointing this Ehcache module at a Terracotta server then multiple CAS servers can share tickets. CAS uses `autocreate` 
+to create the Terracotta cluster configuration. An easy way to run a Terracotta server is to use the [docker container](https://github.com/Terracotta-OSS/docker).
+```shell script
+docker run --rm --name tc-server -p 9410:9410 -d \
+ --env OFFHEAP_RESOURCE1_NAME=main \
+ --env OFFHEAP_RESOURCE2_NAME=extra \
+ --env OFFHEAP_RESOURCE1_SIZE=256 \
+ --env OFFHEAP_RESOURCE2_SIZE=16 \
+terracotta/terracotta-server-oss:5.6.4
+```
+Running a Terracotta cluster on Kubernetes can be done easily using the Terracotta [helm chart](https://github.com/helm/charts/tree/master/stable/terracotta).
+
+#### Configuration
+
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#ehcache-3-ticket-registry).
+CAS currently doesn't support or require an XML configuration to configure Ehcache. 
+
+### Eviction Policy
+
+Ehcache can be configured as "eternal" in which case CAS's regular cleaning process will remove expired tickets. If the 
+eternal property is set to false then storage timeouts will be set based on the metadata for the individual caches.  
+
+
+# Ehcache Ticket Registry (Version 2)
+Due to the relatively unsupported status of the Ehcache 2.x code base, this module is deprecated and will likely be 
+removed in a future CAS release. Unlike the Ehcache 3.x library, it can replicate directly between CAS servers without
+needing an external cache cluster (e.g. Terracotta in Ehcache 3.x).
+ 
 Ehcache integration is enabled by including the following dependency in the WAR overlay:
 
 ```xml
@@ -15,7 +61,7 @@ Ehcache integration is enabled by including the following dependency in the WAR 
 </dependency>
 ```
 
-This registry stores tickets in an [Ehcache](http://ehcache.org/) instance.
+This registry stores tickets using [Ehcache](http://ehcache.org/) version 2.x library.
 
 
 ## Distributed Cache
@@ -33,7 +79,8 @@ replication with Ehcache, [see this resource](http://ehcache.org/documentation/u
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#ehcache-ticket-registry).
 
-The Ehcache configuration for `ehcache-replicated.xml` mentioned in the config follows.
+The Ehcache configuration for `ehcache-replicated.xml` mentioned in the config follows. 
+Note that ${ehcache.otherServer} would be replaced by a system property: -Dehcache.otherserver=cas2
 
 ```xml
 
@@ -54,7 +101,8 @@ The Ehcache configuration for `ehcache-replicated.xml` mentioned in the config f
         <!-- Manual Peer Discovery -->
         <cacheManagerPeerProviderFactory
             class="net.sf.ehcache.distribution.RMICacheManagerPeerProviderFactory"
-            properties="peerDiscovery=manual,rmiUrls=//localhost:41001/org.apereo.cas.ticket.TicketCache" />
+            properties="peerDiscovery=manual,rmiUrls=//${ehcache.otherServer}:41001/proxyGrantingTicketsCache|//${ehcache.otherServer}:41001/ticketGrantingTicketsCache|//${ehcache.otherServer}:41001/proxyTicketsCache|//${ehcache.otherServer}:41001/oauthCodesCache|//${ehcache.otherServer}:41001/samlArtifactsCache|//${ehcache.otherServer}:41001/oauthDeviceUserCodesCache|//${ehcache.otherServer}:41001/samlAttributeQueryCache|//${ehcache.otherServer}:41001/oauthAccessTokensCache|//${ehcache.otherServer}:41001/serviceTicketsCache|//${ehcache.otherServer}:41001/oauthRefreshTokensCache|//${ehcache.otherServer}:41001/transientSessionTicketsCache|//${ehcache.otherServer}:41001/oauthDeviceTokensCache" />
+
         <cacheManagerPeerListenerFactory
             class="net.sf.ehcache.distribution.RMICacheManagerPeerListenerFactory"
             properties="port=41001,remoteObjectPort=41002" />

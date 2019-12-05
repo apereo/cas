@@ -6,6 +6,7 @@ import org.apereo.cas.config.EhcacheTicketRegistryTicketCatalogConfiguration;
 import lombok.SneakyThrows;
 import lombok.val;
 import net.sf.ehcache.distribution.CacheReplicator;
+import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -31,6 +32,7 @@ import static org.mockito.Mockito.*;
     "spring.mail.port=25000",
     "spring.mail.testConnection=false"
 })
+@Tag("Ehcache")
 public class EhCacheTicketRegistryTests extends BaseTicketRegistryTests {
 
     @Autowired
