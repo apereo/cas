@@ -1542,7 +1542,7 @@ ext.libraries = [
             force = true
         },
         jradius                 : [
-                dependencies.create("com.github.coova:jradius:$jradiusVersion") {
+                dependencies.create("net.jradius:jradius-core:$jradiusVersion") {
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "log4j", module: "log4j")
                     exclude(group: "org.slf4j", module: "slf4j-api")
@@ -1557,6 +1557,9 @@ ext.libraries = [
                     exclude(group: "commons-lang", module: "commons-lang")
                     exclude(group: "net.sf.ehcache", module: "ehcache-core")
                     force = true
+                },
+                dependencies.create("net.jradius:jradius-dictionary:1.1.5") {
+                    exclude(group: "net.jradius", module: "jradius-core")
                 },
                 dependencies.create("gnu.getopt:java-getopt:1.0.13") {
                     force = true
