@@ -11,6 +11,8 @@
   },
   "ignoreDeps": [
     "com.github.coova:jradius",
+    "net.jradius:jradius-core",
+    "net.jradius:jradius-dictionary",
     "com.mebigfatguy.fb-contrib:fb-contrib"
   ],
   "packageRules": [
