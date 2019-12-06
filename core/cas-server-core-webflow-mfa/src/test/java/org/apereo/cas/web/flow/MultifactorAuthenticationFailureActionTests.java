@@ -33,7 +33,7 @@ public class MultifactorAuthenticationFailureActionTests extends BaseCasWebflowM
     @Qualifier("mfaFailureAction")
     private Action mfaFailureAction;
 
-    protected void executeAction(final RegisteredServiceMultifactorPolicyFailureModes mode, final String transitionIdUnavailable) throws Exception {
+    protected void executeAction(final RegisteredServiceMultifactorPolicyFailureModes mode, final String transitionId) throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -46,7 +46,7 @@ public class MultifactorAuthenticationFailureActionTests extends BaseCasWebflowM
         WebUtils.putRegisteredService(context, RegisteredServiceTestUtils.getRegisteredService());
         context.getFlowScope().put(CasWebflowConstants.VAR_ID_MFA_PROVIDER_ID, provider.getId());
         val event = mfaFailureAction.execute(context);
-        assertEquals(transitionIdUnavailable, event.getId());
+        assertEquals(transitionId, event.getId());
     }
 
     @Test
