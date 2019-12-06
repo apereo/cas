@@ -1741,40 +1741,14 @@ ext.libraries = [
                 }
         ],
         log4j                   : [
-                dependencies.create("org.springframework.boot:spring-boot-starter-log4j2:$springBootVersion") {
-                    exclude(group: "org.springframework", module: "spring-web")
-                    exclude(group: "org.springframework", module: "spring-webmvc")
-                    exclude(group: "org.springframework", module: "spring-core")
-                    exclude(group: "org.springframework", module: "spring-context")
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "org.slf4j", module: "jul-to-slf4j")
-                    exclude(group: "org.apache.logging.log4j", module: "log4j-slf4j-impl")
-                    exclude(group: "org.apache.logging.log4j", module: "log4j-core")
-                    exclude(group: "org.apache.logging.log4j", module: "log4j-api")
-                    exclude(group: "org.apache.logging.log4j", module: "log4j-jcl")
-                    force = true
-                },
-                dependencies.create("org.apache.logging.log4j:log4j-api:$log4jVersion") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    force = true
-                },
-                dependencies.create("org.apache.logging.log4j:log4j-core:$log4jVersion") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    force = true
-                },
-                dependencies.create("org.apache.logging.log4j:log4j-jcl:$log4jVersion") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    force = true
-                },
-                dependencies.create("org.apache.logging.log4j:log4j-web:$log4jVersion") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    force = true
-                },
-                dependencies.create("org.apache.logging.log4j:log4j-slf4j18-impl:$log4jVersion") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    force = true
-                },
-                dependencies.create("com.lmax:disruptor:$disruptorVersion")
+                createLog4jDependencies(
+                    "org.springframework.boot:spring-boot-starter-log4j2:$springBootVersion",
+                    "org.apache.logging.log4j:log4j-api:$log4jVersion",
+                    "org.apache.logging.log4j:log4j-core:$log4jVersion",
+                    "org.apache.logging.log4j:log4j-jcl:$log4jVersion",
+                    "org.apache.logging.log4j:log4j-web:$log4jVersion",
+                    "org.apache.logging.log4j:log4j-slf4j18-impl:$log4jVersion",
+                    "com.lmax:disruptor:$disruptorVersion")
         ],
         slf4j                   : [
                 dependencies.create("org.slf4j:slf4j-api:$slf4jVersion"),
@@ -1782,62 +1756,21 @@ ext.libraries = [
                 dependencies.create("org.slf4j:jcl-over-slf4j:$slf4jVersion"),
         ],
         metrics                 : [
-                dependencies.create("com.timgroup:java-statsd-client:$statsdVersion") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    force = true
-                },
-                dependencies.create("io.micrometer:micrometer-core:$micrometerVersion") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    force = true
-                },
-                dependencies.create("io.micrometer:micrometer-registry-prometheus:$micrometerVersion") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    force = true
-                },
-                dependencies.create("io.micrometer:micrometer-registry-graphite:$micrometerVersion") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    force = true
-                },
-                dependencies.create("io.micrometer:micrometer-registry-ganglia:$micrometerVersion") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    force = true
-                },
-                dependencies.create("io.micrometer:micrometer-registry-jmx:$micrometerVersion") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    force = true
-                },
-                dependencies.create("io.micrometer:micrometer-registry-influx:$micrometerVersion") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    force = true
-                },
-                dependencies.create("io.micrometer:micrometer-registry-statsd:$micrometerVersion") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    force = true
-                },
-                dependencies.create("io.micrometer:micrometer-registry-atlas:$micrometerVersion") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    force = true
-                },
-                dependencies.create("io.micrometer:micrometer-registry-signalfx:$micrometerVersion") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    force = true
-                },
-                dependencies.create("io.micrometer:micrometer-registry-wavefront:$micrometerVersion") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "com.signalfx.public", module: "signalfx-java")
-                    force = true
-                },
-                dependencies.create("io.micrometer:micrometer-registry-new-relic:$micrometerVersion") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    force = true
-                },
-                dependencies.create("io.micrometer:micrometer-registry-cloudwatch:$micrometerVersion") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    force = true
-                },
-                dependencies.create("com.signalfx.public:signalfx-java:$signalFxVersion") {
-                    force = true
-                }
+                createMetricsDependencies(
+                    "com.timgroup:java-statsd-client:$statsdVersion",
+                    "io.micrometer:micrometer-core:$micrometerVersion",
+                    "io.micrometer:micrometer-registry-prometheus:$micrometerVersion",
+                    "io.micrometer:micrometer-registry-graphite:$micrometerVersion",
+                    "io.micrometer:micrometer-registry-ganglia:$micrometerVersion",
+                    "io.micrometer:micrometer-registry-jmx:$micrometerVersion",
+                    "io.micrometer:micrometer-registry-influx:$micrometerVersion",
+                    "io.micrometer:micrometer-registry-statsd:$micrometerVersion",
+                    "io.micrometer:micrometer-registry-atlas:$micrometerVersion",
+                    "io.micrometer:micrometer-registry-signalfx:$micrometerVersion",
+                    "io.micrometer:micrometer-registry-wavefront:$micrometerVersion",
+                    "io.micrometer:micrometer-registry-new-relic:$micrometerVersion",
+                    "io.micrometer:micrometer-registry-cloudwatch:$micrometerVersion",
+                    "com.signalfx.public:signalfx-java:$signalFxVersion")
         ],
         mongo                   : [
                 dependencies.create("org.mongodb:mongo-java-driver:$mongoDriverVersion") {
@@ -3743,5 +3676,45 @@ def createJRadiusDependency(String... coordinates) {
             exclude(group: "net.sf.ehcache", module: "ehcache-core")
             force = true
         }
+    }
+}
+
+def createMetricsDependencies(String... coordinates) {
+    coordinates.each {
+        dependencies.create(it) {
+            exclude(group: "commons-logging", module: "commons-logging")
+            exclude(group: "org.slf4j", module: "slf4j-api")
+            exclude(group: "commons-lang", module: "commons-lang")
+            excludeDependencyIfNecessary(it, "com.signalfx.public:signalfx-java")
+            force = true
+        }
+    }
+}
+
+def createLog4jDependencies(String... coordinates) {
+    coordinates.each { coord ->
+        dependencies.create(coord) { it ->
+            exclude(group: "org.springframework", module: "spring-web")
+            exclude(group: "org.springframework", module: "spring-webmvc")
+            exclude(group: "org.springframework", module: "spring-core")
+            exclude(group: "org.springframework", module: "spring-context")
+            exclude(group: "org.slf4j", module: "slf4j-api")
+            exclude(group: "org.slf4j", module: "jul-to-slf4j")
+
+            excludeDependencyIfNecessary(it, "org.apache.logging.log4j:log4j-slf4j-impl")
+            excludeDependencyIfNecessary(it, "org.apache.logging.log4j:log4j-core")
+            excludeDependencyIfNecessary(it, "org.apache.logging.log4j:log4j-api")
+            excludeDependencyIfNecessary(it, "org.apache.logging.log4j:log4j-jcl")
+            excludeDependencyIfNecessary(it, "org.apache.logging.log4j:log4j-web")
+            force = true
+        }
+    }
+}
+
+def excludeDependencyIfNecessary(def dependency, String exclusion) {
+    def coords = dependency.group + ":" + dependency.name
+    if (!coords.equalsIgnoreCase(exclusion)) {
+        def exclusionCoords = exclusion.split(":")
+        dependency.exclude(group: exclusionCoords[0], module: exclusionCoords[1])
     }
 }
