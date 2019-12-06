@@ -296,6 +296,14 @@ subprojects {
 
             cacheDynamicVersionsFor 5, 'days'
             cacheChangingModulesFor 5, 'days'
+            /**
+             * Required for all JRadius modules
+             */
+            eachDependency { DependencyResolveDetails details ->
+                if (details.requested.group == "gnu-getopt") {
+                    details.useTarget group: "gnu.getopt", name: "java-getopt", version: details.requested.version
+                }
+            }
         }
         exclude(group: "cglib", module: "cglib")
         exclude(group: "cglib", module: "cglib-full")

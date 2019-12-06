@@ -174,8 +174,6 @@ task validateTestsSuites(description: "Ensure all projects contain a tests suite
     }
 }
 
-
-
 def checkForSpringConfigurationFactories(String projectPath, String configurations) {
     def classes = configurations.split(",")
     classes.each {
@@ -191,6 +189,5 @@ def checkForSpringConfigurationFactories(String projectPath, String configuratio
 gradle.buildFinished { buildResult ->
     cleanLogs
 }
-
 
 clean.dependsOn("cleanLogs")

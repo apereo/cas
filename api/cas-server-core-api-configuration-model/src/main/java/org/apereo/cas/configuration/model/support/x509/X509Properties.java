@@ -117,12 +117,7 @@ public class X509Properties implements Serializable {
     /**
      * Size of cache on disk.
      */
-    private int cacheDiskSize = 100;
-    /**
-     * Units for size of cache on disk units.
-     */
-    private String cacheDiskSizeUnits = "MB";
-
+    private String cacheDiskSize = "100MB";
     /**
      * When CRLs are cached, indicate if cache items should be eternal.
      */

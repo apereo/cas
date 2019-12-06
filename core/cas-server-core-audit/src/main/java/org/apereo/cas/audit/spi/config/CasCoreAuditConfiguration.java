@@ -84,7 +84,7 @@ public class CasCoreAuditConfiguration {
     public AuditTrailManagementAspect auditTrailManagementAspect() {
         val supportedActions = casProperties.getAudit().getSupportedActions();
         val auditManager = new FilterAndDelegateAuditTrailManager(auditTrailExecutionPlan.getObject().getAuditTrailManagers(), supportedActions);
-        var auditRecordResolutionPlan = auditTrailRecordResolutionPlan.getObject();
+        val auditRecordResolutionPlan = auditTrailRecordResolutionPlan.getObject();
         val aspect = new AuditTrailManagementAspect(
             casProperties.getAudit().getAppCode(),
             auditablePrincipalResolver(auditPrincipalIdProvider()),
