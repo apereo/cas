@@ -11,7 +11,7 @@ import com.okta.authn.sdk.client.AuthenticationClients;
 import com.okta.sdk.client.Proxy;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.security.auth.login.FailedLoginException;
 

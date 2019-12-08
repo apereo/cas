@@ -15,6 +15,9 @@ branches:
   only:
     - master
 before_cache:
+  - rm -rf $HOME/.gradle/caches/7.*/
+  - rm -rf $HOME/.gradle/caches/6.*/
+  - rm -rf $HOME/.gradle/caches/6.0.*/
   - rm -rf $HOME/.gradle/caches/5.*/
   - rm -rf $HOME/.gradle/caches/4.*/
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
