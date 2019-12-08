@@ -4,7 +4,6 @@ import org.apereo.cas.authentication.credential.HttpBasedServiceCredential;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.metadata.BasicCredentialMetaData;
-import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.Service;
@@ -42,8 +41,6 @@ public class CoreAuthenticationTestUtils {
     public static final String CONST_GOOD_URL = "https://github.com/";
 
     private static final String CONST_PASSWORD = "test1";
-
-    private static final DefaultPrincipalFactory PRINCIPAL_FACTORY = new DefaultPrincipalFactory();
 
     public static UsernamePasswordCredential getCredentialsWithSameUsernameAndPassword() {
         return getCredentialsWithSameUsernameAndPassword(CONST_USERNAME);
@@ -222,7 +219,7 @@ public class CoreAuthenticationTestUtils {
 
     public static Principal mockPrincipal(final String attrName, final String... attrValues) {
         val attributes = (Map) Collections.singletonMap(attrName, CollectionUtils.toCollection(attrValues, ArrayList.class));
-        return PRINCIPAL_FACTORY.createPrincipal("user", attributes);
+        return PrincipalFactoryUtils.newPrincipalFactory().createPrincipal("user", attributes);
     }
 
     public static AuthenticationBuilder getAuthenticationBuilder() {

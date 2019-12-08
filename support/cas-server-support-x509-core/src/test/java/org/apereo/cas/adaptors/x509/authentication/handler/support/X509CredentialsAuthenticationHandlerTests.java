@@ -9,7 +9,7 @@ import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
-import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.util.RegexUtils;
 
 import lombok.val;
@@ -69,7 +69,7 @@ public class X509CredentialsAuthenticationHandlerTests {
             handler,
             credential,
             true,
-            new DefaultAuthenticationHandlerExecutionResult(handler, credential, new DefaultPrincipalFactory().createPrincipal(credential.getId())),
+            new DefaultAuthenticationHandlerExecutionResult(handler, credential, PrincipalFactoryUtils.newPrincipalFactory().createPrincipal(credential.getId())),
             null));
 
         /* Test case #3: Expired certificate */
@@ -111,7 +111,7 @@ public class X509CredentialsAuthenticationHandlerTests {
             handler,
             credential,
             true,
-            new DefaultAuthenticationHandlerExecutionResult(handler, credential, new DefaultPrincipalFactory().createPrincipal(credential.getId())),
+            new DefaultAuthenticationHandlerExecutionResult(handler, credential, PrincipalFactoryUtils.newPrincipalFactory().createPrincipal(credential.getId())),
             null));
 
         /* Test case #7: Require key usage on a cert without keyUsage extension */
@@ -132,7 +132,7 @@ public class X509CredentialsAuthenticationHandlerTests {
             handler,
             credential,
             true,
-            new DefaultAuthenticationHandlerExecutionResult(handler, credential, new DefaultPrincipalFactory().createPrincipal(credential.getId())),
+            new DefaultAuthenticationHandlerExecutionResult(handler, credential, PrincipalFactoryUtils.newPrincipalFactory().createPrincipal(credential.getId())),
             null
         ));
 
@@ -159,7 +159,7 @@ public class X509CredentialsAuthenticationHandlerTests {
             handler,
             new X509CertificateCredential(createCertificates(USER_VALID_CRT)),
             true,
-            new DefaultAuthenticationHandlerExecutionResult(handler, credential, new DefaultPrincipalFactory().createPrincipal(credential.getId())),
+            new DefaultAuthenticationHandlerExecutionResult(handler, credential, PrincipalFactoryUtils.newPrincipalFactory().createPrincipal(credential.getId())),
             null
         ));
 

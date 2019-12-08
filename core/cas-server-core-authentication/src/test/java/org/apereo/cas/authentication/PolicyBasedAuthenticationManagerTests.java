@@ -5,7 +5,7 @@ import org.apereo.cas.authentication.handler.RegisteredServiceAuthenticationHand
 import org.apereo.cas.authentication.policy.AllCredentialsValidatedAuthenticationPolicy;
 import org.apereo.cas.authentication.policy.AtLeastOneCredentialValidatedAuthenticationPolicy;
 import org.apereo.cas.authentication.policy.RequiredHandlerAuthenticationPolicy;
-import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.ServicesManager;
@@ -68,7 +68,7 @@ public class PolicyBasedAuthenticationManagerTests {
         when(mock.getName()).thenReturn(name);
         when(mock.supports(any(Credential.class))).thenReturn(true);
         if (success) {
-            val p = new DefaultPrincipalFactory().createPrincipal("nobody");
+            val p = PrincipalFactoryUtils.newPrincipalFactory().createPrincipal("nobody");
 
             val result = new DefaultAuthenticationHandlerExecutionResult(mock, mock(CredentialMetaData.class), p);
             when(mock.authenticate(any(Credential.class))).thenReturn(result);

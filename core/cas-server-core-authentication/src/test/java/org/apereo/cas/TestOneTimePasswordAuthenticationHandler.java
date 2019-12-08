@@ -6,7 +6,7 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.credential.OneTimePasswordCredential;
 import org.apereo.cas.authentication.metadata.BasicCredentialMetaData;
-import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -42,7 +42,7 @@ public class TestOneTimePasswordAuthenticationHandler extends AbstractAuthentica
         val valueOnRecord = credentialMap.get(otp.getId());
         if (otp.getPassword().equals(valueOnRecord)) {
             return new DefaultAuthenticationHandlerExecutionResult(this, new BasicCredentialMetaData(otp),
-                new DefaultPrincipalFactory().createPrincipal(otp.getId()));
+                PrincipalFactoryUtils.newPrincipalFactory().createPrincipal(otp.getId()));
         }
         throw new FailedLoginException();
     }

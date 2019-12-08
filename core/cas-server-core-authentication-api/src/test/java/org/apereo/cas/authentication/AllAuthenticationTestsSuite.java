@@ -39,6 +39,7 @@ import org.junit.runner.RunWith;
     GroovyAuthenticationPreProcessorTests.class,
     GroovyPrincipalFactoryTests.class,
     GroovyPasswordEncoderTests.class,
+    RestfulPrincipalFactoryTests.class,
     DefaultPasswordPolicyHandlingStrategyTests.class,
     RejectResultCodePasswordPolicyHandlingStrategyTests.class,
     PasswordExpiringWarningMessageDescriptorTests.class,

@@ -2,10 +2,10 @@ package org.apereo.cas.authentication.principal.cache;
 
 import org.apereo.cas.authentication.AttributeMergingStrategy;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 
 import lombok.SneakyThrows;
 import lombok.val;
@@ -38,7 +38,7 @@ public abstract class AbstractCachingPrincipalAttributesRepositoryTests {
 
     protected IPersonAttributeDao dao;
 
-    private final PrincipalFactory principalFactory = new DefaultPrincipalFactory();
+    private final PrincipalFactory principalFactory = PrincipalFactoryUtils.newPrincipalFactory();
 
     private Map<String, List<Object>> attributes;
 
