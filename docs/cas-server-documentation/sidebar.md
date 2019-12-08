@@ -61,6 +61,7 @@ layout: null
         *   [MongoDb](/$version/installation/MongoDb-Authentication.html)
         *   [Redis](/$version/installation/Redis-Authentication.html)
         *   [Azure Active Directory](/$version/installation/Azure-ActiveDirectory-Authentication.html)
+        *   [Okta](/$version/installation/Okta-Authentication.html)
         *   [Pac4J](/$version/installation/Pac4j-Authentication.html)
         *   [Whitelist](/$version/installation/Whitelist-Authentication.html)
         *   [Blacklist](/$version/installation/Blacklist-Authentication.html)
