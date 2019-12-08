@@ -3,7 +3,7 @@ package org.apereo.cas.adaptors.generic;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeException;
-import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.support.password.PasswordPolicyContext;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
@@ -109,7 +109,7 @@ public class JsonResourceAuthenticationHandlerTests {
             .writerWithDefaultPrettyPrinter()
             .writeValue(resource.getFile(), accounts);
         this.handler = new JsonResourceAuthenticationHandler(null, mock(ServicesManager.class),
-            new DefaultPrincipalFactory(), null, resource);
+            PrincipalFactoryUtils.newPrincipalFactory(), null, resource);
         this.handler.setPasswordPolicyConfiguration(new PasswordPolicyContext(15));
     }
 
@@ -119,7 +119,7 @@ public class JsonResourceAuthenticationHandlerTests {
         val resource = new ClassPathResource("sample-users.json");
         val creds = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "Mellon");
         val jsonHandler = new JsonResourceAuthenticationHandler(null, mock(ServicesManager.class),
-            new DefaultPrincipalFactory(), null, resource);
+            PrincipalFactoryUtils.newPrincipalFactory(), null, resource);
         val result = jsonHandler.authenticate(creds);
         assertNotNull(result);
         assertEquals("casuser", result.getPrincipal().getId());
