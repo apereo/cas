@@ -29,6 +29,7 @@ import org.apereo.cas.configuration.model.support.x509.X509Properties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.RegexUtils;
+import org.apereo.cas.util.model.Capacity;
 
 import lombok.val;
 
@@ -110,10 +111,10 @@ public class X509AuthenticationConfiguration {
         var builder = UserManagedCacheBuilder.newUserManagedCacheBuilder(URI.class, byte[].class);
 
         if (x509.isCacheDiskOverflow()) {
+            val capacity = Capacity.parse(x509.getCacheDiskSize());
             builder = builder.withResourcePools(ResourcePoolsBuilder.newResourcePoolsBuilder()
-                .disk(x509.getCacheDiskSize(), MemoryUnit.valueOf(x509.getCacheDiskSizeUnits()), false));
+                .disk(capacity.getSize().longValue(), MemoryUnit.valueOf(capacity.getUnitOfMeasure().name()), false));
         }
-
         builder = builder.withResourcePools(
             ResourcePoolsBuilder.newResourcePoolsBuilder()
                 .heap(x509.getCacheMaxElementsInMemory(), EntryUnit.ENTRIES));

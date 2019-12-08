@@ -173,9 +173,7 @@ public class PasswordlessAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "verifyPasswordlessAccountAuthenticationAction")
     @RefreshScope
     public Action verifyPasswordlessAccountAuthenticationAction() {
-        return new VerifyPasswordlessAccountAuthenticationAction(
-            passwordlessTokenRepository(),
-            passwordlessUserAccountStore());
+        return new VerifyPasswordlessAccountAuthenticationAction(passwordlessUserAccountStore());
     }
 
     @Bean

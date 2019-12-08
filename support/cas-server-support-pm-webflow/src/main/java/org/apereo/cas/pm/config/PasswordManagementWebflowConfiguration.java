@@ -118,9 +118,7 @@ public class PasswordManagementWebflowConfiguration {
     @RefreshScope
     @Bean
     public Action passwordChangeAction() {
-        return new PasswordChangeAction(passwordManagementService.getObject(),
-            passwordValidationService.getObject(),
-            communicationsManager.getObject());
+        return new PasswordChangeAction(passwordManagementService.getObject(), passwordValidationService.getObject());
     }
 
     @ConditionalOnMissingBean(name = "sendPasswordResetInstructionsAction")

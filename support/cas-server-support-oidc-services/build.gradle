@@ -9,7 +9,7 @@ dependencies {
     implementation project(":core:cas-server-core-services-registry")
     implementation project(":core:cas-server-core-services-authentication")
     
-    testImplementation project(":core:cas-server-core-services-registry")
+    
     testImplementation project(":core:cas-server-core-services")
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":support:cas-server-support-json-service-registry")

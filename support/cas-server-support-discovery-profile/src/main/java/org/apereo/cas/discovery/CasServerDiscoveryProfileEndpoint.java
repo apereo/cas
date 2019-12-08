@@ -1,7 +1,6 @@
 package org.apereo.cas.discovery;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
 import lombok.val;
@@ -20,8 +19,6 @@ import java.util.Map;
  */
 @RestControllerEndpoint(id = "discoveryProfile", enableByDefault = false)
 public class CasServerDiscoveryProfileEndpoint extends BaseCasActuatorEndpoint {
-    private final ServicesManager servicesManager;
-
     private final CasServerProfileRegistrar casServerProfileRegistrar;
 
     /**
@@ -29,14 +26,11 @@ public class CasServerDiscoveryProfileEndpoint extends BaseCasActuatorEndpoint {
      * Endpoints are by default sensitive.
      *
      * @param casProperties             the cas properties
-     * @param servicesManager           the services manager
      * @param casServerProfileRegistrar the cas server profile registrar
      */
     public CasServerDiscoveryProfileEndpoint(final CasConfigurationProperties casProperties,
-                                             final ServicesManager servicesManager,
                                              final CasServerProfileRegistrar casServerProfileRegistrar) {
         super(casProperties);
-        this.servicesManager = servicesManager;
         this.casServerProfileRegistrar = casServerProfileRegistrar;
     }
 

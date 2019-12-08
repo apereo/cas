@@ -43,33 +43,18 @@ public class Ehcache3Properties implements Serializable {
     /**
      * Size of disk cache.
      */
-    private int maxSizeOnDisk = 200;
-
-    /**
-     * Disk cache size units as defined by EhCache. (e.g. MB, GB)
-     */
-    private String maxSizeOnDiskUnits = "MB";
+    private String maxSizeOnDisk = "200MB";
 
     /**
      * Per cache size of disk cache.
      */
-    private int perCacheSizeOnDisk = 20;
-
-    /**
-     * Per cache disk cache size units as defined by EhCache. (e.g. MB, GB)
-     */
-    private String perCacheSizeOnDiskUnits = "MB";
+    private String perCacheSizeOnDisk = "20MB";
 
     /**
      * Size of off heap cache.
      */
-    private int maxSizeOffHeap = 100;
-
-    /**
-     * Off heap cache size units as defined by EhCache. (e.g. MB, GB)
-     */
-    private String maxSizeOffHeapUnits = "MB";
-
+    private String maxSizeOffHeap = "100MB";
+    
     /**
      * Sets whether elements are eternal.
      * If eternal, timeouts are ignored and the element is never expired. False by default.
@@ -106,12 +91,7 @@ public class Ehcache3Properties implements Serializable {
     /**
      * Size of resource pool on terracotta cluster.
      */
-    private int resourcePoolSize = 15;
-
-    /**
-     * Units for size of resource pool on terracotta cluster.
-     */
-    private String resourcePoolUnits = "MB";
+    private String resourcePoolSize = "15MB";
 
     /**
      * Root directory to store data if not using terracotta cluster.

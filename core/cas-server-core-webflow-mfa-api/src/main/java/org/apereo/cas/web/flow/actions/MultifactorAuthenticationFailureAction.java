@@ -1,6 +1,5 @@
 package org.apereo.cas.web.flow.actions;
 
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServiceMultifactorPolicyFailureModes;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
@@ -20,12 +19,8 @@ import org.springframework.webflow.execution.RequestContext;
  */
 @Slf4j
 public class MultifactorAuthenticationFailureAction extends AbstractMultifactorAuthenticationAction {
-
-    private final CasConfigurationProperties casProperties;
-
-    public MultifactorAuthenticationFailureAction(final CasConfigurationProperties casProperties, final ApplicationContext applicationContext) {
+    public MultifactorAuthenticationFailureAction(final ApplicationContext applicationContext) {
         super(applicationContext);
-        this.casProperties = casProperties;
     }
 
     @Override

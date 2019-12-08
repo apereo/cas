@@ -8,7 +8,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * This is {@link DefaultRegisteredServiceOAuthRefreshTokenExpirationPolicy}.
@@ -16,7 +15,6 @@ import lombok.extern.slf4j.Slf4j;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Slf4j
 @Getter
 @Setter
 @EqualsAndHashCode

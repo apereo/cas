@@ -9,7 +9,6 @@ import org.apereo.cas.couchdb.core.ProfileCouchDbRepository;
 import org.apereo.cas.couchdb.surrogate.SurrogateAuthorizationCouchDbRepository;
 import org.apereo.cas.services.ServicesManager;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.ektorp.CouchDbConnector;
 import org.ektorp.CouchDbInstance;
@@ -31,7 +30,6 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("SamlIdPCouchDbMetadataConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class SurrogateCouchDbAuthenticationServiceConfiguration {
 
     @Autowired

@@ -8,7 +8,6 @@ import org.apereo.cas.support.oauth.web.endpoints.BaseOAuth20Controller;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 
 import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.MediaType;
@@ -29,7 +28,6 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Slf4j
 public class OidcLogoutEndpointController extends BaseOAuth20Controller {
     public OidcLogoutEndpointController(final OAuth20ConfigurationContext oAuthConfigurationContext) {
         super(oAuthConfigurationContext);

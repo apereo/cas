@@ -33,7 +33,10 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
  */
 public class X509WebflowConfigurer extends AbstractCasWebflowConfigurer {
 
-    static final String STATE_ID_START_X509 = "startX509Authenticate";
+    /**
+     * State id to start X.509 authentication.
+     */
+    public static final String STATE_ID_START_X509 = "startX509Authenticate";
 
     public X509WebflowConfigurer(final FlowBuilderServices flowBuilderServices,
                                  final FlowDefinitionRegistry loginFlowDefinitionRegistry,

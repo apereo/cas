@@ -8,7 +8,7 @@ dependencies {
     implementation project(":core:cas-server-core-services-registry")
     implementation project(":core:cas-server-core-services-api")
 
-    testImplementation project(":core:cas-server-core-services")
+    
     testImplementation project(":core:cas-server-core-authentication-attributes")
     testImplementation project(":core:cas-server-core-configuration")
     testImplementation project(":support:cas-server-support-oauth-services")

@@ -155,19 +155,19 @@ public class RadiusMultifactorConfiguration {
     @Configuration("radiusMultifactorTrustConfiguration")
     public class RadiusMultifactorTrustConfiguration {
 
-        @ConditionalOnMissingBean(name = "radiusMultifactorTrustConfiguration")
+        @ConditionalOnMissingBean(name = "radiusMultifactorTrustConfigurer")
         @Bean
         @DependsOn("defaultWebflowConfigurer")
-        public CasWebflowConfigurer radiusMultifactorTrustConfiguration() {
+        public CasWebflowConfigurer radiusMultifactorTrustConfigurer() {
             val deviceRegistrationEnabled = casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled();
             return new RadiusMultifactorTrustWebflowConfigurer(flowBuilderServices.getObject(),
                 loginFlowDefinitionRegistry.getObject(), deviceRegistrationEnabled,
-                loginFlowDefinitionRegistry.getObject(), applicationContext, casProperties);
+                radiusFlowRegistry(), applicationContext, casProperties);
         }
 
         @Bean
         public CasWebflowExecutionPlanConfigurer radiusMultifactorTrustCasWebflowExecutionPlanConfigurer() {
-            return plan -> plan.registerWebflowConfigurer(radiusMultifactorTrustConfiguration());
+            return plan -> plan.registerWebflowConfigurer(radiusMultifactorTrustConfigurer());
         }
 
     }

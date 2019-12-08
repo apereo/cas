@@ -21,6 +21,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.List;
 
@@ -53,8 +54,8 @@ public class U2FRestResourceDeviceRepositoryTests extends AbstractU2FDeviceRepos
     public static void beforeClass() throws Exception {
         val devices = new HashMap<String, List<U2FDeviceRegistration>>();
         val reg = new DeviceRegistration("123456", "bjsdghj3b", "njsdkhjdfjh45", 1, false);
-        val device1 = new U2FDeviceRegistration(2000, "casuser", reg.toJson(), LocalDate.now());
-        val device2 = new U2FDeviceRegistration(1000, "casuser", reg.toJson(), LocalDate.now());
+        val device1 = new U2FDeviceRegistration(2000, "casuser", reg.toJson(), LocalDate.now(ZoneId.systemDefault()));
+        val device2 = new U2FDeviceRegistration(1000, "casuser", reg.toJson(), LocalDate.now(ZoneId.systemDefault()));
         devices.put(BaseResourceU2FDeviceRepository.MAP_KEY_DEVICES, CollectionUtils.wrapList(device1, device2));
         val data = MAPPER.writeValueAsString(devices);
         WEB_SERVER = new MockWebServer(9196, data);

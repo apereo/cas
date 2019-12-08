@@ -4,6 +4,7 @@ import com.esotericsoftware.kryo.io.ByteBufferOutput;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 
+import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 
@@ -21,7 +22,7 @@ public class ZonedDateTimeSerializerTests {
         try (val kryo = pool.borrow()) {
             val output = new ByteBufferOutput(2048);
             kryo.writeObject(output, ZonedDateTime.now(ZoneOffset.UTC));
-            kryo.writeObject(output, ZonedDateTime.now());
+            kryo.writeObject(output, ZonedDateTime.now(ZoneId.systemDefault()));
         }
     }
 }

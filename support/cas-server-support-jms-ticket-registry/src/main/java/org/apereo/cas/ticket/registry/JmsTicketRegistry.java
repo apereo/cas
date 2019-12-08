@@ -8,7 +8,6 @@ import org.apereo.cas.ticket.registry.queue.DeleteTicketsMessageQueueCommand;
 import org.apereo.cas.ticket.registry.queue.UpdateTicketMessageQueueCommand;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 /**
@@ -17,7 +16,6 @@ import lombok.val;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Slf4j
 public class JmsTicketRegistry extends DefaultTicketRegistry {
 
 

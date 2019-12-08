@@ -3,7 +3,6 @@ package org.apereo.cas.pm.impl;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.pm.PasswordChangeRequest;
-import org.apereo.cas.pm.PasswordHistoryService;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.config.PasswordManagementConfiguration;
 
@@ -37,14 +36,11 @@ public class GroovyResourcePasswordManagementServiceTests {
     @Qualifier("passwordChangeService")
     private PasswordManagementService passwordChangeService;
 
-    @Autowired
-    @Qualifier("passwordHistoryService")
-    private PasswordHistoryService passwordHistoryService;
-    
     @Test
     public void verifyFindEmail() {
         assertNotNull(passwordChangeService.findEmail("casuser"));
     }
+
     @Test
     public void verifyFindUser() {
         assertNotNull(passwordChangeService.findUsername("casuser@example.org"));

@@ -14,6 +14,7 @@ import org.springframework.boot.actuate.endpoint.annotation.WriteOperation;
 
 import java.time.Duration;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -43,7 +44,7 @@ public class AuditLogEndpoint extends BaseCasActuatorEndpoint {
      */
     @ReadOperation
     public Set<AuditActionContext> getAuditLog() {
-        val sinceDate = LocalDate.now().minusDays(casProperties.getAudit().getNumberOfDaysInHistory());
+        val sinceDate = LocalDate.now(ZoneId.systemDefault()).minusDays(casProperties.getAudit().getNumberOfDaysInHistory());
         return this.auditTrailManager.getAuditRecordsSince(sinceDate);
     }
 
@@ -58,7 +59,7 @@ public class AuditLogEndpoint extends BaseCasActuatorEndpoint {
         val duration = Duration.parse(interval);
         val sinceTime = new Date(new Date().getTime() - duration.toMillis());
         val days = duration.toDays();
-        val sinceDate = LocalDate.now().minusDays(days + 1);
+        val sinceDate = LocalDate.now(ZoneId.systemDefault()).minusDays(days + 1);
         return this.auditTrailManager.getAuditRecordsSince(sinceDate).stream()
             .filter(a -> a.getWhenActionWasPerformed().after(sinceTime))
             .collect(Collectors.toSet());

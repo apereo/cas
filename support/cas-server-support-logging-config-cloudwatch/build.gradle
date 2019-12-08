@@ -10,6 +10,8 @@ dependencies {
     implementation project(":support:cas-server-support-aws")
     
     compileOnly project(":core:cas-server-core-logging-api")
+
+    annotationProcessor libraries.log4j
 }
 
 

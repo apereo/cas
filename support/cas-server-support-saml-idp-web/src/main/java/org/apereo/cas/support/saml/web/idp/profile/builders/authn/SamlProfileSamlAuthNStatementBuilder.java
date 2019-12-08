@@ -56,7 +56,7 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
                                 final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                 final String binding,
                                 final MessageContext messageContext) throws SamlException {
-        return buildAuthnStatement(assertion, authnRequest, adaptor, service, binding, messageContext, request);
+        return buildAuthnStatement(assertion, authnRequest, adaptor, service, binding, request);
     }
 
     /**
@@ -67,7 +67,6 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
      * @param adaptor        the adaptor
      * @param service        the service
      * @param binding        the binding
-     * @param messageContext the message context
      * @param request        the request
      * @return constructed authentication statement
      * @throws SamlException the saml exception
@@ -77,7 +76,6 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
                                                final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                                final SamlRegisteredService service,
                                                final String binding,
-                                               final MessageContext messageContext,
                                                final HttpServletRequest request) throws SamlException {
         val assertion = Assertion.class.cast(casAssertion);
         val authenticationMethod = this.authnContextClassRefBuilder.build(assertion, authnRequest, adaptor, service);
@@ -111,7 +109,7 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
      * @return the subject locality
      * @throws SamlException the saml exception
      */
-    protected SubjectLocality buildSubjectLocality(final Object assertion, final RequestAbstractType authnRequest,
+    protected SubjectLocality buildSubjectLocality(final Assertion assertion, final RequestAbstractType authnRequest,
                                                    final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                                    final String binding) throws SamlException {
         val subjectLocality = newSamlObject(SubjectLocality.class);

@@ -4,7 +4,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.configurer.AbstractCasMultifactorWebflowConfigurer;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.context.ApplicationContext;
 import org.springframework.util.StringUtils;
@@ -75,7 +74,6 @@ public class AccepttoMultifactorWebflowConfigurer extends AbstractCasMultifactor
 
     }
 
-    @Slf4j
     private static class AccepttoFinalizeAuthenticationAction extends AbstractAction {
         @Override
         protected Event doExecute(final RequestContext requestContext) {

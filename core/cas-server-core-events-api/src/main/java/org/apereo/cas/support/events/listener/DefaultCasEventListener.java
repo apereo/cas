@@ -13,7 +13,6 @@ import org.apereo.cas.util.serialization.TicketIdSanitizationUtils;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.context.event.EventListener;
@@ -27,7 +26,6 @@ import org.springframework.scheduling.annotation.Async;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Slf4j
 @RequiredArgsConstructor
 @Getter
 public class DefaultCasEventListener {

@@ -11,6 +11,7 @@ import lombok.val;
 import org.ektorp.UpdateConflictException;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 /**
  * This is {@link GoogleAuthenticatorCouchDbTokenRepository}.
@@ -24,8 +25,7 @@ public class GoogleAuthenticatorCouchDbTokenRepository extends BaseOneTimeTokenR
 
     private final GoogleAuthenticatorTokenCouchDbRepository couchDb;
     private final long expireTokensInSeconds;
-
-
+    
     @Override
     public void store(final OneTimeToken token) {
         couchDb.add(new CouchDbGoogleAuthenticatorToken(token));
@@ -69,7 +69,7 @@ public class GoogleAuthenticatorCouchDbTokenRepository extends BaseOneTimeTokenR
     @Override
     protected void cleanInternal() {
         try {
-            val since = LocalDateTime.now().minusSeconds(expireTokensInSeconds);
+            val since = LocalDateTime.now(ZoneId.systemDefault()).minusSeconds(expireTokensInSeconds);
             LOGGER.debug("Removing tokens older than [{}]", since);
             couchDb.findByIssuedDateTimeBefore(since).forEach(couchDb::remove);
         } catch (final UpdateConflictException e) {

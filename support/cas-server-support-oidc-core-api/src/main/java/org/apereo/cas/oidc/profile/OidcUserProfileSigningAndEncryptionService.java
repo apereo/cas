@@ -5,7 +5,6 @@ import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 
 import com.github.benmanes.caffeine.cache.LoadingCache;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jose4j.jwk.RsaJsonWebKey;
@@ -19,7 +18,6 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Slf4j
 public class OidcUserProfileSigningAndEncryptionService extends BaseOidcJsonWebKeyTokenSigningAndEncryptionService {
     /**
      * Default encoding for user-info encrypted responses.

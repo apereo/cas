@@ -142,7 +142,7 @@ public class HttpUtils {
             val uri = buildHttpUri(url, parameters);
             val request = getHttpRequestByMethod(method.toLowerCase().trim(), entity, uri);
             headers.forEach((k, v) -> request.addHeader(k, v.toString()));
-            prepareHttpRequest(request, basicAuthUsername, basicAuthPassword, parameters);
+            prepareHttpRequest(request, basicAuthUsername, basicAuthPassword);
             return HTTP_CLIENT.execute(request);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
@@ -471,10 +471,9 @@ public class HttpUtils {
      * @param request           the request
      * @param basicAuthUsername the basic auth username
      * @param basicAuthPassword the basic auth password
-     * @param parameters        the parameters
      */
     private static void prepareHttpRequest(final HttpUriRequest request, final String basicAuthUsername,
-                                           final String basicAuthPassword, final Map<String, Object> parameters) {
+                                           final String basicAuthPassword) {
         if (StringUtils.isNotBlank(basicAuthUsername) && StringUtils.isNotBlank(basicAuthPassword)) {
             val auth = EncodingUtils.encodeBase64(basicAuthUsername + ':' + basicAuthPassword);
             request.setHeader(HttpHeaders.AUTHORIZATION, "Basic " + auth);

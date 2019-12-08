@@ -9,6 +9,7 @@ import org.apereo.cas.util.ISOStandardDateFormat;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -193,20 +194,13 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
         return sessionsMap;
     }
 
+    @RequiredArgsConstructor
+    @Getter
     private enum SsoSessionReportOptions {
 
         ALL("all"), PROXIED("proxied"), DIRECT("direct");
 
         private final String type;
-
-        /**
-         * Instantiates a new Sso session report options.
-         *
-         * @param type the type
-         */
-        SsoSessionReportOptions(final String type) {
-            this.type = type;
-        }
     }
 
     /**

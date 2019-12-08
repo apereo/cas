@@ -7,7 +7,6 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
 
 import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.InitializingBean;
@@ -30,7 +29,6 @@ import java.util.Optional;
  */
 @EnableTransactionManagement(proxyTargetClass = true)
 @Transactional(transactionManager = "transactionManagerSamlMetadataIdP")
-@Slf4j
 public class JpaSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGenerator implements InitializingBean {
     private final TransactionTemplate transactionTemplate;
 

@@ -7,11 +7,11 @@ import org.apereo.cas.ticket.TicketDefinition;
 import org.apereo.cas.ticket.registry.EhCache3TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CoreTicketUtils;
+import org.apereo.cas.util.model.Capacity;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-
 import org.ehcache.clustered.client.config.builders.ClusteredResourcePoolBuilder;
 import org.ehcache.clustered.client.config.builders.ClusteredStoreConfigurationBuilder;
 import org.ehcache.clustered.client.config.builders.ClusteringServiceConfigurationBuilder;
@@ -66,18 +66,20 @@ public class Ehcache3TicketRegistryConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Bean
-    @ConditionalOnMissingBean (name = "ehcache3CacheManagerConfiguration")
+    @ConditionalOnMissingBean(name = "ehcache3CacheManagerConfiguration")
     public ServiceCreationConfiguration ehcache3CacheManagerConfiguration() {
         val ehcacheProperties = casProperties.getTicket().getRegistry().getEhcache3();
         val terracottaClusterUri = ehcacheProperties.getTerracottaClusterUri();
         if (StringUtils.isNotBlank(terracottaClusterUri)) {
-            var clusterConfigBuilder = ClusteringServiceConfigurationBuilder.cluster(URI.create(terracottaClusterUri))
+            val resourcePoolCapacity = Capacity.parse(ehcacheProperties.getResourcePoolSize());
+            val clusterConfigBuilder = ClusteringServiceConfigurationBuilder.cluster(URI.create(terracottaClusterUri))
                 .timeouts(TimeoutsBuilder.timeouts()
                     .connection(Duration.ofSeconds(ehcacheProperties.getClusterConnectionTimeout()))
                     .read(Duration.ofSeconds(ehcacheProperties.getClusterReadWriteTimeout()))
                     .write(Duration.ofSeconds(ehcacheProperties.getClusterReadWriteTimeout())).build())
                 .autoCreate(s -> s.defaultServerResource(ehcacheProperties.getDefaultServerResource())
-                .resourcePool(ehcacheProperties.getResourcePoolName(), ehcacheProperties.getResourcePoolSize(), MemoryUnit.valueOf(ehcacheProperties.getResourcePoolUnits())));
+                    .resourcePool(ehcacheProperties.getResourcePoolName(), resourcePoolCapacity.getSize().longValue(),
+                        MemoryUnit.valueOf(resourcePoolCapacity.getUnitOfMeasure().name())));
             return clusterConfigBuilder.build();
         }
         val rootDirectory = ehcacheProperties.getRootDirectory();
@@ -93,9 +95,9 @@ public class Ehcache3TicketRegistryConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean (name = "ehcache3TicketCacheManager")
+    @ConditionalOnMissingBean(name = "ehcache3TicketCacheManager")
     public javax.cache.CacheManager ehcache3TicketCacheManager(
-        @Qualifier ("ehcache3CacheManagerConfiguration") final ServiceCreationConfiguration ehcache3CacheManagerConfiguration) {
+        @Qualifier("ehcache3CacheManagerConfiguration") final ServiceCreationConfiguration ehcache3CacheManagerConfiguration) {
         val ehcacheProperties = casProperties.getTicket().getRegistry().getEhcache3();
         val ehcacheProvider = (EhcacheCachingProvider) Caching.getCachingProvider(EhcacheCachingProvider.class.getName());
         val statisticsAllEnabled = ehcacheProperties.isEnableStatistics() ? ConfigurationElementState.ENABLED : ConfigurationElementState.DISABLED;
@@ -127,11 +129,14 @@ public class Ehcache3TicketRegistryConfiguration {
                 ClusteredResourcePoolBuilder.clusteredShared(ehcacheProperties.getResourcePoolName()));
         }
 
+        val resourcePoolCapacity = Capacity.parse(ehcacheProperties.getResourcePoolSize());
         resourcePools = resourcePools
-            .offheap(ehcacheProperties.getResourcePoolSize(), MemoryUnit.valueOf(ehcacheProperties.getResourcePoolUnits()));
+            .offheap(resourcePoolCapacity.getSize().longValue(), MemoryUnit.valueOf(resourcePoolCapacity.getUnitOfMeasure().name()));
 
         if (StringUtils.isBlank(terracottaClusterUri)) {
-            resourcePools = resourcePools.disk(ehcacheProperties.getPerCacheSizeOnDisk(), MemoryUnit.valueOf(ehcacheProperties.getPerCacheSizeOnDiskUnits()));
+            val perCacheCapacity = Capacity.parse(ehcacheProperties.getPerCacheSizeOnDisk());
+            resourcePools = resourcePools.disk(perCacheCapacity.getSize().longValue(),
+                MemoryUnit.valueOf(perCacheCapacity.getUnitOfMeasure().name()));
         }
 
         var cacheConfigBuilder = CacheConfigurationBuilder.newCacheConfigurationBuilder(
@@ -147,18 +152,12 @@ public class Ehcache3TicketRegistryConfiguration {
         return cacheConfigBuilder.build();
     }
 
-    private static class CasCacheEventListener implements CacheEventListener<String, Ticket> {
-        @Override
-        public void onEvent(final CacheEvent<? extends String, ? extends Ticket> event) {
-            LOGGER.trace("Event Type: {}, Ticket Id: {}", event.getType().name(), event.getKey());
-        }
-    }
-
     /**
      * Create ticket registry bean with all nececessary caches.
      * Using the spring ehcache wrapper bean so it can be initialized after the caches are built.
+     *
      * @param ehcacheManager Spring EhCache manager bean, wraps EhCache manager and is used for cache actuator endpoint.
-     * @param ticketCatalog Ticket Catalog
+     * @param ticketCatalog  Ticket Catalog
      * @return Ticket Registry
      */
     @Autowired
@@ -184,11 +183,19 @@ public class Ehcache3TicketRegistryConfiguration {
     /**
      * This bean is used by the spring boot cache actuator which spring boot admin can use to clear caches.
      * Actuator needs to be exposed in order for this bean to be used.
+     *
      * @param ehcache3TicketCacheManager JSR107 wrapper of EhCache cache manager to be wrapped by spring cache manager.
      * @return Spring EhCacheCacheManager that wraps EhCache JSR107 CacheManager
      */
     @Bean
     public JCacheCacheManager ehCacheJCacheCacheManager(@Qualifier("ehcache3TicketCacheManager") final javax.cache.CacheManager ehcache3TicketCacheManager) {
         return new JCacheCacheManager(ehcache3TicketCacheManager);
+    }
+
+    private static class CasCacheEventListener implements CacheEventListener<String, Ticket> {
+        @Override
+        public void onEvent(final CacheEvent<? extends String, ? extends Ticket> event) {
+            LOGGER.trace("Event Type: {}, Ticket Id: {}", event.getType().name(), event.getKey());
+        }
     }
 }

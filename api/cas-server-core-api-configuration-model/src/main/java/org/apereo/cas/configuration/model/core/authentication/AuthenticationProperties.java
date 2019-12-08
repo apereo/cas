@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
 import org.apereo.cas.configuration.model.core.authentication.passwordsync.PasswordSynchronizationProperties;
+import org.apereo.cas.configuration.model.support.azuread.AzureActiveDirectoryAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.cassandra.authentication.CassandraAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.clouddirectory.CloudDirectoryProperties;
 import org.apereo.cas.configuration.model.support.cognito.AmazonCognitoAuthenticationProperties;
@@ -24,6 +25,7 @@ import org.apereo.cas.configuration.model.support.mongo.MongoAuthenticationPrope
 import org.apereo.cas.configuration.model.support.ntlm.NtlmProperties;
 import org.apereo.cas.configuration.model.support.oauth.OAuthProperties;
 import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
+import org.apereo.cas.configuration.model.support.okta.OktaAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.openid.OpenIdProperties;
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jDelegatedAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.passwordless.PasswordlessAuthenticationProperties;
@@ -96,6 +98,18 @@ public class AuthenticationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private SyncopeAuthenticationProperties syncope = new SyncopeAuthenticationProperties();
+
+    /**
+     * Azure AD authentication settings.
+     */
+    @NestedConfigurationProperty
+    private AzureActiveDirectoryAuthenticationProperties azureActiveDirectory = new AzureActiveDirectoryAuthenticationProperties();
+
+    /**
+     * Okta authentication settings.
+     */
+    @NestedConfigurationProperty
+    private OktaAuthenticationProperties okta = new OktaAuthenticationProperties();
 
     /**
      * Couchbase authentication settings.

@@ -9,7 +9,6 @@ import org.apereo.cas.authentication.soap.generated.ObjectFactory;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.http.HttpStatus;
 
@@ -28,7 +27,6 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Slf4j
 public class SoapAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
     private final SoapAuthenticationClient soapAuthenticationClient;
 

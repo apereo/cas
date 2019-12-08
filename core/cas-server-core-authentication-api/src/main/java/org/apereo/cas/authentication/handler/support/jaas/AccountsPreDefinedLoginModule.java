@@ -32,8 +32,7 @@ public class AccountsPreDefinedLoginModule implements LoginModule {
 
     private Subject subject;
     private CallbackHandler callbackHandler;
-    private Map sharedState;
-    private Map options;
+
 
     private Map<String, String> accounts;
 
@@ -44,9 +43,6 @@ public class AccountsPreDefinedLoginModule implements LoginModule {
                            final Map<String, ?> sharedState, final Map<String, ?> options) {
         this.subject = subject;
         this.callbackHandler = callbackHandler;
-        this.sharedState = sharedState;
-        this.options = options;
-
         this.accounts = new LinkedHashMap<>(MAP_SIZE);
 
         val providedAccounts = options.containsKey("accounts") ? options.get("accounts").toString() : null;

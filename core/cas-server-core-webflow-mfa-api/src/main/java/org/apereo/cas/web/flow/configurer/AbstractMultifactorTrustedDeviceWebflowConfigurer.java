@@ -97,9 +97,9 @@ public abstract class AbstractMultifactorTrustedDeviceWebflowConfigurer extends 
         val prepareAction = createActionState(flow, CasWebflowConstants.STATE_ID_PREPARE_REGISTER_TRUSTED_DEVICE,
             ACTION_ID_MFA_PREPARE_TRUST_DEVICE_VIEW_ACTION);
         createTransitionForState(prepareAction, CasWebflowConstants.TRANSITION_ID_SKIP, CasWebflowConstants.STATE_ID_SUCCESS);
-        createTransitionForState(prepareAction, CasWebflowConstants.TRANSITION_ID_REGISTER, CasWebflowConstants.VIEW_ID_REGISTER_DEVICE);
+        createTransitionForState(prepareAction, CasWebflowConstants.TRANSITION_ID_REGISTER, CasWebflowConstants.STATE_ID_REGISTER_DEVICE);
 
-        val viewRegister = createViewState(flow, CasWebflowConstants.VIEW_ID_REGISTER_DEVICE, "casMfaRegisterDeviceView");
+        val viewRegister = createViewState(flow, CasWebflowConstants.STATE_ID_REGISTER_DEVICE, "casMfaRegisterDeviceView");
         createTransitionForState(viewRegister, CasWebflowConstants.TRANSITION_ID_SUBMIT, CasWebflowConstants.STATE_ID_REGISTER_TRUSTED_DEVICE);
     }
 

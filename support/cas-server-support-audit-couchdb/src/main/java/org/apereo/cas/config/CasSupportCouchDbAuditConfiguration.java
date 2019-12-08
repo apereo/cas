@@ -6,7 +6,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.couchdb.audit.AuditActionContextCouchDbRepository;
 import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.inspektr.audit.AuditTrailManager;
 import org.ektorp.impl.ObjectMapperFactory;
 import org.springframework.beans.factory.ObjectProvider;
@@ -26,7 +25,6 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration(value = "casSupportCouchDbAuditConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class CasSupportCouchDbAuditConfiguration {
 
     @Autowired

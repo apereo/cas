@@ -12,6 +12,7 @@ import lombok.val;
 import org.apereo.inspektr.audit.annotation.Audit;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -61,7 +62,7 @@ public class DefaultConsentEngine implements ConsentEngine {
         LOGGER.debug("Consent is not required yet for [{}]; checking for reminder options", service);
         val unit = decision.getReminderTimeUnit();
         val dt = decision.getCreatedDate().plus(decision.getReminder(), unit);
-        val now = LocalDateTime.now();
+        val now = LocalDateTime.now(ZoneId.systemDefault());
 
         LOGGER.debug("Reminder threshold date/time is calculated as [{}]", dt);
         if (now.isAfter(dt)) {

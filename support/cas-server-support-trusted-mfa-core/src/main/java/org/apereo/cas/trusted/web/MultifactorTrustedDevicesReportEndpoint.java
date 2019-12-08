@@ -14,6 +14,7 @@ import org.springframework.boot.actuate.endpoint.annotation.Selector;
 import org.springframework.http.HttpStatus;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Set;
 
 /**
@@ -46,7 +47,7 @@ public class MultifactorTrustedDevicesReportEndpoint extends BaseCasActuatorEndp
     private LocalDateTime expireRecordsByDate() {
         val properties = casProperties.getAuthn().getMfa().getTrusted();
         val unit = DateTimeUtils.toChronoUnit(properties.getTimeUnit());
-        val onOrAfter = LocalDateTime.now().minus(properties.getExpiration(), unit);
+        val onOrAfter = LocalDateTime.now(ZoneId.systemDefault()).minus(properties.getExpiration(), unit);
         this.mfaTrustEngine.expire(onOrAfter);
         return onOrAfter;
     }
