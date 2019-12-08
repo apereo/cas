@@ -4849,10 +4849,12 @@ Common configuration settings for this feature are available [here](Configuratio
 
 #### LDAP
 
-If AUP is controlled via LDAP, decide how choices should be remembered back inside the LDAP instance. LDAP settings for this feature are available [here](Configuration-Properties-Common.html#ldap-connection-settings) under the configuration key `cas.acceptableUsagePolicy.ldap`.
+If AUP is controlled via LDAP, decide how choices should be remembered back inside the LDAP instance. LDAP settings for this feature are available [here](Configuration-Properties-Common.html#ldap-connection-settings) under the configuration key `cas.acceptableUsagePolicy.ldap[0]`.
 
 #### Disable Acceptable Usage Policy
+
 Allow acceptable usage policy webflow to be disabled - requires restart.
+
 ```properties
 cas.acceptableUsagePolicy.enabled=true
 ```
