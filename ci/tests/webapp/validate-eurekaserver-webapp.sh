@@ -2,7 +2,7 @@
 
 gradle="./gradlew "
 gradleBuild=""
-gradleBuildOptions="--build-cache --configure-on-demand --no-daemon "
+gradleBuildOptions="--build-cache --configure-on-demand --no-daemon -DskipNestedConfigMetadataGen=true -DskipGradleLint=true "
 
 webAppServerType="$1"
 
@@ -10,7 +10,7 @@ echo -e "****************************************************************"
 echo -e "Gradle build started at `date` for eureka web application"
 echo -e "****************************************************************"
 
-gradleBuild="$gradleBuild :webapp:cas-server-webapp-eureka-server:build -x check -x test -x javadoc -DskipNestedConfigMetadataGen=true -DskipGradleLint=true "
+gradleBuild="$gradleBuild :webapp:cas-server-webapp-eureka-server:build -x check -x test -x javadoc "
 
 if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[show streams]"* ]]; then
     gradleBuild="$gradleBuild -DshowStandardStreams=true "
@@ -52,8 +52,7 @@ else
           -keystore "${keystore}" -dname "${dname}" -ext SAN="${subjectAltName}"
 
         echo "Launching CAS eureka web application server..."
-        java -jar webapp/cas-server-webapp-eureka-server/build/libs/caseurekaserver.war \
-          --server.ssl.key-store="${keystore}" &> /dev/null &
+        java -jar webapp/cas-server-webapp-eureka-server/build/libs/caseurekaserver.war --server.ssl.key-store="${keystore}" &> /dev/null &
         pid=$!
         echo "Launched CAS eureka server with pid ${pid}. Waiting for CAS eureka server to come online..."
         sleep 30

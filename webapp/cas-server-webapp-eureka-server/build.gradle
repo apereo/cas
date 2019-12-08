@@ -5,8 +5,6 @@ apply from: rootProject.file("gradle/springboot.gradle")
 
 description = "Apereo CAS Spring Cloud Eureka Service Discovery Server Web Application"
 
-
-
 dependencies {
     implementation libraries.springboottomcat
     implementation project(":webapp:cas-server-webapp-init-eureka-server")
