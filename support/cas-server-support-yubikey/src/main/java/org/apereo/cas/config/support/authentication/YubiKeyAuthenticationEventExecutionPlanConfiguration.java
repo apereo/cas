@@ -123,7 +123,7 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
     public AuthenticationHandler yubikeyAuthenticationHandler() {
         val yubi = this.casProperties.getAuthn().getMfa().getYubikey();
         return new YubiKeyAuthenticationHandler(yubi.getName(),
-            servicesManager.getIfAvailable(), yubikeyPrincipalFactory(),
+            servicesManager.getObject(), yubikeyPrincipalFactory(),
             yubicoClient(), yubiKeyAccountRegistry(),
             yubi.getOrder());
     }
@@ -155,7 +155,7 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
     public YubiKeyAccountRegistry yubiKeyAccountRegistry() {
         val yubi = casProperties.getAuthn().getMfa().getYubikey();
 
-        val cipher = yubikeyAccountCipherExecutor.getIfAvailable();
+        val cipher = yubikeyAccountCipherExecutor.getObject();
         if (yubi.getJsonFile() != null) {
             LOGGER.debug("Using JSON resource [{}] as the YubiKey account registry", yubi.getJsonFile());
             val registry = new JsonYubiKeyAccountRegistry(yubi.getJsonFile(), yubiKeyAccountValidator());
@@ -188,10 +188,10 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
     @RefreshScope
     public MultifactorAuthenticationProvider yubikeyMultifactorAuthenticationProvider() {
         val yubi = casProperties.getAuthn().getMfa().getYubikey();
-        val p = new YubiKeyMultifactorAuthenticationProvider(yubicoClient(), httpClient.getIfAvailable());
-        p.setBypassEvaluator(yubikeyBypassEvaluator.getIfAvailable());
+        val p = new YubiKeyMultifactorAuthenticationProvider(yubicoClient(), httpClient.getObject());
+        p.setBypassEvaluator(yubikeyBypassEvaluator.getObject());
         p.setFailureMode(yubi.getFailureMode());
-        p.setFailureModeEvaluator(failureModeEvaluator.getIfAvailable());
+        p.setFailureModeEvaluator(failureModeEvaluator.getObject());
         p.setOrder(yubi.getRank());
         p.setId(yubi.getId());
         return p;

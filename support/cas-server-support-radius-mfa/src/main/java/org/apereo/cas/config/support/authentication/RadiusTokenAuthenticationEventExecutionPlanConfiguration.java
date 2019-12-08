@@ -64,9 +64,9 @@ public class RadiusTokenAuthenticationEventExecutionPlanConfiguration {
     public MultifactorAuthenticationProvider radiusMultifactorAuthenticationProvider() {
         val radius = casProperties.getAuthn().getMfa().getRadius();
         val p = new RadiusMultifactorAuthenticationProvider(radiusTokenServers());
-        p.setBypassEvaluator(radiusBypassEvaluator.getIfAvailable());
+        p.setBypassEvaluator(radiusBypassEvaluator.getObject());
         p.setFailureMode(radius.getFailureMode());
-        p.setFailureModeEvaluator(failureModeEvaluator.getIfAvailable());
+        p.setFailureModeEvaluator(failureModeEvaluator.getObject());
         p.setOrder(radius.getRank());
         p.setId(radius.getId());
         return p;
@@ -75,7 +75,6 @@ public class RadiusTokenAuthenticationEventExecutionPlanConfiguration {
     @RefreshScope
     @Bean
     public List<RadiusServer> radiusTokenServers() {
-        val list = new ArrayList<RadiusServer>();
         val radius = casProperties.getAuthn().getMfa().getRadius();
         val client = radius.getClient();
         val server = radius.getServer();
@@ -97,6 +96,7 @@ public class RadiusTokenAuthenticationEventExecutionPlanConfiguration {
             .nasPortType(server.getNasPortType())
             .build();
         val impl = new NonBlockingRadiusServer(context);
+        val list = new ArrayList<RadiusServer>(1);
         list.add(impl);
         return list;
     }
@@ -111,7 +111,7 @@ public class RadiusTokenAuthenticationEventExecutionPlanConfiguration {
     @Bean
     public RadiusTokenAuthenticationHandler radiusTokenAuthenticationHandler() {
         val radius = casProperties.getAuthn().getMfa().getRadius();
-        return new RadiusTokenAuthenticationHandler(radius.getName(), servicesManager.getIfAvailable(),
+        return new RadiusTokenAuthenticationHandler(radius.getName(), servicesManager.getObject(),
             radiusTokenPrincipalFactory(), radiusTokenServers(),
             radius.isFailoverOnException(),
             radius.isFailoverOnAuthenticationFailure(),

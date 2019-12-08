@@ -32,14 +32,15 @@ import java.util.Map;
 @NoArgsConstructor(force = true)
 public class DefaultUmaPermissionTicket extends AbstractTicket implements UmaPermissionTicket {
     private static final long serialVersionUID = 2963749819727757623L;
+    private static final int MAP_SIZE = 8;
 
     @Lob
     @Column
-    private LinkedHashMap<String, Object> claims = new LinkedHashMap<>();
+    private LinkedHashMap<String, Object> claims = new LinkedHashMap<>(MAP_SIZE);
 
     @Lob
     @Column
-    private LinkedHashSet<String> scopes = new LinkedHashSet<>();
+    private LinkedHashSet<String> scopes = new LinkedHashSet<>(MAP_SIZE);
 
     @Lob
     @Column

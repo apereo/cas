@@ -5,6 +5,7 @@ import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
 import org.junit.jupiter.api.Test;
+import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 
 import java.util.Collection;
@@ -13,6 +14,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link CoreAuthenticationUtilsTests}.
@@ -55,14 +57,14 @@ public class CoreAuthenticationUtilsTests {
     @Test
     public void verifyPasswordPolicy() {
         val properties = new PasswordPolicyProperties();
-        assertNotNull(CoreAuthenticationUtils.newPasswordPolicyHandlingStrategy(properties));
+        assertNotNull(CoreAuthenticationUtils.newPasswordPolicyHandlingStrategy(properties, mock(ApplicationContext.class)));
 
         properties.setStrategy(PasswordPolicyProperties.PasswordPolicyHandlingOptions.GROOVY);
         properties.getGroovy().setLocation(new ClassPathResource("passwordpolicy.groovy"));
-        assertNotNull(CoreAuthenticationUtils.newPasswordPolicyHandlingStrategy(properties));
+        assertNotNull(CoreAuthenticationUtils.newPasswordPolicyHandlingStrategy(properties, mock(ApplicationContext.class)));
 
         properties.setStrategy(PasswordPolicyProperties.PasswordPolicyHandlingOptions.REJECT_RESULT_CODE);
-        assertNotNull(CoreAuthenticationUtils.newPasswordPolicyHandlingStrategy(properties));
+        assertNotNull(CoreAuthenticationUtils.newPasswordPolicyHandlingStrategy(properties, mock(ApplicationContext.class)));
     }
 
     @Test

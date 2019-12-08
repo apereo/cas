@@ -23,6 +23,15 @@ public class JmsTicketRegistryProperties implements Serializable {
     private static final long serialVersionUID = -2600525447128979994L;
 
     /**
+     * Identifier for this CAS server node
+     * that tags the sender/receiver in the JMS queue
+     * and avoid processing of inbound calls.
+     * If left blank, an identifier is generated automatically
+     * and kept in memory.
+     */
+    private String queueIdentifier;
+
+    /**
      * Crypto settings for the registry.
      */
     @NestedConfigurationProperty

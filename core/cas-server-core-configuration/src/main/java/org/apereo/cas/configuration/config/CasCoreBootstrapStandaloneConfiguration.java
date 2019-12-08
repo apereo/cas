@@ -30,7 +30,7 @@ import java.util.List;
  */
 @Profile("standalone")
 @ConditionalOnProperty(value = "spring.cloud.config.enabled", havingValue = "false")
-@Configuration("casStandaloneBootstrapConfiguration")
+@Configuration(value = "casStandaloneBootstrapConfiguration", proxyBeanMethods = false)
 @AutoConfigureAfter(CasCoreBootstrapStandaloneLocatorConfiguration.class)
 public class CasCoreBootstrapStandaloneConfiguration implements PropertySourceLocator, PriorityOrdered {
 
@@ -49,7 +49,7 @@ public class CasCoreBootstrapStandaloneConfiguration implements PropertySourceLo
 
     @Override
     public PropertySource<?> locate(final Environment environment) {
-        return casConfigurationPropertiesSourceLocator.getIfAvailable().locate(environment, this.resourceLoader);
+        return casConfigurationPropertiesSourceLocator.getObject().locate(environment, this.resourceLoader);
     }
 
     @Override

@@ -44,7 +44,7 @@ public class PasswordHistoryEntity implements Serializable {
     @Column(nullable = false)
     private String username;
 
-    @Column(name = "password", length = Integer.MAX_VALUE, nullable = false)
+    @Column(name = "password", length = 2048, nullable = false)
     private String password;
 
     @Column(nullable = false)

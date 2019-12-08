@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jmeterTestPlan version="1.2" properties="3.2" jmeter="3.2 r1790748">
+<jmeterTestPlan version="1.2" properties="5.0" jmeter="5.1.1 r1855137">
   <hashTree>
     <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="CAS SSO Tests" enabled="true">
       <stringProp name="TestPlan.comments"></stringProp>
@@ -15,13 +15,13 @@
         <collectionProp name="Arguments.arguments">
           <elementProp name="ThreadCount" elementType="Argument">
             <stringProp name="Argument.name">ThreadCount</stringProp>
-            <stringProp name="Argument.value">1</stringProp>
+            <stringProp name="Argument.value">50</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
             <stringProp name="Argument.desc">Number of Threads</stringProp>
           </elementProp>
           <elementProp name="Duration" elementType="Argument">
             <stringProp name="Argument.name">Duration</stringProp>
-            <stringProp name="Argument.value">120</stringProp>
+            <stringProp name="Argument.value">300</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
             <stringProp name="Argument.desc">in seconds</stringProp>
           </elementProp>
@@ -33,13 +33,13 @@
           </elementProp>
           <elementProp name="RampUpPeriod" elementType="Argument">
             <stringProp name="Argument.name">RampUpPeriod</stringProp>
-            <stringProp name="Argument.value">3</stringProp>
+            <stringProp name="Argument.value">5</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
             <stringProp name="Argument.desc">in seconds</stringProp>
           </elementProp>
           <elementProp name="IdPHost" elementType="Argument">
             <stringProp name="Argument.name">IdPHost</stringProp>
-            <stringProp name="Argument.value">https://mydomain.axman.net:8443</stringProp>
+            <stringProp name="Argument.value">https://example.net:8443</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
             <stringProp name="Argument.desc">The main URL of your CAS Instance</stringProp>
           </elementProp>
@@ -55,7 +55,7 @@
           </elementProp>
           <elementProp name="CasSP" elementType="Argument">
             <stringProp name="Argument.name">CasSP</stringProp>
-            <stringProp name="Argument.value">https://cas.edu</stringProp>
+            <stringProp name="Argument.value">https://yahoo.com</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
             <stringProp name="Argument.desc">Service Provider url</stringProp>
           </elementProp>
@@ -63,7 +63,7 @@
       </Arguments>
       <hashTree/>
       <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="CSV Get Users/Passwords" enabled="true">
-        <stringProp name="filename">/Users/axman/Desktop/LoadTestingScripts/cas-users.csv</stringProp>
+        <stringProp name="filename">/etc/loadtests/jmeter/cas-users.csv</stringProp>
         <stringProp name="fileEncoding"></stringProp>
         <stringProp name="variableNames">User,Password</stringProp>
         <stringProp name="delimiter">,</stringProp>
@@ -77,7 +77,6 @@
       <CookieManager guiclass="CookiePanel" testclass="CookieManager" testname="HTTP Cookie Manager" enabled="true">
         <collectionProp name="CookieManager.cookies"/>
         <boolProp name="CookieManager.clearEachIteration">true</boolProp>
-        <stringProp name="CookieManager.implementation">org.apache.jmeter.protocol.http.control.HC4CookieHandler</stringProp>
       </CookieManager>
       <hashTree/>
       <ConfigTestElement guiclass="HttpDefaultsGui" testclass="ConfigTestElement" testname="HTTP Request Defaults" enabled="true">
@@ -95,7 +94,7 @@
         <stringProp name="HTTPSampler.response_timeout">120000</stringProp>
       </ConfigTestElement>
       <hashTree/>
-      <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="false">
+      <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
         <boolProp name="ResultCollector.error_logging">false</boolProp>
         <objProp>
           <name>saveConfig</name>
@@ -128,7 +127,7 @@
         <stringProp name="filename"></stringProp>
       </ResultCollector>
       <hashTree/>
-      <ResultCollector guiclass="StatVisualizer" testclass="ResultCollector" testname="Aggregate Report" enabled="false">
+      <ResultCollector guiclass="StatVisualizer" testclass="ResultCollector" testname="Aggregate Report" enabled="true">
         <boolProp name="ResultCollector.error_logging">false</boolProp>
         <objProp>
           <name>saveConfig</name>
@@ -165,7 +164,7 @@
         <stringProp name="ThreadGroup.on_sample_error">startnextloop</stringProp>
         <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
           <boolProp name="LoopController.continue_forever">false</boolProp>
-          <stringProp name="LoopController.loops">1</stringProp>
+          <intProp name="LoopController.loops">-1</intProp>
         </elementProp>
         <stringProp name="ThreadGroup.num_threads">${ThreadCount}</stringProp>
         <stringProp name="ThreadGroup.ramp_time">${RampUpPeriod}</stringProp>
@@ -281,6 +280,7 @@
             <stringProp name="Assertion.test_field">Assertion.sample_label</stringProp>
             <boolProp name="Assertion.assume_success">false</boolProp>
             <intProp name="Assertion.test_type">16</intProp>
+            <stringProp name="Assertion.custom_message"></stringProp>
           </ResponseAssertion>
           <hashTree/>
           <XPathExtractor guiclass="XPathExtractorGui" testclass="XPathExtractor" testname="Extract Execution variable" enabled="true">
@@ -390,6 +390,7 @@
           <boolProp name="Assertion.assume_success">false</boolProp>
           <intProp name="Assertion.test_type">2</intProp>
           <stringProp name="TestPlan.comments">Verifies get user info on ticket validation</stringProp>
+          <stringProp name="Assertion.custom_message"></stringProp>
         </ResponseAssertion>
         <hashTree/>
       </hashTree>
@@ -421,13 +422,10 @@
           <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
           <boolProp name="Assertion.assume_success">false</boolProp>
           <intProp name="Assertion.test_type">2</intProp>
+          <stringProp name="Assertion.custom_message"></stringProp>
         </ResponseAssertion>
         <hashTree/>
       </hashTree>
     </hashTree>
-    <WorkBench guiclass="WorkBenchGui" testclass="WorkBench" testname="WorkBench" enabled="true">
-      <boolProp name="WorkBench.save">true</boolProp>
-    </WorkBench>
-    <hashTree/>
   </hashTree>
 </jmeterTestPlan>

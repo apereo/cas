@@ -24,6 +24,7 @@ public abstract class AbstractServiceRegistry implements ServiceRegistry {
      * The Event publisher.
      */
     private final transient ApplicationEventPublisher eventPublisher;
+
     /**
      * The Service registry listeners.
      */

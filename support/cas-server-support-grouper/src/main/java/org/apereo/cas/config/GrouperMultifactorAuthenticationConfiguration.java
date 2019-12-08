@@ -5,7 +5,6 @@ import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderResolver;
-import org.apereo.cas.authentication.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.authentication.MultifactorAuthenticationTrigger;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.grouper.GrouperFacade;
@@ -28,7 +27,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -72,9 +70,6 @@ public class GrouperMultifactorAuthenticationConfiguration {
     private ConfigurableApplicationContext applicationContext;
 
     @Autowired
-    private ApplicationEventPublisher applicationEventPublisher;
-
-    @Autowired
     private CasConfigurationProperties casProperties;
     
     @Autowired
@@ -84,10 +79,6 @@ public class GrouperMultifactorAuthenticationConfiguration {
     @Autowired
     @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
     private ObjectProvider<CasDelegatingWebflowEventResolver> initialAuthenticationAttemptWebflowEventResolver;
-
-    @Autowired
-    @Qualifier("multifactorAuthenticationProviderSelector")
-    private ObjectProvider<MultifactorAuthenticationProviderSelector> multifactorAuthenticationProviderSelector;
 
     @Autowired
     @Qualifier("authenticationServiceSelectionPlan")
@@ -107,23 +98,24 @@ public class GrouperMultifactorAuthenticationConfiguration {
     @RefreshScope
     public MultifactorAuthenticationTrigger grouperMultifactorAuthenticationTrigger() {
         return new GrouperMultifactorAuthenticationTrigger(casProperties,
-            multifactorAuthenticationProviderResolver.getIfAvailable(), grouperFacade());
+            multifactorAuthenticationProviderResolver.getObject(), grouperFacade(),
+            this.applicationContext);
     }
 
     @Bean
     @RefreshScope
     public CasWebflowEventResolver grouperMultifactorAuthenticationWebflowEventResolver() {
         val context = CasWebflowEventResolutionConfigurationContext.builder()
-            .authenticationSystemSupport(authenticationSystemSupport.getIfAvailable())
-            .centralAuthenticationService(centralAuthenticationService.getIfAvailable())
-            .servicesManager(servicesManager.getIfAvailable())
-            .ticketRegistrySupport(ticketRegistrySupport.getIfAvailable())
-            .warnCookieGenerator(warnCookieGenerator.getIfAvailable())
-            .authenticationRequestServiceSelectionStrategies(authenticationRequestServiceSelectionStrategies.getIfAvailable())
-            .registeredServiceAccessStrategyEnforcer(registeredServiceAccessStrategyEnforcer.getIfAvailable())
+            .authenticationSystemSupport(authenticationSystemSupport.getObject())
+            .centralAuthenticationService(centralAuthenticationService.getObject())
+            .servicesManager(servicesManager.getObject())
+            .ticketRegistrySupport(ticketRegistrySupport.getObject())
+            .warnCookieGenerator(warnCookieGenerator.getObject())
+            .authenticationRequestServiceSelectionStrategies(authenticationRequestServiceSelectionStrategies.getObject())
+            .registeredServiceAccessStrategyEnforcer(registeredServiceAccessStrategyEnforcer.getObject())
             .casProperties(casProperties)
-            .ticketRegistry(ticketRegistry.getIfAvailable())
-            .eventPublisher(applicationEventPublisher)
+            .ticketRegistry(ticketRegistry.getObject())
+            .eventPublisher(applicationContext)
             .applicationContext(applicationContext)
             .build();
 
@@ -131,7 +123,7 @@ public class GrouperMultifactorAuthenticationConfiguration {
             context,
             grouperMultifactorAuthenticationTrigger());
         LOGGER.debug("Activating MFA event resolver based on Grouper groups...");
-        this.initialAuthenticationAttemptWebflowEventResolver.getIfAvailable().addDelegate(r);
+        this.initialAuthenticationAttemptWebflowEventResolver.getObject().addDelegate(r);
         return r;
     }
 }

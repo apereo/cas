@@ -160,6 +160,6 @@ public class RedisObjectFactory {
                 .map(args -> new RedisNode(args[0], Integer.parseInt(args[1])))
                 .collect(Collectors.toCollection(ArrayList::new));
         }
-        return new ArrayList<>();
+        return new ArrayList<>(0);
     }
 }

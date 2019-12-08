@@ -12,12 +12,6 @@ import org.thymeleaf.spring5.view.ThymeleafViewResolver;
  */
 @FunctionalInterface
 public interface CasThymeleafViewResolverConfigurer extends Ordered {
-
-    /**
-     * Order position for the default CAS thymeleaf view resolver configurer.
-     */
-    int CAS_PROPERTIES_ORDER = 0;
-
     @Override
     default int getOrder() {
         return Ordered.LOWEST_PRECEDENCE;

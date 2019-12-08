@@ -53,8 +53,9 @@ public class ValidateEndpointCommand {
             var trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
             trustManagerFactory.init((KeyStore) null);
             LOGGER.info("Detected Truststore: [{}]", trustManagerFactory.getProvider().getName());
-            val x509TrustManagers = new ArrayList<X509TrustManager>();
-            for (val trustManager : trustManagerFactory.getTrustManagers()) {
+            val trustManagers = trustManagerFactory.getTrustManagers();
+            val x509TrustManagers = new ArrayList<X509TrustManager>(trustManagers.length);
+            for (val trustManager : trustManagers) {
                 if (trustManager instanceof X509TrustManager) {
                     val x509TrustManager = (X509TrustManager) trustManager;
                     LOGGER.info("Trusted issuers found: [{}]", x509TrustManager.getAcceptedIssuers().length);
@@ -77,11 +78,11 @@ public class ValidateEndpointCommand {
      */
     @ShellMethod(key = "validate-endpoint", value = "Test connections to an endpoint to verify connectivity, SSL, etc")
     public void validateEndpoint(
-        @ShellOption(value = "url",
+        @ShellOption(value = { "url", "--url" },
             help = "Endpoint URL to test") final String url,
-        @ShellOption(value = "proxy",
+        @ShellOption(value = { "proxy", "--proxy" },
             help = "Proxy address to use when testing the endpoint url") final String proxy,
-        @ShellOption(value = "timeout",
+        @ShellOption(value = { "timeout", "--timeout" },
             help = "Timeout to use in milliseconds when testing the url",
             defaultValue = "5000") final int timeout) {
 

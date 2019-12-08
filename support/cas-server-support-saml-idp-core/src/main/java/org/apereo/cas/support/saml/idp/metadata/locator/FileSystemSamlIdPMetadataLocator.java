@@ -1,8 +1,9 @@
 package org.apereo.cas.support.saml.idp.metadata.locator;
 
+import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
-import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -12,6 +13,7 @@ import org.springframework.core.io.Resource;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
+import java.util.Optional;
 
 /**
  * This is {@link FileSystemSamlIdPMetadataLocator}.
@@ -20,38 +22,67 @@ import java.nio.charset.StandardCharsets;
  * @since 5.3.0
  */
 @Slf4j
-@RequiredArgsConstructor
-public class FileSystemSamlIdPMetadataLocator implements SamlIdPMetadataLocator {
+public class FileSystemSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocator {
     private final File metadataLocation;
 
+    public FileSystemSamlIdPMetadataLocator(final Resource resource) throws Exception {
+        this(resource.getFile());
+    }
+
+    public FileSystemSamlIdPMetadataLocator(final File resource) {
+        super(CipherExecutor.noOpOfStringToString());
+        this.metadataLocation = resource;
+    }
+
+    private static String getAppliesToFor(final Optional<SamlRegisteredService> result) {
+        if (result.isPresent()) {
+            val registeredService = result.get();
+            return registeredService.getName() + '-' + registeredService.getId();
+        }
+        return "CAS";
+    }
+
+    @Override
+    public Resource resolveSigningCertificate(final Optional<SamlRegisteredService> registeredService) {
+        return getMetadataArtifact(registeredService, "idp-signing.crt");
+    }
+
+    @Override
+    public Resource resolveSigningKey(final Optional<SamlRegisteredService> registeredService) {
+        return getMetadataArtifact(registeredService, "idp-signing.key");
+    }
+
+    @Override
+    public Resource resolveMetadata(final Optional<SamlRegisteredService> registeredService) {
+        return getMetadataArtifact(registeredService, "idp-metadata.xml");
+    }
+
+    @Override
+    public Resource getEncryptionCertificate(final Optional<SamlRegisteredService> registeredService) {
+        return getMetadataArtifact(registeredService, "idp-encryption.crt");
+    }
+
+    @Override
+    public Resource resolveEncryptionKey(final Optional<SamlRegisteredService> registeredService) {
+        return getMetadataArtifact(registeredService, "idp-encryption.key");
+    }
+
+    @Override
+    public boolean exists(final Optional<SamlRegisteredService> registeredService) {
+        return resolveMetadata(registeredService).exists();
+    }
+
     @SneakyThrows
-    public FileSystemSamlIdPMetadataLocator(final Resource metadataResource) {
-        this.metadataLocation = metadataResource.getFile();
-    }
-
     @Override
-    public Resource getSigningCertificate() {
-        return new FileSystemResource(new File(metadataLocation, "/idp-signing.crt"));
-    }
-
-    @Override
-    public Resource getSigningKey() {
-        return new FileSystemResource(new File(metadataLocation, "/idp-signing.key"));
-    }
-
-    @Override
-    public Resource getMetadata() {
-        return new FileSystemResource(new File(metadataLocation, "idp-metadata.xml"));
-    }
-
-    @Override
-    public Resource getEncryptionCertificate() {
-        return new FileSystemResource(new File(metadataLocation, "/idp-encryption.crt"));
-    }
-
-    @Override
-    public Resource getEncryptionKey() {
-        return new FileSystemResource(new File(metadataLocation, "/idp-encryption.key"));
+    protected SamlIdPMetadataDocument fetchInternal(final Optional<SamlRegisteredService> registeredService) {
+        val doc = new SamlIdPMetadataDocument();
+        doc.setMetadata(IOUtils.toString(resolveMetadata(registeredService).getInputStream(), StandardCharsets.UTF_8));
+        doc.setEncryptionCertificate(IOUtils.toString(getEncryptionCertificate(registeredService).getInputStream(), StandardCharsets.UTF_8));
+        doc.setEncryptionKey(IOUtils.toString(resolveEncryptionKey(registeredService).getInputStream(), StandardCharsets.UTF_8));
+        doc.setSigningCertificate(IOUtils.toString(resolveSigningCertificate(registeredService).getInputStream(), StandardCharsets.UTF_8));
+        doc.setSigningKey(IOUtils.toString(resolveSigningKey(registeredService).getInputStream(), StandardCharsets.UTF_8));
+        doc.setAppliesTo(getAppliesToFor(registeredService));
+        return doc;
     }
 
     @Override
@@ -65,20 +96,17 @@ public class FileSystemSamlIdPMetadataLocator implements SamlIdPMetadataLocator 
         LOGGER.info("Metadata directory location is at [{}]", this.metadataLocation);
     }
 
-    @Override
-    public boolean exists() {
-        return getMetadata().exists();
-    }
-
-    @SneakyThrows
-    @Override
-    public SamlIdPMetadataDocument fetch() {
-        val doc = new SamlIdPMetadataDocument();
-        doc.setMetadata(IOUtils.toString(getMetadata().getInputStream(), StandardCharsets.UTF_8));
-        doc.setEncryptionCertificate(IOUtils.toString(getEncryptionCertificate().getInputStream(), StandardCharsets.UTF_8));
-        doc.setEncryptionKey(IOUtils.toString(getEncryptionKey().getInputStream(), StandardCharsets.UTF_8));
-        doc.setSigningCertificate(IOUtils.toString(getSigningCertificate().getInputStream(), StandardCharsets.UTF_8));
-        doc.setSigningKey(IOUtils.toString(getSigningKey().getInputStream(), StandardCharsets.UTF_8));
-        return doc;
+    private Resource getMetadataArtifact(final Optional<SamlRegisteredService> result, final String artifactName) {
+        if (result.isEmpty()) {
+            val serviceDirectory = new File(this.metadataLocation, getAppliesToFor(result));
+            if (serviceDirectory.exists()) {
+                val artifact = new File(serviceDirectory, artifactName);
+                if (artifact.exists()) {
+                    return new FileSystemResource(artifact);
+                }
+            }
+        }
+        initialize();
+        return new FileSystemResource(new File(this.metadataLocation, artifactName));
     }
 }

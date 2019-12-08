@@ -16,6 +16,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.EnableAsync;
 
 /**
  * This is {@link CasCoreServicesAuthenticationConfiguration}.
@@ -23,8 +24,9 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Configuration("casCoreServicesAuthenticationConfiguration")
+@Configuration(value = "casCoreServicesAuthenticationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@EnableAsync
 public class CasCoreServicesAuthenticationConfiguration {
 
     @Autowired
@@ -48,8 +50,8 @@ public class CasCoreServicesAuthenticationConfiguration {
     @RefreshScope
     @Bean
     public ProtocolAttributeEncoder casAttributeEncoder() {
-        return new DefaultCasProtocolAttributeEncoder(servicesManager.getIfAvailable(),
-            registeredServiceCipherExecutor.getIfAvailable(),
-            cacheCredentialsCipherExecutor.getIfAvailable());
+        return new DefaultCasProtocolAttributeEncoder(servicesManager.getObject(),
+            registeredServiceCipherExecutor.getObject(),
+            cacheCredentialsCipherExecutor.getObject());
     }
 }

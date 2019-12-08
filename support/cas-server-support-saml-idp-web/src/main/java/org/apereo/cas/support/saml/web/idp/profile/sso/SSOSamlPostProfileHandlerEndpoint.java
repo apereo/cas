@@ -97,7 +97,6 @@ public class SSOSamlPostProfileHandlerEndpoint extends BaseCasActuatorEndpoint {
             val registeredService = this.servicesManager.findServiceBy(selectedService, SamlRegisteredService.class);
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
 
-            val assertion = getAssertion(username, password, entityId);
             val authnRequest = new AuthnRequestBuilder().buildObject();
             authnRequest.setIssuer(saml20ObjectBuilder.newIssuer(entityId));
 
@@ -108,7 +107,7 @@ public class SSOSamlPostProfileHandlerEndpoint extends BaseCasActuatorEndpoint {
                 val messageContext = new MessageContext<>();
                 val scratch = messageContext.getSubcontext(ScratchContext.class, true);
                 scratch.getMap().put(SamlProtocolConstants.PARAMETER_ENCODE_RESPONSE, Boolean.FALSE);
-
+                val assertion = getAssertion(username, password, entityId);
                 val object = this.responseBuilder.build(authnRequest, request, response, assertion,
                     registeredService, adaptor, SAMLConstants.SAML2_POST_BINDING_URI, messageContext);
                 val encoded = SamlUtils.transformSamlObject(saml20ObjectBuilder.getOpenSamlConfigBean(), object).toString();

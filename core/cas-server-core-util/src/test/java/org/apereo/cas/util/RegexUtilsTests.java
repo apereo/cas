@@ -1,6 +1,7 @@
 package org.apereo.cas.util;
 
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -16,8 +17,14 @@ public class RegexUtilsTests {
     @Test
     public void verifyNotValidRegex() {
         val notValidRegex = "***";
-
         assertFalse(RegexUtils.isValidRegex(notValidRegex));
+    }
+
+    @Test
+    public void verifyBlankValidRegex() {
+        val pattern = RegexUtils.createPattern(StringUtils.EMPTY);
+        assertNotNull(pattern);
+        assertEquals(RegexUtils.MATCH_NOTHING_PATTERN, pattern);
     }
 
     @Test

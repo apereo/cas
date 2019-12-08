@@ -18,7 +18,7 @@ public interface OidcWebFingerUserInfoRepository {
      * @return the map
      */
     default Map<String, Object> findByEmailAddress(final String email) {
-        return new HashMap<>();
+        return new HashMap<>(0);
     }
 
     /**
@@ -28,7 +28,7 @@ public interface OidcWebFingerUserInfoRepository {
      * @return the map
      */
     default Map<String, Object> findByUsername(final String username) {
-        return new HashMap<>();
+        return new HashMap<>(0);
     }
 
     /**

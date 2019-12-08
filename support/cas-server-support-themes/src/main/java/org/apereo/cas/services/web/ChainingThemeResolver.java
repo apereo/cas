@@ -20,7 +20,7 @@ import java.util.Set;
 public class ChainingThemeResolver extends AbstractThemeResolver {
 
 
-    private final Set<ThemeResolver> chain = new LinkedHashSet<>();
+    private final Set<ThemeResolver> chain = new LinkedHashSet<>(0);
 
     /**
      * Add resolver to the chain.

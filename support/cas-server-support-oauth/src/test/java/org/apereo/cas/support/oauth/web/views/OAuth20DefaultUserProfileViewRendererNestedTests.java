@@ -1,7 +1,7 @@
 package org.apereo.cas.support.oauth.web.views;
 
 import org.apereo.cas.support.oauth.web.AbstractOAuth20Tests;
-import org.apereo.cas.ticket.accesstoken.AccessToken;
+import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
@@ -37,7 +37,7 @@ public class OAuth20DefaultUserProfileViewRendererNestedTests extends AbstractOA
         val map = CollectionUtils.wrap(OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_ID, "cas",
             OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_ATTRIBUTES, CollectionUtils.wrap("email", "cas@example.org"),
             "something", CollectionUtils.wrapList("something"));
-        val json = oauthUserProfileViewRenderer.render((Map) map, mock(AccessToken.class), new MockHttpServletResponse());
+        val json = oauthUserProfileViewRenderer.render((Map) map, mock(OAuth20AccessToken.class), new MockHttpServletResponse());
         assertNotNull(json.getBody());
         val value = JsonValue.readJSON(json.getBody().toString()).asObject();
         assertNotNull(value.get(OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_ID));

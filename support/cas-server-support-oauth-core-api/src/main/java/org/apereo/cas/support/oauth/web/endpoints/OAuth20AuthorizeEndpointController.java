@@ -40,7 +40,7 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
         super(oAuthConfigurationContext);
     }
 
-    private static boolean isRequestAuthenticated(final ProfileManager manager, final JEEContext context) {
+    private static boolean isRequestAuthenticated(final ProfileManager manager) {
         val opt = manager.get(true);
         return opt.isPresent();
     }
@@ -59,13 +59,15 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
         val context = new JEEContext(request, response, getOAuthConfigurationContext().getSessionStore());
         val manager = new ProfileManager<CommonProfile>(context, context.getSessionStore());
 
-        if (!verifyAuthorizeRequest(context) || !isRequestAuthenticated(manager, context)) {
+        if (!verifyAuthorizeRequest(context) || !isRequestAuthenticated(manager)) {
             LOGGER.error("Authorize request verification failed. Authorization request is missing required parameters, "
                 + "or the request is not authenticated and contains no authenticated profile/principal.");
             return OAuth20Utils.produceUnauthorizedErrorView();
         }
 
-        val clientId = context.getRequestParameter(OAuth20Constants.CLIENT_ID).map(String::valueOf).orElse(StringUtils.EMPTY);
+        val clientId = context.getRequestParameter(OAuth20Constants.CLIENT_ID)
+            .map(String::valueOf)
+            .orElse(StringUtils.EMPTY);
         val registeredService = getRegisteredServiceByClientId(clientId);
         try {
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(clientId, registeredService);
@@ -127,11 +129,11 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
         val profile = profileResult.get();
         val service = getOAuthConfigurationContext().getAuthenticationBuilder()
             .buildService(registeredService, context, false);
-        LOGGER.debug("Created service [{}] based on registered service [{}]", service, registeredService);
+        LOGGER.trace("Created service [{}] based on registered service [{}]", service, registeredService);
 
         val authentication = getOAuthConfigurationContext().getAuthenticationBuilder()
             .build(profile, registeredService, context, service);
-        LOGGER.debug("Created OAuth authentication [{}] for service [{}]", service, authentication);
+        LOGGER.trace("Created OAuth authentication [{}] for service [{}]", service, authentication);
 
         try {
             val audit = AuditableContext.builder()
@@ -182,7 +184,8 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
             getOAuthConfigurationContext().getTicketRegistry(), context.getNativeRequest());
 
         val grantType = context.getRequestParameter(OAuth20Constants.GRANT_TYPE)
-            .map(String::valueOf).orElse(OAuth20GrantTypes.AUTHORIZATION_CODE.getType())
+            .map(String::valueOf)
+            .orElseGet(OAuth20GrantTypes.AUTHORIZATION_CODE::getType)
             .toUpperCase();
 
         val scopes = OAuth20Utils.parseRequestScopes(context);
@@ -207,8 +210,7 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
             .claims(claims)
             .build();
 
-        LOGGER.debug("Building authorization response for grant type [{}] with scopes [{}] for client id [{}]",
-            grantType, scopes, clientId);
+        LOGGER.debug("Building authorization response for grant type [{}] with scopes [{}] for client id [{}]", grantType, scopes, clientId);
         return builder.build(context, clientId, holder);
     }
 

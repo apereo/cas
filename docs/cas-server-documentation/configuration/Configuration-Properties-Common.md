@@ -66,6 +66,17 @@ in each case to learn the exact unit of measure.
 # ${configurationKey}.httpOnly=true
 ```                               
 
+## Job Scheduling
+
+A number of CAS components are given the ability to schedule background jobs to clean tokens, remove records, etc.
+The behavior of the scheduler can be controlled using the following settings:
+
+```properties
+# ${configurationKey}.schedule.startDelay=PT10S
+# ${configurationKey}.schedule.repeatInterval=PT60S
+# ${configurationKey}.schedule.enabled=true
+```
+
 ## Authentication Throttling
 
 Certain functionality in CAS, such as [OAuth](../installation/OAuth-OpenId-Authentication.html) 
@@ -134,6 +145,7 @@ The following options are supported:
 | `SCRYPT`                | Use the `SCryptPasswordEncoder`.
 | `PBKDF2`                | Use the `Pbkdf2PasswordEncoder` based on the `strength` provided and an optional `secret`.
 | `STANDARD`              | Use the `StandardPasswordEncoder` based on the `secret` provided.
+| `SSHA`                  | Use the `LdapShaPasswordEncoder` supports Ldap SHA and SSHA (salted-SHA). The values are base-64 encoded and have the label `{SHA}` (or `{SSHA}`) prepended to the encoded hash. 
 | `GLIBC_CRYPT`           | Use the `GlibcCryptPasswordEncoder` based on the [`encodingAlgorithm`](https://commons.apache.org/proper/commons-codec/archives/1.10/apidocs/org/apache/commons/codec/digest/Crypt.html), `strength` provided and an optional `secret`.
 | `org.example.MyEncoder` | An implementation of `PasswordEncoder` of your own choosing.
 | `file:///path/to/script.groovy` | Path to a Groovy script charged with handling password encoding operations.
@@ -268,7 +280,7 @@ The following options related to JPA/JDBC support in CAS apply equally to a numb
 # ${configurationKey}.dialect=org.hibernate.dialect.HSQLDialect
 
 # ${configurationKey}.failFastTimeout=1
-# ${configurationKey}.isolationLevelName=ISOLATION_READ_COMMITTED
+# ${configurationKey}.isolationLevelName=ISOLATION_READ_COMMITTED 
 # ${configurationKey}.healthQuery=
 # ${configurationKey}.isolateInternalQueries=false
 # ${configurationKey}.leakThreshold=10
@@ -377,9 +389,11 @@ In Jetty, a pool can be put in JNDI with a `jetty.xml` or `jetty-env.xml` file l
 
 ## Signing & Encryption
 
-A number of components in CAS accept signing and encryption keys. In most scenarios if keys are not provided, CAS will auto-generate them. The following instructions apply if you wish to manually and beforehand create the signing and encryption keys.
+A number of components in CAS accept signing and encryption keys. In most scenarios if keys are not provided, CAS will 
+auto-generate them. The following instructions apply if you wish to manually and beforehand create the signing and encryption keys.
 
-Note that if you are asked to create a [JWK](https://tools.ietf.org/html/rfc7517) of a certain size for the key, you are to use the following set of commands to generate the token:
+Note that if you are asked to create a [JWK](https://tools.ietf.org/html/rfc7517) of a certain size for the key, you are to use 
+the following set of commands to generate the token:
 
 ```bash
 wget https://raw.githubusercontent.com/apereo/cas/master/etc/jwk-gen.jar
@@ -396,11 +410,14 @@ The outcome would be similar to:
 }
 ```
 
-The generated value for `k` needs to be assigned to the relevant CAS settings. Note that keys generated via the above algorithm are processed by CAS using the Advanced Encryption Standard (`AES`) algorithm which is a specification for the encryption of electronic data established by the U.S. National Institute of Standards and Technology.
+The generated value for `k` needs to be assigned to the relevant CAS settings. Note that keys generated via 
+the above algorithm are processed by CAS using the Advanced Encryption Standard (`AES`) algorithm which is a 
+specification for the encryption of electronic data established by the U.S. National Institute of Standards and Technology.
 
 ### Settings
 
-The following crypto options apply equally to relevant CAS components (ticket registries, etc) given the component's *configuration key*:
+The following crypto options apply equally to relevant CAS 
+components (ticket registries, etc) given the component's *configuration key*:
 
 ```properties
 # ${configurationKey}.crypto.signing.key=
@@ -410,8 +427,17 @@ The following crypto options apply equally to relevant CAS components (ticket re
 # ${configurationKey}.crypto.encryption.keySize=
 
 # ${configurationKey}.crypto.alg=AES
-# ${configurationKey}.crypto.enabled=false
+# ${configurationKey}.crypto.enabled=false   
+
+# ${configurationKey}.crypto.strategyType=ENCRYPT_AND_SIGN|SIGN_AND_ENCRYPT
 ```
+
+The following cipher strategy types are available:
+
+| Type                | Description
+|---------------------|---------------------------------------------------
+| `ENCRYPT_AND_SIGN`  | Default strategy; encrypt values, and then sign. 
+| `SIGN_AND_ENCRYPT`  | Sign values, and then encrypt.
 
 ### RSA Keys
 
@@ -717,7 +743,9 @@ The following options related to MongoDb support in CAS apply equally to a numbe
 # ${configurationKey}.mongo.writeConcern=NORMAL
 # ${configurationKey}.mongo.authenticationDatabaseName=
 # ${configurationKey}.mongo.replicaSet=
-# ${configurationKey}.mongo.sslEnabled=false
+# ${configurationKey}.mongo.sslEnabled=false 
+# ${configurationKey}.mongo.retryWrites=false 
+
 # ${configurationKey}.mongo.conns.lifetime=60000
 # ${configurationKey}.mongo.conns.perHost=10
 ```

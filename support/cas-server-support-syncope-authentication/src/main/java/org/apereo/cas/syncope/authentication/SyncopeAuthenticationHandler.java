@@ -57,7 +57,7 @@ public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthen
         try {
             val syncopeRestUrl = StringUtils.appendIfMissing(this.syncopeUrl, "/rest/users/self");
             response = HttpUtils.executeGet(syncopeRestUrl, c.getUsername(), c.getPassword(),
-                new HashMap<>(), CollectionUtils.wrap("X-Syncope-Domain", this.syncopeDomain));
+                new HashMap<>(0), CollectionUtils.wrap("X-Syncope-Domain", this.syncopeDomain));
 
             LOGGER.debug("Received http response status as [{}]", response.getStatusLine());
 
@@ -72,7 +72,7 @@ public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthen
                     throw new AccountPasswordMustChangeException("Account password must change for " + c.getUsername());
                 }
                 val principal = this.principalFactory.createPrincipal(user.getUsername(), buildSyncopeUserAttributes(user));
-                return createHandlerResult(c, principal, new ArrayList<>());
+                return createHandlerResult(c, principal, new ArrayList<>(0));
             }
         } finally {
             HttpUtils.close(response);

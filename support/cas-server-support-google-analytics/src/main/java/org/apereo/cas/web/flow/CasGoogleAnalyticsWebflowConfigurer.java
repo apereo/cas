@@ -10,7 +10,6 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.EndState;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
-import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
@@ -20,8 +19,11 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 6.1.0
  */
 public class CasGoogleAnalyticsWebflowConfigurer extends AbstractCasWebflowConfigurer {
-    private static final String ATTRIBUTE_FLOWSCOPE_GOOGLE_ANALYTICS_TRACKING_ID = "googleAnalyticsTrackingId";
 
+    static final String ACTION_ID_CREATE_GOOGLE_ANALYTICS_COOKIE = "createGoogleAnalyticsCookieAction";
+    static final String ACTION_ID_REMOVE_GOOGLE_ANALYTICS_COOKIE = "removeGoogleAnalyticsCookieAction";
+    static final String ATTRIBUTE_FLOWSCOPE_GOOGLE_ANALYTICS_TRACKING_ID = "googleAnalyticsTrackingId";
+    
     public CasGoogleAnalyticsWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
                                                final FlowDefinitionRegistry loginFlowDefinitionRegistry,
                                                final ApplicationContext applicationContext,
@@ -46,28 +48,27 @@ public class CasGoogleAnalyticsWebflowConfigurer extends AbstractCasWebflowConfi
 
     private void createRemoveGoogleAnalyticsCookieLogoutAction(final Flow logoutFlow) {
         val logoutSetup = getState(logoutFlow, CasWebflowConstants.STATE_ID_TERMINATE_SESSION);
-        logoutSetup.getExitActionList().add(createEvaluateAction("removeGoogleAnalyticsCookieAction"));
+        logoutSetup.getExitActionList().add(createEvaluateAction(ACTION_ID_REMOVE_GOOGLE_ANALYTICS_COOKIE));
     }
 
     private void injectGoogleAnalyticsIdIntoLogoutView(final Flow logoutFlow) {
         val logoutSetup = getState(logoutFlow, CasWebflowConstants.STATE_ID_LOGOUT_VIEW, EndState.class);
-        logoutSetup.getEntryActionList().add(insertGoogleAnalyticsTrackingIdAction());
+        logoutSetup.getEntryActionList().add(requestContext -> {
+            putGoogleAnalyticsTrackingIdIntoFlowScope(requestContext, casProperties.getGoogleAnalytics().getGoogleAnalyticsTrackingId());
+            return null;
+        });
     }
 
     private void createSendGoogleAnalyticsCookieAction(final Flow flow) {
         val sendTgt = getState(flow, CasWebflowConstants.STATE_ID_SEND_TICKET_GRANTING_TICKET);
-        sendTgt.getExitActionList().add(createEvaluateAction("createGoogleAnalyticsCookieAction"));
+        sendTgt.getExitActionList().add(createEvaluateAction(ACTION_ID_CREATE_GOOGLE_ANALYTICS_COOKIE));
     }
 
     private void injectGoogleAnalyticsTrackingIdToFlowStart(final Flow flow) {
-        flow.getStartActionList().add(insertGoogleAnalyticsTrackingIdAction());
-    }
-
-    private Action insertGoogleAnalyticsTrackingIdAction() {
-        return requestContext -> {
+        flow.getStartActionList().add(requestContext -> {
             putGoogleAnalyticsTrackingIdIntoFlowScope(requestContext, casProperties.getGoogleAnalytics().getGoogleAnalyticsTrackingId());
             return null;
-        };
+        });
     }
 
     /**

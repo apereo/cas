@@ -33,6 +33,7 @@ import org.apereo.cas.configuration.model.support.geo.googlemaps.GoogleMapsPrope
 import org.apereo.cas.configuration.model.support.geo.maxmind.MaxmindProperties;
 import org.apereo.cas.configuration.model.support.interrupt.InterruptProperties;
 import org.apereo.cas.configuration.model.support.jpa.DatabaseProperties;
+import org.apereo.cas.configuration.model.support.replication.SessionReplicationProperties;
 import org.apereo.cas.configuration.model.support.saml.SamlCoreProperties;
 import org.apereo.cas.configuration.model.support.saml.googleapps.GoogleAppsProperties;
 import org.apereo.cas.configuration.model.support.saml.mdui.SamlMetadataUIProperties;
@@ -318,4 +319,10 @@ public class CasConfigurationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private SpringCloudConfigurationProperties spring = new SpringCloudConfigurationProperties();
+
+    /**
+     * Session replication properties.
+     */
+    @NestedConfigurationProperty
+    private SessionReplicationProperties sessionReplication = new SessionReplicationProperties();
 }

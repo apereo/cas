@@ -12,11 +12,11 @@ import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.servlet.ServletWebServerFactoryAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -28,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    MailSenderAutoConfiguration.class,
     ServletWebServerFactoryAutoConfiguration.class,
     SoapAuthenticationServerTestConfiguration.class,
     CasCoreServicesConfiguration.class,
@@ -35,8 +36,14 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreUtilConfiguration.class,
     SoapAuthenticationConfiguration.class
 },
+    properties = {
+        "server.port=8080",
+        "cas.authn.soap.url=http://localhost:8080/ws/users",
+        "spring.mail.host=localhost",
+        "spring.mail.port=25000",
+        "spring.mail.testConnection=false"
+    },
     webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-@TestPropertySource(properties = {"server.port=8080", "cas.authn.soap.url=http://localhost:8080/ws/users"})
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class SoapAuthenticationHandlerTests {
     @Autowired

@@ -13,8 +13,13 @@ import java.util.Map;
  * @since 6.0.0
  */
 public class NoOpProtocolAttributesRenderer implements CasProtocolAttributesRenderer {
+    /**
+     * Static instance.
+     */
+    public static final CasProtocolAttributesRenderer INSTANCE = new NoOpProtocolAttributesRenderer();
+
     @Override
     public Collection<String> render(final Map<String, Object> attributes) {
-        return new ArrayList<>();
+        return new ArrayList<>(0);
     }
 }

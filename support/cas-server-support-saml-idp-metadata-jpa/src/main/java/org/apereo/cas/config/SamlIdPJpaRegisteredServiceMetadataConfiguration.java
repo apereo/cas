@@ -8,7 +8,7 @@ import org.apereo.cas.support.saml.metadata.resolver.JpaSamlRegisteredServiceMet
 import org.apereo.cas.support.saml.services.idp.metadata.SamlMetadataDocument;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.SamlRegisteredServiceMetadataResolver;
 import org.apereo.cas.support.saml.services.idp.metadata.plan.SamlRegisteredServiceMetadataResolutionPlan;
-import org.apereo.cas.support.saml.services.idp.metadata.plan.SamlRegisteredServiceMetadataResolutionPlanConfigurator;
+import org.apereo.cas.support.saml.services.idp.metadata.plan.SamlRegisteredServiceMetadataResolutionPlanConfigurer;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -39,7 +40,7 @@ import java.util.List;
 @Configuration("samlIdPJpaRegisteredServiceMetadataConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement(proxyTargetClass = true)
-public class SamlIdPJpaRegisteredServiceMetadataConfiguration implements SamlRegisteredServiceMetadataResolutionPlanConfigurator {
+public class SamlIdPJpaRegisteredServiceMetadataConfiguration implements SamlRegisteredServiceMetadataResolutionPlanConfigurer {
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -48,10 +49,13 @@ public class SamlIdPJpaRegisteredServiceMetadataConfiguration implements SamlReg
     @Qualifier("shibboleth.OpenSAMLConfig")
     private ObjectProvider<OpenSamlConfigBean> openSamlConfigBean;
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+
     @Bean
     public SamlRegisteredServiceMetadataResolver jpaSamlRegisteredServiceMetadataResolver() {
         val idp = casProperties.getAuthn().getSamlIdp();
-        return new JpaSamlRegisteredServiceMetadataResolver(idp, openSamlConfigBean.getIfAvailable());
+        return new JpaSamlRegisteredServiceMetadataResolver(idp, openSamlConfigBean.getObject());
     }
 
     @RefreshScope
@@ -80,7 +84,8 @@ public class SamlIdPJpaRegisteredServiceMetadataConfiguration implements SamlReg
                 jpaSamlMetadataVendorAdapter(),
                 "jpaSamlMetadataContext",
                 jpaSamlMetadataPackagesToScan(),
-                dataSourceSamlMetadata()), idp.getJpa());
+                dataSourceSamlMetadata()), idp.getJpa(),
+            applicationContext);
     }
 
     @Autowired

@@ -61,7 +61,6 @@ public class DelegatedClientAuthenticationHandler extends AbstractPac4jAuthentic
             val clientCredentials = (ClientCredential) credential;
             LOGGER.debug("Located client credentials as [{}]", clientCredentials);
 
-            val credentials = clientCredentials.getCredentials();
             LOGGER.trace("Client name: [{}]", clientCredentials.getClientName());
 
             val clientResult = clients.findClient(clientCredentials.getClientName());
@@ -77,6 +76,7 @@ public class DelegatedClientAuthenticationHandler extends AbstractPac4jAuthentic
 
             var userProfileResult = Optional.ofNullable(clientCredentials.getUserProfile());
             if (userProfileResult.isEmpty()) {
+                val credentials = clientCredentials.getCredentials();
                 userProfileResult = client.getUserProfile(credentials, webContext);
             }
             if (userProfileResult.isEmpty()) {

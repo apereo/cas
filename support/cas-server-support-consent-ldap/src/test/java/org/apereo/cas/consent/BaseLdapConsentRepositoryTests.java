@@ -21,9 +21,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = {
     CasConsentLdapConfiguration.class,
-    RefreshAutoConfiguration.class
+    BaseConsentRepositoryTests.SharedTestConfiguration.class
 })
 @Tag("Ldap")
 @Getter
@@ -142,7 +142,7 @@ public abstract class BaseLdapConsentRepositoryTests extends BaseConsentReposito
         val mod = new Modification(ModificationType.ADD, ATTR_NAME, MAPPER.writeValueAsString(decision));
         assertEquals(ResultCode.SUCCESS, getConnection().modify(USER_DN, mod).getResultCode());
 
-        val t = LocalDateTime.now();
+        val t = LocalDateTime.now(ZoneId.systemDefault());
         assertNotEquals(t, decision.getCreatedDate());
         decision.setCreatedDate(t);
         this.repository.storeConsentDecision(decision);

@@ -2,8 +2,6 @@ description = "Apereo CAS Surrogate Authentication Webflow"
 dependencies {
     api project(":api:cas-server-core-api-webflow")
 
-    
-    
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-authentication-mfa-api")
     implementation project(":core:cas-server-core-webflow")
@@ -21,19 +19,21 @@ dependencies {
     implementation project(":support:cas-server-support-surrogate-api")
 
     testImplementation project(":support:cas-server-support-themes")
-    testImplementation project(":core:cas-server-core-services")
+    
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-logout")
-    testImplementation project(":core:cas-server-core-authentication-api")
+    
     testImplementation project(":core:cas-server-core-authentication")
     testImplementation project(":core:cas-server-core-services-authentication")
     testImplementation project(":core:cas-server-core-authentication-attributes")
+    testImplementation project(":core:cas-server-core-authentication-mfa")
     testImplementation project(":core:cas-server-core-tickets")
     testImplementation project(":core:cas-server-core-cookie")
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core-web")
     testImplementation project(":core:cas-server-core-configuration")
-    
+
+    testImplementation project(path: ":core:cas-server-core-webflow", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")

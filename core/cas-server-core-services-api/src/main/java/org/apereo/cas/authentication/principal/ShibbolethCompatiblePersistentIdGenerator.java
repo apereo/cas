@@ -20,6 +20,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Generates PersistentIds based on the Shibboleth algorithm.
@@ -77,7 +78,7 @@ public class ShibbolethCompatiblePersistentIdGenerator implements PersistentIdGe
         LOGGER.debug("Found principal attributes [{}] to use when generating persistent identifiers", attributes);
 
         val principalId = determinePrincipalIdFromAttributes(principal.getId(), attributes);
-        return generate(principalId, service != null ? service.getId() : null);
+        return generate(principalId, Optional.ofNullable(service).map(Principal::getId).orElse(null));
 
     }
 

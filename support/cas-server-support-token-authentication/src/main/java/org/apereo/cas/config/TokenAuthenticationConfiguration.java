@@ -50,13 +50,13 @@ public class TokenAuthenticationConfiguration {
     @Bean
     public AuthenticationHandler tokenAuthenticationHandler() {
         val token = casProperties.getAuthn().getToken();
-        return new TokenAuthenticationHandler(token.getName(), servicesManager.getIfAvailable(), tokenPrincipalFactory(),
+        return new TokenAuthenticationHandler(token.getName(), servicesManager.getObject(), tokenPrincipalFactory(),
             PrincipalNameTransformerUtils.newPrincipalNameTransformer(token.getPrincipalTransformation()));
     }
 
     @ConditionalOnMissingBean(name = "tokenAuthenticationEventExecutionPlanConfigurer")
     @Bean
     public AuthenticationEventExecutionPlanConfigurer tokenAuthenticationEventExecutionPlanConfigurer() {
-        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(tokenAuthenticationHandler(), defaultPrincipalResolver.getIfAvailable());
+        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(tokenAuthenticationHandler(), defaultPrincipalResolver.getObject());
     }
 }

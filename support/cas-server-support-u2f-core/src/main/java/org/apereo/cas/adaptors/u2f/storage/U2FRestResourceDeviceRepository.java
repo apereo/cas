@@ -51,7 +51,7 @@ public class U2FRestResourceDeviceRepository extends BaseResourceU2FDeviceReposi
                 restProperties.getBasicAuthUsername(), restProperties.getBasicAuthPassword());
             if (Objects.requireNonNull(response).getStatusLine().getStatusCode() == HttpStatus.OK.value()) {
                 return mapper.readValue(response.getEntity().getContent(),
-                    new TypeReference<Map<String, List<U2FDeviceRegistration>>>() {
+                    new TypeReference<>() {
                     });
             }
         } catch (final Exception e) {

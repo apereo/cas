@@ -44,7 +44,7 @@ public class OidcClientRegistrationResponse implements Serializable {
     private String subjectType;
 
     @JsonProperty("grant_types")
-    private List<String> grantTypes = new ArrayList<>();
+    private List<String> grantTypes = new ArrayList<>(0);
 
     @JsonProperty("logo_uri")
     private String logo;
@@ -56,10 +56,10 @@ public class OidcClientRegistrationResponse implements Serializable {
     private String termsOfUseUri;
 
     @JsonProperty("response_types")
-    private List<String> responseTypes = new ArrayList<>();
+    private List<String> responseTypes = new ArrayList<>(0);
 
     @JsonProperty("redirect_uris")
-    private List<String> redirectUris = new ArrayList<>();
+    private List<String> redirectUris = new ArrayList<>(0);
 
     @JsonProperty("userinfo_signed_response_alg")
     private String userInfoSignedReponseAlg;
@@ -71,7 +71,7 @@ public class OidcClientRegistrationResponse implements Serializable {
     private String userInfoEncryptedReponseEncoding;
 
     @JsonProperty("contacts")
-    private List<String> contacts = new ArrayList<>();
+    private List<String> contacts = new ArrayList<>(0);
 
     @JsonProperty("request_object_signing_alg")
     private String requestObjectSigningAlg;

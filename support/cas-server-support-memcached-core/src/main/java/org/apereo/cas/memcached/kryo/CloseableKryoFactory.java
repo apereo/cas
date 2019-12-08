@@ -84,6 +84,7 @@ import org.apereo.cas.ticket.expiration.TicketGrantingTicketExpirationPolicy;
 import org.apereo.cas.ticket.expiration.TimeoutExpirationPolicy;
 import org.apereo.cas.ticket.registry.EncodedTicket;
 import org.apereo.cas.util.crypto.PublicKeyFactoryBean;
+import org.apereo.cas.validation.ValidationResponseType;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.pool.KryoFactory;
@@ -159,7 +160,7 @@ public class CloseableKryoFactory implements KryoFactory {
 
     private final CasKryoPool kryoPool;
 
-    private Collection<Class> classesToRegister = new ArrayList<>();
+    private Collection<Class> classesToRegister = new ArrayList<>(0);
     private boolean warnUnregisteredClasses = true;
     private boolean registrationRequired;
     private boolean replaceObjectsByReferences;
@@ -261,6 +262,7 @@ public class CloseableKryoFactory implements KryoFactory {
         kryo.register(HttpBasedServiceCredential.class);
         kryo.register(OneTimePasswordCredential.class);
         kryo.register(PublicKeyFactoryBean.class);
+        kryo.register(ValidationResponseType.class);
     }
 
     private static void registerCasServicesAttributeReleasePolicyWithKryo(final Kryo kryo) {

@@ -48,7 +48,7 @@ public class JpaServiceRegistry extends AbstractServiceRegistry {
 
     @Override
     public Collection<RegisteredService> load() {
-        val query = String.format("select r from %s r", ENTITY_NAME);
+        val query = String.format("SELECT r from %s r", ENTITY_NAME);
         val list = this.entityManager.createQuery(query, RegisteredService.class).getResultList();
         return list
             .stream()
@@ -76,7 +76,7 @@ public class JpaServiceRegistry extends AbstractServiceRegistry {
 
     @Override
     public long size() {
-        val query = String.format("select count(r) from %s r", ENTITY_NAME);
+        val query = String.format("SELECT count(r) from %s r", ENTITY_NAME);
         return this.entityManager.createQuery(query, Long.class).getSingleResult();
     }
 }

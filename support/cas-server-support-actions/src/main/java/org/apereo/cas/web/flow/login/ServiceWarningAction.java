@@ -42,7 +42,6 @@ public class ServiceWarningAction extends AbstractAction {
     @Override
     protected Event doExecute(final RequestContext context) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
-        val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
 
         val service = WebUtils.getService(context);
         val ticketGrantingTicket = WebUtils.getTicketGrantingTicketId(context);
@@ -65,6 +64,7 @@ public class ServiceWarningAction extends AbstractAction {
 
         if (request.getParameterMap().containsKey(PARAMETER_NAME_IGNORE_WARNING)) {
             if (Boolean.parseBoolean(request.getParameter(PARAMETER_NAME_IGNORE_WARNING))) {
+                val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
                 this.warnCookieGenerator.removeCookie(response);
             }
         }

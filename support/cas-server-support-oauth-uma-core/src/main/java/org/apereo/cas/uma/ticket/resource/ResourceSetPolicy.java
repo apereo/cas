@@ -45,7 +45,7 @@ public class ResourceSetPolicy implements Serializable {
 
     @Lob
     @Column(length = Integer.MAX_VALUE)
-    private HashSet<ResourceSetPolicyPermission> permissions = new HashSet<>();
+    private HashSet<ResourceSetPolicyPermission> permissions = new HashSet<>(0);
 
     /**
      * As json string.

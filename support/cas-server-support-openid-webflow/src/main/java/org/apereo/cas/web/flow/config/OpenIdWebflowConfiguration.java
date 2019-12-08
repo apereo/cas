@@ -2,7 +2,6 @@ package org.apereo.cas.web.flow.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
-import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.OpenIdWebflowConfigurer;
 
@@ -39,23 +38,19 @@ public class OpenIdWebflowConfiguration {
     private ObjectProvider<FlowDefinitionRegistry> loginFlowDefinitionRegistry;
 
     @Autowired
-    private FlowBuilderServices flowBuilderServices;
+    private ObjectProvider<FlowBuilderServices> flowBuilderServices;
 
     @ConditionalOnMissingBean(name = "openidWebflowConfigurer")
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer openidWebflowConfigurer() {
-        return new OpenIdWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry.getIfAvailable(), applicationContext, casProperties);
+        return new OpenIdWebflowConfigurer(flowBuilderServices.getObject(),
+            loginFlowDefinitionRegistry.getObject(), applicationContext, casProperties);
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "openidCasWebflowExecutionPlanConfigurer")
     public CasWebflowExecutionPlanConfigurer openidCasWebflowExecutionPlanConfigurer() {
-        return new CasWebflowExecutionPlanConfigurer() {
-            @Override
-            public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-                plan.registerWebflowConfigurer(openidWebflowConfigurer());
-            }
-        };
+        return plan -> plan.registerWebflowConfigurer(openidWebflowConfigurer());
     }
 }

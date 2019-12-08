@@ -25,6 +25,8 @@ import java.util.ArrayList;
  */
 public class CasCaptchaWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
+    static final String ACTION_ID_VALIDATE_CAPTCHA = "validateCaptchaAction";
+
     public CasCaptchaWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
                                        final FlowDefinitionRegistry loginFlowDefinitionRegistry,
                                        final ApplicationContext applicationContext,
@@ -43,12 +45,13 @@ public class CasCaptchaWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
     private void createValidateRecaptchaAction(final Flow flow) {
         val state = getState(flow, CasWebflowConstants.STATE_ID_REAL_SUBMIT, ActionState.class);
-        val currentActions = new ArrayList<Action>();
-        state.getActionList().forEach(currentActions::add);
-        currentActions.forEach(a -> state.getActionList().remove(a));
+        val actionList = state.getActionList();
+        val currentActions = new ArrayList<Action>(actionList.size());
+        actionList.forEach(currentActions::add);
+        currentActions.forEach(actionList::remove);
 
-        state.getActionList().add(createEvaluateAction("validateCaptchaAction"));
-        currentActions.forEach(a -> state.getActionList().add(a));
+        actionList.add(createEvaluateAction(ACTION_ID_VALIDATE_CAPTCHA));
+        currentActions.forEach(actionList::add);
         state.getTransitionSet().add(createTransition("captchaError", CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM));
     }
 

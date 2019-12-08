@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
 import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Async;
 
 /**
  * This is {@link CasServiceRegistryInitializerConfigurationEventListener}.
@@ -24,6 +25,7 @@ public class CasServiceRegistryInitializerConfigurationEventListener {
      * @param event the event
      */
     @EventListener
+    @Async
     public void handleRefreshEvent(final EnvironmentChangeEvent event) {
         LOGGER.trace("Received event [{}]", event);
         rebind();
@@ -35,6 +37,7 @@ public class CasServiceRegistryInitializerConfigurationEventListener {
      * @param event the event
      */
     @EventListener
+    @Async
     public void handleConfigurationModifiedEvent(final CasConfigurationModifiedEvent event) {
         if (event.isEligibleForContextRefresh()) {
             rebind();

@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 public class ChainingRegisteredServiceConsentPolicy implements RegisteredServiceConsentPolicy {
     private static final long serialVersionUID = -2949244688986345692L;
 
-    private final List<RegisteredServiceConsentPolicy> policies = new ArrayList<>();
+    private final List<RegisteredServiceConsentPolicy> policies = new ArrayList<>(0);
 
     /**
      * Add policies.
@@ -80,5 +80,11 @@ public class ChainingRegisteredServiceConsentPolicy implements RegisteredService
             .map(RegisteredServiceConsentPolicy::getIncludeOnlyAttributes)
             .flatMap(Set::stream)
             .collect(Collectors.toCollection(LinkedHashSet::new));
+    }
+
+    @Override
+    @JsonIgnore
+    public int size() {
+        return policies.size();
     }
 }

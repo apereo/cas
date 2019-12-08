@@ -1,6 +1,6 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.StringBean;
+import org.apereo.cas.JmsQueueIdentifier;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.hz.HazelcastConfigurationFactory;
@@ -41,7 +41,7 @@ public class CasServicesStreamingHazelcastConfiguration {
 
     @Autowired
     @Qualifier("casRegisteredServiceStreamPublisherIdentifier")
-    private ObjectProvider<StringBean> casRegisteredServiceStreamPublisherIdentifier;
+    private ObjectProvider<JmsQueueIdentifier> casRegisteredServiceStreamPublisherIdentifier;
 
     @Bean
     public DistributedCacheManager registeredServiceDistributedCacheManager() {
@@ -57,7 +57,7 @@ public class CasServicesStreamingHazelcastConfiguration {
     @Bean
     public CasRegisteredServiceStreamPublisher casRegisteredServiceStreamPublisher() {
         return new CasRegisteredServiceHazelcastStreamPublisher(registeredServiceDistributedCacheManager(),
-            casRegisteredServiceStreamPublisherIdentifier.getIfAvailable());
+            casRegisteredServiceStreamPublisherIdentifier.getObject());
     }
 
 

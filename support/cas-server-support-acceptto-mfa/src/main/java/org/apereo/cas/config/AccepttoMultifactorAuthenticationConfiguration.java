@@ -34,7 +34,6 @@ import org.apereo.cas.util.crypto.PublicKeyFactoryBean;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
-import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
@@ -53,7 +52,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -122,10 +120,7 @@ public class AccepttoMultifactorAuthenticationConfiguration {
     private ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer;
 
     @Autowired
-    private ApplicationEventPublisher applicationEventPublisher;
-
-    @Autowired
-    private FlowBuilderServices flowBuilderServices;
+    private ObjectProvider<FlowBuilderServices> flowBuilderServices;
 
     @Autowired
     @Qualifier("defaultTicketFactory")
@@ -141,7 +136,7 @@ public class AccepttoMultifactorAuthenticationConfiguration {
 
     @Bean
     public FlowDefinitionRegistry mfaAccepttoAuthenticatorFlowRegistry() {
-        val builder = new FlowDefinitionRegistryBuilder(this.applicationContext, this.flowBuilderServices);
+        val builder = new FlowDefinitionRegistryBuilder(this.applicationContext, flowBuilderServices.getObject());
         builder.setBasePath(CasWebflowConstants.BASE_CLASSPATH_WEBFLOW);
         builder.addFlowLocationPattern("/mfa-acceptto/*-webflow.xml");
         return builder.build();
@@ -151,26 +146,22 @@ public class AccepttoMultifactorAuthenticationConfiguration {
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer mfaAccepttoMultifactorWebflowConfigurer() {
-        return new AccepttoMultifactorWebflowConfigurer(flowBuilderServices,
-            loginFlowDefinitionRegistry.getIfAvailable(),
+        return new AccepttoMultifactorWebflowConfigurer(flowBuilderServices.getObject(),
+            loginFlowDefinitionRegistry.getObject(),
             mfaAccepttoAuthenticatorFlowRegistry(), applicationContext, casProperties);
     }
 
     @ConditionalOnMissingBean(name = "mfaAccepttoCasWebflowExecutionPlanConfigurer")
     @Bean
     public CasWebflowExecutionPlanConfigurer mfaAccepttoCasWebflowExecutionPlanConfigurer() {
-        return new CasWebflowExecutionPlanConfigurer() {
-            @Override
-            public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-                plan.registerWebflowConfigurer(mfaAccepttoMultifactorWebflowConfigurer());
-            }
-        };
+        return plan -> plan.registerWebflowConfigurer(mfaAccepttoMultifactorWebflowConfigurer());
     }
 
     @ConditionalOnMissingBean(name = "mfaAccepttoDistributedSessionStore")
     @Bean
     public SessionStore<JEEContext> mfaAccepttoDistributedSessionStore() {
-        return new DistributedJ2ESessionStore(ticketRegistry.getIfAvailable(), ticketFactory.getIfAvailable());
+        return new DistributedJ2ESessionStore(ticketRegistry.getObject(), ticketFactory.getObject(),
+                casProperties.getSessionReplication().getSessionCookieName());
     }
 
     @ConditionalOnMissingBean(name = "mfaAccepttoMultifactorFetchChannelAction")
@@ -185,7 +176,7 @@ public class AccepttoMultifactorAuthenticationConfiguration {
     @RefreshScope
     public Action mfaAccepttoMultifactorValidateChannelAction() {
         return new AccepttoMultifactorValidateChannelAction(mfaAccepttoDistributedSessionStore(),
-            authenticationSystemSupport.getIfAvailable());
+            authenticationSystemSupport.getObject());
     }
 
     @Bean
@@ -221,23 +212,23 @@ public class AccepttoMultifactorAuthenticationConfiguration {
     @Bean
     @RefreshScope
     public Action mfaAccepttoMultifactorValidateUserDeviceRegistrationAction() {
-        return new AccepttoMultifactorValidateUserDeviceRegistrationAction(casProperties, authenticationSystemSupport.getIfAvailable());
+        return new AccepttoMultifactorValidateUserDeviceRegistrationAction(casProperties);
     }
 
     @RefreshScope
     @Bean
     public CasWebflowEventResolver mfaAccepttoMultifactorAuthenticationWebflowEventResolver() {
         val context = CasWebflowEventResolutionConfigurationContext.builder()
-            .authenticationSystemSupport(authenticationSystemSupport.getIfAvailable())
-            .centralAuthenticationService(centralAuthenticationService.getIfAvailable())
-            .servicesManager(servicesManager.getIfAvailable())
-            .ticketRegistrySupport(ticketRegistrySupport.getIfAvailable())
-            .warnCookieGenerator(warnCookieGenerator.getIfAvailable())
-            .authenticationRequestServiceSelectionStrategies(authenticationRequestServiceSelectionStrategies.getIfAvailable())
-            .registeredServiceAccessStrategyEnforcer(registeredServiceAccessStrategyEnforcer.getIfAvailable())
+            .authenticationSystemSupport(authenticationSystemSupport.getObject())
+            .centralAuthenticationService(centralAuthenticationService.getObject())
+            .servicesManager(servicesManager.getObject())
+            .ticketRegistrySupport(ticketRegistrySupport.getObject())
+            .warnCookieGenerator(warnCookieGenerator.getObject())
+            .authenticationRequestServiceSelectionStrategies(authenticationRequestServiceSelectionStrategies.getObject())
+            .registeredServiceAccessStrategyEnforcer(registeredServiceAccessStrategyEnforcer.getObject())
             .casProperties(casProperties)
-            .ticketRegistry(ticketRegistry.getIfAvailable())
-            .eventPublisher(applicationEventPublisher)
+            .ticketRegistry(ticketRegistry.getObject())
+            .eventPublisher(applicationContext)
             .applicationContext(applicationContext)
             .build();
 
@@ -267,7 +258,7 @@ public class AccepttoMultifactorAuthenticationConfiguration {
                 + "is defined for the Acceptto integration. Examine your CAS configuration and adjust for correct values.");
         }
         return new AccepttoQRCodeAuthenticationHandler(
-            servicesManager.getIfAvailable(),
+            servicesManager.getObject(),
             casAccepttoQRCodePrincipalFactory());
     }
 
@@ -285,8 +276,7 @@ public class AccepttoMultifactorAuthenticationConfiguration {
     @Bean
     public AuthenticationEventExecutionPlanConfigurer casAccepttoAuthenticationQRCodeEventExecutionPlanConfigurer() {
         return plan -> {
-            plan.registerAuthenticationHandlerWithPrincipalResolver(casAccepttoQRCodeAuthenticationHandler(),
-                defaultPrincipalResolver.getIfAvailable());
+            plan.registerAuthenticationHandlerWithPrincipalResolver(casAccepttoQRCodeAuthenticationHandler(), defaultPrincipalResolver.getObject());
             plan.registerAuthenticationMetadataPopulator(casAccepttoQRCodeAuthenticationMetaDataPopulator());
             plan.registerAuthenticationHandlerResolver(new ByCredentialTypeAuthenticationHandlerResolver(AccepttoEmailCredential.class));
         };

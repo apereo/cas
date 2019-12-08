@@ -14,6 +14,7 @@ import lombok.val;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Async;
 
 import java.io.Closeable;
 import java.io.File;
@@ -49,6 +50,7 @@ public class CasConfigurationWatchService implements Closeable {
      * @param event the event
      */
     @EventListener
+    @Async
     public void runPathWatchServices(final ApplicationReadyEvent event) {
         watchConfigurationDirectoryIfNeeded();
         watchConfigurationFileIfNeeded();

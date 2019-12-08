@@ -5,7 +5,6 @@ import org.apereo.cas.config.CasEmbeddedContainerTomcatConfiguration;
 import org.apereo.cas.config.CasEmbeddedContainerTomcatFiltersConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +14,6 @@ import org.springframework.boot.autoconfigure.web.servlet.ServletWebServerFactor
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.servlet.server.ConfigurableServletWebServerFactory;
-import org.springframework.test.context.TestPropertySource;
 
 /**
  * This is {@link CasTomcatServletWebServerFactoryTests}.
@@ -27,25 +25,24 @@ import org.springframework.test.context.TestPropertySource;
     CasEmbeddedContainerTomcatConfiguration.class,
     CasEmbeddedContainerTomcatFiltersConfiguration.class
 },
+    properties = {
+        "server.port=8182",
+        "server.ssl.enabled=false",
+        "cas.server.tomcat.clustering.sessionClusteringEnabled=false",
+        "cas.server.tomcat.sslValve.enabled=true",
+        "cas.server.tomcat.httpProxy.enabled=true",
+        "cas.server.tomcat.httpProxy.secure=true",
+        "cas.server.tomcat.httpProxy.scheme=https",
+        "cas.server.tomcat.http.enabled=true",
+        "cas.server.tomcat.http.port=9190",
+        "cas.server.tomcat.ajp.enabled=true",
+        "cas.server.tomcat.ajp.port=9944",
+        "cas.server.tomcat.basicAuthn.enabled=true",
+        "cas.server.tomcat.extAccessLog.enabled=true",
+        "cas.server.tomcat.rewriteValve.location=classpath:/container/tomcat/rewrite.config"
+    },
     webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @EnableConfigurationProperties({CasConfigurationProperties.class, ServerProperties.class})
-@TestPropertySource(properties = {
-    "server.port=8182",
-    "server.ssl.enabled=false",
-    "cas.server.tomcat.clustering.sessionClusteringEnabled=false",
-    "cas.server.tomcat.sslValve.enabled=true",
-    "cas.server.tomcat.httpProxy.enabled=true",
-    "cas.server.tomcat.httpProxy.secure=true",
-    "cas.server.tomcat.httpProxy.scheme=https",
-    "cas.server.tomcat.http.enabled=true",
-    "cas.server.tomcat.http.port=9190",
-    "cas.server.tomcat.ajp.enabled=true",
-    "cas.server.tomcat.ajp.port=9944",
-    "cas.server.tomcat.basicAuthn.enabled=true",
-    "cas.server.tomcat.extAccessLog.enabled=true",
-    "cas.server.tomcat.rewriteValve.location=classpath:/container/tomcat/rewrite.config"
-})
-@Slf4j
 public class CasTomcatServletWebServerFactoryTests {
     @Autowired
     protected CasConfigurationProperties casProperties;

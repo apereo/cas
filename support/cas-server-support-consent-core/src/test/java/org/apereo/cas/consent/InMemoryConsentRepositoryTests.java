@@ -1,13 +1,11 @@
 package org.apereo.cas.consent;
 
-import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.config.CasConsentCoreConfiguration;
 
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
 /**
  * This is {@link InMemoryConsentRepositoryTests}.
@@ -17,8 +15,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
  */
 @SpringBootTest(classes = {
     CasConsentCoreConfiguration.class,
-    RefreshAutoConfiguration.class,
-    CasCoreAuditConfiguration.class
+    BaseConsentRepositoryTests.SharedTestConfiguration.class
 })
 @Getter
 public class InMemoryConsentRepositoryTests extends BaseConsentRepositoryTests {

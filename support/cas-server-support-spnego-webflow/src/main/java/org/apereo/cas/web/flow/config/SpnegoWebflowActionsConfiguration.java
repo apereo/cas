@@ -33,7 +33,7 @@ import java.util.stream.Stream;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration("spnegoWebflowActionsConfiguration")
+@Configuration(value = "spnegoWebflowActionsConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class SpnegoWebflowActionsConfiguration {
 
@@ -56,9 +56,9 @@ public class SpnegoWebflowActionsConfiguration {
     @RefreshScope
     public Action spnego() {
         val spnegoProperties = casProperties.getAuthn().getSpnego();
-        return new SpnegoCredentialsAction(initialAuthenticationAttemptWebflowEventResolver.getIfAvailable(),
-            serviceTicketRequestWebflowEventResolver.getIfAvailable(),
-            adaptiveAuthenticationPolicy.getIfAvailable(),
+        return new SpnegoCredentialsAction(initialAuthenticationAttemptWebflowEventResolver.getObject(),
+            serviceTicketRequestWebflowEventResolver.getObject(),
+            adaptiveAuthenticationPolicy.getObject(),
             spnegoProperties.isNtlm(),
             spnegoProperties.isSend401OnAuthenticationFailure());
     }

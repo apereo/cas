@@ -48,7 +48,7 @@ public class Cas10ResponseViewTests {
         val response = new MockHttpServletResponse();
         val view = new Cas10ResponseView(true, new NoOpProtocolAttributeEncoder(),
             mock(ServicesManager.class), mock(AuthenticationAttributeReleasePolicy.class), new DefaultAuthenticationServiceSelectionPlan(),
-            new NoOpProtocolAttributesRenderer());
+            NoOpProtocolAttributesRenderer.INSTANCE);
         view.render(this.model, new MockHttpServletRequest(), response);
         assertEquals("yes\ntest\n", response.getContentAsString());
     }
@@ -59,7 +59,7 @@ public class Cas10ResponseViewTests {
         val view = new Cas10ResponseView(false, new NoOpProtocolAttributeEncoder(),
             mock(ServicesManager.class), mock(AuthenticationAttributeReleasePolicy.class),
             new DefaultAuthenticationServiceSelectionPlan(),
-            new NoOpProtocolAttributesRenderer());
+            NoOpProtocolAttributesRenderer.INSTANCE);
         view.render(this.model, new MockHttpServletRequest(), response);
         assertEquals("no\n\n", response.getContentAsString());
     }

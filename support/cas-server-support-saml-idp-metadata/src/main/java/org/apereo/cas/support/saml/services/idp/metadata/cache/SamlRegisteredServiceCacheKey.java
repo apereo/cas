@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.services.idp.metadata.cache;
 
+import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.DigestUtils;
 
@@ -43,7 +44,9 @@ public class SamlRegisteredServiceCacheKey implements Serializable {
      * @return the string
      */
     public static String buildRegisteredServiceCacheKey(final SamlRegisteredService service) {
-        val key = service.getMetadataLocation();
+        val key = SamlUtils.isDynamicMetadataQueryConfigured(service.getMetadataLocation())
+                ? service.getServiceId()
+                : service.getMetadataLocation();
         LOGGER.trace("Determined cache key for service [{}] as [{}]", service.getName(), key);
         val hashedKey = DigestUtils.sha512(key);
         LOGGER.trace("Hashed service cache key as [{}]", hashedKey);

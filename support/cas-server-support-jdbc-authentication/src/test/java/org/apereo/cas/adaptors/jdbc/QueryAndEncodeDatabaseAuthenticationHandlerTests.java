@@ -14,6 +14,7 @@ import org.apache.shiro.crypto.hash.HashRequest;
 import org.apache.shiro.util.ByteSource;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -42,6 +43,7 @@ import static org.junit.jupiter.api.Assertions.*;
     DatabaseAuthenticationTestConfiguration.class
 })
 @DirtiesContext
+@Tag("JDBC")
 public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
     private static final String ALG_NAME = "SHA-512";
     private static final String SQL = "SELECT * FROM users where %s";

@@ -17,6 +17,8 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
  */
 public class DigestAuthenticationWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
+    static final String STATE_ID_DIGEST_AUTHENTICATION_CHECK = "digestAuthenticationCheck";
+
     public DigestAuthenticationWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
                                                  final FlowDefinitionRegistry loginFlowDefinitionRegistry,
                                                  final ApplicationContext applicationContext,
@@ -28,7 +30,7 @@ public class DigestAuthenticationWebflowConfigurer extends AbstractCasWebflowCon
     protected void doInitialize() {
         val flow = getLoginFlow();
         if (flow != null) {
-            val actionState = createActionState(flow, "digestAuthenticationCheck",
+            val actionState = createActionState(flow, STATE_ID_DIGEST_AUTHENTICATION_CHECK,
                 createEvaluateAction("digestAuthenticationAction"));
             actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS,
                 CasWebflowConstants.STATE_ID_CREATE_TICKET_GRANTING_TICKET));

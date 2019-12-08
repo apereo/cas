@@ -23,7 +23,7 @@ import javax.annotation.PostConstruct;
  * @author Paul Spaude
  * @since 5.3.6
  */
-@Configuration("coreWsSecuritySecurityTokenServiceSamlConfiguration")
+@Configuration(value = "coreWsSecuritySecurityTokenServiceSamlConfiguration", proxyBeanMethods = false)
 @Slf4j
 @AutoConfigureAfter(CoreSamlConfiguration.class)
 public class CoreWsSecuritySecurityTokenServiceSamlConfiguration {
@@ -46,7 +46,7 @@ public class CoreWsSecuritySecurityTokenServiceSamlConfiguration {
         WSProviderConfig.init();
 
         LOGGER.trace("Marking OpenSAML components as initialized...");
-        val openSaml = openSamlConfigBean.getIfAvailable();
+        val openSaml = openSamlConfigBean.getObject();
         findFieldAndSetValue("providerRegistry", openSaml.getXmlObjectProviderRegistry());
         findFieldAndSetValue("builderFactory", openSaml.getBuilderFactory());
         findFieldAndSetValue("marshallerFactory", openSaml.getMarshallerFactory());

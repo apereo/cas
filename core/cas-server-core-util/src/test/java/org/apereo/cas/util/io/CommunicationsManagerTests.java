@@ -16,7 +16,6 @@ import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.autoconfigure.mail.MailSenderValidatorAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.TestPropertySource;
 
 import java.util.List;
 
@@ -34,11 +33,11 @@ import static org.mockito.Mockito.*;
     CasCoreUtilConfiguration.class,
     MailSenderAutoConfiguration.class,
     MailSenderValidatorAutoConfiguration.class
-})
+},
+    properties = {"spring.mail.host=localhost", "spring.mail.port=25000", "spring.mail.testConnection=true"})
 @Tag("Mail")
 @EnabledIfContinuousIntegration
 @EnabledIfPortOpen(port = 25000)
-@TestPropertySource(properties = {"spring.mail.host=localhost", "spring.mail.port=25000", "spring.mail.testConnection=true"})
 public class CommunicationsManagerTests {
 
     @Autowired

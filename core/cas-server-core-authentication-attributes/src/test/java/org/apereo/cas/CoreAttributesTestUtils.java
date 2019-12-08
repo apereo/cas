@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategy;
 
+import lombok.experimental.UtilityClass;
 import lombok.val;
 
 import java.util.List;
@@ -19,6 +20,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@UtilityClass
 public class CoreAttributesTestUtils {
 
     public static final String CONST_USERNAME = "test";

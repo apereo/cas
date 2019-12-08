@@ -41,19 +41,19 @@ public class ValidateLdapConnectionCommand {
      */
     @ShellMethod(key = "validate-ldap", value = "Test connections to an LDAP server to verify connectivity, SSL, etc")
     public static void validateLdap(
-        @ShellOption(value = "url",
+        @ShellOption(value = { "url", "--url" },
             help = "LDAP URL to test, comma-separated.") final String url,
-        @ShellOption(value = "bindDn",
+        @ShellOption(value = { "bindDn", "--bindDn" },
             help = "bindDn to use when testing the LDAP server") final String bindDn,
-        @ShellOption(value = "bindCredential",
+        @ShellOption(value = { "bindCredential", "--bindCredential" },
             help = "bindCredential to use when testing the LDAP server") final String bindCredential,
-        @ShellOption(value = "baseDn",
+        @ShellOption(value = { "baseDn", "--baseDn" },
             help = "baseDn to use when testing the LDAP server, searching for accounts (i.e. OU=some,DC=org,DC=edu)") final String baseDn,
-        @ShellOption(value = "searchFilter",
+        @ShellOption(value = { "searchFilter", "--searchFilter" },
             help = "Filter to use when searching for accounts (i.e. (&(objectClass=*) (sAMAccountName=user)))") final String searchFilter,
-        @ShellOption(value = "userPassword",
+        @ShellOption(value = { "userPassword", "--userPassword" },
             help = "Password for the user found in the search result, to attempt authentication") final String userPassword,
-        @ShellOption(value = "userAttributes",
+        @ShellOption(value = { "userAttributes", "--userAttributes" },
             help = "User attributes, comma-separated, to fetch for the user found in the search result") final String userAttributes) {
         try {
             connect(url, bindDn, bindCredential, baseDn, searchFilter, userAttributes, userPassword);

@@ -22,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @TestPropertySource(properties = {
     "cas.authn.ldap[0].type=AUTHENTICATED",
+    "cas.authn.ldap[0].poolPassivator=CLOSE",
     "cas.authn.ldap[0].ldapUrl=ldap://localhost:10389",
     "cas.authn.ldap[0].useSsl=false",
     "cas.authn.ldap[0].baseDn=dc=example,dc=org",

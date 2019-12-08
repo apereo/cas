@@ -70,7 +70,7 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
      */
     @Lob
     @Column(name = "SERVICES_GRANTED_ACCESS_TO", nullable = false, length = Integer.MAX_VALUE)
-    private HashMap<String, Service> services = new HashMap<>();
+    private HashMap<String, Service> services = new HashMap<>(0);
 
     /**
      * The {@link TicketGrantingTicket} this is associated with.
@@ -83,14 +83,14 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
      */
     @Lob
     @Column(name = "PROXY_GRANTING_TICKETS", nullable = false, length = Integer.MAX_VALUE)
-    private HashMap<String, Service> proxyGrantingTickets = new HashMap<>();
+    private HashMap<String, Service> proxyGrantingTickets = new HashMap<>(0);
 
     /**
      * The ticket ids which are tied to this ticket.
      */
     @Lob
     @Column(name = "DESCENDANT_TICKETS", nullable = false, length = Integer.MAX_VALUE)
-    private HashSet<String> descendantTickets = new HashSet<>();
+    private HashSet<String> descendantTickets = new HashSet<>(0);
 
     /**
      * Constructs a new TicketGrantingTicket.
@@ -206,13 +206,13 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
     @JsonIgnore
     @Override
     public List<Authentication> getChainedAuthentications() {
-        val list = new ArrayList<Authentication>();
+        val list = new ArrayList<Authentication>(2);
         list.add(getAuthentication());
         if (this.getTicketGrantingTicket() == null) {
-            return new ArrayList<>(list);
+            return list;
         }
         list.addAll(this.getTicketGrantingTicket().getChainedAuthentications());
-        return new ArrayList<>(list);
+        return list;
     }
 
     @Override

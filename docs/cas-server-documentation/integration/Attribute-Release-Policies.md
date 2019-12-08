@@ -42,7 +42,7 @@ Supported parameters are the following:
 
 The parameters above can either be added as query string parameters or as a JSON object submitted with a POST:
 
-```code
+```json
 { 
   "username": USERNAME,
   "password": PASSWORD,
@@ -267,9 +267,12 @@ def run(final Object... args) {
 }
 ```         
 
+The configuration of this component qualifies to use the [Spring Expression Language](../installation/Configuring-Spring-Expressions.html) syntax.
+
 ### Groovy Script
 
-Let an external Groovy script decide how principal attributes should be released.
+Let an external Groovy script decide how principal attributes should be released. The configuration of this 
+component qualifies to use the [Spring Expression Language](../installation/Configuring-Spring-Expressions.html) syntax.
 
 ```json
 {
@@ -339,7 +342,8 @@ The service definition then may be designed as:
 }
 ```
 
-The scripts need to design a `run` function that receives a list of parameters. The collection of current attributes in process
+The configuration of this component qualifies to use the [Spring Expression Language](../installation/Configuring-Spring-Expressions.html) syntax. The scripts 
+need to design a `run` function that receives a list of parameters. The collection of current attributes in process
 as well as a logger object are passed to this function. The result must produce a map whose `key`s are attributes names 
 and whose `value`s are a list of attribute values.
 

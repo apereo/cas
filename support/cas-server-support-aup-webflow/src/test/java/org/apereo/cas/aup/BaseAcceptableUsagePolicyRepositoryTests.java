@@ -3,8 +3,10 @@ package org.apereo.cas.aup;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasAcceptableUsagePolicyWebflowConfiguration;
 import org.apereo.cas.config.CasAuthenticationEventExecutionPlanTestConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
@@ -20,13 +22,16 @@ import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguratio
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -48,30 +53,38 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
-    CasAcceptableUsagePolicyWebflowConfiguration.class,
+    MailSenderAutoConfiguration.class,
     CasCoreTicketsConfiguration.class,
+    CasCoreTicketIdGeneratorsConfiguration.class,
+    CasCoreTicketCatalogConfiguration.class,
+    CasCoreWebConfiguration.class,
+    CasCookieConfiguration.class,
+    CasRegisteredServicesTestConfiguration.class,
+    CasWebApplicationServiceFactoryConfiguration.class,
+    CasCoreAuthenticationConfiguration.class,
+    CasAuthenticationEventExecutionPlanTestConfiguration.class,
+    CasDefaultServiceTicketIdGeneratorsConfiguration.class,
+    CasCoreAuthenticationSupportConfiguration.class,
+    CasCoreAuthenticationPrincipalConfiguration.class,
+    CasAcceptableUsagePolicyWebflowConfiguration.class,
+    CasPersonDirectoryTestConfiguration.class,
+    CasCoreUtilConfiguration.class,
+    CasCoreHttpConfiguration.class,
     CasWebflowContextConfiguration.class,
     CasCoreWebflowConfiguration.class,
     CasCoreConfiguration.class,
     CasCoreLogoutConfiguration.class,
     CasCoreServicesConfiguration.class,
-    CasCoreTicketIdGeneratorsConfiguration.class,
-    CasCoreTicketCatalogConfiguration.class,
-    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-    CasCoreHttpConfiguration.class,
-    CasCoreWebConfiguration.class,
-    CasPersonDirectoryTestConfiguration.class,
-    CasCoreUtilConfiguration.class,
-    CasRegisteredServicesTestConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class,
-    CasAuthenticationEventExecutionPlanTestConfiguration.class,
-    CasDefaultServiceTicketIdGeneratorsConfiguration.class,
-    CasCoreAuthenticationPrincipalConfiguration.class
+    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class
+}, properties = {
+    "spring.mail.host=localhost",
+    "spring.mail.port=25000",
+    "spring.mail.testConnection=false"
 })
 public abstract class BaseAcceptableUsagePolicyRepositoryTests {
     @Autowired
     @Qualifier("ticketRegistry")
-    protected TicketRegistry ticketRegistry;
+    protected ObjectProvider<TicketRegistry> ticketRegistry;
 
     public abstract AcceptableUsagePolicyRepository getAcceptableUsagePolicyRepository();
 
@@ -90,7 +103,7 @@ public abstract class BaseAcceptableUsagePolicyRepositoryTests {
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         val c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(actualPrincipalId);
         val tgt = new MockTicketGrantingTicket(actualPrincipalId, c, profileAttributes);
-        ticketRegistry.addTicket(tgt);
+        ticketRegistry.getObject().addTicket(tgt);
         val principal = CoreAuthenticationTestUtils.getPrincipal(c.getId(), profileAttributes);
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(principal), context);
         WebUtils.putTicketGrantingTicketInScopes(context, tgt);

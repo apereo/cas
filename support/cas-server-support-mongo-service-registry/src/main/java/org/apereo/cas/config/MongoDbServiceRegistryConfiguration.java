@@ -4,7 +4,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
 import org.apereo.cas.services.MongoDbServiceRegistry;
 import org.apereo.cas.services.ServiceRegistry;
-import org.apereo.cas.services.ServiceRegistryExecutionPlan;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServiceRegistryListener;
 
@@ -14,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -31,10 +30,10 @@ import java.util.Collection;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class MongoDbServiceRegistryConfiguration {
     @Autowired
-    private ApplicationEventPublisher eventPublisher;
+    private CasConfigurationProperties casProperties;
 
     @Autowired
-    private CasConfigurationProperties casProperties;
+    private ConfigurableApplicationContext applicationContext;
 
     @Autowired
     @Qualifier("serviceRegistryListeners")
@@ -55,20 +54,15 @@ public class MongoDbServiceRegistryConfiguration {
     public ServiceRegistry mongoDbServiceRegistry() {
         val mongo = casProperties.getServiceRegistry().getMongo();
         return new MongoDbServiceRegistry(
-            eventPublisher,
+            applicationContext,
             mongoDbServiceRegistryTemplate(),
             mongo.getCollection(),
-            serviceRegistryListeners.getIfAvailable());
+            serviceRegistryListeners.getObject());
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "mongoDbServiceRegistryExecutionPlanConfigurer")
     public ServiceRegistryExecutionPlanConfigurer mongoDbServiceRegistryExecutionPlanConfigurer() {
-        return new ServiceRegistryExecutionPlanConfigurer() {
-            @Override
-            public void configureServiceRegistry(final ServiceRegistryExecutionPlan plan) {
-                plan.registerServiceRegistry(mongoDbServiceRegistry());
-            }
-        };
+        return plan -> plan.registerServiceRegistry(mongoDbServiceRegistry());
     }
 }

@@ -6,7 +6,7 @@ import org.apereo.cas.uma.ticket.resource.ResourceSet;
 import org.apereo.cas.uma.ticket.resource.ResourceSetPolicy;
 import org.apereo.cas.uma.ticket.resource.ResourceSetPolicyPermission;
 import org.apereo.cas.util.serialization.ComponentSerializationPlan;
-import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurator;
+import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurer;
 
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
@@ -17,9 +17,9 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Configuration("casOAuthUmaComponentSerializationConfiguration")
+@Configuration(value = "casOAuthUmaComponentSerializationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class CasOAuthUmaComponentSerializationConfiguration implements ComponentSerializationPlanConfigurator {
+public class CasOAuthUmaComponentSerializationConfiguration implements ComponentSerializationPlanConfigurer {
 
     @Override
     public void configureComponentSerializationPlan(final ComponentSerializationPlan plan) {

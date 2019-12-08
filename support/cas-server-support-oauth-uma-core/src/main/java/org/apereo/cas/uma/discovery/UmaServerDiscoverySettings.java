@@ -52,7 +52,7 @@ public class UmaServerDiscoverySettings {
         OAuth20ClaimTokenFormats.JWT.getType());
 
     @JsonProperty("uma_profiles_supported")
-    private List<String> umaProfilesSupported = new ArrayList<>();
+    private List<String> umaProfilesSupported = new ArrayList<>(0);
 
     @JsonProperty("pat_grant_types_supported")
     private List<String> patGrantTypesSupported = CollectionUtils.wrapList(

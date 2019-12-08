@@ -106,7 +106,7 @@ public class RegisteredServiceSerializer extends Serializer<RegisteredService> {
         writeObjectByReflection(kryo, output, ObjectUtils.defaultIfNull(service.getUsernameAttributeProvider(), new DefaultRegisteredServiceUsernameProvider()));
         writeObjectByReflection(kryo, output, ObjectUtils.defaultIfNull(service.getAccessStrategy(), new DefaultRegisteredServiceAccessStrategy()));
         writeObjectByReflection(kryo, output, ObjectUtils.defaultIfNull(service.getMultifactorPolicy(), new DefaultRegisteredServiceMultifactorPolicy()));
-        writeObjectByReflection(kryo, output, ObjectUtils.defaultIfNull(service.getContacts(), new ArrayList<>()));
+        writeObjectByReflection(kryo, output, ObjectUtils.defaultIfNull(service.getContacts(), new ArrayList<>(0)));
 
         kryo.writeObject(output, StringUtils.defaultIfEmpty(service.getInformationUrl(), StringUtils.EMPTY));
         kryo.writeObject(output, StringUtils.defaultIfEmpty(service.getPrivacyUrl(), StringUtils.EMPTY));

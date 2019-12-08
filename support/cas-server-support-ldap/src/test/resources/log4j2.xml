@@ -4,29 +4,12 @@
         <Console name="console" target="SYSTEM_OUT">
             <PatternLayout pattern="%highlight{%d %p [%c] - &lt;%m&gt;%n}" />
         </Console>
-        <RollingFile name="file" fileName="build/ldap.log" append="true"
-                     filePattern="ldap-%d{yyyy-MM-dd-HH}-%i.log.gz">
-            <PatternLayout pattern="%highlight{%d %p [%c] - %m%n}" />
-            <Policies>
-                <OnStartupTriggeringPolicy />
-                <SizeBasedTriggeringPolicy size="10 MB"/>
-                <TimeBasedTriggeringPolicy />
-            </Policies>
-        </RollingFile>
     </Appenders>
     <Loggers>
-        <Logger name="org.apereo" level="warn" additivity="false">
-            <AppenderRef ref="console"/>
-        </Logger>
-        <Logger name="org.ldaptive" level="warn" additivity="false">
-            <AppenderRef ref="console"/>
-        </Logger>
-        <Logger name="com.unboundid" level="warn" additivity="false">
-            <AppenderRef ref="console"/>
-        </Logger>
-        <Logger name="org.springframework" level="warn" additivity="false">
-            <AppenderRef ref="console"/>
-        </Logger>
+        <Logger name="org.apereo" level="warn" />
+        <Logger name="org.ldaptive" level="warn" />
+        <Logger name="com.unboundid" level="warn" />
+        <Logger name="org.springframework" level="warn" />
         <Root level="off">
             <AppenderRef ref="console"/>
         </Root>

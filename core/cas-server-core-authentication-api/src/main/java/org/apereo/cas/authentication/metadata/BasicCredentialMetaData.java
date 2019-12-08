@@ -8,7 +8,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * Basic credential metadata implementation that stores the original credential ID and the original credential type.
@@ -20,7 +19,6 @@ import lombok.extern.slf4j.Slf4j;
 @Getter
 @NoArgsConstructor(force = true)
 @EqualsAndHashCode
-@Slf4j
 public class BasicCredentialMetaData implements CredentialMetaData {
 
     /**

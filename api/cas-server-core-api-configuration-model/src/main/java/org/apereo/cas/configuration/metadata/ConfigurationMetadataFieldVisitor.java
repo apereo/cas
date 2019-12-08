@@ -4,6 +4,8 @@ import org.apereo.cas.configuration.model.core.authentication.PasswordPolicyProp
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
 import org.apereo.cas.configuration.model.support.ldap.LdapSearchEntryHandlersProperties;
+import org.apereo.cas.util.model.Capacity;
+import org.apereo.cas.util.model.TriStateBoolean;
 
 import com.github.javaparser.ast.Modifier;
 import com.github.javaparser.ast.body.FieldDeclaration;
@@ -20,6 +22,7 @@ import org.springframework.core.io.Resource;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 /**
  * This is {@link ConfigurationMetadataFieldVisitor}.
@@ -30,11 +33,43 @@ import java.util.Set;
 @Slf4j
 @RequiredArgsConstructor
 public class ConfigurationMetadataFieldVisitor extends VoidVisitorAdapter<ConfigurationMetadataProperty> {
+    private static final Pattern EXCLUDED_TYPES;
+
+    static {
+        EXCLUDED_TYPES = Pattern.compile(
+            String.class.getSimpleName() + '|'
+                + Integer.class.getSimpleName() + '|'
+                + Double.class.getSimpleName() + '|'
+                + Long.class.getSimpleName() + '|'
+                + Float.class.getSimpleName() + '|'
+                + Boolean.class.getSimpleName() + '|'
+                + PrincipalTransformationProperties.CaseConversion.class.getSimpleName() + '|'
+                + QueryType.class.getSimpleName() + '|'
+                + AbstractLdapProperties.LdapType.class.getSimpleName() + '|'
+                + CaseCanonicalizationMode.class.getSimpleName() + '|'
+                + TriStateBoolean.class.getSimpleName() + '|'
+                + Capacity.class.getSimpleName() + '|'
+                + PasswordPolicyProperties.PasswordPolicyHandlingOptions.class.getSimpleName() + '|'
+                + LdapSearchEntryHandlersProperties.SearchEntryHandlerTypes.class.getSimpleName() + '|'
+                + Map.class.getSimpleName() + '|'
+                + Resource.class.getSimpleName() + '|'
+                + List.class.getSimpleName() + '|'
+                + Set.class.getSimpleName());
+    }
+
     private final Set<ConfigurationMetadataProperty> properties;
+
     private final Set<ConfigurationMetadataProperty> groups;
+
     private final boolean indexNameWithBrackets;
+
     private final String parentClass;
+
     private final String sourcePath;
+
+    private static boolean shouldTypeBeExcluded(final ClassOrInterfaceType type) {
+        return EXCLUDED_TYPES.matcher(type.getNameAsString()).matches();
+    }
 
     @Override
     public void visit(final FieldDeclaration field, final ConfigurationMetadataProperty property) {
@@ -54,7 +89,6 @@ public class ConfigurationMetadataFieldVisitor extends VoidVisitorAdapter<Config
         processNestedClassOrInterfaceTypeIfNeeded(field, prop);
     }
 
-
     private void processNestedClassOrInterfaceTypeIfNeeded(final FieldDeclaration n, final ConfigurationMetadataProperty prop) {
         if (n.getElementType() instanceof ClassOrInterfaceType) {
             val type = (ClassOrInterfaceType) n.getElementType();
@@ -68,26 +102,6 @@ public class ConfigurationMetadataFieldVisitor extends VoidVisitorAdapter<Config
                 }
             }
         }
-    }
-
-    private static boolean shouldTypeBeExcluded(final ClassOrInterfaceType type) {
-        return type.getNameAsString().matches(
-            String.class.getSimpleName() + '|'
-                + Integer.class.getSimpleName() + '|'
-                + Double.class.getSimpleName() + '|'
-                + Long.class.getSimpleName() + '|'
-                + Float.class.getSimpleName() + '|'
-                + Boolean.class.getSimpleName() + '|'
-                + PrincipalTransformationProperties.CaseConversion.class.getSimpleName() + '|'
-                + QueryType.class.getSimpleName() + '|'
-                + AbstractLdapProperties.LdapType.class.getSimpleName() + '|'
-                + CaseCanonicalizationMode.class.getSimpleName() + '|'
-                + PasswordPolicyProperties.PasswordPolicyHandlingOptions.class.getSimpleName() + '|'
-                + LdapSearchEntryHandlersProperties.SearchEntryHandlerTypes.class.getSimpleName() + '|'
-                + Map.class.getSimpleName() + '|'
-                + Resource.class.getSimpleName() + '|'
-                + List.class.getSimpleName() + '|'
-                + Set.class.getSimpleName());
     }
 
 }

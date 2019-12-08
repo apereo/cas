@@ -57,7 +57,8 @@ public class WsFederationCookieManager {
         val configuration = configurations.stream()
             .filter(c -> c.getId().equalsIgnoreCase(wCtx))
             .findFirst()
-            .orElse(null);
+            .orElseThrow();
+        
         val cookieGen = configuration.getCookieGenerator();
         val value = cookieGen.retrieveCookieValue(request);
         if (StringUtils.isBlank(value)) {

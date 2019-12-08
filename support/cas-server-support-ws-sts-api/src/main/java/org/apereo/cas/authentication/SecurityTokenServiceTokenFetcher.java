@@ -56,14 +56,14 @@ public class SecurityTokenServiceTokenFetcher {
      */
     public Optional<SecurityToken> fetch(final Service service, final String principalId) {
         val resolvedService = this.selectionStrategy.resolveServiceFrom(service);
-        LOGGER.debug("Resolved resolvedService as [{}]", resolvedService);
+        LOGGER.debug("Resolved service as [{}]", resolvedService);
         if (resolvedService != null) {
             val rp = this.servicesManager.findServiceBy(resolvedService, WSFederationRegisteredService.class);
             if (rp == null || !rp.getAccessStrategy().isServiceAccessAllowed()) {
                 LOGGER.warn("Service [{}] is not allowed to use SSO.", rp);
                 throw new UnauthorizedSsoServiceException();
             }
-            LOGGER.debug("Building security token resolvedService client for registered resolvedService [{}]", rp);
+            LOGGER.debug("Building security token service client for registered service [{}]", rp);
             val sts = clientBuilder.buildClientForSecurityTokenRequests(rp);
             return Optional.ofNullable(invokeSecurityTokenServiceForToken(rp, sts, principalId));
         }

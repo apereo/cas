@@ -31,7 +31,8 @@ public class AuthenticationRiskEmailNotifier extends BaseAuthenticationRiskNotif
             LOGGER.debug("Could not send email to [{}]. Either no addresses could be found or email settings are not configured.", principal.getId());
             return;
         }
-        val to = principal.getAttributes().get(mail.getAttributeName()).toString();
-        this.communicationsManager.email(mail, to, mail.getFormattedBody());
+        val addresses = principal.getAttributes().get(mail.getAttributeName());
+        addresses.forEach(address -> this.communicationsManager.email(mail, address.toString(), mail.getFormattedBody()));
+
     }
 }

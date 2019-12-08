@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.SimplePrincipal;
 import org.apereo.cas.util.HttpUtils;
 
+import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -16,17 +17,14 @@ import org.springframework.web.client.RestTemplate;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@RequiredArgsConstructor
 public class RestAuthenticationApi {
 
     private final transient RestTemplate restTemplate;
-    private final String authenticationUri;
-    private final String charset;
 
-    public RestAuthenticationApi(final RestTemplate restTemplate, final String authenticationUri, final String charset) {
-        this.restTemplate = restTemplate;
-        this.authenticationUri = authenticationUri;
-        this.charset = charset;
-    }
+    private final String authenticationUri;
+
+    private final String charset;
 
     /**
      * Authenticate and receive entity from the rest template.
@@ -35,7 +33,8 @@ public class RestAuthenticationApi {
      * @return the response entity
      */
     public ResponseEntity<SimplePrincipal> authenticate(final UsernamePasswordCredential c) {
-        val entity = new HttpEntity<Object>(HttpUtils.createBasicAuthHeaders(c.getUsername(), c.getPassword(), this.charset));
+        val basicAuthHeaders = HttpUtils.createBasicAuthHeaders(c.getUsername(), c.getPassword(), this.charset);
+        val entity = new HttpEntity<Object>(basicAuthHeaders);
         return restTemplate.exchange(authenticationUri, HttpMethod.POST, entity, SimplePrincipal.class);
     }
 }

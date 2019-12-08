@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.TestPropertySource;
 
 import java.util.UUID;
 
@@ -31,8 +30,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     MongoDbCloudConfigBootstrapConfiguration.class
-})
-@TestPropertySource(properties = "cas.spring.cloud.mongo.uri=" + MongoDbCloudConfigBootstrapConfigurationTests.MONGODB_URI)
+},
+    properties = "cas.spring.cloud.mongo.uri=" + MongoDbCloudConfigBootstrapConfigurationTests.MONGODB_URI)
 public class MongoDbCloudConfigBootstrapConfigurationTests {
     static final String MONGODB_URI = "mongodb://root:secret@localhost:27017/admin";
 

@@ -45,7 +45,7 @@ public class HttpCorsRequestProperties implements Serializable {
      * The origin is a URI indicating the server from which the request initiated.
      * It does not include any path information, but only the server name.
      */
-    private List<String> allowOrigins = new ArrayList<>();
+    private List<String> allowOrigins = new ArrayList<>(0);
 
     /**
      * The Access-Control-Allow-Methods header specifies the method or methods allowed when accessing the resource.
@@ -53,14 +53,14 @@ public class HttpCorsRequestProperties implements Serializable {
      * The conditions under which a request is pre-flighted are discussed above.
      * Default is everything.
      */
-    private List<String> allowMethods = new ArrayList<>();
+    private List<String> allowMethods = new ArrayList<>(0);
 
     /**
      * The Access-Control-Allow-Headers header is used in response to a preflight
      * request to indicate which HTTP headers can be used when making the actual request.
      * Default is everything.
      */
-    private List<String> allowHeaders = new ArrayList<>();
+    private List<String> allowHeaders = new ArrayList<>(0);
 
     /**
      * The Access-Control-Max-Age header indicates how long the results of a preflight request can be cached.
@@ -70,7 +70,7 @@ public class HttpCorsRequestProperties implements Serializable {
     /**
      * The Access-Control-Expose-Headers header lets a server whitelist headers that browsers are allowed to access.
      */
-    private List<String> exposedHeaders = new ArrayList<>();
+    private List<String> exposedHeaders = new ArrayList<>(0);
 
     public HttpCorsRequestProperties() {
         this.allowMethods.add("*");

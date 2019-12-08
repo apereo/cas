@@ -21,7 +21,7 @@ import org.springframework.context.annotation.EnableMBeanExport;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Configuration("casJmxConfiguration")
+@Configuration(value = "casJmxConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableMBeanExport
 @EnableAspectJAutoProxy(proxyTargetClass = true)
@@ -36,11 +36,11 @@ public class CasJmxConfiguration {
 
     @Bean
     public ServicesManagerManagedResource servicesManagerManagedResource() {
-        return new ServicesManagerManagedResource(servicesManager.getIfAvailable());
+        return new ServicesManagerManagedResource(servicesManager.getObject());
     }
 
     @Bean
     public TicketRegistryManagedResource ticketRegistryManagedResource() {
-        return new TicketRegistryManagedResource(ticketRegistry.getIfAvailable());
+        return new TicketRegistryManagedResource(ticketRegistry.getObject());
     }
 }

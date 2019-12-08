@@ -1,7 +1,5 @@
 package org.apereo.cas.services.web;
 
-import org.apereo.cas.configuration.CasConfigurationProperties;
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -33,8 +31,6 @@ public class ThemeViewResolver extends AbstractCachingViewResolver {
     private final ViewResolver delegate;
 
     private final ThymeleafProperties thymeleafProperties;
-
-    private final CasConfigurationProperties casProperties;
 
     private final String theme;
 
@@ -72,20 +68,17 @@ public class ThemeViewResolver extends AbstractCachingViewResolver {
 
         private final ThymeleafProperties thymeleafProperties;
 
-        private final CasConfigurationProperties casProperties;
-
         private ApplicationContext applicationContext;
 
-        public Factory(final ViewResolver delegate, final ThymeleafProperties thymeleafProperties, final CasConfigurationProperties casProperties) {
+        public Factory(final ViewResolver delegate, final ThymeleafProperties thymeleafProperties) {
             this.delegate = delegate;
-            this.casProperties = casProperties;
             this.thymeleafProperties = thymeleafProperties;
         }
 
         @Override
         public ThemeViewResolver create(final String theme) {
             LOGGER.trace("Creating theme view resolver based on theme [{}]", theme);
-            val resolver = new ThemeViewResolver(delegate, thymeleafProperties, casProperties, theme);
+            val resolver = new ThemeViewResolver(delegate, thymeleafProperties, theme);
             resolver.setApplicationContext(applicationContext);
             resolver.setCache(thymeleafProperties.isCache());
             return resolver;

@@ -2,6 +2,8 @@ package org.apereo.cas.support.oauth.validator.token;
 
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+
+import lombok.experimental.UtilityClass;
 import lombok.val;
 
 import java.util.HashSet;
@@ -15,6 +17,7 @@ import java.util.stream.Collectors;
  * @author Kirill Gagarski
  * @since 5.3.3
  */
+@UtilityClass
 public class RequestValidatorTestUtils {
     public static final String SUPPORTING_CLIENT_ID = "supporting";
     public static final String NON_SUPPORTING_CLIENT_ID = "nonsupporting";

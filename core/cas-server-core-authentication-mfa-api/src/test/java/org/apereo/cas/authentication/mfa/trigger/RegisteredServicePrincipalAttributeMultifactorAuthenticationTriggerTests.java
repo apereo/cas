@@ -32,7 +32,7 @@ public class RegisteredServicePrincipalAttributeMultifactorAuthenticationTrigger
 
         val props = new CasConfigurationProperties();
         val trigger = new RegisteredServicePrincipalAttributeMultifactorAuthenticationTrigger(props,
-            new DefaultMultifactorAuthenticationProviderResolver((providers, service, principal) -> providers.iterator().next()));
+            new DefaultMultifactorAuthenticationProviderResolver((providers, service, principal) -> providers.iterator().next()), applicationContext);
         val result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
         assertTrue(result.isPresent());
     }

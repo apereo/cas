@@ -72,7 +72,7 @@ public class SwivelAuthenticationEventExecutionPlanConfiguration {
     public SwivelAuthenticationHandler swivelAuthenticationHandler() {
         val swivel = this.casProperties.getAuthn().getMfa().getSwivel();
         return new SwivelAuthenticationHandler(swivel.getName(),
-            servicesManager.getIfAvailable(), swivelPrincipalFactory(), swivel);
+            servicesManager.getObject(), swivelPrincipalFactory(), swivel);
     }
 
     @Bean
@@ -80,9 +80,9 @@ public class SwivelAuthenticationEventExecutionPlanConfiguration {
     public MultifactorAuthenticationProvider swivelMultifactorAuthenticationProvider() {
         val swivel = this.casProperties.getAuthn().getMfa().getSwivel();
         val p = new SwivelMultifactorAuthenticationProvider(swivel.getSwivelUrl());
-        p.setBypassEvaluator(swivelBypassEvaluator.getIfAvailable());
+        p.setBypassEvaluator(swivelBypassEvaluator.getObject());
         p.setFailureMode(swivel.getFailureMode());
-        p.setFailureModeEvaluator(failureModeEvaluator.getIfAvailable());
+        p.setFailureModeEvaluator(failureModeEvaluator.getObject());
         p.setOrder(swivel.getRank());
         p.setId(swivel.getId());
         return p;

@@ -81,7 +81,7 @@ public class HttpRequestMultifactorAuthenticationProviderBypassEvaluator extends
         if (StringUtils.isNotBlank(bypassProperties.getHttpRequestHeaders())) {
             val headerNames = Collections.list(request.getHeaderNames());
             val matched = this.httpRequestHeaderPatterns.stream()
-                .anyMatch(pattern -> headerNames.stream().anyMatch(name -> pattern.matcher(name).matches()));
+                .anyMatch(pattern -> headerNames.stream().anyMatch(pattern.asMatchPredicate()));
             if (matched) {
                 LOGGER.debug("Http request remote headers [{}] match [{}]", headerNames, bypassProperties.getHttpRequestHeaders());
                 return true;

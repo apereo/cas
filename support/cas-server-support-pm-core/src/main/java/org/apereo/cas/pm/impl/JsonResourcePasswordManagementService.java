@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * This is {@link JsonResourcePasswordManagementService}.
@@ -80,7 +81,13 @@ public class JsonResourcePasswordManagementService extends BasePasswordManagemen
     @Override
     public String findEmail(final String username) {
         val account = this.jsonBackedAccounts.getOrDefault(username, null);
-        return account == null ? null : account.getEmail();
+        return Optional.ofNullable(account).map(JsonBackedAccount::getEmail).orElse(null);
+    }
+
+    @Override
+    public String findPhone(final String username) {
+        val account = this.jsonBackedAccounts.getOrDefault(username, null);
+        return Optional.ofNullable(account).map(JsonBackedAccount::getPhone).orElse(null);
     }
 
     @Override
@@ -111,10 +118,6 @@ public class JsonResourcePasswordManagementService extends BasePasswordManagemen
         }
     }
 
-
-    /**
-     * The type Json backed account.
-     */
     @Data
     private static class JsonBackedAccount implements Serializable {
         private static final long serialVersionUID = -8522936598053838986L;
@@ -123,6 +126,8 @@ public class JsonResourcePasswordManagementService extends BasePasswordManagemen
 
         private String password;
 
-        private Map<String, String> securityQuestions = new HashMap<>();
+        private String phone;
+        
+        private Map<String, String> securityQuestions = new HashMap<>(0);
     }
 }

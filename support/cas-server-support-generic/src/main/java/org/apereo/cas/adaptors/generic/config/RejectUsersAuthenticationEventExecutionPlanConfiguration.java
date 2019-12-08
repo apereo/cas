@@ -8,7 +8,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalNameTransformerUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
-import org.apereo.cas.authentication.support.password.PasswordPolicyConfiguration;
+import org.apereo.cas.authentication.support.password.PasswordPolicyContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 
@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -35,7 +36,8 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class RejectUsersAuthenticationEventExecutionPlanConfiguration {
-
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
 
     @Autowired
     @Qualifier("servicesManager")
@@ -59,9 +61,9 @@ public class RejectUsersAuthenticationEventExecutionPlanConfiguration {
     public AuthenticationHandler rejectUsersAuthenticationHandler() {
         val rejectProperties = casProperties.getAuthn().getReject();
         val users = org.springframework.util.StringUtils.commaDelimitedListToSet(rejectProperties.getUsers());
-        val h = new RejectUsersAuthenticationHandler(rejectProperties.getName(), servicesManager.getIfAvailable(),
+        val h = new RejectUsersAuthenticationHandler(rejectProperties.getName(), servicesManager.getObject(),
             rejectUsersPrincipalFactory(), users);
-        h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(rejectProperties.getPasswordEncoder()));
+        h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(rejectProperties.getPasswordEncoder(), applicationContext));
         h.setPasswordPolicyConfiguration(rejectPasswordPolicyConfiguration());
         h.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(rejectProperties.getPrincipalTransformation()));
         return h;
@@ -73,7 +75,7 @@ public class RejectUsersAuthenticationEventExecutionPlanConfiguration {
         return plan -> {
             val users = casProperties.getAuthn().getReject().getUsers();
             if (StringUtils.isNotBlank(users)) {
-                plan.registerAuthenticationHandlerWithPrincipalResolver(rejectUsersAuthenticationHandler(), defaultPrincipalResolver.getIfAvailable());
+                plan.registerAuthenticationHandlerWithPrincipalResolver(rejectUsersAuthenticationHandler(), defaultPrincipalResolver.getObject());
                 LOGGER.debug("Added rejecting authentication handler with the following users [{}]", users);
             }
         };
@@ -81,7 +83,7 @@ public class RejectUsersAuthenticationEventExecutionPlanConfiguration {
 
     @ConditionalOnMissingBean(name = "rejectPasswordPolicyConfiguration")
     @Bean
-    public PasswordPolicyConfiguration rejectPasswordPolicyConfiguration() {
-        return new PasswordPolicyConfiguration();
+    public PasswordPolicyContext rejectPasswordPolicyConfiguration() {
+        return new PasswordPolicyContext();
     }
 }

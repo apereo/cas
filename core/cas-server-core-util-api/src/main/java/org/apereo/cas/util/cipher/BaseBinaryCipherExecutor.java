@@ -59,7 +59,8 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
      * @param cipherName          the cipher name
      */
     public BaseBinaryCipherExecutor(final String encryptionSecretKey, final String signingSecretKey,
-                                    final int signingKeySize, final int encryptionKeySize, final String cipherName) {
+                                    final int signingKeySize, final int encryptionKeySize,
+                                    final String cipherName) {
         this.cipherName = cipherName;
         ensureSigningKeyExists(signingSecretKey, signingKeySize);
         ensureEncryptionKeyExists(encryptionSecretKey, encryptionKeySize);

@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Configuration("casSamlSPPagerDutyConfiguration")
+@Configuration(value = "casSamlSPPagerDutyConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasSamlSPPagerDutyConfiguration extends BaseCasSamlSPConfiguration {
 

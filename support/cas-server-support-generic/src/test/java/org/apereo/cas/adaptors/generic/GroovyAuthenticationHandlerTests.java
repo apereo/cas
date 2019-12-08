@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.services.ServicesManager;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
 
@@ -18,6 +19,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
+@Tag("Groovy")
 public class GroovyAuthenticationHandlerTests {
     @Test
     public void verifyOperation() {

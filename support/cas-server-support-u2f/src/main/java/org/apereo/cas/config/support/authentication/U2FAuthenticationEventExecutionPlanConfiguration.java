@@ -79,8 +79,8 @@ public class U2FAuthenticationEventExecutionPlanConfiguration {
     @RefreshScope
     public AuthenticationHandler u2fAuthenticationHandler() {
         val u2f = this.casProperties.getAuthn().getMfa().getU2f();
-        return new U2FAuthenticationHandler(u2f.getName(), servicesManager.getIfAvailable(),
-            u2fPrincipalFactory(), u2fDeviceRepository.getIfAvailable(), u2f.getOrder());
+        return new U2FAuthenticationHandler(u2f.getName(), servicesManager.getObject(),
+            u2fPrincipalFactory(), u2fDeviceRepository.getObject(), u2f.getOrder());
     }
 
     @ConditionalOnMissingBean(name = "u2fMultifactorAuthenticationProvider")
@@ -89,9 +89,9 @@ public class U2FAuthenticationEventExecutionPlanConfiguration {
     public MultifactorAuthenticationProvider u2fMultifactorAuthenticationProvider() {
         val u2f = casProperties.getAuthn().getMfa().getU2f();
         val p = new U2FMultifactorAuthenticationProvider();
-        p.setBypassEvaluator(u2fBypassEvaluator.getIfAvailable());
+        p.setBypassEvaluator(u2fBypassEvaluator.getObject());
         p.setFailureMode(u2f.getFailureMode());
-        p.setFailureModeEvaluator(failureModeEvaluator.getIfAvailable());
+        p.setFailureModeEvaluator(failureModeEvaluator.getObject());
         p.setOrder(u2f.getRank());
         p.setId(u2f.getId());
         return p;

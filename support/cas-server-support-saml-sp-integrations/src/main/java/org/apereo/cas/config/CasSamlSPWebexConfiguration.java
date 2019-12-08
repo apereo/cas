@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration("casSamlSPWebexConfiguration")
+@Configuration(value = "casSamlSPWebexConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasSamlSPWebexConfiguration extends BaseCasSamlSPConfiguration {
 

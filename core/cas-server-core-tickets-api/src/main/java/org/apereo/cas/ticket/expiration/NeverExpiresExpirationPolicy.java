@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.expiration;
 
+import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.TicketState;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -23,6 +24,11 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 public class NeverExpiresExpirationPolicy extends AbstractCasExpirationPolicy {
+
+    /**
+     * Static instance of the policy.
+     */
+    public static final ExpirationPolicy INSTANCE = new NeverExpiresExpirationPolicy();
 
     /**
      * Serializable Unique ID.

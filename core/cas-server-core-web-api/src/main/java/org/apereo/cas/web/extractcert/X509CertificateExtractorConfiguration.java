@@ -7,6 +7,7 @@ import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -17,7 +18,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Curtis W Ruck
  * @since 5.3.3
  */
-@Configuration("x509CertificateExtractorConfiguration")
+@Configuration(value = "x509CertificateExtractorConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class X509CertificateExtractorConfiguration {
 
@@ -26,6 +27,7 @@ public class X509CertificateExtractorConfiguration {
 
     @ConditionalOnMissingBean(name = "x509CertificateExtractor")
     @Bean
+    @RefreshScope
     public X509CertificateExtractor x509CertificateExtractor() {
         val sslHeaderName = casProperties.getAuthn().getX509().getSslHeaderName();
         return new RequestHeaderX509CertificateExtractor(sslHeaderName);

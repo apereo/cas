@@ -6,7 +6,10 @@ category: Services
 
 # Configure Service Expiration Policy
 
-An application registered with CAS may be assigned an optional expiration policy that controls the lifetime of the registration. Once the service is deemed expired, it will automatically be disabled or removed from the CAS registry and [relevant contacts](Configuring-Service-Contacts.html) defined and assigned to the service will be notified via email or text messages.
+An application registered with CAS may be assigned an optional expiration policy that controls the lifetime of the registration. Once the service is deemed expired, it will automatically be disabled or removed from the CAS registry 
+and [relevant contacts](Configuring-Service-Contacts.html) defined and assigned to the service will be notified via email or text messages.
+
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#service-registry-notifications).
 
 A sample JSON file follows:
 
@@ -20,6 +23,7 @@ A sample JSON file follows:
     "@class": "org.apereo.cas.services.DefaultRegisteredServiceExpirationPolicy",
     "deleteWhenExpired": true,
     "notifyWhenDeleted": false,
+    "notifyWhenExpired": false,
     "expirationDate": "2017-10-05"
   }
 }
@@ -32,3 +36,4 @@ The following settings are available by default for expiration policies:
 | `expirationDate`     | The date on which the registration record is deemed expired. The expiration date may be specified in `2011-12-03T10:15:30`, `09/24/1980 04:30 PM`, `09/24/2014 6:30 AM`, `09/24/2013 18:45`, `09/24/2017` or `2017-10-25` formats.
 | `deleteWhenExpired`  | When `true`, removes the application from the CAS service registry if and when expired. Otherwise the application record will be marked as disabled.
 | `notifyWhenDeleted`  | Notifies [contacts](Configuring-Service-Contacts.html) of the application via email or text, assuming valid contacts with email addresses or phone numbers are defined and CAS is configured to send [email messages](../notifications/Sending-Email-Configuration.html) or [SMS notifications](../notifications/SMS-Messaging-Configuration.html). The notification is only sent if the application is expired and is about to be deleted from the registry.
+| `notifyWhenExpired`  | Notifies [contacts](Configuring-Service-Contacts.html) of the application via email or text, assuming valid contacts with email addresses or phone numbers are defined and CAS is configured to send [email messages](../notifications/Sending-Email-Configuration.html) or [SMS notifications](../notifications/SMS-Messaging-Configuration.html). The notification is only sent if the application is expired.

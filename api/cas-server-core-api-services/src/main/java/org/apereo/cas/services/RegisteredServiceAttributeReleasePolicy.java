@@ -19,6 +19,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
+@FunctionalInterface
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public interface RegisteredServiceAttributeReleasePolicy extends Serializable, Ordered {
 
@@ -62,7 +63,9 @@ public interface RegisteredServiceAttributeReleasePolicy extends Serializable, O
      *
      * @return the consent policy
      */
-    RegisteredServiceConsentPolicy getConsentPolicy();
+    default RegisteredServiceConsentPolicy getConsentPolicy() {
+        return null;
+    }
 
     /**
      * Gets principal attribute repository that may control the fetching
@@ -95,6 +98,11 @@ public interface RegisteredServiceAttributeReleasePolicy extends Serializable, O
     default Map<String, List<Object>> getConsentableAttributes(final Principal p, final Service selectedService,
                                                                final RegisteredService service) {
         return getAttributes(p, selectedService, service);
+    }
+
+    @Override
+    default int getOrder() {
+        return 0;
     }
 
     /**

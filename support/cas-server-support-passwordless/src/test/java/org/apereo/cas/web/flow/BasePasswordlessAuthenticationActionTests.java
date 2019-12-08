@@ -7,8 +7,10 @@ import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPolicyConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
@@ -23,8 +25,10 @@ import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguratio
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
+import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
+import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
@@ -40,8 +44,10 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
     CasCoreAuthenticationConfiguration.class,
     CasCoreAuthenticationHandlersConfiguration.class,
     CasCoreAuthenticationMetadataConfiguration.class,
+    CasCoreAuthenticationSupportConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class,
     RefreshAutoConfiguration.class,
+    MailSenderAutoConfiguration.class,
     CasCoreWebflowConfiguration.class,
     CasWebflowContextConfiguration.class,
     CasCoreConfiguration.class,
@@ -51,6 +57,8 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
     CasCoreServicesConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
+    CasCoreMultifactorAuthenticationConfiguration.class,
+    CasMultifactorAuthenticationWebflowConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     CasCoreHttpConfiguration.class,
     CasCoreWebConfiguration.class,
@@ -59,8 +67,11 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
     CasRegisteredServicesTestConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
     CasAuthenticationEventExecutionPlanTestConfiguration.class,
-    CasDefaultServiceTicketIdGeneratorsConfiguration.class,
-    CasCoreAuthenticationPrincipalConfiguration.class
+    CasDefaultServiceTicketIdGeneratorsConfiguration.class
+}, properties = {
+    "spring.mail.host=localhost",
+    "spring.mail.port=25000",
+    "spring.mail.testConnection=false"
 })
 public class BasePasswordlessAuthenticationActionTests {
 }

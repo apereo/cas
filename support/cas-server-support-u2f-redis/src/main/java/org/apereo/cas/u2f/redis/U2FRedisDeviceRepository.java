@@ -12,6 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.redis.core.RedisTemplate;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
@@ -49,7 +50,7 @@ public class U2FRedisDeviceRepository extends BaseU2FDeviceRepository {
     @Override
     public Collection<? extends DeviceRegistration> getRegisteredDevices(final String username) {
         try {
-            val expirationDate = LocalDate.now().minus(this.expirationTime, DateTimeUtils.toChronoUnit(this.expirationTimeUnit));
+            val expirationDate = LocalDate.now(ZoneId.systemDefault()).minus(this.expirationTime, DateTimeUtils.toChronoUnit(this.expirationTimeUnit));
             val keys = (Set<String>) this.redisTemplate.keys(buildRedisKeyForUser(username));
             if (keys != null) {
                 return keys
@@ -89,7 +90,7 @@ public class U2FRedisDeviceRepository extends BaseU2FDeviceRepository {
         val record = new U2FDeviceRegistration();
         record.setUsername(username);
         record.setRecord(getCipherExecutor().encode(registration.toJson()));
-        record.setCreatedDate(LocalDate.now());
+        record.setCreatedDate(LocalDate.now(ZoneId.systemDefault()));
         val redisKey = buildRedisKeyForRecord(record);
         this.redisTemplate.boundValueOps(redisKey).set(record);
     }
@@ -102,7 +103,7 @@ public class U2FRedisDeviceRepository extends BaseU2FDeviceRepository {
     @Override
     public void clean() {
         try {
-            val expirationDate = LocalDate.now().minus(this.expirationTime, DateTimeUtils.toChronoUnit(this.expirationTimeUnit));
+            val expirationDate = LocalDate.now(ZoneId.systemDefault()).minus(this.expirationTime, DateTimeUtils.toChronoUnit(this.expirationTimeUnit));
             LOGGER.debug("Cleaning up expired U2F device registrations based on expiration date [{}]", expirationDate);
             val expiredKeys = getRedisKeys()
                 .stream()

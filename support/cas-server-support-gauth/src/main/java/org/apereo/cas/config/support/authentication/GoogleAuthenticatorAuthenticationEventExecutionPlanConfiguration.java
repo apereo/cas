@@ -25,6 +25,7 @@ import org.apereo.cas.otp.repository.token.OneTimeTokenRepositoryCleaner;
 import org.apereo.cas.otp.web.flow.OneTimeTokenAccountCheckRegistrationAction;
 import org.apereo.cas.otp.web.flow.OneTimeTokenAccountSaveRegistrationAction;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import com.warrenstrange.googleauth.GoogleAuthenticator;
@@ -106,11 +107,11 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
     public AuthenticationHandler googleAuthenticatorAuthenticationHandler() {
         val gauth = casProperties.getAuthn().getMfa().getGauth();
         return new GoogleAuthenticatorAuthenticationHandler(gauth.getName(),
-            servicesManager.getIfAvailable(),
+            servicesManager.getObject(),
             googlePrincipalFactory(),
             googleAuthenticatorInstance(),
-            oneTimeTokenAuthenticatorTokenRepository.getIfAvailable(),
-            googleAuthenticatorAccountRegistry.getIfAvailable(),
+            oneTimeTokenAuthenticatorTokenRepository.getObject(),
+            googleAuthenticatorAccountRegistry.getObject(),
             gauth.getOrder());
     }
 
@@ -119,9 +120,9 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
     public MultifactorAuthenticationProvider googleAuthenticatorMultifactorAuthenticationProvider() {
         val gauth = casProperties.getAuthn().getMfa().getGauth();
         val p = new GoogleAuthenticatorMultifactorAuthenticationProvider();
-        p.setBypassEvaluator(googleAuthenticatorBypassEvaluator.getIfAvailable());
+        p.setBypassEvaluator(googleAuthenticatorBypassEvaluator.getObject());
         p.setFailureMode(gauth.getFailureMode());
-        p.setFailureModeEvaluator(failureModeEvaluator.getIfAvailable());
+        p.setFailureModeEvaluator(failureModeEvaluator.getObject());
         p.setOrder(gauth.getRank());
         p.setId(gauth.getId());
         return p;
@@ -141,7 +142,7 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
     @RefreshScope
     public Action googleAccountRegistrationAction() {
         val gauth = casProperties.getAuthn().getMfa().getGauth();
-        return new OneTimeTokenAccountCheckRegistrationAction(googleAuthenticatorAccountRegistry.getIfAvailable(),
+        return new OneTimeTokenAccountCheckRegistrationAction(googleAuthenticatorAccountRegistry.getObject(),
             gauth.getLabel(),
             gauth.getIssuer());
     }
@@ -182,12 +183,7 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
     public CipherExecutor googleAuthenticatorAccountCipherExecutor() {
         val crypto = casProperties.getAuthn().getMfa().getGauth().getCrypto();
         if (crypto.isEnabled()) {
-            return new OneTimeTokenAccountCipherExecutor(
-                crypto.getEncryption().getKey(),
-                crypto.getSigning().getKey(),
-                crypto.getAlg(),
-                crypto.getSigning().getKeySize(),
-                crypto.getEncryption().getKeySize());
+            return CipherExecutorUtils.newStringCipherExecutor(crypto, OneTimeTokenAccountCipherExecutor.class);
         }
         LOGGER.warn("Google Authenticator one-time token account encryption/signing is turned off. "
             + "Consider turning on encryption, signing to securely and safely store one-time token accounts.");
@@ -197,7 +193,7 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @RefreshScope
     public Action googleSaveAccountRegistrationAction() {
-        return new OneTimeTokenAccountSaveRegistrationAction(googleAuthenticatorAccountRegistry.getIfAvailable());
+        return new OneTimeTokenAccountSaveRegistrationAction(googleAuthenticatorAccountRegistry.getObject());
     }
 
     @ConditionalOnMissingBean(name = "googlePrincipalFactory")

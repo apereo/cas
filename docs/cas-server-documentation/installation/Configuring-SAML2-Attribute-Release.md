@@ -8,7 +8,7 @@ category: Attributes
 
 Attribute filtering and release policies are defined per SAML service. See [this guide](../integration/Attribute-Release-Policies.html) for more info.
 
-### Attribute Value Types
+## Attribute Value Types
 
 By default, attribute value blocks that are created in the final SAML2 response do not carry any type information in the encoded XML.
 You can, if necessary, enforce a particular type for an attribute value per the requirements of the SAML2 service provider, if any.
@@ -48,7 +48,7 @@ The following attribute value types are supported:
 }
 ```
 
-### Attribute Name Formats
+## Attribute Name Formats
 
 Attribute name formats can be specified per relying party in the service registry.
 
@@ -69,7 +69,7 @@ Attribute name formats can be specified per relying party in the service registr
 You may also have the option to define attributes and their relevant name format globally
 via CAS properties. To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#saml-idp).
 
-### Attribute Friendly Names
+## Attribute Friendly Names
 
 Attribute friendly names can be specified per relying party in the service registry, as well as globally via CAS settings. 
 If there is no friendly name defined for the attribute, the 
@@ -182,6 +182,8 @@ This policy allows a Groovy script to calculate the collection of released attri
   }
 }
 ```
+
+The configuration of this component qualifies to use the [Spring Expression Language](Configuring-Spring-Expressions.html) syntax.
 
 The outline of the script may be designed as:
 

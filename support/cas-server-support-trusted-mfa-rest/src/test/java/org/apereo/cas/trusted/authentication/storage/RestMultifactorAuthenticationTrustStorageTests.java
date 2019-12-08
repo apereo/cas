@@ -25,12 +25,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -46,8 +46,8 @@ import static org.junit.jupiter.api.Assertions.*;
     MultifactorAuthnTrustedDeviceFingerprintConfiguration.class,
     MultifactorAuthnTrustConfiguration.class,
     CasCoreAuditConfiguration.class,
-    RefreshAutoConfiguration.class})
-@TestPropertySource(properties = "cas.authn.mfa.trusted.rest.url=http://localhost:9297")
+    RefreshAutoConfiguration.class},
+    properties = "cas.authn.mfa.trusted.rest.url=http://localhost:9297")
 public class RestMultifactorAuthenticationTrustStorageTests {
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
@@ -88,7 +88,7 @@ public class RestMultifactorAuthenticationTrustStorageTests {
     public void verifyExpireByDate() {
         val r =
             MultifactorAuthenticationTrustRecord.newInstance("castest", "geography", "fingerprint");
-        r.setRecordDate(LocalDateTime.now().minusDays(2));
+        r.setRecordDate(LocalDateTime.now(ZoneId.systemDefault()).minusDays(2));
 
         val data = MAPPER.writeValueAsString(CollectionUtils.wrap(r));
         try (val webServer = new MockWebServer(9311,

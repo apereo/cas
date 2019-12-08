@@ -1,6 +1,7 @@
 package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
+import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import org.springframework.test.context.TestPropertySource;
 
@@ -21,5 +22,6 @@ import org.springframework.test.context.TestPropertySource;
     "cas.ticket.registry.redis.sentinel.node[2]=localhost:26381"
 })
 @EnabledIfContinuousIntegration
+@EnabledIfPortOpen(port = 6379)
 public class SentinelServerTicketRegistryTests extends BaseRedisSentinelTicketRegistryTests {
 }

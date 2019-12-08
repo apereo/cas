@@ -29,9 +29,11 @@ import java.time.LocalDate;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link DynamoDbAuditTrailManagerFacilitator}.
@@ -44,7 +46,28 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class DynamoDbAuditTrailManagerFacilitator {
     private final AuditDynamoDbProperties dynamoDbProperties;
+
     private final AmazonDynamoDB amazonDynamoDBClient;
+
+    /**
+     * Build table attribute values map map.
+     *
+     * @param record the record
+     * @return the map
+     */
+    private static Map<String, AttributeValue> buildTableAttributeValuesMap(final AuditActionContext record) {
+        val values = new HashMap<String, AttributeValue>();
+        values.put(ColumnNames.PRINCIPAL.getColumnName(), new AttributeValue(record.getPrincipal()));
+        values.put(ColumnNames.CLIENT_IP_ADDRESS.getColumnName(), new AttributeValue(record.getClientIpAddress()));
+        values.put(ColumnNames.SERVER_IP_ADDRESS.getColumnName(), new AttributeValue(record.getServerIpAddress()));
+        values.put(ColumnNames.RESOURCE_OPERATED_UPON.getColumnName(), new AttributeValue(record.getResourceOperatedUpon()));
+        values.put(ColumnNames.APPLICATION_CODE.getColumnName(), new AttributeValue(record.getApplicationCode()));
+        values.put(ColumnNames.ACTION_PERFORMED.getColumnName(), new AttributeValue(record.getActionPerformed()));
+        val time = record.getWhenActionWasPerformed().getTime();
+        values.put(ColumnNames.WHEN_ACTION_PERFORMED.getColumnName(), new AttributeValue(String.valueOf(time)));
+        LOGGER.debug("Created attribute values [{}] based on [{}]", values, record);
+        return values;
+    }
 
     /**
      * Create tables.
@@ -94,26 +117,6 @@ public class DynamoDbAuditTrailManagerFacilitator {
     }
 
     /**
-     * Build table attribute values map map.
-     *
-     * @param record the record
-     * @return the map
-     */
-    private static Map<String, AttributeValue> buildTableAttributeValuesMap(final AuditActionContext record) {
-        val values = new HashMap<String, AttributeValue>();
-        values.put(ColumnNames.PRINCIPAL.getColumnName(), new AttributeValue(record.getPrincipal()));
-        values.put(ColumnNames.CLIENT_IP_ADDRESS.getColumnName(), new AttributeValue(record.getClientIpAddress()));
-        values.put(ColumnNames.SERVER_IP_ADDRESS.getColumnName(), new AttributeValue(record.getServerIpAddress()));
-        values.put(ColumnNames.RESOURCE_OPERATED_UPON.getColumnName(), new AttributeValue(record.getResourceOperatedUpon()));
-        values.put(ColumnNames.APPLICATION_CODE.getColumnName(), new AttributeValue(record.getApplicationCode()));
-        values.put(ColumnNames.ACTION_PERFORMED.getColumnName(), new AttributeValue(record.getActionPerformed()));
-        val time = record.getWhenActionWasPerformed().getTime();
-        values.put(ColumnNames.WHEN_ACTION_PERFORMED.getColumnName(), new AttributeValue(String.valueOf(time)));
-        LOGGER.debug("Created attribute values [{}] based on [{}]", values, record);
-        return values;
-    }
-
-    /**
      * Gets audit records.
      *
      * @param localDate the local date
@@ -128,7 +131,7 @@ public class DynamoDbAuditTrailManagerFacilitator {
 
     private Set<AuditActionContext> getRecordsByKeys(final Map<String, AttributeValue> keys,
                                                      final ComparisonOperator operator) {
-        val results = new HashSet<AuditActionContext>();
+
         try {
             val scanRequest = new ScanRequest(dynamoDbProperties.getTableName());
             keys.forEach((k, v) -> {
@@ -140,22 +143,24 @@ public class DynamoDbAuditTrailManagerFacilitator {
 
             LOGGER.debug("Submitting request [{}] to get record with keys [{}]", scanRequest, keys);
             val items = amazonDynamoDBClient.scan(scanRequest).getItems();
-            items.forEach(item -> {
-                val principal = item.get(ColumnNames.PRINCIPAL.getColumnName()).getS();
-                val actionPerformed = item.get(ColumnNames.ACTION_PERFORMED.getColumnName()).getS();
-                val appCode = item.get(ColumnNames.APPLICATION_CODE.getColumnName()).getS();
-                val clientIp = item.get(ColumnNames.CLIENT_IP_ADDRESS.getColumnName()).getS();
-                val serverIp = item.get(ColumnNames.SERVER_IP_ADDRESS.getColumnName()).getS();
-                val resource = item.get(ColumnNames.RESOURCE_OPERATED_UPON.getColumnName()).getS();
-                val time = Long.parseLong(item.get(ColumnNames.WHEN_ACTION_PERFORMED.getColumnName()).getS());
-                val record = new AuditActionContext(principal, resource, actionPerformed,
-                    appCode, new Date(time), clientIp, serverIp);
-                results.add(record);
-            });
+            return items
+                .stream()
+                .map(item -> {
+                    val principal = item.get(ColumnNames.PRINCIPAL.getColumnName()).getS();
+                    val actionPerformed = item.get(ColumnNames.ACTION_PERFORMED.getColumnName()).getS();
+                    val appCode = item.get(ColumnNames.APPLICATION_CODE.getColumnName()).getS();
+                    val clientIp = item.get(ColumnNames.CLIENT_IP_ADDRESS.getColumnName()).getS();
+                    val serverIp = item.get(ColumnNames.SERVER_IP_ADDRESS.getColumnName()).getS();
+                    val resource = item.get(ColumnNames.RESOURCE_OPERATED_UPON.getColumnName()).getS();
+                    val time = Long.parseLong(item.get(ColumnNames.WHEN_ACTION_PERFORMED.getColumnName()).getS());
+                    return new AuditActionContext(principal, resource, actionPerformed,
+                        appCode, new Date(time), clientIp, serverIp);
+                })
+                .collect(Collectors.toCollection(LinkedHashSet::new));
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
-        return results;
+        return new HashSet<>(0);
     }
 
     /**

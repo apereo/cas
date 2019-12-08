@@ -15,4 +15,13 @@ public interface AuditTrailRecordResolutionPlanConfigurer {
      * @param plan the plan
      */
     void configureAuditTrailRecordResolutionPlan(AuditTrailRecordResolutionPlan plan);
+
+    /**
+     * Gets name.
+     *
+     * @return the name
+     */
+    default String getName() {
+        return getClass().getSimpleName();
+    }
 }

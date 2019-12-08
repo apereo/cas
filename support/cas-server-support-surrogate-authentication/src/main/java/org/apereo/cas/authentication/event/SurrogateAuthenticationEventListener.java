@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Async;
 
 /**
  * This is {@link SurrogateAuthenticationEventListener}.
@@ -32,6 +33,7 @@ public class SurrogateAuthenticationEventListener {
      * @param event the event
      */
     @EventListener
+    @Async
     public void handleSurrogateAuthenticationFailureEvent(final CasSurrogateAuthenticationFailureEvent event) {
         notify(event.getPrincipal(), event);
     }
@@ -42,6 +44,7 @@ public class SurrogateAuthenticationEventListener {
      * @param event the event
      */
     @EventListener
+    @Async
     public void handleSurrogateAuthenticationSuccessEvent(final CasSurrogateAuthenticationSuccessfulEvent event) {
         notify(event.getPrincipal(), event);
     }
@@ -59,7 +62,7 @@ public class SurrogateAuthenticationEventListener {
             val smsAttribute = sms.getAttributeName();
             val to = principal.getAttributes().get(smsAttribute);
             if (to != null && StringUtils.isNotBlank(sms.getText())) {
-                val text = sms.getText().concat("\n").concat(eventDetails);
+                val text = sms.getFormattedText("\n\n".concat(eventDetails));
                 this.communicationsManager.sms(sms.getFrom(), to.toString(), text);
             } else {
                 LOGGER.trace("The principal has no [{}] attribute, cannot send SMS notification", smsAttribute);

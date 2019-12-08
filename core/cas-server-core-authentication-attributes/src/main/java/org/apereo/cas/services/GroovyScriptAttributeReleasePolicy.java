@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.scripting.ScriptingUtils;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
@@ -45,7 +46,7 @@ public class GroovyScriptAttributeReleasePolicy extends AbstractRegisteredServic
             val args = new Object[]{attributes, LOGGER, principal, registeredService};
             LOGGER.debug("Invoking Groovy script with attributes=[{}], principal=[{}], service=[{}] and default logger",
                 attributes, principal, registeredService);
-            val resource = ResourceUtils.getResourceFrom(this.groovyScript);
+            val resource = ResourceUtils.getResourceFrom(SpringExpressionLanguageValueResolver.getInstance().resolve(this.groovyScript));
             return ScriptingUtils.executeGroovyScript(resource, args, Map.class, true);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);

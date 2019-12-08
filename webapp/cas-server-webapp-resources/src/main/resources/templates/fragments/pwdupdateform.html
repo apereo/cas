@@ -25,9 +25,8 @@
 </head>
 <body>
 <main role="main" class="container mt-3 mb-3">
-    <div class="alert alert-info">
-        <h3 th:utext="${expiredPass} ? #{screen.expiredpass.heading} : #{screen.mustchangepass.heading}">Change Password
-            Heading</h3>
+    <div>
+        <h3 th:utext="${expiredPass} ? #{screen.expiredpass.heading} : #{screen.mustchangepass.heading}">Change Password Heading</h3>
         <form id="passwordManagementForm" th:if="${passwordManagementEnabled}" method="post" th:object="${password}">
             <div class="alert alert-danger alert-dismissible fade show" th:if="${#fields.hasErrors('*')}">
                 <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
@@ -35,11 +34,11 @@
             </div>
 
             <div class="form-group">
-                <label for="password" th:utext="#{screen.pm.enterpsw}">Enter Password:</label>&nbsp;
+                <span class="fa fa-lock"></span>&nbsp;<label for="password" th:utext="#{screen.pm.enterpsw}">Enter Password:</label>&nbsp;
                 <input class="form-control" type="password" id="password" th:field="*{password}" required/>
             </div>
             <div class="form-group">
-                <label for="confirmedPassword" th:utext="#{screen.pm.confirmpsw}">Confirm Password:</label>&nbsp;
+                <span class="fa fa-lock"></span>&nbsp;<label for="confirmedPassword" th:utext="#{screen.pm.confirmpsw}">Confirm Password:</label>&nbsp;
                 <input class="form-control" type="password" id="confirmedPassword" th:field="*{confirmedPassword}" required/>
             </div>
 
@@ -51,8 +50,11 @@
                 <div class="progress">
                     <div id="strengthProgressBar" class="progress-bar"></div>
                 </div>
-                <div>
-                    <span id="password-strength-warning"></span>&nbsp;<span id="password-strength-suggestions"></span>
+                <div id="password-strength-msg" class="suggestions alert alert-warning alert-dismissible fade show" role="alert" style="display: none;">
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                    <span class="fas fa-exclamation-circle" aria-hidden="true"></span>&nbsp;
+                    <span id="password-strength-warning"></span>&nbsp;
+                    <span id="password-strength-suggestions"></span>
                 </div>
             </div>
             <div class="form-group" id="password-strength-notes">
@@ -67,7 +69,6 @@
                     <strong th:text="#{screen.pm.password.confirmMismatch}">Passwords do not match.</strong>
                 </div>
             </div>
-
 
             <div class="form-group text-center">
                 <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>

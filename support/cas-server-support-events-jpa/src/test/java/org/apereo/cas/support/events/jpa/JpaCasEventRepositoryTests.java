@@ -5,6 +5,7 @@ import org.apereo.cas.support.events.AbstractCasEventRepositoryTests;
 import org.apereo.cas.support.events.CasEventRepository;
 
 import lombok.Getter;
+import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -25,6 +26,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableTransactionManagement(proxyTargetClass = true)
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @Getter
+@Tag("JDBC")
 public class JpaCasEventRepositoryTests extends AbstractCasEventRepositoryTests {
     @Autowired
     @Qualifier("casEventRepository")

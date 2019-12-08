@@ -11,6 +11,7 @@ import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
+import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
@@ -22,11 +23,13 @@ import org.apereo.cas.pm.PasswordHistoryService;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.config.PasswordManagementConfiguration;
 
+import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.TestPropertySource;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.sql.DataSource;
 
@@ -43,6 +46,7 @@ import javax.sql.DataSource;
     CasCoreAuthenticationMetadataConfiguration.class,
     CasCoreAuthenticationSupportConfiguration.class,
     CasCoreAuthenticationHandlersConfiguration.class,
+    CasCoreTicketIdGeneratorsConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreAuditConfiguration.class,
     CasCoreHttpConfiguration.class,
@@ -52,21 +56,22 @@ import javax.sql.DataSource;
     CasCoreAuthenticationConfiguration.class,
     CasCoreServicesAuthenticationConfiguration.class,
     CasCoreWebConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreUtilConfiguration.class,
     JdbcPasswordManagementConfiguration.class,
     JdbcPasswordHistoryManagementConfiguration.class,
     PasswordManagementConfiguration.class
-})
-@TestPropertySource(properties = {
+}, properties = {
     "cas.authn.pm.enabled=true",
     "cas.authn.pm.history.enabled=true",
-    "cas.authn.pm.jdbc.autoCommit=true",
+    "cas.authn.pm.jdbc.autoCommit=false",
     "cas.authn.pm.jdbc.sqlSecurityQuestions=SELECT question, answer FROM pm_table_questions WHERE userid=?",
     "cas.authn.pm.jdbc.sqlFindEmail=SELECT email FROM pm_table_accounts WHERE userid=?",
+    "cas.authn.pm.jdbc.sqlFindPhone=SELECT phone FROM pm_table_accounts WHERE userid=?",
     "cas.authn.pm.jdbc.sqlChangePassword=UPDATE pm_table_accounts SET password=? WHERE userid=?"
 })
+@Tag("JDBC")
+@EnableTransactionManagement(proxyTargetClass = true)
 public abstract class BaseJdbcPasswordManagementServiceTests {
     @Autowired
     @Qualifier("passwordChangeService")
@@ -79,4 +84,9 @@ public abstract class BaseJdbcPasswordManagementServiceTests {
     @Autowired
     @Qualifier("passwordHistoryService")
     protected PasswordHistoryService passwordHistoryService;
+
+    @Autowired
+    @Qualifier("jdbcPasswordManagementTransactionTemplate")
+    protected TransactionTemplate jdbcPasswordManagementTransactionTemplate;
+
 }

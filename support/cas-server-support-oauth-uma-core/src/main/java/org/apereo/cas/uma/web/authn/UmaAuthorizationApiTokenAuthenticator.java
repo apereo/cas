@@ -2,8 +2,7 @@ package org.apereo.cas.uma.web.authn;
 
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.ticket.registry.TicketRegistry;
-
-import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.token.JwtBuilder;
 
 /**
  * This is {@link UmaAuthorizationApiTokenAuthenticator}.
@@ -11,11 +10,11 @@ import lombok.extern.slf4j.Slf4j;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Slf4j
 public class UmaAuthorizationApiTokenAuthenticator extends BaseUmaTokenAuthenticator {
 
-    public UmaAuthorizationApiTokenAuthenticator(final TicketRegistry ticketRegistry) {
-        super(ticketRegistry);
+    public UmaAuthorizationApiTokenAuthenticator(final TicketRegistry ticketRegistry,
+                                                 final JwtBuilder accessTokenJwtBuilder) {
+        super(ticketRegistry, accessTokenJwtBuilder);
     }
 
     @Override

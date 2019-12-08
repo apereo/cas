@@ -23,7 +23,7 @@ public class DefaultAssertionBuilder {
     /**
      * The Authentications.
      */
-    private List<Authentication> authentications = new ArrayList<>();
+    private List<Authentication> authentications = new ArrayList<>(0);
     /**
      * The Service.
      */

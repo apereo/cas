@@ -20,9 +20,9 @@ dependencies {
     implementation libraries.jose4j
     implementation libraries.nimbus
     
-    testImplementation project(":core:cas-server-core-webflow")
+    
     testImplementation project(":support:cas-server-support-person-directory")
-    testImplementation project(":core:cas-server-core-authentication-api")
+    
     testImplementation project(":core:cas-server-core-authentication-attributes")
     testImplementation project(":core:cas-server-core-authentication")
     testImplementation project(":core:cas-server-core-configuration")

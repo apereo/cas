@@ -20,8 +20,8 @@ import org.springframework.http.HttpMethod;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 /**
  * This is {@link BaseDuoSecurityAuthenticationService}.
@@ -63,14 +63,15 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
 
     private final transient Cache<String, DuoSecurityUserAccount> userAccountCache;
 
-    public BaseDuoSecurityAuthenticationService(final DuoSecurityMultifactorProperties duoProperties, final HttpClient httpClient) {
+    public BaseDuoSecurityAuthenticationService(final DuoSecurityMultifactorProperties duoProperties,
+                                                final HttpClient httpClient) {
         this.duoProperties = duoProperties;
         this.httpClient = httpClient;
 
         this.userAccountCache = Caffeine.newBuilder()
             .initialCapacity(USER_ACCOUNT_CACHE_INITIAL_SIZE)
             .maximumSize(USER_ACCOUNT_CACHE_MAX_SIZE)
-            .expireAfterWrite(USER_ACCOUNT_CACHE_EXPIRATION_SECONDS, TimeUnit.SECONDS)
+            .expireAfterWrite(Duration.ofSeconds(USER_ACCOUNT_CACHE_EXPIRATION_SECONDS))
             .build();
         this.userAccountCachedMap = this.userAccountCache.asMap();
     }
@@ -178,9 +179,11 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
      * @return the http
      */
     protected Http buildHttpPostAuthRequest() {
-        return new Http(HttpMethod.POST.name(),
+        val request = new Http(HttpMethod.POST.name(),
             duoProperties.getDuoApiHost(),
             String.format("/auth/v%s/auth", AUTH_API_VERSION));
+        configureHttpRequest(request);
+        return request;
     }
 
     /**
@@ -190,11 +193,24 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
      * @return the http
      */
     protected Http buildHttpPostUserPreAuthRequest(final String username) {
-        val usersRequest = new Http(HttpMethod.POST.name(),
+        val request = new Http(HttpMethod.POST.name(),
             duoProperties.getDuoApiHost(),
             String.format("/auth/v%s/preauth", AUTH_API_VERSION));
-        usersRequest.addParam("username", username);
-        return usersRequest;
+        request.addParam("username", username);
+        configureHttpRequest(request);
+        return request;
+    }
+
+    /**
+     * Configure http request.
+     *
+     * @param request the request
+     */
+    protected void configureHttpRequest(final Http request) {
+        val factory = this.httpClient.getHttpClientFactory();
+        if (factory.getProxy() != null) {
+            request.setProxy(factory.getProxy().getHostName(), factory.getProxy().getPort());
+        }
     }
 
 

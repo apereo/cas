@@ -22,7 +22,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Configuration("surrogateLdapAuthenticationConfiguration")
+@Configuration(value = "surrogateLdapAuthenticationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class SurrogateLdapAuthenticationConfiguration {
@@ -41,6 +41,6 @@ public class SurrogateLdapAuthenticationConfiguration {
         LOGGER.debug("Using LDAP [{}] with baseDn [{}] to locate surrogate accounts",
             su.getLdap().getLdapUrl(), su.getLdap().getBaseDn());
         val factory = LdapUtils.newLdaptivePooledConnectionFactory(su.getLdap());
-        return new SurrogateLdapAuthenticationService(factory, su.getLdap(), servicesManager.getIfAvailable());
+        return new SurrogateLdapAuthenticationService(factory, su.getLdap(), servicesManager.getObject());
     }
 }

@@ -9,7 +9,7 @@ import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
-import org.apereo.cas.ticket.code.OAuthCode;
+import org.apereo.cas.ticket.code.OAuth20Code;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 
 import com.nimbusds.jose.Algorithm;
@@ -21,6 +21,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.credentials.authenticator.Authenticator;
+import org.springframework.context.ApplicationContext;
 
 /**
  * This is {@link BaseOidcJwtAuthenticator}.
@@ -52,6 +53,9 @@ public abstract class BaseOidcJwtAuthenticator implements Authenticator<Username
      * CAS properties.
      */
     protected final CasConfigurationProperties casProperties;
+
+    /** Resource loader instance. */
+    protected final ApplicationContext applicationContext;
 
     /**
      * Verify credentials and fetch oidc registered service.
@@ -86,7 +90,7 @@ public abstract class BaseOidcJwtAuthenticator implements Authenticator<Username
 
         val code = webContext.getRequestParameter(OAuth20Constants.CODE)
             .map(String::valueOf).orElse(StringUtils.EMPTY);
-        val oauthCode = ticketRegistry.getTicket(code, OAuthCode.class);
+        val oauthCode = ticketRegistry.getTicket(code, OAuth20Code.class);
         if (oauthCode == null || oauthCode.isExpired()) {
             LOGGER.error("Provided code [{}] is either not found in the ticket registry or has expired", code);
             return null;
@@ -105,7 +109,7 @@ public abstract class BaseOidcJwtAuthenticator implements Authenticator<Username
     }
 
     /**
-     * Validate jwt algorithm and return truw/false.
+     * Validate jwt algorithm and return true/false.
      *
      * @param alg the alg
      * @return the boolean

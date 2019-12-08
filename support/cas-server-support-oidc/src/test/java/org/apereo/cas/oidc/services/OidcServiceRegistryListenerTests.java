@@ -27,13 +27,14 @@ public class OidcServiceRegistryListenerTests extends AbstractOidcTests {
     @Test
     public void verifyOperationRecon() {
         var service = getOidcRegisteredService();
-        service.getScopes().add(OidcConstants.StandardScopes.ADDRESS.getScope());
-        service.getScopes().add(OidcConstants.StandardScopes.EMAIL.getScope());
-        service.getScopes().add(OidcConstants.StandardScopes.OFFLINE_ACCESS.getScope());
-        service.getScopes().add(OidcConstants.StandardScopes.OPENID.getScope());
-        service.getScopes().add(OidcConstants.StandardScopes.PHONE.getScope());
-        service.getScopes().add(OidcConstants.StandardScopes.PROFILE.getScope());
-        service.getScopes().add("SomeCustomScope");
+        val scopes = service.getScopes();
+        scopes.add(OidcConstants.StandardScopes.ADDRESS.getScope());
+        scopes.add(OidcConstants.StandardScopes.EMAIL.getScope());
+        scopes.add(OidcConstants.StandardScopes.OFFLINE_ACCESS.getScope());
+        scopes.add(OidcConstants.StandardScopes.OPENID.getScope());
+        scopes.add(OidcConstants.StandardScopes.PHONE.getScope());
+        scopes.add(OidcConstants.StandardScopes.PROFILE.getScope());
+        scopes.add("SomeCustomScope");
         service = (OidcRegisteredService) oidcServiceRegistryListener.postLoad(service);
         val policy = service.getAttributeReleasePolicy();
         assertTrue(policy instanceof ChainingAttributeReleasePolicy);

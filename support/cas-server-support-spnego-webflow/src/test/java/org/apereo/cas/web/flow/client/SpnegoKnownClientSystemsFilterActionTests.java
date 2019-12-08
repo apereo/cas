@@ -28,8 +28,8 @@ public class SpnegoKnownClientSystemsFilterActionTests {
 
     @Test
     public void ensureRemoteIpShouldBeChecked() {
-        val action =
-            new BaseSpnegoKnownClientSystemsFilterAction(RegexUtils.createPattern("^192\\.158\\..+"), StringUtils.EMPTY, 0);
+        val action =new BaseSpnegoKnownClientSystemsFilterAction(RegexUtils.createPattern("^192\\.158\\..+"),
+            StringUtils.EMPTY, 0);
 
         val ctx = new MockRequestContext();
         val req = new MockHttpServletRequest();
@@ -45,8 +45,7 @@ public class SpnegoKnownClientSystemsFilterActionTests {
 
     @Test
     public void ensureRemoteIpShouldNotBeChecked() {
-        val action =
-            new BaseSpnegoKnownClientSystemsFilterAction(RegexUtils.createPattern("^192\\.158\\..+"),
+        val action = new BaseSpnegoKnownClientSystemsFilterAction(RegexUtils.createPattern("^192\\.158\\..+"),
                 StringUtils.EMPTY, 0);
 
         val ctx = new MockRequestContext();
@@ -63,8 +62,7 @@ public class SpnegoKnownClientSystemsFilterActionTests {
 
     @Test
     public void ensureAltRemoteIpHeaderShouldBeChecked() {
-        val action =
-            new BaseSpnegoKnownClientSystemsFilterAction(RegexUtils.createPattern("^74\\.125\\..+"),
+        val action = new BaseSpnegoKnownClientSystemsFilterAction(RegexUtils.createPattern("^74\\.125\\..+"),
                 "alternateRemoteIp", 120);
 
         val ctx = new MockRequestContext();
@@ -82,8 +80,7 @@ public class SpnegoKnownClientSystemsFilterActionTests {
 
     @Test
     public void ensureHostnameShouldDoSpnego() {
-        val action =
-            new HostNameSpnegoKnownClientSystemsFilterAction(RegexUtils.createPattern(StringUtils.EMPTY),
+        val action = new HostNameSpnegoKnownClientSystemsFilterAction(RegexUtils.createPattern(".+"),
                 StringUtils.EMPTY, 0, "\\w+\\.\\w+\\.\\w+");
 
         val ctx = new MockRequestContext();

@@ -1,0 +1,29 @@
+description = "Apereo CAS Ehcache3 Integration"
+
+dependencies {
+    implementation libraries.ehcache3
+    implementation project(":core:cas-server-core-configuration-api")
+    implementation project(":core:cas-server-core-tickets-api")
+    implementation project(":core:cas-server-core-tickets")
+    implementation project(":core:cas-server-core-util-api")
+    implementation project(":core:cas-server-core-monitor")
+    
+    testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-tickets", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
+    
+    testImplementation project(":core:cas-server-core-services")
+    testImplementation project(":core:cas-server-core-web")
+    testImplementation project(":core:cas-server-core-util")
+    testImplementation project(":core:cas-server-core-logout-api")
+    testImplementation project(":core:cas-server-core-logout")
+    testImplementation project(":core:cas-server-core")
+    testImplementation project(":core:cas-server-core-configuration")
+    testImplementation project(":core:cas-server-core-services-authentication")
+    testImplementation project(":core:cas-server-core-authentication-api")
+    testImplementation project(":core:cas-server-core-authentication-attributes")
+    testImplementation project(":core:cas-server-core-authentication")
+    testImplementation project(":support:cas-server-support-person-directory")
+}

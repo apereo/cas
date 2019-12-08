@@ -17,11 +17,12 @@ The output of a WAR overlay build is a `cas.war` file that can be deployed to a 
 
 Overlays are a strategy to combat repetitive code and/or resources. Rather than downloading the CAS codebase and building from source,
 overlays allow you to download a pre-built vanilla CAS web application server provided by the project itself and override/insert specific behavior into it.
-At build time, the build installation process will attempt to download the provided binary artifact first. Then the tool will locate your configuration files and settings made available inside the same project directory and will merge those into the downloaded artifact in order to produce
+At build time, the build installation process will attempt to download the provided binary artifact first. Then the tool will locate your configuration files and settings made available 
+inside the same project directory and will merge those into the downloaded artifact in order to produce
 one wholesome archive (i.e. `cas.war`) . Overridden artifacts may include resources, java classes, images, CSS and javascript files. In order for the merge
 process to successfully execute, the location and names of the overridden artifacts locally must **EXACTLY** match that of those provided by the project
-inside the originally downloaded archive. Java code in the overlay project's src/main/java folder and resources in src/main/resources will end up in the WEB-INF\classes 
-folder of cas.war and they will be loaded by the classloader instead of resources with the same names in jar files inside WEB-INF\lib.  
+inside the originally downloaded archive. Java code in the overlay project's `src/main/java` folder and resources in `src/main/resources` will end up in the `WEB-INF\classes` 
+folder of cas.war and they will be loaded by the classloader instead of resources with the same names in jar files inside `WEB-INF\lib`.  
 
 It goes without saying that while up-front ramp-up time could be slightly complicated, there are significant advantages to this approach:
 
@@ -45,7 +46,8 @@ The process of working with an overlay can be summarized in the following steps:
 - After changes, rebuild and repeat the process as many times as possible.
 - Double check your changes inside the built binary artifact to make sure the overlay process is working.
 
-<div class="alert alert-warning"><strong>Be Exact</strong><p>Do NOT copy everything produced by the build. Attempt to keep changes and customizations to a minimum and only grab what you actually need. Make sure the deployment environment is kept clean and precise, or you incur the risk of terrible upgrade issues and painful headaches.</p></div>
+<div class="alert alert-warning"><strong>Be Exact</strong><p>Do NOT copy everything produced by the build. Attempt to keep changes and customizations to a 
+minimum and only grab what you actually need. Make sure the deployment environment is kept clean and precise, or you incur the risk of terrible upgrade issues and painful headaches.</p></div>
 
 ## CAS WAR Overlays
 

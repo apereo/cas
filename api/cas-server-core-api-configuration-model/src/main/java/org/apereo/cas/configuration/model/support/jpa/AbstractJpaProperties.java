@@ -98,7 +98,7 @@ public abstract class AbstractJpaProperties implements Serializable {
      *
      * @see AvailableSettings
      */
-    private Map<String, String> properties = new HashMap<>();
+    private Map<String, String> properties = new HashMap<>(0);
 
     /**
      * Database connection pooling settings.
@@ -170,4 +170,18 @@ public abstract class AbstractJpaProperties implements Serializable {
      * Fully-qualified name of the class that can control the physical naming strategy of hibernate.
      */
     private String physicalNamingStrategyClassName = "org.apereo.cas.jpa.CasHibernatePhysicalNamingStrategy";
+    
+    /**
+     * Defines the isolation level for transactions.
+     *
+     * @see org.springframework.transaction.TransactionDefinition
+     */
+    private String isolationLevelName = "ISOLATION_READ_COMMITTED";
+
+    /**
+     * Defines the propagation behavior for transactions.
+     *
+     * @see org.springframework.transaction.TransactionDefinition
+     */
+    private String propagationBehaviorName = "PROPAGATION_REQUIRED";
 }

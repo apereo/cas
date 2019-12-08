@@ -1,6 +1,6 @@
 package org.apereo.cas.services.publisher;
 
-import org.apereo.cas.StringBean;
+import org.apereo.cas.JmsQueueIdentifier;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.cache.DistributedCacheManager;
 import org.apereo.cas.util.cache.DistributedCacheObject;
@@ -24,7 +24,7 @@ public class CasRegisteredServiceHazelcastStreamPublisher extends BaseCasRegiste
     private final DistributedCacheManager<RegisteredService, DistributedCacheObject<RegisteredService>> distributedCacheManager;
 
     public CasRegisteredServiceHazelcastStreamPublisher(final DistributedCacheManager instance,
-                                                        final StringBean publisherId) {
+                                                        final JmsQueueIdentifier publisherId) {
         super(publisherId);
         this.distributedCacheManager = instance;
     }

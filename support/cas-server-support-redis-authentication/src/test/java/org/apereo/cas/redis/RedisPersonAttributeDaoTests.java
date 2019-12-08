@@ -1,8 +1,10 @@
 package org.apereo.cas.redis;
 
 import org.apereo.cas.config.CasAuthenticationEventExecutionPlanTestConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
@@ -63,6 +65,8 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreWebConfiguration.class,
     CasPersonDirectoryConfiguration.class,
     CasCoreUtilConfiguration.class,
+    CasCoreAuthenticationConfiguration.class,
+    CasCoreAuthenticationSupportConfiguration.class,
     CasRegisteredServicesTestConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
     CasAuthenticationEventExecutionPlanTestConfiguration.class,

@@ -36,7 +36,7 @@ public class RestfulIPAddressIntelligenceService extends BaseIPAddressIntelligen
             parameters.put("clientIpAddress", clientIpAddress);
             response = HttpUtils.execute(restProperties.getUrl(), HttpMethod.GET.name(),
                 restProperties.getBasicAuthUsername(), restProperties.getBasicAuthPassword(),
-                parameters, new HashMap<>());
+                parameters, new HashMap<>(0));
 
             if (response != null) {
                 val status = HttpStatus.valueOf(response.getStatusLine().getStatusCode());

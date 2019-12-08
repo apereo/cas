@@ -16,7 +16,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.TestPropertySource;
 
 import java.nio.charset.StandardCharsets;
 
@@ -31,8 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     CasPersonDirectoryConfiguration.class,
     RefreshAutoConfiguration.class
-})
-@TestPropertySource(properties = {
+}, properties = {
     "cas.authn.attributeRepository.rest[0].method=GET",
     "cas.authn.attributeRepository.rest[0].url=http://localhost:8085"
 })

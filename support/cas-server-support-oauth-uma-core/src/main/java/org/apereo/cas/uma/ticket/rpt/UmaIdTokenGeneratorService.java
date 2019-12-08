@@ -5,7 +5,7 @@ import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.ticket.BaseIdTokenGeneratorService;
-import org.apereo.cas.ticket.accesstoken.AccessToken;
+import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.uma.ticket.permission.UmaPermissionTicket;
 
 import lombok.extern.slf4j.Slf4j;
@@ -35,7 +35,7 @@ public class UmaIdTokenGeneratorService extends BaseIdTokenGeneratorService {
     @Override
     public String generate(final HttpServletRequest request,
                            final HttpServletResponse response,
-                           final AccessToken accessToken,
+                           final OAuth20AccessToken accessToken,
                            final long timeoutInSeconds,
                            final OAuth20ResponseTypes responseType,
                            final OAuthRegisteredService registeredService) {
@@ -53,7 +53,7 @@ public class UmaIdTokenGeneratorService extends BaseIdTokenGeneratorService {
      * Build jwt claims jwt claims.
      *
      * @param request          the request
-     * @param accessTokenId    the access token id
+     * @param accessToken      the access token
      * @param timeoutInSeconds the timeout in seconds
      * @param service          the service
      * @param profile          the profile
@@ -62,7 +62,7 @@ public class UmaIdTokenGeneratorService extends BaseIdTokenGeneratorService {
      * @return the jwt claims
      */
     protected JwtClaims buildJwtClaims(final HttpServletRequest request,
-                                       final AccessToken accessTokenId,
+                                       final OAuth20AccessToken accessToken,
                                        final long timeoutInSeconds,
                                        final OAuthRegisteredService service,
                                        final UserProfile profile,

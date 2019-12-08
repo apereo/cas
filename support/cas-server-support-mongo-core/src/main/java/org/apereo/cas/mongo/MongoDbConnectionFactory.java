@@ -43,6 +43,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -60,7 +61,7 @@ public class MongoDbConnectionFactory {
     private final MongoCustomConversions customConversions;
 
     public MongoDbConnectionFactory() {
-        this(new ArrayList<>());
+        this(new ArrayList<>(0));
     }
 
     public MongoDbConnectionFactory(final Converter... converters) {
@@ -247,6 +248,7 @@ public class MongoDbConnectionFactory {
                 .socketKeepAlive(mongo.isSocketKeepAlive())
                 .maxConnectionIdleTime((int) Beans.newDuration(mongo.getIdleTimeout()).toMillis())
                 .connectionsPerHost(mongo.getConns().getPerHost())
+                .retryWrites(mongo.isRetryWrites())
                 .socketTimeout((int) Beans.newDuration(mongo.getTimeout()).toMillis())
                 .connectTimeout((int) Beans.newDuration(mongo.getTimeout()).toMillis())
                 .sslEnabled(mongo.isSslEnabled());
@@ -285,7 +287,7 @@ public class MongoDbConnectionFactory {
             throw new BeanCreationException("Unable to build a MongoDb client without any hosts/servers defined");
         }
 
-        List<ServerAddress> servers = new ArrayList<>();
+        List<ServerAddress> servers = new ArrayList<>(0);
         if (serverAddresses.length > 1) {
             LOGGER.debug("Multiple MongoDb server addresses are defined. Ignoring port [{}], "
                 + "assuming ports are defined as part of the address", mongo.getPort());
@@ -315,7 +317,7 @@ public class MongoDbConnectionFactory {
     }
 
     private static MongoClientURI buildMongoClientURI(final String clientUri, final MongoClientOptions clientOptions) {
-        val builder = clientOptions != null ? MongoClientOptions.builder(clientOptions) : MongoClientOptions.builder();
+        val builder = Optional.ofNullable(clientOptions).map(MongoClientOptions::builder).orElseGet(MongoClientOptions::builder);
         return new MongoClientURI(clientUri, builder);
     }
 

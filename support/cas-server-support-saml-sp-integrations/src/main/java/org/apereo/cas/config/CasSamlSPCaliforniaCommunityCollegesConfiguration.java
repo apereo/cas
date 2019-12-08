@@ -21,7 +21,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Configuration("casSamlSPCaliforniaCommunityCollegesConfiguration")
+@Configuration(value = "casSamlSPCaliforniaCommunityCollegesConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class CasSamlSPCaliforniaCommunityCollegesConfiguration implements InitializingBean {
@@ -38,12 +38,12 @@ public class CasSamlSPCaliforniaCommunityCollegesConfiguration implements Initia
 
     @Override
     public void afterPropertiesSet() {
-        val resolver = samlRegisteredServiceCachingMetadataResolver.getIfAvailable();
+        val resolver = samlRegisteredServiceCachingMetadataResolver.getObject();
         val service = SamlSPUtils.newSamlServiceProviderService(
             casProperties.getSamlSp().getCccco(),
             resolver);
         if (service != null) {
-            SamlSPUtils.saveService(service, servicesManager.getIfAvailable());
+            SamlSPUtils.saveService(service, servicesManager.getObject());
 
             LOGGER.info("Launching background thread to load the CCC metadata. This might take a while...");
             new Thread(() -> {

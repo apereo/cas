@@ -38,13 +38,13 @@ public class HazelcastDockerSwarmDiscoveryStrategy implements HazelcastDiscovery
             return getDiscoveryStrategyConfigViaMemberAddressProvider(configuration, networkConfig, memberProvider);
         }
         if (dnsProvider.isEnabled()) {
-            return getDiscoveryStrategyConfigViaDnsProvider(configuration, networkConfig, dnsProvider);
+            return getDiscoveryStrategyConfigViaDnsProvider(networkConfig, dnsProvider);
         }
         throw new IllegalArgumentException("No discovery strategy is turned on and enabled in configuration");
     }
 
     @SneakyThrows
-    private static DiscoveryStrategyConfig getDiscoveryStrategyConfigViaDnsProvider(final Config configuration, final NetworkConfig networkConfig,
+    private static DiscoveryStrategyConfig getDiscoveryStrategyConfigViaDnsProvider(final NetworkConfig networkConfig,
                                                                                     final HazelcastDockerSwarmDiscoveryProperties.DnsRProvider dnsProvider) {
         networkConfig.setPortAutoIncrement(false);
         val memberAddressProviderConfig = networkConfig.getMemberAddressProviderConfig();

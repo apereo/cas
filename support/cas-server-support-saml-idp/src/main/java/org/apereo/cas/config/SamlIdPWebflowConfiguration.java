@@ -7,7 +7,6 @@ import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredSer
 import org.apereo.cas.support.saml.web.flow.SamlIdPMetadataUIAction;
 import org.apereo.cas.support.saml.web.flow.SamlIdPMetadataUIWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
-import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 
 import org.springframework.beans.factory.ObjectProvider;
@@ -62,8 +61,8 @@ public class SamlIdPWebflowConfiguration {
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer samlIdPMetadataUIWebConfigurer() {
-        return new SamlIdPMetadataUIWebflowConfigurer(flowBuilderServices.getIfAvailable(),
-            loginFlowDefinitionRegistry.getIfAvailable(),
+        return new SamlIdPMetadataUIWebflowConfigurer(flowBuilderServices.getObject(),
+            loginFlowDefinitionRegistry.getObject(),
             samlIdPMetadataUIParserAction(),
             applicationContext,
             casProperties);
@@ -72,19 +71,14 @@ public class SamlIdPWebflowConfiguration {
     @ConditionalOnMissingBean(name = "samlIdPMetadataUIParserAction")
     @Bean
     public Action samlIdPMetadataUIParserAction() {
-        return new SamlIdPMetadataUIAction(servicesManager.getIfAvailable(),
-            defaultSamlRegisteredServiceCachingMetadataResolver.getIfAvailable(),
-            selectionStrategies.getIfAvailable());
+        return new SamlIdPMetadataUIAction(servicesManager.getObject(),
+            defaultSamlRegisteredServiceCachingMetadataResolver.getObject(),
+            selectionStrategies.getObject());
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "samlIdPCasWebflowExecutionPlanConfigurer")
     public CasWebflowExecutionPlanConfigurer samlIdPCasWebflowExecutionPlanConfigurer() {
-        return new CasWebflowExecutionPlanConfigurer() {
-            @Override
-            public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-                plan.registerWebflowConfigurer(samlIdPMetadataUIWebConfigurer());
-            }
-        };
+        return plan -> plan.registerWebflowConfigurer(samlIdPMetadataUIWebConfigurer());
     }
 }

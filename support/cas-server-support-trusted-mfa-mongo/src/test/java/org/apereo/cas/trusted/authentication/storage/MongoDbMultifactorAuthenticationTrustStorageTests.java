@@ -16,9 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.TestPropertySource;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -35,15 +35,15 @@ import static org.junit.jupiter.api.Assertions.*;
     MultifactorAuthnTrustConfiguration.class,
     CasCoreAuditConfiguration.class,
     RefreshAutoConfiguration.class
-})
-@TestPropertySource(properties = {
-    "cas.authn.mfa.trusted.mongo.databaseName=mfa-trusted",
-    "cas.authn.mfa.trusted.mongo.host=localhost",
-    "cas.authn.mfa.trusted.mongo.port=27017",
-    "cas.authn.mfa.trusted.mongo.userId=root",
-    "cas.authn.mfa.trusted.mongo.password=secret",
-    "cas.authn.mfa.trusted.mongo.authenticationDatabaseName=admin",
-    "cas.authn.mfa.trusted.mongo.dropCollection=true"
+},
+    properties = {
+        "cas.authn.mfa.trusted.mongo.databaseName=mfa-trusted",
+        "cas.authn.mfa.trusted.mongo.host=localhost",
+        "cas.authn.mfa.trusted.mongo.port=27017",
+        "cas.authn.mfa.trusted.mongo.userId=root",
+        "cas.authn.mfa.trusted.mongo.password=secret",
+        "cas.authn.mfa.trusted.mongo.authenticationDatabaseName=admin",
+        "cas.authn.mfa.trusted.mongo.dropCollection=true"
     })
 @EnabledIfPortOpen(port = 27017)
 @EnabledIfContinuousIntegration
@@ -64,10 +64,10 @@ public class MongoDbMultifactorAuthenticationTrustStorageTests {
     @Test
     public void verifyExpireByDate() {
         val r = MultifactorAuthenticationTrustRecord.newInstance("castest", "geography", "fingerprint");
-        r.setRecordDate(LocalDateTime.now().minusDays(2));
+        r.setRecordDate(LocalDateTime.now(ZoneId.systemDefault()).minusDays(2));
         mfaTrustEngine.set(r);
 
-        assertEquals(1, mfaTrustEngine.get(LocalDateTime.now().minusDays(30)).size());
-        assertEquals(0, mfaTrustEngine.get(LocalDateTime.now().minusDays(2)).size());
+        assertEquals(1, mfaTrustEngine.get(LocalDateTime.now(ZoneId.systemDefault()).minusDays(30)).size());
+        assertEquals(0, mfaTrustEngine.get(LocalDateTime.now(ZoneId.systemDefault()).minusDays(2)).size());
     }
 }

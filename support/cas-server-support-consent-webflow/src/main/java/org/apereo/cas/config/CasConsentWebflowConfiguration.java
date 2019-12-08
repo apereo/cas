@@ -5,7 +5,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.consent.ConsentEngine;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
-import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.CheckConsentRequiredAction;
 import org.apereo.cas.web.flow.ConfirmConsentAction;
@@ -41,7 +40,7 @@ public class CasConsentWebflowConfiguration {
     private ObjectProvider<FlowDefinitionRegistry> loginFlowDefinitionRegistry;
 
     @Autowired
-    private FlowBuilderServices flowBuilderServices;
+    private ObjectProvider<FlowBuilderServices> flowBuilderServices;
 
     @Autowired
     @Qualifier("authenticationServiceSelectionPlan")
@@ -64,36 +63,30 @@ public class CasConsentWebflowConfiguration {
     @ConditionalOnMissingBean(name = "checkConsentRequiredAction")
     @Bean
     public Action checkConsentRequiredAction() {
-        return new CheckConsentRequiredAction(servicesManager.getIfAvailable(),
-            authenticationRequestServiceSelectionStrategies.getIfAvailable(), consentEngine.getIfAvailable(), casProperties);
+        return new CheckConsentRequiredAction(servicesManager.getObject(),
+            authenticationRequestServiceSelectionStrategies.getObject(), consentEngine.getObject(), casProperties);
     }
 
     @ConditionalOnMissingBean(name = "confirmConsentAction")
     @Bean
     public Action confirmConsentAction() {
-        return new ConfirmConsentAction(servicesManager.getIfAvailable(),
-            authenticationRequestServiceSelectionStrategies.getIfAvailable(),
-            consentEngine.getIfAvailable(), casProperties);
+        return new ConfirmConsentAction(servicesManager.getObject(),
+            authenticationRequestServiceSelectionStrategies.getObject(),
+            consentEngine.getObject(), casProperties);
     }
 
     @ConditionalOnMissingBean(name = "consentWebflowConfigurer")
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer consentWebflowConfigurer() {
-        return new ConsentWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry.getIfAvailable(),
+        return new ConsentWebflowConfigurer(flowBuilderServices.getObject(), loginFlowDefinitionRegistry.getObject(),
             applicationContext, casProperties);
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "consentCasWebflowExecutionPlanConfigurer")
     public CasWebflowExecutionPlanConfigurer consentCasWebflowExecutionPlanConfigurer() {
-        return new CasWebflowExecutionPlanConfigurer() {
-
-            @Override
-            public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-                plan.registerWebflowConfigurer(consentWebflowConfigurer());
-            }
-        };
+        return plan -> plan.registerWebflowConfigurer(consentWebflowConfigurer());
     }
 
 }

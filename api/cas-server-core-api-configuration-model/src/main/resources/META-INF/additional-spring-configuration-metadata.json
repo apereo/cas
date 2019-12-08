@@ -12,10 +12,19 @@
       }
     },
     {
+      "name": "cas.authn.pm.ldap.search-filter-username",
+      "type": "java.lang.String",
+      "description": "Search filter used by LDAP to locate users and accounts",
+      "deprecation": {
+        "replacement": "cas.authn.pm.ldap.search-filter",
+        "reason": "Property removed and replacd with search-filter.",
+        "level": "error"
+      }
+    },
+    {
       "name": "cas.service-registry.config.location",
       "type": "java.lang.String",
       "description": "Location of the JSON/YAML service registry files",
-      "defaultValue": true,
       "deprecation": {
         "replacement": "cas.service-registry.json.location",
         "reason": "Property renamed due to cas.service-registry.json.location instead.",
@@ -138,6 +147,17 @@
       "defaultValue": "127.0.0.1",
       "deprecation": {
         "reason": "management endpoints security under cas.monitor.endpoints.endpoint.*. e.g. cas.monitor.endpoints.endpoint.defaults.access[0].",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.authn.x509.cache-time-to-idle-seconds",
+      "type": "java.lang.Integer",
+      "description": "Old Ehcache 2 setting, no longer applicable.",
+      "defaultValue": 0,
+      "deprecation": {
+        "replacement": "cas.authn.x509.cache-time-to-live-seconds",
+        "reason": "This setting no longer applies to the ehcache 3 cache used for x509 CRL caching.",
         "level": "error"
       }
     }

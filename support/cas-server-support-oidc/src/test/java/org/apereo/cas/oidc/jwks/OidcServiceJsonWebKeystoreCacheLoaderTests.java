@@ -22,4 +22,11 @@ public class OidcServiceJsonWebKeystoreCacheLoaderTests extends AbstractOidcTest
         assertTrue(oidcServiceJsonWebKeystoreCache.get(service).isPresent());
         assertTrue(oidcServiceJsonWebKeystoreCache.get(service).isPresent());
     }
+
+    @Test
+    public void verifyOperationWithOAuth() {
+        val service = getOAuthRegisteredService("clientid", "secret");
+        assertTrue(oidcServiceJsonWebKeystoreCache.get(service).isEmpty());
+        assertTrue(oidcServiceJsonWebKeystoreCache.get(service).isEmpty());
+    }
 }

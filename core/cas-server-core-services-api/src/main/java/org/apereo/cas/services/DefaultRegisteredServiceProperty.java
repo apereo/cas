@@ -35,7 +35,7 @@ public class DefaultRegisteredServiceProperty implements RegisteredServiceProper
 
     @Lob
     @Column(name = "property_values")
-    private HashSet<String> values = new HashSet<>();
+    private HashSet<String> values = new HashSet<>(0);
 
     public DefaultRegisteredServiceProperty(final String... propertyValues) {
         setValues(Arrays.stream(propertyValues).collect(Collectors.toSet()));
@@ -48,7 +48,7 @@ public class DefaultRegisteredServiceProperty implements RegisteredServiceProper
     @Override
     public Set<String> getValues() {
         if (this.values == null) {
-            this.values = new HashSet<>();
+            this.values = new HashSet<>(0);
         }
         return this.values;
     }

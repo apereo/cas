@@ -35,12 +35,15 @@ dependencies {
     implementation libraries.shibidpjavasupport
 
     testImplementation libraries.pac4j
-    
+    testImplementation libraries.pac4jsaml
+
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-tickets", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-webflow", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core", configuration: "tests")
 
     testImplementation project(":support:cas-server-support-json-service-registry")
     testImplementation project(":support:cas-server-support-jpa-service-registry")
@@ -49,7 +52,7 @@ dependencies {
     testImplementation project(":support:cas-server-support-person-directory")
 
     testImplementation project(":core:cas-server-core-util")
-    testImplementation project(":core:cas-server-core-services")
+    
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-validation")
     testImplementation project(":core:cas-server-core-validation-api")
@@ -57,15 +60,15 @@ dependencies {
     testImplementation project(":core:cas-server-core-configuration")
     testImplementation project(":core:cas-server-core-services-authentication")
     testImplementation project(":core:cas-server-core-authentication-attributes")
-    testImplementation project(":core:cas-server-core-logout-api")
+    
     testImplementation project(":core:cas-server-core-logout")
-    testImplementation project(":core:cas-server-core-services-registry")
-    testImplementation project(":core:cas-server-core-webflow")
-    testImplementation project(":core:cas-server-core-webflow-api")
-    testImplementation project(":core:cas-server-core-cookie-api")
+    
+    
+    
+    
     testImplementation project(":core:cas-server-core-cookie")
     testImplementation project(":core:cas-server-core-web")
-    testImplementation project(":core:cas-server-core-web-api")
+    
     testImplementation project(":core:cas-server-core-tickets")
-    testImplementation project(":core:cas-server-core-tickets-api")
+    
 }

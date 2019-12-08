@@ -169,7 +169,7 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
      */
     public Assertion newAssertion(final AuthnStatement authnStatement, final String issuer,
                                   final ZonedDateTime issuedAt, final String id) {
-        val list = new ArrayList<Statement>();
+        val list = new ArrayList<Statement>(1);
         list.add(authnStatement);
         return newAssertion(list, issuer, issuedAt, id);
     }

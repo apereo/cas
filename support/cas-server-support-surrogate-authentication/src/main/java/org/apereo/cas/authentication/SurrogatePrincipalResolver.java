@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipa
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
+import org.springframework.core.Ordered;
 
 import java.util.Optional;
 import java.util.Set;
@@ -50,5 +51,15 @@ public class SurrogatePrincipalResolver extends PersonDirectoryPrincipalResolver
         val id = currentPrincipal.get().getId();
         LOGGER.debug("Resolving principal id for surrogate authentication as [{}]", id);
         return id;
+    }
+
+    @Override
+    public boolean supports(final Credential credential) {
+        return super.supports(credential) && SurrogateUsernamePasswordCredential.class.isAssignableFrom(credential.getClass());
+    }
+
+    @Override
+    public int getOrder() {
+        return Ordered.HIGHEST_PRECEDENCE;
     }
 }

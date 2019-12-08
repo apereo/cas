@@ -6,12 +6,20 @@ package org.apereo.cas.logout;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@FunctionalInterface
 public interface LogoutExecutionPlanConfigurer {
     /**
      * configure the plan.
      *
      * @param plan the plan
      */
-    default void configureLogoutExecutionPlan(final LogoutExecutionPlan plan) {
+    void configureLogoutExecutionPlan(LogoutExecutionPlan plan);
+    /**
+     * Gets name.
+     *
+     * @return the name
+     */
+    default String getName() {
+        return getClass().getSimpleName();
     }
 }

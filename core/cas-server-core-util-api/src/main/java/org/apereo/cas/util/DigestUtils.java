@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.Arrays;
+import java.util.Optional;
 
 /**
  * This is {@link DigestUtils}
@@ -82,7 +83,7 @@ public class DigestUtils {
      * @return the string
      */
     public static String shaBase64(final String salt, final String data, final String separator, final boolean chunked) {
-        val result = rawDigest(MessageDigestAlgorithms.SHA_1, salt, separator == null ? data : data + separator);
+        val result = rawDigest(MessageDigestAlgorithms.SHA_1, salt, Optional.ofNullable(separator).map(s -> data + s).orElse(data));
         return EncodingUtils.encodeBase64(result, chunked);
     }
 
@@ -95,7 +96,7 @@ public class DigestUtils {
      * @return the string
      */
     public static String shaBase64(final String salt, final String data, final String separator) {
-        val result = rawDigest(MessageDigestAlgorithms.SHA_1, salt, separator == null ? data : data + separator);
+        val result = rawDigest(MessageDigestAlgorithms.SHA_1, salt, Optional.ofNullable(separator).map(s -> data + s).orElse(data));
         return EncodingUtils.encodeBase64(result);
     }
 
@@ -109,7 +110,7 @@ public class DigestUtils {
      * @return the string
      */
     public static String shaBase32(final String salt, final String data, final String separator, final boolean chunked) {
-        val result = rawDigest(MessageDigestAlgorithms.SHA_1, salt, separator == null ? data : data + separator);
+        val result = rawDigest(MessageDigestAlgorithms.SHA_1, salt, Optional.ofNullable(separator).map(s -> data + s).orElse(data));
         return EncodingUtils.encodeBase32(result, chunked);
     }
 
@@ -150,7 +151,6 @@ public class DigestUtils {
             throw new SecurityException(cause);
         }
     }
-
 
     /**
      * Raw digest byte [ ].

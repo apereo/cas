@@ -5,7 +5,6 @@ import org.apereo.cas.api.AuthenticationRiskContingencyPlan;
 import org.apereo.cas.api.AuthenticationRiskEvaluator;
 import org.apereo.cas.api.AuthenticationRiskMitigator;
 import org.apereo.cas.api.AuthenticationRiskNotifier;
-import org.apereo.cas.audit.AuditTrailRecordResolutionPlan;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -51,7 +50,7 @@ import java.util.HashSet;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
 @Slf4j
-public class ElectronicFenceConfiguration implements AuditTrailRecordResolutionPlanConfigurer {
+public class ElectronicFenceConfiguration {
 
     @Autowired
     @Qualifier("geoLocationService")
@@ -79,14 +78,14 @@ public class ElectronicFenceConfiguration implements AuditTrailRecordResolutionP
     @Bean
     @RefreshScope
     public AuthenticationRiskNotifier authenticationRiskEmailNotifier() {
-        return new AuthenticationRiskEmailNotifier(casProperties, communicationsManager.getIfAvailable());
+        return new AuthenticationRiskEmailNotifier(casProperties, communicationsManager.getObject());
     }
 
     @ConditionalOnMissingBean(name = "authenticationRiskSmsNotifier")
     @Bean
     @RefreshScope
     public AuthenticationRiskNotifier authenticationRiskSmsNotifier() {
-        return new AuthenticationRiskSmsNotifier(casProperties, communicationsManager.getIfAvailable());
+        return new AuthenticationRiskSmsNotifier(casProperties, communicationsManager.getObject());
     }
 
     @ConditionalOnMissingBean(name = "blockAuthenticationContingencyPlan")
@@ -121,28 +120,28 @@ public class ElectronicFenceConfiguration implements AuditTrailRecordResolutionP
     @Bean
     @RefreshScope
     public AuthenticationRequestRiskCalculator ipAddressAuthenticationRequestRiskCalculator() {
-        return new IpAddressAuthenticationRequestRiskCalculator(casEventRepository.getIfAvailable(), casProperties);
+        return new IpAddressAuthenticationRequestRiskCalculator(casEventRepository.getObject(), casProperties);
     }
 
     @ConditionalOnMissingBean(name = "userAgentAuthenticationRequestRiskCalculator")
     @Bean
     @RefreshScope
     public AuthenticationRequestRiskCalculator userAgentAuthenticationRequestRiskCalculator() {
-        return new UserAgentAuthenticationRequestRiskCalculator(casEventRepository.getIfAvailable(), casProperties);
+        return new UserAgentAuthenticationRequestRiskCalculator(casEventRepository.getObject(), casProperties);
     }
 
     @ConditionalOnMissingBean(name = "dateTimeAuthenticationRequestRiskCalculator")
     @Bean
     @RefreshScope
     public AuthenticationRequestRiskCalculator dateTimeAuthenticationRequestRiskCalculator() {
-        return new DateTimeAuthenticationRequestRiskCalculator(casEventRepository.getIfAvailable(), casProperties);
+        return new DateTimeAuthenticationRequestRiskCalculator(casEventRepository.getObject(), casProperties);
     }
 
     @ConditionalOnMissingBean(name = "geoLocationAuthenticationRequestRiskCalculator")
     @Bean
     @RefreshScope
     public AuthenticationRequestRiskCalculator geoLocationAuthenticationRequestRiskCalculator() {
-        return new GeoLocationAuthenticationRequestRiskCalculator(casEventRepository.getIfAvailable(),
+        return new GeoLocationAuthenticationRequestRiskCalculator(casEventRepository.getObject(),
             casProperties, geoLocationService.getIfAvailable());
     }
 
@@ -185,9 +184,13 @@ public class ElectronicFenceConfiguration implements AuditTrailRecordResolutionP
         }
     }
 
-    @Override
-    public void configureAuditTrailRecordResolutionPlan(final AuditTrailRecordResolutionPlan plan) {
-        plan.registerAuditActionResolver("ADAPTIVE_RISKY_AUTHENTICATION_ACTION_RESOLVER", new DefaultAuditActionResolver());
-        plan.registerAuditResourceResolver("ADAPTIVE_RISKY_AUTHENTICATION_RESOURCE_RESOLVER", returnValueResourceResolver.getIfAvailable());
+    @Bean
+    public AuditTrailRecordResolutionPlanConfigurer casElectrofenceAuditTrailRecordResolutionPlanConfigurer() {
+        return plan -> {
+            plan.registerAuditActionResolver("ADAPTIVE_RISKY_AUTHENTICATION_ACTION_RESOLVER", new DefaultAuditActionResolver());
+            plan.registerAuditResourceResolver("ADAPTIVE_RISKY_AUTHENTICATION_RESOURCE_RESOLVER",
+                returnValueResourceResolver.getObject());
+        };
     }
+
 }

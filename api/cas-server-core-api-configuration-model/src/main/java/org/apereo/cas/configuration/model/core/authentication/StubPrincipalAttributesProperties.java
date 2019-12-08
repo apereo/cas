@@ -29,7 +29,7 @@ public class StubPrincipalAttributesProperties implements Serializable {
      * from the source and the value is the attribute name CAS should
      * use for virtual renames.
      */
-    private Map<String, String> attributes = new HashMap<>();
+    private Map<String, String> attributes = new HashMap<>(0);
 
 
     /**

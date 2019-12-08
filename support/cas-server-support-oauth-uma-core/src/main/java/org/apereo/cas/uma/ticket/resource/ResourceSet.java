@@ -52,7 +52,7 @@ public class ResourceSet implements Serializable {
 
     @Lob
     @Column(length = Integer.MAX_VALUE)
-    private HashSet<String> scopes = new HashSet<>();
+    private HashSet<String> scopes = new HashSet<>(0);
 
     @Column
     private String iconUri;
@@ -65,7 +65,7 @@ public class ResourceSet implements Serializable {
 
     @Lob
     @Column(length = Integer.MAX_VALUE)
-    private HashSet<ResourceSetPolicy> policies = new HashSet<>();
+    private HashSet<ResourceSetPolicy> policies = new HashSet<>(0);
 
     /**
      * Validate.

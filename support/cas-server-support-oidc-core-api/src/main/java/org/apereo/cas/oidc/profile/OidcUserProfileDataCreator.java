@@ -8,7 +8,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.profile.DefaultOAuth20UserProfileDataCreator;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.web.views.OAuth20UserProfileViewRenderer;
-import org.apereo.cas.ticket.accesstoken.AccessToken;
+import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +29,7 @@ public class OidcUserProfileDataCreator extends DefaultOAuth20UserProfileDataCre
     }
 
     @Override
-    protected void finalizeProfileResponse(final AccessToken accessToken,
+    protected void finalizeProfileResponse(final OAuth20AccessToken accessToken,
                                            final Map<String, Object> map,
                                            final Principal principal,
                                            final RegisteredService registeredService) {

@@ -28,6 +28,9 @@ Support is enabled by including the following dependency in the WAR overlay:
 </dependency>
 ```
 
+<div class="alert alert-info"><strong>YAGNI</strong><p>You do not need to explicitly include this module
+in your configuration and overlays. This is just to teach you that it exists.</p></div>
+
 ## Configuration
 
 To learn more about available notification options, please [see this guide](../notifications/SMS-Messaging-Configuration.html) or [this guide](../notifications/Sending-Email-Configuration.html). 

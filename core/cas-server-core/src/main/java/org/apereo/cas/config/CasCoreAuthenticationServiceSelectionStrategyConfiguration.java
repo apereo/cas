@@ -1,11 +1,11 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategyConfigurer;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionStrategy;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
@@ -14,12 +14,12 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration("casCoreAuthenticationServiceSelectionStrategyConfiguration")
+@Configuration(value = "casCoreAuthenticationServiceSelectionStrategyConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class CasCoreAuthenticationServiceSelectionStrategyConfiguration implements AuthenticationServiceSelectionStrategyConfigurer {
+public class CasCoreAuthenticationServiceSelectionStrategyConfiguration {
 
-    @Override
-    public void configureAuthenticationServiceSelectionStrategy(final AuthenticationServiceSelectionPlan plan) {
-        plan.registerStrategy(new DefaultAuthenticationServiceSelectionStrategy());
+    @Bean
+    public AuthenticationServiceSelectionStrategyConfigurer casCoreAuthenticationServiceSelectionStrategyConfigurer() {
+        return plan -> plan.registerStrategy(new DefaultAuthenticationServiceSelectionStrategy());
     }
 }

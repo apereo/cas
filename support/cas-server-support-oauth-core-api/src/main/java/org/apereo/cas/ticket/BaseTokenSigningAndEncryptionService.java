@@ -10,15 +10,13 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.jose4j.jwa.AlgorithmConstraints;
-import org.jose4j.jwe.JsonWebEncryption;
 import org.jose4j.jwk.PublicJsonWebKey;
-import org.jose4j.jws.AlgorithmIdentifiers;
-import org.jose4j.jws.JsonWebSignature;
 import org.jose4j.jwt.JwtClaims;
 
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
+import java.util.HashMap;
+import java.util.Optional;
 
 /**
  * This is {@link BaseTokenSigningAndEncryptionService}.
@@ -29,23 +27,8 @@ import java.security.Key;
 @Slf4j
 @RequiredArgsConstructor
 @Getter
-public abstract class BaseTokenSigningAndEncryptionService implements OAuthTokenSigningAndEncryptionService {
+public abstract class BaseTokenSigningAndEncryptionService implements OAuth20TokenSigningAndEncryptionService {
     private final String issuer;
-
-    /**
-     * Gets json web signature.
-     *
-     * @param claims the claims
-     * @return the json web signature
-     */
-    protected JsonWebSignature createJsonWebSignature(final JwtClaims claims) {
-        val jws = new JsonWebSignature();
-        val jsonClaims = claims.toJson();
-        jws.setPayload(jsonClaims);
-        jws.setAlgorithmHeaderValue(AlgorithmIdentifiers.NONE);
-        jws.setAlgorithmConstraints(AlgorithmConstraints.NO_CONSTRAINTS);
-        return jws;
-    }
 
     /**
      * Create json web encryption json web encryption.
@@ -63,43 +46,28 @@ public abstract class BaseTokenSigningAndEncryptionService implements OAuthToken
                                   final String keyIdHeaderValue,
                                   final Key publicKey,
                                   final String payload) {
-        val jwe = new JsonWebEncryption();
-        jwe.setAlgorithmHeaderValue(encryptionAlg);
-        jwe.setEncryptionMethodHeaderParameter(encryptionEncoding);
-        jwe.setKey(publicKey);
-        jwe.setKeyIdHeaderValue(keyIdHeaderValue);
-        jwe.setContentTypeHeaderValue("JWT");
-        jwe.setPayload(payload);
-        return jwe.getCompactSerialization();
+        return EncodingUtils.encryptValueAsJwt(publicKey, payload, encryptionAlg,
+            encryptionEncoding, keyIdHeaderValue, new HashMap<>(0));
     }
 
     /**
      * Configure json web signature for id token signing.
      *
      * @param svc        the svc
-     * @param jws        the jws
+     * @param claims     the claims
      * @param jsonWebKey the json web key
      * @return the json web signature
      */
-    protected JsonWebSignature configureJsonWebSignatureForTokenSigning(final OAuthRegisteredService svc,
-                                                                        final JsonWebSignature jws,
-                                                                        final PublicJsonWebKey jsonWebKey) {
+    protected String signToken(final OAuthRegisteredService svc,
+                               final JwtClaims claims,
+                               final PublicJsonWebKey jsonWebKey) {
         LOGGER.debug("Service [{}] is set to sign id tokens", svc);
-        jws.setKey(jsonWebKey.getPrivateKey());
-        jws.setAlgorithmConstraints(AlgorithmConstraints.DISALLOW_NONE);
-        if (StringUtils.isNotBlank(jsonWebKey.getKeyId())) {
-            jws.setKeyIdHeaderValue(jsonWebKey.getKeyId());
-        }
-        LOGGER.debug("Signing id token with key id header value [{}]", jws.getKeyIdHeaderValue());
-        jws.setAlgorithmHeaderValue(getJsonWebKeySigningAlgorithm(svc));
-
-        LOGGER.trace("Signing id token with algorithm [{}]", jws.getAlgorithmHeaderValue());
-        return jws;
+        return EncodingUtils.signJws(claims, jsonWebKey, getJsonWebKeySigningAlgorithm(svc), new HashMap<>(0));
     }
 
     @Override
     @SneakyThrows
-    public JwtClaims validate(final String token) {
+    public JwtClaims decode(final String token, final Optional<OAuthRegisteredService> service) {
         val jsonWebKey = getJsonWebKeySigningKey();
         if (jsonWebKey.getPublicKey() == null) {
             throw new IllegalArgumentException("JSON web key used to validate the id token signature has no associated public key");
@@ -111,13 +79,13 @@ public abstract class BaseTokenSigningAndEncryptionService implements OAuthToken
         val result = new String(jwt, StandardCharsets.UTF_8);
         val claims = JwtClaims.parse(result);
 
-        LOGGER.debug("Validated claims as [{}]", claims);
         if (StringUtils.isBlank(claims.getIssuer())) {
             throw new IllegalArgumentException("Claims do not container an issuer");
         }
 
-        if (claims.getIssuer().equalsIgnoreCase(this.issuer)) {
-            throw new IllegalArgumentException("Issuer assigned to claims does not match " + this.issuer);
+        LOGGER.debug("Validating claims as [{}] with issuer [{}]", claims, claims.getIssuer());
+        if (!claims.getIssuer().equalsIgnoreCase(this.issuer)) {
+            throw new IllegalArgumentException("Issuer assigned to claims " + claims.getIssuer() + " does not match " + this.issuer);
         }
 
         if (StringUtils.isBlank(claims.getStringClaimValue(OAuth20Constants.CLIENT_ID))) {

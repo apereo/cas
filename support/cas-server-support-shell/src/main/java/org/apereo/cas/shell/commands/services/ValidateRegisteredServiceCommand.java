@@ -1,10 +1,12 @@
 package org.apereo.cas.shell.commands.services;
 
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
+import org.apereo.cas.services.util.RegisteredServiceYamlSerializer;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.shell.standard.ShellCommandGroup;
 import org.springframework.shell.standard.ShellComponent;
@@ -34,9 +36,10 @@ public class ValidateRegisteredServiceCommand {
      */
     @ShellMethod(key = "validate-service", value = "Validate a given JSON/YAML service definition by path or directory")
     public static void validateService(
-        @ShellOption(value = "file",
-            help = "Path to the JSON/YAML service definition file") final String file,
-        @ShellOption(value = "directory",
+        @ShellOption(value = { "file", "--file" },
+            help = "Path to the JSON/YAML service definition file",
+            defaultValue = StringUtils.EMPTY) final String file,
+        @ShellOption(value = { "directory", "--directory" },
             help = "Path to the JSON/YAML service definitions directory",
             defaultValue = "/etc/cas/services") final String directory) {
 
@@ -53,7 +56,7 @@ public class ValidateRegisteredServiceCommand {
         if (StringUtils.isNotBlank(directory)) {
             val directoryPath = new File(directory);
             if (directoryPath.isDirectory()) {
-                FileUtils.listFiles(directoryPath, new String[]{"json", "yml"}, false).forEach(ValidateRegisteredServiceCommand::validate);
+                FileUtils.listFiles(directoryPath, new String[]{"json", "yml", "yaml"}, false).forEach(ValidateRegisteredServiceCommand::validate);
             }
             return;
         }
@@ -62,8 +65,19 @@ public class ValidateRegisteredServiceCommand {
 
     private static void validate(final File filePath) {
         try {
-            val validator = new RegisteredServiceJsonSerializer();
+            var validator = (RegisteredServiceJsonSerializer) null;
             if (filePath.isFile() && filePath.exists() && filePath.canRead() && filePath.length() > 0) {
+                switch (FilenameUtils.getExtension(filePath.getPath())) {
+                    case "json":
+                        validator = new RegisteredServiceJsonSerializer();
+                        break;
+                    case "yml":
+                    case "yaml":
+                        validator = new RegisteredServiceYamlSerializer();
+                        break;
+                    default:
+                        throw new IllegalStateException("Incorrect file extension");
+                }
                 val svc = validator.from(filePath);
                 LOGGER.info("Service [{}] is valid at [{}].", svc.getName(), filePath.getCanonicalPath());
             } else {

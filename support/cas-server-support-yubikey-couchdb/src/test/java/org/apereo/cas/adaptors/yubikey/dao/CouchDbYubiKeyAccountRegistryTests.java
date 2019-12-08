@@ -2,13 +2,16 @@ package org.apereo.cas.adaptors.yubikey.dao;
 
 import org.apereo.cas.adaptors.yubikey.AbstractYubiKeyAccountRegistryTests;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountRegistry;
+import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
+import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
@@ -19,12 +22,14 @@ import org.apereo.cas.config.CouchDbYubiKeyConfiguration;
 import org.apereo.cas.config.YubiKeyConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.support.authentication.YubiKeyAuthenticationEventExecutionPlanConfiguration;
+import org.apereo.cas.config.support.authentication.YubiKeyAuthenticationMultifactorProviderBypassConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.couchdb.yubikey.YubiKeyAccountCouchDbRepository;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.services.web.config.CasThemesConfiguration;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
+import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
 import lombok.Getter;
@@ -49,27 +54,31 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 @Tag("CouchDb")
 @SpringBootTest(classes = {
     CouchDbYubiKeyConfiguration.class,
+    YubiKeyAuthenticationMultifactorProviderBypassConfiguration.class,
     CasCouchDbCoreConfiguration.class,
     AbstractYubiKeyAccountRegistryTests.YubiKeyAccountRegistryTestConfiguration.class,
     YubiKeyAuthenticationEventExecutionPlanConfiguration.class,
     YubiKeyConfiguration.class,
+    CasCoreMultifactorAuthenticationConfiguration.class,
+    CasMultifactorAuthenticationWebflowConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasWebflowContextConfiguration.class,
     CasCoreHttpConfiguration.class,
     AopAutoConfiguration.class,
     CasThemesConfiguration.class,
     CasCoreTicketsConfiguration.class,
+    CasCoreTicketIdGeneratorsConfiguration.class,
     CasCoreLogoutConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class,
     CasCoreWebflowConfiguration.class,
     CasCoreConfiguration.class,
     CasPersonDirectoryTestConfiguration.class,
+    CasCoreAuthenticationConfiguration.class,
     CasCoreAuthenticationSupportConfiguration.class,
     CasCookieConfiguration.class,
     CasCoreUtilConfiguration.class,
     CasCoreWebConfiguration.class,
-    CasCoreHttpConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
     CasDefaultServiceTicketIdGeneratorsConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,

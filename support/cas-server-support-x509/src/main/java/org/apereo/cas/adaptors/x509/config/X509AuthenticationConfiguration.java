@@ -29,11 +29,18 @@ import org.apereo.cas.configuration.model.support.x509.X509Properties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.RegexUtils;
+import org.apereo.cas.util.model.Capacity;
 
 import lombok.val;
-import net.sf.ehcache.Cache;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
+
+import org.ehcache.config.builders.ExpiryPolicyBuilder;
+import org.ehcache.config.builders.ResourcePoolsBuilder;
+import org.ehcache.config.builders.UserManagedCacheBuilder;
+import org.ehcache.config.units.EntryUnit;
+import org.ehcache.config.units.MemoryUnit;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -44,7 +51,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ResourceLoader;
 
-import java.util.UUID;
+import java.net.URI;
+import java.time.Duration;
 import java.util.stream.Collectors;
 
 /**
@@ -100,12 +108,24 @@ public class X509AuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "crlDistributionPointRevocationChecker")
     public RevocationChecker crlDistributionPointRevocationChecker() {
         val x509 = casProperties.getAuthn().getX509();
-        val cache = new Cache("CRL".concat(UUID.randomUUID().toString()),
-            x509.getCacheMaxElementsInMemory(),
-            x509.isCacheDiskOverflow(),
-            x509.isCacheEternal(),
-            x509.getCacheTimeToLiveSeconds(),
-            x509.getCacheTimeToIdleSeconds());
+        var builder = UserManagedCacheBuilder.newUserManagedCacheBuilder(URI.class, byte[].class);
+
+        if (x509.isCacheDiskOverflow()) {
+            val capacity = Capacity.parse(x509.getCacheDiskSize());
+            builder = builder.withResourcePools(ResourcePoolsBuilder.newResourcePoolsBuilder()
+                .disk(capacity.getSize().longValue(), MemoryUnit.valueOf(capacity.getUnitOfMeasure().name()), false));
+        }
+        builder = builder.withResourcePools(
+            ResourcePoolsBuilder.newResourcePoolsBuilder()
+                .heap(x509.getCacheMaxElementsInMemory(), EntryUnit.ENTRIES));
+
+        if (x509.isCacheEternal()) {
+            builder = builder.withExpiry(ExpiryPolicyBuilder.noExpiration());
+        } else {
+            builder = builder.withExpiry(ExpiryPolicyBuilder
+                .timeToLiveExpiration(Duration.ofSeconds(x509.getCacheTimeToLiveSeconds())));
+        }
+        var cache = builder.build(true);
 
         return new CRLDistributionPointRevocationChecker(
             x509.isCheckAll(),
@@ -173,7 +193,7 @@ public class X509AuthenticationConfiguration {
 
         return new X509CredentialsAuthenticationHandler(
             x509.getName(),
-            servicesManager.getIfAvailable(),
+            servicesManager.getObject(),
             x509PrincipalFactory(),
             trustedIssuerDnPattern,
             x509.getMaxPathLength(),
@@ -194,7 +214,7 @@ public class X509AuthenticationConfiguration {
         val principal = x509.getPrincipal();
         val principalAttribute = StringUtils.defaultIfBlank(principal.getPrincipalAttribute(), personDirectory.getPrincipalAttribute());
         return new X509SubjectPrincipalResolver(
-            attributeRepository.getIfAvailable(),
+            attributeRepository.getObject(),
             x509PrincipalFactory(),
             principal.isReturnNull() || personDirectory.isReturnNull(),
             principalAttribute,
@@ -213,7 +233,7 @@ public class X509AuthenticationConfiguration {
         val principal = x509.getPrincipal();
         val principalAttribute = StringUtils.defaultIfBlank(principal.getPrincipalAttribute(), personDirectory.getPrincipalAttribute());
         return new X509SubjectDNPrincipalResolver(
-            attributeRepository.getIfAvailable(),
+            attributeRepository.getObject(),
             x509PrincipalFactory(),
             principal.isReturnNull() || personDirectory.isReturnNull(),
             principalAttribute,
@@ -232,7 +252,7 @@ public class X509AuthenticationConfiguration {
         val principal = x509.getPrincipal();
         val principalAttribute = StringUtils.defaultIfBlank(principal.getPrincipalAttribute(), personDirectory.getPrincipalAttribute());
         return new X509SubjectAlternativeNameUPNPrincipalResolver(
-            attributeRepository.getIfAvailable(),
+            attributeRepository.getObject(),
             x509PrincipalFactory(),
             principal.isReturnNull() || personDirectory.isReturnNull(),
             principalAttribute,
@@ -252,7 +272,7 @@ public class X509AuthenticationConfiguration {
         val principal = x509.getPrincipal();
         val principalAttribute = StringUtils.defaultIfBlank(principal.getPrincipalAttribute(), personDirectory.getPrincipalAttribute());
         return new X509SubjectAlternativeNameRFC822EmailPrincipalResolver(
-            attributeRepository.getIfAvailable(),
+            attributeRepository.getObject(),
             x509PrincipalFactory(),
             principal.isReturnNull() || personDirectory.isReturnNull(),
             principalAttribute,
@@ -286,7 +306,7 @@ public class X509AuthenticationConfiguration {
         val personDirectory = casProperties.getPersonDirectory();
         val principalAttribute = StringUtils.defaultIfBlank(principal.getPrincipalAttribute(), personDirectory.getPrincipalAttribute());
 
-        return new X509SerialNumberAndIssuerDNPrincipalResolver(attributeRepository.getIfAvailable(),
+        return new X509SerialNumberAndIssuerDNPrincipalResolver(attributeRepository.getObject(),
             x509PrincipalFactory(),
             principal.isReturnNull() || personDirectory.isReturnNull(),
             principalAttribute,
@@ -306,7 +326,7 @@ public class X509AuthenticationConfiguration {
         val principal = x509.getPrincipal();
         val personDirectory = casProperties.getPersonDirectory();
         val principalAttribute = StringUtils.defaultIfBlank(principal.getPrincipalAttribute(), personDirectory.getPrincipalAttribute());
-        return new X509CommonNameEDIPIPrincipalResolver(attributeRepository.getIfAvailable(),
+        return new X509CommonNameEDIPIPrincipalResolver(attributeRepository.getObject(),
             x509PrincipalFactory(),
             principal.isReturnNull() || personDirectory.isReturnNull(),
             principalAttribute,
@@ -361,7 +381,7 @@ public class X509AuthenticationConfiguration {
         if (Character.MIN_RADIX <= radix && radix <= Character.MAX_RADIX) {
             if (radix == HEX) {
                 return new X509SerialNumberPrincipalResolver(
-                    attributeRepository.getIfAvailable(),
+                    attributeRepository.getObject(),
                     x509PrincipalFactory(),
                     principal.isReturnNull() || personDirectory.isReturnNull(),
                     principalAttribute,
@@ -371,7 +391,7 @@ public class X509AuthenticationConfiguration {
                     org.springframework.util.StringUtils.commaDelimitedListToSet(principal.getActiveAttributeRepositoryIds()));
             }
             return new X509SerialNumberPrincipalResolver(
-                attributeRepository.getIfAvailable(),
+                attributeRepository.getObject(),
                 x509PrincipalFactory(),
                 principal.isReturnNull() || personDirectory.isUseExistingPrincipalId(),
                 principalAttribute,
@@ -381,7 +401,7 @@ public class X509AuthenticationConfiguration {
                 org.springframework.util.StringUtils.commaDelimitedListToSet(principal.getActiveAttributeRepositoryIds()));
         }
         return new X509SerialNumberPrincipalResolver(
-            attributeRepository.getIfAvailable(),
+            attributeRepository.getObject(),
             x509PrincipalFactory(),
             principal.isReturnNull() || personDirectory.isReturnNull(),
             principalAttribute,

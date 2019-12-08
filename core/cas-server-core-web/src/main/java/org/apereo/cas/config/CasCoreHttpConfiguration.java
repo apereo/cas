@@ -10,6 +10,7 @@ import org.apereo.cas.util.http.SimpleHttpClientFactoryBean;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpHost;
 import org.apache.http.conn.ssl.DefaultHostnameVerifier;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
@@ -91,16 +92,24 @@ public class CasCoreHttpConfiguration {
         val c = buildHttpClientFactoryBean();
         c.setRedirectsEnabled(redirectEnabled);
         c.setCircularRedirectsAllowed(redirectEnabled);
-        c.setSslSocketFactory(trustStoreSslSocketFactory());
-        c.setHostnameVerifier(hostnameVerifier());
+
         return c.getObject();
     }
 
     private SimpleHttpClientFactoryBean buildHttpClientFactoryBean() {
         val c = new SimpleHttpClientFactoryBean.DefaultHttpClient();
+
         val httpClient = casProperties.getHttpClient();
         c.setConnectionTimeout(Beans.newDuration(httpClient.getConnectionTimeout()).toMillis());
         c.setReadTimeout((int) Beans.newDuration(httpClient.getReadTimeout()).toMillis());
+
+        if (StringUtils.isNotBlank(httpClient.getProxyHost()) && httpClient.getProxyPort() > 0) {
+            c.setProxy(new HttpHost(httpClient.getProxyHost(), httpClient.getProxyPort()));
+        }
+        c.setSslSocketFactory(trustStoreSslSocketFactory());
+        c.setHostnameVerifier(hostnameVerifier());
+        c.setSslContext(sslContext());
+
         return c;
     }
 }

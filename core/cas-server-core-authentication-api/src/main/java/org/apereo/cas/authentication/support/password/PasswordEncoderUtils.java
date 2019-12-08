@@ -4,13 +4,15 @@ import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderPro
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.crypto.DefaultPasswordEncoder;
 import org.apereo.cas.util.crypto.GlibcCryptPasswordEncoder;
-import org.apereo.cas.util.spring.ApplicationContextProvider;
 
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.ApplicationContext;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.LdapShaPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
@@ -24,16 +26,19 @@ import org.springframework.security.crypto.scrypt.SCryptPasswordEncoder;
  * @since 5.2.0
  */
 @Slf4j
+@UtilityClass
 public class PasswordEncoderUtils {
     private static final int HASH_WIDTH = 256;
 
     /**
      * New password encoder password encoder.
      *
-     * @param properties the properties
+     * @param properties         the properties
+     * @param applicationContext the application context
      * @return the password encoder
      */
-    public static PasswordEncoder newPasswordEncoder(final PasswordEncoderProperties properties) {
+    public static PasswordEncoder newPasswordEncoder(final PasswordEncoderProperties properties,
+                                                     final ApplicationContext applicationContext) {
         val type = properties.getType();
         if (StringUtils.isBlank(type)) {
             LOGGER.trace("No password encoder type is defined, and so none shall be created");
@@ -42,8 +47,8 @@ public class PasswordEncoderUtils {
 
         if (type.endsWith(".groovy")) {
             LOGGER.debug("Creating Groovy-based password encoder at [{}]", type);
-            val resource = ApplicationContextProvider.getResourceLoader().getResource(type);
-            return new GroovyPasswordEncoder(resource);
+            val resource = applicationContext.getResource(type);
+            return new GroovyPasswordEncoder(resource, applicationContext);
         }
 
         if (type.contains(".")) {
@@ -79,6 +84,10 @@ public class PasswordEncoderUtils {
             case SCRYPT:
                 LOGGER.debug("Creating SCRYPT encoder");
                 return new SCryptPasswordEncoder();
+            case SSHA:
+                LOGGER.warn("Creating SSHA encoder; digest based password encoding is not considered secure. "
+                    + "This strategy is here to support legacy implementations and using it is considered insecure.");
+                return new LdapShaPasswordEncoder();
             case PBKDF2:
                 if (StringUtils.isBlank(properties.getSecret())) {
                     LOGGER.trace("Creating PBKDF2 encoder without secret");
@@ -88,8 +97,8 @@ public class PasswordEncoderUtils {
             case GLIBC_CRYPT:
                 val hasSecret = StringUtils.isNotBlank(properties.getSecret());
                 LOGGER.debug("Creating glibc CRYPT encoder with encoding alg [{}], strength [{}] and {}secret",
-                        properties.getEncodingAlgorithm(), properties.getStrength(),
-                        BooleanUtils.toString(hasSecret, StringUtils.EMPTY, "without "));
+                    properties.getEncodingAlgorithm(), properties.getStrength(),
+                    BooleanUtils.toString(hasSecret, StringUtils.EMPTY, "without "));
                 return new GlibcCryptPasswordEncoder(properties.getEncodingAlgorithm(), properties.getStrength(), properties.getSecret());
             case NONE:
             default:

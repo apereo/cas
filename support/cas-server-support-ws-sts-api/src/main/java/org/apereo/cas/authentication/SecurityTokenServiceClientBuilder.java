@@ -44,7 +44,7 @@ public class SecurityTokenServiceClientBuilder {
         val namespace = StringUtils.defaultIfBlank(service.getNamespace(), WSFederationConstants.HTTP_DOCS_OASIS_OPEN_ORG_WS_SX_WS_TRUST_200512);
         sts.setServiceQName(new QName(namespace, StringUtils.defaultIfBlank(service.getWsdlService(), WSFederationConstants.SECURITY_TOKEN_SERVICE)));
         sts.setEndpointQName(new QName(namespace, service.getWsdlEndpoint()));
-        sts.getProperties().putAll(new HashMap<>());
+        sts.getProperties().putAll(new HashMap<>(0));
         return sts;
     }
 

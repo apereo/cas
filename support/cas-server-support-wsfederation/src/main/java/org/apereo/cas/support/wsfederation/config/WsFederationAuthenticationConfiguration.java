@@ -56,7 +56,7 @@ public class WsFederationAuthenticationConfiguration {
     @Bean
     @RefreshScope
     public WsFederationHelper wsFederationHelper() {
-        return new WsFederationHelper(configBean.getIfAvailable(), servicesManager.getIfAvailable());
+        return new WsFederationHelper(configBean.getObject(), servicesManager.getObject());
     }
 
     @Bean
@@ -70,8 +70,8 @@ public class WsFederationAuthenticationConfiguration {
         return new WsFederationNavigationController(wsFederationCookieManager(),
             wsFederationHelper(),
             wsFederationConfigurations,
-            authenticationRequestServiceSelectionStrategies.getIfAvailable(),
-            webApplicationServiceFactory.getIfAvailable(),
+            authenticationRequestServiceSelectionStrategies.getObject(),
+            webApplicationServiceFactory.getObject(),
             casProperties.getServer().getLoginUrl());
     }
 }

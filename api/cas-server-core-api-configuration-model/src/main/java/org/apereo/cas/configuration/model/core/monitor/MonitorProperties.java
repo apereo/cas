@@ -1,10 +1,8 @@
 package org.apereo.cas.configuration.model.core.monitor;
 
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
-import org.apereo.cas.configuration.model.support.ConnectionPoolingProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapAuthenticationProperties;
-import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
 import org.apereo.cas.configuration.model.support.ldap.LdapAuthorizationProperties;
 import org.apereo.cas.configuration.model.support.memcached.BaseMemcachedProperties;
 import org.apereo.cas.configuration.model.support.mongo.BaseMongoDbProperties;
@@ -17,7 +15,9 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.io.Resource;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -74,7 +74,7 @@ public class MonitorProperties implements Serializable {
     /**
      * Options for monitoring LDAP resources.
      */
-    private Ldap ldap = new Ldap();
+    private List<LdapMonitorProperties> ldap = new ArrayList<>(0);
 
     /**
      * Options for monitoring Memcached resources.
@@ -133,35 +133,6 @@ public class MonitorProperties implements Serializable {
         private MonitorWarningProperties warn = new MonitorWarningProperties(25);
     }
 
-    @RequiresModule(name = "cas-server-core-monitor", automated = true)
-    @Getter
-    @Setter
-    public static class Ldap extends AbstractLdapProperties {
-
-        private static final long serialVersionUID = 4722929378440179113L;
-
-        /**
-         * When monitoring the LDAP connection pool, indicates the amount of time the operation must wait
-         * before it times outs and considers the pool in bad shape.
-         */
-        private String maxWait = "PT5S";
-
-        /**
-         * Options that define the thread pool that will ping on the ldap pool.
-         */
-        @NestedConfigurationProperty
-        private ConnectionPoolingProperties pool = new ConnectionPoolingProperties();
-
-        /**
-         * Initialize minPoolSize for the monitor to zero.
-         * This prevents a bad ldap connection from causing server to fail startup.
-         * User can override this default via configuration.
-         */
-        public Ldap() {
-            setMinPoolSize(0);
-        }
-    }
-
     @RequiresModule(name = "cas-server-support-memcached-monitor")
     @Getter
     @Setter
@@ -209,7 +180,7 @@ public class MonitorProperties implements Serializable {
          * and exposes shortcuts so security and capability of endpoints
          * can be globally controlled from one spot and then overridden elsewhere.
          */
-        private Map<String, ActuatorEndpointProperties> endpoint = new HashMap<>();
+        private Map<String, ActuatorEndpointProperties> endpoint = new HashMap<>(0);
 
         /**
          * Enable Spring Security's JAAS authentication provider

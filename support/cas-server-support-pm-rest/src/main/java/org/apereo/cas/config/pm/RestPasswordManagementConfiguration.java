@@ -24,7 +24,7 @@ import org.springframework.web.client.RestTemplate;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Configuration("restPasswordManagementConfiguration")
+@Configuration(value = "restPasswordManagementConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class RestPasswordManagementConfiguration {
     @Autowired
@@ -43,10 +43,10 @@ public class RestPasswordManagementConfiguration {
     @Autowired
     public PasswordManagementService passwordChangeService(final RestTemplateBuilder restTemplateBuilder) {
         var pm = casProperties.getAuthn().getPm();
-        return new RestPasswordManagementService(passwordManagementCipherExecutor.getIfAvailable(),
+        return new RestPasswordManagementService(passwordManagementCipherExecutor.getObject(),
             casProperties.getServer().getPrefix(),
             buildRestTemplateBuilder(restTemplateBuilder),
-            pm, passwordHistoryService.getIfAvailable());
+            pm, passwordHistoryService.getObject());
     }
 
     private RestTemplate buildRestTemplateBuilder(final RestTemplateBuilder restTemplateBuilder) {

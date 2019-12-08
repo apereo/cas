@@ -9,9 +9,11 @@ import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfig
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
+import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
@@ -19,12 +21,16 @@ import org.apereo.cas.config.CasCouchDbCoreConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.GoogleAuthenticatorCouchDbConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
-import org.apereo.cas.config.support.EnvironmentConversionServiceInitializer;
 import org.apereo.cas.config.support.authentication.GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration;
+import org.apereo.cas.config.support.authentication.GoogleAuthenticatorAuthenticationMultifactorProviderBypassConfiguration;
 import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
 import org.apereo.cas.couchdb.gauth.token.GoogleAuthenticatorTokenCouchDbRepository;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
+import org.apereo.cas.web.config.CasCookieConfiguration;
+import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
+import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
+import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
 import lombok.Getter;
 import org.junit.jupiter.api.AfterEach;
@@ -37,7 +43,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.test.context.ContextConfiguration;
 
 /**
  * This is {@link GoogleAuthenticatorCouchDbTokenRepositoryTests}.
@@ -50,7 +55,13 @@ import org.springframework.test.context.ContextConfiguration;
     CasCouchDbCoreConfiguration.class,
     BaseOneTimeTokenRepositoryTests.BaseTestConfiguration.class,
     GoogleAuthenticatorCouchDbConfiguration.class,
+    GoogleAuthenticatorAuthenticationMultifactorProviderBypassConfiguration.class,
+    CasWebflowContextConfiguration.class,
+    CasCoreWebflowConfiguration.class,
+    CasCoreMultifactorAuthenticationConfiguration.class,
+    CasMultifactorAuthenticationWebflowConfiguration.class,
     CasCoreTicketsConfiguration.class,
+    CasCoreTicketIdGeneratorsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
     CasCoreLogoutConfiguration.class,
     CasCoreHttpConfiguration.class,
@@ -67,10 +78,12 @@ import org.springframework.test.context.ContextConfiguration;
     GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration.class,
     AopAutoConfiguration.class,
     CasCoreConfiguration.class,
+    CasCookieConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     CasCoreUtilConfiguration.class,
     RefreshAutoConfiguration.class,
-    CasCoreWebConfiguration.class},
+    CasCoreWebConfiguration.class
+},
     properties = {
         "cas.authn.mfa.gauth.crypto.enabled=false",
         "cas.authn.mfa.gauth.couchDb.dbName=gauth_token",
@@ -79,7 +92,6 @@ import org.springframework.test.context.ContextConfiguration;
     })
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @EnableScheduling
-@ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
 @Getter
 @EnabledIfContinuousIntegration
 public class GoogleAuthenticatorCouchDbTokenRepositoryTests extends BaseOneTimeTokenRepositoryTests {
@@ -96,7 +108,7 @@ public class GoogleAuthenticatorCouchDbTokenRepositoryTests extends BaseOneTimeT
     public void setUp() {
         couchDbFactory.getCouchDbInstance().createDatabaseIfNotExists(couchDbFactory.getCouchDbConnector().getDatabaseName());
         couchDbRepository.initStandardDesignDocument();
-        oneTimeTokenAuthenticatorTokenRepository.removeAll();
+        oneTimeTokenAuthenticatorTokenRepository.getObject().removeAll();
     }
 
     @AfterEach

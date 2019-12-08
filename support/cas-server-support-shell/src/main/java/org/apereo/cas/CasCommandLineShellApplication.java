@@ -8,6 +8,7 @@ import org.springframework.boot.Banner;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.actuate.autoconfigure.metrics.LogbackMetricsAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.batch.BatchAutoConfiguration;
 import org.springframework.boot.autoconfigure.cassandra.CassandraAutoConfiguration;
 import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration;
 import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
@@ -19,6 +20,8 @@ import org.springframework.boot.autoconfigure.jersey.JerseyAutoConfiguration;
 import org.springframework.boot.autoconfigure.jmx.JmxAutoConfiguration;
 import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
+import org.springframework.boot.autoconfigure.quartz.QuartzAutoConfiguration;
+import org.springframework.boot.autoconfigure.task.TaskExecutionAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -42,7 +45,10 @@ import org.springframework.scheduling.annotation.EnableAsync;
     MongoDataAutoConfiguration.class,
     CassandraAutoConfiguration.class,
     DataSourceTransactionManagerAutoConfiguration.class,
-    RedisRepositoriesAutoConfiguration.class
+    RedisRepositoriesAutoConfiguration.class,
+    BatchAutoConfiguration.class,
+    TaskExecutionAutoConfiguration.class,
+    QuartzAutoConfiguration.class
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableAsync

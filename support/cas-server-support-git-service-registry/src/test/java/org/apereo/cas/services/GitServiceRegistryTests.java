@@ -9,14 +9,19 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.eclipse.jgit.api.Git;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.TestPropertySource;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link GitServiceRegistryTests}.
@@ -29,11 +34,17 @@ import java.io.File;
     CasCoreServicesConfiguration.class,
     CasCoreUtilConfiguration.class,
     CasCoreAuthenticationMetadataConfiguration.class,
-    RefreshAutoConfiguration.class})
+    RefreshAutoConfiguration.class,
+    MailSenderAutoConfiguration.class
+},
+    properties = {
+        "spring.mail.host=localhost",
+        "spring.mail.port=25000",
+        "spring.mail.testConnection=false",
+        "cas.serviceRegistry.git.signCommits=false",
+        "cas.serviceRegistry.git.repositoryUrl=file:/tmp/cas-sample-data.git"
+    })
 @Slf4j
-@TestPropertySource(properties =
-    "cas.serviceRegistry.git.repositoryUrl=file:/tmp/cas-sample-data.git"
-)
 @Tag("FileSystem")
 public class GitServiceRegistryTests extends AbstractServiceRegistryTests {
 
@@ -41,17 +52,29 @@ public class GitServiceRegistryTests extends AbstractServiceRegistryTests {
     @Qualifier("serviceRegistry")
     private ServiceRegistry serviceRegistry;
 
-    static {
+    @BeforeAll
+    public static void setup() {
         try {
+            FileUtils.deleteDirectory(new File("/tmp/cas-sample-data"));
             val gitDir = new File(FileUtils.getTempDirectory(), "cas-service-registry");
             if (gitDir.exists()) {
                 FileUtils.deleteDirectory(gitDir);
             }
             val git = Git.init().setDirectory(gitDir).setBare(false).call();
-            LOGGER.debug(git.getRepository().getBranch());
-            git.commit().setMessage("Initial commit").call();
+            FileUtils.write(new File(gitDir, "readme.txt"), "text", StandardCharsets.UTF_8);
+            git.commit().setSign(false).setMessage("Initial commit").call();
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
+            fail(e.getMessage(), e);
+        }
+    }
+
+    @AfterAll
+    public static void cleanUp() throws Exception {
+        FileUtils.deleteDirectory(new File("/tmp/cas-sample-data"));
+        val gitDir = new File(FileUtils.getTempDirectory(), "cas-service-registry");
+        if (gitDir.exists()) {
+            FileUtils.deleteDirectory(gitDir);
         }
     }
 

@@ -6,6 +6,7 @@ import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustS
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.context.SpringBootTest;
 
 /**
  * This is {@link InMemoryMultifactorAuthenticationTrustStorageTests}.
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
  * @since 5.3.0
  */
 @Getter
+@SpringBootTest(classes = AbstractMultifactorAuthenticationTrustStorageTests.SharedTestConfiguration.class)
 public class InMemoryMultifactorAuthenticationTrustStorageTests extends AbstractMultifactorAuthenticationTrustStorageTests {
 
     @Autowired

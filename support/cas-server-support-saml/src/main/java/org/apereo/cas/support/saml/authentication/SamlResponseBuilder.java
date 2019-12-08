@@ -100,7 +100,7 @@ public class SamlResponseBuilder {
         LOGGER.debug("Built assertion conditions for issuer [{}] and service [{}] ", this.issuer, service.getId());
 
         val subject = this.samlObjectBuilder.newSubject(principal.getId());
-        LOGGER.debug("Built subject for principal [{}]", principal);
+        LOGGER.debug("Built subject for principal [{}]", subject);
 
         val attributesToSend = prepareSamlAttributes(service, authnAttributes, principalAttributes);
         LOGGER.debug("Authentication statement shall include these attributes [{}]", attributesToSend);

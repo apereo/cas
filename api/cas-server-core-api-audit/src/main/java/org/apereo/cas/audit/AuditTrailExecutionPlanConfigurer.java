@@ -15,4 +15,12 @@ public interface AuditTrailExecutionPlanConfigurer {
      * @param plan the plan
      */
     void configureAuditTrailExecutionPlan(AuditTrailExecutionPlan plan);
+    /**
+     * Gets name.
+     *
+     * @return the name
+     */
+    default String getName() {
+        return getClass().getSimpleName();
+    }
 }

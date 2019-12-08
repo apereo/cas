@@ -18,12 +18,14 @@ import javax.persistence.Entity;
  *
  * @author Scott Battaglia
  * @since 3.1
+ * @deprecated Since 6.2, to be replaced with CAS SAML2 identity provider functionality.
  */
 @Entity
 @DiscriminatorValue("google")
 @Getter
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
+@Deprecated
 public class GoogleAccountsService extends AbstractWebApplicationService {
 
     private static final long serialVersionUID = 6678711809842282833L;

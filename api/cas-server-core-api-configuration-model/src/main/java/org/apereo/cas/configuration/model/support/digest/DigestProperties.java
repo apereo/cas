@@ -36,7 +36,7 @@ public class DigestProperties implements Serializable {
      * Static/stub list of username and passwords to accept
      * if no other account store is defined.
      */
-    private Map<String, String> users = new HashMap<>();
+    private Map<String, String> users = new HashMap<>(0);
 
     /**
      * Name of the authentication handler.

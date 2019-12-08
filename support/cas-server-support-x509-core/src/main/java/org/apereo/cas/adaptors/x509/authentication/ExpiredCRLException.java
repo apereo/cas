@@ -8,6 +8,7 @@ import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.chrono.ChronoZonedDateTime;
+import java.util.Optional;
 
 /**
  * Exception describing an expired CRL condition.
@@ -89,7 +90,7 @@ public class ExpiredCRLException extends GeneralSecurityException {
      * @return Returns the expirationDate.
      */
     public ZonedDateTime getExpirationDate() {
-        return this.expirationDate == null ? null : ZonedDateTime.from(this.expirationDate);
+        return Optional.ofNullable(this.expirationDate).map(ZonedDateTime::from).orElse(null);
     }
 
     @Override

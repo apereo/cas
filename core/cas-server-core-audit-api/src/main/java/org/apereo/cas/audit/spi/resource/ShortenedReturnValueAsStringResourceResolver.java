@@ -26,6 +26,6 @@ public class ShortenedReturnValueAsStringResourceResolver extends ReturnValueAsS
                 .collect(Collectors.toList())
                 .toArray(ArrayUtils.EMPTY_STRING_ARRAY);
         }
-        return resources;
+        return null;
     }
 }

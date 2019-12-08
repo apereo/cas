@@ -15,7 +15,6 @@ import org.springframework.test.context.TestPropertySource;
  *  - This configuration doesn't retrieve any attributes as part of the authentication.
  *  - If the pool passivator is {@code CLOSE}, and the both success and failure tests run, the failure test will
  *      fail with wrong exception type. If multiple success tests are added, every other test will fail.
- *  - No SSL or startTls due to JDK-8217606 which currently impacts {@link JndiProvider}
  * @author Hal Deadman
  * @since 6.1.0
  */
@@ -23,7 +22,7 @@ import org.springframework.test.context.TestPropertySource;
     "cas.authn.ldap[0].type=AD",
     "cas.authn.ldap[0].ldapUrl=" + BaseActiveDirectoryLdapAuthenticationHandlerTests.AD_LDAP_URL,
     "cas.authn.ldap[0].useSsl=false",
-    "cas.authn.ldap[0].useStartTls=false",
+    "cas.authn.ldap[0].useStartTls=true",
     "cas.authn.ldap[0].subtreeSearch=true",
     "cas.authn.ldap[0].baseDn=cn=Users,dc=cas,dc=example,dc=org",
     "cas.authn.ldap[0].dnFormat=CAS\\\\%s",
@@ -35,6 +34,7 @@ import org.springframework.test.context.TestPropertySource;
     "cas.authn.ldap[0].providerClass=org.ldaptive.provider.jndi.JndiProvider",
     "cas.authn.ldap[0].trustStore=" + BaseActiveDirectoryLdapAuthenticationHandlerTests.AD_TRUST_STORE,
     "cas.authn.ldap[0].trustStoreType=JKS",
+    "cas.authn.ldap[0].trustStorePassword=changeit",
     "cas.authn.ldap[0].hostnameVerifier=DEFAULT"
 })
 @EnabledIfContinuousIntegration

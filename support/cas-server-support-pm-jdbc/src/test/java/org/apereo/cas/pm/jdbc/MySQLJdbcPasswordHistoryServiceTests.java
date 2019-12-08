@@ -14,6 +14,7 @@ import org.springframework.test.context.TestPropertySource;
  * @since 6.1.0
  */
 @TestPropertySource(properties = {
+    "cas.authn.pm.history.enabled=true",
     "cas.authn.pm.jdbc.user=root",
     "cas.authn.pm.jdbc.password=password",
     "cas.authn.pm.jdbc.driverClass=com.mysql.cj.jdbc.Driver",

@@ -30,8 +30,10 @@ import java.util.stream.Collectors;
  * @author Adam Rybicki
  * @author Andrew Tillinghast
  * @since 3.5
+ * @deprecated Since 6.2, due to Ehcache 2.x being unmaintained. Other registries are available, including Ehcache 3.x.
  */
 @Slf4j
+@Deprecated
 public class EhCacheTicketRegistry extends AbstractTicketRegistry {
 
 
@@ -150,7 +152,7 @@ public class EhCacheTicketRegistry extends AbstractTicketRegistry {
     public Collection<? extends Ticket> getTickets() {
         return this.ticketCatalog.findAll().stream()
             .map(this::getTicketCacheFor)
-            .flatMap(map -> getAllExpired(map).values().stream())
+            .flatMap(map -> getAllUnexpired(map).values().stream())
             .map(e -> (Ticket) e.getObjectValue())
             .map(this::decodeTicket)
             .collect(Collectors.toSet());
@@ -168,7 +170,7 @@ public class EhCacheTicketRegistry extends AbstractTicketRegistry {
         return this.cacheManager.getCache(mapName);
     }
 
-    private static Map<Object, Element> getAllExpired(final Ehcache map) {
+    private static Map<Object, Element> getAllUnexpired(final Ehcache map) {
         try {
             return map.getAll(map.getKeysWithExpiryCheck());
         } catch (final Exception e) {

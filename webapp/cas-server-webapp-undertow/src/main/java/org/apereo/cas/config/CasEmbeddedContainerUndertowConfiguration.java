@@ -3,7 +3,6 @@ package org.apereo.cas.config;
 import org.apereo.cas.CasEmbeddedContainerUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -18,14 +17,10 @@ import org.springframework.core.Ordered;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration("casEmbeddedContainerUndertowConfiguration")
+@Configuration(value = "casEmbeddedContainerUndertowConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnProperty(name = CasEmbeddedContainerUtils.EMBEDDED_CONTAINER_CONFIG_ACTIVE, havingValue = "true")
 @AutoConfigureBefore(ServletWebServerFactoryAutoConfiguration.class)
 @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
 public class CasEmbeddedContainerUndertowConfiguration {
-
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
 }

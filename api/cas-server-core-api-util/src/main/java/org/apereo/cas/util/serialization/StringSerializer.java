@@ -149,7 +149,7 @@ public interface StringSerializer<T> extends Serializable {
      */
     private static <T> Collection<T> makeCollectionOf(T elem) {
         if (elem != null) {
-            val list = new ArrayList<T>();
+            val list = new ArrayList<T>(1);
             list.add(elem);
             return list;
         }

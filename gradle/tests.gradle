@@ -16,11 +16,29 @@ if (hasTestsOfCategory(project, "CosmosDb")) {
     }
 }
 
-if (hasTestsOfCategory(project, "AmazonWebServicesS3")) {
-    task testAWSS3(type: Test) {
-        enabled = shouldTest(project, "AmazonWebServicesS3")
+if (hasTestsOfCategory(project, "ZooKeeper")) {
+    task testZooKeeper(type: Test) {
+        enabled = shouldTest(project, "ZooKeeper")
         useJUnitPlatform {
-            includeTags "AmazonWebServicesS3"
+            includeTags "ZooKeeper"
+        }
+    }
+}
+
+if (hasTestsOfCategory(project, "ActiveMQ")) {
+    task testActiveMQ(type: Test) {
+        enabled = shouldTest(project, "ActiveMQ")
+        useJUnitPlatform {
+            includeTags "ActiveMQ"
+        }
+    }
+}
+
+if (hasTestsOfCategory(project, "AmazonWebServices")) {
+    task testAWSS3(type: Test) {
+        enabled = shouldTest(project, "AmazonWebServices")
+        useJUnitPlatform {
+            includeTags "AmazonWebServices"
         }
     }
 }
@@ -97,6 +115,15 @@ if (hasTestsOfCategory(project, "DynamoDb")) {
     }
 }
 
+if (hasTestsOfCategory(project, "Ehcache")) {
+    task testEhcache(type: Test) {
+        enabled = shouldTest(project, "Ehcache")
+        useJUnitPlatform {
+            includeTags "Ehcache"
+        }
+    }
+}
+
 if (hasTestsOfCategory(project, "FileSystem")) {
     task testFileSystem(type: Test) {
         enabled = shouldTest(project, "FileSystem")
@@ -126,6 +153,15 @@ if (hasTestsOfCategory(project, "InfluxDb")) {
         enabled = shouldTest(project, "InfluxDb")
         useJUnitPlatform {
             includeTags "InfluxDb"
+        }
+    }
+}
+
+if (hasTestsOfCategory(project, "Oracle")) {
+    task testOracle(type: Test) {
+        enabled = shouldTest(project, "Oracle")
+        useJUnitPlatform {
+            includeTags "Oracle"
         }
     }
 }
@@ -203,6 +239,15 @@ if (hasTestsOfCategory(project, "OAuth")) {
     }
 }
 
+if (hasTestsOfCategory(project, "UMA")) {
+    task testUma(type: Test) {
+        enabled = shouldTest(project, "UMA")
+        useJUnitPlatform {
+            includeTags "UMA"
+        }
+    }
+}
+
 if (hasTestsOfCategory(project, "OIDC")) {
     task testOIDC(type: Test) {
         enabled = shouldTest(project, "OIDC")
@@ -221,14 +266,24 @@ if (hasTestsOfCategory(project, "SAML")) {
     }
 }
 
+if (hasTestsOfCategory(project, "JDBC")) {
+    task testJDBC(type: Test) {
+        enabled = shouldTest(project, "JDBC")
+        useJUnitPlatform {
+            includeTags "JDBC"
+        }
+    }
+}
+
 test {
     useJUnitPlatform {
-        excludeTags "Cassandra", "CosmosDb", "Couchbase", "DynamoDb",
-                "FileSystem", "Ignite", "InfluxDb", "CouchDb",
-                "Ldap", "Mail", "MariaDb", "Memcached",
+        excludeTags "Cassandra", "CosmosDb", "Couchbase", "CouchDb", "DynamoDb",
+                "Ehcache", "FileSystem", "Ignite", "InfluxDb",
+                "Ldap", "Mail", "MariaDb", "Memcached", "JDBC",
                 "MongoDb", "MsSqlServer", "MySQL", "Postgres", "Redis",
-                "Radius", "AmazonWebServicesS3", "RestfulApi", "Groovy",
-                "OAuth", "OIDC", "SAML"
+                "Radius", "AmazonWebServices", "RestfulApi", "Groovy",
+                "OAuth", "OIDC", "SAML", "UMA", "Oracle", "ActiveMQ",
+                "ZooKeeper"
     }
     enabled = "SIMPLE".equalsIgnoreCase(rootProject.testCategoryType) && !Boolean.getBoolean("skipTests")
 }

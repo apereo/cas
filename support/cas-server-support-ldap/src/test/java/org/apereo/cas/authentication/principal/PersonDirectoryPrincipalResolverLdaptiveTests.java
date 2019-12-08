@@ -18,7 +18,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.TestPropertySource;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -36,8 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     CasPersonDirectoryConfiguration.class,
     RefreshAutoConfiguration.class
-})
-@TestPropertySource(properties = {
+}, properties = {
     "cas.authn.attributeRepository.ldap[0].baseDn=dc=example,dc=org",
     "cas.authn.attributeRepository.ldap[0].ldapUrl=ldap://localhost:10389",
     "cas.authn.attributeRepository.ldap[0].searchFilter=cn={user}",

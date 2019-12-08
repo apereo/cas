@@ -103,7 +103,7 @@ public abstract class BaseSamlRegisteredServiceMetadataResolver implements SamlR
             val metadataResource = ResourceUtils.buildInputStreamResourceFrom(metadataDocument.getDecodedValue(), desc);
             val metadataResolver = new InMemoryResourceMetadataResolver(metadataResource, configBean);
 
-            val metadataFilterList = new ArrayList<MetadataFilter>();
+            val metadataFilterList = new ArrayList<MetadataFilter>(1);
             if (StringUtils.isNotBlank(metadataDocument.getSignature())) {
                 val signatureResource = ResourceUtils.buildInputStreamResourceFrom(metadataDocument.getSignature(), desc);
                 buildSignatureValidationFilterIfNeeded(service, metadataFilterList, signatureResource);
@@ -149,7 +149,7 @@ public abstract class BaseSamlRegisteredServiceMetadataResolver implements SamlR
      */
     protected void configureAndInitializeSingleMetadataResolver(final AbstractMetadataResolver metadataProvider,
                                                                 final SamlRegisteredService service) throws Exception {
-        configureAndInitializeSingleMetadataResolver(metadataProvider, service, new ArrayList<>());
+        configureAndInitializeSingleMetadataResolver(metadataProvider, service, new ArrayList<>(0));
     }
 
     /**

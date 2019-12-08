@@ -8,7 +8,7 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.authenticator.Authenticators;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
-import org.apereo.cas.ticket.refreshtoken.RefreshToken;
+import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
 
@@ -41,7 +41,7 @@ public class OAuth20RefreshTokenGrantTypeTokenRequestValidatorTests {
     private OAuth20TokenRequestValidator validator;
 
     private void registerTicket(final String name) {
-        val oauthCode = mock(RefreshToken.class);
+        val oauthCode = mock(OAuth20RefreshToken.class);
         when(oauthCode.getId()).thenReturn(name);
         when(oauthCode.isExpired()).thenReturn(false);
         when(oauthCode.getAuthentication()).thenReturn(RegisteredServiceTestUtils.getAuthentication());

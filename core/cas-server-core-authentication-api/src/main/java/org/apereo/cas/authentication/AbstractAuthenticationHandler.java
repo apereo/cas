@@ -65,7 +65,7 @@ public abstract class AbstractAuthenticationHandler implements AuthenticationHan
                                          final PrincipalFactory principalFactory, final Integer order) {
         this.name = StringUtils.isNotBlank(name) ? name : getClass().getSimpleName();
         this.servicesManager = servicesManager;
-        this.principalFactory = principalFactory == null ? new DefaultPrincipalFactory() : principalFactory;
+        this.principalFactory = Objects.requireNonNullElseGet(principalFactory, DefaultPrincipalFactory::new);
         this.order = Objects.requireNonNullElseGet(order, () -> RandomUtils.nextInt(1, Integer.MAX_VALUE));
     }
 }

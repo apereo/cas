@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.opensaml.messaging.decoder.MessageDecodingException;
 import org.opensaml.saml.saml2.binding.decoding.impl.HTTPRedirectDeflateDecoder;
@@ -19,7 +18,6 @@ import java.io.InputStream;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Slf4j
 @Getter
 @Setter
 @AllArgsConstructor

@@ -13,6 +13,7 @@ import org.apereo.cas.services.ServicesManager;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -48,6 +49,9 @@ public class JsonResourceAuthenticationHandler extends AbstractUsernamePasswordA
         this.resource = resource;
         this.mapper = new ObjectMapper()
             .findAndRegisterModules()
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true)
+            .configure(DeserializationFeature.READ_ENUMS_USING_TO_STRING, false)
+            .configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true)
             .enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
     }
 
@@ -106,7 +110,7 @@ public class JsonResourceAuthenticationHandler extends AbstractUsernamePasswordA
     private Map<String, CasUserAccount> readAccountsFromResource() throws PreventedException {
         try {
             return mapper.readValue(resource.getInputStream(),
-                new TypeReference<Map<String, CasUserAccount>>() {
+                new TypeReference<>() {
                 });
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);

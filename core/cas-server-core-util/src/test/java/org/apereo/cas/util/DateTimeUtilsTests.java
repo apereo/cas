@@ -3,8 +3,8 @@ package org.apereo.cas.util;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
@@ -21,12 +21,12 @@ public class DateTimeUtilsTests {
 
     @Test
     public void verifyParsingDateAsLocalDateTime() {
-        assertNotNull(DateTimeUtils.localDateTimeOf(LocalDateTime.now().toString()));
+        assertNotNull(DateTimeUtils.localDateTimeOf(LocalDateTime.now(ZoneId.systemDefault()).toString()));
     }
 
     @Test
     public void verifyParsingDateAsLocalDate() {
-        assertNotNull(DateTimeUtils.localDateTimeOf(LocalDate.now().toString()));
+        assertNotNull(DateTimeUtils.localDateTimeOf(LocalDateTime.now(ZoneId.systemDefault()).toString()));
     }
 
     @Test

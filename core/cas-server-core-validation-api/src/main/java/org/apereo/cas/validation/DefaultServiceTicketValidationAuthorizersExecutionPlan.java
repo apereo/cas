@@ -13,7 +13,7 @@ import java.util.List;
  */
 @Getter
 public class DefaultServiceTicketValidationAuthorizersExecutionPlan implements ServiceTicketValidationAuthorizersExecutionPlan {
-    private final List<ServiceTicketValidationAuthorizer> authorizers = new ArrayList<>();
+    private final List<ServiceTicketValidationAuthorizer> authorizers = new ArrayList<>(0);
 
     @Override
     public void registerAuthorizer(final ServiceTicketValidationAuthorizer authz) {

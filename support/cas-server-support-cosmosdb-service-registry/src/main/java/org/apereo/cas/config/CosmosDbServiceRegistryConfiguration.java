@@ -4,7 +4,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.cosmosdb.CosmosDbObjectFactory;
 import org.apereo.cas.services.CosmosDbServiceRegistry;
 import org.apereo.cas.services.ServiceRegistry;
-import org.apereo.cas.services.ServiceRegistryExecutionPlan;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServiceRegistryListener;
 
@@ -21,7 +20,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -47,9 +45,6 @@ public class CosmosDbServiceRegistryConfiguration {
 
     @Autowired
     private ApplicationContext applicationContext;
-
-    @Autowired
-    private ApplicationEventPublisher eventPublisher;
 
     @Autowired
     @Qualifier("serviceRegistryListeners")
@@ -80,18 +75,13 @@ public class CosmosDbServiceRegistryConfiguration {
         db.createCollectionIfNotExists(cosmosDb.getCollection(), PARTITION_KEY_FIELD_NAME,
             cosmosDb.getThroughput(), indexingPolicy);
         return new CosmosDbServiceRegistry(db, dbFactory, cosmosDb.getCollection(),
-            cosmosDb.getDatabase(), eventPublisher, serviceRegistryListeners.getIfAvailable());
+            cosmosDb.getDatabase(), applicationContext, serviceRegistryListeners.getObject());
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "cosmosDbServiceRegistryExecutionPlanConfigurer")
     public ServiceRegistryExecutionPlanConfigurer cosmosDbServiceRegistryExecutionPlanConfigurer() {
-        return new ServiceRegistryExecutionPlanConfigurer() {
-            @Override
-            public void configureServiceRegistry(final ServiceRegistryExecutionPlan plan) {
-                plan.registerServiceRegistry(cosmosDbServiceRegistry());
-            }
-        };
+        return plan -> plan.registerServiceRegistry(cosmosDbServiceRegistry());
     }
 
 }

@@ -13,12 +13,13 @@ import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
@@ -33,30 +34,33 @@ import java.util.List;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-@Configuration("casCoreAuthenticationConfiguration")
+@Configuration(value = "casCoreAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class CasCoreAuthenticationConfiguration {
 
     @Autowired
-    private ApplicationEventPublisher applicationEventPublisher;
+    private ConfigurableApplicationContext applicationContext;
 
     @Autowired
     private CasConfigurationProperties casProperties;
 
+    @Autowired
+    @Qualifier("authenticationEventExecutionPlan")
+    private ObjectProvider<AuthenticationEventExecutionPlan> authenticationEventExecutionPlan;
+
     @Bean
-    public AuthenticationTransactionManager authenticationTransactionManager(@Qualifier("casAuthenticationManager") final AuthenticationManager authenticationManager) {
-        return new DefaultAuthenticationTransactionManager(applicationEventPublisher, authenticationManager);
+    public AuthenticationTransactionManager authenticationTransactionManager() {
+        return new DefaultAuthenticationTransactionManager(applicationContext, casAuthenticationManager());
     }
 
     @ConditionalOnMissingBean(name = "casAuthenticationManager")
-    @Autowired
     @Bean
-    public AuthenticationManager casAuthenticationManager(@Qualifier("authenticationEventExecutionPlan") final AuthenticationEventExecutionPlan authenticationEventExecutionPlan) {
+    public AuthenticationManager casAuthenticationManager() {
         return new PolicyBasedAuthenticationManager(
-            authenticationEventExecutionPlan,
+            authenticationEventExecutionPlan.getObject(),
             casProperties.getPersonDirectory().isPrincipalResolutionFailureFatal(),
-            applicationEventPublisher
+            applicationContext
         );
     }
 

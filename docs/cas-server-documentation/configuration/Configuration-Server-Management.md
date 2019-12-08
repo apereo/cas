@@ -111,21 +111,21 @@ The following endpoints are secured and exposed by the configuration server:
 |-----------------------------------|------------------------------------------
 | `/encrypt`                        | Accepts a `POST` to encrypt CAS configuration settings.
 | `/decrypt`                        | Accepts a `POST` to decrypt CAS configuration settings.
-| `/actuator/refresh`                        | Accepts a `POST` and attempts to refresh the internal state of configuration server.
-| `/actuator/actuator/env`                   | Accepts a `GET` and describes all configuration sources of the configuration server.
-| `/actuator/cas/default`                    | Describes what the configuration server knows about the `default` settings profile.
-| `/actuator/cas/native`                     | Describes what the configuration server knows about the `native` settings profile.
+| `/actuator/refresh`               | Accepts a `POST` and attempts to refresh the internal state of configuration server.
+| `/actuator/env`                   | Accepts a `GET` and describes all configuration sources of the configuration server.
+| `/actuator/cas/default`           | Describes what the configuration server knows about the `default` settings profile.
+| `/actuator/cas/native`            | Describes what the configuration server knows about the `native` settings profile.
 
 Once you have the configuration server deployed and assuming the credentials used to secure the configuration server match the example below, you can observe the collection of settings via:
 
 ```bash
-curl -u casuser:Mellon http://config.server.url:8888/casconfigserver/cas/native
+curl -u casuser:Mellon https://config.server.url:8888/casconfigserver/cas/native
 ```
 
 Assuming actuator endpoints are enabled in the configuration, you can also observe the collection of property sources that provide settings to the configuration server:
 
 ```bash
-curl -u casuser:Mellon http://localhost:8888/casconfigserver/actuator/env
+curl -u casuser:Mellon https://config.server.url:8888/casconfigserver/actuator/env
 ```
 
 <div class="alert alert-info"><strong>Actuator Endpoints</strong><p>
@@ -140,7 +140,7 @@ The properties to configure the CAS server web application as the client of the 
 must necessarily be read in before the rest of the application’s configuration is read from the configuration server, during the *bootstrap* phase.
 
 ```properties
-spring.cloud.config.uri=http://casuser:Mellon@localhost:8888/casconfigserver
+spring.cloud.config.uri=https://casuser:Mellon@config.server.url:8888/casconfigserver
 spring.cloud.config.profile=native
 spring.cloud.config.enabled=true
 spring.profiles.active=default

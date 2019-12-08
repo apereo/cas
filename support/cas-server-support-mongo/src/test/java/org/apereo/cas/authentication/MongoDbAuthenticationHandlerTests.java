@@ -11,6 +11,7 @@ import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
+import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
@@ -33,7 +34,6 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -57,16 +57,14 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreAuthenticationHandlersConfiguration.class,
     CasCoreHttpConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
+    CasCoreTicketIdGeneratorsConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
     CasPersonDirectoryConfiguration.class,
     CasCoreWebConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class,
     RefreshAutoConfiguration.class
-})
-@EnableScheduling
-@TestPropertySource(properties = {
+}, properties = {
     "cas.authn.mongo.collection=users",
     "cas.authn.mongo.databaseName=cas",
     "cas.authn.mongo.clientUri=mongodb://root:secret@localhost:27017/admin",
@@ -75,6 +73,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.mongo.passwordAttribute=password",
     "cas.authn.pac4j.typedIdUsed=false"
 })
+@EnableScheduling
 @EnabledIfContinuousIntegration
 @Tag("MongoDb")
 @EnableConfigurationProperties(CasConfigurationProperties.class)

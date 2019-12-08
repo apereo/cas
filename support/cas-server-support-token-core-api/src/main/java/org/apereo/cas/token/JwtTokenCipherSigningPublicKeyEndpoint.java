@@ -8,7 +8,6 @@ import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
@@ -26,7 +25,6 @@ import java.security.spec.RSAPublicKeySpec;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Slf4j
 @Endpoint(id = "jwtTicketSigningPublicKey", enableByDefault = false)
 public class JwtTokenCipherSigningPublicKeyEndpoint extends BaseCasActuatorEndpoint {
     private final CipherExecutor tokenCipherExecutor;
@@ -49,7 +47,6 @@ public class JwtTokenCipherSigningPublicKeyEndpoint extends BaseCasActuatorEndpo
      */
     @ReadOperation(produces = MediaType.TEXT_PLAIN_VALUE)
     public String fetchPublicKey(@Nullable final String service) throws Exception {
-        val factory = KeyFactory.getInstance("RSA");
         var signingKey = tokenCipherExecutor.getSigningKey();
 
         if (StringUtils.isNotBlank(service)) {
@@ -66,6 +63,7 @@ public class JwtTokenCipherSigningPublicKeyEndpoint extends BaseCasActuatorEndpo
 
         if (signingKey instanceof RSAPrivateCrtKey) {
             val rsaSigningKey = (RSAPrivateCrtKey) signingKey;
+            val factory = KeyFactory.getInstance("RSA");
             val publicKey = factory.generatePublic(new RSAPublicKeySpec(rsaSigningKey.getModulus(), rsaSigningKey.getPublicExponent()));
             return EncodingUtils.encodeBase64(publicKey.getEncoded());
         }

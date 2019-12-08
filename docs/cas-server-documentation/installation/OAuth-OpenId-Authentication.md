@@ -163,6 +163,7 @@ The following fields are supported:
 | `supportedResponseTypes`          | Collection of supported response types for this service.
 | `bypassApprovalPrompt`            | Whether approval prompt/consent screen should be bypassed. Default is `false`.
 | `generateRefreshToken`            | Whether a refresh token should be generated along with the access token. Default is `false`.
+| `renewRefreshToken`               | Whether the existing refresh token should be expired and a new one generated (and sent along) whenever a new access token is requested (with `grant_type` = `refresh_token`). Only possible if `generateRefreshToken` is set to `true`. Default is `false`.
 | `jwtAccessToken`                  | Whether access tokens should be created as JWTs. Default is `false`.
 | `serviceId`                       | The pattern that authorizes the redirect URI(s), or same as `clientId` in case `redirect_uri` is not required by the grant type (i.e `client_credentials`, etc).
 
@@ -171,6 +172,24 @@ The following fields are supported:
 Service definitions are typically managed by the [service management](../services/Service-Management.html) facility.
 
 <div class="alert alert-warning"><strong>Usage Warning!</strong><p>CAS today does not strictly enforce the collection of authorized supported response/grant types for backward compatibility reasons. This means that if left undefined, all grant and response types may be allowed by the service definition and related policies. Do please note that this behavior is <strong>subject to change</strong> in future releases and thus, it is strongly recommended that all authorized grant/response types for each profile be declared in the service definition immediately to avoid surprises in the future.</p></div>
+
+### Encryptable Client Secrets
+
+Client secrets for OAuth relying parties may be defined as encrypted values prefixed with `{cas-cipher}`:
+
+```json
+{
+  "@class": "org.apereo.cas.support.oauth.services.OAuthRegisteredService",
+  "clientId": "clientid",
+  "clientSecret": "{cas-cipher}eyJhbGciOiJIUzUxMiIs...",
+  "serviceId" : "^(https|imaps)://<redirect-uri>.*",
+  "name": "Sample",
+  "id": 100
+}
+``` 
+
+Client secrets may be encrypted using CAS-provided cipher operations either manually or via the [CAS Command-line shell](Configuring-Commandline-Shell.html).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#oauth2).
 
 ### Attribute Release
 
@@ -280,12 +299,32 @@ By default, OAuth access tokens are created as opaque identifiers. There is also
       "accessTokenAsJwtEncryptionKey" : {
            "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
            "values" : [ "java.util.HashSet", [ "..." ] ]
-      }
+      },
+      "accessTokenAsJwtSigningEnabled" : {
+         "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
+         "values" : [ "java.util.HashSet", [ "true" ] ]
+      },
+      "accessTokenAsJwtEncryptionEnabled" : {
+         "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
+         "values" : [ "java.util.HashSet", [ "true" ] ]
+      },
+      "accessTokenAsJwtCipherStrategyType" : {
+         "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
+         "values" : [ "java.util.HashSet", [ "ENCRYPT_AND_SIGN" ] ]
+      } 
     }
 }
 ```
 
-Signing and encryption keys may also be defined on a per-service basis, or globally via CAS settings. To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#oauth2).
+The following cipher strategy types are available:
+
+| Type                | Description
+|---------------------|---------------------------------------------------
+| `ENCRYPT_AND_SIGN`  | Default strategy; encrypt values, and then sign. 
+| `SIGN_AND_ENCRYPT`  | Sign values, and then encrypt.
+
+Signing and encryption keys may also be defined on a per-service basis, or globally via CAS settings.
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#oauth2).
 
 ## OAuth User Profile Structure
 

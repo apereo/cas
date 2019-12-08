@@ -1,11 +1,12 @@
 package org.apereo.cas.support.oauth.validator.token;
 
 import org.apereo.cas.audit.AuditableContext;
+import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
-import org.apereo.cas.ticket.code.OAuthCode;
+import org.apereo.cas.ticket.code.OAuth20Code;
 import org.apereo.cas.util.HttpRequestUtils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -38,18 +39,21 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidator extends Base
         val request = context.getNativeRequest();
         val clientId = uProfile.getId();
         val redirectUri = request.getParameter(OAuth20Constants.REDIRECT_URI);
-        val clientRegisteredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(
+        
+        LOGGER.debug("Locating registered service for client id [{}]", clientId);
+        val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(
             getConfigurationContext().getServicesManager(), clientId);
-
+        RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
+        
         LOGGER.debug("Received grant type [{}] with client id [{}] and redirect URI [{}]", grantType, clientId, redirectUri);
         val valid = HttpRequestUtils.doesParameterExist(request, OAuth20Constants.REDIRECT_URI)
             && HttpRequestUtils.doesParameterExist(request, OAuth20Constants.CODE)
-            && OAuth20Utils.checkCallbackValid(clientRegisteredService, redirectUri);
+            && OAuth20Utils.checkCallbackValid(registeredService, redirectUri);
 
         if (valid) {
             val code = context.getRequestParameter(OAuth20Constants.CODE)
                 .map(String::valueOf).orElse(StringUtils.EMPTY);
-            val token = getConfigurationContext().getTicketRegistry().getTicket(code, OAuthCode.class);
+            val token = getConfigurationContext().getTicketRegistry().getTicket(code, OAuth20Code.class);
             if (token == null || token.isExpired()) {
                 LOGGER.warn("Request OAuth code [{}] is not found or has expired", code);
                 return false;
@@ -68,14 +72,14 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidator extends Base
             val accessResult = getConfigurationContext().getRegisteredServiceAccessStrategyEnforcer().execute(audit);
             accessResult.throwExceptionIfNeeded();
 
-            if (!clientRegisteredService.equals(codeRegisteredService)) {
+            if (!registeredService.equals(codeRegisteredService)) {
                 LOGGER.warn("The OAuth code [{}] issued to service [{}] does not match the registered service [{}] provided in the request given the redirect URI [{}]",
-                    code, id, clientRegisteredService.getName(), redirectUri);
+                    code, id, registeredService.getName(), redirectUri);
                 return false;
             }
 
-            if (!isGrantTypeSupportedBy(clientRegisteredService, grantType)) {
-                LOGGER.warn("Requested grant type [{}] is not authorized by service definition [{}]", getGrantType(), clientRegisteredService.getServiceId());
+            if (!isGrantTypeSupportedBy(registeredService, grantType)) {
+                LOGGER.warn("Requested grant type [{}] is not authorized by service definition [{}]", getGrantType(), registeredService.getServiceId());
                 return false;
             }
 

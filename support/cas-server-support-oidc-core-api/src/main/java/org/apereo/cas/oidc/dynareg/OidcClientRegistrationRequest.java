@@ -29,10 +29,10 @@ public class OidcClientRegistrationRequest implements Serializable {
     private static final long serialVersionUID = 1832102135613155844L;
 
     @JsonProperty("redirect_uris")
-    private List<String> redirectUris = new ArrayList<>();
+    private List<String> redirectUris = new ArrayList<>(0);
 
     @JsonProperty("default_acr_values")
-    private List<String> defaultAcrValues = new ArrayList<>();
+    private List<String> defaultAcrValues = new ArrayList<>(0);
 
     @JsonProperty("registration_client_uri")
     private String registrationClientUri;
@@ -68,10 +68,10 @@ public class OidcClientRegistrationRequest implements Serializable {
     private String tokenEndpointAuthMethod;
 
     @JsonProperty("grant_types")
-    private List<String> grantTypes = new ArrayList<>();
+    private List<String> grantTypes = new ArrayList<>(0);
 
     @JsonProperty("response_types")
-    private List<String> responseTypes = new ArrayList<>();
+    private List<String> responseTypes = new ArrayList<>(0);
 
     @JsonProperty("jwks_uri")
     private String jwksUri;
@@ -93,11 +93,11 @@ public class OidcClientRegistrationRequest implements Serializable {
     private String sectorIdentifierUri;
 
     @JsonProperty("contacts")
-    private List<String> contacts = new ArrayList<>();
+    private List<String> contacts = new ArrayList<>(0);
 
     @JsonProperty("request_object_signing_alg")
     private String requestObjectSigningAlg;
 
     @JsonProperty("post_logout_redirect_uris")
-    private List<String> postLogoutRedirectUris = new ArrayList<>();
+    private List<String> postLogoutRedirectUris = new ArrayList<>(0);
 }

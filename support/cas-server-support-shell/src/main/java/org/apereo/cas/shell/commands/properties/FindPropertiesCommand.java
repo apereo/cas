@@ -42,13 +42,13 @@ public class FindPropertiesCommand {
      */
     @ShellMethod(key = "find", value = "Look up properties associated with a CAS group/module.")
     public void find(
-        @ShellOption(value = "name",
+        @ShellOption(value = { "name", "--name" },
             help = "Property name regex pattern",
             defaultValue = ".+") final String name,
-        @ShellOption(value = "strict-match",
+        @ShellOption(value = { "strict-match", "--strict-match" },
             help = "Whether pattern should be done in strict-mode which means "
                 + "the matching engine tries to match the entire region for the query.") final boolean strict,
-        @ShellOption(value = "summary",
+        @ShellOption(value = { "summary", "--summary" },
             help = "Whether results should be presented in summarized mode") final boolean summary) {
 
         val results = find(strict, RegexUtils.createPattern(name));

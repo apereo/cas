@@ -37,7 +37,7 @@ public class PasswordlessTokenAuthenticationHandler extends AbstractPreAndPostPr
 
         if (token.isPresent() && token.get().equalsIgnoreCase(c.getPassword())) {
             val principal = principalFactory.createPrincipal(c.getId());
-            return createHandlerResult(credential, principal, new ArrayList<>());
+            return createHandlerResult(credential, principal, new ArrayList<>(0));
         }
         throw new FailedLoginException("Passwordless authentication has failed");
     }

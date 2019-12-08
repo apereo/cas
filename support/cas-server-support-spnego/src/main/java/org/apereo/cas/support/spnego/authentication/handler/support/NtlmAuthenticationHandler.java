@@ -25,6 +25,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.security.auth.login.FailedLoginException;
+
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
 
@@ -75,8 +76,7 @@ public class NtlmAuthenticationHandler extends AbstractPreAndPostProcessingAuthe
                 case NTLM_TOKEN_TYPE_ONE:
                     LOGGER.debug("Type 1 received");
                     val type1 = new Type1Message(src);
-                    val type2 = new Type2Message(type1,
-                        challenge, null);
+                    val type2 = new Type2Message(type1, challenge, null);
                     LOGGER.debug("Type 2 returned. Setting next token.");
                     ntlmCredential.setNextToken(type2.toByteArray());
                     break;
@@ -85,9 +85,7 @@ public class NtlmAuthenticationHandler extends AbstractPreAndPostProcessingAuthe
                     val type3 = new Type3Message(src);
                     val lmResponse = type3.getLMResponse() == null ? ArrayUtils.EMPTY_BYTE_ARRAY : type3.getLMResponse();
                     val ntResponse = type3.getNTResponse() == null ? ArrayUtils.EMPTY_BYTE_ARRAY : type3.getNTResponse();
-                    val ntlm = new NtlmPasswordAuthentication(
-                        type3.getDomain(), type3.getUser(), challenge,
-                        lmResponse, ntResponse);
+                    val ntlm = new NtlmPasswordAuthentication(type3.getDomain(), type3.getUser(), challenge, lmResponse, ntResponse);
                     LOGGER.debug("Trying to authenticate [{}] with domain controller", type3.getUser());
                     try {
                         SmbSession.logon(dc, ntlm);

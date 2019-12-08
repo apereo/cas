@@ -70,8 +70,8 @@ public class CasRedisThrottlingConfiguration {
             .authenticationFailureCode(failure.getCode())
             .auditTrailExecutionPlan(auditTrailExecutionPlan)
             .applicationCode(throttle.getAppCode())
-            .throttledRequestResponseHandler(throttledRequestResponseHandler.getIfAvailable())
-            .throttledRequestExecutor(throttledRequestExecutor.getIfAvailable())
+            .throttledRequestResponseHandler(throttledRequestResponseHandler.getObject())
+            .throttledRequestExecutor(throttledRequestExecutor.getObject())
             .build();
         return new RedisThrottledSubmissionHandlerInterceptorAdapter(context, throttleRedisTemplate());
     }

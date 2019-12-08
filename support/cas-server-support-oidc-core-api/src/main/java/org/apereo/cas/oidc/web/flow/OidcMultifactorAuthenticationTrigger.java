@@ -12,7 +12,6 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.oauth.OAuth20Constants;
-import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.utils.URIBuilder;
+import org.springframework.context.ApplicationContext;
 import org.springframework.core.Ordered;
 
 import javax.servlet.http.HttpServletRequest;
@@ -40,6 +40,7 @@ import java.util.Optional;
 public class OidcMultifactorAuthenticationTrigger implements MultifactorAuthenticationTrigger {
     private final CasConfigurationProperties casProperties;
     private final MultifactorAuthenticationProviderResolver multifactorAuthenticationProviderResolver;
+    private final ApplicationContext applicationContext;
 
     private int order = Ordered.LOWEST_PRECEDENCE;
 
@@ -79,7 +80,7 @@ public class OidcMultifactorAuthenticationTrigger implements MultifactorAuthenti
             return Optional.empty();
         }
 
-        val providerMap = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(ApplicationContextProvider.getApplicationContext());
+        val providerMap = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
         if (providerMap.isEmpty()) {
             LOGGER.error("No multifactor authentication providers are available in the application context to handle [{}]", values);
             throw new AuthenticationException(new MultifactorAuthenticationProviderAbsentException());

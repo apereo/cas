@@ -23,7 +23,6 @@ dependencies {
     testImplementation project(":core:cas-server-core-services")
     testImplementation project(":core:cas-server-core-configuration")
     testImplementation project(":core:cas-server-core-util")
-    testImplementation project(":core:cas-server-core-logout-api")
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-audit")
     testImplementation project(":core:cas-server-core-audit-api")

@@ -3,6 +3,7 @@ package org.apereo.cas;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDaoFilter;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.TestPropertySource;
 
@@ -24,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.attributeRepository.jdbc[0].sql=SELECT * FROM table_users WHERE {0}",
     "cas.authn.attributeRepository.jdbc[0].username=uid"
 })
+@Tag("JDBC")
 public class JdbcMultiRowAttributeRepositoryTests extends BaseJdbcAttributeRepositoryTests {
 
     @Test

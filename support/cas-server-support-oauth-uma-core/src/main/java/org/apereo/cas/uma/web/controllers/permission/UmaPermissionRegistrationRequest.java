@@ -20,6 +20,7 @@ import java.util.Map;
  */
 @Data
 public class UmaPermissionRegistrationRequest implements Serializable {
+    private static final int MAP_SIZE = 8;
     private static final ObjectMapper MAPPER = new ObjectMapper()
         .findAndRegisterModules();
 
@@ -29,10 +30,10 @@ public class UmaPermissionRegistrationRequest implements Serializable {
     private long resourceId;
 
     @JsonProperty("resource_scopes")
-    private Collection<String> scopes = new LinkedHashSet<>();
+    private Collection<String> scopes = new LinkedHashSet<>(MAP_SIZE);
 
     @JsonProperty
-    private Map<String, Object> claims = new LinkedHashMap<>();
+    private Map<String, Object> claims = new LinkedHashMap<>(MAP_SIZE);
 
     /**
      * As json string.

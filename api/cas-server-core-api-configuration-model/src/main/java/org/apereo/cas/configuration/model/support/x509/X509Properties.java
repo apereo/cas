@@ -105,7 +105,7 @@ public class X509Properties implements Serializable {
     /**
      * List of CRL resources to use for fetching.
      */
-    private List<String> crlResources = new ArrayList<>();
+    private List<String> crlResources = new ArrayList<>(0);
     /**
      * When CRLs are cached, indicate maximum number of elements kept in memory.
      */
@@ -115,6 +115,10 @@ public class X509Properties implements Serializable {
      */
     private boolean cacheDiskOverflow;
     /**
+     * Size of cache on disk.
+     */
+    private String cacheDiskSize = "100MB";
+    /**
      * When CRLs are cached, indicate if cache items should be eternal.
      */
     private boolean cacheEternal;
@@ -122,10 +126,6 @@ public class X509Properties implements Serializable {
      * When CRLs are cached, indicate the time-to-live of cache items.
      */
     private long cacheTimeToLiveSeconds = TimeUnit.HOURS.toSeconds(4);
-    /**
-     * When CRLs are cached, indicate the idle timeout of cache items.
-     */
-    private long cacheTimeToIdleSeconds = TimeUnit.MINUTES.toSeconds(30);
     /**
      * If the CRL resource is unavailable, activate the this policy.
      * Activated if {@link #revocationChecker} is {@code RESOURCE}.

@@ -13,7 +13,6 @@ dependencies {
     implementation project(":core:cas-server-core-services-api")
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-util-api")
-    implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-services-authentication")
 
     compileOnly project(":core:cas-server-core-rest")
@@ -23,7 +22,7 @@ dependencies {
     testImplementation project(":core:cas-server-core-services")
     testImplementation project(":core:cas-server-core-authentication")
     testImplementation project(":core:cas-server-core-web")
-    testImplementation project(":core:cas-server-core-web-api")
+    
     testImplementation project(":core:cas-server-core-tickets")
     testImplementation project(":core:cas-server-core-tickets-api")
     testImplementation project(":core:cas-server-core-util")

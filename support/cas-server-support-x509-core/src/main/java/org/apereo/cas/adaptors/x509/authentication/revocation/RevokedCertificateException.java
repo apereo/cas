@@ -11,6 +11,7 @@ import java.math.BigInteger;
 import java.security.GeneralSecurityException;
 import java.security.cert.X509CRLEntry;
 import java.time.ZonedDateTime;
+import java.util.Optional;
 
 
 /**
@@ -92,7 +93,7 @@ public class RevokedCertificateException extends GeneralSecurityException {
      * @return Returns the revocationDate.
      */
     public ZonedDateTime getRevocationDate() {
-        return this.revocationDate == null ? null : ZonedDateTime.from(this.revocationDate);
+        return Optional.ofNullable(this.revocationDate).map(ZonedDateTime::from).orElse(null);
     }
 
     @Override

@@ -1,13 +1,14 @@
 description = "Apereo CAS YubiKey Jpa Support"
 dependencies {
     implementation libraries.yubicoapi
+
     runtimeOnly project(":support:cas-server-support-jdbc-drivers")
 
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-configuration-api")
-    implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-webflow")
+    implementation project(":core:cas-server-core-webflow-mfa")
     implementation project(":support:cas-server-support-jpa-util")
     implementation project(":support:cas-server-support-yubikey-core-mfa")
     implementation project(":support:cas-server-support-yubikey-core")
@@ -15,15 +16,19 @@ dependencies {
 
     testImplementation project(":core:cas-server-core-web")
     testImplementation project(":core:cas-server-core-logout")
-    testImplementation project(":support:cas-server-support-themes")
     testImplementation project(":core:cas-server-core-cookie")
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-authentication")
+    testImplementation project(":core:cas-server-core-authentication-mfa")
     testImplementation project(":core:cas-server-core-configuration")
     testImplementation project(":core:cas-server-core-tickets")
+    testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core-services")
     testImplementation project(":core:cas-server-core-util")
+    testImplementation project(":support:cas-server-support-themes")
+
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")
 }

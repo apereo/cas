@@ -4,7 +4,7 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicy;
-import org.apereo.cas.ticket.accesstoken.AccessToken;
+import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 
 import org.pac4j.core.context.JEEContext;
 
@@ -20,7 +20,7 @@ import java.util.Map;
 public interface OAuth20ProfileScopeToAttributesFilter {
 
     default Map<String, ? extends RegisteredServiceAttributeReleasePolicy> getAttributeReleasePolicies() {
-        return new LinkedHashMap<>();
+        return new LinkedHashMap<>(0);
     }
 
     /**
@@ -36,7 +36,7 @@ public interface OAuth20ProfileScopeToAttributesFilter {
     default Principal filter(final Service service, final Principal profile,
                              final RegisteredService registeredService,
                              final JEEContext context,
-                             final AccessToken accessToken) {
+                             final OAuth20AccessToken accessToken) {
         return profile;
     }
 }

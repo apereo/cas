@@ -1,8 +1,11 @@
 package org.apereo.cas.support.saml.idp.metadata.generator;
 
+import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
 
 import org.apache.commons.lang3.StringUtils;
+
+import java.util.Optional;
 
 /**
  * This is {@link SamlIdPMetadataGenerator},
@@ -25,10 +28,17 @@ public interface SamlIdPMetadataGenerator {
     /**
      * Perform the metadata generation steps.
      *
-     * @return the saml id p metadata document
+     * @param registeredService the registered service
+     * @return the saml idp metadata document
      */
-    SamlIdPMetadataDocument generate();
+    SamlIdPMetadataDocument generate(Optional<SamlRegisteredService> registeredService);
 
+    /**
+     * Clean certificate string.
+     *
+     * @param cert the cert
+     * @return the string
+     */
     static String cleanCertificate(final String cert) {
         var result = StringUtils.remove(cert, BEGIN_CERTIFICATE);
         result = StringUtils.remove(result, END_CERTIFICATE).trim();

@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.TestPropertySource;
 
 /**
  * This is {@link InfluxDbCasEventRepositoryTests}.
@@ -22,9 +21,8 @@ import org.springframework.test.context.TestPropertySource;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     CasEventsInfluxDbRepositoryConfiguration.class
-})
+}, properties = "cas.events.influxDb.batchInterval=PT0.001S")
 @Tag("InfluxDb")
-@TestPropertySource(properties = "cas.events.influxDb.batchInterval=PT0.001S")
 @EnabledIfContinuousIntegration
 @Getter
 public class InfluxDbCasEventRepositoryTests extends AbstractCasEventRepositoryTests {

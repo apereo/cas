@@ -6,7 +6,6 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.DefaultTokenRequestExtractor;
 import org.apereo.cas.web.TokenRequestExtractor;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
-import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.TokenAuthenticationAction;
 import org.apereo.cas.web.flow.TokenWebflowConfigurer;
@@ -41,7 +40,7 @@ public class TokenAuthenticationWebflowConfiguration {
     private ObjectProvider<FlowDefinitionRegistry> loginFlowDefinitionRegistry;
 
     @Autowired
-    private FlowBuilderServices flowBuilderServices;
+    private ObjectProvider<FlowBuilderServices> flowBuilderServices;
 
     @Autowired
     @Qualifier("adaptiveAuthenticationPolicy")
@@ -69,7 +68,8 @@ public class TokenAuthenticationWebflowConfiguration {
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer tokenWebflowConfigurer() {
-        return new TokenWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry.getIfAvailable(), applicationContext, casProperties);
+        return new TokenWebflowConfigurer(flowBuilderServices.getObject(),
+            loginFlowDefinitionRegistry.getObject(), applicationContext, casProperties);
     }
 
     @Bean
@@ -81,21 +81,16 @@ public class TokenAuthenticationWebflowConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "tokenAuthenticationAction")
     public Action tokenAuthenticationAction() {
-        return new TokenAuthenticationAction(initialAuthenticationAttemptWebflowEventResolver.getIfAvailable(),
-            serviceTicketRequestWebflowEventResolver.getIfAvailable(),
-            adaptiveAuthenticationPolicy.getIfAvailable(),
+        return new TokenAuthenticationAction(initialAuthenticationAttemptWebflowEventResolver.getObject(),
+            serviceTicketRequestWebflowEventResolver.getObject(),
+            adaptiveAuthenticationPolicy.getObject(),
             tokenRequestExtractor(),
-            servicesManager.getIfAvailable());
+            servicesManager.getObject());
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "tokenCasWebflowExecutionPlanConfigurer")
     public CasWebflowExecutionPlanConfigurer tokenCasWebflowExecutionPlanConfigurer() {
-        return new CasWebflowExecutionPlanConfigurer() {
-            @Override
-            public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-                plan.registerWebflowConfigurer(tokenWebflowConfigurer());
-            }
-        };
+        return plan -> plan.registerWebflowConfigurer(tokenWebflowConfigurer());
     }
 }

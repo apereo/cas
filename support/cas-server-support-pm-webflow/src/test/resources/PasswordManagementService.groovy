@@ -16,3 +16,15 @@ def getSecurityQuestions(Object[] args) {
     def logger = args[1]
     return [securityQuestion1: "securityAnswer1"]
 }
+
+def findPhone(Object[] args) {
+    def username = args[0]
+    def logger = args[1]
+    return "3477463421"
+}
+
+def findUsername(Object[] args) {
+    def email = args[0]
+    def logger = args[1]
+    return "casuser"
+}

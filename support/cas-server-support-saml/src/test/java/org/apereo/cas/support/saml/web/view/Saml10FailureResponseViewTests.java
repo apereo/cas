@@ -44,7 +44,7 @@ public class Saml10FailureResponseViewTests extends AbstractOpenSamlTests {
             StandardCharsets.UTF_8.name(),
             null,
             new DefaultAuthenticationServiceSelectionPlan(),
-            new NoOpProtocolAttributesRenderer(),
+            NoOpProtocolAttributesRenderer.INSTANCE,
             samlResponseBuilder);
     }
 

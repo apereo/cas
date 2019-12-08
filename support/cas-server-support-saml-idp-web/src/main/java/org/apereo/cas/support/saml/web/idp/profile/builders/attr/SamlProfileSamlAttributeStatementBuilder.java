@@ -52,14 +52,13 @@ public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20Obje
                                     final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                     final String binding,
                                     final MessageContext messageContext) throws SamlException {
-        return buildAttributeStatement(assertion, authnRequest, service, adaptor, messageContext);
+        return buildAttributeStatement(assertion, service, adaptor);
     }
 
     private AttributeStatement buildAttributeStatement(final Object casAssertion,
-                                                       final RequestAbstractType authnRequest,
                                                        final SamlRegisteredService service,
-                                                       final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
-                                                       final MessageContext messageContext) throws SamlException {
+                                                       final SamlRegisteredServiceServiceProviderMetadataFacade adaptor)
+        throws SamlException {
 
         val assertion = Assertion.class.cast(casAssertion);
         val attributes = new HashMap<String, Object>(assertion.getAttributes());
@@ -74,7 +73,7 @@ public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20Obje
         val friendlyNames = new HashMap<String, String>(CollectionUtils.convertDirectedListToMap(globalFriendlyNames));
         friendlyNames.putAll(service.getAttributeFriendlyNames());
 
-        val attrBuilder = new SamlProfileSamlRegisteredServiceAttributeBuilder(service, adaptor, messageContext, samlObjectEncrypter);
+        val attrBuilder = new SamlProfileSamlRegisteredServiceAttributeBuilder(service, adaptor, samlObjectEncrypter);
         return newAttributeStatement(encodedAttrs, friendlyNames,
             service.getAttributeValueTypes(),
             nameFormats,

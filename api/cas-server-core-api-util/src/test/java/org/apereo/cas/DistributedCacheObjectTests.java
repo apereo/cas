@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class DistributedCacheObjectTests {
     @Test
     public void verifyAction() {
-        val o = new DistributedCacheObject("objectValue");
+        val o = new DistributedCacheObject<String>("objectValue");
         assertTrue(o.getProperties().isEmpty());
         o.getProperties().put("key", "value");
         assertFalse(o.getProperties().isEmpty());

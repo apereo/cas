@@ -57,7 +57,6 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.IntStream;
@@ -137,7 +136,7 @@ public class DefaultCentralAuthenticationServiceMockitoTests extends BaseCasCore
         val metadata = new BasicCredentialMetaData(RegisteredServiceTestUtils.getCredentialsWithSameUsernameAndPassword("principal"));
         val successes = new HashMap<String, AuthenticationHandlerExecutionResult>();
         successes.put("handler1", new DefaultAuthenticationHandlerExecutionResult(mock(AuthenticationHandler.class), metadata));
-        when(this.authentication.getCredentials()).thenReturn(Collections.singletonList(metadata));
+        when(this.authentication.getCredentials()).thenReturn(List.of(metadata));
         when(this.authentication.getSuccesses()).thenReturn(successes);
         when(this.authentication.getPrincipal()).thenReturn(new DefaultPrincipalFactory().createPrincipal(PRINCIPAL));
 

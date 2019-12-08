@@ -20,6 +20,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.core.io.ClassPathResource;
 
 import javax.security.auth.login.FailedLoginException;
+
 import java.security.GeneralSecurityException;
 import java.security.cert.CertificateExpiredException;
 import java.security.cert.X509Certificate;
@@ -52,11 +53,8 @@ public class X509CredentialsAuthenticationHandlerTests {
     public static Stream<Arguments> getTestParameters() {
         val params = new ArrayList<Arguments>();
 
-        var handler = (X509CredentialsAuthenticationHandler) null;
-        var credential = (X509CertificateCredential) null;
-
         /* Test case #1: Unsupported credential type */
-        handler = new X509CredentialsAuthenticationHandler(RegexUtils.createPattern(".*"));
+        var handler = new X509CredentialsAuthenticationHandler(RegexUtils.createPattern(".*"));
         params.add(arguments(
             handler,
             new UsernamePasswordCredential(),
@@ -66,7 +64,7 @@ public class X509CredentialsAuthenticationHandlerTests {
 
         /* Test case #2:Valid certificate /*/
         handler = new X509CredentialsAuthenticationHandler(RegexUtils.createPattern(".*"));
-        credential = new X509CertificateCredential(createCertificates(USER_VALID_CRT));
+        var credential = new X509CertificateCredential(createCertificates(USER_VALID_CRT));
         params.add(arguments(
             handler,
             credential,
@@ -151,10 +149,9 @@ public class X509CredentialsAuthenticationHandlerTests {
         /*
          * Revocation tests
          */
-        var checker = (ResourceCRLRevocationChecker) null;
 
         /* Test case #10: Valid certificate with CRL checking */
-        checker = new ResourceCRLRevocationChecker(new ClassPathResource("userCA-valid.crl"));
+        var checker = new ResourceCRLRevocationChecker(new ClassPathResource("userCA-valid.crl"));
         checker.init();
         handler = new X509CredentialsAuthenticationHandler(RegexUtils.createPattern(".*"), checker);
         credential = new X509CertificateCredential(createCertificates(USER_VALID_CRT));

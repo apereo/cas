@@ -31,19 +31,20 @@ import org.apereo.cas.token.cipher.JwtTicketCipherExecutor;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
+import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
 import com.nimbusds.jwt.JWTParser;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.test.context.TestPropertySource;
 
 import java.nio.charset.StandardCharsets;
 
@@ -59,6 +60,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasRegisteredServicesTestConfiguration.class,
     TokenTicketsConfiguration.class,
     RefreshAutoConfiguration.class,
+    MailSenderAutoConfiguration.class,
     CasDefaultServiceTicketIdGeneratorsConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
@@ -68,6 +70,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasPersonDirectoryConfiguration.class,
     CasCoreWebConfiguration.class,
     CasCoreWebflowConfiguration.class,
+    CasWebflowContextConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
     CasCoreLogoutConfiguration.class,
@@ -81,14 +84,16 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreAuthenticationHandlersConfiguration.class,
     CasCoreHttpConfiguration.class,
     CasCoreAuthenticationConfiguration.class
+}, properties = {
+    "cas.server.name=http://localhost:8281",
+    "cas.server.prefix=${cas.server.name}/cas",
+    "cas.client.validatorType=CAS10",
+    "spring.mail.host=localhost",
+    "spring.mail.port=25000",
+    "spring.mail.testConnection=false"
 })
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @EnableScheduling
-@TestPropertySource(properties = {
-    "cas.server.name=http://localhost:8281",
-    "cas.server.prefix=${cas.server.name}/cas",
-    "cas.client.validatorType=CAS10"
-})
 public class TokenWebApplicationServiceResponseBuilderTests {
     @Autowired
     @Qualifier("webApplicationServiceResponseBuilder")

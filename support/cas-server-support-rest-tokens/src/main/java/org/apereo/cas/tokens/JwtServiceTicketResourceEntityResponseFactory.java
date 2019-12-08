@@ -10,6 +10,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.token.TokenTicketBuilder;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
@@ -21,14 +22,13 @@ import org.apache.commons.lang3.BooleanUtils;
  * @since 5.2.0
  */
 @Slf4j
+@Getter
 public class JwtServiceTicketResourceEntityResponseFactory extends CasProtocolServiceTicketResourceEntityResponseFactory {
     /**
      * The ticket builder that produces tokens.
      */
     private final TokenTicketBuilder tokenTicketBuilder;
-
     private final TicketRegistrySupport ticketRegistrySupport;
-
     private final ServicesManager servicesManager;
 
     public JwtServiceTicketResourceEntityResponseFactory(final CentralAuthenticationService centralAuthenticationService,
@@ -42,7 +42,8 @@ public class JwtServiceTicketResourceEntityResponseFactory extends CasProtocolSe
     }
 
     @Override
-    protected String grantServiceTicket(final String ticketGrantingTicket, final Service service,
+    protected String grantServiceTicket(final String ticketGrantingTicket,
+                                        final Service service,
                                         final AuthenticationResult authenticationResult) {
         val registeredService = this.servicesManager.findServiceBy(service);
 

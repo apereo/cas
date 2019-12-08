@@ -123,21 +123,21 @@ public class SamlConfiguration {
             samlCore.getAttributeNamespace(),
             samlCore.getIssueLength(),
             samlCore.getSkewAllowance(),
-            protocolAttributeEncoder.getIfAvailable(),
-            this.servicesManager.getIfAvailable());
+            protocolAttributeEncoder.getObject(),
+            this.servicesManager.getObject());
     }
 
     @ConditionalOnMissingBean(name = "casSamlServiceSuccessView")
     @RefreshScope
     @Bean
     public View casSamlServiceSuccessView() {
-        return new Saml10SuccessResponseView(protocolAttributeEncoder.getIfAvailable(),
-            servicesManager.getIfAvailable(),
-            argumentExtractor.getIfAvailable(),
+        return new Saml10SuccessResponseView(protocolAttributeEncoder.getObject(),
+            servicesManager.getObject(),
+            argumentExtractor.getObject(),
             StandardCharsets.UTF_8.name(),
-            authenticationAttributeReleasePolicy.getIfAvailable(),
-            authenticationServiceSelectionPlan.getIfAvailable(),
-            new NoOpProtocolAttributesRenderer(),
+            authenticationAttributeReleasePolicy.getObject(),
+            authenticationServiceSelectionPlan.getObject(),
+            NoOpProtocolAttributesRenderer.INSTANCE,
             samlResponseBuilder());
     }
 
@@ -145,42 +145,42 @@ public class SamlConfiguration {
     @RefreshScope
     @Bean
     public View casSamlServiceFailureView() {
-        return new Saml10FailureResponseView(protocolAttributeEncoder.getIfAvailable(),
-            servicesManager.getIfAvailable(),
-            argumentExtractor.getIfAvailable(),
+        return new Saml10FailureResponseView(protocolAttributeEncoder.getObject(),
+            servicesManager.getObject(),
+            argumentExtractor.getObject(),
             StandardCharsets.UTF_8.name(),
-            authenticationAttributeReleasePolicy.getIfAvailable(),
-            authenticationServiceSelectionPlan.getIfAvailable(),
-            new NoOpProtocolAttributesRenderer(),
+            authenticationAttributeReleasePolicy.getObject(),
+            authenticationServiceSelectionPlan.getObject(),
+            NoOpProtocolAttributesRenderer.INSTANCE,
             samlResponseBuilder());
     }
 
     @ConditionalOnMissingBean(name = "samlServiceResponseBuilder")
     @Bean
     public ResponseBuilder samlServiceResponseBuilder() {
-        return new SamlServiceResponseBuilder(servicesManager.getIfAvailable());
+        return new SamlServiceResponseBuilder(servicesManager.getObject());
     }
 
     @ConditionalOnMissingBean(name = "saml10ObjectBuilder")
     @Bean
     public Saml10ObjectBuilder saml10ObjectBuilder() {
-        return new Saml10ObjectBuilder(this.openSamlConfigBean.getIfAvailable());
+        return new Saml10ObjectBuilder(this.openSamlConfigBean.getObject());
     }
 
     @Bean
     public SamlValidateController samlValidateController() {
         val context = ServiceValidateConfigurationContext.builder()
-            .validationSpecifications(CollectionUtils.wrapSet(cas20WithoutProxyProtocolValidationSpecification.getIfAvailable()))
-            .authenticationSystemSupport(authenticationSystemSupport.getIfAvailable())
-            .servicesManager(servicesManager.getIfAvailable())
-            .centralAuthenticationService(centralAuthenticationService.getIfAvailable())
-            .argumentExtractor(argumentExtractor.getIfAvailable())
-            .proxyHandler(proxy20Handler.getIfAvailable())
-            .requestedContextValidator(requestedContextValidator.getIfAvailable())
+            .validationSpecifications(CollectionUtils.wrapSet(cas20WithoutProxyProtocolValidationSpecification.getObject()))
+            .authenticationSystemSupport(authenticationSystemSupport.getObject())
+            .servicesManager(servicesManager.getObject())
+            .centralAuthenticationService(centralAuthenticationService.getObject())
+            .argumentExtractor(argumentExtractor.getObject())
+            .proxyHandler(proxy20Handler.getObject())
+            .requestedContextValidator(requestedContextValidator.getObject())
             .authnContextAttribute(casProperties.getAuthn().getMfa().getAuthenticationContextAttribute())
-            .validationAuthorizers(validationAuthorizers.getIfAvailable())
+            .validationAuthorizers(validationAuthorizers.getObject())
             .renewEnabled(casProperties.getSso().isRenewAuthnEnabled())
-            .validationViewFactory(serviceValidationViewFactory.getIfAvailable())
+            .validationViewFactory(serviceValidationViewFactory.getObject())
             .build();
 
         return new SamlValidateController(context);
@@ -196,11 +196,11 @@ public class SamlConfiguration {
     @Bean
     @ConditionalOnAvailableEndpoint
     public SamlValidateEndpoint samlValidateEndpoint() {
-        return new SamlValidateEndpoint(casProperties, servicesManager.getIfAvailable(),
-            authenticationSystemSupport.getIfAvailable(),
-            webApplicationServiceFactory.getIfAvailable(),
+        return new SamlValidateEndpoint(casProperties, servicesManager.getObject(),
+            authenticationSystemSupport.getObject(),
+            webApplicationServiceFactory.getObject(),
             PrincipalFactoryUtils.newPrincipalFactory(),
             samlResponseBuilder(),
-            openSamlConfigBean.getIfAvailable());
+            openSamlConfigBean.getObject());
     }
 }

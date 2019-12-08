@@ -26,7 +26,7 @@ public class RegisteredServiceDelegatedAuthenticationPolicyAuditableEnforcer ext
     public AuditableExecutionResult execute(final AuditableContext context) {
         val result = AuditableExecutionResult.of(context);
         if (context.getRegisteredService().isPresent() && context.getProperties().containsKey(Client.class.getSimpleName())) {
-            val registeredService = context.getRegisteredService().get();
+            val registeredService = context.getRegisteredService().orElseThrow();
             val clientName = context.getProperties().get(Client.class.getSimpleName()).toString();
             LOGGER.trace("Checking delegated access strategy of [{}] for client [{}]", registeredService, clientName);
             val policy = registeredService.getAccessStrategy().getDelegatedAuthenticationPolicy();

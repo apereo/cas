@@ -104,10 +104,10 @@ public class SamlMetadataUIParserAction extends AbstractAction {
      * @return the registered service from request
      */
     protected RegisteredService getRegisteredServiceFromRequest(final RequestContext requestContext, final String entityId) {
-        val currentService = WebUtils.getService(requestContext);
         val service = this.serviceFactory.createService(entityId);
         var registeredService = this.servicesManager.findServiceBy(service);
         if (registeredService == null) {
+            val currentService = WebUtils.getService(requestContext);
             LOGGER.debug("Entity id [{}] not found in the registry. Fallback onto [{}]", entityId, currentService);
             registeredService = this.servicesManager.findServiceBy(currentService);
         }

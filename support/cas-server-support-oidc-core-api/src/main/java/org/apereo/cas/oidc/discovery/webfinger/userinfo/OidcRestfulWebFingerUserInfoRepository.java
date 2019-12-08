@@ -52,7 +52,7 @@ public class OidcRestfulWebFingerUserInfoRepository implements OidcWebFingerUser
         try {
             response = HttpUtils.execute(properties.getUrl(), properties.getMethod(),
                 properties.getBasicAuthUsername(), properties.getBasicAuthPassword(),
-                new HashMap<>(), headers);
+                new HashMap<>(0), headers);
             if (response != null && response.getEntity() != null && response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
                 return MAPPER.readValue(response.getEntity().getContent(), Map.class);
             }
@@ -61,6 +61,6 @@ public class OidcRestfulWebFingerUserInfoRepository implements OidcWebFingerUser
         } finally {
             HttpUtils.close(response);
         }
-        return new HashMap<>();
+        return new HashMap<>(0);
     }
 }

@@ -1,11 +1,11 @@
 package org.apereo.cas.services.web.support;
 
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
-import org.apereo.cas.security.ResponseHeadersEnforcementFilter;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.support.ArgumentExtractor;
+import org.apereo.cas.web.support.filters.ResponseHeadersEnforcementFilter;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

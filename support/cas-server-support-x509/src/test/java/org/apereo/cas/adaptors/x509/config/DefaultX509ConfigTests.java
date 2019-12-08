@@ -11,6 +11,7 @@ import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
+import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
@@ -20,20 +21,22 @@ import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguratio
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.TestPropertySource;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
-/** 
+/**
  * This test makes sure the default X509 config loads without errors.
  * It purposely has minimal configuration and the defined crlFetcher is the default.
+ *
  * @since 6.1.0
-*/
+ */
 @SpringBootTest(classes = {
     X509AuthenticationConfiguration.class,
     RefreshAutoConfiguration.class,
+    MailSenderAutoConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class,
     CasCoreAuthenticationPolicyConfiguration.class,
     CasCoreAuthenticationMetadataConfiguration.class,
@@ -47,10 +50,15 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
     CasPersonDirectoryConfiguration.class,
     CasCoreAuthenticationConfiguration.class,
     CasCoreWebConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreServicesAuthenticationConfiguration.class,
-    CasCoreServicesConfiguration.class})
-@TestPropertySource(properties="cas.authn.x509.crlFetcher=resource")
+    CasCoreTicketIdGeneratorsConfiguration.class,
+    CasCoreServicesConfiguration.class
+}, properties = {
+    "cas.authn.x509.crlFetcher=resource",
+    "spring.mail.host=localhost",
+    "spring.mail.port=25000",
+    "spring.mail.testConnection=false"
+})
 public class DefaultX509ConfigTests {
 
     @Autowired

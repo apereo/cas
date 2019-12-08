@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration("casSamlSPWebAdvisorConfiguration")
+@Configuration(value = "casSamlSPWebAdvisorConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasSamlSPWebAdvisorConfiguration extends BaseCasSamlSPConfiguration {
 

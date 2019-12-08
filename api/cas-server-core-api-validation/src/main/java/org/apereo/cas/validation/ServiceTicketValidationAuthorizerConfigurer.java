@@ -6,6 +6,7 @@ package org.apereo.cas.validation;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@FunctionalInterface
 public interface ServiceTicketValidationAuthorizerConfigurer {
 
     /**
@@ -13,7 +14,13 @@ public interface ServiceTicketValidationAuthorizerConfigurer {
      *
      * @param plan the plan
      */
-    default void configureAuthorizersExecutionPlan(final ServiceTicketValidationAuthorizersExecutionPlan plan) {
+    void configureAuthorizersExecutionPlan(ServiceTicketValidationAuthorizersExecutionPlan plan);
+    /**
+     * Gets name.
+     *
+     * @return the name
+     */
+    default String getName() {
+        return getClass().getSimpleName();
     }
-
 }

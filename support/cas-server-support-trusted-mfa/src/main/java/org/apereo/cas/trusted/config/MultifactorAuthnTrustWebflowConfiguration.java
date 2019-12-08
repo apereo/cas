@@ -54,37 +54,37 @@ public class MultifactorAuthnTrustWebflowConfiguration {
     @ConditionalOnMissingBean(name = "mfaTrustedDeviceBypassEvaluator")
     @Bean
     public MultifactorAuthenticationTrustedDeviceBypassEvaluator mfaTrustedDeviceBypassEvaluator() {
-        return new DefaultMultifactorAuthenticationTrustedDeviceBypassEvaluator(registeredServiceAccessStrategyEnforcer.getIfAvailable());
+        return new DefaultMultifactorAuthenticationTrustedDeviceBypassEvaluator(registeredServiceAccessStrategyEnforcer.getObject());
     }
     
     @ConditionalOnMissingBean(name = "mfaSetTrustAction")
     @Bean
     public Action mfaSetTrustAction() {
-        return new MultifactorAuthenticationSetTrustAction(mfaTrustEngine.getIfAvailable(),
-            deviceFingerprintStrategy.getIfAvailable(),
+        return new MultifactorAuthenticationSetTrustAction(mfaTrustEngine.getObject(),
+            deviceFingerprintStrategy.getObject(),
             casProperties.getAuthn().getMfa().getTrusted(),
-            registeredServiceAccessStrategyEnforcer.getIfAvailable(),
+            registeredServiceAccessStrategyEnforcer.getObject(),
             mfaTrustedDeviceBypassEvaluator());
     }
 
     @ConditionalOnMissingBean(name = "mfaVerifyTrustAction")
     @Bean
     public Action mfaVerifyTrustAction() {
-        return new MultifactorAuthenticationVerifyTrustAction(mfaTrustEngine.getIfAvailable(),
-            deviceFingerprintStrategy.getIfAvailable(),
+        return new MultifactorAuthenticationVerifyTrustAction(mfaTrustEngine.getObject(),
+            deviceFingerprintStrategy.getObject(),
             casProperties.getAuthn().getMfa().getTrusted(),
-            registeredServiceAccessStrategyEnforcer.getIfAvailable(),
+            registeredServiceAccessStrategyEnforcer.getObject(),
             mfaTrustedDeviceBypassEvaluator());
     }
 
     @ConditionalOnMissingBean(name = "mfaPrepareTrustDeviceViewAction")
     @Bean
     public Action mfaPrepareTrustDeviceViewAction() {
-        return new MultifactorAuthenticationPrepareTrustDeviceViewAction(mfaTrustEngine.getIfAvailable(),
-            deviceFingerprintStrategy.getIfAvailable(),
+        return new MultifactorAuthenticationPrepareTrustDeviceViewAction(mfaTrustEngine.getObject(),
+            deviceFingerprintStrategy.getObject(),
             casProperties.getAuthn().getMfa().getTrusted(),
-            registeredServiceAccessStrategyEnforcer.getIfAvailable(),
-            servicesManager.getIfAvailable(),
+            registeredServiceAccessStrategyEnforcer.getObject(),
+            servicesManager.getObject(),
             mfaTrustedDeviceBypassEvaluator());
     }
 }

@@ -11,7 +11,6 @@ import org.apereo.cas.otp.repository.token.OneTimeTokenRepository;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.ektorp.impl.ObjectMapperFactory;
 import org.springframework.beans.factory.ObjectProvider;
@@ -30,10 +29,9 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  * @author Timur Duehr
  * @since 6.0.0
  */
-@Configuration("googleAuthenticatorCouchDbConfiguration")
+@Configuration(value = "googleAuthenticatorCouchDbConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
-@Slf4j
 public class GoogleAuthenticatorCouchDbConfiguration {
 
     @Autowired
@@ -47,7 +45,7 @@ public class GoogleAuthenticatorCouchDbConfiguration {
     @Bean
     @RefreshScope
     public CouchDbConnectorFactory oneTimeTokenAccountCouchDbFactory() {
-        return new CouchDbConnectorFactory(casProperties.getAuthn().getMfa().getGauth().getCouchDb(), objectMapperFactory.getIfAvailable());
+        return new CouchDbConnectorFactory(casProperties.getAuthn().getMfa().getGauth().getCouchDb(), objectMapperFactory.getObject());
     }
 
     @ConditionalOnMissingBean(name = "couchDbGoogleAuthenticatotAccountRegistry")
@@ -85,7 +83,7 @@ public class GoogleAuthenticatorCouchDbConfiguration {
     @Bean
     @RefreshScope
     public CouchDbConnectorFactory oneTimeTokenCouchDbFactory() {
-        return new CouchDbConnectorFactory(casProperties.getAuthn().getMfa().getGauth().getCouchDb(), objectMapperFactory.getIfAvailable());
+        return new CouchDbConnectorFactory(casProperties.getAuthn().getMfa().getGauth().getCouchDb(), objectMapperFactory.getObject());
     }
 
     @ConditionalOnMissingBean(name = "couchDbbOneTimeTokenRepository")

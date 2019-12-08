@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 public class DefaultTicketCatalog implements TicketCatalog {
 
-    private final Map<String, TicketDefinition> ticketMetadataMap = new HashMap<>();
+    private final Map<String, TicketDefinition> ticketMetadataMap = new HashMap<>(0);
 
     @Override
     public TicketDefinition find(final String ticketId) {

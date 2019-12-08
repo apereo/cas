@@ -23,7 +23,6 @@ dependencies {
     testImplementation project(":core:cas-server-core-monitor")
     testImplementation project(":core:cas-server-core-services")
     testImplementation project(":core:cas-server-core-tickets")
-    testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core-web")
     testImplementation project(":support:cas-server-support-person-directory")
 

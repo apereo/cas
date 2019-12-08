@@ -13,6 +13,11 @@ public class OAuth20JwtAccessTokenCipherExecutor extends JwtTicketCipherExecutor
         super();
     }
 
+    public OAuth20JwtAccessTokenCipherExecutor(final boolean encryptionEnabled,
+                                               final boolean signingEnabled) {
+        super(null, null, null, encryptionEnabled, signingEnabled, 0, 0);
+    }
+
     public OAuth20JwtAccessTokenCipherExecutor(final String secretKeyEncryption, final String secretKeySigning,
                                                final String alg, final boolean encryptionEnabled,
                                                final boolean signingEnabled, final int signingKeySize,

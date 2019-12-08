@@ -45,13 +45,9 @@ public class UmaRequestingPartyTokenSigningService extends BaseTokenSigningAndEn
 
     @Override
     @SneakyThrows
-    public String encode(final OAuthRegisteredService svc, final JwtClaims claims) {
+    public String encode(final OAuthRegisteredService service, final JwtClaims claims) {
         LOGGER.debug("Generated claims to put into token are [{}]", claims.toJson());
-        val jws = createJsonWebSignature(claims);
-        if (jsonWebKey != null) {
-            configureJsonWebSignatureForTokenSigning(svc, jws, jsonWebKey);
-        }
-        return jws.getCompactSerialization();
+        return signToken(service, claims, jsonWebKey);
     }
 
     @Override

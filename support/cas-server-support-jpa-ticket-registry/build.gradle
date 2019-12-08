@@ -10,11 +10,9 @@ dependencies {
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":support:cas-server-support-jpa-util")
 
-    testImplementation project(":core:cas-server-core-logout")
-    testImplementation project(":core:cas-server-core-logout-api")
-    
+
     runtimeOnly project(":support:cas-server-support-jdbc-drivers")
-    
+
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":support:cas-server-support-oauth-services")
     testImplementation project(":support:cas-server-support-saml-idp-core")
@@ -24,6 +22,7 @@ dependencies {
     testImplementation project(":support:cas-server-support-ws-sts")
     testImplementation project(":support:cas-server-support-ws-idp")
 
+    testImplementation project(":core:cas-server-core-logout")
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core-logout-api")
     testImplementation project(":core:cas-server-core-authentication-api")
@@ -35,7 +34,7 @@ dependencies {
     testImplementation project(":core:cas-server-core-configuration")
     testImplementation project(":core:cas-server-core-cookie-api")
     testImplementation project(":core:cas-server-core")
-    testImplementation project(":core:cas-server-core-tickets")
+    
 
     testImplementation project(":support:cas-server-support-oauth")
     testImplementation project(":support:cas-server-support-oauth-api")

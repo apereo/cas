@@ -18,10 +18,9 @@ if [ "$runBuild" = false ]; then
     exit 0
 fi
 
-prepCommand="echo 'Running command...'; "
 gradle="./gradlew $@"
 gradleBuild=""
-gradleBuildOptions="--stacktrace --build-cache --configure-on-demand --no-daemon "
+gradleBuildOptions="--build-cache --configure-on-demand --no-daemon "
 
 echo -e "***********************************************"
 echo -e "Gradle build started at `date`"
@@ -37,16 +36,11 @@ if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[rerun tasks]"* ]]; then
     gradleBuild="$gradleBuild --rerun-tasks "
 fi
 
-if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[refresh dependencies]"* ]]; then
-    gradleBuild="$gradleBuild --refresh-dependencies "
-fi
-
 if [ -z "$gradleBuild" ]; then
     echo "Gradle build will be ignored since no commands are specified to run."
 else
     tasks="$gradle $gradleBuildOptions $gradleBuild"
     echo -e "***************************************************************************************"
-    echo $prepCommand
     echo $tasks
     echo -e "***************************************************************************************"
 
@@ -54,7 +48,7 @@ else
     eval $waitloop
     waitRetVal=$?
 
-    eval $prepCommand
+    echo 'Running command...'
     eval $tasks
     retVal=$?
 

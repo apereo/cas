@@ -23,7 +23,6 @@ public class GlibcCryptPasswordEncoder implements PasswordEncoder {
 
     private final String encodingAlgorithm;
     private final int strength;
-
     private String secret;
 
     @Override

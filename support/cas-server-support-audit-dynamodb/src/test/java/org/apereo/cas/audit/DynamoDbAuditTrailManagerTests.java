@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.TestPropertySource;
 
 /**
  * This is {@link DynamoDbAuditTrailManagerTests}.
@@ -30,19 +29,19 @@ import org.springframework.test.context.TestPropertySource;
     CasCoreUtilConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
     RefreshAutoConfiguration.class,
-    CasCoreWebConfiguration.class}
+    CasCoreWebConfiguration.class},
+    properties = {
+        "cas.audit.dynamoDb.endpoint=http://localhost:8000",
+        "cas.audit.dynamoDb.dropTablesOnStartup=true",
+        "cas.audit.dynamoDb.localInstance=true",
+        "cas.audit.dynamoDb.region=us-east-1",
+        "cas.audit.dynamoDb.asynchronous=false"
+    }
 )
 @Tag("DynamoDb")
 @Getter
 @EnabledIfContinuousIntegration
 @EnabledIfPortOpen(port = 8000)
-@TestPropertySource(properties = {
-    "cas.audit.dynamoDb.endpoint=http://localhost:8000",
-    "cas.audit.dynamoDb.dropTablesOnStartup=true",
-    "cas.audit.dynamoDb.localInstance=true",
-    "cas.audit.dynamoDb.region=us-east-1",
-    "cas.audit.dynamoDb.asynchronous=false"
-})
 public class DynamoDbAuditTrailManagerTests extends BaseAuditConfigurationTests {
 
     static {

@@ -21,7 +21,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration("casSamlSPInCommonConfiguration")
+@Configuration(value = "casSamlSPInCommonConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class CasSamlSPInCommonConfiguration implements InitializingBean {
@@ -40,12 +40,12 @@ public class CasSamlSPInCommonConfiguration implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() {
-        val resolver = samlRegisteredServiceCachingMetadataResolver.getIfAvailable();
+        val resolver = samlRegisteredServiceCachingMetadataResolver.getObject();
         val service = SamlSPUtils.newSamlServiceProviderService(
             casProperties.getSamlSp().getInCommon(),
             resolver);
         if (service != null) {
-            SamlSPUtils.saveService(service, servicesManager.getIfAvailable());
+            SamlSPUtils.saveService(service, servicesManager.getObject());
 
             LOGGER.info("Launching background thread to load the InCommon metadata. Depending on bandwidth, this might take a while...");
             new Thread(() -> {

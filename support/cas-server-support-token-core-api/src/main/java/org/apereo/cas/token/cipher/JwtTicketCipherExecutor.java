@@ -16,23 +16,23 @@ public class JwtTicketCipherExecutor extends BaseStringCipherExecutor {
 
     public JwtTicketCipherExecutor(final String secretKeyEncryption,
                                    final String secretKeySigning,
-                                   final String alg,
+                                   final String contentEncryptionAlgorithmIdentifier,
                                    final boolean encryptionEnabled,
                                    final boolean signingEnabled,
                                    final int signingKeySize,
                                    final int encryptionKeySize) {
-        super(secretKeyEncryption, secretKeySigning, alg, encryptionEnabled,
+        super(secretKeyEncryption, secretKeySigning, contentEncryptionAlgorithmIdentifier, encryptionEnabled,
             signingEnabled, signingKeySize, encryptionKeySize);
     }
 
 
     public JwtTicketCipherExecutor(final String secretKeyEncryption,
                                    final String secretKeySigning,
-                                   final String alg,
+                                   final String contentEncryptionAlgorithmIdentifier,
                                    final boolean encryptionEnabled,
                                    final int signingKeySize,
                                    final int encryptionKeySize) {
-        this(secretKeyEncryption, secretKeySigning, alg, encryptionEnabled,
+        this(secretKeyEncryption, secretKeySigning, contentEncryptionAlgorithmIdentifier, encryptionEnabled,
             true, signingKeySize, encryptionKeySize);
     }
 
@@ -54,6 +54,7 @@ public class JwtTicketCipherExecutor extends BaseStringCipherExecutor {
         super(secretKeyEncryption, secretKeySigning, encryptionEnabled,
             signingEnabled, signingKeySize, encryptionKeySize);
     }
+
 
     @Override
     protected String getEncryptionKeySetting() {

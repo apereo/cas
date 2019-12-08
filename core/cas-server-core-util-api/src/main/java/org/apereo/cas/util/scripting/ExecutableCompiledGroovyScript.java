@@ -43,5 +43,5 @@ public interface ExecutableCompiledGroovyScript {
      *
      * @param args the args
      */
-    default void setBinding(final Map<String, Object> args) {};
+    default void setBinding(final Map<String, Object> args) {}
 }

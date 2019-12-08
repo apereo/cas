@@ -1,6 +1,5 @@
 package org.apereo.cas.monitor;
 
-import org.apereo.cas.config.support.EnvironmentConversionServiceInitializer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 
 import lombok.val;
@@ -11,7 +10,6 @@ import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.ContextConfiguration;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -25,7 +23,6 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class,
     AopAutoConfiguration.class
 })
-@ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CacheHealthIndicatorTests {
 

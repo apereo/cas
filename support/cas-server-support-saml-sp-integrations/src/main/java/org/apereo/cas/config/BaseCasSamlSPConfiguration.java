@@ -41,10 +41,10 @@ public abstract class BaseCasSamlSPConfiguration implements InitializingBean {
 
     public void init() {
         val service = SamlSPUtils.newSamlServiceProviderService(getServiceProvider(),
-            samlRegisteredServiceCachingMetadataResolver.getIfAvailable());
+            samlRegisteredServiceCachingMetadataResolver.getObject());
         if (service != null) {
             finalizeRegisteredService(service);
-            SamlSPUtils.saveService(service, servicesManager.getIfAvailable());
+            SamlSPUtils.saveService(service, servicesManager.getObject());
         }
     }
 

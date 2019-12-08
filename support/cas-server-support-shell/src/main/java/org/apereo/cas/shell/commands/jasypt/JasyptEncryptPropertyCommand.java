@@ -39,15 +39,15 @@ public class JasyptEncryptPropertyCommand {
      */
     @ShellMethod(key = "encrypt-value", value = "Encrypt a CAS property value/setting via Jasypt")
     public void encryptValue(
-        @ShellOption(value = "value",
+        @ShellOption(value = { "value", "--value" },
             help = "Value to encrypt") final String value,
-        @ShellOption(value = "alg",
+        @ShellOption(value = { "alg", "--alg" },
             help = "Algorithm to use to encrypt") final String alg,
-        @ShellOption(value = "provider",
+        @ShellOption(value = { "provider", "--provider" },
             help = "Security provider to use to encrypt") final String provider,
-        @ShellOption(value = "password",
+        @ShellOption(value = { "password", "--password" },
             help = "Password (encryption key) to encrypt") final String password,
-        @ShellOption(value = "iterations",
+        @ShellOption(value = { "iterations", "--iterations" },
             defaultValue = ShellOption.NULL,
             help = "Key obtention iterations to encrypt, default 1000") final String iterations) {
 

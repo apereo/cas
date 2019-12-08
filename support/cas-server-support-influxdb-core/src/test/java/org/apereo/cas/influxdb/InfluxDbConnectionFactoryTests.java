@@ -2,6 +2,9 @@ package org.apereo.cas.influxdb;
 
 import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import lombok.val;
 import org.influxdb.annotation.Column;
 import org.influxdb.annotation.Measurement;
@@ -60,6 +63,9 @@ public class InfluxDbConnectionFactoryTests {
     }
 
     @Measurement(name = "events")
+    @Getter
+    @Setter
+    @ToString
     public static class InfluxEvent {
         @Column(name = "time")
         private Instant time;

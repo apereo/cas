@@ -97,9 +97,7 @@ public class SamlIdPUtils {
             endpoint = adaptor.getSingleLogoutService(binding);
         } else {
             val endpointReq = getAssertionConsumerServiceFromRequest(authnRequest, binding);
-            endpoint = endpointReq == null
-                ? adaptor.getAssertionConsumerService(binding)
-                : endpointReq;
+            endpoint = Optional.ofNullable(endpointReq).orElseGet(() -> adaptor.getAssertionConsumerService(binding));
         }
 
         if (endpoint == null || StringUtils.isBlank(endpoint.getBinding())) {
@@ -215,7 +213,7 @@ public class SamlIdPUtils {
                 throw new SamlException("AssertionConsumerService has no protocol binding defined");
             }
             if (StringUtils.isBlank(acs.getLocation()) && StringUtils.isBlank(acs.getResponseLocation())) {
-                throw new SamlException("AssertionConsumerService has no location or response location defined");
+                throw new SamlException("AssertionConsumerServicAcceptableUsagePolicySubmitActione has no location or response location defined");
             }
             return acs;
         } catch (final Exception e) {
@@ -231,16 +229,6 @@ public class SamlIdPUtils {
      */
     private static String getIssuerFromSamlRequest(final RequestAbstractType request) {
         return request.getIssuer().getValue();
-    }
-
-    /**
-     * Gets issuer from saml response.
-     *
-     * @param response the response
-     * @return the issuer from saml response
-     */
-    private static String getIssuerFromSamlResponse(final StatusResponseType response) {
-        return response.getIssuer().getValue();
     }
 
     /**

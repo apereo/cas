@@ -61,18 +61,17 @@ public class DefaultCasProtocolAttributeEncoder extends AbstractProtocolAttribut
         this.cacheCredentialCipherExecutor = cacheCredentialCipherExecutor;
     }
 
-    private static void sanitizeAndTransformAttributeNames(final Map<String, Object> attributes,
-                                                           final RegisteredService registeredService) {
+    private static void sanitizeAndTransformAttributeNames(final Map<String, Object> attributes) {
         LOGGER.trace("Sanitizing attribute names in preparation of the final validation response");
 
         val attrs = attributes.keySet().stream()
-            .filter(getSanitizingAttributeNamePredicate())
+            .filter(DefaultCasProtocolAttributeEncoder::getSanitizingAttributeNamePredicate)
             .map(s -> Pair.of(ProtocolAttributeEncoder.encodeAttribute(s), attributes.get(s)))
             .collect(Collectors.toSet());
 
         if (!attrs.isEmpty()) {
             LOGGER.info("Found [{}] attribute(s) that need to be sanitized/encoded.", attrs);
-            attributes.keySet().removeIf(getSanitizingAttributeNamePredicate());
+            attributes.keySet().removeIf(DefaultCasProtocolAttributeEncoder::getSanitizingAttributeNamePredicate);
             attrs.forEach(p -> {
                 val key = p.getKey();
                 LOGGER.trace("Sanitized attribute name to be [{}]", key);
@@ -81,8 +80,11 @@ public class DefaultCasProtocolAttributeEncoder extends AbstractProtocolAttribut
         }
     }
 
-    private static void sanitizeAndTransformAttributeValues(final Map<String, Object> attributes,
-                                                            final RegisteredService registeredService) {
+    private static boolean getSanitizingAttributeNamePredicate(final String s) {
+        return s.contains(":") || s.contains("@");
+    }
+
+    private static void sanitizeAndTransformAttributeValues(final Map<String, Object> attributes) {
         LOGGER.trace("Sanitizing attribute values in preparation of the final validation response");
         attributes.forEach((key, value) -> {
             val values = CollectionUtils.toCollection(value);
@@ -98,10 +100,7 @@ public class DefaultCasProtocolAttributeEncoder extends AbstractProtocolAttribut
         }
         return attributeValue;
     }
-
-    private static Predicate<String> getSanitizingAttributeNamePredicate() {
-        return s -> s.contains(":") || s.contains("@");
-    }
+    
 
     private static Predicate<Object> getBinaryAttributeValuePredicate() {
         return Predicates.instanceOf(byte[].class);
@@ -191,7 +190,7 @@ public class DefaultCasProtocolAttributeEncoder extends AbstractProtocolAttribut
                                             final RegisteredService registeredService) {
         encodeAndEncryptCredentialPassword(attributes, cachedAttributesToEncode, cipher, registeredService);
         encodeAndEncryptProxyGrantingTicket(attributes, cachedAttributesToEncode, cipher, registeredService);
-        sanitizeAndTransformAttributeNames(attributes, registeredService);
-        sanitizeAndTransformAttributeValues(attributes, registeredService);
+        sanitizeAndTransformAttributeNames(attributes);
+        sanitizeAndTransformAttributeValues(attributes);
     }
 }

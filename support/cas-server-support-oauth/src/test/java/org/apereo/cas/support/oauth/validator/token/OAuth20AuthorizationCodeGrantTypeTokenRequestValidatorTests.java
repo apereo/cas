@@ -13,13 +13,14 @@ import org.apereo.cas.support.oauth.authenticator.Authenticators;
 import org.apereo.cas.support.oauth.authenticator.OAuth20CasAuthenticationBuilder;
 import org.apereo.cas.support.oauth.profile.DefaultOAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.support.oauth.web.AbstractOAuth20Tests;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.Ticket;
-import org.apereo.cas.ticket.code.DefaultOAuthCodeFactory;
-import org.apereo.cas.ticket.code.OAuthCode;
-import org.apereo.cas.ticket.code.OAuthCodeExpirationPolicy;
+import org.apereo.cas.ticket.code.OAuth20Code;
+import org.apereo.cas.ticket.code.OAuth20CodeExpirationPolicy;
+import org.apereo.cas.ticket.code.OAuth20DefaultOAuthCodeFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
 
@@ -32,6 +33,7 @@ import org.pac4j.core.context.Pac4jConstants;
 import org.pac4j.core.profile.CommonProfile;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -46,14 +48,15 @@ import static org.mockito.Mockito.*;
  * @since 6.0.0
  */
 @Tag("OAuth")
-public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests {
+@DirtiesContext
+public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests extends AbstractOAuth20Tests {
     private static final String SUPPORTING_SERVICE_TICKET = "OC-SUPPORTING";
     private static final String NON_SUPPORTING_SERVICE_TICKET = "OC-NON-SUPPORTING";
     private static final String PROMISCUOUS_SERVICE_TICKET = "OC-PROMISCUOUS";
 
     private OAuth20TokenRequestValidator validator;
 
-    private TicketRegistry ticketRegistry;
+    private TicketRegistry mockingTicketRegistry;
 
     private void registerTicket(final String name, final OAuthRegisteredService service) {
         val builder = new OAuth20CasAuthenticationBuilder(
@@ -67,21 +70,21 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests {
 
             @Override
             public ExpirationPolicy buildTicketExpirationPolicy() {
-                return new OAuthCodeExpirationPolicy(1, 60);
+                return new OAuth20CodeExpirationPolicy(1, 60);
             }
 
             @Override
             public Class getTicketType() {
-                return OAuthCode.class;
+                return OAuth20Code.class;
             }
         };
 
-        val oauthCode = new DefaultOAuthCodeFactory(expirationPolicy, mock(ServicesManager.class))
+        val oauthCode = new OAuth20DefaultOAuthCodeFactory(expirationPolicy, mock(ServicesManager.class))
             .create(oauthCasAuthenticationBuilderService, RegisteredServiceTestUtils.getAuthentication(),
                 new MockTicketGrantingTicket("casuser"), new HashSet<>(),
                 null, null, "clientid12345",
                 new HashMap<>());
-        when(ticketRegistry.getTicket(eq(name), (Class<Ticket>) any())).thenReturn(oauthCode);
+        when(mockingTicketRegistry.getTicket(eq(name), (Class<Ticket>) any())).thenReturn(oauthCode);
     }
 
     @BeforeEach
@@ -105,7 +108,7 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests {
             RequestValidatorTestUtils.PROMISCUOUS_CLIENT_ID,
             RequestValidatorTestUtils.SHARED_SECRET);
 
-        this.ticketRegistry = mock(TicketRegistry.class);
+        this.mockingTicketRegistry = mock(TicketRegistry.class);
 
         registerTicket(SUPPORTING_SERVICE_TICKET, supportingService);
         registerTicket(NON_SUPPORTING_SERVICE_TICKET, nonSupportingService);
@@ -119,7 +122,7 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests {
 
         val context = OAuth20ConfigurationContext.builder()
             .servicesManager(serviceManager)
-            .ticketRegistry(ticketRegistry)
+            .ticketRegistry(mockingTicketRegistry)
             .webApplicationServiceServiceFactory(new WebApplicationServiceFactory())
             .registeredServiceAccessStrategyEnforcer(new RegisteredServiceAccessStrategyAuditableEnforcer())
             .build();

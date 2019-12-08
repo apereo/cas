@@ -16,10 +16,10 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import javax.persistence.Transient;
+
 import java.security.GeneralSecurityException;
 import java.util.Optional;
 import java.util.Set;
-import java.util.regex.Matcher;
 
 /**
  * This is {@link GroovyScriptAuthenticationPolicy}.
@@ -45,10 +45,7 @@ public class GroovyScriptAuthenticationPolicy implements AuthenticationPolicy {
     @Override
     public boolean isSatisfiedBy(final Authentication auth, final Set<AuthenticationHandler> authenticationHandlers) throws Exception {
         initializeWatchableScriptIfNeeded();
-
-        val matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(script);
-        val ex = getScriptExecutionResult(auth, matcherInline);
-
+        val ex = getScriptExecutionResult(auth);
         if (ex != null && ex.isPresent()) {
             throw new GeneralSecurityException(ex.get());
         }
@@ -70,7 +67,7 @@ public class GroovyScriptAuthenticationPolicy implements AuthenticationPolicy {
         }
     }
 
-    private Optional<Exception> getScriptExecutionResult(final Authentication auth, final Matcher matcherInline) {
+    private Optional<Exception> getScriptExecutionResult(final Authentication auth) {
         val args = CollectionUtils.wrap("principal", auth.getPrincipal(), "logger", LOGGER);
         executableScript.setBinding(args);
         return executableScript.execute(args.values().toArray(), Optional.class);

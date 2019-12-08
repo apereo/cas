@@ -10,7 +10,6 @@ dependencies {
     implementation project(":core:cas-server-core-logging")
     implementation project(":core:cas-server-core-tickets-api")
     implementation project(":core:cas-server-core-services-api")
-    implementation project(":core:cas-server-core-services-api")
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-authentication-mfa-api")
@@ -25,7 +24,7 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-authentication-mfa-api", configuration: "tests")
     
     testImplementation project(":core:cas-server-core-util")
-    testImplementation project(":core:cas-server-core-authentication-api")
+    
     testImplementation project(":core:cas-server-core-authentication")
     testImplementation project(":core:cas-server-core-services")
     testImplementation project(":core:cas-server-core-web")

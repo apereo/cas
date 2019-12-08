@@ -9,6 +9,7 @@ import org.apereo.cas.util.HttpRequestUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
@@ -36,7 +37,10 @@ public class UserAgentAuthenticationRequestRiskCalculator extends BaseAuthentica
 
         val agent = HttpRequestUtils.getHttpServletRequestUserAgent(request);
         LOGGER.debug("Filtering authentication events for user agent [{}]", agent);
-        val count = events.stream().filter(e -> e.getAgent().equalsIgnoreCase(agent)).count();
+        val count = events.stream()
+            .filter(e -> StringUtils.isNotBlank(e.getAgent()))
+            .filter(e -> e.getAgent().equalsIgnoreCase(agent))
+            .count();
         LOGGER.debug("Total authentication events found for [{}]: [{}]", agent, count);
         return calculateScoreBasedOnEventsCount(authentication, events, count);
     }

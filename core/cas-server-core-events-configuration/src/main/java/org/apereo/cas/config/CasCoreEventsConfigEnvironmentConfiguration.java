@@ -21,7 +21,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration("casCoreEventsConfigEnvironmentConfiguration")
+@Configuration(value = "casCoreEventsConfigEnvironmentConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasCoreEventsConfigEnvironmentConfiguration {
 
@@ -41,8 +41,8 @@ public class CasCoreEventsConfigEnvironmentConfiguration {
     @ConditionalOnMissingBean(name = "casConfigurationEventListener")
     @Bean
     public CasConfigurationEventListener casConfigurationEventListener() {
-        return new CasConfigurationEventListener(manager.getIfAvailable(), binder.getIfAvailable(),
-            contextRefresher.getIfAvailable(), applicationContext);
+        return new CasConfigurationEventListener(manager.getObject(), binder.getObject(),
+            contextRefresher.getObject(), applicationContext);
     }
 
 }

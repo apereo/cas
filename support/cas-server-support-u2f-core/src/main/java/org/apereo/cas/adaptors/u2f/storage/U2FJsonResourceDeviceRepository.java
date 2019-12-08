@@ -51,7 +51,7 @@ public class U2FJsonResourceDeviceRepository extends BaseResourceU2FDeviceReposi
             return new HashMap<>(0);
         }
         return MAPPER.readValue(jsonResource.getInputStream(),
-            new TypeReference<Map<String, List<U2FDeviceRegistration>>>() {
+            new TypeReference<>() {
             });
     }
 
@@ -66,7 +66,7 @@ public class U2FJsonResourceDeviceRepository extends BaseResourceU2FDeviceReposi
     @Override
     public void removeAll() throws Exception {
         val newDevices = new HashMap<String, List<U2FDeviceRegistration>>();
-        newDevices.put(MAP_KEY_DEVICES, new ArrayList<>());
+        newDevices.put(MAP_KEY_DEVICES, new ArrayList<>(0));
         MAPPER.writerWithDefaultPrettyPrinter().writeValue(jsonResource.getFile(), newDevices);
         LOGGER.debug("Removed all device(s) from repository [{}]", jsonResource);
     }

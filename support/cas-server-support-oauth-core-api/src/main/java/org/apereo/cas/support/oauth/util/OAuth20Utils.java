@@ -9,8 +9,10 @@ import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseModeTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
-import org.apereo.cas.ticket.OAuthToken;
+import org.apereo.cas.ticket.OAuth20Token;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -30,6 +32,8 @@ import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -83,7 +87,7 @@ public class OAuth20Utils {
         if (StringUtils.isBlank(clientId)) {
             return null;
         }
-        return getRegisteredOAuthServiceByPredicate(servicesManager, s -> s.getClientId().equals(clientId));
+        return getRegisteredOAuthServiceByPredicate(servicesManager, s -> s.getClientId().equalsIgnoreCase(clientId));
     }
 
     /**
@@ -127,7 +131,7 @@ public class OAuth20Utils {
             .filter(a -> StringUtils.isNotBlank(context.getParameter(a)))
             .map(m -> {
                 val values = context.getParameterValues(m);
-                val valuesSet = new LinkedHashSet<Object>();
+                val valuesSet = new LinkedHashSet<Object>(values.length);
                 if (values != null && values.length > 0) {
                     Arrays.stream(values).forEach(v -> valuesSet.addAll(Arrays.stream(v.split(" ")).collect(Collectors.toSet())));
                 }
@@ -176,7 +180,7 @@ public class OAuth20Utils {
      * @return the model and view
      */
     public static ModelAndView produceErrorView(final Exception e) {
-        return new ModelAndView(OAuth20Constants.ERROR_VIEW, CollectionUtils.wrap("rootCauseException", e));
+        return new ModelAndView(CasWebflowConstants.VIEW_ID_SERVICE_ERROR, CollectionUtils.wrap("rootCauseException", e));
     }
 
     /**
@@ -286,9 +290,8 @@ public class OAuth20Utils {
      * @return the boolean
      */
     public static boolean isAuthorizedResponseTypeForService(final JEEContext context, final OAuthRegisteredService registeredService) {
-        val responseType = context.getRequestParameter(OAuth20Constants.RESPONSE_TYPE).map(String::valueOf).orElse(StringUtils.EMPTY);
-
         if (registeredService.getSupportedResponseTypes() != null && !registeredService.getSupportedResponseTypes().isEmpty()) {
+            val responseType = context.getRequestParameter(OAuth20Constants.RESPONSE_TYPE).map(String::valueOf).orElse(StringUtils.EMPTY);
             LOGGER.debug("Checking response type [{}] against supported response types [{}]", responseType, registeredService.getSupportedResponseTypes());
             return registeredService.getSupportedResponseTypes().stream().anyMatch(s -> s.equalsIgnoreCase(responseType));
         }
@@ -399,15 +402,19 @@ public class OAuth20Utils {
      *
      * @param registeredService the registered service
      * @param clientSecret      the client secret
+     * @param cipherExecutor    the cipher executor
      * @return whether the secret is valid
      */
-    public static boolean checkClientSecret(final OAuthRegisteredService registeredService, final String clientSecret) {
+    public static boolean checkClientSecret(final OAuthRegisteredService registeredService, final String clientSecret,
+                                            final CipherExecutor<Serializable, String> cipherExecutor) {
         LOGGER.debug("Found: [{}] in secret check", registeredService);
-        if (StringUtils.isBlank(registeredService.getClientSecret())) {
+        var definedSecret = registeredService.getClientSecret();
+        if (StringUtils.isBlank(definedSecret)) {
             LOGGER.debug("The client secret is not defined for the registered service [{}]", registeredService.getName());
             return true;
         }
-        if (!StringUtils.equals(registeredService.getClientSecret(), clientSecret)) {
+        definedSecret = cipherExecutor.decode(definedSecret, new Object[] {registeredService});
+        if (!StringUtils.equals(definedSecret, clientSecret)) {
             LOGGER.error("Wrong client secret for service: [{}]", registeredService.getServiceId());
             return false;
         }
@@ -454,7 +461,7 @@ public class OAuth20Utils {
     public static Map<String, Map<String, Object>> parseRequestClaims(final JEEContext context) throws Exception {
         val claims = context.getRequestParameter(OAuth20Constants.CLAIMS).map(String::valueOf).orElse(StringUtils.EMPTY);
         if (StringUtils.isBlank(claims)) {
-            return new HashMap<>();
+            return new HashMap<>(0);
         }
         return MAPPER.readValue(claims, Map.class);
     }
@@ -465,8 +472,8 @@ public class OAuth20Utils {
      * @param token the token
      * @return the set
      */
-    public static Set<String> parseUserInfoRequestClaims(final OAuthToken token) {
-        return token.getClaims().getOrDefault("userinfo", new HashMap<>()).keySet();
+    public static Set<String> parseUserInfoRequestClaims(final OAuth20Token token) {
+        return token.getClaims().getOrDefault("userinfo", new HashMap<>(0)).keySet();
     }
 
     /**
@@ -478,6 +485,6 @@ public class OAuth20Utils {
      */
     public static Set<String> parseUserInfoRequestClaims(final JEEContext context) throws Exception {
         val requestedClaims = parseRequestClaims(context);
-        return requestedClaims.getOrDefault("userinfo", new HashMap<>()).keySet();
+        return requestedClaims.getOrDefault("userinfo", new HashMap<>(0)).keySet();
     }
 }

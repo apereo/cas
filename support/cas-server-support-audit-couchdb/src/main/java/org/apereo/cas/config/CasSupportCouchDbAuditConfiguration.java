@@ -6,7 +6,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.couchdb.audit.AuditActionContextCouchDbRepository;
 import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.inspektr.audit.AuditTrailManager;
 import org.ektorp.impl.ObjectMapperFactory;
 import org.springframework.beans.factory.ObjectProvider;
@@ -24,9 +23,8 @@ import org.springframework.context.annotation.Configuration;
  * @author Timur Duehr
  * @since 6.0.0
  */
-@Configuration("casSupportCouchDbAuditConfiguration")
+@Configuration(value = "casSupportCouchDbAuditConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class CasSupportCouchDbAuditConfiguration {
 
     @Autowired
@@ -40,7 +38,7 @@ public class CasSupportCouchDbAuditConfiguration {
     @RefreshScope
     @ConditionalOnMissingBean(name = "auditCouchDbFactory")
     public CouchDbConnectorFactory auditCouchDbFactory() {
-        return new CouchDbConnectorFactory(casProperties.getAudit().getCouchDb(), defaultObjectMapperFactory.getIfAvailable());
+        return new CouchDbConnectorFactory(casProperties.getAudit().getCouchDb(), defaultObjectMapperFactory.getObject());
     }
 
     @ConditionalOnMissingBean(name = "auditActionContextCouchDbRepository")

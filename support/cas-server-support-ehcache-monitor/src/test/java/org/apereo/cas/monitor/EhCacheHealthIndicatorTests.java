@@ -1,8 +1,11 @@
 package org.apereo.cas.monitor;
 
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
+import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
+import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.EhcacheTicketRegistryConfiguration;
 import org.apereo.cas.config.EhcacheTicketRegistryTicketCatalogConfiguration;
 import org.apereo.cas.mock.MockServiceTicket;
@@ -12,14 +15,15 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.boot.actuate.health.Status;
+import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.TestPropertySource;
 
 import java.util.stream.IntStream;
 
@@ -38,12 +42,19 @@ import static org.junit.jupiter.api.Assertions.*;
     EhCacheMonitorConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
     CasCoreTicketsConfiguration.class,
-    CasCoreHttpConfiguration.class
-})
-@TestPropertySource(properties = {
+    CasCoreTicketIdGeneratorsConfiguration.class,
+    CasCoreServicesConfiguration.class,
+    CasCoreHttpConfiguration.class,
+    CasCoreUtilConfiguration.class,
+    MailSenderAutoConfiguration.class
+}, properties = {
     "cas.ticket.registry.ehcache.maxElementsOnDisk=100",
-    "cas.ticket.registry.ehcache.maxElementsInMemory=100"
+    "cas.ticket.registry.ehcache.maxElementsInMemory=100",
+    "spring.mail.host=localhost",
+    "spring.mail.port=25000",
+    "spring.mail.testConnection=false"
 })
+@Tag("Ehcache")
 public class EhCacheHealthIndicatorTests {
     @Autowired
     @Qualifier("ticketRegistry")

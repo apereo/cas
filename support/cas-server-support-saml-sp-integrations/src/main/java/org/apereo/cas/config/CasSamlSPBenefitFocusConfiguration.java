@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration("casSamlSPBenefitFocusConfiguration")
+@Configuration(value = "casSamlSPBenefitFocusConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasSamlSPBenefitFocusConfiguration extends BaseCasSamlSPConfiguration {
 

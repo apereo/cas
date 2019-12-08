@@ -8,7 +8,6 @@ import org.apereo.cas.services.web.view.AbstractCasView;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.validation.CasProtocolAttributesRenderer;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import javax.servlet.http.HttpServletRequest;
@@ -24,7 +23,6 @@ import java.util.Map;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@Slf4j
 public class Cas10ResponseView extends AbstractCasView {
 
     public Cas10ResponseView(final boolean successResponse,

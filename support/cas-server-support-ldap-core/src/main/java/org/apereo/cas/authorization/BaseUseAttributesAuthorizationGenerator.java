@@ -22,6 +22,11 @@ import java.util.Optional;
 /**
  * This is {@link BaseUseAttributesAuthorizationGenerator}.
  *
+ * <ol>
+ * <li>Search for an entry to resolve the username. In most cases the search should return exactly one result,
+ * but the {@link #allowMultipleResults} property may be toggled to change that behavior.</li>
+ * </ol>
+ *
  * @author Misagh Moayyed
  * @since 5.1.0
  */

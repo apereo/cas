@@ -7,16 +7,31 @@ buildscript {
     repositories {
         mavenLocal()
         jcenter()
-        maven { url "https://maven.eveoh.nl/content/repositories/releases" }
-        maven { url "https://plugins.gradle.org/m2/" }
-        maven { url "https://repo.spring.io/plugins-release" }
-        maven { url "https://repo.spring.io/libs-milestone" }
-        maven { url "http://repo.spring.io/snapshot" }
+        maven {
+            url "https://maven.eveoh.nl/content/repositories/releases"
+            mavenContent { releasesOnly() }
+        }
+        maven {
+            url "https://plugins.gradle.org/m2/"
+            mavenContent { releasesOnly() }
+        }
+        maven {
+            url "https://repo.spring.io/plugins-release"
+            mavenContent { releasesOnly() }
+        }
+        maven {
+            url "https://repo.spring.io/libs-milestone"
+            mavenContent { releasesOnly() }
+        }
+        maven {
+            url "http://repo.spring.io/snapshot"
+            mavenContent { snapshotsOnly() }
+        }
     }
 
     dependencies {
-        classpath "com.gradle:build-scan-plugin:2.3"
         classpath "gradle.plugin.com.ewerk.gradle.plugins:jaxb2-plugin:1.0.9"
+        classpath "com.github.jk1:gradle-license-report:$gradleLicenseVersion"
         classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
         classpath "com.netflix.nebula:gradle-lint-plugin:$gradleLintVersion"
         classpath "gradle.plugin.com.gorylenko.gradle-git-properties:gradle-git-properties:$gradleGitVersion"
@@ -65,20 +80,11 @@ apply from: rootProject.file("gradle/overrides.gradle")
 apply from: rootProject.file("gradle/dependencies.gradle")
 apply plugin: "com.github.ben-manes.versions"
 
-if (project.ext.continuousIntegrationBuild) {
-    apply plugin: "com.gradle.build-scan"
-}
-
 if (!Boolean.getBoolean("skipSonarqube")) {
     apply plugin: "org.sonarqube"
 }
 
-if (rootProject.continuousIntegrationBuild) {
-    buildScan {
-        termsOfServiceUrl = 'https://gradle.com/terms-of-service'
-        termsOfServiceAgree = 'yes'
-    }
-
+if (continuousIntegrationBuild) {
     apply plugin: "build-time-tracker"
     buildtimetracker {
         reporters {
@@ -94,7 +100,6 @@ if (rootProject.continuousIntegrationBuild) {
 
 apply plugin: "org.owasp.dependencycheck"
 dependencyCheck {
-    //logging.captureStandardOutput LogLevel.DEBUG
     /*
      * Specifies if the build should be failed if a CVSS score equal
      * to or above a specified level is identified.
@@ -103,7 +108,7 @@ dependencyCheck {
     skipTestGroups = true
     skipConfigurations = ['jacocoAgent', 'jacocoAnt', 'optional', 'provided', 'providedCompile', 'providedRuntime',
                           'signatures', 'spotbugs', 'spotbugsPlugins', 'checkstyle', 'errorprone', 'errorproneJavac',
-                          'annotationProcessor', 'archives', 'developmentOnly', 'compileOnly',
+                          'annotationProcessor', 'archives', 'compileOnly',
                           'tests', 'testRuntimeOnly', 'testRuntimeClasspath', 'testRuntime', 'testImplementation',
                           'testCompileOnly', 'testCompileClasspath', 'testCompile', 'testAnnotationProcessor',
                           'bootArchives', 'bootRunAnnotationProcessor']
@@ -136,7 +141,9 @@ allprojects {
     apply plugin: "eclipse"
     apply plugin: "jacoco"
     apply plugin: "java"
-    
+
+    apply from: rootProject.file("gradle/tasks.gradle")
+
     if (rootProject.publishReleases || rootProject.publishSnapshots || rootProject.generateGitProperties) {
         apply plugin: "com.gorylenko.gradle-git-properties"
         gitProperties {
@@ -167,13 +174,19 @@ allprojects {
             }
         }
     }
-    
+
     repositories {
         mavenLocal()
         mavenCentral()
         jcenter()
-        maven { url "https://repo.spring.io/libs-milestone" }
-        maven { url "$sonatypeReleasesRepositoryUrl" }
+        maven {
+            url "https://repo.spring.io/libs-milestone"
+            mavenContent { releasesOnly() }
+        }
+        maven {
+            url "$sonatypeReleasesRepositoryUrl"
+            mavenContent { releasesOnly() }
+        }
     }
 
     javadoc {
@@ -181,6 +194,8 @@ allprojects {
         failOnError = Boolean.getBoolean("ignoreJavadocFailures")
         excludes = ['**/generated/**']
     }
+
+
 }
 
 subprojects {
@@ -201,6 +216,11 @@ subprojects {
         doLast {}
     }
     apply plugin: "java-library"
+    if (projectShouldBePublished(project)) {
+        apply plugin: "maven-publish"
+        apply plugin: "signing"
+    }
+
     if (!rootProject.skipErrorProneCompiler) {
         apply plugin: "net.ltgt.errorprone-javacplugin"
     }
@@ -210,46 +230,61 @@ subprojects {
     apply plugin: "propdeps-idea"
     apply plugin: "propdeps-eclipse"
 
-
-    apply from: rootProject.file("gradle/tasks.gradle")
     apply from: rootProject.file("gradle/tests.gradle")
-
-    if (projectShouldBePublished(project)) {
-        apply plugin: "maven-publish"
-        apply plugin: "signing"
-        apply from: rootProject.file("gradle/maven.gradle")
-        signing {
-            required = isArtifactSigningRequired
-            sign publishing.publications
-        }
-    }
 
     ext.libraries = rootProject.ext.libraries
 
     repositories {
         mavenLocal()
         mavenCentral()
-        maven { url "https://build.shibboleth.net/nexus/content/repositories/releases" }
-        maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
-        maven { url "https://oss.sonatype.org/content/repositories/releases" }
-        maven { url "https://repo.spring.io/plugins-release/" }
-        maven { url "https://repo.spring.io/milestone/" }
-        maven { url "https://repo.spring.io/snapshot/" }
-        maven { url "https://repo.spring.io/libs-milestone" }
-        maven { url "https://dl.bintray.com/uniconiam/maven" }
-        maven { url "https://jitpack.io" }
-        maven { url "https://oss.jfrog.org/artifactory/oss-snapshot-local" }
+        maven {
+            url "https://build.shibboleth.net/nexus/content/repositories/releases"
+            content {
+                includeGroupByRegex "org\\.opensaml.*"
+                includeGroupByRegex "net\\.shibboleth.*"
+            }
+        }
+        maven {
+            url "https://oss.sonatype.org/content/repositories/snapshots"
+            mavenContent { snapshotsOnly() }
+        }
+        maven {
+            url "https://oss.sonatype.org/content/repositories/releases"
+            mavenContent { releasesOnly() }
+        }
+        maven {
+            url "https://repo.spring.io/plugins-release/"
+            mavenContent { releasesOnly() }
+        }
+        maven {
+            url "https://repo.spring.io/milestone/"
+            mavenContent { releasesOnly() }
+        }
+        maven {
+            url "https://repo.spring.io/snapshot/"
+            mavenContent { snapshotsOnly() }
+        }
+        maven {
+            url "https://repo.spring.io/libs-milestone"
+            mavenContent { releasesOnly() }
+        }
+        maven {
+            url "https://splunk.jfrog.io/splunk/ext-releases-local"
+            mavenContent { releasesOnly() }
+        }
+        maven {
+            url "https://dl.bintray.com/uniconiam/maven"
+            mavenContent { releasesOnly() }
+        }
+        maven {
+            url "https://oss.jfrog.org/artifactory/oss-snapshot-local"
+            mavenContent { snapshotsOnly() }
+        }
         jcenter()
     }
-
-
+    
     configurations {
         tests
-        developmentOnly
-
-        runtimeClasspath {
-            extendsFrom developmentOnly
-        }
     }
 
     configurations.all {
@@ -258,9 +293,9 @@ subprojects {
                 failOnVersionConflict()
             }
             preferProjectModules()
-            cacheDynamicVersionsFor 5, "days"
-            cacheChangingModulesFor 5, "days"
 
+            cacheDynamicVersionsFor 5, 'days'
+            cacheChangingModulesFor 5, 'days'
             /**
              * Required for all JRadius modules
              */
@@ -275,6 +310,79 @@ subprojects {
         exclude(group: "org.slf4j", module: "slf4j-log4j12")
         exclude(group: "org.slf4j", module: "slf4j-simple")
         exclude(group: "org.apache.logging.log4j", module: "log4j-to-slf4j")
+    }
+
+    /**
+     * Apply publishing rules after the build has had a chance to
+     * evaluate sub-projects to apply plugins, etc.
+     */
+    afterEvaluate { project ->
+        if (projectShouldBePublished(project)) {
+            logger.info "Project ${project.name} should be published"
+            apply from: rootProject.file("gradle/maven.gradle")
+
+            publishing {
+                publications {
+                    def isWarPluginApplied = project.plugins.hasPlugin("war")
+                    if (isWarPluginApplied) {
+                        logger.info "Project ${project.name} should be published as a WAR"
+                        mavenWeb(MavenPublication) {
+                            from components.web
+                            pom {
+                                createPom(it, project)
+                            }
+                            pom.withXml {
+                                createPomRepositories(asNode())
+                            }
+                        }
+                    } else {
+                        logger.info "Project ${project.name} should be published as a JAR"
+                        mavenJava(MavenPublication) {
+                            from components.java
+                            artifact tasks['sourcesJar']
+                            artifact tasks['resourcesJar']
+                            artifact tasks['javadocJar']
+                            artifact tasks['testJar']
+
+                            pom {
+                                createPom(it, project)
+                            }
+                            pom.withXml {
+                                createPomRepositories(asNode())
+                            }
+                        }
+                    }
+                }
+
+                repositories {
+                    if (rootProject.publishReleases) {
+                        maven {
+                            name "Sonatype-Releases"
+                            url "${sonatypeRepositoryUrl}"
+                            credentials {
+                                username "${sonatypeUsername}"
+                                password "${sonatypePassword}"
+                            }
+                        }
+                    }
+                    if (rootProject.publishSnapshots) {
+                        maven {
+                            name "Sonatype-Snapshots"
+                            url "${sonatypeSnapshotsRepositoryUrl}"
+                            credentials {
+                                username "${sonatypeUsername}"
+                                password "${sonatypePassword}"
+                            }
+                        }
+                    }
+                }
+            }
+            
+            signing {
+                required = isArtifactSigningRequired
+                sign publishing.publications
+            }
+        }
     }
 
     artifacts {
@@ -313,7 +421,7 @@ subprojects {
 
     [compileTestJava, compileJava].each {
         it.options.fork = false
-        it.options.incremental = false
+        it.options.incremental = true
 
         def casCompilerArgs = ["-parameters"]
 
@@ -328,7 +436,7 @@ subprojects {
         it.options.compilerArgs += casCompilerArgs
     }
 
-    def currentTime = java.time.ZonedDateTime.now()
+    def currentTime = java.time.ZonedDateTime.now(ZoneId.systemDefault())
     compileJava.doLast {
         buildDate = currentTime
         jar.manifest {
@@ -395,6 +503,7 @@ subprojects {
                 xml.enabled = true
                 html.enabled = false
             }
+            it.pluginClasspath = project.configurations.spotbugsPlugins
             it.finalizedBy outputSpotbugsReports
         }
     }
@@ -436,17 +545,37 @@ subprojects {
             errorproneJavac "com.google.errorprone:javac:$errorproneJavacVersion"
         }
         testImplementation libraries.tests
-        testImplementation libraries.groovy
         testImplementation libraries.log4j
         compileOnly libraries.findbugsannotations
     }
 }
 
-wrapper {
-    gradleVersion = project.gradleVersion
+task outputDependenciesWithoutLicense(description: "Output dependencies without approved license") {
+    doLast {
+        def results = file("${project.buildDir}/licenses/dependencies-without-allowed-license.json")
+        if (results.exists()) {
+            def slurper = new groovy.json.JsonSlurper()
+            def dependencies = slurper.parseText(results.text)
+            if (!dependencies.dependenciesWithoutAllowedLicenses.isEmpty()) {
+                println results.text
+                throw new GradleException("Dependencies found without allowed licenses")
+            }
+        }
+    }
 }
 
-task javadoc(type: Javadoc, description: "Aggregate all Javadocs into a single directory", overwrite: true) {
+apply plugin: "com.github.jk1.dependency-license-report"
+licenseReport {
+    outputDir = "$projectDir/build/licenses"
+    projects = [project] + project.subprojects
+    excludeOwnGroup = true
+    configurations = ['runtimeClasspath']
+    filters = [new com.github.jk1.license.filter.ExcludeTransitiveDependenciesFilter()]
+    allowedLicensesFile = new File("$projectDir/etc/allowed-licenses.json")
+}
+checkLicense.finalizedBy outputDependenciesWithoutLicense
+
+tasks.withType(Javadoc) {
     source subprojects.collect { project -> project.sourceSets.main.allJava }
     destinationDir = new File(buildDir, "javadoc")
     classpath = files(subprojects.collect { project -> project.sourceSets.main.compileClasspath })
@@ -487,7 +616,7 @@ task jacocoMerge(type: JacocoMerge) {
     }
 }
 
-task jacocoRootReport(type: JacocoReport, group: 'Coverage reports') {
+task jacocoRootReport(type: JacocoReport, group: "Coverage reports") {
     description = 'Generates an aggregate report from all subprojects'
 
     subprojects.each {
@@ -498,9 +627,9 @@ task jacocoRootReport(type: JacocoReport, group: 'Coverage reports') {
 
     dependsOn jacocoMerge
 
-    additionalSourceDirs = files(publishedProjects.sourceSets.main.allSource.srcDirs)
-    sourceDirectories = files(publishedProjects.sourceSets.main.allSource.srcDirs)
-    classDirectories = files(files(subprojects.sourceSets.main.output).collect {
+    additionalSourceDirs.from(files(publishedProjects.sourceSets.main.allSource.srcDirs))
+    sourceDirectories.from(files(publishedProjects.sourceSets.main.allSource.srcDirs))
+    classDirectories.from(files(subprojects.sourceSets.main.output)).collect {
         fileTree(dir: it,
                 include: '**/*.class',
                 exclude: [
@@ -508,19 +637,16 @@ task jacocoRootReport(type: JacocoReport, group: 'Coverage reports') {
                         '**/shell/cli/**',
                         '**/shell/commands/**',
                         '**/**Configuration$**',
-                        '**/**Controller**',
                         '**/**ConfigurationMetadataGenerator**',
                         '**/**Application.class',
                         '**/**Application$**',
-                        '**/**WebflowConfigurer.class',
-                        '**/**WebflowConfigurer$**',
                         '**/**Exception.class',
                         '**/**Banner.class',
                         '**/**Exception$**',
                         '**/**Properties.class',
                         '**/**Properties$**'
                 ])
-    })
+    }
     executionData jacocoMerge.destinationFile
     reports {
         html.enabled = false

@@ -111,10 +111,22 @@ the service definition in the registry to match the following:
     "jwtAsServiceTicketEncryptionKey" : {
          "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
          "values" : [ "java.util.HashSet", [ "..." ] ]
+    },
+    "jwtAsServiceTicketCipherStrategyType" : {
+         "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
+         "values" : [ "java.util.HashSet", [ "ENCRYPT_AND_SIGN" ] ]
     }
   }
 }
 ```
+
+The following cipher strategy types are available:
+
+| Type                | Description
+|---------------------|---------------------------------------------------
+| `ENCRYPT_AND_SIGN`  | Default strategy; encrypt values, and then sign. 
+| `SIGN_AND_ENCRYPT`  | Sign values, and then encrypt.
+
 
 ## JWT Validation - AES
 

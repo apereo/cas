@@ -13,6 +13,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -29,8 +30,9 @@ import javax.persistence.Id;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import javax.sql.DataSource;
-import java.util.Collections;
+
 import java.util.HashMap;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -46,6 +48,7 @@ import static org.junit.jupiter.api.Assertions.*;
     DatabaseAuthenticationTestConfiguration.class
 })
 @DirtiesContext
+@Tag("JDBC")
 public class QueryDatabaseAuthenticationHandlerTests {
     private static final String SQL = "SELECT * FROM casusers where username=?";
     private static final String PASSWORD_FIELD = "password";
@@ -125,7 +128,7 @@ public class QueryDatabaseAuthenticationHandlerTests {
     @Test
     @SneakyThrows
     public void verifySuccess() {
-        val map = CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(Collections.singletonList("phone:phoneNumber"));
+        val map = CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(List.of("phone:phoneNumber"));
         val q = new QueryDatabaseAuthenticationHandler(StringUtils.EMPTY, null, null, null,
             this.dataSource, SQL, PASSWORD_FIELD,
             null, null,

@@ -5,13 +5,12 @@ import org.apereo.cas.pm.impl.history.BasePasswordHistoryService;
 import org.apereo.cas.pm.impl.history.PasswordHistoryEntity;
 
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+
 import java.util.Collection;
 
 /**
@@ -20,9 +19,7 @@ import java.util.Collection;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@EnableTransactionManagement(proxyTargetClass = true)
 @Transactional(transactionManager = "transactionManagerPasswordHistory")
-@Slf4j
 @ToString
 public class JdbcPasswordHistoryService extends BasePasswordHistoryService {
     private static final String SELECT_QUERY = "SELECT p FROM PasswordHistoryEntity p ";

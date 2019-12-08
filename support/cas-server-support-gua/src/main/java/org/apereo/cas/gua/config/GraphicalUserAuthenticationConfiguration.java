@@ -7,7 +7,6 @@ import org.apereo.cas.gua.impl.StaticUserGraphicalAuthenticationRepository;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.flow.AcceptUserGraphicsForAuthenticationAction;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
-import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.DisplayUserGraphicsBeforeAuthenticationAction;
 import org.apereo.cas.web.flow.GraphicalUserAuthenticationWebflowConfigurer;
@@ -55,14 +54,14 @@ public class GraphicalUserAuthenticationConfiguration {
     private ApplicationContext applicationContext;
 
     @Autowired
-    private FlowBuilderServices flowBuilderServices;
+    private ObjectProvider<FlowBuilderServices> flowBuilderServices;
 
     @ConditionalOnMissingBean(name = "graphicalUserAuthenticationWebflowConfigurer")
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer graphicalUserAuthenticationWebflowConfigurer() {
-        return new GraphicalUserAuthenticationWebflowConfigurer(flowBuilderServices,
-            loginFlowDefinitionRegistry.getIfAvailable(), applicationContext, casProperties);
+        return new GraphicalUserAuthenticationWebflowConfigurer(flowBuilderServices.getObject(),
+            loginFlowDefinitionRegistry.getObject(), applicationContext, casProperties);
     }
 
     @Bean
@@ -101,17 +100,12 @@ public class GraphicalUserAuthenticationConfiguration {
     @Bean
     @RefreshScope
     public Action initializeLoginAction() {
-        return new PrepareForGraphicalAuthenticationAction(servicesManager.getIfAvailable());
+        return new PrepareForGraphicalAuthenticationAction(servicesManager.getObject());
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "graphicalUserAuthenticationCasWebflowExecutionPlanConfigurer")
     public CasWebflowExecutionPlanConfigurer graphicalUserAuthenticationCasWebflowExecutionPlanConfigurer() {
-        return new CasWebflowExecutionPlanConfigurer() {
-            @Override
-            public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-                plan.registerWebflowConfigurer(graphicalUserAuthenticationWebflowConfigurer());
-            }
-        };
+        return plan -> plan.registerWebflowConfigurer(graphicalUserAuthenticationWebflowConfigurer());
     }
 }

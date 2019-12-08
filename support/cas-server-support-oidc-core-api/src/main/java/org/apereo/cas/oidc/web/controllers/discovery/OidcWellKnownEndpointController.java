@@ -6,7 +6,6 @@ import org.apereo.cas.oidc.discovery.webfinger.OidcWebFingerDiscoveryService;
 import org.apereo.cas.support.oauth.web.endpoints.BaseOAuth20Controller;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestParam;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Slf4j
 public class OidcWellKnownEndpointController extends BaseOAuth20Controller {
 
     private final OidcWebFingerDiscoveryService webFingerDiscoveryService;

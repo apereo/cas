@@ -51,7 +51,7 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
 
     @Override
     public Principal resolve(final Credential credential, final Optional<Principal> principal, final Optional<AuthenticationHandler> handler) {
-        val principals = new ArrayList<Principal>();
+        val principals = new ArrayList<Principal>(chain.size());
         chain.stream()
             .filter(resolver -> resolver.supports(credential))
             .forEach(resolver -> {
@@ -99,7 +99,7 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
      */
     @Override
     public boolean supports(final Credential credential) {
-        return this.chain.get(0).supports(credential);
+        return this.chain.stream().anyMatch(r -> r.supports(credential));
     }
 
     @Override

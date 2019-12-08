@@ -1,10 +1,10 @@
 package org.apereo.cas.support.oauth.web.response.accesstoken;
 
+import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
-import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
-import org.apereo.cas.ticket.accesstoken.AccessToken;
-import org.apereo.cas.ticket.refreshtoken.RefreshToken;
+import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
+import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
 
 import lombok.Builder;
 
@@ -20,22 +20,24 @@ import java.util.Optional;
  */
 @Builder
 public class OAuth20TokenGeneratedResult {
-    private AccessToken accessToken;
-    private RefreshToken refreshToken;
+    private static final int MAP_SIZE = 8;
+
+    private OAuth20AccessToken accessToken;
+    private OAuth20RefreshToken refreshToken;
     private OAuth20ResponseTypes responseType;
     private OAuth20GrantTypes grantType;
-    private OAuthRegisteredService registeredService;
+    private RegisteredService registeredService;
     private String deviceCode;
     private String userCode;
 
     @Builder.Default
-    private Map<String, Object> details = new LinkedHashMap<>();
+    private Map<String, Object> details = new LinkedHashMap<>(MAP_SIZE);
 
-    public Optional<AccessToken> getAccessToken() {
+    public Optional<OAuth20AccessToken> getAccessToken() {
         return Optional.ofNullable(accessToken);
     }
 
-    public Optional<RefreshToken> getRefreshToken() {
+    public Optional<OAuth20RefreshToken> getRefreshToken() {
         return Optional.ofNullable(refreshToken);
     }
 
@@ -47,7 +49,7 @@ public class OAuth20TokenGeneratedResult {
         return Optional.ofNullable(grantType);
     }
 
-    public Optional<OAuthRegisteredService> getRegisteredService() {
+    public Optional<RegisteredService> getRegisteredService() {
         return Optional.ofNullable(registeredService);
     }
 

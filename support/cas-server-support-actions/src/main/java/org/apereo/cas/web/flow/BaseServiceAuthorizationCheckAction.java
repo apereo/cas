@@ -21,8 +21,6 @@ import org.springframework.webflow.execution.RequestContext;
 @Slf4j
 @RequiredArgsConstructor
 public abstract class BaseServiceAuthorizationCheckAction extends AbstractAction {
-    private static final long serialVersionUID = -3165401494229678245L;
-
     private final ServicesManager servicesManager;
     private final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
 

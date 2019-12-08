@@ -18,7 +18,6 @@ import java.io.File;
 @Slf4j
 public class DeleteResourceBasedRegisteredServiceWatcher extends BaseResourceBasedRegisteredServiceWatcher {
 
-
     public DeleteResourceBasedRegisteredServiceWatcher(final AbstractResourceBasedServiceRegistry serviceRegistryDao) {
         super(serviceRegistryDao);
     }

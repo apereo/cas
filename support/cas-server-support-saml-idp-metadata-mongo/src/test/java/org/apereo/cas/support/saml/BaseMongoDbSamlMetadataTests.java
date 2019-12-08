@@ -28,12 +28,14 @@ import org.apereo.cas.config.SamlIdPMongoDbRegisteredServiceMetadataConfiguratio
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.SamlRegisteredServiceMetadataResolver;
 import org.apereo.cas.validation.config.CasCoreValidationConfiguration;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
+import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,14 +70,13 @@ import org.springframework.data.mongodb.core.MongoTemplate;
     CasCoreServicesConfiguration.class,
     CasCoreWebConfiguration.class,
     CasCoreWebflowConfiguration.class,
+    CasWebflowContextConfiguration.class,
     SamlIdPConfiguration.class,
     SamlIdPAuthenticationServiceSelectionStrategyConfiguration.class,
     SamlIdPEndpointsConfiguration.class,
     SamlIdPMetadataConfiguration.class,
     RefreshAutoConfiguration.class,
     AopAutoConfiguration.class,
-    CasCoreAuthenticationConfiguration.class,
-    CasCoreServicesAuthenticationConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
     CasCoreLogoutConfiguration.class,
@@ -85,7 +86,8 @@ import org.springframework.data.mongodb.core.MongoTemplate;
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     CoreSamlConfiguration.class,
     CasPersonDirectoryConfiguration.class,
-    CasCoreUtilConfiguration.class})
+    CasCoreUtilConfiguration.class
+})
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public abstract class BaseMongoDbSamlMetadataTests {
     @Autowired
@@ -98,6 +100,10 @@ public abstract class BaseMongoDbSamlMetadataTests {
     @Autowired
     @Qualifier("mongoDbSamlRegisteredServiceMetadataResolver")
     protected SamlRegisteredServiceMetadataResolver resolver;
+
+    @Autowired
+    @Qualifier("servicesManager")
+    protected ServicesManager servicesManager;
 
     @Autowired
     @Qualifier("samlIdPMetadataGenerator")

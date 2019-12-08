@@ -8,6 +8,7 @@ import org.ektorp.support.GenerateView;
 import org.ektorp.support.View;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Collection;
 import java.util.List;
 
@@ -42,7 +43,7 @@ public class EventCouchDbRepository extends CouchDbRepositorySupport<CouchDbCasE
     @View(name = "by_type_and_local_date_time", map = "function(doc) { emit([doc.type, doc.creationTime], doc) }")
     public List<CouchDbCasEvent> findByTypeSince(final String type, final LocalDateTime localDateTime) {
         val view = createQuery("by_type_and_local_date_time").startKey(ComplexKey.of(type, localDateTime))
-            .endKey(ComplexKey.of(type, LocalDateTime.now()));
+            .endKey(ComplexKey.of(type, LocalDateTime.now(ZoneId.systemDefault())));
         return db.queryView(view, CouchDbCasEvent.class);
     }
 
@@ -68,7 +69,7 @@ public class EventCouchDbRepository extends CouchDbRepositorySupport<CouchDbCasE
     @View(name = "by_type_for_principal_id_since", map = "function(doc) { emit([doc.type, doc.principal, doc.creationTime], doc) }")
     public Collection<CouchDbCasEvent> findByTypeForPrincipalSince(final String type, final String principalId, final LocalDateTime localDateTime) {
         val view = createQuery("by_type_for_principal_id_since").startKey(ComplexKey.of(type, principalId, localDateTime))
-            .endKey(ComplexKey.of(type, principalId, LocalDateTime.now()));
+            .endKey(ComplexKey.of(type, principalId, LocalDateTime.now(ZoneId.systemDefault())));
         return db.queryView(view, CouchDbCasEvent.class);
     }
 
@@ -91,7 +92,7 @@ public class EventCouchDbRepository extends CouchDbRepositorySupport<CouchDbCasE
     @View(name = "by_principal_id_since", map = "function(doc) { emit([doc.principalId, doc.creationTime], doc) }")
     public Collection<CouchDbCasEvent> findByPrincipalSince(final String principalId, final LocalDateTime creationTime) {
         val view = createQuery("by_principal_id_since").startKey(ComplexKey.of(principalId, creationTime))
-            .endKey(ComplexKey.of(principalId, LocalDateTime.now()));
+            .endKey(ComplexKey.of(principalId, LocalDateTime.now(ZoneId.systemDefault())));
         return db.queryView(view, CouchDbCasEvent.class);
     }
 }

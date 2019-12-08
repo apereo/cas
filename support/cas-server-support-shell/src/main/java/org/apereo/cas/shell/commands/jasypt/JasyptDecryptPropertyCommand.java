@@ -39,15 +39,15 @@ public class JasyptDecryptPropertyCommand {
      */
     @ShellMethod(key = "decrypt-value", value = "Decrypt a CAS property value/setting via Jasypt")
     public void decryptValue(
-        @ShellOption(value = "value",
+        @ShellOption(value = { "value", "--value" },
             help = "Value to decrypt") final String value,
-        @ShellOption(value = "alg",
+        @ShellOption(value = { "alg", "--alg" },
             help = "Algorithm to use to decrypt") final String alg,
-        @ShellOption(value = "provider",
+        @ShellOption(value = { "provider", "--provider" },
             help = "Security provider to use to decrypt") final String provider,
-        @ShellOption(value = "password",
+        @ShellOption(value = { "password", "--password" },
             help = "Password (encryption key) to decrypt") final String password,
-        @ShellOption(value = "iterations",
+        @ShellOption(value = { "iterations", "--iterations" },
             defaultValue = ShellOption.NULL,
             help = "Key obtention iterations to decrypt, default 1000") final String iterations) {
 

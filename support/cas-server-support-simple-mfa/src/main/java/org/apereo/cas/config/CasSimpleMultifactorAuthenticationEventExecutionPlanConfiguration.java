@@ -17,7 +17,6 @@ import org.apereo.cas.mfa.simple.CasSimpleMultifactorTokenCredential;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,9 +35,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("casSimpleMultifactorAuthenticationEventExecutionPlanConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class CasSimpleMultifactorAuthenticationEventExecutionPlanConfiguration {
-
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -64,8 +61,8 @@ public class CasSimpleMultifactorAuthenticationEventExecutionPlanConfiguration {
     public AuthenticationHandler casSimpleMultifactorAuthenticationHandler() {
         val props = casProperties.getAuthn().getMfa().getSimple();
         return new CasSimpleMultifactorAuthenticationHandler(props.getName(),
-            servicesManager.getIfAvailable(), casSimpleMultifactorPrincipalFactory(),
-            ticketRegistry.getIfAvailable(), props.getOrder());
+            servicesManager.getObject(), casSimpleMultifactorPrincipalFactory(),
+            ticketRegistry.getObject(), props.getOrder());
     }
 
     @Bean
@@ -73,9 +70,9 @@ public class CasSimpleMultifactorAuthenticationEventExecutionPlanConfiguration {
     public MultifactorAuthenticationProvider casSimpleMultifactorAuthenticationProvider() {
         val simple = casProperties.getAuthn().getMfa().getSimple();
         val p = new CasSimpleMultifactorAuthenticationProvider();
-        p.setBypassEvaluator(casSimpleMultifactorBypassEvaluator.getIfAvailable());
+        p.setBypassEvaluator(casSimpleMultifactorBypassEvaluator.getObject());
         p.setFailureMode(simple.getFailureMode());
-        p.setFailureModeEvaluator(failureModeEvaluator.getIfAvailable());
+        p.setFailureModeEvaluator(failureModeEvaluator.getObject());
         p.setOrder(simple.getRank());
         p.setId(simple.getId());
         return p;

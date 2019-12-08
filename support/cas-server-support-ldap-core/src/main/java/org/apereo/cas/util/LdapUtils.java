@@ -1,5 +1,6 @@
 package org.apereo.cas.util;
 
+import org.apereo.cas.authentication.OpenActivator;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
 import org.apereo.cas.configuration.support.Beans;
@@ -257,7 +258,7 @@ public class LdapUtils {
         try (val connection = createConnection(connectionFactory)) {
             val request = LdapUtils.newLdaptiveSearchRequest(baseDn, filter, binaryAttributes, returnAttributes);
             request.setReferralHandler(new SearchReferralHandler());
-            if (pageSize <=0) {
+            if (pageSize <= 0) {
                 val searchOperation = new SearchOperation(connection);
                 return searchOperation.execute(request);
             }
@@ -323,6 +324,12 @@ public class LdapUtils {
      * @param newPassword       the new password
      * @param type              the type
      * @return true /false
+     * <p>
+     * AD NOTE: Resetting passwords requires binding to AD as user with privileges to reset other users passwords
+     * and it does not validate old password or respect directory policies such as history or minimum password age.
+     * Changing a password with the old password does respect directory policies and requires no account operator
+     * privileges on the bind user. Pass in blank old password if reset is in order (e.g. forgot password) vs.
+     * letting user change their own (e.g. expiring) password.
      */
     public static boolean executePasswordModifyOperation(final String currentDn,
                                                          final ConnectionFactory connectionFactory,
@@ -333,13 +340,23 @@ public class LdapUtils {
             if (!modifyConnection.getConnectionConfig().getUseSSL()
                 && !modifyConnection.getConnectionConfig().getUseStartTLS()) {
                 LOGGER.warn("Executing password modification op under a non-secure LDAP connection; "
-                    + "To modify password attributes, the connection to the LDAP server SHOULD be secured and/or encrypted.");
+                        + "To modify password attributes, the connection to the LDAP server {} be secured and/or encrypted.",
+                    type == AbstractLdapProperties.LdapType.AD ? "MUST" : "SHOULD");
             }
             if (type == AbstractLdapProperties.LdapType.AD) {
-                LOGGER.debug("Executing password modification op for active directory based on "
-                    + "[https://support.microsoft.com/en-us/kb/269190]");
+                LOGGER.debug("Executing password change op for active directory based on "
+                    + "[https://support.microsoft.com/en-us/kb/269190]"
+                    + "change type: [{}]", StringUtils.isBlank(oldPassword) ? "reset" : "change");
                 val operation = new ModifyOperation(modifyConnection);
-                val response = operation.execute(new ModifyRequest(currentDn, new AttributeModification(AttributeModificationType.REPLACE, new UnicodePwdAttribute(newPassword))));
+                val response = StringUtils.isBlank(oldPassword)
+                    ?
+                    operation.execute(new ModifyRequest(currentDn,
+                        new AttributeModification(AttributeModificationType.REPLACE, new UnicodePwdAttribute(newPassword))))
+                    :
+                    operation.execute(
+                        new ModifyRequest(currentDn,
+                            new AttributeModification(AttributeModificationType.REMOVE, new UnicodePwdAttribute(oldPassword)),
+                            new AttributeModification(AttributeModificationType.ADD, new UnicodePwdAttribute(newPassword))));
                 LOGGER.debug("Result code [{}], message: [{}]", response.getResult(), response.getMessage());
                 return response.getResultCode() == ResultCode.SUCCESS;
             }
@@ -683,7 +700,7 @@ public class LdapUtils {
         }
 
         val auth = StringUtils.isBlank(l.getPrincipalAttributePassword())
-            ? new Authenticator(resolver, getPooledBindAuthenticationHandler(l, newLdaptivePooledConnectionFactory(l)))
+            ? new Authenticator(resolver, getPooledBindAuthenticationHandler(newLdaptivePooledConnectionFactory(l)))
             : new Authenticator(resolver, getPooledCompareAuthenticationHandler(l, newLdaptivePooledConnectionFactory(l)));
 
         if (l.isEnhanceWithEntryResolver()) {
@@ -708,7 +725,7 @@ public class LdapUtils {
 
     private static Authenticator getAuthenticatorViaDnFormat(final AbstractLdapAuthenticationProperties l) {
         val resolver = new FormatDnResolver(l.getDnFormat());
-        val authenticator = new Authenticator(resolver, getPooledBindAuthenticationHandler(l, newLdaptivePooledConnectionFactory(l)));
+        val authenticator = new Authenticator(resolver, getPooledBindAuthenticationHandler(newLdaptivePooledConnectionFactory(l)));
 
         if (l.isEnhanceWithEntryResolver()) {
             authenticator.setEntryResolver(newLdaptiveSearchEntryResolver(l, newLdaptivePooledConnectionFactory(l)));
@@ -716,8 +733,7 @@ public class LdapUtils {
         return authenticator;
     }
 
-    private static PooledBindAuthenticationHandler getPooledBindAuthenticationHandler(final AbstractLdapAuthenticationProperties l,
-                                                                                      final PooledConnectionFactory factory) {
+    private static PooledBindAuthenticationHandler getPooledBindAuthenticationHandler(final PooledConnectionFactory factory) {
         val handler = new PooledBindAuthenticationHandler(factory);
         handler.setAuthenticationControls(new PasswordPolicyControl());
         return handler;
@@ -804,8 +820,8 @@ public class LdapUtils {
             if (l.getKeystore() != null) {
                 LOGGER.trace("Creating LDAP SSL configuration via keystore [{}]", l.getKeystore());
                 cfg.setKeyStore(l.getKeystore());
-                cfg.setKeyStorePassword(l.getKeystorePassword());
                 cfg.setKeyStoreType(l.getKeystoreType());
+                cfg.setKeyStorePassword(l.getKeystorePassword());
             }
             cc.setSslConfig(new SslConfig(cfg));
         } else {
@@ -968,6 +984,8 @@ public class LdapUtils {
             switch (pass) {
                 case CLOSE:
                     cp.setPassivator(new ClosePassivator());
+                    cp.setActivator(new OpenActivator());
+
                     LOGGER.debug("Created [{}] passivator for [{}]", l.getPoolPassivator(), l.getLdapUrl());
                     break;
                 case BIND:
@@ -996,6 +1014,7 @@ public class LdapUtils {
         cp.initialize();
         return cp;
     }
+
 
     /**
      * New dn resolver entry resolver.

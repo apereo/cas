@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -33,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Timur Duehr
  * @since 6.0.0
  */
-@Configuration("couchDbAuthenticationConfiguration")
+@Configuration(value = "couchDbAuthenticationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class CouchDbAuthenticationConfiguration {
@@ -53,11 +54,14 @@ public class CouchDbAuthenticationConfiguration {
     @Qualifier("servicesManager")
     private ObjectProvider<ServicesManager> servicesManager;
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "authenticationCouchDbFactory")
     public CouchDbConnectorFactory authenticationCouchDbFactory() {
-        return new CouchDbConnectorFactory(casProperties.getAuthn().getCouchDb(), objectMapperFactory.getIfAvailable());
+        return new CouchDbConnectorFactory(casProperties.getAuthn().getCouchDb(), objectMapperFactory.getObject());
     }
 
     @ConditionalOnMissingBean(name = "authenticationCouchDbRepository")
@@ -74,7 +78,7 @@ public class CouchDbAuthenticationConfiguration {
     @Bean
     public AuthenticationEventExecutionPlanConfigurer couchDbAuthenticationEventExecutionPlanConfigurer(
         @Qualifier("couchDbAuthenticationHandler") final AuthenticationHandler authenticationHandler) {
-        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(authenticationHandler, defaultPrincipalResolver.getIfAvailable());
+        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(authenticationHandler, defaultPrincipalResolver.getObject());
     }
 
     @ConditionalOnMissingBean(name = "couchDbPrincipalFactory")
@@ -90,7 +94,7 @@ public class CouchDbAuthenticationConfiguration {
         @Qualifier("couchDbAuthenticatorProfileService") final CouchProfileService couchProfileService,
         @Qualifier("couchDbPrincipalFactory") final PrincipalFactory principalFactory) {
         val couchDb = casProperties.getAuthn().getCouchDb();
-        val handler = new CouchDbAuthenticationHandler(couchDb.getName(), servicesManager.getIfAvailable(), principalFactory, couchDb.getOrder());
+        val handler = new CouchDbAuthenticationHandler(couchDb.getName(), servicesManager.getObject(), principalFactory, couchDb.getOrder());
         handler.setAuthenticator(couchProfileService);
         handler.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(couchDb.getPrincipalTransformation()));
         return handler;
@@ -103,7 +107,7 @@ public class CouchDbAuthenticationConfiguration {
 
         LOGGER.info("Connected to CouchDb instance @ [{}] using database [{}]", couchDb.getUrl(), couchDb.getDbName());
 
-        val encoder = new SpringSecurityPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(couchDb.getPasswordEncoder()));
+        val encoder = new SpringSecurityPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(couchDb.getPasswordEncoder(), applicationContext));
         val auth = new CouchProfileService(authenticationCouchDbFactory.getCouchDbConnector(), couchDb.getAttributes());
         auth.setUsernameAttribute(couchDb.getUsernameAttribute());
         auth.setPasswordAttribute(couchDb.getPasswordAttribute());

@@ -9,9 +9,10 @@ import org.apereo.cas.util.MockWebServer;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
 import org.apache.commons.io.IOUtils;
+import org.ehcache.UserManagedCache;
+import org.ehcache.config.builders.ResourcePoolsBuilder;
+import org.ehcache.config.builders.UserManagedCacheBuilder;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -24,6 +25,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.net.URI;
 import java.security.GeneralSecurityException;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -65,7 +67,12 @@ public class CRLDistributionPointRevocationCheckerTests extends BaseCRLRevocatio
         LOGGER.debug("Web server listening on port 8085 serving file [{}]", crlFile);
         Thread.sleep(500);
 
-        super.checkCertificate(checker, certFiles, expected);
+        BaseCRLRevocationCheckerTests.checkCertificate(checker, certFiles, expected);
+    }
+
+    private static UserManagedCache<URI, byte[]> getCache(final int entries) {
+        return UserManagedCacheBuilder.newUserManagedCacheBuilder(URI.class, byte[].class)
+            .withResourcePools(ResourcePoolsBuilder.heap(entries)).build();
     }
 
     /**
@@ -74,9 +81,7 @@ public class CRLDistributionPointRevocationCheckerTests extends BaseCRLRevocatio
      * @return Test parameter data.
      */
     public static Stream<Arguments> getTestParameters() {
-        CacheManager.getInstance().removeAllCaches();
         val params = new ArrayList<Arguments>();
-        var cache = (Cache) null;
         val defaultPolicy = new ThresholdExpiredCRLRevocationPolicy(0);
         val zeroThresholdPolicy = new ThresholdExpiredCRLRevocationPolicy(0);
 
@@ -84,8 +89,7 @@ public class CRLDistributionPointRevocationCheckerTests extends BaseCRLRevocatio
          * Test case #0
          * Valid certificate on valid CRL data with encoded url
          */
-        cache = new Cache("crlCache-0", 100, false, false, 20, 10);
-        CacheManager.getInstance().addCache(cache);
+        var cache = getCache(100);
         params.add(arguments(
             new CRLDistributionPointRevocationChecker(cache, defaultPolicy, null),
             new String[]{"uservalid-encoded-crl.crt"},
@@ -97,8 +101,7 @@ public class CRLDistributionPointRevocationCheckerTests extends BaseCRLRevocatio
          * Test case #1
          * Valid certificate on valid CRL data
          */
-        cache = new Cache("crlCache-1", 100, false, false, 20, 10);
-        CacheManager.getInstance().addCache(cache);
+        cache = getCache(100);
         params.add(arguments(
             new CRLDistributionPointRevocationChecker(cache, defaultPolicy, null, true),
             new String[]{"user-valid-distcrl.crt"},
@@ -110,8 +113,7 @@ public class CRLDistributionPointRevocationCheckerTests extends BaseCRLRevocatio
         /* Test case #2
          * Revoked certificate on valid CRL data
          */
-        cache = new Cache("crlCache-2", 100, false, false, 20, 10);
-        CacheManager.getInstance().addCache(cache);
+        cache = getCache(100);
         params.add(arguments(
             new CRLDistributionPointRevocationChecker(cache, defaultPolicy, null),
             new String[]{"user-revoked-distcrl.crt"},
@@ -122,8 +124,7 @@ public class CRLDistributionPointRevocationCheckerTests extends BaseCRLRevocatio
         /* Test case #3
          * Valid certificate on expired CRL data
          */
-        cache = new Cache("crlCache-3", 100, false, false, 20, 10);
-        CacheManager.getInstance().addCache(cache);
+        cache = getCache(100);
         params.add(arguments(
             new CRLDistributionPointRevocationChecker(cache, zeroThresholdPolicy, null),
             new String[]{"user-valid-distcrl.crt"},
@@ -135,8 +136,7 @@ public class CRLDistributionPointRevocationCheckerTests extends BaseCRLRevocatio
          * Valid certificate on expired CRL data with custom expiration
          * policy to always allow expired CRL data
          */
-        cache = new Cache("crlCache-4", 100, false, false, 20, 10);
-        CacheManager.getInstance().addCache(cache);
+        cache = getCache(100);
         params.add(arguments(
             new CRLDistributionPointRevocationChecker(cache, crl -> {
             }, null),
@@ -149,8 +149,7 @@ public class CRLDistributionPointRevocationCheckerTests extends BaseCRLRevocatio
          * Valid certificate with no CRL distribution points defined but with
          * "AllowRevocationPolicy" set to allow unavailable CRL data
          */
-        cache = new Cache("crlCache-5", 100, false, false, 20, 10);
-        CacheManager.getInstance().addCache(cache);
+        cache = getCache(100);
         params.add(arguments(
             new CRLDistributionPointRevocationChecker(cache, defaultPolicy, new AllowRevocationPolicy()),
             new String[]{"user-valid.crt"},
@@ -165,8 +164,7 @@ public class CRLDistributionPointRevocationCheckerTests extends BaseCRLRevocatio
          * the escaping of reserved characters in RFC 2396.
          * Make sure we can convert given URI to valid URI and confirm it's revoked
          */
-        cache = new Cache("crlCache-6", 100, false, false, 20, 10);
-        CacheManager.getInstance().addCache(cache);
+        cache = getCache(100);
         params.add(arguments(
             new CRLDistributionPointRevocationChecker(cache, defaultPolicy, null),
             new String[]{"user-revoked-distcrl2.crt"},

@@ -16,6 +16,7 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
+import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.ClientCredential;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
@@ -32,7 +33,8 @@ import org.apereo.cas.ticket.expiration.builder.TransientSessionTicketExpiration
 import org.apereo.cas.ticket.factory.DefaultTransientSessionTicketFactory;
 import org.apereo.cas.ticket.registry.DefaultTicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.web.DelegatedClientNavigationController;
+import org.apereo.cas.web.DelegatedClientIdentityProviderConfiguration;
+import org.apereo.cas.web.DelegatedClientIdentityProviderConfigurationFactory;
 import org.apereo.cas.web.DelegatedClientWebflowManager;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
@@ -50,6 +52,10 @@ import org.pac4j.core.context.session.JEESessionStore;
 import org.pac4j.oauth.client.FacebookClient;
 import org.pac4j.oauth.client.TwitterClient;
 import org.pac4j.oauth.credentials.OAuth20Credentials;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpMethod;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -58,7 +64,12 @@ import org.springframework.web.servlet.theme.ThemeChangeInterceptor;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
+import org.springframework.webflow.engine.Flow;
+import org.springframework.webflow.engine.FlowVariable;
+import org.springframework.webflow.engine.support.BeanFactoryVariableValueFactory;
 import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.test.MockFlowExecutionContext;
+import org.springframework.webflow.test.MockFlowSession;
 import org.springframework.webflow.test.MockRequestContext;
 
 import java.util.Arrays;
@@ -76,6 +87,7 @@ import static org.mockito.Mockito.*;
  * @author Jerome Leleu
  * @since 3.5.2
  */
+@SpringBootTest(classes = RefreshAutoConfiguration.class)
 public class DelegatedClientAuthenticationActionTests {
 
     private static final String TGT_ID = "TGT-00-xxxxxxxxxxxxxxxxxxxxxxxxxx.cas0";
@@ -90,6 +102,9 @@ public class DelegatedClientAuthenticationActionTests {
 
     private static final String MY_THEME = "my_theme";
     private static final List<String> CLIENTS = Arrays.asList("FacebookClient", "TwitterClient");
+
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
 
     @Test
     public void verifyStartAuthenticationNoService() {
@@ -116,7 +131,12 @@ public class DelegatedClientAuthenticationActionTests {
         when(servletExternalContext.getNativeRequest()).thenReturn(mockRequest);
         when(servletExternalContext.getNativeResponse()).thenReturn(mockResponse);
 
+        val flow = new Flow("mockFlow");
+        flow.addVariable(new FlowVariable("credential",
+            new BeanFactoryVariableValueFactory(UsernamePasswordCredential.class, applicationContext.getAutowireCapableBeanFactory())));
         val mockRequestContext = new MockRequestContext();
+        val mockExecutionContext = new MockFlowExecutionContext(new MockFlowSession(flow));
+        mockRequestContext.setFlowExecutionContext(mockExecutionContext);
         mockRequestContext.setExternalContext(servletExternalContext);
 
         if (service != null) {
@@ -155,7 +175,7 @@ public class DelegatedClientAuthenticationActionTests {
         assertEquals(Locale.getDefault().getCountry(), mockRequest.getAttribute(LocaleChangeInterceptor.DEFAULT_PARAM_NAME));
         assertEquals(HttpMethod.POST.name(), mockRequest.getAttribute(CasProtocolConstants.PARAMETER_METHOD));
         val flowScope = mockRequestContext.getFlowScope();
-        val urls = (Set<DelegatedClientAuthenticationAction.DelegatedClientIdentityProviderConfiguration>)
+        val urls = (Set<DelegatedClientIdentityProviderConfiguration>)
             flowScope.get(DelegatedClientAuthenticationAction.FLOW_ATTRIBUTE_PROVIDER_URLS);
 
         assertFalse(urls.isEmpty());
@@ -163,7 +183,7 @@ public class DelegatedClientAuthenticationActionTests {
         urls.stream()
             .map(url -> UriComponentsBuilder.fromUriString(url.getRedirectUrl()).build())
             .forEach(uriComponents -> {
-                assertEquals(DelegatedClientNavigationController.ENDPOINT_REDIRECT, uriComponents.getPath());
+                assertEquals(DelegatedClientIdentityProviderConfigurationFactory.ENDPOINT_URL_REDIRECT, uriComponents.getPath());
                 val clientName = uriComponents.getQueryParams().get(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER);
                 assertEquals(1, clientName.size());
                 assertTrue(CLIENTS.containsAll(clientName));
@@ -186,7 +206,7 @@ public class DelegatedClientAuthenticationActionTests {
             });
     }
 
-    private TransientSessionTicketExpirationPolicyBuilder getExpirationPolicyBuilder() {
+    private static TransientSessionTicketExpirationPolicyBuilder getExpirationPolicyBuilder() {
         val props = new CasConfigurationProperties();
         props.getTicket().getTst().setTimeToKillInSeconds(60);
         return new TransientSessionTicketExpirationPolicyBuilder(props);
@@ -270,7 +290,9 @@ public class DelegatedClientAuthenticationActionTests {
 
     private static ServicesManager getServicesManagerWith(final Service service, final RegisteredServiceAccessStrategy accessStrategy) {
         val mgr = mock(ServicesManager.class);
-        val regSvc = service != null ? RegisteredServiceTestUtils.getRegisteredService(service.getId()) : null;
+        val regSvc = Optional.ofNullable(service)
+            .map(svc -> RegisteredServiceTestUtils.getRegisteredService(svc.getId()))
+            .orElse(null);
 
         if (regSvc != null) {
             regSvc.setAccessStrategy(accessStrategy);
@@ -332,6 +354,7 @@ public class DelegatedClientAuthenticationActionTests {
             new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()),
             mock(CentralAuthenticationService.class),
             SingleSignOnParticipationStrategy.alwaysParticipating(),
-            new JEESessionStore());
+            new JEESessionStore(),
+            CollectionUtils.wrap(new DefaultArgumentExtractor(new WebApplicationServiceFactory())));
     }
 }

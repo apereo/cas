@@ -3,7 +3,6 @@ package org.apereo.cas.web.flow.config;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.CasCaptchaWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
-import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.ValidateCaptchaAction;
 
@@ -38,7 +37,7 @@ public class CasCaptchaConfiguration {
     private ObjectProvider<FlowDefinitionRegistry> loginFlowDefinitionRegistry;
 
     @Autowired
-    private FlowBuilderServices flowBuilderServices;
+    private ObjectProvider<FlowBuilderServices> flowBuilderServices;
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -50,12 +49,14 @@ public class CasCaptchaConfiguration {
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer captchaWebflowConfigurer() {
-        return new CasCaptchaWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry.getIfAvailable(),
+        return new CasCaptchaWebflowConfigurer(flowBuilderServices.getObject(),
+            loginFlowDefinitionRegistry.getObject(),
             applicationContext, casProperties);
     }
 
     @RefreshScope
     @Bean
+    @ConditionalOnMissingBean(name = "validateCaptchaAction")
     public Action validateCaptchaAction() {
         return new ValidateCaptchaAction(casProperties.getGoogleRecaptcha());
     }
@@ -63,11 +64,6 @@ public class CasCaptchaConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "captchaCasWebflowExecutionPlanConfigurer")
     public CasWebflowExecutionPlanConfigurer captchaCasWebflowExecutionPlanConfigurer() {
-        return new CasWebflowExecutionPlanConfigurer() {
-            @Override
-            public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-                plan.registerWebflowConfigurer(captchaWebflowConfigurer());
-            }
-        };
+        return plan -> plan.registerWebflowConfigurer(captchaWebflowConfigurer());
     }
 }

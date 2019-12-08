@@ -12,6 +12,7 @@ import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
+import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
@@ -33,7 +34,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.TestPropertySource;
 
 /**
  * This is {@link MongoDbTicketRegistryTests}.
@@ -47,6 +47,7 @@ import org.springframework.test.context.TestPropertySource;
     CasCoreUtilConfiguration.class,
     AopAutoConfiguration.class,
     MongoDbTicketRegistryTicketCatalogConfiguration.class,
+    CasCoreTicketIdGeneratorsConfiguration.class,
     MongoDbTicketRegistryConfiguration.class,
     CasCoreAuthenticationConfiguration.class,
     CasCoreServicesAuthenticationConfiguration.class,
@@ -66,9 +67,7 @@ import org.springframework.test.context.TestPropertySource;
     CasCoreTicketsSerializationConfiguration.class,
     CasCoreWebConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class
-})
-@EnableScheduling
-@TestPropertySource(properties = {
+}, properties = {
     "cas.ticket.registry.mongo.databaseName=ticket-registry",
     "cas.ticket.registry.mongo.authenticationDatabaseName=admin",
     "cas.ticket.registry.mongo.host=localhost",
@@ -77,6 +76,7 @@ import org.springframework.test.context.TestPropertySource;
     "cas.ticket.registry.mongo.userId=root",
     "cas.ticket.registry.mongo.password=secret"
 })
+@EnableScheduling
 @DirtiesContext
 @EnabledIfPortOpen(port = 27017)
 @EnabledIfContinuousIntegration

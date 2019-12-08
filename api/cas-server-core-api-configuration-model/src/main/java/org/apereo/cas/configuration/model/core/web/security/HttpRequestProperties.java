@@ -42,9 +42,16 @@ public class HttpRequestProperties implements Serializable {
     private String paramsToCheck = "ticket,service,renew,gateway,warn,method,target,SAMLart," + "pgtUrl,pgt,pgtId,pgtIou,targetService,entityId,token";
 
     /**
+     * Specify a regular expression that would be checked
+     * against the request URL. If a successful match is found,
+     * the request would be blocked.
+     */
+    private String patternToBlock;
+
+    /**
      * Custom response headers to inject into the response as needed.
      */
-    private Map<String, String> customHeaders = new LinkedHashMap<>();
+    private Map<String, String> customHeaders = new LinkedHashMap<>(0);
 
     /**
      * Control http request settings.

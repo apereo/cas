@@ -25,7 +25,6 @@ import org.springframework.test.context.TestPropertySource;
     "cas.acceptableUsagePolicy.couchDb.asynchronous=false",
     "cas.acceptableUsagePolicy.couchDb.username=cas",
     "cas.acceptableUsagePolicy.couchdb.password=password"
-
 })
 @Tag("CouchDb")
 @Getter

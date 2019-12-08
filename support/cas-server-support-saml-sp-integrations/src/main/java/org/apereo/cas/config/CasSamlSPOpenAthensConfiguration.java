@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration("casSamlSPOpenAthensConfiguration")
+@Configuration(value = "casSamlSPOpenAthensConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasSamlSPOpenAthensConfiguration extends BaseCasSamlSPConfiguration {
 

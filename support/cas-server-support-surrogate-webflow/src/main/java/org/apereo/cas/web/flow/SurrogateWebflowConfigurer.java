@@ -29,6 +29,18 @@ public class SurrogateWebflowConfigurer extends AbstractCasWebflowConfigurer {
      */
     public static final String TRANSITION_ID_SKIP_SURROGATE = "skipSurrogateView";
 
+    static final String STATE_ID_SURROGATE_VIEW = "surrogateListView";
+
+    static final String STATE_ID_LOAD_SURROGATES_ACTION = "loadSurrogatesAction";
+
+    static final String STATE_ID_SELECT_SURROGATE = "selectSurrogate";
+
+    private static final String VIEW_ID_CAS_SURROGATE_AUTHN_LIST_VIEW = "casSurrogateAuthnListView";
+
+    private static final String ACTION_ID_LOAD_SURROGATES_LIST_ACTION = "loadSurrogatesListAction";
+
+    private static final String ACTION_ID_SELECT_SURROGATE_ACTION = "selectSurrogateAction";
+
     public SurrogateWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
                                       final FlowDefinitionRegistry loginFlowDefinitionRegistry,
                                       final ApplicationContext applicationContext,
@@ -59,23 +71,23 @@ public class SurrogateWebflowConfigurer extends AbstractCasWebflowConfigurer {
         LOGGER.debug("Locating transition id [{}] to for state [{}", CasWebflowConstants.TRANSITION_ID_SUCCESS, actionState.getId());
         val targetSuccessId = actionState.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS).getTargetStateId();
 
-        val loadSurrogatesAction = createActionState(flow, "loadSurrogatesAction", "loadSurrogatesListAction");
+        val loadSurrogatesAction = createActionState(flow, STATE_ID_LOAD_SURROGATES_ACTION, ACTION_ID_LOAD_SURROGATES_LIST_ACTION);
         createTransitionForState(loadSurrogatesAction, CasWebflowConstants.TRANSITION_ID_SUCCESS, targetSuccessId);
-        createTransitionForState(loadSurrogatesAction, TRANSITION_ID_SURROGATE_VIEW, TRANSITION_ID_SURROGATE_VIEW);
+        createTransitionForState(loadSurrogatesAction, TRANSITION_ID_SURROGATE_VIEW, STATE_ID_SURROGATE_VIEW);
         createTransitionForState(loadSurrogatesAction, TRANSITION_ID_SKIP_SURROGATE, targetSuccessId);
         createTransitionForState(actionState, CasWebflowConstants.TRANSITION_ID_SUCCESS, loadSurrogatesAction.getId(), true);
 
     }
 
     private void createSurrogateSelectionActionState(final Flow flow) {
-        val selectSurrogate = createActionState(flow, "selectSurrogate", "selectSurrogateAction");
+        val selectSurrogate = createActionState(flow, STATE_ID_SELECT_SURROGATE, ACTION_ID_SELECT_SURROGATE_ACTION);
         val actionState = getState(flow, CasWebflowConstants.STATE_ID_REAL_SUBMIT, ActionState.class);
         val targetSuccessId = actionState.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS).getTargetStateId();
         createTransitionForState(selectSurrogate, CasWebflowConstants.TRANSITION_ID_SUCCESS, targetSuccessId);
     }
 
     private void createSurrogateListViewState(final Flow flow) {
-        val viewState = createViewState(flow, TRANSITION_ID_SURROGATE_VIEW, "casSurrogateAuthnListView");
+        val viewState = createViewState(flow, STATE_ID_SURROGATE_VIEW, VIEW_ID_CAS_SURROGATE_AUTHN_LIST_VIEW);
         createTransitionForState(viewState, CasWebflowConstants.TRANSITION_ID_SUBMIT, "selectSurrogate");
     }
 }

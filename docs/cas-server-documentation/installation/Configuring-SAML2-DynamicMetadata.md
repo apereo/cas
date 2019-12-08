@@ -130,15 +130,22 @@ Metadata artifacts that belong to CAS as a SAML2 identity provider may also be m
     "signingKey": "...",
     "encryptionCertificate": "...",
     "encryptionKey": "...",
-    "metadata": ""
+    "metadata": "",
+    "appliesTo: "CAS"
 }
 ```
 
 Note that the signing and encryption keys are expected to be encrypted and signed using CAS crypto keys. To see the relevant CAS properties, please [see this guide](../configuration/Configuration-Properties.html#saml-metadata-mongodb).
 
+#### Per Service
+
+Identity provider metadata, certificates and keys can also be defined on a per-service basis to override the global defaults.
+Metadata documents that would be applicable to a service definition need to adjust the `appliesTo` field in the metadata
+document to carry the service definition's name and numeric identifier using the `[service-name]-[service-numeric-identifier]` format.
+
 ## JPA
 
-Metadata documents may also be stored in and fetched from a relational database instance. This may specially be used to avoid copying metadata files across CAS nodes in a cluster, particularly where one needs to deal with more than a few bilateral SAML integrations. Metadata documents are stored in and fetched from a single pre-defined table  (i.e. `SamlMetadataDocument`) whose connection information is taught to CAS via settings and is automatically generated.  The outline of the table is as follows:
+Metadata documents may also be stored in and fetched from a relational database instance. This may specially be used to avoid copying metadata files across CAS nodes in a cluster, particularly where one needs to deal with more than a few bilateral SAML integrations. Metadata documents are stored in and fetched from a single pre-defined table  (i.e. `SamlMetadataDocument`) whose connection information is taught to CAS via settings and is automatically generated. The outline of the table is as follows:
 
 | Field        | Description
 |--------------|---------------------------------------------------
@@ -157,7 +164,7 @@ Support is enabled by including the following module in the overlay:
 </dependency>
 ```
 
-SAML service definitions must then be designed as follows to allow CAS to fetch metadata documents from database  instances:
+SAML service definitions must then be designed as follows to allow CAS to fetch metadata documents from database instances:
 
 ```json
 {
@@ -189,8 +196,15 @@ inside a database table that would have the following structure:
 | `encryptionCertificate`   | The encryption certificate.
 | `encryptionKey`           | The encryption key.
 | `metadata`                | The SAML2 identity provider metadata.
+| `appliesTo`               | The owner of the SAML2 identity provider metadata (i.e. `CAS`).
 
 Note that the signing and encryption keys are expected to be encrypted and signed using CAS crypto keys. To see the relevant CAS properties, please [see this guide](../configuration/Configuration-Properties.html#saml-metadata-jpa).
+
+#### Per Service
+
+Identity provider metadata, certificates and keys can also be defined on a per-service basis to override the global defaults.
+Metadata documents that would be applicable to a service definition need to adjust the `appliesTo` column in the metadata
+document to carry the service definition's name and numeric identifier using the `[service-name]-[service-numeric-identifier]` format.
 
 ## CouchDb
 
@@ -222,7 +236,7 @@ SAML service definitions must then be designed as follows to allow CAS to fetch 
   "name" : "SAMLService",
   "id" : 10000003,
   "description" : "A relational-db-based metadata resolver",
-  "metadataLocation" : "couchdb://"
+  "metadataLocation" : "couchdb://",
 }
 ```
 
@@ -245,12 +259,20 @@ inside a database with documents that would have the following structure:
 | `encryptionCertificate`   | The encryption certificate.
 | `encryptionKey`           | The encryption key.
 | `metadata`                | The SAML2 identity provider metadata.
+| `appliesTo`               | The owner of the SAML2 identity provider metadata (i.e. `CAS`).
 
 Note that the signing and encryption keys are expected to be encrypted and signed using CAS crypto keys. To see the relevant CAS properties, please [see this guide](../configuration/Configuration-Properties.html#saml-metadata-couchdb).
 
+#### Per Service
+
+Identity provider metadata, certificates and keys can also be defined on a per-service basis to override the global defaults.
+Metadata documents that would be applicable to a service definition need to adjust the `appliesTo` field in the metadata
+document to carry the service definition's name and numeric identifier using the `[service-name]_[service-numeric-identifier]` format.
+
 ## Groovy
 
-A metadata location for a SAML service definition may  point to an external Groovy script, allowing the script to programmatically determine and build the metadata resolution machinery to be added to the collection of the existing resolvers. 
+A metadata location for a SAML service definition may  point to an external Groovy script, allowing the script to programmatically 
+determine and build the metadata resolution machinery to be added to the collection of the existing resolvers. 
 
 ```json
 {
@@ -353,7 +375,14 @@ inside a bucket with metadata that would have the following structure:
 | `signingKey`              | The signing key.
 | `encryptionCertificate`   | The encryption certificate.
 | `encryptionKey`           | The encryption key.
+| `appliesTo`               | The owner of this metadata document (i.e. `CAS`).
 
 The actual object's content/body is expected to contain the SAML2 identity provider metadata. Note that the signing and encryption keys are expected to be encrypted and signed using CAS crypto keys. 
 
 To see the relevant CAS properties, please [see this guide](../configuration/Configuration-Properties.html#saml-metadata-amazon-s3).
+
+#### Per Service
+
+Identity provider metadata, certificates and keys can also be defined on a per-service basis to override the global defaults.
+Metadata documents that would be applicable to a service definition need to be put in a special bucket named 
+using the `[service-name][service-numeric-identifier]` format.

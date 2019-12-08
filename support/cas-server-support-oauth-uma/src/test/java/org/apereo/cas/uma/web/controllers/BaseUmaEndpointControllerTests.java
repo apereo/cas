@@ -52,7 +52,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Tag("OAuth")
+@Tag("UMA")
 @Import({CasOAuthUmaConfiguration.class, CasOAuthUmaComponentSerializationConfiguration.class})
 @TestPropertySource(properties = "cas.authn.uma.requestingPartyToken.jwksFile=classpath:uma-keystore.jwks")
 @Slf4j

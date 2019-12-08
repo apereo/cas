@@ -137,7 +137,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
     @Override
     public ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         val service = serviceValidateConfigurationContext.getArgumentExtractor().extractService(request);
-        val serviceTicketId = service != null ? service.getArtifactId() : null;
+        val serviceTicketId = Optional.ofNullable(service).map(WebApplicationService::getArtifactId).orElse(null);
         if (service == null || StringUtils.isBlank(serviceTicketId)) {
             LOGGER.warn("Could not identify service and/or service ticket for service: [{}]", service);
             return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_REQUEST, StringUtils.EMPTY, request, service);
@@ -218,11 +218,18 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         var proxyIou = StringUtils.EMPTY;
         val proxyHandler = serviceValidateConfigurationContext.getProxyHandler();
         if (serviceCredential != null && proxyHandler != null && proxyHandler.canHandle(serviceCredential)) {
-            proxyIou = handleProxyIouDelivery(serviceCredential, proxyGrantingTicketId);
-            if (StringUtils.isEmpty(proxyIou)) {
-                val description = getTicketValidationErrorDescription(CasProtocolConstants.ERROR_CODE_INVALID_PROXY_CALLBACK,
-                    new Object[]{serviceCredential.getId()}, request);
-                return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_PROXY_CALLBACK, description, request, service);
+            val registeredService = ((HttpBasedServiceCredential) serviceCredential).getService();
+            val authorizedToReleaseProxyGrantingTicket = registeredService.getAttributeReleasePolicy().isAuthorizedToReleaseProxyGrantingTicket();
+            if (!authorizedToReleaseProxyGrantingTicket) {
+                LOGGER.debug("The service: {} is not authorized to release the PGT directly, make a proxy callback", registeredService);
+                proxyIou = handleProxyIouDelivery(serviceCredential, proxyGrantingTicketId);
+                if (StringUtils.isEmpty(proxyIou)) {
+                    val description = getTicketValidationErrorDescription(CasProtocolConstants.ERROR_CODE_INVALID_PROXY_CALLBACK,
+                            new Object[]{serviceCredential.getId()}, request);
+                    return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_PROXY_CALLBACK, description, request, service);
+                }
+            } else {
+                LOGGER.debug("The service: {} is authorized to release the PGT directly, skip the proxy callback", registeredService);
             }
         } else {
             LOGGER.debug("No service credentials specified, and/or the proxy handler [{}] cannot handle credentials", proxyHandler);

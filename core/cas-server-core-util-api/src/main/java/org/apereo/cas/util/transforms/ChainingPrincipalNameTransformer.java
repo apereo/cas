@@ -19,7 +19,7 @@ import java.util.List;
 @Getter
 public class ChainingPrincipalNameTransformer implements PrincipalNameTransformer {
 
-    private final List<PrincipalNameTransformer> transformers = new ArrayList<>();
+    private final List<PrincipalNameTransformer> transformers = new ArrayList<>(0);
 
     @Override
     public String transform(final String formUserId) {

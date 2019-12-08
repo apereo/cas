@@ -69,7 +69,7 @@ public class AccepttoApiUtils {
         LOGGER.debug("Current principal attributes are [{}]", attributes);
 
         if (StringUtils.isBlank(acceptto.getGroupAttribute()) || !attributes.containsKey(acceptto.getGroupAttribute())) {
-            return new ArrayList<>();
+            return new ArrayList<>(0);
         }
         return CollectionUtils.toCollection(attributes.get(acceptto.getGroupAttribute()), ArrayList.class);
     }
@@ -87,7 +87,7 @@ public class AccepttoApiUtils {
 
         if (StringUtils.isBlank(email)) {
             LOGGER.error("Unable to determine email address under attribute [{}]", acceptto.getEmailAttribute());
-            return new HashMap<>();
+            return new HashMap<>(0);
         }
 
         LOGGER.debug("Principal email address determined from attribute [{}] is [{}]", acceptto.getEmailAttribute(), email);
@@ -114,7 +114,7 @@ public class AccepttoApiUtils {
         } finally {
             HttpUtils.close(response);
         }
-        return new HashMap<>();
+        return new HashMap<>(0);
     }
 
     /**
@@ -154,9 +154,8 @@ public class AccepttoApiUtils {
             parameters.put("groups", group);
         }
 
-        AccepttoWebflowUtils.getEGuardianUserId(requestContext).ifPresent(value -> {
-            parameters.put("eguardian_user_id", value);
-        });
+        AccepttoWebflowUtils.getEGuardianUserId(requestContext)
+            .ifPresent(value -> parameters.put("eguardian_user_id", value));
 
         val currentCredential = WebUtils.getCredential(requestContext);
         if (currentCredential instanceof AccepttoEmailCredential) {
@@ -171,7 +170,7 @@ public class AccepttoApiUtils {
             response = HttpUtils.executePost(url, parameters, headers);
             if (response == null) {
                 LOGGER.error("Unable to extract response from API at [{}]", url);
-                return new HashMap<>();
+                return new HashMap<>(0);
             }
             val status = response.getStatusLine().getStatusCode();
             LOGGER.debug("Authentication response status code is [{}]", status);
@@ -185,7 +184,7 @@ public class AccepttoApiUtils {
             val decoded = EncodingUtils.verifyJwsSignature(apiResponsePublicKey, content);
             if (decoded == null) {
                 LOGGER.error("Unable to verify API content using public key [{}]", apiResponsePublicKey);
-                return new HashMap<>();
+                return new HashMap<>(0);
             }
             val decodedResult = new String(decoded, StandardCharsets.UTF_8);
             LOGGER.debug("Received final API response as [{}]", decodedResult);
@@ -195,7 +194,7 @@ public class AccepttoApiUtils {
         } finally {
             HttpUtils.close(response);
         }
-        return new HashMap<>();
+        return new HashMap<>(0);
     }
 
     private static String buildAuthorizationHeaderPayloadForAuthentication(final AccepttoMultifactorProperties acceptto) {
@@ -206,7 +205,7 @@ public class AccepttoApiUtils {
         LOGGER.trace("Authorization payload is [{}]", payload);
         val signingKey = new AesKey(acceptto.getOrganizationSecret().getBytes(StandardCharsets.UTF_8));
         LOGGER.trace("Signing authorization payload...");
-        val signedBytes = EncodingUtils.signJwsHMACSha256(signingKey, payload.getBytes(StandardCharsets.UTF_8));
+        val signedBytes = EncodingUtils.signJwsHMACSha256(signingKey, payload.getBytes(StandardCharsets.UTF_8), Map.of());
         val authzPayload = new String(signedBytes, StandardCharsets.UTF_8);
         LOGGER.trace("Signed authorization payload is [{}]", authzPayload);
         return authzPayload;

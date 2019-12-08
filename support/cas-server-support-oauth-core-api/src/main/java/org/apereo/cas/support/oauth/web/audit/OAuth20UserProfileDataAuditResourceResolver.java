@@ -3,7 +3,7 @@ package org.apereo.cas.support.oauth.web.audit;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.web.views.OAuth20UserProfileViewRenderer;
-import org.apereo.cas.ticket.accesstoken.AccessToken;
+import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 
 import lombok.val;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -26,7 +26,7 @@ public class OAuth20UserProfileDataAuditResourceResolver extends ReturnValueAsSt
     public String[] resolveFrom(final JoinPoint auditableTarget, final Object retval) {
         Objects.requireNonNull(retval, "User profile data must not be null");
         val profileMap = Map.class.cast(retval);
-        val accessToken = AccessToken.class.cast(auditableTarget.getArgs()[0]);
+        val accessToken = OAuth20AccessToken.class.cast(auditableTarget.getArgs()[0]);
 
         var service = profileMap.get(CasProtocolConstants.PARAMETER_SERVICE);
         if (service == null) {

@@ -37,6 +37,7 @@ public class SamlMetadataUIInfo extends DefaultRegisteredServiceUserInterfaceInf
     private static final long serialVersionUID = -1434801982864628179L;
 
     private transient UIInfo uiInfo;
+
     private String locale;
 
     /**
@@ -68,7 +69,7 @@ public class SamlMetadataUIInfo extends DefaultRegisteredServiceUserInterfaceInf
      * @return the string values
      */
     private static Collection<String> getStringValues(final List<?> items) {
-        val list = new ArrayList<String>();
+        val list = new ArrayList<String>(items.size());
         items.forEach(d -> {
             if (d instanceof XSURI) {
                 list.add(((XSURI) d).getValue());
@@ -77,128 +78,6 @@ public class SamlMetadataUIInfo extends DefaultRegisteredServiceUserInterfaceInf
             }
         });
         return list;
-    }
-
-    @Override
-    public Collection<String> getDescriptions() {
-        if (this.uiInfo != null) {
-            return getStringValues(this.uiInfo.getDescriptions());
-        }
-        return super.getDescriptions();
-    }
-
-    @Override
-    public Collection<String> getDisplayNames() {
-        if (this.uiInfo != null) {
-            return getStringValues(this.uiInfo.getDisplayNames());
-        }
-        return super.getDescriptions();
-    }
-
-    @Override
-    public Collection<String> getInformationURLs() {
-        if (this.uiInfo != null) {
-            return getStringValues(this.uiInfo.getInformationURLs());
-        }
-        return super.getInformationURLs();
-    }
-
-    @Override
-    public Collection<String> getPrivacyStatementURLs() {
-        if (this.uiInfo != null) {
-            return getStringValues(this.uiInfo.getPrivacyStatementURLs());
-        }
-        return super.getPrivacyStatementURLs();
-    }
-
-    /**
-     * Gets logo urls.
-     *
-     * @return the logo urls
-     */
-    @Override
-    public Collection<Logo> getLogoUrls() {
-        val list = new ArrayList<Logo>();
-        if (this.uiInfo != null) {
-            list.addAll(this.uiInfo.getLogos().stream().map(l -> new Logo(l.getURL(), l.getHeight(), l.getWidth())).collect(Collectors.toList()));
-        }
-        return list;
-    }
-
-    /**
-     * Gets localized description.
-     *
-     * @param locale browser preferred language
-     * @return the description
-     */
-    public String getDescription(final String locale) {
-        if (this.uiInfo != null) {
-            val description = getLocalizedValues(locale, this.uiInfo.getDescriptions());
-            return description != null ? description : super.getDescription();
-        }
-        return super.getDescription();
-    }
-
-    @Override
-    public String getDescription() {
-        return getDescription(this.locale);
-    }
-
-    /**
-     * Gets localized displayName.
-     *
-     * @param locale browser preferred language
-     * @return the displayName
-     */
-    public String getDisplayName(final String locale) {
-        if (this.uiInfo != null) {
-            val displayName = getLocalizedValues(locale, this.uiInfo.getDisplayNames());
-            return displayName != null ? displayName : super.getDisplayName();
-        }
-        return super.getDisplayName();
-    }
-
-    @Override
-    public String getDisplayName() {
-        return getDisplayName(this.locale);
-    }
-
-    /**
-     * Gets localized informationURL.
-     *
-     * @param locale browser preferred language
-     * @return the informationURL
-     */
-    public String getInformationURL(final String locale) {
-        if (this.uiInfo != null) {
-            val informationUrl = getLocalizedValues(locale, this.uiInfo.getInformationURLs());
-            return informationUrl != null ? informationUrl : super.getInformationURL();
-        }
-        return super.getInformationURL();
-    }
-
-    @Override
-    public String getInformationURL() {
-        return getInformationURL(this.locale);
-    }
-
-    /**
-     * Gets localized privacyStatementURL.
-     *
-     * @param locale browser preferred language
-     * @return the privacyStatementURL
-     */
-    public String getPrivacyStatementURL(final String locale) {
-        if (this.uiInfo != null) {
-            val privacyStatementURL = getLocalizedValues(locale, this.uiInfo.getPrivacyStatementURLs());
-            return privacyStatementURL != null ? privacyStatementURL : super.getPrivacyStatementURL();
-        }
-        return super.getPrivacyStatementURL();
-    }
-
-    @Override
-    public String getPrivacyStatementURL() {
-        return getPrivacyStatementURL(this.locale);
     }
 
     /**
@@ -245,4 +124,128 @@ public class SamlMetadataUIInfo extends DefaultRegisteredServiceUserInterfaceInf
             .map(XSString::getValue)
             .findFirst();
     }
+
+    /**
+     * Gets localized description.
+     *
+     * @param locale browser preferred language
+     * @return the description
+     */
+    public String getDescription(final String locale) {
+        if (this.uiInfo != null) {
+            val description = getLocalizedValues(locale, this.uiInfo.getDescriptions());
+            return Optional.ofNullable(description).orElseGet(super::getDescription);
+        }
+        return super.getDescription();
+    }
+
+    @Override
+    public String getDescription() {
+        return getDescription(this.locale);
+    }
+
+    @Override
+    public String getDisplayName() {
+        return getDisplayName(this.locale);
+    }
+
+    /**
+     * Gets localized displayName.
+     *
+     * @param locale browser preferred language
+     * @return the displayName
+     */
+    public String getDisplayName(final String locale) {
+        if (this.uiInfo != null) {
+            val displayName = getLocalizedValues(locale, this.uiInfo.getDisplayNames());
+            return Optional.ofNullable(displayName).orElseGet(super::getDisplayName);
+        }
+        return super.getDisplayName();
+    }
+
+    @Override
+    public Collection<String> getDescriptions() {
+        if (this.uiInfo != null) {
+            return getStringValues(this.uiInfo.getDescriptions());
+        }
+        return super.getDescriptions();
+    }
+
+    @Override
+    public Collection<String> getDisplayNames() {
+        if (this.uiInfo != null) {
+            return getStringValues(this.uiInfo.getDisplayNames());
+        }
+        return super.getDescriptions();
+    }
+
+    @Override
+    public Collection<String> getInformationURLs() {
+        if (this.uiInfo != null) {
+            return getStringValues(this.uiInfo.getInformationURLs());
+        }
+        return super.getInformationURLs();
+    }
+
+    @Override
+    public String getInformationURL() {
+        return getInformationURL(this.locale);
+    }
+
+    /**
+     * Gets localized informationURL.
+     *
+     * @param locale browser preferred language
+     * @return the informationURL
+     */
+    public String getInformationURL(final String locale) {
+        if (this.uiInfo != null) {
+            val informationUrl = getLocalizedValues(locale, this.uiInfo.getInformationURLs());
+            return Optional.ofNullable(informationUrl).orElseGet(super::getInformationURL);
+        }
+        return super.getInformationURL();
+    }
+
+    @Override
+    public String getPrivacyStatementURL() {
+        return getPrivacyStatementURL(this.locale);
+    }
+
+    /**
+     * Gets localized privacyStatementURL.
+     *
+     * @param locale browser preferred language
+     * @return the privacyStatementURL
+     */
+    public String getPrivacyStatementURL(final String locale) {
+        if (this.uiInfo != null) {
+            val privacyStatementURL = getLocalizedValues(locale, this.uiInfo.getPrivacyStatementURLs());
+            return Optional.ofNullable(privacyStatementURL).orElseGet(super::getPrivacyStatementURL);
+        }
+        return super.getPrivacyStatementURL();
+    }
+
+    @Override
+    public Collection<String> getPrivacyStatementURLs() {
+        if (this.uiInfo != null) {
+            return getStringValues(this.uiInfo.getPrivacyStatementURLs());
+        }
+        return super.getPrivacyStatementURLs();
+    }
+
+    /**
+     * Gets logo urls.
+     *
+     * @return the logo urls
+     */
+    @Override
+    public Collection<Logo> getLogoUrls() {
+        if (this.uiInfo != null) {
+            return this.uiInfo.getLogos().stream()
+                .map(l -> new Logo(l.getURL(), l.getHeight(), l.getWidth())).collect(Collectors.toList());
+        }
+        return new ArrayList<>(0);
+    }
+
+
 }

@@ -21,7 +21,7 @@ import org.springframework.core.Ordered;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Configuration("samlIdPTicketCatalogConfiguration")
+@Configuration(value = "samlIdPTicketCatalogConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class SamlIdPTicketCatalogConfiguration extends BaseTicketCatalogConfigurer {

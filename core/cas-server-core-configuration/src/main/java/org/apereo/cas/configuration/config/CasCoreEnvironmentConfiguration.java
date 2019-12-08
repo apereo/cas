@@ -15,7 +15,7 @@ import org.springframework.core.env.Environment;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration("casCoreEnvironmentConfiguration")
+@Configuration(value = "casCoreEnvironmentConfiguration", proxyBeanMethods = false)
 public class CasCoreEnvironmentConfiguration {
 
     @Autowired

@@ -10,6 +10,7 @@ import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfig
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
@@ -31,6 +32,7 @@ import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
+import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -48,6 +50,7 @@ import org.springframework.test.annotation.DirtiesContext;
     AbstractCentralAuthenticationServiceTests.CasTestConfiguration.class,
     CasAuthenticationEventExecutionPlanTestConfiguration.class,
     CasCoreServicesConfiguration.class,
+    CasCoreMultifactorAuthenticationConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
     CasDefaultServiceTicketIdGeneratorsConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
@@ -70,14 +73,17 @@ import org.springframework.test.annotation.DirtiesContext;
     CasCoreLogoutConfiguration.class,
     CasCookieConfiguration.class,
     RefreshAutoConfiguration.class,
-    CasCoreAuthenticationConfiguration.class,
-    CasCoreServicesAuthenticationConfiguration.class,
+    MailSenderAutoConfiguration.class,
     AopAutoConfiguration.class,
     CasPersonDirectoryTestConfiguration.class,
     CasCoreWebflowConfiguration.class,
     CasWebflowContextConfiguration.class,
     CasCoreValidationConfiguration.class,
     AdaptiveMultifactorAuthenticationPolicyEventResolverTests.GeoLocationServiceTestConfiguration.class
+}, properties = {
+    "spring.mail.host=localhost",
+    "spring.mail.port=25000",
+    "spring.mail.testConnection=false"
 })
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @DirtiesContext

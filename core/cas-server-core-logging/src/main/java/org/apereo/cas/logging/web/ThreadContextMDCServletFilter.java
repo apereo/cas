@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Optional;
 import java.util.TimeZone;
 
 /**
@@ -33,7 +34,7 @@ public class ThreadContextMDCServletFilter implements Filter {
     private final CasCookieBuilder ticketGrantingTicketCookieGenerator;
 
     private static void addContextAttribute(final String attributeName, final Object value) {
-        val result = value != null ? value.toString() : null;
+        val result = Optional.ofNullable(value).map(Object::toString).orElse(null);
         if (StringUtils.isNotBlank(result)) {
             MDC.put(attributeName, result);
         }

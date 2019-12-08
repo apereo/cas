@@ -17,8 +17,10 @@ import java.util.Map;
  */
 @Getter
 public class DefaultAuditTrailRecordResolutionPlan implements AuditTrailRecordResolutionPlan {
-    private final Map<String, AuditResourceResolver> auditResourceResolvers = new LinkedHashMap<>();
-    private final Map<String, AuditActionResolver> auditActionResolvers = new LinkedHashMap<>();
+    private static final int MAP_SIZE = 8;
+
+    private final Map<String, AuditResourceResolver> auditResourceResolvers = new LinkedHashMap<>(MAP_SIZE);
+    private final Map<String, AuditActionResolver> auditActionResolvers = new LinkedHashMap<>(MAP_SIZE);
 
     @Override
     public void registerAuditResourceResolver(final String key, final AuditResourceResolver resolver) {

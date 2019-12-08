@@ -8,7 +8,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalNameTransformerUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
-import org.apereo.cas.authentication.support.password.PasswordPolicyConfiguration;
+import org.apereo.cas.authentication.support.password.PasswordPolicyContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 
@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -34,6 +35,8 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class FileAuthenticationEventExecutionPlanConfiguration {
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
 
     @Autowired
     @Qualifier("servicesManager")
@@ -57,10 +60,10 @@ public class FileAuthenticationEventExecutionPlanConfiguration {
     @Bean
     public AuthenticationHandler fileAuthenticationHandler() {
         val fileProperties = casProperties.getAuthn().getFile();
-        val h = new FileAuthenticationHandler(fileProperties.getName(), servicesManager.getIfAvailable(), filePrincipalFactory(),
+        val h = new FileAuthenticationHandler(fileProperties.getName(), servicesManager.getObject(), filePrincipalFactory(),
             fileProperties.getFilename(), fileProperties.getSeparator());
 
-        h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(fileProperties.getPasswordEncoder()));
+        h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(fileProperties.getPasswordEncoder(), applicationContext));
         h.setPasswordPolicyConfiguration(filePasswordPolicyConfiguration());
         h.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(fileProperties.getPrincipalTransformation()));
 
@@ -74,14 +77,14 @@ public class FileAuthenticationEventExecutionPlanConfiguration {
             val file = casProperties.getAuthn().getFile().getFilename();
             if (file != null) {
                 LOGGER.debug("Added file-based authentication handler for the target file [{}]", file.getDescription());
-                plan.registerAuthenticationHandlerWithPrincipalResolver(fileAuthenticationHandler(), defaultPrincipalResolver.getIfAvailable());
+                plan.registerAuthenticationHandlerWithPrincipalResolver(fileAuthenticationHandler(), defaultPrincipalResolver.getObject());
             }
         };
     }
 
     @ConditionalOnMissingBean(name = "filePasswordPolicyConfiguration")
     @Bean
-    public PasswordPolicyConfiguration filePasswordPolicyConfiguration() {
-        return new PasswordPolicyConfiguration();
+    public PasswordPolicyContext filePasswordPolicyConfiguration() {
+        return new PasswordPolicyContext();
     }
 }

@@ -3,7 +3,6 @@ package org.apereo.cas.config.authentication.support;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.rest.factory.ServiceTicketResourceEntityResponseFactory;
 import org.apereo.cas.rest.plan.ServiceTicketResourceEntityResponseFactoryConfigurer;
-import org.apereo.cas.rest.plan.ServiceTicketResourceEntityResponseFactoryPlan;
 import org.apereo.cas.support.saml.authentication.SamlRestServiceTicketResourceEntityResponseFactory;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 
@@ -24,7 +23,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration("samlRestConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnClass(ServiceTicketResourceEntityResponseFactoryConfigurer.class)
-public class SamlRestConfiguration implements ServiceTicketResourceEntityResponseFactoryConfigurer {
+public class SamlRestConfiguration {
 
     @Autowired
     @Qualifier("samlServiceTicketUniqueIdGenerator")
@@ -32,11 +31,12 @@ public class SamlRestConfiguration implements ServiceTicketResourceEntityRespons
 
     @Bean
     public ServiceTicketResourceEntityResponseFactory samlRestServiceTicketResourceEntityResponseFactory() {
-        return new SamlRestServiceTicketResourceEntityResponseFactory(samlServiceTicketUniqueIdGenerator.getIfAvailable());
+        return new SamlRestServiceTicketResourceEntityResponseFactory(samlServiceTicketUniqueIdGenerator.getObject());
     }
 
-    @Override
-    public void configureEntityResponseFactory(final ServiceTicketResourceEntityResponseFactoryPlan plan) {
-        plan.registerFactory(samlRestServiceTicketResourceEntityResponseFactory());
+    @Bean
+    public ServiceTicketResourceEntityResponseFactoryConfigurer samlRestServiceTicketResourceEntityResponseFactoryConfigurer() {
+        return plan -> plan.registerFactory(samlRestServiceTicketResourceEntityResponseFactory());
     }
+
 }

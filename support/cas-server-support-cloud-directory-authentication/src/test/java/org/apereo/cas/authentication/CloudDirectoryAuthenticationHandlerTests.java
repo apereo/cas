@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.TestPropertySource;
 
 import java.util.List;
 
@@ -26,8 +25,8 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@SpringBootTest(classes = RefreshAutoConfiguration.class)
-@TestPropertySource(properties = {
+@SpringBootTest(classes = RefreshAutoConfiguration.class,
+    properties = {
     "cas.authn.cloudDirectory.usernameAttributeName=username",
     "cas.authn.cloudDirectory.passwordAttributeName=password"
 })

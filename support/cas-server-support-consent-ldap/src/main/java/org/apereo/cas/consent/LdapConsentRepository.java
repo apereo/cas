@@ -81,6 +81,7 @@ public class LdapConsentRepository implements ConsentRepository {
                 return values
                     .stream()
                     .map(LdapConsentRepository::mapFromJson)
+                    .filter(Objects::nonNull)
                     .filter(d -> d.getService().equals(service.getId()))
                     .findFirst()
                     .orElse(null);
@@ -108,9 +109,8 @@ public class LdapConsentRepository implements ConsentRepository {
     @Override
     public Collection<? extends ConsentDecision> findConsentDecisions() {
         val entries = readConsentEntries();
-        if (entries != null && !entries.isEmpty()) {
-            val decisions = new HashSet<ConsentDecision>();
-            entries
+        if (!entries.isEmpty()) {
+            val decisions = entries
                 .stream()
                 .map(e -> e.getAttribute(this.ldap.getConsentAttributeName()))
                 .filter(Objects::nonNull)
@@ -118,8 +118,9 @@ public class LdapConsentRepository implements ConsentRepository {
                     .stream()
                     .map(LdapConsentRepository::mapFromJson)
                     .collect(Collectors.toSet()))
-                .forEach(decisions::addAll);
-            return CollectionUtils.wrap(decisions);
+                .flatMap(Set::stream)
+                .collect(Collectors.toList());
+            return decisions;
         }
         LOGGER.debug("No consent decision could be found");
         return new HashSet<>(0);
@@ -184,11 +185,11 @@ public class LdapConsentRepository implements ConsentRepository {
             LOGGER.debug("Merged consent decision [{}] with LDAP attribute [{}]", decision, ldapConsent.getName());
             return CollectionUtils.wrap(result);
         }
-        val result = new HashSet<String>();
         val json = mapToJson(decision);
         if (StringUtils.isBlank(json)) {
             throw new IllegalArgumentException("Could not map consent decision to JSON");
         }
+        val result = new HashSet<String>(1);
         result.add(json);
         return result;
     }
@@ -201,18 +202,17 @@ public class LdapConsentRepository implements ConsentRepository {
      * @return the new decision set
      */
     private static Set<String> removeDecision(final LdapAttribute ldapConsent, final long decisionId) {
-        val result = new HashSet<String>();
         if (ldapConsent.size() != 0) {
-            ldapConsent.getStringValues()
+            return ldapConsent.getStringValues()
                 .stream()
                 .map(LdapConsentRepository::mapFromJson)
                 .filter(Objects::nonNull)
                 .filter(d -> d.getId() != decisionId)
                 .map(LdapConsentRepository::mapToJson)
                 .filter(Objects::nonNull)
-                .forEach(result::add);
+                .collect(Collectors.toSet());
         }
-        return result;
+        return new HashSet<>(0);
     }
 
     /**

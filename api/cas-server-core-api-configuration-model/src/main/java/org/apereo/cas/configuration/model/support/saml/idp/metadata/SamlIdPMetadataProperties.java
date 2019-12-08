@@ -105,7 +105,7 @@ public class SamlIdPMetadataProperties implements Serializable {
     /**
      * Supported content types in case the metadata instance is connecting to an MDQ server.
      */
-    private List<String> supportedContentTypes = new ArrayList<>();
+    private List<String> supportedContentTypes = new ArrayList<>(0);
 
     public SamlIdPMetadataProperties() {
         supportedContentTypes.add("application/xml");

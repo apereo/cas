@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import java.nio.charset.StandardCharsets;
@@ -25,10 +25,11 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@Import({
+@SpringBootTest(classes = {
     SamlAuthenticationEventExecutionPlanConfiguration.class,
     SamlServiceFactoryConfiguration.class,
-    SamlConfiguration.class
+    SamlConfiguration.class,
+    AbstractOpenSamlTests.SharedTestConfiguration.class
 })
 @Tag("SAML")
 public class SamlServiceFactoryTests extends AbstractOpenSamlTests {

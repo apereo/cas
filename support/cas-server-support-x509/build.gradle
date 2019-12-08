@@ -9,7 +9,7 @@ dependencies {
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-util-api")
     
-    implementation libraries.ehcache
+    implementation libraries.ehcache3
     implementation libraries.ldaptive
 
     testImplementation project(":support:cas-server-support-person-directory")

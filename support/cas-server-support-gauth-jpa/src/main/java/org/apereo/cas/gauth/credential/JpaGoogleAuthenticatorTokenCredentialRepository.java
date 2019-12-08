@@ -60,8 +60,8 @@ public class JpaGoogleAuthenticatorTokenCredentialRepository extends BaseGoogleA
     @Override
     public Collection<? extends OneTimeTokenAccount> load() {
         try {
-            val results = new ArrayList<OneTimeTokenAccount>();
             val r = this.entityManager.createQuery("SELECT r FROM " + ENTITY_NAME + " r", GoogleAuthenticatorAccount.class).getResultList();
+            val results = new ArrayList<OneTimeTokenAccount>(r.size());
             r.forEach(account -> {
                 this.entityManager.detach(account);
                 results.add(decode(account));
@@ -70,7 +70,7 @@ public class JpaGoogleAuthenticatorTokenCredentialRepository extends BaseGoogleA
         } catch (final Exception e) {
             LOGGER.debug(e.getMessage(), e);
         }
-        return new ArrayList<>();
+        return new ArrayList<>(0);
     }
 
     @Override

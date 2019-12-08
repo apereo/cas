@@ -8,6 +8,7 @@ import org.apereo.cas.configuration.support.JpaBeans;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -27,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class,
     JdbcCloudConfigBootstrapConfiguration.class
 })
+@Tag("JDBC")
 public class JdbcCloudConfigBootstrapConfigurationTests {
     private static final String STATIC_AUTHN_USERS = "casuser::WHATEVER";
 

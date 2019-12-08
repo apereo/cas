@@ -13,7 +13,6 @@ import org.springframework.boot.actuate.health.Status;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -27,8 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class,
     MemcachedMonitorConfiguration.class,
     CasCoreUtilSerializationConfiguration.class
-})
-@TestPropertySource(properties = {
+}, properties = {
     "cas.monitor.memcached.servers=localhost:11212",
     "cas.monitor.memcached.failureMode=Redistribute",
     "cas.monitor.memcached.locatorType=ARRAY_MOD",

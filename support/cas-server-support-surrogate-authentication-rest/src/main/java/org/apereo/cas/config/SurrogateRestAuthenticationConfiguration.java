@@ -21,7 +21,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Configuration("surrogateRestAuthenticationConfiguration")
+@Configuration(value = "surrogateRestAuthenticationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class SurrogateRestAuthenticationConfiguration {
@@ -39,6 +39,6 @@ public class SurrogateRestAuthenticationConfiguration {
         val su = casProperties.getAuthn().getSurrogate();
         LOGGER.debug("Using REST endpoint [{}] with method [{}] to locate surrogate accounts",
             su.getRest().getUrl(), su.getRest().getMethod());
-        return new SurrogateRestAuthenticationService(su.getRest(), servicesManager.getIfAvailable());
+        return new SurrogateRestAuthenticationService(su.getRest(), servicesManager.getObject());
     }
 }

@@ -20,7 +20,6 @@ import org.apereo.cas.web.UrlValidator;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.RegExUtils;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -41,7 +40,7 @@ import java.util.List;
 @Configuration("casCoreLogoutConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-public class CasCoreLogoutConfiguration implements LogoutExecutionPlanConfigurer {
+public class CasCoreLogoutConfiguration {
 
     @Autowired
     @Qualifier("ticketRegistry")
@@ -69,18 +68,18 @@ public class CasCoreLogoutConfiguration implements LogoutExecutionPlanConfigurer
     @ConditionalOnMissingBean(name = "singleLogoutServiceLogoutUrlBuilder")
     @Bean
     public SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder() {
-        return new DefaultSingleLogoutServiceLogoutUrlBuilder(this.urlValidator.getIfAvailable());
+        return new DefaultSingleLogoutServiceLogoutUrlBuilder(this.urlValidator.getObject());
     }
 
     @ConditionalOnMissingBean(name = "defaultSingleLogoutServiceMessageHandler")
     @Bean
     public SingleLogoutServiceMessageHandler defaultSingleLogoutServiceMessageHandler() {
-        return new DefaultSingleLogoutServiceMessageHandler(httpClient.getIfAvailable(),
+        return new DefaultSingleLogoutServiceMessageHandler(httpClient.getObject(),
             defaultSingleLogoutMessageCreator(),
-            servicesManager.getIfAvailable(),
+            servicesManager.getObject(),
             singleLogoutServiceLogoutUrlBuilder(),
             casProperties.getSlo().isAsynchronous(),
-            authenticationServiceSelectionPlan.getIfAvailable());
+            authenticationServiceSelectionPlan.getObject());
     }
 
     @ConditionalOnMissingBean(name = "logoutManager")
@@ -103,24 +102,26 @@ public class CasCoreLogoutConfiguration implements LogoutExecutionPlanConfigurer
     public LogoutExecutionPlan logoutExecutionPlan(final List<LogoutExecutionPlanConfigurer> configurers) {
         val plan = new DefaultLogoutExecutionPlan();
         configurers.forEach(c -> {
-            val name = RegExUtils.removePattern(c.getClass().getSimpleName(), "\\$.+");
-            LOGGER.trace("Configuring logout execution plan [{}]", name);
+            LOGGER.trace("Configuring logout execution plan [{}]", c.getName());
             c.configureLogoutExecutionPlan(plan);
         });
         return plan;
     }
 
-    @Override
-    public void configureLogoutExecutionPlan(final LogoutExecutionPlan plan) {
-        plan.registerSingleLogoutServiceMessageHandler(defaultSingleLogoutServiceMessageHandler());
+    @Bean
+    public LogoutExecutionPlanConfigurer casCoreLogoutExecutionPlanConfigurer() {
+        return plan -> {
+            plan.registerSingleLogoutServiceMessageHandler(defaultSingleLogoutServiceMessageHandler());
 
-        if (casProperties.getLogout().isRemoveDescendantTickets()) {
-            LOGGER.debug("CAS is configured to remove descendant tickets of the ticket-granting tickets");
-            plan.registerLogoutPostProcessor(ticketGrantingTicket -> ticketGrantingTicket.getDescendantTickets()
-                .forEach(t -> {
-                    LOGGER.debug("Deleting ticket [{}] from the registry as a descendant of [{}]", t, ticketGrantingTicket.getId());
-                    ticketRegistry.getObject().deleteTicket(t);
-                }));
-        }
+            if (casProperties.getLogout().isRemoveDescendantTickets()) {
+                LOGGER.debug("CAS is configured to remove descendant tickets of the ticket-granting tickets");
+                plan.registerLogoutPostProcessor(ticketGrantingTicket -> ticketGrantingTicket.getDescendantTickets()
+                    .forEach(t -> {
+                        LOGGER.debug("Deleting ticket [{}] from the registry as a descendant of [{}]", t, ticketGrantingTicket.getId());
+                        ticketRegistry.getObject().deleteTicket(t);
+                    }));
+            }
+        };
     }
+
 }

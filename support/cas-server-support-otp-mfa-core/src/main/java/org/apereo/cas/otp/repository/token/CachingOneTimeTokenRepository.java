@@ -46,7 +46,7 @@ public class CachingOneTimeTokenRepository extends BaseOneTimeTokenRepository {
                 LOGGER.warn(e.getMessage(), e);
             }
         } else {
-            val tokens = new ArrayList<OneTimeToken>();
+            val tokens = new ArrayList<OneTimeToken>(1);
             tokens.add(token);
 
             LOGGER.debug("Storing previously used token [{}] for user [{}]", token, token.getUserId());
@@ -77,7 +77,7 @@ public class CachingOneTimeTokenRepository extends BaseOneTimeTokenRepository {
         val dataset = this.storage.asMap();
         if (dataset.containsKey(uid)) {
             val tokens = dataset.get(uid);
-            tokens.removeIf(t -> otp.intValue() == t.getId());
+            tokens.removeIf(t -> otp == t.getId());
             this.storage.put(uid, tokens);
             this.storage.refresh(uid);
         }
@@ -92,7 +92,7 @@ public class CachingOneTimeTokenRepository extends BaseOneTimeTokenRepository {
     @Override
     public void remove(final Integer otp) {
         val dataset = this.storage.asMap();
-        dataset.values().forEach(tokens -> tokens.removeIf(t -> otp.intValue() == t.getId()));
+        dataset.values().forEach(tokens -> tokens.removeIf(t -> otp == t.getId()));
     }
 
     @Override

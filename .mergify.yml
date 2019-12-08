@@ -1,0 +1,25 @@
+pull_request_rules:
+- name: automatic merge by dependabot
+  conditions:
+    - status-success=continuous-integration/travis-ci/pr
+    - status-success=WIP
+    - "#changes-requested-reviews-by=0"
+    - base=master
+    - label=Dependencies & Modules
+  actions:
+    merge:
+      method: squash
+      strict: false
+    delete_head_branch:
+- name: automatic merge by renovate
+  conditions:
+    - status-success=continuous-integration/travis-ci/pr
+    - status-success=WIP
+    - "#changes-requested-reviews-by=0"
+    - base=master
+    - label=Dependencies & Modules
+  actions:
+    merge:
+      method: squash
+      strict: false
+    delete_head_branch:

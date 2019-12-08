@@ -1,0 +1,21 @@
+description = "Apereo CAS Core Events API"
+dependencies {
+    api project(":api:cas-server-core-api-ticket")
+    api project(":api:cas-server-core-api-services")
+    api project(":api:cas-server-core-api-validation")
+    api project(":api:cas-server-core-api-events")
+    
+    implementation project(":core:cas-server-core-web-api")
+    implementation project(":core:cas-server-core-configuration-api")
+    implementation project(":core:cas-server-core-util-api")
+
+    testImplementation project(":core:cas-server-core-tickets")
+    testImplementation project(":core:cas-server-core-tickets-api")
+    testImplementation project(":core:cas-server-core-authentication-api")
+    
+    testImplementation project(path: ":core:cas-server-core-tickets", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
+}

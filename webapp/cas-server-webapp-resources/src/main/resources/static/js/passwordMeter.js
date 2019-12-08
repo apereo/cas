@@ -2,7 +2,7 @@
 /*eslint-disable no-unused-vars*/
 function jqueryReady() {
     var strength = passwordStrengthI18n;
-    
+
     $.fn.zxcvbnProgressBar = function (options) {
 
         //init settings
@@ -70,10 +70,10 @@ function jqueryReady() {
     var policyPatternRegex = new RegExp(policyPattern);
     var password = document.getElementById('password');
     var confirmed = document.getElementById('confirmedPassword');
-    
+
     password.addEventListener('input', validate);
     confirmed.addEventListener('input', validate);
-    
+
     var alertSettings = {
         allAlertClasses: 'fa-times-circle fa-exclamation-circle fa-info-circle fa-check-circle',
         alertClassDanger: 'fa-times-circle',
@@ -85,23 +85,24 @@ function jqueryReady() {
     function validate() {
         var val = password.value;
         var cnf = confirmed.value;
-        
+
+        $('#password-strength-msg').hide();
         $('#password-policy-violation-msg').hide();
         $('#password-confirm-mismatch-msg').hide();
 
-        var passwordPolicyViolated = val === '' || !policyPatternRegex.test(val); 
+        var passwordPolicyViolated = val === '' || !policyPatternRegex.test(val);
         var passwordMismatch = val !== '' && val !== cnf;
         var disableSubmit = passwordPolicyViolated || passwordMismatch;
         $('#submit').prop('disabled', disableSubmit);
 
         var result = zxcvbn(val);
-        $('#strengthProgressBar').zxcvbnProgressBar({ passwordInput: '#password' });       
-        
+        $('#strengthProgressBar').zxcvbnProgressBar({ passwordInput: '#password' });
+
         // Check strength, update the text indicator
         if (val !== '') {
             $('#password-strength-warning').text(result.feedback.warning);
-            $('#password-strength-suggestions').text(result.feedback.suggestions);
-            
+            $('#password-strength-suggestions').text(result.feedback.suggestions.join(' ').trim());
+
             var clz = alertSettings.alertClassDanger;
             switch (result.score) {
             case 0:
@@ -120,18 +121,23 @@ function jqueryReady() {
                 clz = alertSettings.alertClassSuccess;
                 break;
             }
+
             $('#password-strength-icon').removeClass(alertSettings.allAlertClasses).addClass(clz);
+            // Check for suggestions
+            if ( result.feedback.warning > 0 || result.feedback.suggestions.length > 0 ) {
+                $('#password-strength-msg').show();
+            }
         } else {
             $('#password-strength-icon').removeClass(alertSettings.allAlertClasses);
             $('#password-strength-warning').text('');
             $('#password-strength-suggestions').text('');
         }
-        
+
         // Check for mismatch
         if (passwordMismatch && cnf !== '') {
             $('#password-confirm-mismatch-msg').show();
         }
-        
+
         // Check password policy
         if (passwordPolicyViolated) {
             $('#password-policy-violation-msg').show();

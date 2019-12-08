@@ -11,8 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 
 /**
  * Uses {@link CouchDbProfileDocument} to store a list of the principals a user may surrogate.
@@ -61,7 +61,7 @@ public class SurrogateCouchDbProfileAuthenticationService extends BaseSurrogateA
     }
 
     @Override
-    public List<String> getEligibleAccountsForSurrogateToProxy(final String username) {
+    public Collection<String> getEligibleAccountsForSurrogateToProxy(final String username) {
         LOGGER.debug("Listing eligible accounts for user [{}].", username);
         val user = couchDb.findByUsername(username);
         if (user == null) {

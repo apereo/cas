@@ -1,6 +1,6 @@
 package org.apereo.cas.ticket.registry.queue;
 
-import org.apereo.cas.StringBean;
+import org.apereo.cas.JmsQueueIdentifier;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 
@@ -26,7 +26,7 @@ public class AddTicketMessageQueueCommand extends BaseMessageQueueCommand {
     private Ticket ticket;
 
     @JsonCreator
-    public AddTicketMessageQueueCommand(@JsonProperty("id") final StringBean id, @JsonProperty("ticket") final Ticket ticket) {
+    public AddTicketMessageQueueCommand(@JsonProperty("id") final JmsQueueIdentifier id, @JsonProperty("ticket") final Ticket ticket) {
         super(id);
         this.ticket = ticket;
     }

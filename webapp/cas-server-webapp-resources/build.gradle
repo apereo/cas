@@ -1,4 +1,1 @@
-description = "Apereo CAS Web Application Resources"
-
-dependencies {
-}
+description = "Apereo CAS Web Resources"

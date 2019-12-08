@@ -68,7 +68,7 @@ public class LdapAuthenticationProperties extends AbstractLdapAuthenticationProp
      * Attributes can be virtually remapped to multiple names.
      * Example {@code cn:commonName,givenName,eduPersonTargettedId:SOME_IDENTIFIER}
      */
-    private List principalAttributeList = new ArrayList<>();
+    private List principalAttributeList = new ArrayList<>(0);
 
     /**
      * Sets a flag that determines whether multiple values are allowed for the {@link #principalAttributeId}.
@@ -81,7 +81,7 @@ public class LdapAuthenticationProperties extends AbstractLdapAuthenticationProp
     /**
      * List of additional attributes to retrieve, if any.
      */
-    private List additionalAttributes = new ArrayList<>();
+    private List additionalAttributes = new ArrayList<>(0);
 
     /**
      * Flag to indicate whether CAS should block authentication

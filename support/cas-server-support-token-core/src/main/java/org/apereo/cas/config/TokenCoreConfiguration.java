@@ -9,6 +9,7 @@ import org.apereo.cas.token.JwtTokenTicketBuilder;
 import org.apereo.cas.token.TokenTicketBuilder;
 import org.apereo.cas.token.cipher.JwtTicketCipherExecutor;
 import org.apereo.cas.token.cipher.RegisteredServiceJwtTicketCipherExecutor;
+import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
 
@@ -71,13 +72,7 @@ public class TokenCoreConfiguration {
             .get();
 
         if (enabled) {
-            return new JwtTicketCipherExecutor(crypto.getEncryption().getKey(),
-                crypto.getSigning().getKey(),
-                crypto.getAlg(),
-                crypto.isEncryptionEnabled(),
-                crypto.isSigningEnabled(),
-                crypto.getSigning().getKeySize(),
-                crypto.getEncryption().getKeySize());
+            return CipherExecutorUtils.newStringCipherExecutor(crypto, JwtTicketCipherExecutor.class);
         }
         LOGGER.info("Token cookie encryption/signing is turned off. This "
             + "MAY NOT be safe in a production environment. Consider using other choices to handle encryption, "
@@ -89,9 +84,10 @@ public class TokenCoreConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "tokenTicketBuilder")
     public TokenTicketBuilder tokenTicketBuilder() {
-        return new JwtTokenTicketBuilder(casClientTicketValidator.getIfAvailable(),
-            grantingTicketExpirationPolicy.getIfAvailable(),
-            tokenTicketJwtBuilder());
+        return new JwtTokenTicketBuilder(casClientTicketValidator.getObject(),
+            grantingTicketExpirationPolicy.getObject(),
+            tokenTicketJwtBuilder(),
+            servicesManager.getObject());
     }
 
     @RefreshScope
@@ -101,13 +97,13 @@ public class TokenCoreConfiguration {
         return new JwtBuilder(
             casProperties.getServer().getPrefix(),
             tokenCipherExecutor(),
-            servicesManager.getIfAvailable(),
+            servicesManager.getObject(),
             new RegisteredServiceJwtTicketCipherExecutor());
     }
 
     @Bean
     @ConditionalOnAvailableEndpoint
     public JwtTokenCipherSigningPublicKeyEndpoint jwtTokenCipherSigningPublicKeyEndpoint() {
-        return new JwtTokenCipherSigningPublicKeyEndpoint(casProperties, tokenCipherExecutor(), this.servicesManager.getIfAvailable());
+        return new JwtTokenCipherSigningPublicKeyEndpoint(casProperties, tokenCipherExecutor(), this.servicesManager.getObject());
     }
 }

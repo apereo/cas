@@ -169,6 +169,18 @@ responsible for upgrades, maintenance and all other manners of configuration suc
 not provide official support and troubleshooting guidelines, etc for an external container's configuration or issues. 
 Refer to the servlet container's own documentation for more info.
 
+Note for JBoss, Wildfly and EAP, you may need to add a `jboss-deloyment-structure.xml` file to `src/main/webapp/WEB-INF` in your overlay in order for CAS to start properly.
+
+```xml
+<jboss-deployment-structure>
+    <deployment>
+        <dependencies>
+            <module name="jdk.unsupported" />
+        </dependencies>
+    </deployment>
+</jboss-deployment-structure>
+```
+
 ### Configuration
 
 Support for external containers is enabled by including the following module in the overlay:

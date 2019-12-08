@@ -127,7 +127,7 @@ public class OpenIdConfiguration {
 
     @Bean
     public AbstractDelegateController smartOpenIdAssociationController() {
-        return new SmartOpenIdController(serverManager(), casOpenIdAssociationSuccessView.getIfAvailable());
+        return new SmartOpenIdController(serverManager(), casOpenIdAssociationSuccessView.getObject());
     }
 
     @RefreshScope
@@ -145,7 +145,7 @@ public class OpenIdConfiguration {
     @Bean
     public ResponseBuilder openIdServiceResponseBuilder() {
         val openIdPrefixUrl = casProperties.getServer().getPrefix().concat("/openid");
-        return new OpenIdServiceResponseBuilder(openIdPrefixUrl, serverManager(), centralAuthenticationService.getIfAvailable(), servicesManager.getIfAvailable());
+        return new OpenIdServiceResponseBuilder(openIdPrefixUrl, serverManager(), centralAuthenticationService.getObject(), servicesManager.getObject());
     }
 
     @Bean
@@ -163,11 +163,11 @@ public class OpenIdConfiguration {
 
     @Bean
     public Action openIdSingleSignOnAction() {
-        return new OpenIdSingleSignOnAction(initialAuthenticationAttemptWebflowEventResolver.getIfAvailable(),
-            serviceTicketRequestWebflowEventResolver.getIfAvailable(),
-            adaptiveAuthenticationPolicy.getIfAvailable(),
+        return new OpenIdSingleSignOnAction(initialAuthenticationAttemptWebflowEventResolver.getObject(),
+            serviceTicketRequestWebflowEventResolver.getObject(),
+            adaptiveAuthenticationPolicy.getObject(),
             defaultOpenIdUserNameExtractor(),
-            ticketRegistrySupport.getIfAvailable());
+            ticketRegistrySupport.getObject());
     }
 
     @Bean
@@ -178,17 +178,17 @@ public class OpenIdConfiguration {
     @Bean
     public OpenIdPostUrlHandlerMapping openIdPostUrlHandlerMapping() {
         val context = ServiceValidateConfigurationContext.builder()
-            .validationSpecifications(CollectionUtils.wrapSet(cas20WithoutProxyProtocolValidationSpecification.getIfAvailable()))
-            .authenticationSystemSupport(authenticationSystemSupport.getIfAvailable())
-            .servicesManager(servicesManager.getIfAvailable())
-            .centralAuthenticationService(centralAuthenticationService.getIfAvailable())
-            .argumentExtractor(argumentExtractor.getIfAvailable())
-            .proxyHandler(proxy20Handler.getIfAvailable())
-            .requestedContextValidator(requestedContextValidator.getIfAvailable())
+            .validationSpecifications(CollectionUtils.wrapSet(cas20WithoutProxyProtocolValidationSpecification.getObject()))
+            .authenticationSystemSupport(authenticationSystemSupport.getObject())
+            .servicesManager(servicesManager.getObject())
+            .centralAuthenticationService(centralAuthenticationService.getObject())
+            .argumentExtractor(argumentExtractor.getObject())
+            .proxyHandler(proxy20Handler.getObject())
+            .requestedContextValidator(requestedContextValidator.getObject())
             .authnContextAttribute(casProperties.getAuthn().getMfa().getAuthenticationContextAttribute())
-            .validationAuthorizers(validationAuthorizers.getIfAvailable())
+            .validationAuthorizers(validationAuthorizers.getObject())
             .renewEnabled(casProperties.getSso().isRenewAuthnEnabled())
-            .validationViewFactory(serviceValidationViewFactory.getIfAvailable())
+            .validationViewFactory(serviceValidationViewFactory.getObject())
             .build();
 
         val c = new OpenIdValidateController(context, serverManager());
@@ -207,6 +207,6 @@ public class OpenIdConfiguration {
     public ServiceValidationViewFactoryConfigurer openIdServiceValidationViewFactoryConfigurer() {
         return factory ->
             factory.registerView(OpenIdValidateController.class,
-                Pair.of(casOpenIdServiceSuccessView.getIfAvailable(), casOpenIdServiceFailureView.getIfAvailable()));
+                Pair.of(casOpenIdServiceSuccessView.getObject(), casOpenIdServiceFailureView.getObject()));
     }
 }

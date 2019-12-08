@@ -2,6 +2,7 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.scripting.ScriptingUtils;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -88,7 +89,7 @@ public class GroovyRegisteredServiceMultifactorPolicy implements RegisteredServi
     @SneakyThrows
     private void buildGroovyMultifactorPolicyInstanceIfNeeded() {
         if (this.groovyPolicyInstance == null) {
-            val groovyResource = ResourceUtils.getResourceFrom(this.groovyScript);
+            val groovyResource = ResourceUtils.getResourceFrom(SpringExpressionLanguageValueResolver.getInstance().resolve(this.groovyScript));
             this.groovyPolicyInstance = ScriptingUtils.getObjectInstanceFromGroovyResource(groovyResource, RegisteredServiceMultifactorPolicy.class);
         }
     }

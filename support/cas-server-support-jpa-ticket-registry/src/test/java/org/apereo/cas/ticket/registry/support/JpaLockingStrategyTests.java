@@ -1,14 +1,17 @@
 package org.apereo.cas.ticket.registry.support;
 
+import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPolicyConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
+import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
@@ -16,14 +19,15 @@ import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.JpaTicketRegistryConfiguration;
 import org.apereo.cas.config.JpaTicketRegistryTicketCatalogConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
-import org.apereo.cas.config.support.EnvironmentConversionServiceInitializer;
 import org.apereo.cas.configuration.model.support.jpa.ticketregistry.JpaTicketRegistryProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.util.SchedulingUtils;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.ResourceLock;
 import org.springframework.beans.factory.InitializingBean;
@@ -37,7 +41,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.orm.jpa.SharedEntityManagerCreator;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -68,16 +71,17 @@ import static org.junit.jupiter.api.Assertions.*;
     JpaTicketRegistryTicketCatalogConfiguration.class,
     JpaTicketRegistryConfiguration.class,
     JpaLockingStrategyTests.JpaTestConfiguration.class,
-    JpaTicketRegistryTicketCatalogConfiguration.class,
-    JpaTicketRegistryConfiguration.class,
     RefreshAutoConfiguration.class,
     AopAutoConfiguration.class,
     CasCoreTicketsConfiguration.class,
+    CasCoreTicketIdGeneratorsConfiguration.class,
     CasCoreLogoutConfiguration.class,
     CasCoreHttpConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreConfiguration.class,
     CasCoreUtilConfiguration.class,
+    CasCoreAuthenticationConfiguration.class,
+    CasCoreAuthenticationSupportConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class,
     CasCoreAuthenticationMetadataConfiguration.class,
@@ -86,10 +90,11 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreTicketCatalogConfiguration.class,
     CasPersonDirectoryConfiguration.class,
     CasCoreWebConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class})
-@ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
+    CasWebApplicationServiceFactoryConfiguration.class
+})
 @DirtiesContext
 @Slf4j
+@Tag("JDBC")
 @ResourceLock("jpa-tickets")
 public class JpaLockingStrategyTests {
     /**
@@ -121,7 +126,7 @@ public class JpaLockingStrategyTests {
                 throw new RuntimeException(e.getMessage(), e);
             }
         }).count();
-        assertTrue(lockCount <= 1, "Lock count should be <= 1 but was " + lockCount);
+        assertTrue(lockCount <= 1, () -> "Lock count should be <= 1 but was " + lockCount);
         
         val releaseCount = executor.invokeAll(lockers).stream().filter(result -> {
             try {
@@ -130,7 +135,7 @@ public class JpaLockingStrategyTests {
                 throw new RuntimeException(e.getMessage(), e);
             }
         }).count();
-        assertTrue(releaseCount <= 1, "Release count should be <= 1 but was " + releaseCount);
+        assertTrue(releaseCount <= 1, () -> "Release count should be <= 1 but was " + releaseCount);
     }
 
     /**
@@ -259,21 +264,11 @@ public class JpaLockingStrategyTests {
         }
     }
 
+    @RequiredArgsConstructor
     private static class TransactionalLockInvocationHandler implements InvocationHandler {
-
 
         private final JpaLockingStrategy jpaLock;
         private final PlatformTransactionManager txManager;
-
-        TransactionalLockInvocationHandler(final JpaLockingStrategy lock,
-                                           final PlatformTransactionManager txManager) {
-            jpaLock = lock;
-            this.txManager = txManager;
-        }
-
-        public JpaLockingStrategy getLock() {
-            return this.jpaLock;
-        }
 
         @Override
         public Object invoke(final Object proxy, final Method method, final Object[] args) {
@@ -306,27 +301,6 @@ public class JpaLockingStrategyTests {
                 return lock.acquire();
             } catch (final Exception e) {
                 LOGGER.debug("[{}] failed to acquire lock", lock, e);
-                return false;
-            }
-        }
-    }
-
-    private static class Releaser implements Callable<Boolean> {
-
-
-        private final LockingStrategy lock;
-
-        Releaser(final LockingStrategy l) {
-            lock = l;
-        }
-
-        @Override
-        public Boolean call() {
-            try {
-                lock.release();
-                return true;
-            } catch (final Exception e) {
-                LOGGER.debug("[{}] failed to release lock", lock, e);
                 return false;
             }
         }

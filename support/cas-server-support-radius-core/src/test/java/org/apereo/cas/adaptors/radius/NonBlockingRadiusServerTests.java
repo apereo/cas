@@ -2,6 +2,8 @@ package org.apereo.cas.adaptors.radius;
 
 import org.apereo.cas.adaptors.radius.server.NonBlockingRadiusServer;
 
+import org.junit.jupiter.api.Tag;
+
 /**
  * This is {@link NonBlockingRadiusServerTests}.
  * Runs test cases against a radius server running on "https://console.ironwifi.com/".
@@ -9,6 +11,7 @@ import org.apereo.cas.adaptors.radius.server.NonBlockingRadiusServer;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Tag("Radius")
 public class NonBlockingRadiusServerTests extends AbstractRadiusServerTests {
     @Override
     public RadiusServer getRadiusServer() {

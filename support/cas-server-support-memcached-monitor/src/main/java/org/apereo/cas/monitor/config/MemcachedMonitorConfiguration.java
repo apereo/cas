@@ -18,6 +18,7 @@ import org.springframework.boot.actuate.autoconfigure.health.ConditionalOnEnable
 import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -40,9 +41,10 @@ public class MemcachedMonitorConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "memcachedMonitorTranscoder")
+    @RefreshScope
     public Transcoder memcachedMonitorTranscoder() {
         val memcached = casProperties.getMonitor().getMemcached();
-        return MemcachedUtils.newTranscoder(memcached, componentSerializationPlan.getIfAvailable().getRegisteredClasses());
+        return MemcachedUtils.newTranscoder(memcached, componentSerializationPlan.getObject().getRegisteredClasses());
     }
 
     @Bean
@@ -56,6 +58,8 @@ public class MemcachedMonitorConfiguration {
     }
 
     @Bean
+    @RefreshScope
+    @ConditionalOnMissingBean(name = "memcachedHealthClientPool")
     public ObjectPool<MemcachedClientIF> memcachedHealthClientPool() {
         val memcached = casProperties.getMonitor().getMemcached();
         val factory = new MemcachedPooledClientConnectionFactory(memcached, memcachedMonitorTranscoder());

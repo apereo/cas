@@ -6,12 +6,20 @@ package org.apereo.cas.services;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@FunctionalInterface
 public interface ServiceRegistryExecutionPlanConfigurer {
     /**
      * Configure service registry.
      *
      * @param plan the plan
      */
-    default void configureServiceRegistry(final ServiceRegistryExecutionPlan plan) {
+    void configureServiceRegistry(ServiceRegistryExecutionPlan plan);
+    /**
+     * Gets name.
+     *
+     * @return the name
+     */
+    default String getName() {
+        return getClass().getSimpleName();
     }
 }

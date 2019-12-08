@@ -16,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 /**
@@ -37,28 +38,32 @@ public class X509SubjectAlternativeNameRFC822EmailPrincipalResolverTests {
             arguments(
                 "/x509-san-upn-resolver.crt",
                 "test@somecompany.com",
-                null
+                null,
+                "x509Rfc822Email"
             ),
 
             /* test with alternate parameter and cert with RFC822 Email Address */
             arguments(
                 "/x509-san-upn-resolver.crt",
                 "test@somecompany.com",
-                "subjectDn"
+                "subjectDn",
+                "x509subjectUPN"
             ),
 
             /* test with alternate parameter and cert without RFC822 Email Address */
             arguments(
                 "/user-valid.crt",
                 "CN=Alice, OU=CAS, O=Jasig, L=Westminster, ST=Colorado, C=US",
-                "subjectDn"
+                "subjectDn",
+                null
             ),
 
             /* test with bad alternate parameter and cert without RFC822 Email Address */
             arguments(
                 "/user-valid.crt",
                 null,
-                "badAttribute"
+                "badAttribute",
+                null
             )
         );
     }
@@ -67,7 +72,8 @@ public class X509SubjectAlternativeNameRFC822EmailPrincipalResolverTests {
     @MethodSource("getTestParameters")
     public void verifyResolvePrincipalInternal(final String certPath,
                                                final String expectedResult,
-                                               final String alternatePrincipalAttribute) throws FileNotFoundException, CertificateException {
+                                               final String alternatePrincipalAttribute,
+                                               final String requiredAttribute) throws FileNotFoundException, CertificateException {
         val resolver = new X509SubjectAlternativeNameRFC822EmailPrincipalResolver();
         resolver.setAlternatePrincipalAttribute(alternatePrincipalAttribute);
         val certificate = (X509Certificate) CertificateFactory.getInstance("X509").generateCertificate(
@@ -82,6 +88,9 @@ public class X509SubjectAlternativeNameRFC822EmailPrincipalResolverTests {
         if (expectedResult != null) {
             assertNotNull(principal);
             assertFalse(principal.getAttributes().isEmpty());
+            if (requiredAttribute != null) {
+                assertTrue(principal.getAttributes().keySet().contains(requiredAttribute));
+            }
         } else {
             assertNull(principal);
         }

@@ -1,6 +1,5 @@
 package org.apereo.cas.web.flow.actions.composite;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.action.EventFactorySupport;
@@ -13,7 +12,6 @@ import org.springframework.webflow.execution.RequestContext;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Slf4j
 public class MultifactorProviderSelectedAction extends AbstractAction {
     @Override
     public Event doExecute(final RequestContext requestContext) {

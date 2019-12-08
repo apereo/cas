@@ -12,6 +12,7 @@ import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
+import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
@@ -65,7 +66,6 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
     CasPersonDirectoryTestConfiguration.class,
     CasCoreAuthenticationConfiguration.class,
     CasCoreWebConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreServicesAuthenticationConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreWebflowConfiguration.class,
@@ -76,6 +76,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
     CasThemesConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
+    CasCoreTicketIdGeneratorsConfiguration.class,
     CasCoreTicketsConfiguration.class
     }, properties = {
         "cas.authn.surrogate.couchDb.username=cas",

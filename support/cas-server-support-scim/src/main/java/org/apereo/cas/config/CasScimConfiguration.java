@@ -7,18 +7,16 @@ import org.apereo.cas.scim.v1.ScimV1PrincipalProvisioner;
 import org.apereo.cas.scim.v2.ScimV2PrincipalAttributeMapper;
 import org.apereo.cas.scim.v2.ScimV2PrincipalProvisioner;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
-import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.PrincipalScimProvisionerAction;
 import org.apereo.cas.web.flow.ScimWebflowConfigurer;
 
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationContext;
@@ -39,13 +37,14 @@ import org.springframework.webflow.execution.Action;
 @Configuration("casScimConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
+@ConditionalOnProperty(name = "cas.scim.target")
 public class CasScimConfiguration {
     @Autowired
     @Qualifier("loginFlowRegistry")
     private ObjectProvider<FlowDefinitionRegistry> loginFlowDefinitionRegistry;
 
     @Autowired
-    private FlowBuilderServices flowBuilderServices;
+    private ObjectProvider<FlowBuilderServices> flowBuilderServices;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -57,7 +56,8 @@ public class CasScimConfiguration {
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer scimWebflowConfigurer() {
-        return new ScimWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry.getIfAvailable(), applicationContext, casProperties);
+        return new ScimWebflowConfigurer(flowBuilderServices.getObject(),
+            loginFlowDefinitionRegistry.getObject(), applicationContext, casProperties);
     }
 
     @RefreshScope
@@ -79,10 +79,6 @@ public class CasScimConfiguration {
     @ConditionalOnMissingBean(name = "scimProvisioner")
     public PrincipalProvisioner scimProvisioner() {
         val scim = casProperties.getScim();
-        if (StringUtils.isBlank(scim.getTarget())) {
-            throw new BeanCreationException("Scim target cannot be blank");
-        }
-
         if (casProperties.getScim().getVersion() == 1) {
             return new ScimV1PrincipalProvisioner(scim.getTarget(),
                 scim.getOauthToken(),
@@ -105,11 +101,6 @@ public class CasScimConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "scimCasWebflowExecutionPlanConfigurer")
     public CasWebflowExecutionPlanConfigurer scimCasWebflowExecutionPlanConfigurer() {
-        return new CasWebflowExecutionPlanConfigurer() {
-            @Override
-            public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-                plan.registerWebflowConfigurer(scimWebflowConfigurer());
-            }
-        };
+        return plan -> plan.registerWebflowConfigurer(scimWebflowConfigurer());
     }
 }

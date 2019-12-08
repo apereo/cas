@@ -1,5 +1,6 @@
 package org.apereo.cas.util.http;
 
+import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.val;
@@ -32,10 +33,10 @@ import org.apache.http.impl.client.FutureRequestExecutionService;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.client.ProxyAuthenticationStrategy;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
-import org.springframework.beans.factory.DisposableBean;
-import org.springframework.beans.factory.FactoryBean;
 
 import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLContext;
+
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.util.ArrayList;
@@ -55,7 +56,8 @@ import java.util.stream.IntStream;
  * @since 4.1.0
  */
 @Setter
-public class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttpClient>, DisposableBean {
+@Getter
+public class SimpleHttpClientFactoryBean implements HttpClientFactory {
 
     /**
      * Max connections per route.
@@ -126,6 +128,11 @@ public class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttpClient
     private HostnameVerifier hostnameVerifier = new DefaultHostnameVerifier();
 
     /**
+     * The CAS SSL context used to create ssl socket factories, etc.
+     */
+    private SSLContext sslContext;
+
+    /**
      * The credentials provider for endpoints that require authentication.
      */
     private CredentialsProvider credentialsProvider;
@@ -194,12 +201,14 @@ public class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttpClient
      */
     private ExecutorService executorService;
 
+    private HttpHost proxy;
+
     @Override
     public SimpleHttpClient getObject() {
         val httpClient = buildHttpClient();
         val requestExecutorService = buildRequestExecutorService(httpClient);
         val codes = this.acceptableCodes.stream().sorted().collect(Collectors.toList());
-        return new SimpleHttpClient(codes, httpClient, requestExecutorService);
+        return new SimpleHttpClient(codes, httpClient, requestExecutorService, this);
     }
 
     @Override
@@ -257,6 +266,7 @@ public class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttpClient
             .setServiceUnavailableRetryStrategy(this.serviceUnavailableRetryStrategy)
             .setProxyAuthenticationStrategy(this.proxyAuthenticationStrategy)
             .setDefaultHeaders(this.defaultHeaders)
+            .setProxy(this.proxy)
             .setRetryHandler(this.httpRequestRetryHandler)
             .useSystemProperties();
         return builder.build();

@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.web.support.ArgumentExtractor;
 
 import com.google.common.base.Splitter;
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -21,6 +22,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * This is {@link HttpRequestUtils}.
@@ -28,7 +30,7 @@ import java.util.Objects;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-
+@UtilityClass
 @Slf4j
 public class HttpRequestUtils {
     /**
@@ -51,7 +53,7 @@ public class HttpRequestUtils {
     public static HttpServletRequest getHttpServletRequestFromRequestAttributes() {
         try {
             val requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-            return requestAttributes != null ? requestAttributes.getRequest() : null;
+            return Optional.ofNullable(requestAttributes).map(ServletRequestAttributes::getRequest).orElse(null);
         } catch (final Exception e) {
             LOGGER.trace(e.getMessage(), e);
         }
@@ -65,7 +67,7 @@ public class HttpRequestUtils {
      */
     public static HttpServletResponse getHttpServletResponseFromRequestAttributes() {
         val requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        return requestAttributes != null ? requestAttributes.getResponse() : null;
+        return Optional.ofNullable(requestAttributes).map(ServletRequestAttributes::getResponse).orElse(null);
     }
 
     /**
@@ -78,13 +80,26 @@ public class HttpRequestUtils {
         val loc = new GeoLocationRequest();
         if (request != null) {
             val geoLocationParam = request.getParameter("geolocation");
-            if (StringUtils.isNotBlank(geoLocationParam)) {
-                val geoLocation = Splitter.on(",").splitToList(geoLocationParam);
-                loc.setLatitude(geoLocation.get(GEO_LOC_LAT_INDEX));
-                loc.setLongitude(geoLocation.get(GEO_LOC_LONG_INDEX));
-                loc.setAccuracy(geoLocation.get(GEO_LOC_ACCURACY_INDEX));
-                loc.setTimestamp(geoLocation.get(GEO_LOC_TIME_INDEX));
-            }
+            return getHttpServletRequestGeoLocation(geoLocationParam);
+        }
+        return loc;
+    }
+
+    /**
+     * Gets http servlet request geo location.
+     *
+     * @param geoLocationParam the geo location param
+     * @return the http servlet request geo location
+     */
+    public static GeoLocationRequest getHttpServletRequestGeoLocation(final String geoLocationParam) {
+        val loc = new GeoLocationRequest();
+        if (StringUtils.isNotBlank(geoLocationParam) && !StringUtils.equalsIgnoreCase(geoLocationParam, "unknown")) {
+            val geoLocation = Splitter.on(",").splitToList(geoLocationParam);
+            loc.setLatitude(geoLocation.get(GEO_LOC_LAT_INDEX));
+            loc.setLongitude(geoLocation.get(GEO_LOC_LONG_INDEX));
+            loc.setAccuracy(geoLocation.get(GEO_LOC_ACCURACY_INDEX));
+            loc.setTimestamp(geoLocation.get(GEO_LOC_TIME_INDEX));
+
         }
         return loc;
     }

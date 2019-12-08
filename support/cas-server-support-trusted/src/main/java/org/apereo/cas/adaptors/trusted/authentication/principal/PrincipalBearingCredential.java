@@ -17,7 +17,7 @@ import lombok.ToString;
  * that has already happened in layers in front of CAS, e.g. by means of a Java
  * Servlet Filter or by means of container authentication in the servlet
  * container or Apache layers. DO NOT accept these Credential from arbitrary
- * web-servicey calls to CAS. Rather, the code constructing these Credential
+ * web-service calls to CAS. Rather, the code constructing these Credential
  * must be trusted to perform appropriate authentication before issuing these
  * credentials.
  *

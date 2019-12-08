@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -22,16 +21,16 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@SpringBootTest(classes = RefreshAutoConfiguration.class)
+@SpringBootTest(classes = RefreshAutoConfiguration.class,
+    properties = {
+        "cas.authn.passwordSync.ldap[0].ldapUrl=ldap://localhost:10389",
+        "cas.authn.passwordSync.ldap[0].useSsl=false",
+        "cas.authn.passwordSync.ldap[0].baseDn=dc=example,dc=org",
+        "cas.authn.passwordSync.ldap[0].searchFilter=cn={user}",
+        "cas.authn.passwordSync.ldap[0].bindDn=cn=Directory Manager",
+        "cas.authn.passwordSync.ldap[0].bindCredential=password"
+    })
 @Tag("Ldap")
-@TestPropertySource(properties = {
-    "cas.authn.passwordSync.ldap[0].ldapUrl=ldap://localhost:10389",
-    "cas.authn.passwordSync.ldap[0].useSsl=false",
-    "cas.authn.passwordSync.ldap[0].baseDn=dc=example,dc=org",
-    "cas.authn.passwordSync.ldap[0].searchFilter=cn={user}",
-    "cas.authn.passwordSync.ldap[0].bindDn=cn=Directory Manager",
-    "cas.authn.passwordSync.ldap[0].bindCredential=password"
-})
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnabledIfContinuousIntegration
 public class LdapPasswordSynchronizationAuthenticationPostProcessorTests {

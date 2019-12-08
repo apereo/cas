@@ -5,7 +5,6 @@ import org.apereo.cas.git.GitRepository;
 import org.apereo.cas.git.GitRepositoryBuilder;
 import org.apereo.cas.services.GitServiceRegistry;
 import org.apereo.cas.services.ServiceRegistry;
-import org.apereo.cas.services.ServiceRegistryExecutionPlan;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServiceRegistryListener;
 import org.apereo.cas.services.resource.RegisteredServiceResourceNamingStrategy;
@@ -18,8 +17,10 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -32,10 +33,11 @@ import java.util.Collection;
  * @since 6.1.0
  */
 @Configuration("gitServiceRegistryConfiguration")
+@ConditionalOnProperty(prefix = "cas.serviceRegistry.git", name = "repositoryUrl")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class GitServiceRegistryConfiguration {
     @Autowired
-    private ApplicationEventPublisher eventPublisher;
+    private ConfigurableApplicationContext applicationContext;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -49,40 +51,33 @@ public class GitServiceRegistryConfiguration {
     private ObjectProvider<Collection<ServiceRegistryListener>> serviceRegistryListeners;
 
     @Bean
+    @RefreshScope
     @ConditionalOnMissingBean(name = "gitRepositoryInstance")
     public GitRepository gitRepositoryInstance() {
         val registry = casProperties.getServiceRegistry().getGit();
-        return new GitRepositoryBuilder(registry.getRepositoryUrl())
-            .activeBranch(registry.getActiveBranch())
-            .branchesToClone(registry.getBranchesToClone())
-            .credentialProvider(registry.getUsername(), registry.getPassword())
-            .repositoryDirectory(registry.getCloneDirectory())
-            .build();
+        return GitRepositoryBuilder.newInstance(registry).build();
     }
 
     @Bean
+    @RefreshScope
+    @ConditionalOnMissingBean(name = "gitServiceRegistry")
     public ServiceRegistry gitServiceRegistry() {
         val registry = casProperties.getServiceRegistry().getGit();
-        return new GitServiceRegistry(eventPublisher,
+        return new GitServiceRegistry(applicationContext,
             gitRepositoryInstance(),
             CollectionUtils.wrapList(
                 new RegisteredServiceJsonSerializer(),
                 new RegisteredServiceYamlSerializer()
             ),
-            resourceNamingStrategy.getIfAvailable(),
+            resourceNamingStrategy.getObject(),
             registry.isPushChanges(),
-            serviceRegistryListeners.getIfAvailable()
+            serviceRegistryListeners.getObject()
         );
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "gitServiceRegistryExecutionPlanConfigurer")
     public ServiceRegistryExecutionPlanConfigurer gitServiceRegistryExecutionPlanConfigurer() {
-        return new ServiceRegistryExecutionPlanConfigurer() {
-            @Override
-            public void configureServiceRegistry(final ServiceRegistryExecutionPlan plan) {
-                plan.registerServiceRegistry(gitServiceRegistry());
-            }
-        };
+        return plan -> plan.registerServiceRegistry(gitServiceRegistry());
     }
 }

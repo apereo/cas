@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.Optional;
 
 
 /**
@@ -43,7 +44,7 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
     private final CookieGenerationContext cookieGenerationContext;
 
     public CookieRetrievingCookieGenerator(final CookieGenerationContext context) {
-        this(context, new NoOpCookieValueManager());
+        this(context, NoOpCookieValueManager.INSTANCE);
     }
 
     public CookieRetrievingCookieGenerator(final CookieGenerationContext context,
@@ -105,7 +106,9 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
                     cookie = createCookie(cookieValue);
                 }
             }
-            return cookie == null ? null : this.casCookieValueManager.obtainCookieValue(cookie, request);
+            return Optional.ofNullable(cookie)
+                .map(ck -> this.casCookieValueManager.obtainCookieValue(ck, request))
+                .orElse(null);
         } catch (final Exception e) {
             LOGGER.debug(e.getMessage(), e);
         }

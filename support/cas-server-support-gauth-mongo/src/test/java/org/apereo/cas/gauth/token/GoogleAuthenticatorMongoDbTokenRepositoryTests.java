@@ -9,21 +9,27 @@ import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfig
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
+import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.GoogleAuthenticatorMongoDbConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
-import org.apereo.cas.config.support.EnvironmentConversionServiceInitializer;
 import org.apereo.cas.config.support.authentication.GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration;
+import org.apereo.cas.config.support.authentication.GoogleAuthenticatorAuthenticationMultifactorProviderBypassConfiguration;
 import org.apereo.cas.gauth.credential.MongoDbGoogleAuthenticatorTokenCredentialRepositoryTests;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.util.SchedulingUtils;
 import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
+import org.apereo.cas.web.config.CasCookieConfiguration;
+import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
+import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
+import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
 import lombok.Getter;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,8 +43,6 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 /**
@@ -51,10 +55,14 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @SpringBootTest(classes = {
     MongoDbGoogleAuthenticatorTokenCredentialRepositoryTests.MongoTestConfiguration.class,
     GoogleAuthenticatorMongoDbConfiguration.class,
+    CasCoreMultifactorAuthenticationConfiguration.class,
+    CasMultifactorAuthenticationWebflowConfiguration.class,
     CasCoreTicketsConfiguration.class,
+    CasCoreTicketIdGeneratorsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
     CasCoreLogoutConfiguration.class,
     CasCoreHttpConfiguration.class,
+    CasCookieConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreAuthenticationConfiguration.class,
@@ -65,34 +73,36 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
     CasCoreAuthenticationHandlersConfiguration.class,
     CasCoreAuthenticationSupportConfiguration.class,
     CasPersonDirectoryConfiguration.class,
+    GoogleAuthenticatorAuthenticationMultifactorProviderBypassConfiguration.class,
     GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration.class,
     AopAutoConfiguration.class,
     CasCoreConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     CasCoreUtilConfiguration.class,
+    CasCoreWebflowConfiguration.class,
+    CasWebflowContextConfiguration.class,
     RefreshAutoConfiguration.class,
-    CasCoreWebConfiguration.class})
+    CasCoreWebConfiguration.class},
+    properties = {
+        "cas.authn.mfa.gauth.mongo.userId=root",
+        "cas.authn.mfa.gauth.mongo.password=secret",
+        "cas.authn.mfa.gauth.mongo.host=localhost",
+        "cas.authn.mfa.gauth.mongo.port=27017",
+        "cas.authn.mfa.gauth.mongo.authenticationDatabaseName=admin",
+        "cas.authn.mfa.gauth.mongo.dropCollection=true",
+        "cas.authn.mfa.gauth.mongo.databaseName=gauth-token",
+        "cas.authn.mfa.gauth.crypto.enabled=false"
+    })
 @EnableTransactionManagement(proxyTargetClass = true)
 @EnableAspectJAutoProxy(proxyTargetClass = true)
-@TestPropertySource(properties = {
-    "cas.authn.mfa.gauth.mongo.userId=root",
-    "cas.authn.mfa.gauth.mongo.password=secret",
-    "cas.authn.mfa.gauth.mongo.host=localhost",
-    "cas.authn.mfa.gauth.mongo.port=27017",
-    "cas.authn.mfa.gauth.mongo.authenticationDatabaseName=admin",
-    "cas.authn.mfa.gauth.mongo.dropCollection=true",
-    "cas.authn.mfa.gauth.mongo.databaseName=gauth-token",
-    "cas.authn.mfa.gauth.crypto.enabled=false"
-})
 @EnableScheduling
-@ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
 @Getter
 @EnabledIfContinuousIntegration
 public class GoogleAuthenticatorMongoDbTokenRepositoryTests extends BaseOneTimeTokenRepositoryTests {
 
     @BeforeEach
     public void initialize() {
-        oneTimeTokenAuthenticatorTokenRepository.removeAll();
+        oneTimeTokenAuthenticatorTokenRepository.getObject().removeAll();
     }
 
     @TestConfiguration("MongoTestConfiguration")

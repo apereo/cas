@@ -1,6 +1,5 @@
 package org.apereo.cas.support.pac4j.config.support.authentication;
 
-import org.apereo.cas.audit.AuditTrailRecordResolutionPlan;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.audit.DelegatedAuthenticationAuditResourceResolver;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
@@ -15,7 +14,6 @@ import org.apereo.cas.authentication.principal.provision.GroovyDelegatedClientUs
 import org.apereo.cas.authentication.principal.provision.RestfulDelegatedClientUserProfileProvisioner;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.integration.pac4j.DistributedJ2ESessionStore;
-import org.apereo.cas.logout.LogoutExecutionPlan;
 import org.apereo.cas.logout.LogoutExecutionPlanConfigurer;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.pac4j.authentication.ClientAuthenticationMetaDataPopulator;
@@ -52,7 +50,7 @@ import java.util.ArrayList;
 @Configuration("pac4jAuthenticationEventExecutionPlanConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-public class Pac4jAuthenticationEventExecutionPlanConfiguration implements AuditTrailRecordResolutionPlanConfigurer, LogoutExecutionPlanConfigurer {
+public class Pac4jAuthenticationEventExecutionPlanConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -122,7 +120,7 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration implements Audit
         val pac4j = casProperties.getAuthn().getPac4j();
         val h = new DelegatedClientAuthenticationHandler(pac4j.getName(),
             pac4j.getOrder(),
-            servicesManager.getIfAvailable(),
+            servicesManager.getObject(),
             clientPrincipalFactory(),
             builtClients(),
             clientUserProfileProvisioner(),
@@ -160,7 +158,7 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration implements Audit
             if (!builtClients().findAllClients().isEmpty()) {
                 LOGGER.info("Registering delegated authentication clients...");
                 plan.registerAuthenticationHandlerWithPrincipalResolver(clientAuthenticationHandler(),
-                    defaultPrincipalResolver.getIfAvailable());
+                    defaultPrincipalResolver.getObject());
                 plan.registerAuthenticationMetadataPopulator(clientAuthenticationMetaDataPopulator());
             }
         };
@@ -173,18 +171,21 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration implements Audit
     }
 
 
-    @Override
-    public void configureAuditTrailRecordResolutionPlan(final AuditTrailRecordResolutionPlan plan) {
-        plan.registerAuditActionResolver("DELEGATED_CLIENT_ACTION_RESOLVER", authenticationActionResolver.getIfAvailable());
-        plan.registerAuditResourceResolver("DELEGATED_CLIENT_RESOURCE_RESOLVER", delegatedAuthenticationAuditResourceResolver());
+    @Bean
+    public AuditTrailRecordResolutionPlanConfigurer delegatedAuthenticationAuditTrailRecordResolutionPlanConfigurer() {
+        return plan -> {
+            plan.registerAuditActionResolver("DELEGATED_CLIENT_ACTION_RESOLVER", authenticationActionResolver.getObject());
+            plan.registerAuditResourceResolver("DELEGATED_CLIENT_RESOURCE_RESOLVER", delegatedAuthenticationAuditResourceResolver());
+        };
     }
 
-    @Override
-    public void configureLogoutExecutionPlan(final LogoutExecutionPlan plan) {
-        plan.registerLogoutPostProcessor(getDistributedSessionStore());
+    @Bean
+    public LogoutExecutionPlanConfigurer delegatedAuthenticationLogoutExecutionPlanConfigurer() {
+        return plan -> plan.registerLogoutPostProcessor(getDistributedSessionStore());
     }
 
     private DistributedJ2ESessionStore getDistributedSessionStore() {
-        return new DistributedJ2ESessionStore(ticketRegistry.getIfAvailable(), ticketFactory.getIfAvailable());
+        return new DistributedJ2ESessionStore(ticketRegistry.getObject(), ticketFactory.getObject(),
+                casProperties.getSessionReplication().getSessionCookieName());
     }
 }

@@ -8,7 +8,6 @@ import org.apereo.cas.throttle.ThrottledRequestResponseHandler;
 import org.apereo.cas.web.support.CouchDbThrottledSubmissionHandlerInterceptorAdapter;
 import org.apereo.cas.web.support.ThrottledSubmissionHandlerConfigurationContext;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,9 +24,8 @@ import org.springframework.context.annotation.Configuration;
  * @author Timur Duehr
  * @since 6.0.0
  */
-@Configuration("casCouchDbThrottlingConfiguration")
+@Configuration(value = "casCouchDbThrottlingConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class CasCouchDbThrottlingConfiguration {
 
     @Autowired
@@ -60,12 +58,12 @@ public class CasCouchDbThrottlingConfiguration {
             .failureRangeInSeconds(failure.getRangeSeconds())
             .usernameParameter(throttle.getUsernameParameter())
             .authenticationFailureCode(failure.getCode())
-            .auditTrailExecutionPlan(auditTrailManager.getIfAvailable())
+            .auditTrailExecutionPlan(auditTrailManager.getObject())
             .applicationCode(throttle.getAppCode())
-            .throttledRequestResponseHandler(throttledRequestResponseHandler.getIfAvailable())
-            .throttledRequestExecutor(throttledRequestExecutor.getIfAvailable())
+            .throttledRequestResponseHandler(throttledRequestResponseHandler.getObject())
+            .throttledRequestExecutor(throttledRequestExecutor.getObject())
             .build();
 
-        return new CouchDbThrottledSubmissionHandlerInterceptorAdapter(context, couchDbRepository.getIfAvailable());
+        return new CouchDbThrottledSubmissionHandlerInterceptorAdapter(context, couchDbRepository.getObject());
     }
 }

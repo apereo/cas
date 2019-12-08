@@ -117,9 +117,9 @@ public class TerminateSessionAction extends AbstractAction {
     }
 
     private String getTicketGrantingTicket(final RequestContext context) {
-        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         val tgtId = WebUtils.getTicketGrantingTicketId(context);
         if (StringUtils.isBlank(tgtId)) {
+            val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
             return this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
         }
         return tgtId;

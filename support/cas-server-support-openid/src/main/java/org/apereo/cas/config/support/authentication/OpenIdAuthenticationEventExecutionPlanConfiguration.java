@@ -49,8 +49,8 @@ public class OpenIdAuthenticationEventExecutionPlanConfiguration {
     @Bean
     public AuthenticationHandler openIdCredentialsAuthenticationHandler() {
         val openid = casProperties.getAuthn().getOpenid();
-        return new OpenIdCredentialsAuthenticationHandler(openid.getName(), servicesManager.getIfAvailable(),
-            openidPrincipalFactory(), ticketRegistry.getIfAvailable(),
+        return new OpenIdCredentialsAuthenticationHandler(openid.getName(), servicesManager.getObject(),
+            openidPrincipalFactory(), ticketRegistry.getObject(),
             openid.getOrder());
     }
 
@@ -59,7 +59,7 @@ public class OpenIdAuthenticationEventExecutionPlanConfiguration {
         val personDirectory = casProperties.getPersonDirectory();
         val principal = casProperties.getAuthn().getOpenid().getPrincipal();
         val principalAttribute = StringUtils.defaultIfBlank(principal.getPrincipalAttribute(), personDirectory.getPrincipalAttribute());
-        return new OpenIdPrincipalResolver(attributeRepository.getIfAvailable(),
+        return new OpenIdPrincipalResolver(attributeRepository.getObject(),
             openidPrincipalFactory(),
             principal.isReturnNull() || personDirectory.isReturnNull(),
             principalAttribute,

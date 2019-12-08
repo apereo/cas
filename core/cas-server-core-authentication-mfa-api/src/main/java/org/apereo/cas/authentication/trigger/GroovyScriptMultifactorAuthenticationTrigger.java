@@ -10,7 +10,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
-import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -18,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.DisposableBean;
+import org.springframework.context.ApplicationContext;
 import org.springframework.core.Ordered;
 
 import javax.servlet.http.HttpServletRequest;
@@ -35,13 +35,16 @@ import java.util.Optional;
 public class GroovyScriptMultifactorAuthenticationTrigger implements MultifactorAuthenticationTrigger, DisposableBean {
     private final CasConfigurationProperties casProperties;
     private final WatchableGroovyScriptResource watchableScript;
+    private final ApplicationContext applicationContext;
 
     private int order = Ordered.LOWEST_PRECEDENCE;
 
-    public GroovyScriptMultifactorAuthenticationTrigger(final CasConfigurationProperties casProperties) {
+    public GroovyScriptMultifactorAuthenticationTrigger(final CasConfigurationProperties casProperties,
+                                                        final ApplicationContext applicationContext) {
         this.casProperties = casProperties;
         val groovyScript = casProperties.getAuthn().getMfa().getGroovyScript();
         this.watchableScript = new WatchableGroovyScriptResource(groovyScript);
+        this.applicationContext = applicationContext;
     }
 
     @Override
@@ -63,19 +66,25 @@ public class GroovyScriptMultifactorAuthenticationTrigger implements Multifactor
             LOGGER.debug("No authentication is available to determine event for principal");
             return Optional.empty();
         }
+        
         if (registeredService == null) {
             LOGGER.debug("No registered service is available to determine event for principal [{}]", authentication.getPrincipal());
             return Optional.empty();
         }
 
-        val providerMap = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(ApplicationContextProvider.getApplicationContext());
+        if (service == null) {
+            LOGGER.debug("No service is available to determine event for principal [{}]", authentication.getPrincipal());
+            return Optional.empty();
+        }
+        
+        val providerMap = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
         if (providerMap.isEmpty()) {
             LOGGER.error("No multifactor authentication providers are available in the application context");
             throw new AuthenticationException();
         }
 
         try {
-            val args = new Object[]{registeredService, registeredService, authentication, httpServletRequest, LOGGER};
+            val args = new Object[]{service, registeredService, authentication, httpServletRequest, LOGGER};
             val provider = this.watchableScript.execute(args, String.class);
             LOGGER.debug("Groovy script run for [{}] returned the provider id [{}]", registeredService, provider);
             if (StringUtils.isBlank(provider)) {

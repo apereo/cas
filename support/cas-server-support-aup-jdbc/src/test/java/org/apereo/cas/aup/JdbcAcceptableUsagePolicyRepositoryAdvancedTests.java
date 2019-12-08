@@ -7,6 +7,7 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -36,10 +37,11 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.acceptableUsagePolicy.jdbc.principalIdAttribute=email",
     "cas.acceptableUsagePolicy.jdbc.sqlUpdateAUP=UPDATE %s SET %s=true WHERE lower(%s)=lower(?)"
 })
+@Tag("JDBC")
 public class JdbcAcceptableUsagePolicyRepositoryAdvancedTests extends BaseJdbcAcceptableUsagePolicyRepositoryTests {
     @BeforeEach
     public void initialize() throws SQLException {
-        try (val c = this.acceptableUsagePolicyDataSource.getConnection()) {
+        try (val c = this.acceptableUsagePolicyDataSource.getObject().getConnection()) {
             try (val s = c.createStatement()) {
                 c.setAutoCommit(true);
                 s.execute("CREATE TABLE users_table (id int primary key, username varchar(255), mail varchar(255), aup boolean)");
@@ -50,7 +52,7 @@ public class JdbcAcceptableUsagePolicyRepositoryAdvancedTests extends BaseJdbcAc
     
     @AfterEach
     public void cleanup() throws SQLException {
-        try (val c = this.acceptableUsagePolicyDataSource.getConnection()) {
+        try (val c = this.acceptableUsagePolicyDataSource.getObject().getConnection()) {
             try (val s = c.createStatement()) {
                 c.setAutoCommit(true);
                 s.execute("DROP TABLE users_table;");
@@ -88,16 +90,17 @@ public class JdbcAcceptableUsagePolicyRepositoryAdvancedTests extends BaseJdbcAc
     
     private void raiseException(final Map<String, List<Object>> profileAttributes) {
         val aupProperties = casProperties.getAcceptableUsagePolicy();
-        val jdbcAupRepository = new JdbcAcceptableUsagePolicyRepository(ticketRegistrySupport,
-                aupProperties.getAupAttributeName(), acceptableUsagePolicyDataSource, aupProperties);
+        val jdbcAupRepository = new JdbcAcceptableUsagePolicyRepository(ticketRegistrySupport.getObject(),
+                aupProperties.getAupAttributeName(),
+            acceptableUsagePolicyDataSource.getObject(), aupProperties);
         
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         
         val c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser");
-        val pricipal = CoreAuthenticationTestUtils.getPrincipal(c.getId(), profileAttributes);
-        val auth = CoreAuthenticationTestUtils.getAuthentication(pricipal);
+        val principal = CoreAuthenticationTestUtils.getPrincipal(c.getId(), profileAttributes);
+        val auth = CoreAuthenticationTestUtils.getAuthentication(principal);
         WebUtils.putAuthentication(auth, context);
         
         jdbcAupRepository.determinePrincipalId(context, c);

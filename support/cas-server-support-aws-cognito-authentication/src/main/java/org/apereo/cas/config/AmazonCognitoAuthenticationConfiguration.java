@@ -32,6 +32,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -47,6 +48,9 @@ import java.net.URL;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class AmazonCognitoAuthenticationConfiguration {
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -99,20 +103,20 @@ public class AmazonCognitoAuthenticationConfiguration {
     public AuthenticationHandler amazonCognitoAuthenticationHandler() {
         val cognito = casProperties.getAuthn().getCognito();
         val handler = new AmazonCognitoAuthenticationAuthenticationHandler(cognito.getName(),
-            servicesManager.getIfAvailable(),
+            servicesManager.getObject(),
             amazonCognitoPrincipalFactory(),
             amazonCognitoIdentityProvider(),
             cognito,
             amazonCognitoAuthenticationJwtProcessor());
         handler.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(cognito.getPrincipalTransformation()));
-        handler.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(cognito.getPasswordEncoder()));
+        handler.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(cognito.getPasswordEncoder(), applicationContext));
         return handler;
     }
 
     @ConditionalOnMissingBean(name = "amazonCognitoAuthenticationEventExecutionPlanConfigurer")
     @Bean
     public AuthenticationEventExecutionPlanConfigurer amazonCognitoAuthenticationEventExecutionPlanConfigurer() {
-        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(amazonCognitoAuthenticationHandler(), defaultPrincipalResolver.getIfAvailable());
+        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(amazonCognitoAuthenticationHandler(), defaultPrincipalResolver.getObject());
     }
 
     @ConditionalOnMissingBean(name = "amazonCognitoAuthenticationJwtProcessor")

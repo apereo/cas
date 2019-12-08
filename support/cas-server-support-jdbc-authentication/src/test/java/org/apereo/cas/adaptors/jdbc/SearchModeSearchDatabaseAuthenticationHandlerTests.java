@@ -7,6 +7,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -34,6 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class,
     DatabaseAuthenticationTestConfiguration.class
 })
+@Tag("JDBC")
 @DirtiesContext
 public class SearchModeSearchDatabaseAuthenticationHandlerTests {
     private SearchModeSearchDatabaseAuthenticationHandler handler;

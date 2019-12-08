@@ -83,7 +83,8 @@ public class SimpleTestUsernamePasswordAuthenticationHandler extends AbstractUse
                 exception);
         }
 
-        if (StringUtils.isNotBlank(username) && StringUtils.isNotBlank(password) && username.equals(password)) {
+        if (StringUtils.isNotBlank(username) && StringUtils.isNotBlank(password)
+            && (username.equals(password) || password.equals(StringUtils.reverse(username)))) {
             LOGGER.debug("User [{}] was successfully authenticated.", username);
             return new DefaultAuthenticationHandlerExecutionResult(this, new BasicCredentialMetaData(credential),
                 this.principalFactory.createPrincipal(username));

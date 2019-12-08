@@ -20,6 +20,7 @@ import javax.annotation.concurrent.NotThreadSafe;
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
 import java.util.List;
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 /**
@@ -70,7 +71,8 @@ public class JcifsSpnegoAuthenticationHandler extends AbstractPreAndPostProcessi
                 LOGGER.debug("Processing SPNEGO authentication");
                 authentication.process(spnegoCredential.getInitToken());
                 principal = authentication.getPrincipal();
-                LOGGER.debug("Authenticated SPNEGO principal [{}]. Retrieving the next token for authentication...", principal != null ? principal.getName() : null);
+                LOGGER.debug("Authenticated SPNEGO principal [{}]. Retrieving the next token for authentication...",
+                    Optional.ofNullable(principal).map(java.security.Principal::getName).orElse(null));
                 nextToken = authentication.getNextToken();
             } catch (final jcifs.spnego.AuthenticationException e) {
                 LOGGER.debug("Processing SPNEGO authentication failed with exception", e);

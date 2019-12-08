@@ -1,12 +1,15 @@
 package org.apereo.cas.services.web;
 
 import org.apereo.cas.CasProtocolConstants;
+import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
+import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
@@ -23,11 +26,11 @@ import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.web.servlet.ThemeResolver;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.RequestContext;
@@ -48,18 +51,28 @@ import static org.mockito.Mockito.*;
     CasCoreHttpConfiguration.class,
     CasCoreLogoutConfiguration.class,
     CasCoreWebConfiguration.class,
+    CasCoreTicketIdGeneratorsConfiguration.class,
     CasPersonDirectoryConfiguration.class,
+    CasCoreAuthenticationConfiguration.class,
+    CasCoreAuthenticationSupportConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreConfiguration.class,
     CasCoreUtilConfiguration.class,
     ThymeleafAutoConfiguration.class,
+    MailSenderAutoConfiguration.class,
     RefreshAutoConfiguration.class
-})
-@TestPropertySource(properties = "cas.theme.defaultThemeName=test")
+},
+    properties = {
+        "cas.theme.defaultThemeName=test",
+        "spring.mail.host=localhost",
+        "spring.mail.port=25000",
+        "spring.mail.testConnection=false"
+    })
 public class ServiceThemeResolverTests {
     private static final String MOZILLA = "Mozilla";
+
     private static final String DEFAULT_THEME_NAME = "test";
 
     @Autowired

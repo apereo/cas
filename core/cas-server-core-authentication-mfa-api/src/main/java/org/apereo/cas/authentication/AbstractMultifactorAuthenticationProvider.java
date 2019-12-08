@@ -9,7 +9,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -19,7 +18,6 @@ import org.apache.commons.lang3.StringUtils;
  * @author Misagh Moayyed
  * @since 4.3
  */
-@Slf4j
 @ToString
 @Getter
 @Setter
@@ -45,13 +43,12 @@ public abstract class AbstractMultifactorAuthenticationProvider implements Multi
     }
 
     @Override
-    public RegisteredServiceMultifactorPolicyFailureModes getFailureMode() {
-        return RegisteredServiceMultifactorPolicyFailureModes.valueOf(failureMode);
+    public boolean matches(final String identifier) {
+        return StringUtils.isNotBlank(getId()) && getId().matches(identifier);
     }
 
-
     @Override
-    public boolean matches(final String identifier) {
-        return StringUtils.isNotBlank(getId()) ? getId().matches(identifier) : false;
+    public RegisteredServiceMultifactorPolicyFailureModes getFailureMode() {
+        return RegisteredServiceMultifactorPolicyFailureModes.valueOf(failureMode);
     }
 }

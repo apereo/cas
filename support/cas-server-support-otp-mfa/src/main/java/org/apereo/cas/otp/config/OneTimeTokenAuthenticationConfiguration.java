@@ -28,15 +28,14 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.webflow.execution.Action;
 
+import java.time.Duration;
 import java.util.Collection;
-import java.util.concurrent.TimeUnit;
 
 /**
  * This is {@link OneTimeTokenAuthenticationConfiguration}.
@@ -82,9 +81,6 @@ public class OneTimeTokenAuthenticationConfiguration {
     private ConfigurableApplicationContext applicationContext;
 
     @Autowired
-    private ApplicationEventPublisher applicationEventPublisher;
-
-    @Autowired
     @Qualifier("registeredServiceAccessStrategyEnforcer")
     private ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer;
 
@@ -99,16 +95,16 @@ public class OneTimeTokenAuthenticationConfiguration {
     @RefreshScope
     public CasWebflowEventResolver oneTimeTokenAuthenticationWebflowEventResolver() {
         val context = CasWebflowEventResolutionConfigurationContext.builder()
-            .authenticationSystemSupport(authenticationSystemSupport.getIfAvailable())
-            .centralAuthenticationService(centralAuthenticationService.getIfAvailable())
-            .servicesManager(servicesManager.getIfAvailable())
-            .ticketRegistrySupport(ticketRegistrySupport.getIfAvailable())
-            .warnCookieGenerator(warnCookieGenerator.getIfAvailable())
-            .authenticationRequestServiceSelectionStrategies(authenticationRequestServiceSelectionStrategies.getIfAvailable())
-            .registeredServiceAccessStrategyEnforcer(registeredServiceAccessStrategyEnforcer.getIfAvailable())
+            .authenticationSystemSupport(authenticationSystemSupport.getObject())
+            .centralAuthenticationService(centralAuthenticationService.getObject())
+            .servicesManager(servicesManager.getObject())
+            .ticketRegistrySupport(ticketRegistrySupport.getObject())
+            .warnCookieGenerator(warnCookieGenerator.getObject())
+            .authenticationRequestServiceSelectionStrategies(authenticationRequestServiceSelectionStrategies.getObject())
+            .registeredServiceAccessStrategyEnforcer(registeredServiceAccessStrategyEnforcer.getObject())
             .casProperties(casProperties)
-            .ticketRegistry(ticketRegistry.getIfAvailable())
-            .eventPublisher(applicationEventPublisher)
+            .ticketRegistry(ticketRegistry.getObject())
+            .eventPublisher(applicationContext)
             .applicationContext(applicationContext)
             .build();
 
@@ -133,7 +129,7 @@ public class OneTimeTokenAuthenticationConfiguration {
             .initialCapacity(INITIAL_CACHE_SIZE)
             .maximumSize(MAX_CACHE_SIZE)
             .recordStats()
-            .expireAfterWrite(EXPIRE_TOKENS_IN_SECONDS, TimeUnit.SECONDS)
+            .expireAfterWrite(Duration.ofSeconds(EXPIRE_TOKENS_IN_SECONDS))
             .build(s -> {
                 LOGGER.error("Load operation of the cache is not supported.");
                 return null;

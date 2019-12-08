@@ -6,12 +6,12 @@ package org.apereo.cas.web.flow;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@FunctionalInterface
 public interface CasWebflowExecutionPlanConfigurer {
     /**
      * Configure webflow execution plan.
      *
      * @param plan the plan
      */
-    default void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-    }
+    void configureWebflowExecutionPlan(CasWebflowExecutionPlan plan);
 }

@@ -7,6 +7,7 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.LdapPasswordManagementConfiguration;
 import org.apereo.cas.pm.config.PasswordManagementConfiguration;
 import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
+import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import com.unboundid.ldap.sdk.LDAPConnection;
 import lombok.SneakyThrows;
@@ -16,6 +17,8 @@ import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.ldaptive.BindRequest;
+import org.ldaptive.Credential;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -23,7 +26,6 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -40,10 +42,8 @@ import static org.junit.jupiter.api.Assertions.*;
     PasswordManagementConfiguration.class,
     CasCoreAuditConfiguration.class,
     CasCoreUtilConfiguration.class
-})
-@DirtiesContext
-@EnabledIfContinuousIntegration
-@TestPropertySource(properties = {
+}, properties = {
+    "cas.authn.pm.reset.sms.attributeName=telephoneNumber",
     "cas.authn.pm.ldap.ldapUrl=ldap://localhost:10389",
     "cas.authn.pm.ldap.bindDn=cn=Directory Manager",
     "cas.authn.pm.ldap.bindCredential=password",
@@ -54,6 +54,9 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.pm.ldap.securityQuestionsAttributes.registeredAddress=roomNumber",
     "cas.authn.pm.ldap.securityQuestionsAttributes.postalCode=teletexTerminalIdentifier"
 })
+@DirtiesContext
+@EnabledIfContinuousIntegration
+@EnabledIfPortOpen(port = 10389)
 public class LdapPasswordManagementServiceTests {
     private static final int LDAP_PORT = 10389;
 
@@ -69,7 +72,8 @@ public class LdapPasswordManagementServiceTests {
             "cn=Directory Manager", "password");
         LdapIntegrationTestsOperations.populateEntries(localhost,
             new ClassPathResource("ldif/ldap-pm.ldif").getInputStream(),
-            "ou=people,dc=example,dc=org");
+            "ou=people,dc=example,dc=org",
+            new BindRequest("cn=Directory Manager", new Credential("password")));
     }
 
     @Test
@@ -94,6 +98,12 @@ public class LdapPasswordManagementServiceTests {
     public void verifyFindEmail() {
         val email = passwordChangeService.findEmail("caspm");
         assertEquals("caspm@example.org", email);
+    }
+
+    @Test
+    public void verifyFindPhone() {
+        val ph = passwordChangeService.findPhone("caspm");
+        assertEquals("1234567890", ph);
     }
 
     @Test

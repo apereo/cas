@@ -25,42 +25,42 @@ public class SamlIdPAlgorithmsProperties implements Serializable {
     /**
      * The Override data encryption algorithms.
      */
-    private List<String> overrideDataEncryptionAlgorithms = new ArrayList<>();
+    private List<String> overrideDataEncryptionAlgorithms = new ArrayList<>(0);
 
     /**
      * The Override key encryption algorithms.
      */
-    private List<String> overrideKeyEncryptionAlgorithms = new ArrayList<>();
+    private List<String> overrideKeyEncryptionAlgorithms = new ArrayList<>(0);
 
     /**
      * The Override black listed encryption algorithms.
      */
-    private List<String> overrideBlackListedEncryptionAlgorithms = new ArrayList<>();
+    private List<String> overrideBlackListedEncryptionAlgorithms = new ArrayList<>(0);
 
     /**
      * The Override white listed algorithms.
      */
-    private List<String> overrideWhiteListedAlgorithms = new ArrayList<>();
+    private List<String> overrideWhiteListedAlgorithms = new ArrayList<>(0);
 
     /**
      * The Override signature reference digest methods.
      */
-    private List<String> overrideSignatureReferenceDigestMethods = new ArrayList<>();
+    private List<String> overrideSignatureReferenceDigestMethods = new ArrayList<>(0);
 
     /**
      * The Override signature algorithms.
      */
-    private List<String> overrideSignatureAlgorithms = new ArrayList<>();
+    private List<String> overrideSignatureAlgorithms = new ArrayList<>(0);
 
     /**
      * The Override black listed signature signing algorithms.
      */
-    private List<String> overrideBlackListedSignatureSigningAlgorithms = new ArrayList<>();
+    private List<String> overrideBlackListedSignatureSigningAlgorithms = new ArrayList<>(0);
 
     /**
      * The Override white listed signature signing algorithms.
      */
-    private List<String> overrideWhiteListedSignatureSigningAlgorithms = new ArrayList<>();
+    private List<String> overrideWhiteListedSignatureSigningAlgorithms = new ArrayList<>(0);
 
     /**
      * The Override signature canonicalization algorithm.

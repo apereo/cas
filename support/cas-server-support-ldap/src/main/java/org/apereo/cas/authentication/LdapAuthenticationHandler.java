@@ -48,7 +48,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
     /**
      * Mapping of LDAP attribute name to principal attribute name.
      */
-    protected Map<String, Object> principalAttributeMap = new HashMap<>();
+    protected Map<String, Object> principalAttributeMap = new HashMap<>(0);
 
     /**
      * Performs LDAP authentication given username/password.

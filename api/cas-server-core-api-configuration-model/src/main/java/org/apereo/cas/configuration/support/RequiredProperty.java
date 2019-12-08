@@ -20,7 +20,7 @@ import java.lang.annotation.Target;
 public @interface RequiredProperty {
     /**
      * The message associated with this required property.
-     * Might want to explain caveats and fallbacks to defaults.
+     * Might want to explain caveats and falls back to defaults.
      *
      * @return the msg
      */

@@ -4,20 +4,6 @@ project.ext["mainClassName"] = "org.apereo.cas.CasSpringBootAdminServerWebApplic
 apply from: rootProject.file("gradle/springboot.gradle")
 description = "Apereo CAS Spring Boot Admin Server"
 
-publishing {
-    publications {
-        mavenWeb(MavenPublication) {
-            from components.web
-            pom {
-                createPom(it, project)
-            }
-            pom.withXml {
-                createPomRepositories(asNode())
-            }
-        }
-    }
-}
-
 dependencies {
     implementation libraries.springboottomcat
 

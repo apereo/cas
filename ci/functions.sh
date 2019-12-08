@@ -23,6 +23,11 @@ currentChangeSetContains() {
     return 1
 }
 
+currentChangeSetAffectsBuild() {
+    currentChangeSetContains "\.(gradle|java|groovy)"
+    return `(expr "$?" + 0)`
+}
+
 currentChangeSetAffectsTests() {
     currentChangeSetContains "\.(java|groovy|xml|properties|yml|json)"
     return `(expr "$?" + 0)`

@@ -28,30 +28,31 @@ import java.util.function.Predicate;
 @Slf4j
 @Getter
 public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
+    private static final int MAP_SIZE = 8;
 
     private static final long serialVersionUID = -8504842011648432398L;
 
-    private final List<CredentialMetaData> credentials = new ArrayList<>();
+    private final List<CredentialMetaData> credentials = new ArrayList<>(MAP_SIZE);
 
     /**
      * Warnings here are considered global and apply
      * to the authentication event vs individual attempts and results.
      */
-    private final List<MessageDescriptor> warnings = new ArrayList<>();
+    private final List<MessageDescriptor> warnings = new ArrayList<>(MAP_SIZE);
 
     /**
      * Authentication metadata attributes.
      */
-    private final Map<String, List<Object>> attributes = new LinkedHashMap<>();
+    private final Map<String, List<Object>> attributes = new LinkedHashMap<>(MAP_SIZE);
 
     /**
      * Map of handler names to authentication successes.
      */
-    private final Map<String, AuthenticationHandlerExecutionResult> successes = new LinkedHashMap<>();
+    private final Map<String, AuthenticationHandlerExecutionResult> successes = new LinkedHashMap<>(MAP_SIZE);
     /**
      * Map of handler names to authentication failures.
      */
-    private final Map<String, Throwable> failures = new LinkedHashMap<>();
+    private final Map<String, Throwable> failures = new LinkedHashMap<>(MAP_SIZE);
     /**
      * Authenticated principal.
      */

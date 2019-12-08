@@ -70,7 +70,7 @@ public class GetSoapAuthenticationResponse {
      */
     public List<MapItemType> getAttributes() {
         if (attributes == null) {
-            attributes = new ArrayList<MapItemType>();
+            attributes = new ArrayList<>(0);
         }
         return this.attributes;
     }

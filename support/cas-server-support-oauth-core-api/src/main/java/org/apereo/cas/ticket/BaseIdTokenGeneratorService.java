@@ -2,7 +2,7 @@ package org.apereo.cas.ticket;
 
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
-import org.apereo.cas.ticket.accesstoken.AccessToken;
+import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -55,7 +55,7 @@ public abstract class BaseIdTokenGeneratorService implements IdTokenGeneratorSer
      * @return the string
      */
     protected String encodeAndFinalizeToken(final JwtClaims claims, final OAuthRegisteredService registeredService,
-                                            final AccessToken accessToken) {
+                                            final OAuth20AccessToken accessToken) {
 
         LOGGER.debug("Received claims for the id token [{}] as [{}]", accessToken, claims);
         val idTokenResult = getConfigurationContext().getIdTokenSigningAndEncryptionService().encode(registeredService, claims);

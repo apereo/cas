@@ -1,7 +1,9 @@
 package org.apereo.cas.pm.web.flow.actions;
 
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -31,6 +33,7 @@ public class SendPasswordResetInstructionsActionTests extends BasePasswordManage
             val context = new MockRequestContext();
             val request = new MockHttpServletRequest();
             request.addParameter("username", "casuser");
+            WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
             context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
             assertEquals("success", sendPasswordResetInstructionsAction.execute(context).getId());
         } catch (final Exception e) {

@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.TestPropertySource;
 
 /**
  * Test cases for {@link MongoDbCasEventRepository}.
@@ -20,16 +19,16 @@ import org.springframework.test.context.TestPropertySource;
  * @since 5.2.0
  */
 @Tag("MongoDb")
-@SpringBootTest(classes = {MongoDbEventsConfiguration.class, RefreshAutoConfiguration.class})
-@TestPropertySource(properties = {
-    "cas.events.mongo.userId=root",
-    "cas.events.mongo.password=secret",
-    "cas.events.mongo.host=localhost",
-    "cas.events.mongo.port=27017",
-    "cas.events.mongo.authenticationDatabaseName=admin",
-    "cas.events.mongo.databaseName=events",
-    "cas.events.mongo.dropCollection=true"
-})
+@SpringBootTest(classes = {MongoDbEventsConfiguration.class, RefreshAutoConfiguration.class},
+    properties = {
+        "cas.events.mongo.userId=root",
+        "cas.events.mongo.password=secret",
+        "cas.events.mongo.host=localhost",
+        "cas.events.mongo.port=27017",
+        "cas.events.mongo.authenticationDatabaseName=admin",
+        "cas.events.mongo.databaseName=events",
+        "cas.events.mongo.dropCollection=true"
+    })
 @Getter
 @EnabledIfContinuousIntegration
 public class MongoDbCasEventRepositoryTests extends AbstractCasEventRepositoryTests {

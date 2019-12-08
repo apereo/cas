@@ -4,7 +4,6 @@ task outputSpotbugsReports(description: "Display Spotbugs output") {
     }
 }
 
-
 def printSpotbugsReportToConsole(File file) {
     println "Reviewing file $file"
     if (file.exists()) {
@@ -45,11 +44,5 @@ def printSpotbugsReportToConsole(File file) {
         }
     } else {
         println "$file does not exist"
-    }
-}
-
-task spotbugs(type: FindBugs, description: "Set up classpath for Spotbugs") {
-    if (!Boolean.getBoolean("skipFindbugs")) {
-        pluginClasspath = project.configurations.spotbugsPlugins
     }
 }

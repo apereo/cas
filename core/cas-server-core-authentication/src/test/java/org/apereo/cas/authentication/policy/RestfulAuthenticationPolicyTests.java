@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeException;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
@@ -49,6 +50,7 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
     RefreshAutoConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
     CasDefaultServiceTicketIdGeneratorsConfiguration.class,
+    CasCoreServicesConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreWebConfiguration.class,
     CasCoreUtilConfiguration.class,

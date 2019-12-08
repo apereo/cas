@@ -23,7 +23,7 @@ dependencies {
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-logout-api")
     testImplementation project(":core:cas-server-core-logout")
-    testImplementation project(":core:cas-server-core-monitor")
+    
     testImplementation project(":core:cas-server-core-cookie")
     testImplementation project(":core:cas-server-core-services-authentication")
     testImplementation project(":core:cas-server-core-tickets")
@@ -34,7 +34,7 @@ dependencies {
     testImplementation project(":core:cas-server-core-audit")
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core-configuration")
-    testImplementation project(":core:cas-server-core-web-api")
+    
     testImplementation project(":core:cas-server-core-events")
     testImplementation project(":support:cas-server-support-validation")
     testImplementation project(":support:cas-server-support-metrics")

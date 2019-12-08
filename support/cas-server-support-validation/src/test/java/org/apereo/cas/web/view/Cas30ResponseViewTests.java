@@ -1,5 +1,6 @@
 package org.apereo.cas.web.view;
 
+import org.apereo.cas.BaseCasCoreTests;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CasViewConstants;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
@@ -19,6 +20,8 @@ import org.apereo.cas.web.AbstractServiceValidateController;
 import org.apereo.cas.web.AbstractServiceValidateControllerTests;
 import org.apereo.cas.web.ServiceValidateConfigurationContext;
 import org.apereo.cas.web.ServiceValidationViewFactory;
+import org.apereo.cas.web.config.CasProtocolViewsConfiguration;
+import org.apereo.cas.web.config.CasValidationConfiguration;
 import org.apereo.cas.web.v2.ServiceValidateController;
 import org.apereo.cas.web.view.attributes.DefaultCas30ProtocolAttributesRenderer;
 
@@ -31,16 +34,15 @@ import org.apereo.services.persondir.support.StubPersonAttributeDao;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Import;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.web.context.support.GenericWebApplicationContext;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.support.RequestContext;
@@ -48,6 +50,7 @@ import org.springframework.web.servlet.support.RequestContext;
 import javax.crypto.Cipher;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Optional;
@@ -61,9 +64,17 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 4.0.0
  */
 @DirtiesContext
-@TestPropertySource(properties = {"cas.clearpass.cacheCredential=true", "cas.clearpass.crypto.enabled=false"})
 @Slf4j
-@Import(Cas30ResponseViewTests.AttributeRepositoryTestConfiguration.class)
+@SpringBootTest(properties = {
+    "cas.clearpass.cacheCredential=true",
+    "cas.clearpass.crypto.enabled=false"
+},
+    classes = {
+        Cas30ResponseViewTests.AttributeRepositoryTestConfiguration.class,
+        BaseCasCoreTests.SharedTestConfiguration.class,
+        CasProtocolViewsConfiguration.class,
+        CasValidationConfiguration.class
+    })
 public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTests {
 
     @Autowired
@@ -74,13 +85,34 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
     @Qualifier("servicesManager")
     protected ServicesManager servicesManager;
 
+    @SneakyThrows
+    private static String decryptCredential(final String cred) {
+        val factory = new PrivateKeyFactoryBean();
+        factory.setAlgorithm("RSA");
+        factory.setLocation(new ClassPathResource("keys/RSA4096Private.p8"));
+        factory.setSingleton(false);
+        val privateKey = factory.getObject();
+
+        LOGGER.debug("Initializing cipher based on [{}]", privateKey.getAlgorithm());
+        val cipher = Cipher.getInstance(privateKey.getAlgorithm());
+
+        LOGGER.debug("Decoding value [{}]", cred);
+        val cred64 = EncodingUtils.decodeBase64(cred);
+
+        LOGGER.debug("Initializing decrypt-mode via private key [{}]", privateKey.getAlgorithm());
+        cipher.init(Cipher.DECRYPT_MODE, privateKey);
+
+        val cipherData = cipher.doFinal(cred64);
+        return new String(cipherData, StandardCharsets.UTF_8);
+    }
+
     @Override
     public AbstractServiceValidateController getServiceValidateControllerInstance() {
         val context = ServiceValidateConfigurationContext.builder()
             .validationSpecifications(CollectionUtils.wrapSet(getValidationSpecification()))
             .authenticationSystemSupport(getAuthenticationSystemSupport())
             .servicesManager(getServicesManager())
-            .centralAuthenticationService(getCentralAuthenticationService())
+            .centralAuthenticationService(getCentralAuthenticationService().getObject())
             .argumentExtractor(getArgumentExtractor())
             .proxyHandler(getProxyHandler())
             .requestedContextValidator((assertion, request) -> Pair.of(Boolean.TRUE, Optional.empty()))
@@ -93,7 +125,7 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
     }
 
     protected Map<?, ?> renderView() throws Exception {
-        val modelAndView = this.getModelAndViewUponServiceValidationWithSecurePgtUrl();
+        val modelAndView = this.getModelAndViewUponServiceValidationWithSecurePgtUrl(DEFAULT_SERVICE);
         LOGGER.debug("Retrieved model and view [{}]", modelAndView.getModel());
 
         val req = new MockHttpServletRequest(new MockServletContext());
@@ -158,27 +190,6 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
         val encodedPgt = (String) attributes.get(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET);
         val pgt = decryptCredential(encodedPgt);
         assertNotNull(pgt);
-    }
-
-    @SneakyThrows
-    private static String decryptCredential(final String cred) {
-        val factory = new PrivateKeyFactoryBean();
-        factory.setAlgorithm("RSA");
-        factory.setLocation(new ClassPathResource("keys/RSA4096Private.p8"));
-        factory.setSingleton(false);
-        val privateKey = factory.getObject();
-
-        LOGGER.debug("Initializing cipher based on [{}]", privateKey.getAlgorithm());
-        val cipher = Cipher.getInstance(privateKey.getAlgorithm());
-
-        LOGGER.debug("Decoding value [{}]", cred);
-        val cred64 = EncodingUtils.decodeBase64(cred);
-
-        LOGGER.debug("Initializing decrypt-mode via private key [{}]", privateKey.getAlgorithm());
-        cipher.init(Cipher.DECRYPT_MODE, privateKey);
-
-        val cipherData = cipher.doFinal(cred64);
-        return new String(cipherData, StandardCharsets.UTF_8);
     }
 
     @Test

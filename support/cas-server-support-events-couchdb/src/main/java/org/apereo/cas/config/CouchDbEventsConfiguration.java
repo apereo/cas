@@ -24,7 +24,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Timur Duehr
  * @since 6.0.0
  */
-@Configuration("couchDbEventsConfiguration")
+@Configuration(value = "couchDbEventsConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CouchDbEventsConfiguration {
 
@@ -48,7 +48,7 @@ public class CouchDbEventsConfiguration {
     @Bean
     @RefreshScope
     public CouchDbConnectorFactory eventCouchDbFactory() {
-        return new CouchDbConnectorFactory(casProperties.getEvents().getCouchDb(), objectMapperFactory.getIfAvailable());
+        return new CouchDbConnectorFactory(casProperties.getEvents().getCouchDb(), objectMapperFactory.getObject());
     }
 
     @ConditionalOnMissingBean(name = "couchDbCasEventRepository")

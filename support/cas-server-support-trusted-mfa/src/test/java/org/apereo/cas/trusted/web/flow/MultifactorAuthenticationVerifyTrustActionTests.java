@@ -16,6 +16,7 @@ import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -24,6 +25,7 @@ import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -34,6 +36,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@SpringBootTest(classes = AbstractMultifactorAuthenticationTrustStorageTests.SharedTestConfiguration.class)
 @TestPropertySource(properties = {
     "cas.authn.mfa.trusted.expiration=30",
     "cas.authn.mfa.trusted.timeUnit=SECONDS"
@@ -50,7 +53,7 @@ public class MultifactorAuthenticationVerifyTrustActionTests extends AbstractMul
     @Test
     public void verifyDeviceNotTrusted() throws Exception {
         val r = getMultifactorAuthenticationTrustRecord();
-        r.setRecordDate(LocalDateTime.now().minusSeconds(5));
+        r.setRecordDate(LocalDateTime.now(ZoneId.systemDefault()).minusSeconds(5));
         getMfaTrustEngine().set(r);
 
         val context = new MockRequestContext();
@@ -78,7 +81,7 @@ public class MultifactorAuthenticationVerifyTrustActionTests extends AbstractMul
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
 
         val record = getMultifactorAuthenticationTrustRecord();
-        record.setRecordDate(LocalDateTime.now().minusSeconds(5));
+        record.setRecordDate(LocalDateTime.now(ZoneId.systemDefault()).minusSeconds(5));
         val deviceFingerprint = deviceFingerprintStrategy.determineFingerprint(record.getPrincipal(), context, true);
         record.setDeviceFingerprint(deviceFingerprint);
         mfaTrustEngine.set(record);

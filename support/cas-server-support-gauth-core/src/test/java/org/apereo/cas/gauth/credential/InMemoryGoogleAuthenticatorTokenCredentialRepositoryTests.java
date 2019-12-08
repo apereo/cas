@@ -5,6 +5,7 @@ import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepositor
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
+import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.concurrent.ConcurrentHashMap;
@@ -18,7 +19,12 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @SpringBootTest(classes = {
     AopAutoConfiguration.class,
+    MailSenderAutoConfiguration.class,
     CasCoreUtilConfiguration.class
+}, properties = {
+    "spring.mail.host=localhost",
+    "spring.mail.port=25000",
+    "spring.mail.testConnection=false"
 })
 public class InMemoryGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTimeTokenCredentialRepositoryTests {
     private final ConcurrentHashMap<String, OneTimeTokenCredentialRepository> repoMap = new ConcurrentHashMap<>();

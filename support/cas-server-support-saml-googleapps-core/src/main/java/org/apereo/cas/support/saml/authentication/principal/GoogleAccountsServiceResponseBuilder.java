@@ -39,10 +39,12 @@ import java.util.stream.Stream;
  *
  * @author Misagh Moayyed
  * @since 4.2
+ * @deprecated Since 6.2, to be replaced with CAS SAML2 identity provider functionality.
  */
 @Slf4j
 @Getter
 @Setter
+@Deprecated
 @EqualsAndHashCode(callSuper = true,
     of = {"publicKeyLocation", "privateKeyLocation", "keyAlgorithm", "samlObjectBuilder", "skewAllowance"})
 public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplicationServiceResponseBuilder {

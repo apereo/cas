@@ -83,7 +83,7 @@ public class OpenIdSingleSignOnActionTests extends AbstractOpenIdTests {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val authentication = CoreAuthenticationTestUtils.getAuthentication("scootman28");
-        val t = new TicketGrantingTicketImpl("TGT-11", authentication, new NeverExpiresExpirationPolicy());
+        val t = new TicketGrantingTicketImpl("TGT-11", authentication, NeverExpiresExpirationPolicy.INSTANCE);
 
         this.ticketRegistry.addTicket(t);
 

@@ -11,6 +11,7 @@ import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
+import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
@@ -37,7 +38,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -61,6 +61,7 @@ import static org.junit.jupiter.api.Assertions.*;
         CasCoreAuthenticationMetadataConfiguration.class,
         CasCoreAuthenticationSupportConfiguration.class,
         CasCoreAuthenticationHandlersConfiguration.class,
+        CasCoreTicketIdGeneratorsConfiguration.class,
         CasCoreHttpConfiguration.class,
         CasCoreTicketCatalogConfiguration.class,
         CasCoreTicketsConfiguration.class,
@@ -68,18 +69,17 @@ import static org.junit.jupiter.api.Assertions.*;
         CasWebApplicationServiceFactoryConfiguration.class,
         CasPersonDirectoryConfiguration.class,
         CasCoreWebConfiguration.class,
-        CasWebApplicationServiceFactoryConfiguration.class,
         RefreshAutoConfiguration.class
+    },
+    properties = {
+        "cas.authn.couchDb.dbName=authentication",
+        "cas.authn.couchDb.attributes=loc,state",
+        "cas.authn.couchDb.usernameAttribute=username",
+        "cas.authn.couchDb.passwordAttribute=password",
+        "cas.authn.couchDb.username=cas",
+        "cas.authn.couchdb.password=password",
+        "cas.authn.pac4j.typedIdUsed=false"
     })
-@TestPropertySource(properties = {
-    "cas.authn.couchDb.dbName=authentication",
-    "cas.authn.couchDb.attributes=loc,state",
-    "cas.authn.couchDb.usernameAttribute=username",
-    "cas.authn.couchDb.passwordAttribute=password",
-    "cas.authn.couchDb.username=cas",
-    "cas.authn.couchdb.password=password",
-    "cas.authn.pac4j.typedIdUsed=false"
-})
 @Tag("CouchDb")
 public class CouchDbAuthenticationHandlerTests {
     @Autowired

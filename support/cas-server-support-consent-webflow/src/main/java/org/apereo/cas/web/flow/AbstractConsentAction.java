@@ -15,6 +15,8 @@ import lombok.val;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.util.Optional;
+
 /**
  * This is {@link AbstractConsentAction}.
  *
@@ -80,11 +82,14 @@ public abstract class AbstractConsentAction extends AbstractAction {
         WebUtils.putServiceIntoFlashScope(requestContext, service);
 
         val decision = consentEngine.findConsentDecision(service, registeredService, authentication);
-        flowScope.put("option", decision == null ? ConsentReminderOptions.ATTRIBUTE_NAME.getValue() : decision.getOptions().getValue());
+        flowScope.put("option", Optional.ofNullable(decision)
+            .map(consentDecision -> consentDecision.getOptions().getValue())
+            .orElseGet(ConsentReminderOptions.ATTRIBUTE_NAME::getValue));
 
         val reminder = decision == null ? consentProperties.getReminder() : decision.getReminder();
-        flowScope.put("reminder", Long.valueOf(reminder));
-        flowScope.put("reminderTimeUnit", decision == null
-            ? consentProperties.getReminderTimeUnit().name() : decision.getReminderTimeUnit().name());
+        flowScope.put("reminder", reminder);
+        flowScope.put("reminderTimeUnit", Optional.ofNullable(decision)
+            .map(consentDecision -> consentDecision.getReminderTimeUnit().name())
+            .orElseGet(() -> consentProperties.getReminderTimeUnit().name()));
     }
 }

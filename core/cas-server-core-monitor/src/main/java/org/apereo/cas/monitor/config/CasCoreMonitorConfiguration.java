@@ -27,7 +27,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration("casCoreMonitorConfiguration")
+@Configuration(value = "casCoreMonitorConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class CasCoreMonitorConfiguration {
@@ -63,7 +63,7 @@ public class CasCoreMonitorConfiguration {
         if (warnSt.getThreshold() > 0 && warnTgt.getThreshold() > 0) {
             LOGGER.debug("Configured session monitor with service ticket threshold [{}] and session threshold [{}]",
                 warnSt.getThreshold(), warnTgt.getThreshold());
-            return new TicketRegistryHealthIndicator(ticketRegistry.getIfAvailable(), warnSt.getThreshold(), warnTgt.getThreshold());
+            return new TicketRegistryHealthIndicator(ticketRegistry.getObject(), warnSt.getThreshold(), warnTgt.getThreshold());
         }
         return () -> Health.up().build();
     }
@@ -74,6 +74,6 @@ public class CasCoreMonitorConfiguration {
     @ConditionalOnAvailableEndpoint(endpoint = MetricsEndpoint.class)
     public HealthIndicator systemHealthIndicator() {
         val warnLoad = casProperties.getMonitor().getLoad().getWarn();
-        return new SystemMonitorHealthIndicator(metricsEndpoint.getIfAvailable(), warnLoad.getThreshold());
+        return new SystemMonitorHealthIndicator(metricsEndpoint.getObject(), warnLoad.getThreshold());
     }
 }

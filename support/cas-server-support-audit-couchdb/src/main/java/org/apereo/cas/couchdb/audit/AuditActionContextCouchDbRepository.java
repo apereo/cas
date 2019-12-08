@@ -43,7 +43,7 @@ public class AuditActionContextCouchDbRepository extends CouchDbRepositorySuppor
      * @param failureCode failure code
      * @param applicationCode application code
      * @param cutoffTime cut off time
-     * @return records for authentication throttleing decision
+     * @return records for authentication throttling decision
      */
     @View(name = "by_throttle_params", map = "classpath:CouchDbAuditActionContext_by_throttle_params.js")
     public List<CouchDbAuditActionContext> findByThrottleParams(final String remoteAddress, final String username, final String failureCode,

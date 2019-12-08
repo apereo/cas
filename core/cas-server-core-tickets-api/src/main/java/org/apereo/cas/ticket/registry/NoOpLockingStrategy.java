@@ -2,7 +2,6 @@ package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.ticket.registry.support.LockingStrategy;
 
-
 /**
  * This is {@link NoOpLockingStrategy} that does absolutely nothing
  * when it comes to locking operations.
@@ -14,12 +13,5 @@ public class NoOpLockingStrategy implements LockingStrategy {
     @Override
     public boolean acquire() {
         return true;
-    }
-
-    /**
-     * Does nothing.
-     */
-    @Override
-    public void release() {
     }
 }
