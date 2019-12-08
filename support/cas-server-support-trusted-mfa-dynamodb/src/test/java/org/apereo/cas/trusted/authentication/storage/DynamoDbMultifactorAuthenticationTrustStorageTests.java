@@ -16,9 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.TestPropertySource;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -34,8 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
     MultifactorAuthnTrustConfiguration.class,
     CasCoreAuditConfiguration.class,
     RefreshAutoConfiguration.class
-})
-@TestPropertySource(properties = {
+}, properties = {
     "cas.authn.mfa.trusted.dynamoDb.endpoint=http://localhost:8000",
     "cas.authn.mfa.trusted.dynamoDb.dropTablesOnStartup=true",
     "cas.authn.mfa.trusted.dynamoDb.localInstance=true",
@@ -68,10 +67,11 @@ public class DynamoDbMultifactorAuthenticationTrustStorageTests {
     @Test
     public void verifyExpireByDate() {
         val r = MultifactorAuthenticationTrustRecord.newInstance("castest", "geography", "fingerprint");
-        r.setRecordDate(LocalDateTime.now().minusDays(2));
+        val now = LocalDateTime.now(ZoneId.systemDefault());
+        r.setRecordDate(now.minusDays(2));
         mfaTrustEngine.set(r);
         assertFalse(mfaTrustEngine.get(r.getPrincipal()).isEmpty());
-        assertEquals(1, mfaTrustEngine.get(LocalDateTime.now().minusDays(30)).size());
-        assertEquals(0, mfaTrustEngine.get(LocalDateTime.now().minusDays(2)).size());
+        assertEquals(1, mfaTrustEngine.get(now.minusDays(30)).size());
+        assertEquals(0, mfaTrustEngine.get(now.minusDays(2)).size());
     }
 }

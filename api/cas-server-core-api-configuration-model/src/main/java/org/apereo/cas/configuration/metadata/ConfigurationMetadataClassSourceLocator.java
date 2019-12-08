@@ -1,7 +1,6 @@
 package org.apereo.cas.configuration.metadata;
 
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
@@ -20,12 +19,11 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Slf4j
 public class ConfigurationMetadataClassSourceLocator {
 
     private static ConfigurationMetadataClassSourceLocator INSTANCE;
 
-    private final Map<String, Class> cachedPropertiesClasses = new HashMap<>();
+    private final Map<String, Class> cachedPropertiesClasses = new HashMap<>(0);
 
     /**
      * Gets instance.

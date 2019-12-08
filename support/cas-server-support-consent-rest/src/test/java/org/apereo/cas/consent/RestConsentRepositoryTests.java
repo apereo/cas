@@ -16,14 +16,17 @@ import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.client.ExpectedCount.manyTimes;
 import static org.springframework.test.web.client.ExpectedCount.once;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.*;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withServerError;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 /**
  * This is {@link RestConsentRepositoryTests}.
@@ -32,11 +35,14 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
  * @since 5.2.0
  */
 @Tag("RestfulApi")
-@SpringBootTest(classes = CasConsentRestConfiguration.class)
+@SpringBootTest(classes = {
+    CasConsentRestConfiguration.class,
+    BaseConsentRepositoryTests.SharedTestConfiguration.class
+})
 public class RestConsentRepositoryTests extends BaseConsentRepositoryTests {
     private static final String CONSENT = "/consent";
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
-    private static final Function<ConsentDecision, String> HANDLER = Unchecked.function(MAPPER::writeValueAsString);
+    private static final Function<Object, String> HANDLER = Unchecked.function(MAPPER::writeValueAsString);
 
     private final Map<String, ConsentRepository> repos = new HashMap<>();
 
@@ -97,6 +103,39 @@ public class RestConsentRepositoryTests extends BaseConsentRepositoryTests {
             .andRespond(withServerError());
 
         super.verifyConsentDecisionIsFound();
+        server.verify();
+    }
+
+
+    @Test
+    public void verifyConsentDecisionsFound() {
+        val repo = getRepository("verifyConsentDecisionsFound");
+        val decision = BUILDER.build(SVC, REG_SVC, "casuser", CollectionUtils.wrap("attribute", "value"));
+        decision.setId(1);
+        repo.storeConsentDecision(decision);
+
+        val body = HANDLER.apply(List.of(decision));
+        val server = getNewServer((RestConsentRepository) repo);
+        server.expect(manyTimes(), requestTo(CONSENT))
+            .andExpect(method(HttpMethod.GET))
+            .andRespond(withSuccess(body, MediaType.APPLICATION_JSON));
+        assertFalse(repo.findConsentDecisions().isEmpty());
+        server.verify();
+    }
+
+    @Test
+    public void verifyConsentDecisionsFoundForPrincipal() {
+        val repo = getRepository("verifyConsentDecisionsFoundForPrincipal");
+        val decision = BUILDER.build(SVC, REG_SVC, "casuser", CollectionUtils.wrap("attribute", "value"));
+        decision.setId(1);
+        repo.storeConsentDecision(decision);
+
+        val body = HANDLER.apply(List.of(decision));
+        val server = getNewServer((RestConsentRepository) repo);
+        server.expect(manyTimes(), requestTo(CONSENT))
+            .andExpect(method(HttpMethod.GET))
+            .andRespond(withSuccess(body, MediaType.APPLICATION_JSON));
+        assertFalse(repo.findConsentDecisions("casuser").isEmpty());
         server.verify();
     }
 }

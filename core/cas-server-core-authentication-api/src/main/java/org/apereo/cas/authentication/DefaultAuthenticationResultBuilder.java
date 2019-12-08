@@ -29,8 +29,8 @@ import java.util.Set;
 public class DefaultAuthenticationResultBuilder implements AuthenticationResultBuilder {
 
     private static final long serialVersionUID = 6180465589526463843L;
-    private final Set<Authentication> authentications = Collections.synchronizedSet(new LinkedHashSet<>());
-    private final List<Credential> providedCredentials = new ArrayList<>();
+    private final Set<Authentication> authentications = Collections.synchronizedSet(new LinkedHashSet<>(0));
+    private final List<Credential> providedCredentials = new ArrayList<>(0);
 
     private static void buildAuthenticationHistory(final Set<Authentication> authentications,
                                                    final Map<String, List<Object>> authenticationAttributes,
@@ -63,7 +63,9 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
             LOGGER.warn("Authentication chain is empty as no authentications have been collected");
         }
 
-        return this.authentications.stream().findFirst();
+        synchronized (this.authentications) {
+            return this.authentications.stream().findFirst();
+        }
     }
 
     @Override
@@ -122,9 +124,12 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
         val authenticationBuilder = DefaultAuthenticationBuilder.newInstance();
 
         buildAuthenticationHistory(this.authentications, authenticationAttributes, principalAttributes, authenticationBuilder);
-        val primaryPrincipal = getPrimaryPrincipal(principalElectionStrategy, this.authentications, principalAttributes);
-        authenticationBuilder.setPrincipal(primaryPrincipal);
-        LOGGER.debug("Determined primary authentication principal to be [{}]", primaryPrincipal);
+
+        synchronized (this.authentications) {
+            val primaryPrincipal = getPrimaryPrincipal(principalElectionStrategy, this.authentications, principalAttributes);
+            authenticationBuilder.setPrincipal(primaryPrincipal);
+            LOGGER.debug("Determined primary authentication principal to be [{}]", primaryPrincipal);
+        }
 
         authenticationBuilder.setAttributes(authenticationAttributes);
         LOGGER.trace("Collected authentication attributes for this result are [{}]", authenticationAttributes);

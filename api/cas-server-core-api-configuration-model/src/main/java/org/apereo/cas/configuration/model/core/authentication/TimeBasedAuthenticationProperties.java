@@ -40,5 +40,5 @@ public class TimeBasedAuthenticationProperties implements Serializable {
     /**
      * Trigger mfa on the following days of the week.
      */
-    private List<String> onDays = new ArrayList<>();
+    private List<String> onDays = new ArrayList<>(0);
 }

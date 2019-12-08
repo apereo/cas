@@ -33,7 +33,7 @@ public class MemcachedUtils {
      * @return the transcoder
      */
     public static Transcoder newTranscoder(final BaseMemcachedProperties memcachedProperties) {
-        return newTranscoder(memcachedProperties, new ArrayList<>());
+        return newTranscoder(memcachedProperties, new ArrayList<>(0));
     }
 
     /**

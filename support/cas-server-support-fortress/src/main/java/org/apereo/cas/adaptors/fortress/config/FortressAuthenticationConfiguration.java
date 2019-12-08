@@ -60,7 +60,7 @@ public class FortressAuthenticationConfiguration {
     @RefreshScope
     public AuthenticationHandler fortressAuthenticationHandler() {
         return new FortressAuthenticationHandler(fortressAccessManager(), null,
-            servicesManager.getIfAvailable(), fortressPrincipalFactory(), null);
+            servicesManager.getObject(), fortressPrincipalFactory(), null);
     }
 
     @ConditionalOnMissingBean(name = "fortressAuthenticationEventExecutionPlanConfigurer")

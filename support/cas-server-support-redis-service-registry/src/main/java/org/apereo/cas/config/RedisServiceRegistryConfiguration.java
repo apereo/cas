@@ -4,7 +4,6 @@ import org.apereo.cas.adaptors.redis.services.RedisServiceRegistry;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.redis.core.RedisObjectFactory;
 import org.apereo.cas.services.ServiceRegistry;
-import org.apereo.cas.services.ServiceRegistryExecutionPlan;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServiceRegistryListener;
 
@@ -15,7 +14,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -37,7 +36,7 @@ public class RedisServiceRegistryConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Autowired
-    private ApplicationEventPublisher eventPublisher;
+    private ConfigurableApplicationContext applicationContext;
 
     @Autowired
     @Qualifier("serviceRegistryListeners")
@@ -59,18 +58,13 @@ public class RedisServiceRegistryConfiguration {
     @Bean
     @RefreshScope
     public ServiceRegistry redisServiceRegistry() {
-        return new RedisServiceRegistry(eventPublisher, registeredServiceRedisTemplate(), serviceRegistryListeners.getIfAvailable());
+        return new RedisServiceRegistry(applicationContext, registeredServiceRedisTemplate(), serviceRegistryListeners.getObject());
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "redisServiceRegistryExecutionPlanConfigurer")
     public ServiceRegistryExecutionPlanConfigurer redisServiceRegistryExecutionPlanConfigurer() {
-        return new ServiceRegistryExecutionPlanConfigurer() {
-            @Override
-            public void configureServiceRegistry(final ServiceRegistryExecutionPlan plan) {
-                plan.registerServiceRegistry(redisServiceRegistry());
-            }
-        };
+        return plan -> plan.registerServiceRegistry(redisServiceRegistry());
     }
 
 }

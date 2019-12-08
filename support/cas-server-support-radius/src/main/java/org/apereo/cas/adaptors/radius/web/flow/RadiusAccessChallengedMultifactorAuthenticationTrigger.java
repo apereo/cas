@@ -10,7 +10,6 @@ import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -19,9 +18,11 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.jradius.dictionary.Attr_ReplyMessage;
 import net.jradius.dictionary.Attr_State;
+import org.springframework.context.ApplicationContext;
 import org.springframework.core.Ordered;
 
 import javax.servlet.http.HttpServletRequest;
+
 import java.util.Optional;
 
 /**
@@ -37,6 +38,7 @@ import java.util.Optional;
 public class RadiusAccessChallengedMultifactorAuthenticationTrigger implements MultifactorAuthenticationTrigger {
     private final CasConfigurationProperties casProperties;
     private final MultifactorAuthenticationProviderResolver multifactorAuthenticationProviderResolver;
+    private final ApplicationContext applicationContext;
 
     private int order = Ordered.LOWEST_PRECEDENCE;
 
@@ -47,20 +49,27 @@ public class RadiusAccessChallengedMultifactorAuthenticationTrigger implements M
             LOGGER.debug("No authentication or service is available to determine event for principal");
             return Optional.empty();
         }
-        val providerMap = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(ApplicationContextProvider.getApplicationContext());
+        if (!supports(authentication)) {
+            LOGGER.trace("Authentication attempt does not qualify for radius multifactor authentication");
+            return Optional.empty();
+        }
+        
+        val providerMap = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
         if (providerMap.isEmpty()) {
             LOGGER.error("No multifactor authentication providers are available in the application context");
             throw new AuthenticationException(new MultifactorAuthenticationProviderAbsentException());
         }
 
+        val id = casProperties.getAuthn().getMfa().getRadius().getId();
+        LOGGER.debug("Authentication requires multifactor authentication via provider [{}]", id);
+        return MultifactorAuthenticationUtils.resolveProvider(providerMap, id);
+
+    }
+
+    private static boolean supports(final Authentication authentication) {
         val principal = authentication.getPrincipal();
         val attributes = principal.getAttributes();
         LOGGER.debug("Evaluating principal attributes [{}] for multifactor authentication", attributes.keySet());
-        if (attributes.containsKey(Attr_ReplyMessage.NAME) && attributes.containsKey(Attr_State.NAME)) {
-            val id = casProperties.getAuthn().getMfa().getRadius().getId();
-            LOGGER.debug("Authentication requires multifactor authentication via provider [{}]", id);
-            return MultifactorAuthenticationUtils.resolveProvider(providerMap, id);
-        }
-        return Optional.empty();
+        return attributes.containsKey(Attr_ReplyMessage.NAME) && attributes.containsKey(Attr_State.NAME);
     }
 }

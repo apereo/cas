@@ -7,7 +7,10 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.hibernate.boot.model.naming.Identifier;
 import org.hibernate.engine.jdbc.env.spi.JdbcEnvironment;
+import org.springframework.beans.BeansException;
 import org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 
 /**
  * This is {@link CasHibernatePhysicalNamingStrategy}.
@@ -16,7 +19,9 @@ import org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy;
  * @since 6.0.0
  */
 @Slf4j
-public class CasHibernatePhysicalNamingStrategy extends SpringPhysicalNamingStrategy {
+public class CasHibernatePhysicalNamingStrategy extends SpringPhysicalNamingStrategy implements ApplicationContextAware {
+    private ApplicationContext applicationContext;
+
     @Override
     public Identifier toPhysicalTableName(final Identifier name, final JdbcEnvironment jdbcEnvironment) {
         val propsResult = ApplicationContextProvider.getCasConfigurationProperties();
@@ -37,8 +42,8 @@ public class CasHibernatePhysicalNamingStrategy extends SpringPhysicalNamingStra
             val physicalName = tableNames.get(tableName);
             if (ScriptingUtils.isExternalGroovyScript(physicalName)) {
                 LOGGER.trace("Executing script [{}] to determine physical table name for [{}]", physicalName, tableName);
-                val scriptResource = ApplicationContextProvider.getResourceLoader().getResource(physicalName);
-                val args = new Object[]{name, jdbcEnvironment, ApplicationContextProvider.getApplicationContext(), LOGGER};
+                val scriptResource = this.applicationContext.getResource(physicalName);
+                val args = new Object[]{name, jdbcEnvironment, this.applicationContext, LOGGER};
                 val identifier = ScriptingUtils.executeGroovyScript(scriptResource, args, Identifier.class, true);
                 LOGGER.trace("Determine table physical name from script [{}] to be [{}]", scriptResource, identifier);
                 return identifier;
@@ -53,10 +58,15 @@ public class CasHibernatePhysicalNamingStrategy extends SpringPhysicalNamingStra
     protected boolean isCaseInsensitive(final JdbcEnvironment jdbcEnvironment) {
         val propsResult = ApplicationContextProvider.getCasConfigurationProperties();
         if (propsResult.isEmpty()) {
-            LOGGER.error("Could not load configuration settings to determine case insensitivity.");
+            LOGGER.debug("Could not load configuration settings to determine case insensitivity.");
             return super.isCaseInsensitive(jdbcEnvironment);
         }
         val casProperties = propsResult.get();
         return casProperties.getJdbc().isCaseInsensitive();
+    }
+
+    @Override
+    public void setApplicationContext(final ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
     }
 }

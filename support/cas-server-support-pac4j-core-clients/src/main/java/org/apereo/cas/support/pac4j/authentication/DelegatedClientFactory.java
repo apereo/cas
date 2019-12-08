@@ -7,7 +7,7 @@ import org.apereo.cas.configuration.model.support.pac4j.oidc.BasePac4jOidcClient
 import org.apereo.cas.configuration.model.support.pac4j.oidc.Pac4jOidcClientProperties;
 import org.apereo.cas.configuration.model.support.pac4j.saml.Pac4jSamlClientProperties;
 import org.apereo.cas.configuration.support.Beans;
-import org.apereo.cas.support.pac4j.logout.CasServerSpecificLogoutHandler;
+import org.apereo.cas.util.RandomUtils;
 
 import com.github.scribejava.core.model.Verb;
 import com.nimbusds.jose.JWSAlgorithm;
@@ -16,14 +16,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.cas.config.CasConfiguration;
 import org.pac4j.cas.config.CasProtocol;
 import org.pac4j.core.client.IndirectClient;
 import org.pac4j.core.http.callback.PathParameterCallbackUrlResolver;
-import org.pac4j.core.logout.handler.LogoutHandler;
 import org.pac4j.oauth.client.BitbucketClient;
 import org.pac4j.oauth.client.DropBoxClient;
 import org.pac4j.oauth.client.FacebookClient;
@@ -68,13 +66,37 @@ import java.util.stream.Collectors;
 public class DelegatedClientFactory {
     private final CasConfigurationProperties casProperties;
 
-    /**
-     * The pac4j specific logout handler for the CAS server.
-     */
-    private final LogoutHandler casServerSpecificLogoutHandler;
+    @SneakyThrows
+    private static <T extends OidcConfiguration> T getOidcConfigurationForClient(final BasePac4jOidcClientProperties oidc, final Class<T> clazz) {
+        val cfg = clazz.getDeclaredConstructor().newInstance();
+        if (StringUtils.isNotBlank(oidc.getScope())) {
+            cfg.setScope(oidc.getScope());
+        }
+        cfg.setUseNonce(oidc.isUseNonce());
+        cfg.setSecret(oidc.getSecret());
+        cfg.setClientId(oidc.getId());
+        cfg.setReadTimeout((int) Beans.newDuration(oidc.getReadTimeout()).toMillis());
+        cfg.setConnectTimeout((int) Beans.newDuration(oidc.getConnectTimeout()).toMillis());
+        if (StringUtils.isNotBlank(oidc.getPreferredJwsAlgorithm())) {
+            cfg.setPreferredJwsAlgorithm(JWSAlgorithm.parse(oidc.getPreferredJwsAlgorithm().toUpperCase()));
+        }
+        cfg.setMaxClockSkew(oidc.getMaxClockSkew());
+        cfg.setDiscoveryURI(oidc.getDiscoveryUri());
+        cfg.setCustomParams(oidc.getCustomParams());
+        cfg.setLogoutUrl(oidc.getLogoutUrl());
 
-    public DelegatedClientFactory(final CasConfigurationProperties casProperties) {
-        this(casProperties, new CasServerSpecificLogoutHandler());
+        cfg.setExpireSessionWithToken(oidc.isExpireSessionWithToken());
+        if (StringUtils.isNotBlank(oidc.getTokenExpirationAdvance())) {
+            cfg.setTokenExpirationAdvance((int) Beans.newDuration(oidc.getTokenExpirationAdvance()).toSeconds());
+        }
+
+        if (StringUtils.isNotBlank(oidc.getResponseMode())) {
+            cfg.setResponseMode(oidc.getResponseMode());
+        }
+        if (StringUtils.isNotBlank(oidc.getResponseType())) {
+            cfg.setResponseType(oidc.getResponseType());
+        }
+        return cfg;
     }
 
     /**
@@ -88,7 +110,6 @@ public class DelegatedClientFactory {
         if (github.isEnabled() && StringUtils.isNotBlank(github.getId()) && StringUtils.isNotBlank(github.getSecret())) {
             val client = new GitHubClient(github.getId(), github.getSecret());
             configureClient(client, github);
-
             LOGGER.debug("Created client [{}] with identifier [{}]", client.getName(), client.getKey());
             properties.add(client);
         }
@@ -186,8 +207,8 @@ public class DelegatedClientFactory {
     protected void configureGoogleClient(final Collection<IndirectClient> properties) {
         val pac4jProperties = casProperties.getAuthn().getPac4j();
         val google = pac4jProperties.getGoogle();
-        val client = new Google2Client(google.getId(), google.getSecret());
         if (google.isEnabled() && StringUtils.isNotBlank(google.getId()) && StringUtils.isNotBlank(google.getSecret())) {
+            val client = new Google2Client(google.getId(), google.getSecret());
             configureClient(client, google);
             if (StringUtils.isNotBlank(google.getScope())) {
                 client.setScope(Google2Client.Google2Scope.valueOf(google.getScope().toUpperCase()));
@@ -233,13 +254,8 @@ public class DelegatedClientFactory {
         if (ln.isEnabled() && StringUtils.isNotBlank(ln.getId()) && StringUtils.isNotBlank(ln.getSecret())) {
             val client = new LinkedIn2Client(ln.getId(), ln.getSecret());
             configureClient(client, ln);
-
             if (StringUtils.isNotBlank(ln.getScope())) {
                 client.setScope(ln.getScope());
-            }
-
-            if (StringUtils.isNotBlank(ln.getFields())) {
-                client.setFields(ln.getFields());
             }
             LOGGER.debug("Created client [{}] with identifier [{}]", client.getName(), client.getKey());
             properties.add(client);
@@ -348,11 +364,10 @@ public class DelegatedClientFactory {
                 val cfg = new CasConfiguration(cas.getLoginUrl(), CasProtocol.valueOf(cas.getProtocol()));
                 var prefix = StringUtils.remove(cas.getLoginUrl(), "/login");
                 cfg.setPrefixUrl(StringUtils.appendIfMissing(prefix, "/"));
-                cfg.setLogoutHandler(casServerSpecificLogoutHandler);
                 val client = new CasClient(cfg);
 
-                val count = index.intValue();
                 if (StringUtils.isBlank(cas.getClientName())) {
+                    val count = index.intValue();
                     client.setName(client.getClass().getSimpleName() + count);
                 }
                 client.setCallbackUrlResolver(new PathParameterCallbackUrlResolver());
@@ -400,7 +415,7 @@ public class DelegatedClientFactory {
                     cfg.setAttributeAsId(saml.getPrincipalIdAttribute());
                 }
                 cfg.setWantsAssertionsSigned(saml.isWantsAssertionsSigned());
-                cfg.setLogoutHandler(casServerSpecificLogoutHandler);
+                cfg.setSpLogoutRequestSigned(saml.isSignLogoutRequests());
                 cfg.setUseNameQualifier(saml.isUseNameQualifier());
                 cfg.setAttributeConsumingServiceIndex(saml.getAttributeConsumingServiceIndex());
                 if (saml.getAssertionConsumerServiceIndex() >= 0) {
@@ -436,6 +451,8 @@ public class DelegatedClientFactory {
                 if (!StringUtils.isNotBlank(saml.getSignatureCanonicalizationAlgorithm())) {
                     cfg.setSignatureCanonicalizationAlgorithm(saml.getSignatureCanonicalizationAlgorithm());
                 }
+                cfg.setProviderName(saml.getProviderName());
+                cfg.setNameIdPolicyAllowCreate(saml.getNameIdPolicyAllowCreate().toBoolean());
 
                 val mappedAttributes = saml.getMappedAttributes();
                 if (!mappedAttributes.isEmpty()) {
@@ -448,8 +465,8 @@ public class DelegatedClientFactory {
 
                 val client = new SAML2Client(cfg);
 
-                val count = index.intValue();
                 if (StringUtils.isBlank(saml.getClientName())) {
+                    val count = index.intValue();
                     client.setName(client.getClass().getSimpleName() + count);
                 }
                 configureClient(client, saml);
@@ -484,8 +501,8 @@ public class DelegatedClientFactory {
                 client.setTokenUrl(oauth.getTokenUrl());
                 client.setAuthUrl(oauth.getAuthUrl());
                 client.setCustomParams(oauth.getCustomParams());
-                val count = index.intValue();
                 if (StringUtils.isBlank(oauth.getClientName())) {
+                    val count = index.intValue();
                     client.setName(client.getClass().getSimpleName() + count);
                 }
                 client.setCallbackUrlResolver(new PathParameterCallbackUrlResolver());
@@ -543,45 +560,12 @@ public class DelegatedClientFactory {
         if (oidc.getGeneric().isEnabled()) {
             LOGGER.debug("Building generic OpenID Connect client...");
             val generic = getOidcConfigurationForClient(oidc.getGeneric(), OidcConfiguration.class);
-            val oc = new OidcClient(generic);
+            val oc = new OidcClient<>(generic);
             oc.setCallbackUrlResolver(new PathParameterCallbackUrlResolver());
             configureClient(oc, oidc.getGeneric());
             return oc;
         }
         return null;
-    }
-
-    @SneakyThrows
-    private static <T extends OidcConfiguration> T getOidcConfigurationForClient(final BasePac4jOidcClientProperties oidc, final Class<T> clazz) {
-        val cfg = clazz.getDeclaredConstructor().newInstance();
-        if (StringUtils.isNotBlank(oidc.getScope())) {
-            cfg.setScope(oidc.getScope());
-        }
-        cfg.setUseNonce(oidc.isUseNonce());
-        cfg.setSecret(oidc.getSecret());
-        cfg.setClientId(oidc.getId());
-        cfg.setReadTimeout((int) Beans.newDuration(oidc.getReadTimeout()).toMillis());
-        cfg.setConnectTimeout((int) Beans.newDuration(oidc.getConnectTimeout()).toMillis());
-        if (StringUtils.isNotBlank(oidc.getPreferredJwsAlgorithm())) {
-            cfg.setPreferredJwsAlgorithm(JWSAlgorithm.parse(oidc.getPreferredJwsAlgorithm().toUpperCase()));
-        }
-        cfg.setMaxClockSkew(oidc.getMaxClockSkew());
-        cfg.setDiscoveryURI(oidc.getDiscoveryUri());
-        cfg.setCustomParams(oidc.getCustomParams());
-        cfg.setLogoutUrl(oidc.getLogoutUrl());
-
-        cfg.setExpireSessionWithToken(oidc.isExpireSessionWithToken());
-        if (StringUtils.isNotBlank(oidc.getTokenExpirationAdvance())) {
-            cfg.setTokenExpirationAdvance((int) Beans.newDuration(oidc.getTokenExpirationAdvance()).toSeconds());
-        }
-
-        if (StringUtils.isNotBlank(oidc.getResponseMode())) {
-            cfg.setResponseMode(oidc.getResponseMode());
-        }
-        if (StringUtils.isNotBlank(oidc.getResponseType())) {
-            cfg.setResponseType(oidc.getResponseType());
-        }
-        return cfg;
     }
 
     /**
@@ -596,7 +580,7 @@ public class DelegatedClientFactory {
             client.setName(cname);
         } else {
             val className = client.getClass().getSimpleName();
-            val genName = className.concat(RandomStringUtils.randomNumeric(2));
+            val genName = className.concat(RandomUtils.randomNumeric(2));
             client.setName(genName);
             LOGGER.warn("Client name for [{}] is set to a generated value of [{}]. "
                 + "Consider defining an explicit name for the delegated provider", className, genName);
@@ -607,7 +591,6 @@ public class DelegatedClientFactory {
             customProperties.put(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_PRINCIPAL_ATTRIBUTE_ID, props.getPrincipalAttributeId());
         }
         client.setCallbackUrl(casProperties.getServer().getLoginUrl());
-
         if (!casProperties.getAuthn().getPac4j().isLazyInit()) {
             client.init();
         }

@@ -22,7 +22,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration("casAcceptableUsagePolicyLdapConfiguration")
+@Configuration(value = "casAcceptableUsagePolicyLdapConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnProperty(prefix = "cas.acceptableUsagePolicy", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class CasAcceptableUsagePolicyLdapConfiguration {
@@ -39,7 +39,7 @@ public class CasAcceptableUsagePolicyLdapConfiguration {
     public AcceptableUsagePolicyRepository acceptableUsagePolicyRepository() {
         val ldap = casProperties.getAcceptableUsagePolicy().getLdap();
         val connectionFactory = LdapUtils.newLdaptivePooledConnectionFactory(ldap);
-        return new LdapAcceptableUsagePolicyRepository(ticketRegistrySupport.getIfAvailable(),
+        return new LdapAcceptableUsagePolicyRepository(ticketRegistrySupport.getObject(),
             casProperties.getAcceptableUsagePolicy().getAupAttributeName(),
             connectionFactory, ldap);
     }

@@ -111,7 +111,7 @@ public class ResourceUtils {
             getResourceFrom(location);
             return true;
         } catch (final Exception e) {
-            LOGGER.trace(e.getMessage(), e);
+            LOGGER.trace(e.getMessage());
         }
         return false;
     }
@@ -245,6 +245,21 @@ public class ResourceUtils {
             return true;
         } catch (final Exception e) {
             LOGGER.trace(e.getMessage());
+        }
+        return false;
+    }
+
+    /**
+     * Is jar resource ?.
+     *
+     * @param resource the resource
+     * @return the boolean
+     */
+    public static boolean isJarResource(final Resource resource) {
+        try {
+            return "jar".equals(resource.getURI().getScheme());
+        } catch (final IOException e) {
+            LOGGER.trace(e.getMessage(), e);
         }
         return false;
     }

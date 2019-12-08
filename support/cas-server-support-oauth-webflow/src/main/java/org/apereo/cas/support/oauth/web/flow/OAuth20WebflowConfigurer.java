@@ -21,7 +21,8 @@ public class OAuth20WebflowConfigurer extends AbstractCasWebflowConfigurer {
 
     private final Action oauth20RegisteredServiceUIAction;
 
-    public OAuth20WebflowConfigurer(final FlowBuilderServices flowBuilderServices, final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+    public OAuth20WebflowConfigurer(final FlowBuilderServices flowBuilderServices,
+                                    final FlowDefinitionRegistry loginFlowDefinitionRegistry,
                                     final Action oauth20RegisteredServiceUIAction,
                                     final ApplicationContext applicationContext,
                                     final CasConfigurationProperties casProperties) {

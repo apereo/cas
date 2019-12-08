@@ -8,7 +8,6 @@ import org.apereo.cas.authentication.principal.PrincipalNameTransformerUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlan;
 import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlanConfigurer;
 import org.apereo.cas.redis.RedisAuthenticationHandler;
 import org.apereo.cas.redis.RedisPersonAttributeDao;
@@ -24,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -43,6 +43,9 @@ import java.util.stream.Collectors;
 public class RedisAuthenticationConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
+
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
 
     @Autowired
     @Qualifier("servicesManager")
@@ -74,12 +77,12 @@ public class RedisAuthenticationConfiguration {
     public AuthenticationHandler redisAuthenticationHandler() {
         val redis = casProperties.getAuthn().getRedis();
         val handler = new RedisAuthenticationHandler(redis.getName(),
-            servicesManager.getIfAvailable(),
+            servicesManager.getObject(),
             redisPrincipalFactory(), redis.getOrder(),
             authenticationRedisTemplate());
 
         handler.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(redis.getPrincipalTransformation()));
-        handler.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(redis.getPasswordEncoder()));
+        handler.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(redis.getPasswordEncoder(), applicationContext));
         return handler;
     }
 
@@ -87,7 +90,7 @@ public class RedisAuthenticationConfiguration {
     @Bean
     public AuthenticationEventExecutionPlanConfigurer redisAuthenticationEventExecutionPlanConfigurer() {
         return plan ->
-            plan.registerAuthenticationHandlerWithPrincipalResolver(redisAuthenticationHandler(), defaultPrincipalResolver.getIfAvailable());
+            plan.registerAuthenticationHandlerWithPrincipalResolver(redisAuthenticationHandler(), defaultPrincipalResolver.getObject());
     }
 
     @ConditionalOnMissingBean(name = "redisPersonAttributeDaos")
@@ -112,12 +115,9 @@ public class RedisAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "redisAttributeRepositoryPlanConfigurer")
     @Bean
     public PersonDirectoryAttributeRepositoryPlanConfigurer redisAttributeRepositoryPlanConfigurer() {
-        return new PersonDirectoryAttributeRepositoryPlanConfigurer() {
-            @Override
-            public void configureAttributeRepositoryPlan(final PersonDirectoryAttributeRepositoryPlan plan) {
-                val daos = redisPersonAttributeDaos();
-                daos.forEach(plan::registerAttributeRepository);
-            }
+        return plan -> {
+            val daos = redisPersonAttributeDaos();
+            daos.forEach(plan::registerAttributeRepository);
         };
     }
 }

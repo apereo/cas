@@ -55,7 +55,7 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker i
     /**
      * Map of CRL issuer to CRL.
      */
-    private final Map<X500Principal, X509CRL> crlIssuerMap = Collections.synchronizedMap(new HashMap<>());
+    private final Map<X500Principal, X509CRL> crlIssuerMap = Collections.synchronizedMap(new HashMap<>(0));
 
     /**
      * Resource CRLs.

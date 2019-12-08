@@ -1,7 +1,9 @@
 package org.apereo.cas.support.oauth.authenticator;
 
-import org.apereo.cas.ticket.accesstoken.AccessToken;
+import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoder;
+import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.token.JwtBuilder;
 
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -24,14 +26,22 @@ import java.util.HashMap;
 @RequiredArgsConstructor
 public class OAuth20AccessTokenAuthenticator implements Authenticator<TokenCredentials> {
     private final TicketRegistry ticketRegistry;
+    private final JwtBuilder accessTokenJwtBuilder;
+
+    private String extractAccessTokenFrom(final TokenCredentials tokenCredentials) {
+        return OAuth20JwtAccessTokenEncoder.builder()
+            .accessTokenJwtBuilder(accessTokenJwtBuilder)
+            .build()
+            .decode(tokenCredentials.getToken());
+    }
 
     @SneakyThrows
     @Override
     public void validate(final TokenCredentials tokenCredentials, final WebContext webContext) {
-        val token = tokenCredentials.getToken();
+        val token = extractAccessTokenFrom(tokenCredentials);
         LOGGER.trace("Received access token [{}] for authentication", token);
-        
-        val accessToken = ticketRegistry.getTicket(token, AccessToken.class);
+
+        val accessToken = ticketRegistry.getTicket(token, OAuth20AccessToken.class);
         if (accessToken == null || accessToken.isExpired()) {
             LOGGER.error("Provided access token [{}] is either not found in the ticket registry or has expired", token);
             return;
@@ -53,7 +63,7 @@ public class OAuth20AccessTokenAuthenticator implements Authenticator<TokenCrede
      */
     protected CommonProfile buildUserProfile(final TokenCredentials tokenCredentials,
                                              final WebContext webContext,
-                                             final AccessToken accessToken) {
+                                             final OAuth20AccessToken accessToken) {
         val userProfile = new CommonProfile(true);
         val authentication = accessToken.getAuthentication();
         val principal = authentication.getPrincipal();

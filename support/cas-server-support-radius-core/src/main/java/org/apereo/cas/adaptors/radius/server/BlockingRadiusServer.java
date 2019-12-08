@@ -5,7 +5,6 @@ import org.apereo.cas.adaptors.radius.RadiusProtocol;
 
 import lombok.Setter;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 import net.jradius.client.RadiusClient;
 import net.jradius.packet.AccessRequest;
 import net.jradius.packet.RadiusResponse;
@@ -19,7 +18,6 @@ import net.jradius.packet.RadiusResponse;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Slf4j
 @ToString
 @Setter
 public class BlockingRadiusServer extends AbstractRadiusServer {

@@ -1,6 +1,54 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.1.xsd">
     <suppress>
+        <cve>CVE-2019-14540</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2019-16335</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2019-17267</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2019-13139</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2017-15089</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2016-0750</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2019-12419</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2019-17531</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2019-16943</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2019-17195</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2019-16942</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2018-8016</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2019-10241</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2019-10247</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2015-5182</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2019-14379</cve>
+    </suppress>
+    <suppress>
         <cve>CVE-2019-10102</cve>
     </suppress>
     <suppress>
@@ -772,13 +820,14 @@
         <cve>CVE-2018-7489</cve>
     </suppress>
     <suppress>
-        <notes><![CDATA[ file name: old Tomcat CVEs false positives on latest Tomcat 9.0.14 ]]></notes>
+        <notes><![CDATA[ file name: old Tomcat CVEs false positives on latest Tomcat 9.0.x ]]></notes>
         <cve>CVE-2014-0230</cve>
         <cve>CVE-2011-3190</cve>
         <cve>CVE-2016-8735</cve>
         <cve>CVE-2016-1240</cve>
         <cve>CVE-2016-9774</cve>
         <cve>CVE-2016-9775</cve>
+        <cve>CVE-2017-12615</cve>
     </suppress>
     <suppress>
         <notes><![CDATA[

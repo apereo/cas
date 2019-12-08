@@ -18,10 +18,10 @@ if [ "$runBuild" = false ]; then
     exit 0
 fi
 
-prepCommand="echo 'Running command...'; "
+
 gradle="./gradlew $@"
 gradleBuild=""
-gradleBuildOptions="--stacktrace --build-cache --configure-on-demand --no-daemon -DtestCategoryType=COUCHDB "
+gradleBuildOptions="--build-cache --configure-on-demand --no-daemon -DtestCategoryType=COUCHDB "
 
 echo -e "***********************************************"
 echo -e "Gradle build started at `date`"
@@ -57,7 +57,7 @@ else
 
     tasks="$gradle $gradleBuildOptions $gradleBuild"
     echo -e "***************************************************************************************"
-    echo $prepCommand
+
     echo $tasks
     echo -e "***************************************************************************************"
 
@@ -65,7 +65,7 @@ else
     eval $waitloop
     waitRetVal=$?
 
-    eval $prepCommand
+
     eval $tasks
     retVal=$?
 
@@ -75,7 +75,7 @@ else
 
     if [ $retVal == 0 ]; then
         echo "Uploading test coverage results..."
-        bash <(curl -s https://codecov.io/bash)
+        bash <(curl -s https://codecov.io/bash) -F CouchDb
         echo "Gradle build finished successfully."
     else
         echo "Gradle build did NOT finish successfully."

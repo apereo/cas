@@ -1,6 +1,7 @@
-import org.gradle.internal.logging.LoggingOutputInternal
-import org.gradle.internal.logging.events.OutputEvent
-import org.gradle.internal.logging.events.OutputEventListener
+import org.gradle.internal.logging.*
+import org.gradle.internal.logging.events.*
+
+import java.util.regex.Pattern
 
 tasks.withType(Javadoc) {
     def exceptions = []
@@ -101,6 +102,42 @@ task verifySpringConfigurationFactories(description: "Examine spring.factories f
     }
 }
 
+task verifySpringConfigurationCanDisableBeanProxying(description: "Examine @Configuration files and check whether proxying bean methods can be disabled") {
+     doLast {
+         def patternBeanMethods = Pattern.compile("public\\s\\w+(<\\w+>)*\\s(\\w+)\\(")
+         
+         def results = []
+         new File('.').eachFileRecurse(groovy.io.FileType.FILES) {
+             if (it.name.endsWith('Configuration.java') && it.text.contains("@Configuration")) {
+                 def canProxyBeans = true
+                 def matcher = patternBeanMethods.matcher(it.text)
+                 results.clear()
+                 while (matcher.find()) {
+                     results += matcher.group(2)
+                 }
+                 for (def r in results) {
+                     def patternMethodCall = Pattern.compile(r + "\\(");
+                     def matcher2 = patternMethodCall.matcher(it.text)
+                     def count = 0
+                     while (matcher2.find()) {
+                         count++
+                     }
+                     if (count > 1) {
+                         canProxyBeans = false
+                         break
+                     }
+                 }
+                 if (canProxyBeans) {
+                     def proxyPattern = Pattern.compile("@Configuration\\(value\\s*=\\s*\"(\\w+)\",\\s*proxyBeanMethods\\s*=\\s*(false|true)\\)") .matcher(it.text)
+                     if (!proxyPattern.find()) {
+                         throw new GradleException("Configuration class ${it.name} should be marked with proxyBeanMethods = false")
+                     }
+                 }
+             }
+         }
+     }
+}
+
 task validateTestsSuites(description: "Ensure all projects contain a tests suite that contains test classes") {
     doLast {
         def testSources = new File(project.getProjectDir(), "src/test/java")
@@ -137,8 +174,6 @@ task validateTestsSuites(description: "Ensure all projects contain a tests suite
     }
 }
 
-
-
 def checkForSpringConfigurationFactories(String projectPath, String configurations) {
     def classes = configurations.split(",")
     classes.each {
@@ -154,6 +189,5 @@ def checkForSpringConfigurationFactories(String projectPath, String configuratio
 gradle.buildFinished { buildResult ->
     cleanLogs
 }
-
 
 clean.dependsOn("cleanLogs")

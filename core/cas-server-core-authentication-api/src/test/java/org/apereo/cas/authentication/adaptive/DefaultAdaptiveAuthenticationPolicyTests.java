@@ -70,8 +70,8 @@ public class DefaultAdaptiveAuthenticationPolicyTests {
         val service = mock(GeoLocationService.class);
         val response = new GeoLocationResponse();
         response.addAddress("UK");
-        response.setLatitude(Double.valueOf(geoRequest.getLatitude()));
-        response.setLongitude(Double.valueOf(geoRequest.getLongitude()));
+        response.setLatitude(Double.parseDouble(geoRequest.getLatitude()));
+        response.setLongitude(Double.parseDouble(geoRequest.getLongitude()));
         when(service.locate(anyString(), any())).thenReturn(response);
         val p = new DefaultAdaptiveAuthenticationPolicy(service, IPAddressIntelligenceService.allowed(), props);
         assertFalse(p.apply(new MockRequestContext(), USER_AGENT, geoRequest));
@@ -87,8 +87,8 @@ public class DefaultAdaptiveAuthenticationPolicyTests {
 
         val service = mock(GeoLocationService.class);
         val response = new GeoLocationResponse();
-        response.setLatitude(Double.valueOf(geoRequest.getLatitude()));
-        response.setLongitude(Double.valueOf(geoRequest.getLongitude()));
+        response.setLatitude(Double.parseDouble(geoRequest.getLatitude()));
+        response.setLongitude(Double.parseDouble(geoRequest.getLongitude()));
         when(service.locate(anyString(), any())).thenReturn(response);
         val p = new DefaultAdaptiveAuthenticationPolicy(service, IPAddressIntelligenceService.allowed(), props);
         assertTrue(p.apply(new MockRequestContext(), USER_AGENT, geoRequest));

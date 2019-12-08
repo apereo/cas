@@ -1,5 +1,6 @@
 package org.apereo.cas.authorization;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.ldaptive.ConnectionFactory;
@@ -13,10 +14,6 @@ import java.util.Optional;
 /**
  * Provides a simple {@link AuthorizationGenerator} implementation that obtains user roles from an LDAP search.
  * Searches are performed by this component for every user details lookup:
- * <ol>
- * <li>Search for an entry to resolve the username. In most cases the search should return exactly one result,
- * but the {@link #isAllowMultipleResults()} property may be toggled to change that behavior.</li>
- * </ol>
  *
  * @author Jerome Leleu
  * @author Marvin S. Addison
@@ -24,6 +21,7 @@ import java.util.Optional;
  * @since 4.0.0
  */
 @Slf4j
+@Getter
 public class LdapUserAttributesToRolesAuthorizationGenerator extends BaseUseAttributesAuthorizationGenerator {
 
     private final String roleAttribute;

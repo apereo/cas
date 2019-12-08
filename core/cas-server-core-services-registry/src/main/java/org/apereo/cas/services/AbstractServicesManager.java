@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
@@ -91,7 +92,9 @@ public abstract class AbstractServicesManager implements ServicesManager {
 
     @Override
     public RegisteredService findServiceBy(final Service service) {
-        return service != null ? findServiceBy(service.getId()) : null;
+        return Optional.ofNullable(service)
+            .map(svc -> findServiceBy(svc.getId()))
+            .orElse(null);
     }
 
     @Override
@@ -179,7 +182,7 @@ public abstract class AbstractServicesManager implements ServicesManager {
         this.services = this.serviceRegistry.load()
             .stream()
             .collect(Collectors.toConcurrentMap(r -> {
-                LOGGER.debug("Adding registered service [{}]", r.getServiceId());
+                LOGGER.debug("Adding registered service [{}] with name [{}] and internal identifier [{}]", r.getServiceId(), r.getName(), r.getId());
                 return r.getId();
             }, Function.identity(), (r, s) -> s));
         loadInternal();
@@ -199,7 +202,7 @@ public abstract class AbstractServicesManager implements ServicesManager {
     private void evaluateExpiredServiceDefinitions() {
         this.services.values()
             .stream()
-            .filter(getRegisteredServicesFilteringPredicate().negate())
+            .filter(RegisteredServiceAccessStrategyUtils.getRegisteredServiceExpirationPolicyPredicate().negate())
             .filter(Objects::nonNull)
             .forEach(this::processExpiredRegisteredService);
     }
@@ -228,11 +231,15 @@ public abstract class AbstractServicesManager implements ServicesManager {
         val policy = registeredService.getExpirationPolicy();
         LOGGER.warn("Registered service [{}] has expired on [{}]", registeredService.getServiceId(), policy.getExpirationDate());
 
+        if (policy.isNotifyWhenExpired()) {
+            LOGGER.debug("Contacts for registered service [{}] will be notified of service expiry", registeredService.getServiceId());
+            publishEvent(new CasRegisteredServiceExpiredEvent(this, registeredService, false));
+        }
         if (policy.isDeleteWhenExpired()) {
             LOGGER.debug("Deleting expired registered service [{}] from registry.", registeredService.getServiceId());
             if (policy.isNotifyWhenDeleted()) {
-                LOGGER.debug("Contacts for registered service [{}] will be notified of service expiry", registeredService.getServiceId());
-                publishEvent(new CasRegisteredServiceExpiredEvent(this, registeredService));
+                LOGGER.debug("Contacts for registered service [{}] will be notified of service expiry and removal", registeredService.getServiceId());
+                publishEvent(new CasRegisteredServiceExpiredEvent(this, registeredService, true));
             }
             delete(registeredService);
             return null;

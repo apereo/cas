@@ -14,7 +14,6 @@ import org.apereo.cas.ticket.serialization.serializers.TransientSessionTicketStr
 import org.apereo.cas.util.serialization.StringSerializer;
 
 import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -25,7 +24,6 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Slf4j
 @Getter
 public class DefaultTicketSerializationExecutionPlan implements TicketSerializationExecutionPlan {
     private final Map<String, StringSerializer<? extends Ticket>> ticketSerializers = new ConcurrentHashMap<>();

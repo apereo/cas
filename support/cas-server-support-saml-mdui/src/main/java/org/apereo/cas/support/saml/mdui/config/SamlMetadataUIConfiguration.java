@@ -40,7 +40,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration("samlMetadataUIConfiguration")
+@Configuration(value = "samlMetadataUIConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class SamlMetadataUIConfiguration {
@@ -68,7 +68,7 @@ public class SamlMetadataUIConfiguration {
         casProperties.getSamlMetadataUi().getResources().forEach(Unchecked.consumer(r -> configureResource(resources, chain, r)));
         adapter.setRequireValidMetadata(casProperties.getSamlMetadataUi().isRequireValidMetadata());
         adapter.setMetadataResources(resources);
-        adapter.setConfigBean(openSamlConfigBean.getIfAvailable());
+        adapter.setConfigBean(openSamlConfigBean.getObject());
         return adapter;
     }
 

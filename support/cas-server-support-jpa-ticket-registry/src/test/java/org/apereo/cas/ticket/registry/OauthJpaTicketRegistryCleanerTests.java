@@ -17,19 +17,19 @@ import org.apereo.cas.config.CasCoreTicketsSchedulingConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
-import org.apereo.cas.config.CasOAuthConfiguration;
+import org.apereo.cas.config.CasOAuth20Configuration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.JpaTicketRegistryConfiguration;
 import org.apereo.cas.config.JpaTicketRegistryTicketCatalogConfiguration;
-import org.apereo.cas.config.OAuthProtocolTicketCatalogConfiguration;
+import org.apereo.cas.config.OAuth20ProtocolTicketCatalogConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
-import org.apereo.cas.config.support.EnvironmentConversionServiceInitializer;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketFactory;
-import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
+import org.apereo.cas.ticket.accesstoken.OAuth20AccessTokenFactory;
+import org.apereo.cas.web.config.CasCookieConfiguration;
 
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
@@ -41,7 +41,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -61,12 +60,13 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 @SpringBootTest(classes = {
         JpaTicketRegistryTicketCatalogConfiguration.class,
         JpaTicketRegistryConfiguration.class,
-        CasOAuthConfiguration.class,
+        CasOAuth20Configuration.class,
         CasCoreTicketsSchedulingConfiguration.class,
         CasCoreTicketIdGeneratorsConfiguration.class,
         CasDefaultServiceTicketIdGeneratorsConfiguration.class,
         RefreshAutoConfiguration.class,
         AopAutoConfiguration.class,
+        CasCookieConfiguration.class,
         CasCoreUtilConfiguration.class,
         CasCoreAuthenticationConfiguration.class,
         CasCoreServicesAuthenticationConfiguration.class,
@@ -83,10 +83,9 @@ import static org.junit.jupiter.api.Assertions.assertNull;
         CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
         CasCoreTicketsConfiguration.class,
         CasCoreWebConfiguration.class,
-        OAuthProtocolTicketCatalogConfiguration.class,
+        OAuth20ProtocolTicketCatalogConfiguration.class,
         CasWebApplicationServiceFactoryConfiguration.class
 })
-@ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
 @Transactional(transactionManager = "ticketTransactionManager", isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
 @ResourceLock("oauth-jpa-tickets")
 @Tag("OAuth")
@@ -97,7 +96,7 @@ public class OauthJpaTicketRegistryCleanerTests {
 
     @Autowired
     @Qualifier("defaultAccessTokenFactory")
-    protected AccessTokenFactory accessTokenFactory;
+    protected OAuth20AccessTokenFactory accessTokenFactory;
 
     @Autowired
     @Qualifier("ticketRegistry")

@@ -4,29 +4,12 @@
         <Console name="console" target="SYSTEM_OUT">
             <PatternLayout pattern="%highlight{%d %p [%c] - &lt;%m&gt;%n}" />
         </Console>
-        <RollingFile name="file" fileName="build/tomcattests.log" append="true"
-                     filePattern="events-%d{yyyy-MM-dd-HH}-%i.log.gz">
-            <PatternLayout pattern="%highlight{%d %p [%c] - %m%n}" />
-            <Policies>
-                <OnStartupTriggeringPolicy />
-                <SizeBasedTriggeringPolicy size="10 MB"/>
-                <TimeBasedTriggeringPolicy />
-            </Policies>
-        </RollingFile>
     </Appenders>
     <Loggers>
-        <Logger name="org.apereo" level="off" additivity="false">
-            <AppenderRef ref="console"/>
-        </Logger>
-        <Logger name="org.springframework.boot" level="warn" additivity="false">
-            <AppenderRef ref="console"/>
-        </Logger>
-        <Logger name="org.apache.tomcat" level="warn" additivity="false">
-            <AppenderRef ref="console"/>
-        </Logger>
-        <Logger name="org.apache.tomcat.util.scan" level="error" additivity="false">
-            <AppenderRef ref="console"/>
-        </Logger>
+        <Logger name="org.apereo" level="off" />
+        <Logger name="org.springframework.boot" level="warn" />
+        <Logger name="org.apache.tomcat" level="warn" />
+        <Logger name="org.apache.tomcat.util.scan" level="error" />
         <Root level="off">
             <AppenderRef ref="console"/>
         </Root>

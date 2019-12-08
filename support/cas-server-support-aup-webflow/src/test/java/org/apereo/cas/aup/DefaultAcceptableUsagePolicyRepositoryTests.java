@@ -17,6 +17,9 @@ import org.springframework.mock.web.MockServletContext;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
 
+import java.util.List;
+import java.util.Set;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -32,20 +35,6 @@ public class DefaultAcceptableUsagePolicyRepositoryTests extends BaseAcceptableU
     @Autowired
     @Qualifier("acceptableUsagePolicyRepository")
     protected AcceptableUsagePolicyRepository acceptableUsagePolicyRepository;
-
-    @Test
-    public void verifyActionDefaultGlobal() {
-        val properties = new AcceptableUsagePolicyProperties();
-        properties.setScope(AcceptableUsagePolicyProperties.Scope.GLOBAL);
-        verifyAction(properties);
-    }
-
-    @Test
-    public void verifyActionDefaultAuthentication() {
-        val properties = new AcceptableUsagePolicyProperties();
-        properties.setScope(AcceptableUsagePolicyProperties.Scope.AUTHENTICATION);
-        verifyAction(properties);
-    }
 
     private static void verifyAction(final AcceptableUsagePolicyProperties properties) {
         val context = new MockRequestContext();
@@ -64,6 +53,34 @@ public class DefaultAcceptableUsagePolicyRepositoryTests extends BaseAcceptableU
         assertFalse(repo.verify(context, c).isAccepted());
         assertTrue(repo.submit(context, c));
         assertTrue(repo.verify(context, c).isAccepted());
+    }
+
+    @Test
+    public void verifyActionDefaultGlobal() {
+        val properties = new AcceptableUsagePolicyProperties();
+        properties.setScope(AcceptableUsagePolicyProperties.Scope.GLOBAL);
+        verifyAction(properties);
+    }
+
+    @Test
+    public void verifyActionDefaultAuthentication() {
+        val properties = new AcceptableUsagePolicyProperties();
+        properties.setScope(AcceptableUsagePolicyProperties.Scope.AUTHENTICATION);
+        verifyAction(properties);
+    }
+
+    @Test
+    public void verifyProps() {
+        val status = AcceptableUsagePolicyStatus.accepted(CoreAuthenticationTestUtils.getPrincipal());
+        status.clearProperties();
+        status.addProperty("example", "cas");
+        status.setProperty("example2", "cas");
+        status.addProperty("example2", "system");
+        status.setProperty("user", "casuser");
+        assertEquals(List.of("cas"), status.getPropertyOrDefault("example", "hello"));
+        assertEquals(List.of("casuser"), status.getProperty("user"));
+        assertEquals(List.of("cas", "system"), status.getPropertyOrDefault("example2", List.of()));
+        assertEquals(Set.of("hello"), status.getPropertyOrDefault("nada", "hello"));
     }
 
     @Override

@@ -16,6 +16,7 @@ import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -35,7 +36,7 @@ public class ChainingAttributeReleasePolicy implements RegisteredServiceAttribut
 
     private static final long serialVersionUID = 3795054936775326709L;
 
-    private List<RegisteredServiceAttributeReleasePolicy> policies = new ArrayList<>();
+    private List<RegisteredServiceAttributeReleasePolicy> policies = new ArrayList<>(0);
 
     private String mergingPolicy = "replace";
 
@@ -44,14 +45,14 @@ public class ChainingAttributeReleasePolicy implements RegisteredServiceAttribut
     @Override
     public RegisteredServiceConsentPolicy getConsentPolicy() {
         AnnotationAwareOrderComparator.sortIfNecessary(policies);
-        val policy = new ChainingRegisteredServiceConsentPolicy();
-        val consentPolicies = this.policies
+        val chainingConsentPolicy = new ChainingRegisteredServiceConsentPolicy();
+        val newConsentPolicies = policies
             .stream()
-            .map(RegisteredServiceAttributeReleasePolicy::getConsentPolicy)
-            .distinct()
-            .collect(Collectors.toList());
-        policy.addPolicies(consentPolicies);
-        return policy;
+            .map(policy -> policy.getConsentPolicy().getPolicies())
+            .flatMap(List::stream)
+            .collect(Collectors.toCollection(LinkedHashSet::new));
+        chainingConsentPolicy.addPolicies(newConsentPolicies);
+        return chainingConsentPolicy;
     }
 
     @Override
@@ -103,7 +104,7 @@ public class ChainingAttributeReleasePolicy implements RegisteredServiceAttribut
     }
 
     /**
-     * Size.
+     * Size int.
      *
      * @return the int
      */

@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public abstract class BaseConsentRepository implements ConsentRepository {
     private static final long serialVersionUID = 1736846688546785564L;
-    private transient Set<ConsentDecision> consentDecisions = new LinkedHashSet<>();
+    private transient Set<ConsentDecision> consentDecisions = new LinkedHashSet<>(0);
 
     @Override
     public ConsentDecision findConsentDecision(final Service service, final RegisteredService registeredService,

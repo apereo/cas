@@ -13,7 +13,6 @@ import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.BeanCreationException;
@@ -23,6 +22,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
@@ -40,10 +40,12 @@ import java.util.HashMap;
  */
 @Configuration("soapAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class SoapAuthenticationConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
+
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
 
     @Autowired
     @Qualifier("servicesManager")
@@ -65,19 +67,19 @@ public class SoapAuthenticationConfiguration {
     public AuthenticationHandler soapAuthenticationAuthenticationHandler() {
         val soap = casProperties.getAuthn().getSoap();
         val handler = new SoapAuthenticationHandler(soap.getName(),
-            servicesManager.getIfAvailable(),
+            servicesManager.getObject(),
             soapAuthenticationPrincipalFactory(),
             soap.getOrder(),
             soapAuthenticationClient());
         handler.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(soap.getPrincipalTransformation()));
-        handler.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(soap.getPasswordEncoder()));
+        handler.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(soap.getPasswordEncoder(), applicationContext));
         return handler;
     }
 
     @ConditionalOnMissingBean(name = "soapAuthenticationEventExecutionPlanConfigurer")
     @Bean
     public AuthenticationEventExecutionPlanConfigurer soapAuthenticationEventExecutionPlanConfigurer() {
-        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(soapAuthenticationAuthenticationHandler(), defaultPrincipalResolver.getIfAvailable());
+        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(soapAuthenticationAuthenticationHandler(), defaultPrincipalResolver.getObject());
     }
 
     @ConditionalOnMissingBean(name = "soapAuthenticationMarshaller")

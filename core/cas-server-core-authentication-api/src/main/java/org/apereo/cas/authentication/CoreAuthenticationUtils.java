@@ -32,6 +32,7 @@ import org.apereo.services.persondir.support.merger.MultivaluedAttributeMerger;
 import org.apereo.services.persondir.support.merger.NoncollidingAttributeAdder;
 import org.apereo.services.persondir.support.merger.ReplacingAttributeAdder;
 import org.codehaus.groovy.control.CompilerConfiguration;
+import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.DefaultResourceLoader;
 
 import java.nio.charset.StandardCharsets;
@@ -113,6 +114,7 @@ public class CoreAuthenticationUtils {
             case "multivalued":
             case "multi_valued":
             case "combine":
+            case "merge":
                 return new MultivaluedAttributeMerger();
             case "add":
                 return new NoncollidingAttributeAdder();
@@ -120,7 +122,7 @@ public class CoreAuthenticationUtils {
             case "overwrite":
             case "override":
                 return new ReplacingAttributeAdder();
-            default:
+            case "none":
                 return new BaseAdditiveAttributeMerger() {
                     @Override
                     protected Map<String, List<Object>> mergePersonAttributes(final Map<String, List<Object>> toModify,
@@ -128,6 +130,8 @@ public class CoreAuthenticationUtils {
                         return new LinkedHashMap<>(toModify);
                     }
                 };
+            default:
+                throw new IllegalArgumentException("Unsupported merging policy [" + mergingPolicy + ']');
         }
     }
 
@@ -155,6 +159,7 @@ public class CoreAuthenticationUtils {
      */
     public static Map<String, List<Object>> mergeAttributes(final Map<String, List<Object>> currentAttributes, final Map<String, List<Object>> attributesToMerge) {
         val merger = new MultivaluedAttributeMerger();
+        merger.setDistinctValues(true);
 
         val toModify = currentAttributes.entrySet()
             .stream()
@@ -250,23 +255,25 @@ public class CoreAuthenticationUtils {
     /**
      * New password policy handling strategy.
      *
-     * @param properties the properties
+     * @param properties         the properties
+     * @param applicationContext the application context
      * @return the authentication password policy handling strategy
      */
-    public static AuthenticationPasswordPolicyHandlingStrategy newPasswordPolicyHandlingStrategy(final PasswordPolicyProperties properties) {
+    public static AuthenticationPasswordPolicyHandlingStrategy newPasswordPolicyHandlingStrategy(final PasswordPolicyProperties properties,
+                                                                                                 final ApplicationContext applicationContext) {
         if (properties.getStrategy() == PasswordPolicyProperties.PasswordPolicyHandlingOptions.REJECT_RESULT_CODE) {
             LOGGER.debug("Created password policy handling strategy based on blacklisted authentication result codes");
-            return new RejectResultCodePasswordPolicyHandlingStrategy();
+            return new RejectResultCodePasswordPolicyHandlingStrategy<>();
         }
 
         val location = properties.getGroovy().getLocation();
         if (properties.getStrategy() == PasswordPolicyProperties.PasswordPolicyHandlingOptions.GROOVY && location != null) {
             LOGGER.debug("Created password policy handling strategy based on Groovy script [{}]", location);
-            return new GroovyPasswordPolicyHandlingStrategy(location);
+            return new GroovyPasswordPolicyHandlingStrategy<>(location, applicationContext);
         }
 
         LOGGER.trace("Created default password policy handling strategy");
-        return new DefaultPasswordPolicyHandlingStrategy();
+        return new DefaultPasswordPolicyHandlingStrategy<>();
     }
 
     /**
@@ -279,16 +286,24 @@ public class CoreAuthenticationUtils {
      */
     public static PrincipalResolver newPersonDirectoryPrincipalResolver(
         final PrincipalFactory principalFactory, final IPersonAttributeDao attributeRepository,
-        final PersonDirectoryPrincipalResolverProperties personDirectory) {
+        final PersonDirectoryPrincipalResolverProperties... personDirectory) {
 
         return new PersonDirectoryPrincipalResolver(
             attributeRepository,
             principalFactory,
-            personDirectory.isReturnNull(),
-            personDirectory.getPrincipalAttribute(),
-            personDirectory.isUseExistingPrincipalId(),
-            personDirectory.isAttributeResolutionEnabled(),
-            org.springframework.util.StringUtils.commaDelimitedListToSet(personDirectory.getActiveAttributeRepositoryIds())
+            Arrays.stream(personDirectory).anyMatch(PersonDirectoryPrincipalResolverProperties::isReturnNull),
+            Arrays.stream(personDirectory)
+                .filter(p -> StringUtils.isNotBlank(p.getPrincipalAttribute()))
+                .map(PersonDirectoryPrincipalResolverProperties::getPrincipalAttribute)
+                .findFirst()
+                .orElse(StringUtils.EMPTY),
+            Arrays.stream(personDirectory).anyMatch(PersonDirectoryPrincipalResolverProperties::isUseExistingPrincipalId),
+            Arrays.stream(personDirectory).anyMatch(PersonDirectoryPrincipalResolverProperties::isAttributeResolutionEnabled),
+            Arrays.stream(personDirectory)
+                .filter(p -> StringUtils.isNotBlank(p.getActiveAttributeRepositoryIds()))
+                .map(p-> org.springframework.util.StringUtils.commaDelimitedListToSet(p.getActiveAttributeRepositoryIds()))
+                .flatMap(Set::stream)
+                .collect(Collectors.toSet())
         );
     }
 }

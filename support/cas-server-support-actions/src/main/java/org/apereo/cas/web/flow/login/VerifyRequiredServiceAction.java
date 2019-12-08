@@ -12,7 +12,6 @@ import org.apereo.cas.web.support.WebUtils;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.webflow.action.AbstractAction;
@@ -27,7 +26,7 @@ import java.util.regex.Pattern;
 /**
  * Class to automatically set the paths for the CookieGenerators.
  * <p>
- * Note: This is technically not threadsafe, but because its overriding with a
+ * Note: This is technically not thread-safe, but because its overriding with a
  * constant value it doesn't matter.
  * <p>
  * Note: As of CAS 3.1, this is a required class that retrieves and exposes the
@@ -36,7 +35,6 @@ import java.util.regex.Pattern;
  * @author Scott Battaglia
  * @since 3.1
  */
-@Slf4j
 @RequiredArgsConstructor
 @Getter
 public class VerifyRequiredServiceAction extends AbstractAction {

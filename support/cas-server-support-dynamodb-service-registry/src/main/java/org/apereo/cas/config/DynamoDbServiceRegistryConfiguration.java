@@ -5,7 +5,6 @@ import org.apereo.cas.dynamodb.AmazonDynamoDbClientFactory;
 import org.apereo.cas.services.DynamoDbServiceRegistry;
 import org.apereo.cas.services.DynamoDbServiceRegistryFacilitator;
 import org.apereo.cas.services.ServiceRegistry;
-import org.apereo.cas.services.ServiceRegistryExecutionPlan;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServiceRegistryListener;
 
@@ -18,7 +17,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -37,7 +36,7 @@ public class DynamoDbServiceRegistryConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Autowired
-    private ApplicationEventPublisher eventPublisher;
+    private ConfigurableApplicationContext applicationContext;
 
     @Autowired
     @Qualifier("serviceRegistryListeners")
@@ -53,18 +52,13 @@ public class DynamoDbServiceRegistryConfiguration {
     @Bean
     @RefreshScope
     public ServiceRegistry dynamoDbServiceRegistry() {
-        return new DynamoDbServiceRegistry(eventPublisher, dynamoDbServiceRegistryFacilitator(), serviceRegistryListeners.getIfAvailable());
+        return new DynamoDbServiceRegistry(applicationContext, dynamoDbServiceRegistryFacilitator(), serviceRegistryListeners.getObject());
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "dynamoDbServiceRegistryExecutionPlanConfigurer")
     public ServiceRegistryExecutionPlanConfigurer dynamoDbServiceRegistryExecutionPlanConfigurer() {
-        return new ServiceRegistryExecutionPlanConfigurer() {
-            @Override
-            public void configureServiceRegistry(final ServiceRegistryExecutionPlan plan) {
-                plan.registerServiceRegistry(dynamoDbServiceRegistry());
-            }
-        };
+        return plan -> plan.registerServiceRegistry(dynamoDbServiceRegistry());
     }
 
     @RefreshScope

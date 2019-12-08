@@ -54,6 +54,25 @@
                                 [[${entry.name}]]
                             </a>
                         </li>
+                        
+                        <li th:if="${identityProviderDiscoveryEnabled}">
+                            <script type="text/javascript" th:inline="javascript">
+                                /*<![CDATA[*/
+                                var url = /*[[@{/idp/discovery}]]*/ ;
+
+                                var returnUrl = /*[[${cas.server.name} + @{/idp/discovery/redirect}]]*/ ;
+
+                                if (window.location.search) {
+                                    returnUrl += encodeURIComponent(window.location.search);
+                                }
+                                url += "?return=" + returnUrl;
+                                var link = `<a href='${url}' class='btn btn-block btn-social btn-primary'>
+                                            <span class='fas fa-shield-alt' aria-hidden='true'></span>
+                                            SAML2 Identity Provider Discovery</a>`;
+                                document.write(link);
+                                /*]]>*/
+                            </script>
+                        </li>
                     </ul>
                 </div>
             </div>

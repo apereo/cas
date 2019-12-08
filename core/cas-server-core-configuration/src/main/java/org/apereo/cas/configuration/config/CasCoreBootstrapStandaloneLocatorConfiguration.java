@@ -39,7 +39,7 @@ public class CasCoreBootstrapStandaloneLocatorConfiguration {
     @Bean
     public CasConfigurationPropertiesSourceLocator casConfigurationPropertiesSourceLocator() {
         return new DefaultCasConfigurationPropertiesSourceLocator(
-            configurationPropertiesEnvironmentManager.getIfAvailable(),
+            configurationPropertiesEnvironmentManager.getObject(),
             configurationPropertiesLoaderFactory());
     }
 

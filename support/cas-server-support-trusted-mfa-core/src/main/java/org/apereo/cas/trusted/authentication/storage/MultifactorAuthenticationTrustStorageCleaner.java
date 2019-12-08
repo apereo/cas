@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 /**
  * This is {@link MultifactorAuthenticationTrustStorageCleaner}.
@@ -45,7 +46,7 @@ public class MultifactorAuthenticationTrustStorageCleaner {
         try {
             LOGGER.debug("Proceeding to clean up expired trusted authentication records...");
             SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
-            val validDate = LocalDateTime.now().minus(trustedProperties.getExpiration(),
+            val validDate = LocalDateTime.now(ZoneId.systemDefault()).minus(trustedProperties.getExpiration(),
                 DateTimeUtils.toChronoUnit(trustedProperties.getTimeUnit()));
             LOGGER.debug("Expiring records that are on/before [{}]", validDate);
             this.storage.expire(validDate);

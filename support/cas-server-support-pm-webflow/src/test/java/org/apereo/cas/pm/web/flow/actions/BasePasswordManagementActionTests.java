@@ -2,6 +2,8 @@ package org.apereo.cas.pm.web.flow.actions;
 
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
@@ -10,6 +12,7 @@ import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
+import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
@@ -34,7 +37,6 @@ import org.springframework.boot.autoconfigure.mail.MailSenderValidatorAutoConfig
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.execution.Action;
 
 /**
@@ -57,8 +59,11 @@ import org.springframework.webflow.execution.Action;
     CasCoreAuthenticationSupportConfiguration.class,
     CasCoreConfiguration.class,
     CasCoreLogoutConfiguration.class,
+    CasCoreAuthenticationConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class,
+    CasCoreAuthenticationMetadataConfiguration.class,
+    CasCoreTicketIdGeneratorsConfiguration.class,
     CasPersonDirectoryTestConfiguration.class,
     CasCookieConfiguration.class,
     CasThemesConfiguration.class,
@@ -67,8 +72,7 @@ import org.springframework.webflow.execution.Action;
     CasCoreWebflowConfiguration.class,
     CasCoreHttpConfiguration.class,
     CasWebflowContextConfiguration.class
-})
-@TestPropertySource(properties = {
+}, properties = {
     "spring.mail.host=localhost",
     "spring.mail.port=25000",
     "spring.mail.testConnection=true",

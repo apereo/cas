@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
  */
 public class ConsentServiceRegistry extends ImmutableInMemoryServiceRegistry {
     public ConsentServiceRegistry(final List<RegisteredService> services, final ApplicationEventPublisher eventPublisher) {
-        super(services, eventPublisher, new ArrayList<>());
+        super(services, eventPublisher, new ArrayList<>(0));
     }
 
     public ConsentServiceRegistry(final ApplicationEventPublisher eventPublisher, final RegisteredService... services) {

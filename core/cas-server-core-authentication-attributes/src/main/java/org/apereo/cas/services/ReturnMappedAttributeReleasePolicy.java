@@ -8,6 +8,7 @@ import org.apereo.cas.util.scripting.ExecutableCompiledGroovyScript;
 import org.apereo.cas.util.scripting.GroovyShellScript;
 import org.apereo.cas.util.scripting.ScriptingUtils;
 import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -45,7 +46,7 @@ import java.util.TreeMap;
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServiceAttributeReleasePolicy {
-
+    private static final int MAP_SIZE = 8;
     private static final long serialVersionUID = -6249488544306639050L;
 
     private Map<String, Object> allowedAttributes = new TreeMap<>();
@@ -53,7 +54,7 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
     @JsonIgnore
     @Transient
     @org.springframework.data.annotation.Transient
-    private transient Map<String, ExecutableCompiledGroovyScript> attributeScriptCache = new LinkedHashMap<>();
+    private transient Map<String, ExecutableCompiledGroovyScript> attributeScriptCache = new LinkedHashMap<>(0);
 
     @JsonCreator
     public ReturnMappedAttributeReleasePolicy(@JsonProperty("allowedAttributes") final Map<String, Object> attributes) {
@@ -73,6 +74,9 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
 
     @PostLoad
     private void initializeWatchableScriptIfNeeded() {
+        if (this.attributeScriptCache == null) {
+            this.attributeScriptCache = new LinkedHashMap<>(MAP_SIZE);
+        }
         getAllowedAttributes().forEach((attributeName, value) -> {
             val mappedAttributes = CollectionUtils.wrap(value);
             mappedAttributes.forEach(mapped -> {
@@ -84,7 +88,7 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
                         attributeScriptCache.put(mappedAttributeName, new GroovyShellScript(matcherInline.group(1)));
                     } else if (matcherFile.find()) {
                         try {
-                            val resource = ResourceUtils.getRawResourceFrom(matcherFile.group(2));
+                            val resource = ResourceUtils.getRawResourceFrom(SpringExpressionLanguageValueResolver.getInstance().resolve(matcherFile.group(2)));
                             attributeScriptCache.put(mappedAttributeName, new WatchableGroovyScriptResource(resource));
                         } catch (final Exception e) {
                             LOGGER.error(e.getMessage(), e);

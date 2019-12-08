@@ -91,7 +91,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
     protected final Set<String> activeAttributeRepositoryIdentifiers;
 
     public PersonDirectoryPrincipalResolver() {
-        this(new StubPersonAttributeDao(new HashMap<>()), PrincipalFactoryUtils.newPrincipalFactory(), false,
+        this(new StubPersonAttributeDao(new HashMap<>(0)), PrincipalFactoryUtils.newPrincipalFactory(), false,
             String::trim, null,
             false, true,
             CollectionUtils.wrapSet(IPersonAttributeDao.WILDCARD));
@@ -111,7 +111,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
     }
 
     public PersonDirectoryPrincipalResolver(final boolean returnNullIfNoAttributes, final String principalAttributeNames) {
-        this(new StubPersonAttributeDao(new HashMap<>()), PrincipalFactoryUtils.newPrincipalFactory(),
+        this(new StubPersonAttributeDao(new HashMap<>(0)), PrincipalFactoryUtils.newPrincipalFactory(),
             returnNullIfNoAttributes, String::trim, principalAttributeNames,
             false, true,
             CollectionUtils.wrapSet(IPersonAttributeDao.WILDCARD));
@@ -158,7 +158,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
 
     @Override
     public Principal resolve(final Credential credential, final Optional<Principal> currentPrincipal, final Optional<AuthenticationHandler> handler) {
-        LOGGER.debug("Attempting to resolve a principal...");
+        LOGGER.debug("Attempting to resolve a principal via [{}]", getName());
         var principalId = extractPrincipalId(credential, currentPrincipal);
         if (StringUtils.isBlank(principalId)) {
             LOGGER.debug("Principal id [{}] could not be found", principalId);
@@ -227,7 +227,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
             if (result.isPresent()) {
                 val values = result.get();
                 if (!values.isEmpty()) {
-                    principalId = CollectionUtils.firstElement(values).get().toString();
+                    principalId = CollectionUtils.firstElement(values).map(Object::toString).orElseThrow();
                     LOGGER.debug("Found principal id attribute value [{}] and removed it from the collection of attributes", principalId);
                 }
             } else {
@@ -264,7 +264,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
     protected String extractPrincipalId(final Credential credential, final Optional<Principal> currentPrincipal) {
         LOGGER.debug("Extracting credential id based on existing credential [{}]", credential);
         val id = credential.getId();
-        if (currentPrincipal != null && currentPrincipal.isPresent()) {
+        if (currentPrincipal.isPresent()) {
             val principal = currentPrincipal.get();
             LOGGER.debug("Principal is currently resolved as [{}]", principal);
             if (useCurrentPrincipalId) {

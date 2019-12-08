@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 public class OAuth20ServiceRegistry extends ImmutableInMemoryServiceRegistry {
     public OAuth20ServiceRegistry(final List<RegisteredService> services,
                                   final ApplicationEventPublisher eventPublisher) {
-        super(services, eventPublisher, new ArrayList<>());
+        super(services, eventPublisher, new ArrayList<>(0));
     }
 
     public OAuth20ServiceRegistry(final ApplicationEventPublisher eventPublisher, final RegisteredService... services) {

@@ -1,7 +1,6 @@
 package org.apereo.cas.config;
 
 import de.codecentric.boot.admin.server.config.AdminServerProperties;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -16,8 +15,7 @@ import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Slf4j
-@Configuration("casSpringBootAdminServerSecurityConfiguration")
+@Configuration(value = "casSpringBootAdminServerSecurityConfiguration", proxyBeanMethods = false)
 public class CasSpringBootAdminServerSecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Autowired
     private AdminServerProperties adminServerProperties;

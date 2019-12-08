@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -39,6 +40,9 @@ import org.springframework.context.annotation.Configuration;
 public class CasMongoAuthenticationConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
+
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
 
     @Autowired
     @Qualifier("servicesManager")
@@ -58,7 +62,7 @@ public class CasMongoAuthenticationConfiguration {
     @RefreshScope
     public AuthenticationHandler mongoAuthenticationHandler() {
         val mongo = casProperties.getAuthn().getMongo();
-        val handler = new MongoDbAuthenticationHandler(mongo.getName(), servicesManager.getIfAvailable(), mongoPrincipalFactory());
+        val handler = new MongoDbAuthenticationHandler(mongo.getName(), servicesManager.getObject(), mongoPrincipalFactory());
         handler.setAuthenticator(mongoAuthenticatorProfileService());
         handler.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(mongo.getPrincipalTransformation()));
         return handler;
@@ -67,7 +71,7 @@ public class CasMongoAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "mongoAuthenticationEventExecutionPlanConfigurer")
     @Bean
     public AuthenticationEventExecutionPlanConfigurer mongoAuthenticationEventExecutionPlanConfigurer() {
-        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(mongoAuthenticationHandler(), defaultPrincipalResolver.getIfAvailable());
+        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(mongoAuthenticationHandler(), defaultPrincipalResolver.getObject());
     }
 
     @ConditionalOnMissingBean(name = "mongoAuthenticatorProfileService")
@@ -77,7 +81,7 @@ public class CasMongoAuthenticationConfiguration {
         val client = MongoDbConnectionFactory.buildMongoDbClient(mongo);
         LOGGER.info("Connected to MongoDb instance using mongo client [{}]", client.toString());
 
-        val encoder = new SpringSecurityPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(mongo.getPasswordEncoder()));
+        val encoder = new SpringSecurityPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(mongo.getPasswordEncoder(), applicationContext));
         val auth = new MongoProfileService(client, mongo.getAttributes());
         auth.setUsersCollection(mongo.getCollection());
         auth.setUsersDatabase(mongo.getDatabaseName());

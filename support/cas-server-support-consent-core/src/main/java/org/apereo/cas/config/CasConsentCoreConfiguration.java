@@ -1,6 +1,5 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.audit.AuditTrailRecordResolutionPlan;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.consent.AttributeConsentReportEndpoint;
@@ -13,6 +12,7 @@ import org.apereo.cas.consent.DefaultConsentEngine;
 import org.apereo.cas.consent.GroovyConsentRepository;
 import org.apereo.cas.consent.InMemoryConsentRepository;
 import org.apereo.cas.consent.JsonConsentRepository;
+import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.extern.slf4j.Slf4j;
@@ -38,7 +38,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration("casConsentCoreConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-public class CasConsentCoreConfiguration implements AuditTrailRecordResolutionPlanConfigurer {
+public class CasConsentCoreConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -65,11 +65,7 @@ public class CasConsentCoreConfiguration implements AuditTrailRecordResolutionPl
         val consent = casProperties.getConsent();
         val crypto = consent.getCrypto();
         if (crypto.isEnabled()) {
-            return new AttributeReleaseConsentCipherExecutor(crypto.getEncryption().getKey(),
-                crypto.getSigning().getKey(),
-                crypto.getAlg(),
-                crypto.getSigning().getKeySize(),
-                crypto.getEncryption().getKeySize());
+            return CipherExecutorUtils.newStringCipherExecutor(crypto, AttributeReleaseConsentCipherExecutor.class);
         }
         LOGGER.debug("Consent attributes stored by CAS are not signed/encrypted.");
         return CipherExecutor.noOp();
@@ -102,10 +98,12 @@ public class CasConsentCoreConfiguration implements AuditTrailRecordResolutionPl
         return new InMemoryConsentRepository();
     }
 
-    @Override
-    public void configureAuditTrailRecordResolutionPlan(final AuditTrailRecordResolutionPlan plan) {
-        plan.registerAuditActionResolver("SAVE_CONSENT_ACTION_RESOLVER", authenticationActionResolver.getIfAvailable());
-        plan.registerAuditResourceResolver("SAVE_CONSENT_RESOURCE_RESOLVER", returnValueResourceResolver.getIfAvailable());
+    @Bean
+    public AuditTrailRecordResolutionPlanConfigurer casConsentAuditTrailRecordResolutionPlanConfigurer() {
+        return plan -> {
+            plan.registerAuditActionResolver("SAVE_CONSENT_ACTION_RESOLVER", authenticationActionResolver.getObject());
+            plan.registerAuditResourceResolver("SAVE_CONSENT_RESOURCE_RESOLVER", returnValueResourceResolver.getObject());
+        };
     }
 
     @Bean

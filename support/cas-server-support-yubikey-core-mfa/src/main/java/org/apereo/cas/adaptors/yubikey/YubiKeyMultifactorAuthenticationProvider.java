@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.model.support.mfa.YubiKeyMultifactorProperti
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.http.HttpClient;
+import org.apereo.cas.util.http.HttpMessage;
 
 import com.yubico.client.v2.YubicoClient;
 import lombok.AllArgsConstructor;
@@ -14,6 +15,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
 import java.net.URL;
+import java.util.Optional;
 
 /**
  * The authentication provider for yubikey.
@@ -38,7 +40,7 @@ public class YubiKeyMultifactorAuthenticationProvider extends AbstractMultifacto
             for (val endpoint : endpoints) {
                 LOGGER.debug("Pinging YubiKey API endpoint at [{}]", endpoint);
                 val msg = this.httpClient.sendMessageToEndPoint(new URL(endpoint));
-                val message = msg != null ? msg.getMessage() : null;
+                val message = Optional.ofNullable(msg).map(HttpMessage::getMessage).orElse(null);
                 if (StringUtils.isNotBlank(message)) {
                     val response = EncodingUtils.urlDecode(message);
                     LOGGER.debug("Received YubiKey ping response [{}]", response);

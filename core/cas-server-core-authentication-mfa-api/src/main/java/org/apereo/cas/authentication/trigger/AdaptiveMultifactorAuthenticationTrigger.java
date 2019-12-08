@@ -11,7 +11,6 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.HttpRequestUtils;
-import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
+import org.springframework.context.ApplicationContext;
 import org.springframework.core.Ordered;
 
 import javax.servlet.http.HttpServletRequest;
@@ -39,6 +39,7 @@ import java.util.Optional;
 public class AdaptiveMultifactorAuthenticationTrigger implements MultifactorAuthenticationTrigger {
     private final GeoLocationService geoLocationService;
     private final CasConfigurationProperties casProperties;
+    private final ApplicationContext applicationContext;
 
     private int order = Ordered.LOWEST_PRECEDENCE;
 
@@ -51,7 +52,7 @@ public class AdaptiveMultifactorAuthenticationTrigger implements MultifactorAuth
         val multifactorMap = casProperties.getAuthn().getAdaptive().getRequireMultifactor();
 
         if (service == null || authentication == null) {
-            LOGGER.debug("No service or authentication is available to determine event for principal");
+            LOGGER.trace("No service or authentication is available to determine event for principal");
             return Optional.empty();
         }
 
@@ -60,7 +61,7 @@ public class AdaptiveMultifactorAuthenticationTrigger implements MultifactorAuth
             return Optional.empty();
         }
 
-        val providerMap = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(ApplicationContextProvider.getApplicationContext());
+        val providerMap = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
         if (providerMap.isEmpty()) {
             LOGGER.error("No multifactor authentication providers are available in the application context");
             throw new AuthenticationException(new MultifactorAuthenticationProviderAbsentException());

@@ -2,6 +2,7 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.principal.Response;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -232,7 +233,7 @@ public interface RegisteredService extends Serializable, Comparable<RegisteredSe
     String getPrivacyUrl();
 
     /**
-     * Identifies the logout url that that will be invoked
+     * Identifies the logout url that will be invoked
      * upon sending single-logout callback notifications.
      * This is an optional setting. When undefined, the service
      * url as is defined by {@link #getServiceId()} will be used
@@ -242,6 +243,18 @@ public interface RegisteredService extends Serializable, Comparable<RegisteredSe
      * @since 4.1
      */
     String getLogoutUrl();
+
+    /**
+     * Identifies the redirect url that will be used
+     * when building a response to authentication requests.
+     * The url is ultimately used to carry the service ticket
+     * back to the application and will override the default
+     * url which is tracked by the {@link WebApplicationService#getOriginalUrl()}.
+     *
+     * @return the redirect url for this service
+     * @since 6.2
+     */
+    String getRedirectUrl();
 
     /**
      * Gets the public key associated with this service

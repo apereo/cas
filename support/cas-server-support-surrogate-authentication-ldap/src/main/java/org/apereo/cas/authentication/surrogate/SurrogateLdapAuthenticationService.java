@@ -13,7 +13,7 @@ import lombok.val;
 import org.ldaptive.ConnectionFactory;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 
@@ -59,8 +59,7 @@ public class SurrogateLdapAuthenticationService extends BaseSurrogateAuthenticat
     }
 
     @Override
-    public List<String> getEligibleAccountsForSurrogateToProxy(final String username) {
-        val eligible = new ArrayList<String>();
+    public Collection<String> getEligibleAccountsForSurrogateToProxy(final String username) {
         try {
             val filter = LdapUtils.newLdaptiveSearchFilter(ldapProperties.getSearchFilter(), CollectionUtils.wrap(username));
             LOGGER.debug("Using search filter to find eligible accounts: [{}]", filter);
@@ -70,7 +69,7 @@ public class SurrogateLdapAuthenticationService extends BaseSurrogateAuthenticat
 
             if (!LdapUtils.containsResultEntry(response)) {
                 LOGGER.warn("LDAP response is not found or does not contain a result entry for [{}]", username);
-                return eligible;
+                return new ArrayList<>(0);
             }
 
             val ldapEntry = response.getResult().getEntry();
@@ -79,29 +78,30 @@ public class SurrogateLdapAuthenticationService extends BaseSurrogateAuthenticat
 
             if (attribute == null || attribute.getStringValues().isEmpty()) {
                 LOGGER.warn("Attribute [{}] not found or has no values", ldapProperties.getMemberAttributeName());
-                return eligible;
+                return new ArrayList<>(0);
             }
 
             val pattern = RegexUtils.createPattern(ldapProperties.getMemberAttributeValueRegex());
             LOGGER.debug("Constructed attribute value regex pattern [{}]", pattern.pattern());
-            eligible.addAll(
-                attribute.getStringValues()
-                    .stream()
-                    .map(pattern::matcher)
-                    .filter(Matcher::matches)
-                    .map(p -> {
-                        if (p.groupCount() > 0) {
-                            return p.group(1);
-                        }
-                        return p.group();
-                    })
-                    .sorted()
-                    .collect(Collectors.toList()));
+            val eligible = attribute.getStringValues()
+                .stream()
+                .map(pattern::matcher)
+                .filter(Matcher::matches)
+                .map(p -> {
+                    if (p.groupCount() > 0) {
+                        return p.group(1);
+                    }
+                    return p.group();
+                })
+                .sorted()
+                .collect(Collectors.toList());
+            LOGGER.debug("Following accounts may be eligible for surrogate authentication: [{}]", eligible);
+            return eligible;
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
 
-        LOGGER.debug("The following accounts may be eligible for surrogate authentication [{}]", eligible);
-        return eligible;
+        LOGGER.debug("No accounts may be eligible for surrogate authentication");
+        return new ArrayList<>(0);
     }
 }

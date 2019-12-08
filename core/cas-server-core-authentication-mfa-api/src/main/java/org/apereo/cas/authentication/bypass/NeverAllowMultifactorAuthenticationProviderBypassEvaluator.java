@@ -4,8 +4,6 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
 
-import lombok.extern.slf4j.Slf4j;
-
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -14,10 +12,10 @@ import javax.servlet.http.HttpServletRequest;
  * @author Travis Schmidt
  * @since 6.0
  */
-@Slf4j
 public class NeverAllowMultifactorAuthenticationProviderBypassEvaluator extends BaseMultifactorAuthenticationProviderBypassEvaluator {
     private static final long serialVersionUID = -2433888418344342672L;
-    private static volatile MultifactorAuthenticationProviderBypassEvaluator INSTANCE;
+
+    private static MultifactorAuthenticationProviderBypassEvaluator INSTANCE;
 
     protected NeverAllowMultifactorAuthenticationProviderBypassEvaluator() {
         super(NeverAllowMultifactorAuthenticationProviderBypassEvaluator.class.getSimpleName());
@@ -38,9 +36,9 @@ public class NeverAllowMultifactorAuthenticationProviderBypassEvaluator extends 
 
     @Override
     public boolean shouldMultifactorAuthenticationProviderExecuteInternal(final Authentication authentication,
-                                                                  final RegisteredService registeredService,
-                                                                  final MultifactorAuthenticationProvider provider,
-                                                                  final HttpServletRequest request) {
+                                                                          final RegisteredService registeredService,
+                                                                          final MultifactorAuthenticationProvider provider,
+                                                                          final HttpServletRequest request) {
         return true;
     }
 }

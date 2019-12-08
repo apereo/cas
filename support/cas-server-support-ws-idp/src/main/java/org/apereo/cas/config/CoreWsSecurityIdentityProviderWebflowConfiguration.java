@@ -4,11 +4,10 @@ import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
-import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
+import org.apereo.cas.ws.idp.web.flow.WSFederationIdentityProviderWebflowConfigurer;
 import org.apereo.cas.ws.idp.web.flow.WSFederationMetadataUIAction;
-import org.apereo.cas.ws.idp.web.flow.WSFederationWebflowConfigurer;
 
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +39,7 @@ public class CoreWsSecurityIdentityProviderWebflowConfiguration {
     private ApplicationContext applicationContext;
 
     @Autowired
-    private FlowBuilderServices flowBuilderServices;
+    private ObjectProvider<FlowBuilderServices> flowBuilderServices;
 
     @Autowired
     @Qualifier("servicesManager")
@@ -60,25 +59,21 @@ public class CoreWsSecurityIdentityProviderWebflowConfiguration {
     @Bean
     @RefreshScope
     public Action wsFederationMetadataUIAction() {
-        return new WSFederationMetadataUIAction(servicesManager.getIfAvailable(), wsFederationAuthenticationServiceSelectionStrategy.getIfAvailable());
+        return new WSFederationMetadataUIAction(servicesManager.getObject(), wsFederationAuthenticationServiceSelectionStrategy.getObject());
     }
 
     @ConditionalOnMissingBean(name = "wsFederationWebflowConfigurer")
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer wsFederationWebflowConfigurer() {
-        return new WSFederationWebflowConfigurer(flowBuilderServices,
-            loginFlowDefinitionRegistry.getIfAvailable(), wsFederationMetadataUIAction(), applicationContext, casProperties);
+        return new WSFederationIdentityProviderWebflowConfigurer(flowBuilderServices.getObject(),
+            loginFlowDefinitionRegistry.getObject(), wsFederationMetadataUIAction(),
+            applicationContext, casProperties);
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "wsFederationCasWebflowExecutionPlanConfigurer")
     public CasWebflowExecutionPlanConfigurer wsFederationCasWebflowExecutionPlanConfigurer() {
-        return new CasWebflowExecutionPlanConfigurer() {
-            @Override
-            public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-                plan.registerWebflowConfigurer(wsFederationWebflowConfigurer());
-            }
-        };
+        return plan -> plan.registerWebflowConfigurer(wsFederationWebflowConfigurer());
     }
 }

@@ -3,7 +3,6 @@ package org.apereo.cas.web.flow.action;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationCredentialsThreadLocalBinder;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -20,19 +19,18 @@ import org.springframework.webflow.execution.RequestContext;
  */
 @RequiredArgsConstructor
 public class SurrogateAuthorizationAction extends AbstractAction {
-    private final ServicesManager servicesManager;
     private final AuditableExecution registeredServiceAccessStrategyEnforcer;
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
         val ca = AuthenticationCredentialsThreadLocalBinder.getCurrentAuthentication();
         try {
-            val service = WebUtils.getService(requestContext);
-            val authentication = WebUtils.getAuthentication(requestContext);
             val svc = WebUtils.getRegisteredService(requestContext);
             if (svc != null) {
+                val authentication = WebUtils.getAuthentication(requestContext);
                 AuthenticationCredentialsThreadLocalBinder.bindCurrent(authentication);
 
+                val service = WebUtils.getService(requestContext);
                 val audit = AuditableContext.builder().service(service)
                     .service(service)
                     .authentication(authentication)

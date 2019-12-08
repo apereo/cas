@@ -62,7 +62,7 @@ public class DynamoDbMultifactorAuthenticationTrustConfiguration {
     public MultifactorAuthenticationTrustStorage mfaTrustEngine() {
         val m = new DynamoDbMultifactorAuthenticationTrustStorage(
             dynamoDbMultifactorTrustEngineFacilitator());
-        m.setCipherExecutor(mfaTrustCipherExecutor.getIfAvailable());
+        m.setCipherExecutor(mfaTrustCipherExecutor.getObject());
         return m;
     }
 }

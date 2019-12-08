@@ -3,6 +3,8 @@ package org.apereo.cas.support.saml;
 import org.apereo.cas.support.saml.idp.metadata.JpaSamlIdPMetadataGeneratorTests;
 import org.apereo.cas.support.saml.idp.metadata.MicrosoftSQLServerJpaSamlIdPMetadataGeneratorTests;
 import org.apereo.cas.support.saml.idp.metadata.MySQLJpaSamlIdPMetadataGeneratorTests;
+import org.apereo.cas.support.saml.idp.metadata.OracleJpaSamlIdPMetadataGeneratorTests;
+import org.apereo.cas.support.saml.idp.metadata.PostgresJpaSamlIdPMetadataGeneratorTests;
 import org.apereo.cas.support.saml.metadata.resolver.JpaSamlRegisteredServiceMetadataResolverTests;
 
 import org.junit.platform.runner.JUnitPlatform;
@@ -19,6 +21,8 @@ import org.junit.runner.RunWith;
     JpaSamlIdPMetadataGeneratorTests.class,
     JpaSamlRegisteredServiceMetadataResolverTests.class,
     MySQLJpaSamlIdPMetadataGeneratorTests.class,
+    PostgresJpaSamlIdPMetadataGeneratorTests.class,
+    OracleJpaSamlIdPMetadataGeneratorTests.class,
     MicrosoftSQLServerJpaSamlIdPMetadataGeneratorTests.class
 })
 @RunWith(JUnitPlatform.class)

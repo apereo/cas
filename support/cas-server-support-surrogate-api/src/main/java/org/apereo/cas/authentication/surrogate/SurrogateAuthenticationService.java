@@ -3,7 +3,7 @@ package org.apereo.cas.authentication.surrogate;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 
-import java.util.List;
+import java.util.Collection;
 
 /**
  * This is {@link SurrogateAuthenticationService}.
@@ -46,5 +46,5 @@ public interface SurrogateAuthenticationService {
      * @param username The username of the surrogate
      * @return collection of usernames
      */
-    List<String> getEligibleAccountsForSurrogateToProxy(String username);
+    Collection<String> getEligibleAccountsForSurrogateToProxy(String username);
 }

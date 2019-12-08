@@ -8,7 +8,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalNameTransformerUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
-import org.apereo.cas.authentication.support.password.PasswordPolicyConfiguration;
+import org.apereo.cas.authentication.support.password.PasswordPolicyContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 
@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -34,6 +35,8 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class JsonResourceAuthenticationEventExecutionPlanConfiguration {
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
 
     @Autowired
     @Qualifier("servicesManager")
@@ -56,11 +59,11 @@ public class JsonResourceAuthenticationEventExecutionPlanConfiguration {
     @Bean
     public AuthenticationHandler jsonResourceAuthenticationHandler() {
         val jsonProps = casProperties.getAuthn().getJson();
-        val h = new JsonResourceAuthenticationHandler(jsonProps.getName(), servicesManager.getIfAvailable(), jsonPrincipalFactory(),
+        val h = new JsonResourceAuthenticationHandler(jsonProps.getName(), servicesManager.getObject(), jsonPrincipalFactory(),
             null, jsonProps.getLocation());
-        h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(jsonProps.getPasswordEncoder()));
+        h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(jsonProps.getPasswordEncoder(), applicationContext));
         if (jsonProps.getPasswordPolicy().isEnabled()) {
-            h.setPasswordPolicyConfiguration(new PasswordPolicyConfiguration(jsonProps.getPasswordPolicy()));
+            h.setPasswordPolicyConfiguration(new PasswordPolicyContext(jsonProps.getPasswordPolicy()));
         }
         h.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(jsonProps.getPrincipalTransformation()));
         return h;
@@ -73,7 +76,7 @@ public class JsonResourceAuthenticationEventExecutionPlanConfiguration {
             val file = casProperties.getAuthn().getJson().getLocation();
             if (file != null) {
                 LOGGER.debug("Added JSON resource authentication handler for the target file [{}]", file.getFilename());
-                plan.registerAuthenticationHandlerWithPrincipalResolver(jsonResourceAuthenticationHandler(), defaultPrincipalResolver.getIfAvailable());
+                plan.registerAuthenticationHandlerWithPrincipalResolver(jsonResourceAuthenticationHandler(), defaultPrincipalResolver.getObject());
             }
         };
     }

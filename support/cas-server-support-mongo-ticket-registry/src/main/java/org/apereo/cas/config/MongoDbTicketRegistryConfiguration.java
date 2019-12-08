@@ -48,7 +48,7 @@ public class MongoDbTicketRegistryConfiguration {
     public TicketRegistry ticketRegistry(@Qualifier("ticketCatalog") final TicketCatalog ticketCatalog) {
         val mongo = casProperties.getTicket().getRegistry().getMongo();
         val registry = new MongoDbTicketRegistry(ticketCatalog, mongoDbTicketRegistryTemplate(),
-            mongo.isDropCollection(), ticketSerializationManager.getIfAvailable());
+            mongo.isDropCollection(), ticketSerializationManager.getObject());
         registry.setCipherExecutor(CoreTicketUtils.newTicketRegistryCipherExecutor(mongo.getCrypto(), "mongo"));
         return registry;
     }

@@ -17,6 +17,7 @@ import org.springframework.core.io.support.PropertiesLoaderUtils;
 
 import java.net.URL;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,7 +34,7 @@ import java.util.Properties;
 public class SystemUtils {
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
     private static final int SYSTEM_INFO_DEFAULT_SIZE = 20;
-    private static final String UPDATE_CHECK_MAVEN_URL = "https://search.maven.org/solrsearch/select?q=g:%22org.apereo.cas%22%20AND%20a:%22cas-server%22";
+    private static final String UPDATE_CHECK_MAVEN_URL = "https://search.maven.org/solrsearch/select?q=g:%22org.apereo.cas%22%20AND%20a:%22cas-server-core%22";
 
     private static final GitProperties GIT_PROPERTIES;
 
@@ -87,7 +88,7 @@ public class SystemUtils {
         info.put("OS Architecture", properties.get("os.arch"));
         info.put("OS Name", properties.get("os.name"));
         info.put("OS Version", properties.get("os.version"));
-        info.put("OS Date/Time", LocalDateTime.now());
+        info.put("OS Date/Time", LocalDateTime.now(ZoneId.systemDefault()));
         info.put("OS Temp Directory", FileUtils.getTempDirectoryPath());
 
         injectUpdateInfoIntoBannerIfNeeded(info);
@@ -120,7 +121,7 @@ public class SystemUtils {
         val entry = (Map) docs.get(0);
         val latestVersion = (String) entry.get("latestVersion");
         if (StringUtils.isNotBlank(latestVersion)) {
-            val currentVersion = CasVersion.getVersion();
+            val currentVersion = StringUtils.defaultString(CasVersion.getVersion(), GIT_PROPERTIES.get("build.version"));
             val latestSem = new Semver(latestVersion);
             val currentSem = new Semver(currentVersion);
 

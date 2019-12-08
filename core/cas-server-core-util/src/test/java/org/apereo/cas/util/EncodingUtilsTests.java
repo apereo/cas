@@ -13,6 +13,7 @@ import org.springframework.core.io.ClassPathResource;
 import java.nio.charset.StandardCharsets;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -47,7 +48,7 @@ public class EncodingUtilsTests {
         val secret = EncodingUtils.generateJsonWebKey(512);
         val key = new AesKey(secret.getBytes(StandardCharsets.UTF_8));
         val value = "ThisValue";
-        val signed = EncodingUtils.signJwsHMACSha512(key, value.getBytes(StandardCharsets.UTF_8));
+        val signed = EncodingUtils.signJwsHMACSha512(key, value.getBytes(StandardCharsets.UTF_8), Map.of());
         val jwt = EncodingUtils.verifyJwsSignature(key, signed);
         val result = new String(jwt, StandardCharsets.UTF_8);
         assertTrue(result.equals(value));
@@ -56,7 +57,7 @@ public class EncodingUtilsTests {
     @Test
     public void verifyRsaKeyForJwtSigning() {
         val value = "ThisValue";
-        val signed = EncodingUtils.signJwsRSASha512(getPrivateKey(), value.getBytes(StandardCharsets.UTF_8));
+        val signed = EncodingUtils.signJwsRSASha512(getPrivateKey(), value.getBytes(StandardCharsets.UTF_8), Map.of());
         val jwt = EncodingUtils.verifyJwsSignature(getPublicKey(), signed);
         val result = new String(jwt, StandardCharsets.UTF_8);
         assertTrue(result.equals(value));

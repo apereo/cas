@@ -4,21 +4,11 @@
         <Console name="console" target="SYSTEM_OUT">
             <PatternLayout pattern="%highlight{%d %p [%c] - &lt;%m&gt;%n}" />
         </Console>
-        <RollingFile name="file" fileName="build/x509.log" append="true"
-                     filePattern="x509-%d{yyyy-MM-dd-HH}-%i.log.gz">
-            <PatternLayout pattern="%highlight{%d %p [%c] - %m%n}" />
-            <Policies>
-                <OnStartupTriggeringPolicy />
-                <SizeBasedTriggeringPolicy size="10 MB"/>
-                <TimeBasedTriggeringPolicy />
-            </Policies>
-        </RollingFile>
     </Appenders>
     <Loggers>
-        <Logger name="org.apereo" level="off" additivity="false">
-            <AppenderRef ref="console"/>
-        </Logger>
-        <Root level="off">
+        <Logger name="org.apereo.cas.adaptors.x509.authentication.principal.X509UPNExtractorUtils" level="debug" />
+        <Logger name="org.apereo" level="error" />
+        <Root level="error">
             <AppenderRef ref="console"/>
         </Root>
     </Loggers>

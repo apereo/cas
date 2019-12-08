@@ -31,5 +31,5 @@ public class CasCustomProperties implements Serializable {
      * <p>
      * {@code cas.properties.[name]=[value]}
      */
-    private Map<String, String> properties = new HashMap<>();
+    private Map<String, String> properties = new HashMap<>(0);
 }

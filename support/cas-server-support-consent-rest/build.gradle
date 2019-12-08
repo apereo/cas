@@ -9,7 +9,12 @@ dependencies {
     implementation project(":support:cas-server-support-consent-core")
     
     testImplementation project(":core:cas-server-core-services")
+    testImplementation project(":core:cas-server-core-authentication")
     testImplementation project(":core:cas-server-core-configuration")
+    testImplementation project(":core:cas-server-core-audit")
+    testImplementation project(":core:cas-server-core-util")
+    testImplementation project(":core:cas-server-core-web")
+
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")

@@ -10,10 +10,9 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalNameTransformerUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
-import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
 import org.apereo.cas.authentication.principal.resolvers.ProxyingPrincipalResolver;
 import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
-import org.apereo.cas.authentication.support.password.PasswordPolicyConfiguration;
+import org.apereo.cas.authentication.support.password.PasswordPolicyContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.http.HttpClient;
@@ -29,6 +28,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -64,13 +64,16 @@ public class CasCoreAuthenticationHandlersConfiguration {
     @Qualifier("servicesManager")
     private ObjectProvider<ServicesManager> servicesManager;
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+
     @ConditionalOnProperty(prefix = "cas.sso", name = "proxyAuthnEnabled", havingValue = "true", matchIfMissing = true)
     @Bean
     public AuthenticationHandler proxyAuthenticationHandler() {
         return new HttpBasedServiceCredentialsAuthenticationHandler(null,
-            servicesManager.getIfAvailable(),
+            servicesManager.getObject(),
             proxyPrincipalFactory(), Integer.MIN_VALUE,
-            supportsTrustStoreSslSocketFactoryHttpClient.getIfAvailable());
+            supportsTrustStoreSslSocketFactoryHttpClient.getObject());
     }
 
     @ConditionalOnMissingBean(name = "proxyPrincipalFactory")
@@ -90,18 +93,18 @@ public class CasCoreAuthenticationHandlersConfiguration {
     public AuthenticationHandler acceptUsersAuthenticationHandler() {
         val props = casProperties.getAuthn().getAccept();
         val h = new AcceptUsersAuthenticationHandler(props.getName(),
-            servicesManager.getIfAvailable(),
+            servicesManager.getObject(),
             acceptUsersPrincipalFactory(),
             null,
             getParsedUsers());
-        h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(props.getPasswordEncoder()));
+        h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(props.getPasswordEncoder(), applicationContext));
         h.setPasswordPolicyConfiguration(acceptPasswordPolicyConfiguration());
         h.setCredentialSelectionPredicate(CoreAuthenticationUtils.newCredentialSelectionPredicate(props.getCredentialCriteria()));
         h.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(props.getPrincipalTransformation()));
         val passwordPolicy = props.getPasswordPolicy();
-        h.setPasswordPolicyHandlingStrategy(CoreAuthenticationUtils.newPasswordPolicyHandlingStrategy(passwordPolicy));
+        h.setPasswordPolicyHandlingStrategy(CoreAuthenticationUtils.newPasswordPolicyHandlingStrategy(passwordPolicy, applicationContext));
         if (passwordPolicy.isEnabled()) {
-            val cfg = new PasswordPolicyConfiguration(passwordPolicy);
+            val cfg = new PasswordPolicyContext(passwordPolicy);
             if (passwordPolicy.isAccountStateHandlingEnabled()) {
                 cfg.setAccountStateHandler((response, configuration) -> new ArrayList<>(0));
             } else {
@@ -139,14 +142,14 @@ public class CasCoreAuthenticationHandlersConfiguration {
 
     @ConditionalOnMissingBean(name = "acceptPasswordPolicyConfiguration")
     @Bean
-    public PasswordPolicyConfiguration acceptPasswordPolicyConfiguration() {
-        return new PasswordPolicyConfiguration();
+    public PasswordPolicyContext acceptPasswordPolicyConfiguration() {
+        return new PasswordPolicyContext();
     }
 
     @ConditionalOnMissingBean(name = "jaasPasswordPolicyConfiguration")
     @Bean
-    public PasswordPolicyConfiguration jaasPasswordPolicyConfiguration() {
-        return new PasswordPolicyConfiguration();
+    public PasswordPolicyContext jaasPasswordPolicyConfiguration() {
+        return new PasswordPolicyContext();
     }
 
     /**
@@ -175,13 +178,8 @@ public class CasCoreAuthenticationHandlersConfiguration {
                 .filter(jaas -> StringUtils.isNotBlank(jaas.getRealm()))
                 .map(jaas -> {
                     val jaasPrincipal = jaas.getPrincipal();
-                    val principalAttribute = StringUtils.defaultIfBlank(jaasPrincipal.getPrincipalAttribute(), personDirectory.getPrincipalAttribute());
-                    return new PersonDirectoryPrincipalResolver(attributeRepository.getIfAvailable(),
-                        jaasPrincipalFactory(),
-                        jaasPrincipal.isReturnNull() || personDirectory.isReturnNull(),
-                        principalAttribute,
-                        jaasPrincipal.isUseExistingPrincipalId() || personDirectory.isUseExistingPrincipalId(),
-                        jaasPrincipal.isAttributeResolutionEnabled());
+                    return CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(jaasPrincipalFactory(),
+                        attributeRepository.getObject(), jaasPrincipal, personDirectory);
                 })
                 .collect(Collectors.toList());
         }
@@ -194,13 +192,13 @@ public class CasCoreAuthenticationHandlersConfiguration {
                 .stream()
                 .filter(jaas -> StringUtils.isNotBlank(jaas.getRealm()))
                 .map(jaas -> {
-                    val h = new JaasAuthenticationHandler(jaas.getName(), servicesManager.getIfAvailable(),
+                    val h = new JaasAuthenticationHandler(jaas.getName(), servicesManager.getObject(),
                         jaasPrincipalFactory(), jaas.getOrder());
 
                     h.setKerberosKdcSystemProperty(jaas.getKerberosKdcSystemProperty());
                     h.setKerberosRealmSystemProperty(jaas.getKerberosRealmSystemProperty());
                     h.setRealm(jaas.getRealm());
-                    h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(jaas.getPasswordEncoder()));
+                    h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(jaas.getPasswordEncoder(), applicationContext));
 
                     if (StringUtils.isNotBlank(jaas.getLoginConfigType())) {
                         h.setLoginConfigType(jaas.getLoginConfigType());
@@ -209,10 +207,10 @@ public class CasCoreAuthenticationHandlersConfiguration {
                         h.setLoginConfigurationFile(new File(jaas.getLoginConfigurationFile()));
                     }
                     val passwordPolicy = jaas.getPasswordPolicy();
-                    h.setPasswordPolicyHandlingStrategy(CoreAuthenticationUtils.newPasswordPolicyHandlingStrategy(passwordPolicy));
+                    h.setPasswordPolicyHandlingStrategy(CoreAuthenticationUtils.newPasswordPolicyHandlingStrategy(passwordPolicy, applicationContext));
                     if (passwordPolicy.isEnabled()) {
                         LOGGER.debug("Password policy is enabled for JAAS. Constructing password policy configuration for [{}]", jaas.getRealm());
-                        val cfg = new PasswordPolicyConfiguration(passwordPolicy);
+                        val cfg = new PasswordPolicyContext(passwordPolicy);
                         if (passwordPolicy.isAccountStateHandlingEnabled()) {
                             cfg.setAccountStateHandler((response, configuration) -> new ArrayList<>(0));
                         } else {

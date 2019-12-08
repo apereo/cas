@@ -9,7 +9,7 @@ dependencies {
     implementation project(":support:cas-server-support-ldap-core")
     
     implementation libraries.bouncycastle
-    implementation libraries.ehcache
+    implementation libraries.ehcache3
     implementation libraries.ldaptive
     
     testImplementation project(":support:cas-server-support-generic")

@@ -1,8 +1,9 @@
+apply plugin: "war"
+ext {
+    mainClassName = "org.apereo.cas.web.CasWebApplication"
+}
 description = "Apereo CAS Web Application"
 
-apply plugin: "war"
-
-project.ext["mainClassName"] = "org.apereo.cas.web.CasWebApplication"
 sourceSets {
     main {
         resources {
@@ -14,22 +15,10 @@ sourceSets {
      * Application’s static resources are loaded from their source location.
      */
     bootRun {
-        resources {
-            srcDirs new File("//etc/cas/templates/"),
-                    new File("${project(":webapp").getProjectDir()}/cas-server-webapp-resources/src/main/resources/")
-        }
-    }
-}
-
-publishing {
-    publications {
-        mavenWeb(MavenPublication) {
-            from components.web
-            pom {
-                createPom(it, project)
-            }
-            pom.withXml {
-                createPomRepositories(asNode())
+        if (project.name.matches('cas-server-webapp-(tomcat|jetty|undertow)')) {
+            resources {
+                srcDirs new File("//etc/cas/templates/"),
+                        new File("${project(":webapp").getProjectDir()}/cas-server-webapp-resources/src/main/resources/")
             }
         }
     }
@@ -55,12 +44,15 @@ dependencies {
     implementation project(":support:cas-server-support-person-directory")
     implementation project(":support:cas-server-support-themes")
     implementation project(":support:cas-server-support-validation")
+    implementation project(":support:cas-server-support-pm-webflow")
 
     implementation project(":webapp:cas-server-webapp-config")
     implementation project(":webapp:cas-server-webapp-init")
+    implementation project(":webapp:cas-server-webapp-resources")
 
     implementation libraries.springcloudconfigclient
-
-    developmentOnly libraries.springbootdevtools
+    if (!rootProject.publishReleases && !rootProject.publishSnapshots) {
+        runtimeClasspath libraries.springbootdevtools
+    }
     runtimeOnly libraries.webjars
 }

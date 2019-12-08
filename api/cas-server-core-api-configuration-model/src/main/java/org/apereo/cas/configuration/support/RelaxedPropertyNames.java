@@ -21,7 +21,7 @@ public class RelaxedPropertyNames implements Iterable<String> {
 
     private final String name;
 
-    private final Set<String> values = new LinkedHashSet<>();
+    private final Set<String> values = new LinkedHashSet<>(0);
 
     public RelaxedPropertyNames(final String name) {
         this.name = StringUtils.defaultString(name);

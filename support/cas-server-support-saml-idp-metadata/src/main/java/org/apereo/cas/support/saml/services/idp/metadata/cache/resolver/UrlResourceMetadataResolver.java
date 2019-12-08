@@ -5,6 +5,7 @@ import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.saml.InMemoryResourceMetadataResolver;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlException;
+import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DigestUtils;
@@ -87,7 +88,7 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
             LOGGER.debug("Metadata backup file will be at [{}]", canonicalPath);
             FileUtils.forceMkdirParent(backupFile);
 
-            response = fetchMetadata(metadataLocation, criteriaSet);
+            response = fetchMetadata(metadataLocation, criteriaSet, backupFile);
             val status = HttpStatus.valueOf(response.getStatusLine().getStatusCode());
             if (shouldHttpResponseStatusBeProcessed(status)) {
                 val metadataProvider = getMetadataResolverFromResponse(response, backupFile);
@@ -141,11 +142,12 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
      *
      * @param metadataLocation the metadata location
      * @param criteriaSet      the criteria set
+     * @param backupFile       the backup file
      * @return the http response
      */
-    protected HttpResponse fetchMetadata(final String metadataLocation, final CriteriaSet criteriaSet) {
+    protected HttpResponse fetchMetadata(final String metadataLocation, final CriteriaSet criteriaSet, final File backupFile) {
         LOGGER.debug("Fetching metadata from [{}]", metadataLocation);
-        return HttpUtils.executeGet(metadataLocation, new LinkedHashMap<>());
+        return HttpUtils.executeGet(metadataLocation, new LinkedHashMap<>(0));
     }
 
     /**
@@ -214,7 +216,9 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
         if (StringUtils.isBlank(mdFileName)) {
             throw new FileNotFoundException("Unable to determine filename for " + metadataResource);
         }
-        val fileName = service.getMetadataLocation();
+        val fileName = SamlUtils.isDynamicMetadataQueryConfigured(service.getMetadataLocation())
+                ? service.getServiceId()
+                : service.getMetadataLocation();
         val sha = DigestUtils.sha(fileName);
         LOGGER.trace("Metadata backup file for metadata location [{}] is linked to [{}]", fileName, sha);
         return sha;
@@ -224,7 +228,9 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
     public boolean supports(final SamlRegisteredService service) {
         try {
             val metadataLocation = getMetadataLocationForService(service, new CriteriaSet());
-            return StringUtils.isNotBlank(metadataLocation) && StringUtils.startsWith(metadataLocation, "http");
+            return StringUtils.isNotBlank(metadataLocation)
+                    && StringUtils.startsWith(metadataLocation, "http")
+                    && !SamlUtils.isDynamicMetadataQueryConfigured(metadataLocation);
         } catch (final Exception e) {
             LOGGER.trace(e.getMessage(), e);
         }

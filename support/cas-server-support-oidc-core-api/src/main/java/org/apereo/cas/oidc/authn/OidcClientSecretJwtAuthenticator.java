@@ -16,6 +16,7 @@ import lombok.val;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.profile.CommonProfile;
+import org.springframework.context.ApplicationContext;
 
 import java.util.HashMap;
 import java.util.List;
@@ -33,9 +34,10 @@ public class OidcClientSecretJwtAuthenticator extends BaseOidcJwtAuthenticator {
                                             final AuditableExecution registeredServiceAccessStrategyEnforcer,
                                             final TicketRegistry ticketRegistry,
                                             final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
-                                            final CasConfigurationProperties casProperties) {
+                                            final CasConfigurationProperties casProperties,
+                                            final ApplicationContext applicationContext) {
         super(servicesManager, registeredServiceAccessStrategyEnforcer,
-            ticketRegistry, webApplicationServiceServiceFactory, casProperties);
+            ticketRegistry, webApplicationServiceServiceFactory, casProperties, applicationContext);
     }
 
     @Override

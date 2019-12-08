@@ -2,6 +2,7 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.scripting.ScriptingUtils;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.EqualsAndHashCode;
@@ -93,7 +94,7 @@ public class GroovyRegisteredServiceAccessStrategy implements RegisteredServiceA
     @SneakyThrows
     private void buildGroovyAccessStrategyInstanceIfNeeded() {
         if (this.groovyStrategyInstance == null) {
-            val groovyResource = ResourceUtils.getResourceFrom(this.groovyScript);
+            val groovyResource = ResourceUtils.getResourceFrom(SpringExpressionLanguageValueResolver.getInstance().resolve(this.groovyScript));
             this.groovyStrategyInstance = ScriptingUtils.getObjectInstanceFromGroovyResource(groovyResource, RegisteredServiceAccessStrategy.class);
         }
     }

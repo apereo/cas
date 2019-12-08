@@ -18,7 +18,7 @@ dependencies {
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":core:cas-server-core-services")
     testImplementation project(":core:cas-server-core-util")
-    testImplementation project(":core:cas-server-core-tickets")
+    
     testImplementation project(":core:cas-server-core-services-authentication")
     testImplementation project(":core:cas-server-core-authentication-api")
     testImplementation project(":core:cas-server-core-authentication")

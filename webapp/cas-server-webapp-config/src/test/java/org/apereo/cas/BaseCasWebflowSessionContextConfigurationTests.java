@@ -14,9 +14,11 @@ import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfig
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
+import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
@@ -47,6 +49,7 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
+import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -56,7 +59,6 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
@@ -85,6 +87,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.0.0
  */
 @SpringBootTest(classes = {
+    MailSenderAutoConfiguration.class,
     CasThemesConfiguration.class,
     CasFiltersConfiguration.class,
     CasPropertiesConfiguration.class,
@@ -92,6 +95,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasWebflowServerSessionContextConfigurationTests.TestWebflowContextConfiguration.class,
     CasWebflowContextConfiguration.class,
     CasMultifactorAuthenticationWebflowConfiguration.class,
+    CasCoreTicketIdGeneratorsConfiguration.class,
     CasDefaultServiceTicketIdGeneratorsConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreWebflowConfiguration.class,
@@ -118,11 +122,15 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreAuditConfiguration.class,
     CasPersonDirectoryConfiguration.class,
     AopAutoConfiguration.class,
-    RefreshAutoConfiguration.class
+    RefreshAutoConfiguration.class,
+    CasCoreMultifactorAuthenticationConfiguration.class
+}, properties = {
+    "spring.mail.host=localhost",
+    "spring.mail.port=25000",
+    "spring.mail.testConnection=false"
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableAspectJAutoProxy(proxyTargetClass = true)
-@TestPropertySource(properties = "spring.aop.proxy-target-class=true")
 public abstract class BaseCasWebflowSessionContextConfigurationTests {
     @Test
     public void verifyExecutorsAreBeans() {
@@ -185,7 +193,7 @@ public abstract class BaseCasWebflowSessionContextConfigurationTests {
                     val flowScope = requestContext.getFlowScope();
                     flowScope.put("test", TEST);
                     flowScope.put("test0", Collections.singleton(TEST));
-                    flowScope.put("test1", Collections.singletonList(TEST));
+                    flowScope.put("test1", List.of(TEST));
                     flowScope.put("test2", Collections.singletonMap(TEST, TEST));
                     flowScope.put("test3", Arrays.asList(TEST, TEST));
                     flowScope.put("test4", new ConcurrentSkipListSet());
@@ -207,7 +215,7 @@ public abstract class BaseCasWebflowSessionContextConfigurationTests {
                     val principal = CoreAuthenticationTestUtils.getPrincipal();
                     authenticationResultBuilder.collect(authentication);
                     authenticationResultBuilder.collect(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
-                    val authenticationResult = authenticationResultBuilder.build(principalElectionStrategy.getIfAvailable(), service);
+                    val authenticationResult = authenticationResultBuilder.build(principalElectionStrategy.getObject(), service);
 
                     WebUtils.putAuthenticationResultBuilder(authenticationResultBuilder, requestContext);
                     WebUtils.putAuthenticationResult(authenticationResult, requestContext);

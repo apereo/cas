@@ -28,6 +28,7 @@ import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguratio
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.locator.FileSystemSamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
@@ -40,8 +41,10 @@ import org.apereo.cas.validation.config.CasCoreValidationConfiguration;
 import org.apereo.cas.web.UrlValidator;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
+import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
 import lombok.Data;
+import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -91,14 +94,13 @@ import static org.mockito.Mockito.*;
     CasCoreServicesConfiguration.class,
     CasCoreWebConfiguration.class,
     CasCoreWebflowConfiguration.class,
+    CasWebflowContextConfiguration.class,
     SamlIdPConfiguration.class,
     SamlIdPAuthenticationServiceSelectionStrategyConfiguration.class,
     SamlIdPEndpointsConfiguration.class,
     SamlIdPMetadataConfiguration.class,
     RefreshAutoConfiguration.class,
     AopAutoConfiguration.class,
-    CasCoreAuthenticationConfiguration.class,
-    CasCoreServicesAuthenticationConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
     CasCoreLogoutConfiguration.class,
@@ -158,13 +160,21 @@ public abstract class BaseSamlIdPConfigurationTests {
     @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
     protected SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver;
 
+    @Autowired
+    @Qualifier("samlIdPMetadataLocator")
+    protected SamlIdPMetadataLocator samlIdPMetadataLocator;
+    
+    @Autowired
+    @Qualifier("samlIdPMetadataGenerator")
+    protected SamlIdPMetadataGenerator samlIdPMetadataGenerator;
+
     @BeforeAll
     public static void beforeClass() {
         METADATA_DIRECTORY = new FileSystemResource("src/test/resources/metadata");
     }
 
     protected static Assertion getAssertion() {
-        val attributes = new LinkedHashMap<>(CoreAuthenticationTestUtils.getAttributes());
+        val attributes = new LinkedHashMap<String, Object>(CoreAuthenticationTestUtils.getAttributes());
         val permissions = new ArrayList<>();
         permissions.add(new PermissionSamlAttributeValue("admin", "cas-admins", "super-cas"));
         permissions.add(new PermissionSamlAttributeValue("designer", "cas-designers", "cas-ux"));
@@ -212,6 +222,7 @@ public abstract class BaseSamlIdPConfigurationTests {
 
     @TestConfiguration
     public static class SamlIdPMetadataTestConfiguration {
+        @SneakyThrows
         @Bean
         public SamlIdPMetadataLocator samlIdPMetadataLocator() {
             return new FileSystemSamlIdPMetadataLocator(METADATA_DIRECTORY);

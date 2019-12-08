@@ -12,7 +12,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.concurrent.TimeUnit;
+import java.time.Duration;
 
 /**
  * This is {@link CasEventsInMemoryRepositoryConfiguration}.
@@ -20,12 +20,11 @@ import java.util.concurrent.TimeUnit;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration("casEventsMemoryRepositoryConfiguration")
+@Configuration(value = "casEventsMemoryRepositoryConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class CasEventsInMemoryRepositoryConfiguration {
-
-
+    
     private static final int INITIAL_CACHE_SIZE = 50;
     private static final long MAX_CACHE_SIZE = 1_000_000;
     private static final long EXPIRATION_TIME = 2;
@@ -36,7 +35,7 @@ public class CasEventsInMemoryRepositoryConfiguration {
             .initialCapacity(INITIAL_CACHE_SIZE)
             .maximumSize(MAX_CACHE_SIZE)
             .recordStats()
-            .expireAfterWrite(EXPIRATION_TIME, TimeUnit.HOURS)
+            .expireAfterWrite(Duration.ofHours(EXPIRATION_TIME))
             .build(s -> {
                 LOGGER.error("Load operation of the cache is not supported.");
                 return null;

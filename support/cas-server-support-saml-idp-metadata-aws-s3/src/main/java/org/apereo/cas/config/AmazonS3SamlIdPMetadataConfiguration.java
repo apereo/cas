@@ -8,6 +8,7 @@ import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerat
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGeneratorConfigurationContext;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.idp.metadata.writer.SamlIdPCertificateAndKeyWriter;
+import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import com.amazonaws.services.s3.AmazonS3;
@@ -23,6 +24,8 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ResourceLoader;
+
+import java.util.Optional;
 
 /**
  * This is {@link AmazonS3SamlIdPMetadataConfiguration}.
@@ -56,12 +59,7 @@ public class AmazonS3SamlIdPMetadataConfiguration {
         val crypto = idp.getMetadata().getAmazonS3().getCrypto();
 
         if (crypto.isEnabled()) {
-            return new AmazonS3SamlIdPMetadataCipherExecutor(
-                crypto.getEncryption().getKey(),
-                crypto.getSigning().getKey(),
-                crypto.getAlg(),
-                crypto.getSigning().getKeySize(),
-                crypto.getEncryption().getKeySize());
+            return CipherExecutorUtils.newStringCipherExecutor(crypto, AmazonS3SamlIdPMetadataCipherExecutor.class);
         }
         LOGGER.info("Amazon S3 SAML IdP metadata encryption/signing is turned off and "
             + "MAY NOT be safe in a production environment. "
@@ -70,23 +68,22 @@ public class AmazonS3SamlIdPMetadataConfiguration {
         return CipherExecutor.noOp();
     }
 
-    @Bean(initMethod = "generate")
+    @Bean
     @SneakyThrows
     public SamlIdPMetadataGenerator samlIdPMetadataGenerator() {
         val idp = casProperties.getAuthn().getSamlIdp();
         val context = SamlIdPMetadataGeneratorConfigurationContext.builder()
             .samlIdPMetadataLocator(samlIdPMetadataLocator())
-            .samlIdPCertificateAndKeyWriter(samlSelfSignedCertificateWriter.getIfAvailable())
-            .entityId(idp.getEntityId())
+            .samlIdPCertificateAndKeyWriter(samlSelfSignedCertificateWriter.getObject())
             .resourceLoader(resourceLoader)
-            .casServerPrefix(casProperties.getServer().getPrefix())
-            .scope(idp.getScope())
+            .casProperties(casProperties)
             .metadataCipherExecutor(amazonS3SamlIdPMetadataCipherExecutor())
             .build();
-
-        return new AmazonS3SamlIdPMetadataGenerator(context,
-            amazonS3Client.getIfAvailable(),
+        val generator = new AmazonS3SamlIdPMetadataGenerator(context,
+            amazonS3Client.getObject(),
             idp.getMetadata().getAmazonS3().getIdpMetadataBucketName());
+        generator.generate(Optional.empty());
+        return generator;
     }
 
     @Bean
@@ -95,7 +92,7 @@ public class AmazonS3SamlIdPMetadataConfiguration {
         val idp = casProperties.getAuthn().getSamlIdp();
         return new AmazonS3SamlIdPMetadataLocator(amazonS3SamlIdPMetadataCipherExecutor(),
             idp.getMetadata().getAmazonS3().getIdpMetadataBucketName(),
-            amazonS3Client.getIfAvailable());
+            amazonS3Client.getObject());
     }
 
 }

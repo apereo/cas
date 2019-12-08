@@ -49,7 +49,7 @@ public class CasDiscoveryProfileConfiguration {
 
     @Bean
     public CasServerProfileRegistrar casServerProfileRegistrar() {
-        return new CasServerProfileRegistrar(servicesManager.getIfAvailable(), casProperties,
+        return new CasServerProfileRegistrar(servicesManager.getObject(),
             this.builtClients.getIfAvailable(),
             availableAttributes());
     }
@@ -57,13 +57,13 @@ public class CasDiscoveryProfileConfiguration {
     @Bean
     @ConditionalOnAvailableEndpoint
     public CasServerDiscoveryProfileEndpoint discoveryProfileEndpoint() {
-        return new CasServerDiscoveryProfileEndpoint(casProperties, servicesManager.getIfAvailable(), casServerProfileRegistrar());
+        return new CasServerDiscoveryProfileEndpoint(casProperties, casServerProfileRegistrar());
     }
 
     @Bean
     public Set<String> availableAttributes() {
         val attributes = new LinkedHashSet<String>(0);
-        val possibleUserAttributeNames = attributeRepository.getIfAvailable().getPossibleUserAttributeNames(IPersonAttributeDaoFilter.alwaysChoose());
+        val possibleUserAttributeNames = attributeRepository.getObject().getPossibleUserAttributeNames(IPersonAttributeDaoFilter.alwaysChoose());
         if (possibleUserAttributeNames != null) {
             attributes.addAll(possibleUserAttributeNames);
         }
@@ -83,7 +83,7 @@ public class CasDiscoveryProfileConfiguration {
     }
 
     private static Set<String> transformAttributes(final List<String> attributes) {
-        val attributeSet = new LinkedHashSet<String>();
+        val attributeSet = new LinkedHashSet<String>(attributes.size());
         CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(attributes)
             .values()
             .forEach(v -> attributeSet.add(v.toString()));

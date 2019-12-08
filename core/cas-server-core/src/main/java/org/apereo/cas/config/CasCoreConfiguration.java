@@ -22,13 +22,12 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.RegExUtils;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -52,7 +51,7 @@ public class CasCoreConfiguration {
     private ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer;
 
     @Autowired
-    private ApplicationEventPublisher applicationEventPublisher;
+    private ConfigurableApplicationContext applicationContext;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -98,8 +97,7 @@ public class CasCoreConfiguration {
     public AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan(final List<AuthenticationServiceSelectionStrategyConfigurer> configurers) {
         val plan = new DefaultAuthenticationServiceSelectionPlan();
         configurers.forEach(c -> {
-            val name = RegExUtils.removePattern(c.getClass().getSimpleName(), "\\$.+");
-            LOGGER.trace("Configuring authentication request service selection strategy plan [{}]", name);
+            LOGGER.trace("Configuring authentication request service selection strategy plan [{}]", c.getName());
             c.configureAuthenticationServiceSelectionStrategy(plan);
         });
         return plan;
@@ -108,7 +106,7 @@ public class CasCoreConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "serviceMatchingStrategy")
     public ServiceMatchingStrategy serviceMatchingStrategy() {
-        return new DefaultServiceMatchingStrategy(servicesManager.getIfAvailable());
+        return new DefaultServiceMatchingStrategy(servicesManager.getObject());
     }
     
     @Bean
@@ -116,16 +114,16 @@ public class CasCoreConfiguration {
     @ConditionalOnMissingBean(name = "centralAuthenticationService")
     public CentralAuthenticationService centralAuthenticationService(
         @Qualifier("authenticationServiceSelectionPlan") final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan) {
-        return new DefaultCentralAuthenticationService(applicationEventPublisher,
-            ticketRegistry.getIfAvailable(),
-            servicesManager.getIfAvailable(),
-            logoutManager.getIfAvailable(),
-            ticketFactory.getIfAvailable(),
+        return new DefaultCentralAuthenticationService(applicationContext,
+            ticketRegistry.getObject(),
+            servicesManager.getObject(),
+            logoutManager.getObject(),
+            ticketFactory.getObject(),
             authenticationServiceSelectionPlan,
             authenticationPolicyFactory(),
-            principalFactory.getIfAvailable(),
-            cipherExecutor.getIfAvailable(),
-            registeredServiceAccessStrategyEnforcer.getIfAvailable(),
+            principalFactory.getObject(),
+            cipherExecutor.getObject(),
+            registeredServiceAccessStrategyEnforcer.getObject(),
             serviceMatchingStrategy());
     }
 }

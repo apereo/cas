@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -35,6 +36,8 @@ import org.springframework.context.annotation.Configuration;
 @Configuration("cassandraAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CassandraAuthenticationConfiguration {
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
 
     @Autowired
     @Qualifier("servicesManager")
@@ -71,17 +74,17 @@ public class CassandraAuthenticationConfiguration {
     @Bean
     public AuthenticationHandler cassandraAuthenticationHandler() {
         val cassandra = casProperties.getAuthn().getCassandra();
-        val handler = new CassandraAuthenticationHandler(cassandra.getName(), servicesManager.getIfAvailable(),
+        val handler = new CassandraAuthenticationHandler(cassandra.getName(), servicesManager.getObject(),
             cassandraPrincipalFactory(),
             cassandra.getOrder(), cassandra, cassandraRepository());
         handler.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(cassandra.getPrincipalTransformation()));
-        handler.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(cassandra.getPasswordEncoder()));
+        handler.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(cassandra.getPasswordEncoder(), applicationContext));
         return handler;
     }
 
     @ConditionalOnMissingBean(name = "cassandraAuthenticationEventExecutionPlanConfigurer")
     @Bean
     public AuthenticationEventExecutionPlanConfigurer cassandraAuthenticationEventExecutionPlanConfigurer() {
-        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(cassandraAuthenticationHandler(), defaultPrincipalResolver.getIfAvailable());
+        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(cassandraAuthenticationHandler(), defaultPrincipalResolver.getObject());
     }
 }

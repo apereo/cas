@@ -172,11 +172,6 @@ public interface OAuth20Constants {
     String DEVICE_CODE_APPROVED_VIEW = "oauthDeviceCodeApprovedView";
 
     /**
-     * The error view.
-     */
-    String ERROR_VIEW = "casServiceErrorView";
-
-    /**
      * The invalid client.
      */
     String INVALID_CLIENT = "invalid_client";
@@ -190,6 +185,11 @@ public interface OAuth20Constants {
      * The invalid grant.
      */
     String INVALID_GRANT = "invalid_grant";
+
+    /**
+     * The invalid scope.
+     */
+    String INVALID_SCOPE = "invalid_scope";
 
     /**
      * Access denied error.

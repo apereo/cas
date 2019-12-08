@@ -1,0 +1,88 @@
+{
+  "allowedLicenses": [
+    {
+      "moduleLicense": "EDL 1.0"
+    },
+    {
+      "moduleLicense": "Apache License Version 2.0"
+    },
+    {
+      "moduleLicense": "Apache 2.0 License"
+    },
+    {
+      "moduleLicense": "Apache License, Version 2.0"
+    },
+    {
+      "moduleLicense": "Public Domain"
+    },
+    {
+      "moduleLicense": "Apache 2"
+    },
+    {
+      "moduleLicense": "MPL 1.1"
+    },
+    {
+      "moduleLicense": "MIT License"
+    },
+    {
+      "moduleLicense": "MIT"
+    },
+    {
+      "moduleLicense": "ASL 2.0"
+    },
+    {
+      "moduleLicense": "BSD New"
+    },
+    {
+      "moduleLicense": "BSD New License"
+    },
+    {
+      "moduleLicense": "The MIT License (MIT)"
+    },
+    {
+      "moduleLicense": "The MIT License"
+    },
+    {
+      "moduleLicense": "Apache 2.0"
+    },
+    {
+      "moduleLicense": "Eclipse Distribution License (EDL), Version 1.0"
+    },
+    {
+      "moduleLicense": "Apache License 2.0"
+    },
+    {
+      "moduleLicense": "BSD 2-Clause License"
+    },
+    {
+      "moduleLicense": "The Apache Software License, Version 2.0"
+    },
+    {
+      "moduleLicense": "The Apache License, Version 2.0"
+    },
+    {
+      "moduleLicense": "Apache Software License, Version 1.1"
+    },
+    {
+      "moduleLicense": "Apache Software License - Version 2.0"
+    },
+    {
+      "moduleLicense": "Apache Software License 1.1"
+    },
+    {
+      "moduleLicense": "Eclipse Distribution License 1.0"
+    },
+    {
+      "moduleLicense": "Eclipse Public License - v 1.0"
+    },
+    {
+      "moduleLicense": "Eclipse Public License v. 2.0"
+    },
+    {
+      "moduleLicense": "Creative Commons CC0"
+    },
+    {
+      "moduleLicense": "Common Public License - v 1.0"
+    }
+  ]
+}

@@ -24,7 +24,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Configuration("casMongoDbThrottlingConfiguration")
+@Configuration(value = "casMongoDbThrottlingConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasMongoDbThrottlingConfiguration {
 
@@ -59,8 +59,8 @@ public class CasMongoDbThrottlingConfiguration {
             .authenticationFailureCode(failure.getCode())
             .auditTrailExecutionPlan(auditTrailExecutionPlan)
             .applicationCode(throttle.getAppCode())
-            .throttledRequestResponseHandler(throttledRequestResponseHandler.getIfAvailable())
-            .throttledRequestExecutor(throttledRequestExecutor.getIfAvailable())
+            .throttledRequestResponseHandler(throttledRequestResponseHandler.getObject())
+            .throttledRequestExecutor(throttledRequestExecutor.getObject())
             .build();
 
         return new MongoDbThrottledSubmissionHandlerInterceptorAdapter(context, mongoTemplate, mongo.getCollection());

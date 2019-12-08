@@ -2,6 +2,8 @@ package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.util.crypto.CipherExecutor;
 
+import org.springframework.boot.test.context.SpringBootTest;
+
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -11,6 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Scott Battaglia
  * @since 3.0.0
  */
+@SpringBootTest(classes = BaseTicketRegistryTests.SharedTestConfiguration.class)
 public class DefaultTicketRegistryTests extends BaseTicketRegistryTests {
 
     @Override

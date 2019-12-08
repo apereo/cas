@@ -30,7 +30,7 @@ public class RegisteredServiceChainingAttributeFilter implements RegisteredServi
 
     private static final long serialVersionUID = 903015750234610128L;
 
-    private List<RegisteredServiceAttributeFilter> filters = new ArrayList<>();
+    private List<RegisteredServiceAttributeFilter> filters = new ArrayList<>(0);
 
     @Override
     public Map<String, List<Object>> filter(final Map<String, List<Object>> givenAttributes) {

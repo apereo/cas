@@ -16,7 +16,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.TestPropertySource;
 
 import java.nio.charset.StandardCharsets;
 
@@ -33,9 +32,9 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreUtilConfiguration.class,
     MailSenderAutoConfiguration.class,
     MailSenderValidatorAutoConfiguration.class
-})
+},
+    properties = "cas.smsProvider.rest.url=http://localhost:8132")
 @Tag("RestfulApi")
-@TestPropertySource(properties = "cas.smsProvider.rest.url=http://localhost:8132")
 public class RestfulSmsSenderTests {
     @Autowired
     @Qualifier("communicationsManager")

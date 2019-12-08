@@ -1,7 +1,6 @@
 package org.apereo.cas.audit;
 
 import org.apereo.cas.audit.spi.BaseAuditConfigurationTests;
-import org.apereo.cas.config.CasCoreUtilSerializationConfiguration;
 import org.apereo.cas.config.CasSupportRestAuditConfiguration;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockWebServer;
@@ -21,7 +20,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.TestPropertySource;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
@@ -36,15 +34,13 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
-    CasSupportRestAuditConfiguration.class,
-    CasCoreUtilSerializationConfiguration.class
-})
-@Tag("RestfulApi")
-@Slf4j
-@TestPropertySource(properties = {
+    CasSupportRestAuditConfiguration.class
+}, properties = {
     "cas.audit.rest.url=http://localhost:9296",
     "cas.audit.rest.asynchronous=false"
 })
+@Tag("RestfulApi")
+@Slf4j
 @Getter
 public class RestAuditTrailManagerTests extends BaseAuditConfigurationTests {
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();

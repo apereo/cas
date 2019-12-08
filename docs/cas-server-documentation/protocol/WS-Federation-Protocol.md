@@ -27,7 +27,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 </dependency>
 ```
 
-<div class="alert alert-info"><strong>YAGNI</strong><p>You do not need to explicitly incude this component
+<div class="alert alert-info"><strong>YAGNI</strong><p>You do not need to explicitly include this component
 in your configuration and overlays. This is just to teach you that it exists. The security token service will be pulled 
 in automatically once you declare the identity provider. Only include this module in your overlay if you 
 need compile-time access to the components within.</p></div>
@@ -104,6 +104,8 @@ Service definitions may be managed by the [service management](../services/Servi
 
 ### Standard Claims
 
+Attribute filtering and release policies are defined per relying party. See [this guide](../integration/Attribute-Release-Policies.html) for more info.
+
 The following standard claims are supported by CAS for release:
 
 | Claim                           | Description
@@ -153,6 +155,61 @@ that should be already available. The configuration looks as such:
 
 The above snippet allows CAS to release the claim `http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname` whose value
 is identified by the value of the `givenName` attribute that is already retrieved for the authenticated principal.
+
+### Inline Groovy Claims
+
+Claims may produce their values from an inline Groovy script. As an example, the claim `EMAIL_ADDRESS_2005` may be constructed 
+as a dynamic attribute whose value is determined by the inline Groovy script attribute and the `cn` attribute:
+
+```json
+{
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId" : "sample",
+  "name" : "sample",
+  "id" : 300,
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.ws.idp.services.WSFederationClaimsReleasePolicy",
+    "allowedAttributes" : {
+      "@class" : "java.util.TreeMap",
+      "EMAIL_ADDRESS_2005" : "groovy { return attributes['cn'].get(0) + '@example.org' }"
+    }
+  }
+}
+```
+
+### File-based Groovy Claims
+
+Claims may produce their values from an external Groovy script. As an example, the claim `EMAIL_ADDRESS_2005` may be constructed 
+as a dynamic attribute whose value is determined by the Groovy script attribute and the `cn` attribute:
+
+```json
+{
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId" : "sample",
+  "name" : "sample",
+  "id" : 300,
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.ws.idp.services.WSFederationClaimsReleasePolicy",
+    "allowedAttributes" : {
+      "@class" : "java.util.TreeMap",
+      "EMAIL_ADDRESS_2005" : "file:/path/to/script.groovy"
+    }
+  }
+}
+```
+
+The configuration of this component qualifies to use the [Spring Expression Language](../installation/Configuring-Spring-Expressions.html) syntax. The script 
+itself may have the following outline:
+
+```groovy
+def run(final Object... args) {
+    def attributes = args[0]
+    def logger = args[1]
+
+    logger.info "Attributes currently resolved: ${attributes}"
+    return [attributes["cn"][0] + "@example.org"]
+}
+```
 
 ### Custom Claims
 

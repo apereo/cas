@@ -3,13 +3,12 @@ package org.apereo.cas.config;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.DefaultSecurityTokenTicket;
 import org.apereo.cas.ticket.SecurityTokenTicket;
-import org.apereo.cas.ticket.serialization.TicketSerializationExecutionPlan;
 import org.apereo.cas.ticket.serialization.TicketSerializationExecutionPlanConfigurer;
 import org.apereo.cas.util.serialization.AbstractJacksonBackedStringSerializer;
-import org.apereo.cas.util.serialization.ComponentSerializationPlan;
-import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurator;
+import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurer;
 
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
@@ -18,20 +17,21 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Configuration("casWsSecurityTokenTicketComponentSerializationConfiguration")
+@Configuration(value = "casWsSecurityTokenTicketComponentSerializationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class CasWsSecurityTokenTicketComponentSerializationConfiguration
-    implements ComponentSerializationPlanConfigurator, TicketSerializationExecutionPlanConfigurer {
+public class CasWsSecurityTokenTicketComponentSerializationConfiguration {
 
-    @Override
-    public void configureTicketSerialization(final TicketSerializationExecutionPlan plan) {
-        plan.registerTicketSerializer(new SecurityTokenTicketStringSerializer());
-        plan.registerTicketSerializer(SecurityTokenTicket.class.getName(), new SecurityTokenTicketStringSerializer());
+    @Bean
+    public TicketSerializationExecutionPlanConfigurer casWsSecurityTokenTicketSerializationExecutionPlanConfigurer() {
+        return plan -> {
+            plan.registerTicketSerializer(new SecurityTokenTicketStringSerializer());
+            plan.registerTicketSerializer(SecurityTokenTicket.class.getName(), new SecurityTokenTicketStringSerializer());
+        };
     }
 
-    @Override
-    public void configureComponentSerializationPlan(final ComponentSerializationPlan plan) {
-        plan.registerSerializableClass(DefaultSecurityTokenTicket.class);
+    @Bean
+    public ComponentSerializationPlanConfigurer casWsSecurityTokenComponentSerializationPlanConfigurer() {
+        return plan -> plan.registerSerializableClass(DefaultSecurityTokenTicket.class);
     }
 
     private static class SecurityTokenTicketStringSerializer extends AbstractJacksonBackedStringSerializer<DefaultSecurityTokenTicket> {

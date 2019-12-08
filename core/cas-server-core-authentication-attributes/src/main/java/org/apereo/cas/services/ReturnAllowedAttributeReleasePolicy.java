@@ -38,7 +38,7 @@ public class ReturnAllowedAttributeReleasePolicy extends AbstractRegisteredServi
 
     private static final long serialVersionUID = -5771481877391140569L;
 
-    private List<String> allowedAttributes = new ArrayList<>();
+    private List<String> allowedAttributes = new ArrayList<>(0);
 
     @Override
     public Map<String, List<Object>> getAttributesInternal(final Principal principal, final Map<String, List<Object>> attrs,

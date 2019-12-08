@@ -29,7 +29,7 @@ import java.util.Map;
 @Getter
 @EqualsAndHashCode
 public class DefaultAuthentication implements Authentication {
-
+    private static final int MAP_SIZE = 8;
     private static final long serialVersionUID = 3206127526058061391L;
 
     /**
@@ -45,17 +45,17 @@ public class DefaultAuthentication implements Authentication {
     /**
      * Authentication messages and warnings.
      */
-    private List<MessageDescriptor> warnings = new ArrayList<>();
+    private List<MessageDescriptor> warnings = new ArrayList<>(MAP_SIZE);
 
     /**
      * List of metadata about credentials presented at authentication.
      */
-    private List<CredentialMetaData> credentials = new ArrayList<>();
+    private List<CredentialMetaData> credentials = new ArrayList<>(MAP_SIZE);
 
     /**
      * Authentication metadata attributes.
      */
-    private Map<String, List<Object>> attributes = new LinkedHashMap<>();
+    private Map<String, List<Object>> attributes = new LinkedHashMap<>(MAP_SIZE);
 
     /**
      * Map of handler name to handler authentication success event.
@@ -65,7 +65,7 @@ public class DefaultAuthentication implements Authentication {
     /**
      * Map of handler name to handler authentication failure cause.
      */
-    private Map<String, Throwable> failures = new LinkedHashMap<>();
+    private Map<String, Throwable> failures = new LinkedHashMap<>(MAP_SIZE);
 
     public DefaultAuthentication(
         final @NonNull ZonedDateTime date,
@@ -80,7 +80,7 @@ public class DefaultAuthentication implements Authentication {
         this.successes = successes;
         this.warnings = warnings;
         this.credentials = null;
-        this.failures = new LinkedHashMap<>();
+        this.failures = new LinkedHashMap<>(MAP_SIZE);
     }
 
     public DefaultAuthentication(

@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.Credential;
 
 import org.apereo.services.persondir.IPersonAttributeDao;
+import org.springframework.core.Ordered;
 
 import java.util.Optional;
 
@@ -21,7 +22,7 @@ import java.util.Optional;
  * @see Credential
  * @since 4.0.0
  */
-public interface PrincipalResolver {
+public interface PrincipalResolver extends Ordered {
 
     /**
      * Resolves a principal from the given credential using an arbitrary strategy.
@@ -80,5 +81,10 @@ public interface PrincipalResolver {
      */
     default String getName() {
         return this.getClass().getSimpleName();
+    }
+
+    @Override
+    default int getOrder() {
+        return 0;
     }
 }

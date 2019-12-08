@@ -4,7 +4,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.monitor.HazelcastHealthIndicator;
 
 import com.hazelcast.core.HazelcastInstance;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.ObjectProvider;
@@ -23,9 +22,8 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration("hazelcastMonitorConfiguration")
+@Configuration(value = "hazelcastMonitorConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class HazelcastMonitorConfiguration implements DisposableBean {
 
     @Autowired
@@ -39,7 +37,7 @@ public class HazelcastMonitorConfiguration implements DisposableBean {
     @RefreshScope
     @ConditionalOnEnabledHealthIndicator("hazelcastHealthIndicator")
     public HealthIndicator hazelcastHealthIndicator() {
-        val hazelcastInstance = casTicketRegistryHazelcastInstance.getIfAvailable();
+        val hazelcastInstance = casTicketRegistryHazelcastInstance.getObject();
         val warn = casProperties.getMonitor().getWarn();
         return new HazelcastHealthIndicator(
             warn.getEvictionThreshold(),
@@ -50,7 +48,7 @@ public class HazelcastMonitorConfiguration implements DisposableBean {
 
     @Override
     public void destroy() {
-        val hazelcastInstance = casTicketRegistryHazelcastInstance.getIfAvailable();
+        val hazelcastInstance = casTicketRegistryHazelcastInstance.getObject();
         if (hazelcastInstance != null) {
             hazelcastInstance.shutdown();
         }

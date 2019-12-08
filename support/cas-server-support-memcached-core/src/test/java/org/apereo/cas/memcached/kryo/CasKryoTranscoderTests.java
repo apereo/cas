@@ -25,6 +25,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 
 import javax.security.auth.login.AccountNotFoundException;
+
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -87,7 +89,7 @@ public class CasKryoTranscoderTests {
         val bldr = new DefaultAuthenticationBuilder(new DefaultPrincipalFactory()
             .createPrincipal("user", new HashMap<>(this.principalAttributes)));
         bldr.setAttributes(new HashMap<>(this.principalAttributes));
-        bldr.setAuthenticationDate(ZonedDateTime.now());
+        bldr.setAuthenticationDate(ZonedDateTime.now(ZoneId.systemDefault()));
         bldr.addCredential(new BasicCredentialMetaData(userPassCredential));
         bldr.addFailure("error", new AccountNotFoundException());
         bldr.addSuccess("authn", new DefaultAuthenticationHandlerExecutionResult(
@@ -98,11 +100,11 @@ public class CasKryoTranscoderTests {
         val expectedTGT = new TicketGrantingTicketImpl(TGT_ID,
             RegisteredServiceTestUtils.getService(),
             null, authentication,
-            new NeverExpiresExpirationPolicy());
+            NeverExpiresExpirationPolicy.INSTANCE);
 
         val serviceTicket = expectedTGT.grantServiceTicket(ST_ID,
             RegisteredServiceTestUtils.getService(),
-            new NeverExpiresExpirationPolicy(), false, true);
+            NeverExpiresExpirationPolicy.INSTANCE, false, true);
         var encoded = transcoder.encode(expectedTGT);
         var decoded = transcoder.decode(encoded);
 
@@ -208,7 +210,7 @@ public class CasKryoTranscoderTests {
     @Test
     public void verifyEncodeDecodeTGTWithSingleton() {
         val newAttributes = new HashMap<String, List<Object>>();
-        newAttributes.put(NICKNAME_KEY, Collections.singletonList(NICKNAME_VALUE));
+        newAttributes.put(NICKNAME_KEY, List.of(NICKNAME_VALUE));
         val userPassCredential = new UsernamePasswordCredential(USERNAME, PASSWORD);
         val expectedTGT = new MockTicketGrantingTicket(TGT_ID, userPassCredential, newAttributes);
         expectedTGT.grantServiceTicket(ST_ID, null, null, false, true);

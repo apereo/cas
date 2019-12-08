@@ -203,13 +203,13 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
         publishEvent(new CasAuthenticationTransactionSuccessfulEvent(this, credential));
         var principal = result.getPrincipal();
 
-        val resolverName = resolver != null ? resolver.getName(): "N/A";
         if (resolver == null) {
             LOGGER.debug("No principal resolution is configured for [{}]. Falling back to handler principal [{}]", authenticationHandlerName, principal);
         } else {
             principal = resolvePrincipal(handler, resolver, credential, principal);
             if (principal == null) {
                 if (this.principalResolutionFailureFatal) {
+                    val resolverName = resolver.getName();
                     LOGGER.warn("Principal resolution handled by [{}] produced a null principal for: [{}]"
                         + "CAS is configured to treat principal resolution failures as fatal.", resolverName, credential);
                     throw new UnresolvedPrincipalException();
@@ -281,7 +281,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
 
         val builder = new DefaultAuthenticationBuilder(NullPrincipal.getInstance());
         credentials.forEach(cred -> builder.addCredential(new BasicCredentialMetaData(cred)));
-        
+
         val handlerSet = this.authenticationEventExecutionPlan.getAuthenticationHandlersForTransaction(transaction);
         LOGGER.debug("Candidate resolved authentication handlers for this transaction are [{}]", handlerSet);
 
@@ -370,7 +370,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
     protected Pair<Boolean, Set<Throwable>> evaluateAuthenticationPolicies(final Authentication authentication,
                                                                            final AuthenticationTransaction transaction,
                                                                            final Set<AuthenticationHandler> authenticationHandlers) {
-        val failures = new LinkedHashSet<Throwable>();
+        val failures = new LinkedHashSet<Throwable>(authenticationHandlers.size());
         val policies = authenticationEventExecutionPlan.getAuthenticationPolicies(transaction);
 
         policies.forEach(p -> {

@@ -10,7 +10,6 @@ import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
-import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlan;
 import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlanConfigurer;
 import org.apereo.cas.persondir.support.CouchbasePersonAttributeDao;
 import org.apereo.cas.services.ServicesManager;
@@ -26,6 +25,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -40,6 +40,8 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class CouchbaseAuthenticationConfiguration {
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
 
     @Autowired
     @Qualifier("servicesManager")
@@ -73,11 +75,11 @@ public class CouchbaseAuthenticationConfiguration {
     public AuthenticationHandler couchbaseAuthenticationHandler() {
         val couchbase = casProperties.getAuthn().getCouchbase();
         val handler = new CouchbaseAuthenticationHandler(
-            servicesManager.getIfAvailable(), couchbasePrincipalFactory(),
+            servicesManager.getObject(), couchbasePrincipalFactory(),
             authenticationCouchbaseClientFactory(),
             couchbase);
         handler.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(couchbase.getPrincipalTransformation()));
-        handler.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(couchbase.getPasswordEncoder()));
+        handler.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(couchbase.getPasswordEncoder(), applicationContext));
         return handler;
     }
 
@@ -87,7 +89,7 @@ public class CouchbaseAuthenticationConfiguration {
         return plan -> {
             val couchbase = casProperties.getAuthn().getCouchbase();
             if (StringUtils.isNotBlank(couchbase.getPasswordAttribute()) && StringUtils.isNotBlank(couchbase.getUsernameAttribute())) {
-                plan.registerAuthenticationHandlerWithPrincipalResolver(couchbaseAuthenticationHandler(), defaultPrincipalResolver.getIfAvailable());
+                plan.registerAuthenticationHandlerWithPrincipalResolver(couchbaseAuthenticationHandler(), defaultPrincipalResolver.getObject());
             } else {
                 LOGGER.debug("No couchbase username/password is defined, so couchbase authentication will not be registered in the execution plan");
             }
@@ -108,12 +110,9 @@ public class CouchbaseAuthenticationConfiguration {
     @Bean
     public PersonDirectoryAttributeRepositoryPlanConfigurer couchbaseAttributeRepositoryPlanConfigurer() {
         val couchbase = casProperties.getAuthn().getAttributeRepository().getCouchbase();
-        return new PersonDirectoryAttributeRepositoryPlanConfigurer() {
-            @Override
-            public void configureAttributeRepositoryPlan(final PersonDirectoryAttributeRepositoryPlan plan) {
-                if (StringUtils.isNotBlank(couchbase.getUsernameAttribute())) {
-                    plan.registerAttributeRepository(couchbasePersonAttributeDao());
-                }
+        return plan -> {
+            if (StringUtils.isNotBlank(couchbase.getUsernameAttribute())) {
+                plan.registerAttributeRepository(couchbasePersonAttributeDao());
             }
         };
     }

@@ -4,6 +4,7 @@ import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import org.junit.jupiter.api.RepeatedTest;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -17,6 +18,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@SpringBootTest(classes = BaseTicketRegistryTests.SharedTestConfiguration.class)
 public class CachingTicketRegistryTests extends BaseTicketRegistryTests {
 
     @Override

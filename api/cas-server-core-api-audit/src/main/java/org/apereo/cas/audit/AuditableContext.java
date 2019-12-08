@@ -49,7 +49,7 @@ public class AuditableContext {
      * Properties.
      */
     @Builder.Default
-    private Map<String, Object> properties = new LinkedHashMap<>();
+    private Map<String, Object> properties = new LinkedHashMap<>(0);
 
     /**
      * Get.

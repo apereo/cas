@@ -14,6 +14,7 @@ import org.apereo.cas.web.support.ArgumentExtractor;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -28,13 +29,13 @@ import org.springframework.test.context.TestPropertySource;
     "cas.authn.policy.any.tryAll=true",
     "spring.aop.proxy-target-class=true",
     "cas.ticket.st.timeToKillInSeconds=30"
-    })
+})
 @Setter
 @Getter
 public abstract class AbstractCentralAuthenticationServiceTests extends BaseCasCoreTests {
     @Autowired
     @Qualifier("centralAuthenticationService")
-    private CentralAuthenticationService centralAuthenticationService;
+    private ObjectProvider<CentralAuthenticationService> centralAuthenticationService;
 
     @Autowired
     @Qualifier("ticketGrantingTicketCookieGenerator")

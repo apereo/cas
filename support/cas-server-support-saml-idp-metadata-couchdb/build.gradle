@@ -24,9 +24,6 @@ dependencies {
     implementation libraries.pac4jcore
     implementation libraries.pac4jjwt
     implementation libraries.nimbus
-    
-
-    runtimeOnly libraries.groovy
 
     testImplementation project(":core:cas-server-core-cookie")
     testImplementation project(":core:cas-server-core-web")

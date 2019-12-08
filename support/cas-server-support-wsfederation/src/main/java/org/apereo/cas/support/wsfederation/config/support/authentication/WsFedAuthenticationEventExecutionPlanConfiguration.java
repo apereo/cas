@@ -15,6 +15,7 @@ import org.apereo.cas.support.wsfederation.authentication.handler.support.WsFede
 import org.apereo.cas.support.wsfederation.authentication.principal.WsFederationCredentialsToPrincipalResolver;
 import org.apereo.cas.support.wsfederation.web.WsFederationCookieCipherExecutor;
 import org.apereo.cas.support.wsfederation.web.WsFederationCookieGenerator;
+import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.support.mgmr.DefaultCasCookieValueManager;
@@ -107,10 +108,7 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
     private static CipherExecutor getCipherExecutorForWsFederationConfig(final WsFederationDelegatedCookieProperties cookie) {
         val crypto = cookie.getCrypto();
         if (crypto.isEnabled()) {
-            return new WsFederationCookieCipherExecutor(crypto.getEncryption().getKey(), crypto.getSigning().getKey(),
-                crypto.getAlg(),
-                crypto.getSigning().getKeySize(),
-                crypto.getEncryption().getKeySize());
+            return CipherExecutorUtils.newStringCipherExecutor(crypto, WsFederationCookieCipherExecutor.class);
         }
         LOGGER.info("WsFederation delegated authentication cookie encryption/signing is turned off and "
             + "MAY NOT be safe in a production environment. "
@@ -147,7 +145,7 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
             .filter(wsfed -> StringUtils.isNotBlank(wsfed.getIdentityProviderUrl())
                 && StringUtils.isNotBlank(wsfed.getIdentityProviderIdentifier()))
             .forEach(wsfed -> {
-                val handler = new WsFederationAuthenticationHandler(wsfed.getName(), servicesManager.getIfAvailable(),
+                val handler = new WsFederationAuthenticationHandler(wsfed.getName(), servicesManager.getObject(),
                     wsfedPrincipalFactory(), wsfed.getOrder());
                 if (!wsfed.isAttributeResolverEnabled()) {
                     plan.registerAuthenticationHandler(handler);
@@ -162,7 +160,7 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
                     val principal = wsfed.getPrincipal();
                     val principalAttribute = StringUtils.defaultIfBlank(principal.getPrincipalAttribute(),
                         personDirectory.getPrincipalAttribute());
-                    val r = new WsFederationCredentialsToPrincipalResolver(attributeRepository.getIfAvailable(),
+                    val r = new WsFederationCredentialsToPrincipalResolver(attributeRepository.getObject(),
                         wsfedPrincipalFactory(),
                         principal.isReturnNull() || personDirectory.isReturnNull(),
                         principalAttribute,

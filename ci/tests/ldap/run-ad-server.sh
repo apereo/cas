@@ -93,6 +93,12 @@ docker run --detach \
 sleep 15 # Give it time to come up before we create users
 docker logs samba
 
+#Disable password history at the domain level.
+docker exec samba bash -c "samba-tool domain passwordsettings set --history-length=0"
+
+#Disable password min-age at the domain level
+docker exec samba bash -c "samba-tool domain passwordsettings set --min-pwd-age=0"
+
 # Create users that can be used by various tests (e.g. authenticiation tests, password change tests, etc.
 # If we aren't setting up brand new instance these will fail if they already exist but that is OK.
 echo Creating users for tests
@@ -101,9 +107,19 @@ docker exec samba bash -c "samba-tool user create aburr $DEFAULT_TESTUSER_PASSWO
 docker exec samba bash -c "samba-tool user create aham $DEFAULT_TESTUSER_PASSWORD --given-name=Alexander --surname=Hamilton"
 docker exec samba bash -c "samba-tool user create expireduser $DEFAULT_TESTUSER_PASSWORD --use-username-as-cn"
 docker exec samba bash -c "samba-tool user create disableduser $DEFAULT_TESTUSER_PASSWORD --use-username-as-cn"
+docker exec samba bash -c "samba-tool user create changepassword $DEFAULT_TESTUSER_PASSWORD --use-username-as-cn --mail-address=changepassword@example.org --telephone-number=1234567890 --department='DepartmentQuestion' --company='CompanyAnswer' --description='DescriptionQuestion' --physical-delivery-office=PhysicalDeliveryOfficeAnswer "
+docker exec samba bash -c "samba-tool user create changepasswordnoreset $DEFAULT_TESTUSER_PASSWORD --use-username-as-cn"
 docker exec samba bash -c "samba-tool user setexpiry --days 0 expireduser"
 docker exec samba bash -c "samba-tool user disable disableduser"
 docker exec samba bash -c "samba-tool user list"
+docker exec samba bash -c "samba-tool group addmembers 'Account Operators' admin"
+
+# create a special password policy and apply it to a user
+docker exec samba bash -c "samba-tool user create expirestomorrow $DEFAULT_TESTUSER_PASSWORD --use-username-as-cn"
+docker exec samba bash -c "samba-tool domain passwordsettings pso create expirepasswordsoon 10 --max-pwd-age=2"
+docker exec samba bash -c "samba-tool domain passwordsettings pso apply expirepasswordsoon expirestomorrow"
+
+
 
 # Copying certificate out of the container so it can be put in a Java certificate trust store.
 echo Putting cert in trust store for use by unit test
@@ -114,6 +130,7 @@ unset  MSYS_NO_PATHCONV
 if [[ -f ${TMPDIR}/adcacerts.jks ]] ; then
     rm ${TMPDIR}/adcacerts.jks
 fi
+echo Creating truststore: ${TMPDIR}/adcacerts.jks
 keytool -import -noprompt -trustcacerts -file ${ORG}.${DOMAIN}.crt -alias AD_CERT -keystore ${TMPDIR}/adcacerts.jks -storepass changeit
 rm ${ORG}.${DOMAIN}.crt
 

@@ -19,11 +19,11 @@ import org.apereo.cas.impl.token.InMemoryPasswordlessTokenRepository;
 import org.apereo.cas.impl.token.PasswordlessTokenCipherExecutor;
 import org.apereo.cas.impl.token.RestfulPasswordlessTokenRepository;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.io.CommunicationsManager;
 import org.apereo.cas.web.flow.AcceptPasswordlessAuthenticationAction;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
-import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.DisplayBeforePasswordlessAuthenticationAction;
 import org.apereo.cas.web.flow.PasswordlessAuthenticationWebflowConfigurer;
@@ -84,7 +84,7 @@ public class PasswordlessAuthenticationConfiguration {
     private ApplicationContext applicationContext;
 
     @Autowired
-    private FlowBuilderServices flowBuilderServices;
+    private ObjectProvider<FlowBuilderServices> flowBuilderServices;
 
     @Autowired
     @Qualifier("adaptiveAuthenticationPolicy")
@@ -111,7 +111,7 @@ public class PasswordlessAuthenticationConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "passwordlessTokenAuthenticationHandler")
     public AuthenticationHandler passwordlessTokenAuthenticationHandler() {
-        return new PasswordlessTokenAuthenticationHandler(null, servicesManager.getIfAvailable(),
+        return new PasswordlessTokenAuthenticationHandler(null, servicesManager.getObject(),
             passwordlessPrincipalFactory(), null, passwordlessTokenRepository());
     }
 
@@ -153,12 +153,7 @@ public class PasswordlessAuthenticationConfiguration {
         val tokens = casProperties.getAuthn().getPasswordless().getTokens();
         val crypto = tokens.getRest().getCrypto();
         if (crypto.isEnabled()) {
-            return new PasswordlessTokenCipherExecutor(
-                crypto.getEncryption().getKey(),
-                crypto.getSigning().getKey(),
-                crypto.getAlg(),
-                crypto.getSigning().getKeySize(),
-                crypto.getEncryption().getKeySize());
+            return CipherExecutorUtils.newStringCipherExecutor(crypto, PasswordlessTokenCipherExecutor.class);
         }
         return CipherExecutor.noOpOfSerializableToString();
     }
@@ -178,20 +173,18 @@ public class PasswordlessAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "verifyPasswordlessAccountAuthenticationAction")
     @RefreshScope
     public Action verifyPasswordlessAccountAuthenticationAction() {
-        return new VerifyPasswordlessAccountAuthenticationAction(
-            passwordlessTokenRepository(),
-            passwordlessUserAccountStore());
+        return new VerifyPasswordlessAccountAuthenticationAction(passwordlessUserAccountStore());
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "acceptPasswordlessAuthenticationAction")
     @RefreshScope
     public Action acceptPasswordlessAuthenticationAction() {
-        return new AcceptPasswordlessAuthenticationAction(initialAuthenticationAttemptWebflowEventResolver.getIfAvailable(),
-            serviceTicketRequestWebflowEventResolver.getIfAvailable(),
-            adaptiveAuthenticationPolicy.getIfAvailable(),
+        return new AcceptPasswordlessAuthenticationAction(initialAuthenticationAttemptWebflowEventResolver.getObject(),
+            serviceTicketRequestWebflowEventResolver.getObject(),
+            adaptiveAuthenticationPolicy.getObject(),
             passwordlessTokenRepository(),
-            authenticationSystemSupport.getIfAvailable(),
+            authenticationSystemSupport.getObject(),
             passwordlessUserAccountStore());
     }
 
@@ -200,37 +193,32 @@ public class PasswordlessAuthenticationConfiguration {
     @RefreshScope
     public Action displayBeforePasswordlessAuthenticationAction() {
         return new DisplayBeforePasswordlessAuthenticationAction(passwordlessTokenRepository(),
-            passwordlessUserAccountStore(), communicationsManager.getIfAvailable(), casProperties.getAuthn().getPasswordless());
+            passwordlessUserAccountStore(), communicationsManager.getObject(), casProperties.getAuthn().getPasswordless());
     }
 
     @Bean
     public Action initializeLoginAction() {
-        return new PrepareForPasswordlessAuthenticationAction(servicesManager.getIfAvailable());
+        return new PrepareForPasswordlessAuthenticationAction(servicesManager.getObject());
     }
 
     @ConditionalOnMissingBean(name = "passwordlessAuthenticationWebflowConfigurer")
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer passwordlessAuthenticationWebflowConfigurer() {
-        return new PasswordlessAuthenticationWebflowConfigurer(flowBuilderServices,
-            loginFlowDefinitionRegistry.getIfAvailable(), applicationContext, casProperties);
+        return new PasswordlessAuthenticationWebflowConfigurer(flowBuilderServices.getObject(),
+            loginFlowDefinitionRegistry.getObject(), applicationContext, casProperties);
     }
 
     @ConditionalOnMissingBean(name = "passwordlessAuthenticationEventExecutionPlanConfigurer")
     @Bean
     public AuthenticationEventExecutionPlanConfigurer passwordlessAuthenticationEventExecutionPlanConfigurer() {
         return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(
-            passwordlessTokenAuthenticationHandler(), defaultPrincipalResolver.getIfAvailable());
+            passwordlessTokenAuthenticationHandler(), defaultPrincipalResolver.getObject());
     }
 
     @ConditionalOnMissingBean(name = "passwordlessCasWebflowExecutionPlanConfigurer")
     @Bean
     public CasWebflowExecutionPlanConfigurer passwordlessCasWebflowExecutionPlanConfigurer() {
-        return new CasWebflowExecutionPlanConfigurer() {
-            @Override
-            public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-                plan.registerWebflowConfigurer(passwordlessAuthenticationWebflowConfigurer());
-            }
-        };
+        return plan -> plan.registerWebflowConfigurer(passwordlessAuthenticationWebflowConfigurer());
     }
 }

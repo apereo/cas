@@ -12,6 +12,7 @@ import lombok.val;
 import org.apereo.inspektr.audit.annotation.Audit;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -28,6 +29,7 @@ import java.util.Map;
 @Getter
 public class DefaultConsentEngine implements ConsentEngine {
     private static final long serialVersionUID = -617809298856160625L;
+    private static final int MAP_SIZE = 8;
 
     private final ConsentRepository consentRepository;
     private final ConsentDecisionBuilder consentDecisionBuilder;
@@ -60,7 +62,7 @@ public class DefaultConsentEngine implements ConsentEngine {
         LOGGER.debug("Consent is not required yet for [{}]; checking for reminder options", service);
         val unit = decision.getReminderTimeUnit();
         val dt = decision.getCreatedDate().plus(decision.getReminder(), unit);
-        val now = LocalDateTime.now();
+        val now = LocalDateTime.now(ZoneId.systemDefault());
 
         LOGGER.debug("Reminder threshold date/time is calculated as [{}]", dt);
         if (now.isAfter(dt)) {
@@ -125,6 +127,6 @@ public class DefaultConsentEngine implements ConsentEngine {
         if (policy != null) {
             return policy.getConsentableAttributes(authentication.getPrincipal(), service, registeredService);
         }
-        return new LinkedHashMap<>();
+        return new LinkedHashMap<>(MAP_SIZE);
     }
 }

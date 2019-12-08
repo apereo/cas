@@ -12,6 +12,7 @@ import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.scripting.ScriptingUtils;
 import org.apereo.cas.web.support.WebUtils;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
@@ -20,19 +21,18 @@ import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.io.UrlResource;
 import org.springframework.web.servlet.theme.AbstractThemeResolver;
 import org.springframework.webflow.execution.RequestContextHolder;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 /**
  * ThemeResolver to determine the theme for CAS based on the service provided.
@@ -45,6 +45,7 @@ import java.util.stream.Collectors;
  * @since 3.0.0
  */
 @Slf4j
+@RequiredArgsConstructor
 public class RegisteredServiceThemeResolver extends AbstractThemeResolver {
     private final ServicesManager servicesManager;
 
@@ -52,8 +53,6 @@ public class RegisteredServiceThemeResolver extends AbstractThemeResolver {
 
     private final CasConfigurationProperties casProperties;
 
-    private final ResourceLoader resourceLoader;
-    
     /**
      * This sets a flag on the request called "isMobile" and also
      * provides the custom flag called browserType which can be mapped into the theme.
@@ -61,20 +60,6 @@ public class RegisteredServiceThemeResolver extends AbstractThemeResolver {
      * Themes that understand isMobile should provide an alternative stylesheet.
      */
     private final Map<Pattern, String> overrides;
-
-    public RegisteredServiceThemeResolver(final ServicesManager servicesManager,
-                                          final Map<String, String> mobileOverrides,
-                                          final AuthenticationServiceSelectionPlan serviceSelectionStrategies,
-                                          final ResourceLoader resourceLoader,
-                                          final CasConfigurationProperties casProperties) {
-        this.servicesManager = servicesManager;
-        this.authenticationRequestServiceSelectionStrategies = serviceSelectionStrategies;
-        this.resourceLoader = resourceLoader;
-        this.casProperties = casProperties;
-        this.overrides = mobileOverrides.entrySet()
-            .stream()
-            .collect(Collectors.toMap(entry -> Pattern.compile(entry.getKey()), Map.Entry::getValue));
-    }
 
     @Override
     public String resolveThemeName(final HttpServletRequest request) {
@@ -117,6 +102,10 @@ public class RegisteredServiceThemeResolver extends AbstractThemeResolver {
 
         val themeName = determineThemeNameToChoose(request, service, rService);
         return rememberThemeName(request, themeName);
+    }
+
+    @Override
+    public void setThemeName(final HttpServletRequest request, final HttpServletResponse response, final String themeName) {
     }
 
     /**
@@ -166,10 +155,6 @@ public class RegisteredServiceThemeResolver extends AbstractThemeResolver {
         return getDefaultThemeName();
     }
 
-    @Override
-    public void setThemeName(final HttpServletRequest request, final HttpServletResponse response, final String themeName) {
-    }
-
     /**
      * Remember/save the theme in the request.
      *
@@ -183,7 +168,7 @@ public class RegisteredServiceThemeResolver extends AbstractThemeResolver {
     /**
      * Remember/save the theme in the request.
      *
-     * @param request the HTTP request
+     * @param request   the HTTP request
      * @param themeName the theme to remember
      * @return the remembered theme
      */

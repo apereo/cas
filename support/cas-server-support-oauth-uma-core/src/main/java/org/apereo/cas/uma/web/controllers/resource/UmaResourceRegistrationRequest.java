@@ -45,7 +45,7 @@ public class UmaResourceRegistrationRequest implements Serializable {
     private String name;
 
     @JsonProperty("resource_scopes")
-    private Collection<String> scopes = new LinkedHashSet<>();
+    private Collection<String> scopes = new LinkedHashSet<>(0);
 
     /**
      * As resource set.

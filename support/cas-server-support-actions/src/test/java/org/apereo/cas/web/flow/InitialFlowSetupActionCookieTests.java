@@ -87,7 +87,7 @@ public class InitialFlowSetupActionCookieTests extends AbstractWebflowActionsTes
             authenticationRequestServiceSelectionStrategies, tgtCookieGenerator,
             warnCookieGenerator, casProperties, authenticationEventExecutionPlan,
             new DefaultSingleSignOnParticipationStrategy(servicesManager, true,
-                true, mock(TicketRegistrySupport.class)),
+                true, mock(TicketRegistrySupport.class), mock(AuthenticationServiceSelectionPlan.class)),
             mock(TicketRegistrySupport.class));
 
         this.action.afterPropertiesSet();

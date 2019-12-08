@@ -31,7 +31,6 @@ public class ISOStandardDateFormat extends FastDateFormat {
         super(DATE_FORMAT, TimeZone.getDefault(), Locale.getDefault());
     }
 
-
     /**
      * Gets the current date and time
      * formatted by the pattern specified.

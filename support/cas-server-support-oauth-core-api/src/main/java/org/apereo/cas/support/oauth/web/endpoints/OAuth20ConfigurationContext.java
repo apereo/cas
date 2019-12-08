@@ -20,13 +20,15 @@ import org.apereo.cas.support.oauth.web.views.ConsentApprovalViewResolver;
 import org.apereo.cas.support.oauth.web.views.OAuth20CallbackAuthorizeViewResolver;
 import org.apereo.cas.support.oauth.web.views.OAuth20UserProfileViewRenderer;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
-import org.apereo.cas.ticket.OAuthTokenSigningAndEncryptionService;
-import org.apereo.cas.ticket.accesstoken.AccessToken;
-import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
-import org.apereo.cas.ticket.code.OAuthCodeFactory;
-import org.apereo.cas.ticket.device.DeviceToken;
-import org.apereo.cas.ticket.device.DeviceTokenFactory;
+import org.apereo.cas.ticket.OAuth20TokenSigningAndEncryptionService;
+import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
+import org.apereo.cas.ticket.accesstoken.OAuth20AccessTokenFactory;
+import org.apereo.cas.ticket.code.OAuth20CodeFactory;
+import org.apereo.cas.ticket.device.OAuth20DeviceToken;
+import org.apereo.cas.ticket.device.OAuth20DeviceTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.token.JwtBuilder;
+import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.gen.RandomStringGenerator;
 import org.apereo.cas.util.serialization.StringSerializer;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
@@ -40,6 +42,7 @@ import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.springframework.core.io.ResourceLoader;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Set;
 
@@ -58,7 +61,7 @@ public class OAuth20ConfigurationContext {
 
     private final TicketRegistry ticketRegistry;
 
-    private final AccessTokenFactory accessTokenFactory;
+    private final OAuth20AccessTokenFactory accessTokenFactory;
 
     private final PrincipalFactory principalFactory;
 
@@ -72,17 +75,19 @@ public class OAuth20ConfigurationContext {
 
     private final OAuth20TokenGenerator accessTokenGenerator;
 
+    private final JwtBuilder accessTokenJwtBuilder;
+
     private final OAuth20AccessTokenResponseGenerator accessTokenResponseGenerator;
 
-    private final ExpirationPolicyBuilder<AccessToken> accessTokenExpirationPolicy;
+    private final ExpirationPolicyBuilder<OAuth20AccessToken> accessTokenExpirationPolicy;
 
     private final Collection<OAuth20TokenRequestValidator> accessTokenGrantRequestValidators;
 
-    private final ExpirationPolicyBuilder<DeviceToken> deviceTokenExpirationPolicy;
+    private final ExpirationPolicyBuilder<OAuth20DeviceToken> deviceTokenExpirationPolicy;
 
     private AuditableExecution accessTokenGrantAuditableRequestExtractor;
 
-    private final OAuthCodeFactory oAuthCodeFactory;
+    private final OAuth20CodeFactory oAuthCodeFactory;
 
     private final ConsentApprovalViewResolver consentApprovalViewResolver;
 
@@ -96,7 +101,7 @@ public class OAuth20ConfigurationContext {
 
     private final Config oauthConfig;
 
-    private final DeviceTokenFactory deviceTokenFactory;
+    private final OAuth20DeviceTokenFactory deviceTokenFactory;
 
     private final OAuth20CallbackAuthorizeViewResolver callbackAuthorizeViewResolver;
 
@@ -114,9 +119,12 @@ public class OAuth20ConfigurationContext {
 
     private final ResourceLoader resourceLoader;
 
-    private OAuthTokenSigningAndEncryptionService idTokenSigningAndEncryptionService;
+    private OAuth20TokenSigningAndEncryptionService idTokenSigningAndEncryptionService;
 
     private final SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder;
 
     private final SessionStore<JEEContext> sessionStore;
+
+    private final CipherExecutor<Serializable, String> registeredServiceCipherExecutor;
+
 }

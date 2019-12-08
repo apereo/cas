@@ -19,7 +19,7 @@ import java.util.List;
 @Getter
 @Slf4j
 public class DefaultCasWebflowExecutionPlan implements CasWebflowExecutionPlan {
-    private final List<CasWebflowConfigurer> webflowConfigurers = new ArrayList<>();
+    private final List<CasWebflowConfigurer> webflowConfigurers = new ArrayList<>(0);
 
     @Override
     public void registerWebflowConfigurer(final CasWebflowConfigurer cfg) {

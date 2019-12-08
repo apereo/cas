@@ -1,5 +1,5 @@
 <p align="center">
-<img src="https://user-images.githubusercontent.com/1205228/30969994-e2fe6bf0-a470-11e7-80f9-d54d1e4d348e.png">
+<img src="https://user-images.githubusercontent.com/2813838/66173345-91b00380-e604-11e9-95f4-546767cc134c.png">
 </p>
 
 # Central Authentication Service (CAS)
@@ -34,8 +34,8 @@ There is no need for special ceremony to create separate issues. The pull reques
 | Version         | Reference
 |------------|-----------------------------------
 | ![](https://img.shields.io/badge/Development-WIP-blue.svg?style=flat) | [Link](https://apereo.github.io/cas/development)
+| ![](https://img.shields.io/badge/6.1.x-Current-green.svg?style=flat) | [Link](https://apereo.github.io/cas/6.1.x)
 | ![](https://img.shields.io/badge/6.0.x-Current-green.svg?style=flat) | [Link](https://apereo.github.io/cas/6.0.x)
-| ![](https://img.shields.io/badge/5.3.x-Current-green.svg?style=flat) | [Link](https://apereo.github.io/cas/5.3.x)
 
 Additional resources are available as follows:
 

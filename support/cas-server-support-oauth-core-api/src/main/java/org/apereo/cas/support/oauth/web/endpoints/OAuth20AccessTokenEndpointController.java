@@ -11,6 +11,7 @@ import org.apereo.cas.support.oauth.validator.token.device.UnapprovedOAuth20Devi
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGeneratedResult;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestDataHolder;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseResult;
+import org.apereo.cas.ticket.OAuth20UnauthorizedScopeRequestException;
 
 import com.google.common.base.Supplier;
 import lombok.SneakyThrows;
@@ -59,6 +60,9 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
             if (!verifyAccessTokenRequest(request, response)) {
                 throw new IllegalArgumentException("Access token validation failed");
             }
+        } catch (final OAuth20UnauthorizedScopeRequestException e) {
+            LOGGER.error(e.getMessage(), e);
+            return OAuth20Utils.writeError(response, OAuth20Constants.INVALID_SCOPE);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
             return OAuth20Utils.writeError(response, OAuth20Constants.INVALID_REQUEST);
@@ -80,6 +84,9 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
         } catch (final ThrottledOAuth20DeviceUserCodeApprovalException e) {
             LOGGER.error("Check for device user code approval is too quick and is throttled. Requests must slow down");
             return OAuth20Utils.writeError(response, OAuth20Constants.SLOW_DOWN);
+        } catch (final OAuth20UnauthorizedScopeRequestException e) {
+            LOGGER.error(e.getMessage(), e);
+            return OAuth20Utils.writeError(response, OAuth20Constants.INVALID_SCOPE);
         } catch (final Exception e) {
             LOGGER.error("Could not identify and extract access token request", e);
             return OAuth20Utils.writeError(response, OAuth20Constants.INVALID_GRANT);
@@ -127,7 +134,7 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
             .accessTokenTimeout(atPolicy.buildTicketExpirationPolicy().getTimeToLive())
             .deviceRefreshInterval(deviceRefreshInterval)
             .deviceTokenTimeout(dtPolicy.buildTicketExpirationPolicy().getTimeToLive())
-            .responseType(result.getResponseType().isPresent() ? result.getResponseType().get() : OAuth20ResponseTypes.NONE)
+            .responseType(result.getResponseType().orElse(OAuth20ResponseTypes.NONE))
             .casProperties(getOAuthConfigurationContext().getCasProperties())
             .generatedToken(result)
             .build();

@@ -20,7 +20,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Configuration("ldapPasswordManagementConfiguration")
+@Configuration(value = "ldapPasswordManagementConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class LdapPasswordManagementConfiguration {
     @Autowired
@@ -37,9 +37,9 @@ public class LdapPasswordManagementConfiguration {
     @RefreshScope
     @Bean
     public PasswordManagementService passwordChangeService() {
-        return new LdapPasswordManagementService(passwordManagementCipherExecutor.getIfAvailable(),
+        return new LdapPasswordManagementService(passwordManagementCipherExecutor.getObject(),
             casProperties.getServer().getPrefix(),
             casProperties.getAuthn().getPm(),
-            passwordHistoryService.getIfAvailable());
+            passwordHistoryService.getObject());
     }
 }

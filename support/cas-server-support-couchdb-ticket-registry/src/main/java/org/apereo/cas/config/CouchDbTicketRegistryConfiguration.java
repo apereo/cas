@@ -3,7 +3,6 @@ package org.apereo.cas.config;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
 import org.apereo.cas.couchdb.tickets.TicketRepository;
-import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.registry.CouchDbTicketRegistry;
 import org.apereo.cas.ticket.registry.NoOpTicketRegistryCleaner;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -41,7 +40,7 @@ public class CouchDbTicketRegistryConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "ticketRegistryCouchDbFactory")
     public CouchDbConnectorFactory ticketRegistryCouchDbFactory() {
-        return new CouchDbConnectorFactory(casProperties.getTicket().getRegistry().getCouchDb(), objectMapperFactory.getIfAvailable());
+        return new CouchDbConnectorFactory(casProperties.getTicket().getRegistry().getCouchDb(), objectMapperFactory.getObject());
     }
 
     @Bean
@@ -57,11 +56,10 @@ public class CouchDbTicketRegistryConfiguration {
 
     @RefreshScope
     @Bean
-    @Autowired
     @ConditionalOnMissingBean(name = "couchDbTicketRegistry")
-    public TicketRegistry ticketRegistry(@Qualifier("ticketCatalog") final TicketCatalog ticketCatalog) {
+    public TicketRegistry ticketRegistry() {
         val couchDb = casProperties.getTicket().getRegistry().getCouchDb();
-        val c = new CouchDbTicketRegistry(ticketCatalog, ticketRegistryCouchDbRepository(), couchDb.getRetries());
+        val c = new CouchDbTicketRegistry(ticketRegistryCouchDbRepository(), couchDb.getRetries());
         c.setCipherExecutor(CoreTicketUtils.newTicketRegistryCipherExecutor(couchDb.getCrypto(), "couchdb"));
         return c;
     }

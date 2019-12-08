@@ -16,8 +16,10 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.val;
 
+import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.util.Optional;
 
 /**
  * Mock service ticket.
@@ -53,7 +55,7 @@ public class MockServiceTicket implements ServiceTicket, TicketState {
         this.id = id;
         this.ticketGrantingTicket = parent;
         this.creationTime = ZonedDateTime.now(ZoneOffset.UTC);
-        this.expirationPolicy = policy == null ? new NeverExpiresExpirationPolicy() : policy;
+        this.expirationPolicy = Optional.ofNullable(policy).orElse(NeverExpiresExpirationPolicy.INSTANCE);
     }
 
     @Override
@@ -94,12 +96,12 @@ public class MockServiceTicket implements ServiceTicket, TicketState {
 
     @Override
     public ZonedDateTime getLastTimeUsed() {
-        return ZonedDateTime.now();
+        return ZonedDateTime.now(ZoneId.systemDefault());
     }
 
     @Override
     public ZonedDateTime getPreviousTimeUsed() {
-        return ZonedDateTime.now();
+        return ZonedDateTime.now(ZoneId.systemDefault());
     }
 
     @Override

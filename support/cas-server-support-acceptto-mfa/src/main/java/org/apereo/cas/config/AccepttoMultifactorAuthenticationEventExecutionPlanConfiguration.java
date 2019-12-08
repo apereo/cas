@@ -16,7 +16,6 @@ import org.apereo.cas.mfa.accepto.AccepttoMultifactorAuthenticationProvider;
 import org.apereo.cas.mfa.accepto.AccepttoMultifactorTokenCredential;
 import org.apereo.cas.services.ServicesManager;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.BeanCreationException;
@@ -37,7 +36,6 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("accepttoMultifactorAuthenticationEventExecutionPlanConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class AccepttoMultifactorAuthenticationEventExecutionPlanConfiguration {
 
     @Autowired
@@ -62,7 +60,7 @@ public class AccepttoMultifactorAuthenticationEventExecutionPlanConfiguration {
         val props = casProperties.getAuthn().getMfa().getAcceptto();
         validateConfigurationProperties();
         return new AccepttoMultifactorAuthenticationHandler(
-            servicesManager.getIfAvailable(),
+            servicesManager.getObject(),
             casAccepttoMultifactorPrincipalFactory(),
             props);
     }
@@ -72,9 +70,9 @@ public class AccepttoMultifactorAuthenticationEventExecutionPlanConfiguration {
     public MultifactorAuthenticationProvider casAccepttoMultifactorAuthenticationProvider() {
         val simple = casProperties.getAuthn().getMfa().getAcceptto();
         val p = new AccepttoMultifactorAuthenticationProvider();
-        p.setBypassEvaluator(casAccepttoMultifactorBypassEvaluator.getIfAvailable());
+        p.setBypassEvaluator(casAccepttoMultifactorBypassEvaluator.getObject());
         p.setFailureMode(simple.getFailureMode());
-        p.setFailureModeEvaluator(failureModeEvaluator.getIfAvailable());
+        p.setFailureModeEvaluator(failureModeEvaluator.getObject());
         p.setOrder(simple.getRank());
         p.setId(simple.getId());
         return p;

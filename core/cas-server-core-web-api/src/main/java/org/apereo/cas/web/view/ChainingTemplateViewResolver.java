@@ -20,7 +20,7 @@ import java.util.Map;
  */
 @Getter
 public class ChainingTemplateViewResolver extends AbstractConfigurableTemplateResolver {
-    private final List<AbstractTemplateResolver> resolvers = new ArrayList<>();
+    private final List<AbstractTemplateResolver> resolvers = new ArrayList<>(0);
 
     public ChainingTemplateViewResolver() {
         setOrder(0);

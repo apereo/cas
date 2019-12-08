@@ -21,7 +21,7 @@ import org.springframework.web.client.RestTemplate;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration("restMultifactorAuthenticationTrustConfiguration")
+@Configuration(value = "restMultifactorAuthenticationTrustConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class RestMultifactorAuthenticationTrustConfiguration {
 
@@ -36,7 +36,7 @@ public class RestMultifactorAuthenticationTrustConfiguration {
     @Bean
     public MultifactorAuthenticationTrustStorage mfaTrustEngine() {
         val m = new RestMultifactorAuthenticationTrustStorage(new RestTemplate(), casProperties);
-        m.setCipherExecutor(mfaTrustCipherExecutor.getIfAvailable());
+        m.setCipherExecutor(mfaTrustCipherExecutor.getObject());
         return m;
     }
 }

@@ -18,7 +18,6 @@ import com.amazonaws.services.cognitoidp.model.NotAuthorizedException;
 import com.amazonaws.services.cognitoidp.model.UserNotFoundException;
 import com.nimbusds.jose.proc.SimpleSecurityContext;
 import com.nimbusds.jwt.proc.ConfigurableJWTProcessor;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.DisposableBean;
@@ -38,7 +37,6 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Slf4j
 public class AmazonCognitoAuthenticationAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler implements DisposableBean {
     private final AWSCognitoIdentityProvider cognitoIdentityProvider;
     private final AmazonCognitoAuthenticationProperties properties;
@@ -99,7 +97,7 @@ public class AmazonCognitoAuthenticationAuthenticationHandler extends AbstractUs
             userAttributes.forEach(attr -> attributes.put(attr.getName(), CollectionUtils.wrap(attr.getValue())));
 
             val principal = principalFactory.createPrincipal(userResult.getUsername(), attributes);
-            return createHandlerResult(credential, principal, new ArrayList<>());
+            return createHandlerResult(credential, principal, new ArrayList<>(0));
         } catch (final NotAuthorizedException e) {
             val message = e.getMessage();
             if (message.contains("expired")) {

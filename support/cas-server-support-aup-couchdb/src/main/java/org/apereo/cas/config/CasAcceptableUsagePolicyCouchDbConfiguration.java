@@ -7,7 +7,6 @@ import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
 import org.apereo.cas.couchdb.core.ProfileCouchDbRepository;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.ektorp.impl.ObjectMapperFactory;
 import org.springframework.beans.factory.ObjectProvider;
@@ -25,9 +24,8 @@ import org.springframework.context.annotation.Configuration;
  * @author Timur Duehr
  * @since 6.0.0
  */
-@Configuration("casAcceptableUsagePolicyCoucbDbConfiguration")
+@Configuration(value = "casAcceptableUsagePolicyCoucbDbConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class CasAcceptableUsagePolicyCouchDbConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -44,7 +42,7 @@ public class CasAcceptableUsagePolicyCouchDbConfiguration {
     @Bean
     @RefreshScope
     public CouchDbConnectorFactory aupCouchDbFactory() {
-        return new CouchDbConnectorFactory(casProperties.getAcceptableUsagePolicy().getCouchDb(), objectMapperFactory.getIfAvailable());
+        return new CouchDbConnectorFactory(casProperties.getAcceptableUsagePolicy().getCouchDb(), objectMapperFactory.getObject());
     }
 
     @ConditionalOnMissingBean(name = "aupCouchDbRepository")
@@ -62,7 +60,7 @@ public class CasAcceptableUsagePolicyCouchDbConfiguration {
     @RefreshScope
     public AcceptableUsagePolicyRepository acceptableUsagePolicyRepository(
         @Qualifier("aupCouchDbRepository") final ProfileCouchDbRepository profileCouchDbRepository) {
-        return new CouchDbAcceptableUsagePolicyRepository(ticketRegistrySupport.getIfAvailable(),
+        return new CouchDbAcceptableUsagePolicyRepository(ticketRegistrySupport.getObject(),
             casProperties.getAcceptableUsagePolicy().getAupAttributeName(),
             profileCouchDbRepository,
             casProperties.getAcceptableUsagePolicy().getCouchDb().getRetries());

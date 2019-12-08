@@ -64,7 +64,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
         if (!clazz.isAssignableFrom(ticket.getClass())) {
             throw new ClassCastException("Ticket [" + ticket.getId() + " is of type " + ticket.getClass() + " when we were expecting " + clazz);
         }
-        return (T) ticket;
+        return clazz.cast(ticket);
     }
 
     @Override

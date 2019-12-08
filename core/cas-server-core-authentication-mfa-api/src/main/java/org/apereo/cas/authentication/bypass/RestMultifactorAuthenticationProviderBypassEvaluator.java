@@ -50,7 +50,7 @@ public class RestMultifactorAuthenticationProviderBypassEvaluator extends BaseMu
             }
 
             val response = HttpUtils.execute(rest.getUrl(), rest.getMethod(),
-                rest.getBasicAuthUsername(), rest.getBasicAuthPassword(), parameters, new HashMap<>());
+                rest.getBasicAuthUsername(), rest.getBasicAuthPassword(), parameters, new HashMap<>(0));
             return response.getStatusLine().getStatusCode() == HttpStatus.ACCEPTED.value();
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);

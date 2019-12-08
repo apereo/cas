@@ -2,7 +2,7 @@ package org.apereo.cas.support.saml.mdui;
 
 import org.apereo.cas.services.RegisteredService;
 
-import lombok.NoArgsConstructor;
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.opensaml.saml.common.xml.SAMLConstants;
@@ -19,7 +19,7 @@ import javax.servlet.http.HttpServletRequest;
  * @since 5.1.0
  */
 @Slf4j
-@NoArgsConstructor
+@UtilityClass
 public class MetadataUIUtils {
 
     /**

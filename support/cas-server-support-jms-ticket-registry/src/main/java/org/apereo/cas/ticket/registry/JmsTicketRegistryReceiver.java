@@ -1,6 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
-import org.apereo.cas.StringBean;
+import org.apereo.cas.JmsQueueIdentifier;
 import org.apereo.cas.ticket.registry.queue.BaseMessageQueueCommand;
 
 import lombok.RequiredArgsConstructor;
@@ -17,14 +17,14 @@ import org.springframework.jms.annotation.JmsListener;
 @RequiredArgsConstructor
 public class JmsTicketRegistryReceiver {
     private final TicketRegistry ticketRegistry;
-    private final StringBean ticketRegistryId;
+    private final JmsQueueIdentifier ticketRegistryId;
 
     /**
      * Receive.
      *
      * @param command command to execute.
      */
-    @JmsListener(destination = JmsTicketRegistry.QUEUE_DESTINATION, containerFactory = "messageQueueTicketRegistryFactory")
+    @JmsListener(destination = JmsTicketRegistryPublisher.QUEUE_DESTINATION, containerFactory = "messageQueueTicketRegistryFactory")
     public void receive(final BaseMessageQueueCommand command) {
         if (!command.getId().equals(this.ticketRegistryId)) {
             LOGGER.debug("Received message from ticket registry id [{}]. Executing command [{}]",

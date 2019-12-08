@@ -19,6 +19,7 @@ import javax.persistence.Lob;
 import javax.persistence.MappedSuperclass;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.util.Optional;
 
 /**
  * Abstract implementation of a ticket that handles all ticket state for
@@ -160,9 +161,9 @@ public abstract class AbstractTicket implements Ticket, TicketState {
     @Override
     public Authentication getAuthentication() {
         val ticketGrantingTicket = getTicketGrantingTicket();
-        return ticketGrantingTicket != null
-            ? ticketGrantingTicket.getAuthentication()
-            : null;
+        return Optional.ofNullable(ticketGrantingTicket)
+            .map(TicketGrantingTicket::getAuthentication)
+            .orElse(null);
     }
 
     @Override

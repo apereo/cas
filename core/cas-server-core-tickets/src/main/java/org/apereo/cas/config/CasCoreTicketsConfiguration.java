@@ -9,6 +9,7 @@ import org.apereo.cas.ticket.DefaultTicketCatalog;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.ServiceTicketFactory;
+import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketCatalogConfigurer;
 import org.apereo.cas.ticket.TicketFactory;
@@ -46,13 +47,13 @@ import org.apereo.cas.util.CoreTicketUtils;
 import org.apereo.cas.util.ProxyGrantingTicketIdGenerator;
 import org.apereo.cas.util.ProxyTicketIdGenerator;
 import org.apereo.cas.util.TicketGrantingTicketIdGenerator;
+import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.cipher.ProtocolTicketCipherExecutor;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.http.HttpClient;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.client.ssl.HttpURLConnectionFactory;
 import org.jasig.cas.client.validation.AbstractUrlBasedTicketValidator;
@@ -81,6 +82,7 @@ import org.springframework.transaction.annotation.TransactionManagementConfigure
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
+
 import java.net.HttpURLConnection;
 import java.net.URLConnection;
 import java.util.List;
@@ -115,11 +117,7 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
     @Autowired
     @Qualifier("uniqueIdGeneratorsMap")
     private ObjectProvider<Map<String, UniqueTicketIdGenerator>> uniqueIdGeneratorsMap;
-
-    @Autowired
-    @Qualifier("ticketRegistry")
-    private ObjectProvider<TicketRegistry> ticketRegistry;
-
+    
     @Autowired
     @Qualifier("supportsTrustStoreSslSocketFactoryHttpClient")
     private ObjectProvider<HttpClient> httpClient;
@@ -172,10 +170,10 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
     public ProxyTicketFactory defaultProxyTicketFactory() {
         val onlyTrackMostRecentSession = casProperties.getTicket().getTgt().isOnlyTrackMostRecentSession();
         return new DefaultProxyTicketFactory(proxyTicketExpirationPolicy(),
-            uniqueIdGeneratorsMap.getIfAvailable(),
+            uniqueIdGeneratorsMap.getObject(),
             protocolTicketCipherExecutor(),
             onlyTrackMostRecentSession,
-            servicesManager.getIfAvailable());
+            servicesManager.getObject());
     }
 
     @ConditionalOnMissingBean(name = "proxyGrantingTicketUniqueIdGenerator")
@@ -226,10 +224,10 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
     public ServiceTicketFactory defaultServiceTicketFactory() {
         val onlyTrackMostRecentSession = casProperties.getTicket().getTgt().isOnlyTrackMostRecentSession();
         return new DefaultServiceTicketFactory(serviceTicketExpirationPolicy(),
-            uniqueIdGeneratorsMap.getIfAvailable(),
+            uniqueIdGeneratorsMap.getObject(),
             onlyTrackMostRecentSession,
             protocolTicketCipherExecutor(),
-            servicesManager.getIfAvailable());
+            servicesManager.getObject());
     }
 
     @ConditionalOnMissingBean(name = "defaultTicketGrantingTicketFactory")
@@ -266,7 +264,7 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
     @Bean
     @ConditionalOnProperty(prefix = "cas.sso", name = "proxyAuthnEnabled", havingValue = "true", matchIfMissing = true)
     public ProxyHandler proxy20Handler() {
-        return new Cas20ProxyHandler(httpClient.getIfAvailable(), proxy20TicketUniqueIdGenerator());
+        return new Cas20ProxyHandler(httpClient.getObject(), proxy20TicketUniqueIdGenerator());
     }
 
     @ConditionalOnMissingBean(name = "ticketRegistry")
@@ -282,13 +280,14 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
             val logoutManager = applicationContext.getBean("logoutManager", LogoutManager.class);
             return new CachingTicketRegistry(cipher, logoutManager);
         }
-        return new DefaultTicketRegistry(new ConcurrentHashMap<>(mem.getInitialCapacity(), mem.getLoadFactor(), mem.getConcurrency()), cipher);
+        val storageMap = new ConcurrentHashMap<String, Ticket>(mem.getInitialCapacity(), mem.getLoadFactor(), mem.getConcurrency());
+        return new DefaultTicketRegistry(storageMap, cipher);
     }
 
     @ConditionalOnMissingBean(name = "defaultTicketRegistrySupport")
     @Bean
     public TicketRegistrySupport defaultTicketRegistrySupport() {
-        return new DefaultTicketRegistrySupport(ticketRegistry.getIfAvailable());
+        return new DefaultTicketRegistrySupport(ticketRegistry());
     }
 
     @ConditionalOnMissingBean(name = "grantingTicketExpirationPolicy")
@@ -337,12 +336,7 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
     public CipherExecutor protocolTicketCipherExecutor() {
         val crypto = casProperties.getTicket().getCrypto();
         if (crypto.isEnabled()) {
-            return new ProtocolTicketCipherExecutor(
-                crypto.getEncryption().getKey(),
-                crypto.getSigning().getKey(),
-                crypto.getAlg(),
-                crypto.getSigning().getKeySize(),
-                crypto.getEncryption().getKeySize());
+            return CipherExecutorUtils.newStringCipherExecutor(crypto, ProtocolTicketCipherExecutor.class);
         }
         LOGGER.trace("Protocol tickets generated by CAS are not signed/encrypted.");
         return CipherExecutor.noOp();
@@ -359,8 +353,7 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
     public TicketCatalog ticketCatalog(final List<TicketCatalogConfigurer> configurers) {
         val plan = new DefaultTicketCatalog();
         configurers.forEach(c -> {
-            val name = RegExUtils.removePattern(c.getClass().getSimpleName(), "\\$.+");
-            LOGGER.trace("Configuring ticket metadata registration plan [{}]", name);
+            LOGGER.trace("Configuring ticket metadata registration plan [{}]", c.getName());
             c.configureTicketCatalog(plan);
         });
         return plan;

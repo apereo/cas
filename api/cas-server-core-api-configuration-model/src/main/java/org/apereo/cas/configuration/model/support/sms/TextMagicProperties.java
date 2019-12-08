@@ -34,7 +34,47 @@ public class TextMagicProperties implements Serializable {
     private String username;
 
     /**
-     * API url, if any.
+     * Check that whether debugging is enabled for this API client.
      */
-    private String url;
+    private boolean debugging;
+
+    /**
+     * set password for the first HTTP basic authentication.
+     */
+    private String password;
+
+    /**
+     * read timeout (in milliseconds).
+     */
+    private int readTimeout = 5_000;
+
+    /**
+     * connect timeout (in milliseconds).
+     */
+    private int connectTimeout = 5_000;
+
+    /**
+     * Set the User-Agent header's value (by adding to the default header map).
+     */
+    private String userAgent;
+
+    /**
+     * Should SSL connections be verified?
+     */
+    private boolean verifyingSsl = true;
+
+    /**
+     * write timeout (in milliseconds).
+     */
+    private int writeTimeout;
+
+    /**
+     * set API key value for the first API key authentication.
+     */
+    private String apiKey;
+
+    /**
+     * set API key prefix for the first API key authentication.
+     */
+    private String apiKeyPrefix;
 }

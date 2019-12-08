@@ -38,6 +38,17 @@ public interface PasswordManagementService {
     }
 
     /**
+     * Find phone associated with username.
+     *
+     * @param username the username
+     * @return the string
+     */
+    default String findPhone(final String username) {
+        return null;
+    }
+
+    
+    /**
      * Find username linked to the email.
      *
      * @param email the email

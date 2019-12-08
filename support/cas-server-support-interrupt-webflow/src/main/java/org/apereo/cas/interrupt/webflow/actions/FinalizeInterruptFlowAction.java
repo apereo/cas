@@ -5,12 +5,13 @@ import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
+
+import java.util.Optional;
 
 /**
  * This is {@link FinalizeInterruptFlowAction}.
@@ -18,17 +19,16 @@ import org.springframework.webflow.execution.RequestContext;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Slf4j
 public class FinalizeInterruptFlowAction extends AbstractAction {
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {
-        val registeredService = WebUtils.getRegisteredService(requestContext);
         val response = InterruptUtils.getInterruptFrom(requestContext);
 
         if (response.isBlock()) {
-            val accessUrl = registeredService != null
-                ? registeredService.getAccessStrategy().getUnauthorizedRedirectUrl()
-                : null;
+            val registeredService = WebUtils.getRegisteredService(requestContext);
+            val accessUrl = Optional.ofNullable(registeredService)
+                .map(service -> service.getAccessStrategy().getUnauthorizedRedirectUrl())
+                .orElse(null);
             if (accessUrl != null) {
                 val url = accessUrl.toURL().toExternalForm();
                 val externalContext = requestContext.getExternalContext();

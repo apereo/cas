@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.validation.ValidationResponseType;
 
-import groovy.util.logging.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -23,13 +22,12 @@ import java.util.function.Function;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Slf4j
 public class ServiceValidationViewFactory {
 
     /**
      * The Registered views.
      */
-    private final Map<String, Pair<View, View>> registeredViews = new HashMap<>();
+    private final Map<String, Pair<View, View>> registeredViews = new HashMap<>(0);
 
     /**
      * Register view.

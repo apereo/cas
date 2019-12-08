@@ -32,6 +32,7 @@ import java.security.cert.CertPath;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Date;
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 /**
@@ -162,7 +163,9 @@ public abstract class BaseConverters {
     public static class DateToZonedDateTimeConverter implements Converter<Date, ZonedDateTime> {
         @Override
         public ZonedDateTime convert(final Date source) {
-            return source == null ? null : ZonedDateTime.ofInstant(source.toInstant(), ZoneId.systemDefault());
+            return Optional.ofNullable(source)
+                .map(date -> ZonedDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault()))
+                .orElse(null);
         }
     }
 
@@ -184,7 +187,7 @@ public abstract class BaseConverters {
     static class ObjectIdToLongConverter implements Converter<ObjectId, Long> {
         @Override
         public Long convert(final ObjectId source) {
-            return Long.valueOf(source.getMachineIdentifier());
+            return (long) source.getMachineIdentifier();
         }
     }
 
@@ -194,7 +197,7 @@ public abstract class BaseConverters {
     public static class ZonedDateTimeToDateConverter implements Converter<ZonedDateTime, Date> {
         @Override
         public Date convert(final ZonedDateTime source) {
-            return source == null ? null : Date.from(source.toInstant());
+            return Optional.ofNullable(source).map(zonedDateTime -> Date.from(zonedDateTime.toInstant())).orElse(null);
         }
     }
 
@@ -205,7 +208,7 @@ public abstract class BaseConverters {
     public static class ZonedDateTimeToStringConverter implements Converter<ZonedDateTime, String> {
         @Override
         public String convert(final ZonedDateTime source) {
-            return source == null ? null : source.toString();
+            return Optional.ofNullable(source).map(ZonedDateTime::toString).orElse(null);
         }
     }
 

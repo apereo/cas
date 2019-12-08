@@ -78,6 +78,29 @@ To access the service, the principal must have a `cn` attribute with the value o
 }
 ```
 
+To access the service, the principal must have a `cn` attribute with the value of `admin` **OR** a
+`givenName` attribute with the value of `Administrator`:
+
+```json
+{
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId" : "testId",
+  "name" : "testId",
+  "id" : 1,
+  "accessStrategy" : {
+    "@class" : "org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy",
+    "enabled" : true,
+    "ssoEnabled" : true,
+    "requireAllAttributes": false,
+    "requiredAttributes" : {
+      "@class" : "java.util.HashMap",
+      "cn" : [ "java.util.HashSet", [ "admin" ] ],
+      "givenName" : [ "java.util.HashSet", [ "Administrator" ] ]
+    }
+  }
+}
+```
+
 To access the service, the principal must have a `cn` attribute whose value is either of `admin`, `Admin` or `TheAdmin`.
 
 ```json
@@ -177,7 +200,7 @@ The following parameters are provided to the script:
 #### Enforce Combined Attribute Conditions
 
 To access the service, the principal must have a `cn` attribute whose value is either of `admin`, `Admin` or `TheAdmin`,
-OR the principal must have a `member` attribute whose value is either of `admins`, `adminGroup` or `staff`.
+**OR** the principal must have a `member` attribute whose value is either of `admins`, `adminGroup` or `staff`.
 
 
 ```json
@@ -329,7 +352,7 @@ class GroovyRegisteredAccessStrategy extends DefaultRegisteredServiceAccessStrat
 }
 ```
 
-Refer to the CAS API documentation to learn more about operations and expected behaviors.
+The configuration of this component qualifies to use the [Spring Expression Language](../installation/Configuring-Spring-Expressions.html) syntax. Refer to the CAS API documentation to learn more about operations and expected behaviors.
 
 ## Grouper
 

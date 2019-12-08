@@ -8,7 +8,6 @@ import org.apereo.cas.support.oauth.web.endpoints.BaseOAuth20Controller;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 
 import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.MediaType;
@@ -21,13 +20,14 @@ import org.springframework.web.util.UriComponentsBuilder;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import java.util.Optional;
+
 /**
  * This is {@link OidcLogoutEndpointController}.
  *
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Slf4j
 public class OidcLogoutEndpointController extends BaseOAuth20Controller {
     public OidcLogoutEndpointController(final OAuth20ConfigurationContext oAuthConfigurationContext) {
         super(oAuthConfigurationContext);
@@ -51,7 +51,7 @@ public class OidcLogoutEndpointController extends BaseOAuth20Controller {
                                       final HttpServletRequest request, final HttpServletResponse response) {
 
         if (StringUtils.isNotBlank(idToken)) {
-            val claims = getOAuthConfigurationContext().getIdTokenSigningAndEncryptionService().validate(idToken);
+            val claims = getOAuthConfigurationContext().getIdTokenSigningAndEncryptionService().decode(idToken, Optional.empty());
 
             val clientId = claims.getStringClaimValue(OAuth20Constants.CLIENT_ID);
 

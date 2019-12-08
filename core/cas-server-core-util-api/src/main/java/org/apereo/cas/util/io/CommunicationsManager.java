@@ -34,7 +34,7 @@ public class CommunicationsManager {
     }
 
     /**
-     * Email boolean.
+     * Email.
      *
      * @param principal       the principal
      * @param attribute       the email attribute

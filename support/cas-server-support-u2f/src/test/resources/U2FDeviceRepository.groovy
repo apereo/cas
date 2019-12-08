@@ -10,8 +10,8 @@ def read(Object[] args) {
     def devices = new HashMap<>()
     def reg = new DeviceRegistration("123456", "bjsdghj3b", "njsdkhjdfjh45", 1, false)
     devices.put(BaseResourceU2FDeviceRepository.MAP_KEY_DEVICES,
-            [new U2FDeviceRegistration(2000, "casuser", reg.toJson(), LocalDate.now()),
-             new U2FDeviceRegistration(1000, "casuser", reg.toJson(), LocalDate.now())
+            [new U2FDeviceRegistration(2000, "casuser", reg.toJson(), LocalDate.now(ZoneId.systemDefault())),
+             new U2FDeviceRegistration(1000, "casuser", reg.toJson(), LocalDate.now(ZoneId.systemDefault()))
             ])
     return devices
 }

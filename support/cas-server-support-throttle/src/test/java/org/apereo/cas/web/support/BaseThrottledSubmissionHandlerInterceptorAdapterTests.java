@@ -6,8 +6,27 @@ import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.DefaultAuthenticationTransaction;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
+import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationPolicyConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
+import org.apereo.cas.config.CasCoreConfiguration;
+import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
+import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
+import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
+import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasCoreWebConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryConfiguration;
+import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.CasThrottlingConfiguration;
+import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
+import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -21,18 +40,22 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.SpringBootConfiguration;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
+import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.test.MockRequestContext;
 
 import javax.servlet.http.HttpServletResponse;
+
 import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -43,13 +66,13 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
-@SpringBootTest(classes = {RefreshAutoConfiguration.class,
-    CasCoreUtilConfiguration.class,
-    CasCoreAuditConfiguration.class,
-    AopAutoConfiguration.class,
-    CasThrottlingConfiguration.class})
+@SpringBootTest(classes = BaseThrottledSubmissionHandlerInterceptorAdapterTests.SharedTestConfiguration.class,
+    properties = {
+        "spring.aop.proxy-target-class=true",
+        "cas.authn.throttle.failure.rangeSeconds=1",
+        "cas.authn.throttle.failure.threshold=2"
+    })
 @EnableAspectJAutoProxy(proxyTargetClass = true)
-@TestPropertySource(properties = {"spring.aop.proxy-target-class=true", "cas.authn.throttle.failure.rangeSeconds=1", "cas.authn.throttle.failure.threshold=2"})
 @EnableScheduling
 @Slf4j
 public abstract class BaseThrottledSubmissionHandlerInterceptorAdapterTests {
@@ -58,6 +81,13 @@ public abstract class BaseThrottledSubmissionHandlerInterceptorAdapterTests {
     @Autowired
     @Qualifier("casAuthenticationManager")
     protected AuthenticationManager authenticationManager;
+
+    private static UsernamePasswordCredential badCredentials(final String username) {
+        val credentials = new UsernamePasswordCredential();
+        credentials.setUsername(username);
+        credentials.setPassword("badpassword");
+        return credentials;
+    }
 
     @BeforeEach
     public void initialize() {
@@ -130,12 +160,38 @@ public abstract class BaseThrottledSubmissionHandlerInterceptorAdapterTests {
         throw new AssertionError("Expected AbstractAuthenticationException");
     }
 
-    private static UsernamePasswordCredential badCredentials(final String username) {
-        val credentials = new UsernamePasswordCredential();
-        credentials.setUsername(username);
-        credentials.setPassword("badpassword");
-        return credentials;
-    }
-
     public abstract ThrottledSubmissionHandlerInterceptor getThrottle();
+
+    @ImportAutoConfiguration({
+        RefreshAutoConfiguration.class,
+        MailSenderAutoConfiguration.class,
+        AopAutoConfiguration.class
+    })
+    @SpringBootConfiguration
+    @Import({
+        CasCoreConfiguration.class,
+        CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
+        CasCoreServicesConfiguration.class,
+        CasCoreUtilConfiguration.class,
+        CasCoreTicketsConfiguration.class,
+        CasCoreTicketIdGeneratorsConfiguration.class,
+        CasCoreTicketCatalogConfiguration.class,
+        CasCoreLogoutConfiguration.class,
+        CasPersonDirectoryConfiguration.class,
+        CasCoreAuthenticationPrincipalConfiguration.class,
+        CasCoreAuthenticationPolicyConfiguration.class,
+        CasCoreAuthenticationMetadataConfiguration.class,
+        CasCoreAuthenticationSupportConfiguration.class,
+        CasCoreAuthenticationHandlersConfiguration.class,
+        CasCoreAuthenticationConfiguration.class,
+        CasCoreServicesAuthenticationConfiguration.class,
+        CasCoreHttpConfiguration.class,
+        CasCoreWebConfiguration.class,
+        CasRegisteredServicesTestConfiguration.class,
+        CasWebApplicationServiceFactoryConfiguration.class,
+        CasCoreAuditConfiguration.class,
+        CasThrottlingConfiguration.class
+    })
+    static class SharedTestConfiguration {
+    }
 }

@@ -87,13 +87,15 @@ public class SamlProfileSamlSubjectBuilder extends AbstractSaml20ObjectBuilder i
             ? null
             : getNameIdForService(request, response, authnRequest, service, adaptor, binding, assertion, messageContext);
 
-        val skewAllowance = service.getSkewAllowance() > 0
-            ? service.getSkewAllowance()
-            : casProperties.getAuthn().getSamlIdp().getResponse().getSkewAllowance();
+        val notOnOrAfter = service.isSkipGeneratingSubjectConfirmationNotOnOrAfter()
+            ? null
+            : validFromDate.plusSeconds(service.getSkewAllowance() > 0
+                ? service.getSkewAllowance()
+                : casProperties.getAuthn().getSamlIdp().getResponse().getSkewAllowance());
 
         val subject = newSubject(subjectNameId, subjectConfNameId,
             service.isSkipGeneratingSubjectConfirmationRecipient() ? null : location,
-            service.isSkipGeneratingSubjectConfirmationNotOnOrAfter() ? null : validFromDate.plusSeconds(skewAllowance),
+            notOnOrAfter,
             service.isSkipGeneratingSubjectConfirmationInResponseTo() ? null : authnRequest.getID(),
             service.isSkipGeneratingSubjectConfirmationNotBefore() ? null : ZonedDateTime.now(ZoneOffset.UTC));
 

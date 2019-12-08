@@ -90,7 +90,7 @@ public class CasThrottlingConfiguration {
             .failureRangeInSeconds(throttle.getFailure().getRangeSeconds())
             .usernameParameter(throttle.getUsernameParameter())
             .authenticationFailureCode(throttle.getFailure().getCode())
-            .auditTrailExecutionPlan(auditTrailExecutionPlan.getIfAvailable())
+            .auditTrailExecutionPlan(auditTrailExecutionPlan.getObject())
             .applicationCode(throttle.getAppCode())
             .throttledRequestResponseHandler(throttledRequestResponseHandler())
             .throttledRequestExecutor(throttledRequestExecutor())
@@ -126,11 +126,6 @@ public class CasThrottlingConfiguration {
     @Bean
     @Order(0)
     public AuthenticationThrottlingExecutionPlanConfigurer authenticationThrottlingExecutionPlanConfigurer() {
-        return new AuthenticationThrottlingExecutionPlanConfigurer() {
-            @Override
-            public void configureAuthenticationThrottlingExecutionPlan(final AuthenticationThrottlingExecutionPlan plan) {
-                plan.registerAuthenticationThrottleInterceptor(authenticationThrottle());
-            }
-        };
+        return plan -> plan.registerAuthenticationThrottleInterceptor(authenticationThrottle());
     }
 }

@@ -6,7 +6,6 @@ import org.apereo.cas.util.HttpUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.http.HttpResponse;
 import org.springframework.context.ApplicationContext;
@@ -21,7 +20,6 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Slf4j
 @RequiredArgsConstructor
 public class RestfulLoginWebflowDecorator implements WebflowDecorator {
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();

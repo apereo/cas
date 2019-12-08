@@ -13,6 +13,7 @@ import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
+import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
@@ -33,7 +34,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.TestPropertySource;
 
 import java.util.Arrays;
 
@@ -47,12 +47,6 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @EnabledIfContinuousIntegration
 @EnabledIfPortOpen(port = 8000)
-@TestPropertySource(properties = {
-    "cas.ticket.registry.dynamoDb.endpoint=http://localhost:8000",
-    "cas.ticket.registry.dynamoDb.dropTablesOnStartup=true",
-    "cas.ticket.registry.dynamoDb.localInstance=true",
-    "cas.ticket.registry.dynamoDb.region=us-east-1"
-})
 @SpringBootTest(classes = {
     DynamoDbTicketRegistryConfiguration.class,
     DynamoDbTicketRegistryTicketCatalogConfiguration.class,
@@ -62,6 +56,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreHttpConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreAuthenticationConfiguration.class,
+    CasCoreTicketIdGeneratorsConfiguration.class,
     CasCoreServicesAuthenticationConfiguration.class,
     CasCoreConfiguration.class,
     CasCoreWebConfiguration.class,
@@ -74,7 +69,13 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreAuthenticationPrincipalConfiguration.class,
     CasCoreAuthenticationSupportConfiguration.class,
     CasPersonDirectoryConfiguration.class,
-    RefreshAutoConfiguration.class})
+    RefreshAutoConfiguration.class},
+    properties = {
+        "cas.ticket.registry.dynamoDb.endpoint=http://localhost:8000",
+        "cas.ticket.registry.dynamoDb.dropTablesOnStartup=true",
+        "cas.ticket.registry.dynamoDb.localInstance=true",
+        "cas.ticket.registry.dynamoDb.region=us-east-1"
+    })
 @Tag("DynamoDb")
 public class DynamoDbTicketRegistryFacilitatorTests {
 

@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.model.support.pac4j.cas.Pac4jCasClientProper
 import org.apereo.cas.configuration.model.support.pac4j.oauth.Pac4jOAuth20ClientProperties;
 import org.apereo.cas.configuration.model.support.pac4j.oidc.Pac4jOidcClientProperties;
 import org.apereo.cas.configuration.model.support.pac4j.saml.Pac4jSamlClientProperties;
+import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPDiscoveryProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
@@ -65,22 +66,22 @@ public class Pac4jDelegatedAuthenticationProperties implements Serializable {
     /**
      * Settings that deal with having SAML2 IdPs as an external delegated-to authentication provider.
      */
-    private List<Pac4jSamlClientProperties> saml = new ArrayList<>();
+    private List<Pac4jSamlClientProperties> saml = new ArrayList<>(0);
 
     /**
      * Settings that deal with having OpenID Connect Providers as an external delegated-to authentication provider.
      */
-    private List<Pac4jOidcClientProperties> oidc = new ArrayList<>();
+    private List<Pac4jOidcClientProperties> oidc = new ArrayList<>(0);
 
     /**
      * Settings that deal with having OAuth2-capable providers as an external delegated-to authentication provider.
      */
-    private List<Pac4jOAuth20ClientProperties> oauth2 = new ArrayList<>();
+    private List<Pac4jOAuth20ClientProperties> oauth2 = new ArrayList<>(0);
 
     /**
      * Settings that deal with having CAS Servers as an external delegated-to authentication provider.
      */
-    private List<Pac4jCasClientProperties> cas = new ArrayList<>();
+    private List<Pac4jCasClientProperties> cas = new ArrayList<>(0);
 
     /**
      * Settings that deal with having LinkedIn as an external delegated-to authentication provider.
@@ -153,6 +154,12 @@ public class Pac4jDelegatedAuthenticationProperties implements Serializable {
      */
     private Integer order;
 
+    /**
+     * Settings related to handling saml2 discovery of IdPs.
+     */
+    @NestedConfigurationProperty
+    private SamlIdPDiscoveryProperties samlDiscovery = new SamlIdPDiscoveryProperties();
+
     @RequiresModule(name = "cas-server-support-pac4j-webflow")
     @Getter
     @Setter
@@ -164,11 +171,6 @@ public class Pac4jDelegatedAuthenticationProperties implements Serializable {
          * The requested scope.
          */
         private String scope;
-
-        /**
-         * Custom fields to include in the request.
-         */
-        private String fields;
 
         public LinkedIn() {
             setClientName("LinkedIn");

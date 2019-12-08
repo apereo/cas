@@ -7,11 +7,11 @@ import org.apereo.cas.web.security.CasWebSecurityExpressionHandler;
 
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties;
 import org.springframework.boot.actuate.endpoint.web.PathMappedEndpoints;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
@@ -28,15 +28,14 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration("casWebAppSecurityConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasWebAppSecurityConfiguration implements WebMvcConfigurer {
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
 
     @Autowired
     private CasConfigurationProperties casProperties;
 
     @Autowired
-    private SecurityProperties securityProperties;
-
-    @Autowired
-    private WebEndpointProperties webEndpointProperties;
+    private ObjectProvider<SecurityProperties> securityProperties;
 
     @Autowired
     private ObjectProvider<PathMappedEndpoints> pathMappedEndpoints;
@@ -50,8 +49,11 @@ public class CasWebAppSecurityConfiguration implements WebMvcConfigurer {
     @Bean
     @ConditionalOnMissingBean(name = "casWebSecurityConfigurerAdapter")
     public WebSecurityConfigurerAdapter casWebSecurityConfigurerAdapter() {
-        return new CasWebSecurityConfigurerAdapter(casProperties, securityProperties,
-            casWebSecurityExpressionHandler(), webEndpointProperties, pathMappedEndpoints.getIfAvailable());
+        return new CasWebSecurityConfigurerAdapter(casProperties,
+            securityProperties.getObject(),
+            casWebSecurityExpressionHandler(),
+            pathMappedEndpoints.getObject(),
+            applicationContext);
     }
 
     @Override

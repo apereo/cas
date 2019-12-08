@@ -53,7 +53,6 @@ public interface ProtocolAttributeEncoder {
             finalAttributes.put(attributeName, v);
         });
         return finalAttributes;
-
     }
 
     /**

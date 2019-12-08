@@ -8,6 +8,7 @@ import org.apereo.cas.adaptors.u2f.storage.U2FJsonResourceDeviceRepository;
 import org.apereo.cas.adaptors.u2f.storage.U2FRestResourceDeviceRepository;
 import org.apereo.cas.authentication.PseudoPlatformTransactionManager;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
@@ -36,7 +37,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration("u2fConfiguration")
+@Configuration(value = "u2fConfiguration", proxyBeanMethods = true)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class U2FConfiguration {
@@ -88,7 +89,7 @@ public class U2FConfiguration {
         final LoadingCache<String, Map<String, String>> userStorage =
             Caffeine.newBuilder()
                 .expireAfterWrite(u2f.getExpireDevices(), u2f.getExpireDevicesTimeUnit())
-                .build(key -> new HashMap<>());
+                .build(key -> new HashMap<>(0));
         return new U2FInMemoryDeviceRepository(userStorage, requestStorage);
     }
 
@@ -97,12 +98,7 @@ public class U2FConfiguration {
     public CipherExecutor u2fRegistrationRecordCipherExecutor() {
         val crypto = casProperties.getAuthn().getMfa().getU2f().getCrypto();
         if (crypto.isEnabled()) {
-            return new U2FAuthenticationRegistrationRecordCipherExecutor(
-                crypto.getEncryption().getKey(),
-                crypto.getSigning().getKey(),
-                crypto.getAlg(),
-                crypto.getSigning().getKeySize(),
-                crypto.getEncryption().getKeySize());
+            return CipherExecutorUtils.newStringCipherExecutor(crypto, U2FAuthenticationRegistrationRecordCipherExecutor.class);
         }
         LOGGER.info("U2F registration record encryption/signing is turned off and "
             + "MAY NOT be safe in a production environment. "

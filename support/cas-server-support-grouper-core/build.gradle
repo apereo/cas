@@ -15,7 +15,7 @@ dependencies {
     compileOnly project(":core:cas-server-core-webflow")
     
     testImplementation project(":core:cas-server-core-authentication-api")
-    testImplementation project(":core:cas-server-core-services")
+    
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
     testImplementation project(":support:cas-server-support-json-service-registry")
 }

@@ -34,9 +34,37 @@ public class CasAddonsRegisteredServicesJsonSerializer extends RegisteredService
     private static final long serialVersionUID = 1874802012930264278L;
 
     private static final String SERVICE_REGISTRY_FILENAME = "servicesRegistry";
+
     private static final String SERVICES_KEY = "services";
 
     private final ObjectMapper objectMapper = new ObjectMapper().findAndRegisterModules();
+
+    private static RegisteredService convertServiceProperties(final Map serviceDataMap) {
+        val service = new RegexRegisteredService();
+
+        service.setId(Long.parseLong(serviceDataMap.get("id").toString()));
+        service.setName(serviceDataMap.get("name").toString());
+        service.setDescription(serviceDataMap.getOrDefault("description", StringUtils.EMPTY).toString());
+        service.setServiceId(serviceDataMap.get("serviceId").toString().replace("**", ".*"));
+        service.setTheme(serviceDataMap.getOrDefault("theme", StringUtils.EMPTY).toString());
+        service.setEvaluationOrder(Integer.parseInt(serviceDataMap.getOrDefault("evaluationOrder", Integer.MAX_VALUE).toString()));
+
+        val allowedProxy = Boolean.parseBoolean(serviceDataMap.getOrDefault("allowedToProxy", Boolean.FALSE).toString());
+        val enabled = Boolean.parseBoolean(serviceDataMap.getOrDefault("enabled", Boolean.TRUE).toString());
+        val ssoEnabled = Boolean.parseBoolean(serviceDataMap.getOrDefault("ssoEnabled", Boolean.TRUE).toString());
+        val anonymousAccess = Boolean.parseBoolean(serviceDataMap.getOrDefault("anonymousAccess", Boolean.TRUE).toString());
+
+        if (allowedProxy) {
+            service.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy(".+"));
+        }
+        service.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(enabled, ssoEnabled));
+        if (anonymousAccess) {
+            service.setUsernameAttributeProvider(new AnonymousRegisteredServiceUsernameAttributeProvider());
+        }
+        val attributes = (List<String>) serviceDataMap.getOrDefault("allowedAttributes", new ArrayList<>(0));
+        service.setAttributeReleasePolicy(new ReturnAllowedAttributeReleasePolicy(attributes));
+        return service;
+    }
 
     @Override
     public Collection<RegisteredService> load(final InputStream stream) {
@@ -64,33 +92,6 @@ public class CasAddonsRegisteredServicesJsonSerializer extends RegisteredService
             LOGGER.error(e.getMessage(), e);
         }
         return results;
-    }
-
-    private static RegisteredService convertServiceProperties(final Map serviceDataMap) {
-        val service = new RegexRegisteredService();
-
-        service.setId(Long.parseLong(serviceDataMap.get("id").toString()));
-        service.setName(serviceDataMap.get("name").toString());
-        service.setDescription(serviceDataMap.getOrDefault("description", StringUtils.EMPTY).toString());
-        service.setServiceId(serviceDataMap.get("serviceId").toString().replace("**", ".*"));
-        service.setTheme(serviceDataMap.getOrDefault("theme", StringUtils.EMPTY).toString());
-        service.setEvaluationOrder(Integer.parseInt(serviceDataMap.getOrDefault("evaluationOrder", Integer.MAX_VALUE).toString()));
-
-        val allowedProxy = Boolean.parseBoolean(serviceDataMap.getOrDefault("allowedToProxy", Boolean.FALSE).toString());
-        val enabled = Boolean.parseBoolean(serviceDataMap.getOrDefault("enabled", Boolean.TRUE).toString());
-        val ssoEnabled = Boolean.parseBoolean(serviceDataMap.getOrDefault("ssoEnabled", Boolean.TRUE).toString());
-        val anonymousAccess = Boolean.parseBoolean(serviceDataMap.getOrDefault("anonymousAccess", Boolean.TRUE).toString());
-
-        if (allowedProxy) {
-            service.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy(".+"));
-        }
-        service.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(enabled, ssoEnabled));
-        if (anonymousAccess) {
-            service.setUsernameAttributeProvider(new AnonymousRegisteredServiceUsernameAttributeProvider());
-        }
-        val attributes = (List<String>) serviceDataMap.getOrDefault("allowedAttributes", new ArrayList<>());
-        service.setAttributeReleasePolicy(new ReturnAllowedAttributeReleasePolicy(attributes));
-        return service;
     }
 
     @Override

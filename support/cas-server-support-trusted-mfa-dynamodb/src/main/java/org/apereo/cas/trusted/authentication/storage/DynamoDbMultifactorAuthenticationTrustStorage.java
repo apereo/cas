@@ -3,7 +3,6 @@ package org.apereo.cas.trusted.authentication.storage;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -15,7 +14,6 @@ import java.util.Set;
  * @since 6.1.0
  */
 @RequiredArgsConstructor
-@Slf4j
 public class DynamoDbMultifactorAuthenticationTrustStorage extends BaseMultifactorAuthenticationTrustStorage {
     private final DynamoDbMultifactorTrustEngineFacilitator dynamoDbFacilitator;
 

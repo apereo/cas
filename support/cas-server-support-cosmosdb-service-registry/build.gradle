@@ -9,7 +9,7 @@ dependencies {
     implementation project(":core:cas-server-core-services-api")
     implementation project(":support:cas-server-support-cosmosdb-core")
 
-    testImplementation project(":core:cas-server-core-services")
+    
     
     testImplementation project(":support:cas-server-support-oauth-services")
     testImplementation project(":support:cas-server-support-saml-idp-core")

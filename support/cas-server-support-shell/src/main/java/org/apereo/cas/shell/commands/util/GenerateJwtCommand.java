@@ -1,5 +1,7 @@
 package org.apereo.cas.shell.commands.util;
 
+import org.apereo.cas.util.RandomUtils;
+
 import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JWEAlgorithm;
 import com.nimbusds.jose.JWSAlgorithm;
@@ -7,7 +9,6 @@ import com.nimbusds.jose.crypto.AESDecrypter;
 import com.nimbusds.jose.crypto.DirectDecrypter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 import org.pac4j.core.profile.CommonProfile;
@@ -64,22 +65,22 @@ public class GenerateJwtCommand {
      */
     @ShellMethod(key = "generate-jwt", value = "Generate a JWT with given size and algorithm for signing and encryption.")
     public static void generate(
-        @ShellOption(value = "signingSecretSize",
+        @ShellOption(value = { "signingSecretSize", "--signingSecretSize" },
             help = "Size of the signing secret",
             defaultValue = StringUtils.EMPTY + DEFAULT_SIGNING_SECRET_SIZE) final int signingSecretSize,
-        @ShellOption(value = "encryptionSecretSize",
+        @ShellOption(value = { "encryptionSecretSize", "--encryptionSecretSize" },
             help = "Size of the encryption secret",
             defaultValue = StringUtils.EMPTY + DEFAULT_ENCRYPTION_SECRET_SIZE) final int encryptionSecretSize,
-        @ShellOption(value = "signingAlgorithm",
+        @ShellOption(value = { "signingAlgorithm", "--signingAlgorithm" },
             help = "Algorithm to use for signing",
             defaultValue = DEFAULT_SIGNING_ALGORITHM) final String signingAlgorithm,
-        @ShellOption(value = "encryptionAlgorithm",
+        @ShellOption(value = { "encryptionAlgorithm", "--encryptionAlgorithm" },
             help = "Algorithm to use for encryption",
             defaultValue = DEFAULT_ENCRYPTION_ALGORITHM) final String encryptionAlgorithm,
-        @ShellOption(value = "encryptionMethod",
+        @ShellOption(value = { "encryptionMethod", "--encryptionMethod" },
             help = "Method to use for encryption",
             defaultValue = DEFAULT_ENCRYPTION_METHOD) final String encryptionMethod,
-        @ShellOption(value = "subject",
+        @ShellOption(value = { "subject", "--subject" },
             help = "Subject to use for the JWT") final String subject) {
 
         val g = new JwtGenerator<CommonProfile>();
@@ -108,7 +109,7 @@ public class GenerateJwtCommand {
             return;
         }
 
-        val encryptionSecret = RandomStringUtils.randomAlphanumeric(encryptionSecretSize);
+        val encryptionSecret = RandomUtils.randomAlphanumeric(encryptionSecretSize);
         LOGGER.info("==== Encryption Secret ====\n[{}]\n", encryptionSecret);
 
         val acceptedEncAlgs = Arrays.stream(JWEAlgorithm.class.getDeclaredFields())
@@ -157,7 +158,7 @@ public class GenerateJwtCommand {
             return;
         }
 
-        val signingSecret = RandomStringUtils.randomAlphanumeric(signingSecretSize);
+        val signingSecret = RandomUtils.randomAlphanumeric(signingSecretSize);
         LOGGER.info("==== Signing Secret ====\n{}\n", signingSecret);
 
         val acceptedSigningAlgs = Arrays.stream(JWSAlgorithm.class.getDeclaredFields())

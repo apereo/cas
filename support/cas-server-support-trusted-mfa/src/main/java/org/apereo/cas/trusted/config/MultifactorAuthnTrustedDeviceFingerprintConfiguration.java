@@ -11,6 +11,7 @@ import org.apereo.cas.trusted.web.flow.fingerprint.DeviceFingerprintStrategy;
 import org.apereo.cas.trusted.web.flow.fingerprint.GeoLocationDeviceFingerprintComponentExtractor;
 import org.apereo.cas.trusted.web.flow.fingerprint.UserAgentDeviceFingerprintComponentExtractor;
 import org.apereo.cas.trusted.web.support.TrustedDeviceCookieRetrievingCookieGenerator;
+import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.gen.Base64RandomStringGenerator;
 import org.apereo.cas.util.gen.RandomStringGenerator;
@@ -55,7 +56,7 @@ public class MultifactorAuthnTrustedDeviceFingerprintConfiguration {
     @Autowired
     @Qualifier("geoLocationService")
     private ObjectProvider<GeoLocationService> geoLocationService;
-    
+
     @ConditionalOnProperty(prefix = "cas.authn.mfa.trusted.deviceFingerprint.clientIp", name = "enabled", havingValue = "true")
     @Bean
     @RefreshScope
@@ -123,7 +124,6 @@ public class MultifactorAuthnTrustedDeviceFingerprintConfiguration {
     }
 
 
-
     @ConditionalOnMissingBean(name = BEAN_DEVICE_FINGERPRINT_COOKIE_RANDOM_STRING_GENERATOR)
     @Bean(BEAN_DEVICE_FINGERPRINT_COOKIE_RANDOM_STRING_GENERATOR)
     public RandomStringGenerator deviceFingerprintCookieRandomStringGenerator() {
@@ -151,12 +151,7 @@ public class MultifactorAuthnTrustedDeviceFingerprintConfiguration {
         }
 
         if (enabled) {
-            return new CookieDeviceFingerprintComponentCipherExecutor(
-                crypto.getEncryption().getKey(),
-                crypto.getSigning().getKey(),
-                crypto.getAlg(),
-                crypto.getSigning().getKeySize(),
-                crypto.getEncryption().getKeySize());
+            return CipherExecutorUtils.newStringCipherExecutor(crypto, CookieDeviceFingerprintComponentCipherExecutor.class);
         }
 
         return CipherExecutor.noOp();

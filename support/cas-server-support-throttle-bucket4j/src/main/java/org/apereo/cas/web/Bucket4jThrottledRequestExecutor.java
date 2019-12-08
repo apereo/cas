@@ -31,9 +31,9 @@ public class Bucket4jThrottledRequestExecutor implements ThrottledRequestExecuto
 
     public Bucket4jThrottledRequestExecutor(final Bucket4jThrottleProperties properties) {
         val duration = Duration.ofSeconds(properties.getRangeInSeconds());
-        val greedyRefill = Refill.greedy(properties.getCapacity(), duration);
+
         val limit = properties.getOverdraft() > 0
-            ? Bandwidth.classic(properties.getOverdraft(), greedyRefill)
+            ? Bandwidth.classic(properties.getOverdraft(), Refill.greedy(properties.getCapacity(), duration))
             : Bandwidth.simple(properties.getCapacity(), duration);
 
         this.bucket = (AbstractBucket) Bucket4j.builder()
@@ -57,6 +57,7 @@ public class Bucket4jThrottledRequestExecutor implements ThrottledRequestExecuto
             result = !this.bucket.tryConsume(1);
         } catch (final InterruptedException e) {
             LOGGER.error(e.getMessage(), e);
+            Thread.currentThread().interrupt();
         }
         if (result) {
             val probe = this.bucket.tryConsumeAndReturnRemaining(1);

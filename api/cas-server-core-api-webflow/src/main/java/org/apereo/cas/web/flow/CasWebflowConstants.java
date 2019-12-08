@@ -236,12 +236,7 @@ public interface CasWebflowConstants {
      * The state 'realSubmit'.
      */
     String STATE_ID_REAL_SUBMIT = "realSubmit";
-
-    /**
-     * 'gateway' state id.
-     */
-    String STATE_ID_GATEWAY = "gateway";
-
+    
     /**
      * 'finishMfaTrustedAuth' state id.
      */
@@ -331,6 +326,11 @@ public interface CasWebflowConstants {
      * The state 'viewRedirectToUnauthorizedUrlView'.
      */
     String STATE_ID_VIEW_REDIR_UNAUTHZ_URL = "viewRedirectToUnauthorizedUrlView";
+
+    /**
+     * The state 'mfaFailure'.
+     */
+    String STATE_ID_MFA_FAILURE = "mfaFailure";
 
     /**
      * The state 'serviceUnauthorizedCheck'.
@@ -476,15 +476,22 @@ public interface CasWebflowConstants {
      * The view state 'showAuthenticationWarningMessages'.
      */
     String STATE_ID_SHOW_AUTHN_WARNING_MSGS = "showAuthenticationWarningMessages";
+
+    /**
+     * State id 'openIdSingleSignOnAction'.
+     */
+    String STATE_ID_OPEN_ID_SINGLE_SIGN_ON_ACTION = "openIdSingleSignOnAction";
+
+    /**
+     * The view id 'registerDeviceView'.
+     */
+    String STATE_ID_REGISTER_DEVICE = "registerDeviceView";
+
     /*
      ****************************************
      * Views.
      ****************************************
      */
-    /**
-     * The view id 'registerDeviceView'.
-     */
-    String VIEW_ID_REGISTER_DEVICE = "registerDeviceView";
 
     /**
      * The view state 'casPac4jStopWebflow'.
@@ -605,12 +612,6 @@ public interface CasWebflowConstants {
      * Decisions.
      ****************************************
      */
-
-    /**
-     * The decision state 'checkRegistrationRequired'.
-     */
-    String DECISION_STATE_REQUIRE_REGISTRATION = "checkRegistrationRequired";
-
     /**
      * The decision state 'finishLogout'.
      */
@@ -620,6 +621,11 @@ public interface CasWebflowConstants {
      * Action to check if login should redirect to password reset subflow.
      */
     String DECISION_STATE_CHECK_FOR_PASSWORD_RESET_TOKEN_ACTION = "checkForPswdResetToken";
+
+    /**
+     * Action state 'selectFirstAction'.
+     */
+    String DECISION_STATE_OPEN_ID_SELECT_FIRST_ACTION = "selectFirstAction";
 
     /*
      ****************************************
@@ -666,7 +672,8 @@ public interface CasWebflowConstants {
     /**
      * Action id 'initialFlowSetupAction'.
      */
-    String ACTION_ID_INIT_FLOW_SETUP = "initialFlowSetupAction";
+    String ACTION_ID_INITIAL_FLOW_SETUP = "initialFlowSetupAction";
+    
     /**
      * Action id 'verifyRequiredServiceAction'.
      */
@@ -736,4 +743,10 @@ public interface CasWebflowConstants {
      * Action id `renewAuthenticationRequestCheckAction`.
      */
     String ACTION_ID_RENEW_AUTHN_REQUEST = "renewAuthenticationRequestCheckAction";
+
+    /**
+     * Action id 'openIdSingleSignOnAction .
+     */
+    String ACTION_ID_OPEN_ID_SINGLE_SIGN_ON_ACTION = "openIdSingleSignOnAction";
+
 }

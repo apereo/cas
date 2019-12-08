@@ -32,6 +32,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -51,7 +52,7 @@ public class MonitorEndpointLdapAuthenticationProvider implements Authentication
         try {
             val username = authentication.getPrincipal().toString();
             val credentials = authentication.getCredentials();
-            val password = credentials == null ? null : credentials.toString();
+            val password = Optional.ofNullable(credentials).map(Object::toString).orElse(null);
             if (StringUtils.isBlank(password)) {
                 throw new IllegalArgumentException("Password cannot be blank");
             }
@@ -68,7 +69,7 @@ public class MonitorEndpointLdapAuthenticationProvider implements Authentication
                 val roles = securityProperties.getUser().getRoles();
                 if (roles.isEmpty()) {
                     LOGGER.info("No user security roles are defined for CAS to enable authorization. User [{}] is considered authorized", username);
-                    return generateAuthenticationToken(authentication, new ArrayList<>());
+                    return generateAuthenticationToken(authentication, new ArrayList<>(0));
                 }
 
                 val entry = response.getLdapEntry();
@@ -143,7 +144,7 @@ public class MonitorEndpointLdapAuthenticationProvider implements Authentication
         }
         val roles = securityProperties.getUser().getRoles();
         LOGGER.info("Could not determine authorization generator based on users or groups. Authorization will generate static roles based on [{}]", roles);
-        return new DefaultRolesPermissionsAuthorizationGenerator(roles, new ArrayList<>());
+        return new DefaultRolesPermissionsAuthorizationGenerator(roles, new ArrayList<>(0));
     }
 
     private boolean isGroupBasedAuthorization() {

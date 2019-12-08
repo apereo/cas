@@ -1,6 +1,5 @@
 package org.apereo.cas.trusted.config;
 
-import org.apereo.cas.audit.AuditTrailRecordResolutionPlan;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.authentication.PseudoPlatformTransactionManager;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
@@ -12,6 +11,7 @@ import org.apereo.cas.trusted.authentication.storage.InMemoryMultifactorAuthenti
 import org.apereo.cas.trusted.authentication.storage.JsonMultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.authentication.storage.MultifactorAuthenticationTrustStorageCleaner;
 import org.apereo.cas.trusted.web.MultifactorTrustedDevicesReportEndpoint;
+import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
 
@@ -43,7 +43,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @AutoConfigureAfter(CasCoreUtilConfiguration.class)
 @Slf4j
-public class MultifactorAuthnTrustConfiguration implements AuditTrailRecordResolutionPlanConfigurer {
+public class MultifactorAuthnTrustConfiguration {
     private static final int INITIAL_CACHE_SIZE = 50;
     private static final long MAX_CACHE_SIZE = 1_000_000;
 
@@ -96,12 +96,7 @@ public class MultifactorAuthnTrustConfiguration implements AuditTrailRecordResol
     public CipherExecutor mfaTrustCipherExecutor() {
         val crypto = casProperties.getAuthn().getMfa().getTrusted().getCrypto();
         if (crypto.isEnabled()) {
-            return new MultifactorAuthenticationTrustCipherExecutor(
-                crypto.getEncryption().getKey(),
-                crypto.getSigning().getKey(),
-                crypto.getAlg(),
-                crypto.getSigning().getKeySize(),
-                crypto.getEncryption().getKeySize());
+            return CipherExecutorUtils.newStringCipherExecutor(crypto, MultifactorAuthenticationTrustCipherExecutor.class);
         }
         LOGGER.info("Multifactor trusted authentication record encryption/signing is turned off and "
             + "MAY NOT be safe in a production environment. "
@@ -118,10 +113,12 @@ public class MultifactorAuthnTrustConfiguration implements AuditTrailRecordResol
             mfaTrustEngine());
     }
 
-    @Override
-    public void configureAuditTrailRecordResolutionPlan(final AuditTrailRecordResolutionPlan plan) {
-        plan.registerAuditResourceResolver("TRUSTED_AUTHENTICATION_RESOURCE_RESOLVER", returnValueResourceResolver.getIfAvailable());
-        plan.registerAuditActionResolver("TRUSTED_AUTHENTICATION_ACTION_RESOLVER", ticketCreationActionResolver.getIfAvailable());
+    @Bean
+    public AuditTrailRecordResolutionPlanConfigurer casMfaTrustAuditTrailRecordResolutionPlanConfigurer() {
+        return plan -> {
+            plan.registerAuditResourceResolver("TRUSTED_AUTHENTICATION_RESOURCE_RESOLVER", returnValueResourceResolver.getObject());
+            plan.registerAuditActionResolver("TRUSTED_AUTHENTICATION_ACTION_RESOLVER", ticketCreationActionResolver.getObject());
+        };
     }
 
     @Bean

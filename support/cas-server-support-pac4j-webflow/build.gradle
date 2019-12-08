@@ -12,6 +12,7 @@ dependencies {
     implementation project(":core:cas-server-core-services-api")
     implementation project(":core:cas-server-core-cookie-api")
     implementation project(":core:cas-server-core-services-authentication")
+    
     implementation project(":support:cas-server-support-pac4j-api")
     implementation project(":support:cas-server-support-pac4j")
     implementation project(":support:cas-server-support-saml-core")
@@ -20,6 +21,7 @@ dependencies {
     implementation project(":support:cas-server-support-pac4j-core")
     
     implementation libraries.pac4j
+    implementation libraries.pac4jsaml
     implementation libraries.pac4jcore
     implementation libraries.pac4jcas
     implementation libraries.nimbus
@@ -29,10 +31,11 @@ dependencies {
     
     testImplementation project(":core:cas-server-core-authentication-api")
     testImplementation project(":core:cas-server-core-tickets")
-    testImplementation project(":core:cas-server-core-services-authentication")
+    
     
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-webflow", configuration: "tests")
 }

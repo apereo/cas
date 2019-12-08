@@ -1,6 +1,6 @@
 package org.apereo.cas.ticket.registry.queue;
 
-import org.apereo.cas.StringBean;
+import org.apereo.cas.JmsQueueIdentifier;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -20,7 +20,7 @@ public class DeleteTicketsMessageQueueCommand extends BaseMessageQueueCommand {
     private static final long serialVersionUID = 8907022828993467474L;
 
     @JsonCreator
-    public DeleteTicketsMessageQueueCommand(@JsonProperty("id") final StringBean id) {
+    public DeleteTicketsMessageQueueCommand(@JsonProperty("id") final JmsQueueIdentifier id) {
         super(id);
 
     }

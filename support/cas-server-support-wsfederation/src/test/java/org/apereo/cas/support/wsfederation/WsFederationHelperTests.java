@@ -7,6 +7,7 @@ import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.opensaml.security.credential.Credential;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.annotation.DirtiesContext;
 
@@ -23,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 4.2.0
  */
 @Setter
+@SpringBootTest(classes = AbstractWsFederationTests.SharedTestConfiguration.class)
 public class WsFederationHelperTests extends AbstractWsFederationTests {
     private static final String GOOD_TOKEN = "goodToken";
 

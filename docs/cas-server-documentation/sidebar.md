@@ -60,6 +60,8 @@ layout: null
         *   [Digest](/$version/installation/Digest-Authentication.html)
         *   [MongoDb](/$version/installation/MongoDb-Authentication.html)
         *   [Redis](/$version/installation/Redis-Authentication.html)
+        *   [Azure Active Directory](/$version/installation/Azure-ActiveDirectory-Authentication.html)
+        *   [Okta](/$version/installation/Okta-Authentication.html)
         *   [Pac4J](/$version/installation/Pac4j-Authentication.html)
         *   [Whitelist](/$version/installation/Whitelist-Authentication.html)
         *   [Blacklist](/$version/installation/Blacklist-Authentication.html)
@@ -193,9 +195,13 @@ layout: null
     *   [Views](/$version/ux/User-Interface-Customization-Views.html)
     *   [Localization](/$version/ux/User-Interface-Customization-Localization.html)
     *   [Dynamic Themes](/$version/ux/User-Interface-Customization-Themes.html)
-    *   [Acceptable Usage Policy](/$version/webflow/Webflow-Customization-AUP.html)
-    *   [Interrupt Notifications](/$version/webflow/Webflow-Customization-Interrupt.html)
     *   [Dynamic Decorations](/$version/webflow/Webflow-Customization-Decorators.html)
+
+* [Acceptable Usage Policy](#aup)
+    *   [Overview](/$version/webflow/Webflow-Customization-AUP.html)
+
+* [Interrupt Notifications](#interrupt_notifications)
+    *   [Overview](/$version/webflow/Webflow-Customization-Interrupt.html)
         
 *   [Webflow Management](#webflowmgmt)
     *   [Overview](/$version/webflow/Webflow-Customization.html) 

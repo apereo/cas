@@ -4,7 +4,8 @@ import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyAuditableEnforcer;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
-import org.apereo.cas.ticket.code.OAuthCodeImpl;
+import org.apereo.cas.support.oauth.services.OAuth20RegisteredServiceCipherExecutor;
+import org.apereo.cas.ticket.code.OAuth20DefaultCode;
 import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.EncodingUtils;
@@ -38,18 +39,22 @@ public class OAuth20ProofKeyCodeExchangeAuthenticatorTests extends BaseOAuth20Au
     @BeforeEach
     public void init() {
         authenticator = new OAuth20ProofKeyCodeExchangeAuthenticator(servicesManager, serviceFactory,
-            new RegisteredServiceAccessStrategyAuditableEnforcer(), ticketRegistry);
+            new RegisteredServiceAccessStrategyAuditableEnforcer(), ticketRegistry,
+            new OAuth20RegisteredServiceCipherExecutor(),
+            defaultPrincipalResolver);
     }
 
     @Test
     public void verifyAuthenticationPlain() {
         val credentials = new UsernamePasswordCredentials("client", "ABCD123");
         val request = new MockHttpServletRequest();
-        ticketRegistry.addTicket(new OAuthCodeImpl("CODE-1234567890", RegisteredServiceTestUtils.getService(), RegisteredServiceTestUtils.getAuthentication(),
+        ticketRegistry.addTicket(new OAuth20DefaultCode("CODE-1234567890", RegisteredServiceTestUtils.getService(), RegisteredServiceTestUtils.getAuthentication(),
             new HardTimeoutExpirationPolicy(10),
             new MockTicketGrantingTicket("casuser"),
             new ArrayList<>(), "ABCD123",
             "plain", "clientid12345", new HashMap<>()));
+        request.addParameter(OAuth20Constants.CODE_VERIFIER, "ABCD123");
+        request.addParameter(OAuth20Constants.CLIENT_SECRET, "secret");
         request.addParameter(OAuth20Constants.CODE, "CODE-1234567890");
         val ctx = new JEEContext(request, new MockHttpServletResponse());
         authenticator.validate(credentials, ctx);
@@ -62,12 +67,14 @@ public class OAuth20ProofKeyCodeExchangeAuthenticatorTests extends BaseOAuth20Au
         val hash = EncodingUtils.encodeUrlSafeBase64(DigestUtils.sha256("ABCD1234").getBytes(StandardCharsets.UTF_8));
         val credentials = new UsernamePasswordCredentials("client", "ABCD1234");
         val request = new MockHttpServletRequest();
-        val ticket = new OAuthCodeImpl("CODE-1234567890",
+        val ticket = new OAuth20DefaultCode("CODE-1234567890",
             RegisteredServiceTestUtils.getService(), RegisteredServiceTestUtils.getAuthentication(),
             new HardTimeoutExpirationPolicy(10),
             new MockTicketGrantingTicket("casuser"),
             new ArrayList<>(), hash, "s256", "clientid12345", new HashMap<>());
         ticketRegistry.addTicket(ticket);
+        request.addParameter(OAuth20Constants.CODE_VERIFIER, "ABCD123");
+        request.addParameter(OAuth20Constants.CLIENT_SECRET, "secret");
         request.addParameter(OAuth20Constants.CODE, ticket.getId());
         val ctx = new JEEContext(request, new MockHttpServletResponse());
         authenticator.validate(credentials, ctx);
@@ -79,13 +86,15 @@ public class OAuth20ProofKeyCodeExchangeAuthenticatorTests extends BaseOAuth20Au
     public void verifyAuthenticationNotHashedCorrectly() {
         val credentials = new UsernamePasswordCredentials("client", "ABCD1234");
         val request = new MockHttpServletRequest();
-        val ticket = new OAuthCodeImpl("CODE-1234567890",
+        val ticket = new OAuth20DefaultCode("CODE-1234567890",
             RegisteredServiceTestUtils.getService(), RegisteredServiceTestUtils.getAuthentication(),
             new HardTimeoutExpirationPolicy(10),
             new MockTicketGrantingTicket("casuser"),
             new ArrayList<>(),
             "something-else", "s256", "clientid12345", new HashMap<>());
         ticketRegistry.addTicket(ticket);
+        request.addParameter(OAuth20Constants.CODE_VERIFIER, "ABCD123");
+        request.addParameter(OAuth20Constants.CLIENT_SECRET, "secret");
         request.addParameter(OAuth20Constants.CODE, ticket.getId());
         val ctx = new JEEContext(request, new MockHttpServletResponse());
         assertThrows(CredentialsException.class, () -> authenticator.validate(credentials, ctx));

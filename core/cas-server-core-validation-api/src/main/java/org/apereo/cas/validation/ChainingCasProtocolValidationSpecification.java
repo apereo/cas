@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -18,13 +17,12 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Slf4j
 @Getter
 @Setter
 @NoArgsConstructor(force = true)
 @RequiredArgsConstructor
 public class ChainingCasProtocolValidationSpecification implements CasProtocolValidationSpecification {
-    private final List<CasProtocolValidationSpecification> specifications = new ArrayList<>();
+    private final List<CasProtocolValidationSpecification> specifications = new ArrayList<>(0);
 
     private final boolean canBeSatisfiedByAnySpecification;
 

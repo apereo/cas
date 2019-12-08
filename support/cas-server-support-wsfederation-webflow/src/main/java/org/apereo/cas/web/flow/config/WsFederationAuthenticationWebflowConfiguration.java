@@ -7,7 +7,6 @@ import org.apereo.cas.support.wsfederation.WsFederationConfiguration;
 import org.apereo.cas.support.wsfederation.WsFederationHelper;
 import org.apereo.cas.support.wsfederation.web.WsFederationCookieManager;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
-import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.WsFederationAction;
 import org.apereo.cas.web.flow.WsFederationRequestBuilder;
@@ -53,7 +52,7 @@ public class WsFederationAuthenticationWebflowConfiguration {
     private ObjectProvider<FlowDefinitionRegistry> loginFlowDefinitionRegistry;
 
     @Autowired
-    private FlowBuilderServices flowBuilderServices;
+    private ObjectProvider<FlowBuilderServices> flowBuilderServices;
 
     @Autowired
     @Qualifier("wsFederationCookieManager")
@@ -87,16 +86,16 @@ public class WsFederationAuthenticationWebflowConfiguration {
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer wsFederationWebflowConfigurer() {
-        return new WsFederationWebflowConfigurer(flowBuilderServices,
-            loginFlowDefinitionRegistry.getIfAvailable(), applicationContext, casProperties);
+        return new WsFederationWebflowConfigurer(flowBuilderServices.getObject(),
+            loginFlowDefinitionRegistry.getObject(), applicationContext, casProperties);
     }
 
     @Bean
     @RefreshScope
     public Action wsFederationAction() {
-        return new WsFederationAction(initialAuthenticationAttemptWebflowEventResolver.getIfAvailable(),
-            serviceTicketRequestWebflowEventResolver.getIfAvailable(),
-            adaptiveAuthenticationPolicy.getIfAvailable(),
+        return new WsFederationAction(initialAuthenticationAttemptWebflowEventResolver.getObject(),
+            serviceTicketRequestWebflowEventResolver.getObject(),
+            adaptiveAuthenticationPolicy.getObject(),
             wsFederationRequestBuilder(),
             wsFederationResponseValidator());
     }
@@ -105,27 +104,22 @@ public class WsFederationAuthenticationWebflowConfiguration {
     @RefreshScope
     @ConditionalOnMissingBean(name = "wsFederationRequestBuilder")
     public WsFederationRequestBuilder wsFederationRequestBuilder() {
-        return new WsFederationRequestBuilder(wsFederationConfigurations, wsFederationHelper.getIfAvailable());
+        return new WsFederationRequestBuilder(wsFederationConfigurations, wsFederationHelper.getObject());
     }
 
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "wsFederationResponseValidator")
     public WsFederationResponseValidator wsFederationResponseValidator() {
-        return new WsFederationResponseValidator(wsFederationHelper.getIfAvailable(),
+        return new WsFederationResponseValidator(wsFederationHelper.getObject(),
             wsFederationConfigurations,
-            authenticationSystemSupport.getIfAvailable(),
-            wsFederationCookieManager.getIfAvailable());
+            authenticationSystemSupport.getObject(),
+            wsFederationCookieManager.getObject());
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "wsFederationCasWebflowExecutionPlanConfigurer")
     public CasWebflowExecutionPlanConfigurer wsFederationCasWebflowExecutionPlanConfigurer() {
-        return new CasWebflowExecutionPlanConfigurer() {
-            @Override
-            public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-                plan.registerWebflowConfigurer(wsFederationWebflowConfigurer());
-            }
-        };
+        return plan -> plan.registerWebflowConfigurer(wsFederationWebflowConfigurer());
     }
 }

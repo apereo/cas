@@ -192,7 +192,7 @@ public class SamlUtils {
             return null;
         }
 
-        val keyInfoProviderList = new ArrayList<KeyInfoProvider>();
+        val keyInfoProviderList = new ArrayList<KeyInfoProvider>(4);
         keyInfoProviderList.add(new RSAKeyValueProvider());
         keyInfoProviderList.add(new DSAKeyValueProvider());
         keyInfoProviderList.add(new DEREncodedKeyValueProvider());
@@ -257,5 +257,15 @@ public class SamlUtils {
         } catch (final Exception e) {
             throw new SamlException(e.getMessage(), e);
         }
+    }
+
+    /**
+     * Is dynamic metadata query configured ?
+     *
+     * @param metadataLocation - the location of the metadata to resolve
+     * @return true/false
+     */
+    public static boolean isDynamicMetadataQueryConfigured(final String metadataLocation) {
+        return metadataLocation.trim().endsWith("/entities/{0}");
     }
 }

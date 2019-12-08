@@ -61,12 +61,12 @@ public class AdaptiveAuthenticationProperties implements Serializable {
      * <p>
      * Default value is EMPTY Map.
      */
-    private Map<String, String> requireMultifactor = new HashMap<>();
+    private Map<String, String> requireMultifactor = new HashMap<>(0);
 
     /**
      * This property binds a valid mfa provider to a collection of rules that deal with triggering mfa
      * based on that provider based on properties of date/time. One may want to force mfa during weekends,
      * after hours, etc and the ruleset provides a modest configuration set where time can also be treated as trigger.
      */
-    private List<TimeBasedAuthenticationProperties> requireTimedMultifactor = new ArrayList<>();
+    private List<TimeBasedAuthenticationProperties> requireTimedMultifactor = new ArrayList<>(0);
 }

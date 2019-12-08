@@ -5,7 +5,6 @@ import org.apereo.cas.web.CasGoogleAnalyticsCookieGenerator;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasGoogleAnalyticsWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
-import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.CreateGoogleAnalyticsCookieAction;
 import org.apereo.cas.web.flow.RemoveGoogleAnalyticsCookieAction;
@@ -47,7 +46,7 @@ public class CasGoogleAnalyticsConfiguration {
     private ObjectProvider<FlowDefinitionRegistry> logoutFlowDefinitionRegistry;
 
     @Autowired
-    private FlowBuilderServices flowBuilderServices;
+    private ObjectProvider<FlowBuilderServices> flowBuilderServices;
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -63,10 +62,10 @@ public class CasGoogleAnalyticsConfiguration {
     @Bean
     @DependsOn({"defaultWebflowConfigurer", "defaultLogoutWebflowConfigurer"})
     public CasWebflowConfigurer casGoogleAnalyticsWebflowConfigurer() {
-        val cfg = new CasGoogleAnalyticsWebflowConfigurer(flowBuilderServices,
-            loginFlowDefinitionRegistry.getIfAvailable(),
+        val cfg = new CasGoogleAnalyticsWebflowConfigurer(flowBuilderServices.getObject(),
+            loginFlowDefinitionRegistry.getObject(),
             applicationContext, casProperties);
-        cfg.setLogoutFlowDefinitionRegistry(logoutFlowDefinitionRegistry.getIfAvailable());
+        cfg.setLogoutFlowDefinitionRegistry(logoutFlowDefinitionRegistry.getObject());
         return cfg;
     }
 
@@ -79,17 +78,12 @@ public class CasGoogleAnalyticsConfiguration {
     @ConditionalOnMissingBean(name = "removeGoogleAnalyticsCookieAction")
     @Bean
     public Action removeGoogleAnalyticsCookieAction() {
-        return new RemoveGoogleAnalyticsCookieAction(casProperties, casGoogleAnalyticsCookieGenerator());
+        return new RemoveGoogleAnalyticsCookieAction(casGoogleAnalyticsCookieGenerator());
     }
 
     @ConditionalOnMissingBean(name = "casGoogleAnalyticsWebflowExecutionPlanConfigurer")
     @Bean
     public CasWebflowExecutionPlanConfigurer casGoogleAnalyticsWebflowExecutionPlanConfigurer() {
-        return new CasWebflowExecutionPlanConfigurer() {
-            @Override
-            public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-                plan.registerWebflowConfigurer(casGoogleAnalyticsWebflowConfigurer());
-            }
-        };
+        return plan -> plan.registerWebflowConfigurer(casGoogleAnalyticsWebflowConfigurer());
     }
 }

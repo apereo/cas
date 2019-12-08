@@ -30,7 +30,7 @@ import java.util.LinkedHashSet;
 public class DefaultRegisteredServiceDelegatedAuthenticationPolicy implements RegisteredServiceDelegatedAuthenticationPolicy {
     private static final long serialVersionUID = -784106970642770923L;
 
-    private Collection<String> allowedProviders = new LinkedHashSet<>();
+    private Collection<String> allowedProviders = new LinkedHashSet<>(0);
 
     private boolean permitUndefined = true;
 

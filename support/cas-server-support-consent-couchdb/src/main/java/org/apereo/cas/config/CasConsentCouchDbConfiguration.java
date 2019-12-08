@@ -23,7 +23,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Timur Duehr
  * @since 6.0.0
  */
-@Configuration("couchDbConsentConfiguration")
+@Configuration(value = "couchDbConsentConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasConsentCouchDbConfiguration {
     @Autowired
@@ -37,14 +37,15 @@ public class CasConsentCouchDbConfiguration {
     @RefreshScope
     @Bean
     public CouchDbConnectorFactory consentCouchDbFactory() {
-        return new CouchDbConnectorFactory(casProperties.getConsent().getCouchDb(), objectMapperFactory.getIfAvailable());
+        return new CouchDbConnectorFactory(casProperties.getConsent().getCouchDb(), objectMapperFactory.getObject());
     }
 
     @ConditionalOnMissingBean(name = "consentCouchDbRepository")
     @Bean
     @RefreshScope
     public ConsentDecisionCouchDbRepository consentCouchDbRepository(@Qualifier("consentCouchDbFactory") final CouchDbConnectorFactory consentCouchDbFactory) {
-        val repository = new ConsentDecisionCouchDbRepository(consentCouchDbFactory.getCouchDbConnector(), casProperties.getConsent().getCouchDb().isCreateIfNotExists());
+        val repository = new ConsentDecisionCouchDbRepository(consentCouchDbFactory.getCouchDbConnector(),
+            casProperties.getConsent().getCouchDb().isCreateIfNotExists());
         repository.initStandardDesignDocument();
         return repository;
     }

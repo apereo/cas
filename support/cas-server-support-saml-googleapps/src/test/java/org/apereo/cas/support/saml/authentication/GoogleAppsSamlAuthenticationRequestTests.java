@@ -11,7 +11,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -22,9 +22,21 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
-@Import(SamlGoogleAppsConfiguration.class)
+@SpringBootTest(classes = {
+    SamlGoogleAppsConfiguration.class,
+    AbstractOpenSamlTests.SharedTestConfiguration.class
+})
 @Tag("SAML")
-@TestPropertySource(locations = "classpath:/gapps.properties")
+@TestPropertySource(properties = {
+    "cas.server.name=http://localhost:8080",
+    "cas.server.prefix=${server.name}/cas",
+    "cas.samlCore.issuer=localhost",
+    "cas.samlCore.skewAllowance=200",
+    "cas.samlCore.ticketidSaml2=false",
+    "cas.googleApps.keyAlgorithm=DSA",
+    "cas.googleApps.publicKeyLocation=classpath:DSAPublicKey01.key",
+    "cas.googleApps.privateKeyLocation=classpath:DSAPrivateKey01.key"
+})
 public class GoogleAppsSamlAuthenticationRequestTests extends AbstractOpenSamlTests {
     @Autowired
     private ApplicationContextProvider applicationContextProvider;

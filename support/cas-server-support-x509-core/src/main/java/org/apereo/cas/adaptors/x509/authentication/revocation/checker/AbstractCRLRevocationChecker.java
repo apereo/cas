@@ -58,10 +58,8 @@ public abstract class AbstractCRLRevocationChecker implements RevocationChecker 
                                         final RevocationPolicy<Void> unavailableCRLPolicy,
                                         final RevocationPolicy<X509CRL> expiredCRLPolicy) {
         this.checkAll = checkAll;
-        this.unavailableCRLPolicy = unavailableCRLPolicy == null
-            ? new DenyRevocationPolicy() : unavailableCRLPolicy;
-        this.expiredCRLPolicy = expiredCRLPolicy == null
-            ? new ThresholdExpiredCRLRevocationPolicy(0) : expiredCRLPolicy;
+        this.unavailableCRLPolicy = Objects.requireNonNullElseGet(unavailableCRLPolicy, DenyRevocationPolicy::new);
+        this.expiredCRLPolicy = Objects.requireNonNullElseGet(expiredCRLPolicy, () -> new ThresholdExpiredCRLRevocationPolicy(0));
     }
 
     @Override
@@ -78,8 +76,7 @@ public abstract class AbstractCRLRevocationChecker implements RevocationChecker 
             return;
         }
 
-        val expiredCrls = new ArrayList<X509CRL>();
-
+        val expiredCrls = new ArrayList<X509CRL>(crls.size());
         crls.stream().filter(CertUtils::isExpired).forEach(crl -> {
             LOGGER.warn("CRL data expired on [{}]", crl.getNextUpdate());
             expiredCrls.add(crl);

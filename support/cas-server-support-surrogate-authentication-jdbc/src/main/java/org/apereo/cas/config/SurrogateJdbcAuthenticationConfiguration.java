@@ -40,7 +40,7 @@ public class SurrogateJdbcAuthenticationConfiguration {
         return new SurrogateJdbcAuthenticationService(su.getJdbc().getSurrogateSearchQuery(),
             surrogateAuthenticationJdbcDataSource(),
             su.getJdbc().getSurrogateAccountQuery(),
-            servicesManager.getIfAvailable());
+            servicesManager.getObject());
     }
 
     @Bean

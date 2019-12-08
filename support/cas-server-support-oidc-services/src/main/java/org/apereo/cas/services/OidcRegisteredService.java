@@ -14,6 +14,8 @@ import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Lob;
+import javax.persistence.Transient;
+
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.HashSet;
@@ -84,15 +86,19 @@ public class OidcRegisteredService extends OAuthRegisteredService {
     @Column
     private boolean dynamicallyRegistered;
 
+    @JsonIgnore
     @Column
-    private boolean implicit;
+    @Deprecated
+    @Transient
+    @org.springframework.data.annotation.Transient
+    private transient boolean implicit;
 
     @Column(name = "DYNAMIC_REG_TIME")
     private ZonedDateTime dynamicRegistrationDateTime;
 
     @Lob
     @Column(name = "scopes", length = Integer.MAX_VALUE)
-    private HashSet<String> scopes = new HashSet<>();
+    private HashSet<String> scopes = new HashSet<>(0);
 
     /**
      * Gets subject type.
@@ -126,7 +132,7 @@ public class OidcRegisteredService extends OAuthRegisteredService {
      */
     public Set<String> getScopes() {
         if (this.scopes == null) {
-            this.scopes = new HashSet<>();
+            this.scopes = new HashSet<>(0);
         }
         return scopes;
     }
@@ -145,7 +151,7 @@ public class OidcRegisteredService extends OAuthRegisteredService {
     public void initialize() {
         super.initialize();
         if (this.scopes == null) {
-            this.scopes = new HashSet<>();
+            this.scopes = new HashSet<>(0);
         }
     }
 

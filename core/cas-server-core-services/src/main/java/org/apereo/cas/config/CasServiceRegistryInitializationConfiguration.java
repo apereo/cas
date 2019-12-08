@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.CasServiceRegistryInitializerConfigurationEventListener;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServiceRegistry;
+import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServiceRegistryInitializer;
 import org.apereo.cas.services.ServiceRegistryListener;
 import org.apereo.cas.services.ServicesManager;
@@ -11,6 +12,7 @@ import org.apereo.cas.services.resource.AbstractResourceBasedServiceRegistry;
 import org.apereo.cas.services.util.CasAddonsRegisteredServicesJsonSerializer;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.io.WatcherService;
 import org.apereo.cas.util.serialization.StringSerializer;
 
 import lombok.SneakyThrows;
@@ -21,17 +23,20 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.scheduling.annotation.EnableAsync;
 
 import java.util.Collection;
 
@@ -50,7 +55,8 @@ import java.util.Collection;
 @ConditionalOnBean(ServicesManager.class)
 @ConditionalOnProperty(prefix = "cas.serviceRegistry", name = "initFromJson", havingValue = "true")
 @Slf4j
-@EnableAspectJAutoProxy(proxyTargetClass=true)
+@EnableAspectJAutoProxy(proxyTargetClass = true)
+@EnableAsync
 public class CasServiceRegistryInitializationConfiguration {
 
     @Autowired
@@ -58,7 +64,7 @@ public class CasServiceRegistryInitializationConfiguration {
     private ObjectProvider<Collection<ServiceRegistryListener>> serviceRegistryListeners;
 
     @Autowired
-    private ApplicationEventPublisher eventPublisher;
+    private ConfigurableApplicationContext applicationContext;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -74,9 +80,9 @@ public class CasServiceRegistryInitializationConfiguration {
     @Lazy(false)
     @Bean
     public ServiceRegistryInitializer serviceRegistryInitializer() {
-        val serviceRegistryInstance = serviceRegistry.getIfAvailable();
+        val serviceRegistryInstance = serviceRegistry.getObject();
         val initializer = new ServiceRegistryInitializer(embeddedJsonServiceRegistry(),
-            serviceRegistryInstance, servicesManager.getIfAvailable());
+            serviceRegistryInstance, servicesManager.getObject());
 
         LOGGER.info("Attempting to initialize the service registry [{}] from service definition resources found at [{}]",
             serviceRegistryInstance.getName(),
@@ -89,16 +95,27 @@ public class CasServiceRegistryInitializationConfiguration {
     public CasServiceRegistryInitializerConfigurationEventListener serviceRegistryInitializerConfigurationEventListener() {
         return new CasServiceRegistryInitializerConfigurationEventListener(serviceRegistryInitializer());
     }
-
+    
     @RefreshScope
     @Bean
     @SneakyThrows
     @Lazy(false)
     public ServiceRegistry embeddedJsonServiceRegistry() {
         val location = getServiceRegistryInitializerServicesDirectoryResource();
-        return new EmbeddedResourceBasedServiceRegistry(eventPublisher, location, serviceRegistryListeners.getIfAvailable());
+        val registry = new EmbeddedResourceBasedServiceRegistry(applicationContext, location,
+            serviceRegistryListeners.getObject(), WatcherService.noOp());
+        if (!(location instanceof ClassPathResource)) {
+            registry.enableDefaultWatcherService();
+        }
+        return registry;
     }
 
+    @Bean
+    @ConditionalOnMissingBean(name = "embeddedJsonServiceRegistryExecutionPlanConfigurer")
+    public ServiceRegistryExecutionPlanConfigurer embeddedJsonServiceRegistryExecutionPlanConfigurer() {
+        return plan -> plan.registerServiceRegistry(embeddedJsonServiceRegistry());
+    }
+    
     private Resource getServiceRegistryInitializerServicesDirectoryResource() {
         val registry = casProperties.getServiceRegistry().getJson();
         return ObjectUtils.defaultIfNull(registry.getLocation(), new ClassPathResource("services"));
@@ -111,8 +128,9 @@ public class CasServiceRegistryInitializationConfiguration {
     public static class EmbeddedResourceBasedServiceRegistry extends AbstractResourceBasedServiceRegistry {
         EmbeddedResourceBasedServiceRegistry(final ApplicationEventPublisher publisher,
                                              final Resource location,
-                                             final Collection<ServiceRegistryListener> serviceRegistryListeners) throws Exception {
-            super(location, getRegisteredServiceSerializers(), publisher, serviceRegistryListeners);
+                                             final Collection<ServiceRegistryListener> serviceRegistryListeners,
+                                             final WatcherService watcherService) throws Exception {
+            super(location, getRegisteredServiceSerializers(), publisher, serviceRegistryListeners, watcherService);
         }
 
         static Collection<StringSerializer<RegisteredService>> getRegisteredServiceSerializers() {

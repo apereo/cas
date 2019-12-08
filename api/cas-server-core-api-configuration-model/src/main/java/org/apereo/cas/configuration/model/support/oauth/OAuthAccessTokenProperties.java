@@ -35,6 +35,11 @@ public class OAuthAccessTokenProperties implements Serializable {
     private String timeToKillInSeconds = "PT7200S";
 
     /**
+     * Create access token as JWTs.
+     */
+    private boolean createAsJwt;
+
+    /**
      * Crypto settings.
      */
     @NestedConfigurationProperty

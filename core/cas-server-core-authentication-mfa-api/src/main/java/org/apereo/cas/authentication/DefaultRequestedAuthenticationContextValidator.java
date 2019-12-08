@@ -49,16 +49,18 @@ public class DefaultRequestedAuthenticationContextValidator implements Requested
             val provider = providerResult.get();
             if (provider.isAvailable(registeredService)) {
                 val bypassEvaluator = provider.getBypassEvaluator();
-                if (!bypassEvaluator.shouldMultifactorAuthenticationProviderExecute(authentication, registeredService, provider, request)) {
-                    LOGGER.debug("MFA provider [{}] has determined that it should be bypassed for this service request [{}]",
+                if (bypassEvaluator != null) {
+                    if (!bypassEvaluator.shouldMultifactorAuthenticationProviderExecute(authentication, registeredService, provider, request)) {
+                        LOGGER.debug("MFA provider [{}] has determined that it should be bypassed for this service request [{}]",
                             providerId, assertion.getService());
-                    bypassEvaluator.rememberBypass(authentication, provider);
-                    return Pair.of(Boolean.TRUE, Optional.empty());
-                }
-                if (bypassEvaluator.isMultifactorAuthenticationBypassed(authentication, providerId)) {
-                    LOGGER.debug("Authentication attempt indicates that MFA is bypassed for this request for [{}]", requestedContext);
-                    bypassEvaluator.rememberBypass(authentication, provider);
-                    return Pair.of(Boolean.TRUE, Optional.empty());
+                        bypassEvaluator.rememberBypass(authentication, provider);
+                        return Pair.of(Boolean.TRUE, Optional.empty());
+                    }
+                    if (bypassEvaluator.isMultifactorAuthenticationBypassed(authentication, providerId)) {
+                        LOGGER.debug("Authentication attempt indicates that MFA is bypassed for this request for [{}]", requestedContext);
+                        bypassEvaluator.rememberBypass(authentication, provider);
+                        return Pair.of(Boolean.TRUE, Optional.empty());
+                    }
                 }
             } else {
                 val failure = provider.getFailureModeEvaluator().evaluate(registeredService, provider);

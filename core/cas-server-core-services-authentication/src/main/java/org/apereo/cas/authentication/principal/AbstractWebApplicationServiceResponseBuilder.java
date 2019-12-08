@@ -12,6 +12,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 
 /**
@@ -42,7 +43,15 @@ public abstract class AbstractWebApplicationServiceResponseBuilder implements Re
      * @return the response
      */
     protected Response buildRedirect(final WebApplicationService service, final Map<String, String> parameters) {
-        return DefaultResponse.getRedirectResponse(service.getOriginalUrl(), parameters);
+        return DefaultResponse.getRedirectResponse(determineServiceResponseUrl(service), parameters);
+    }
+
+    protected String determineServiceResponseUrl(final WebApplicationService service) {
+        val registeredService = this.servicesManager.findServiceBy(service);
+        if (registeredService != null && StringUtils.isNotBlank(registeredService.getRedirectUrl())) {
+            return registeredService.getRedirectUrl();
+        }
+        return service.getOriginalUrl();
     }
 
     /**
@@ -53,7 +62,7 @@ public abstract class AbstractWebApplicationServiceResponseBuilder implements Re
      * @return the response
      */
     protected Response buildHeader(final WebApplicationService service, final Map<String, String> parameters) {
-        return DefaultResponse.getHeaderResponse(service.getOriginalUrl(), parameters);
+        return DefaultResponse.getHeaderResponse(determineServiceResponseUrl(service), parameters);
     }
 
     /**
@@ -64,7 +73,7 @@ public abstract class AbstractWebApplicationServiceResponseBuilder implements Re
      * @return the response
      */
     protected Response buildPost(final WebApplicationService service, final Map<String, String> parameters) {
-        return DefaultResponse.getPostResponse(service.getOriginalUrl(), parameters);
+        return DefaultResponse.getPostResponse(determineServiceResponseUrl(service), parameters);
     }
 
     /**
@@ -75,7 +84,9 @@ public abstract class AbstractWebApplicationServiceResponseBuilder implements Re
      */
     protected Response.ResponseType getWebApplicationServiceResponseType(final WebApplicationService finalService) {
         val request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
-        val methodRequest = request != null ? request.getParameter(CasProtocolConstants.PARAMETER_METHOD) : null;
+        val methodRequest = Optional.ofNullable(request)
+            .map(httpServletRequest -> httpServletRequest.getParameter(CasProtocolConstants.PARAMETER_METHOD))
+            .orElse(null);
         final Function<String, String> func = FunctionUtils.doIf(StringUtils::isBlank,
             t -> {
                 val registeredService = this.servicesManager.findServiceBy(finalService);

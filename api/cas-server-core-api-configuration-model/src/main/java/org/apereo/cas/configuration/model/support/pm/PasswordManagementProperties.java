@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCrypt
 import org.apereo.cas.configuration.model.support.email.EmailProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapSearchProperties;
+import org.apereo.cas.configuration.model.support.sms.SmsProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.SpringResourceProperties;
 import org.apereo.cas.util.crypto.CipherExecutor;
@@ -113,6 +114,11 @@ public class PasswordManagementProperties implements Serializable {
         private String sqlFindEmail;
 
         /**
+         * SQL query to locate the user phone number.
+         */
+        private String sqlFindPhone;
+
+        /**
          * SQL query to locate the user via email.
          */
         private String sqlFindUser;
@@ -134,6 +140,11 @@ public class PasswordManagementProperties implements Serializable {
          * Endpoint URL to use when locating email addresses.
          */
         private String endpointUrlEmail;
+
+        /**
+         * Endpoint URL to use when locating phone numbers.
+         */
+        private String endpointUrlPhone;
 
         /**
          * Endpoint URL to use when locating user names.
@@ -173,7 +184,7 @@ public class PasswordManagementProperties implements Serializable {
          * This is done via a key-value structure where the key is the attribute name
          * for the security question and the value is the attribute name for the answer linked to the question.
          */
-        private Map<String, String> securityQuestionsAttributes = new LinkedHashMap<>();
+        private Map<String, String> securityQuestionsAttributes = new LinkedHashMap<>(2);
 
         /**
          * The specific variant of LDAP
@@ -185,11 +196,6 @@ public class PasswordManagementProperties implements Serializable {
          * Username attribute required by LDAP.
          */
         private String usernameAttribute = "uid";
-
-        /**
-         * Search filter used to look up usernames by email.
-         */
-        private String searchFilterUsername;
     }
 
     @RequiresModule(name = "cas-server-support-pm-webflow")
@@ -247,6 +253,12 @@ public class PasswordManagementProperties implements Serializable {
          */
         @NestedConfigurationProperty
         private EmailProperties mail = new EmailProperties();
+
+        /**
+         * SMS settings for notifications.
+         */
+        @NestedConfigurationProperty
+        private SmsProperties sms = new SmsProperties();
 
         /**
          * Whether reset operations require security questions,

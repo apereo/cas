@@ -28,6 +28,8 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
 public class DefaultCloudDirectoryRepository implements CloudDirectoryRepository {
+    private static final int MAP_SIZE = 8;
+
     private final AmazonCloudDirectory amazonCloudDirectory;
     private final CloudDirectoryProperties properties;
 
@@ -36,7 +38,7 @@ public class DefaultCloudDirectoryRepository implements CloudDirectoryRepository
         val indexResult = getIndexResult(username);
         if (indexResult == null) {
             LOGGER.warn("Index result could not be found for user [{}]", username);
-            return new LinkedHashMap<>();
+            return new LinkedHashMap<>(MAP_SIZE);
         }
         return getUserInfoFromIndexResult(indexResult);
     }

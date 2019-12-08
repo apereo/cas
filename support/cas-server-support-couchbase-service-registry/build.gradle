@@ -16,7 +16,8 @@ dependencies {
     implementation project(":core:cas-server-core-services-api")
     implementation project(":support:cas-server-support-couchbase-core")
 
-    testImplementation project(":core:cas-server-core-services")
+    
+    testImplementation project(":core:cas-server-core-util")
     testImplementation project(":support:cas-server-support-oauth-services")
     testImplementation project(":support:cas-server-support-saml-idp-core")
     testImplementation project(":support:cas-server-support-oidc-services")

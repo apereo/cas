@@ -29,7 +29,7 @@ import java.io.Serializable;
  * @author Timur Duehr
  * @since 6.0.0
  */
-@Configuration("couchDbU2fConfiguration")
+@Configuration(value = "couchDbU2fConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class U2FCouchDbConfiguration {
     @Autowired
@@ -47,7 +47,7 @@ public class U2FCouchDbConfiguration {
     @Bean
     @RefreshScope
     public CouchDbConnectorFactory u2fCouchDbFactory() {
-        return new CouchDbConnectorFactory(casProperties.getAuthn().getMfa().getU2f().getCouchDb(), objectMapperFactory.getIfAvailable());
+        return new CouchDbConnectorFactory(casProperties.getAuthn().getMfa().getU2f().getCouchDb(), objectMapperFactory.getObject());
     }
 
     @ConditionalOnMissingBean(name = "couchDbU2fDeviceRegistrationRepository")

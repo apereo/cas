@@ -35,9 +35,8 @@ dependencies {
     testImplementation project(":core:cas-server-core-authentication-mfa")
     testImplementation project(":core:cas-server-core-tickets")
     testImplementation project(":core:cas-server-core")
-    testImplementation project(":core:cas-server-core-services")
+    
     testImplementation project(":core:cas-server-core-validation")
-    testImplementation project(":core:cas-server-core-authentication-throttle")
     testImplementation project(":core:cas-server-core-services-registry")
     testImplementation project(":core:cas-server-core-webflow")
 
@@ -45,8 +44,10 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-mfa-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-authentication-mfa", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-tickets", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-webflow", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")
 }
 

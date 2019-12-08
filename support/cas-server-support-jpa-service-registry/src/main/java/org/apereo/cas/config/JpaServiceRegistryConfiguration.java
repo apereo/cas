@@ -7,7 +7,6 @@ import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.JpaServiceRegistry;
 import org.apereo.cas.services.ServiceRegistry;
-import org.apereo.cas.services.ServiceRegistryExecutionPlan;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServiceRegistryListener;
 
@@ -22,7 +21,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -54,7 +53,7 @@ public class JpaServiceRegistryConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Autowired
-    private ApplicationEventPublisher eventPublisher;
+    private ConfigurableApplicationContext applicationContext;
 
     @Autowired
     @Qualifier("serviceRegistryListeners")
@@ -85,7 +84,8 @@ public class JpaServiceRegistryConfiguration {
                 "jpaServiceRegistryContext",
                 jpaServicePackagesToScan(),
                 dataSourceService()),
-            casProperties.getServiceRegistry().getJpa());
+            casProperties.getServiceRegistry().getJpa(),
+            applicationContext);
     }
 
     @Autowired
@@ -104,17 +104,12 @@ public class JpaServiceRegistryConfiguration {
     @Bean
     @RefreshScope
     public ServiceRegistry jpaServiceRegistry() {
-        return new JpaServiceRegistry(eventPublisher, serviceRegistryListeners.getIfAvailable());
+        return new JpaServiceRegistry(applicationContext, serviceRegistryListeners.getObject());
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "jpaServiceRegistryExecutionPlanConfigurer")
     public ServiceRegistryExecutionPlanConfigurer jpaServiceRegistryExecutionPlanConfigurer() {
-        return new ServiceRegistryExecutionPlanConfigurer() {
-            @Override
-            public void configureServiceRegistry(final ServiceRegistryExecutionPlan plan) {
-                plan.registerServiceRegistry(jpaServiceRegistry());
-            }
-        };
+        return plan -> plan.registerServiceRegistry(jpaServiceRegistry());
     }
 }

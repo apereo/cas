@@ -85,18 +85,22 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      * Flow builder services.
      */
     protected final FlowBuilderServices flowBuilderServices;
+
     /**
      * The Login flow definition registry.
      */
     protected final FlowDefinitionRegistry loginFlowDefinitionRegistry;
+
     /**
      * Application context.
      */
     protected final ApplicationContext applicationContext;
+
     /**
      * CAS Properties.
      */
     protected final CasConfigurationProperties casProperties;
+
     /**
      * The logout flow definition registry.
      */
@@ -105,6 +109,13 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     private int order;
 
     private String name = getClass().getSimpleName();
+
+    private static TransitionCriteria getTransitionCriteriaForExpression(final Expression criteriaOutcomeExpression) {
+        if (criteriaOutcomeExpression.toString().equals(WildcardTransitionCriteria.WILDCARD_EVENT_ID)) {
+            return WildcardTransitionCriteria.INSTANCE;
+        }
+        return new DefaultTransitionCriteria(criteriaOutcomeExpression);
+    }
 
     @Override
     public void initialize() {
@@ -120,31 +131,17 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
         }
     }
 
-    /**
-     * Handle the initialization of the webflow.
-     */
-    protected abstract void doInitialize();
-
-    @Override
-    public Flow buildFlow(final String location, final String id) {
-        val builder = new FlowDefinitionRegistryBuilder(this.applicationContext, this.flowBuilderServices);
-        builder.setParent(this.loginFlowDefinitionRegistry);
-        builder.addFlowLocation(location, id);
-        val registry = builder.build();
-        return (Flow) registry.getFlowDefinition(id);
-    }
-
     @Override
     public Flow getLoginFlow() {
         if (this.loginFlowDefinitionRegistry == null) {
-            LOGGER.error("Login flow registry is not configured and/or initialized correctly.");
+            LOGGER.warn("Login flow registry is not configured and/or initialized correctly.");
             return null;
         }
         val found = Arrays.asList(this.loginFlowDefinitionRegistry.getFlowDefinitionIds()).contains(FLOW_ID_LOGIN);
         if (found) {
             return (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(FLOW_ID_LOGIN);
         }
-        LOGGER.error("Could not find flow definition [{}]. Available flow definition ids are [{}]",
+        LOGGER.warn("Could not find flow definition [{}]. Available flow definition ids are [{}]",
             FLOW_ID_LOGIN, this.loginFlowDefinitionRegistry.getFlowDefinitionIds());
         return null;
     }
@@ -167,53 +164,45 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
         return (TransitionableState) flow.getStartState();
     }
 
-    /**
-     * Create action state action state.
-     *
-     * @param flow the flow
-     * @param name the name
-     * @return the action state
-     */
-    public ActionState createActionState(final Flow flow, final String name) {
-        return createActionState(flow, name, new Action[]{});
-    }
-
-    /**
-     * Create action state action state.
-     *
-     * @param flow   the flow
-     * @param name   the name
-     * @param action the action
-     * @return the action state
-     */
-    public ActionState createActionState(final Flow flow, final String name, final String action) {
-        return createActionState(flow, name, createEvaluateAction(action));
-    }
-
-    /**
-     * Create action state action state.
-     *
-     * @param flow   the flow
-     * @param name   the name
-     * @param action the action
-     * @return the action state
-     */
-    public ActionState createActionState(final Flow flow, final String name, final Action action) {
-        return createActionState(flow, name, new Action[]{action});
+    @Override
+    public Transition createTransition(final String criteriaOutcome, final String targetState) {
+        return createTransition(new LiteralExpression(criteriaOutcome), targetState);
     }
 
     @Override
-    public ActionState createActionState(final Flow flow, final String name, final Action... actions) {
-        if (containsFlowState(flow, name)) {
-            LOGGER.trace("Flow [{}] already contains a definition for state id [{}]", flow.getId(), name);
-            return getTransitionableState(flow, name, ActionState.class);
+    public Transition createTransition(final String criteriaOutcome, final TransitionableState targetState) {
+        return createTransition(new LiteralExpression(criteriaOutcome), targetState.getId());
+    }
+
+    @Override
+    public Transition createTransition(final Expression criteriaOutcomeExpression, final String targetState) {
+        val criteria = getTransitionCriteriaForExpression(criteriaOutcomeExpression);
+        val resolver = new DefaultTargetStateResolver(targetState);
+        return new Transition(criteria, resolver);
+    }
+
+    @Override
+    public Transition createTransition(final String targetState) {
+        val resolver = new DefaultTargetStateResolver(targetState);
+        return new Transition(resolver);
+    }
+
+    @Override
+    public SetAction createSetAction(final String name, final String value) {
+        return new SetAction(createExpression(name), createExpression(value));
+    }
+
+    @Override
+    public EvaluateAction createEvaluateAction(final String expression) {
+        if (this.flowBuilderServices == null) {
+            LOGGER.warn("Flow builder services is not configured correctly.");
+            return null;
         }
-        val actionState = new ActionState(flow, name);
-        LOGGER.trace("Created action state [{}]", actionState.getId());
-        actionState.getActionList().addAll(actions);
-        LOGGER.trace("Added action to the action state [{}] list of actions: [{}]",
-            actionState.getId(), actionState.getActionList());
-        return actionState;
+        val ctx = new FluentParserContext();
+        val action = this.flowBuilderServices.getExpressionParser().parseExpression(expression, ctx);
+        val newAction = new EvaluateAction(action, null);
+        LOGGER.trace("Created evaluate action for expression [{}]", action.getExpressionString());
+        return newAction;
     }
 
     @Override
@@ -244,165 +233,18 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     }
 
     @Override
-    public SetAction createSetAction(final String name, final String value) {
-        return new SetAction(createExpression(name), createExpression(value));
-    }
-
-    @Override
-    public EvaluateAction createEvaluateAction(final String expression) {
-        if (this.flowBuilderServices == null) {
-            LOGGER.error("Flow builder services is not configured correctly.");
-            return null;
-        }
-        val ctx = new FluentParserContext();
-        val action = this.flowBuilderServices.getExpressionParser().parseExpression(expression, ctx);
-        val newAction = new EvaluateAction(action, null);
-        LOGGER.trace("Created evaluate action for expression [{}]", action.getExpressionString());
-        return newAction;
-    }
-
-    /**
-     * Add a default transition to a given state.
-     *
-     * @param state       the state to include the default transition
-     * @param targetState the id of the destination state to which the flow should transfer
-     */
-    public void createStateDefaultTransition(final TransitionableState state, final String targetState) {
-        if (state == null) {
-            LOGGER.trace("Cannot add default transition of [{}] to the given state is null and cannot be found in the flow.", targetState);
-            return;
-        }
-        val transition = createTransition(targetState);
-        state.getTransitionSet().add(transition);
-    }
-
-    /**
-     * Create state default transition.
-     *
-     * @param state       the state
-     * @param targetState the target state
-     */
-    public void createStateDefaultTransition(final TransitionableState state, final StateDefinition targetState) {
-        createStateDefaultTransition(state, targetState.getId());
-    }
-
-    /**
-     * Create transition for state transition.
-     *
-     * @param state           the state
-     * @param criteriaOutcome the criteria outcome
-     * @param targetState     the target state
-     * @return the transition
-     */
-    public Transition createTransitionForState(final TransitionableState state, final String criteriaOutcome, final String targetState) {
-        return createTransitionForState(state, criteriaOutcome, targetState, false);
-    }
-
-    /**
-     * Add transition to action state.
-     *
-     * @param state           the action state
-     * @param criteriaOutcome the criteria outcome
-     * @param targetState     the target state
-     * @param removeExisting  the remove existing
-     * @return the transition
-     */
-    public Transition createTransitionForState(final TransitionableState state, final String criteriaOutcome, final String targetState, final boolean removeExisting) {
-        try {
-            if (removeExisting) {
-                val success = (Transition) state.getTransition(criteriaOutcome);
-                if (success != null) {
-                    state.getTransitionSet().remove(success);
-                }
-            }
-            val transition = createTransition(criteriaOutcome, targetState);
-            state.getTransitionSet().add(transition);
-            LOGGER.trace("Added transition [{}] to the state [{}]", transition.getId(), state.getId());
-            return transition;
-        } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
-        }
-        return null;
-    }
-
-    @Override
-    public Transition createTransition(final String criteriaOutcome, final String targetState) {
-        return createTransition(new LiteralExpression(criteriaOutcome), targetState);
-    }
-
-    @Override
-    public Transition createTransition(final String criteriaOutcome, final TransitionableState targetState) {
-        return createTransition(new LiteralExpression(criteriaOutcome), targetState.getId());
-    }
-
-    @Override
-    public Transition createTransition(final String targetState) {
-        val resolver = new DefaultTargetStateResolver(targetState);
-        return new Transition(resolver);
-    }
-
-    @Override
-    public Transition createTransition(final Expression criteriaOutcomeExpression, final String targetState) {
-        val criteria = getTransitionCriteriaForExpression(criteriaOutcomeExpression);
-        val resolver = new DefaultTargetStateResolver(targetState);
-        return new Transition(criteria, resolver);
-    }
-
-    private static TransitionCriteria getTransitionCriteriaForExpression(final Expression criteriaOutcomeExpression) {
-        if (criteriaOutcomeExpression.toString().equals(WildcardTransitionCriteria.WILDCARD_EVENT_ID)) {
-            return WildcardTransitionCriteria.INSTANCE;
-        }
-        return new DefaultTransitionCriteria(criteriaOutcomeExpression);
-    }
-
-    /**
-     * Create expression expression.
-     *
-     * @param expression   the expression
-     * @param expectedType the expected type
-     * @return the expression
-     */
-    public Expression createExpression(final String expression, final Class expectedType) {
-        val parserContext = new FluentParserContext().expectResult(expectedType);
-        return getSpringExpressionParser().parseExpression(expression, parserContext);
-    }
-
-    /**
-     * Create expression.
-     *
-     * @param expression the expression
-     * @return the expression
-     */
-    public Expression createExpression(final String expression) {
-        return createExpression(expression, null);
-    }
-
-    /**
-     * Gets spring expression parser.
-     *
-     * @return the spring expression parser
-     */
-    public SpringELExpressionParser getSpringExpressionParser() {
-        val configuration = new SpelParserConfiguration();
-        val spelExpressionParser = new SpelExpressionParser(configuration);
-        val parser = new SpringELExpressionParser(spelExpressionParser, this.flowBuilderServices.getConversionService());
-        parser.addPropertyAccessor(new ActionPropertyAccessor());
-        parser.addPropertyAccessor(new BeanFactoryPropertyAccessor());
-        parser.addPropertyAccessor(new FlowVariablePropertyAccessor());
-        parser.addPropertyAccessor(new MapAdaptablePropertyAccessor());
-        parser.addPropertyAccessor(new MessageSourcePropertyAccessor());
-        parser.addPropertyAccessor(new ScopeSearchingPropertyAccessor());
-        parser.addPropertyAccessor(new BeanExpressionContextAccessor());
-        parser.addPropertyAccessor(new MapAccessor());
-        parser.addPropertyAccessor(new MapAdaptablePropertyAccessor());
-        parser.addPropertyAccessor(new EnvironmentAccessor());
-        parser.addPropertyAccessor(new ReflectivePropertyAccessor());
-        return parser;
-    }
-
-    @Override
     public EndState createEndState(final Flow flow, final String id) {
         return createEndState(flow, id, (ViewFactory) null);
+    }
+
+    @Override
+    public EndState createEndState(final Flow flow, final String id, final String viewId, final boolean redirect) {
+        if (!redirect) {
+            return createEndState(flow, id, viewId);
+        }
+        val expression = createExpression(viewId, String.class);
+        val viewFactory = new ActionExecutingViewFactory(new ExternalRedirectAction(expression));
+        return createEndState(flow, id, viewFactory);
     }
 
     @Override
@@ -416,16 +258,6 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
             .createViewFactory(expression, this.flowBuilderServices.getExpressionParser(),
                 this.flowBuilderServices.getConversionService(), null,
                 this.flowBuilderServices.getValidator(), this.flowBuilderServices.getValidationHintResolver());
-        return createEndState(flow, id, viewFactory);
-    }
-
-    @Override
-    public EndState createEndState(final Flow flow, final String id, final String viewId, final boolean redirect) {
-        if (!redirect) {
-            return createEndState(flow, id, viewId);
-        }
-        val expression = createExpression(viewId, String.class);
-        val viewFactory = new ActionExecutingViewFactory(new ExternalRedirectAction(expression));
         return createEndState(flow, id, viewFactory);
     }
 
@@ -493,6 +325,178 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     @Override
     public SubflowState createSubflowState(final Flow flow, final String id, final String subflow) {
         return createSubflowState(flow, id, subflow, null);
+    }
+
+    @Override
+    public Flow buildFlow(final String location, final String id) {
+        val builder = new FlowDefinitionRegistryBuilder(this.applicationContext, this.flowBuilderServices);
+        builder.setParent(this.loginFlowDefinitionRegistry);
+        builder.addFlowLocation(location, id);
+        val registry = builder.build();
+        return (Flow) registry.getFlowDefinition(id);
+    }
+
+    /**
+     * Handle the initialization of the webflow.
+     */
+    protected abstract void doInitialize();
+
+    /**
+     * Create action state action state.
+     *
+     * @param flow the flow
+     * @param name the name
+     * @return the action state
+     */
+    public ActionState createActionState(final Flow flow, final String name) {
+        return createActionState(flow, name, new Action[]{});
+    }
+
+    /**
+     * Create action state action state.
+     *
+     * @param flow   the flow
+     * @param name   the name
+     * @param action the action
+     * @return the action state
+     */
+    public ActionState createActionState(final Flow flow, final String name, final String action) {
+        return createActionState(flow, name, createEvaluateAction(action));
+    }
+
+    @Override
+    public ActionState createActionState(final Flow flow, final String name, final Action... actions) {
+        if (containsFlowState(flow, name)) {
+            LOGGER.trace("Flow [{}] already contains a definition for state id [{}]", flow.getId(), name);
+            return getTransitionableState(flow, name, ActionState.class);
+        }
+        val actionState = new ActionState(flow, name);
+        LOGGER.trace("Created action state [{}]", actionState.getId());
+        actionState.getActionList().addAll(actions);
+        LOGGER.trace("Added action to the action state [{}] list of actions: [{}]",
+            actionState.getId(), actionState.getActionList());
+        return actionState;
+    }
+
+    /**
+     * Create action state action state.
+     *
+     * @param flow   the flow
+     * @param name   the name
+     * @param action the action
+     * @return the action state
+     */
+    public ActionState createActionState(final Flow flow, final String name, final Action action) {
+        return createActionState(flow, name, new Action[]{action});
+    }
+
+    /**
+     * Add a default transition to a given state.
+     *
+     * @param state       the state to include the default transition
+     * @param targetState the id of the destination state to which the flow should transfer
+     */
+    public void createStateDefaultTransition(final TransitionableState state, final String targetState) {
+        if (state == null) {
+            LOGGER.trace("Cannot add default transition of [{}] to the given state is null and cannot be found in the flow.", targetState);
+            return;
+        }
+        val transition = createTransition(targetState);
+        state.getTransitionSet().add(transition);
+    }
+
+    /**
+     * Create state default transition.
+     *
+     * @param state       the state
+     * @param targetState the target state
+     */
+    public void createStateDefaultTransition(final TransitionableState state, final StateDefinition targetState) {
+        createStateDefaultTransition(state, targetState.getId());
+    }
+
+    /**
+     * Create transition for state transition.
+     *
+     * @param state           the state
+     * @param criteriaOutcome the criteria outcome
+     * @param targetState     the target state
+     * @return the transition
+     */
+    public Transition createTransitionForState(final TransitionableState state, final String criteriaOutcome, final String targetState) {
+        return createTransitionForState(state, criteriaOutcome, targetState, false);
+    }
+
+    /**
+     * Add transition to action state.
+     *
+     * @param state           the action state
+     * @param criteriaOutcome the criteria outcome
+     * @param targetState     the target state
+     * @param removeExisting  the remove existing
+     * @return the transition
+     */
+    public Transition createTransitionForState(final TransitionableState state, final String criteriaOutcome, final String targetState, final boolean removeExisting) {
+        try {
+            if (removeExisting) {
+                val success = (Transition) state.getTransition(criteriaOutcome);
+                if (success != null) {
+                    state.getTransitionSet().remove(success);
+                }
+            }
+            val transition = createTransition(criteriaOutcome, targetState);
+            state.getTransitionSet().add(transition);
+            LOGGER.trace("Added transition [{}] to the state [{}]", transition.getId(), state.getId());
+            return transition;
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return null;
+    }
+
+    /**
+     * Create expression expression.
+     *
+     * @param expression   the expression
+     * @param expectedType the expected type
+     * @return the expression
+     */
+    public Expression createExpression(final String expression, final Class expectedType) {
+        val parserContext = new FluentParserContext().expectResult(expectedType);
+        return getSpringExpressionParser().parseExpression(expression, parserContext);
+    }
+
+    /**
+     * Create expression.
+     *
+     * @param expression the expression
+     * @return the expression
+     */
+    public Expression createExpression(final String expression) {
+        return createExpression(expression, null);
+    }
+
+    /**
+     * Gets spring expression parser.
+     *
+     * @return the spring expression parser
+     */
+    public SpringELExpressionParser getSpringExpressionParser() {
+        val configuration = new SpelParserConfiguration();
+        val spelExpressionParser = new SpelExpressionParser(configuration);
+        val parser = new SpringELExpressionParser(spelExpressionParser, this.flowBuilderServices.getConversionService());
+        parser.addPropertyAccessor(new ActionPropertyAccessor());
+        parser.addPropertyAccessor(new BeanFactoryPropertyAccessor());
+        parser.addPropertyAccessor(new FlowVariablePropertyAccessor());
+        parser.addPropertyAccessor(new MapAdaptablePropertyAccessor());
+        parser.addPropertyAccessor(new MessageSourcePropertyAccessor());
+        parser.addPropertyAccessor(new ScopeSearchingPropertyAccessor());
+        parser.addPropertyAccessor(new BeanExpressionContextAccessor());
+        parser.addPropertyAccessor(new MapAccessor());
+        parser.addPropertyAccessor(new MapAdaptablePropertyAccessor());
+        parser.addPropertyAccessor(new EnvironmentAccessor());
+        parser.addPropertyAccessor(new ReflectivePropertyAccessor());
+        return parser;
     }
 
     /**
@@ -854,8 +858,8 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      */
     public void addActionsToActionStateExecutionListAt(final Flow flow, final String actionStateId, final int position, final EvaluateAction... actions) {
         val actionState = getState(flow, actionStateId, ActionState.class);
-        val currentActions = new ArrayList<Action>();
         val actionList = actionState.getActionList();
+        val currentActions = new ArrayList<Action>(actionList.size() + actions.length);
         actionList.forEach(currentActions::add);
         val index = position < 0 || position == Integer.MAX_VALUE ? currentActions.size() : position;
         currentActions.forEach(actionList::remove);

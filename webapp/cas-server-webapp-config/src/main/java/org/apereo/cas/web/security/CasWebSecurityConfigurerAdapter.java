@@ -13,11 +13,11 @@ import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
-import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties;
 import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
 import org.springframework.boot.actuate.endpoint.web.PathMappedEndpoints;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
+import org.springframework.context.ApplicationContext;
 import org.springframework.security.authentication.jaas.JaasAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -43,8 +43,8 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
     private final CasConfigurationProperties casProperties;
     private final SecurityProperties securityProperties;
     private final CasWebSecurityExpressionHandler casWebSecurityExpressionHandler;
-    private final WebEndpointProperties webEndpointProperties;
     private final PathMappedEndpoints pathMappedEndpoints;
+    private final ApplicationContext applicationContext;
 
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
@@ -130,7 +130,7 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
         cfg.usersByUsernameQuery(jdbc.getQuery());
         cfg.rolePrefix(jdbc.getRolePrefix());
         cfg.dataSource(JpaBeans.newDataSource(jdbc));
-        cfg.passwordEncoder(PasswordEncoderUtils.newPasswordEncoder(jdbc.getPasswordEncoder()));
+        cfg.passwordEncoder(PasswordEncoderUtils.newPasswordEncoder(jdbc.getPasswordEncoder(), applicationContext));
     }
 
     /**
@@ -296,10 +296,10 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
 
     private boolean isLdapAuthorizationActive() {
         val ldap = casProperties.getMonitor().getEndpoints().getLdap();
-        val authZ = ldap.getLdapAuthz();
         return StringUtils.isNotBlank(ldap.getBaseDn())
             && StringUtils.isNotBlank(ldap.getLdapUrl())
             && StringUtils.isNotBlank(ldap.getSearchFilter())
-            && (StringUtils.isNotBlank(authZ.getRoleAttribute()) || StringUtils.isNotBlank(authZ.getGroupAttribute()));
+            && (StringUtils.isNotBlank(ldap.getLdapAuthz().getRoleAttribute())
+               || StringUtils.isNotBlank(ldap.getLdapAuthz().getGroupAttribute()));
     }
 }

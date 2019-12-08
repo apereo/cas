@@ -30,7 +30,7 @@ public class JdbcAuthenticationProperties implements Serializable {
      * Settings related to search-mode jdbc authentication.
      * Searches for a user record by querying against a username and password; the user is authenticated if at least one result is found.
      */
-    private List<SearchJdbcAuthenticationProperties> search = new ArrayList<>();
+    private List<SearchJdbcAuthenticationProperties> search = new ArrayList<>(0);
 
     /**
      * Settings related to query-encode-mode jdbc authentication.
@@ -42,18 +42,18 @@ public class JdbcAuthenticationProperties implements Serializable {
      * are used, the byte code hash of the first iteration is rehashed without the salt values. The final hash
      * is converted to hex before comparing it to the database value.
      */
-    private List<QueryEncodeJdbcAuthenticationProperties> encode = new ArrayList<>();
+    private List<QueryEncodeJdbcAuthenticationProperties> encode = new ArrayList<>(0);
 
     /**
      * Settings related to query-mode jdbc authentication.
      * Authenticates a user by comparing the user password
      * (which can be encoded with a password encoder) against the password on record determined by a configurable database query.
      */
-    private List<QueryJdbcAuthenticationProperties> query = new ArrayList<>();
+    private List<QueryJdbcAuthenticationProperties> query = new ArrayList<>(0);
 
     /**
      * Settings related to bind-mode jdbc authentication.
      * Authenticates a user by attempting to create a database connection using the username and (hashed) password.
      */
-    private List<BindJdbcAuthenticationProperties> bind = new ArrayList<>();
+    private List<BindJdbcAuthenticationProperties> bind = new ArrayList<>(0);
 }

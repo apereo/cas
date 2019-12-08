@@ -5,7 +5,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.tomcat.CasTomcatServletWebServerFactory;
 import org.apereo.cas.tomcat.CasTomcatServletWebServerFactoryCustomizer;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apache.catalina.startup.Tomcat;
 import org.apache.coyote.http2.Http2Protocol;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,13 +28,12 @@ import org.springframework.core.Ordered;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration("casEmbeddedContainerTomcatConfiguration")
+@Configuration(value = "casEmbeddedContainerTomcatConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnProperty(name = CasEmbeddedContainerUtils.EMBEDDED_CONTAINER_CONFIG_ACTIVE, havingValue = "true")
 @ConditionalOnClass(value = {Tomcat.class, Http2Protocol.class})
 @AutoConfigureBefore(ServletWebServerFactoryAutoConfiguration.class)
 @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
-@Slf4j
 public class CasEmbeddedContainerTomcatConfiguration {
 
     @Autowired

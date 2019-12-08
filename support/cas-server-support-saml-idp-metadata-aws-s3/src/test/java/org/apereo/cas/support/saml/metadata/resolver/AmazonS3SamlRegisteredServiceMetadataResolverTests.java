@@ -30,7 +30,7 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
-@Tag("AmazonWebServicesS3")
+@Tag("AmazonWebServices")
 public class AmazonS3SamlRegisteredServiceMetadataResolverTests {
     @Test
     public void verifyAction() throws Exception {

@@ -2,6 +2,7 @@ package org.apereo.cas.trusted;
 
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
@@ -15,11 +16,17 @@ import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.SpringBootConfiguration;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
+import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
+import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.annotation.Import;
 import org.springframework.webflow.execution.Action;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 import static org.apereo.cas.trusted.BeanNames.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -31,15 +38,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@SpringBootTest(classes = {
-    RefreshAutoConfiguration.class,
-    CasCoreServicesConfiguration.class,
-    CasRegisteredServicesTestConfiguration.class,
-    CasCoreAuditConfiguration.class,
-    MultifactorAuthnTrustWebflowConfiguration.class,
-    MultifactorAuthnTrustConfiguration.class,
-    MultifactorAuthnTrustedDeviceFingerprintConfiguration.class
-})
+@SpringBootTest(classes = AbstractMultifactorAuthenticationTrustStorageTests.SharedTestConfiguration.class)
 public abstract class AbstractMultifactorAuthenticationTrustStorageTests {
     @Autowired
     @Qualifier("mfaVerifyTrustAction")
@@ -59,7 +58,7 @@ public abstract class AbstractMultifactorAuthenticationTrustStorageTests {
         record.setName("DeviceName");
         record.setPrincipal("casuser");
         record.setId(1000);
-        record.setRecordDate(LocalDateTime.now().plusDays(1));
+        record.setRecordDate(LocalDateTime.now(ZoneId.systemDefault()).plusDays(1));
         record.setRecordKey("RecordKey");
         return record;
     }
@@ -69,9 +68,28 @@ public abstract class AbstractMultifactorAuthenticationTrustStorageTests {
         val record = getMultifactorAuthenticationTrustRecord();
         getMfaTrustEngine().set(record);
         assertFalse(getMfaTrustEngine().get(record.getPrincipal()).isEmpty());
-        assertFalse(getMfaTrustEngine().get(LocalDateTime.now()).isEmpty());
-        assertFalse(getMfaTrustEngine().get(record.getPrincipal(), LocalDateTime.now()).isEmpty());
+        val now = LocalDateTime.now(ZoneId.systemDefault());
+        assertFalse(getMfaTrustEngine().get(now).isEmpty());
+        assertFalse(getMfaTrustEngine().get(record.getPrincipal(), now).isEmpty());
     }
 
     public abstract MultifactorAuthenticationTrustStorage getMfaTrustEngine();
+
+    @ImportAutoConfiguration({
+        RefreshAutoConfiguration.class,
+        MailSenderAutoConfiguration.class,
+        AopAutoConfiguration.class
+    })
+    @SpringBootConfiguration
+    @Import({
+        CasCoreUtilConfiguration.class,
+        CasCoreServicesConfiguration.class,
+        CasRegisteredServicesTestConfiguration.class,
+        CasCoreAuditConfiguration.class,
+        MultifactorAuthnTrustWebflowConfiguration.class,
+        MultifactorAuthnTrustConfiguration.class,
+        MultifactorAuthnTrustedDeviceFingerprintConfiguration.class
+    })
+    public static class SharedTestConfiguration {
+    }
 }

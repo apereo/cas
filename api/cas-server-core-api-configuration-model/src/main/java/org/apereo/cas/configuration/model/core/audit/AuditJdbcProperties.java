@@ -1,10 +1,12 @@
 package org.apereo.cas.configuration.model.core.audit;
 
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
+import org.apereo.cas.configuration.model.support.quartz.SchedulingProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * This is {@link AuditJdbcProperties}.
@@ -39,16 +41,8 @@ public class AuditJdbcProperties extends AbstractJpaProperties {
     private int columnLength = 100;
 
     /**
-     * Defines the isolation level for transactions.
-     *
-     * @see org.springframework.transaction.TransactionDefinition
+     * Scheduler settings to indicate how often the cleaner is reloaded.
      */
-    private String isolationLevelName = "ISOLATION_READ_COMMITTED";
-
-    /**
-     * Defines the propagation behavior for transactions.
-     *
-     * @see org.springframework.transaction.TransactionDefinition
-     */
-    private String propagationBehaviorName = "PROPAGATION_REQUIRED";
+    @NestedConfigurationProperty
+    private SchedulingProperties schedule = new SchedulingProperties();
 }

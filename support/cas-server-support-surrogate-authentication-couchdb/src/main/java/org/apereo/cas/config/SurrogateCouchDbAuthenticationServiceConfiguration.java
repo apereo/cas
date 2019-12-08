@@ -9,7 +9,6 @@ import org.apereo.cas.couchdb.core.ProfileCouchDbRepository;
 import org.apereo.cas.couchdb.surrogate.SurrogateAuthorizationCouchDbRepository;
 import org.apereo.cas.services.ServicesManager;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.ektorp.CouchDbConnector;
 import org.ektorp.CouchDbInstance;
@@ -31,7 +30,6 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("SamlIdPCouchDbMetadataConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class SurrogateCouchDbAuthenticationServiceConfiguration {
 
     @Autowired
@@ -53,21 +51,21 @@ public class SurrogateCouchDbAuthenticationServiceConfiguration {
     @RefreshScope
     @Bean
     public CouchDbConnectorFactory surrogateCouchDbFactory() {
-        return new CouchDbConnectorFactory(casProperties.getAuthn().getSurrogate().getCouchDb(), objectMapperFactory.getIfAvailable());
+        return new CouchDbConnectorFactory(casProperties.getAuthn().getSurrogate().getCouchDb(), objectMapperFactory.getObject());
     }
 
     @ConditionalOnMissingBean(name = "surrogateCouchDbInstance")
     @RefreshScope
     @Bean
     public CouchDbInstance surrogateCouchDbInstance() {
-        return surrogateCouchDbFactory.getIfAvailable().createInstance();
+        return surrogateCouchDbFactory.getObject().createInstance();
     }
 
     @ConditionalOnMissingBean(name = "surrogateCouchDbConnector")
     @RefreshScope
     @Bean
     public CouchDbConnector surrogateCouchDbConnector() {
-        return surrogateCouchDbFactory.getIfAvailable().createConnector();
+        return surrogateCouchDbFactory.getObject().createConnector();
     }
 
     @ConditionalOnMissingBean(name = "surrogateAuthorizationCouchDbRepository")
@@ -75,7 +73,7 @@ public class SurrogateCouchDbAuthenticationServiceConfiguration {
     @RefreshScope
     public SurrogateAuthorizationCouchDbRepository surrogateAuthorizationCouchDbRepository() {
         val couch = casProperties.getAuthn().getSurrogate().getCouchDb();
-        val repository = new SurrogateAuthorizationCouchDbRepository(surrogateCouchDbFactory.getIfAvailable().getCouchDbConnector(), couch.isCreateIfNotExists());
+        val repository = new SurrogateAuthorizationCouchDbRepository(surrogateCouchDbFactory.getObject().getCouchDbConnector(), couch.isCreateIfNotExists());
         repository.initStandardDesignDocument();
         return repository;
     }
@@ -85,7 +83,7 @@ public class SurrogateCouchDbAuthenticationServiceConfiguration {
     @RefreshScope
     public ProfileCouchDbRepository surrogateAuthorizationProfileCouchDbRepository() {
         val couch = casProperties.getAuthn().getSurrogate().getCouchDb();
-        val repository = new ProfileCouchDbRepository(surrogateCouchDbFactory.getIfAvailable().getCouchDbConnector(), couch.isCreateIfNotExists());
+        val repository = new ProfileCouchDbRepository(surrogateCouchDbFactory.getObject().getCouchDbConnector(), couch.isCreateIfNotExists());
         repository.initStandardDesignDocument();
         return repository;
     }
@@ -97,9 +95,9 @@ public class SurrogateCouchDbAuthenticationServiceConfiguration {
         val couchDb = casProperties.getAuthn().getSurrogate().getCouchDb();
         if (couchDb.isProfileBased()) {
             return new SurrogateCouchDbProfileAuthenticationService(surrogateAuthorizationProfileCouchDbRepository(),
-                couchDb.getSurrogatePrincipalsAttribute(), servicesManager.getIfAvailable());
+                couchDb.getSurrogatePrincipalsAttribute(), servicesManager.getObject());
         }
-        return new SurrogateCouchDbAuthenticationService(surrogateAuthorizationCouchDbRepository(), servicesManager.getIfAvailable());
+        return new SurrogateCouchDbAuthenticationService(surrogateAuthorizationCouchDbRepository(), servicesManager.getObject());
 
     }
 }

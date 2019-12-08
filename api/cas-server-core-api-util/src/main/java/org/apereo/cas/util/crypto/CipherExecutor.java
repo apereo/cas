@@ -45,7 +45,7 @@ public interface CipherExecutor<I, O> {
      * @return Strongly -typed Noop {@code CipherExecutor Serializable -> Serializable}
      */
     static CipherExecutor<Serializable, Serializable> noOp() {
-        return NoOpCipherExecutor.getInstance();
+        return NoOpCipherExecutor.INSTANCE;
     }
 
     /**
@@ -54,7 +54,7 @@ public interface CipherExecutor<I, O> {
      * @return Strongly -typed Noop {@code CipherExecutor String -> String}
      */
     static CipherExecutor<String, String> noOpOfStringToString() {
-        return NoOpCipherExecutor.getInstance();
+        return NoOpCipherExecutor.INSTANCE;
     }
 
     /**
@@ -63,7 +63,7 @@ public interface CipherExecutor<I, O> {
      * @return Strongly -typed Noop {@code CipherExecutor Serializable -> String}
      */
     static CipherExecutor<Serializable, String> noOpOfSerializableToString() {
-        return NoOpCipherExecutor.getInstance();
+        return NoOpCipherExecutor.INSTANCE;
     }
 
     /**

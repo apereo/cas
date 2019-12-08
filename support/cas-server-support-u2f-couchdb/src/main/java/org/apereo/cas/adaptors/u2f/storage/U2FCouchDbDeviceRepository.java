@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
@@ -71,7 +72,7 @@ public class U2FCouchDbDeviceRepository extends BaseU2FDeviceRepository {
         val record = new U2FDeviceRegistration();
         record.setUsername(username);
         record.setRecord(getCipherExecutor().encode(registration.toJson()));
-        record.setCreatedDate(LocalDate.now());
+        record.setCreatedDate(LocalDate.now(ZoneId.systemDefault()));
         if (asynchronous) {
             this.executorService.execute(() -> couchDb.add(new CouchDbU2FDeviceRegistration(record)));
         } else {
@@ -86,7 +87,7 @@ public class U2FCouchDbDeviceRepository extends BaseU2FDeviceRepository {
 
     @Override
     public void clean() {
-        val expirationDate = LocalDate.now().minus(this.expirationTime, DateTimeUtils.toChronoUnit(this.expirationTimeUnit));
+        val expirationDate = LocalDate.now(ZoneId.systemDefault()).minus(this.expirationTime, DateTimeUtils.toChronoUnit(this.expirationTimeUnit));
         LOGGER.debug("Cleaning up expired U2F device registrations based on expiration date [{}]", expirationDate);
         if (asynchronous) {
             this.executorService.execute(() -> couchDb.findByDateBefore(expirationDate).forEach(couchDb::deleteRecord));
@@ -98,7 +99,7 @@ public class U2FCouchDbDeviceRepository extends BaseU2FDeviceRepository {
     @Override
     public void removeAll() {
         if (asynchronous) {
-            this.executorService.execute(() -> couchDb.deleteAll());
+            this.executorService.execute(couchDb::deleteAll);
         } else {
             couchDb.deleteAll();
         }

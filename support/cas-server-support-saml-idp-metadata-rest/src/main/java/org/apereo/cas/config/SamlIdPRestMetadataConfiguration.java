@@ -5,7 +5,7 @@ import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.metadata.resolver.RestSamlRegisteredServiceMetadataResolver;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.SamlRegisteredServiceMetadataResolver;
 import org.apereo.cas.support.saml.services.idp.metadata.plan.SamlRegisteredServiceMetadataResolutionPlan;
-import org.apereo.cas.support.saml.services.idp.metadata.plan.SamlRegisteredServiceMetadataResolutionPlanConfigurator;
+import org.apereo.cas.support.saml.services.idp.metadata.plan.SamlRegisteredServiceMetadataResolutionPlanConfigurer;
 
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
@@ -23,7 +23,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("samlIdPRestMetadataConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class SamlIdPRestMetadataConfiguration implements SamlRegisteredServiceMetadataResolutionPlanConfigurator {
+public class SamlIdPRestMetadataConfiguration implements SamlRegisteredServiceMetadataResolutionPlanConfigurer {
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -35,7 +35,7 @@ public class SamlIdPRestMetadataConfiguration implements SamlRegisteredServiceMe
     @Bean
     public SamlRegisteredServiceMetadataResolver restSamlRegisteredServiceMetadataResolver() {
         val idp = casProperties.getAuthn().getSamlIdp();
-        return new RestSamlRegisteredServiceMetadataResolver(idp, openSamlConfigBean.getIfAvailable());
+        return new RestSamlRegisteredServiceMetadataResolver(idp, openSamlConfigBean.getObject());
     }
 
     @Override

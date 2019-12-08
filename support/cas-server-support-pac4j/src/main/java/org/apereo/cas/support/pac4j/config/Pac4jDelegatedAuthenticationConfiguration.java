@@ -7,7 +7,6 @@ import org.apereo.cas.validation.DelegatedAuthenticationServiceTicketValidationA
 import org.apereo.cas.validation.RegisteredServiceDelegatedAuthenticationPolicyAuditableEnforcer;
 import org.apereo.cas.validation.ServiceTicketValidationAuthorizer;
 import org.apereo.cas.validation.ServiceTicketValidationAuthorizerConfigurer;
-import org.apereo.cas.validation.ServiceTicketValidationAuthorizersExecutionPlan;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -15,7 +14,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.github.scribejava.core.model.OAuth1RequestToken;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,8 +32,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("pac4jDelegatedAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
-public class Pac4jDelegatedAuthenticationConfiguration implements ServiceTicketValidationAuthorizerConfigurer {
+public class Pac4jDelegatedAuthenticationConfiguration {
 
     @Autowired
     @Qualifier("servicesManager")
@@ -58,14 +55,15 @@ public class Pac4jDelegatedAuthenticationConfiguration implements ServiceTicketV
 
     @Bean
     public ServiceTicketValidationAuthorizer pac4jServiceTicketValidationAuthorizer() {
-        return new DelegatedAuthenticationServiceTicketValidationAuthorizer(servicesManager.getIfAvailable(),
+        return new DelegatedAuthenticationServiceTicketValidationAuthorizer(servicesManager.getObject(),
             registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer());
     }
 
-    @Override
-    public void configureAuthorizersExecutionPlan(final ServiceTicketValidationAuthorizersExecutionPlan plan) {
-        plan.registerAuthorizer(pac4jServiceTicketValidationAuthorizer());
+    @Bean
+    public ServiceTicketValidationAuthorizerConfigurer pac4jServiceTicketValidationAuthorizerConfigurer() {
+        return plan -> plan.registerAuthorizer(pac4jServiceTicketValidationAuthorizer());
     }
+
 
     /**
      * The type Oauth1 request token mixin.

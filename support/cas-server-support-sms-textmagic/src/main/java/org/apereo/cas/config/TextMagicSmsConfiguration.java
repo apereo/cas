@@ -10,8 +10,11 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.Optional;
 
 /**
  * This is {@link TextMagicSmsConfiguration}.
@@ -19,7 +22,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration("textMagicSmsConfiguration")
+@Configuration(value = "textMagicSmsConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class TextMagicSmsConfiguration {
     @Autowired
@@ -30,9 +33,9 @@ public class TextMagicSmsConfiguration {
     private ObjectProvider<HttpClient> httpClient;
 
     @Bean
+    @RefreshScope
     public SmsSender smsSender() {
         val textMagic = casProperties.getSmsProvider().getTextMagic();
-        return new TextMagicSmsSender(textMagic.getUsername(), textMagic.getToken(),
-            textMagic.getUrl(), httpClient.getIfAvailable());
+        return new TextMagicSmsSender(textMagic, Optional.of(httpClient.getObject()));
     }
 }

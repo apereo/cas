@@ -5,8 +5,9 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.views.OAuth20UserProfileViewRenderer;
-import org.apereo.cas.ticket.accesstoken.AccessToken;
+import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -43,9 +44,8 @@ public class DefaultOAuth20UserProfileDataCreator implements OAuth20UserProfileD
     @Audit(action = "OAUTH2_USER_PROFILE",
         actionResolverName = "OAUTH2_USER_PROFILE_ACTION_RESOLVER",
         resourceResolverName = "OAUTH2_USER_PROFILE_RESOURCE_RESOLVER")
-    public Map<String, Object> createFrom(final AccessToken accessToken, final JEEContext context) {
-        val service = accessToken.getService();
-        val registeredService = this.servicesManager.findServiceBy(service);
+    public Map<String, Object> createFrom(final OAuth20AccessToken accessToken, final JEEContext context) {
+        val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, accessToken.getClientId());
 
         val principal = getAccessTokenAuthenticationPrincipal(accessToken, context, registeredService);
         val map = new HashMap<String, Object>();
@@ -65,7 +65,7 @@ public class DefaultOAuth20UserProfileDataCreator implements OAuth20UserProfileD
      * @param registeredService the registered service
      * @return the access token authentication principal
      */
-    protected Principal getAccessTokenAuthenticationPrincipal(final AccessToken accessToken,
+    protected Principal getAccessTokenAuthenticationPrincipal(final OAuth20AccessToken accessToken,
                                                               final JEEContext context,
                                                               final RegisteredService registeredService) {
         val currentPrincipal = accessToken.getAuthentication().getPrincipal();
@@ -86,7 +86,7 @@ public class DefaultOAuth20UserProfileDataCreator implements OAuth20UserProfileD
      * @param principal         the authentication principal
      * @param registeredService the registered service
      */
-    protected void finalizeProfileResponse(final AccessToken accessTokenTicket,
+    protected void finalizeProfileResponse(final OAuth20AccessToken accessTokenTicket,
                                            final Map<String, Object> map,
                                            final Principal principal,
                                            final RegisteredService registeredService) {

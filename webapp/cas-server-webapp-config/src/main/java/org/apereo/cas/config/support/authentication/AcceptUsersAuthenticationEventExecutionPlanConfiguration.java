@@ -25,7 +25,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Dmitriy Kopylenko
  * @since 5.1.0
  */
-@Configuration("acceptUsersAuthenticationEventExecutionPlanConfiguration")
+@Configuration(value = "acceptUsersAuthenticationEventExecutionPlanConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class AcceptUsersAuthenticationEventExecutionPlanConfiguration {
@@ -51,8 +51,8 @@ public class AcceptUsersAuthenticationEventExecutionPlanConfiguration {
                         + "While this is generally useful for demo purposes, it is STRONGLY recommended "
                         + "that you DISABLE this authentication method (by setting 'cas.authn.accept.users' "
                         + "to a blank value) and switch to a mode that is more suitable for production.";
-                AsciiArtUtils.printAsciiArtWarning(LOGGER, "STOP!", header);
-                plan.registerAuthenticationHandlerWithPrincipalResolver(acceptUsersAuthenticationHandler.getIfAvailable(), defaultPrincipalResolver.getIfAvailable());
+                AsciiArtUtils.printAsciiArtWarning(LOGGER, header);
+                plan.registerAuthenticationHandlerWithPrincipalResolver(acceptUsersAuthenticationHandler.getObject(), defaultPrincipalResolver.getObject());
             }
         };
     }

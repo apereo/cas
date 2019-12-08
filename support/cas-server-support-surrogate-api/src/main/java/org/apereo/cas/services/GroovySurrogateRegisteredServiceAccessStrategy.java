@@ -2,6 +2,7 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.scripting.ScriptingUtils;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -31,7 +32,7 @@ public class GroovySurrogateRegisteredServiceAccessStrategy extends BaseSurrogat
         if (isSurrogateAuthenticationSession(principalAttributes)) {
             try {
                 val args = new Object[]{principal, principalAttributes, LOGGER};
-                val resource = ResourceUtils.getResourceFrom(this.groovyScript);
+                val resource = ResourceUtils.getResourceFrom(SpringExpressionLanguageValueResolver.getInstance().resolve(this.groovyScript));
                 return ScriptingUtils.executeGroovyScript(resource, args, Boolean.class, true);
             } catch (final Exception e) {
                 LOGGER.error(e.getMessage(), e);

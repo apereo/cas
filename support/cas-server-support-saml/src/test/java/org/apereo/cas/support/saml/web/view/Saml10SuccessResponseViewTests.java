@@ -26,6 +26,7 @@ import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -33,7 +34,6 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -49,6 +49,7 @@ import static org.mockito.Mockito.*;
  * @since 3.1
  */
 @Tag("SAML")
+@SpringBootTest(classes = AbstractOpenSamlTests.SharedTestConfiguration.class)
 public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
 
     private static final String TEST_VALUE = "testValue";
@@ -76,7 +77,7 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
             StandardCharsets.UTF_8.name(),
             new DefaultAuthenticationAttributeReleasePolicy("attribute"),
             new DefaultAuthenticationServiceSelectionPlan(),
-            new NoOpProtocolAttributesRenderer(),
+            NoOpProtocolAttributesRenderer.INSTANCE,
             samlResponseBuilder);
     }
 
@@ -97,7 +98,7 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
         authAttributes.put("testSamlAttribute", List.of("value"));
 
         val primary = CoreAuthenticationTestUtils.getAuthentication(principal, authAttributes);
-        val assertion = new DefaultAssertionBuilder(primary).with(Collections.singletonList(primary)).with(
+        val assertion = new DefaultAssertionBuilder(primary).with(List.of(primary)).with(
             CoreAuthenticationTestUtils.getService()).with(true).build();
         model.put("assertion", assertion);
 
@@ -135,7 +136,7 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
 
         val primary = CoreAuthenticationTestUtils.getAuthentication(principal, authAttributes);
         val assertion = new DefaultAssertionBuilder(primary)
-            .with(Collections.singletonList(primary))
+            .with(List.of(primary))
             .with(CoreAuthenticationTestUtils.getService())
             .with(true)
             .build();
@@ -168,7 +169,7 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
         val primary = CoreAuthenticationTestUtils.getAuthentication(principal, authnAttributes);
 
         val assertion = new DefaultAssertionBuilder(primary)
-            .with(Collections.singletonList(primary))
+            .with(List.of(primary))
             .with(CoreAuthenticationTestUtils.getService())
             .with(true)
             .build();
