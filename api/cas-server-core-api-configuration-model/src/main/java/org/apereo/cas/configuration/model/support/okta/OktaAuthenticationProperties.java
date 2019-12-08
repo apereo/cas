@@ -1,4 +1,4 @@
-package org.apereo.cas.configuration.model.support.azuread;
+package org.apereo.cas.configuration.model.support.okta;
 
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
@@ -12,16 +12,16 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import java.io.Serializable;
 
 /**
- * This is {@link AzureActiveDirectoryAuthenticationProperties}.
+ * This is {@link OktaAuthenticationProperties}.
  *
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@RequiresModule(name = "cas-server-support-azuread-authentication", automated = true)
+@RequiresModule(name = "cas-server-support-okta-authentication", automated = true)
 @Getter
 @Setter
-public class AzureActiveDirectoryAuthenticationProperties implements Serializable {
-    private static final long serialVersionUID = -21355975558426360L;
+public class OktaAuthenticationProperties implements Serializable {
+    private static final long serialVersionUID = -13245764438426360L;
 
     /**
      * The name of the authentication handler.
@@ -46,20 +46,31 @@ public class AzureActiveDirectoryAuthenticationProperties implements Serializabl
     private PrincipalTransformationProperties principalTransformation = new PrincipalTransformationProperties();
 
     /**
-     * Client id of the application.
+     * Send requests via a proxy; define the hostname.
      */
-    @RequiredProperty
-    private String clientId;
+    private String proxyHost;
 
     /**
-     * Login url including the tenant id.
+     * Send requests via a proxy; define the proxy port.
+     * Negative/zero values should deactivate the proxy configuration
+     * for the http client.
      */
-    private String loginUrl = "https://login.microsoftonline.com/common/";
+    private int proxyPort;
 
     /**
-     * Resource url for the graph API to fetch attributes.
+     * Send requests via a proxy; define the proxy username.
      */
-    private String resource = "https://graph.microsoft.com/";
+    private String proxyUsername;
+
+    /**
+     * Send requests via a proxy; define the proxy password.
+     */
+    private String proxyPassword;
+
+    /**
+     * Connection timeout in milliseconds.
+     */
+    private int connectionTimeout = 5000;
 
     /**
      * A number of authentication handlers are allowed to determine whether they can operate on the provided credential
@@ -71,4 +82,10 @@ public class AzureActiveDirectoryAuthenticationProperties implements Serializabl
      * </ul>
      */
     private String credentialCriteria;
+    
+    /**
+     * Okta domain.
+     */
+    @RequiredProperty
+    private String organizationUrl;
 }

@@ -2272,6 +2272,27 @@ AWS settings for this feature are available [here](Configuration-Properties-Comm
 # cas.authn.cognito.userPoolId=
 ```
 
+## Okta Authentication
+
+To learn more about this topic, [please review this guide](../installation/Okta-Authentication.html).
+
+Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.okta`.
+Password encoding settings for this feature are available [here](Configuration-Properties-Common.html#password-encoding) under the configuration key `cas.authn.okta`.
+
+```properties
+# cas.authn.okta.name=
+# cas.authn.okta.order=  
+# cas.authn.okta.credentialCriteria=
+
+# cas.authn.okta.organizationUrl=     
+
+# cas.authn.okta.connectionTimeout=5000
+# cas.authn.okta.proxyUsername=
+# cas.authn.okta.proxyPassword=
+# cas.authn.okta.proxyHost=
+# cas.authn.okta.proxyPort=
+```
+
 ## Microsoft Azure Active Directory Authentication
 
 To learn more about this topic, [please review this guide](../installation/Azure-ActiveDirectory-Authentication.html).
@@ -2279,11 +2300,10 @@ To learn more about this topic, [please review this guide](../installation/Azure
 Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.azure-active-directory`.
 Password encoding  settings for this feature are available [here](Configuration-Properties-Common.html#password-encoding) under the configuration key `cas.authn.azure-active-directory`.
 
-AWS settings for this feature are available [here](Configuration-Properties-Common.html#amazon-integration-settings) under the configuration key `cas.authn.azure-active-directory`.
-
 ```properties
 # cas.authn.azure-active-directory.name=
 # cas.authn.azure-active-directory.order=
+# cas.authn.azure-active-directory.credentialCriteria=
 
 # cas.authn.azure-active-directory.clientId=
 # cas.authn.azure-active-directory.loginUrl=https://login.microsoftonline.com/common/
