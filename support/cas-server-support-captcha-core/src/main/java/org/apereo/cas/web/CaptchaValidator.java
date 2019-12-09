@@ -29,12 +29,12 @@ public class CaptchaValidator {
     /**
      * Recaptcha response as a request parameter.
      */
-    private static final String REQUEST_PARAM_RECAPTCHA_RESPONSE = "g-recaptcha-response";
+    public static final String REQUEST_PARAM_RECAPTCHA_RESPONSE = "g-recaptcha-response";
 
     /**
      * Recaptcha token as a request parameter.
      */
-    private static final String REQUEST_PARAM_RECAPTCHA_TOKEN = "g-recaptcha-token";
+    public static final String REQUEST_PARAM_RECAPTCHA_TOKEN = "g-recaptcha-token";
 
     private static final ObjectReader READER = new ObjectMapper().findAndRegisterModules().reader();
 
