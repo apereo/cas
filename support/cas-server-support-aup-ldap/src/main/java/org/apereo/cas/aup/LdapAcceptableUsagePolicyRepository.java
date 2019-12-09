@@ -1,7 +1,7 @@
 package org.apereo.cas.aup;
 
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.configuration.model.support.aup.AcceptableUsagePolicyProperties;
+import org.apereo.cas.configuration.model.support.aup.LdapAcceptableUsagePolicyProperties;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapUtils;
@@ -34,11 +34,11 @@ import java.util.Set;
 public class LdapAcceptableUsagePolicyRepository extends AbstractPrincipalAttributeAcceptableUsagePolicyRepository {
     private static final long serialVersionUID = 1600024683199961892L;
 
-    private final List<AcceptableUsagePolicyProperties.Ldap> ldapProperties;
+    private final List<LdapAcceptableUsagePolicyProperties> ldapProperties;
 
     public LdapAcceptableUsagePolicyRepository(final TicketRegistrySupport ticketRegistrySupport,
                                                final String aupAttributeName,
-                                               final List<AcceptableUsagePolicyProperties.Ldap> ldapProperties) {
+                                               final List<LdapAcceptableUsagePolicyProperties> ldapProperties) {
         super(ticketRegistrySupport, aupAttributeName);
         this.ldapProperties = ldapProperties;
     }
@@ -51,7 +51,7 @@ public class LdapAcceptableUsagePolicyRepository extends AbstractPrincipalAttrib
      * @return the optional
      * @throws Exception the exception
      */
-    protected Optional<Pair<ConnectionFactory, Response<SearchResult>>> searchLdapForId(final AcceptableUsagePolicyProperties.Ldap ldap,
+    protected Optional<Pair<ConnectionFactory, Response<SearchResult>>> searchLdapForId(final LdapAcceptableUsagePolicyProperties ldap,
                                                                                         final String id) throws Exception {
         val filter = LdapUtils.newLdaptiveSearchFilter(ldap.getSearchFilter(),
             LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
@@ -69,7 +69,7 @@ public class LdapAcceptableUsagePolicyRepository extends AbstractPrincipalAttrib
         try {
             val response = this.ldapProperties
                 .stream()
-                .sorted(Comparator.comparing(AcceptableUsagePolicyProperties.Ldap::getName))
+                .sorted(Comparator.comparing(LdapAcceptableUsagePolicyProperties::getName))
                 .map(Unchecked.function(ldap -> searchLdapForId(ldap, credential.getId())))
                 .filter(Optional::isPresent)
                 .findFirst();
