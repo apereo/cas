@@ -14,6 +14,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This is {@link AcceptableUsagePolicyProperties}.
@@ -31,7 +33,7 @@ public class AcceptableUsagePolicyProperties implements Serializable {
     /**
      * Control AUP via LDAP.
      */
-    private Ldap ldap = new Ldap();
+    private List<Ldap> ldap = new ArrayList<>();
 
     /**
      * Control AUP via Redis.

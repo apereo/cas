@@ -3,10 +3,10 @@ package org.apereo.cas.authentication.principal.resolvers;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.NullPrincipal;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 
 import lombok.Setter;
@@ -42,7 +42,7 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
     /**
      * Factory to create the principal type.
      **/
-    private final PrincipalFactory principalFactory = new DefaultPrincipalFactory();
+    private final PrincipalFactory principalFactory = PrincipalFactoryUtils.newPrincipalFactory();
 
     /**
      * The chain of delegate resolvers that are invoked in order.

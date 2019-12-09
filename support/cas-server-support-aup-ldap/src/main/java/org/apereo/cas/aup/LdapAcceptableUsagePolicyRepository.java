@@ -8,12 +8,16 @@ import org.apereo.cas.util.LdapUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.tuple.Pair;
+import org.jooq.lambda.Unchecked;
 import org.ldaptive.ConnectionFactory;
-import org.ldaptive.LdapException;
 import org.ldaptive.Response;
 import org.ldaptive.SearchResult;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -30,46 +34,57 @@ import java.util.Set;
 public class LdapAcceptableUsagePolicyRepository extends AbstractPrincipalAttributeAcceptableUsagePolicyRepository {
     private static final long serialVersionUID = 1600024683199961892L;
 
-    private final transient ConnectionFactory connectionFactory;
-    private final AcceptableUsagePolicyProperties.Ldap ldapProperties;
+    private final List<AcceptableUsagePolicyProperties.Ldap> ldapProperties;
 
     public LdapAcceptableUsagePolicyRepository(final TicketRegistrySupport ticketRegistrySupport,
                                                final String aupAttributeName,
-                                               final ConnectionFactory connectionFactory,
-                                               final AcceptableUsagePolicyProperties.Ldap ldapProperties) {
+                                               final List<AcceptableUsagePolicyProperties.Ldap> ldapProperties) {
         super(ticketRegistrySupport, aupAttributeName);
-        this.connectionFactory = connectionFactory;
         this.ldapProperties = ldapProperties;
+    }
+
+    /**
+     * Search ldap for id and return optional.
+     *
+     * @param ldap the ldap
+     * @param id   the id
+     * @return the optional
+     * @throws Exception the exception
+     */
+    protected Optional<Pair<ConnectionFactory, Response<SearchResult>>> searchLdapForId(final AcceptableUsagePolicyProperties.Ldap ldap,
+                                                                                        final String id) throws Exception {
+        val filter = LdapUtils.newLdaptiveSearchFilter(ldap.getSearchFilter(),
+            LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
+            CollectionUtils.wrap(id));
+        val connectionFactory = LdapUtils.newLdaptivePooledConnectionFactory(ldap);
+        val response = LdapUtils.executeSearchOperation(connectionFactory, ldap.getBaseDn(), filter, ldap.getPageSize());
+        if (LdapUtils.containsResultEntry(response)) {
+            return Optional.of(Pair.of(connectionFactory, response));
+        }
+        return Optional.empty();
     }
 
     @Override
     public boolean submit(final RequestContext requestContext, final Credential credential) {
         try {
-            val response = searchForId(credential.getId());
-            if (LdapUtils.containsResultEntry(response)) {
-                val currentDn = response.getResult().getEntry().getDn();
+            val response = this.ldapProperties
+                .stream()
+                .sorted(Comparator.comparing(AcceptableUsagePolicyProperties.Ldap::getName))
+                .map(Unchecked.function(ldap -> searchLdapForId(ldap, credential.getId())))
+                .filter(Optional::isPresent)
+                .findFirst();
+
+            if (response.isPresent()) {
+                val result = response.get().get();
+                val currentDn = result.getValue().getResult().getEntry().getDn();
                 LOGGER.debug("Updating [{}]", currentDn);
                 val attributes = CollectionUtils.<String, Set<String>>wrap(this.aupAttributeName,
                     CollectionUtils.wrapSet(Boolean.TRUE.toString().toUpperCase()));
-                return LdapUtils.executeModifyOperation(currentDn, this.connectionFactory, attributes);
+                return LdapUtils.executeModifyOperation(currentDn, result.getKey(), attributes);
             }
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
         return false;
-    }
-
-    /**
-     * Search for service by id.
-     *
-     * @param id the id
-     * @return the response
-     * @throws LdapException the ldap exception
-     */
-    private Response<SearchResult> searchForId(final String id) throws LdapException {
-        val filter = LdapUtils.newLdaptiveSearchFilter(ldapProperties.getSearchFilter(),
-            LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
-            CollectionUtils.wrap(id));
-        return LdapUtils.executeSearchOperation(this.connectionFactory, ldapProperties.getBaseDn(), filter, ldapProperties.getPageSize());
     }
 }

@@ -2,7 +2,7 @@ package org.apereo.cas.adaptors.yubikey;
 
 import org.apereo.cas.adaptors.yubikey.registry.WhitelistYubiKeyAccountRegistry;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -68,7 +68,7 @@ public class YubiKeyAuthenticationHandlerTests {
             new DefaultYubiKeyAccountValidator(YubicoClient.getClient(CLIENT_ID, SECRET_KEY)));
         registry.setCipherExecutor(CipherExecutor.noOpOfSerializableToString());
         val handler = new YubiKeyAuthenticationHandler(StringUtils.EMPTY,
-            null, new DefaultPrincipalFactory(),
+            null, PrincipalFactoryUtils.newPrincipalFactory(),
             YubicoClient.getClient(CLIENT_ID, SECRET_KEY),
             registry, null);
         assertThrows(AccountNotFoundException.class, () -> handler.authenticate(new YubiKeyCredential(OTP)));

@@ -20,7 +20,7 @@ public class DefaultPrincipalFactoryTests {
 
     @Test
     public void checkCreatingSimplePrincipal() {
-        val f = new DefaultPrincipalFactory();
+        val f = PrincipalFactoryUtils.newPrincipalFactory();
         val p = f.createPrincipal(UID);
         assertEquals(UID, p.getId());
         assertTrue(p.getAttributes().isEmpty());
@@ -28,7 +28,7 @@ public class DefaultPrincipalFactoryTests {
 
     @Test
     public void checkCreatingSimplePrincipalWithAttributes() {
-        val f = new DefaultPrincipalFactory();
+        val f = PrincipalFactoryUtils.newPrincipalFactory();
         val p = f.createPrincipal(UID, Collections.singletonMap("mail", List.of("final@example.com")));
         assertEquals(UID, p.getId());
         assertEquals(1, p.getAttributes().size());
@@ -37,7 +37,7 @@ public class DefaultPrincipalFactoryTests {
 
     @Test
     public void checkCreatingSimplePrincipalWithDefaultRepository() {
-        val f = new DefaultPrincipalFactory();
+        val f = PrincipalFactoryUtils.newPrincipalFactory();
         val p = f.createPrincipal(UID);
         assertEquals(UID, p.getId());
         assertTrue(p.getAttributes().isEmpty());
