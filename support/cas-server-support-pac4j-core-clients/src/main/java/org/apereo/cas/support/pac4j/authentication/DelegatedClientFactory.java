@@ -416,6 +416,7 @@ public class DelegatedClientFactory {
                 }
                 cfg.setWantsAssertionsSigned(saml.isWantsAssertionsSigned());
                 cfg.setSpLogoutRequestSigned(saml.isSignLogoutRequests());
+                cfg.setAllSignatureValidationDisabled(saml.isAllSignatureValidationDisabled());
                 cfg.setUseNameQualifier(saml.isUseNameQualifier());
                 cfg.setAttributeConsumingServiceIndex(saml.getAttributeConsumingServiceIndex());
                 if (saml.getAssertionConsumerServiceIndex() >= 0) {
