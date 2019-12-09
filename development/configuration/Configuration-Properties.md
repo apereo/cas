@@ -943,8 +943,7 @@ By default, the execution order (when defined) is the following but can be adjus
 5. [Internet2 Grouper](http://www.internet2.edu/products-services/trust-identity/grouper/)
 6. REST
 7. Script
-8. Microsoft Graph
-9. Stubbed/Static
+8. Stubbed/Static
 
 Note that if no *explicit* attribute mappings are defined, all permitted attributes on the record
 may be retrieved by CAS from the attribute repository source and made available to the principal. On the other hand,
@@ -1198,26 +1197,28 @@ under the configuration key `cas.authn.attributeRepository.redis`.
 # cas.authn.attributeRepository.redis.id=
 ```
 
-### Microsoft Graph
+### Microsoft Azure Active Directory
 
 This option will fetch attributes from Microsoft Azure Active Directory using the Microsoft Graph API.
 
-```properties
-# cas.authn.attributeRepository.microsoftGraph[0].clientId=
-# cas.authn.attributeRepository.microsoftGraph[0].clientSecret=
-# cas.authn.attributeRepository.microsoftGraph[0].clientSecret=
-# cas.authn.attributeRepository.microsoftGraph[0].tenant=
+The following settings are available:
 
-# cas.authn.attributeRepository.microsoftGraph[0].id=
-# cas.authn.attributeRepository.microsoftGraph[0].order=0
-# cas.authn.attributeRepository.microsoftGraph[0].caseInsensitive=false
-# cas.authn.attributeRepository.microsoftGraph[0].resource=
-# cas.authn.attributeRepository.microsoftGraph[0].scope=
-# cas.authn.attributeRepository.microsoftGraph[0].grantType=
-# cas.authn.attributeRepository.microsoftGraph[0].apiBaseUrl=
-# cas.authn.attributeRepository.microsoftGraph[0].attributes=
-# cas.authn.attributeRepository.microsoftGraph[0].domain=
-# cas.authn.attributeRepository.microsoftGraph[0].loggingLevel=
+```properties
+# cas.authn.attributeRepository.azureActiveDirectory[0].clientId=
+# cas.authn.attributeRepository.azureActiveDirectory[0].clientSecret=
+# cas.authn.attributeRepository.azureActiveDirectory[0].clientSecret=
+# cas.authn.attributeRepository.azureActiveDirectory[0].tenant=
+
+# cas.authn.attributeRepository.azureActiveDirectory[0].id=
+# cas.authn.attributeRepository.azureActiveDirectory[0].order=0
+# cas.authn.attributeRepository.azureActiveDirectory[0].caseInsensitive=false
+# cas.authn.attributeRepository.azureActiveDirectory[0].resource=
+# cas.authn.attributeRepository.azureActiveDirectory[0].scope=
+# cas.authn.attributeRepository.azureActiveDirectory[0].grantType=
+# cas.authn.attributeRepository.azureActiveDirectory[0].apiBaseUrl=
+# cas.authn.attributeRepository.azureActiveDirectory[0].attributes=
+# cas.authn.attributeRepository.azureActiveDirectory[0].domain=
+# cas.authn.attributeRepository.azureActiveDirectory[0].loggingLevel=
 ```
 
 ### Shibboleth Integrations
@@ -2271,6 +2272,43 @@ AWS settings for this feature are available [here](Configuration-Properties-Comm
 # cas.authn.cognito.userPoolId=
 ```
 
+## Okta Authentication
+
+To learn more about this topic, [please review this guide](../installation/Okta-Authentication.html).
+
+Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.okta`.
+Password encoding settings for this feature are available [here](Configuration-Properties-Common.html#password-encoding) under the configuration key `cas.authn.okta`.
+
+```properties
+# cas.authn.okta.name=
+# cas.authn.okta.order=  
+# cas.authn.okta.credentialCriteria=
+
+# cas.authn.okta.organizationUrl=     
+
+# cas.authn.okta.connectionTimeout=5000
+# cas.authn.okta.proxyUsername=
+# cas.authn.okta.proxyPassword=
+# cas.authn.okta.proxyHost=
+# cas.authn.okta.proxyPort=
+```
+
+## Microsoft Azure Active Directory Authentication
+
+To learn more about this topic, [please review this guide](../installation/Azure-ActiveDirectory-Authentication.html).
+
+Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.azure-active-directory`.
+Password encoding  settings for this feature are available [here](Configuration-Properties-Common.html#password-encoding) under the configuration key `cas.authn.azure-active-directory`.
+
+```properties
+# cas.authn.azure-active-directory.name=
+# cas.authn.azure-active-directory.order=
+# cas.authn.azure-active-directory.credentialCriteria=
+
+# cas.authn.azure-active-directory.clientId=
+# cas.authn.azure-active-directory.loginUrl=https://login.microsoftonline.com/common/
+# cas.authn.azure-active-directory.resource=https://graph.microsoft.com/
+```
 
 ## SOAP Authentication
 
@@ -2386,8 +2424,7 @@ To fetch CRLs, the following options are available:
 
 # cas.authn.x509.cacheMaxElementsInMemory=1000
 # cas.authn.x509.cacheDiskOverflow=false
-# cas.authn.x509.cacheDiskSize=100
-# cas.authn.x509.cacheDiskSizeUnits=MB
+# cas.authn.x509.cacheDiskSize=100MB
 # cas.authn.x509.cacheEternal=false
 # cas.authn.x509.cacheTimeToLiveSeconds=7200
 
@@ -4397,29 +4434,25 @@ To learn more about this topic, [please review this guide](../ticketing/Ehcache-
 ```properties
 # cas.ticket.registry.ehcache3.enabled=true
 # cas.ticket.registry.ehcache3.maxElementsInMemory=10000
-# cas.ticket.registry.ehcache3.maxSizeOnDisk=200
-# cas.ticket.registry.ehcache3.maxSizeOnDiskUnits=MB
-# cas.ticket.registry.ehcache3.perCacheSizeOnDisk=20
-# cas.ticket.registry.ehcache3.perCacheSizeOnDiskUnits=MB
-# cas.ticket.registry.ehcache3.maxSizeOffHeap=100
-# cas.ticket.registry.ehcache3.maxSizeOffHeapUnits=MB
+# cas.ticket.registry.ehcache3.maxSizeOnDisk=200MB
+# cas.ticket.registry.ehcache3.perCacheSizeOnDisk=20MB
+# cas.ticket.registry.ehcache3.maxSizeOffHeap=100MB
 # cas.ticket.registry.ehcache3.eternal=false
 # cas.ticket.registry.ehcache3.enableStatistics=true
 # cas.ticket.registry.ehcache3.enableManagement=true
 # cas.ticket.registry.ehcache3.terracottaClusterUri=
 # cas.ticket.registry.ehcache3.defaultServerResource=main
 # cas.ticket.registry.ehcache3.resourcePoolName=cas-ticket-pool
-# cas.ticket.registry.ehcache3.resourcePoolSize=15
-# cas.ticket.registry.ehcache3.resourcePoolUnits=MB
+# cas.ticket.registry.ehcache3.resourcePoolSize=15MB
 # cas.ticket.registry.ehcache3.rootDirectory=/tmp/cas/ehcache3
 # cas.ticket.registry.ehcache3.clusterConnectTimeout=150
 # cas.ticket.registry.ehcache3.clusterReadWriteTimeout=5
 # cas.ticket.registry.ehcache3.clusteredCacheConsistency=STRONG
-```
+```                                              
+
 There is no default value for the Terracota Cluster URI but the format is `terracotta://host1.company.org:9410,host2.company.org:9410/cas-application`
 
-Signing & encryption settings for this registry are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.ticket.registry.ehcache`.
-
+Signing & encryption settings for this registry are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.ticket.registry.ehcache3`.
 
 ### Ignite Ticket Registry
 
@@ -4816,10 +4849,12 @@ Common configuration settings for this feature are available [here](Configuratio
 
 #### LDAP
 
-If AUP is controlled via LDAP, decide how choices should be remembered back inside the LDAP instance. LDAP settings for this feature are available [here](Configuration-Properties-Common.html#ldap-connection-settings) under the configuration key `cas.acceptableUsagePolicy.ldap`.
+If AUP is controlled via LDAP, decide how choices should be remembered back inside the LDAP instance. LDAP settings for this feature are available [here](Configuration-Properties-Common.html#ldap-connection-settings) under the configuration key `cas.acceptableUsagePolicy.ldap[0]`.
 
 #### Disable Acceptable Usage Policy
+
 Allow acceptable usage policy webflow to be disabled - requires restart.
+
 ```properties
 cas.acceptableUsagePolicy.enabled=true
 ```
