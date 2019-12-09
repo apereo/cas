@@ -4,24 +4,41 @@ import java.util.regex.Pattern
 
 static void main(String[] args) {
     def pattern = Pattern.compile(/implementation\s+(project.+)/)
+    def testPattern = Pattern.compile(/testImplementation\s+(project.+)/)
+
     def directory = new File(".")
+    println "Starting from ${directory.absolutePath}"
+    
     def failBuild = false
     directory.eachFileRecurse(FileType.FILES) { file ->
         if (file.name == "build.gradle") {
             def text = file.text
             def matcher = pattern.matcher(text)
-            def foundDuplicate = false
+            
             while (matcher.find()) {
                 def match = matcher.group(1)
-                def testPattern = "testImplementation ${match}"
-                if (text.contains(testPattern)) {
-                    println "\tFound duplicate test configuration for ${testPattern} at ${file.absolutePath}"
+                def p2 = matcher.group().replace("(", "\\(").replace(")", "\\)")
+                if (Pattern.compile(p2).matcher(text).results().count() > 1) {
+                    println "\tFound duplicated configuration for ${match} at ${file.absolutePath}"
                     failBuild = true
-                    foundDuplicate = true
+                }
+
+                def testImpl = "testImplementation ${match}"
+                if (text.contains(testImpl)) {
+                    println "\tFound duplicate test configuration for ${testImpl} at ${file.absolutePath}"
+                    failBuild = true
                 }
             }
-            if (foundDuplicate) {
-                file.write(text)
+
+            matcher = testPattern.matcher(text)
+            while (matcher.find()) {
+                p2 = matcher.group().replace("(", "\\(").replace(")", "\\)")
+                if (Pattern.compile(p2).matcher(text).results().count() > 1) {
+                    println "\tFound duplicate test configuration for ${matcher.group()} at ${file.absolutePath}"
+                    failBuild = true
+                    text = text.replace(matcher.group() + "\n", "")
+                    file.write(text)
+                }
             }
         }
     }
