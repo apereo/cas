@@ -33,10 +33,11 @@ static void main(String[] args) {
             matcher = testPattern.matcher(text)
             while (matcher.find()) {
                 p2 = matcher.group().replace("(", "\\(").replace(")", "\\)")
-                if (Pattern.compile(p2).matcher(text).results().count() > 1) {
+                def compiled = Pattern.compile(p2)
+                if (compiled.matcher(text).results().count() > 1) {
                     println "\tFound duplicate test configuration for ${matcher.group()} at ${file.absolutePath}"
                     failBuild = true
-                    text = text.replace(matcher.group() + "\n", "")
+                    text = text.replaceFirst(compiled, "")
                     file.write(text)
                 }
             }
