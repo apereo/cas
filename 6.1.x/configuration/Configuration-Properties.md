@@ -3417,6 +3417,7 @@ prefixes for the `keystorePath` or `identityProviderMetadataPath` property).
 
 # cas.authn.pac4j.saml[0].wantsAssertionsSigned=
 # cas.authn.pac4j.saml[0].signLogoutRequests=
+# cas.authn.pac4j.saml[0].allSignatureValidationDisabled=false
 # cas.authn.pac4j.saml[0].signServiceProviderMetadata=false
 # cas.authn.pac4j.saml[0].principalIdAttribute=eduPersonPrincipalName
 # cas.authn.pac4j.saml[0].useNameQualifier=true
