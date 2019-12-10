@@ -463,7 +463,14 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         return false;
     }
 
-    private void prepareRequestContextForSingleSignOn(final RequestContext context,
+    /**
+     * Prepare the request context if there is a SSO session.
+     *
+     * @param context the request context
+     * @param webContext the web context
+     * @param clientName the client name
+     */
+    protected void prepareRequestContextForSingleSignOn(final RequestContext context,
                                                       final JEEContext webContext,
                                                       final String clientName) {
         val resolvedService = WebUtils.getService(argumentExtractors, context);
