@@ -410,6 +410,7 @@ public class DelegatedClientFactory {
                 cfg.setSignMetadata(saml.isSignServiceProviderMetadata());
                 cfg.setAuthnRequestSigned(saml.isSignAuthnRequest());
                 cfg.setSpLogoutRequestSigned(saml.isSignServiceProviderLogoutRequest());
+                cfg.setAllSignatureValidationDisabled(saml.isAllSignatureValidationDisabled());
                 cfg.setAcceptedSkew(saml.getAcceptedSkew());
 
                 if (StringUtils.isNotBlank(saml.getPrincipalIdAttribute())) {
