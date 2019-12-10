@@ -18,6 +18,22 @@ publishing {
                         id = "mmoayyed"
                         name = "Misagh Moayyed"
                     }
+                    developer {
+                        id = "dima767"
+                        name = "Dmitriy Kopylenko"
+                    }
+                    developer {
+                        id = "tsschmidt"
+                        name = "Travis Schmidt"
+                    }
+                    developer {
+                        id = "leleuj"
+                        name = "Jérôme Leleu"
+                    }
+                    developer {
+                        id = "hdeadman"
+                        name = "Hal Deadman"
+                    }
                 }
             }
 
@@ -27,31 +43,37 @@ publishing {
                 def dependencyManagement = asNode().appendNode("dependencyManagement")
                 def dependencies = dependencyManagement.appendNode("dependencies")
 
-
-                rootProject.subprojects.findAll { p -> p != project && p.tasks.asMap['generatePomFileForMavenJavaPublication']?.enabled }.each { p ->
-                    def dependency = dependencies.appendNode("dependency")
-                    dependency.appendNode("groupId", groupId)
-                    dependency.appendNode("artifactId", p.name)
-                    dependency.appendNode("version", version)
-                }
+                rootProject.subprojects
+                        .findAll { p -> p != project && p.tasks.asMap['generatePomFileForMavenJavaPublication']?.enabled }
+                        .each { p ->
+                            createDependency(dependencies, groupId, p.name, version)
+                        }
 
                 libraries.each {
-                    if (it.value instanceof List) {
-                        it.value.each { d ->
-                            def dependency = dependencies.appendNode("dependency")
-                            dependency.appendNode("groupId", d.group)
-                            dependency.appendNode("artifactId", d.name)
-                            dependency.appendNode("version", d.version)
+                    def artifact = it.value
+                    if (artifact instanceof List) {
+                        artifact.each { art ->
+                            if (art.class.isArray()) {
+                                art.each { coords ->
+                                    def elem = coords.toString().split(":")
+                                    createDependency(dependencies, elem[0], elem[1], elem[2])
+                                }
+                            } else {
+                                createDependency(dependencies, art.group, art.name, art.version)
+                            }
                         }
                     } else {
-                        def d = it.value
-                        def dependency = dependencies.appendNode("dependency")
-                        dependency.appendNode("groupId", d.group)
-                        dependency.appendNode("artifactId", d.name)
-                        dependency.appendNode("version", d.version)
+                        createDependency(dependencies, artifact.group, artifact.name, artifact.version)
                     }
                 }
             }
         }
     }
+}
+
+def createDependency(dependencies, group, name, version) {
+    def dependency = dependencies.appendNode("dependency")
+    dependency.appendNode("groupId", group)
+    dependency.appendNode("artifactId", name)
+    dependency.appendNode("version", version)
 }
