@@ -7,6 +7,7 @@ import org.apereo.cas.config.SamlIdPMetadataConfiguration;
 import org.apereo.cas.config.SamlIdPWebflowConfiguration;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration;
 import org.springframework.context.annotation.Import;
@@ -29,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
     SamlIdPWebflowConfiguration.class,
     BaseWebflowConfigurerTests.SharedTestConfiguration.class
 })
+@Tag("SAML")
 public class SamlIdPMetadataUIWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Test
     public void verifyOperation() {
