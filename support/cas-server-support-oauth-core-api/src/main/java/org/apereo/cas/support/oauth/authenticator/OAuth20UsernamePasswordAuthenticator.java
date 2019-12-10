@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
@@ -51,9 +52,12 @@ public class OAuth20UsernamePasswordAuthenticator implements Authenticator<Usern
             val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, clientId);
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
 
-            val clientSecret = clientIdAndSecret.getRight();
-            if (!OAuth20Utils.checkClientSecret(registeredService, clientSecret, registeredServiceCipherExecutor)) {
-                throw new CredentialsException("Client Credentials provided is not valid for registered service: " + registeredService.getName());
+            val grantType = context.getRequestParameter(OAuth20Constants.GRANT_TYPE);
+            if (grantType.isEmpty() || (grantType.isPresent() && !OAuth20Utils.isGrantType(grantType.get(), OAuth20GrantTypes.PASSWORD))) {
+                val clientSecret = clientIdAndSecret.getRight();
+                if (!OAuth20Utils.checkClientSecret(registeredService, clientSecret, registeredServiceCipherExecutor)) {
+                    throw new CredentialsException("Client Credentials provided is not valid for registered service: " + registeredService.getName());
+                }
             }
 
             val redirectUri = context.getRequestParameter(OAuth20Constants.REDIRECT_URI)
