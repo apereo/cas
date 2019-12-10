@@ -68,7 +68,7 @@ public class OAuth20ProofKeyCodeExchangeAuthenticator extends OAuth20ClientIdCli
             throw new CredentialsException("Invalid token: " + code);
         }
 
-        val method = StringUtils.defaultString(token.getCodeChallengeMethod(), "plain");
+        val method = StringUtils.defaultIfEmpty(token.getCodeChallengeMethod(), "plain");
         val hash = calculateCodeVerifierHash(method, codeVerifier);
         if (!hash.equalsIgnoreCase(token.getCodeChallenge())) {
             LOGGER.error("Code verifier [{}] does not match the challenge [{}]", hash, token.getCodeChallenge());
