@@ -25,7 +25,8 @@ With the above module, you may then declare a specific appender to communicate w
                     awsLogRegionName="us-west-1"
                     credentialAccessKey="..."
                     credentialSecretKey="..."
-                    awsLogStreamFlushPeriodInSeconds="5">
+                    awsLogStreamFlushPeriodInSeconds="5"
+                    createIfNeeded="true">
     <PatternLayout>
         <Pattern>%5p | %d{ISO8601}{UTC} | %t | %C | %M:%L | %m %ex %n</Pattern>
     </PatternLayout>
@@ -45,3 +46,5 @@ AWS credentials are fetched from the following sources automatically, where rele
 5. Environment variables that include `AWS_ACCESS_KEY_ID`, `AWS_SECRET_KEY` and `AWS_SESSION_TOKEN`.
 6. Properties file on the classpath as `awscredentials.properties` that contains `accessKey` and `secretKey` as property keys.
 7. Static credentials for access key and secret provided directly by the configuration at hand (logging, etc).
+
+`createIfNeeded` is optional; it will default to `true`.
