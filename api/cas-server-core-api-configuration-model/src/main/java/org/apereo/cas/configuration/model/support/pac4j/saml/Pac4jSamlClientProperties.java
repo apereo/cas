@@ -154,6 +154,12 @@ public class Pac4jSamlClientProperties extends Pac4jBaseClientProperties {
     private boolean signLogoutRequests;
 
     /**
+     * Whether the signature validation should be disabled.
+     * Never set this property to {@code true} in production.
+     */
+    private boolean allSignatureValidationDisabled;
+
+    /**
      * AttributeConsumingServiceIndex attribute of AuthnRequest element.
      * The given index points out a specific AttributeConsumingService structure, declared into the
      * Service Provider (SP)'s metadata, to be used to specify all the attributes that the Service Provider
