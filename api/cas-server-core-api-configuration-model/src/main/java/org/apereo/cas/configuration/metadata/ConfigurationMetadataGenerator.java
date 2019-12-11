@@ -246,7 +246,7 @@ public class ConfigurationMetadataGenerator {
                     .map(n -> ReflectionUtils.findField(clazz, n))
                     .filter(f -> f != null && f.isAnnotationPresent(RequiredProperty.class))
                     .forEach(field -> {
-                        val annotation = Arrays.stream(clazz.getAnnotations())
+                        val annotation = Arrays.stream(f.getAnnotations())
                             .filter(a -> a.annotationType().equals(RequiredProperty.class))
                             .findFirst()
                             .map(RequiredProperty.class::cast)
