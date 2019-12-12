@@ -4,7 +4,6 @@ import org.apereo.cas.configuration.model.support.couchdb.BaseAsynchronousCouchD
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.mongo.SingleCollectionMongoDbProperties;
 import org.apereo.cas.configuration.model.support.redis.BaseRedisProperties;
-import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.RestEndpointProperties;
 import org.apereo.cas.configuration.support.SpringResourceProperties;
@@ -67,14 +66,12 @@ public class AcceptableUsagePolicyProperties implements Serializable {
     /**
      * AUP enabled allows AUP to be turned off on startup.
      */
-    @RequiredProperty
     private boolean enabled = true;
 
     /**
      * AUP attribute to choose in order to determine whether policy
      * has been accepted or not.
      */
-    @RequiredProperty
     private String aupAttributeName = "aupAccepted";
 
     /**

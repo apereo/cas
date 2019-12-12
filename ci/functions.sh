@@ -24,7 +24,7 @@ currentChangeSetContains() {
 }
 
 currentChangeSetAffectsBuild() {
-    currentChangeSetContains "\.(gradle|java|groovy)"
+    currentChangeSetContains "\.(gradle|java|groovy|properties)"
     return `(expr "$?" + 0)`
 }
 
