@@ -6,11 +6,12 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.core.util.MinimalPrettyPrinter;
+import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.javaparser.StaticJavaParser;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ClassUtils;
@@ -26,12 +27,11 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 /**
  * This is {@link ConfigurationMetadataGenerator}.
@@ -52,6 +52,7 @@ import java.util.stream.StreamSupport;
  * @since 5.2.0
  */
 @Slf4j
+@RequiredArgsConstructor
 public class ConfigurationMetadataGenerator {
 
     private static final Pattern PATTERN_GENERICS = Pattern.compile(".+\\<(.+)\\>");
@@ -60,12 +61,7 @@ public class ConfigurationMetadataGenerator {
 
     private final String buildDir;
     private final String sourcePath;
-
-    public ConfigurationMetadataGenerator(final String buildDir, final String sourcePath) {
-        this.buildDir = buildDir;
-        this.sourcePath = sourcePath;
-    }
-
+    
     /**
      * Main.
      *
@@ -76,8 +72,8 @@ public class ConfigurationMetadataGenerator {
         if (args.length != 2) {
             throw new RuntimeException("Invalid build configuration. No command-line arguments specified");
         }
-        final var buildDir = args[0];
-        final var projectDir = args[1];
+        val buildDir = args[0];
+        val projectDir = args[1];
         new ConfigurationMetadataGenerator(buildDir, projectDir).execute();
     }
 
@@ -87,13 +83,14 @@ public class ConfigurationMetadataGenerator {
      * @throws Exception the exception
      */
     public void execute() throws Exception {
-        final var jsonFile = new File(buildDir, "classes/java/main/META-INF/spring-configuration-metadata.json");
+        val jsonFile = new File(buildDir, "classes/java/main/META-INF/spring-configuration-metadata.json");
         if (!jsonFile.exists()) {
             throw new RuntimeException("Could not locate file " + jsonFile.getCanonicalPath());
         }
-        final var mapper = new ObjectMapper().findAndRegisterModules();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        mapper.enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS);
+        val mapper = new ObjectMapper().findAndRegisterModules()
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+            .setSerializationInclusion(JsonInclude.Include.NON_NULL)
+            .enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS);
 
         final TypeReference<Map<String, Set<ConfigurationMetadataProperty>>> values = new TypeReference<>() {
         };
@@ -101,36 +98,32 @@ public class ConfigurationMetadataGenerator {
         final Set<ConfigurationMetadataProperty> properties = jsonMap.get("properties");
         final Set<ConfigurationMetadataProperty> groups = jsonMap.get("groups");
 
-        final Set<ConfigurationMetadataProperty> collectedProps = new HashSet<>(0);
-        final Set<ConfigurationMetadataProperty> collectedGroups = new HashSet<>(0);
+        val collectedProps = new HashSet<ConfigurationMetadataProperty>(0);
+        val collectedGroups = new HashSet<ConfigurationMetadataProperty>(0);
 
         properties.stream()
             .filter(p -> NESTED_TYPE_PATTERN.matcher(p.getType()).matches())
             .forEach(Unchecked.consumer(p -> {
-                final var matcher = NESTED_TYPE_PATTERN.matcher(p.getType());
-                final var indexBrackets = matcher.matches();
-                final var typeName = matcher.group(1);
-                final var typePath = ConfigurationMetadataClassSourceLocator.buildTypeSourcePath(this.sourcePath, typeName);
+                val matcher = NESTED_TYPE_PATTERN.matcher(p.getType());
+                val indexBrackets = matcher.matches();
+                val typeName = matcher.group(1);
+                val typePath = ConfigurationMetadataClassSourceLocator.buildTypeSourcePath(this.sourcePath, typeName);
 
-                final var parser = new ConfigurationMetadataUnitParser(this.sourcePath);
+                val parser = new ConfigurationMetadataUnitParser(this.sourcePath);
                 parser.parseCompilationUnit(collectedProps, collectedGroups, p, typePath, typeName, indexBrackets);
             }));
 
         properties.addAll(collectedProps);
         groups.addAll(collectedGroups);
 
-        final var hints = processHints(properties, groups);
+        val hints = processHints(properties, groups);
 
         processNestedEnumProperties(properties, groups);
 
         jsonMap.put("properties", properties);
         jsonMap.put("groups", groups);
         jsonMap.put("hints", hints);
-
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        final var pp = new MinimalPrettyPrinter();
-        final var writer = mapper.writer(pp);
-        writer.writeValue(jsonFile, jsonMap);
+        mapper.writer(new DefaultPrettyPrinter()).writeValue(jsonFile, jsonMap);
     }
 
     private void processNestedEnumProperties(final Set<ConfigurationMetadataProperty> properties, final Set<ConfigurationMetadataProperty> groups) {
@@ -210,7 +203,7 @@ public class ConfigurationMetadataGenerator {
             .filter(p -> p.getDeprecation() == null
                 || !Deprecation.Level.ERROR.equals(p.getDeprecation().getLevel()))
             .collect(Collectors.toList());
-
+        
         for (val entry : nonDeprecatedErrors) {
             try {
                 val propName = StringUtils.substringAfterLast(entry.getName(), ".");
@@ -234,29 +227,29 @@ public class ConfigurationMetadataGenerator {
                         .findFirst()
                         .map(RequiresModule.class::cast)
                         .get();
+
                     val valueHint = new ValueHint();
-                    valueHint.setValue(Stream.of(RequiresModule.class.getName(), annotation.automated())
-                        .collect(Collectors.toList()));
+                    valueHint.setValue(List.of(RequiresModule.class.getName(), annotation.automated()));
                     valueHint.setDescription(annotation.name());
                     hint.getValues().add(valueHint);
                 }
 
-                StreamSupport.stream(RelaxedPropertyNames.forCamelCase(propName)
-                    .spliterator(), false)
-                    .map(n -> ReflectionUtils.findField(clazz, n))
-                    .filter(f -> f != null && f.isAnnotationPresent(RequiredProperty.class))
-                    .forEach(field -> {
-                        val annotation = Arrays.stream(clazz.getAnnotations())
+                val names = RelaxedPropertyNames.forCamelCase(propName);
+                names.getValues().forEach(name -> {
+                    val f = ReflectionUtils.findField(clazz, name);
+                    if (f != null && f.isAnnotationPresent(RequiredProperty.class)) {
+                        val annotation = Arrays.stream(f.getAnnotations())
                             .filter(a -> a.annotationType().equals(RequiredProperty.class))
                             .findFirst()
                             .map(RequiredProperty.class::cast)
                             .get();
                         val valueHint = new ValueHint();
                         valueHint.setValue(RequiredProperty.class.getName());
-                        valueHint.setDescription(annotation.message());
+                        valueHint.setDescription(clazz.getName());
+                        valueHint.setShortDescription(annotation.message());
                         hint.getValues().add(valueHint);
-                    });
-                
+                    }
+                });
                 if (!hint.getValues().isEmpty()) {
                     hints.add(hint);
                 }
