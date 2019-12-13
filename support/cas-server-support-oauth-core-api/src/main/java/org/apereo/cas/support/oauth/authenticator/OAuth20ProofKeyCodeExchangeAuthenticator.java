@@ -20,7 +20,6 @@ import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.exception.CredentialsException;
 
 import java.io.Serializable;
-import java.nio.charset.StandardCharsets;
 
 /**
  * This is {@link OAuth20ProofKeyCodeExchangeAuthenticator}.
@@ -79,8 +78,8 @@ public class OAuth20ProofKeyCodeExchangeAuthenticator extends OAuth20ClientIdCli
             return codeVerifier;
         }
         if ("S256".equalsIgnoreCase(method)) {
-            val sha256 = DigestUtils.sha256(codeVerifier);
-            return EncodingUtils.encodeUrlSafeBase64(sha256.getBytes(StandardCharsets.UTF_8));
+            val sha256 = DigestUtils.rawDigestSha256(codeVerifier);
+            return EncodingUtils.encodeUrlSafeBase64(sha256);
         }
         throw new CredentialsException("Code verification method is unrecognized: " + method);
     }

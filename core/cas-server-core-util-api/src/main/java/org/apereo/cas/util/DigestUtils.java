@@ -139,10 +139,17 @@ public class DigestUtils {
     /**
      * Computes digest.
      *
-     * @param alg  Digest algorithm to use
      * @param data data to be hashed
-     * @return hash
+     * @return hash byte []
      */
+    public static byte[] rawDigestSha256(final String data) {
+        try {
+            return rawDigest(MessageDigestAlgorithms.SHA3_256, data.getBytes(StandardCharsets.UTF_8));
+        } catch (final Exception cause) {
+            throw new SecurityException(cause);
+        }
+    }
+
     public static byte[] rawDigest(final String alg, final byte[] data) {
         try {
             val digest = getMessageDigestInstance(alg);
