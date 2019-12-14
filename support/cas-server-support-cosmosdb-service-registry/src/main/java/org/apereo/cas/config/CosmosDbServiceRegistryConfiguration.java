@@ -11,6 +11,8 @@ import com.microsoft.azure.documentdb.ConsistencyLevel;
 import com.microsoft.azure.documentdb.IndexingMode;
 import com.microsoft.azure.documentdb.IndexingPolicy;
 import com.microsoft.azure.documentdb.RequestOptions;
+import com.microsoft.azure.spring.data.documentdb.DocumentDbFactory;
+import com.microsoft.azure.spring.data.documentdb.core.DocumentDbTemplate;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
@@ -31,7 +33,7 @@ import java.util.Collection;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Configuration("cosmosDbServiceRegistryConfiguration")
+@Configuration(value = "cosmosDbServiceRegistryConfiguration", proxyBeanMethods = true)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class CosmosDbServiceRegistryConfiguration {
@@ -50,13 +52,34 @@ public class CosmosDbServiceRegistryConfiguration {
     @Qualifier("serviceRegistryListeners")
     private ObjectProvider<Collection<ServiceRegistryListener>> serviceRegistryListeners;
 
+    @ConditionalOnMissingBean(name = "cosmosDbObjectFactory")
+    @Bean
+    public CosmosDbObjectFactory cosmosDbObjectFactory() {
+        return new CosmosDbObjectFactory(this.applicationContext);
+    }
+
+    @ConditionalOnMissingBean(name = "cosmosDbDocumentDbTemplate")
+    @Bean
+    public DocumentDbTemplate cosmosDbDocumentDbTemplate() {
+        val factory = cosmosDbObjectFactory();
+        val cosmosDb = casProperties.getServiceRegistry().getCosmosDb();
+        val dbFactory = factory.createDocumentDbFactory(cosmosDb);
+        return factory.createDocumentDbTemplate(dbFactory, cosmosDb);
+    }
+
+    @ConditionalOnMissingBean(name = "cosmosDbDocumentDbFactory")
+    @Bean
+    public DocumentDbFactory cosmosDbDocumentDbFactory() {
+        val cosmosDb = casProperties.getServiceRegistry().getCosmosDb();
+        return cosmosDbObjectFactory().createDocumentDbFactory(cosmosDb);
+    }
+
     @Bean
     @RefreshScope
     public ServiceRegistry cosmosDbServiceRegistry() {
-        val factory = new CosmosDbObjectFactory(this.applicationContext);
         val cosmosDb = casProperties.getServiceRegistry().getCosmosDb();
-        val dbFactory = factory.createDocumentDbFactory(cosmosDb);
-        val db = factory.createDocumentDbTemplate(dbFactory, cosmosDb);
+        val dbFactory = cosmosDbDocumentDbFactory();
+        val db = cosmosDbDocumentDbTemplate();
 
         if (cosmosDb.isDropCollection()) {
             val collectionLink = CosmosDbObjectFactory.getCollectionLink(cosmosDb.getDatabase(), cosmosDb.getCollection());
