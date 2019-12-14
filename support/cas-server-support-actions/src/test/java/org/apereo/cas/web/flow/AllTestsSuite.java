@@ -22,7 +22,7 @@ import org.junit.runner.RunWith;
     InitialFlowSetupActionCookieTests.class,
     SendTicketGrantingTicketActionTests.class,
     SendTicketGrantingTicketActionSsoTests.class,
-    ServiceAuthorizationCheckTests.class,
+    ServiceAuthorizationCheckActionMockitoTests.class,
     CreateTicketGrantingTicketActionTests.class,
     TicketGrantingTicketCheckActionTests.class,
     ServiceWarningActionTests.class,

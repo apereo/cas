@@ -74,7 +74,7 @@ public class FileAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyFailsUserNotInFileWithDefaultSeparator() throws Exception {
+    public void verifyFailsUserNotInFileWithDefaultSeparator() {
         val c = new UsernamePasswordCredential();
 
         c.setUsername("fds");
@@ -86,7 +86,7 @@ public class FileAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyFailsNullUserName() throws Exception {
+    public void verifyFailsNullUserName() {
         val c = new UsernamePasswordCredential();
         c.setUsername(null);
         c.setPassword("user");
@@ -96,7 +96,7 @@ public class FileAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyFailsNullUserNameAndPassword() throws Exception {
+    public void verifyFailsNullUserNameAndPassword() {
         val c = new UsernamePasswordCredential();
         c.setUsername(null);
         c.setPassword(null);
@@ -106,7 +106,7 @@ public class FileAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyFailsNullPassword() throws Exception {
+    public void verifyFailsNullPassword() {
         val c = new UsernamePasswordCredential();
         c.setUsername("scott");
         c.setPassword(null);
@@ -125,7 +125,7 @@ public class FileAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyFailsUserNotInFileWithCommaSeparator() throws Exception {
+    public void verifyFailsUserNotInFileWithCommaSeparator() {
         val c = new UsernamePasswordCredential();
 
         this.authenticationHandler = new FileAuthenticationHandler(StringUtils.EMPTY, null, null,

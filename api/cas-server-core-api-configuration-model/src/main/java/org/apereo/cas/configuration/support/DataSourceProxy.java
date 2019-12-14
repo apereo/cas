@@ -10,7 +10,7 @@ import java.sql.SQLException;
 /**
  * This purpose of this class is to fix a class loading issue that occurs
  * in some application servers when using a datasource/pool from the
- * container @{@link ClassLoader}. By having this class at the app level,
+ * container {@link ClassLoader}. By having this class at the app level,
  * proxying that occurs (e.g. {@link org.springframework.cloud.context.config.annotation.RefreshScope} annotation)
  * doesn't encounter
  * problems if another proxying library somewhere else uses the container

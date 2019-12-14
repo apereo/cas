@@ -47,7 +47,7 @@ public class CouchbaseAuthenticationHandlerTests {
     }
 
     @Test
-    public void noEncryptionBadPassword() throws Exception {
+    public void noEncryptionBadPassword() {
         assertThrows(FailedLoginException.class, () ->
             internalAutenticate(NoOpPasswordEncoder.getInstance(), new SimplePrincipal(), BAD_PASSWORD));
     }
@@ -61,7 +61,7 @@ public class CouchbaseAuthenticationHandlerTests {
     }
 
     @Test
-    public void sha256EncryptionBadPassword() throws Exception {
+    public void sha256EncryptionBadPassword() {
         assertThrows(FailedLoginException.class, () ->
             internalAutenticate(new StandardPasswordEncoder(), new SimplePrincipal(), BAD_PASSWORD));
     }
@@ -75,7 +75,7 @@ public class CouchbaseAuthenticationHandlerTests {
     }
 
     @Test
-    public void bcryptEncryptionBadPassword() throws Exception {
+    public void bcryptEncryptionBadPassword() {
         assertThrows(FailedLoginException.class, () ->
         internalAutenticate(new BCryptPasswordEncoder(), new SimplePrincipal(), BAD_PASSWORD));
     }

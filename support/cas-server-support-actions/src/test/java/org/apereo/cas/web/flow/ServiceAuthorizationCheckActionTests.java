@@ -30,7 +30,7 @@ public class ServiceAuthorizationCheckActionTests extends AbstractWebflowActions
     private ObjectProvider<Action> action;
 
     @Test
-    public void verifyNoServiceFound() throws Exception {
+    public void verifyNoServiceFound() {
         val request = new MockHttpServletRequest();
         val context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
@@ -39,7 +39,7 @@ public class ServiceAuthorizationCheckActionTests extends AbstractWebflowActions
     }
 
     @Test
-    public void verifyDisabledServiceFound() throws Exception {
+    public void verifyDisabledServiceFound() {
         val request = new MockHttpServletRequest();
         val context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
@@ -49,7 +49,7 @@ public class ServiceAuthorizationCheckActionTests extends AbstractWebflowActions
     }
 
     @Test
-    public void verifyExclusiveAuthnDelegationMode() throws Exception {
+    public void verifyExclusiveAuthnDelegationMode() {
         val request = new MockHttpServletRequest();
         val context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
