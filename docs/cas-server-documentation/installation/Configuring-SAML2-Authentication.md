@@ -40,6 +40,10 @@ This endpoint will display the CAS IdP SAML2 metadata upon receiving a GET reque
 it will be displayed. If metadata is absent, one will be generated automatically.
 CAS configuration below dictates where metadata files/keys will be generated and stored.
 
+Note that the endpoint can accept a `service` parameter either by entity id or numeric identifier. This parameter
+is matched against the CAS service registry allowing the endpoint to calculate and combine any identity provider 
+metadata overrides that may have been specified.
+
 Here is a generated metadata file as an example:
 
 ```xml
