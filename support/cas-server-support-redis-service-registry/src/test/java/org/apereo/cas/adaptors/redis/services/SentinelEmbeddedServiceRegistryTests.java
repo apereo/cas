@@ -49,7 +49,7 @@ public class SentinelEmbeddedServiceRegistryTests extends BaseRedisSentinelServi
 
     @BeforeAll
     @SneakyThrows
-    public static void startRedis() throws Exception {
+    public static void startRedis() {
         REDIS_SERVER_1.start();
         SENTINEL_SERVER_1.start();
         REDIS_SERVER_2.start();
