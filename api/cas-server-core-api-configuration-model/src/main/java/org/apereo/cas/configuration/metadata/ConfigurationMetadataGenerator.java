@@ -196,12 +196,10 @@ public class ConfigurationMetadataGenerator {
         mapper.writer(new DefaultPrettyPrinter()).writeValue(jsonFile, jsonMap);
     }
 
-    private void processDeprecatedProperties(final Set<ConfigurationMetadataProperty> properties) {
-        properties.stream().filter(p -> p.getDeprecation() != null).forEach(property -> {
-            if (property.getDeprecation().getLevel() != Deprecation.Level.ERROR) {
-                property.getDeprecation().setLevel(Deprecation.Level.ERROR);
-            }
-        });
+    private static void processDeprecatedProperties(final Set<ConfigurationMetadataProperty> properties) {
+        properties.stream()
+            .filter(p -> p.getDeprecation() != null)
+            .forEach(property -> property.getDeprecation().setLevel(Deprecation.Level.ERROR));
     }
 
     private void processNestedEnumProperties(final Set<ConfigurationMetadataProperty> properties, final Set<ConfigurationMetadataProperty> groups) {
