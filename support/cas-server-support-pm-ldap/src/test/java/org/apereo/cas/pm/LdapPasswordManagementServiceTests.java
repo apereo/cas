@@ -44,15 +44,15 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreUtilConfiguration.class
 }, properties = {
     "cas.authn.pm.reset.sms.attributeName=telephoneNumber",
-    "cas.authn.pm.ldap.ldapUrl=ldap://localhost:10389",
-    "cas.authn.pm.ldap.bindDn=cn=Directory Manager",
-    "cas.authn.pm.ldap.bindCredential=password",
-    "cas.authn.pm.ldap.baseDn=ou=people,dc=example,dc=org",
-    "cas.authn.pm.ldap.searchFilter=cn={user}",
-    "cas.authn.pm.ldap.useSsl=false",
-    "cas.authn.pm.ldap.type=GENERIC",
-    "cas.authn.pm.ldap.securityQuestionsAttributes.registeredAddress=roomNumber",
-    "cas.authn.pm.ldap.securityQuestionsAttributes.postalCode=teletexTerminalIdentifier"
+    "cas.authn.pm.ldap[0].ldapUrl=ldap://localhost:10389",
+    "cas.authn.pm.ldap[0].bindDn=cn=Directory Manager",
+    "cas.authn.pm.ldap[0].bindCredential=password",
+    "cas.authn.pm.ldap[0].baseDn=ou=people,dc=example,dc=org",
+    "cas.authn.pm.ldap[0].searchFilter=cn={user}",
+    "cas.authn.pm.ldap[0].useSsl=false",
+    "cas.authn.pm.ldap[0].type=GENERIC",
+    "cas.authn.pm.ldap[0].securityQuestionsAttributes.registeredAddress=roomNumber",
+    "cas.authn.pm.ldap[0].securityQuestionsAttributes.postalCode=teletexTerminalIdentifier"
 })
 @DirtiesContext
 @EnabledIfContinuousIntegration

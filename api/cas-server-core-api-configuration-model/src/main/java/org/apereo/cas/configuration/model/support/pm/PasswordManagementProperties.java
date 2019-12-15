@@ -4,7 +4,6 @@ import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderPro
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.email.EmailProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
-import org.apereo.cas.configuration.model.support.ldap.AbstractLdapSearchProperties;
 import org.apereo.cas.configuration.model.support.sms.SmsProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.SpringResourceProperties;
@@ -16,8 +15,8 @@ import lombok.Setter;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This is {@link PasswordManagementProperties}.
@@ -53,7 +52,7 @@ public class PasswordManagementProperties implements Serializable {
     /**
      * Manage account passwords in LDAP.
      */
-    private Ldap ldap = new Ldap();
+    private List<LdapPasswordManagementProperties> ldap = new ArrayList<>();
 
     /**
      * Manage account passwords in database.
@@ -170,32 +169,6 @@ public class PasswordManagementProperties implements Serializable {
          * Password for Basic-Auth at the password management endpoints.
          */
         private String endpointPassword;
-    }
-
-    @RequiresModule(name = "cas-server-support-pm-ldap")
-    @Getter
-    @Setter
-    public static class Ldap extends AbstractLdapSearchProperties {
-
-        private static final long serialVersionUID = -2610186056194686825L;
-
-        /**
-         * Collection of attribute names that indicate security questions answers.
-         * This is done via a key-value structure where the key is the attribute name
-         * for the security question and the value is the attribute name for the answer linked to the question.
-         */
-        private Map<String, String> securityQuestionsAttributes = new LinkedHashMap<>(2);
-
-        /**
-         * The specific variant of LDAP
-         * based on which update operations will be constructed.
-         */
-        private LdapType type = LdapType.AD;
-
-        /**
-         * Username attribute required by LDAP.
-         */
-        private String usernameAttribute = "uid";
     }
 
     @RequiresModule(name = "cas-server-support-pm-webflow")
