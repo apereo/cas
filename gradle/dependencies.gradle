@@ -1754,14 +1754,40 @@ ext.libraries = [
                 }
         ],
         log4j                   : [
-                createLog4jDependencies(
-                    "org.springframework.boot:spring-boot-starter-log4j2:$springBootVersion",
-                    "org.apache.logging.log4j:log4j-api:$log4jVersion",
-                    "org.apache.logging.log4j:log4j-core:$log4jVersion",
-                    "org.apache.logging.log4j:log4j-jcl:$log4jVersion",
-                    "org.apache.logging.log4j:log4j-web:$log4jVersion",
-                    "org.apache.logging.log4j:log4j-slf4j18-impl:$log4jVersion",
-                    "com.lmax:disruptor:$disruptorVersion")
+                dependencies.create("org.springframework.boot:spring-boot-starter-log4j2:$springBootVersion") {
+                    exclude(group: "org.springframework", module: "spring-web")
+                    exclude(group: "org.springframework", module: "spring-webmvc")
+                    exclude(group: "org.springframework", module: "spring-core")
+                    exclude(group: "org.springframework", module: "spring-context")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.slf4j", module: "jul-to-slf4j")
+                    exclude(group: "org.apache.logging.log4j", module: "log4j-slf4j-impl")
+                    exclude(group: "org.apache.logging.log4j", module: "log4j-core")
+                    exclude(group: "org.apache.logging.log4j", module: "log4j-api")
+                    exclude(group: "org.apache.logging.log4j", module: "log4j-jcl")
+                    force = true
+                },
+                dependencies.create("org.apache.logging.log4j:log4j-api:$log4jVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    force = true
+                },
+                dependencies.create("org.apache.logging.log4j:log4j-core:$log4jVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    force = true
+                },
+                dependencies.create("org.apache.logging.log4j:log4j-jcl:$log4jVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    force = true
+                },
+                dependencies.create("org.apache.logging.log4j:log4j-web:$log4jVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    force = true
+                },
+                dependencies.create("org.apache.logging.log4j:log4j-slf4j18-impl:$log4jVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    force = true
+                },
+                dependencies.create("com.lmax:disruptor:$disruptorVersion")
         ],
         slf4j                   : [
                 dependencies.create("org.slf4j:slf4j-api:$slf4jVersion"),
@@ -3765,27 +3791,6 @@ def createMetricsDependencies(String... coordinates) {
         }
     }
 }
-
-def createLog4jDependencies(String... coordinates) {
-    coordinates.each { coord ->
-        dependencies.create(coord) { it ->
-            exclude(group: "org.springframework", module: "spring-web")
-            exclude(group: "org.springframework", module: "spring-webmvc")
-            exclude(group: "org.springframework", module: "spring-core")
-            exclude(group: "org.springframework", module: "spring-context")
-            exclude(group: "org.slf4j", module: "slf4j-api")
-            exclude(group: "org.slf4j", module: "jul-to-slf4j")
-
-            excludeDependencyIfNecessary(it, "org.apache.logging.log4j:log4j-slf4j-impl")
-            excludeDependencyIfNecessary(it, "org.apache.logging.log4j:log4j-core")
-            excludeDependencyIfNecessary(it, "org.apache.logging.log4j:log4j-api")
-            excludeDependencyIfNecessary(it, "org.apache.logging.log4j:log4j-jcl")
-            excludeDependencyIfNecessary(it, "org.apache.logging.log4j:log4j-web")
-            force = true
-        }
-    }
-}
-
 
 def excludeDependencyIfNecessary(def dependency, String exclusion) {
     def coords = dependency.group + ":" + dependency.name
