@@ -70,7 +70,7 @@ public class ClientFlowExecutionKey extends FlowExecutionKey {
         out.writeUTF(toString());
     }
 
-    private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {
+    private void readObject(final ObjectInputStream in) throws Exception {
         val temp = parse(in.readUTF());
         this.id = temp.id;
         this.data = temp.data;
