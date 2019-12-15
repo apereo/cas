@@ -56,12 +56,15 @@ import java.util.stream.Collectors;
 public class ConfigurationMetadataGenerator {
 
     private static final Pattern PATTERN_GENERICS = Pattern.compile(".+\\<(.+)\\>");
+
     private static final Pattern NESTED_TYPE_PATTERN = Pattern.compile("java\\.util\\.\\w+<(org\\.apereo\\.cas\\..+)>");
+
     private static final Pattern NESTED_CLASS_PATTERN = Pattern.compile("(.+)\\$(\\w+)");
 
     private final String buildDir;
+
     private final String sourcePath;
-    
+
     /**
      * Main.
      *
@@ -75,6 +78,72 @@ public class ConfigurationMetadataGenerator {
         val buildDir = args[0];
         val projectDir = args[1];
         new ConfigurationMetadataGenerator(buildDir, projectDir).execute();
+    }
+
+    private static Set<ConfigurationMetadataHint> processHints(final Collection<ConfigurationMetadataProperty> props,
+                                                               final Collection<ConfigurationMetadataProperty> groups) {
+
+        final Set<ConfigurationMetadataHint> hints = new LinkedHashSet<>(0);
+
+        val nonDeprecatedErrors = props.stream()
+            .filter(p -> p.getDeprecation() == null
+                || !Deprecation.Level.ERROR.equals(p.getDeprecation().getLevel()))
+            .collect(Collectors.toList());
+
+        for (val entry : nonDeprecatedErrors) {
+            try {
+                val propName = StringUtils.substringAfterLast(entry.getName(), ".");
+                val groupName = StringUtils.substringBeforeLast(entry.getName(), ".");
+                val grp = groups
+                    .stream()
+                    .filter(g -> g.getName().equalsIgnoreCase(groupName))
+                    .findFirst()
+                    .orElseThrow(() -> new IllegalArgumentException("Cant locate group " + groupName));
+
+                val matcher = PATTERN_GENERICS.matcher(grp.getType());
+                val className = matcher.find() ? matcher.group(1) : grp.getType();
+                val clazz = ClassUtils.getClass(className);
+
+                val hint = new ConfigurationMetadataHint();
+                hint.setName(entry.getName());
+
+                if (clazz.isAnnotationPresent(RequiresModule.class)) {
+                    val annotation = Arrays.stream(clazz.getAnnotations())
+                        .filter(a -> a.annotationType().equals(RequiresModule.class))
+                        .findFirst()
+                        .map(RequiresModule.class::cast)
+                        .get();
+
+                    val valueHint = new ValueHint();
+                    valueHint.setValue(List.of(RequiresModule.class.getName(), annotation.automated()));
+                    valueHint.setDescription(annotation.name());
+                    hint.getValues().add(valueHint);
+                }
+
+                val names = RelaxedPropertyNames.forCamelCase(propName);
+                names.getValues().forEach(name -> {
+                    val f = ReflectionUtils.findField(clazz, name);
+                    if (f != null && f.isAnnotationPresent(RequiredProperty.class)) {
+                        val annotation = Arrays.stream(f.getAnnotations())
+                            .filter(a -> a.annotationType().equals(RequiredProperty.class))
+                            .findFirst()
+                            .map(RequiredProperty.class::cast)
+                            .get();
+                        val valueHint = new ValueHint();
+                        valueHint.setValue(RequiredProperty.class.getName());
+                        valueHint.setDescription(clazz.getName());
+                        valueHint.setShortDescription(annotation.message());
+                        hint.getValues().add(valueHint);
+                    }
+                });
+                if (!hint.getValues().isEmpty()) {
+                    hints.add(hint);
+                }
+            } catch (final Exception e) {
+                LOGGER.error(e.getMessage(), e);
+            }
+        }
+        return hints;
     }
 
     /**
@@ -119,11 +188,20 @@ public class ConfigurationMetadataGenerator {
         val hints = processHints(properties, groups);
 
         processNestedEnumProperties(properties, groups);
+        processDeprecatedProperties(properties);
 
         jsonMap.put("properties", properties);
         jsonMap.put("groups", groups);
         jsonMap.put("hints", hints);
         mapper.writer(new DefaultPrettyPrinter()).writeValue(jsonFile, jsonMap);
+    }
+
+    private void processDeprecatedProperties(final Set<ConfigurationMetadataProperty> properties) {
+        properties.stream().filter(p -> p.getDeprecation() != null).forEach(property -> {
+            if (property.getDeprecation().getLevel() != Deprecation.Level.ERROR) {
+                property.getDeprecation().setLevel(Deprecation.Level.ERROR);
+            }
+        });
     }
 
     private void processNestedEnumProperties(final Set<ConfigurationMetadataProperty> properties, final Set<ConfigurationMetadataProperty> groups) {
@@ -192,71 +270,5 @@ public class ConfigurationMetadataGenerator {
                 throw new RuntimeException(ex);
             }
         });
-    }
-
-    private static Set<ConfigurationMetadataHint> processHints(final Collection<ConfigurationMetadataProperty> props,
-                                                               final Collection<ConfigurationMetadataProperty> groups) {
-
-        final Set<ConfigurationMetadataHint> hints = new LinkedHashSet<>(0);
-
-        val nonDeprecatedErrors = props.stream()
-            .filter(p -> p.getDeprecation() == null
-                || !Deprecation.Level.ERROR.equals(p.getDeprecation().getLevel()))
-            .collect(Collectors.toList());
-        
-        for (val entry : nonDeprecatedErrors) {
-            try {
-                val propName = StringUtils.substringAfterLast(entry.getName(), ".");
-                val groupName = StringUtils.substringBeforeLast(entry.getName(), ".");
-                val grp = groups
-                    .stream()
-                    .filter(g -> g.getName().equalsIgnoreCase(groupName))
-                    .findFirst()
-                    .orElseThrow(() -> new IllegalArgumentException("Cant locate group " + groupName));
-
-                val matcher = PATTERN_GENERICS.matcher(grp.getType());
-                val className = matcher.find() ? matcher.group(1) : grp.getType();
-                val clazz = ClassUtils.getClass(className);
-
-                val hint = new ConfigurationMetadataHint();
-                hint.setName(entry.getName());
-
-                if (clazz.isAnnotationPresent(RequiresModule.class)) {
-                    val annotation = Arrays.stream(clazz.getAnnotations())
-                        .filter(a -> a.annotationType().equals(RequiresModule.class))
-                        .findFirst()
-                        .map(RequiresModule.class::cast)
-                        .get();
-
-                    val valueHint = new ValueHint();
-                    valueHint.setValue(List.of(RequiresModule.class.getName(), annotation.automated()));
-                    valueHint.setDescription(annotation.name());
-                    hint.getValues().add(valueHint);
-                }
-
-                val names = RelaxedPropertyNames.forCamelCase(propName);
-                names.getValues().forEach(name -> {
-                    val f = ReflectionUtils.findField(clazz, name);
-                    if (f != null && f.isAnnotationPresent(RequiredProperty.class)) {
-                        val annotation = Arrays.stream(f.getAnnotations())
-                            .filter(a -> a.annotationType().equals(RequiredProperty.class))
-                            .findFirst()
-                            .map(RequiredProperty.class::cast)
-                            .get();
-                        val valueHint = new ValueHint();
-                        valueHint.setValue(RequiredProperty.class.getName());
-                        valueHint.setDescription(clazz.getName());
-                        valueHint.setShortDescription(annotation.message());
-                        hint.getValues().add(valueHint);
-                    }
-                });
-                if (!hint.getValues().isEmpty()) {
-                    hints.add(hint);
-                }
-            } catch (final Exception e) {
-                LOGGER.error(e.getMessage(), e);
-            }
-        }
-        return hints;
     }
 }
