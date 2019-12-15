@@ -40,7 +40,7 @@ public class MongoDbSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGenerato
     }
 
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
         generate(Optional.empty());
     }
 
