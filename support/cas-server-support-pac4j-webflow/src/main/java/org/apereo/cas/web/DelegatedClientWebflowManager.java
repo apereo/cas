@@ -205,13 +205,13 @@ public class DelegatedClientWebflowManager {
                 clientId = webContext.getRequestParameter(OAuth20Configuration.STATE_REQUEST_PARAMETER);
             }
             if (client instanceof OAuth10Client) {
-                LOGGER.debug("Client identifier could not be found as part of request parameters.  Looking at state for the OAuth1 client");
+                LOGGER.debug("Client identifier could not be found as part of request parameters. Looking at state for the OAuth1 client");
                 val sessionStore = webContext.getSessionStore();
                 clientId = (String) sessionStore.get(webContext, OAUTH10_CLIENT_ID_SESSION_KEY);
                 sessionStore.set(webContext, OAUTH10_CLIENT_ID_SESSION_KEY, null);
             }
             if (client instanceof CasClient) {
-                LOGGER.debug("Client identifier could not be found as part of request parameters.  Looking at state for the CAS client");
+                LOGGER.debug("Client identifier could not be found as part of request parameters. Looking at state for the CAS client");
                 val sessionStore = webContext.getSessionStore();
                 clientId = (String) sessionStore.get(webContext, CAS_CLIENT_ID_SESSION_KEY);
                 sessionStore.set(webContext, CAS_CLIENT_ID_SESSION_KEY, null);
