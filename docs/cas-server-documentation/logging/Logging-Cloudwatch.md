@@ -26,7 +26,9 @@ With the above module, you may then declare a specific appender to communicate w
                     credentialAccessKey="..."
                     credentialSecretKey="..."
                     awsLogStreamFlushPeriodInSeconds="5"
-                    createIfNeeded="true">
+                    createIfNeeded="true"
+                    createLogGroupIfNeeded="false"
+                    createLogStreamIfNeeded="false">
     <PatternLayout>
         <Pattern>%5p | %d{ISO8601}{UTC} | %t | %C | %M:%L | %m %ex %n</Pattern>
     </PatternLayout>
@@ -47,4 +49,6 @@ AWS credentials are fetched from the following sources automatically, where rele
 6. Properties file on the classpath as `awscredentials.properties` that contains `accessKey` and `secretKey` as property keys.
 7. Static credentials for access key and secret provided directly by the configuration at hand (logging, etc).
 
-`createIfNeeded` is optional; it will default to `true`.
+`createIfNeeded`, `createLogGroupIfNeeded`, and `createLogStreamIfNeeded` are optional; `createIfNeeded` will default to
+ `true` while `createLogGroupIfNeeded` and `createLogStreamIfNeeded` default to `false`. Any `true` value will take
+ precendence (i.e., set all to `false` to not create anything).
