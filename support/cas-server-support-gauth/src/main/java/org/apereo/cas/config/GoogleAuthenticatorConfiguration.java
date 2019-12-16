@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.trusted.config.MultifactorAuthnTrustConfiguration;
 import org.apereo.cas.gauth.web.flow.GoogleAuthenticatorMultifactorTrustWebflowConfigurer;
 import org.apereo.cas.gauth.web.flow.GoogleAuthenticatorMultifactorWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
@@ -11,6 +12,7 @@ import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -32,7 +34,8 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
  */
 @Configuration("googleAuthenticatorConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@EnableScheduling
+@AutoConfigureAfter(MultifactorAuthnTrustConfiguration.class)
+@EnableScheduling 
 public class GoogleAuthenticatorConfiguration {
 
     @Autowired

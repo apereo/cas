@@ -7,6 +7,7 @@ dependencies {
     implementation project(":support:cas-server-support-otp-mfa-core")
     implementation project(":support:cas-server-support-gauth-core-mfa")
     implementation project(":support:cas-server-support-trusted-mfa-core")
+    implementation project(":support:cas-server-support-trusted-mfa")
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-authentication-mfa-api")
     implementation project(":core:cas-server-core-util-api")
