@@ -3,4 +3,7 @@ description = "Apereo CAS Web Application via Apache Tomcat"
 
 dependencies {
     implementation project(":webapp:cas-server-webapp-init-tomcat")
+    implementation project(":support:cas-server-support-gauth")
+    implementation project(":support:cas-server-support-gauth-redis")
+    implementation project(":support:cas-server-support-trusted-mfa")
 }
