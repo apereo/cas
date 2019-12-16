@@ -49,6 +49,7 @@ public class DelegatedClientWebflowManager {
      */
     public static final String PARAMETER_CLIENT_ID = "delegatedclientid";
     private static final String OAUTH10_CLIENT_ID_SESSION_KEY = "OAUTH10_CLIENT_ID";
+    private static final String CAS_CLIENT_ID_SESSION_KEY = "CAS_CLIENT_ID";
 
     private final TicketRegistry ticketRegistry;
     private final TicketFactory ticketFactory;
@@ -96,8 +97,7 @@ public class DelegatedClientWebflowManager {
             config.setStateData(ticketId);
         }
         if (client instanceof CasClient) {
-            final CasClient casClient = (CasClient) client;
-            casClient.getConfiguration().addCustomParam(DelegatedClientWebflowManager.PARAMETER_CLIENT_ID, ticketId);
+            webContext.getSessionStore().set(webContext, CAS_CLIENT_ID_SESSION_KEY, ticket.getId());
         }
         if (client instanceof OAuth10Client) {
             webContext.getSessionStore().set(webContext, OAUTH10_CLIENT_ID_SESSION_KEY, ticket.getId());
@@ -205,6 +205,12 @@ public class DelegatedClientWebflowManager {
                 final SessionStore sessionStore = webContext.getSessionStore();
                 clientId = (String) sessionStore.get(webContext, OAUTH10_CLIENT_ID_SESSION_KEY);
                 sessionStore.set(webContext, OAUTH10_CLIENT_ID_SESSION_KEY, null);
+            }
+            if (client instanceof CasClient) {
+                LOGGER.debug("Client identifier could not be found as part of request parameters.  Looking at state for the CAS client");
+                final SessionStore sessionStore = webContext.getSessionStore();
+                clientId = (String) sessionStore.get(webContext, CAS_CLIENT_ID_SESSION_KEY);
+                sessionStore.set(webContext, CAS_CLIENT_ID_SESSION_KEY, null);
             }
         }
         LOGGER.debug("Located delegated client identifier for this request as [{}]", clientId);
