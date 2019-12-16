@@ -40,16 +40,21 @@ import javax.servlet.http.HttpServletRequest;
  * @author Dmitriy Kopylenko
  * @since 4.1.0
  */
-@RestController("ticketResourceRestController")
+@RestController("ticketGrantingTicketResource")
 @Slf4j
 @RequiredArgsConstructor
 public class TicketGrantingTicketResource {
 
     private final AuthenticationSystemSupport authenticationSystemSupport;
+
     private final RestHttpRequestCredentialFactory credentialFactory;
+
     private final CentralAuthenticationService centralAuthenticationService;
+
     private final ServiceFactory serviceFactory;
+
     private final TicketGrantingTicketResourceEntityResponseFactory ticketGrantingTicketResourceEntityResponseFactory;
+
     private final ApplicationContext applicationContext;
 
     /**
@@ -60,7 +65,7 @@ public class TicketGrantingTicketResource {
      * @return ResponseEntity representing RESTful response
      */
     @PostMapping(value = "/v1/tickets", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public ResponseEntity<String> createTicketGrantingTicket(@RequestBody(required=false) final MultiValueMap<String, String> requestBody,
+    public ResponseEntity<String> createTicketGrantingTicket(@RequestBody(required = false) final MultiValueMap<String, String> requestBody,
                                                              final HttpServletRequest request) {
         try {
             val tgtId = createTicketGrantingTicketForRequest(requestBody, request);
@@ -116,8 +121,7 @@ public class TicketGrantingTicketResource {
             throw new BadRestRequestException("No credentials are provided or extracted to authenticate the REST request");
         }
         val service = this.serviceFactory.createService(request);
-        val authenticationResult =
-            authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, credential);
+        val authenticationResult = authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, credential);
         return centralAuthenticationService.createTicketGrantingTicket(authenticationResult);
     }
 }

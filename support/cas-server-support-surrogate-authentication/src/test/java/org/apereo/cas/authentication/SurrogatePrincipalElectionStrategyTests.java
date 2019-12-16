@@ -6,6 +6,7 @@ import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -36,8 +37,7 @@ public class SurrogatePrincipalElectionStrategyTests {
         val attributeRepository = CoreAuthenticationTestUtils.getAttributeRepository();
         val surrogatePrincipalBuilder = new SurrogatePrincipalBuilder(PrincipalFactoryUtils.newPrincipalFactory(), attributeRepository);
         val surrogatePrincipal = surrogatePrincipalBuilder.buildSurrogatePrincipal("cas-surrogate",
-            primaryAuth.getPrincipal(), CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("cas-surrogate"),
-            RegisteredServiceTestUtils.getRegisteredService());
+            primaryAuth.getPrincipal(), RegisteredServiceTestUtils.getRegisteredService());
 
         authentications.add(CoreAuthenticationTestUtils.getAuthentication(surrogatePrincipal));
         val principal = strategy.nominate(authentications, (Map) attributes);

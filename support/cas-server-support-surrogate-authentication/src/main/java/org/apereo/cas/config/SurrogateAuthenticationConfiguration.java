@@ -164,7 +164,8 @@ public class SurrogateAuthenticationConfiguration {
             principalAttribute,
             personDirectory.isUseExistingPrincipalId() || principal.isUseExistingPrincipalId(),
             principal.isAttributeResolutionEnabled(),
-            StringUtils.commaDelimitedListToSet(principal.getActiveAttributeRepositoryIds()));
+            StringUtils.commaDelimitedListToSet(principal.getActiveAttributeRepositoryIds()),
+            surrogatePrincipalBuilder());
     }
 
     @ConditionalOnMissingBean(name = "surrogatePrincipalResolutionExecutionPlanConfigurer")
