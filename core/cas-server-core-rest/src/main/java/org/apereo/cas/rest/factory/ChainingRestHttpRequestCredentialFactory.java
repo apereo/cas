@@ -9,6 +9,7 @@ import org.springframework.util.MultiValueMap;
 
 import javax.servlet.http.HttpServletRequest;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -42,6 +43,7 @@ public class ChainingRestHttpRequestCredentialFactory implements RestHttpRequest
         OrderComparator.sort(this.chain);
         return this.chain
             .stream()
+            .sorted(Comparator.comparing(RestHttpRequestCredentialFactory::getOrder))
             .map(f -> f.fromRequest(request, requestBody))
             .flatMap(List::stream)
             .collect(Collectors.toList());
