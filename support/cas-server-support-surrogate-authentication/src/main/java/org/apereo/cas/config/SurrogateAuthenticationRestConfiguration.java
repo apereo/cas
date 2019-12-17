@@ -1,6 +1,6 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.authentication.rest.SurrogateAuthenticatorRestHttpRequestCredentialFactory;
+import org.apereo.cas.authentication.rest.SurrogateAuthenticationRestHttpRequestCredentialFactory;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.rest.plan.RestHttpRequestCredentialFactoryConfigurer;
@@ -24,12 +24,23 @@ import org.springframework.context.annotation.Configuration;
 @ConditionalOnClass(value = RestHttpRequestCredentialFactoryConfigurer.class)
 public class SurrogateAuthenticationRestConfiguration {
     @Autowired
+    private CasConfigurationProperties casProperties;
+
+    @Autowired
     @Qualifier("surrogateAuthenticationService")
     private ObjectProvider<SurrogateAuthenticationService> surrogateAuthenticationService;
 
+    /**
+     * Override the core bean definition
+     * that handles username+password to
+     * avoid duplicate authentication attempts.
+     *
+     * @return configurer instance
+     */
     @Bean
-    public RestHttpRequestCredentialFactoryConfigurer surrogateAuthenticatorRestHttpRequestCredentialFactoryConfigurer() {
+    public RestHttpRequestCredentialFactoryConfigurer restHttpRequestCredentialFactoryConfigurer() {
         return factory -> factory.registerCredentialFactory(
-            new SurrogateAuthenticatorRestHttpRequestCredentialFactory(surrogateAuthenticationService.getObject()));
+            new SurrogateAuthenticationRestHttpRequestCredentialFactory(surrogateAuthenticationService.getObject(),
+                casProperties.getAuthn().getSurrogate()));
     }
 }

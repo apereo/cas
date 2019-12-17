@@ -3,12 +3,14 @@ package org.apereo.cas.authentication.principal.resolvers;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.PrincipalElectionStrategy;
 import org.apereo.cas.authentication.principal.NullPrincipal;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +22,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -37,6 +40,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @ToString
 @Setter
+@RequiredArgsConstructor
 public class ChainingPrincipalResolver implements PrincipalResolver {
 
     /**
@@ -49,6 +53,8 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
      */
     private List<PrincipalResolver> chain;
 
+    private final PrincipalElectionStrategy principalElectionStrategy;
+    
     @Override
     public Principal resolve(final Credential credential, final Optional<Principal> principal, final Optional<AuthenticationHandler> handler) {
         val principals = new ArrayList<Principal>(chain.size());
@@ -77,17 +83,7 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
                 }
             }
         });
-        val principalIds = principals.stream()
-            .map(p -> p.getId().trim().toLowerCase())
-            .collect(Collectors.toCollection(LinkedHashSet::new));
-        val count = principalIds.size();
-        if (count > 1) {
-            LOGGER.debug("Principal resolvers produced [{}] distinct principal IDs [{}]; last resolved principal ID will be the final principal ID", count, principalIds);
-        }
-        val principalId = principals.get(principals.size() - 1).getId();
-        val finalPrincipal = this.principalFactory.createPrincipal(principalId, attributes);
-        LOGGER.debug("Final principal constructed by the chain of resolvers is [{}]", finalPrincipal);
-        return finalPrincipal;
+        return principalElectionStrategy.nominate(principals, attributes);
     }
 
     /**

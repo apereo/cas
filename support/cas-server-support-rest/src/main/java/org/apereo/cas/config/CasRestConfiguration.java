@@ -106,7 +106,7 @@ public class CasRestConfiguration {
         configurers.forEach(c -> c.configureEntityResponseFactory(plan));
         return new CompositeServiceTicketResourceEntityResponseFactory(plan.getFactories());
     }
-    
+
     @Bean
     @ConditionalOnMissingBean(name = "ticketGrantingTicketResourceEntityResponseFactory")
     public TicketGrantingTicketResourceEntityResponseFactory ticketGrantingTicketResourceEntityResponseFactory() {
@@ -146,10 +146,10 @@ public class CasRestConfiguration {
     @Bean
     public RestHttpRequestCredentialFactory restHttpRequestCredentialFactory(final List<RestHttpRequestCredentialFactoryConfigurer> configurers) {
         LOGGER.trace("building REST credential factory from [{}]", configurers);
-        
+
         val factory = new ChainingRestHttpRequestCredentialFactory();
         AnnotationAwareOrderComparator.sortIfNecessary(configurers);
-        
+
         configurers.forEach(c -> {
             LOGGER.trace("Configuring credential factory: [{}]", c);
             c.configureCredentialFactory(factory);
@@ -157,6 +157,7 @@ public class CasRestConfiguration {
         return factory;
     }
 
+    @ConditionalOnMissingBean(name = "restHttpRequestCredentialFactoryConfigurer")
     @Bean
     public RestHttpRequestCredentialFactoryConfigurer restHttpRequestCredentialFactoryConfigurer() {
         return factory -> factory.registerCredentialFactory(new UsernamePasswordRestHttpRequestCredentialFactory());

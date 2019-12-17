@@ -11,6 +11,7 @@ import org.apereo.cas.adaptors.trusted.web.flow.PrincipalFromRequestRemoteUserNo
 import org.apereo.cas.adaptors.trusted.web.flow.PrincipalFromRequestUserPrincipalNonInteractiveCredentialsAction;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.authentication.PrincipalElectionStrategy;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
@@ -51,6 +52,10 @@ public class TrustedAuthenticationConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Autowired
+    @Qualifier("principalElectionStrategy")
+    private ObjectProvider<PrincipalElectionStrategy> principalElectionStrategy;
+
+    @Autowired
     @Qualifier("adaptiveAuthenticationPolicy")
     private ObjectProvider<AdaptiveAuthenticationPolicy> adaptiveAuthenticationPolicy;
 
@@ -82,7 +87,7 @@ public class TrustedAuthenticationConfiguration {
     @Bean
     @RefreshScope
     public PrincipalResolver trustedPrincipalResolver() {
-        val resolver = new ChainingPrincipalResolver();
+        val resolver = new ChainingPrincipalResolver(this.principalElectionStrategy.getObject());
         val personDirectory = casProperties.getPersonDirectory();
         val trusted = casProperties.getAuthn().getTrusted();
         val principalAttribute = StringUtils.defaultIfBlank(trusted.getPrincipalAttribute(), personDirectory.getPrincipalAttribute());

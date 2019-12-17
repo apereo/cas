@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
+import org.apereo.cas.authentication.principal.DefaultPrincipalElectionStrategy;
 import org.apereo.cas.authentication.principal.DefaultPrincipalResolutionExecutionPlan;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.resolvers.ChainingPrincipalResolver;
@@ -93,7 +94,7 @@ public class SurrogatePrincipalResolverTests {
         plan.registerPrincipalResolver(new PersonDirectoryPrincipalResolver(CoreAuthenticationTestUtils.getAttributeRepository()));
         plan.registerPrincipalResolver(new SurrogatePrincipalResolver(CoreAuthenticationTestUtils.getAttributeRepository(), surrogatePrincipalBuilder));
 
-        val resolver = new ChainingPrincipalResolver();
+        val resolver = new ChainingPrincipalResolver(new DefaultPrincipalElectionStrategy());
         resolver.setChain(plan.getRegisteredPrincipalResolvers());
 
         val upcPrincipal = resolver.resolve(upc, Optional.of(CoreAuthenticationTestUtils.getPrincipal("test")),
