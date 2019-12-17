@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Groovy")
 public class GroovyPrincipalNameTransformerTests {
     @Test
-    public void verifyOperation() throws Exception {
+    public void verifyOperation() {
         val chain = new ChainingPrincipalNameTransformer();
         chain.addTransformer(new GroovyPrincipalNameTransformer(new ClassPathResource("GroovyTransformer.groovy")));
         chain.addTransformer(new ConvertCasePrincipalNameTransformer(true));

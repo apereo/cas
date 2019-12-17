@@ -21,7 +21,7 @@ public class VerifyPasswordlessAccountAuthenticationAction extends AbstractActio
     private final PasswordlessUserAccountStore passwordlessUserAccountStore;
 
     @Override
-    public Event doExecute(final RequestContext requestContext) throws Exception {
+    public Event doExecute(final RequestContext requestContext) {
         val messageContext = requestContext.getMessageContext();
         val username = requestContext.getRequestParameters().get("username");
         if (StringUtils.isBlank(username)) {

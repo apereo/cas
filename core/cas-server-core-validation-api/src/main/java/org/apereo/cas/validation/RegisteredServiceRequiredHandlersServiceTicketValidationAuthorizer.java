@@ -33,13 +33,13 @@ public class RegisteredServiceRequiredHandlersServiceTicketValidationAuthorizer 
         if (registeredService.getRequiredHandlers() != null && !registeredService.getRequiredHandlers().isEmpty()) {
             LOGGER.debug("Evaluating service [{}] to ensure required authentication handlers can satisfy assertion", service);
             val attributes = assertion.getPrimaryAuthentication().getAttributes();
-            if (attributes.containsKey(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS)) {
-                val assertedHandlers = CollectionUtils.toCollection(
-                    attributes.get(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS));
-                val matchesAll = assertedHandlers.containsAll(registeredService.getRequiredHandlers());
-                if (!matchesAll) {
-                    throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
-                }
+            if (!attributes.containsKey(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS)) {
+                throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
+            }
+            val assertedHandlers = CollectionUtils.toCollection(attributes.get(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS));
+            val matchesAll = assertedHandlers.containsAll(registeredService.getRequiredHandlers());
+            if (!matchesAll) {
+                throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
             }
         }
     }

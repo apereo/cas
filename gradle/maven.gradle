@@ -78,6 +78,10 @@ ext.createPom = { pom, project ->
             id = "tsschmidt"
             name = "Travis Schmidt"
         }
+        developer {
+            id = "hdeadman"
+            name = "Hal Deadman"
+        }
     }
 
     pom.contributors {

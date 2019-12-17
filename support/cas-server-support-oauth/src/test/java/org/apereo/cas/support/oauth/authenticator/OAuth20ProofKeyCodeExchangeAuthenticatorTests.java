@@ -20,7 +20,6 @@ import org.pac4j.core.exception.CredentialsException;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -64,7 +63,7 @@ public class OAuth20ProofKeyCodeExchangeAuthenticatorTests extends BaseOAuth20Au
 
     @Test
     public void verifyAuthenticationHashed() {
-        val hash = EncodingUtils.encodeUrlSafeBase64(DigestUtils.sha256("ABCD1234").getBytes(StandardCharsets.UTF_8));
+        val hash = EncodingUtils.encodeUrlSafeBase64(DigestUtils.rawDigestSha256("ABCD1234"));
         val credentials = new UsernamePasswordCredentials("client", "ABCD1234");
         val request = new MockHttpServletRequest();
         val ticket = new OAuth20DefaultCode("CODE-1234567890",

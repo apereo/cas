@@ -393,7 +393,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
     protected abstract String[] getExtensions();
 
     @Override
-    public void destroy() throws Exception {
+    public void destroy() {
         this.serviceRegistryWatcherService.close();
     }
 
