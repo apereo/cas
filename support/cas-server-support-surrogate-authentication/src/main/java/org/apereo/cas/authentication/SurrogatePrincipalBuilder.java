@@ -27,12 +27,10 @@ public class SurrogatePrincipalBuilder {
      *
      * @param surrogate         the surrogate
      * @param primaryPrincipal  the primary principal
-     * @param credentials       the credentials
      * @param registeredService the registered service
      * @return the principal
      */
-    public Principal buildSurrogatePrincipal(final String surrogate, final Principal primaryPrincipal, final Credential credentials,
-                                             final RegisteredService registeredService) {
+    public Principal buildSurrogatePrincipal(final String surrogate, final Principal primaryPrincipal, final RegisteredService registeredService) {
         val repositories = new HashSet<String>(0);
         if (registeredService != null) {
             repositories.addAll(registeredService.getAttributeReleasePolicy().getPrincipalAttributesRepository().getAttributeRepositoryIds());
@@ -41,6 +39,18 @@ public class SurrogatePrincipalBuilder {
         val principal = principalFactory.createPrincipal(surrogate, attributes);
         return new SurrogatePrincipal(primaryPrincipal, principal);
     }
+
+    /**
+     * Build surrogate principal.
+     *
+     * @param surrogate        the surrogate
+     * @param primaryPrincipal the primary principal
+     * @return the principal
+     */
+    public Principal buildSurrogatePrincipal(final String surrogate, final Principal primaryPrincipal) {
+        return buildSurrogatePrincipal(surrogate, primaryPrincipal, null);
+    }
+
 
     /**
      * Build surrogate authentication result optional.
@@ -58,7 +68,7 @@ public class SurrogatePrincipalBuilder {
         val currentAuthn = authenticationResultBuilder.getInitialAuthentication();
         if (currentAuthn.isPresent()) {
             val authentication = currentAuthn.get();
-            val surrogatePrincipal = buildSurrogatePrincipal(surrogateTargetId, authentication.getPrincipal(), credential, registeredService);
+            val surrogatePrincipal = buildSurrogatePrincipal(surrogateTargetId, authentication.getPrincipal(), registeredService);
             val auth = DefaultAuthenticationBuilder.newInstance(authentication).setPrincipal(surrogatePrincipal).build();
             return Optional.of(authenticationResultBuilder.collect(auth));
         }

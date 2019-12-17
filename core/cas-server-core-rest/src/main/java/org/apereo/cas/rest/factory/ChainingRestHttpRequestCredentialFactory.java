@@ -4,7 +4,7 @@ import org.apereo.cas.authentication.Credential;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.core.OrderComparator;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.util.MultiValueMap;
 
 import javax.servlet.http.HttpServletRequest;
@@ -40,7 +40,7 @@ public class ChainingRestHttpRequestCredentialFactory implements RestHttpRequest
 
     @Override
     public List<Credential> fromRequest(final HttpServletRequest request, final MultiValueMap<String, String> requestBody) {
-        OrderComparator.sort(this.chain);
+        AnnotationAwareOrderComparator.sort(this.chain);
         return this.chain
             .stream()
             .sorted(Comparator.comparing(RestHttpRequestCredentialFactory::getOrder))

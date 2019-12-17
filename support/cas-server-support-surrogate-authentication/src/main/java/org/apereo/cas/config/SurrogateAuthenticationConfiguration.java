@@ -4,7 +4,6 @@ import org.apereo.cas.audit.AuditPrincipalIdProvider;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationPostProcessor;
-import org.apereo.cas.authentication.PrincipalElectionStrategy;
 import org.apereo.cas.authentication.SurrogateAuthenticationExpirationPolicyBuilder;
 import org.apereo.cas.authentication.SurrogateAuthenticationPostProcessor;
 import org.apereo.cas.authentication.SurrogatePrincipalBuilder;
@@ -12,6 +11,7 @@ import org.apereo.cas.authentication.SurrogatePrincipalElectionStrategy;
 import org.apereo.cas.authentication.SurrogatePrincipalResolver;
 import org.apereo.cas.authentication.audit.SurrogateAuditPrincipalIdProvider;
 import org.apereo.cas.authentication.event.SurrogateAuthenticationEventListener;
+import org.apereo.cas.authentication.principal.PrincipalElectionStrategyConfigurer;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolutionExecutionPlanConfigurer;
@@ -129,9 +129,10 @@ public class SurrogateAuthenticationConfiguration {
         return new SurrogatePrincipalBuilder(surrogatePrincipalFactory(), attributeRepository.getObject());
     }
 
+    @ConditionalOnMissingBean(name = "surrogatePrincipalElectionStrategyConfigurer")
     @Bean
-    public PrincipalElectionStrategy principalElectionStrategy() {
-        return new SurrogatePrincipalElectionStrategy();
+    public PrincipalElectionStrategyConfigurer surrogatePrincipalElectionStrategyConfigurer() {
+        return chain -> chain.registerElectionStrategy(new SurrogatePrincipalElectionStrategy());
     }
 
     @Bean

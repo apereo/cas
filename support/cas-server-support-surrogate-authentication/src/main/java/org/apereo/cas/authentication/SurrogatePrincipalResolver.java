@@ -9,6 +9,8 @@ import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.springframework.core.Ordered;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -20,37 +22,54 @@ import java.util.Set;
  */
 @Slf4j
 public class SurrogatePrincipalResolver extends PersonDirectoryPrincipalResolver {
+    private final SurrogatePrincipalBuilder surrogatePrincipalBuilder;
 
-    public SurrogatePrincipalResolver(final IPersonAttributeDao attributeRepository) {
+    public SurrogatePrincipalResolver(final IPersonAttributeDao attributeRepository,
+                                      final SurrogatePrincipalBuilder surrogatePrincipalBuilder) {
         super(attributeRepository);
+        this.surrogatePrincipalBuilder = surrogatePrincipalBuilder;
     }
 
-    public SurrogatePrincipalResolver(final IPersonAttributeDao attributeRepository, final String principalAttributeName) {
+    public SurrogatePrincipalResolver(final IPersonAttributeDao attributeRepository, final String principalAttributeName,
+                                      final SurrogatePrincipalBuilder surrogatePrincipalBuilder) {
         super(attributeRepository, principalAttributeName);
+        this.surrogatePrincipalBuilder = surrogatePrincipalBuilder;
     }
 
     public SurrogatePrincipalResolver(final IPersonAttributeDao attributeRepository, final PrincipalFactory principalFactory,
                                       final boolean returnNullIfNoAttributes, final String principalAttributeName,
                                       final boolean useCurrentPrincipalId, final boolean resolveAttributes,
-                                      final Set<String> activeAttributeRepositoryIdentifiers) {
+                                      final Set<String> activeAttributeRepositoryIdentifiers,
+                                      final SurrogatePrincipalBuilder surrogatePrincipalBuilder) {
         super(attributeRepository, principalFactory, returnNullIfNoAttributes,
             principalAttributeName, useCurrentPrincipalId, resolveAttributes,
             activeAttributeRepositoryIdentifiers);
+        this.surrogatePrincipalBuilder = surrogatePrincipalBuilder;
     }
 
     @Override
     protected String extractPrincipalId(final Credential credential, final Optional<Principal> currentPrincipal) {
         LOGGER.debug("Attempting to extract principal id for principal [{}]", currentPrincipal);
-        if (!credential.getClass().equals(SurrogateUsernamePasswordCredential.class)) {
+        if (!supports(credential)) {
             LOGGER.trace("Provided credential is not one of [{}]", SurrogateUsernamePasswordCredential.class.getName());
             return super.extractPrincipalId(credential, currentPrincipal);
         }
         if (currentPrincipal.isEmpty()) {
             throw new IllegalArgumentException("Current principal resolved cannot be null");
         }
-        val id = currentPrincipal.get().getId();
+        val id = SurrogateUsernamePasswordCredential.class.cast(credential).getSurrogateUsername();
         LOGGER.debug("Resolving principal id for surrogate authentication as [{}]", id);
         return id;
+    }
+
+    @Override
+    protected Principal buildResolvedPrincipal(final String id, final Map<String, List<Object>> attributes,
+                                               final Credential credential, final Optional<Principal> currentPrincipal,
+                                               final Optional<AuthenticationHandler> handler) {
+        if (!supports(credential)) {
+            return super.buildResolvedPrincipal(id, attributes, credential, currentPrincipal, handler);
+        }
+        return surrogatePrincipalBuilder.buildSurrogatePrincipal(id, currentPrincipal.get());
     }
 
     @Override
