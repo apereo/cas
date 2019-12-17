@@ -66,13 +66,16 @@ public class MonitoredRepository implements InitializingBean {
             page = page.next();
         }
         log.info("Available milestones are {}", this.milestones);
-
-        Page<Label> lbl = gitHub.getLabels(getOrganization(), getName());
-        while (lbl != null) {
-            labels.addAll(lbl.getContent());
-            lbl = lbl.next();
+        try {
+            Page<Label> lbl = gitHub.getLabels(getOrganization(), getName());
+            while (lbl != null) {
+                labels.addAll(lbl.getContent());
+                lbl = lbl.next();
+            }
+            log.info("Available labels are {}", this.labels.stream().map(Object::toString).collect(Collectors.joining(",")));
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
         }
-        log.info("Available labels are {}", this.labels.stream().map(Object::toString).collect(Collectors.joining(",")));
     }
 
     public String getOrganization() {
@@ -178,9 +181,5 @@ public class MonitoredRepository implements InitializingBean {
 
     public CombinedCommitStatus getCombinedPullRequestCommitStatuses(final PullRequest pr) {
         return this.gitHub.getCombinedPullRequestCommitStatus(getOrganization(), getName(), pr.getHead().getSha());
-    }
-
-    public String getCurrentCommitSha() {
-        return null;
     }
 }

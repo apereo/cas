@@ -68,17 +68,7 @@ public class GitHubProperties {
     @Getter
     @Setter
     public static class Credentials {
-
-        /**
-         * The username used for authentication with GitHub.
-         */
-        private String username;
-
-        /**
-         * The password used for authentication with GitHub.
-         */
-        private String password;
-
+        private String token;
     }
 
 }

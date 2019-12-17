@@ -34,7 +34,6 @@ public class CasPullRequestListener implements PullRequestListener {
         processMilestoneAssignment(pr);
         processLabelsByFeatures(pr);
         removeLabelWorkInProgress(pr);
-
         mergePullRequestIfPossible(pr);
     }
 
@@ -68,14 +67,26 @@ public class CasPullRequestListener implements PullRequestListener {
         return false;
     }
 
-    private void removeLabelWorkInProgress(final PullRequest pr) {
-        if (pr.isLabeledAs(CasLabels.LABEL_WIP)) {
+    private void removeLabelWorkInProgress(final PullRequest givenPullRequest) {
+        val pr = this.repository.getPullRequest(givenPullRequest.getNumber());
+        if (pr.isDraft()) {
+            if (pr.isLabeledAs(CasLabels.LABEL_PENDING)) {
+                repository.removeLabelFrom(pr, CasLabels.LABEL_PENDING);
+            }
+            if (!pr.isLabeledAs(CasLabels.LABEL_WIP)) {
+                repository.labelPullRequestAs(pr, CasLabels.LABEL_WIP);
+            }
+        } else if (pr.isLabeledAs(CasLabels.LABEL_WIP)) {
+            if (pr.isLabeledAs(CasLabels.LABEL_PENDING)) {
+                repository.removeLabelFrom(pr, CasLabels.LABEL_PENDING);
+            }
             val title = pr.getTitle().toLowerCase();
             if (CasLabels.LABEL_WIP.getKeywords() != null && !CasLabels.LABEL_WIP.getKeywords().matcher(title).find()) {
                 log.info("{} will remove the label {}", pr, CasLabels.LABEL_WIP);
                 repository.removeLabelFrom(pr, CasLabels.LABEL_WIP);
             }
         }
+
     }
 
     private void processLabelPendingUpdateProperty(final PullRequest pr) {

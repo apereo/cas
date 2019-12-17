@@ -16,6 +16,7 @@
 
 package org.apereo.cas.github;
 
+import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,17 +70,8 @@ public class GitHubTemplate implements GitHubOperations {
 
     private final LinkParser linkParser;
 
-    /**
-     * Creates a new {@code GitHubTemplate} that will use the given {@code username} and
-     * {@code password} to authenticate, and the given {@code linkParser} to parse links
-     * from responses' {@code Link} header.
-     *
-     * @param username   the username
-     * @param password   the password
-     * @param linkParser the link parser
-     */
-    public GitHubTemplate(final String username, final String password, final LinkParser linkParser) {
-        this(createDefaultRestTemplate(username, password), linkParser);
+    public GitHubTemplate(final String token, final LinkParser linkParser) {
+        this(createDefaultRestTemplate(token), linkParser);
     }
 
     GitHubTemplate(final RestOperations rest, final LinkParser linkParser) {
@@ -87,7 +79,7 @@ public class GitHubTemplate implements GitHubOperations {
         this.linkParser = linkParser;
     }
 
-    static RestTemplate createDefaultRestTemplate(final String username, final String password) {
+    static RestTemplate createDefaultRestTemplate(final String token) {
         final RestTemplate rest = new RestTemplate();
         rest.setErrorHandler(new DefaultResponseErrorHandler() {
             @Override
@@ -106,7 +98,7 @@ public class GitHubTemplate implements GitHubOperations {
             new HttpComponentsClientHttpRequestFactory());
         rest.setRequestFactory(bufferingClient);
         rest.setInterceptors(Collections
-            .singletonList(new BasicAuthorizationInterceptor(username, password)));
+            .singletonList(new BasicAuthorizationInterceptor(token)));
         rest.setMessageConverters(
             Arrays.asList(new ErrorLoggingMappingJackson2HttpMessageConverter()));
         return rest;
@@ -122,13 +114,15 @@ public class GitHubTemplate implements GitHubOperations {
     @Override
     public Page<PullRequest> getPullRequests(final String organization, final String repository) {
         val url = "https://api.github.com/repos/" + organization + '/' + repository + "/pulls?state=open";
-        return getPage(url, PullRequest[].class);
+        val headers = new LinkedMultiValueMap(Map.of("Accept", List.of("application/vnd.github.shadow-cat-preview+json")));
+        return getPage(url, PullRequest[].class, Map.of(), headers);
     }
 
     @Override
     public PullRequest getPullRequest(final String organization, final String repository, final String number) {
         val url = "https://api.github.com/repos/" + organization + '/' + repository + "/pulls/" + number;
-        return getSinglePage(url, PullRequest.class);
+        val headers = new LinkedMultiValueMap(Map.of("Accept", List.of("application/vnd.github.shadow-cat-preview+json")));
+        return getSinglePage(url, PullRequest.class, Map.of(), headers);
     }
 
     @Override
@@ -220,7 +214,7 @@ public class GitHubTemplate implements GitHubOperations {
             if (responseEntity.getStatusCode().is2xxSuccessful()) {
                 log.info("Merged pull request {} with base", pr);
             } else {
-                log.error("Unable to merge pull request {} with base {}", pr, responseEntity);
+                log.error("Unable to merge pulfl request {} with base {}", pr, responseEntity);
             }
             return pr;
         }
@@ -276,12 +270,17 @@ public class GitHubTemplate implements GitHubOperations {
     }
 
     private <T> Page<T> getPage(final String url, final Class<T[]> type, final Map params) {
+        return getPage(url, type, params, new HttpHeaders());
+    }
+    
+    private <T> Page<T> getPage(final String url, final Class<T[]> type, final Map params, final MultiValueMap headers) {
         if (!StringUtils.hasText(url)) {
             return null;
         }
-        final ResponseEntity<T[]> contents = this.rest.getForEntity(url, type, params);
-        return new StandardPage<T>(Arrays.asList(contents.getBody()),
-            () -> getPage(getNextUrl(contents), type));
+        final HttpHeaders hd = new HttpHeaders(headers);
+        final ResponseEntity<T> contents = this.rest.exchange(url, HttpMethod.GET, new HttpEntity<>(hd), type, params);
+        List<T> body = Arrays.asList(type.cast(contents.getBody()));
+        return new StandardPage<T>(body, () -> getPage(getNextUrl(contents), type));
     }
 
     private <T> Page<T> getPage(final String url, final Class<T[]> type) {
@@ -454,26 +453,16 @@ public class GitHubTemplate implements GitHubOperations {
 
     }
 
+    @RequiredArgsConstructor
     private static class BasicAuthorizationInterceptor
         implements ClientHttpRequestInterceptor {
-
-        private static final Charset UTF_8 = Charset.forName("UTF-8");
-
-        private final String username;
-
-        private final String password;
-
-        BasicAuthorizationInterceptor(final String username, final String password) {
-            this.username = username;
-            this.password = password == null ? "" : password;
-        }
+        
+        private final String token;
 
         @Override
         public ClientHttpResponse intercept(final HttpRequest request, final byte[] body,
                                             final ClientHttpRequestExecution execution) throws IOException {
-            val token = Base64Utils.encodeToString(
-                (this.username + ':' + this.password).getBytes(UTF_8));
-            request.getHeaders().add("Authorization", "Basic " + token);
+            request.getHeaders().add("Authorization", "Bearer " + token);
             return execution.execute(request, body);
         }
 

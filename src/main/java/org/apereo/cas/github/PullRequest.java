@@ -24,7 +24,6 @@ import lombok.Getter;
 import lombok.ToString;
 
 import java.util.List;
-import java.util.function.Predicate;
 
 @Getter
 @ToString(of = {"title", "url"}, includeFieldNames = false)
@@ -61,6 +60,7 @@ public class PullRequest {
 
     private final boolean mergeable;
     private final boolean locked;
+    private final boolean draft;
 
     @JsonCreator
     public PullRequest(@JsonProperty("url") final String url,
@@ -80,7 +80,8 @@ public class PullRequest {
                        @JsonProperty("commits") final long commits,
                        @JsonProperty("statuses_url") final String statusesUrl,
                        @JsonProperty("mergeable") final String mergeable,
-                       @JsonProperty("locked") final Boolean locked) {
+                       @JsonProperty("locked") final Boolean locked,
+                       @JsonProperty("draft") final Boolean draft) {
         this.url = url;
         this.commentsUrl = commentsUrl;
         this.user = user;
@@ -99,15 +100,11 @@ public class PullRequest {
         this.commits = commits;
 
         this.statusesUrl = statusesUrl;
-
+        this.draft = draft;
         this.mergeable = mergeable != null && Boolean.parseBoolean(mergeable);
         this.locked = locked;
     }
-
-    private static Predicate<Label> getLabelPredicateByName(final CasLabels name) {
-        return l -> l.getName().contains(name.getTitle());
-    }
-
+    
     public boolean isOpen() {
         return "open".equalsIgnoreCase(this.state);
     }
@@ -125,6 +122,6 @@ public class PullRequest {
     }
 
     public boolean isLabeledAs(final CasLabels labelName) {
-        return this.labels.stream().anyMatch(getLabelPredicateByName(labelName));
+        return this.labels.stream().anyMatch(l -> l.getName().equalsIgnoreCase(labelName.getTitle()));
     }
 }
