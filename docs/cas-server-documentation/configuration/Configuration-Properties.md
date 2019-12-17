@@ -3137,7 +3137,7 @@ To learn more about this topic, [please review this guide](../integration/Config
 Configuration settings for all SAML2 service providers are [available here](Configuration-Properties-Common.html#saml2-service-provider-integrations).
 
 | Service Provider      | Configuration Key     | Attributes
-|-----------------------|----------------------------------------------------------
+|-----------------------|-----------------------|----------------------------------
 | Gitlab                | `cas.samlSp.gitlab`   | `last_name`,`first_name`,`name`
 | Hipchat               | `cas.samlSp.hipchat`  | `last_name`,`first_name`,`title`
 | Dropbox               | `cas.samlSp.dropbox`  | `mail`
