@@ -1,8 +1,8 @@
 package org.apereo.cas.logging;
 
-import com.amazonaws.SdkClientException;
 import org.apereo.cas.aws.ChainingAWSCredentialsProvider;
 
+import com.amazonaws.SdkClientException;
 import com.amazonaws.services.logs.AWSLogs;
 import com.amazonaws.services.logs.AWSLogsClient;
 import com.amazonaws.services.logs.model.CreateLogGroupRequest;
@@ -185,6 +185,9 @@ public class CloudWatchAppender extends AbstractAppender {
      * @param credentialSecretKey              the credential secret key
      * @param awsLogRegionName                 the aws log region name
      * @param layout                           the layout
+     * @param createIfNeeded                   whether to create resources if needed
+     * @param createLogGroupIfNeeded           whether to create log group if needed
+     * @param createLogStreamIfNeeded          whether to create log stream if needed
      * @return the cloud watch appender
      */
     @PluginFactory
