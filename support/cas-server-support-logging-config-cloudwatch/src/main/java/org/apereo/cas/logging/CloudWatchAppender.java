@@ -69,6 +69,27 @@ public class CloudWatchAppender extends AbstractAppender {
     private boolean createLogGroupIfNeeded;
     private boolean createLogStreamIfNeeded;
 
+    /**
+     * Create appender cloud watch appender.
+     *
+     * @param name                             the name
+     * @param awsLogStreamName                 the aws log stream name
+     * @param awsLogGroupName                  the aws log group name
+     * @param awsLogStreamFlushPeriodInSeconds the aws log stream flush period in seconds
+     * @param credentialAccessKey              the credential access key
+     * @param credentialSecretKey              the credential secret key
+     * @param awsLogRegionName                 the aws log region name
+     * @param layout                           the layout
+     * @param createIfNeeded                   whether to create the resources if needed. Default value is `true`. A
+     *                                         value of `true` takes precedence over the other `create*IfNeeded`.
+     * @param createLogGroupIfNeeded           whether to create a Cloud Watch log group if needed. Default value is
+     *                                         `false`. A value of `true takes precedence over a value of `false` for
+     *                                         `createIfNeeded`
+     * @param createLogStreamIfNeeded          whether to create a Cloud Watch log stream if needed. Default value is
+     *                                         `false`. A value of `true takes precedence over a value of `false` for
+     *                                         `createIfNeeded`
+     * @return the cloud watch appender
+     */
     public CloudWatchAppender(final String name,
                               final String awsLogGroupName,
                               final String awsLogStreamName,
@@ -93,6 +114,25 @@ public class CloudWatchAppender extends AbstractAppender {
         }
     }
 
+    /**
+     * Create appender cloud watch appender.
+     *
+     * @param name                             the name
+     * @param awsLogStreamName                 the aws log stream name
+     * @param awsLogGroupName                  the aws log group name
+     * @param awsLogStreamFlushPeriodInSeconds the aws log stream flush period in seconds
+     * @param layout                           the layout
+     * @param createIfNeeded                   whether to create the resources if needed. Default value is `true`. A
+     *                                         value of `true` takes precedence over the other `create*IfNeeded`.
+     * @param createLogGroupIfNeeded           whether to create a Cloud Watch log group if needed. Default value is
+     *                                         `false`. A value of `true takes precedence over a value of `false` for
+     *                                         `createIfNeeded`
+     * @param createLogStreamIfNeeded          whether to create a Cloud Watch log stream if needed. Default value is
+     *                                         `false`. A value of `true takes precedence over a value of `false` for
+     *                                         `createIfNeeded`
+     * @param awsLogs                          instance of AWSLogs to use
+     * @return the cloud watch appender
+     */
     public CloudWatchAppender(final String name,
                               final String awsLogGroupName,
                               final String awsLogStreamName,
