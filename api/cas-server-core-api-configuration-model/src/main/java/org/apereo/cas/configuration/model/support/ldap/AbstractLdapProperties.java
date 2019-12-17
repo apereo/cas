@@ -131,7 +131,6 @@ public abstract class AbstractLdapProperties implements Serializable {
     /**
      * If multiple URLs are provided as the ldapURL this describes how each URL will be processed.
      * <ul>
-     * <li>{@code DEFAULT} The default JNDI provider behavior will be used. </li>
      * <li>{@code ACTIVE_PASSIVE} First LDAP will be used for every request unless it fails and then the next shall be used.</li>
      * <li>{@code ROUND_ROBIN} For each new connection the next url in the list will be used.</li>
      * <li>{@code RANDOM} For each new connection a random LDAP url will be selected.</li>
@@ -144,13 +143,9 @@ public abstract class AbstractLdapProperties implements Serializable {
      */
     private String ldapUrl;
     /**
-     * If the LDAP connection should be used with SSL enabled.
-     */
-    private boolean useSsl = true;
-    /**
      * Whether TLS should be used and enabled when establishing the connection.
      */
-    private boolean useStartTls;
+    private boolean useStartTls = true;
     /**
      * Sets the maximum amount of time that connects will block.
      */
@@ -159,12 +154,6 @@ public abstract class AbstractLdapProperties implements Serializable {
      * Duration of time to wait for responses.
      */
     private String responseTimeout = "PT5S";
-    /**
-     * LDAP operations are delegated to what we call a provider. This allows developers and deployers to change the underlying library
-     * that provides the LDAP implementation without modifying any code. By default the JNDI provider is used, though
-     * it may be swapped out for {@code org.ldaptive.provider.unboundid.UnboundIDProvider}.
-     */
-    private String providerClass = "org.ldaptive.provider.unboundid.UnboundIDProvider";
     /**
      * Whether search/query results are allowed to match on multiple DNs,
      * or whether a single unique DN is expected for the result.
@@ -288,10 +277,6 @@ public abstract class AbstractLdapProperties implements Serializable {
      */
     public enum LdapConnectionStrategy {
 
-        /**
-         * Default JNDI.
-         */
-        DEFAULT,
         /**
          * First ldap used until it fails.
          */

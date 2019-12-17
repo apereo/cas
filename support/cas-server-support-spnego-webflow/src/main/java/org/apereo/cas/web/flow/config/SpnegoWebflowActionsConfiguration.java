@@ -14,6 +14,7 @@ import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 
 import lombok.val;
+import org.ldaptive.SearchOperation;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -102,8 +103,7 @@ public class SpnegoWebflowActionsConfiguration {
         return new LdapSpnegoKnownClientSystemsFilterAction(RegexUtils.createPattern(spnegoProperties.getIpsToCheckPattern()),
             spnegoProperties.getAlternativeRemoteHostAttribute(),
             Beans.newDuration(spnegoProperties.getDnsTimeout()).toMillis(),
-            connectionFactory,
-            searchRequest,
+            new SearchOperation(connectionFactory, searchRequest),
             spnegoProperties.getSpnegoAttributeName());
     }
 }

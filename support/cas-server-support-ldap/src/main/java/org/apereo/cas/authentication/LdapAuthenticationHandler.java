@@ -114,13 +114,13 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         LOGGER.debug("Attempting to examine and handle LDAP password policy via [{}]",
             passwordPolicyHandlingStrategy.getClass().getSimpleName());
         val messageList = passwordPolicyHandlingStrategy.handle(response, getPasswordPolicyConfiguration());
-        if (response.getResult()) {
+        if (response.isSuccess()) {
             LOGGER.debug("LDAP response returned a result [{}], creating the final LDAP principal", response.getLdapEntry());
             val principal = createPrincipal(upc.getUsername(), response.getLdapEntry());
             return createHandlerResult(upc, principal, messageList);
         }
         if (AuthenticationResultCode.DN_RESOLUTION_FAILURE == response.getAuthenticationResultCode()) {
-            LOGGER.warn("DN resolution failed. [{}]", response.getMessage());
+            LOGGER.warn("DN resolution failed. [{}]", response.getDiagnosticMessage());
             throw new AccountNotFoundException(upc.getUsername() + " not found.");
         }
         throw new FailedLoginException("Invalid credentials");
