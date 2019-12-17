@@ -33,7 +33,7 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
  */
 @Configuration("googleAuthenticatorConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@EnableScheduling 
+@EnableScheduling
 public class GoogleAuthenticatorConfiguration {
 
     @Autowired
