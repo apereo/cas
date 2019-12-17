@@ -102,7 +102,7 @@ public class RequestParameterPolicyEnforcementFilterTests {
     }
 
     @Test
-    public void verifySettingFailSafeFalseFromInitParam() throws Exception {
+    public void verifySettingFailSafeFalseFromInitParam() {
 
         val filter = new RequestParameterPolicyEnforcementFilter();
 
@@ -190,7 +190,7 @@ public class RequestParameterPolicyEnforcementFilterTests {
     }
 
     @Test
-    public void verifyRejectsRequestWithIllicitCharacterInCheckedParameter() throws IOException, ServletException {
+    public void verifyRejectsRequestWithIllicitCharacterInCheckedParameter() {
 
         val filter = new RequestParameterPolicyEnforcementFilter();
 
@@ -272,7 +272,7 @@ public class RequestParameterPolicyEnforcementFilterTests {
     }
 
     @Test
-    public void verifyRejectsUnExpectedParameterName() throws ServletException {
+    public void verifyRejectsUnExpectedParameterName() {
 
         val parameterNames = new HashSet<String>();
         parameterNames.add(RequestParameterPolicyEnforcementFilter.CHARACTERS_TO_FORBID);

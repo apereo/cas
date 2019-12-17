@@ -20,7 +20,7 @@ public class RemoveGoogleAnalyticsCookieAction extends AbstractAction {
     private final CasCookieBuilder googleAnalyticsCookieBuilder;
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) throws Exception {
+    protected Event doExecute(final RequestContext requestContext) {
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
         googleAnalyticsCookieBuilder.removeCookie(response);
         return null;

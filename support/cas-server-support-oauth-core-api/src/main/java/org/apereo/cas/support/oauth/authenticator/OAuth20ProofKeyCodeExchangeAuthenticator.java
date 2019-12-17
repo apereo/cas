@@ -21,7 +21,6 @@ import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.exception.CredentialsException;
 
 import java.io.Serializable;
-import java.nio.charset.StandardCharsets;
 
 /**
  * This is {@link OAuth20ProofKeyCodeExchangeAuthenticator}.
@@ -68,7 +67,7 @@ public class OAuth20ProofKeyCodeExchangeAuthenticator extends OAuth20ClientIdCli
             throw new CredentialsException("Invalid token: " + code);
         }
 
-        val method = StringUtils.defaultString(token.getCodeChallengeMethod(), "plain");
+        val method = StringUtils.defaultIfEmpty(token.getCodeChallengeMethod(), "plain");
         val hash = calculateCodeVerifierHash(method, codeVerifier);
         if (!hash.equalsIgnoreCase(token.getCodeChallenge())) {
             LOGGER.error("Code verifier [{}] does not match the challenge [{}]", hash, token.getCodeChallenge());
@@ -82,8 +81,8 @@ public class OAuth20ProofKeyCodeExchangeAuthenticator extends OAuth20ClientIdCli
             return codeVerifier;
         }
         if ("S256".equalsIgnoreCase(method)) {
-            val sha256 = DigestUtils.sha256(codeVerifier);
-            return EncodingUtils.encodeUrlSafeBase64(sha256.getBytes(StandardCharsets.UTF_8));
+            val sha256 = DigestUtils.rawDigestSha256(codeVerifier);
+            return EncodingUtils.encodeUrlSafeBase64(sha256);
         }
         throw new CredentialsException("Code verification method is unrecognized: " + method);
     }

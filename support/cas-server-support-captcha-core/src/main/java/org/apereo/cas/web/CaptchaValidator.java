@@ -45,7 +45,7 @@ public class CaptchaValidator {
     private final double score;
 
     /**
-     * Gets recaptcha response.
+     * Gets recaptcha response based on version.
      *
      * @param version the version
      * @param request the request

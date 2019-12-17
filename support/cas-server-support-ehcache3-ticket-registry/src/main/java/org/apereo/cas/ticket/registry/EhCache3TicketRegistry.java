@@ -157,7 +157,7 @@ public class EhCache3TicketRegistry extends AbstractTicketRegistry implements Di
     }
 
     @Override
-    public void destroy() throws Exception {
+    public void destroy() {
         if (!this.cacheManager.isClosed()) {
             this.cacheManager.close();
         }

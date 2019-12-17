@@ -68,7 +68,7 @@ public class OktaAuthenticationStateHandlerAdapterTests {
     private AuthenticationHandler oktaAuthenticationHandler;
 
     @Test
-    public void verifyOperation() throws Exception {
+    public void verifyOperation() {
         val c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword(
             "casuser@apereo.org", "a8BuQH@6B7z");
         assertThrows(FailedLoginException.class, () -> oktaAuthenticationHandler.authenticate(c));

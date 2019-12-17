@@ -3478,6 +3478,7 @@ prefixes for the `keystorePath` or `identityProviderMetadataPath` property).
 
 # cas.authn.pac4j.saml[0].wantsAssertionsSigned=
 # cas.authn.pac4j.saml[0].signLogoutRequests=
+# cas.authn.pac4j.saml[0].allSignatureValidationDisabled=false
 # cas.authn.pac4j.saml[0].signServiceProviderMetadata=false
 # cas.authn.pac4j.saml[0].principalIdAttribute=eduPersonPrincipalName
 # cas.authn.pac4j.saml[0].useNameQualifier=true
@@ -5217,16 +5218,16 @@ To learn more about this topic, [please review this guide](../installation/Passw
 ### LDAP Password Management
 
 Common LDAP settings for this feature are available [here](Configuration-Properties-Common.html#ldap-connection-settings) 
-under the configuration key `cas.authn.pm.ldap`.
+under the configuration key `cas.authn.pm.ldap[0]`.
 
 ```properties
-# cas.authn.pm.ldap.type=AD|GENERIC|EDirectory|FreeIPA
-# cas.authn.pm.ldap.usernameAttribute=uid
+# cas.authn.pm.ldap[0].type=AD|GENERIC|EDirectory|FreeIPA
+# cas.authn.pm.ldap[0].usernameAttribute=uid
 
 # Attributes that should be fetched to indicate security questions and answers
-# cas.authn.pm.ldap.securityQuestionsAttributes.attrQuestion1=attrAnswer1
-# cas.authn.pm.ldap.securityQuestionsAttributes.attrQuestion2=attrAnswer2
-# cas.authn.pm.ldap.securityQuestionsAttributes.attrQuestion3=attrAnswer3
+# cas.authn.pm.ldap[0].securityQuestionsAttributes.attrQuestion1=attrAnswer1
+# cas.authn.pm.ldap[0].securityQuestionsAttributes.attrQuestion2=attrAnswer2
+# cas.authn.pm.ldap[0].securityQuestionsAttributes.attrQuestion3=attrAnswer3
 ```
 
 ### JDBC Password Management
