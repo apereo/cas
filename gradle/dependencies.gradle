@@ -1741,12 +1741,6 @@ ext.libraries = [
                     exclude(group: "commons-cli", module: "commons-cli")
                     force = true
                 },
-                dependencies.create("org.ldaptive:ldaptive-unboundid:$ldaptiveVersion") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "commons-cli", module: "commons-cli")
-                    exclude(group: "com.unboundid", module: "unboundid-ldapsdk")
-                    force = true
-                },
                 dependencies.create("com.unboundid:unboundid-ldapsdk:$unboundidVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "commons-cli", module: "commons-cli")

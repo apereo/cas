@@ -1,6 +1,5 @@
 package org.apereo.cas.util;
 
-import org.apereo.cas.authentication.OpenActivator;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
 import org.apereo.cas.configuration.support.Beans;
@@ -9,84 +8,73 @@ import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.ldaptive.ActivePassiveConnectionStrategy;
 import org.ldaptive.AddOperation;
 import org.ldaptive.AddRequest;
 import org.ldaptive.AttributeModification;
-import org.ldaptive.AttributeModificationType;
+import org.ldaptive.AttributeModification.Type;
 import org.ldaptive.BindConnectionInitializer;
-import org.ldaptive.BindRequest;
+import org.ldaptive.CompareConnectionValidator;
 import org.ldaptive.CompareRequest;
-import org.ldaptive.Connection;
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.Credential;
 import org.ldaptive.DefaultConnectionFactory;
-import org.ldaptive.DefaultConnectionStrategy;
 import org.ldaptive.DeleteOperation;
 import org.ldaptive.DeleteRequest;
 import org.ldaptive.DerefAliases;
 import org.ldaptive.DnsSrvConnectionStrategy;
+import org.ldaptive.FilterTemplate;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
 import org.ldaptive.ModifyOperation;
 import org.ldaptive.ModifyRequest;
+import org.ldaptive.PooledConnectionFactory;
 import org.ldaptive.RandomConnectionStrategy;
-import org.ldaptive.Response;
 import org.ldaptive.ResultCode;
 import org.ldaptive.ReturnAttributes;
 import org.ldaptive.RoundRobinConnectionStrategy;
-import org.ldaptive.SearchExecutor;
-import org.ldaptive.SearchFilter;
+import org.ldaptive.SearchConnectionValidator;
 import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
-import org.ldaptive.SearchResult;
+import org.ldaptive.SearchResponse;
 import org.ldaptive.SearchScope;
+import org.ldaptive.SimpleBindRequest;
 import org.ldaptive.ad.UnicodePwdAttribute;
-import org.ldaptive.ad.extended.FastBindOperation;
+import org.ldaptive.ad.extended.FastBindConnectionInitializer;
 import org.ldaptive.ad.handler.ObjectGuidHandler;
 import org.ldaptive.ad.handler.ObjectSidHandler;
 import org.ldaptive.ad.handler.PrimaryGroupIdHandler;
 import org.ldaptive.ad.handler.RangeEntryHandler;
 import org.ldaptive.auth.Authenticator;
+import org.ldaptive.auth.CompareAuthenticationHandler;
 import org.ldaptive.auth.EntryResolver;
 import org.ldaptive.auth.FormatDnResolver;
-import org.ldaptive.auth.PooledBindAuthenticationHandler;
-import org.ldaptive.auth.PooledCompareAuthenticationHandler;
-import org.ldaptive.auth.PooledSearchDnResolver;
+import org.ldaptive.auth.SearchDnResolver;
+import org.ldaptive.auth.SearchEntryResolver;
+import org.ldaptive.auth.SimpleBindAuthenticationHandler;
 import org.ldaptive.control.PasswordPolicyControl;
 import org.ldaptive.control.util.PagedResultsClient;
-import org.ldaptive.extended.PasswordModifyOperation;
+import org.ldaptive.extended.ExtendedOperation;
 import org.ldaptive.extended.PasswordModifyRequest;
 import org.ldaptive.handler.CaseChangeEntryHandler;
 import org.ldaptive.handler.DnAttributeEntryHandler;
+import org.ldaptive.handler.LdapEntryHandler;
 import org.ldaptive.handler.MergeAttributeEntryHandler;
-import org.ldaptive.handler.RecursiveEntryHandler;
-import org.ldaptive.handler.SearchEntryHandler;
-import org.ldaptive.pool.BindPassivator;
-import org.ldaptive.pool.BlockingConnectionPool;
-import org.ldaptive.pool.ClosePassivator;
-import org.ldaptive.pool.CompareValidator;
-import org.ldaptive.pool.ConnectionPool;
+import org.ldaptive.handler.RecursiveResultHandler;
+import org.ldaptive.handler.SearchResultHandler;
+import org.ldaptive.pool.BindConnectionPassivator;
+import org.ldaptive.pool.CloseConnectionPassivator;
 import org.ldaptive.pool.IdlePruneStrategy;
+import org.ldaptive.pool.OpenConnectionActivator;
 import org.ldaptive.pool.PoolConfig;
-import org.ldaptive.pool.PooledConnectionFactory;
-import org.ldaptive.pool.SearchValidator;
-import org.ldaptive.provider.Provider;
-import org.ldaptive.referral.DeleteReferralHandler;
-import org.ldaptive.referral.ModifyReferralHandler;
-import org.ldaptive.referral.SearchReferralHandler;
-import org.ldaptive.sasl.CramMd5Config;
-import org.ldaptive.sasl.DigestMd5Config;
-import org.ldaptive.sasl.ExternalConfig;
-import org.ldaptive.sasl.GssApiConfig;
+import org.ldaptive.referral.FollowSearchReferralHandler;
+import org.ldaptive.sasl.SaslConfig;
 import org.ldaptive.sasl.Mechanism;
 import org.ldaptive.sasl.QualityOfProtection;
-import org.ldaptive.sasl.SaslConfig;
 import org.ldaptive.sasl.SecurityStrength;
 import org.ldaptive.ssl.AllowAnyHostnameVerifier;
 import org.ldaptive.ssl.DefaultHostnameVerifier;
@@ -228,11 +216,11 @@ public class LdapUtils {
      * @return the response
      * @throws LdapException the ldap exception
      */
-    public static Response<SearchResult> executeSearchOperation(final ConnectionFactory connectionFactory,
-                                                                final String baseDn,
-                                                                final SearchFilter filter,
-                                                                final int pageSize,
-                                                                final String... returnAttributes) throws LdapException {
+    public static SearchResponse executeSearchOperation(final ConnectionFactory connectionFactory,
+                                                        final String baseDn,
+                                                        final FilterTemplate filter,
+                                                        final int pageSize,
+                                                        final String... returnAttributes) throws LdapException {
         return executeSearchOperation(connectionFactory, baseDn,
             filter, pageSize, null, returnAttributes);
     }
@@ -249,22 +237,20 @@ public class LdapUtils {
      * @return the response
      * @throws LdapException the ldap exception
      */
-    public static Response<SearchResult> executeSearchOperation(final ConnectionFactory connectionFactory,
-                                                                final String baseDn,
-                                                                final SearchFilter filter,
-                                                                final int pageSize,
-                                                                final String[] binaryAttributes,
-                                                                final String[] returnAttributes) throws LdapException {
-        try (val connection = createConnection(connectionFactory)) {
-            val request = LdapUtils.newLdaptiveSearchRequest(baseDn, filter, binaryAttributes, returnAttributes);
-            request.setReferralHandler(new SearchReferralHandler());
-            if (pageSize <= 0) {
-                val searchOperation = new SearchOperation(connection);
-                return searchOperation.execute(request);
-            }
-            val client = new PagedResultsClient(connection, pageSize);
-            return client.executeToCompletion(request);
+    public static SearchResponse executeSearchOperation(final ConnectionFactory connectionFactory,
+                                                        final String baseDn,
+                                                        final FilterTemplate filter,
+                                                        final int pageSize,
+                                                        final String[] binaryAttributes,
+                                                        final String[] returnAttributes) throws LdapException {
+        val request = LdapUtils.newLdaptiveSearchRequest(baseDn, filter, binaryAttributes, returnAttributes);
+        if (pageSize <= 0) {
+            val searchOperation = new SearchOperation(connectionFactory);
+            searchOperation.setSearchResultHandlers(new FollowSearchReferralHandler());
+            return searchOperation.execute(request);
         }
+        val client = new PagedResultsClient(connectionFactory, pageSize);
+        return client.executeToCompletion(request);
     }
 
     /**
@@ -277,10 +263,10 @@ public class LdapUtils {
      * @return the response
      * @throws LdapException the ldap exception
      */
-    public static Response<SearchResult> executeSearchOperation(final ConnectionFactory connectionFactory,
-                                                                final String baseDn,
-                                                                final SearchFilter filter,
-                                                                final int pageSize) throws LdapException {
+    public static SearchResponse executeSearchOperation(final ConnectionFactory connectionFactory,
+                                                        final String baseDn,
+                                                        final FilterTemplate filter,
+                                                        final int pageSize) throws LdapException {
         return executeSearchOperation(connectionFactory, baseDn, filter, pageSize,
             ReturnAttributes.ALL_USER.value(), ReturnAttributes.ALL_USER.value());
     }
@@ -291,28 +277,11 @@ public class LdapUtils {
      * @param response the response
      * @return true, if successful
      */
-    public static boolean containsResultEntry(final Response<SearchResult> response) {
+    public static boolean containsResultEntry(final SearchResponse response) {
         if (response != null) {
-            val result = response.getResult();
-            return result != null && result.getEntry() != null;
+            return response.getEntry() != null;
         }
         return false;
-    }
-
-    /**
-     * Gets connection from the factory.
-     * Opens the connection if needed.
-     *
-     * @param connectionFactory the connection factory
-     * @return the connection
-     * @throws LdapException the ldap exception
-     */
-    public static Connection createConnection(final ConnectionFactory connectionFactory) throws LdapException {
-        val c = connectionFactory.getConnection();
-        if (!c.isOpen()) {
-            c.open();
-        }
-        return c;
     }
 
     /**
@@ -336,9 +305,10 @@ public class LdapUtils {
                                                          final String oldPassword,
                                                          final String newPassword,
                                                          final AbstractLdapProperties.LdapType type) {
-        try (val modifyConnection = createConnection(connectionFactory)) {
-            if (!modifyConnection.getConnectionConfig().getUseSSL()
-                && !modifyConnection.getConnectionConfig().getUseStartTLS()) {
+        try {
+            val connConfig = connectionFactory.getConnectionConfig();
+            if (connConfig.getUseStartTLS() ||
+                (connConfig.getLdapUrl() != null && connConfig.getLdapUrl().toLowerCase().contains("ldaps://"))) {
                 LOGGER.warn("Executing password modification op under a non-secure LDAP connection; "
                         + "To modify password attributes, the connection to the LDAP server {} be secured and/or encrypted.",
                     type == AbstractLdapProperties.LdapType.AD ? "MUST" : "SHOULD");
@@ -347,26 +317,26 @@ public class LdapUtils {
                 LOGGER.debug("Executing password change op for active directory based on "
                     + "[https://support.microsoft.com/en-us/kb/269190]"
                     + "change type: [{}]", StringUtils.isBlank(oldPassword) ? "reset" : "change");
-                val operation = new ModifyOperation(modifyConnection);
+                val operation = new ModifyOperation(connectionFactory);
                 val response = StringUtils.isBlank(oldPassword)
                     ?
                     operation.execute(new ModifyRequest(currentDn,
-                        new AttributeModification(AttributeModificationType.REPLACE, new UnicodePwdAttribute(newPassword))))
+                        new AttributeModification(AttributeModification.Type.REPLACE, new UnicodePwdAttribute(newPassword))))
                     :
                     operation.execute(
                         new ModifyRequest(currentDn,
-                            new AttributeModification(AttributeModificationType.REMOVE, new UnicodePwdAttribute(oldPassword)),
-                            new AttributeModification(AttributeModificationType.ADD, new UnicodePwdAttribute(newPassword))));
-                LOGGER.debug("Result code [{}], message: [{}]", response.getResult(), response.getMessage());
+                            new AttributeModification(Type.DELETE, new UnicodePwdAttribute(oldPassword)),
+                            new AttributeModification(Type.ADD, new UnicodePwdAttribute(newPassword))));
+                LOGGER.debug("Result code [{}], message: [{}]", response.getResultCode(), response.getDiagnosticMessage());
                 return response.getResultCode() == ResultCode.SUCCESS;
             }
 
             LOGGER.debug("Executing password modification op for generic LDAP");
-            val operation = new PasswordModifyOperation(modifyConnection);
+            val operation = new ExtendedOperation(connectionFactory);
             val response = operation.execute(new PasswordModifyRequest(currentDn,
-                StringUtils.isNotBlank(oldPassword) ? new Credential(oldPassword) : null,
-                new Credential(newPassword)));
-            LOGGER.debug("Result code [{}], message: [{}]", response.getResult(), response.getMessage());
+                StringUtils.isNotBlank(oldPassword) ? oldPassword : null,
+                newPassword));
+            LOGGER.debug("Result code [{}], message: [{}]", response.getResultCode(), response.getDiagnosticMessage());
             return response.getResultCode() == ResultCode.SUCCESS;
         } catch (final LdapException e) {
             LOGGER.error(e.getMessage(), e);
@@ -384,18 +354,17 @@ public class LdapUtils {
      */
     public static boolean executeModifyOperation(final String currentDn, final ConnectionFactory connectionFactory,
                                                  final Map<String, Set<String>> attributes) {
-        try (val modifyConnection = createConnection(connectionFactory)) {
-            val operation = new ModifyOperation(modifyConnection);
+        try {
+            val operation = new ModifyOperation(connectionFactory);
             val mods = attributes.entrySet()
                 .stream()
                 .map(entry -> {
                     val values = entry.getValue().toArray(ArrayUtils.EMPTY_STRING_ARRAY);
                     val attr = new LdapAttribute(entry.getKey(), values);
-                    return new AttributeModification(AttributeModificationType.REPLACE, attr);
+                    return new AttributeModification(AttributeModification.Type.REPLACE, attr);
                 })
-                .toArray(value -> new AttributeModification[attributes.size()]);
+                .toArray(AttributeModification[]::new);
             val request = new ModifyRequest(currentDn, mods);
-            request.setReferralHandler(new ModifyReferralHandler());
             operation.execute(request);
             return true;
         } catch (final LdapException e) {
@@ -427,8 +396,8 @@ public class LdapUtils {
      * @return true/false
      */
     public static boolean executeAddOperation(final ConnectionFactory connectionFactory, final LdapEntry entry) {
-        try (val connection = createConnection(connectionFactory)) {
-            val operation = new AddOperation(connection);
+        try {
+            val operation = new AddOperation(connectionFactory);
             operation.execute(new AddRequest(entry.getDn(), entry.getAttributes()));
             return true;
         } catch (final LdapException e) {
@@ -445,10 +414,9 @@ public class LdapUtils {
      * @return true/false
      */
     public static boolean executeDeleteOperation(final ConnectionFactory connectionFactory, final LdapEntry entry) {
-        try (val connection = createConnection(connectionFactory)) {
-            val delete = new DeleteOperation(connection);
+        try {
+            val delete = new DeleteOperation(connectionFactory);
             val request = new DeleteRequest(entry.getDn());
-            request.setReferralHandler(new DeleteReferralHandler());
             val res = delete.execute(request);
             return res.getResultCode() == ResultCode.SUCCESS;
         } catch (final LdapException e) {
@@ -497,7 +465,7 @@ public class LdapUtils {
      * @return the search request
      */
     public static SearchRequest newLdaptiveSearchRequest(final String baseDn,
-                                                         final SearchFilter filter,
+                                                         final FilterTemplate filter,
                                                          final String[] binaryAttributes,
                                                          final String[] returnAttributes) {
         val sr = new SearchRequest(baseDn, filter);
@@ -516,44 +484,41 @@ public class LdapUtils {
      * @return the search request
      */
     public static SearchRequest newLdaptiveSearchRequest(final String baseDn,
-                                                         final SearchFilter filter) {
+                                                         final FilterTemplate filter) {
         return newLdaptiveSearchRequest(baseDn, filter, ReturnAttributes.ALL_USER.value(), ReturnAttributes.ALL_USER.value());
     }
 
     /**
-     * Constructs a new search filter using {@link SearchExecutor#getSearchFilter()} as a template and
-     * the username as a parameter.
+     * Constructs a new search filter.
      *
      * @param filterQuery the query filter
      * @return Search filter with parameters applied.
      */
-    public static SearchFilter newLdaptiveSearchFilter(final String filterQuery) {
+    public static FilterTemplate newLdaptiveSearchFilter(final String filterQuery) {
         return newLdaptiveSearchFilter(filterQuery, new ArrayList<>(0));
     }
 
     /**
-     * Constructs a new search filter using {@link SearchExecutor#getSearchFilter()} as a template and
-     * the username as a parameter.
+     * Constructs a new search filter.
      *
      * @param filterQuery the query filter
      * @param params      the username
      * @return Search filter with parameters applied.
      */
-    public static SearchFilter newLdaptiveSearchFilter(final String filterQuery, final List<String> params) {
+    public static FilterTemplate newLdaptiveSearchFilter(final String filterQuery, final List<String> params) {
         return newLdaptiveSearchFilter(filterQuery, LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME, params);
     }
 
     /**
-     * Constructs a new search filter using {@link SearchExecutor#getSearchFilter()} as a template and
-     * the username as a parameter.
+     * Constructs a new search filter.
      *
      * @param filterQuery the query filter
      * @param paramName   the param name
      * @param params      the username
      * @return Search filter with parameters applied.
      */
-    public static SearchFilter newLdaptiveSearchFilter(final String filterQuery, final String paramName, final List<String> params) {
-        val filter = new SearchFilter();
+    public static FilterTemplate newLdaptiveSearchFilter(final String filterQuery, final String paramName, final List<String> params) {
+        val filter = new FilterTemplate();
         filter.setFilter(filterQuery);
         if (params != null) {
             IntStream.range(0, params.size()).forEach(i -> {
@@ -576,8 +541,8 @@ public class LdapUtils {
      * @param params      the params
      * @return the search filter
      */
-    public static SearchFilter newLdaptiveSearchFilter(final String filterQuery, final List<String> paramName, final List<String> params) {
-        val filter = new SearchFilter();
+    public static FilterTemplate newLdaptiveSearchFilter(final String filterQuery, final List<String> paramName, final List<String> params) {
+        val filter = new FilterTemplate();
         filter.setFilter(filterQuery);
         if (params != null) {
             IntStream.range(0, params.size()).forEach(i -> {
@@ -603,8 +568,8 @@ public class LdapUtils {
      * @param params      the params
      * @return the search executor
      */
-    public static SearchExecutor newLdaptiveSearchExecutor(final String baseDn, final String filterQuery, final List<String> params) {
-        return newLdaptiveSearchExecutor(baseDn, filterQuery, params, ReturnAttributes.ALL.value());
+    public static SearchOperation newLdaptiveSearchOperation(final String baseDn, final String filterQuery, final List<String> params) {
+        return newLdaptiveSearchOperation(baseDn, filterQuery, params, List.of(ReturnAttributes.ALL.value()));
     }
 
     /**
@@ -616,10 +581,12 @@ public class LdapUtils {
      * @param returnAttributes the return attributes
      * @return the search executor
      */
-    public static SearchExecutor newLdaptiveSearchExecutor(final String baseDn, final String filterQuery,
-                                                           final List<String> params,
-                                                           final List<String> returnAttributes) {
-        return newLdaptiveSearchExecutor(baseDn, filterQuery, params, returnAttributes.toArray(ArrayUtils.EMPTY_STRING_ARRAY));
+    public static SearchOperation newLdaptiveSearchOperation(final String baseDn, final String filterQuery,
+                                                             final List<String> params,
+                                                             final List<String> returnAttributes) {
+        val operation = new SearchOperation();
+        operation.setRequest(newLdaptiveSearchRequest(baseDn, filterQuery, params, returnAttributes.toArray(ArrayUtils.EMPTY_STRING_ARRAY)));
+        return operation;
     }
 
     /**
@@ -631,15 +598,15 @@ public class LdapUtils {
      * @param returnAttributes the return attributes
      * @return the search executor
      */
-    public static SearchExecutor newLdaptiveSearchExecutor(final String baseDn, final String filterQuery,
-                                                           final List<String> params,
-                                                           final String[] returnAttributes) {
-        val executor = new SearchExecutor();
-        executor.setBaseDn(baseDn);
-        executor.setSearchFilter(newLdaptiveSearchFilter(filterQuery, params));
-        executor.setReturnAttributes(returnAttributes);
-        executor.setSearchScope(SearchScope.SUBTREE);
-        return executor;
+    public static SearchRequest newLdaptiveSearchRequest(final String baseDn, final String filterQuery,
+                                                             final List<String> params,
+                                                             final String[] returnAttributes) {
+        val request = new SearchRequest();
+        request.setBaseDn(baseDn);
+        request.setFilter(newLdaptiveSearchFilter(filterQuery, params));
+        request.setReturnAttributes(returnAttributes);
+        request.setSearchScope(SearchScope.SUBTREE);
+        return request;
     }
 
     /**
@@ -649,8 +616,8 @@ public class LdapUtils {
      * @param filterQuery the filter query
      * @return the search executor
      */
-    public static SearchExecutor newLdaptiveSearchExecutor(final String baseDn, final String filterQuery) {
-        return newLdaptiveSearchExecutor(baseDn, filterQuery, new ArrayList<>(0));
+    public static SearchOperation newLdaptiveSearchOperation(final String baseDn, final String filterQuery) {
+        return newLdaptiveSearchOperation(baseDn, filterQuery, new ArrayList<>(0));
     }
 
     /**
@@ -684,7 +651,7 @@ public class LdapUtils {
             throw new IllegalArgumentException("User filter cannot be empty/blank for authenticated/anonymous authentication");
         }
         val connectionFactoryForSearch = newLdaptivePooledConnectionFactory(l);
-        val resolver = new PooledSearchDnResolver();
+        val resolver = new SearchDnResolver();
         resolver.setBaseDn(l.getBaseDn());
         resolver.setSubtreeSearch(l.isSubtreeSearch());
         resolver.setAllowMultipleDns(l.isAllowMultipleDns());
@@ -692,7 +659,7 @@ public class LdapUtils {
         resolver.setUserFilter(l.getSearchFilter());
 
         if (l.isFollowReferrals()) {
-            resolver.setReferralHandler(new SearchReferralHandler());
+            resolver.setSearchResultHandlers(new FollowSearchReferralHandler());
         }
 
         if (StringUtils.isNotBlank(l.getDerefAliases())) {
@@ -733,15 +700,15 @@ public class LdapUtils {
         return authenticator;
     }
 
-    private static PooledBindAuthenticationHandler getPooledBindAuthenticationHandler(final PooledConnectionFactory factory) {
-        val handler = new PooledBindAuthenticationHandler(factory);
+    private static SimpleBindAuthenticationHandler getPooledBindAuthenticationHandler(final PooledConnectionFactory factory) {
+        val handler = new SimpleBindAuthenticationHandler(factory);
         handler.setAuthenticationControls(new PasswordPolicyControl());
         return handler;
     }
 
-    private static PooledCompareAuthenticationHandler getPooledCompareAuthenticationHandler(final AbstractLdapAuthenticationProperties l,
-                                                                                            final PooledConnectionFactory factory) {
-        val handler = new PooledCompareAuthenticationHandler(factory);
+    private static CompareAuthenticationHandler getPooledCompareAuthenticationHandler(final AbstractLdapAuthenticationProperties l,
+                                                                                      final PooledConnectionFactory factory) {
+        val handler = new CompareAuthenticationHandler(factory);
         handler.setPasswordAttribute(l.getPrincipalAttributePassword());
         return handler;
     }
@@ -753,8 +720,82 @@ public class LdapUtils {
      * @return the pooled connection factory
      */
     public static PooledConnectionFactory newLdaptivePooledConnectionFactory(final AbstractLdapProperties l) {
-        val cp = newLdaptiveBlockingConnectionPool(l);
-        return new PooledConnectionFactory(cp);
+        val cc = newLdaptiveConnectionConfig(l);
+        val pc = newLdaptivePoolConfig(l);
+
+        val pooledCf = new PooledConnectionFactory(cc, pc);
+        pooledCf.setBlockWaitTime(Beans.newDuration(l.getBlockWaitTime()));
+
+        val strategy = new IdlePruneStrategy();
+        strategy.setIdleTime(Beans.newDuration(l.getIdleTime()));
+        strategy.setPrunePeriod(Beans.newDuration(l.getPrunePeriod()));
+
+        pooledCf.setPruneStrategy(strategy);
+
+        switch (l.getValidator().getType().trim().toLowerCase()) {
+        case "compare":
+            val compareRequest = new CompareRequest(
+                l.getValidator().getDn(),
+                l.getValidator().getAttributeName(),
+                l.getValidator().getAttributeValue());
+            val compareValidator = new CompareConnectionValidator(compareRequest);
+            compareValidator.setValidatePeriod(Beans.newDuration(l.getValidatePeriod()));
+            compareValidator.setValidateTimeout(Beans.newDuration(l.getValidateTimeout()));
+            pooledCf.setValidator(compareValidator);
+            break;
+        case "none":
+            LOGGER.debug("No validator is configured for the LDAP connection pool of [{}]", l.getLdapUrl());
+            break;
+        case "search":
+        default:
+            val searchRequest = new SearchRequest();
+            searchRequest.setBaseDn(l.getValidator().getBaseDn());
+            searchRequest.setFilter(l.getValidator().getSearchFilter());
+            searchRequest.setReturnAttributes(ReturnAttributes.NONE.value());
+            searchRequest.setSearchScope(SearchScope.valueOf(l.getValidator().getScope()));
+            searchRequest.setSizeLimit(1);
+            val searchValidator = new SearchConnectionValidator(searchRequest);
+            searchValidator.setValidatePeriod(Beans.newDuration(l.getValidatePeriod()));
+            searchValidator.setValidateTimeout(Beans.newDuration(l.getValidateTimeout()));
+            pooledCf.setValidator(searchValidator);
+            break;
+        }
+
+        pooledCf.setFailFastInitialize(l.isFailFast());
+
+        if (StringUtils.isNotBlank(l.getPoolPassivator())) {
+            val pass =
+                AbstractLdapProperties.LdapConnectionPoolPassivator.valueOf(l.getPoolPassivator().toUpperCase());
+            switch (pass) {
+            case CLOSE:
+                pooledCf.setPassivator(new CloseConnectionPassivator());
+                pooledCf.setActivator(new OpenConnectionActivator());
+
+                LOGGER.debug("Created [{}] passivator for [{}]", l.getPoolPassivator(), l.getLdapUrl());
+                break;
+            case BIND:
+                if (StringUtils.isNotBlank(l.getBindDn()) && StringUtils.isNoneBlank(l.getBindCredential())) {
+                    val bindRequest = new SimpleBindRequest(l.getBindDn(), l.getBindCredential());
+                    pooledCf.setPassivator(new BindConnectionPassivator(bindRequest));
+                    LOGGER.debug("Created [{}] passivator for [{}]", l.getPoolPassivator(), l.getLdapUrl());
+                } else {
+                    val values = Arrays.stream(AbstractLdapProperties.LdapConnectionPoolPassivator.values())
+                        .filter(v -> v != AbstractLdapProperties.LdapConnectionPoolPassivator.BIND)
+                        .collect(Collectors.toList());
+                    LOGGER.warn("[{}] pool passivator could not be created for [{}] given bind credentials are not specified. "
+                            + "If you are dealing with LDAP in such a way that does not require bind credentials, you may need to "
+                            + "set the pool passivator setting to one of [{}]",
+                        l.getPoolPassivator(), l.getLdapUrl(), values);
+                }
+                break;
+            default:
+                break;
+            }
+        }
+
+        LOGGER.debug("Initializing ldap connection pool for [{}] and bindDn [{}]", l.getLdapUrl(), l.getBindDn());
+        pooledCf.initialize();
+        return pooledCf;
     }
 
     /**
@@ -777,7 +818,6 @@ public class LdapUtils {
         LOGGER.debug("Transformed LDAP urls from [{}] to [{}]", l.getLdapUrl(), urls);
         cc.setLdapUrl(urls);
 
-        cc.setUseSSL(l.isUseSsl());
         cc.setUseStartTLS(l.isUseStartTls());
         cc.setConnectTimeout(Beans.newDuration(l.getConnectTimeout()));
         cc.setResponseTimeout(Beans.newDuration(l.getResponseTimeout()));
@@ -791,15 +831,12 @@ public class LdapUtils {
                 case DNS_SRV:
                     cc.setConnectionStrategy(new DnsSrvConnectionStrategy());
                     break;
-                case ACTIVE_PASSIVE:
-                    cc.setConnectionStrategy(new ActivePassiveConnectionStrategy());
-                    break;
                 case ROUND_ROBIN:
                     cc.setConnectionStrategy(new RoundRobinConnectionStrategy());
                     break;
-                case DEFAULT:
+                case ACTIVE_PASSIVE:
                 default:
-                    cc.setConnectionStrategy(new DefaultConnectionStrategy());
+                    cc.setConnectionStrategy(new ActivePassiveConnectionStrategy());
                     break;
             }
         }
@@ -859,30 +896,36 @@ public class LdapUtils {
                 sc.setSecurityStrength(SecurityStrength.valueOf(l.getSaslSecurityStrength()));
             }
             bc.setBindSaslConfig(sc);
-            cc.setConnectionInitializer(bc);
+            cc.setConnectionInitializers(bc);
         } else if (StringUtils.equals(l.getBindCredential(), "*") && StringUtils.equals(l.getBindDn(), "*")) {
             LOGGER.debug("Creating LDAP fast-bind connection initializer");
-            cc.setConnectionInitializer(new FastBindOperation.FastBindConnectionInitializer());
+            cc.setConnectionInitializers(new FastBindConnectionInitializer());
         } else if (StringUtils.isNotBlank(l.getBindDn()) && StringUtils.isNotBlank(l.getBindCredential())) {
             LOGGER.debug("Creating LDAP bind connection initializer via [{}]", l.getBindDn());
-            cc.setConnectionInitializer(new BindConnectionInitializer(l.getBindDn(), new Credential(l.getBindCredential())));
+            cc.setConnectionInitializers(new BindConnectionInitializer(l.getBindDn(), new Credential(l.getBindCredential())));
         }
         return cc;
     }
 
     private static SaslConfig getSaslConfigFrom(final AbstractLdapProperties l) {
         if (Mechanism.valueOf(l.getSaslMechanism()) == Mechanism.DIGEST_MD5) {
-            val sc = new DigestMd5Config();
+            val sc = new SaslConfig();
+            sc.setMechanism(Mechanism.DIGEST_MD5);
             sc.setRealm(l.getSaslRealm());
             return sc;
         }
         if (Mechanism.valueOf(l.getSaslMechanism()) == Mechanism.CRAM_MD5) {
-            return new CramMd5Config();
+            val sc = new SaslConfig();
+            sc.setMechanism(Mechanism.CRAM_MD5);
+            return sc;
         }
         if (Mechanism.valueOf(l.getSaslMechanism()) == Mechanism.EXTERNAL) {
-            return new ExternalConfig();
+            val sc = new SaslConfig();
+            sc.setMechanism(Mechanism.EXTERNAL);
+            return sc;
         }
-        val sc = new GssApiConfig();
+        val sc = new SaslConfig();
+        sc.setMechanism(Mechanism.GSSAPI);
         sc.setRealm(l.getSaslRealm());
         return sc;
     }
@@ -900,8 +943,6 @@ public class LdapUtils {
         pc.setMaxPoolSize(l.getMaxPoolSize());
         pc.setValidateOnCheckOut(l.isValidateOnCheckout());
         pc.setValidatePeriodically(l.isValidatePeriodically());
-        pc.setValidatePeriod(Beans.newDuration(l.getValidatePeriod()));
-        pc.setValidateTimeout(Beans.newDuration(l.getValidateTimeout()));
         return pc;
     }
 
@@ -915,106 +956,8 @@ public class LdapUtils {
         LOGGER.debug("Creating LDAP connection factory for [{}]", l.getLdapUrl());
         val cc = newLdaptiveConnectionConfig(l);
         val bindCf = new DefaultConnectionFactory(cc);
-        if (l.getProviderClass() != null) {
-            try {
-                val clazz = ClassUtils.getClass(l.getProviderClass());
-                bindCf.setProvider(Provider.class.cast(clazz.getDeclaredConstructor().newInstance()));
-            } catch (final Exception e) {
-                LOGGER.error(e.getMessage(), e);
-            }
-        }
         return bindCf;
     }
-
-    /**
-     * New blocking connection pool connection pool.
-     *
-     * @param l the l
-     * @return the connection pool
-     */
-    public static ConnectionPool newLdaptiveBlockingConnectionPool(final AbstractLdapProperties l) {
-        val bindCf = newLdaptiveConnectionFactory(l);
-        val pc = newLdaptivePoolConfig(l);
-        val cp = new BlockingConnectionPool(pc, bindCf);
-
-        cp.setBlockWaitTime(Beans.newDuration(l.getBlockWaitTime()));
-        cp.setPoolConfig(pc);
-
-        val strategy = new IdlePruneStrategy();
-        strategy.setIdleTime(Beans.newDuration(l.getIdleTime()));
-        strategy.setPrunePeriod(Beans.newDuration(l.getPrunePeriod()));
-
-        cp.setPruneStrategy(strategy);
-
-        switch (l.getValidator().getType().trim().toLowerCase()) {
-            case "compare":
-                val compareRequest = new CompareRequest();
-                compareRequest.setDn(l.getValidator().getDn());
-                compareRequest.setAttribute(new LdapAttribute(l.getValidator().getAttributeName(),
-                    l.getValidator().getAttributeValues().toArray(ArrayUtils.EMPTY_STRING_ARRAY)));
-
-                if (l.isFollowReferrals()) {
-                    compareRequest.setReferralHandler(new SearchReferralHandler());
-                }
-                cp.setValidator(new CompareValidator(compareRequest));
-                break;
-            case "none":
-                LOGGER.debug("No validator is configured for the LDAP connection pool of [{}]", l.getLdapUrl());
-                break;
-            case "search":
-            default:
-                val searchRequest = new SearchRequest();
-                searchRequest.setBaseDn(l.getValidator().getBaseDn());
-                searchRequest.setSearchFilter(new SearchFilter(l.getValidator().getSearchFilter()));
-                searchRequest.setReturnAttributes(ReturnAttributes.NONE.value());
-                searchRequest.setSearchScope(SearchScope.valueOf(l.getValidator().getScope()));
-                searchRequest.setSizeLimit(1L);
-                if (l.isFollowReferrals()) {
-                    searchRequest.setReferralHandler(new SearchReferralHandler());
-                }
-                cp.setValidator(new SearchValidator(searchRequest));
-                break;
-        }
-
-        cp.setFailFastInitialize(l.isFailFast());
-
-        if (StringUtils.isNotBlank(l.getPoolPassivator())) {
-            val pass =
-                AbstractLdapProperties.LdapConnectionPoolPassivator.valueOf(l.getPoolPassivator().toUpperCase());
-            switch (pass) {
-                case CLOSE:
-                    cp.setPassivator(new ClosePassivator());
-                    cp.setActivator(new OpenActivator());
-
-                    LOGGER.debug("Created [{}] passivator for [{}]", l.getPoolPassivator(), l.getLdapUrl());
-                    break;
-                case BIND:
-                    if (StringUtils.isNotBlank(l.getBindDn()) && StringUtils.isNoneBlank(l.getBindCredential())) {
-                        val bindRequest = new BindRequest();
-                        bindRequest.setDn(l.getBindDn());
-                        bindRequest.setCredential(new Credential(l.getBindCredential()));
-                        cp.setPassivator(new BindPassivator(bindRequest));
-                        LOGGER.debug("Created [{}] passivator for [{}]", l.getPoolPassivator(), l.getLdapUrl());
-                    } else {
-                        val values = Arrays.stream(AbstractLdapProperties.LdapConnectionPoolPassivator.values())
-                            .filter(v -> v != AbstractLdapProperties.LdapConnectionPoolPassivator.BIND)
-                            .collect(Collectors.toList());
-                        LOGGER.warn("[{}] pool passivator could not be created for [{}] given bind credentials are not specified. "
-                                + "If you are dealing with LDAP in such a way that does not require bind credentials, you may need to "
-                                + "set the pool passivator setting to one of [{}]",
-                            l.getPoolPassivator(), l.getLdapUrl(), values);
-                    }
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        LOGGER.debug("Initializing ldap connection pool for [{}] and bindDn [{}]", l.getLdapUrl(), l.getBindDn());
-        cp.initialize();
-        return cp;
-    }
-
 
     /**
      * New dn resolver entry resolver.
@@ -1033,18 +976,19 @@ public class LdapUtils {
             throw new IllegalArgumentException("To create a search entry resolver, user filter cannot be empty/blank");
         }
 
-        val entryResolver = new BinaryAttributeAwarePooledSearchEntryResolver();
+        val entryResolver = new SearchEntryResolver();
         entryResolver.setBaseDn(l.getBaseDn());
         entryResolver.setUserFilter(l.getSearchFilter());
         entryResolver.setSubtreeSearch(l.isSubtreeSearch());
         entryResolver.setConnectionFactory(factory);
         entryResolver.setAllowMultipleEntries(l.isAllowMultipleEntries());
-        entryResolver.setBinaryAttributes(l.getBinaryAttributes());
+        entryResolver.setBinaryAttributes(l.getBinaryAttributes().toArray(new String[0]));
 
         if (StringUtils.isNotBlank(l.getDerefAliases())) {
             entryResolver.setDerefAliases(DerefAliases.valueOf(l.getDerefAliases()));
         }
-        val handlers = new ArrayList<SearchEntryHandler>();
+        val entryHandlers = new ArrayList<LdapEntryHandler>();
+        val searchResultHandlers = new ArrayList<SearchResultHandler>();
         l.getSearchEntryHandlers().forEach(h -> {
             switch (h.getType()) {
                 case CASE_CHANGE:
@@ -1054,53 +998,57 @@ public class LdapUtils {
                     eh.setAttributeNames(caseChange.getAttributeNames().toArray(ArrayUtils.EMPTY_STRING_ARRAY));
                     eh.setAttributeValueCaseChange(CaseChangeEntryHandler.CaseChange.valueOf(caseChange.getAttributeValueCaseChange()));
                     eh.setDnCaseChange(CaseChangeEntryHandler.CaseChange.valueOf(caseChange.getDnCaseChange()));
-                    handlers.add(eh);
+                    entryHandlers.add(eh);
                     break;
                 case DN_ATTRIBUTE_ENTRY:
                     val ehd = new DnAttributeEntryHandler();
                     val dnAttribute = h.getDnAttribute();
                     ehd.setAddIfExists(dnAttribute.isAddIfExists());
                     ehd.setDnAttributeName(dnAttribute.getDnAttributeName());
-                    handlers.add(ehd);
+                    entryHandlers.add(ehd);
                     break;
                 case MERGE:
                     val ehm = new MergeAttributeEntryHandler();
                     val mergeAttribute = h.getMergeAttribute();
                     ehm.setAttributeNames(mergeAttribute.getAttributeNames().toArray(ArrayUtils.EMPTY_STRING_ARRAY));
                     ehm.setMergeAttributeName(mergeAttribute.getMergeAttributeName());
-                    handlers.add(ehm);
+                    entryHandlers.add(ehm);
                     break;
                 case OBJECT_GUID:
-                    handlers.add(new ObjectGuidHandler());
+                    entryHandlers.add(new ObjectGuidHandler());
                     break;
                 case OBJECT_SID:
-                    handlers.add(new ObjectSidHandler());
+                    entryHandlers.add(new ObjectSidHandler());
                     break;
                 case PRIMARY_GROUP:
                     val ehp = new PrimaryGroupIdHandler();
                     val primaryGroupId = h.getPrimaryGroupId();
                     ehp.setBaseDn(primaryGroupId.getBaseDn());
                     ehp.setGroupFilter(primaryGroupId.getGroupFilter());
-                    handlers.add(ehp);
+                    searchResultHandlers.add(ehp);
                     break;
                 case RANGE_ENTRY:
-                    handlers.add(new RangeEntryHandler());
+                    searchResultHandlers.add(new RangeEntryHandler());
                     break;
                 case RECURSIVE_ENTRY:
                     val recursive = h.getRecursive();
-                    handlers.add(new RecursiveEntryHandler(recursive.getSearchAttribute(), recursive.getMergeAttributes().toArray(ArrayUtils.EMPTY_STRING_ARRAY)));
+                    searchResultHandlers.add(new RecursiveResultHandler(recursive.getSearchAttribute(), recursive.getMergeAttributes().toArray(ArrayUtils.EMPTY_STRING_ARRAY)));
                     break;
                 default:
                     break;
             }
         });
 
-        if (!handlers.isEmpty()) {
-            LOGGER.debug("Search entry handlers defined for the entry resolver of [{}] are [{}]", l.getLdapUrl(), handlers);
-            entryResolver.setSearchEntryHandlers(handlers.toArray(SearchEntryHandler[]::new));
+        if (!entryHandlers.isEmpty()) {
+            LOGGER.debug("Search entry handlers defined for the entry resolver of [{}] are [{}]", l.getLdapUrl(), entryHandlers);
+            entryResolver.setEntryHandlers(entryHandlers.toArray(LdapEntryHandler[]::new));
+        }
+        if (!searchResultHandlers.isEmpty()) {
+            LOGGER.debug("Search entry handlers defined for the entry resolver of [{}] are [{}]", l.getLdapUrl(), searchResultHandlers);
+            entryResolver.setSearchResultHandlers(searchResultHandlers.toArray(SearchResultHandler[]::new));
         }
         if (l.isFollowReferrals()) {
-            entryResolver.setReferralHandler(new SearchReferralHandler());
+            entryResolver.setSearchResultHandlers(new FollowSearchReferralHandler());
         }
         return entryResolver;
     }

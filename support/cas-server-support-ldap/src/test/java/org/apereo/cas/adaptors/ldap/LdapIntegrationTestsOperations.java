@@ -5,6 +5,7 @@ import org.apereo.cas.util.ldap.uboundid.InMemoryTestLdapDirectoryServer;
 
 import com.unboundid.ldap.sdk.LDAPConnection;
 import lombok.val;
+import org.ldaptive.BindConnectionInitializer;
 import org.ldaptive.BindRequest;
 import org.springframework.core.io.ClassPathResource;
 
@@ -78,13 +79,14 @@ public class LdapIntegrationTestsOperations {
     /**
      * Populate entries.
      *
-     * @param c      the c
-     * @param rs     the rs
-     * @param baseDn the base dn
+     * @param c        the c
+     * @param rs       the rs
+     * @param baseDn   the base dn
+     * @param connInit the connection initializer
      * @throws Exception the exception
      */
-    public static void populateEntries(final LDAPConnection c, final InputStream rs, final String baseDn, final BindRequest bindRequest) throws Exception {
-        LdapTestUtils.createLdapEntries(c, LdapTestUtils.readLdif(rs, baseDn), bindRequest);
+    public static void populateEntries(final LDAPConnection c, final InputStream rs, final String baseDn, final BindConnectionInitializer connInit) throws Exception {
+        LdapTestUtils.createLdapEntries(c, LdapTestUtils.readLdif(rs, baseDn), connInit);
     }
 
     /**
