@@ -29,6 +29,7 @@ public class OAuth20RefreshTokenTests extends AbstractOAuth20Tests {
     public void verifyTicketGrantingRemovalDoesNotRemoveAccessToken() throws Exception {
         val service = addRegisteredService();
         service.setGenerateRefreshToken(true);
+        service.setRenewRefreshToken(true);
 
         val result = assertClientOK(service, true);
 
