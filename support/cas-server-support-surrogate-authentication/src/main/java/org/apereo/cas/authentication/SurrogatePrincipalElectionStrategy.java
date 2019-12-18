@@ -54,7 +54,7 @@ public class SurrogatePrincipalElectionStrategy extends DefaultPrincipalElection
             .map(SurrogatePrincipal.class::cast)
             .findFirst();
         if (result.isPresent()) {
-            val surrogate = result.get().getSurrogate();
+            val surrogate = result.get();
             LOGGER.debug("Found surrogate principal [{}]", surrogate);
             return surrogate;
         }
