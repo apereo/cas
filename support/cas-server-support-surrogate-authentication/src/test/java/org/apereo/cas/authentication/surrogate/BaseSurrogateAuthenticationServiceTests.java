@@ -3,8 +3,11 @@ package org.apereo.cas.authentication.surrogate;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.services.ServicesManager;
 
+import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -16,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 public abstract class BaseSurrogateAuthenticationServiceTests {
     public static final String CASUSER = "casuser";
+
     public static final String BANDERSON = "banderson";
 
     @Mock
@@ -30,11 +34,9 @@ public abstract class BaseSurrogateAuthenticationServiceTests {
 
     @Test
     public void verifyProxying() {
-        assertTrue(getService().canAuthenticateAs(BANDERSON, CoreAuthenticationTestUtils.getPrincipal(CASUSER),
-            CoreAuthenticationTestUtils.getService()));
-        assertFalse(getService().canAuthenticateAs("XXXX", CoreAuthenticationTestUtils.getPrincipal(CASUSER),
-            CoreAuthenticationTestUtils.getService()));
-        assertFalse(getService().canAuthenticateAs(CASUSER, CoreAuthenticationTestUtils.getPrincipal(BANDERSON),
-            CoreAuthenticationTestUtils.getService()));
+        val service = Optional.of(CoreAuthenticationTestUtils.getService());
+        assertTrue(getService().canAuthenticateAs(BANDERSON, CoreAuthenticationTestUtils.getPrincipal(CASUSER), service));
+        assertFalse(getService().canAuthenticateAs("XXXX", CoreAuthenticationTestUtils.getPrincipal(CASUSER), service));
+        assertFalse(getService().canAuthenticateAs(CASUSER, CoreAuthenticationTestUtils.getPrincipal(BANDERSON), service));
     }
 }

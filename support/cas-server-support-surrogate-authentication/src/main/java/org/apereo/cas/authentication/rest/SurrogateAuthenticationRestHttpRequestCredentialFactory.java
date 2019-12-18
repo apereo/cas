@@ -30,6 +30,13 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 public class SurrogateAuthenticationRestHttpRequestCredentialFactory extends UsernamePasswordRestHttpRequestCredentialFactory {
+
+    /**
+     * Header to be extracted from the request
+     * that indicates the surrogate/substitute principal name.
+     */
+    public static final String REQUEST_HEADER_SURROGATE_PRINCIPAL = "X-Surrogate-Principal";
+
     private final SurrogateAuthenticationService surrogateAuthenticationService;
 
     private final SurrogateAuthenticationProperties properties;
@@ -48,7 +55,7 @@ public class SurrogateAuthenticationRestHttpRequestCredentialFactory extends Use
         val credential = UsernamePasswordCredential.class.cast(credentials.get(0));
         BeanUtils.copyProperties(sc, credential);
 
-        val surrogatePrincipal = request.getHeader("X-Surrogate-Principal");
+        val surrogatePrincipal = request.getHeader(REQUEST_HEADER_SURROGATE_PRINCIPAL);
         if (StringUtils.isNotBlank(surrogatePrincipal)) {
             LOGGER.debug("Request surrogate principal [{}]", surrogatePrincipal);
             sc.setSurrogateUsername(surrogatePrincipal);
