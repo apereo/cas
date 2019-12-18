@@ -782,6 +782,7 @@ public class OAuth20AccessTokenEndpointControllerTests extends AbstractOAuth20Te
     public void verifyRefreshTokenOKWithRefreshToken() {
         val service = addRegisteredService(CollectionUtils.wrapSet(OAuth20GrantTypes.REFRESH_TOKEN));
         service.setGenerateRefreshToken(true);
+        service.setRenewRefreshToken(true);
         assertRefreshTokenOk(service);
     }
 
@@ -795,6 +796,7 @@ public class OAuth20AccessTokenEndpointControllerTests extends AbstractOAuth20Te
     public void verifyJsonRefreshTokenOKWithRefreshToken() {
         val service = addRegisteredService(CollectionUtils.wrapSet(OAuth20GrantTypes.REFRESH_TOKEN));
         service.setGenerateRefreshToken(true);
+        service.setRenewRefreshToken(true);
         assertRefreshTokenOk(service);
     }
 
