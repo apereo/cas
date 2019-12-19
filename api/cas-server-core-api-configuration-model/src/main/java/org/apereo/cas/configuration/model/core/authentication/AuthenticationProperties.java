@@ -22,6 +22,7 @@ import org.apereo.cas.configuration.model.support.jdbc.JdbcAuthenticationPropert
 import org.apereo.cas.configuration.model.support.ldap.LdapAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.mongo.MongoAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.multiphase.MultiphaseUserAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.ntlm.NtlmProperties;
 import org.apereo.cas.configuration.model.support.oauth.OAuthProperties;
 import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
@@ -152,6 +153,12 @@ public class AuthenticationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private SurrogateAuthenticationProperties surrogate = new SurrogateAuthenticationProperties();
+
+    /**
+     * Multiphase user authenticaiton settings.
+     */
+    @NestedConfigurationProperty
+    private MultiphaseUserAuthenticationProperties multiphase = new MultiphaseUserAuthenticationProperties();
 
     /**
      * Graphical User authentication settings.
