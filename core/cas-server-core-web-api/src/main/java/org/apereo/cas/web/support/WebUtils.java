@@ -947,7 +947,7 @@ public class WebUtils {
      * @param requestContext the requestContext
      * @param value          the value
      */
-    public static void hasMultiphaseAuthenticationUsername(final RequestContext requestContext) {
+    public static boolean hasMultiphaseAuthenticationUsername(final RequestContext requestContext) {
         return requestContext.getFlowScope().contains("multiphaseUsername");
     }
 
