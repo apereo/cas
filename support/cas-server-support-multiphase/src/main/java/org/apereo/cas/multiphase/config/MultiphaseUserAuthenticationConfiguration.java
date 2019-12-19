@@ -4,6 +4,8 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
+import org.apereo.cas.web.flow.MultiphaseUserAuthenticationWebflowConfigurer;
+import org.apereo.cas.web.flow.StoreUserIdForAuthenticationAction;
 
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +54,13 @@ public class MultiphaseUserAuthenticationConfiguration {
     public CasWebflowConfigurer multiphaseUserAuthenticationWebflowConfigurer() {
         return new MultiphaseUserAuthenticationConfigurer(flowBuilderServices.getObject(),
                 loginFlowDefinitionRegistry.getObject(), applicationContext, casProperties);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "storeUserIdForAuthenticationAction")
+    @RefreshScope
+    public Action storeUserIdForAuthenticationAction() {
+        return new StoreUserIdForAuthenticationAction();
     }
 
     @Bean
