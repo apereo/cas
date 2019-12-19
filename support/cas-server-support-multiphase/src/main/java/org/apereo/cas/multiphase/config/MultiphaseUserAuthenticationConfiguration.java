@@ -53,7 +53,7 @@ public class MultiphaseUserAuthenticationConfiguration {
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer multiphaseUserAuthenticationWebflowConfigurer() {
-        return new MultiphaseUserAuthenticationConfigurer(flowBuilderServices.getObject(),
+        return new MultiphaseUserAuthenticationWebflowConfigurer(flowBuilderServices.getObject(),
                 loginFlowDefinitionRegistry.getObject(), applicationContext, casProperties);
     }
 
