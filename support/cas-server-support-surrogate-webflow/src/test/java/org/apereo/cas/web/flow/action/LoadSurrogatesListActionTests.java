@@ -82,7 +82,7 @@ public class LoadSurrogatesListActionTests extends BaseSurrogateInitialAuthentic
         WebUtils.putCredential(context, creds);
 
         val builder = mock(AuthenticationResultBuilder.class);
-        when(builder.getInitialAuthentication()).thenReturn(Optional.of(CoreAuthenticationTestUtils.getAuthentication()));
+        when(builder.getInitialAuthentication()).thenReturn(Optional.of(CoreAuthenticationTestUtils.getAuthentication("casuser")));
         when(builder.collect(any(Authentication.class))).thenReturn(builder);
 
         WebUtils.putAuthenticationResultBuilder(builder, context);
@@ -112,7 +112,7 @@ public class LoadSurrogatesListActionTests extends BaseSurrogateInitialAuthentic
         WebUtils.putCredential(context, creds);
 
         val builder = mock(AuthenticationResultBuilder.class);
-        when(builder.getInitialAuthentication()).thenReturn(Optional.of(CoreAuthenticationTestUtils.getAuthentication()));
+        when(builder.getInitialAuthentication()).thenReturn(Optional.of(CoreAuthenticationTestUtils.getAuthentication("casuser")));
         when(builder.collect(any(Authentication.class))).thenReturn(builder);
 
         WebUtils.putAuthenticationResultBuilder(builder, context);
