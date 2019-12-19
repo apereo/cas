@@ -1,0 +1,24 @@
+package org.apereo.cas.web.flow;
+
+import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
+import org.apereo.cas.web.support.WebUtils;
+
+import lombok.val;
+import org.springframework.webflow.action.AbstractAction;
+import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.RequestContext;
+
+/**
+ * This is {@link StoreUserIdForAuthenticationAction}.
+ * @author Hayden Sartoris
+ * @since 6.2.0
+ */
+public class StoreUserIdForAuthenticationAction extends AbstractAction {
+	@Override
+	public Event doExecute(final RequestContext requestContext) {
+		val username = requestContext.getRequestParameters().get("username");
+		WebUtils.putCredential(requestContext, new UsernamePasswordCredential(username, null));
+		WebUtils.putMultiphaseUserAuthenticationUsername(requestContext, username);
+		return success();
+	}
+}

@@ -922,6 +922,16 @@ public class WebUtils {
     }
 
     /**
+     * Put multiphase user authentication username.
+     *
+     * @param requestContext the request context
+     * @param value             the value
+     */
+    public static void putMultiphaseUserAuthenticationUsername(final RequestContext requestContext, final String username) {
+        requestContext.getFlowScope().put("multiphaseUsername", username);
+    }
+
+    /**
      * Put graphical user authentication enabled.
      *
      * @param requestContext the request context
