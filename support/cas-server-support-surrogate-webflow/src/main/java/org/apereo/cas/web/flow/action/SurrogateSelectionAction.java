@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.binding.message.MessageBuilder;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -30,22 +31,32 @@ public class SurrogateSelectionAction extends AbstractAction {
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
-        val credential = WebUtils.getCredential(requestContext);
-        if (credential instanceof UsernamePasswordCredential) {
-            val target = requestContext.getExternalContext().getRequestParameterMap().get("surrogateTarget");
-
-            LOGGER.debug("Located surrogate target as [{}]", target);
-            if (StringUtils.isNotBlank(target)) {
-                val authenticationResultBuilder = WebUtils.getAuthenticationResultBuilder(requestContext);
-                val result =
+        try {
+            val credential = WebUtils.getCredential(requestContext);
+            if (credential instanceof UsernamePasswordCredential) {
+                val target = requestContext.getExternalContext().getRequestParameterMap().get("surrogateTarget");
+                LOGGER.debug("Located surrogate target as [{}]", target);
+                if (StringUtils.isNotBlank(target)) {
+                    val authenticationResultBuilder = WebUtils.getAuthenticationResultBuilder(requestContext);
+                    val result = surrogatePrincipalBuilder.buildSurrogateAuthenticationResult(authenticationResultBuilder, credential, target);
                     surrogatePrincipalBuilder.buildSurrogateAuthenticationResult(authenticationResultBuilder, credential, target);
-                result.ifPresent(authenticationResultBuilder1 -> WebUtils.putAuthenticationResultBuilder(authenticationResultBuilder1, requestContext));
+                    result.ifPresent(builder -> WebUtils.putAuthenticationResultBuilder(builder, requestContext));
+                } else {
+                    LOGGER.warn("No surrogate identifier was selected or provided");
+                }
             } else {
-                LOGGER.warn("No surrogate identifier was selected or provided");
+                LOGGER.debug("Current credential in the webflow is not one of [{}]", UsernamePasswordCredential.class.getName());
             }
-        } else {
-            LOGGER.debug("Current credential in the webflow is not one of [{}]", UsernamePasswordCredential.class.getName());
+            return success();
+        } catch (final Exception e) {
+            requestContext.getMessageContext().addMessage(new MessageBuilder()
+                .error()
+                .source("surrogate")
+                .code("screen.surrogates.account.selection.error")
+                .defaultText("Unable to accept or authorize selection")
+                .build());
+            LOGGER.error(e.getMessage(), e);
         }
-        return success();
+        return error();
     }
 }

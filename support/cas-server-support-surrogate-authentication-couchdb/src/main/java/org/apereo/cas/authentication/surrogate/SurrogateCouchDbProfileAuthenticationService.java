@@ -34,7 +34,7 @@ public class SurrogateCouchDbProfileAuthenticationService extends BaseSurrogateA
 
     @Override
     protected boolean canAuthenticateAsInternal(final String surrogate, final Principal principal, final Service service) {
-        LOGGER.warn("User [{}] attempting surrogate for [{}] at [{}]", principal.getId(), surrogate, service.getId());
+        LOGGER.warn("User [{}] attempting surrogate for [{}]", principal.getId(), surrogate);
         val user = couchDb.findByUsername(principal.getId());
         LOGGER.debug("User [{}]", user);
         if (user == null) {
@@ -54,7 +54,7 @@ public class SurrogateCouchDbProfileAuthenticationService extends BaseSurrogateA
             return false;
         }
         if (userList.contains(surrogate)) {
-            LOGGER.warn("User [{}] becoming surrogate for [{}] at [{}]", principal.getId(), surrogate, service.getId());
+            LOGGER.warn("User [{}] becoming surrogate for [{}]", principal.getId(), surrogate);
             return true;
         }
         return false;
