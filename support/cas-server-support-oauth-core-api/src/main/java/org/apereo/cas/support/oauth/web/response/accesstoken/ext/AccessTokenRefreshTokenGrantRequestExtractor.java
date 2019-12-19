@@ -45,7 +45,7 @@ public class AccessTokenRefreshTokenGrantRequestExtractor extends AccessTokenAut
         }
 
         val shouldRenewRefreshToken = registeredService.isGenerateRefreshToken() && registeredService.isRenewRefreshToken();
-        builder.generateRefreshToken(registeredService.isGenerateRefreshToken());
+        builder.generateRefreshToken(shouldRenewRefreshToken);
         builder.expireOldRefreshToken(shouldRenewRefreshToken);
 
         return super.extractInternal(request, response, builder);
