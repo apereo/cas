@@ -14,7 +14,6 @@ import org.apereo.cas.authentication.principal.provision.GroovyDelegatedClientUs
 import org.apereo.cas.authentication.principal.provision.RestfulDelegatedClientUserProfileProvisioner;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.integration.pac4j.DistributedJ2ESessionStore;
-import org.apereo.cas.logout.LogoutExecutionPlanConfigurer;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.pac4j.authentication.ClientAuthenticationMetaDataPopulator;
 import org.apereo.cas.support.pac4j.authentication.DelegatedClientFactory;
@@ -28,6 +27,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.spi.AuditActionResolver;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 import org.pac4j.core.client.Clients;
+import org.pac4j.core.context.JEEContext;
+import org.pac4j.core.context.session.JEESessionStore;
 import org.pac4j.core.context.session.SessionStore;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,7 +87,6 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
     public SessionStore delegatedClientDistributedSessionStore() {
         return getDistributedSessionStore();
     }
-
 
     @RefreshScope
     @Bean
@@ -179,13 +179,12 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
         };
     }
 
-    @Bean
-    public LogoutExecutionPlanConfigurer delegatedAuthenticationLogoutExecutionPlanConfigurer() {
-        return plan -> plan.registerLogoutPostProcessor(getDistributedSessionStore());
-    }
-
-    private DistributedJ2ESessionStore getDistributedSessionStore() {
-        return new DistributedJ2ESessionStore(ticketRegistry.getObject(), ticketFactory.getObject(),
+    private SessionStore<JEEContext> getDistributedSessionStore() {
+        val replicate = casProperties.getAuthn().getPac4j().isReplicateSessions();
+        if (replicate) {
+            return new DistributedJ2ESessionStore(ticketRegistry.getObject(), ticketFactory.getObject(),
                 casProperties.getSessionReplication().getSessionCookieName());
+        }
+        return new JEESessionStore();
     }
 }

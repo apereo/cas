@@ -46,9 +46,6 @@ dependencies {
     implementation project(":support:cas-server-support-validation")
     implementation project(":support:cas-server-support-pm-webflow")
     
-    implementation project(":support:cas-server-support-hazelcast-ticket-registry")
-    implementation project(":support:cas-server-support-hazelcast-discovery-aws")
-
     implementation project(":webapp:cas-server-webapp-config")
     implementation project(":webapp:cas-server-webapp-init")
     implementation project(":webapp:cas-server-webapp-resources")
