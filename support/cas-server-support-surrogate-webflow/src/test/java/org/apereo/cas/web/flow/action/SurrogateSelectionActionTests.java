@@ -56,7 +56,7 @@ public class SurrogateSelectionActionTests extends BaseSurrogateInitialAuthentic
             val request = new MockHttpServletRequest();
 
             val builder = mock(AuthenticationResultBuilder.class);
-            when(builder.getInitialAuthentication()).thenReturn(Optional.of(CoreAuthenticationTestUtils.getAuthentication()));
+            when(builder.getInitialAuthentication()).thenReturn(Optional.of(CoreAuthenticationTestUtils.getAuthentication("casuser")));
             when(builder.collect(any(Authentication.class))).thenReturn(builder);
 
             WebUtils.putAuthenticationResultBuilder(builder, context);
