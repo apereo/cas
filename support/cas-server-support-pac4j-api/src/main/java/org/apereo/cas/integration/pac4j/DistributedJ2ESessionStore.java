@@ -1,12 +1,9 @@
 package org.apereo.cas.integration.pac4j;
 
-import org.apereo.cas.logout.LogoutPostProcessor;
 import org.apereo.cas.ticket.TicketFactory;
-import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.ticket.TransientSessionTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.util.HttpRequestUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Optional;
@@ -30,9 +28,11 @@ import java.util.Optional;
 @Transactional(transactionManager = "ticketTransactionManager")
 @RequiredArgsConstructor
 @Slf4j
-public class DistributedJ2ESessionStore extends JEESessionStore implements HttpSessionListener, LogoutPostProcessor {
+public class DistributedJ2ESessionStore extends JEESessionStore implements HttpSessionListener {
     private final TicketRegistry ticketRegistry;
+
     private final TicketFactory ticketFactory;
+
     private final String sessionCookieName;
 
     @Override
@@ -107,17 +107,5 @@ public class DistributedJ2ESessionStore extends JEESessionStore implements HttpS
     private void removeSessionTicket(final String id) {
         val ticketId = TransientSessionTicketFactory.normalizeTicketId(id);
         this.ticketRegistry.deleteTicket(ticketId);
-    }
-
-    @Override
-    public void handle(final TicketGrantingTicket ticketGrantingTicket) {
-        try {
-            val request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
-            val response = HttpRequestUtils.getHttpServletResponseFromRequestAttributes();
-            val id = getOrCreateSessionId(new JEEContext(request, response, this));
-            removeSessionTicket(id);
-        } catch (final Exception e) {
-            LOGGER.trace(e.getMessage(), e);
-        }
     }
 }

@@ -3366,6 +3366,7 @@ To learn more about this topic, [please review this guide](../integration/Delega
 # cas.authn.pac4j.name=
 # cas.authn.pac4j.order=
 # cas.authn.pac4j.lazyInit=true
+# cas.authn.pac4j.replicateSessions=true
 ```
 
 The following external identity providers share [common blocks of settings](Configuration-Properties-Common.html#delegated-authentication-settings) 
