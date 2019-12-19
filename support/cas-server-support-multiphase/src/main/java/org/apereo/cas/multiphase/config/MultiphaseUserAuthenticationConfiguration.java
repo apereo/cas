@@ -39,9 +39,11 @@ public class MultiphaseUserAuthenticationConfiguration {
     @Qualifier("loginFlowRegistry")
     private ObjectProvider<FlowDefinitionRegistry> loginFlowDefinitionRegistry;
 
+    /*
     @Autowired
     @Qualifier("servicesManager")
     private ObjectProvider<ServicesManager> servicesManager;
+    */
 
     @Autowired
     private ApplicationContext applicationContext;
