@@ -1,10 +1,11 @@
-package org.apereo.cas.multiphase.config;
+package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
-import org.apereo.cas.web.flow.MultiphaseUserAuthenticationWebflowConfigurer;
+import org.apereo.cas.web.flow.MultiphaseAuthenticationWebflowConfigurer;
+import org.apereo.cas.web.flow.PrepareForMultiphaseAuthenticationAction;
 import org.apereo.cas.web.flow.StoreUserIdForAuthenticationAction;
 
 import org.springframework.beans.factory.ObjectProvider;
@@ -23,15 +24,15 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
 
 /**
- * This is {@link MultiphaseUserAuthenticationConfiguration}.
+ * This is {@link MultiphaseAuthenticationConfiguration}.
  *
  * @author Hayden Sartoris
  * @since 6.2.0
  */
 
-@Configuration("multiphaseUserAuthenticationConfiguration")
+@Configuration("multiphaseAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class MultiphaseUserAuthenticationConfiguration {
+public class MultiphaseAuthenticationConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -40,11 +41,9 @@ public class MultiphaseUserAuthenticationConfiguration {
     @Qualifier("loginFlowRegistry")
     private ObjectProvider<FlowDefinitionRegistry> loginFlowDefinitionRegistry;
 
-    /*
     @Autowired
     @Qualifier("servicesManager")
     private ObjectProvider<ServicesManager> servicesManager;
-    */
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -52,12 +51,17 @@ public class MultiphaseUserAuthenticationConfiguration {
     @Autowired
     private ObjectProvider<FlowBuilderServices> flowBuilderServices;
 
+	@Bean
+	public Action initializeLoginAction() {
+		return new PrepareForMultiphaseAuthenticationAction(servicesManager.getObject());
+	}
+
     @Bean
-    @ConditionalOnMissingBean(name = "multiphaseUserAuthenticationWebflowConfigurer")
+    @ConditionalOnMissingBean(name = "multiphaseAuthenticationWebflowConfigurer")
     @ConditionalOnProperty(prefix = "cas.authn.multiphase", name = "enabled", havingValue = "true", matchIfMissing = true)
     @DependsOn("defaultWebflowConfigurer")
-    public CasWebflowConfigurer multiphaseUserAuthenticationWebflowConfigurer() {
-        return new MultiphaseUserAuthenticationWebflowConfigurer(flowBuilderServices.getObject(),
+    public CasWebflowConfigurer multiphaseAuthenticationWebflowConfigurer() {
+        return new MultiphaseAuthenticationWebflowConfigurer(flowBuilderServices.getObject(),
                 loginFlowDefinitionRegistry.getObject(), applicationContext, casProperties);
     }
 
@@ -69,9 +73,9 @@ public class MultiphaseUserAuthenticationConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean(name = "multiphaseUserAuthenticationCasWebflowExecutionPlanConfigurer")
-    public CasWebflowExecutionPlanConfigurer multiphaseUserAuthenticationCasWebflowExecutionPlanConfigurer() {
-        return plan -> plan.registerWebflowConfigurer(multiphaseUserAuthenticationWebflowConfigurer());
+    @ConditionalOnMissingBean(name = "multiphaseAuthenticationCasWebflowExecutionPlanConfigurer")
+    public CasWebflowExecutionPlanConfigurer multiphaseAuthenticationCasWebflowExecutionPlanConfigurer() {
+        return plan -> plan.registerWebflowConfigurer(multiphaseAuthenticationWebflowConfigurer());
     }
 
 }

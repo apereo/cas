@@ -11,12 +11,12 @@ import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 
 /**
- * This is {@link MultiphaseUserAuthenticationWebflowConfigurer}.
+ * This is {@link MultiphaseAuthenticationWebflowConfigurer}.
  *
  * @author Hayden Sartoris
  * @since 6.2.0
  */
-public class MultiphaseUserAuthenticationWebflowConfigurer extends AbstractCasWebflowConfigurer {
+public class MultiphaseAuthenticationWebflowConfigurer extends AbstractCasWebflowConfigurer {
 	/**
 	 * Transition to obtain username.
 	 */
@@ -26,7 +26,7 @@ public class MultiphaseUserAuthenticationWebflowConfigurer extends AbstractCasWe
 	static final String STATE_ID_STORE_USERID = "storeUserIdForAuthentication";
 	static final String ACTION_ID_STORE_USERID_FOR_AUTHENTICATION = "storeUserIdForAuthenticationAction";
 
-	public MultiphaseUserAuthenticationWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
+	public MultiphaseAuthenticationWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
                                                         final FlowDefinitionRegistry loginFlowDefinitionRegistry,
                                                         final ApplicationContext applicationContext,
                                                         final CasConfigurationProperties casProperties) {

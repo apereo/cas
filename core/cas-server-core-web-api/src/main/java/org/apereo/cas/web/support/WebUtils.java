@@ -927,7 +927,7 @@ public class WebUtils {
      * @param requestContext the request context
      * @param value          the value
      */
-    public static void putMultiphaseUserAuthenticationEnabled(final RequestContext requestContext, final Boolean value) {
+    public static void putMultiphaseAuthenticationEnabled(final RequestContext requestContext, final Boolean value) {
         requestContext.getFlowScope().put("multiphaseEnabled", value);
     }
 
@@ -937,9 +937,20 @@ public class WebUtils {
      * @param requestContext the request context
      * @param value             the value
      */
-    public static void putMultiphaseUserAuthenticationUsername(final RequestContext requestContext, final String username) {
+    public static void putMultiphaseAuthenticationUsername(final RequestContext requestContext, final String username) {
         requestContext.getFlowScope().put("multiphaseUsername", username);
     }
+
+    /**
+     * Has multiphase userid stored.
+     *
+     * @param requestContext the requestContext
+     * @param value          the value
+     */
+    public static void hasMultiphaseAuthenticationUsername(final RequestContext requestContext) {
+        return requestContext.getFlowScope().contains("multiphaseUsername");
+    }
+
 
     /**
      * Put graphical user authentication enabled.

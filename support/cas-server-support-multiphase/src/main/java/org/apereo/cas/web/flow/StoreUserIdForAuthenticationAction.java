@@ -18,7 +18,7 @@ public class StoreUserIdForAuthenticationAction extends AbstractAction {
 	public Event doExecute(final RequestContext requestContext) {
 		val username = requestContext.getRequestParameters().get("username");
 		WebUtils.putCredential(requestContext, new UsernamePasswordCredential(username, null));
-		WebUtils.putMultiphaseUserAuthenticationUsername(requestContext, username);
+		WebUtils.putMultiphaseAuthenticationUsername(requestContext, username);
 		return success();
 	}
 }
