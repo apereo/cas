@@ -1,16 +1,20 @@
 package org.apereo.cas.authentication;
 
-import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.authentication.surrogate.SimpleSurrogateAuthenticationService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link SurrogatePrincipalElectionStrategyTests}.
@@ -34,7 +38,8 @@ public class SurrogatePrincipalElectionStrategyTests {
         authentications.add(primaryAuth);
 
         val attributeRepository = CoreAuthenticationTestUtils.getAttributeRepository();
-        val surrogatePrincipalBuilder = new SurrogatePrincipalBuilder(new DefaultPrincipalFactory(), attributeRepository);
+        val surrogatePrincipalBuilder = new SurrogatePrincipalBuilder(PrincipalFactoryUtils.newPrincipalFactory(), attributeRepository,
+            new SimpleSurrogateAuthenticationService(Map.of("test", List.of("surrogate")), mock(ServicesManager.class)));
         val surrogatePrincipal = surrogatePrincipalBuilder.buildSurrogatePrincipal("cas-surrogate",
             primaryAuth.getPrincipal(), CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("cas-surrogate"),
             RegisteredServiceTestUtils.getRegisteredService());

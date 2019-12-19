@@ -126,7 +126,8 @@ public class SurrogateAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "surrogatePrincipalBuilder")
     @Bean
     public SurrogatePrincipalBuilder surrogatePrincipalBuilder() {
-        return new SurrogatePrincipalBuilder(surrogatePrincipalFactory(), attributeRepository.getObject());
+        return new SurrogatePrincipalBuilder(surrogatePrincipalFactory(), attributeRepository.getObject(),
+            surrogateAuthenticationService());
     }
 
     @Bean
