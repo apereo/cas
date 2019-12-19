@@ -11,6 +11,7 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationContext;
@@ -51,8 +52,9 @@ public class MultiphaseUserAuthenticationConfiguration {
     @Autowired
     private ObjectProvider<FlowBuilderServices> flowBuilderServices;
 
-    @ConditionalOnMissingBean(name = "multiphaseUserAuthenticationWebflowConfigurer")
     @Bean
+    @ConditionalOnMissingBean(name = "multiphaseUserAuthenticationWebflowConfigurer")
+    @ConditionalOnProperty(prefix = "cas.authn.multiphase", name = "enabled", havingValue = "true", matchIfMissing = true)
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer multiphaseUserAuthenticationWebflowConfigurer() {
         return new MultiphaseUserAuthenticationWebflowConfigurer(flowBuilderServices.getObject(),

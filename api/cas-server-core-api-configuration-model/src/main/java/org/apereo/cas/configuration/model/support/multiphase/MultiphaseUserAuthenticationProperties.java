@@ -20,4 +20,9 @@ import java.io.Serializable;
 public class MultiphaseUserAuthenticationProperties implements Serializable {
     private static final long serialVersionUID = 3113258705759426332L;
 
+    /**
+     * Indicates whether this should do anything.
+     */
+    private boolean enabled;
+
 }
