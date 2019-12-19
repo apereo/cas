@@ -8,7 +8,7 @@ import lombok.Setter;
 import java.io.Serializable;
 
 /**
- * This is {@link MultiphaseUserAuthenticationProperties};
+ * This is {@link MultiphaseAuthenticationProperties};
  * mostly a skeleton for the time being as it's either on or off.
  *
  * @author Hayden Sartoris
@@ -17,7 +17,7 @@ import java.io.Serializable;
 @RequiresModule(name = "cas-server-support-multiphase")
 @Getter
 @Setter
-public class MultiphaseUserAuthenticationProperties implements Serializable {
+public class MultiphaseAuthenticationProperties implements Serializable {
     private static final long serialVersionUID = 3113258705759426332L;
 
     /**
