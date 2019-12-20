@@ -8,6 +8,7 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.core.OrderComparator;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -183,7 +184,7 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
     @Override
     public Collection<AuthenticationHandlerResolver> getAuthenticationHandlerResolvers(final AuthenticationTransaction transaction) {
         val list = new ArrayList<AuthenticationHandlerResolver>(this.authenticationHandlerResolvers);
-        OrderComparator.sort(list);
+        AnnotationAwareOrderComparator.sort(list);
         LOGGER.debug("Sorted and registered authentication handler resolvers for this transaction are [{}]", list);
         return list;
     }

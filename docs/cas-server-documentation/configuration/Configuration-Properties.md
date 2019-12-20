@@ -39,7 +39,12 @@ The following settings could be used to extend CAS with arbitrary configuration 
 
 ## Configuration Storage
 
+This section outlines strategies that can be used to store CAS configuration and settings.
+
 ### Standalone
+
+This is the default configuration mode which indicates that CAS does NOT require connections 
+to an external configuration server and will run in an embedded standalone mode.
 
 #### By Directory
 
@@ -1286,6 +1291,13 @@ In the event that a separate resolver is put into place, control how the final p
 ## Authentication Engine
 
 Control inner-workings of the CAS authentication engine, before and after the execution.
+
+```properties
+cas.authn.core.groovy-authentication-resolution.location=file:/etc/cas/config/GroovyAuthentication.groovy
+cas.authn.core.groovy-authentication-resolution.order=0
+
+cas.authn.core.service-authentication-resolution.order=0
+```           
 
 ### Authentication Pre-Processing
 

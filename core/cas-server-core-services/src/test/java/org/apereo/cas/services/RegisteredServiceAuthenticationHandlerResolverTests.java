@@ -29,7 +29,7 @@ import static org.mockito.Mockito.*;
  */
 public class RegisteredServiceAuthenticationHandlerResolverTests {
 
-    private DefaultServicesManager defaultServicesManager;
+    private ServicesManager defaultServicesManager;
     private Set<AuthenticationHandler> authenticationHandlers;
 
     @BeforeEach
