@@ -31,12 +31,25 @@
                                 <span th:utext="#{screen.welcome.forcedsso(${existingSingleSignOnSessionPrincipal.id})}" />
                             </h6>
                         </div>
-                        <h3 th:unless="${existingSingleSignOnSessionAvailable}"
-                            style="text-align: center; margin-top:-15px">
-                            <i class="fas fa-id-card"></i>
-                            <span th:utext="#{screen.welcome.instructions}">Enter your Username and Password:</span>
-                        </h3>
-                        
+						<div th:unless="${existingSingleSignOnSessionAvailable}"
+							style="text-align: center; margin-top:-15px;">
+							<div th:if="${multiphaseEnabled}">
+                                <div th:if="${guaEnabled}" align="middle">
+									<img style="width:130px;height:130px;border-radius:20%;
+										   		box-shadow: 0 0 2px 1px rgba(0, 140, 186, 0.5);
+												border: 1px solid #ddd;border-radius: 4px;"
+										 th:src="@{'data:image/jpeg;base64,' + ${guaUserImage}}"/>
+								</div>
+								<h6>
+									<i class="fas fa-info-circle"></i>&nbsp;
+									<span th:utext="#{screen.welcome.forcedsso(${multiphaseUsername})}" />
+								</h6>
+							</div>
+							<h3 th:unless="${multiphaseEnabled}">
+                            	<i class="fas fa-id-card"></i>
+                            	<span th:utext="#{screen.welcome.instructions}">Enter your Username and Password:</span>
+							</h3>
+						</div>
                         <section class="form-group">
                             <span th:if="${availableAuthenticationHandlerNames != null}">
                                 <span th:if="${availableAuthenticationHandlerNames.size() > 1}">
