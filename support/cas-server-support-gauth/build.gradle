@@ -17,6 +17,7 @@ dependencies {
     implementation project(":core:cas-server-core-webflow-mfa-api")
 
     compileOnly project(":core:cas-server-core-rest")
+    compileOnly project(":support:cas-server-support-trusted-mfa")
 
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-authentication")
