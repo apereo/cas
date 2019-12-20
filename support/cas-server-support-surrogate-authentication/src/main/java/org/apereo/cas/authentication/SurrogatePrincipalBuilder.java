@@ -1,8 +1,10 @@
 package org.apereo.cas.authentication;
 
-import lombok.RequiredArgsConstructor;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
+
+import lombok.RequiredArgsConstructor;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.IPersonAttributes;
 
@@ -19,7 +21,10 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class SurrogatePrincipalBuilder {
     private final PrincipalFactory principalFactory;
+
     private final IPersonAttributeDao attributeRepository;
+
+    private final SurrogateAuthenticationService surrogateAuthenticationService;
 
     /**
      * Build principal.
@@ -49,7 +54,14 @@ public class SurrogatePrincipalBuilder {
         final Optional<Authentication> currentAuthn = authenticationResultBuilder.getInitialAuthentication();
         if (currentAuthn.isPresent()) {
             final Authentication authentication = currentAuthn.get();
-            final Principal surrogatePrincipal = buildSurrogatePrincipal(surrogateTargetId, authentication.getPrincipal(), credential);
+            Principal principal = authentication.getPrincipal();
+            if (authentication.getPrincipal() instanceof SurrogatePrincipal) {
+                principal = SurrogatePrincipal.class.cast(authentication.getPrincipal()).getPrimary();
+            }
+            if (!surrogateAuthenticationService.canAuthenticateAs(surrogateTargetId, principal, null)) {
+                throw new SurrogateAuthenticationException("Unable to authorize surrogate authentication request for " + surrogateTargetId);
+            }
+            final Principal surrogatePrincipal = buildSurrogatePrincipal(surrogateTargetId, principal, credential);
             final Authentication auth = DefaultAuthenticationBuilder.newInstance(authentication).setPrincipal(surrogatePrincipal).build();
             return Optional.of(authenticationResultBuilder.collect(auth));
         }
