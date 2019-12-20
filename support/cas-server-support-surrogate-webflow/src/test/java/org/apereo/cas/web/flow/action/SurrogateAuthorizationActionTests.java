@@ -47,7 +47,7 @@ public class SurrogateAuthorizationActionTests extends BaseSurrogateInitialAuthe
         try {
             final MockRequestContext context = new MockRequestContext();
             WebUtils.putService(context, CoreAuthenticationTestUtils.getWebApplicationService());
-            WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
+            WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication("casuser"), context);
             final RegisteredService registeredService = CoreAuthenticationTestUtils.getRegisteredService();
             final SurrogateRegisteredServiceAccessStrategy strategy = new SurrogateRegisteredServiceAccessStrategy();
             when(registeredService.getAccessStrategy()).thenReturn(strategy);
