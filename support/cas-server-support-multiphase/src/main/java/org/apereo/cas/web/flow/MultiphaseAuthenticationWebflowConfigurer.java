@@ -54,8 +54,7 @@ public class MultiphaseAuthenticationWebflowConfigurer extends AbstractCasWebflo
 			createTransitionForState(initState, TRANSITION_ID_MULTIPHASE_GET_USERID, STATE_ID_MULTIPHASE_GET_USERID);
 
 			val getUserIdState = createViewState(flow, STATE_ID_MULTIPHASE_GET_USERID, "casMultiphaseGetUserIdView");
-			createTransitionForState(getUserIdState, CasWebflowConstants.TRANSITION_ID_SUBMIT, 
-					ACTION_ID_STORE_USERID_FOR_AUTHENTICATION);
+			createTransitionForState(getUserIdState, CasWebflowConstants.TRANSITION_ID_SUBMIT, STATE_ID_STORE_USERID);
 
 			val actionState = createActionState(flow, STATE_ID_STORE_USERID,
                     createEvaluateAction(ACTION_ID_STORE_USERID_FOR_AUTHENTICATION));
