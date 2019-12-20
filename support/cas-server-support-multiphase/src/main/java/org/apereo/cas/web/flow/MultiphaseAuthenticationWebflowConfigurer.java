@@ -40,11 +40,17 @@ public class MultiphaseAuthenticationWebflowConfigurer extends AbstractCasWebflo
 		val flow = getLoginFlow();
 		if (flow != null) {
             LOGGER.debug("Configuring multiphase webflow");
+            // init login state form
 			val initState = getState(flow, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM, ActionState.class);
             LOGGER.debug("Locating transition id [{}] to for state [{}", 
                     CasWebflowConstants.TRANSITION_ID_SUCCESS, initState.getId());
+            // transition object with id of success from init state
 			val initTransition = (Transition) initState.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS);
+            // target following that transition (maybe main page; could be
+            // otherwise)
 			val targetStateId = initTransition.getTargetStateId();
+            // add a transition from init state on get_userid transition to
+            // get_userid state
 			createTransitionForState(initState, TRANSITION_ID_MULTIPHASE_GET_USERID, STATE_ID_MULTIPHASE_GET_USERID);
 
 			val getUserIdState = createViewState(flow, STATE_ID_MULTIPHASE_GET_USERID, "casMultiphaseGetUserIdView");
