@@ -18,6 +18,8 @@ dependencies {
     implementation project(":support:cas-server-support-yubikey-core-mfa")
     implementation project(":support:cas-server-support-yubikey-core")
 
+    compileOnly project(":support:cas-server-support-trusted-mfa")
+
     implementation libraries.yubicoapi
 
     testImplementation project(":core:cas-server-core-web")
