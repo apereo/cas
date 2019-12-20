@@ -89,8 +89,7 @@ public class SurrogateAuthenticationPostProcessorTests {
         c.setUsername("casuser");
         c.setPassword("Mellon");
         c.setSurrogateUsername("cassurrogate");
-        val transaction = DefaultAuthenticationTransaction.of(
-            RegisteredServiceTestUtils.getService("https://localhost"), c);
+        val transaction = DefaultAuthenticationTransaction.of(RegisteredServiceTestUtils.getService("https://localhost"), c);
         val builder = mock(AuthenticationBuilder.class);
         when(builder.build()).thenReturn(CoreAuthenticationTestUtils.getAuthentication("casuser"));
         surrogateAuthenticationPostProcessor.process(builder, transaction);
