@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
 
 import lombok.val;
+import lonk.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContext;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ActionState;
@@ -16,6 +17,7 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
  * @author Hayden Sartoris
  * @since 6.2.0
  */
+@Slf4j
 public class MultiphaseAuthenticationWebflowConfigurer extends AbstractCasWebflowConfigurer {
 	/**
 	 * Transition to obtain username.
@@ -37,7 +39,10 @@ public class MultiphaseAuthenticationWebflowConfigurer extends AbstractCasWebflo
 	protected void doInitialize() {
 		val flow = getLoginFlow();
 		if (flow != null) {
+            LOGGER.debug("Configuring multiphase webflow");
 			val initState = getState(flow, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM, ActionState.class);
+            LOGGER.debug("Locating transition id [{}] to for state [{}", 
+                    CasWebflowConstants.TRANSITION_ID_SUCCESS, initState.getId());
 			val initTransition = (Transition) initState.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS);
 			val targetStateId = initTransition.getTargetStateId();
 			createTransitionForState(initState, TRANSITION_ID_MULTIPHASE_GET_USERID, STATE_ID_MULTIPHASE_GET_USERID);
