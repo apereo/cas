@@ -43,8 +43,8 @@ The JSON structure is a simple map of user id to yubikey public id representing 
 
 ```json
 {
-  "uid1": "yubikeyPublicId1",
-  "uid2": "yubikeyPublicId2"
+  "uid1": ["yubikeyPublicId1"],
+  "uid2": ["yubikeyPublicId2"]
 }
 ```
 
