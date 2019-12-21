@@ -2,6 +2,7 @@ package org.apereo.cas.adaptors.yubikey.registry;
 
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccount;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
+import org.apereo.cas.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -36,7 +37,8 @@ public class OpenYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
 
     @Override
     public Optional<? extends YubiKeyAccount> getAccount(final String uid) {
-        return Optional.of(new YubiKeyAccount(System.currentTimeMillis(), UUID.randomUUID().toString(), uid));
+        return Optional.of(new YubiKeyAccount(System.currentTimeMillis(),
+            CollectionUtils.wrapArrayList(UUID.randomUUID().toString()), uid));
     }
 
     @Override

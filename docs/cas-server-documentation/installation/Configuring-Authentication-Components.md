@@ -55,7 +55,7 @@ Each registered application in the registry may be assigned a set of identifiers
 handlers available and configured in CAS. These names can be used to enforce a service definition to only use the 
 authentication strategy carrying that name when an authentication request is submitted to CAS.
 
-Please [review this guide](../configuration/services/Configuring-Service-Required-AuthN.html) to learn more.
+Please [review this guide](../services/Configuring-Service-Required-AuthN.html) to learn more.
 
 #### Groovy Script
 

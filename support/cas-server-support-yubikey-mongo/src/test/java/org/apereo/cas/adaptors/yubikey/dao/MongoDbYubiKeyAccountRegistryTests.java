@@ -30,6 +30,7 @@ import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
+import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -98,6 +99,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class MongoDbYubiKeyAccountRegistryTests {
     private static final String OTP = "cccccccvlidcnlednilgctgcvcjtivrjidfbdgrefcvi";
+
     private static final String BAD_TOKEN = "123456";
 
     @Autowired
@@ -117,15 +119,19 @@ public class MongoDbYubiKeyAccountRegistryTests {
 
     @Test
     public void verifyAccountRegistered() {
+        assertTrue(yubiKeyAccountRegistry.registerAccountFor("casuser2", OTP));
         assertTrue(yubiKeyAccountRegistry.registerAccountFor("casuser", OTP));
+        assertTrue(yubiKeyAccountRegistry.registerAccountFor("casuser", OTP + OTP));
         assertTrue(yubiKeyAccountRegistry.isYubiKeyRegisteredFor("casuser"));
-        assertEquals(2, yubiKeyAccountRegistry.getAccounts().size());
+        val account = yubiKeyAccountRegistry.getAccount("casuser");
+        account.ifPresent(acct -> assertEquals(2, acct.getDeviceIdentifiers().size()));
     }
 
     @Test
     public void verifyEncryptedAccount() {
         assertTrue(yubiKeyAccountRegistry.registerAccountFor("encrypteduser", OTP));
-        assertTrue(yubiKeyAccountRegistry.isYubiKeyRegisteredFor("encrypteduser", yubiKeyAccountRegistry.getAccountValidator().getTokenPublicId(OTP)));
+        assertTrue(yubiKeyAccountRegistry.isYubiKeyRegisteredFor("encrypteduser",
+            yubiKeyAccountRegistry.getAccountValidator().getTokenPublicId(OTP)));
     }
 
     @TestConfiguration("MongoDbYubiKeyAccountRegistryTestConfiguration")
