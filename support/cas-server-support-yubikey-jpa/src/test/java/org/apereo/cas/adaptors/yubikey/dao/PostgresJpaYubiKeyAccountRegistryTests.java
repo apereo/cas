@@ -21,7 +21,7 @@ import org.springframework.test.context.TestPropertySource;
     "cas.authn.mfa.yubikey.jpa.password=password",
     "cas.authn.mfa.yubikey.jpa.driverClass=org.postgresql.Driver",
     "cas.authn.mfa.yubikey.jpa.url=jdbc:postgresql://localhost:5432/yubikey",
-    "cas.authn.mfa.yubikey.jpa.dialect=org.hibernate.dialect.PostgreSQL95Dialect",
+    "cas.authn.mfa.yubikey.jpa.dialect=org.hibernate.dialect.PostgreSQL95Dialect"
 })
 public class PostgresJpaYubiKeyAccountRegistryTests extends JpaYubiKeyAccountRegistryTests {
 }
