@@ -19,17 +19,8 @@ dependencies {
     compileOnly project(":core:cas-server-core-rest")
     compileOnly project(":support:cas-server-support-trusted-mfa")
 
-    
-    
-    
-    
     testImplementation project(":core:cas-server-core-configuration")
-    
-    
-    
-    
     testImplementation project(":core:cas-server-core-rest")
-    
 
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":support:cas-server-support-trusted-mfa")

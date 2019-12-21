@@ -71,6 +71,12 @@ public class AuthenticationProperties implements Serializable {
     private static final long serialVersionUID = -1233126985007049516L;
 
     /**
+     * Core authentication settings.
+     */
+    @NestedConfigurationProperty
+    private CoreAuthenticationProperties core = new CoreAuthenticationProperties();
+
+    /**
      * Passwordless authentication settings.
      */
     @NestedConfigurationProperty

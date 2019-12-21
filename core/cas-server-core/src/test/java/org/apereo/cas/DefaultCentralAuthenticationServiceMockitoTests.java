@@ -184,7 +184,6 @@ public class DefaultCentralAuthenticationServiceMockitoTests extends BaseCasCore
             CipherExecutor.noOpOfStringToString(),
             enforcer,
             new DefaultServiceMatchingStrategy(smMock));
-        this.cas.setApplicationEventPublisher(mock(ApplicationEventPublisher.class));
     }
 
     private static TicketFactory getTicketFactory() {
