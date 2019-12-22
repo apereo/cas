@@ -14,6 +14,8 @@ import org.apereo.cas.authentication.principal.provision.GroovyDelegatedClientUs
 import org.apereo.cas.authentication.principal.provision.RestfulDelegatedClientUserProfileProvisioner;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.integration.pac4j.DistributedJ2ESessionStore;
+import org.apereo.cas.logout.LogoutExecutionPlanConfigurer;
+import org.apereo.cas.logout.LogoutPostProcessor;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.pac4j.authentication.ClientAuthenticationMetaDataPopulator;
 import org.apereo.cas.support.pac4j.authentication.DelegatedClientFactory;
@@ -176,6 +178,16 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
         return plan -> {
             plan.registerAuditActionResolver("DELEGATED_CLIENT_ACTION_RESOLVER", authenticationActionResolver.getObject());
             plan.registerAuditResourceResolver("DELEGATED_CLIENT_RESOURCE_RESOLVER", delegatedAuthenticationAuditResourceResolver());
+        };
+    }
+
+    @Bean
+    public LogoutExecutionPlanConfigurer delegatedAuthenticationLogoutExecutionPlanConfigurer() {
+        return plan -> {
+            val sessionStore = getDistributedSessionStore();
+            if (sessionStore instanceof LogoutPostProcessor) {
+                plan.registerLogoutPostProcessor(LogoutPostProcessor.class.cast(sessionStore));
+            }
         };
     }
 

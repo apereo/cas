@@ -7,8 +7,6 @@ import org.apereo.cas.services.ServicesManager;
 
 import lombok.val;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
@@ -25,7 +23,6 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
-@ExtendWith(MockitoExtension.class)
 public class SurrogatePrincipalBuilderTests {
     @Test
     public void verifyOperationWithNoService() {
