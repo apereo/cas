@@ -78,6 +78,8 @@ public class SurrogatePrincipalResolverTests {
             new SimpleSurrogateAuthenticationService(Map.of("test", List.of("surrogate")), mock(ServicesManager.class)));
         val resolver = new SurrogatePrincipalResolver(CoreAuthenticationTestUtils.getAttributeRepository(), "cn", surrogatePrincipalBuilder);
         val credential = new SurrogateUsernamePasswordCredential();
+        credential.setUsername("something");
+        credential.setSurrogateUsername("something2");
         assertThrows(IllegalArgumentException.class, () -> resolver.resolve(credential));
     }
 
