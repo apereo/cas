@@ -18,8 +18,8 @@ import lombok.val;
  */
 public class JmsTicketRegistry extends DefaultTicketRegistry {
 
-
     private final JmsTicketRegistryPublisher ticketPublisher;
+
     private final JmsQueueIdentifier id;
 
     public JmsTicketRegistry(final JmsTicketRegistryPublisher publisher, final JmsQueueIdentifier id,
