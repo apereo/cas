@@ -46,7 +46,7 @@ else
         echo -e "Gradle build finished successfully.\nPreparing CAS web application WAR artifact..."
         export CATALINA_HOME=./apache-tomcat-${tomcatVersion}
         rm -Rf ${CATALINA_HOME}
-        wget
+        wget ${tomcatUrl}
         unzip apache-tomcat-${tomcatVersion}.zip
 
         mv webapp/cas-server-webapp/build/libs/cas-server-webapp-*.war ${CATALINA_HOME}/webapps/cas.war

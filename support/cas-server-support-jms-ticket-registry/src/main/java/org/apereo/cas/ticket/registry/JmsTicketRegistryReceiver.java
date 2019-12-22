@@ -17,6 +17,7 @@ import org.springframework.jms.annotation.JmsListener;
 @RequiredArgsConstructor
 public class JmsTicketRegistryReceiver {
     private final TicketRegistry ticketRegistry;
+
     private final JmsQueueIdentifier ticketRegistryId;
 
     /**
