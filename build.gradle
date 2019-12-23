@@ -280,6 +280,13 @@ subprojects {
             url "https://oss.jfrog.org/artifactory/oss-snapshot-local"
             mavenContent { snapshotsOnly() }
         }
+        maven {
+            url "https://raw.github.com/vt-middleware/maven-repo/master"
+            mavenContent { snapshotsOnly() }
+            content {
+                includeGroupByRegex "org\\.ldaptive.*"
+            }
+        }
         jcenter()
     }
     
