@@ -1,6 +1,5 @@
 package org.apereo.cas.web.flow;
 
-//import org.apereo.cas.web.flow.authentication.
 import org.apereo.cas.web.flow.resolver.impl.AbstractCasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
 
@@ -28,8 +27,7 @@ public class MultiphaseAuthenticationWebflowEventResolver extends AbstractCasWeb
 
     @Override
     public Set<Event> resolveInternal(final RequestContext requestContext) {
-        // TODO
-        return null;
+        return handleAuthenticationTransactionAndGrantTicketGrantingTicket(context);
     }
 
     @Audit(action = "AUTHENTICATION_EVENT",
