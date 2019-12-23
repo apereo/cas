@@ -1,0 +1,66 @@
+description = "Apereo CAS JPA Service Registry Support"
+ext {
+    maxParallelForksForTests = 1
+}
+
+dependencies {
+    api project(":api:cas-server-core-api")
+
+    implementation project(":core:cas-server-core-tickets-api")
+    implementation project(":core:cas-server-core-tickets")
+    implementation project(":core:cas-server-core-monitor")
+    implementation project(":core:cas-server-core-util-api")
+    implementation project(":core:cas-server-core-authentication-api")
+    implementation project(":core:cas-server-core-services-authentication")
+    implementation project(":core:cas-server-core-configuration-api")
+    implementation project(":support:cas-server-support-jpa-util")
+    implementation project(":support:cas-server-support-trusted")
+    implementation project(":support:cas-server-support-memcached-core")
+    implementation project(":support:cas-server-support-oauth-api")
+    implementation project(":support:cas-server-support-oauth-core-api")
+    implementation project(":support:cas-server-support-pac4j-core")
+
+    implementation libraries.nimbus
+    implementation libraries.springcloudsleuth
+    implementation libraries.pac4j
+    implementation libraries.pac4jcore
+    implementation libraries.pac4jcas
+    implementation libraries.kryo
+
+    runtimeOnly project(":support:cas-server-support-jdbc-drivers")
+
+    testImplementation project(":support:cas-server-support-person-directory")
+    testImplementation project(":support:cas-server-support-oauth-services")
+    testImplementation project(":support:cas-server-support-saml-idp-core")
+    testImplementation project(":support:cas-server-support-oidc-services")
+    testImplementation project(":support:cas-server-support-ws-idp-api")
+    testImplementation project(":support:cas-server-support-ws-sts-api")
+    testImplementation project(":support:cas-server-support-ws-sts")
+    testImplementation project(":support:cas-server-support-ws-idp")
+
+    testImplementation project(":core:cas-server-core-logout")
+    testImplementation project(":core:cas-server-core-util")
+    testImplementation project(":core:cas-server-core-logout-api")
+    testImplementation project(":core:cas-server-core-authentication-api")
+    testImplementation project(":core:cas-server-core-authentication")
+    testImplementation project(":core:cas-server-core-web")
+    testImplementation project(":core:cas-server-core-authentication-attributes")
+    testImplementation project(":core:cas-server-core-services")
+    testImplementation project(":core:cas-server-core-cookie")
+    testImplementation project(":core:cas-server-core-configuration")
+    testImplementation project(":core:cas-server-core-cookie-api")
+    testImplementation project(":core:cas-server-core")
+
+
+    testImplementation project(":support:cas-server-support-oauth")
+    testImplementation project(":support:cas-server-support-oauth-api")
+    testImplementation project(":support:cas-server-support-oauth-core")
+    testImplementation project(":support:cas-server-support-oauth-core-api")
+
+    testImplementation project(path: ":core:cas-server-core-util", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-tickets", configuration: "tests")
+}
