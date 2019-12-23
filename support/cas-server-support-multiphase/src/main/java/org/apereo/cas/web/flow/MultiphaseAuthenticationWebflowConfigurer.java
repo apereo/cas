@@ -39,6 +39,7 @@ public class MultiphaseAuthenticationWebflowConfigurer extends AbstractCasWebflo
 	protected void doInitialize() {
 		val flow = getLoginFlow();
 		if (flow != null) {
+            LOGGER.debug("Current state ids: [{}]", flow.getStateIds());
             LOGGER.debug("Configuring multiphase webflow");
             // init login state form
 			val initState = getState(flow, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM, ActionState.class);
