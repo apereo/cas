@@ -23,7 +23,7 @@ public class StoreUserIdForAuthenticationAction extends AbstractAction {
 	public Event doExecute(final RequestContext requestContext) {
 		val username = requestContext.getRequestParameters().get("username");
         if (username.endsWith("@example.com")) {
-            return result(MultiphaseAuthenticationWebflowConfigurer.TRANSITION_ID_MULTIPHASE_DO_DELEGATE);
+            return result(MultiphaseAuthenticationWebflowConfigurer.TRANSITION_ID_MULTIPHASE_REDIRECT);
         }
 		WebUtils.putCredential(requestContext, new UsernamePasswordCredential(username, null));
 		WebUtils.putMultiphaseAuthenticationUsername(requestContext, username);

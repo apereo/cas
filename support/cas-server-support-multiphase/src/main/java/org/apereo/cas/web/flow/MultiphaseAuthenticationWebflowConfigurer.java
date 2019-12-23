@@ -23,8 +23,9 @@ public class MultiphaseAuthenticationWebflowConfigurer extends AbstractCasWebflo
 	 * Transition to obtain username.
 	 */
 	public static final String TRANSITION_ID_MULTIPHASE_GET_USERID = "multiphaseGetUserId";
-    public static final String TRANSITION_ID_MULTIPHASE_DO_DELEGATE = "multiphaseDoDelegateUser";
+    public static final String TRANSITION_ID_MULTIPHASE_REDIRECT = "multiphaseRedirect";
 
+    static final String STATE_ID_MULTIPHASE_REDIRECT = "multiphaseRedirectView";
 	static final String STATE_ID_MULTIPHASE_GET_USERID = "multiphaseGetUserIdView";
 	static final String STATE_ID_STORE_USERID = "storeUserIdForAuthentication";
 	static final String ACTION_ID_STORE_USERID_FOR_AUTHENTICATION = "storeUserIdForAuthenticationAction";
@@ -70,8 +71,8 @@ public class MultiphaseAuthenticationWebflowConfigurer extends AbstractCasWebflo
             createTransitionForState(actionState, CasWebflowConstants.TRANSITION_ID_SUCCESS, targetStateId);
 
             LOGGER.debug("Creating transition with id [{}] for state [{}] to state [{}]",
-                    TRANSITION_ID_MULTIPHASE_DO_DELEGATE, actionState.getId(), CasWebflowConstants.STATE_ID_DELEGATED_AUTHENTICATION);
-            createTransitionForState(actionState, TRANSITION_ID_MULTIPHASE_DO_DELEGATE, CasWebflowConstants.STATE_ID_DELEGATED_AUTHENTICATION);
+                    TRANSITION_ID_MULTIPHASE_REDIRECT, actionState.getId(), STATE_ID_MULTIPHASE_REDIRECT);
+            createTransitionForState(actionState, TRANSITION_ID_MULTIPHASE_REDIRECT, STATE_ID_MULTIPHASE_REDIRECT);
             LOGGER.debug("Current possible outcomes: {}", (Object) flow.getPossibleOutcomes());
 			//createStateDefaultTransition(actionState, targetStateId);
 		}
