@@ -178,13 +178,13 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
                         if (LdapUtils.executePasswordModifyOperation(dn, ldapConnectionFactory, c.getPassword(), bean.getPassword(),
                             ldap.getType())) {
                             LOGGER.debug("Successfully updated the account password for [{}]", dn);
-                            return true;
+                            return Boolean.TRUE;
                         }
                         LOGGER.error("Could not update the LDAP entry's password for [{}] and base DN [{}]", filter.format(), ldap.getBaseDn());
                     } else {
                         LOGGER.error("Could not locate an LDAP entry for [{}] and base DN [{}]", filter.format(), ldap.getBaseDn());
                     }
-                    return false;
+                    return Boolean.FALSE;
                 }))
                 .collect(Collectors.toList());
 
