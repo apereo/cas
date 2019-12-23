@@ -2906,8 +2906,13 @@ Configuration settings for this feature are available [here](Configuration-Prope
 
 ### YubiKey MongoDb Device Store
 
- Configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.authn.mfa.yubikey`.
+Configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.authn.mfa.yubikey`.
 
+### YubiKey Redis Device Store
+
+Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#redis-configuration)
+under the configuration key `cas.authn.mfa.yubikey`.
+ 
 ### Radius OTP
 
 To learn more about this topic, [please review this guide](../mfa/RADIUS-Authentication.html).
