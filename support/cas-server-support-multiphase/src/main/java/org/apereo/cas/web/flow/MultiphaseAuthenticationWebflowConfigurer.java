@@ -41,6 +41,7 @@ public class MultiphaseAuthenticationWebflowConfigurer extends AbstractCasWebflo
 		val flow = getLoginFlow();
 		if (flow != null) {
             LOGGER.debug("Current state ids: [{}]", (Object) flow.getStateIds());
+            LOGGER.debug("Current possible outcomes: {}", (Object) flow.getPossibleOutcomes());
             LOGGER.debug("Configuring multiphase webflow");
             // init login state form
 			val initState = getState(flow, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM, ActionState.class);
@@ -71,6 +72,7 @@ public class MultiphaseAuthenticationWebflowConfigurer extends AbstractCasWebflo
             LOGGER.debug("Creating transition with id [{}] for state [{}] to state [{}]",
                     TRANSITION_ID_MULTIPHASE_DO_DELEGATE, actionState.getId(), CasWebflowConstants.STATE_ID_DELEGATED_AUTHENTICATION);
             createTransitionForState(actionState, TRANSITION_ID_MULTIPHASE_DO_DELEGATE, CasWebflowConstants.STATE_ID_DELEGATED_AUTHENTICATION);
+            LOGGER.debug("Current possible outcomes: {}", (Object) flow.getPossibleOutcomes());
 			//createStateDefaultTransition(actionState, targetStateId);
 		}
 	}
