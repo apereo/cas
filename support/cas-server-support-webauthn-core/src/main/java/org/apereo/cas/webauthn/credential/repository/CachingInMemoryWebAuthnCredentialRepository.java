@@ -12,6 +12,7 @@ import com.yubico.webauthn.data.PublicKeyCredentialDescriptor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
+import java.time.Duration;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.NoSuchElementException;
@@ -34,7 +35,7 @@ public class CachingInMemoryWebAuthnCredentialRepository implements WebAuthnCred
 
     private final Cache<String, Set<WebAuthnCredentialRegistration>> storage = CacheBuilder.newBuilder()
         .maximumSize(CACHE_MAX_SIZE)
-        .expireAfterAccess(CACHE_EXPIRE_DAYS, TimeUnit.DAYS)
+        .expireAfterAccess(Duration.ofDays(CACHE_EXPIRE_DAYS))
         .build();
 
     @Override

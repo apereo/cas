@@ -2,6 +2,7 @@ package org.apereo.cas.webauthn.attestation;
 
 import com.yubico.internal.util.CertificateParser;
 import com.yubico.webauthn.data.ByteArray;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.security.cert.CertificateException;
@@ -14,6 +15,7 @@ import java.security.cert.X509Certificate;
  * @since 6.1.0
  */
 @Slf4j
+@Getter
 public class AttestationCertInfo {
     private final ByteArray der;
     private final String text;
