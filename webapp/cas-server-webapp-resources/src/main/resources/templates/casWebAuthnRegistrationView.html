@@ -20,7 +20,7 @@
 
 </head>
 
-<body>
+<body onload="register()">
 <main role="main" class="container mt-3 mb-3">
     <div layout:fragment="content" id="login">
 
@@ -37,9 +37,7 @@
         Authenticator response: <pre id="authenticator-response"></pre>
         Request: <pre id="request"></pre>
 
-        <button type="button" onClick="register()">
-            Register new account
-        </button>
+        <input class="btn btn-block btn-submit" onclick="register()" name="registerButton" id="registerButton" value="Register Device" />
         
         <div class="alert alert-info">
             <form method="POST" id="form">
