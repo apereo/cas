@@ -22,6 +22,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.services.web.config.CasThemesConfiguration;
 import org.apereo.cas.util.MockWebServer;
+import org.apereo.cas.web.CaptchaValidator;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCaptchaConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
@@ -101,7 +102,7 @@ public class ValidateCaptchaActionTests {
         val request = new MockHttpServletRequest();
 
         val data = "{\"success\": true }";
-        request.addParameter(ValidateCaptchaAction.REQUEST_PARAM_RECAPTCHA_RESPONSE, data);
+        request.addParameter(CaptchaValidator.REQUEST_PARAM_RECAPTCHA_RESPONSE, data);
 
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
 

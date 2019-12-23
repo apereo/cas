@@ -24,6 +24,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.http.HttpClient;
 
@@ -165,7 +166,8 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
         if (yubi.getAllowedDevices() != null) {
             LOGGER.debug("Using statically-defined devices for [{}] as the YubiKey account registry",
                 yubi.getAllowedDevices().keySet());
-            val registry = new WhitelistYubiKeyAccountRegistry(yubi.getAllowedDevices(), yubiKeyAccountValidator());
+            val map = CollectionUtils.asMultiValueMap(yubi.getAllowedDevices());
+            val registry = new WhitelistYubiKeyAccountRegistry(map, yubiKeyAccountValidator());
             registry.setCipherExecutor(cipher);
             return registry;
         }

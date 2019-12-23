@@ -77,7 +77,9 @@ public class SurrogateAuthenticationPostProcessorTests {
         c.setPassword("Mellon");
         val transaction = DefaultAuthenticationTransaction.of(RegisteredServiceTestUtils.getService("service"), c);
         val builder = mock(AuthenticationBuilder.class);
-        when(builder.build()).thenReturn(CoreAuthenticationTestUtils.getAuthentication("casuser"));
+        val principal = new SurrogatePrincipal(CoreAuthenticationTestUtils.getPrincipal("casuser"),
+            CoreAuthenticationTestUtils.getPrincipal("something"));
+        when(builder.build()).thenReturn(CoreAuthenticationTestUtils.getAuthentication(principal));
         assertThrows(AuthenticationException.class, () -> surrogateAuthenticationPostProcessor.process(builder, transaction));
     }
 
@@ -87,8 +89,7 @@ public class SurrogateAuthenticationPostProcessorTests {
         c.setUsername("casuser");
         c.setPassword("Mellon");
         c.setSurrogateUsername("cassurrogate");
-        val transaction = DefaultAuthenticationTransaction.of(
-            RegisteredServiceTestUtils.getService("https://localhost"), c);
+        val transaction = DefaultAuthenticationTransaction.of(RegisteredServiceTestUtils.getService("https://localhost"), c);
         val builder = mock(AuthenticationBuilder.class);
         when(builder.build()).thenReturn(CoreAuthenticationTestUtils.getAuthentication("casuser"));
         surrogateAuthenticationPostProcessor.process(builder, transaction);

@@ -30,7 +30,7 @@ public class GatewayServicesManagementCheckActionTests extends AbstractWebflowAc
     private ObjectProvider<Action> action;
 
     @Test
-    public void verifyNoServiceFound() throws Exception {
+    public void verifyNoServiceFound() {
         val request = new MockHttpServletRequest();
         val context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
@@ -39,7 +39,7 @@ public class GatewayServicesManagementCheckActionTests extends AbstractWebflowAc
     }
 
     @Test
-    public void verifyDisabledServiceFound() throws Exception {
+    public void verifyDisabledServiceFound() {
         val request = new MockHttpServletRequest();
         val context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));

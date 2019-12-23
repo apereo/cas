@@ -2,7 +2,7 @@ package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.credential.HttpBasedServiceCredential;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
-import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 
 import lombok.SneakyThrows;
 import lombok.val;
@@ -35,7 +35,7 @@ public class AcceptUsersAuthenticationHandlerTests {
         users.put("bill", "thisisAwesoME");
         users.put("brian", "t�st");
 
-        this.authenticationHandler = new AcceptUsersAuthenticationHandler(StringUtils.EMPTY, null, new DefaultPrincipalFactory(), null, users);
+        this.authenticationHandler = new AcceptUsersAuthenticationHandler(StringUtils.EMPTY, null, PrincipalFactoryUtils.newPrincipalFactory(), null, users);
     }
 
     @Test

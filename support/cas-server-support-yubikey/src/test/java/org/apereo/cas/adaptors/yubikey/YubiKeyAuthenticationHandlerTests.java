@@ -2,7 +2,7 @@ package org.apereo.cas.adaptors.yubikey;
 
 import org.apereo.cas.adaptors.yubikey.registry.WhitelistYubiKeyAccountRegistry;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -11,13 +11,13 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.RequestContextHolder;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
-import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -64,11 +64,11 @@ public class YubiKeyAuthenticationHandlerTests {
 
     @Test
     public void checkAccountNotFound() {
-        val registry = new WhitelistYubiKeyAccountRegistry(new HashMap<>(),
+        val registry = new WhitelistYubiKeyAccountRegistry(new LinkedMultiValueMap<>(),
             new DefaultYubiKeyAccountValidator(YubicoClient.getClient(CLIENT_ID, SECRET_KEY)));
         registry.setCipherExecutor(CipherExecutor.noOpOfSerializableToString());
         val handler = new YubiKeyAuthenticationHandler(StringUtils.EMPTY,
-            null, new DefaultPrincipalFactory(),
+            null, PrincipalFactoryUtils.newPrincipalFactory(),
             YubicoClient.getClient(CLIENT_ID, SECRET_KEY),
             registry, null);
         assertThrows(AccountNotFoundException.class, () -> handler.authenticate(new YubiKeyCredential(OTP)));
@@ -76,7 +76,7 @@ public class YubiKeyAuthenticationHandlerTests {
 
     @Test
     public void checkEncryptedAccount() {
-        val registry = new WhitelistYubiKeyAccountRegistry(new HashMap<>(), (uid, token) -> true);
+        val registry = new WhitelistYubiKeyAccountRegistry(new LinkedMultiValueMap<>(), (uid, token) -> true);
         registry.setCipherExecutor(new YubikeyAccountCipherExecutor(
             "1PbwSbnHeinpkZOSZjuSJ8yYpUrInm5aaV18J2Ar4rM",
             "szxK-5_eJjs-aUj-64MpUZ-GPPzGLhYPLGl0wrYjYNVAGva2P0lLe6UGKGM7k8dWxsOVGutZWgvmY3l5oVPO3w", 0, 0));

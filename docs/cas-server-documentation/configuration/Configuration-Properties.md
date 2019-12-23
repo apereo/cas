@@ -39,7 +39,12 @@ The following settings could be used to extend CAS with arbitrary configuration 
 
 ## Configuration Storage
 
+This section outlines strategies that can be used to store CAS configuration and settings.
+
 ### Standalone
+
+This is the default configuration mode which indicates that CAS does NOT require connections 
+to an external configuration server and will run in an embedded standalone mode.
 
 #### By Directory
 
@@ -363,9 +368,33 @@ server.ssl.keyPassword=changeit
 # server.ssl.trustStoreProvider=
 # server.ssl.trustStoreType=
 
-server.maxHttpHeaderSize=2097152
-server.useForwardHeaders=true
-server.connectionTimeout=20000
+# server.maxHttpHeaderSize=2097152
+# server.useForwardHeaders=true
+# server.connectionTimeout=20000
+```
+
+### Embedded Jetty Container
+
+The following settings affect the runtime behavior of the embedded Jetty container.
+
+```properties
+# server.jetty.acceptors=-1       
+
+# server.jetty.accesslog.append=false
+# server.jetty.accesslog.custom-format=
+# server.jetty.accesslog.enabled=false
+# server.jetty.accesslog.file-date-format=
+# server.jetty.accesslog.filename=
+# server.jetty.accesslog.format=
+# server.jetty.accesslog.ignore-paths=
+# server.jetty.accesslog.retention-period=31
+
+# server.jetty.connection-idle-timeout=
+# server.jetty.max-http-form-post-size=200000B
+# server.jetty.max-threads=200
+# server.jetty.min-threads=8
+# server.jetty.selectors=-1
+# server.jetty.thread-idle-timeout=-1
 ```
 
 ### Embedded Apache Tomcat Container
@@ -1262,6 +1291,13 @@ In the event that a separate resolver is put into place, control how the final p
 ## Authentication Engine
 
 Control inner-workings of the CAS authentication engine, before and after the execution.
+
+```properties
+cas.authn.core.groovy-authentication-resolution.location=file:/etc/cas/config/GroovyAuthentication.groovy
+cas.authn.core.groovy-authentication-resolution.order=0
+
+cas.authn.core.service-authentication-resolution.order=0
+```           
 
 ### Authentication Pre-Processing
 
@@ -2870,8 +2906,13 @@ Configuration settings for this feature are available [here](Configuration-Prope
 
 ### YubiKey MongoDb Device Store
 
- Configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.authn.mfa.yubikey`.
+Configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.authn.mfa.yubikey`.
 
+### YubiKey Redis Device Store
+
+Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#redis-configuration)
+under the configuration key `cas.authn.mfa.yubikey`.
+ 
 ### Radius OTP
 
 To learn more about this topic, [please review this guide](../mfa/RADIUS-Authentication.html).
@@ -3198,7 +3239,7 @@ To learn more about this topic, [please review this guide](../integration/Config
 Configuration settings for all SAML2 service providers are [available here](Configuration-Properties-Common.html#saml2-service-provider-integrations).
 
 | Service Provider      | Configuration Key     | Attributes
-|-----------------------|----------------------------------------------------------
+|-----------------------|-----------------------|----------------------------------
 | Gitlab                | `cas.samlSp.gitlab`   | `last_name`,`first_name`,`name`
 | Hipchat               | `cas.samlSp.hipchat`  | `last_name`,`first_name`,`title`
 | Dropbox               | `cas.samlSp.dropbox`  | `mail`
@@ -3342,6 +3383,7 @@ To learn more about this topic, [please review this guide](../integration/Delega
 # cas.authn.pac4j.name=
 # cas.authn.pac4j.order=
 # cas.authn.pac4j.lazyInit=true
+# cas.authn.pac4j.replicateSessions=true
 ```
 
 The following external identity providers share [common blocks of settings](Configuration-Properties-Common.html#delegated-authentication-settings) 
@@ -3478,6 +3520,7 @@ prefixes for the `keystorePath` or `identityProviderMetadataPath` property).
 
 # cas.authn.pac4j.saml[0].wantsAssertionsSigned=
 # cas.authn.pac4j.saml[0].signLogoutRequests=
+# cas.authn.pac4j.saml[0].allSignatureValidationDisabled=false
 # cas.authn.pac4j.saml[0].signServiceProviderMetadata=false
 # cas.authn.pac4j.saml[0].principalIdAttribute=eduPersonPrincipalName
 # cas.authn.pac4j.saml[0].useNameQualifier=true
@@ -4849,10 +4892,12 @@ Common configuration settings for this feature are available [here](Configuratio
 
 #### LDAP
 
-If AUP is controlled via LDAP, decide how choices should be remembered back inside the LDAP instance. LDAP settings for this feature are available [here](Configuration-Properties-Common.html#ldap-connection-settings) under the configuration key `cas.acceptableUsagePolicy.ldap`.
+If AUP is controlled via LDAP, decide how choices should be remembered back inside the LDAP instance. LDAP settings for this feature are available [here](Configuration-Properties-Common.html#ldap-connection-settings) under the configuration key `cas.acceptableUsagePolicy.ldap[0]`.
 
 #### Disable Acceptable Usage Policy
+
 Allow acceptable usage policy webflow to be disabled - requires restart.
+
 ```properties
 cas.acceptableUsagePolicy.enabled=true
 ```
@@ -5215,16 +5260,16 @@ To learn more about this topic, [please review this guide](../installation/Passw
 ### LDAP Password Management
 
 Common LDAP settings for this feature are available [here](Configuration-Properties-Common.html#ldap-connection-settings) 
-under the configuration key `cas.authn.pm.ldap`.
+under the configuration key `cas.authn.pm.ldap[0]`.
 
 ```properties
-# cas.authn.pm.ldap.type=AD|GENERIC|EDirectory|FreeIPA
-# cas.authn.pm.ldap.usernameAttribute=uid
+# cas.authn.pm.ldap[0].type=AD|GENERIC|EDirectory|FreeIPA
+# cas.authn.pm.ldap[0].usernameAttribute=uid
 
 # Attributes that should be fetched to indicate security questions and answers
-# cas.authn.pm.ldap.securityQuestionsAttributes.attrQuestion1=attrAnswer1
-# cas.authn.pm.ldap.securityQuestionsAttributes.attrQuestion2=attrAnswer2
-# cas.authn.pm.ldap.securityQuestionsAttributes.attrQuestion3=attrAnswer3
+# cas.authn.pm.ldap[0].securityQuestionsAttributes.attrQuestion1=attrAnswer1
+# cas.authn.pm.ldap[0].securityQuestionsAttributes.attrQuestion2=attrAnswer2
+# cas.authn.pm.ldap[0].securityQuestionsAttributes.attrQuestion3=attrAnswer3
 ```
 
 ### JDBC Password Management

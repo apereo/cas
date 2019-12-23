@@ -59,7 +59,10 @@ public class RestResourceUtils {
                 .stream()
                 .map(ex -> mapExceptionToMessage(e, request, applicationContext, ex))
                 .collect(Collectors.toList());
-            val errorsMap = new HashMap<String, List<String>>();
+            if (authnExceptions.isEmpty()) {
+                authnExceptions.add(mapExceptionToMessage(e, request, applicationContext, e));
+            }
+            val errorsMap = new HashMap<String, List<String>>(1);
             errorsMap.put("authentication_exceptions", authnExceptions);
             LOGGER.warn("[{}] Caused by: [{}]", e.getMessage(), authnExceptions);
 

@@ -20,6 +20,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.Serializable;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * This is {@link RestPasswordManagementService}.
@@ -29,7 +30,7 @@ import java.util.Map;
  */
 public class RestPasswordManagementService extends BasePasswordManagementService {
 
-    private final transient RestTemplate restTemplate;
+    private final RestTemplate restTemplate;
 
     public RestPasswordManagementService(final CipherExecutor<Serializable, String> cipherExecutor,
                                          final String issuer,
@@ -59,7 +60,7 @@ public class RestPasswordManagementService extends BasePasswordManagementService
         val entity = new HttpEntity<Object>(headers);
         val result = restTemplate.exchange(rest.getEndpointUrlChange(), HttpMethod.POST, entity, Boolean.class);
         if (result.getStatusCodeValue() == HttpStatus.OK.value() && result.hasBody()) {
-            return result.getBody();
+            return Objects.requireNonNull(result.getBody()).booleanValue();
         }
         return false;
     }

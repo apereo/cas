@@ -104,7 +104,7 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
      */
     @ReadOperation
     public Map<String, Object> getSsoSessions(final String type) {
-        val sessionsMap = new HashMap<String, Object>(1);
+        val sessionsMap = new HashMap<String, Object>(6);
         val option = SsoSessionReportOptions.valueOf(type);
         val activeSsoSessions = getActiveSsoSessions(option);
         sessionsMap.put("activeSsoSessions", activeSsoSessions);

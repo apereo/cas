@@ -72,6 +72,6 @@ public class DynamoDbMultifactorAuthenticationTrustStorageTests {
         mfaTrustEngine.set(r);
         assertFalse(mfaTrustEngine.get(r.getPrincipal()).isEmpty());
         assertEquals(1, mfaTrustEngine.get(now.minusDays(30)).size());
-        assertEquals(0, mfaTrustEngine.get(now.minusDays(2)).size());
+        assertEquals(0, mfaTrustEngine.get(now.minusDays(1)).size());
     }
 }

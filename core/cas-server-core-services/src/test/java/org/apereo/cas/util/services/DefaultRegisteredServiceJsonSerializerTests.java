@@ -41,7 +41,7 @@ public class DefaultRegisteredServiceJsonSerializerTests {
     }
 
     @Test
-    public void verifySsoPolicySerialization() throws Exception {
+    public void verifySsoPolicySerialization() {
         val s = new RegexRegisteredService();
         val policy = new ChainingRegisteredServiceSingleSignOnParticipationPolicy();
         policy.addPolicies(Arrays.asList(

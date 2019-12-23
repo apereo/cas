@@ -37,7 +37,7 @@ public class ChainingPrincipalResolverTests {
         val resolver2 = mock(PrincipalResolver.class);
         when(resolver2.supports(eq(credential))).thenReturn(false);
 
-        val resolver = new ChainingPrincipalResolver();
+        val resolver = new ChainingPrincipalResolver(new DefaultPrincipalElectionStrategy());
         resolver.setChain(Arrays.asList(resolver1, resolver2));
         assertTrue(resolver.supports(credential));
     }
@@ -58,7 +58,7 @@ public class ChainingPrincipalResolverTests {
         when(resolver2.resolve(any(Credential.class), any(Optional.class), any(Optional.class)))
             .thenReturn(principalFactory.createPrincipal("output", Collections.singletonMap("mail", List.of("final@example.com"))));
 
-        val resolver = new ChainingPrincipalResolver();
+        val resolver = new ChainingPrincipalResolver(new DefaultPrincipalElectionStrategy());
         resolver.setChain(Arrays.asList(resolver1, resolver2));
         val principal = resolver.resolve(credential,
             Optional.of(principalOut),

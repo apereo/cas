@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.1.xsd">
     <suppress>
+        <cve>CVE-2019-10174</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2018-5382</cve>
+    </suppress>
+    <suppress>
         <cve>CVE-2019-14540</cve>
     </suppress>
     <suppress>

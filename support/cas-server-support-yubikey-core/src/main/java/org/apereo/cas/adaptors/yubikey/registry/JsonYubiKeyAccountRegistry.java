@@ -8,9 +8,8 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.core.io.Resource;
-
-import java.util.HashMap;
-import java.util.Map;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 /**
  * This is {@link JsonYubiKeyAccountRegistry}.
@@ -22,6 +21,7 @@ import java.util.Map;
 public class JsonYubiKeyAccountRegistry extends WhitelistYubiKeyAccountRegistry {
 
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+
     private final Resource jsonResource;
 
     public JsonYubiKeyAccountRegistry(final Resource jsonResource, final YubiKeyAccountValidator validator) {
@@ -30,7 +30,7 @@ public class JsonYubiKeyAccountRegistry extends WhitelistYubiKeyAccountRegistry 
     }
 
     @SneakyThrows
-    private static Map<String, String> getDevicesFromJsonResource(final Resource jsonResource) {
+    private static MultiValueMap<String, String> getDevicesFromJsonResource(final Resource jsonResource) {
         if (!ResourceUtils.doesResourceExist(jsonResource)) {
             val res = jsonResource.getFile().createNewFile();
             if (res) {
@@ -40,12 +40,12 @@ public class JsonYubiKeyAccountRegistry extends WhitelistYubiKeyAccountRegistry 
         if (ResourceUtils.doesResourceExist(jsonResource)) {
             val file = jsonResource.getFile();
             if (file.canRead() && file.length() > 0) {
-                return MAPPER.readValue(file, Map.class);
+                return MAPPER.readValue(file, LinkedMultiValueMap.class);
             }
         } else {
             LOGGER.warn("JSON resource @ [{}] does not exist", jsonResource);
         }
-        return new HashMap<>(0);
+        return new LinkedMultiValueMap<>(0);
     }
 
     @SneakyThrows
@@ -54,7 +54,7 @@ public class JsonYubiKeyAccountRegistry extends WhitelistYubiKeyAccountRegistry 
         if (getAccountValidator().isValid(uid, token)) {
             val yubikeyPublicId = getAccountValidator().getTokenPublicId(token);
             val file = jsonResource.getFile();
-            this.devices.put(uid, getCipherExecutor().encode(yubikeyPublicId));
+            this.devices.add(uid, getCipherExecutor().encode(yubikeyPublicId));
             MAPPER.writer().withDefaultPrettyPrinter().writeValue(file, this.devices);
             return true;
         }

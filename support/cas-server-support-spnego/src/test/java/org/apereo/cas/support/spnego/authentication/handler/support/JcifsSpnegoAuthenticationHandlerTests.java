@@ -2,7 +2,7 @@ package org.apereo.cas.support.spnego.authentication.handler.support;
 
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
-import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.spnego.MockJcifsAuthentication;
 import org.apereo.cas.support.spnego.MockUnsuccessfulJcifsAuthentication;
@@ -93,7 +93,7 @@ public class JcifsSpnegoAuthenticationHandlerTests {
         val myNtlmUserWithNoDomain = USERNAME;
         val myKerberosUser = "Username@DOMAIN.COM";
 
-        val factory = new DefaultPrincipalFactory();
+        val factory = PrincipalFactoryUtils.newPrincipalFactory();
         val authenticationHandler = new JcifsSpnegoAuthenticationHandler(StringUtils.EMPTY, null, null,
             CollectionUtils.wrapList(new MockJcifsAuthentication()), true,
             true, null);
@@ -103,7 +103,7 @@ public class JcifsSpnegoAuthenticationHandlerTests {
         assertEquals(factory.createPrincipal(myKerberosUser), authenticationHandler.getPrincipal(myKerberosUser, false));
 
         val handlerNoDomain = new JcifsSpnegoAuthenticationHandler(StringUtils.EMPTY, mock(ServicesManager.class),
-            new DefaultPrincipalFactory(), CollectionUtils.wrapList(new MockJcifsAuthentication()),
+            PrincipalFactoryUtils.newPrincipalFactory(), CollectionUtils.wrapList(new MockJcifsAuthentication()),
             false, true, null);
         assertEquals(factory.createPrincipal(USERNAME), handlerNoDomain.getPrincipal(myNtlmUser, true));
         assertEquals(factory.createPrincipal(USERNAME), handlerNoDomain.getPrincipal(myNtlmUserWithNoDomain, true));

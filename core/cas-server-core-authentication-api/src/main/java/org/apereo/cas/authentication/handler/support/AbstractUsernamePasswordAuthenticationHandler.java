@@ -56,7 +56,7 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
 
     @SneakyThrows
     @Override
-    protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws GeneralSecurityException, PreventedException {
+    protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) {
         val originalUserPass = (UsernamePasswordCredential) credential;
         val userPass = new UsernamePasswordCredential();
 

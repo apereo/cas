@@ -1,6 +1,6 @@
 package org.apereo.cas.support.spnego.authentication.principal;
 
-import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
@@ -24,7 +24,7 @@ public class SpnegoCredentialsTests {
     @Test
     public void verifyToStringWithPrincipal() {
         val credentials = new SpnegoCredential(ArrayUtils.EMPTY_BYTE_ARRAY);
-        val principal = new DefaultPrincipalFactory().createPrincipal("test");
+        val principal = PrincipalFactoryUtils.newPrincipalFactory().createPrincipal("test");
         credentials.setPrincipal(principal);
         assertEquals("test", credentials.getId());
     }
@@ -36,7 +36,7 @@ public class SpnegoCredentialsTests {
     public void verifyPrincipalAffectsHash() {
         val credential = new SpnegoCredential(ArrayUtils.EMPTY_BYTE_ARRAY);
         val hash1 = credential.hashCode();
-        val principal = new DefaultPrincipalFactory().createPrincipal("test");
+        val principal = PrincipalFactoryUtils.newPrincipalFactory().createPrincipal("test");
         credential.setPrincipal(principal);
         val hash2 = credential.hashCode();
         assertNotEquals(hash1, hash2);

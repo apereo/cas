@@ -1,8 +1,8 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.CoreAttributesTestUtils;
-import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesRepository;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
@@ -218,7 +218,7 @@ public class RegisteredServiceAttributeReleasePolicyTests {
 
         val repository = new CachingPrincipalAttributesRepository(TimeUnit.MILLISECONDS.name(), 100);
         repository.setAttributeRepositoryIds(Set.of(stub.getId()));
-        val p = new DefaultPrincipalFactory().createPrincipal("uid", Collections.singletonMap("mail", List.of("final@example.com")));
+        val p = PrincipalFactoryUtils.newPrincipalFactory().createPrincipal("uid", Collections.singletonMap("mail", List.of("final@example.com")));
 
         policy.setPrincipalAttributesRepository(repository);
 
@@ -249,7 +249,7 @@ public class RegisteredServiceAttributeReleasePolicyTests {
 
         ApplicationContextProvider.registerBeanIntoApplicationContext(this.applicationContext, dao, "attributeRepository");
         val repository = new CachingPrincipalAttributesRepository(TimeUnit.MILLISECONDS.name(), 0);
-        val p = new DefaultPrincipalFactory().createPrincipal("uid", Collections.singletonMap("mail", List.of("final@example.com")));
+        val p = PrincipalFactoryUtils.newPrincipalFactory().createPrincipal("uid", Collections.singletonMap("mail", List.of("final@example.com")));
 
         repository.setAttributeRepositoryIds(CollectionUtils.wrapSet("SampleStubRepository".toUpperCase()));
         policy.setPrincipalAttributesRepository(repository);
@@ -278,7 +278,8 @@ public class RegisteredServiceAttributeReleasePolicyTests {
         assertFalse(policy.isAuthorizedToReleaseCredentialPassword());
         assertFalse(policy.isAuthorizedToReleaseProxyGrantingTicket());
 
-        val p = new DefaultPrincipalFactory().createPrincipal("uid", Collections.singletonMap("mail", List.of("final@example.com")));
+        val p = PrincipalFactoryUtils.newPrincipalFactory()
+            .createPrincipal("uid", Collections.singletonMap("mail", List.of("final@example.com")));
         val attrs = policy.getConsentableAttributes(p, CoreAttributesTestUtils.getService(), CoreAttributesTestUtils.getRegisteredService());
         assertEquals(p.getAttributes(), attrs);
 

@@ -1,6 +1,6 @@
 package org.apereo.cas.adaptors.trusted.authentication.principal;
 
-import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
@@ -26,7 +26,7 @@ public class PrincipalBearingCredentialsTests {
 
     @BeforeEach
     public void initialize() {
-        this.principalBearingCredentials = new PrincipalBearingCredential(new DefaultPrincipalFactory().createPrincipal("test"));
+        this.principalBearingCredentials = new PrincipalBearingCredential(PrincipalFactoryUtils.newPrincipalFactory().createPrincipal("test"));
     }
 
     @Test

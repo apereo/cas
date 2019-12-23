@@ -55,7 +55,7 @@ public class RejectUsersAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyFailsUserInMap() throws Exception {
+    public void verifyFailsUserInMap() {
         val c = new UsernamePasswordCredential();
 
         c.setUsername("scott");
@@ -77,7 +77,7 @@ public class RejectUsersAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyPassesNullUserName() throws Exception {
+    public void verifyPassesNullUserName() {
         val c = new UsernamePasswordCredential();
 
         c.setUsername(null);
@@ -89,7 +89,7 @@ public class RejectUsersAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyPassesNullUserNameAndPassword() throws Exception {
+    public void verifyPassesNullUserNameAndPassword() {
         assertThrows(AccountNotFoundException.class, () -> {
             this.authenticationHandler.authenticate(new UsernamePasswordCredential());
         });

@@ -71,7 +71,7 @@ public class AzureActiveDirectoryAuthenticationHandlerTests {
     private AuthenticationHandler microsoftAzureActiveDirectoryAuthenticationHandler;
 
     @Test
-    public void verifyOperation() throws Exception {
+    public void verifyOperation() {
         val c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword(
             "castest@hotmail.onmicrosoft.com", "1234567890");
         assertThrows(FailedLoginException.class, () -> microsoftAzureActiveDirectoryAuthenticationHandler.authenticate(c));

@@ -1,4 +1,5 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.config.SurrogateAuthenticationConfiguration,\
 org.apereo.cas.config.SurrogateAuthenticationMetadataConfiguration,\
 org.apereo.cas.config.SurrogateComponentSerializationConfiguration,\
+org.apereo.cas.config.SurrogateAuthenticationRestConfiguration,\
 org.apereo.cas.config.SurrogateAuthenticationAuditConfiguration

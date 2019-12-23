@@ -21,12 +21,12 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
- * Mockito based tests for @{link ServiceAuthorizationCheck}
+ * Mockito based tests for {@link ServiceAuthorizationCheckAction}
  *
  * @author Dmitriy Kopylenko
  * @since 3.5.0
  */
-public class ServiceAuthorizationCheckTests {
+public class ServiceAuthorizationCheckActionMockitoTests {
     private final WebApplicationService authorizedService = mock(WebApplicationService.class);
     private final WebApplicationService unauthorizedService = mock(WebApplicationService.class);
     private final WebApplicationService undefinedService = mock(WebApplicationService.class);

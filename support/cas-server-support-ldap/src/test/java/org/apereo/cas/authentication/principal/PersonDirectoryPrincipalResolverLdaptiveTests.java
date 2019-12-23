@@ -66,7 +66,7 @@ public class PersonDirectoryPrincipalResolverLdaptiveTests {
     @Test
     public void verifyChainedResolver() {
         val resolver = new PersonDirectoryPrincipalResolver(this.attributeRepository);
-        val chain = new ChainingPrincipalResolver();
+        val chain = new ChainingPrincipalResolver(new DefaultPrincipalElectionStrategy());
         chain.setChain(Arrays.asList(new EchoingPrincipalResolver(), resolver));
         val attributes = new HashMap<String, List<Object>>(2);
         attributes.put("a1", List.of("v1"));

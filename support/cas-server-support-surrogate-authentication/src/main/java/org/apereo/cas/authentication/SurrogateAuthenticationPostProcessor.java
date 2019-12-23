@@ -19,6 +19,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import javax.security.auth.login.CredentialNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import java.util.Map;
+import java.util.Optional;
 
 
 /**
@@ -39,12 +40,17 @@ public class SurrogateAuthenticationPostProcessor implements AuthenticationPostP
     @Override
     public void process(final AuthenticationBuilder builder, final AuthenticationTransaction transaction) throws AuthenticationException {
         val authentication = builder.build();
-        val primaryPrincipal = authentication.getPrincipal();
+        val principal = authentication.getPrincipal();
 
+        if (!(principal instanceof SurrogatePrincipal)) {
+            LOGGER.trace("Provided principal is one intended for surrogate authentication");
+            return;
+        }
         val primaryCredential = transaction.getPrimaryCredential();
         if (primaryCredential.isEmpty()) {
             throw new AuthenticationException("Unable to determine primary credentials");
         }
+        val primaryPrincipal = SurrogatePrincipal.class.cast(principal);
         val surrogateCredentials = (SurrogateUsernamePasswordCredential) primaryCredential.get();
         val targetUserId = surrogateCredentials.getSurrogateUsername();
 
@@ -68,7 +74,7 @@ public class SurrogateAuthenticationPostProcessor implements AuthenticationPostP
                 accessResult.throwExceptionIfNeeded();
             }
 
-            if (this.surrogateAuthenticationService.canAuthenticateAs(targetUserId, primaryPrincipal, transaction.getService())) {
+            if (surrogateAuthenticationService.canAuthenticateAs(targetUserId, primaryPrincipal.getPrimary(), Optional.ofNullable(transaction.getService()))) {
                 LOGGER.debug("Principal [{}] is authorized to authenticate as [{}]", primaryPrincipal, targetUserId);
                 publishSuccessEvent(primaryPrincipal, targetUserId);
 

@@ -4,7 +4,6 @@ import org.apereo.cas.aup.AcceptableUsagePolicyRepository;
 import org.apereo.cas.aup.LdapAcceptableUsagePolicyRepository;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
-import org.apereo.cas.util.LdapUtils;
 
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
@@ -38,9 +37,7 @@ public class CasAcceptableUsagePolicyLdapConfiguration {
     @Bean
     public AcceptableUsagePolicyRepository acceptableUsagePolicyRepository() {
         val ldap = casProperties.getAcceptableUsagePolicy().getLdap();
-        val connectionFactory = LdapUtils.newLdaptivePooledConnectionFactory(ldap);
         return new LdapAcceptableUsagePolicyRepository(ticketRegistrySupport.getObject(),
-            casProperties.getAcceptableUsagePolicy().getAupAttributeName(),
-            connectionFactory, ldap);
+            casProperties.getAcceptableUsagePolicy().getAupAttributeName(), ldap);
     }
 }

@@ -7,7 +7,7 @@
     </Appenders>
     <Loggers>
         <Logger name="org.apereo" level="error" />
-        <Logger name="org.apache.http" level="error" />
+        <Logger name="org.apache.http" level="off" />
         <Root level="off">
             <AppenderRef ref="console"/>
         </Root>

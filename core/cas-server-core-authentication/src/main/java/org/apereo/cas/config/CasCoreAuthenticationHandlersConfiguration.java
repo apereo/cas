@@ -95,7 +95,7 @@ public class CasCoreAuthenticationHandlersConfiguration {
         val h = new AcceptUsersAuthenticationHandler(props.getName(),
             servicesManager.getObject(),
             acceptUsersPrincipalFactory(),
-            null,
+            props.getOrder(),
             getParsedUsers());
         h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(props.getPasswordEncoder(), applicationContext));
         h.setPasswordPolicyConfiguration(acceptPasswordPolicyConfiguration());

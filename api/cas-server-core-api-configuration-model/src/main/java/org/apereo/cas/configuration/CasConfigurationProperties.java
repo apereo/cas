@@ -57,7 +57,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@ConfigurationProperties(value = "cas", ignoreUnknownFields = false)
+@ConfigurationProperties(value = "cas")
 @Getter
 @Setter
 public class CasConfigurationProperties implements Serializable {

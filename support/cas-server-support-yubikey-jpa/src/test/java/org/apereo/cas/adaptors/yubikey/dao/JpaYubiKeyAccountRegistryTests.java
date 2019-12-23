@@ -30,6 +30,7 @@ import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
+import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -107,8 +108,11 @@ public class JpaYubiKeyAccountRegistryTests {
     @Test
     public void verifyAccountRegistered() {
         assertTrue(yubiKeyAccountRegistry.registerAccountFor("casuser", "cccccccvlidchlffblbghhckbctgethcrtdrruchvlud"));
+        assertTrue(yubiKeyAccountRegistry.registerAccountFor("casuser", "cccccccvlidchlffblbghhckbctgethcrtdrruchvluq"));
         assertTrue(yubiKeyAccountRegistry.isYubiKeyRegisteredFor("casuser"));
         assertEquals(1, yubiKeyAccountRegistry.getAccounts().size());
+        val account = yubiKeyAccountRegistry.getAccount("casuser");
+        account.ifPresent(acct -> assertEquals(2, acct.getDeviceIdentifiers().size()));
     }
 
     @TestConfiguration("JpaYubiKeyAccountRegistryTestConfiguration")

@@ -10,7 +10,9 @@ echo "Current CAS version is $casVersion"
 
 gradle="./gradlew $@"
 gradleBuild=""
-gradleBuildOptions="--build-cache --configure-on-demand --no-daemon -Dorg.gradle.internal.http.socketTimeout=160000 -Dorg.gradle.internal.http.connectionTimeout=160000 "
+gradleBuildOptions="--build-cache --configure-on-demand --no-daemon -DskipGradleLint=true \
+                    -Dorg.gradle.internal.http.socketTimeout=180000 \
+                    -Dorg.gradle.internal.http.connectionTimeout=180000 "
 
 echo -e "***********************************************"
 echo -e "Gradle build started at `date`"

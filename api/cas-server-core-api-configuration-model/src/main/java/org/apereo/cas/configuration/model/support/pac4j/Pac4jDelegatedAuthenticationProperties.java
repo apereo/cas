@@ -47,6 +47,17 @@ public class Pac4jDelegatedAuthenticationProperties implements Serializable {
     private boolean lazyInit = true;
 
     /**
+     * Indicates whether profiles and other session data,
+     * collected as part of pac4j flows and requests
+     * that are kept by the container session, should be replicated
+     * across the cluster using CAS and its own ticket registry.
+     * Without this option, profile data and other related
+     * pieces of information should be manually replicated
+     * via means and libraries outside of CAS.
+     */
+    private boolean replicateSessions = true;
+
+    /**
      * Handle provisioning ops when establishing profiles
      * from external identity providers.
      */

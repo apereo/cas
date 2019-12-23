@@ -10,6 +10,7 @@ import org.apereo.cas.util.CollectionUtils;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Maps;
 import com.microsoft.aad.adal4j.AuthenticationContext;
 import com.microsoft.aad.adal4j.AuthenticationResult;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +27,6 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -107,7 +107,7 @@ public class AzureActiveDirectoryAuthenticationHandler extends AbstractUsernameP
             LOGGER.trace("Retrieved user info [{}]", userInfo);
             val userInfoMap = (Map<String, ?>) MAPPER.readValue(userInfo, Map.class);
 
-            val attributeMap = new HashMap<String, List<Object>>(userInfoMap.size());
+            val attributeMap = Maps.<String, List<Object>>newHashMapWithExpectedSize(userInfoMap.size());
             userInfoMap.forEach((key, value) -> {
                 val values = CollectionUtils.toCollection(value, ArrayList.class);
                 if (!values.isEmpty()) {

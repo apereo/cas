@@ -72,7 +72,8 @@ public class OAuth20UserProfileEndpointController extends BaseOAuth20Controller 
      * @return the response entity
      * @throws Exception the exception
      */
-    @GetMapping(path = OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.PROFILE_URL)
+    @GetMapping(path = OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.PROFILE_URL,
+        produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> handleGetRequest(final HttpServletRequest request,
                                                    final HttpServletResponse response) throws Exception {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
