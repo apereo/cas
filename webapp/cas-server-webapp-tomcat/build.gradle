@@ -3,6 +3,6 @@ description = "Apereo CAS Web Application via Apache Tomcat"
 
 dependencies {
     implementation project(":webapp:cas-server-webapp-init-tomcat")
-    implementation project(":support:cas-server-support-json-service-registry")
-    implementation project(":support:cas-server-support-multiphase")
 }
+
+apply from: rootProject.file("multiphase_deps.gradle")
