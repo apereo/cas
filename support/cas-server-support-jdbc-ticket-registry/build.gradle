@@ -1,4 +1,4 @@
-description = "Apereo CAS JPA Service Registry Support"
+description = "Apereo CAS JDBC high-performance Ticket Registry Support"
 ext {
     maxParallelForksForTests = 1
 }
