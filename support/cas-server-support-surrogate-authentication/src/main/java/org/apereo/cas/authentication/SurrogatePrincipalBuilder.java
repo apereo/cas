@@ -2,6 +2,7 @@ package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.services.RegisteredService;
 
 import lombok.RequiredArgsConstructor;
@@ -21,18 +22,18 @@ import java.util.Optional;
 public class SurrogatePrincipalBuilder {
     private final PrincipalFactory principalFactory;
     private final IPersonAttributeDao attributeRepository;
+    private final SurrogateAuthenticationService surrogateAuthenticationService;
+
 
     /**
      * Build principal.
      *
      * @param surrogate         the surrogate
      * @param primaryPrincipal  the primary principal
-     * @param credentials       the credentials
      * @param registeredService the registered service
      * @return the principal
      */
-    public Principal buildSurrogatePrincipal(final String surrogate, final Principal primaryPrincipal, final Credential credentials,
-                                             final RegisteredService registeredService) {
+    public Principal buildSurrogatePrincipal(final String surrogate, final Principal primaryPrincipal, final RegisteredService registeredService) {
         val repositories = new HashSet<String>(0);
         if (registeredService != null) {
             repositories.addAll(registeredService.getAttributeReleasePolicy().getPrincipalAttributesRepository().getAttributeRepositoryIds());
@@ -41,6 +42,18 @@ public class SurrogatePrincipalBuilder {
         val principal = principalFactory.createPrincipal(surrogate, attributes);
         return new SurrogatePrincipal(primaryPrincipal, principal);
     }
+
+    /**
+     * Build surrogate principal.
+     *
+     * @param surrogate        the surrogate
+     * @param primaryPrincipal the primary principal
+     * @return the principal
+     */
+    public Principal buildSurrogatePrincipal(final String surrogate, final Principal primaryPrincipal) {
+        return buildSurrogatePrincipal(surrogate, primaryPrincipal, null);
+    }
+
 
     /**
      * Build surrogate authentication result optional.
@@ -58,7 +71,14 @@ public class SurrogatePrincipalBuilder {
         val currentAuthn = authenticationResultBuilder.getInitialAuthentication();
         if (currentAuthn.isPresent()) {
             val authentication = currentAuthn.get();
-            val surrogatePrincipal = buildSurrogatePrincipal(surrogateTargetId, authentication.getPrincipal(), credential, registeredService);
+            var principal = authentication.getPrincipal();
+            if (authentication.getPrincipal() instanceof SurrogatePrincipal) {
+                principal = SurrogatePrincipal.class.cast(authentication.getPrincipal()).getPrimary();
+            }
+            if (!surrogateAuthenticationService.canAuthenticateAs(surrogateTargetId, principal, Optional.empty())) {
+                throw new SurrogateAuthenticationException("Unable to authorize surrogate authentication request for " + surrogateTargetId);
+            }
+            val surrogatePrincipal = buildSurrogatePrincipal(surrogateTargetId, principal, registeredService);
             val auth = DefaultAuthenticationBuilder.newInstance(authentication).setPrincipal(surrogatePrincipal).build();
             return Optional.of(authenticationResultBuilder.collect(auth));
         }

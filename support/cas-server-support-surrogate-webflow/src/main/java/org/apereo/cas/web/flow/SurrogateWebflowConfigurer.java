@@ -84,6 +84,7 @@ public class SurrogateWebflowConfigurer extends AbstractCasWebflowConfigurer {
         val actionState = getState(flow, CasWebflowConstants.STATE_ID_REAL_SUBMIT, ActionState.class);
         val targetSuccessId = actionState.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS).getTargetStateId();
         createTransitionForState(selectSurrogate, CasWebflowConstants.TRANSITION_ID_SUCCESS, targetSuccessId);
+        createTransitionForState(selectSurrogate, CasWebflowConstants.TRANSITION_ID_ERROR, STATE_ID_SURROGATE_VIEW);
     }
 
     private void createSurrogateListViewState(final Flow flow) {

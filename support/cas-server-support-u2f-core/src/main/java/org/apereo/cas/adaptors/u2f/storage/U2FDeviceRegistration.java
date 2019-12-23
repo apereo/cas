@@ -14,6 +14,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.Table;
+
 import java.io.Serializable;
 import java.time.LocalDate;
 
@@ -42,7 +43,7 @@ public class U2FDeviceRegistration implements Serializable {
     private String username;
 
     @Lob
-    @Column(name = "record", length = 4000)
+    @Column(name = "record", length = Integer.MAX_VALUE)
     private String record;
 
     @Column(nullable = false, columnDefinition = "TIMESTAMP")
