@@ -39,7 +39,12 @@ The following settings could be used to extend CAS with arbitrary configuration 
 
 ## Configuration Storage
 
+This section outlines strategies that can be used to store CAS configuration and settings.
+
 ### Standalone
+
+This is the default configuration mode which indicates that CAS does NOT require connections 
+to an external configuration server and will run in an embedded standalone mode.
 
 #### By Directory
 
@@ -363,9 +368,33 @@ server.ssl.keyPassword=changeit
 # server.ssl.trustStoreProvider=
 # server.ssl.trustStoreType=
 
-server.maxHttpHeaderSize=2097152
-server.useForwardHeaders=true
-server.connectionTimeout=20000
+# server.maxHttpHeaderSize=2097152
+# server.useForwardHeaders=true
+# server.connectionTimeout=20000
+```
+
+### Embedded Jetty Container
+
+The following settings affect the runtime behavior of the embedded Jetty container.
+
+```properties
+# server.jetty.acceptors=-1       
+
+# server.jetty.accesslog.append=false
+# server.jetty.accesslog.custom-format=
+# server.jetty.accesslog.enabled=false
+# server.jetty.accesslog.file-date-format=
+# server.jetty.accesslog.filename=
+# server.jetty.accesslog.format=
+# server.jetty.accesslog.ignore-paths=
+# server.jetty.accesslog.retention-period=31
+
+# server.jetty.connection-idle-timeout=
+# server.jetty.max-http-form-post-size=200000B
+# server.jetty.max-threads=200
+# server.jetty.min-threads=8
+# server.jetty.selectors=-1
+# server.jetty.thread-idle-timeout=-1
 ```
 
 ### Embedded Apache Tomcat Container
@@ -1262,6 +1291,13 @@ In the event that a separate resolver is put into place, control how the final p
 ## Authentication Engine
 
 Control inner-workings of the CAS authentication engine, before and after the execution.
+
+```properties
+cas.authn.core.groovy-authentication-resolution.location=file:/etc/cas/config/GroovyAuthentication.groovy
+cas.authn.core.groovy-authentication-resolution.order=0
+
+cas.authn.core.service-authentication-resolution.order=0
+```           
 
 ### Authentication Pre-Processing
 
@@ -3342,6 +3378,7 @@ To learn more about this topic, [please review this guide](../integration/Delega
 # cas.authn.pac4j.name=
 # cas.authn.pac4j.order=
 # cas.authn.pac4j.lazyInit=true
+# cas.authn.pac4j.replicateSessions=true
 ```
 
 The following external identity providers share [common blocks of settings](Configuration-Properties-Common.html#delegated-authentication-settings) 

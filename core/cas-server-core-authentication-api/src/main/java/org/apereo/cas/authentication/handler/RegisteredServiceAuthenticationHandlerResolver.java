@@ -7,7 +7,9 @@ import org.apereo.cas.authentication.handler.support.HttpBasedServiceCredentials
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedSsoServiceException;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
@@ -24,12 +26,16 @@ import java.util.Set;
  */
 @Slf4j
 @RequiredArgsConstructor
+@Getter
+@Setter
 public class RegisteredServiceAuthenticationHandlerResolver implements AuthenticationHandlerResolver {
 
     /**
      * The Services manager.
      */
     protected final ServicesManager servicesManager;
+
+    private int order;
 
     @Override
     public boolean supports(final Set<AuthenticationHandler> handlers, final AuthenticationTransaction transaction) {
@@ -67,6 +73,5 @@ public class RegisteredServiceAuthenticationHandlerResolver implements Authentic
         }
         LOGGER.debug("Authentication handlers for this transaction are [{}]", handlerSet);
         return handlerSet;
-
     }
 }

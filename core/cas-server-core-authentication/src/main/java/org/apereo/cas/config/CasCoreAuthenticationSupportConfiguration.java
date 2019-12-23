@@ -9,6 +9,7 @@ import org.apereo.cas.authentication.GroovyAuthenticationPostProcessor;
 import org.apereo.cas.authentication.GroovyAuthenticationPreProcessor;
 import org.apereo.cas.authentication.PrincipalElectionStrategy;
 import org.apereo.cas.authentication.handler.ByCredentialSourceAuthenticationHandlerResolver;
+import org.apereo.cas.authentication.handler.GroovyAuthenticationHandlerResolver;
 import org.apereo.cas.authentication.handler.RegisteredServiceAuthenticationHandlerResolver;
 import org.apereo.cas.authentication.principal.cache.PrincipalAttributesRepositoryCache;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -19,10 +20,11 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
 
 /**
  * This is {@link CasCoreAuthenticationSupportConfiguration}.
@@ -55,15 +57,25 @@ public class CasCoreAuthenticationSupportConfiguration {
             principalElectionStrategy.getObject());
     }
 
+    @RefreshScope
     @Bean
-    @Lazy
     @ConditionalOnMissingBean(name = "registeredServiceAuthenticationHandlerResolver")
     public AuthenticationHandlerResolver registeredServiceAuthenticationHandlerResolver() {
-        return new RegisteredServiceAuthenticationHandlerResolver(servicesManager.getObject());
+        val resolver = new RegisteredServiceAuthenticationHandlerResolver(servicesManager.getObject());
+        resolver.setOrder(casProperties.getAuthn().getCore().getServiceAuthenticationResolution().getOrder());
+        return resolver;
+    }
+
+    @RefreshScope
+    @Bean
+    @ConditionalOnMissingBean(name = "groovyAuthenticationHandlerResolver")
+    @ConditionalOnProperty(name = "cas.authn.core.groovy-authentication-resolution.location")
+    public AuthenticationHandlerResolver groovyAuthenticationHandlerResolver() {
+        val groovy = casProperties.getAuthn().getCore().getGroovyAuthenticationResolution();
+        return new GroovyAuthenticationHandlerResolver(groovy.getLocation(), servicesManager.getObject(), groovy.getOrder());
     }
 
     @Bean
-    @Lazy
     @ConditionalOnMissingBean(name = "byCredentialSourceAuthenticationHandlerResolver")
     public AuthenticationHandlerResolver byCredentialSourceAuthenticationHandlerResolver() {
         return new ByCredentialSourceAuthenticationHandlerResolver();
@@ -77,6 +89,11 @@ public class CasCoreAuthenticationSupportConfiguration {
                 plan.registerAuthenticationHandlerResolver(byCredentialSourceAuthenticationHandlerResolver());
             }
             plan.registerAuthenticationHandlerResolver(registeredServiceAuthenticationHandlerResolver());
+
+            val groovy = casProperties.getAuthn().getCore().getGroovyAuthenticationResolution();
+            if (groovy.getLocation() != null) {
+                plan.registerAuthenticationHandlerResolver(groovyAuthenticationHandlerResolver());
+            }
         };
     }
 
