@@ -32,14 +32,15 @@ public class AccessTokenPasswordGrantRequestExtractor extends BaseAccessTokenGra
 
     @Override
     public AccessTokenRequestDataHolder extract(final HttpServletRequest request, final HttpServletResponse response) {
-        val clientId = request.getParameter(OAuth20Constants.CLIENT_ID);
+        val context = new JEEContext(request, response, getOAuthConfigurationContext().getSessionStore());
+        val clientId = OAuth20Utils.getClientIdAndClientSecret(context).getKey();
         val scopes = OAuth20Utils.parseRequestScopes(request);
         LOGGER.debug("Locating OAuth registered service by client id [{}]", clientId);
 
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(getOAuthConfigurationContext().getServicesManager(), clientId);
         LOGGER.debug("Located OAuth registered service [{}]", registeredService);
 
-        val context = new JEEContext(request, response, getOAuthConfigurationContext().getSessionStore());
+
         val manager = new ProfileManager<CommonProfile>(context, context.getSessionStore());
         val profile = manager.get(true);
         if (profile.isEmpty()) {
