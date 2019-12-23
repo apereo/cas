@@ -1,11 +1,9 @@
 package org.apereo.cas.support.oauth.validator.token;
 
 import org.apereo.cas.audit.AuditableContext;
-import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
-import org.apereo.cas.util.HttpRequestUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
