@@ -1784,14 +1784,40 @@ ext.libraries = [
                 }
         ],
         log4j                   : [
-                createLog4jDependencies(
-                    "org.springframework.boot:spring-boot-starter-log4j2:$springBootVersion",
-                    "org.apache.logging.log4j:log4j-api:$log4jVersion",
-                    "org.apache.logging.log4j:log4j-core:$log4jVersion",
-                    "org.apache.logging.log4j:log4j-jcl:$log4jVersion",
-                    "org.apache.logging.log4j:log4j-web:$log4jVersion",
-                    "org.apache.logging.log4j:log4j-slf4j18-impl:$log4jVersion",
-                    "com.lmax:disruptor:$disruptorVersion")
+                dependencies.create("org.springframework.boot:spring-boot-starter-log4j2:$springBootVersion") {
+                    exclude(group: "org.springframework", module: "spring-web")
+                    exclude(group: "org.springframework", module: "spring-webmvc")
+                    exclude(group: "org.springframework", module: "spring-core")
+                    exclude(group: "org.springframework", module: "spring-context")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.slf4j", module: "jul-to-slf4j")
+                    exclude(group: "org.apache.logging.log4j", module: "log4j-slf4j-impl")
+                    exclude(group: "org.apache.logging.log4j", module: "log4j-core")
+                    exclude(group: "org.apache.logging.log4j", module: "log4j-api")
+                    exclude(group: "org.apache.logging.log4j", module: "log4j-jcl")
+                    force = true
+                },
+                dependencies.create("org.apache.logging.log4j:log4j-api:$log4jVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    force = true
+                },
+                dependencies.create("org.apache.logging.log4j:log4j-core:$log4jVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    force = true
+                },
+                dependencies.create("org.apache.logging.log4j:log4j-jcl:$log4jVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    force = true
+                },
+                dependencies.create("org.apache.logging.log4j:log4j-web:$log4jVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    force = true
+                },
+                dependencies.create("org.apache.logging.log4j:log4j-slf4j18-impl:$log4jVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    force = true
+                },
+                dependencies.create("com.lmax:disruptor:$disruptorVersion")
         ],
         slf4j                   : [
                 dependencies.create("org.slf4j:slf4j-api:$slf4jVersion"),
@@ -2561,6 +2587,7 @@ ext.libraries = [
                 },
                 dependencies.create("org.springframework.boot:spring-boot-starter-aop:$springBootVersion") {
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-web")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.slf4j", module: "log4j-over-slf4j")
@@ -2577,6 +2604,7 @@ ext.libraries = [
                 },
                 dependencies.create("org.springframework.boot:spring-boot-starter-web:$springBootVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.slf4j", module: "jcl-over-slf4j")
                     exclude(group: "org.slf4j", module: "log4j-over-slf4j")
                     exclude(group: "org.slf4j", module: "jul-to-slf4j")
                     exclude(group: "org.jboss.logging", module: "jboss-logging")
@@ -2595,18 +2623,18 @@ ext.libraries = [
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-actuator")
-                    exclude(group: "org.slf4j", module: "jcl-over-slf4j")
-                    exclude(group: "org.slf4j", module: "jul-to-slf4j")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-tomcat")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-validation")
                     exclude(group: "org.apache.tomcat.embed", module: "tomcat-embed-core")
                     exclude(group: "org.apache.tomcat.embed", module: "tomcat-embed-el")
                     exclude(group: "org.apache.tomcat.embed", module: "tomcat-embed-websocket")
-                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-tomcat")
-                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-validation")
                     force = true
                 },
                 dependencies.create("org.springframework.boot:spring-boot-autoconfigure:$springBootVersion") {
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-actuator")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-web")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter")
                     exclude(group: "org.springframework", module: "spring-web")
                     exclude(group: "org.springframework", module: "spring-webmvc")
                     exclude(group: "org.springframework", module: "spring-core")
@@ -2621,6 +2649,8 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
+                    exclude(group: "ch.qos.logback", module: "logback-core")
+                    exclude(group: "ch.qos.logback", module: "logback-classic")
                     force = true
                 },
                 dependencies.create("org.springframework.boot:spring-boot:$springBootVersion") {
@@ -2635,6 +2665,8 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.slf4j", module: "jul-to-slf4j")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
+                    exclude(group: "ch.qos.logback", module: "logback-core")
+                    exclude(group: "ch.qos.logback", module: "logback-classic")
                     force = true
                 },
                 dependencies.create("org.springframework.boot:spring-boot-properties-migrator:$springBootVersion") {
@@ -2655,6 +2687,7 @@ ext.libraries = [
                 },
                 dependencies.create("org.springframework.boot:spring-boot-starter-actuator:$springBootVersion") {
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-actuator")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-web")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
@@ -2669,6 +2702,29 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-aop")
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.slf4j", module: "jul-to-slf4j")
+                    exclude(group: "ch.qos.logback", module: "logback-core")
+                    exclude(group: "ch.qos.logback", module: "logback-classic")
+                    force = true
+                },
+                dependencies.create("org.springframework.boot:spring-boot-starter-validation:$springBootVersion") {
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-actuator")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-web")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
+                    exclude(group: "org.hibernate", module: "hibernate-validator")
+                    exclude(group: "org.hibernate", module: "hibernate-core")
+                    exclude(group: "org.hibernate", module: "hibernate-entitymanager")
+                    exclude(group: "org.springframework", module: "spring-web")
+                    exclude(group: "org.springframework", module: "spring-webmvc")
+                    exclude(group: "org.springframework", module: "spring-core")
+                    exclude(group: "org.springframework", module: "spring-context")
+                    exclude(group: "org.springframework", module: "spring-aop")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.slf4j", module: "jul-to-slf4j")
+                    exclude(group: "ch.qos.logback", module: "logback-core")
+                    exclude(group: "ch.qos.logback", module: "logback-classic")
                     force = true
                 },
                 dependencies.create("org.springframework.boot:spring-boot-actuator:$springBootVersion") {
@@ -2682,11 +2738,14 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-aop")
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-web")
                     force = true
                 }
         ],
         springboottomcat        : [
                 dependencies.create("org.springframework.boot:spring-boot-starter-tomcat:$springBootVersion") {
+                    exclude(group: "ch.qos.logback", module: "logback-core")
+                    exclude(group: "ch.qos.logback", module: "logback-classic")
                     exclude(group: "org.springframework", module: "spring-web")
                     exclude(group: "org.springframework", module: "spring-webmvc")
                     exclude(group: "org.springframework", module: "spring-core")
@@ -2697,6 +2756,7 @@ ext.libraries = [
                     exclude(group: "org.apache.tomcat.embed", module: "tomcat-embed-el")
                     exclude(group: "org.apache.tomcat.embed", module: "tomcat-embed-websocket")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-web")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
                     force = true
                 },
@@ -3568,12 +3628,26 @@ ext.libraries = [
                     exclude(group: "org.jvnet.mimepull", module: "mimepull")
                     exclude(group: "ch.qos.logback", module: "logback-core")
                     exclude(group: "ch.qos.logback", module: "logback-classic")
+                    exclude(group: "log4j", module: "log4j")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.slf4j", module: "slf4j-log4j12")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-web")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-validation")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-actuator")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter")
                     force = true
                 },
                 dependencies.create("org.springframework.ws:spring-ws-security:$springWsVersion") {
                     exclude(group: "org.apache.wss4j", module: "wss4j-ws-security-dom")
                     exclude(group: "org.apache.wss4j", module: "wss4j-ws-security-common")
                     exclude(group: "org.jvnet.mimepull", module: "mimepull")
+                    exclude(group: "ch.qos.logback", module: "logback-core")
+                    exclude(group: "ch.qos.logback", module: "logback-classic")
+                    exclude(group: "commons-logging", module: "commons-logging")
+                    exclude(group: "log4j", module: "log4j")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.slf4j", module: "slf4j-log4j12")
                     force = true
                 }
         ],
@@ -3744,26 +3818,6 @@ def createMetricsDependencies(String... coordinates) {
             exclude(group: "org.slf4j", module: "slf4j-api")
             exclude(group: "commons-lang", module: "commons-lang")
             excludeDependencyIfNecessary(it, "com.signalfx.public:signalfx-java")
-            force = true
-        }
-    }
-}
-
-def createLog4jDependencies(String... coordinates) {
-    coordinates.each { coord ->
-        dependencies.create(coord) { it ->
-            exclude(group: "org.springframework", module: "spring-web")
-            exclude(group: "org.springframework", module: "spring-webmvc")
-            exclude(group: "org.springframework", module: "spring-core")
-            exclude(group: "org.springframework", module: "spring-context")
-            exclude(group: "org.slf4j", module: "slf4j-api")
-            exclude(group: "org.slf4j", module: "jul-to-slf4j")
-
-            excludeDependencyIfNecessary(it, "org.apache.logging.log4j:log4j-slf4j-impl")
-            excludeDependencyIfNecessary(it, "org.apache.logging.log4j:log4j-core")
-            excludeDependencyIfNecessary(it, "org.apache.logging.log4j:log4j-api")
-            excludeDependencyIfNecessary(it, "org.apache.logging.log4j:log4j-jcl")
-            excludeDependencyIfNecessary(it, "org.apache.logging.log4j:log4j-web")
             force = true
         }
     }

@@ -21,7 +21,7 @@ public class BlockingRadiusServerTests extends AbstractRadiusServerTests {
     public static final String XYZ = "xyz";
 
     @Test
-    public void verifyBadSecret() throws Exception {
+    public void verifyBadSecret() {
         assertThrows(TimeoutException.class,
             () -> new BlockingRadiusServer(RadiusProtocol.MSCHAPv2, new RadiusClientFactory(ACCOUNTING_PORT, AUTHENTICATION_PORT, 1, INET_ADDRESS, XYZ))
                 .authenticate(XYZ, XYZ));

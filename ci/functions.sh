@@ -4,7 +4,7 @@ currentChangeSetContains() {
     # Turn on for case-insensitive matching
     # shopt -s nocasematch
 
-    if [[ "${TRAVIS_COMMIT_MESSAGE}" =~ "[force build]" ]]; then
+    if [[ "${TRAVIS_COMMIT_MESSAGE}" =~ "[force build]" || "${TRAVIS_COMMIT_MESSAGE}" =~ "Merge branch"  ]]; then
         echo "Build is forced. Commit message: ${TRAVIS_COMMIT_MESSAGE}"
         return 0
     fi
@@ -24,7 +24,7 @@ currentChangeSetContains() {
 }
 
 currentChangeSetAffectsBuild() {
-    currentChangeSetContains "\.(gradle|java|groovy)"
+    currentChangeSetContains "\.(gradle|java|groovy|properties)"
     return `(expr "$?" + 0)`
 }
 

@@ -75,7 +75,7 @@ public class MultifactorAuthenticationProperties implements Serializable {
     private transient Resource groovyScript;
 
     /**
-     * This is a more generic variant of the @{link #globalPrincipalAttributeNameTriggers}.
+     * This is a more generic variant of the {@link #globalPrincipalAttributeNameTriggers}.
      * It may be useful in cases where there
      * is more than one provider configured and available in the application runtime and
      * you need to design a strategy to dynamically decide on the provider that should be activated for the request.

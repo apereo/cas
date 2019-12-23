@@ -17,6 +17,7 @@ import org.apereo.cas.authentication.handler.support.JaasAuthenticationHandlerTe
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordHandlerTests;
 import org.apereo.cas.authentication.policy.RestfulAuthenticationPolicyTests;
 import org.apereo.cas.authentication.policy.UniquePrincipalAuthenticationPolicyTests;
+import org.apereo.cas.authentication.principal.ChainingPrincipalElectionStrategyTests;
 import org.apereo.cas.authentication.principal.ChainingPrincipalResolverTests;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactoryTests;
 import org.apereo.cas.authentication.principal.NullPrincipalTests;
@@ -51,6 +52,7 @@ import org.junit.runner.RunWith;
     DefaultPasswordEncoderTests.class,
     DefaultAuthenticationTests.class,
     BasicCredentialMetaDataTests.class,
+    ChainingPrincipalElectionStrategyTests.class,
     UsernamePasswordCredentialTests.class,
     RememberMePasswordCredentialTests.class,
     AcceptUsersAuthenticationHandlerTests.class,

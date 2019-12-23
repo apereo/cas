@@ -15,6 +15,9 @@ branches:
   only:
     - master
 before_cache:
+  - rm -rf $HOME/.gradle/caches/7.*/
+  - rm -rf $HOME/.gradle/caches/6.*/
+  - rm -rf $HOME/.gradle/caches/6.0.*/
   - rm -rf $HOME/.gradle/caches/5.*/
   - rm -rf $HOME/.gradle/caches/4.*/
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
@@ -117,13 +120,16 @@ jobs:
       name: "Validate CAS Command-line Shell"
     - stage: validate
       script: ./ci/tests/webapp/validate-embedded-webapp.sh tomcat
-      name: "Validate Web Application Server via Apache Tomcat"
+      name: "Validate Web Application Server via Embedded Apache Tomcat"
+    - stage: validate
+      script: ./ci/tests/webapp/validate-external-webapp.sh tomcat
+      name: "Validate Web Application Server via External Apache Tomcat"
     - stage: validate
       script: ./ci/tests/webapp/validate-embedded-webapp.sh jetty
-      name: "Validate Web Application Server via Jetty"
+      name: "Validate Web Application Server via Embedded Jetty"
     - stage: validate
       script: ./ci/tests/webapp/validate-embedded-webapp.sh undertow
-      name: "Validate Web Application Server via Undertow"
+      name: "Validate Web Application Server via Embedded Undertow"
     - stage: validate
       script: ./ci/tests/webapp/validate-configserver-webapp.sh
       name: "Validate Spring Cloud Configuration Server"

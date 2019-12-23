@@ -50,6 +50,7 @@ public class DelegatedClientWebflowManager {
      */
     public static final String PARAMETER_CLIENT_ID = "delegatedclientid";
     private static final String OAUTH10_CLIENT_ID_SESSION_KEY = "OAUTH10_CLIENT_ID";
+    private static final String CAS_CLIENT_ID_SESSION_KEY = "CAS_CLIENT_ID";
 
     private final TicketRegistry ticketRegistry;
     private final TicketFactory ticketFactory;
@@ -97,9 +98,7 @@ public class DelegatedClientWebflowManager {
             config.setStateGenerator(new StaticOrRandomStateGenerator(ticketId));
         }
         if (client instanceof CasClient) {
-            val casClient = (CasClient) client;
-            val config = casClient.getConfiguration();
-            config.addCustomParam(DelegatedClientWebflowManager.PARAMETER_CLIENT_ID, ticketId);
+            sessionStore.set(webContext, CAS_CLIENT_ID_SESSION_KEY, ticket.getId());
         }
         if (client instanceof OAuth10Client) {
             sessionStore.set(webContext, OAUTH10_CLIENT_ID_SESSION_KEY, ticket.getId());
@@ -216,10 +215,16 @@ public class DelegatedClientWebflowManager {
                 clientId = webContext.getRequestParameter(OAuth20Configuration.STATE_REQUEST_PARAMETER);
             }
             if (client instanceof OAuth10Client) {
-                LOGGER.debug("Client identifier could not be found as part of request parameters. Looking at state for the OAuth1 client");
+                LOGGER.debug("Client identifier could not be found as part of request parameters. Looking at session store for the OAuth1 client");
                 val sessionStore = webContext.getSessionStore();
                 clientId = sessionStore.get(webContext, OAUTH10_CLIENT_ID_SESSION_KEY);
                 sessionStore.set(webContext, OAUTH10_CLIENT_ID_SESSION_KEY, null);
+            }
+            if (client instanceof CasClient) {
+                LOGGER.debug("Client identifier could not be found as part of request parameters. Looking at the session store for the CAS client");
+                val sessionStore = webContext.getSessionStore();
+                clientId = sessionStore.get(webContext, CAS_CLIENT_ID_SESSION_KEY);
+                sessionStore.set(webContext, CAS_CLIENT_ID_SESSION_KEY, null);
             }
         }
         LOGGER.debug("Located delegated client identifier for this request as [{}]", clientId);

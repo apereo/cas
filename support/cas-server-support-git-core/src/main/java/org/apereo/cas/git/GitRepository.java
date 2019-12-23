@@ -176,7 +176,7 @@ public class GitRepository implements DisposableBean {
     }
 
     @Override
-    public void destroy() throws Exception {
+    public void destroy() {
         if (this.gitInstance != null) {
             this.gitInstance.close();
         }

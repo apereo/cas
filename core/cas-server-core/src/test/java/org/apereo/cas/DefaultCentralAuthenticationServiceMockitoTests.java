@@ -11,8 +11,8 @@ import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.metadata.BasicCredentialMetaData;
 import org.apereo.cas.authentication.policy.AcceptAnyAuthenticationPolicyFactory;
-import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.DefaultServiceMatchingStrategy;
+import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.logout.LogoutManager;
@@ -138,7 +138,7 @@ public class DefaultCentralAuthenticationServiceMockitoTests extends BaseCasCore
         successes.put("handler1", new DefaultAuthenticationHandlerExecutionResult(mock(AuthenticationHandler.class), metadata));
         when(this.authentication.getCredentials()).thenReturn(List.of(metadata));
         when(this.authentication.getSuccesses()).thenReturn(successes);
-        when(this.authentication.getPrincipal()).thenReturn(new DefaultPrincipalFactory().createPrincipal(PRINCIPAL));
+        when(this.authentication.getPrincipal()).thenReturn(PrincipalFactoryUtils.newPrincipalFactory().createPrincipal(PRINCIPAL));
 
         val tgtRootMock = createRootTicketGrantingTicket();
         val service1 = getService(SVC1_ID);
@@ -180,11 +180,10 @@ public class DefaultCentralAuthenticationServiceMockitoTests extends BaseCasCore
             factory,
             authenticationRequestServiceSelectionStrategies,
             new AcceptAnyAuthenticationPolicyFactory(),
-            new DefaultPrincipalFactory(),
+            PrincipalFactoryUtils.newPrincipalFactory(),
             CipherExecutor.noOpOfStringToString(),
             enforcer,
             new DefaultServiceMatchingStrategy(smMock));
-        this.cas.setApplicationEventPublisher(mock(ApplicationEventPublisher.class));
     }
 
     private static TicketFactory getTicketFactory() {

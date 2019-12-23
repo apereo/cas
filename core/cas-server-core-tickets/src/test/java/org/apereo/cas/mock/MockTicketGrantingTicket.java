@@ -7,7 +7,7 @@ import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.metadata.BasicCredentialMetaData;
-import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ServiceTicket;
@@ -60,7 +60,7 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket, TicketSta
     public MockTicketGrantingTicket(final String principal, final Credential c, final Map<String, List<Object>> attributes) {
         id = ID_GENERATOR.getNewTicketId("TGT");
         val metaData = new BasicCredentialMetaData(c);
-        authentication = new DefaultAuthenticationBuilder(new DefaultPrincipalFactory().createPrincipal(principal, attributes))
+        authentication = new DefaultAuthenticationBuilder(PrincipalFactoryUtils.newPrincipalFactory().createPrincipal(principal, attributes))
             .addCredential(metaData)
             .addSuccess(SimpleTestUsernamePasswordAuthenticationHandler.class.getName(),
                 new DefaultAuthenticationHandlerExecutionResult(new SimpleTestUsernamePasswordAuthenticationHandler(), metaData)).build();

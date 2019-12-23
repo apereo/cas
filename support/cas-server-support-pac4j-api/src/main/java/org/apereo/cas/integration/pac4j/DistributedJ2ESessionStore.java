@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Optional;
@@ -32,7 +33,9 @@ import java.util.Optional;
 @Slf4j
 public class DistributedJ2ESessionStore extends JEESessionStore implements HttpSessionListener, LogoutPostProcessor {
     private final TicketRegistry ticketRegistry;
+
     private final TicketFactory ticketFactory;
+
     private final String sessionCookieName;
 
     @Override

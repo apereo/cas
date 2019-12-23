@@ -116,7 +116,7 @@ public class JsonResourceMetadataResolver extends BaseSamlRegisteredServiceMetad
     }
 
     @Override
-    public void destroy() throws Exception {
+    public void destroy() {
         if (this.watcherService != null) {
             this.watcherService.close();
         }

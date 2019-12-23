@@ -17,18 +17,10 @@ dependencies {
     implementation project(":core:cas-server-core-webflow-mfa-api")
 
     compileOnly project(":core:cas-server-core-rest")
+    compileOnly project(":support:cas-server-support-trusted-mfa")
 
-    testImplementation project(":core:cas-server-core")
-    testImplementation project(":core:cas-server-core-authentication")
-    testImplementation project(":core:cas-server-core-authentication-mfa")
-    testImplementation project(":core:cas-server-core-cookie")
     testImplementation project(":core:cas-server-core-configuration")
-    testImplementation project(":core:cas-server-core-tickets")
-    testImplementation project(":core:cas-server-core-services")
-    testImplementation project(":core:cas-server-core-util")
-    testImplementation project(":core:cas-server-core-web")
     testImplementation project(":core:cas-server-core-rest")
-    testImplementation project(":core:cas-server-core-logout")
 
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":support:cas-server-support-trusted-mfa")
