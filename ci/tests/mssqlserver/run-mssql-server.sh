@@ -25,3 +25,6 @@ sudo docker exec -it mssql-server /opt/mssql-tools/bin/sqlcmd \
 
 sudo docker exec -it mssql-server /opt/mssql-tools/bin/sqlcmd \
    -S localhost -U SA -P 'p@ssw0rd' -Q 'CREATE DATABASE services;'
+
+sudo docker exec -it mssql-server /opt/mssql-tools/bin/sqlcmd \
+   -S localhost -U SA -P 'p@ssw0rd' -Q 'CREATE DATABASE yubikey;'

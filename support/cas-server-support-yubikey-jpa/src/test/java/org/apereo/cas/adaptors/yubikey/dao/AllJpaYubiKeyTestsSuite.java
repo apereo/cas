@@ -12,6 +12,7 @@ import org.junit.runner.RunWith;
  */
 @SelectClasses({
     JpaYubiKeyAccountRegistryTests.class,
+    MicrosoftSQLServerJpaYubiKeyAccountRegistryTests.class,
     MySQLJpaYubiKeyAccountRegistryTests.class,
     PostgresJpaYubiKeyAccountRegistryTests.class
 })
