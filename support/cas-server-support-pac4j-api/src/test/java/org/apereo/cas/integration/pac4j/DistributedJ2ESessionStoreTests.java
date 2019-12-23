@@ -12,7 +12,6 @@ import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 
@@ -92,7 +91,6 @@ public class DistributedJ2ESessionStoreTests {
         assertEquals("test3", value.get());
 
         store.destroySession(context);
-        store.handle(new MockTicketGrantingTicket("casuser"));
         value = store.get(context, "attribute");
         assertTrue(value.isEmpty());
     }
