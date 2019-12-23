@@ -12,7 +12,9 @@ dependencies {
     implementation project(":core:cas-server-core-services-api")
     implementation project(":support:cas-server-support-u2f-core")
     implementation project(":support:cas-server-support-trusted-mfa-core")
-    
+
+    compileOnly project(":support:cas-server-support-trusted-mfa")
+
     api project(":api:cas-server-core-api-webflow")
     api project(":api:cas-server-core-api")
 

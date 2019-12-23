@@ -5,7 +5,6 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.webauthn.registration.WebAuthnRegistrationRequest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.yubico.internal.util.WebAuthnCodecs;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -39,10 +38,10 @@ public class WebAuthnRestController {
     private static final String WEBAUTHN_CONTEXT_PATH = "/webauthn";
 
     private final WebAuthnOperations server;
+
     private final CasConfigurationProperties casProperties;
 
     private final ObjectMapper jsonMapper = WebAuthnCodecs.json().findAndRegisterModules();
-    private final JsonNodeFactory jsonFactory = JsonNodeFactory.instance;
 
     @GetMapping
     public ResponseEntity index() throws Exception {
@@ -97,7 +96,9 @@ public class WebAuthnRestController {
     @Getter
     private class StartRegistrationResponse {
         private final boolean success = true;
+
         private final WebAuthnRegistrationRequest request;
+
         private final StartRegistrationActions actions = new StartRegistrationActions();
     }
 

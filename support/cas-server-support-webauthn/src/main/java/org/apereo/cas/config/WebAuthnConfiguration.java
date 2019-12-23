@@ -31,7 +31,6 @@ import com.yubico.webauthn.attestation.resolver.SimpleTrustResolver;
 import com.yubico.webauthn.data.AttestationConveyancePreference;
 import com.yubico.webauthn.data.RelyingPartyIdentity;
 import com.yubico.webauthn.extension.appid.AppId;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectProvider;
@@ -46,6 +45,7 @@ import org.springframework.context.annotation.Configuration;
 
 import java.net.URL;
 import java.security.cert.X509Certificate;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.concurrent.TimeUnit;
@@ -58,7 +58,6 @@ import java.util.concurrent.TimeUnit;
  */
 @Configuration("webAuthnConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class WebAuthnConfiguration {
     private static final int CACHE_MAX_SIZE = 10_000;
 
@@ -77,6 +76,14 @@ public class WebAuthnConfiguration {
     @Autowired
     @Qualifier("webAuthnBypassEvaluator")
     private ObjectProvider<MultifactorAuthenticationProviderBypassEvaluator> webAuthnBypassEvaluator;
+
+    private static <K, V> Cache<K, V> newCache() {
+        return CacheBuilder.newBuilder()
+            .maximumSize(CACHE_MAX_SIZE)
+            .expireAfterAccess(Duration.ofMinutes(1))
+            .recordStats()
+            .build();
+    }
 
     @Bean
     public WebAuthnRestController webAuthnRestController() throws Exception {
@@ -175,13 +182,5 @@ public class WebAuthnConfiguration {
             newCache(),
             relyingParty,
             webAuthnMetadataService());
-    }
-
-    private static <K, V> Cache<K, V> newCache() {
-        return CacheBuilder.newBuilder()
-            .maximumSize(CACHE_MAX_SIZE)
-            .expireAfterAccess(1, TimeUnit.MINUTES)
-            .recordStats()
-            .build();
     }
 }

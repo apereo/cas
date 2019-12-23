@@ -30,10 +30,12 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.trusted.config.MultifactorAuthnTrustConfiguration;
 import org.apereo.cas.util.crypto.PublicKeyFactoryBean;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
+import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
@@ -47,7 +49,7 @@ import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -161,7 +163,7 @@ public class AccepttoMultifactorAuthenticationConfiguration {
     @Bean
     public SessionStore<JEEContext> mfaAccepttoDistributedSessionStore() {
         return new DistributedJ2ESessionStore(ticketRegistry.getObject(), ticketFactory.getObject(),
-                casProperties.getSessionReplication().getSessionCookieName());
+            casProperties.getSessionReplication().getSessionCookieName());
     }
 
     @ConditionalOnMissingBean(name = "mfaAccepttoMultifactorFetchChannelAction")
@@ -285,7 +287,7 @@ public class AccepttoMultifactorAuthenticationConfiguration {
     /**
      * The Acceptto multifactor trust configuration.
      */
-    @ConditionalOnBean(name = "mfaTrustEngine")
+    @ConditionalOnClass(value = MultifactorAuthnTrustConfiguration.class)
     @ConditionalOnProperty(prefix = "cas.authn.mfa.acceptto", name = "trustedDeviceEnabled", havingValue = "true", matchIfMissing = true)
     @Configuration("accepttoMultifactorTrustConfiguration")
     public class AccepttoMultifactorTrustConfiguration implements CasWebflowExecutionPlanConfigurer {
@@ -295,7 +297,7 @@ public class AccepttoMultifactorAuthenticationConfiguration {
         @DependsOn("defaultWebflowConfigurer")
         public CasWebflowConfigurer accepttoMultifactorTrustWebflowConfigurer() {
             val deviceRegistrationEnabled = casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled();
-            return new AccepttoMultifactorTrustWebflowConfigurer(flowBuilderServices,
+            return new AccepttoMultifactorTrustWebflowConfigurer(flowBuilderServices.getObject(),
                 deviceRegistrationEnabled, loginFlowDefinitionRegistry.getIfAvailable(),
                 applicationContext, casProperties);
         }

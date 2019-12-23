@@ -4,7 +4,6 @@ import com.google.common.collect.Multimap;
 import com.yubico.webauthn.attestation.TrustResolver;
 import com.yubico.webauthn.attestation.resolver.SimpleTrustResolver;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import java.security.cert.X509Certificate;
@@ -17,10 +16,10 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Slf4j
 @RequiredArgsConstructor
 public class DefaultAttestationCertificateTrustResolver implements TrustResolver {
     private final SimpleTrustResolver simpleResolver;
+
     private final Multimap<String, X509Certificate> trustedCerts;
 
     @Override

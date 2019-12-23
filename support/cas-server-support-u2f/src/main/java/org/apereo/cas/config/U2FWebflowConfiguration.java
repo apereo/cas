@@ -17,9 +17,11 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.trusted.config.MultifactorAuthnTrustConfiguration;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
+import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
@@ -28,7 +30,7 @@ import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -175,7 +177,7 @@ public class U2FWebflowConfiguration {
     /**
      * The U2F multifactor trust configuration.
      */
-    @ConditionalOnBean(name = "mfaTrustEngine")
+    @ConditionalOnClass(value = MultifactorAuthnTrustConfiguration.class)
     @ConditionalOnProperty(prefix = "cas.authn.mfa.u2f", name = "trustedDeviceEnabled", havingValue = "true", matchIfMissing = true)
     @Configuration("u2fMultifactorTrustConfiguration")
     public class U2FMultifactorTrustConfiguration implements CasWebflowExecutionPlanConfigurer {
@@ -185,7 +187,7 @@ public class U2FWebflowConfiguration {
         @DependsOn("defaultWebflowConfigurer")
         public CasWebflowConfigurer u2fMultifactorTrustWebflowConfigurer() {
             val deviceRegistrationEnabled = casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled();
-            return new U2FMultifactorTrustWebflowConfigurer(flowBuilderServices,
+            return new U2FMultifactorTrustWebflowConfigurer(flowBuilderServices.getObject(),
                 deviceRegistrationEnabled, loginFlowDefinitionRegistry.getIfAvailable(),
                 applicationContext, casProperties);
         }
