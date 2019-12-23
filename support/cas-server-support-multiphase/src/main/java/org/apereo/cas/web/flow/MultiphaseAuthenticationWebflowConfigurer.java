@@ -42,7 +42,7 @@ public class MultiphaseAuthenticationWebflowConfigurer extends AbstractCasWebflo
             LOGGER.debug("Configuring multiphase webflow");
             // init login state form
 			val initState = getState(flow, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM, ActionState.class);
-            LOGGER.debug("Locating transition id [{}] to for state [{}", 
+            LOGGER.debug("Locating transition id [{}] for state [{}]", 
                     CasWebflowConstants.TRANSITION_ID_SUCCESS, initState.getId());
             // transition object with id of success from init state
 			val initTransition = (Transition) initState.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS);
@@ -51,15 +51,18 @@ public class MultiphaseAuthenticationWebflowConfigurer extends AbstractCasWebflo
 			val targetStateId = initTransition.getTargetStateId();
             // add a transition from init state on get_userid transition to
             // get_userid state
+            LOGGER.debug("Creating transition with id [{}] for state [{}] to state [{}]",
+                    TRANSITION_ID_MULTIPHASE_GET_USERID, initState.getId(), STATE_ID_MULTIPHASE_GET_USERID);
 			createTransitionForState(initState, TRANSITION_ID_MULTIPHASE_GET_USERID, STATE_ID_MULTIPHASE_GET_USERID);
 
 			val getUserIdState = createViewState(flow, STATE_ID_MULTIPHASE_GET_USERID, "casMultiphaseGetUserIdView");
+            LOGGER.debug("Creating transition with id [{}] for state [{}] to state [{}]",
+                    CasWebflowConstants.TRANSITION_ID_SUBMIT, getUserIdState.getId(), STATE_ID_STORE_USERID);
 			createTransitionForState(getUserIdState, CasWebflowConstants.TRANSITION_ID_SUBMIT, STATE_ID_STORE_USERID);
 
 			val actionState = createActionState(flow, STATE_ID_STORE_USERID,
                     createEvaluateAction(ACTION_ID_STORE_USERID_FOR_AUTHENTICATION));
 			createStateDefaultTransition(actionState, targetStateId);
-            LOGGER.debug("Wait does this work now?");
 		}
 	}
 }
