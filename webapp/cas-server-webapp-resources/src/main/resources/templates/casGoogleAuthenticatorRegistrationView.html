@@ -15,7 +15,9 @@
         <h3 th:text="#{screen.authentication.gauth.register}">Your account is not registered. Use the below settings to
             register your device with CAS.</h3>
 
-        <form method="post" id="fm1" class="fm-v clearfix" th:action="@{/login}">
+        <form method="post" id="fm1" class="fm-v clearfix"
+									 th:action="@{/login}"
+									 th:object="${credential}">
             <div class="form-group">
                 <img th:src="@{/otp/qrgen(key=${keyUri})}"/>
                 <br/>
