@@ -185,7 +185,6 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
     }
 
     private DistributedJ2ESessionStore getDistributedSessionStore() {
-        return new DistributedJ2ESessionStore(ticketRegistry.getObject(), ticketFactory.getObject(),
-                casProperties.getSessionReplication().getSessionCookieName());
+        return new DistributedJ2ESessionStore(ticketRegistry.getObject(), ticketFactory.getObject(), casProperties);
     }
 }
