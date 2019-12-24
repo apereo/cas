@@ -21,16 +21,15 @@
     </action-state>
 
     <view-state id="viewRegistration" view="casGoogleAuthenticatorRegistrationView">
+		<binder>
+			<binding property="token" required="true"/>
+		</binder
         <on-entry>
             <set name="viewScope.principal" value="conversationScope.authentication.principal" />
         </on-entry>
-        <transition on="submit" to="saveRegistration"/>
+		<!--<transition on="submit" to="saveRegistration"/>-->
+		<transition on="submit" bind="true" validate="true" to="realSubmit"/>
     </view-state>
-    
-    <action-state id="saveRegistration">
-        <evaluate expression="googleSaveAccountRegistrationAction" />
-        <transition on="success" to="viewLoginForm"/>
-    </action-state>
     
     <view-state id="viewLoginForm" view="casGoogleAuthenticatorLoginView" model="credential">
         <binder>
@@ -45,9 +44,19 @@
 
     <action-state id="realSubmit">
         <evaluate expression="oneTimeTokenAuthenticationWebflowAction" />
-        <transition on="success" to="success" />
-        <transition on="error" to="initializeLoginForm" />
+        <transition on="success" to="saveRegistration" />
+        <transition on="error" to="maybeFailedRegistration" />
     </action-state>
+
+	<decision-state id="maybeFailedRegistration">
+		<if test="flowScope.contains('newOtpRegistration')" then="viewRegistration" else="initializeLoginForm" />
+	</decision-state>
+
+    <action-state id="saveRegistration">
+        <evaluate expression="googleSaveAccountRegistrationAction" />
+        <transition on="success" to="success"/>
+    </action-state>
+    
 
     <end-state id="success" />
 

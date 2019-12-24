@@ -30,14 +30,23 @@ public class OneTimeTokenAccountCheckRegistrationAction extends AbstractAction {
         val uid = WebUtils.getAuthentication(requestContext).getPrincipal().getId();
 
         val acct = repository.get(uid);
-        if (acct == null || StringUtils.isBlank(acct.getSecretKey())) {
+
+		if (acct == null || StringUtils.isBlank(acct.getSecretKey())) {
+			if (requestContext.getFlowScope().contains("newOtpRegistration")) {
+				// @hsartoris
+				// could do this for only allowing two tries:
+				//requestContext.getFlowScope().remove("newOtpRegistration");
+				LOGGER.debug("Presenting registration information again");
+				return new EventFactorySupport().event(this, "register");
+			}
             val keyAccount = this.repository.create(uid);
             val keyUri = "otpauth://totp/" + this.label + ':' + uid + "?secret=" + keyAccount.getSecretKey() + "&issuer=" + this.issuer;
             requestContext.getFlowScope().put("key", keyAccount);
             requestContext.getFlowScope().put("keyUri", keyUri);
+			requestContext.getFlowScope().put("newOtpRegistration", true);
             LOGGER.debug("Registration key URI is [{}]", keyUri);
             return new EventFactorySupport().event(this, "register");
-        }
+		}
         return success();
     }
 }
