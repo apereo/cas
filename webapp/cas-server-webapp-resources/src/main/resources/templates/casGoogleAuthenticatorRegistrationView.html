@@ -28,6 +28,18 @@
                 <ul>
                     <li th:each="code : ${key.getScratchCodes()}" th:text="${code}">code</li>
                 </ul>
+				<br/>
+				<label for="token" class="fl-label"
+								   th:utext="#{cas.mfa.googleauth.label.token">Token:</label>
+				<input type="text" 
+					   class="form-control required" 
+					   id="token"
+					   size="25"
+					   tabindex="1"
+					   th:field="*{token}"
+					   th:accesskey="#{screen.welcome.label.password.accesskey}"
+					   autocomplete="off"/>
+
                 <input type="hidden" name="_eventId" value="submit"/>
                 <input class="btn btn-submit" name="submit" accesskey="l"
                        th:value="#{screen.welcome.button.register}"
