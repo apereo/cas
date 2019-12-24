@@ -91,8 +91,7 @@ import static org.mockito.Mockito.*;
 }, properties = {
     "cas.authn.mfa.grouperGroupField=name",
     "spring.mail.host=localhost",
-    "spring.mail.port=25000",
-    "spring.mail.testConnection=false"
+    "spring.mail.port=25000"
 })
 public class GrouperMultifactorAuthenticationPolicyEventResolverTests {
     @Autowired

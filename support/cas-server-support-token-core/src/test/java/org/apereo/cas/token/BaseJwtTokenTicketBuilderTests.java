@@ -55,8 +55,7 @@ import java.util.List;
     CasDefaultServiceTicketIdGeneratorsConfiguration.class
 }, properties = {
     "spring.mail.host=localhost",
-    "spring.mail.port=25000",
-    "spring.mail.testConnection=false"
+    "spring.mail.port=25000"
 })
 public abstract class BaseJwtTokenTicketBuilderTests {
     @Autowired

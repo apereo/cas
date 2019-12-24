@@ -51,8 +51,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.ticket.registry.ehcache.maxElementsOnDisk=100",
     "cas.ticket.registry.ehcache.maxElementsInMemory=100",
     "spring.mail.host=localhost",
-    "spring.mail.port=25000",
-    "spring.mail.testConnection=false"
+    "spring.mail.port=25000"
 })
 @Tag("Ehcache")
 public class EhCacheHealthIndicatorTests {

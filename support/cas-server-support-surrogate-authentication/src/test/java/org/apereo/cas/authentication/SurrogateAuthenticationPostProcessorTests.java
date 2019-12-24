@@ -56,8 +56,7 @@ import static org.mockito.Mockito.*;
     properties = {
         "cas.authn.surrogate.simple.surrogates.casuser=cassurrogate",
         "spring.mail.host=localhost",
-        "spring.mail.port=25000",
-        "spring.mail.testConnection=false"
+        "spring.mail.port=25000"
     })
 public class SurrogateAuthenticationPostProcessorTests {
     @Autowired

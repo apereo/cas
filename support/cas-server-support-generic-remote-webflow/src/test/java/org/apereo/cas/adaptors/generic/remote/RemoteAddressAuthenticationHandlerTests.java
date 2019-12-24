@@ -79,8 +79,7 @@ import static org.junit.jupiter.api.Assertions.*;
     properties = {
         "cas.authn.remoteAddress.ipAddressRange=192.168.1.0/255.255.255.0",
         "spring.mail.host=localhost",
-        "spring.mail.port=25000",
-        "spring.mail.testConnection=false"
+        "spring.mail.port=25000"
     })
 public class RemoteAddressAuthenticationHandlerTests {
     @Autowired

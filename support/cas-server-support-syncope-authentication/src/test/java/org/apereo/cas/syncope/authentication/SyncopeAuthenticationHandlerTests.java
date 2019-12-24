@@ -54,8 +54,7 @@ import static org.junit.jupiter.api.Assertions.*;
 }, properties = {
     "cas.authn.syncope.url=http://localhost:8095",
     "spring.mail.host=localhost",
-    "spring.mail.port=25000",
-    "spring.mail.testConnection=false"
+    "spring.mail.port=25000"
 })
 @ResourceLock("Syncope")
 public class SyncopeAuthenticationHandlerTests {
