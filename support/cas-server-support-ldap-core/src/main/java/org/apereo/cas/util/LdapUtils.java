@@ -733,32 +733,32 @@ public class LdapUtils {
         pooledCf.setPruneStrategy(strategy);
 
         switch (l.getValidator().getType().trim().toLowerCase()) {
-        case "compare":
-            val compareRequest = new CompareRequest(
-                l.getValidator().getDn(),
-                l.getValidator().getAttributeName(),
-                l.getValidator().getAttributeValue());
-            val compareValidator = new CompareConnectionValidator(compareRequest);
-            compareValidator.setValidatePeriod(Beans.newDuration(l.getValidatePeriod()));
-            compareValidator.setValidateTimeout(Beans.newDuration(l.getValidateTimeout()));
-            pooledCf.setValidator(compareValidator);
-            break;
-        case "none":
-            LOGGER.debug("No validator is configured for the LDAP connection pool of [{}]", l.getLdapUrl());
-            break;
-        case "search":
-        default:
-            val searchRequest = new SearchRequest();
-            searchRequest.setBaseDn(l.getValidator().getBaseDn());
-            searchRequest.setFilter(l.getValidator().getSearchFilter());
-            searchRequest.setReturnAttributes(ReturnAttributes.NONE.value());
-            searchRequest.setSearchScope(SearchScope.valueOf(l.getValidator().getScope()));
-            searchRequest.setSizeLimit(1);
-            val searchValidator = new SearchConnectionValidator(searchRequest);
-            searchValidator.setValidatePeriod(Beans.newDuration(l.getValidatePeriod()));
-            searchValidator.setValidateTimeout(Beans.newDuration(l.getValidateTimeout()));
-            pooledCf.setValidator(searchValidator);
-            break;
+            case "compare":
+                val compareRequest = new CompareRequest(
+                    l.getValidator().getDn(),
+                    l.getValidator().getAttributeName(),
+                    l.getValidator().getAttributeValue());
+                val compareValidator = new CompareConnectionValidator(compareRequest);
+                compareValidator.setValidatePeriod(Beans.newDuration(l.getValidatePeriod()));
+                compareValidator.setValidateTimeout(Beans.newDuration(l.getValidateTimeout()));
+                pooledCf.setValidator(compareValidator);
+                break;
+            case "none":
+                LOGGER.debug("No validator is configured for the LDAP connection pool of [{}]", l.getLdapUrl());
+                break;
+            case "search":
+            default:
+                val searchRequest = new SearchRequest();
+                searchRequest.setBaseDn(l.getValidator().getBaseDn());
+                searchRequest.setFilter(l.getValidator().getSearchFilter());
+                searchRequest.setReturnAttributes(ReturnAttributes.NONE.value());
+                searchRequest.setSearchScope(SearchScope.valueOf(l.getValidator().getScope()));
+                searchRequest.setSizeLimit(1);
+                val searchValidator = new SearchConnectionValidator(searchRequest);
+                searchValidator.setValidatePeriod(Beans.newDuration(l.getValidatePeriod()));
+                searchValidator.setValidateTimeout(Beans.newDuration(l.getValidateTimeout()));
+                pooledCf.setValidator(searchValidator);
+                break;
         }
 
         pooledCf.setFailFastInitialize(l.isFailFast());
@@ -767,29 +767,28 @@ public class LdapUtils {
             val pass =
                 AbstractLdapProperties.LdapConnectionPoolPassivator.valueOf(l.getPoolPassivator().toUpperCase());
             switch (pass) {
-            case CLOSE:
-                pooledCf.setPassivator(new CloseConnectionPassivator());
-                pooledCf.setActivator(new OpenConnectionActivator());
-
-                LOGGER.debug("Created [{}] passivator for [{}]", l.getPoolPassivator(), l.getLdapUrl());
-                break;
-            case BIND:
-                if (StringUtils.isNotBlank(l.getBindDn()) && StringUtils.isNoneBlank(l.getBindCredential())) {
-                    val bindRequest = new SimpleBindRequest(l.getBindDn(), l.getBindCredential());
-                    pooledCf.setPassivator(new BindConnectionPassivator(bindRequest));
+                case CLOSE:
+                    pooledCf.setPassivator(new CloseConnectionPassivator());
+                    pooledCf.setActivator(new OpenConnectionActivator());
                     LOGGER.debug("Created [{}] passivator for [{}]", l.getPoolPassivator(), l.getLdapUrl());
-                } else {
-                    val values = Arrays.stream(AbstractLdapProperties.LdapConnectionPoolPassivator.values())
-                        .filter(v -> v != AbstractLdapProperties.LdapConnectionPoolPassivator.BIND)
-                        .collect(Collectors.toList());
-                    LOGGER.warn("[{}] pool passivator could not be created for [{}] given bind credentials are not specified. "
+                    break;
+                case BIND:
+                    if (StringUtils.isNotBlank(l.getBindDn()) && StringUtils.isNoneBlank(l.getBindCredential())) {
+                        val bindRequest = new SimpleBindRequest(l.getBindDn(), l.getBindCredential());
+                        pooledCf.setPassivator(new BindConnectionPassivator(bindRequest));
+                        LOGGER.debug("Created [{}] passivator for [{}]", l.getPoolPassivator(), l.getLdapUrl());
+                    } else {
+                        val values = Arrays.stream(AbstractLdapProperties.LdapConnectionPoolPassivator.values())
+                            .filter(v -> v != AbstractLdapProperties.LdapConnectionPoolPassivator.BIND)
+                            .collect(Collectors.toList());
+                        LOGGER.warn("[{}] pool passivator could not be created for [{}] given bind credentials are not specified. "
                             + "If you are dealing with LDAP in such a way that does not require bind credentials, you may need to "
                             + "set the pool passivator setting to one of [{}]",
-                        l.getPoolPassivator(), l.getLdapUrl(), values);
-                }
-                break;
-            default:
-                break;
+                            l.getPoolPassivator(), l.getLdapUrl(), values);
+                    }
+                    break;
+                default:
+                    break;
             }
         }
 
