@@ -20,7 +20,7 @@
         <transition on="success" to="viewLoginForm"/>
     </action-state>
 
-    <view-state id="viewRegistration" view="casGoogleAuthenticatorRegistrationView">
+	<view-state id="viewRegistration" view="casGoogleAuthenticatorRegistrationView" model="credential">
 		<binder>
 			<binding property="token" required="true"/>
 		</binder
