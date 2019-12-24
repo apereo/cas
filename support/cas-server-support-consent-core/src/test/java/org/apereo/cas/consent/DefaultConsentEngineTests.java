@@ -39,8 +39,7 @@ import static org.mockito.Mockito.*;
     MailSenderAutoConfiguration.class
 }, properties = {
     "spring.mail.host=localhost",
-    "spring.mail.port=25000",
-    "spring.mail.testConnection=false"
+    "spring.mail.port=25000"
 })
 @DirtiesContext
 public class DefaultConsentEngineTests {

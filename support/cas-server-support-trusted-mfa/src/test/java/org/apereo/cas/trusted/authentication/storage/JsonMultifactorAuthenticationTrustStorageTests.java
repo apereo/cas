@@ -29,8 +29,7 @@ import java.io.IOException;
 @TestPropertySource(properties = {
     "cas.authn.mfa.trusted.json.location=file:/tmp/trusted-device.json",
     "spring.mail.host=localhost",
-    "spring.mail.port=25000",
-    "spring.mail.testConnection=false"
+    "spring.mail.port=25000"
 })
 @Tag("FileSystem")
 @Getter
