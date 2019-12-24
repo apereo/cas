@@ -34,7 +34,7 @@ import static org.mockito.Mockito.*;
     MailSenderAutoConfiguration.class,
     MailSenderValidatorAutoConfiguration.class
 },
-    properties = {"spring.mail.host=localhost", "spring.mail.port=25000", "spring.mail.testConnection=true"})
+    properties = {"spring.mail.host=localhost", "spring.mail.port=25000"})
 @Tag("Mail")
 @EnabledIfContinuousIntegration
 @EnabledIfPortOpen(port = 25000)
