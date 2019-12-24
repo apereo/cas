@@ -584,10 +584,10 @@ If none is specified, one is automatically detected and used by CAS.
 
 ## Session replication
 
-The `sessionCookieName` property defines the session cookie name for the session replication.
+The `sessionCookieName` property defines the specific session cookie name used for the session replication.
 
 ```properties
-# cas.sessionReplication.sessionCookieName=JSESSIONID
+# cas.sessionReplication.sessionCookieName=DISSESSION
 ```
 
 ## CAS Banner

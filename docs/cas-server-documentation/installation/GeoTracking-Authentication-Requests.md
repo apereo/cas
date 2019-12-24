@@ -13,7 +13,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 ```xml
 <dependency>
   <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-support-geolication</artifactId>
+  <artifactId>cas-server-support-geolocation</artifactId>
   <version>${cas.version}</version>
 </dependency>
 ```
