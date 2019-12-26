@@ -49,8 +49,7 @@ public class CasDiscoveryProfileConfiguration {
 
     @Bean
     public CasServerProfileRegistrar casServerProfileRegistrar() {
-        return new CasServerProfileRegistrar(servicesManager.getIfAvailable(), casProperties,
-            this.builtClients.getIfAvailable(),
+        return new CasServerProfileRegistrar(this.builtClients.getIfAvailable(),
             availableAttributes());
     }
 
