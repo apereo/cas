@@ -132,8 +132,6 @@ If you did create a new release branch as part of a new major/minor release:
 Update the [Maintenance Policy](Maintenance-Policy.html) to note the release schedule and EOL timeline. 
 This task is only relevant when dealing with major or minor releases.
 
-## Optional
+## Update Demos
 
-### Update Demos
-
-A number of CAS demos today run on Heroku and are tracked in dedicated branches inside the codebase. Take a pass and updated each, when relevant.
+(Optional) A number of CAS demos today run on Heroku and are tracked in dedicated branches inside the codebase. Take a pass and updated each, when relevant.
