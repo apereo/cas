@@ -20,15 +20,16 @@ public class AllAuthenticationHandlersSucceededAuthenticationPolicy implements A
 
     @Override
     public boolean isSatisfiedBy(final Authentication authn, final Set<AuthenticationHandler> authenticationHandlers) {
-        LOGGER.debug("Successful authentications: [{}], current authentication handlers [{}]", authn.getSuccesses().keySet(),
-            authenticationHandlers.stream().map(AuthenticationHandler::getName).collect(Collectors.joining(",")));
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Successful authentications: [{}], current authentication handlers [{}]", authn.getSuccesses().keySet(),
+                authenticationHandlers.stream().map(AuthenticationHandler::getName).collect(Collectors.joining(",")));
+        }
 
         if (authn.getSuccesses().size() != authenticationHandlers.size()) {
             LOGGER.warn("Number of successful authentications, [{}], does not match the number of authentication handlers, [{}].",
                 authn.getSuccesses().size(), authenticationHandlers.size());
             return false;
         }
-
         return true;
     }
 }

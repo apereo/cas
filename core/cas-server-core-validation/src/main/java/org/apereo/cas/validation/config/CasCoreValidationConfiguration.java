@@ -1,14 +1,15 @@
 package org.apereo.cas.validation.config;
 
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.validation.AuthenticationPolicyAwareServiceTicketValidationAuthorizer;
 import org.apereo.cas.validation.Cas10ProtocolValidationSpecification;
 import org.apereo.cas.validation.Cas20ProtocolValidationSpecification;
 import org.apereo.cas.validation.Cas20WithoutProxyingValidationSpecification;
 import org.apereo.cas.validation.CasProtocolValidationSpecification;
 import org.apereo.cas.validation.DefaultServiceTicketValidationAuthorizersExecutionPlan;
-import org.apereo.cas.validation.RegisteredServiceRequiredHandlersServiceTicketValidationAuthorizer;
 import org.apereo.cas.validation.RequestedAuthenticationContextValidator;
 import org.apereo.cas.validation.ServiceTicketValidationAuthorizer;
 import org.apereo.cas.validation.ServiceTicketValidationAuthorizerConfigurer;
@@ -44,20 +45,27 @@ public class CasCoreValidationConfiguration {
     @Qualifier("servicesManager")
     private ObjectProvider<ServicesManager> servicesManager;
 
+    @Autowired
+    @Qualifier("authenticationEventExecutionPlan")
+    private ObjectProvider<AuthenticationEventExecutionPlan> authenticationEventExecutionPlan;
+
     @Bean
     @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+    @ConditionalOnMissingBean(name = "cas10ProtocolValidationSpecification")
     public CasProtocolValidationSpecification cas10ProtocolValidationSpecification() {
         return new Cas10ProtocolValidationSpecification(servicesManager.getObject());
     }
 
     @Bean
     @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+    @ConditionalOnMissingBean(name = "cas20ProtocolValidationSpecification")
     public CasProtocolValidationSpecification cas20ProtocolValidationSpecification() {
         return new Cas20ProtocolValidationSpecification(servicesManager.getObject());
     }
 
     @Bean
     @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+    @ConditionalOnMissingBean(name = "cas20WithoutProxyProtocolValidationSpecification")
     public CasProtocolValidationSpecification cas20WithoutProxyProtocolValidationSpecification() {
         return new Cas20WithoutProxyingValidationSpecification(servicesManager.getObject());
     }
@@ -75,22 +83,26 @@ public class CasCoreValidationConfiguration {
     }
 
     @Bean
-    public ServiceTicketValidationAuthorizer requiredHandlersServiceTicketValidationAuthorizer() {
-        return new RegisteredServiceRequiredHandlersServiceTicketValidationAuthorizer(this.servicesManager.getObject());
+    @ConditionalOnMissingBean(name = "authenticationPolicyAwareServiceTicketValidationAuthorizer")
+    public ServiceTicketValidationAuthorizer authenticationPolicyAwareServiceTicketValidationAuthorizer() {
+        return new AuthenticationPolicyAwareServiceTicketValidationAuthorizer(
+            servicesManager.getObject(), authenticationEventExecutionPlan.getObject());
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "casCoreServiceTicketValidationAuthorizerConfigurer")
     public ServiceTicketValidationAuthorizerConfigurer casCoreServiceTicketValidationAuthorizerConfigurer() {
-        return plan -> plan.registerAuthorizer(requiredHandlersServiceTicketValidationAuthorizer());
+        return plan -> plan.registerAuthorizer(authenticationPolicyAwareServiceTicketValidationAuthorizer());
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "requestedContextValidator")
     public RequestedAuthenticationContextValidator requestedContextValidator() {
         return (assertion, request) -> {
-            LOGGER.trace("Locating the primary authentication associated with this service request [{}]", assertion.getService());
-            val service = servicesManager.getObject().findServiceBy(assertion.getService());
-            RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(assertion.getService(), service);
+            val service = assertion.getService();
+            LOGGER.trace("Locating the primary authentication associated with this service request [{}]", service);
+            val registeredService = servicesManager.getObject().findServiceBy(service);
+            RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
             return Pair.of(Boolean.TRUE, Optional.empty());
         };
     }
