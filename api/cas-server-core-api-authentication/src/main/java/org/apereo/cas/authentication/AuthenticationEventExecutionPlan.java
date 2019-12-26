@@ -26,6 +26,15 @@ public interface AuthenticationEventExecutionPlan {
     void registerAuthenticationHandler(AuthenticationHandler handler);
 
     /**
+     * Register authentication handlers.
+     *
+     * @param handlers the handlers
+     */
+    default void registerAuthenticationHandlers(final List<? extends AuthenticationHandler> handlers) {
+        handlers.forEach(this::registerAuthenticationHandler);
+    }
+
+    /**
      * Register metadata populator.
      *
      * @param populator the populator
@@ -153,6 +162,14 @@ public interface AuthenticationEventExecutionPlan {
      * @return the authentication policies
      */
     Collection<AuthenticationPolicy> getAuthenticationPolicies(AuthenticationTransaction transaction);
+
+    /**
+     * Gets authentication policies.
+     *
+     * @param authentication the authentication
+     * @return the authentication policies
+     */
+    Collection<AuthenticationPolicy> getAuthenticationPolicies(Authentication authentication);
 
     /**
      * Gets authentication handler resolvers.

@@ -3,7 +3,7 @@ package org.apereo.cas.ticket;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.core.OrderComparator;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -51,7 +51,7 @@ public class DefaultTicketCatalog implements TicketCatalog {
         val list = ticketMetadataMap.values().stream()
             .filter(t -> ticketClass.isAssignableFrom(t.getImplementationClass()))
             .collect(Collectors.toList());
-        OrderComparator.sort(list);
+        AnnotationAwareOrderComparator.sort(list);
         LOGGER.trace("Located all registered and known sorted ticket definitions [{}] that match [{}]", list, ticketClass);
         return list;
     }
@@ -76,7 +76,7 @@ public class DefaultTicketCatalog implements TicketCatalog {
     @Override
     public Collection<TicketDefinition> findAll() {
         val list = new ArrayList<TicketDefinition>(ticketMetadataMap.values());
-        OrderComparator.sort(list);
+        AnnotationAwareOrderComparator.sort(list);
         LOGGER.trace("Located all registered and known sorted ticket definitions [{}]", list);
         return list;
     }

@@ -156,7 +156,7 @@ public class CoreAuthenticationTestUtils {
         return new DefaultAuthenticationBuilder(principal)
             .addCredential(meta)
             .setAuthenticationDate(authnDate)
-            .addSuccess("testHandler", new DefaultAuthenticationHandlerExecutionResult(handler, meta))
+            .addSuccess(handler.getName(), new DefaultAuthenticationHandlerExecutionResult(handler, meta))
             .setAttributes(attributes)
             .build();
     }
@@ -231,6 +231,17 @@ public class CoreAuthenticationTestUtils {
         val handler = new SimpleTestUsernamePasswordAuthenticationHandler();
         return new DefaultAuthenticationBuilder(principal)
             .addCredential(meta)
-            .addSuccess("test", new DefaultAuthenticationHandlerExecutionResult(handler, meta));
+            .addSuccess(handler.getName(), new DefaultAuthenticationHandlerExecutionResult(handler, meta));
+    }
+
+    public static AuthenticationBuilder getAuthenticationBuilder(final Principal principal,
+                                                                 final Map<Credential, ? extends AuthenticationHandler> handlers,
+                                                                 final Map<String, List<Object>> attributes) {
+        val builder = new DefaultAuthenticationBuilder(principal).setAttributes(attributes);
+        handlers.forEach((credential, handler) -> {
+            builder.addSuccess(handler.getName(), new DefaultAuthenticationHandlerExecutionResult(handler, new BasicCredentialMetaData(credential)));
+            builder.addCredential(new BasicCredentialMetaData(credential));
+        });
+        return builder;
     }
 }
