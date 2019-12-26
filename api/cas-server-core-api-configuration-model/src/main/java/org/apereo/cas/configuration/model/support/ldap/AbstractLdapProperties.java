@@ -145,7 +145,7 @@ public abstract class AbstractLdapProperties implements Serializable {
     /**
      * Whether TLS should be used and enabled when establishing the connection.
      */
-    private boolean useStartTls = true;
+    private boolean useStartTls;
     /**
      * Sets the maximum amount of time that connects will block.
      */
