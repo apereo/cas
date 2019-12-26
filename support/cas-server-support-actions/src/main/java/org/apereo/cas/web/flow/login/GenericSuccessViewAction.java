@@ -58,7 +58,7 @@ public class GenericSuccessViewAction extends AbstractAction {
      * @return the authentication principal, or {@link NullPrincipal}
      * if none was available.
      */
-    protected Optional<Authentication> getAuthentication(final String ticketGrantingTicketId) {
+    public Optional<Authentication> getAuthentication(final String ticketGrantingTicketId) {
         try {
             val ticketGrantingTicket = this.centralAuthenticationService.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
             return Optional.of(ticketGrantingTicket.getAuthentication());
