@@ -1074,7 +1074,6 @@ The following settings may also need to be defined to describe the mail server s
 # spring.mail.port=
 # spring.mail.username=
 # spring.mail.password=
-# spring.mail.testConnection=true
 # spring.mail.properties.mail.smtp.auth=true
 # spring.mail.properties.mail.smtp.starttls.enable=true
 ```
