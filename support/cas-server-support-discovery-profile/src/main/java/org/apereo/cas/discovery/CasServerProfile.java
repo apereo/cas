@@ -17,17 +17,17 @@ import java.util.Set;
 public class CasServerProfile {
 
     /**
-     * The type of registered services that are supported by this CAS instance.
+     * The type of registered services that <i>are</i> supported by this CAS instance.
      */
     private Map<String, Class> registeredServiceTypesSupported;
 
     /**
-     * The type of multifactor authentication providers that are supported by this CAS instance.
+     * The type of multifactor authentication providers that <i>are</i> supported by this CAS instance.
      */
     private Map<String, String> multifactorAuthenticationProviderTypesSupported;
 
     /**
-     * The type of delegated clients that are supported by this CAS instance.
+     * The type of delegated clients that <i>are</i> supported by this CAS instance.
      */
     private Set<String> delegatedClientTypesSupported;
 
