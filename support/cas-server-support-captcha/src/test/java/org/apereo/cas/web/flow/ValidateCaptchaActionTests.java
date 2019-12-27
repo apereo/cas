@@ -87,8 +87,7 @@ import static org.junit.jupiter.api.Assertions.*;
     properties = {
         "cas.googleRecaptcha.verifyUrl=http://localhost:9294",
         "spring.mail.host=localhost",
-        "spring.mail.port=25000",
-        "spring.mail.testConnection=false"
+        "spring.mail.port=25000"
     }
 )
 public class ValidateCaptchaActionTests {

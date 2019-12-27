@@ -29,6 +29,16 @@ create attribute release policies, etc. CAS at runtime will auto-configure all r
 A number of CAS configuration options equally apply to a number of modules and features. To understand and 
 take note of those options, please [review this guide](Configuration-Properties-Common.html).
 
+## Validation
+
+Configuration properties are automatically validated on CAS startup to report issues with configuration binding,
+specially if defined CAS settings cannot be recognized or validated by the configuration schema. The validation process
+is on by default and can be skipped on startup using a special *system property* `SKIP_CONFIG_VALIDATION` 
+that should be set to `true`. 
+
+Additional validation processes are also handled via [Configuration Metadata](Configuration-Metadata-Repository.html)
+and property migrations applied automatically on startup by Spring Boot and family.
+
 ## Custom Settings
 
 The following settings could be used to extend CAS with arbitrary configuration keys and values:
@@ -39,7 +49,12 @@ The following settings could be used to extend CAS with arbitrary configuration 
 
 ## Configuration Storage
 
+This section outlines strategies that can be used to store CAS configuration and settings.
+
 ### Standalone
+
+This is the default configuration mode which indicates that CAS does NOT require connections 
+to an external configuration server and will run in an embedded standalone mode.
 
 #### By Directory
 
@@ -363,9 +378,33 @@ server.ssl.keyPassword=changeit
 # server.ssl.trustStoreProvider=
 # server.ssl.trustStoreType=
 
-server.maxHttpHeaderSize=2097152
-server.useForwardHeaders=true
-server.connectionTimeout=20000
+# server.maxHttpHeaderSize=2097152
+# server.useForwardHeaders=true
+# server.connectionTimeout=20000
+```
+
+### Embedded Jetty Container
+
+The following settings affect the runtime behavior of the embedded Jetty container.
+
+```properties
+# server.jetty.acceptors=-1       
+
+# server.jetty.accesslog.append=false
+# server.jetty.accesslog.custom-format=
+# server.jetty.accesslog.enabled=false
+# server.jetty.accesslog.file-date-format=
+# server.jetty.accesslog.filename=
+# server.jetty.accesslog.format=
+# server.jetty.accesslog.ignore-paths=
+# server.jetty.accesslog.retention-period=31
+
+# server.jetty.connection-idle-timeout=
+# server.jetty.max-http-form-post-size=200000B
+# server.jetty.max-threads=200
+# server.jetty.min-threads=8
+# server.jetty.selectors=-1
+# server.jetty.thread-idle-timeout=-1
 ```
 
 ### Embedded Apache Tomcat Container
@@ -584,10 +623,10 @@ If none is specified, one is automatically detected and used by CAS.
 
 ## Session replication
 
-The `sessionCookieName` property defines the session cookie name for the session replication.
+The `sessionCookieName` property defines the specific session cookie name used for the session replication.
 
 ```properties
-# cas.sessionReplication.sessionCookieName=JSESSIONID
+# cas.sessionReplication.sessionCookieName=DISSESSION
 ```
 
 ## CAS Banner
@@ -616,8 +655,6 @@ To learn more about this topic, [please review this guide](../monitoring/Monitor
 
 # management.endpoints.jmx.exposure.exclude=*
 # management.endpoints.jmx.exposure.include=
-
-# management.server.add-application-context-header=false
 ```
 
 ### Basic Authentication Security
@@ -1262,6 +1299,13 @@ In the event that a separate resolver is put into place, control how the final p
 ## Authentication Engine
 
 Control inner-workings of the CAS authentication engine, before and after the execution.
+
+```properties
+cas.authn.core.groovy-authentication-resolution.location=file:/etc/cas/config/GroovyAuthentication.groovy
+cas.authn.core.groovy-authentication-resolution.order=0
+
+cas.authn.core.service-authentication-resolution.order=0
+```           
 
 ### Authentication Pre-Processing
 
@@ -2870,8 +2914,13 @@ Configuration settings for this feature are available [here](Configuration-Prope
 
 ### YubiKey MongoDb Device Store
 
- Configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.authn.mfa.yubikey`.
+Configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.authn.mfa.yubikey`.
 
+### YubiKey Redis Device Store
+
+Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#redis-configuration)
+under the configuration key `cas.authn.mfa.yubikey`.
+ 
 ### Radius OTP
 
 To learn more about this topic, [please review this guide](../mfa/RADIUS-Authentication.html).
@@ -3342,6 +3391,7 @@ To learn more about this topic, [please review this guide](../integration/Delega
 # cas.authn.pac4j.name=
 # cas.authn.pac4j.order=
 # cas.authn.pac4j.lazyInit=true
+# cas.authn.pac4j.replicateSessions=true
 ```
 
 The following external identity providers share [common blocks of settings](Configuration-Properties-Common.html#delegated-authentication-settings) 
@@ -4053,7 +4103,6 @@ Control how CAS should respond and validate incoming HTTP requests.
 # cas.httpWebRequest.customHeaders.headerName2=headerValue2
 
 # spring.http.encoding.charset=UTF-8
-# spring.http.encoding.enabled=true
 # spring.http.encoding.force=true
 ```
 

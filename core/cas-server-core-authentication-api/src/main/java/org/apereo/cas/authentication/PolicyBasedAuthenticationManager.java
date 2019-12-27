@@ -149,7 +149,6 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
         LOGGER.info("Authenticated principal [{}] with attributes [{}] via credentials [{}].",
             principal.getId(), principal.getAttributes(), transaction.getCredentials());
         AuthenticationCredentialsThreadLocalBinder.bindCurrent(auth);
-
         return auth;
     }
 

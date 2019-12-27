@@ -79,8 +79,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.google-analytics.cookie.attribute-name=membership",
     "cas.google-analytics.cookie.attribute-value-pattern=^(faculty|staff).*",
     "spring.mail.host=localhost",
-    "spring.mail.port=25000",
-    "spring.mail.testConnection=false"
+    "spring.mail.port=25000"
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CreateGoogleAnalyticsCookieActionTests {

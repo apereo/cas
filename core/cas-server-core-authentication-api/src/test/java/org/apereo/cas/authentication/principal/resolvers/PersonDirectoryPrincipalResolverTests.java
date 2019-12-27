@@ -3,6 +3,7 @@ package org.apereo.cas.authentication.principal.resolvers;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
+import org.apereo.cas.authentication.principal.DefaultPrincipalElectionStrategy;
 import org.apereo.cas.util.CollectionUtils;
 
 import com.google.common.collect.Maps;
@@ -84,7 +85,7 @@ public class PersonDirectoryPrincipalResolverTests {
     public void verifyChainingResolverOverwrite() {
         val resolver = new PersonDirectoryPrincipalResolver(CoreAuthenticationTestUtils.getAttributeRepository());
 
-        val chain = new ChainingPrincipalResolver();
+        val chain = new ChainingPrincipalResolver(new DefaultPrincipalElectionStrategy());
         chain.setChain(Arrays.asList(new EchoingPrincipalResolver(), resolver));
         val attributes = new HashMap<String, List<Object>>();
         attributes.put("cn", List.of("originalCN"));
@@ -103,7 +104,7 @@ public class PersonDirectoryPrincipalResolverTests {
     public void verifyChainingResolver() {
         val resolver = new PersonDirectoryPrincipalResolver(CoreAuthenticationTestUtils.getAttributeRepository());
 
-        val chain = new ChainingPrincipalResolver();
+        val chain = new ChainingPrincipalResolver(new DefaultPrincipalElectionStrategy());
         chain.setChain(Arrays.asList(new EchoingPrincipalResolver(), resolver));
         val p = chain.resolve(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(),
             Optional.of(CoreAuthenticationTestUtils.getPrincipal(CoreAuthenticationTestUtils.CONST_USERNAME,
@@ -121,7 +122,7 @@ public class PersonDirectoryPrincipalResolverTests {
             new StubPersonAttributeDao(Collections.singletonMap("principal",
                 CollectionUtils.wrap("changedPrincipal"))), "principal");
 
-        val chain = new ChainingPrincipalResolver();
+        val chain = new ChainingPrincipalResolver(new DefaultPrincipalElectionStrategy());
         chain.setChain(Arrays.asList(new EchoingPrincipalResolver(), resolver, resolver2));
 
         val p = chain.resolve(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(),
@@ -140,7 +141,7 @@ public class PersonDirectoryPrincipalResolverTests {
         val resolver = new PersonDirectoryPrincipalResolver(CoreAuthenticationTestUtils.getAttributeRepository());
         val resolver2 = new PersonDirectoryPrincipalResolver(
             new StubPersonAttributeDao(Collections.singletonMap("something", CollectionUtils.wrap("principal-id"))), " invalid, something");
-        val chain = new ChainingPrincipalResolver();
+        val chain = new ChainingPrincipalResolver(new DefaultPrincipalElectionStrategy());
         chain.setChain(Arrays.asList(new EchoingPrincipalResolver(), resolver, resolver2));
 
         val p = chain.resolve(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(),
@@ -155,7 +156,7 @@ public class PersonDirectoryPrincipalResolverTests {
         val resolver = new PersonDirectoryPrincipalResolver(CoreAuthenticationTestUtils.getAttributeRepository());
         val resolver2 = new PersonDirectoryPrincipalResolver(
             new StubPersonAttributeDao(Collections.singletonMap("something", CollectionUtils.wrap("principal-id"))), " invalid, ");
-        val chain = new ChainingPrincipalResolver();
+        val chain = new ChainingPrincipalResolver(new DefaultPrincipalElectionStrategy());
         chain.setChain(Arrays.asList(new EchoingPrincipalResolver(), resolver, resolver2));
 
         val p = chain.resolve(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(),

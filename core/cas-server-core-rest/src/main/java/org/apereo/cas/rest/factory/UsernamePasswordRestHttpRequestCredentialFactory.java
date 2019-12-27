@@ -28,7 +28,7 @@ public class UsernamePasswordRestHttpRequestCredentialFactory implements RestHtt
     private static final String USERNAME = "username";
     private static final String PASSWORD = "password";
 
-    private int order;
+    private int order = Integer.MAX_VALUE;
 
     @Override
     public List<Credential> fromRequest(final HttpServletRequest request, final MultiValueMap<String, String> requestBody) {

@@ -85,8 +85,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.wsfed[0].signingCertificateResources=classpath:adfs-signing.cer",
     "cas.authn.wsfed[0].identityAttribute=upn",
     "spring.mail.host=localhost",
-    "spring.mail.port=25000",
-    "spring.mail.testConnection=false"
+    "spring.mail.port=25000"
 })
 public class WsFederationActionTests {
     @Autowired

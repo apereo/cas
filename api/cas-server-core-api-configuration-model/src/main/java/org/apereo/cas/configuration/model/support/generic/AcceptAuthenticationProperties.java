@@ -31,6 +31,11 @@ public class AcceptAuthenticationProperties implements Serializable {
     private String users = StringUtils.EMPTY;
 
     /**
+     * Order of the authentication handler in the chain.
+     */
+    private int order = Integer.MAX_VALUE;
+    
+    /**
      * Name of the authentication handler.
      */
     private String name;

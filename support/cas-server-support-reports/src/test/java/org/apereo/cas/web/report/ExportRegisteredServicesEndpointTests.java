@@ -21,8 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestPropertySource(properties = {
     "management.endpoint.exportRegisteredServices.enabled=true",
     "spring.mail.host=localhost",
-    "spring.mail.port=25000",
-    "spring.mail.testConnection=false"
+    "spring.mail.port=25000"
 })
 public class ExportRegisteredServicesEndpointTests extends AbstractCasEndpointTests {
     @Autowired

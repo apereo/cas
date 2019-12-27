@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * This is {@link SurrogateRestAuthenticationService}.
@@ -42,7 +43,7 @@ public class SurrogateRestAuthenticationService extends BaseSurrogateAuthenticat
     }
 
     @Override
-    public boolean canAuthenticateAsInternal(final String surrogate, final Principal principal, final Service service) {
+    public boolean canAuthenticateAsInternal(final String surrogate, final Principal principal, final Optional<Service> service) {
         HttpResponse response = null;
         try {
             response = HttpUtils.execute(properties.getUrl(), properties.getMethod(),

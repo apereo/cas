@@ -46,8 +46,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
     "cas.ticket.registry.ehcache.maxElementsInMemory=100",
     "cas.ticket.registry.ehcache.shared=true",
     "spring.mail.host=localhost",
-    "spring.mail.port=25000",
-    "spring.mail.testConnection=false"
+    "spring.mail.port=25000"
 })
 @Tag("Ehcache")
 public class CachesEndpointTests {

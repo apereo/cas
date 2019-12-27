@@ -23,8 +23,7 @@ import java.util.concurrent.ConcurrentHashMap;
     CasCoreUtilConfiguration.class
 }, properties = {
     "spring.mail.host=localhost",
-    "spring.mail.port=25000",
-    "spring.mail.testConnection=false"
+    "spring.mail.port=25000"
 })
 public class InMemoryGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTimeTokenCredentialRepositoryTests {
     private final ConcurrentHashMap<String, OneTimeTokenCredentialRepository> repoMap = new ConcurrentHashMap<>();

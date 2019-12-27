@@ -48,6 +48,7 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -140,7 +141,7 @@ public class SurrogateRestAuthenticationServiceTests extends BaseSurrogateAuthen
 
             val result = surrogateService.canAuthenticateAs("cassurrogate",
                 CoreAuthenticationTestUtils.getPrincipal("casuser"),
-                CoreAuthenticationTestUtils.getService());
+                Optional.of(CoreAuthenticationTestUtils.getService()));
             /*
              * Can't use super() until the REST classes are
              * completely refactored and don't need an actual server to connect to.

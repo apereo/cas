@@ -43,8 +43,8 @@ The JSON structure is a simple map of user id to yubikey public id representing 
 
 ```json
 {
-  "uid1": "yubikeyPublicId1",
-  "uid2": "yubikeyPublicId2"
+  "uid1": ["yubikeyPublicId1"],
+  "uid2": ["yubikeyPublicId2"]
 }
 ```
 
@@ -93,6 +93,20 @@ The structure of this database's documents is as follows:
 | `publicId`         | The public identifier/key of the device used for authentication.
 | `username`         | The username whose device is registered.
 
+### Redis
+
+Support is enabled by including the following dependencies in the WAR overlay:
+
+```xml
+<dependency>
+     <groupId>org.apereo.cas</groupId>
+     <artifactId>cas-server-support-yubikey-redis</artifactId>
+     <version>${cas.version}</version>
+</dependency>
+```
+
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#yubikey).
+
 ### MongoDb
 
 Support is enabled by including the following dependencies in the WAR overlay:
@@ -113,6 +127,8 @@ The structure of this collection is as follows:
 | `id`               | Unique record identifier, acting as the primary key.
 | `publicId`         | The public identifier/key of the device used for authentication.
 | `username`         | The username whose device is registered.
+
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#yubikey).
 
 ### Custom
 

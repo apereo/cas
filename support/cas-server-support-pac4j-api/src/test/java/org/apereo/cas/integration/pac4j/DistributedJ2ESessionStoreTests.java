@@ -12,7 +12,6 @@ import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 
@@ -27,8 +26,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-
-import javax.servlet.http.HttpSessionEvent;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -54,8 +51,7 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class
 }, properties = {
     "spring.mail.host=localhost",
-    "spring.mail.port=25000",
-    "spring.mail.testConnection=false"
+    "spring.mail.port=25000"
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class DistributedJ2ESessionStoreTests {
@@ -71,7 +67,7 @@ public class DistributedJ2ESessionStoreTests {
     public void verifyOperation() {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
-        val store = new DistributedJ2ESessionStore(this.ticketRegistry, this.ticketFactory, "JSESSIONID");
+        val store = new DistributedJ2ESessionStore(this.ticketRegistry, this.ticketFactory, new CasConfigurationProperties());
         val context = new JEEContext(request, response, store);
 
         assertNotNull(request.getSession());
@@ -87,14 +83,13 @@ public class DistributedJ2ESessionStoreTests {
         assertEquals("test2", value.get());
 
         store.set(context, "attribute", null);
-        store.set(context, "attribute2", "test3"); 
+        store.set(context, "attribute2", "test3");
         assertFalse(store.get(context, "attribute").isPresent());
         value = store.get(context, "attribute2");
         assertTrue(value.isPresent());
         assertEquals("test3", value.get());
 
-        store.sessionDestroyed(new HttpSessionEvent(request.getSession()));
-        store.handle(new MockTicketGrantingTicket("casuser"));
+        store.destroySession(context);
         value = store.get(context, "attribute");
         assertTrue(value.isEmpty());
     }

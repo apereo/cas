@@ -273,3 +273,17 @@ SERVER IP ADDRESS: 127.0.0.1
 ```
 
 Additionally, failure and success events may also communicated via SMS and/or email messages to relevant parties. To learn more about available options, please [see this guide](../notifications/SMS-Messaging-Configuration.html) or [this guide](../notifications/Sending-Email-Configuration.html).
+
+## REST Protocol
+
+The feature extends the [CAS REST API](../protocol/REST-Protocol.html) communication model to surrogate authentication,
+allowing REST credentials to specify a substitute and authenticate on behalf of another user. To activate surrogate authentication
+for the CAS REST API, you will need to choose one of the following options:
+
+- Format the credential username using the following syntax:
+
+```bash
+[surrogate-userid][separator][primary-userid]
+```
+
+- Pass along a special request header `X-Surrogate-Principal` that contains the surrogate userid.
