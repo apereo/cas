@@ -72,9 +72,9 @@ import org.ldaptive.pool.IdlePruneStrategy;
 import org.ldaptive.pool.OpenConnectionActivator;
 import org.ldaptive.pool.PoolConfig;
 import org.ldaptive.referral.FollowSearchReferralHandler;
-import org.ldaptive.sasl.SaslConfig;
 import org.ldaptive.sasl.Mechanism;
 import org.ldaptive.sasl.QualityOfProtection;
+import org.ldaptive.sasl.SaslConfig;
 import org.ldaptive.sasl.SecurityStrength;
 import org.ldaptive.ssl.AllowAnyHostnameVerifier;
 import org.ldaptive.ssl.DefaultHostnameVerifier;
@@ -307,8 +307,8 @@ public class LdapUtils {
                                                          final AbstractLdapProperties.LdapType type) {
         try {
             val connConfig = connectionFactory.getConnectionConfig();
-            if (connConfig.getUseStartTLS() ||
-                (connConfig.getLdapUrl() != null && connConfig.getLdapUrl().toLowerCase().contains("ldaps://"))) {
+            if (connConfig.getUseStartTLS()
+                || (connConfig.getLdapUrl() != null && connConfig.getLdapUrl().toLowerCase().contains("ldaps://"))) {
                 LOGGER.warn("Executing password modification op under a non-secure LDAP connection; "
                         + "To modify password attributes, the connection to the LDAP server {} be secured and/or encrypted.",
                     type == AbstractLdapProperties.LdapType.AD ? "MUST" : "SHOULD");
@@ -476,6 +476,26 @@ public class LdapUtils {
     }
 
     /**
+     * New ldaptive search executor search executor.
+     *
+     * @param baseDn           the base dn
+     * @param filterQuery      the filter query
+     * @param params           the params
+     * @param returnAttributes the return attributes
+     * @return the search executor
+     */
+    public static SearchRequest newLdaptiveSearchRequest(final String baseDn, final String filterQuery,
+                                                         final List<String> params,
+                                                         final String[] returnAttributes) {
+        val request = new SearchRequest();
+        request.setBaseDn(baseDn);
+        request.setFilter(newLdaptiveSearchFilter(filterQuery, params));
+        request.setReturnAttributes(returnAttributes);
+        request.setSearchScope(SearchScope.SUBTREE);
+        return request;
+    }
+
+    /**
      * New ldaptive search request.
      * Returns all attributes.
      *
@@ -587,26 +607,6 @@ public class LdapUtils {
         val operation = new SearchOperation();
         operation.setRequest(newLdaptiveSearchRequest(baseDn, filterQuery, params, returnAttributes.toArray(ArrayUtils.EMPTY_STRING_ARRAY)));
         return operation;
-    }
-
-    /**
-     * New ldaptive search executor search executor.
-     *
-     * @param baseDn           the base dn
-     * @param filterQuery      the filter query
-     * @param params           the params
-     * @param returnAttributes the return attributes
-     * @return the search executor
-     */
-    public static SearchRequest newLdaptiveSearchRequest(final String baseDn, final String filterQuery,
-                                                             final List<String> params,
-                                                             final String[] returnAttributes) {
-        val request = new SearchRequest();
-        request.setBaseDn(baseDn);
-        request.setFilter(newLdaptiveSearchFilter(filterQuery, params));
-        request.setReturnAttributes(returnAttributes);
-        request.setSearchScope(SearchScope.SUBTREE);
-        return request;
     }
 
     /**

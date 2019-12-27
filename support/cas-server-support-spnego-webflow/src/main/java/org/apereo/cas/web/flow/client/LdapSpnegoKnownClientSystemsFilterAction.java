@@ -86,14 +86,14 @@ public class LdapSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownCli
         val remoteHostName = getRemoteHostName(remoteIp);
         LOGGER.debug("Resolved remote hostname [{}] based on ip [{}]", remoteHostName, remoteIp);
 
-        val searchOperation = SearchOperation.copy(this.searchOperation);
-        searchOperation.getTemplate().setParameter("host", remoteHostName);
+        val searchOp = SearchOperation.copy(this.searchOperation);
+        searchOp.getTemplate().setParameter("host", remoteHostName);
 
         LOGGER.debug("Using search filter [{}] on baseDn [{}]",
-            searchOperation.getTemplate().format(),
-            searchOperation.getRequest().getBaseDn());
+            searchOp.getTemplate().format(),
+            searchOp.getRequest().getBaseDn());
 
-        val searchResult = searchOperation.execute();
+        val searchResult = searchOp.execute();
         if (searchResult.isSuccess()) {
             return processSpnegoAttribute(searchResult);
         }
