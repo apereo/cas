@@ -1,7 +1,5 @@
-
 package org.apereo.cas;
 
-import org.apereo.cas.adaptors.ldap.services.LdapContinuousIntegrationServiceRegistryTests;
 import org.apereo.cas.adaptors.ldap.services.LdapServiceRegistryTests;
 
 import org.junit.platform.runner.JUnitPlatform;
@@ -14,10 +12,7 @@ import org.junit.runner.RunWith;
  * @author Misagh Moayyed
  * @since 6.0.0-RC3
  */
-@SelectClasses({
-    LdapServiceRegistryTests.class,
-    LdapContinuousIntegrationServiceRegistryTests.class
-})
+@SelectClasses(LdapServiceRegistryTests.class)
 @RunWith(JUnitPlatform.class)
 public class AllTestsSuite {
 }

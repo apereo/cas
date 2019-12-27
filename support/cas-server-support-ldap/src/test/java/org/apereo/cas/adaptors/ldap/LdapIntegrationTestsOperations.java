@@ -6,7 +6,6 @@ import org.apereo.cas.util.ldap.uboundid.InMemoryTestLdapDirectoryServer;
 import com.unboundid.ldap.sdk.LDAPConnection;
 import lombok.val;
 import org.ldaptive.BindConnectionInitializer;
-import org.ldaptive.BindRequest;
 import org.springframework.core.io.ClassPathResource;
 
 import java.io.IOException;
