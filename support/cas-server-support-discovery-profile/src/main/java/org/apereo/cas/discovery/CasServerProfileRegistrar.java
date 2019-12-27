@@ -36,7 +36,6 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Slf4j
 @Setter
 @RequiredArgsConstructor
 public class CasServerProfileRegistrar implements ApplicationContextAware {
