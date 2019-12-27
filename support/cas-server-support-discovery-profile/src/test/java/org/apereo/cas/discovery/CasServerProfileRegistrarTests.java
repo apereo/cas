@@ -67,11 +67,8 @@ public class CasServerProfileRegistrarTests {
         val profile = casServerProfileRegistrar.getProfile();
         assertNotNull(profile);
         assertNotNull(profile.getAvailableAttributes());
-        assertNotNull(profile.getDelegatedClientTypes());
         assertNotNull(profile.getDelegatedClientTypesSupported());
-        assertNotNull(profile.getMultifactorAuthenticationProviderTypes());
         assertNotNull(profile.getMultifactorAuthenticationProviderTypesSupported());
-        assertNotNull(profile.getRegisteredServiceTypes());
         assertNotNull(profile.getRegisteredServiceTypesSupported());
     }
 }
