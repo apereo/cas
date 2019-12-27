@@ -121,17 +121,6 @@ public class LdapUtils {
      *
      * @param ctx       the ldap entry
      * @param attribute the attribute name
-     * @return {@code true} if the attribute's value matches (case-insensitive) {@code "true"}, otherwise false
-     */
-    public static Boolean getBoolean(final LdapEntry ctx, final String attribute) {
-        return getBoolean(ctx, attribute, Boolean.FALSE);
-    }
-
-    /**
-     * Reads a Boolean value from the LdapEntry.
-     *
-     * @param ctx       the ldap entry
-     * @param attribute the attribute name
      * @param nullValue the value which should be returning in case of a null value
      * @return {@code true} if the attribute's value matches (case-insensitive) {@code "true"}, otherwise false
      */
@@ -141,17 +130,6 @@ public class LdapUtils {
             return v.equalsIgnoreCase(Boolean.TRUE.toString());
         }
         return nullValue;
-    }
-
-    /**
-     * Reads a Long value from the LdapEntry.
-     *
-     * @param ctx       the ldap entry
-     * @param attribute the attribute name
-     * @return the long value
-     */
-    public static Long getLong(final LdapEntry ctx, final String attribute) {
-        return getLong(ctx, attribute, Long.MIN_VALUE);
     }
 
     /**
@@ -307,8 +285,7 @@ public class LdapUtils {
                                                          final AbstractLdapProperties.LdapType type) {
         try {
             val connConfig = connectionFactory.getConnectionConfig();
-            if (connConfig.getUseStartTLS()
-                || (connConfig.getLdapUrl() != null && connConfig.getLdapUrl().toLowerCase().contains("ldaps://"))) {
+            if (connConfig.getUseStartTLS() || connConfig.getLdapUrl() != null && connConfig.getLdapUrl().toLowerCase().contains("ldaps://")) {
                 LOGGER.warn("Executing password modification op under a non-secure LDAP connection; "
                         + "To modify password attributes, the connection to the LDAP server {} be secured and/or encrypted.",
                     type == AbstractLdapProperties.LdapType.AD ? "MUST" : "SHOULD");
@@ -323,10 +300,9 @@ public class LdapUtils {
                     operation.execute(new ModifyRequest(currentDn,
                         new AttributeModification(AttributeModification.Type.REPLACE, new UnicodePwdAttribute(newPassword))))
                     :
-                    operation.execute(
-                        new ModifyRequest(currentDn,
-                            new AttributeModification(Type.DELETE, new UnicodePwdAttribute(oldPassword)),
-                            new AttributeModification(Type.ADD, new UnicodePwdAttribute(newPassword))));
+                    operation.execute(new ModifyRequest(currentDn,
+                        new AttributeModification(Type.DELETE, new UnicodePwdAttribute(oldPassword)),
+                        new AttributeModification(Type.ADD, new UnicodePwdAttribute(newPassword))));
                 LOGGER.debug("Result code [{}], message: [{}]", response.getResultCode(), response.getDiagnosticMessage());
                 return response.getResultCode() == ResultCode.SUCCESS;
             }
@@ -783,8 +759,8 @@ public class LdapUtils {
                             .filter(v -> v != AbstractLdapProperties.LdapConnectionPoolPassivator.BIND)
                             .collect(Collectors.toList());
                         LOGGER.warn("[{}] pool passivator could not be created for [{}] given bind credentials are not specified. "
-                            + "If you are dealing with LDAP in such a way that does not require bind credentials, you may need to "
-                            + "set the pool passivator setting to one of [{}]",
+                                + "If you are dealing with LDAP in such a way that does not require bind credentials, you may need to "
+                                + "set the pool passivator setting to one of [{}]",
                             l.getPoolPassivator(), l.getLdapUrl(), values);
                     }
                     break;
