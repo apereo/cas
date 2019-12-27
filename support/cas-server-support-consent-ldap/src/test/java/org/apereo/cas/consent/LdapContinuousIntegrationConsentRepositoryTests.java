@@ -50,8 +50,9 @@ public class LdapContinuousIntegrationConsentRepositoryTests extends BaseLdapCon
     @Override
     @SneakyThrows
     public LDAPConnection getConnection() {
+        val ldap = casProperties.getConsent().getLdap();
         return new LDAPConnection("localhost", LDAP_PORT,
-            casProperties.getConsent().getLdap().getBindDn(),
-            casProperties.getConsent().getLdap().getBindCredential());
+            ldap.getBindDn(),
+            ldap.getBindCredential());
     }
 }
