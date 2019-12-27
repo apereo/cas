@@ -285,7 +285,7 @@ public class LdapUtils {
                                                          final AbstractLdapProperties.LdapType type) {
         try {
             val connConfig = connectionFactory.getConnectionConfig();
-            if (connConfig.getUseStartTLS() || connConfig.getLdapUrl() != null && connConfig.getLdapUrl().toLowerCase().contains("ldaps://")) {
+            if (connConfig.getUseStartTLS() || (connConfig.getLdapUrl() != null && connConfig.getLdapUrl().toLowerCase().contains("ldaps://"))) {
                 LOGGER.warn("Executing password modification op under a non-secure LDAP connection; "
                         + "To modify password attributes, the connection to the LDAP server {} be secured and/or encrypted.",
                     type == AbstractLdapProperties.LdapType.AD ? "MUST" : "SHOULD");
