@@ -41,7 +41,7 @@ echo -e "\n${GREEN}Building CAS. Please be patient as this might take a while...
 -DsonatypeUsername="${username}" -DsonatypePassword="${password}"
 
 echo -e "\n${GREEN}Publishing CAS. Please be patient as this might take a while...${NORMAL}\n"
-./gradlew publish -DpublishReleases=true -DsonatypeUsername="${username}" -DsonatypePassword="${password}" \
+./gradlew publish -DpublishReleases=true -DskipGradleLint=true -DsonatypeUsername="${username}" -DsonatypePassword="${password}" \
 -Dorg.gradle.internal.http.socketTimeout="${timeout}" -Dorg.gradle.internal.http.connectionTimeout="${timeout}"
 
 echo -e "\n${YELLOW}Done! You may now finalize the release process via Sonatype:"
