@@ -732,12 +732,13 @@ public class LdapUtils {
 
         pooledCf.setPruneStrategy(strategy);
 
-        switch (l.getValidator().getType().trim().toLowerCase()) {
+        val validator = l.getValidator();
+        switch (validator.getType().trim().toLowerCase()) {
             case "compare":
                 val compareRequest = new CompareRequest(
-                    l.getValidator().getDn(),
-                    l.getValidator().getAttributeName(),
-                    l.getValidator().getAttributeValue());
+                    validator.getDn(),
+                    validator.getAttributeName(),
+                    validator.getAttributeValue());
                 val compareValidator = new CompareConnectionValidator(compareRequest);
                 compareValidator.setValidatePeriod(Beans.newDuration(l.getValidatePeriod()));
                 compareValidator.setValidateTimeout(Beans.newDuration(l.getValidateTimeout()));
@@ -749,10 +750,10 @@ public class LdapUtils {
             case "search":
             default:
                 val searchRequest = new SearchRequest();
-                searchRequest.setBaseDn(l.getValidator().getBaseDn());
-                searchRequest.setFilter(l.getValidator().getSearchFilter());
+                searchRequest.setBaseDn(validator.getBaseDn());
+                searchRequest.setFilter(validator.getSearchFilter());
                 searchRequest.setReturnAttributes(ReturnAttributes.NONE.value());
-                searchRequest.setSearchScope(SearchScope.valueOf(l.getValidator().getScope()));
+                searchRequest.setSearchScope(SearchScope.valueOf(validator.getScope()));
                 searchRequest.setSizeLimit(1);
                 val searchValidator = new SearchConnectionValidator(searchRequest);
                 searchValidator.setValidatePeriod(Beans.newDuration(l.getValidatePeriod()));
