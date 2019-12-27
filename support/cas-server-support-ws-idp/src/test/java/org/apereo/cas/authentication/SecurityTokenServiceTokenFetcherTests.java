@@ -75,7 +75,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
         "spring.mail.host=localhost",
         "spring.mail.port=25000",
-        "spring.mail.testConnection=false",
+
 
         "cas.authn.wsfedIdp.sts.signingKeystoreFile=classpath:ststrust.jks",
         "cas.authn.wsfedIdp.sts.signingKeystorePassword=storepass",

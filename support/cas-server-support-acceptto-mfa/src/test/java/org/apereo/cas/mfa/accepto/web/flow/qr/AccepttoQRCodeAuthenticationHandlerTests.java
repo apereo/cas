@@ -79,7 +79,7 @@ import static org.mockito.Mockito.*;
         "cas.authn.mfa.acceptto.organization-secret=thisisasecret",
         "spring.mail.host=localhost",
         "spring.mail.port=25000",
-        "spring.mail.testConnection=false",
+
         "cas.authn.mfa.acceptto.registration-api-public-key.location=classpath:publickey.pem"
     })
 public class AccepttoQRCodeAuthenticationHandlerTests {

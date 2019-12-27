@@ -56,8 +56,7 @@ import static org.mockito.Mockito.*;
     properties = {
         "cas.authn.surrogate.simple.surrogates.casuser=cassurrogate",
         "spring.mail.host=localhost",
-        "spring.mail.port=25000",
-        "spring.mail.testConnection=false"
+        "spring.mail.port=25000"
     })
 public class SurrogateAuthenticationPostProcessorTests {
     @Autowired
@@ -77,7 +76,9 @@ public class SurrogateAuthenticationPostProcessorTests {
         c.setPassword("Mellon");
         val transaction = DefaultAuthenticationTransaction.of(RegisteredServiceTestUtils.getService("service"), c);
         val builder = mock(AuthenticationBuilder.class);
-        when(builder.build()).thenReturn(CoreAuthenticationTestUtils.getAuthentication("casuser"));
+        val principal = new SurrogatePrincipal(CoreAuthenticationTestUtils.getPrincipal("casuser"),
+            CoreAuthenticationTestUtils.getPrincipal("something"));
+        when(builder.build()).thenReturn(CoreAuthenticationTestUtils.getAuthentication(principal));
         assertThrows(AuthenticationException.class, () -> surrogateAuthenticationPostProcessor.process(builder, transaction));
     }
 
@@ -87,8 +88,7 @@ public class SurrogateAuthenticationPostProcessorTests {
         c.setUsername("casuser");
         c.setPassword("Mellon");
         c.setSurrogateUsername("cassurrogate");
-        val transaction = DefaultAuthenticationTransaction.of(
-            RegisteredServiceTestUtils.getService("https://localhost"), c);
+        val transaction = DefaultAuthenticationTransaction.of(RegisteredServiceTestUtils.getService("https://localhost"), c);
         val builder = mock(AuthenticationBuilder.class);
         when(builder.build()).thenReturn(CoreAuthenticationTestUtils.getAuthentication("casuser"));
         surrogateAuthenticationPostProcessor.process(builder, transaction);

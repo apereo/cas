@@ -14,6 +14,7 @@ import org.ldaptive.ConnectionFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 
@@ -38,7 +39,7 @@ public class SurrogateLdapAuthenticationService extends BaseSurrogateAuthenticat
     }
 
     @Override
-    public boolean canAuthenticateAsInternal(final String surrogate, final Principal principal, final Service service) {
+    public boolean canAuthenticateAsInternal(final String surrogate, final Principal principal, final Optional<Service> service) {
         try {
             val id = principal.getId();
             if (surrogate.equalsIgnoreCase(id)) {

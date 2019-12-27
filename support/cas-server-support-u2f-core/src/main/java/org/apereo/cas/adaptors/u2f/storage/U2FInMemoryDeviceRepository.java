@@ -4,7 +4,9 @@ import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.yubico.u2f.data.DeviceRegistration;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
@@ -28,19 +30,14 @@ public class U2FInMemoryDeviceRepository extends BaseU2FDeviceRepository {
     }
 
     @Override
-    public void clean() {
-        this.userStorage.cleanUp();
-    }
-
-    @Override
-    public void removeAll() {
-        userStorage.invalidateAll();
-    }
-
-    @Override
     @SneakyThrows
     public Collection<? extends DeviceRegistration> getRegisteredDevices(final String username) {
-        return userStorage.get(username).values()
+        val values = userStorage.get(username);
+        if (values == null) {
+            return new ArrayList<>(0);
+        }
+
+        return values.values()
             .stream()
             .map(r -> {
                 try {
@@ -56,16 +53,33 @@ public class U2FInMemoryDeviceRepository extends BaseU2FDeviceRepository {
 
     @Override
     public void registerDevice(final String username, final DeviceRegistration registration) {
-        userStorage.get(username).put(registration.getKeyHandle(), registration.toJson());
+        val values = userStorage.get(username);
+        if (values != null) {
+            values.put(registration.getKeyHandle(), registration.toJson());
+        }
     }
 
     @Override
     public void authenticateDevice(final String username, final DeviceRegistration registration) {
-        userStorage.get(username).put(registration.getKeyHandle(), registration.toJson());
+        val values = userStorage.get(username);
+        if (values != null) {
+            values.put(registration.getKeyHandle(), registration.toJson());
+        }
     }
 
     @Override
     public boolean isDeviceRegisteredFor(final String username) {
-        return !userStorage.get(username).values().isEmpty();
+        val values = userStorage.get(username);
+        return values != null && !values.values().isEmpty();
+    }
+
+    @Override
+    public void clean() {
+        this.userStorage.cleanUp();
+    }
+
+    @Override
+    public void removeAll() {
+        userStorage.invalidateAll();
     }
 }

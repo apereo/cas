@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * This is {@link SimpleSurrogateAuthenticationService}.
@@ -34,7 +35,7 @@ public class SimpleSurrogateAuthenticationService extends BaseSurrogateAuthentic
     }
 
     @Override
-    public boolean canAuthenticateAsInternal(final String surrogate, final Principal principal, final Service service) {
+    public boolean canAuthenticateAsInternal(final String surrogate, final Principal principal, final Optional<Service> service) {
         if (this.eligibleAccounts.containsKey(principal.getId())) {
             val surrogates = this.eligibleAccounts.get(principal.getId());
             LOGGER.debug("Surrogate accounts authorized for [{}] are [{}]", principal.getId(), surrogates);
