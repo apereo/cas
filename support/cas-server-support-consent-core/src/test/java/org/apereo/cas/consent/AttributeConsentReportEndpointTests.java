@@ -1,6 +1,6 @@
-package org.apereo.cas.discovery;
+package org.apereo.cas.consent;
 
-import org.apereo.cas.config.CasDiscoveryProfileConfiguration;
+import org.apereo.cas.config.CasConsentCoreConfiguration;
 import org.apereo.cas.web.report.AbstractCasEndpointTests;
 
 import lombok.val;
@@ -12,28 +12,27 @@ import org.springframework.boot.test.context.SpringBootTest;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link CasServerDiscoveryProfileEndpointTests}.
+ * This is {@link AttributeConsentReportEndpointTests}.
  *
  * @author Misagh Moayyed
  * @since 6.2.0
  */
 @SpringBootTest(classes = {
     AbstractCasEndpointTests.SharedTestConfiguration.class,
-    CasDiscoveryProfileConfiguration.class
+    CasConsentCoreConfiguration.class
 },
     properties = {
         "management.endpoints.web.exposure.include=*",
-        "management.endpoint.discoveryProfile.enabled=true"
+        "management.endpoint.attributeConsent.enabled=true"
     })
-public class CasServerDiscoveryProfileEndpointTests extends AbstractCasEndpointTests {
+public class AttributeConsentReportEndpointTests {
     @Autowired
-    @Qualifier("discoveryProfileEndpoint")
-    private CasServerDiscoveryProfileEndpoint discoveryProfileEndpoint;
+    @Qualifier("attributeConsentReportEndpoint")
+    private AttributeConsentReportEndpoint attributeConsentReportEndpoint;
 
     @Test
     public void verifyOperation() {
-        val discovery = discoveryProfileEndpoint.discovery();
-        assertNotNull(discovery);
-        assertFalse(discovery.isEmpty());
+        val results = attributeConsentReportEndpoint.consentDecisions("casuser");
+        assertNotNull(results);
     }
 }

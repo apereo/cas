@@ -1,6 +1,7 @@
 
 package org.apereo.cas;
 
+import org.apereo.cas.consent.AttributeConsentReportEndpointTests;
 import org.apereo.cas.consent.DefaultConsentDecisionBuilderTests;
 import org.apereo.cas.consent.DefaultConsentEngineTests;
 import org.apereo.cas.consent.GroovyConsentRepositoryTests;
@@ -22,7 +23,8 @@ import org.junit.runner.RunWith;
     GroovyConsentRepositoryTests.class,
     DefaultConsentDecisionBuilderTests.class,
     InMemoryConsentRepositoryTests.class,
-    JsonConsentRepositoryTests.class
+    JsonConsentRepositoryTests.class,
+    AttributeConsentReportEndpointTests.class
 })
 @RunWith(JUnitPlatform.class)
 public class AllTestsSuite {
