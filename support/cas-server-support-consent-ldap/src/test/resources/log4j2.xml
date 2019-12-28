@@ -6,9 +6,9 @@
         </Console>
     </Appenders>
     <Loggers>
-        <Logger name="org.apereo" level="off" />
-        <Logger name="org.ldaptive" level="off" />
-        <Logger name="com.unboundid" level="off" />
+        <Logger name="org.apereo" level="warn" />
+        <Logger name="org.ldaptive" level="warn" />
+        <Logger name="com.unboundid" level="warn" />
         <Root level="off">
             <AppenderRef ref="console"/>
         </Root>

@@ -148,8 +148,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      * @throws LoginException On security policy errors related to principal creation.
      */
     protected Principal createPrincipal(final String username, final LdapEntry ldapEntry) throws LoginException {
-        LOGGER.debug("Creating LDAP principal for [{}] based on [{}] and attributes [{}]", username, ldapEntry.getDn(),
-            ldapEntry.getAttributeNames());
+        LOGGER.debug("Creating LDAP principal for [{}] based on [{}] and attributes [{}]", username, ldapEntry.getDn(), ldapEntry.getAttributeNames());
         val id = getLdapPrincipalIdentifier(username, ldapEntry);
         LOGGER.debug("LDAP principal identifier created is [{}]", id);
         val attributeMap = collectAttributesForLdapEntry(ldapEntry, id);

@@ -31,7 +31,6 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 @SpringBootTest(classes = RefreshAutoConfiguration.class,
     properties = {
         "cas.monitor.endpoints.ldap.ldapUrl=ldap://localhost:10389",
-        "cas.monitor.endpoints.ldap.useSsl=false",
         "cas.monitor.endpoints.ldap.baseDn=ou=people,dc=example,dc=org",
         "cas.monitor.endpoints.ldap.searchFilter=cn={user}",
         "cas.monitor.endpoints.ldap.bindDn=cn=Directory Manager",

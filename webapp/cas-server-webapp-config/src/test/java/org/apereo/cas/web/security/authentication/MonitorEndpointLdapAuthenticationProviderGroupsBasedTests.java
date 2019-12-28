@@ -32,7 +32,6 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.monitor.endpoints.ldap.ldapAuthz.groupAttribute=roomNumber",
         "cas.monitor.endpoints.ldap.ldapAuthz.groupPrefix=ROLE_",
         "cas.monitor.endpoints.ldap.ldapUrl=ldap://localhost:10389",
-        "cas.monitor.endpoints.ldap.useSsl=false",
         "cas.monitor.endpoints.ldap.baseDn=ou=people,dc=example,dc=org",
         "cas.monitor.endpoints.ldap.searchFilter=cn={user}",
         "cas.monitor.endpoints.ldap.bindDn=cn=Directory Manager",

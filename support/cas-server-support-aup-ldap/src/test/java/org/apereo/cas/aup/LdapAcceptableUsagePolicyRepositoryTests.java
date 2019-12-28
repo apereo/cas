@@ -32,7 +32,6 @@ import org.springframework.test.context.TestPropertySource;
 @EnabledIfContinuousIntegration
 @TestPropertySource(properties = {
     "cas.acceptableUsagePolicy.ldap[0].ldapUrl=ldap://localhost:10389",
-    "cas.acceptableUsagePolicy.ldap[0].useSsl=false",
     "cas.acceptableUsagePolicy.ldap[0].baseDn=ou=people,dc=example,dc=org",
     "cas.acceptableUsagePolicy.ldap[0].searchFilter=cn={0}",
     "cas.acceptableUsagePolicy.ldap[0].bindDn=cn=Directory Manager",
