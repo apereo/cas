@@ -242,11 +242,11 @@ public class LdapConsentRepository implements ConsentRepository {
      */
     private Collection<LdapEntry> readConsentEntries() {
         try {
-            val att = this.ldapProperties.getConsentAttributeName();
+            val att = ldapProperties.getConsentAttributeName();
             val filter = LdapUtils.newLdaptiveSearchFilter('(' + att + "=*)");
 
             LOGGER.debug("Locating consent LDAP entries via filter [{}] based on attribute [{}]", filter, att);
-            val response = LdapUtils.executeSearchOperation(this.connectionFactory, this.ldapProperties.getBaseDn(), filter, this.ldapProperties.getPageSize(), att);
+            val response = LdapUtils.executeSearchOperation(this.connectionFactory, ldapProperties.getBaseDn(), filter, ldapProperties.getPageSize(), att);
             if (LdapUtils.containsResultEntry(response)) {
                 val results = response.getEntries();
                 LOGGER.debug("Locating [{}] consent LDAP entries", results.size());

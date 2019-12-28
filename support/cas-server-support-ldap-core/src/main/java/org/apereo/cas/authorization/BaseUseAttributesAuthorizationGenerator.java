@@ -37,7 +37,6 @@ public abstract class BaseUseAttributesAuthorizationGenerator implements Authori
     private final SearchOperation userSearchOperation;
     private final boolean allowMultipleResults;
 
-
     /**
      * Add profile roles.
      *

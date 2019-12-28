@@ -11,6 +11,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.ldaptive.AttributeModification;
 import org.ldaptive.BindConnectionInitializer;
+import org.ldaptive.ConnectionConfig;
 import org.ldaptive.DefaultConnectionFactory;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
@@ -150,12 +151,13 @@ public class LdapTestUtils {
                                        final AttributeModification.Type add,
                                        final BindConnectionInitializer connInit) {
 
-        val address = "ldap://" + serverCon.getConnectedAddress() + ':' + serverCon.getConnectedPort();
-        val connectionFactory = new DefaultConnectionFactory(address);
-        if (connInit != null) {
-            connectionFactory.getConnectionConfig().setConnectionInitializers(connInit);
-        }
         try {
+            val address = "ldap://" + serverCon.getConnectedAddress() + ':' + serverCon.getConnectedPort();
+            val config = new ConnectionConfig(address);
+            if (connInit != null) {
+                config.setConnectionInitializers(connInit);
+            }
+            val connectionFactory = new DefaultConnectionFactory(config);
             val modify = new ModifyOperation(connectionFactory);
             modify.execute(new ModifyRequest(dn, new AttributeModification(add, attr)));
         } catch (final Exception e) {
