@@ -100,10 +100,13 @@ public class SpnegoWebflowActionsConfiguration {
         val filter = LdapUtils.newLdaptiveSearchFilter(spnegoProperties.getLdap().getSearchFilter());
 
         val searchRequest = LdapUtils.newLdaptiveSearchRequest(spnegoProperties.getLdap().getBaseDn(), filter);
+        val searchOperation = new SearchOperation(connectionFactory, searchRequest);
+        searchOperation.setTemplate(filter);
+        
         return new LdapSpnegoKnownClientSystemsFilterAction(RegexUtils.createPattern(spnegoProperties.getIpsToCheckPattern()),
             spnegoProperties.getAlternativeRemoteHostAttribute(),
             Beans.newDuration(spnegoProperties.getDnsTimeout()).toMillis(),
-            new SearchOperation(connectionFactory, searchRequest),
+            searchOperation,
             spnegoProperties.getSpnegoAttributeName());
     }
 }

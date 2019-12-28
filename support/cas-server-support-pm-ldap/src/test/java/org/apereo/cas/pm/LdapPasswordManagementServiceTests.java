@@ -49,7 +49,6 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.pm.ldap[0].bindCredential=password",
     "cas.authn.pm.ldap[0].baseDn=ou=people,dc=example,dc=org",
     "cas.authn.pm.ldap[0].searchFilter=cn={user}",
-    "cas.authn.pm.ldap[0].useSsl=false",
     "cas.authn.pm.ldap[0].type=GENERIC",
     "cas.authn.pm.ldap[0].securityQuestionsAttributes.registeredAddress=roomNumber",
     "cas.authn.pm.ldap[0].securityQuestionsAttributes.postalCode=teletexTerminalIdentifier"

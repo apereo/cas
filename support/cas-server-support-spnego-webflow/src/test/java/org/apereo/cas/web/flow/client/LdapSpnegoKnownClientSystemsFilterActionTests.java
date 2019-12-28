@@ -14,7 +14,6 @@ import org.springframework.test.context.TestPropertySource;
  */
 @TestPropertySource(properties = {
     "cas.authn.spnego.ldap.ldapUrl=ldap://localhost:1381",
-    "cas.authn.spnego.ldap.useSsl=false",
     "cas.authn.spnego.ldap.baseDn=ou=people,dc=example,dc=org",
     "cas.authn.spnego.ldap.searchFilter=host={host}",
     "cas.authn.spnego.ldap.bindDn=cn=Directory Manager,dc=example,dc=org",
