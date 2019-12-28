@@ -57,7 +57,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @DirtiesContext
 @EnabledIfContinuousIntegration
-@EnabledIfPortOpen(port = 10390)
+@EnabledIfPortOpen(port = 10636)
 public class ADPasswordManagementServiceTests {
 
     @Autowired

@@ -30,19 +30,20 @@ import java.util.Optional;
 @Slf4j
 public class LdapUserGroupsToRolesAuthorizationGenerator extends BaseUseAttributesAuthorizationGenerator {
 
-
     private final String groupAttributeName;
+
     private final String groupPrefix;
+
     private final SearchOperation groupSearchOperation;
 
     /**
      * Instantiates a new Ldap user groups to roles authorization generator.
      *
-     * @param userSearchOperation   the user search executor
-     * @param allowMultipleResults  the allow multiple results
-     * @param groupAttributeName    the group attribute name
-     * @param groupPrefix           the group prefix
-     * @param groupSearchOperation  the group search executor
+     * @param userSearchOperation  the user search executor
+     * @param allowMultipleResults the allow multiple results
+     * @param groupAttributeName   the group attribute name
+     * @param groupPrefix          the group prefix
+     * @param groupSearchOperation the group search executor
      */
     public LdapUserGroupsToRolesAuthorizationGenerator(final SearchOperation userSearchOperation,
                                                        final boolean allowMultipleResults,
