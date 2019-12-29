@@ -159,7 +159,7 @@ public class LdapConsentRepository implements ConsentRepository {
     public Collection<? extends ConsentDecision> findConsentDecisions() {
         val entries = readConsentEntries();
         if (!entries.isEmpty()) {
-            val decisions = entries
+            return entries
                 .stream()
                 .map(e -> e.getAttribute(this.ldapProperties.getConsentAttributeName()))
                 .filter(Objects::nonNull)
@@ -169,7 +169,6 @@ public class LdapConsentRepository implements ConsentRepository {
                     .collect(Collectors.toSet()))
                 .flatMap(Set::stream)
                 .collect(Collectors.toList());
-            return decisions;
         }
         LOGGER.debug("No consent decision could be found");
         return new HashSet<>(0);
@@ -177,11 +176,13 @@ public class LdapConsentRepository implements ConsentRepository {
 
     @Override
     public boolean storeConsentDecision(final ConsentDecision decision) {
+        LOGGER.debug("Storing consent decision [{}]", decision);
         val entry = readConsentEntry(decision.getPrincipal());
         if (entry != null) {
             val newConsent = mergeDecision(entry.getAttribute(ldapProperties.getConsentAttributeName()), decision);
             return executeModifyOperation(newConsent, entry);
         }
+        LOGGER.debug("Unable to read consent entry for [{}]. Consent decision is not stored", decision.getPrincipal());
         return false;
     }
 
@@ -241,20 +242,20 @@ public class LdapConsentRepository implements ConsentRepository {
      * @return the collection of user entries
      */
     private Collection<LdapEntry> readConsentEntries() {
+        val att = ldapProperties.getConsentAttributeName();
+        val filter = LdapUtils.newLdaptiveSearchFilter('(' + att + "=*)");
         try {
-            val att = ldapProperties.getConsentAttributeName();
-            val filter = LdapUtils.newLdaptiveSearchFilter('(' + att + "=*)");
-
             LOGGER.debug("Locating consent LDAP entries via filter [{}] based on attribute [{}]", filter, att);
             val response = LdapUtils.executeSearchOperation(this.connectionFactory, ldapProperties.getBaseDn(), filter, ldapProperties.getPageSize(), att);
             if (LdapUtils.containsResultEntry(response)) {
                 val results = response.getEntries();
-                LOGGER.debug("Locating [{}] consent LDAP entries", results.size());
+                LOGGER.debug("Locating [{}] consent LDAP entries based on response [{}]", results.size(), response);
                 return results;
             }
         } catch (final LdapException e) {
             LOGGER.debug(e.getMessage(), e);
         }
+        LOGGER.debug("Unable to read consent entries from LDAP via filter [{}]", filter);
         return new HashSet<>(0);
     }
 }
