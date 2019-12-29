@@ -3,6 +3,7 @@ package org.apereo.cas.adaptors.authy.web.flow;
 import org.apereo.cas.adaptors.authy.BaseAuthyAuthenticationTests;
 import org.apereo.cas.web.flow.configurer.BaseMultifactorWebflowConfigurerTests;
 
+import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,6 +22,7 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
         "cas.authn.mfa.authy.apiKey=example",
         "cas.authn.mfa.authy.apiUrl=http://localhost:8080/authy"
     })
+@Tag("Webflow")
 public class AuthyMultifactorWebflowConfigurerTests extends BaseMultifactorWebflowConfigurerTests {
     @Autowired
     @Qualifier("authyAuthenticatorFlowRegistry")

@@ -3,6 +3,7 @@ package org.apereo.cas.web.flow;
 import org.apereo.cas.support.spnego.util.SpnegoConstants;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -20,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@Tag("Webflow")
 public class SpnegoNegotiateCredentialsActionTests extends AbstractSpnegoTests {
     @Test
     public void verifyOperation() throws Exception {

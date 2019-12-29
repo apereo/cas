@@ -17,6 +17,7 @@ import org.apereo.cas.web.support.gen.CookieRetrievingCookieGenerator;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -37,6 +38,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Tag("Webflow")
 public class InitialFlowSetupActionCookieTests extends AbstractWebflowActionsTests {
 
     private static final String CONST_CONTEXT_PATH = "/test";

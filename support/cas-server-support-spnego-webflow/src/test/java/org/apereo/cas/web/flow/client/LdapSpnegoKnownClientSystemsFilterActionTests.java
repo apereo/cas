@@ -4,6 +4,7 @@ import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
 import org.apereo.cas.util.junit.DisabledIfContinuousIntegration;
 
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
 import org.springframework.test.context.TestPropertySource;
 
 /**
@@ -30,6 +31,7 @@ import org.springframework.test.context.TestPropertySource;
     "cas.authn.spnego.spnegoAttributeName=mail"
 })
 @DisabledIfContinuousIntegration
+@Tag("Ldap")
 public class LdapSpnegoKnownClientSystemsFilterActionTests extends BaseLdapSpnegoKnownClientSystemsFilterActionTests {
 
     @BeforeAll
