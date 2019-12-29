@@ -179,7 +179,7 @@ public class LdapConsentRepository implements ConsentRepository {
     public boolean storeConsentDecision(final ConsentDecision decision) {
         val entry = readConsentEntry(decision.getPrincipal());
         if (entry != null) {
-            val newConsent = mergeDecision(entry.getAttribute(this.ldapProperties.getConsentAttributeName()), decision);
+            val newConsent = mergeDecision(entry.getAttribute(ldapProperties.getConsentAttributeName()), decision);
             return executeModifyOperation(newConsent, entry);
         }
         return false;
@@ -219,9 +219,9 @@ public class LdapConsentRepository implements ConsentRepository {
      */
     private LdapEntry readConsentEntry(final String principal) {
         try {
-            val searchFilter = '(' + this.ldapProperties.getSearchFilter() + ')';
+            val searchFilter = '(' + ldapProperties.getSearchFilter() + ')';
             val filter = LdapUtils.newLdaptiveSearchFilter(searchFilter, CollectionUtils.wrapList(principal));
-            LOGGER.debug("Locating consent LDAP entry via filter [{}] based on attribute [{}]", filter, this.ldapProperties.getConsentAttributeName());
+            LOGGER.debug("Locating consent LDAP entry via filter [{}] based on attribute [{}]", filter, ldapProperties.getConsentAttributeName());
             val response = LdapUtils.executeSearchOperation(this.connectionFactory, ldapProperties.getBaseDn(),
                 filter, ldapProperties.getPageSize(), ldapProperties.getConsentAttributeName());
             if (LdapUtils.containsResultEntry(response)) {

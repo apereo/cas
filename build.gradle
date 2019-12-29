@@ -84,7 +84,7 @@ if (!Boolean.getBoolean("skipSonarqube")) {
     apply plugin: "org.sonarqube"
 }
 
-if (continuousIntegrationBuild) {
+if (continuousIntegrationBuild || Boolean.getBoolean("enableBuildTimeTracker")) {
     apply plugin: "build-time-tracker"
     buildtimetracker {
         reporters {
