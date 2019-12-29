@@ -9,6 +9,7 @@ import com.unboundid.scim2.common.types.Meta;
 import com.unboundid.scim2.common.types.Name;
 import com.unboundid.scim2.common.types.UserResource;
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
@@ -36,6 +37,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "spring.mail.host=localhost",
     "spring.mail.port=25000"
 })
+@Tag("Webflow")
 public class PrincipalScimV2ProvisionerActionTests extends BaseScimProvisionerActionTests {
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 

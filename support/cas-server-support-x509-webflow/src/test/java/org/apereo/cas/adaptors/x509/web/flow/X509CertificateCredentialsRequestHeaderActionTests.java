@@ -3,6 +3,7 @@ package org.apereo.cas.adaptors.x509.web.flow;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -20,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @TestPropertySource(properties = "cas.authn.x509.extractCert=true")
+@Tag("Webflow")
 public class X509CertificateCredentialsRequestHeaderActionTests extends BaseCertificateCredentialActionTests {
 
     @Test

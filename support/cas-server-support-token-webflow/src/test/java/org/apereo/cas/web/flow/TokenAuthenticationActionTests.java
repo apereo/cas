@@ -21,6 +21,7 @@ import com.nimbusds.jose.JWSAlgorithm;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.jwt.config.encryption.SecretEncryptionConfiguration;
@@ -53,6 +54,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "spring.mail.host=localhost",
     "spring.mail.port=25000"
 })
+@Tag("Webflow")
 public class TokenAuthenticationActionTests extends AbstractCentralAuthenticationServiceTests {
     private static final RandomStringGenerator RANDOM_STRING_GENERATOR = new DefaultRandomStringGenerator();
 

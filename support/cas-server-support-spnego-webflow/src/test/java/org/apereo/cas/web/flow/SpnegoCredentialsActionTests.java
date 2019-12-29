@@ -7,6 +7,7 @@ import org.apereo.cas.util.EncodingUtils;
 
 import jcifs.spnego.Authentication;
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -28,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Import(SpnegoCredentialsActionTests.SpnegoAuthenticationTestConfiguration.class)
+@Tag("Webflow")
 public class SpnegoCredentialsActionTests extends AbstractSpnegoTests {
     @Test
     public void verifyOperation() throws Exception {

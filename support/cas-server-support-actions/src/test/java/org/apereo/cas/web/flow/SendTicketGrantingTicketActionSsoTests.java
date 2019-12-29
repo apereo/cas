@@ -10,6 +10,7 @@ import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,7 @@ import static org.mockito.Mockito.*;
  * @since 3.4.0
  */
 @TestPropertySource(properties = "cas.sso.createSsoCookieOnRenewAuthn=false")
+@Tag("Webflow")
 public class SendTicketGrantingTicketActionSsoTests extends AbstractWebflowActionsTests {
 
     private static final String LOCALHOST_IP = "127.0.0.1";

@@ -4,6 +4,7 @@ import org.apereo.cas.util.RegexUtils;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -22,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 4.1
  */
+@Tag("Webflow")
 public class SpnegoKnownClientSystemsFilterActionTests {
 
     private static final String ALTERNATE_REMOTE_IP = "74.125.136.102";

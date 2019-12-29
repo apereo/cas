@@ -29,6 +29,7 @@ import org.apereo.cas.web.flow.config.WsFederationAuthenticationWebflowConfigura
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -87,6 +88,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "spring.mail.host=localhost",
     "spring.mail.port=25000"
 })
+@Tag("Webflow")
 public class WsFederationActionTests {
     @Autowired
     @Qualifier("wsFederationAction")

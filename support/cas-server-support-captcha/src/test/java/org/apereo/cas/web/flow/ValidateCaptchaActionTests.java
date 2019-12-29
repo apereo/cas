@@ -30,6 +30,7 @@ import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,6 +91,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "spring.mail.port=25000"
     }
 )
+@Tag("Webflow")
 public class ValidateCaptchaActionTests {
     @Autowired
     @Qualifier("validateCaptchaAction")

@@ -11,6 +11,7 @@ import org.apereo.cas.web.flow.login.GenericSuccessViewAction;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -22,6 +23,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
+@Tag("Webflow")
 public class GenericSuccessViewActionTests {
 
     @Test

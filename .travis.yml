@@ -15,11 +15,11 @@ branches:
   only:
     - master
 before_cache:
-  - rm -rf $HOME/.gradle/caches/7.*/
-  - rm -rf $HOME/.gradle/caches/6.*/
+  - rm -rf $HOME/.gradle/caches/7.0.*/
+  - rm -rf $HOME/.gradle/caches/6.3.*/
+  - rm -rf $HOME/.gradle/caches/6.2.*/
+  - rm -rf $HOME/.gradle/caches/6.1.*/
   - rm -rf $HOME/.gradle/caches/6.0.*/
-  - rm -rf $HOME/.gradle/caches/5.*/
-  - rm -rf $HOME/.gradle/caches/4.*/
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
   - find ~/.gradle/caches/ -name "*.lock" -type f -delete
 cache:
@@ -137,6 +137,7 @@ jobs:
       script: ./ci/tests/webapp/validate-eurekaserver-webapp.sh
       name: "Validate Eureka Discovery Server"
     - stage: validate
+      if: NOT (head_branch =~ env(DEPENDENCY_BOT_BRANCH) and type = pull_request)
       script: ./ci/tests/validate-tests.sh
       name: "Validate Tests & Test Suites"
     - stage: validate
@@ -149,6 +150,9 @@ jobs:
     - stage: test
       script: ./ci/tests/groovy/run-tests-groovy.sh
       name: "Groovy Tests"
+    - stage: test
+      script: ./ci/tests/webflow/run-tests-webflow.sh
+      name: "Spring Webflow Tests"
     - stage: test
       script: ./ci/tests/restful/run-tests-restful.sh
       name: "RESTful Tests"
