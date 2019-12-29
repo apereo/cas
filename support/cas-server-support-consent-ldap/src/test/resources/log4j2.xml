@@ -10,7 +10,7 @@
         <Logger name="org.apereo.consent" level="debug" />
         <Logger name="org.ldaptive" level="warn" />
         <Logger name="com.unboundid" level="warn" />
-        <Root level="off">
+        <Root level="error">
             <AppenderRef ref="console"/>
         </Root>
     </Loggers>
