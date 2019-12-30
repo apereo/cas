@@ -4484,9 +4484,7 @@ To learn more about this topic, [please review this guide](../ticketing/Ehcache-
 ```properties
 # cas.ticket.registry.ehcache3.enabled=true
 # cas.ticket.registry.ehcache3.maxElementsInMemory=10000
-# cas.ticket.registry.ehcache3.maxSizeOnDisk=200MB
 # cas.ticket.registry.ehcache3.perCacheSizeOnDisk=20MB
-# cas.ticket.registry.ehcache3.maxSizeOffHeap=100MB
 # cas.ticket.registry.ehcache3.eternal=false
 # cas.ticket.registry.ehcache3.enableStatistics=true
 # cas.ticket.registry.ehcache3.enableManagement=true
