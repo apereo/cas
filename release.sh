@@ -6,6 +6,7 @@ NORMAL=$(tput sgr0)
 
 clear
 java -version
+./gradlew --version
 
 timeout=640000
 casVersion=(`cat ./gradle.properties | grep "version" | cut -d= -f2`)
@@ -42,7 +43,8 @@ echo -e "\n${GREEN}Building CAS. Please be patient as this might take a while...
 
 echo -e "\n${GREEN}Publishing CAS. Please be patient as this might take a while...${NORMAL}\n"
 ./gradlew publish -DpublishReleases=true -DskipGradleLint=true -DsonatypeUsername="${username}" -DsonatypePassword="${password}" \
--Dorg.gradle.internal.http.socketTimeout="${timeout}" -Dorg.gradle.internal.http.connectionTimeout="${timeout}"
+-Dorg.gradle.internal.http.socketTimeout="${timeout}" -Dorg.gradle.internal.http.connectionTimeout="${timeout}"  \
+-Dorg.gradle.internal.publish.checksums.insecure=true
 
 echo -e "\n${YELLOW}Done! You may now finalize the release process via Sonatype:"
 echo -e "\tLog into https://oss.sonatype.org"
