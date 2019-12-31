@@ -197,8 +197,9 @@ public class OAuth20IntrospectionEndpointController extends BaseOAuth20Controlle
             val subject = authentication.getPrincipal().getId();
             introspect.setSub(subject);
             introspect.setUniqueSecurityName(subject);
-            introspect.setExp(ticket.getExpirationPolicy().getTimeToLive());
-            introspect.setIat(ticket.getCreationTime().toInstant().getEpochSecond());
+            val issuedAt = ticket.getCreationTime().toInstant().getEpochSecond();
+            introspect.setExp(issuedAt + ticket.getExpirationPolicy().getTimeToLive());
+            introspect.setIat(issuedAt);
 
             val methods = authentication.getAttributes().get(AuthenticationManager.AUTHENTICATION_METHOD_ATTRIBUTE);
             val realmNames = CollectionUtils.toCollection(methods)
