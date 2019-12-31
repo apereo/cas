@@ -69,6 +69,7 @@ The following commandline boolean flags are supported by the build and can be pa
 | `skipBootifulArtifact`            | Do not apply the Spring Boot plugin to bootify application artifacts.
 | `forceBom`                        | Force the generation of the CAS Maven BOM.
 | `ignoreJavadocFailures`           | Ignore javadoc failures and let the build resume.
+| `enableBuildTimeTracker`          | Track build execution time for requested tasks.
 | `ignoreFindbugsFailures`          | Ignore Findbugs failures and let the build resume.
 | `ignoreTestFailures`              | Ignore test failures and let the build resume.
 
@@ -90,14 +91,7 @@ CAS development may be carried out using any modern IDE that supports Gradle.
 
 The following IDEA settings for Gradle may also be useful:
 
-![image](https://user-images.githubusercontent.com/1205228/42181347-5e55351a-7def-11e8-8204-f681c36eed2c.png)
-
-- Note how 'Use auto-import' is turned off. To resolve Gradle modules and dependencies, you are required to force refresh the project rather than have IDEA auto-refresh the project as you make changes to the build script. Disabling auto-import usually results in much better performance.
-- You must use the 'default gradle wrapper' option as opposed to your own local Gradle installation. 
-
-You may also need to adjust the 'Compiler' settings so modules are built in parallel and automatically:
-
-![image](https://cloud.githubusercontent.com/assets/1205228/23251099/31d8f250-f9c1-11e6-9ca1-64489bc1a948.png)
+![image](https://user-images.githubusercontent.com/1205228/71612835-5ea5ed80-2bbc-11ea-8f49-9746dc2b3a70.png)
 
 Additionally, you may need to customize the VM settings to ensure the development environment can load and index the codebase:
 
@@ -319,3 +313,18 @@ The following shell commands may be used to test a submodule manually:
 ```
 
 `testCategoryType` need to be specified in order for the test to run. List of `testCategoryType` and their usage can be found in `gradle/tests.gradle` file.
+
+To simplify the test execution process, you may take advantage of the `testcas.sh` script found at the root of the repository as such:
+
+```bash
+# chmod +x ./testcas.sh
+./testcas.sh <category> [tests] [debug]
+```
+
+The accepted parameters are:
+
+| Parameter            | Description
+|----------------------+--------------------------------+
+| `category`           | `testCategoryType` to use.
+| `tests`              | Optional. When specified using the syntax `<fully-qualified-class-name#testMethodName>`, it will filter test execution by class and/or method.
+| `debug`              | Optional. When set to `true`, it will launch the tests in debug mode.
