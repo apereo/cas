@@ -4493,7 +4493,7 @@ To learn more about this topic, [please review this guide](../ticketing/Ehcache-
 # cas.ticket.registry.ehcache3.resourcePoolName=cas-ticket-pool
 # cas.ticket.registry.ehcache3.resourcePoolSize=15MB
 # cas.ticket.registry.ehcache3.rootDirectory=/tmp/cas/ehcache3
-# cas.ticket.registry.ehcache3.clusterConnectTimeout=150
+# cas.ticket.registry.ehcache3.clusterConnectionTimeout=150
 # cas.ticket.registry.ehcache3.clusterReadWriteTimeout=5
 # cas.ticket.registry.ehcache3.clusteredCacheConsistency=STRONG
 ```                                              
