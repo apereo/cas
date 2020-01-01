@@ -114,7 +114,7 @@ if [ ! -z "${debug}" ]; then
 fi
 
 clear
-echo -e "Running Gradle with task [$task]}, category [$category] including test(s) [$tests] with debug mode [$debug]\n"
+echo -e "Running Gradle with task [$task], category [$category] including test(s) [$tests] with debug mode [$debug]\n"
 
 cmd="./gradlew $task $debug -DtestCategoryType=$category $tests \
 --build-cache --parallel -x javadoc -x check -DignoreTestFailures=false -DskipNestedConfigMetadataGen=true \
