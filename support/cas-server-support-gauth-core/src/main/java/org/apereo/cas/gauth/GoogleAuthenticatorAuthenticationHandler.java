@@ -2,6 +2,7 @@ package org.apereo.cas.gauth;
 
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -66,12 +67,13 @@ public class GoogleAuthenticatorAuthenticationHandler extends AbstractPreAndPost
 		val authAttrs = authentication.getAttributes();
         val uid = authentication.getPrincipal().getId();
 
+		OneTimeTokenAccount acct;
         LOGGER.trace("Received principal id [{}]. Attempting to locate account in credential repository...", uid);
 		if (authAttrs.containsKey("newOtpRegistrationAccount")) {
 			LOGGER.trace("Found in-progress OTP registration for [{}]", uid);
-			val acct = authAttrs.get("newOtpRegistrationAccount");
+			acct = authAttrs.get("newOtpRegistrationAccount");
 		} else {
-        	val acct = this.credentialRepository.get(uid);
+        	acct = this.credentialRepository.get(uid);
 		}
 		/*
         if (acct == null || StringUtils.isBlank(acct.getSecretKey())) {
