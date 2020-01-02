@@ -38,7 +38,7 @@ public class GitServiceRegistry extends AbstractServiceRegistry {
     private static final Pattern PATTERN_ACCEPTED_REPOSITORY_FILES = RegexUtils.createPattern(".+\\.("
         + String.join("|", FILE_EXTENSIONS) + ')', Pattern.CASE_INSENSITIVE);
 
-    private final Collection<RegisteredService> registeredServices = new ArrayList<>();
+    private final Collection<RegisteredService> registeredServices = new ArrayList<>(0);
 
     private final GitRepository gitRepository;
     private final Collection<StringSerializer<RegisteredService>> registeredServiceSerializers;

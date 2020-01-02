@@ -29,6 +29,16 @@ create attribute release policies, etc. CAS at runtime will auto-configure all r
 A number of CAS configuration options equally apply to a number of modules and features. To understand and 
 take note of those options, please [review this guide](Configuration-Properties-Common.html).
 
+## Validation
+
+Configuration properties are automatically validated on CAS startup to report issues with configuration binding,
+specially if defined CAS settings cannot be recognized or validated by the configuration schema. The validation process
+is on by default and can be skipped on startup using a special *system property* `SKIP_CONFIG_VALIDATION` 
+that should be set to `true`. 
+
+Additional validation processes are also handled via [Configuration Metadata](Configuration-Metadata-Repository.html)
+and property migrations applied automatically on startup by Spring Boot and family.
+
 ## Custom Settings
 
 The following settings could be used to extend CAS with arbitrary configuration keys and values:
@@ -39,7 +49,12 @@ The following settings could be used to extend CAS with arbitrary configuration 
 
 ## Configuration Storage
 
+This section outlines strategies that can be used to store CAS configuration and settings.
+
 ### Standalone
+
+This is the default configuration mode which indicates that CAS does NOT require connections 
+to an external configuration server and will run in an embedded standalone mode.
 
 #### By Directory
 
@@ -363,9 +378,33 @@ server.ssl.keyPassword=changeit
 # server.ssl.trustStoreProvider=
 # server.ssl.trustStoreType=
 
-server.maxHttpHeaderSize=2097152
-server.useForwardHeaders=true
-server.connectionTimeout=20000
+# server.maxHttpHeaderSize=2097152
+# server.useForwardHeaders=true
+# server.connectionTimeout=20000
+```
+
+### Embedded Jetty Container
+
+The following settings affect the runtime behavior of the embedded Jetty container.
+
+```properties
+# server.jetty.acceptors=-1       
+
+# server.jetty.accesslog.append=false
+# server.jetty.accesslog.custom-format=
+# server.jetty.accesslog.enabled=false
+# server.jetty.accesslog.file-date-format=
+# server.jetty.accesslog.filename=
+# server.jetty.accesslog.format=
+# server.jetty.accesslog.ignore-paths=
+# server.jetty.accesslog.retention-period=31
+
+# server.jetty.connection-idle-timeout=
+# server.jetty.max-http-form-post-size=200000B
+# server.jetty.max-threads=200
+# server.jetty.min-threads=8
+# server.jetty.selectors=-1
+# server.jetty.thread-idle-timeout=-1
 ```
 
 ### Embedded Apache Tomcat Container
@@ -584,10 +623,10 @@ If none is specified, one is automatically detected and used by CAS.
 
 ## Session replication
 
-The `sessionCookieName` property defines the session cookie name for the session replication.
+The `sessionCookieName` property defines the specific session cookie name used for the session replication.
 
 ```properties
-# cas.sessionReplication.sessionCookieName=JSESSIONID
+# cas.sessionReplication.sessionCookieName=DISSESSION
 ```
 
 ## CAS Banner
@@ -616,8 +655,6 @@ To learn more about this topic, [please review this guide](../monitoring/Monitor
 
 # management.endpoints.jmx.exposure.exclude=*
 # management.endpoints.jmx.exposure.include=
-
-# management.server.add-application-context-header=false
 ```
 
 ### Basic Authentication Security
@@ -934,7 +971,7 @@ The story in plain english is:
 
 Note that attribute repository sources, if/when defined, execute in a specific order.
 This is important to take into account when attribute merging may take place.
-By default, the execution order is the following but can be adjusted per source:
+By default, the execution order (when defined) is the following but can be adjusted per source:
 
 1. LDAP
 2. JDBC
@@ -1197,6 +1234,30 @@ under the configuration key `cas.authn.attributeRepository.redis`.
 # cas.authn.attributeRepository.redis.id=
 ```
 
+### Microsoft Azure Active Directory
+
+This option will fetch attributes from Microsoft Azure Active Directory using the Microsoft Graph API.
+
+The following settings are available:
+
+```properties
+# cas.authn.attributeRepository.azureActiveDirectory[0].clientId=
+# cas.authn.attributeRepository.azureActiveDirectory[0].clientSecret=
+# cas.authn.attributeRepository.azureActiveDirectory[0].clientSecret=
+# cas.authn.attributeRepository.azureActiveDirectory[0].tenant=
+
+# cas.authn.attributeRepository.azureActiveDirectory[0].id=
+# cas.authn.attributeRepository.azureActiveDirectory[0].order=0
+# cas.authn.attributeRepository.azureActiveDirectory[0].caseInsensitive=false
+# cas.authn.attributeRepository.azureActiveDirectory[0].resource=
+# cas.authn.attributeRepository.azureActiveDirectory[0].scope=
+# cas.authn.attributeRepository.azureActiveDirectory[0].grantType=
+# cas.authn.attributeRepository.azureActiveDirectory[0].apiBaseUrl=
+# cas.authn.attributeRepository.azureActiveDirectory[0].attributes=
+# cas.authn.attributeRepository.azureActiveDirectory[0].domain=
+# cas.authn.attributeRepository.azureActiveDirectory[0].loggingLevel=
+```
+
 ### Shibboleth Integrations
 
 To learn more about this topic, [please review this guide](../integration/Shibboleth.html).
@@ -1238,6 +1299,13 @@ In the event that a separate resolver is put into place, control how the final p
 ## Authentication Engine
 
 Control inner-workings of the CAS authentication engine, before and after the execution.
+
+```properties
+cas.authn.core.groovy-authentication-resolution.location=file:/etc/cas/config/GroovyAuthentication.groovy
+cas.authn.core.groovy-authentication-resolution.order=0
+
+cas.authn.core.service-authentication-resolution.order=0
+```           
 
 ### Authentication Pre-Processing
 
@@ -2248,6 +2316,43 @@ AWS settings for this feature are available [here](Configuration-Properties-Comm
 # cas.authn.cognito.userPoolId=
 ```
 
+## Okta Authentication
+
+To learn more about this topic, [please review this guide](../installation/Okta-Authentication.html).
+
+Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.okta`.
+Password encoding settings for this feature are available [here](Configuration-Properties-Common.html#password-encoding) under the configuration key `cas.authn.okta`.
+
+```properties
+# cas.authn.okta.name=
+# cas.authn.okta.order=  
+# cas.authn.okta.credentialCriteria=
+
+# cas.authn.okta.organizationUrl=     
+
+# cas.authn.okta.connectionTimeout=5000
+# cas.authn.okta.proxyUsername=
+# cas.authn.okta.proxyPassword=
+# cas.authn.okta.proxyHost=
+# cas.authn.okta.proxyPort=
+```
+
+## Microsoft Azure Active Directory Authentication
+
+To learn more about this topic, [please review this guide](../installation/Azure-ActiveDirectory-Authentication.html).
+
+Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.azure-active-directory`.
+Password encoding  settings for this feature are available [here](Configuration-Properties-Common.html#password-encoding) under the configuration key `cas.authn.azure-active-directory`.
+
+```properties
+# cas.authn.azure-active-directory.name=
+# cas.authn.azure-active-directory.order=
+# cas.authn.azure-active-directory.credentialCriteria=
+
+# cas.authn.azure-active-directory.clientId=
+# cas.authn.azure-active-directory.loginUrl=https://login.microsoftonline.com/common/
+# cas.authn.azure-active-directory.resource=https://graph.microsoft.com/
+```
 
 ## SOAP Authentication
 
@@ -2363,9 +2468,9 @@ To fetch CRLs, the following options are available:
 
 # cas.authn.x509.cacheMaxElementsInMemory=1000
 # cas.authn.x509.cacheDiskOverflow=false
+# cas.authn.x509.cacheDiskSize=100MB
 # cas.authn.x509.cacheEternal=false
 # cas.authn.x509.cacheTimeToLiveSeconds=7200
-# cas.authn.x509.cacheTimeToIdleSeconds=1800
 
 # cas.authn.x509.checkKeyUsage=false
 # cas.authn.x509.revocationPolicyThreshold=172800
@@ -2809,8 +2914,13 @@ Configuration settings for this feature are available [here](Configuration-Prope
 
 ### YubiKey MongoDb Device Store
 
- Configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.authn.mfa.yubikey`.
+Configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.authn.mfa.yubikey`.
 
+### YubiKey Redis Device Store
+
+Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#redis-configuration)
+under the configuration key `cas.authn.mfa.yubikey`.
+ 
 ### Radius OTP
 
 To learn more about this topic, [please review this guide](../mfa/RADIUS-Authentication.html).
@@ -3137,7 +3247,7 @@ To learn more about this topic, [please review this guide](../integration/Config
 Configuration settings for all SAML2 service providers are [available here](Configuration-Properties-Common.html#saml2-service-provider-integrations).
 
 | Service Provider      | Configuration Key     | Attributes
-|-----------------------|----------------------------------------------------------
+|-----------------------|-----------------------|----------------------------------
 | Gitlab                | `cas.samlSp.gitlab`   | `last_name`,`first_name`,`name`
 | Hipchat               | `cas.samlSp.hipchat`  | `last_name`,`first_name`,`title`
 | Dropbox               | `cas.samlSp.dropbox`  | `mail`
@@ -3281,6 +3391,7 @@ To learn more about this topic, [please review this guide](../integration/Delega
 # cas.authn.pac4j.name=
 # cas.authn.pac4j.order=
 # cas.authn.pac4j.lazyInit=true
+# cas.authn.pac4j.replicateSessions=true
 ```
 
 The following external identity providers share [common blocks of settings](Configuration-Properties-Common.html#delegated-authentication-settings) 
@@ -3416,11 +3527,15 @@ prefixes for the `keystorePath` or `identityProviderMetadataPath` property).
 # cas.authn.pac4j.saml[0].passive=false
 
 # cas.authn.pac4j.saml[0].wantsAssertionsSigned=
+# cas.authn.pac4j.saml[0].signLogoutRequests=
+# cas.authn.pac4j.saml[0].allSignatureValidationDisabled=false
 # cas.authn.pac4j.saml[0].signServiceProviderMetadata=false
 # cas.authn.pac4j.saml[0].principalIdAttribute=eduPersonPrincipalName
 # cas.authn.pac4j.saml[0].useNameQualifier=true
 # cas.authn.pac4j.saml[0].attributeConsumingServiceIndex=
 # cas.authn.pac4j.saml[0].assertionConsumerServiceIndex=-1
+# cas.authn.pac4j.saml[0].provider-name=
+# cas.authn.pac4j.saml[0].nameIdPolicyAllowCreate=TRUE|FALSE|UNDEFINED
 
 # properties to configure how signing AuthnRequest
 # cas.authn.pac4j.saml[0].signAuthnRequest=false
@@ -3470,7 +3585,6 @@ Delegate authentication to HiOrg Server. Common settings for this identity provi
 Delegate authentication to LinkedIn. Common settings for this identity provider are available [here](Configuration-Properties-Common.html#delegated-authentication-settings) under the configuration key `cas.authn.pac4j.linkedin`.
 
 ```properties
-# cas.authn.pac4j.linkedIn.fields=
 # cas.authn.pac4j.linkedIn.scope=
 ```
 
@@ -3796,8 +3910,6 @@ under the configuration key `cas.audit.jdbc`.
 # cas.audit.jdbc.asynchronous=true
 # cas.audit.jdbc.maxAgeDays=180
 # cas.audit.jdbc.columnLength=100
-# cas.audit.jdbc.isolationLevelName=ISOLATION_READ_COMMITTED
-# cas.audit.jdbc.propagationBehaviorName=PROPAGATION_REQUIRED
 ```
 
 Scheduler settings for this feature are available [here](Configuration-Properties-Common.html#job-scheduling) under the configuration key `cas.audit.jdbc`.
@@ -3991,7 +4103,6 @@ Control how CAS should respond and validate incoming HTTP requests.
 # cas.httpWebRequest.customHeaders.headerName2=headerValue2
 
 # spring.http.encoding.charset=UTF-8
-# spring.http.encoding.enabled=true
 # spring.http.encoding.force=true
 ```
 
@@ -4331,6 +4442,7 @@ under the configuration key `cas.ticket.registry.jms`.
 
 ### Ehcache Ticket Registry
 
+Theses properties are for the module that uses version 2.x of the Ehcache library. 
 To learn more about this topic, [please review this guide](../ticketing/Ehcache-Ticket-Registry.html).
 
 ```properties
@@ -4364,6 +4476,31 @@ To learn more about this topic, [please review this guide](../ticketing/Ehcache-
 ```
 
 Signing & encryption settings for this registry are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.ticket.registry.ehcache`.
+
+### Ehcache 3 Ticket Registry
+
+To learn more about this topic, [please review this guide](../ticketing/Ehcache-Ticket-Registry.html).
+
+```properties
+# cas.ticket.registry.ehcache3.enabled=true
+# cas.ticket.registry.ehcache3.maxElementsInMemory=10000
+# cas.ticket.registry.ehcache3.perCacheSizeOnDisk=20MB
+# cas.ticket.registry.ehcache3.eternal=false
+# cas.ticket.registry.ehcache3.enableStatistics=true
+# cas.ticket.registry.ehcache3.enableManagement=true
+# cas.ticket.registry.ehcache3.terracottaClusterUri=
+# cas.ticket.registry.ehcache3.defaultServerResource=main
+# cas.ticket.registry.ehcache3.resourcePoolName=cas-ticket-pool
+# cas.ticket.registry.ehcache3.resourcePoolSize=15MB
+# cas.ticket.registry.ehcache3.rootDirectory=/tmp/cas/ehcache3
+# cas.ticket.registry.ehcache3.clusterConnectionTimeout=150
+# cas.ticket.registry.ehcache3.clusterReadWriteTimeout=5
+# cas.ticket.registry.ehcache3.clusteredCacheConsistency=STRONG
+```                                              
+
+There is no default value for the Terracota Cluster URI but the format is `terracotta://host1.company.org:9410,host2.company.org:9410/cas-application`
+
+Signing & encryption settings for this registry are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.ticket.registry.ehcache3`.
 
 ### Ignite Ticket Registry
 
@@ -4760,10 +4897,12 @@ Common configuration settings for this feature are available [here](Configuratio
 
 #### LDAP
 
-If AUP is controlled via LDAP, decide how choices should be remembered back inside the LDAP instance. LDAP settings for this feature are available [here](Configuration-Properties-Common.html#ldap-connection-settings) under the configuration key `cas.acceptableUsagePolicy.ldap`.
+If AUP is controlled via LDAP, decide how choices should be remembered back inside the LDAP instance. LDAP settings for this feature are available [here](Configuration-Properties-Common.html#ldap-connection-settings) under the configuration key `cas.acceptableUsagePolicy.ldap[0]`.
 
 #### Disable Acceptable Usage Policy
+
 Allow acceptable usage policy webflow to be disabled - requires restart.
+
 ```properties
 cas.acceptableUsagePolicy.enabled=true
 ```
@@ -5126,16 +5265,16 @@ To learn more about this topic, [please review this guide](../installation/Passw
 ### LDAP Password Management
 
 Common LDAP settings for this feature are available [here](Configuration-Properties-Common.html#ldap-connection-settings) 
-under the configuration key `cas.authn.pm.ldap`.
+under the configuration key `cas.authn.pm.ldap[0]`.
 
 ```properties
-# cas.authn.pm.ldap.type=AD|GENERIC|EDirectory|FreeIPA
-# cas.authn.pm.ldap.usernameAttribute=uid
+# cas.authn.pm.ldap[0].type=AD|GENERIC|EDirectory|FreeIPA
+# cas.authn.pm.ldap[0].usernameAttribute=uid
 
 # Attributes that should be fetched to indicate security questions and answers
-# cas.authn.pm.ldap.securityQuestionsAttributes.attrQuestion1=attrAnswer1
-# cas.authn.pm.ldap.securityQuestionsAttributes.attrQuestion2=attrAnswer2
-# cas.authn.pm.ldap.securityQuestionsAttributes.attrQuestion3=attrAnswer3
+# cas.authn.pm.ldap[0].securityQuestionsAttributes.attrQuestion1=attrAnswer1
+# cas.authn.pm.ldap[0].securityQuestionsAttributes.attrQuestion2=attrAnswer2
+# cas.authn.pm.ldap[0].securityQuestionsAttributes.attrQuestion3=attrAnswer3
 ```
 
 ### JDBC Password Management

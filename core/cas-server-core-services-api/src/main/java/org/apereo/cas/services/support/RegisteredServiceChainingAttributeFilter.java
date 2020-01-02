@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.val;
-import org.springframework.core.OrderComparator;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,11 +30,11 @@ public class RegisteredServiceChainingAttributeFilter implements RegisteredServi
 
     private static final long serialVersionUID = 903015750234610128L;
 
-    private List<RegisteredServiceAttributeFilter> filters = new ArrayList<>();
+    private List<RegisteredServiceAttributeFilter> filters = new ArrayList<>(0);
 
     @Override
     public Map<String, List<Object>> filter(final Map<String, List<Object>> givenAttributes) {
-        OrderComparator.sort(this.filters);
+        AnnotationAwareOrderComparator.sort(this.filters);
         val attributes = new HashMap<String, List<Object>>();
         filters.forEach(policy -> attributes.putAll(policy.filter(givenAttributes)));
         return attributes;

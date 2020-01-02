@@ -19,13 +19,12 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
  */
 public class AcceptableUsagePolicyWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
-    private static final String VIEW_ID_ACCEPTABLE_USAGE_POLICY_VIEW = "acceptableUsagePolicyView";
+    static final String VIEW_ID_ACCEPTABLE_USAGE_POLICY_VIEW = "acceptableUsagePolicyView";
+    static final String STATE_ID_AUP_CHECK = "acceptableUsagePolicyCheck";
 
     private static final String AUP_ACCEPTED_ACTION = "aupAcceptedAction";
     private static final String AUP_VERIFY_ACTION = "acceptableUsagePolicyVerifyAction";
     private static final String AUP_VERIFY_SERVICE_ACTION = "acceptableUsagePolicyVerifyServiceAction";
-
-    private static final String STATE_ID_AUP_CHECK = "acceptableUsagePolicyCheck";
 
     public AcceptableUsagePolicyWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
                                                   final FlowDefinitionRegistry loginFlowDefinitionRegistry,

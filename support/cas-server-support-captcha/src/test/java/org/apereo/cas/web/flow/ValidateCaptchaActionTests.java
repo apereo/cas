@@ -22,6 +22,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.services.web.config.CasThemesConfiguration;
 import org.apereo.cas.util.MockWebServer;
+import org.apereo.cas.web.CaptchaValidator;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCaptchaConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
@@ -29,6 +30,7 @@ import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,10 +88,10 @@ import static org.junit.jupiter.api.Assertions.*;
     properties = {
         "cas.googleRecaptcha.verifyUrl=http://localhost:9294",
         "spring.mail.host=localhost",
-        "spring.mail.port=25000",
-        "spring.mail.testConnection=false"
+        "spring.mail.port=25000"
     }
 )
+@Tag("Webflow")
 public class ValidateCaptchaActionTests {
     @Autowired
     @Qualifier("validateCaptchaAction")
@@ -101,7 +103,7 @@ public class ValidateCaptchaActionTests {
         val request = new MockHttpServletRequest();
 
         val data = "{\"success\": true }";
-        request.addParameter(ValidateCaptchaAction.REQUEST_PARAM_RECAPTCHA_RESPONSE, data);
+        request.addParameter(CaptchaValidator.REQUEST_PARAM_RECAPTCHA_RESPONSE, data);
 
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
 

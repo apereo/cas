@@ -7,11 +7,10 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
-import org.ldaptive.SearchExecutor;
+import org.ldaptive.SearchOperation;
 import org.pac4j.core.authorization.generator.AuthorizationGenerator;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.exception.AccountNotFoundException;
@@ -34,14 +33,9 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Getter
 public abstract class BaseUseAttributesAuthorizationGenerator implements AuthorizationGenerator {
-    /**
-     * Search connection factory.
-     */
-    protected final ConnectionFactory connectionFactory;
 
-    private final SearchExecutor userSearchExecutor;
+    private final SearchOperation userSearchOperation;
     private final boolean allowMultipleResults;
-
 
     /**
      * Add profile roles.
@@ -75,20 +69,19 @@ public abstract class BaseUseAttributesAuthorizationGenerator implements Authori
 
         try {
             LOGGER.debug("Attempting to get details for user [{}].", username);
-            val filter = LdapUtils.newLdaptiveSearchFilter(this.userSearchExecutor.getSearchFilter().getFilter(),
+            val filter = LdapUtils.newLdaptiveSearchFilter(this.userSearchOperation.getTemplate().getFilter(),
                 LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME, CollectionUtils.wrap(username));
-            val response = this.userSearchExecutor.search(this.connectionFactory, filter);
+            val response = this.userSearchOperation.execute(filter);
 
             LOGGER.debug("LDAP user search response: [{}]", response);
-            val userResult = response.getResult();
-            if (userResult.size() == 0) {
+            if (response.entrySize() == 0) {
                 throw new IllegalArgumentException(new AccountNotFoundException(username + " not found."));
             }
-            if (!this.allowMultipleResults && userResult.size() > 1) {
+            if (!this.allowMultipleResults && response.entrySize() > 1) {
                 throw new IllegalStateException("Found multiple results for user which is not allowed.");
             }
 
-            val userEntry = userResult.getEntry();
+            val userEntry = response.getEntry();
             return generateAuthorizationForLdapEntry(profile, userEntry);
         } catch (final LdapException e) {
             throw new IllegalArgumentException("LDAP error fetching details for user.", e);

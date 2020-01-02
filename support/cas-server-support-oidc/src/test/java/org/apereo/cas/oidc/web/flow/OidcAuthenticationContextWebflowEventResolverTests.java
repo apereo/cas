@@ -17,7 +17,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.binding.expression.support.LiteralExpression;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -40,9 +39,6 @@ public class OidcAuthenticationContextWebflowEventResolverTests extends Abstract
     @Autowired
     @Qualifier("oidcAuthenticationContextWebflowEventResolver")
     protected CasWebflowEventResolver resolver;
-
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
 
     private MockRequestContext context;
 

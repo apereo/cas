@@ -50,7 +50,7 @@ public class SimplePrincipal implements Principal {
      * Principal attributes.
      **/
     @JsonSetter(nulls = Nulls.AS_EMPTY)
-    private Map<String, List<Object>> attributes = new HashMap<>();
+    private Map<String, List<Object>> attributes = new HashMap<>(0);
 
     /**
      * Instantiates a new simple principal.

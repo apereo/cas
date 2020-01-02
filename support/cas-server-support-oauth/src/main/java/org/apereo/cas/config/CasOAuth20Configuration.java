@@ -562,7 +562,7 @@ public class CasOAuth20Configuration {
     @Bean
     @RefreshScope
     public Set<OAuth20AuthorizationRequestValidator> oauthAuthorizationRequestValidators() {
-        val validators = new LinkedHashSet<OAuth20AuthorizationRequestValidator>();
+        val validators = new LinkedHashSet<OAuth20AuthorizationRequestValidator>(5);
         validators.add(oauthProofKeyCodeExchangeResponseTypeAuthorizationRequestValidator());
         validators.add(oauthAuthorizationCodeResponseTypeRequestValidator());
         validators.add(oauthIdTokenResponseTypeRequestValidator());
@@ -628,7 +628,7 @@ public class CasOAuth20Configuration {
     @Bean
     @RefreshScope
     public Collection<OAuth20TokenRequestValidator> oauthTokenRequestValidators() {
-        val validators = new ArrayList<OAuth20TokenRequestValidator>();
+        val validators = new ArrayList<OAuth20TokenRequestValidator>(6);
 
         validators.add(oauth20AuthorizationCodeGrantTypeProofKeyCodeExchangeTokenRequestValidator());
         validators.add(oauthAuthorizationCodeGrantTypeTokenRequestValidator());
@@ -824,8 +824,7 @@ public class CasOAuth20Configuration {
     public SessionStore<JEEContext> oauthDistributedSessionStore() {
         val replicate = casProperties.getAuthn().getOauth().isReplicateSessions();
         if (replicate) {
-            return new DistributedJ2ESessionStore(ticketRegistry.getObject(), ticketFactory.getObject(),
-                    casProperties.getSessionReplication().getSessionCookieName());
+            return new DistributedJ2ESessionStore(ticketRegistry.getObject(), ticketFactory.getObject(), casProperties);
         }
         return new JEESessionStore();
     }

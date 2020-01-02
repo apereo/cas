@@ -93,7 +93,7 @@ public class DomainServicesManager extends AbstractServicesManager {
 
     @Override
     public Collection<RegisteredService> getServicesForDomain(final String domain) {
-        return this.domains.containsKey(domain) ? this.domains.get(domain) : new ArrayList<>();
+        return this.domains.containsKey(domain) ? this.domains.get(domain) : new ArrayList<>(0);
     }
 
     private void addToDomain(final RegisteredService r, final Map<String, TreeSet<RegisteredService>> map) {

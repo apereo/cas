@@ -55,8 +55,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreAuthenticationHandlersConfiguration.class
 }, properties = {
     "spring.mail.host=localhost",
-    "spring.mail.port=25000",
-    "spring.mail.testConnection=false"
+    "spring.mail.port=25000"
 })
 @DirtiesContext
 public class CasServerProfileRegistrarTests {
@@ -73,11 +72,8 @@ public class CasServerProfileRegistrarTests {
         val profile = casServerProfileRegistrar.getProfile();
         assertNotNull(profile);
         assertNotNull(profile.getAvailableAttributes());
-        assertNotNull(profile.getDelegatedClientTypes());
         assertNotNull(profile.getDelegatedClientTypesSupported());
-        assertNotNull(profile.getMultifactorAuthenticationProviderTypes());
         assertNotNull(profile.getMultifactorAuthenticationProviderTypesSupported());
-        assertNotNull(profile.getRegisteredServiceTypes());
         assertNotNull(profile.getRegisteredServiceTypesSupported());
     }
 }

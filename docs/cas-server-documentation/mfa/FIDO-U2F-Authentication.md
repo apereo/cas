@@ -43,7 +43,7 @@ Devices stored into the JSON file take on the following format:
 ```json
 {
   "@class" : "java.util.HashMap",
-  "services" : [ "java.util.ArrayList", [ {
+  "devices" : [ "java.util.ArrayList", [ {
     "@class" : "org.apereo.cas.adaptors.u2f.storage.U2FDeviceRegistration",
     "id" : 1508515100762,
     "username" : "casuser",
@@ -64,14 +64,14 @@ import org.apereo.cas.adaptors.u2f.storage.*
 Map<String, List<U2FDeviceRegistration>> read(final Object... args) {
     def logger = args[0]
     ...
-    return null;
+    null
 }
 
 Boolean write(final Object... args) {
     List<U2FDeviceRegistration> list = args[0]
     def logger = args[1]
     ...
-    return true;
+    true
 }
 
 void removeAll(final Object... args) {

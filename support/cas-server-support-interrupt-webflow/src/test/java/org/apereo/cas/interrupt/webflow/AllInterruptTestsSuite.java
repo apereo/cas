@@ -18,6 +18,7 @@ import org.junit.runner.RunWith;
     InterruptSingleSignOnParticipationStrategyTests.class,
     PrepareInterruptViewActionTests.class,
     InquireInterruptActionTests.class,
+    InterruptWebflowConfigurerTests.class,
     FinalizeInterruptFlowActionTests.class
 })
 @RunWith(JUnitPlatform.class)

@@ -165,42 +165,42 @@ public class SamlRegisteredService extends RegexRegisteredService {
 
     @Lob
     @Column(name = "encryptable_attrs", length = Integer.MAX_VALUE)
-    private HashSet<String> encryptableAttributes = new HashSet<>();
+    private HashSet<String> encryptableAttributes = new HashSet<>(0);
 
     @Lob
     @Column(name = "signing_sig_ref_digest_methods", length = Integer.MAX_VALUE)
-    private ArrayList<String> signingSignatureReferenceDigestMethods = new ArrayList<>();
+    private ArrayList<String> signingSignatureReferenceDigestMethods = new ArrayList<>(0);
 
     @Lob
     @Column(name = "signing_sig_algs", length = Integer.MAX_VALUE)
-    private ArrayList<String> signingSignatureAlgorithms = new ArrayList<>();
+    private ArrayList<String> signingSignatureAlgorithms = new ArrayList<>(0);
 
     @Lob
     @Column(name = "signing_sig_blacklisted_algs", length = Integer.MAX_VALUE)
-    private ArrayList<String> signingSignatureBlackListedAlgorithms = new ArrayList<>();
+    private ArrayList<String> signingSignatureBlackListedAlgorithms = new ArrayList<>(0);
 
     @Lob
     @Column(name = "signing_sig_whitelisted_algs", length = Integer.MAX_VALUE)
-    private ArrayList<String> signingSignatureWhiteListedAlgorithms = new ArrayList<>();
+    private ArrayList<String> signingSignatureWhiteListedAlgorithms = new ArrayList<>(0);
 
     @Column(name = "signing_sig_canonicalization_alg")
     private String signingSignatureCanonicalizationAlgorithm;
 
     @Lob
     @Column(name = "enc_data_algs", length = Integer.MAX_VALUE)
-    private ArrayList<String> encryptionDataAlgorithms = new ArrayList<>();
+    private ArrayList<String> encryptionDataAlgorithms = new ArrayList<>(0);
 
     @Lob
     @Column(name = "enc_key_algs", length = Integer.MAX_VALUE)
-    private ArrayList<String> encryptionKeyAlgorithms = new ArrayList<>();
+    private ArrayList<String> encryptionKeyAlgorithms = new ArrayList<>(0);
 
     @Lob
     @Column(name = "enc_blacklisted_algs", length = Integer.MAX_VALUE)
-    private ArrayList<String> encryptionBlackListedAlgorithms = new ArrayList<>();
+    private ArrayList<String> encryptionBlackListedAlgorithms = new ArrayList<>(0);
 
     @Lob
     @Column(name = "enc_whitelisted_algs", length = Integer.MAX_VALUE)
-    private ArrayList<String> encryptionWhiteListedAlgorithms = new ArrayList<>();
+    private ArrayList<String> encryptionWhiteListedAlgorithms = new ArrayList<>(0);
 
     @Override
     protected AbstractRegisteredService newInstance() {

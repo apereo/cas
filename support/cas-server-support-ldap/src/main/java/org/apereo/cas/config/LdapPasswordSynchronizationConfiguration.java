@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.LdapPasswordSynchronizationAuthenticationPo
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.authentication.passwordsync.LdapPasswordSynchronizationProperties;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -21,7 +20,6 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration(value = "ldapPasswordSynchronizationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class LdapPasswordSynchronizationConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;

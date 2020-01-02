@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.io.NotSerializableException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.Objects;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -78,7 +79,8 @@ public class EncryptedTranscoder implements Transcoder {
                 LOGGER.error(e.getMessage(), e);
             }
             if (object == null) {
-                LOGGER.error("Could not determine object [{}] from proxy", o.getClass().getSimpleName());
+                LOGGER.error("Could not determine object [{}] from proxy",
+                    Objects.requireNonNull(o).getClass().getSimpleName());
             }
         }
         if (object != null) {

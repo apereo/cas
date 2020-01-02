@@ -96,7 +96,7 @@ public class JsonGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
 
     @Override
     public void deleteAll() {
-        writeAccountsToJsonRepository(new HashMap<>());
+        writeAccountsToJsonRepository(new HashMap<>(0));
     }
 
     @Override

@@ -25,7 +25,7 @@ public class InMemoryServiceRegistry extends AbstractServiceRegistry {
     private final List<RegisteredService> registeredServices;
 
     public InMemoryServiceRegistry(final ApplicationEventPublisher eventPublisher) {
-        this(eventPublisher, new ArrayList<>(), new ArrayList<>());
+        this(eventPublisher, new ArrayList<>(0), new ArrayList<>(0));
     }
 
     public InMemoryServiceRegistry(final ApplicationEventPublisher eventPublisher,
@@ -47,7 +47,7 @@ public class InMemoryServiceRegistry extends AbstractServiceRegistry {
 
     @Override
     public Collection<RegisteredService> load() {
-        val services = new ArrayList<RegisteredService>();
+        val services = new ArrayList<RegisteredService>(registeredServices.size());
         registeredServices
             .stream()
             .map(this::invokeServiceRegistryListenerPostLoad)

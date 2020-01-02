@@ -145,7 +145,7 @@ public class DelegatedClientNavigationController {
     @SneakyThrows
     protected View getResultingView(final IndirectClient<Credentials> client, final JEEContext webContext, final Ticket ticket) {
         client.init();
-        val actionResult = client.getRedirectionActionBuilder().redirect(webContext);
+        val actionResult = client.getRedirectionActionBuilder().getRedirectionAction(webContext);
         if (actionResult.isPresent()) {
             val action = actionResult.get();
             LOGGER.debug("Determined final redirect action for client [{}] as [{}]", client, action);

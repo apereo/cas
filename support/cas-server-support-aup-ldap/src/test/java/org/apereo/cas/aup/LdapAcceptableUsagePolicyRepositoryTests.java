@@ -13,6 +13,7 @@ import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
@@ -30,12 +31,11 @@ import org.springframework.test.context.TestPropertySource;
 @Import(CasAcceptableUsagePolicyLdapConfiguration.class)
 @EnabledIfContinuousIntegration
 @TestPropertySource(properties = {
-    "cas.acceptableUsagePolicy.ldap.ldapUrl=ldap://localhost:10389",
-    "cas.acceptableUsagePolicy.ldap.useSsl=false",
-    "cas.acceptableUsagePolicy.ldap.baseDn=ou=people,dc=example,dc=org",
-    "cas.acceptableUsagePolicy.ldap.searchFilter=cn={0}",
-    "cas.acceptableUsagePolicy.ldap.bindDn=cn=Directory Manager",
-    "cas.acceptableUsagePolicy.ldap.bindCredential=password",
+    "cas.acceptableUsagePolicy.ldap[0].ldapUrl=ldap://localhost:10389",
+    "cas.acceptableUsagePolicy.ldap[0].baseDn=ou=people,dc=example,dc=org",
+    "cas.acceptableUsagePolicy.ldap[0].searchFilter=cn={0}",
+    "cas.acceptableUsagePolicy.ldap[0].bindDn=cn=Directory Manager",
+    "cas.acceptableUsagePolicy.ldap[0].bindCredential=password",
     "cas.acceptableUsagePolicy.aupAttributeName=carLicense"
 })
 @Getter
@@ -55,5 +55,9 @@ public class LdapAcceptableUsagePolicyRepositoryTests extends BaseAcceptableUsag
         val localhost = new LDAPConnection("localhost", LDAP_PORT, "cn=Directory Manager", "password");
         LdapIntegrationTestsOperations.populateEntries(localhost,
             new ClassPathResource("ldif/ldap-aup.ldif").getInputStream(), "ou=people,dc=example,dc=org");
+    }
+
+    @Test
+    public void verifyOperation() {
     }
 }

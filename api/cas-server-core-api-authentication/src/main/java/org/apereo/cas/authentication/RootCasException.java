@@ -2,7 +2,6 @@ package org.apereo.cas.authentication;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.ToString;
 import lombok.val;
 
 import java.util.ArrayList;
@@ -16,7 +15,6 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 4.0.0
  */
-@ToString(callSuper = true)
 @RequiredArgsConstructor
 @Getter
 public abstract class RootCasException extends RuntimeException {
@@ -25,7 +23,7 @@ public abstract class RootCasException extends RuntimeException {
 
     private final String code;
 
-    private final List<Object> args = new ArrayList<>();
+    private final List<Object> args = new ArrayList<>(0);
     
     public RootCasException(final String code, final String msg) {
         super(msg);

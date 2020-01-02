@@ -5,7 +5,7 @@ casVersion=$(./gradlew casVersion --no-daemon -q)
 echo "Current CAS version is $casVersion"
 gradle="./gradlew $@"
 gradleBuild=""
-gradleBuildOptions="--build-cache --configure-on-demand --no-daemon --parallel -x test -x javadoc -x check"
+gradleBuildOptions="--build-cache --configure-on-demand --no-daemon --parallel -x test -x javadoc -x check -DskipGradleLint=true -DskipNestedConfigMetadataGen=true "
 
 echo -e "***********************************************"
 echo -e "Gradle build started at `date`"

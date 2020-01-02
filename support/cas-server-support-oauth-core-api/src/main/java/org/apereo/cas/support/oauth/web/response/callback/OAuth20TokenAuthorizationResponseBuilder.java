@@ -58,7 +58,7 @@ public class OAuth20TokenAuthorizationResponseBuilder implements OAuth20Authoriz
         val accessToken = result.getAccessToken().orElse(null);
         val refreshToken = result.getRefreshToken().orElse(null);
         LOGGER.debug("Generated OAuth access token: [{}]", accessToken);
-        return buildCallbackUrlResponseType(holder, redirectUri, accessToken, new ArrayList<>(), refreshToken, context);
+        return buildCallbackUrlResponseType(holder, redirectUri, accessToken, new ArrayList<>(0), refreshToken, context);
     }
 
 

@@ -7,6 +7,15 @@ if (hasTestsOfCategory(project, "Cassandra")) {
     }
 }
 
+if (hasTestsOfCategory(project, "Webflow")) {
+    task testWebflow(type: Test) {
+        enabled = shouldTest(project, "Webflow")
+        useJUnitPlatform {
+            includeTags "Webflow"
+        }
+    }
+}
+
 if (hasTestsOfCategory(project, "CosmosDb")) {
     task testCosmosDb(type: Test) {
         enabled = shouldTest(project, "CosmosDb")
@@ -111,6 +120,15 @@ if (hasTestsOfCategory(project, "DynamoDb")) {
         enabled = shouldTest(project, "DynamoDb")
         useJUnitPlatform {
             includeTags "DynamoDb"
+        }
+    }
+}
+
+if (hasTestsOfCategory(project, "Ehcache")) {
+    task testEhcache(type: Test) {
+        enabled = shouldTest(project, "Ehcache")
+        useJUnitPlatform {
+            includeTags "Ehcache"
         }
     }
 }
@@ -268,13 +286,13 @@ if (hasTestsOfCategory(project, "JDBC")) {
 
 test {
     useJUnitPlatform {
-        excludeTags "Cassandra", "CosmosDb", "Couchbase", "DynamoDb",
-                "FileSystem", "Ignite", "InfluxDb", "CouchDb",
+        excludeTags "Cassandra", "CosmosDb", "Couchbase", "CouchDb", "DynamoDb",
+                "Ehcache", "FileSystem", "Ignite", "InfluxDb",
                 "Ldap", "Mail", "MariaDb", "Memcached", "JDBC",
                 "MongoDb", "MsSqlServer", "MySQL", "Postgres", "Redis",
                 "Radius", "AmazonWebServices", "RestfulApi", "Groovy",
                 "OAuth", "OIDC", "SAML", "UMA", "Oracle", "ActiveMQ",
-                "ZooKeeper"
+                "ZooKeeper", "Webflow"
     }
     enabled = "SIMPLE".equalsIgnoreCase(rootProject.testCategoryType) && !Boolean.getBoolean("skipTests")
 }

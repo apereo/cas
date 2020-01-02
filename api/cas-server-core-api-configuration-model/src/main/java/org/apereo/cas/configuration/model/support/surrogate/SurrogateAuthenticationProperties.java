@@ -103,7 +103,7 @@ public class SurrogateAuthenticationProperties implements Serializable {
          * and the value is a comma-separated list of identifiers that can be
          * impersonated by the admin-user.
          */
-        private Map<String, String> surrogates = new LinkedHashMap<>();
+        private Map<String, String> surrogates = new LinkedHashMap<>(2);
     }
 
     @RequiresModule(name = "cas-server-support-surrogate-authentication-couchdb")

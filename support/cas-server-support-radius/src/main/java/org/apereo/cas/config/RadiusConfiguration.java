@@ -15,7 +15,6 @@ import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderResolver;
-import org.apereo.cas.authentication.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.authentication.MultifactorAuthenticationTrigger;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
@@ -97,10 +96,6 @@ public class RadiusConfiguration {
     private ObjectProvider<TicketRegistrySupport> ticketRegistrySupport;
 
     @Autowired
-    @Qualifier("multifactorAuthenticationProviderSelector")
-    private ObjectProvider<MultifactorAuthenticationProviderSelector> multifactorAuthenticationProviderSelector;
-
-    @Autowired
     @Qualifier("authenticationServiceSelectionPlan")
     private ObjectProvider<AuthenticationServiceSelectionPlan> authenticationRequestServiceSelectionStrategies;
 
@@ -153,7 +148,7 @@ public class RadiusConfiguration {
             radiusPrincipalFactory(), radiusServers(),
             radius.isFailoverOnException(), radius.isFailoverOnAuthenticationFailure());
 
-        h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(radius.getPasswordEncoder()));
+        h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(radius.getPasswordEncoder(), applicationContext));
         h.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(radius.getPrincipalTransformation()));
         h.setPasswordPolicyConfiguration(radiusPasswordPolicyConfiguration());
         return h;
@@ -182,7 +177,8 @@ public class RadiusConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "radiusAccessChallengedMultifactorAuthenticationTrigger")
     public MultifactorAuthenticationTrigger radiusAccessChallengedMultifactorAuthenticationTrigger() {
-        return new RadiusAccessChallengedMultifactorAuthenticationTrigger(casProperties, multifactorAuthenticationProviderResolver.getObject());
+        return new RadiusAccessChallengedMultifactorAuthenticationTrigger(casProperties,
+            multifactorAuthenticationProviderResolver.getObject(), this.applicationContext);
     }
 
     @RefreshScope

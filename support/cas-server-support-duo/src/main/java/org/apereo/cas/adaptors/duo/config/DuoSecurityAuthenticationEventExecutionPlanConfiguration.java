@@ -8,9 +8,9 @@ import org.apereo.cas.adaptors.duo.authn.DuoSecurityMultifactorAuthenticationPro
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityMultifactorAuthenticationProviderFactory;
 import org.apereo.cas.adaptors.duo.web.DuoSecurityPingEndpoint;
 import org.apereo.cas.adaptors.duo.web.DuoSecurityUserAccountStatusEndpoint;
+import org.apereo.cas.adaptors.duo.web.flow.DuoSecurityMultifactorWebflowConfigurer;
 import org.apereo.cas.adaptors.duo.web.flow.action.DuoSecurityDetermineUserAccountAction;
 import org.apereo.cas.adaptors.duo.web.flow.action.DuoSecurityPrepareWebLoginFormAction;
-import org.apereo.cas.adaptors.duo.web.flow.config.DuoSecurityMultifactorWebflowConfigurer;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
@@ -29,7 +29,6 @@ import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.BeanCreationException;
@@ -62,7 +61,6 @@ import java.util.stream.Collectors;
  */
 @Configuration("duoSecurityAuthenticationEventExecutionPlanConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
     @Autowired
     private GenericWebApplicationContext applicationContext;
@@ -101,13 +99,13 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
 
     @Bean
     public Action prepareDuoWebLoginFormAction() {
-        return new DuoSecurityPrepareWebLoginFormAction();
+        return new DuoSecurityPrepareWebLoginFormAction(applicationContext);
     }
 
     @ConditionalOnMissingBean(name = "determineDuoUserAccountAction")
     @Bean
     public Action determineDuoUserAccountAction() {
-        return new DuoSecurityDetermineUserAccountAction();
+        return new DuoSecurityDetermineUserAccountAction(applicationContext);
     }
 
     @ConditionalOnMissingBean(name = "duoProviderFactory")
@@ -186,7 +184,7 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
     public CasWebflowExecutionPlanConfigurer duoSecurityCasWebflowExecutionPlanConfigurer() {
         return plan -> plan.registerWebflowConfigurer(duoMultifactorWebflowConfigurer());
     }
-    
+
     @Bean
     @ConditionalOnEnabledHealthIndicator("duoSecurityHealthIndicator")
     public HealthIndicator duoSecurityHealthIndicator() {

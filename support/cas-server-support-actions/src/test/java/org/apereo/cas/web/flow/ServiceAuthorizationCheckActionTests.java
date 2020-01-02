@@ -5,6 +5,7 @@ import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,13 +25,14 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
+@Tag("Webflow")
 public class ServiceAuthorizationCheckActionTests extends AbstractWebflowActionsTests {
     @Autowired
     @Qualifier("serviceAuthorizationCheck")
     private ObjectProvider<Action> action;
 
     @Test
-    public void verifyNoServiceFound() throws Exception {
+    public void verifyNoServiceFound() {
         val request = new MockHttpServletRequest();
         val context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
@@ -39,7 +41,7 @@ public class ServiceAuthorizationCheckActionTests extends AbstractWebflowActions
     }
 
     @Test
-    public void verifyDisabledServiceFound() throws Exception {
+    public void verifyDisabledServiceFound() {
         val request = new MockHttpServletRequest();
         val context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
@@ -49,7 +51,7 @@ public class ServiceAuthorizationCheckActionTests extends AbstractWebflowActions
     }
 
     @Test
-    public void verifyExclusiveAuthnDelegationMode() throws Exception {
+    public void verifyExclusiveAuthnDelegationMode() {
         val request = new MockHttpServletRequest();
         val context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));

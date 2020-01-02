@@ -39,27 +39,25 @@ import static org.junit.jupiter.api.Assertions.*;
     PasswordManagementConfiguration.class,
     CasCoreAuditConfiguration.class,
     CasCoreUtilConfiguration.class
-    }, properties = {
+}, properties = {
     "cas.authn.pm.reset.sms.attributeName=telephoneNumber",
-    "cas.authn.pm.ldap.ldapUrl=ldap://localhost:10636",
-    "cas.authn.pm.ldap.bindDn=CN=admin,CN=Users,DC=cas,DC=example,DC=org",
-    "cas.authn.pm.ldap.bindCredential=P@ssw0rd",
-    "cas.authn.pm.ldap.baseDn=CN=Users,DC=cas,DC=example,DC=org",
-    "cas.authn.pm.ldap.searchFilter=cn={user}",
-    "cas.authn.pm.ldap.useSsl=true",
-    "cas.authn.pm.ldap.type=AD",
-    "cas.authn.pm.ldap.securityQuestionsAttributes.department=company",
-    "cas.authn.pm.ldap.securityQuestionsAttributes.description=physicalDeliveryOfficeName",
-    "cas.authn.pm.ldap.providerClass=org.ldaptive.provider.unboundid.UnboundIDProvider",
-    "cas.authn.pm.ldap.trustStore=file:/tmp/adcacerts.jks",
-    "cas.authn.pm.ldap.trustStoreType=JKS",
-    "cas.authn.pm.ldap.trustStorePassword=changeit",
-    "cas.authn.pm.ldap.minPoolSize=0",
-    "cas.authn.pm.ldap.hostnameVerifier=DEFAULT"
+    "cas.authn.pm.ldap[0].ldapUrl=ldaps://localhost:10636",
+    "cas.authn.pm.ldap[0].bindDn=CN=admin,CN=Users,DC=cas,DC=example,DC=org",
+    "cas.authn.pm.ldap[0].bindCredential=P@ssw0rd",
+    "cas.authn.pm.ldap[0].baseDn=CN=Users,DC=cas,DC=example,DC=org",
+    "cas.authn.pm.ldap[0].searchFilter=cn={user}",
+    "cas.authn.pm.ldap[0].type=AD",
+    "cas.authn.pm.ldap[0].securityQuestionsAttributes.department=company",
+    "cas.authn.pm.ldap[0].securityQuestionsAttributes.description=physicalDeliveryOfficeName",
+    "cas.authn.pm.ldap[0].trustStore=file:/tmp/adcacerts.jks",
+    "cas.authn.pm.ldap[0].trustStoreType=JKS",
+    "cas.authn.pm.ldap[0].trustStorePassword=changeit",
+    "cas.authn.pm.ldap[0].minPoolSize=0",
+    "cas.authn.pm.ldap[0].hostnameVerifier=DEFAULT"
 })
 @DirtiesContext
 @EnabledIfContinuousIntegration
-@EnabledIfPortOpen(port = 10390)
+@EnabledIfPortOpen(port = 10636)
 public class ADPasswordManagementServiceTests {
 
     @Autowired

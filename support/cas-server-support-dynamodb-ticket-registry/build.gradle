@@ -33,7 +33,7 @@ dependencies {
     testImplementation project(":core:cas-server-core-authentication")
     testImplementation project(":core:cas-server-core-logout-api")
     testImplementation project(":core:cas-server-core-logout")
-    testImplementation project(":core:cas-server-core-tickets")
+    
     testImplementation project(":core:cas-server-core-services-authentication")
     testImplementation project(":core:cas-server-core-authentication-api")
     testImplementation project(":core:cas-server-core-authentication-attributes")

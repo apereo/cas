@@ -11,6 +11,7 @@ import lombok.val;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
+
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 
@@ -56,7 +57,7 @@ public class CassandraAuthenticationHandler extends AbstractUsernamePasswordAuth
             LOGGER.warn("Account password on record for [{}] does not match the given password", username);
             throw new FailedLoginException();
         }
-        return createHandlerResult(credential,
-            this.principalFactory.createPrincipal(username, attributes), new ArrayList<>());
+        val principal = this.principalFactory.createPrincipal(username, attributes);
+        return createHandlerResult(credential, principal, new ArrayList<>(0));
     }
 }

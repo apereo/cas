@@ -12,8 +12,8 @@ import org.apereo.cas.web.flow.authentication.DefaultCasWebflowAbstractTicketExc
 import org.apereo.cas.web.flow.authentication.DefaultCasWebflowAuthenticationExceptionHandler;
 import org.apereo.cas.web.flow.authentication.GenericCasWebflowExceptionHandler;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.binding.message.DefaultMessageResolver;
@@ -36,7 +36,7 @@ import static org.mockito.Mockito.*;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
-@Slf4j
+@Tag("Webflow")
 public class AuthenticationExceptionHandlerActionTests {
 
     @Test

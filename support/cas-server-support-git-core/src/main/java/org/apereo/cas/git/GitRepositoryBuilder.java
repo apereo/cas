@@ -38,7 +38,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class GitRepositoryBuilder {
     @Builder.Default
-    private final List<CredentialsProvider> credentialsProviders = new ArrayList<>();
+    private final List<CredentialsProvider> credentialsProviders = new ArrayList<>(0);
 
     private final String repositoryUri;
 

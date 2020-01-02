@@ -7,15 +7,15 @@
   overlays could use and pull this file and have their 
   dependencies match that of CAS. 
  */
-ext["hibernateVersion"] = "5.4.7.Final"
-ext["hazelcastVersion"] = "3.12.3"
+ext["hibernateVersion"] = "5.4.10.Final"
+ext["hazelcastVersion"] = "3.12.5"
 ext["infinispanVersion"] = "10.0.1.Final"
 
-ext["springVersion"] = "5.2.1.RELEASE"
+ext["springVersion"] = "5.2.2.RELEASE"
 ext["springSessionVersion"] = "2.2.0.RELEASE"
 ext["springSessionMongoVersion"] = "2.2.1.RELEASE"
 
-ext["springBootTomcatVersion"] = "9.0.27"
+ext["springBootTomcatVersion"] = "9.0.30"
 
 ext["jacksonVersion"] = "2.10.1"
 ext["jacksonCoreVersion"] = "2.10.1"
@@ -24,19 +24,19 @@ ext["thymeleafDialectVersion"] = "2.4.1"
 ext["hsqlVersion"] = "2.5.0"
 ext["httpCoreVersion"] = "4.4.12"
 ext["hikariVersion"] = "3.4.1"
-ext["groovyVersion"] = "3.0.0-rc-1"
-ext["log4jVersion"] = "2.12.1"
+ext["groovyVersion"] = "3.0.0-rc-2"
+ext["log4jVersion"] = "2.13.0"
 ext["commonsBeansVersion"] = "1.9.4"
 ext["logbackVersion"] = "1.3.0-alpha5"
 ext["caffeinVersion"] = "2.8.0"
-ext["couchbaseVersion"] = "2.7.10"
+ext["couchbaseVersion"] = "2.7.11"
 
 ext["mysqlVersion"] = "8.0.18"
-ext["postgresqlVersion"] = "42.2.8"
-ext["mariaDbVersion"] = "2.5.1"
+ext["postgresqlVersion"] = "42.2.9"
+ext["mariaDbVersion"] = "2.5.2"
 ext["jtdsVersion"] = "1.3.1"
 ext["mssqlServerVersion"] = "7.2.1.jre11"
-ext["mongoDriverVersion"] = "3.11.2"
+ext["mongoDriverVersion"] = "3.12.0"
 ext["oracleJdbcVersion"] = "19.3.0.0"
 
 ext["couchbase-client.version"] = ext["couchbaseVersion"]

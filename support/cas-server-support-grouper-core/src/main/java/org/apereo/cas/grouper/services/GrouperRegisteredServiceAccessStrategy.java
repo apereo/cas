@@ -38,9 +38,9 @@ public class GrouperRegisteredServiceAccessStrategy extends TimeBasedRegisteredS
     @Override
     public boolean doPrincipalAttributesAllowServiceAccess(final String principal, final Map<String, Object> principalAttributes) {
         val allAttributes = new HashMap<String, Object>(principalAttributes);
-        val grouperGroups = new ArrayList<String>();
         val facade = new GrouperFacade();
         val results = facade.getGroupsForSubjectId(principal);
+        val grouperGroups = new ArrayList<String>(results.size());
         if (results.isEmpty()) {
             LOGGER.warn("Subject id [{}] could not be located. Access denied", principal);
             return false;

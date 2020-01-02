@@ -24,6 +24,6 @@ public class PasswordSynchronizationProperties implements Serializable {
     /**
      * Options for password sync via LDAP.
      */
-    private List<LdapPasswordSynchronizationProperties> ldap = new ArrayList<>();
+    private List<LdapPasswordSynchronizationProperties> ldap = new ArrayList<>(0);
 
 }

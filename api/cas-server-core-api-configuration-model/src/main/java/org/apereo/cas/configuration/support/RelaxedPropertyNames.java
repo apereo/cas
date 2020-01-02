@@ -21,7 +21,7 @@ public class RelaxedPropertyNames implements Iterable<String> {
 
     private final String name;
 
-    private final Set<String> values = new LinkedHashSet<>();
+    private final Set<String> values = new LinkedHashSet<>(0);
 
     public RelaxedPropertyNames(final String name) {
         this.name = StringUtils.defaultString(name);
@@ -207,8 +207,7 @@ public class RelaxedPropertyNames implements Iterable<String> {
             final var builder = new StringBuilder();
             for (final var field : SEPARATED_TO_CAMEL_CASE_PATTERN.split(value)) {
                 final var fieldCased = caseInsensitive ? field.toLowerCase() : field;
-                builder.append(
-                    builder.length() == 0 ? field : StringUtils.capitalize(fieldCased));
+                builder.append(builder.length() == 0 ? field : StringUtils.capitalize(fieldCased));
             }
             final var lastChar = value.charAt(value.length() - 1);
             for (final var suffix : SUFFIXES) {

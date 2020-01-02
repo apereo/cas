@@ -4,7 +4,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.CasConfigurationPropertiesEnvironmentManager;
 import org.apereo.cas.configuration.CasConfigurationWatchService;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -22,7 +21,6 @@ import org.springframework.context.annotation.Profile;
  * @since 5.1.0
  */
 @Configuration(value = "casCoreBootstrapStandaloneWatchConfiguration", proxyBeanMethods = false)
-@Slf4j
 @Profile("standalone")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnProperty(value = "spring.cloud.config.enabled", havingValue = "false")

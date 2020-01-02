@@ -66,7 +66,7 @@ public class WsFederationRequestBuilder {
      * @return the event
      */
     public Event buildAuthenticationRequestEvent(final RequestContext context) {
-        val clients = new ArrayList<WsFedClient>();
+        val clients = new ArrayList<WsFedClient>(this.configurations.size());
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         val service = (Service) context.getFlowScope().get(CasProtocolConstants.PARAMETER_SERVICE);
         this.configurations.forEach(cfg -> {

@@ -30,8 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.pm.enabled=true",
     "cas.authn.pm.history.enabled=true",
     "spring.mail.host=localhost",
-    "spring.mail.port=25000",
-    "spring.mail.testConnection=false"
+    "spring.mail.port=25000"
 })
 public class InMemoryPasswordHistoryServiceTests {
     @Autowired

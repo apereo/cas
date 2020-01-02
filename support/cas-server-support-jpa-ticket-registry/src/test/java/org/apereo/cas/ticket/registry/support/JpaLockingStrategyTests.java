@@ -24,6 +24,7 @@ import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.util.SchedulingUtils;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -263,21 +264,11 @@ public class JpaLockingStrategyTests {
         }
     }
 
+    @RequiredArgsConstructor
     private static class TransactionalLockInvocationHandler implements InvocationHandler {
-
 
         private final JpaLockingStrategy jpaLock;
         private final PlatformTransactionManager txManager;
-
-        TransactionalLockInvocationHandler(final JpaLockingStrategy lock,
-                                           final PlatformTransactionManager txManager) {
-            jpaLock = lock;
-            this.txManager = txManager;
-        }
-
-        public JpaLockingStrategy getLock() {
-            return this.jpaLock;
-        }
 
         @Override
         public Object invoke(final Object proxy, final Method method, final Object[] args) {
@@ -310,26 +301,6 @@ public class JpaLockingStrategyTests {
                 return lock.acquire();
             } catch (final Exception e) {
                 LOGGER.debug("[{}] failed to acquire lock", lock, e);
-                return false;
-            }
-        }
-    }
-
-    private static class Releaser implements Callable<Boolean> {
-
-        private final LockingStrategy lock;
-
-        Releaser(final LockingStrategy l) {
-            lock = l;
-        }
-
-        @Override
-        public Boolean call() {
-            try {
-                lock.release();
-                return true;
-            } catch (final Exception e) {
-                LOGGER.debug("[{}] failed to release lock", lock, e);
                 return false;
             }
         }

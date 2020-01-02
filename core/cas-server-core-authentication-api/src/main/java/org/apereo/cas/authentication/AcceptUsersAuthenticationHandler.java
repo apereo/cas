@@ -2,8 +2,8 @@ package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
-import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.services.ServicesManager;
 
 import lombok.Setter;
@@ -13,6 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
+
 import java.security.GeneralSecurityException;
 import java.util.HashMap;
 import java.util.Map;
@@ -41,7 +42,7 @@ public class AcceptUsersAuthenticationHandler extends AbstractUsernamePasswordAu
     private Map<String, String> users;
 
     public AcceptUsersAuthenticationHandler(final Map<String, String> users) {
-        this(null, null, new DefaultPrincipalFactory(), Integer.MAX_VALUE, users);
+        this(null, null, PrincipalFactoryUtils.newPrincipalFactory(), Integer.MAX_VALUE, users);
     }
 
     /**
@@ -50,7 +51,7 @@ public class AcceptUsersAuthenticationHandler extends AbstractUsernamePasswordAu
      * @param name the name
      */
     public AcceptUsersAuthenticationHandler(final String name) {
-        this(name, null, new DefaultPrincipalFactory(), Integer.MAX_VALUE, new HashMap<>());
+        this(name, null, PrincipalFactoryUtils.newPrincipalFactory(), Integer.MAX_VALUE, new HashMap<>(0));
     }
 
     /**

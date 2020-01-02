@@ -42,7 +42,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -57,12 +56,6 @@ import java.util.stream.Stream;
 @Slf4j
 @ToString
 public abstract class AbstractResourceBasedServiceRegistry extends AbstractServiceRegistry implements ResourceBasedServiceRegistry, DisposableBean {
-
-    private static final BinaryOperator<RegisteredService> LOG_DUPLICATE_AND_RETURN_FIRST_ONE = (s1, s2) -> {
-        BaseResourceBasedRegisteredServiceWatcher.LOG_SERVICE_DUPLICATE.accept(s2);
-        return s1;
-    };
-
     /**
      * The Service registry directory.
      */
@@ -191,15 +184,45 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
         serviceRegistryWatcherService.start(getClass().getSimpleName());
     }
 
-    @Override
-    public long size() {
-        return this.services.size();
+    /**
+     * Remove registered service.
+     *
+     * @param service the service
+     */
+    protected void removeRegisteredService(final RegisteredService service) {
+        this.services.remove(service.getId());
     }
 
     @Override
-    public RegisteredService findServiceById(final long id) {
-        val service = this.services.get(id);
-        return this.registeredServiceReplicationStrategy.getRegisteredServiceFromCacheIfAny(service, id, this);
+    public RegisteredService save(final RegisteredService service) {
+        if (service.getId() == RegisteredService.INITIAL_IDENTIFIER_VALUE) {
+            LOGGER.debug("Service id not set. Calculating id based on system time...");
+            service.setId(System.currentTimeMillis());
+        }
+        val f = getRegisteredServiceFileName(service);
+        try (val out = Files.newOutputStream(f.toPath())) {
+            invokeServiceRegistryListenerPreSave(service);
+            val result = this.registeredServiceSerializers.stream().anyMatch(s -> {
+                try {
+                    s.to(out, service);
+                    return true;
+                } catch (final Exception e) {
+                    LOGGER.debug(e.getMessage(), e);
+                    return false;
+                }
+            });
+            if (!result) {
+                throw new IOException("The service definition file could not be saved at " + f.getCanonicalPath());
+            }
+            if (this.services.containsKey(service.getId())) {
+                LOGGER.debug("Found existing service definition by id [{}]. Saving...", service.getId());
+            }
+            this.services.put(service.getId(), service);
+            LOGGER.debug("Saved service to [{}]", f.getCanonicalPath());
+        } catch (final IOException e) {
+            throw new IllegalArgumentException("IO error opening file stream.", e);
+        }
+        return findServiceById(service.getId());
     }
 
     @Override
@@ -219,15 +242,6 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
         return result;
     }
 
-    /**
-     * Remove registered service.
-     *
-     * @param service the service
-     */
-    protected void removeRegisteredService(final RegisteredService service) {
-        this.services.remove(service.getId());
-    }
-
     @Override
     public synchronized Collection<RegisteredService> load() {
         LOGGER.trace("Loading files from [{}]", this.serviceRegistryDirectory);
@@ -241,7 +255,10 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
             .flatMap(Collection::stream)
             .sorted()
             .collect(Collectors.toMap(RegisteredService::getId, Function.identity(),
-                LOG_DUPLICATE_AND_RETURN_FIRST_ONE, LinkedHashMap::new));
+                (s1, s2) -> {
+                    BaseResourceBasedRegisteredServiceWatcher.LOG_SERVICE_DUPLICATE.accept(s2);
+                    return s1;
+                }, LinkedHashMap::new));
         val listedServices = new ArrayList<RegisteredService>(this.services.values());
         val results = this.registeredServiceReplicationStrategy.updateLoadedRegisteredServicesFromCache(listedServices, this);
         results.forEach(service -> publishEvent(new CasRegisteredServiceLoadedEvent(this, service)));
@@ -299,35 +316,19 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
     }
 
     @Override
-    public RegisteredService save(final RegisteredService service) {
-        if (service.getId() == RegisteredService.INITIAL_IDENTIFIER_VALUE) {
-            LOGGER.debug("Service id not set. Calculating id based on system time...");
-            service.setId(System.currentTimeMillis());
-        }
-        val f = getRegisteredServiceFileName(service);
-        try (val out = Files.newOutputStream(f.toPath())) {
-            invokeServiceRegistryListenerPreSave(service);
-            val result = this.registeredServiceSerializers.stream().anyMatch(s -> {
-                try {
-                    s.to(out, service);
-                    return true;
-                } catch (final Exception e) {
-                    LOGGER.debug(e.getMessage(), e);
-                    return false;
-                }
-            });
-            if (!result) {
-                throw new IOException("The service definition file could not be saved at " + f.getCanonicalPath());
-            }
-            if (this.services.containsKey(service.getId())) {
-                LOGGER.debug("Found existing service definition by id [{}]. Saving...", service.getId());
-            }
-            this.services.put(service.getId(), service);
-            LOGGER.debug("Saved service to [{}]", f.getCanonicalPath());
-        } catch (final IOException e) {
-            throw new IllegalArgumentException("IO error opening file stream.", e);
-        }
-        return findServiceById(service.getId());
+    public Stream<? extends RegisteredService> getServicesStream() {
+        return this.services.values().stream();
+    }
+
+    @Override
+    public RegisteredService findServiceById(final long id) {
+        val service = this.services.get(id);
+        return this.registeredServiceReplicationStrategy.getRegisteredServiceFromCacheIfAny(service, id, this);
+    }
+
+    @Override
+    public long size() {
+        return this.services.size();
     }
 
     @Override
@@ -384,11 +385,6 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
 
     }
 
-    @Override
-    public Stream<? extends RegisteredService> getServicesStream() {
-        return this.services.values().stream();
-    }
-
     /**
      * Gets extension associated with files in the given resource directory.
      *
@@ -397,7 +393,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
     protected abstract String[] getExtensions();
 
     @Override
-    public void destroy() throws Exception {
+    public void destroy() {
         this.serviceRegistryWatcherService.close();
     }
 

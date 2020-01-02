@@ -99,7 +99,7 @@ public class OAuth20CasAuthenticationBuilder {
 
         val authenticator = profile.getClass().getCanonicalName();
         val metadata = new BasicCredentialMetaData(new BasicIdentifiableCredential(profile.getId()));
-        val handlerResult = new DefaultAuthenticationHandlerExecutionResult(authenticator, metadata, newPrincipal, new ArrayList<>());
+        val handlerResult = new DefaultAuthenticationHandlerExecutionResult(authenticator, metadata, newPrincipal, new ArrayList<>(0));
         val scopes = CollectionUtils.toCollection(context.getNativeRequest().getParameterValues(OAuth20Constants.SCOPE));
 
         val state = context.getRequestParameter(OAuth20Constants.STATE).map(String::valueOf).orElse(StringUtils.EMPTY);

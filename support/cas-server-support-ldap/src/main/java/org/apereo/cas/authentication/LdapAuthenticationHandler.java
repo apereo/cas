@@ -48,7 +48,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
     /**
      * Mapping of LDAP attribute name to principal attribute name.
      */
-    protected Map<String, Object> principalAttributeMap = new HashMap<>();
+    protected Map<String, Object> principalAttributeMap = new HashMap<>(0);
 
     /**
      * Performs LDAP authentication given username/password.
@@ -114,13 +114,13 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         LOGGER.debug("Attempting to examine and handle LDAP password policy via [{}]",
             passwordPolicyHandlingStrategy.getClass().getSimpleName());
         val messageList = passwordPolicyHandlingStrategy.handle(response, getPasswordPolicyConfiguration());
-        if (response.getResult()) {
+        if (response.isSuccess()) {
             LOGGER.debug("LDAP response returned a result [{}], creating the final LDAP principal", response.getLdapEntry());
             val principal = createPrincipal(upc.getUsername(), response.getLdapEntry());
             return createHandlerResult(upc, principal, messageList);
         }
         if (AuthenticationResultCode.DN_RESOLUTION_FAILURE == response.getAuthenticationResultCode()) {
-            LOGGER.warn("DN resolution failed. [{}]", response.getMessage());
+            LOGGER.warn("DN resolution failed. [{}]", response.getDiagnosticMessage());
             throw new AccountNotFoundException(upc.getUsername() + " not found.");
         }
         throw new FailedLoginException("Invalid credentials");
@@ -148,8 +148,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      * @throws LoginException On security policy errors related to principal creation.
      */
     protected Principal createPrincipal(final String username, final LdapEntry ldapEntry) throws LoginException {
-        LOGGER.debug("Creating LDAP principal for [{}] based on [{}] and attributes [{}]", username, ldapEntry.getDn(),
-            ldapEntry.getAttributeNames());
+        LOGGER.debug("Creating LDAP principal for [{}] based on [{}] and attributes [{}]", username, ldapEntry.getDn(), ldapEntry.getAttributeNames());
         val id = getLdapPrincipalIdentifier(username, ldapEntry);
         LOGGER.debug("LDAP principal identifier created is [{}]", id);
         val attributeMap = collectAttributesForLdapEntry(ldapEntry, id);

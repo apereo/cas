@@ -41,20 +41,6 @@ public class AuditJdbcProperties extends AbstractJpaProperties {
     private int columnLength = 100;
 
     /**
-     * Defines the isolation level for transactions.
-     *
-     * @see org.springframework.transaction.TransactionDefinition
-     */
-    private String isolationLevelName = "ISOLATION_READ_COMMITTED";
-
-    /**
-     * Defines the propagation behavior for transactions.
-     *
-     * @see org.springframework.transaction.TransactionDefinition
-     */
-    private String propagationBehaviorName = "PROPAGATION_REQUIRED";
-
-    /**
      * Scheduler settings to indicate how often the cleaner is reloaded.
      */
     @NestedConfigurationProperty

@@ -57,6 +57,7 @@ public class Bucket4jThrottledRequestExecutor implements ThrottledRequestExecuto
             result = !this.bucket.tryConsume(1);
         } catch (final InterruptedException e) {
             LOGGER.error(e.getMessage(), e);
+            Thread.currentThread().interrupt();
         }
         if (result) {
             val probe = this.bucket.tryConsumeAndReturnRemaining(1);

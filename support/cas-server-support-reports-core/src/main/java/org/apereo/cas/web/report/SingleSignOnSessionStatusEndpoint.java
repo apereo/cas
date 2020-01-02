@@ -5,7 +5,6 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.actuate.endpoint.web.annotation.RestControllerEndpoint;
@@ -23,7 +22,6 @@ import javax.servlet.http.HttpServletRequest;
  */
 @RestControllerEndpoint(id = "sso", enableByDefault = false)
 @RequiredArgsConstructor
-@Slf4j
 public class SingleSignOnSessionStatusEndpoint {
 
     private final CasCookieBuilder ticketGrantingTicketCookieGenerator;

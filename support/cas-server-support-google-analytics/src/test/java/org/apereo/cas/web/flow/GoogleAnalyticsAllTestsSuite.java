@@ -10,9 +10,10 @@ import org.junit.runner.RunWith;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@SelectClasses(
-  CreateGoogleAnalyticsCookieActionTests.class
-)
+@SelectClasses({
+    CreateGoogleAnalyticsCookieActionTests.class,
+    CasGoogleAnalyticsWebflowConfigurerTests.class
+})
 @RunWith(JUnitPlatform.class)
 public class GoogleAnalyticsAllTestsSuite {
 }

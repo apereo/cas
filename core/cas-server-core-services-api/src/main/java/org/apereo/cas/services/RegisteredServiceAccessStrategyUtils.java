@@ -102,7 +102,7 @@ public class RegisteredServiceAccessStrategyUtils {
             val exception = new UnauthorizedServiceForPrincipalException(message, registeredService, principalId, attributes);
             handlerErrors.put(UnauthorizedServiceForPrincipalException.class.getSimpleName(), exception);
 
-            throw new PrincipalException(UnauthorizedServiceForPrincipalException.CODE_UNAUTHZ_SERVICE, handlerErrors, new HashMap<>());
+            throw new PrincipalException(UnauthorizedServiceForPrincipalException.CODE_UNAUTHZ_SERVICE, handlerErrors, new HashMap<>(0));
         }
     }
 

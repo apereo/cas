@@ -68,7 +68,7 @@ else
 
     if [ $retVal == 0 ]; then
         echo "Uploading test coverage results..."
-        bash <(curl -s https://codecov.io/bash)
+        bash <(curl -s https://codecov.io/bash) -F JMS
         echo "Gradle build finished successfully."
     else
         echo "Gradle build did NOT finish successfully."

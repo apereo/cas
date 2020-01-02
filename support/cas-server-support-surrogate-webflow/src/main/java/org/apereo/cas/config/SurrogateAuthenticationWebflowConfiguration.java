@@ -6,7 +6,6 @@ import org.apereo.cas.authentication.SurrogatePrincipalBuilder;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.SurrogateWebflowConfigurer;
@@ -56,11 +55,7 @@ public class SurrogateAuthenticationWebflowConfiguration implements Initializing
     @Autowired
     @Qualifier("registeredServiceAccessStrategyEnforcer")
     private ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer;
-
-    @Autowired
-    @Qualifier("servicesManager")
-    private ObjectProvider<ServicesManager> servicesManager;
-
+    
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -115,8 +110,7 @@ public class SurrogateAuthenticationWebflowConfiguration implements Initializing
     @ConditionalOnMissingBean(name = "surrogateAuthorizationCheck")
     @Bean
     public Action surrogateAuthorizationCheck() {
-        return new SurrogateAuthorizationAction(servicesManager.getObject(),
-            registeredServiceAccessStrategyEnforcer.getObject());
+        return new SurrogateAuthorizationAction(registeredServiceAccessStrategyEnforcer.getObject());
     }
 
     @ConditionalOnMissingBean(name = "loadSurrogatesListAction")

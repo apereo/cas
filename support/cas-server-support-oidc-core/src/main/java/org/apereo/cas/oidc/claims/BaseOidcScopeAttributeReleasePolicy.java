@@ -58,7 +58,7 @@ public abstract class BaseOidcScopeAttributeReleasePolicy extends AbstractRegist
         val applicationContext = ApplicationContextProvider.getApplicationContext();
         if (applicationContext == null) {
             LOGGER.warn("Could not locate the application context to process attributes");
-            return new HashMap<>();
+            return new HashMap<>(0);
         }
         val resolvedAttributes = new TreeMap<String, List<Object>>(String.CASE_INSENSITIVE_ORDER);
         resolvedAttributes.putAll(attributes);
@@ -92,6 +92,9 @@ public abstract class BaseOidcScopeAttributeReleasePolicy extends AbstractRegist
                 val value = resolvedAttributes.get(mappedAttr);
                 LOGGER.debug("Found mapped attribute [{}] with value [{}] for claim [{}]", mappedAttr, value, claim);
                 return Pair.of(claim, value);
+            } else {
+                LOGGER.warn("Located claim [{}] mapped to attribute [{}], yet resolved attributes [{}] do not contain this attribute",
+                    claim, mappedAttr, resolvedAttributes);
             }
         }
         val value = resolvedAttributes.get(claim);

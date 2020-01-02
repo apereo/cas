@@ -2,6 +2,7 @@ description = "Apereo CAS Web Application Initializer"
 dependencies {
     implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-util-api")
+    implementation project(":core:cas-server-core-configuration")
     
     implementation project(":webapp:cas-server-webapp-config")
 
@@ -17,9 +18,8 @@ dependencies {
     testImplementation project(":core:cas-server-core-validation")
     testImplementation project(":core:cas-server-core-validation-api")
     testImplementation project(":core:cas-server-core-util")
-    testImplementation project(":core:cas-server-core-configuration")
     testImplementation project(":core:cas-server-core-web")
-    testImplementation project(":core:cas-server-core-web-api")
+    
     testImplementation project(":core:cas-server-core-cookie")
     testImplementation project(":core:cas-server-core-webflow")
     testImplementation project(":core:cas-server-core-webflow-api")

@@ -261,7 +261,7 @@ public class SamlIdPObjectEncrypter {
 
         val kekCredentialResolver = new MetadataCredentialResolver();
 
-        val providers = new ArrayList<KeyInfoProvider>();
+        val providers = new ArrayList<KeyInfoProvider>(5);
         providers.add(new RSAKeyValueProvider());
         providers.add(new DSAKeyValueProvider());
         providers.add(new InlineX509DataProvider());

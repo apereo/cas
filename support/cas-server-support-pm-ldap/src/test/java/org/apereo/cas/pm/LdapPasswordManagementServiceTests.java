@@ -17,7 +17,7 @@ import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.ldaptive.BindRequest;
+import org.ldaptive.BindConnectionInitializer;
 import org.ldaptive.Credential;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -44,15 +44,14 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreUtilConfiguration.class
 }, properties = {
     "cas.authn.pm.reset.sms.attributeName=telephoneNumber",
-    "cas.authn.pm.ldap.ldapUrl=ldap://localhost:10389",
-    "cas.authn.pm.ldap.bindDn=cn=Directory Manager",
-    "cas.authn.pm.ldap.bindCredential=password",
-    "cas.authn.pm.ldap.baseDn=ou=people,dc=example,dc=org",
-    "cas.authn.pm.ldap.searchFilter=cn={user}",
-    "cas.authn.pm.ldap.useSsl=false",
-    "cas.authn.pm.ldap.type=GENERIC",
-    "cas.authn.pm.ldap.securityQuestionsAttributes.registeredAddress=roomNumber",
-    "cas.authn.pm.ldap.securityQuestionsAttributes.postalCode=teletexTerminalIdentifier"
+    "cas.authn.pm.ldap[0].ldapUrl=ldap://localhost:10389",
+    "cas.authn.pm.ldap[0].bindDn=cn=Directory Manager",
+    "cas.authn.pm.ldap[0].bindCredential=password",
+    "cas.authn.pm.ldap[0].baseDn=ou=people,dc=example,dc=org",
+    "cas.authn.pm.ldap[0].searchFilter=cn={user}",
+    "cas.authn.pm.ldap[0].type=GENERIC",
+    "cas.authn.pm.ldap[0].securityQuestionsAttributes.registeredAddress=roomNumber",
+    "cas.authn.pm.ldap[0].securityQuestionsAttributes.postalCode=teletexTerminalIdentifier"
 })
 @DirtiesContext
 @EnabledIfContinuousIntegration
@@ -73,7 +72,7 @@ public class LdapPasswordManagementServiceTests {
         LdapIntegrationTestsOperations.populateEntries(localhost,
             new ClassPathResource("ldif/ldap-pm.ldif").getInputStream(),
             "ou=people,dc=example,dc=org",
-            new BindRequest("cn=Directory Manager", new Credential("password")));
+            new BindConnectionInitializer("cn=Directory Manager", new Credential("password")));
     }
 
     @Test

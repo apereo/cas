@@ -12,6 +12,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 
 import java.io.File;
@@ -24,11 +25,11 @@ import java.io.IOException;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@SpringBootTest(classes = AbstractMultifactorAuthenticationTrustStorageTests.SharedTestConfiguration.class)
 @TestPropertySource(properties = {
     "cas.authn.mfa.trusted.json.location=file:/tmp/trusted-device.json",
     "spring.mail.host=localhost",
-    "spring.mail.port=25000",
-    "spring.mail.testConnection=false"
+    "spring.mail.port=25000"
 })
 @Tag("FileSystem")
 @Getter

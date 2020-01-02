@@ -1,7 +1,7 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
-import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.ToString;
@@ -43,7 +43,7 @@ public class X509SerialNumberAndIssuerDNPrincipalResolver extends AbstractX509Pr
     private final String valueDelimiter;
 
     public X509SerialNumberAndIssuerDNPrincipalResolver(final String serialNumberPrefix, final String valueDelimiter) {
-        this(new StubPersonAttributeDao(new HashMap<>()), new DefaultPrincipalFactory(), false,
+        this(new StubPersonAttributeDao(new HashMap<>(0)), PrincipalFactoryUtils.newPrincipalFactory(), false,
             null, serialNumberPrefix, valueDelimiter, false, true,
             CollectionUtils.wrapSet(IPersonAttributeDao.WILDCARD));
     }

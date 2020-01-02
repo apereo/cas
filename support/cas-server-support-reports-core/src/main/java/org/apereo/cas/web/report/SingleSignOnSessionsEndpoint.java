@@ -9,6 +9,7 @@ import org.apereo.cas.util.ISOStandardDateFormat;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -103,14 +104,14 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
      */
     @ReadOperation
     public Map<String, Object> getSsoSessions(final String type) {
-        val sessionsMap = new HashMap<String, Object>(1);
+        val sessionsMap = new HashMap<String, Object>(6);
         val option = SsoSessionReportOptions.valueOf(type);
         val activeSsoSessions = getActiveSsoSessions(option);
         sessionsMap.put("activeSsoSessions", activeSsoSessions);
         val totalTicketGrantingTickets = new AtomicLong();
         val totalProxyGrantingTickets = new AtomicLong();
         val totalUsageCount = new AtomicLong();
-        val uniquePrincipals = new HashSet<Object>();
+        val uniquePrincipals = new HashSet<Object>(activeSsoSessions.size());
         for (val activeSsoSession : activeSsoSessions) {
             if (activeSsoSession.containsKey(SsoSessionAttributeKeys.IS_PROXIED.toString())) {
                 val isProxied = Boolean.valueOf(activeSsoSession.get(SsoSessionAttributeKeys.IS_PROXIED.toString()).toString());
@@ -193,20 +194,13 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
         return sessionsMap;
     }
 
+    @RequiredArgsConstructor
+    @Getter
     private enum SsoSessionReportOptions {
 
         ALL("all"), PROXIED("proxied"), DIRECT("direct");
 
         private final String type;
-
-        /**
-         * Instantiates a new Sso session report options.
-         *
-         * @param type the type
-         */
-        SsoSessionReportOptions(final String type) {
-            this.type = type;
-        }
     }
 
     /**

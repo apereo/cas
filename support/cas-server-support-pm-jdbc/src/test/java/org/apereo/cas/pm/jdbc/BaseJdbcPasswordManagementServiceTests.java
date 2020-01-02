@@ -28,6 +28,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.sql.DataSource;
 
@@ -62,13 +64,14 @@ import javax.sql.DataSource;
 }, properties = {
     "cas.authn.pm.enabled=true",
     "cas.authn.pm.history.enabled=true",
-    "cas.authn.pm.jdbc.autoCommit=true",
+    "cas.authn.pm.jdbc.autoCommit=false",
     "cas.authn.pm.jdbc.sqlSecurityQuestions=SELECT question, answer FROM pm_table_questions WHERE userid=?",
     "cas.authn.pm.jdbc.sqlFindEmail=SELECT email FROM pm_table_accounts WHERE userid=?",
     "cas.authn.pm.jdbc.sqlFindPhone=SELECT phone FROM pm_table_accounts WHERE userid=?",
     "cas.authn.pm.jdbc.sqlChangePassword=UPDATE pm_table_accounts SET password=? WHERE userid=?"
 })
 @Tag("JDBC")
+@EnableTransactionManagement(proxyTargetClass = true)
 public abstract class BaseJdbcPasswordManagementServiceTests {
     @Autowired
     @Qualifier("passwordChangeService")
@@ -81,4 +84,9 @@ public abstract class BaseJdbcPasswordManagementServiceTests {
     @Autowired
     @Qualifier("passwordHistoryService")
     protected PasswordHistoryService passwordHistoryService;
+
+    @Autowired
+    @Qualifier("jdbcPasswordManagementTransactionTemplate")
+    protected TransactionTemplate jdbcPasswordManagementTransactionTemplate;
+
 }

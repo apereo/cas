@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCrypt
 import org.apereo.cas.configuration.model.support.couchdb.BaseCouchDbProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.mongo.SingleCollectionMongoDbProperties;
+import org.apereo.cas.configuration.model.support.redis.BaseRedisProperties;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.util.crypto.CipherExecutor;
@@ -58,12 +59,12 @@ public class YubiKeyMultifactorProperties extends BaseMultifactorProviderPropert
      * This is done using a key-value structure where the key is the user
      * the value is the whitelisted collection of yubikey device ids.
      */
-    private Map<String, String> allowedDevices = new LinkedHashMap<>();
+    private Map<String, String> allowedDevices = new LinkedHashMap<>(1);
 
     /**
      * YubiKey API urls to contact for verification of credentials.
      */
-    private List<String> apiUrls = new ArrayList<>();
+    private List<String> apiUrls = new ArrayList<>(0);
 
     /**
      * Indicates whether this provider should support trusted devices.
@@ -84,6 +85,11 @@ public class YubiKeyMultifactorProperties extends BaseMultifactorProviderPropert
      * Keep device registration records inside a MongoDb resource.
      */
     private MongoDb mongo = new MongoDb();
+
+    /**
+     * Keep device registration records inside a redis resource.
+     */
+    private Redis redis = new Redis();
 
     /**
      * Crypto settings that sign/encrypt the yubikey registration records.
@@ -108,6 +114,7 @@ public class YubiKeyMultifactorProperties extends BaseMultifactorProviderPropert
         }
     }
 
+    @RequiresModule(name = "cas-server-support-yubikey-jpa")
     @Getter
     @Setter
     public static class Jpa extends AbstractJpaProperties {
@@ -115,6 +122,7 @@ public class YubiKeyMultifactorProperties extends BaseMultifactorProviderPropert
         private static final long serialVersionUID = -4420099402220880361L;
     }
 
+    @RequiresModule(name = "cas-server-support-yubikey-mongo")
     @Getter
     @Setter
     public static class MongoDb extends SingleCollectionMongoDbProperties {
@@ -124,5 +132,12 @@ public class YubiKeyMultifactorProperties extends BaseMultifactorProviderPropert
         public MongoDb() {
             setCollection("MongoDbYubiKeyRepository");
         }
+    }
+
+    @RequiresModule(name = "cas-server-support-yubikey-redis")
+    @Getter
+    @Setter
+    public static class Redis extends BaseRedisProperties {
+        private static final long serialVersionUID = -1261683393319585262L;
     }
 }

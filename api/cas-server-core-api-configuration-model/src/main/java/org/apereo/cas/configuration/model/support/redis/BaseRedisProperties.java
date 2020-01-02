@@ -214,6 +214,6 @@ public class BaseRedisProperties implements Serializable {
         /**
          * list of host:port pairs.
          */
-        private List<String> node = new ArrayList<>();
+        private List<String> node = new ArrayList<>(0);
     }
 }

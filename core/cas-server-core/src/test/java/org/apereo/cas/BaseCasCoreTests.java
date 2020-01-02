@@ -35,6 +35,8 @@ import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfigu
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.SpringBootConfiguration;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration;
@@ -43,6 +45,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.context.annotation.Import;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.test.annotation.DirtiesContext;
 
@@ -52,45 +55,11 @@ import org.springframework.test.annotation.DirtiesContext;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@SpringBootTest(classes = {
-    MailSenderAutoConfiguration.class,
-    ThymeleafAutoConfiguration.class,
-    AopAutoConfiguration.class,
-    RefreshAutoConfiguration.class,
-    CasCookieConfiguration.class,
-    CasCoreServicesConfiguration.class,
-    CasAuthenticationEventExecutionPlanTestConfiguration.class,
-    AbstractCentralAuthenticationServiceTests.CasTestConfiguration.class,
-    CasCoreServicesAuthenticationConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class,
-    CasDefaultServiceTicketIdGeneratorsConfiguration.class,
-    CasCoreTicketIdGeneratorsConfiguration.class,
-    CasCoreUtilConfiguration.class,
-    CasCoreAuthenticationConfiguration.class,
-    CasCoreAuthenticationPrincipalConfiguration.class,
-    CasCoreAuthenticationPolicyConfiguration.class,
-    CasCoreAuthenticationMetadataConfiguration.class,
-    CasCoreAuthenticationSupportConfiguration.class,
-    CasCoreAuthenticationHandlersConfiguration.class,
-    CasCoreHttpConfiguration.class,
-    CasRegisteredServicesTestConfiguration.class,
-    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-    CasCoreTicketsConfiguration.class,
-    CasCoreTicketCatalogConfiguration.class,
-    CasCoreWebConfiguration.class,
-    CasWebflowContextConfiguration.class,
-    CasCoreWebflowConfiguration.class,
-    CasCoreLogoutConfiguration.class,
-    CasCoreMultifactorAuthenticationConfiguration.class,
-    CasMultifactorAuthenticationWebflowConfiguration.class,
-    CasPersonDirectoryTestConfiguration.class,
-    CasCoreValidationConfiguration.class,
-    CasCoreConfiguration.class
-}, properties = {
-    "spring.mail.host=localhost",
-    "spring.mail.port=25000",
-    "spring.mail.testConnection=false"
-})
+@SpringBootTest(classes = BaseCasCoreTests.SharedTestConfiguration.class,
+    properties = {
+        "spring.mail.host=localhost",
+        "spring.mail.port=25000"
+    })
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @DirtiesContext
 @EnableScheduling
@@ -106,6 +75,7 @@ public abstract class BaseCasCoreTests {
     public static ExpirationPolicyBuilder neverExpiresExpirationPolicyBuilder() {
         return new ExpirationPolicyBuilder() {
             private static final long serialVersionUID = -9043565995104313970L;
+
             @Override
             public ExpirationPolicy buildTicketExpirationPolicy() {
                 return NeverExpiresExpirationPolicy.INSTANCE;
@@ -116,5 +86,46 @@ public abstract class BaseCasCoreTests {
                 return null;
             }
         };
+    }
+
+    @ImportAutoConfiguration({
+        MailSenderAutoConfiguration.class,
+        ThymeleafAutoConfiguration.class,
+        AopAutoConfiguration.class,
+        RefreshAutoConfiguration.class
+    })
+    @SpringBootConfiguration
+    @Import({
+        CasCookieConfiguration.class,
+        CasCoreServicesConfiguration.class,
+        CasAuthenticationEventExecutionPlanTestConfiguration.class,
+        AbstractCentralAuthenticationServiceTests.CasTestConfiguration.class,
+        CasCoreServicesAuthenticationConfiguration.class,
+        CasWebApplicationServiceFactoryConfiguration.class,
+        CasDefaultServiceTicketIdGeneratorsConfiguration.class,
+        CasCoreTicketIdGeneratorsConfiguration.class,
+        CasCoreUtilConfiguration.class,
+        CasCoreAuthenticationConfiguration.class,
+        CasCoreAuthenticationPrincipalConfiguration.class,
+        CasCoreAuthenticationPolicyConfiguration.class,
+        CasCoreAuthenticationMetadataConfiguration.class,
+        CasCoreAuthenticationSupportConfiguration.class,
+        CasCoreAuthenticationHandlersConfiguration.class,
+        CasCoreHttpConfiguration.class,
+        CasRegisteredServicesTestConfiguration.class,
+        CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
+        CasCoreTicketsConfiguration.class,
+        CasCoreTicketCatalogConfiguration.class,
+        CasCoreWebConfiguration.class,
+        CasWebflowContextConfiguration.class,
+        CasCoreWebflowConfiguration.class,
+        CasCoreLogoutConfiguration.class,
+        CasCoreMultifactorAuthenticationConfiguration.class,
+        CasMultifactorAuthenticationWebflowConfiguration.class,
+        CasPersonDirectoryTestConfiguration.class,
+        CasCoreValidationConfiguration.class,
+        CasCoreConfiguration.class
+    })
+    public static class SharedTestConfiguration {
     }
 }

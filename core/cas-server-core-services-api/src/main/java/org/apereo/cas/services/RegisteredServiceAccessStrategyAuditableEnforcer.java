@@ -25,8 +25,10 @@ public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAudita
         if (context.getServiceTicket().isPresent() && context.getAuthenticationResult().isPresent() && providedRegisteredService.isPresent()) {
             val result = AuditableExecutionResult.of(context);
             try {
-                RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(context.getServiceTicket().get(),
-                    context.getAuthenticationResult().get(), providedRegisteredService.get());
+                val serviceTicket = context.getServiceTicket().orElseThrow();
+                val authResult = context.getAuthenticationResult().orElseThrow();
+                RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(serviceTicket,
+                    authResult, providedRegisteredService.get());
             } catch (final PrincipalException | UnauthorizedServiceException e) {
                 result.setException(e);
             }

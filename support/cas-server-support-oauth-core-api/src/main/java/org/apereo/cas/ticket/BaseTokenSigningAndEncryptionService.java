@@ -47,7 +47,7 @@ public abstract class BaseTokenSigningAndEncryptionService implements OAuth20Tok
                                   final Key publicKey,
                                   final String payload) {
         return EncodingUtils.encryptValueAsJwt(publicKey, payload, encryptionAlg,
-            encryptionEncoding, keyIdHeaderValue, new HashMap<>());
+            encryptionEncoding, keyIdHeaderValue, new HashMap<>(0));
     }
 
     /**
@@ -62,7 +62,7 @@ public abstract class BaseTokenSigningAndEncryptionService implements OAuth20Tok
                                final JwtClaims claims,
                                final PublicJsonWebKey jsonWebKey) {
         LOGGER.debug("Service [{}] is set to sign id tokens", svc);
-        return EncodingUtils.signJws(claims, jsonWebKey, getJsonWebKeySigningAlgorithm(svc), new HashMap<>());
+        return EncodingUtils.signJws(claims, jsonWebKey, getJsonWebKeySigningAlgorithm(svc), new HashMap<>(0));
     }
 
     @Override

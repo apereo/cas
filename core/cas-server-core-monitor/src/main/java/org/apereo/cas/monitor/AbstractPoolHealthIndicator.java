@@ -41,6 +41,7 @@ public abstract class AbstractPoolHealthIndicator extends AbstractHealthIndicato
             poolBuilder = result.get(this.maxWait, TimeUnit.MILLISECONDS);
             message = "OK";
         } catch (final InterruptedException e) {
+            Thread.currentThread().interrupt();
             message = "Validator thread interrupted during pool validation";
             poolBuilder.outOfService();
             LOGGER.trace(e.getMessage(), e);

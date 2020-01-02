@@ -6,6 +6,7 @@ import org.apereo.cas.impl.calcs.IpAddressAuthenticationRequestRiskCalculatorTes
 import org.apereo.cas.impl.calcs.UserAgentAuthenticationRequestRiskCalculatorTests;
 import org.apereo.cas.impl.notify.AuthenticationRiskEmailNotifierTests;
 import org.apereo.cas.impl.notify.AuthenticationRiskSmsNotifierTests;
+import org.apereo.cas.web.flow.RiskAwareAuthenticationWebflowConfigurerTests;
 
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
@@ -22,6 +23,7 @@ import org.junit.runner.RunWith;
     GeoLocationAuthenticationRequestRiskCalculatorTests.class,
     IpAddressAuthenticationRequestRiskCalculatorTests.class,
     UserAgentAuthenticationRequestRiskCalculatorTests.class,
+    RiskAwareAuthenticationWebflowConfigurerTests.class,
     AuthenticationRiskEmailNotifierTests.class,
     AuthenticationRiskSmsNotifierTests.class
 })

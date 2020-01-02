@@ -10,6 +10,7 @@ import org.apereo.cas.web.flow.SurrogateWebflowConfigurer;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -33,6 +34,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@Tag("Webflow")
 public class LoadSurrogatesListActionTests extends BaseSurrogateInitialAuthenticationActionTests {
     @Autowired
     @Qualifier("loadSurrogatesListAction")
@@ -77,7 +79,7 @@ public class LoadSurrogatesListActionTests extends BaseSurrogateInitialAuthentic
         WebUtils.putCredential(context, creds);
 
         val builder = mock(AuthenticationResultBuilder.class);
-        when(builder.getInitialAuthentication()).thenReturn(Optional.of(CoreAuthenticationTestUtils.getAuthentication()));
+        when(builder.getInitialAuthentication()).thenReturn(Optional.of(CoreAuthenticationTestUtils.getAuthentication("casuser")));
         when(builder.collect(any(Authentication.class))).thenReturn(builder);
 
         WebUtils.putAuthenticationResultBuilder(builder, context);
@@ -107,7 +109,7 @@ public class LoadSurrogatesListActionTests extends BaseSurrogateInitialAuthentic
         WebUtils.putCredential(context, creds);
 
         val builder = mock(AuthenticationResultBuilder.class);
-        when(builder.getInitialAuthentication()).thenReturn(Optional.of(CoreAuthenticationTestUtils.getAuthentication()));
+        when(builder.getInitialAuthentication()).thenReturn(Optional.of(CoreAuthenticationTestUtils.getAuthentication("casuser")));
         when(builder.collect(any(Authentication.class))).thenReturn(builder);
 
         WebUtils.putAuthenticationResultBuilder(builder, context);

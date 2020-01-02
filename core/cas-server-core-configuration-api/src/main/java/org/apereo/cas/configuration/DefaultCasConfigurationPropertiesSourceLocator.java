@@ -55,7 +55,7 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
 
         val configFile = casConfigurationPropertiesEnvironmentManager.getStandaloneProfileConfigurationFile();
         if (configFile != null) {
-            val sourceStandalone = loadSettingsFromStandaloneConfigFile(environment, configFile);
+            val sourceStandalone = loadSettingsFromStandaloneConfigFile(configFile);
             compositePropertySource.addPropertySource(sourceStandalone);
         }
 
@@ -74,7 +74,7 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
         return compositePropertySource;
     }
 
-    private PropertySource<Map<String, Object>> loadSettingsFromStandaloneConfigFile(final Environment environment, final File configFile) {
+    private PropertySource<Map<String, Object>> loadSettingsFromStandaloneConfigFile(final File configFile) {
         return configurationPropertiesLoaderFactory
             .getLoader(new FileSystemResource(configFile), "standaloneConfigurationFileProperties")
             .load();

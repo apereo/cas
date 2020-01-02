@@ -57,7 +57,7 @@ public abstract class AbstractSamlSPProperties implements Serializable {
      * Allow attributes that are to be released to this SP.
      * Attributes should be separated by commas and can be virtually mapped and renamed.
      */
-    private List<String> attributes = new ArrayList<>();
+    private List<String> attributes = new ArrayList<>(0);
 
     /**
      * Signature location used to verify metadata.
@@ -68,7 +68,7 @@ public abstract class AbstractSamlSPProperties implements Serializable {
      * List of entityIds allowed for this service provider.
      * Multiple ids can be specified in the event that the metadata is an aggregate.
      */
-    private List<String> entityIds = new ArrayList<>();
+    private List<String> entityIds = new ArrayList<>(0);
 
     /**
      * Indicate whether responses should be signed.

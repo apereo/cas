@@ -2,7 +2,6 @@ package org.apereo.cas.throttle;
 
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
@@ -17,7 +16,6 @@ import javax.servlet.http.HttpServletResponse;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Slf4j
 @RequiredArgsConstructor
 public class DefaultThrottledRequestResponseHandler implements ThrottledRequestResponseHandler {
     private final String usernameParameter;

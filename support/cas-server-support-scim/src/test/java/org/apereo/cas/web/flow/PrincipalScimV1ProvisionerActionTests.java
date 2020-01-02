@@ -12,6 +12,7 @@ import com.unboundid.scim.marshal.json.JsonMarshaller;
 import com.unboundid.scim.schema.CoreSchema;
 import com.unboundid.scim.sdk.Resources;
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
@@ -41,9 +42,9 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.scim.username=casuser",
     "cas.scim.password=Mellon",
     "spring.mail.host=localhost",
-    "spring.mail.port=25000",
-    "spring.mail.testConnection=false"
+    "spring.mail.port=25000"
 })
+@Tag("Webflow")
 public class PrincipalScimV1ProvisionerActionTests extends BaseScimProvisionerActionTests {
     @Test
     public void verifyAction() throws Exception {

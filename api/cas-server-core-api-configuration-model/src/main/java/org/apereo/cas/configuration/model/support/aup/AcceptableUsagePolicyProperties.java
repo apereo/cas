@@ -2,10 +2,8 @@ package org.apereo.cas.configuration.model.support.aup;
 
 import org.apereo.cas.configuration.model.support.couchdb.BaseAsynchronousCouchDbProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
-import org.apereo.cas.configuration.model.support.ldap.AbstractLdapSearchProperties;
 import org.apereo.cas.configuration.model.support.mongo.SingleCollectionMongoDbProperties;
 import org.apereo.cas.configuration.model.support.redis.BaseRedisProperties;
-import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.RestEndpointProperties;
 import org.apereo.cas.configuration.support.SpringResourceProperties;
@@ -14,6 +12,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This is {@link AcceptableUsagePolicyProperties}.
@@ -31,7 +31,7 @@ public class AcceptableUsagePolicyProperties implements Serializable {
     /**
      * Control AUP via LDAP.
      */
-    private Ldap ldap = new Ldap();
+    private List<LdapAcceptableUsagePolicyProperties> ldap = new ArrayList<>();
 
     /**
      * Control AUP via Redis.
@@ -66,14 +66,12 @@ public class AcceptableUsagePolicyProperties implements Serializable {
     /**
      * AUP enabled allows AUP to be turned off on startup.
      */
-    @RequiredProperty
     private boolean enabled = true;
 
     /**
      * AUP attribute to choose in order to determine whether policy
      * has been accepted or not.
      */
-    @RequiredProperty
     private String aupAttributeName = "aupAccepted";
 
     /**
@@ -163,14 +161,6 @@ public class AcceptableUsagePolicyProperties implements Serializable {
     @Setter
     public static class Rest extends RestEndpointProperties {
         private static final long serialVersionUID = -8102345678378393382L;
-    }
-
-    @RequiresModule(name = "cas-server-support-aup-ldap")
-    @Getter
-    @Setter
-    public static class Ldap extends AbstractLdapSearchProperties {
-
-        private static final long serialVersionUID = -7991011278378393382L;
     }
 
     @RequiresModule(name = "cas-server-support-aup-core", automated = true)

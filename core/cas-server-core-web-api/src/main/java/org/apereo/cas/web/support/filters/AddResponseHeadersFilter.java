@@ -37,8 +37,8 @@ import java.util.Map;
 @Slf4j
 @Getter
 public class AddResponseHeadersFilter extends AbstractSecurityFilter implements Filter {
-
-    private Map<String, String> headersMap = new LinkedHashMap<>();
+    private static final int MAP_SIZE = 8;
+    private Map<String, String> headersMap = new LinkedHashMap<>(MAP_SIZE);
     
     @Override
     public void init(final FilterConfig filterConfig) {

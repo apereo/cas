@@ -12,6 +12,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.trusted.config.MultifactorAuthnTrustConfiguration;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -23,7 +24,7 @@ import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -150,24 +151,24 @@ public class RadiusMultifactorConfiguration {
     /**
      * The Radius multifactor trust configuration.
      */
-    @ConditionalOnBean(name = "mfaTrustEngine")
+    @ConditionalOnClass(value = MultifactorAuthnTrustConfiguration.class)
     @ConditionalOnProperty(prefix = "cas.authn.mfa.radius", name = "trustedDeviceEnabled", havingValue = "true", matchIfMissing = true)
     @Configuration("radiusMultifactorTrustConfiguration")
     public class RadiusMultifactorTrustConfiguration {
 
-        @ConditionalOnMissingBean(name = "radiusMultifactorTrustConfiguration")
+        @ConditionalOnMissingBean(name = "radiusMultifactorTrustConfigurer")
         @Bean
         @DependsOn("defaultWebflowConfigurer")
-        public CasWebflowConfigurer radiusMultifactorTrustConfiguration() {
+        public CasWebflowConfigurer radiusMultifactorTrustConfigurer() {
             val deviceRegistrationEnabled = casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled();
             return new RadiusMultifactorTrustWebflowConfigurer(flowBuilderServices.getObject(),
                 loginFlowDefinitionRegistry.getObject(), deviceRegistrationEnabled,
-                loginFlowDefinitionRegistry.getObject(), applicationContext, casProperties);
+                radiusFlowRegistry(), applicationContext, casProperties);
         }
 
         @Bean
         public CasWebflowExecutionPlanConfigurer radiusMultifactorTrustCasWebflowExecutionPlanConfigurer() {
-            return plan -> plan.registerWebflowConfigurer(radiusMultifactorTrustConfiguration());
+            return plan -> plan.registerWebflowConfigurer(radiusMultifactorTrustConfigurer());
         }
 
     }

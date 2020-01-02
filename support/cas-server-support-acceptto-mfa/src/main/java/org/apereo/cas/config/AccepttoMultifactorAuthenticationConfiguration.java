@@ -157,8 +157,7 @@ public class AccepttoMultifactorAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "mfaAccepttoDistributedSessionStore")
     @Bean
     public SessionStore<JEEContext> mfaAccepttoDistributedSessionStore() {
-        return new DistributedJ2ESessionStore(ticketRegistry.getObject(), ticketFactory.getObject(),
-                casProperties.getSessionReplication().getSessionCookieName());
+        return new DistributedJ2ESessionStore(ticketRegistry.getObject(), ticketFactory.getObject(), casProperties);
     }
 
     @ConditionalOnMissingBean(name = "mfaAccepttoMultifactorFetchChannelAction")
@@ -209,7 +208,7 @@ public class AccepttoMultifactorAuthenticationConfiguration {
     @Bean
     @RefreshScope
     public Action mfaAccepttoMultifactorValidateUserDeviceRegistrationAction() {
-        return new AccepttoMultifactorValidateUserDeviceRegistrationAction(casProperties, authenticationSystemSupport.getObject());
+        return new AccepttoMultifactorValidateUserDeviceRegistrationAction(casProperties);
     }
 
     @RefreshScope

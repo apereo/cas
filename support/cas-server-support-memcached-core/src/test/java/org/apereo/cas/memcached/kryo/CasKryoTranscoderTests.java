@@ -6,7 +6,7 @@ import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.metadata.BasicCredentialMetaData;
 import org.apereo.cas.authentication.principal.DefaultPrincipalAttributesRepository;
-import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.mock.MockServiceTicket;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -25,6 +25,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 
 import javax.security.auth.login.AccountNotFoundException;
+
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -84,10 +86,10 @@ public class CasKryoTranscoderTests {
     @Test
     public void verifyEncodeDecodeTGTImpl() {
         val userPassCredential = new UsernamePasswordCredential(USERNAME, PASSWORD);
-        val bldr = new DefaultAuthenticationBuilder(new DefaultPrincipalFactory()
+        val bldr = new DefaultAuthenticationBuilder(PrincipalFactoryUtils.newPrincipalFactory()
             .createPrincipal("user", new HashMap<>(this.principalAttributes)));
         bldr.setAttributes(new HashMap<>(this.principalAttributes));
-        bldr.setAuthenticationDate(ZonedDateTime.now());
+        bldr.setAuthenticationDate(ZonedDateTime.now(ZoneId.systemDefault()));
         bldr.addCredential(new BasicCredentialMetaData(userPassCredential));
         bldr.addFailure("error", new AccountNotFoundException());
         bldr.addSuccess("authn", new DefaultAuthenticationHandlerExecutionResult(

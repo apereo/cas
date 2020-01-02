@@ -3,8 +3,10 @@ package org.apereo.cas.mfa.simple;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
+import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -12,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import javax.security.auth.login.FailedLoginException;
+
 import java.security.GeneralSecurityException;
 
 /**
@@ -42,10 +45,22 @@ public class CasSimpleMultifactorAuthenticationHandler extends AbstractPreAndPos
         val uid = authentication.getPrincipal().getId();
 
         LOGGER.debug("Received principal id [{}]. Attempting to locate token in registry...", uid);
-        val acct = this.ticketRegistry.getTicket(tokenCredential.getId());
+        val acct = this.ticketRegistry.getTicket(tokenCredential.getId(), TransientSessionTicket.class);
 
         if (acct == null) {
             LOGGER.warn("Authorization of token [{}] has failed. Token is not found in registry", tokenCredential.getId());
+            throw new FailedLoginException("Failed to authenticate code " + tokenCredential.getId());
+        }
+        val properties = acct.getProperties();
+        if (!properties.containsKey(CasSimpleMultifactorAuthenticationConstants.PROPERTY_PRINCIPAL)) {
+            LOGGER.warn("Unable to locate principal for token [{}]", tokenCredential.getId());
+            this.ticketRegistry.deleteTicket(acct.getId());
+            throw new FailedLoginException("Failed to authenticate code " + tokenCredential.getId());
+        }
+        val principal = Principal.class.cast(properties.get(CasSimpleMultifactorAuthenticationConstants.PROPERTY_PRINCIPAL));
+        if (!principal.equals(authentication.getPrincipal())) {
+            LOGGER.warn("Principal assigned to token [{}] is unauthorized for of token [{}]", principal.getId(), tokenCredential.getId());
+            this.ticketRegistry.deleteTicket(acct.getId());
             throw new FailedLoginException("Failed to authenticate code " + tokenCredential.getId());
         }
         if (acct.isExpired()) {
@@ -53,7 +68,6 @@ public class CasSimpleMultifactorAuthenticationHandler extends AbstractPreAndPos
             this.ticketRegistry.deleteTicket(acct.getId());
             throw new FailedLoginException("Failed to authenticate code " + tokenCredential.getId());
         }
-
         this.ticketRegistry.deleteTicket(acct.getId());
 
         LOGGER.debug("Validated token [{}] successfully for [{}]. Creating authentication result and building principal...", tokenCredential.getId(), uid);
@@ -61,12 +75,12 @@ public class CasSimpleMultifactorAuthenticationHandler extends AbstractPreAndPos
     }
 
     @Override
-    public boolean supports(final Class<? extends Credential> clazz) {
-        return CasSimpleMultifactorTokenCredential.class.isAssignableFrom(clazz);
+    public boolean supports(final Credential credential) {
+        return CasSimpleMultifactorTokenCredential.class.isAssignableFrom(credential.getClass());
     }
 
     @Override
-    public boolean supports(final Credential credential) {
-        return CasSimpleMultifactorTokenCredential.class.isAssignableFrom(credential.getClass());
+    public boolean supports(final Class<? extends Credential> clazz) {
+        return CasSimpleMultifactorTokenCredential.class.isAssignableFrom(clazz);
     }
 }

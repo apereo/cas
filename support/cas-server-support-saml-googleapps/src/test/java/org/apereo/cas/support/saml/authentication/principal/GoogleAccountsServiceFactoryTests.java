@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.TestPropertySource;
 
@@ -27,7 +27,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@Import(SamlGoogleAppsConfiguration.class)
+@SpringBootTest(classes = {
+    SamlGoogleAppsConfiguration.class,
+    AbstractOpenSamlTests.SharedTestConfiguration.class
+})
 @TestPropertySource(properties = {
     "cas.server.name=http://localhost:8080",
     "cas.server.prefix=${server.name}/cas",

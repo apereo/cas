@@ -18,7 +18,7 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
  */
 public class RiskAwareAuthenticationWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
-    private static final String VIEW_ID_BLOCKED_AUTHN = "casRiskAuthenticationBlockedView";
+    static final String VIEW_ID_BLOCKED_AUTHN = "casRiskAuthenticationBlockedView";
 
     public RiskAwareAuthenticationWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
                                                     final FlowDefinitionRegistry loginFlowDefinitionRegistry,

@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.*;
     properties = {
         "spring.mail.host=localhost",
         "spring.mail.port=25000",
-        "spring.mail.testConnection=false",
+
         "cas.serviceRegistry.git.signCommits=false",
         "cas.serviceRegistry.git.repositoryUrl=file:/tmp/cas-sample-data.git"
     })

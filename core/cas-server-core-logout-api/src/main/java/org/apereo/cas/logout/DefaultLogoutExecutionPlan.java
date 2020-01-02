@@ -3,7 +3,7 @@ package org.apereo.cas.logout;
 import org.apereo.cas.logout.slo.SingleLogoutServiceMessageHandler;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.OrderComparator;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -18,8 +18,8 @@ import java.util.List;
 @Slf4j
 public class DefaultLogoutExecutionPlan implements LogoutExecutionPlan {
 
-    private final List<LogoutPostProcessor> handlers = new ArrayList<>();
-    private final List<SingleLogoutServiceMessageHandler> singleLogoutServiceMessageHandlers = new ArrayList<>();
+    private final List<LogoutPostProcessor> handlers = new ArrayList<>(0);
+    private final List<SingleLogoutServiceMessageHandler> singleLogoutServiceMessageHandlers = new ArrayList<>(0);
 
     @Override
     public void registerLogoutPostProcessor(final LogoutPostProcessor handler) {
@@ -29,7 +29,7 @@ public class DefaultLogoutExecutionPlan implements LogoutExecutionPlan {
 
     @Override
     public Collection<LogoutPostProcessor> getLogoutPostProcessor() {
-        OrderComparator.sort(this.handlers);
+        AnnotationAwareOrderComparator.sort(this.handlers);
         return this.handlers;
     }
 
@@ -41,7 +41,7 @@ public class DefaultLogoutExecutionPlan implements LogoutExecutionPlan {
 
     @Override
     public Collection<SingleLogoutServiceMessageHandler> getSingleLogoutServiceMessageHandlers() {
-        OrderComparator.sort(this.singleLogoutServiceMessageHandlers);
+        AnnotationAwareOrderComparator.sort(this.singleLogoutServiceMessageHandlers);
         return this.singleLogoutServiceMessageHandlers;
     }
 }

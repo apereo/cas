@@ -25,6 +25,8 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.pac4j.core.context.JEEContext;
+import org.pac4j.core.context.WebContext;
+import org.pac4j.core.credentials.extractor.BasicAuthExtractor;
 import org.pac4j.core.profile.CommonProfile;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.ModelAndView;
@@ -131,7 +133,7 @@ public class OAuth20Utils {
             .filter(a -> StringUtils.isNotBlank(context.getParameter(a)))
             .map(m -> {
                 val values = context.getParameterValues(m);
-                val valuesSet = new LinkedHashSet<Object>();
+                val valuesSet = new LinkedHashSet<Object>(values.length);
                 if (values != null && values.length > 0) {
                     Arrays.stream(values).forEach(v -> valuesSet.addAll(Arrays.stream(v.split(" ")).collect(Collectors.toSet())));
                 }
@@ -461,7 +463,7 @@ public class OAuth20Utils {
     public static Map<String, Map<String, Object>> parseRequestClaims(final JEEContext context) throws Exception {
         val claims = context.getRequestParameter(OAuth20Constants.CLAIMS).map(String::valueOf).orElse(StringUtils.EMPTY);
         if (StringUtils.isBlank(claims)) {
-            return new HashMap<>();
+            return new HashMap<>(0);
         }
         return MAPPER.readValue(claims, Map.class);
     }
@@ -473,7 +475,7 @@ public class OAuth20Utils {
      * @return the set
      */
     public static Set<String> parseUserInfoRequestClaims(final OAuth20Token token) {
-        return token.getClaims().getOrDefault("userinfo", new HashMap<>()).keySet();
+        return token.getClaims().getOrDefault("userinfo", new HashMap<>(0)).keySet();
     }
 
     /**
@@ -485,6 +487,26 @@ public class OAuth20Utils {
      */
     public static Set<String> parseUserInfoRequestClaims(final JEEContext context) throws Exception {
         val requestedClaims = parseRequestClaims(context);
-        return requestedClaims.getOrDefault("userinfo", new HashMap<>()).keySet();
+        return requestedClaims.getOrDefault("userinfo", new HashMap<>(0)).keySet();
+    }
+
+    /**
+     * Gets client id and client secret.
+     *
+     * @param context the context
+     * @return the client id and client secret
+     */
+    public static Pair<String, String> getClientIdAndClientSecret(final WebContext context) {
+        val extractor = new BasicAuthExtractor();
+        val upcResult = extractor.extract(context);
+        if (upcResult.isPresent()) {
+            val upc = upcResult.get();
+            return Pair.of(upc.getUsername(), upc.getPassword());
+        }
+        val clientId = context.getRequestParameter(OAuth20Constants.CLIENT_ID)
+                .map(String::valueOf).orElse(StringUtils.EMPTY);
+        val clientSecret = context.getRequestParameter(OAuth20Constants.CLIENT_SECRET)
+                .map(String::valueOf).orElse(StringUtils.EMPTY);
+        return Pair.of(clientId, clientSecret);
     }
 }

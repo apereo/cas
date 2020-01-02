@@ -16,6 +16,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -41,6 +42,8 @@ import java.util.List;
 @EnableTransactionManagement(proxyTargetClass = true)
 @ConditionalOnProperty(name = "cas.authn.uma.resourceSet.jpa.url")
 public class CasOAuthUmaJpaConfiguration {
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -61,7 +64,7 @@ public class CasOAuthUmaJpaConfiguration {
     public LocalContainerEntityManagerFactoryBean umaEntityManagerFactory() {
         return JpaBeans.newHibernateEntityManagerFactoryBean(
             new JpaConfigDataHolder(jpaUmaVendorAdapter(), getClass().getSimpleName(), jpaUmaPackagesToScan(), dataSourceUma()),
-            casProperties.getAuthn().getUma().getResourceSet().getJpa());
+            casProperties.getAuthn().getUma().getResourceSet().getJpa(), applicationContext);
     }
 
     @Autowired

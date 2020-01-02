@@ -26,10 +26,10 @@ public class UmaAuthorizationNeedInfoResponse {
     private String ticket;
 
     @JsonProperty("required_claims")
-    private Collection<String> requiredClaims = new LinkedHashSet<>();
+    private Collection<String> requiredClaims = new LinkedHashSet<>(0);
 
     @JsonProperty("required_scopes")
-    private Collection<String> requiredScopes = new LinkedHashSet<>();
+    private Collection<String> requiredScopes = new LinkedHashSet<>(0);
 
     /**
      * As json string.

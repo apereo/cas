@@ -72,6 +72,6 @@ public class CouchbaseAuthenticationHandler extends AbstractUsernamePasswordAuth
         val attributes = couchbase.collectAttributesFromEntity(value, s ->
             !s.equals(couchbaseProperties.getPasswordAttribute()) && !s.equals(couchbaseProperties.getUsernameAttribute()));
         val principal = this.principalFactory.createPrincipal(transformedCredential.getId(), attributes);
-        return createHandlerResult(transformedCredential, principal, new ArrayList<>());
+        return createHandlerResult(transformedCredential, principal, new ArrayList<>(0));
     }
 }

@@ -39,7 +39,6 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.attributeRepository.ldap[0].baseDn=dc=example,dc=org",
     "cas.authn.attributeRepository.ldap[0].ldapUrl=ldap://localhost:10389",
     "cas.authn.attributeRepository.ldap[0].searchFilter=cn={user}",
-    "cas.authn.attributeRepository.ldap[0].useSsl=false",
     "cas.authn.attributeRepository.ldap[0].attributes.cn=cn",
     "cas.authn.attributeRepository.ldap[0].attributes.description=description",
     "cas.authn.attributeRepository.ldap[0].bindDn=cn=Directory Manager",
@@ -66,7 +65,7 @@ public class PersonDirectoryPrincipalResolverLdaptiveTests {
     @Test
     public void verifyChainedResolver() {
         val resolver = new PersonDirectoryPrincipalResolver(this.attributeRepository);
-        val chain = new ChainingPrincipalResolver();
+        val chain = new ChainingPrincipalResolver(new DefaultPrincipalElectionStrategy());
         chain.setChain(Arrays.asList(new EchoingPrincipalResolver(), resolver));
         val attributes = new HashMap<String, List<Object>>(2);
         attributes.put("a1", List.of("v1"));

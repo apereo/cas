@@ -2,6 +2,7 @@ package org.apereo.cas;
 
 import org.apereo.cas.ticket.registry.CachesEndpointTests;
 import org.apereo.cas.ticket.registry.EhCacheTicketRegistryTests;
+import org.junit.jupiter.api.Tag;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
 import org.junit.runner.RunWith;
@@ -17,6 +18,7 @@ import org.junit.runner.RunWith;
     CachesEndpointTests.class,
     EhCacheTicketRegistryTests.class
 })
+@Tag("Ehcache")
 @RunWith(JUnitPlatform.class)
 public class AllTestsSuite {
 }

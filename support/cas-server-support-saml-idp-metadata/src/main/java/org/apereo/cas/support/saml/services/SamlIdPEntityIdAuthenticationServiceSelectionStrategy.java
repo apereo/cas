@@ -51,7 +51,7 @@ public class SamlIdPEntityIdAuthenticationServiceSelectionStrategy implements Au
 
     @Override
     public Service resolveServiceFrom(final Service service) {
-        val entityId = getEntityIdAsParameter(service).get().getValue();
+        val entityId = getEntityIdAsParameter(service).orElseThrow().getValue();
         LOGGER.trace("Located entity id [{}] from service authentication request at [{}]", entityId, service.getId());
         return this.webApplicationServiceFactory.createService(entityId);
     }

@@ -27,9 +27,20 @@ public class TestMultifactorAuthenticationProvider extends AbstractMultifactorAu
      * @return the multifactor authentication provider
      */
     public static TestMultifactorAuthenticationProvider registerProviderIntoApplicationContext(final ConfigurableApplicationContext applicationContext) {
+        return registerProviderIntoApplicationContext(applicationContext, "provider" + RandomUtils.randomAlphabetic(8));
+    }
+
+    /**
+     * Register provider into application context.
+     *
+     * @param applicationContext the application context
+     * @param beanId             the bean id
+     * @return the multifactor authentication provider
+     */
+    public static TestMultifactorAuthenticationProvider registerProviderIntoApplicationContext(
+        final ConfigurableApplicationContext applicationContext, final String beanId) {
         return ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext,
-            TestMultifactorAuthenticationProvider.class,
-            "provider" + RandomUtils.randomAlphabetic(8));
+            TestMultifactorAuthenticationProvider.class, beanId);
     }
 
     @Override

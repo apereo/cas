@@ -278,8 +278,7 @@ public class SamlIdPConfiguration {
     @RefreshScope
     public SamlProfileObjectBuilder<NameID> samlProfileSamlNameIdBuilder() {
         return new SamlProfileSamlNameIdBuilder(openSamlConfigBean.getObject(),
-            shibbolethCompatiblePersistentIdGenerator.getObject(),
-            samlObjectEncrypter());
+            shibbolethCompatiblePersistentIdGenerator.getObject());
     }
 
     @ConditionalOnMissingBean(name = "samlProfileSamlConditionsBuilder")

@@ -14,6 +14,7 @@ import com.unboundid.ldap.sdk.ResultCode;
 import com.unboundid.ldap.sdk.SearchScope;
 import lombok.Getter;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Tag;
@@ -21,9 +22,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -35,21 +36,29 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = {
     CasConsentLdapConfiguration.class,
-    RefreshAutoConfiguration.class
+    BaseConsentRepositoryTests.SharedTestConfiguration.class
 })
 @Tag("Ldap")
 @Getter
+@Slf4j
 public abstract class BaseLdapConsentRepositoryTests extends BaseConsentRepositoryTests {
 
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
     private static final String ATTR_NAME = "description";
+
     private static final String USER_CN = "casuser";
+
     private static final String USER_DN = "cn=casuser,ou=people,dc=example,dc=org";
+
     private static final String USER2_CN = "casuser2";
+
     private static final String USER2_DN = "cn=casuser2,ou=people,dc=example,dc=org";
+
     private static final Service SVC2 = RegisteredServiceTestUtils.getService2();
+
     private static final AbstractRegisteredService REG_SVC2 = RegisteredServiceTestUtils.getRegisteredService(SVC2.getId());
+
     private static final String DEF_FILTER = "(objectClass=*)";
 
     @Autowired
@@ -57,16 +66,23 @@ public abstract class BaseLdapConsentRepositoryTests extends BaseConsentReposito
     protected ConsentRepository repository;
 
     @AfterEach
-    @SneakyThrows
     public void cleanDecisions() {
         val conn = getConnection();
-        val res = conn.search(USER_DN, SearchScope.SUB, DEF_FILTER, ATTR_NAME);
-        if (res.getEntryCount() != 0 && res.getSearchEntry(USER_DN).hasAttribute(ATTR_NAME)) {
-            conn.modify(USER_DN, new Modification(ModificationType.DELETE, ATTR_NAME));
+        try {
+            val res = conn.search(USER_DN, SearchScope.SUB, DEF_FILTER, ATTR_NAME);
+            if (res.getEntryCount() != 0 && res.getSearchEntry(USER_DN).hasAttribute(ATTR_NAME)) {
+                conn.modify(USER_DN, new Modification(ModificationType.DELETE, ATTR_NAME));
+            }
+        } catch (final Exception e) {
+            LOGGER.debug(e.getMessage(), e);
         }
-        val res2 = conn.search(USER2_DN, SearchScope.SUB, DEF_FILTER, ATTR_NAME);
-        if (res2.getEntryCount() != 0 && res2.getSearchEntry(USER2_DN).hasAttribute(ATTR_NAME)) {
-            conn.modify(USER2_DN, new Modification(ModificationType.DELETE, ATTR_NAME));
+        try {
+            val res2 = conn.search(USER2_DN, SearchScope.SUB, DEF_FILTER, ATTR_NAME);
+            if (res2.getEntryCount() != 0 && res2.getSearchEntry(USER2_DN).hasAttribute(ATTR_NAME)) {
+                conn.modify(USER2_DN, new Modification(ModificationType.DELETE, ATTR_NAME));
+            }
+        } catch (final Exception e) {
+            LOGGER.debug(e.getMessage(), e);
         }
     }
 
@@ -142,7 +158,7 @@ public abstract class BaseLdapConsentRepositoryTests extends BaseConsentReposito
         val mod = new Modification(ModificationType.ADD, ATTR_NAME, MAPPER.writeValueAsString(decision));
         assertEquals(ResultCode.SUCCESS, getConnection().modify(USER_DN, mod).getResultCode());
 
-        val t = LocalDateTime.now();
+        val t = LocalDateTime.now(ZoneId.systemDefault());
         assertNotEquals(t, decision.getCreatedDate());
         decision.setCreatedDate(t);
         this.repository.storeConsentDecision(decision);

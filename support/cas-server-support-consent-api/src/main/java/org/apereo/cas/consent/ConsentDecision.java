@@ -14,6 +14,7 @@ import javax.persistence.Lob;
 import javax.persistence.Table;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 
 /**
@@ -44,7 +45,7 @@ public class ConsentDecision implements Serializable {
     private String service;
 
     @Column(nullable = false)
-    private LocalDateTime createdDate = LocalDateTime.now();
+    private LocalDateTime createdDate = LocalDateTime.now(ZoneId.systemDefault());
 
     @Column(nullable = false)
     private ConsentReminderOptions options = ConsentReminderOptions.ATTRIBUTE_NAME;

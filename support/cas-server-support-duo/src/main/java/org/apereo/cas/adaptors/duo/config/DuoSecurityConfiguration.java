@@ -15,8 +15,6 @@ import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
 
-import lombok.extern.slf4j.Slf4j;
-
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +34,6 @@ import org.springframework.webflow.execution.Action;
  */
 @Configuration("duoSecurityConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class DuoSecurityConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -79,7 +76,7 @@ public class DuoSecurityConfiguration {
     @ConditionalOnMissingBean(name = "duoNonWebAuthenticationAction")
     @Bean
     public Action duoNonWebAuthenticationAction() {
-        return new DuoSecurityDirectAuthenticationAction();
+        return new DuoSecurityDirectAuthenticationAction(applicationContext);
     }
 
     @ConditionalOnMissingBean(name = "duoAuthenticationWebflowAction")

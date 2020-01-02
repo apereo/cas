@@ -21,6 +21,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.credentials.authenticator.Authenticator;
+import org.springframework.context.ApplicationContext;
 
 /**
  * This is {@link BaseOidcJwtAuthenticator}.
@@ -52,6 +53,9 @@ public abstract class BaseOidcJwtAuthenticator implements Authenticator<Username
      * CAS properties.
      */
     protected final CasConfigurationProperties casProperties;
+
+    /** Resource loader instance. */
+    protected final ApplicationContext applicationContext;
 
     /**
      * Verify credentials and fetch oidc registered service.

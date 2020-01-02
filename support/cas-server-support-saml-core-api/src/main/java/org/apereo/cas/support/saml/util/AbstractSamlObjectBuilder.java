@@ -62,6 +62,7 @@ import java.security.Provider;
 import java.security.PublicKey;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * An abstract builder to serve as the template handler
@@ -219,7 +220,7 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
      * @return the org.w3c.dom. element
      */
     private static Element toDom(final org.jdom.Element element) {
-        return toDom(element.getDocument()).getDocumentElement();
+        return Objects.requireNonNull(toDom(element.getDocument())).getDocumentElement();
     }
 
     /**

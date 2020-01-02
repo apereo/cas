@@ -19,6 +19,7 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 /**
  * This is {@link MultifactorAuthenticationVerifyTrustAction}.
@@ -52,7 +53,7 @@ public class MultifactorAuthenticationVerifyTrustAction extends AbstractAction {
         }
         val principal = authn.getPrincipal().getId();
         val unit = DateTimeUtils.toChronoUnit(trustedProperties.getTimeUnit());
-        val onOrAfter = LocalDateTime.now().minus(trustedProperties.getExpiration(), unit);
+        val onOrAfter = LocalDateTime.now(ZoneId.systemDefault()).minus(trustedProperties.getExpiration(), unit);
         LOGGER.trace("Retrieving trusted authentication records for [{}] that are on/after [{}]", principal, onOrAfter);
         val results = storage.get(principal, onOrAfter);
         if (results.isEmpty()) {

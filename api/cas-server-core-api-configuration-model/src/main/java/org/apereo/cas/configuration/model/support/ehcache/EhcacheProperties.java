@@ -28,6 +28,12 @@ public class EhcacheProperties implements Serializable {
     private static final long serialVersionUID = 7772510035918976450L;
 
     /**
+     * Enabled allows this registry to be disabled on startup (so registry choice can be made at runtime).
+     */
+    @RequiredProperty
+    private boolean enabled = true;
+
+    /**
      * Sets the persistence write mode.
      */
     private boolean synchronousWrites;
@@ -153,7 +159,7 @@ public class EhcacheProperties implements Serializable {
      * <ul>
      * <li>LOCALTEMPSWAP: Standard open source (non fault-tolerant) on-disk persistence.</li>
      * <li>DISTRIBUTED: Terracotta clustered persistence (requires a Terracotta clustered cache)</li>
-     * <li>LOCALRESTARTABL: Enterprise fault tolerant persistence</li>
+     * <li>LOCALRESTARTABLE: Enterprise fault tolerant persistence</li>
      * <li>NONE: No persistence</li>
      * </ul>
      */
@@ -163,7 +169,7 @@ public class EhcacheProperties implements Serializable {
      * Allows system properties to be set prior to ehcache.xml parsing.
      * EhCache will interpolate system properties in the ehcache xml config file e.g. ${ehCacheMulticastAddress}.
      */
-    private final Map<String, String> systemProps = new HashMap<>();
+    private final Map<String, String> systemProps = new HashMap<>(0);
 
     /**
      * Crypto settings for the registry.

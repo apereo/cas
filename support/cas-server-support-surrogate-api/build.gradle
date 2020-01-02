@@ -8,7 +8,7 @@ dependencies {
     provided project(":core:cas-server-core-tickets")
     implementation project(":core:cas-server-core-configuration-api")
 
-    testImplementation project(":core:cas-server-core-services")
+    
     testImplementation project(":core:cas-server-core-authentication-api")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")

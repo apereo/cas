@@ -5,7 +5,6 @@ import org.apereo.cas.util.RegexUtils;
 import com.google.common.base.Splitter;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.server.ServletServerHttpRequest;
@@ -82,7 +81,6 @@ import java.util.regex.Pattern;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Slf4j
 @Setter
 @Getter
 public class RequestParameterPolicyEnforcementFilter extends AbstractSecurityFilter implements Filter {
@@ -202,7 +200,7 @@ public class RequestParameterPolicyEnforcementFilter extends AbstractSecurityFil
      */
     public static Set<String> parseParametersList(final String initParamValue, final boolean allowWildcard) {
         if (null == initParamValue) {
-            return new HashSet<>();
+            return new HashSet<>(0);
         }
         if (initParamValue.trim().isEmpty()) {
             logException(new IllegalArgumentException('[' + initParamValue + "] had no tokens but should have had at least one token."));
@@ -213,7 +211,7 @@ public class RequestParameterPolicyEnforcementFilter extends AbstractSecurityFil
         }
 
         if (allowWildcard && 1 == tokens.size() && "*".equals(tokens.get(0))) {
-            return new HashSet<>();
+            return new HashSet<>(0);
         }
         val parameterNames = new HashSet<String>();
         for (val parameterName : tokens) {
@@ -411,6 +409,10 @@ public class RequestParameterPolicyEnforcementFilter extends AbstractSecurityFil
         chain.doFilter(request, response);
     }
 
+    @Override
+    public void destroy() {
+    }
+
     private void blockRequestIfNecessary(final HttpServletRequest httpServletRequest) {
         if (patternToBlock != null && StringUtils.isNotBlank(httpServletRequest.getRequestURI())) {
             val uri = UriComponentsBuilder.fromHttpRequest(new ServletServerHttpRequest(httpServletRequest))
@@ -421,9 +423,5 @@ public class RequestParameterPolicyEnforcementFilter extends AbstractSecurityFil
                 logException(new ServletException("The request is blocked as it matches a prohibited pattern"));
             }
         }
-    }
-
-    @Override
-    public void destroy() {
     }
 }

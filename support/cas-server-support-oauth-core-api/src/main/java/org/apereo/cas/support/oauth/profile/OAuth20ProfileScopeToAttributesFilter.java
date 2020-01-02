@@ -20,7 +20,7 @@ import java.util.Map;
 public interface OAuth20ProfileScopeToAttributesFilter {
 
     default Map<String, ? extends RegisteredServiceAttributeReleasePolicy> getAttributeReleasePolicies() {
-        return new LinkedHashMap<>();
+        return new LinkedHashMap<>(0);
     }
 
     /**

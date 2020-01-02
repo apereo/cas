@@ -2,12 +2,14 @@ package org.apereo.cas.support.saml.idp.metadata.jpa;
 
 import org.apereo.cas.configuration.model.support.saml.idp.metadata.JpaSamlMetadataProperties;
 import org.apereo.cas.support.saml.idp.metadata.jpa.generic.JpaSamlIdPMetadataDocument;
+import org.apereo.cas.support.saml.idp.metadata.jpa.mysql.MySQLSamlIdPMetadataDocument;
 import org.apereo.cas.support.saml.idp.metadata.jpa.oracle.OracleSamlIdPMetadataDocument;
+import org.apereo.cas.support.saml.idp.metadata.jpa.postgres.PostgresSamlIdPMetadataDocument;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import lombok.SneakyThrows;
 
 /**
  * This is {@link JpaSamlIdPMetadataDocumentFactory}.
@@ -15,7 +17,6 @@ import lombok.extern.slf4j.Slf4j;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Slf4j
 @RequiredArgsConstructor
 @Getter
 public class JpaSamlIdPMetadataDocumentFactory {
@@ -26,15 +27,21 @@ public class JpaSamlIdPMetadataDocumentFactory {
      *
      * @return the saml metadata document
      */
+    @SneakyThrows
     public SamlIdPMetadataDocument newInstance() {
-        if (isOracle()) {
-            return new OracleSamlIdPMetadataDocument();
-        }
-        return new JpaSamlIdPMetadataDocument();
+        return getType().getDeclaredConstructor().newInstance();
     }
 
     private boolean isOracle() {
         return properties.getDialect().contains("Oracle");
+    }
+
+    private boolean isMySql() {
+        return properties.getDialect().contains("MySQL");
+    }
+
+    private boolean isPostgres() {
+        return properties.getUrl().contains("postgresql");
     }
 
     /**
@@ -42,9 +49,15 @@ public class JpaSamlIdPMetadataDocumentFactory {
      *
      * @return the type
      */
-    public Class getType() {
+    public Class<? extends SamlIdPMetadataDocument> getType() {
         if (isOracle()) {
             return OracleSamlIdPMetadataDocument.class;
+        }
+        if (isMySql()) {
+            return MySQLSamlIdPMetadataDocument.class;
+        }
+        if (isPostgres()) {
+            return PostgresSamlIdPMetadataDocument.class;
         }
         return JpaSamlIdPMetadataDocument.class;
     }

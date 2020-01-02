@@ -16,6 +16,8 @@ be considered to achieve suitable security.
 
 ## Announcements
 
+- [Dec 20 2019 Vulnerability Disclosure](https://apereo.github.io/2019/12/20/surrogatevuln/)
+- [Nov 21 2019 Vulnerability Disclosure](https://apereo.github.io/2019/11/24/smfavuln/)
 - [Sep 27 2019 Vulnerability Disclosure](https://apereo.github.io/2019/09/27/numvulndisc/)
 - [Sep 26 2018 Vulnerability Disclosure](https://apereo.github.io/2018/09/26/mfavulndisc/)
 - [Mar 6 2017 Vulnerability Disclosure](https://apereo.github.io/2017/03/06/moncfgsecvulndisc/)

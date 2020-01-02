@@ -47,6 +47,17 @@ public class Pac4jDelegatedAuthenticationProperties implements Serializable {
     private boolean lazyInit = true;
 
     /**
+     * Indicates whether profiles and other session data,
+     * collected as part of pac4j flows and requests
+     * that are kept by the container session, should be replicated
+     * across the cluster using CAS and its own ticket registry.
+     * Without this option, profile data and other related
+     * pieces of information should be manually replicated
+     * via means and libraries outside of CAS.
+     */
+    private boolean replicateSessions = true;
+
+    /**
      * Handle provisioning ops when establishing profiles
      * from external identity providers.
      */
@@ -66,22 +77,22 @@ public class Pac4jDelegatedAuthenticationProperties implements Serializable {
     /**
      * Settings that deal with having SAML2 IdPs as an external delegated-to authentication provider.
      */
-    private List<Pac4jSamlClientProperties> saml = new ArrayList<>();
+    private List<Pac4jSamlClientProperties> saml = new ArrayList<>(0);
 
     /**
      * Settings that deal with having OpenID Connect Providers as an external delegated-to authentication provider.
      */
-    private List<Pac4jOidcClientProperties> oidc = new ArrayList<>();
+    private List<Pac4jOidcClientProperties> oidc = new ArrayList<>(0);
 
     /**
      * Settings that deal with having OAuth2-capable providers as an external delegated-to authentication provider.
      */
-    private List<Pac4jOAuth20ClientProperties> oauth2 = new ArrayList<>();
+    private List<Pac4jOAuth20ClientProperties> oauth2 = new ArrayList<>(0);
 
     /**
      * Settings that deal with having CAS Servers as an external delegated-to authentication provider.
      */
-    private List<Pac4jCasClientProperties> cas = new ArrayList<>();
+    private List<Pac4jCasClientProperties> cas = new ArrayList<>(0);
 
     /**
      * Settings that deal with having LinkedIn as an external delegated-to authentication provider.
@@ -171,11 +182,6 @@ public class Pac4jDelegatedAuthenticationProperties implements Serializable {
          * The requested scope.
          */
         private String scope;
-
-        /**
-         * Custom fields to include in the request.
-         */
-        private String fields;
 
         public LinkedIn() {
             setClientName("LinkedIn");

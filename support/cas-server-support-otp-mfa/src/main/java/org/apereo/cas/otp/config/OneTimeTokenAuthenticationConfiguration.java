@@ -34,8 +34,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.webflow.execution.Action;
 
+import java.time.Duration;
 import java.util.Collection;
-import java.util.concurrent.TimeUnit;
 
 /**
  * This is {@link OneTimeTokenAuthenticationConfiguration}.
@@ -129,7 +129,7 @@ public class OneTimeTokenAuthenticationConfiguration {
             .initialCapacity(INITIAL_CACHE_SIZE)
             .maximumSize(MAX_CACHE_SIZE)
             .recordStats()
-            .expireAfterWrite(EXPIRE_TOKENS_IN_SECONDS, TimeUnit.SECONDS)
+            .expireAfterWrite(Duration.ofSeconds(EXPIRE_TOKENS_IN_SECONDS))
             .build(s -> {
                 LOGGER.error("Load operation of the cache is not supported.");
                 return null;

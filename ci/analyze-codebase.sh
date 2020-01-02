@@ -19,7 +19,7 @@ if [ "$runBuild" = false ]; then
 fi
 
 echo -e "Installing Groovy...\n"
-groovyVersion=3.0.0-rc-1
+groovyVersion=3.0.0-rc-2
 wget https://dl.bintray.com/groovy/maven/apache-groovy-binary-${groovyVersion}.zip -O ./groovy.zip
 unzip ./groovy.zip -d $PWD/.groovy
 export PATH=$PWD/.groovy/groovy-${groovyVersion}/bin:$PATH
@@ -58,6 +58,23 @@ if [ $retVal != 0 ]; then
     exit $retVal
 fi
 
+echo -e "Checking for duplicate test configuration in inheritance hierarchy"
+groovy ./ci/groovy/CheckRedundantTestConfigurationInheritance.groovy
+retVal=$?
+if [ $retVal != 0 ]; then
+    echo -e "Groovy analysis has found issues with test configuration classes."
+    exit $retVal
+fi
+
+echo -e "Checking for duplicate configurations in Gradle build files"
+groovy ./ci/groovy/CheckDuplicateGradleConfiguration.groovy
+retVal=$?
+if [ $retVal != 0 ]; then
+    echo -e "Groovy analysis has found issues with Gradle configurations."
+    exit $retVal
+fi
+
+echo -e "Groovy analysis has successfully examined the codebase."
 echo -e "***************************************************************************************"
 echo -e "Build finished at `date`"
 echo -e "***************************************************************************************"

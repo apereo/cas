@@ -5,7 +5,7 @@ import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.OrderComparator;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +19,7 @@ import java.util.List;
 @Getter
 @Slf4j
 public class DefaultCasWebflowExecutionPlan implements CasWebflowExecutionPlan {
-    private final List<CasWebflowConfigurer> webflowConfigurers = new ArrayList<>();
+    private final List<CasWebflowConfigurer> webflowConfigurers = new ArrayList<>(0);
 
     @Override
     public void registerWebflowConfigurer(final CasWebflowConfigurer cfg) {
@@ -31,7 +31,7 @@ public class DefaultCasWebflowExecutionPlan implements CasWebflowExecutionPlan {
      * Execute the plan.
      */
     public void execute() {
-        OrderComparator.sortIfNecessary(webflowConfigurers);
+        AnnotationAwareOrderComparator.sortIfNecessary(webflowConfigurers);
         webflowConfigurers.forEach(c -> {
             LOGGER.trace("Registering webflow configurer [{}]", c.getName());
             c.initialize();

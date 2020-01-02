@@ -43,7 +43,7 @@ public class RestAcceptableUsagePolicyRepository extends AbstractPrincipalAttrib
         try {
             response = HttpUtils.execute(properties.getUrl(), properties.getMethod(),
                 properties.getBasicAuthUsername(), properties.getBasicAuthPassword(),
-                CollectionUtils.wrap("username", credential.getId()), new HashMap<>());
+                CollectionUtils.wrap("username", credential.getId()), new HashMap<>(0));
             val statusCode = response.getStatusLine().getStatusCode();
             return HttpStatus.valueOf(statusCode).is2xxSuccessful();
         } catch (final Exception e) {

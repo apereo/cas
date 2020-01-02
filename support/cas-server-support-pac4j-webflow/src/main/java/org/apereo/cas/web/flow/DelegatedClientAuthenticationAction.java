@@ -302,9 +302,9 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
         val webContext = new JEEContext(request, response, this.sessionStore);
 
-        val urls = new LinkedHashSet<DelegatedClientIdentityProviderConfiguration>();
-        this.clients
-            .findAllClients()
+        val allClients = this.clients.findAllClients();
+        val urls = new LinkedHashSet<DelegatedClientIdentityProviderConfiguration>(allClients.size());
+        allClients
             .stream()
             .filter(client -> client instanceof IndirectClient && isDelegatedClientAuthorizedForService(client, service))
             .map(IndirectClient.class::cast)
@@ -463,7 +463,14 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         return false;
     }
 
-    private void prepareRequestContextForSingleSignOn(final RequestContext context,
+    /**
+     * Prepare the request context if there is a SSO session.
+     *
+     * @param context the request context
+     * @param webContext the web context
+     * @param clientName the client name
+     */
+    protected void prepareRequestContextForSingleSignOn(final RequestContext context,
                                                       final JEEContext webContext,
                                                       final String clientName) {
         val resolvedService = WebUtils.getService(argumentExtractors, context);

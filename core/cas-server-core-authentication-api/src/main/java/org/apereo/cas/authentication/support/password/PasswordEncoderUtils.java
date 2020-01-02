@@ -4,13 +4,13 @@ import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderPro
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.crypto.DefaultPasswordEncoder;
 import org.apereo.cas.util.crypto.GlibcCryptPasswordEncoder;
-import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.ApplicationContext;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.LdapShaPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
@@ -33,10 +33,12 @@ public class PasswordEncoderUtils {
     /**
      * New password encoder password encoder.
      *
-     * @param properties the properties
+     * @param properties         the properties
+     * @param applicationContext the application context
      * @return the password encoder
      */
-    public static PasswordEncoder newPasswordEncoder(final PasswordEncoderProperties properties) {
+    public static PasswordEncoder newPasswordEncoder(final PasswordEncoderProperties properties,
+                                                     final ApplicationContext applicationContext) {
         val type = properties.getType();
         if (StringUtils.isBlank(type)) {
             LOGGER.trace("No password encoder type is defined, and so none shall be created");
@@ -45,8 +47,8 @@ public class PasswordEncoderUtils {
 
         if (type.endsWith(".groovy")) {
             LOGGER.debug("Creating Groovy-based password encoder at [{}]", type);
-            val resource = ApplicationContextProvider.getResourceLoader().getResource(type);
-            return new GroovyPasswordEncoder(resource);
+            val resource = applicationContext.getResource(type);
+            return new GroovyPasswordEncoder(resource, applicationContext);
         }
 
         if (type.contains(".")) {

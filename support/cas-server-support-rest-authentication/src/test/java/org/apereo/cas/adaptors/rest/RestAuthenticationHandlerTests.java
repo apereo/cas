@@ -3,7 +3,7 @@ package org.apereo.cas.adaptors.rest;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
-import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -111,7 +111,7 @@ public class RestAuthenticationHandlerTests {
 
     @Test
     public void verifySuccess() throws Exception {
-        val principalWritten = new DefaultPrincipalFactory().createPrincipal("casuser");
+        val principalWritten = PrincipalFactoryUtils.newPrincipalFactory().createPrincipal("casuser");
         val writer = new StringWriter();
         MAPPER.writeValue(writer, principalWritten);
         server.andRespond(withSuccess(writer.toString(), MediaType.APPLICATION_JSON));

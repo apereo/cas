@@ -6,7 +6,6 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.context.JEEContext;
@@ -17,7 +16,6 @@ import org.pac4j.core.context.JEEContext;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Slf4j
 public class OAuth20ProofKeyCodeExchangeResponseTypeAuthorizationRequestValidator extends OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator {
 
     public OAuth20ProofKeyCodeExchangeResponseTypeAuthorizationRequestValidator(final ServicesManager servicesManager,

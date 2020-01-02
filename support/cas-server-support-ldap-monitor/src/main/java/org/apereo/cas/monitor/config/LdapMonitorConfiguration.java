@@ -9,7 +9,7 @@ import org.apereo.cas.util.LdapUtils;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.ldaptive.pool.SearchValidator;
+import org.ldaptive.SearchConnectionValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.autoconfigure.health.ConditionalOnEnabledHealthIndicator;
 import org.springframework.boot.actuate.health.CompositeHealthContributor;
@@ -30,6 +30,7 @@ import java.util.UUID;
 @Configuration(value = "ldapMonitorConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class LdapMonitorConfiguration {
+    private static final int MAP_SIZE = 8;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -38,7 +39,7 @@ public class LdapMonitorConfiguration {
     @ConditionalOnEnabledHealthIndicator("pooledLdapConnectionFactoryHealthIndicator")
     public CompositeHealthContributor pooledLdapConnectionFactoryHealthIndicator() {
         val ldaps = casProperties.getMonitor().getLdap();
-        val contributors = new LinkedHashMap<>();
+        val contributors = new LinkedHashMap<>(MAP_SIZE);
         ldaps.stream()
             .filter(LdapMonitorProperties::isEnabled)
             .map(ldap -> {
@@ -46,7 +47,7 @@ public class LdapMonitorConfiguration {
                 executor.afterPropertiesSet();
                 val connectionFactory = LdapUtils.newLdaptivePooledConnectionFactory(ldap);
                 val healthIndicator = new PooledLdapConnectionFactoryHealthIndicator(Beans.newDuration(ldap.getMaxWait()).toMillis(),
-                    connectionFactory, executor.getObject(), new SearchValidator());
+                    connectionFactory, executor.getObject(), new SearchConnectionValidator());
                 val name = StringUtils.defaultIfBlank(ldap.getName(), UUID.randomUUID().toString());
                 return Pair.of(name, healthIndicator);
             })

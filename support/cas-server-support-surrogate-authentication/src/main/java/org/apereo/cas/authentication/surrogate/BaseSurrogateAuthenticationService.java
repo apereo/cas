@@ -6,6 +6,8 @@ import org.apereo.cas.services.ServicesManager;
 
 import lombok.RequiredArgsConstructor;
 
+import java.util.Optional;
+
 /**
  * This is {@link BaseSurrogateAuthenticationService}.
  *
@@ -20,7 +22,7 @@ public abstract class BaseSurrogateAuthenticationService implements SurrogateAut
     protected final ServicesManager servicesManager;
 
     @Override
-    public final boolean canAuthenticateAs(final String surrogate, final Principal principal, final Service service) {
+    public final boolean canAuthenticateAs(final String surrogate, final Principal principal, final Optional<Service> service) {
         return canAuthenticateAsInternal(surrogate, principal, service);
     }
 
@@ -32,5 +34,5 @@ public abstract class BaseSurrogateAuthenticationService implements SurrogateAut
      * @param service   the service
      * @return the boolean
      */
-    protected abstract boolean canAuthenticateAsInternal(String surrogate, Principal principal, Service service);
+    protected abstract boolean canAuthenticateAsInternal(String surrogate, Principal principal, Optional<Service> service);
 }

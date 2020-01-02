@@ -20,6 +20,6 @@ public class NoOpProtocolAttributesRenderer implements CasProtocolAttributesRend
 
     @Override
     public Collection<String> render(final Map<String, Object> attributes) {
-        return new ArrayList<>();
+        return new ArrayList<>(0);
     }
 }

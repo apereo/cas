@@ -30,7 +30,7 @@ public class SamlIdentityProviderEntityParser implements DisposableBean {
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
     @Getter
-    private final Set<SamlIdentityProviderEntity> identityProviders = new LinkedHashSet<>();
+    private final Set<SamlIdentityProviderEntity> identityProviders = new LinkedHashSet<>(0);
 
     private FileWatcherService discoveryFeedResourceWatchers;
 

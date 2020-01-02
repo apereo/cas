@@ -25,8 +25,9 @@ import org.apereo.cas.util.SchedulingUtils;
 import org.apereo.cas.util.crypto.CertUtils;
 
 import lombok.val;
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
+import org.ehcache.UserManagedCache;
+import org.ehcache.config.builders.ResourcePoolsBuilder;
+import org.ehcache.config.builders.UserManagedCacheBuilder;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -38,6 +39,8 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.scheduling.annotation.EnableScheduling;
+
+import java.net.URI;
 
 
 /**
@@ -74,7 +77,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         "cas.authn.policy.any.tryAll=true",
         "cas.authn.x509.crlFetcher=ldap",
         "cas.authn.x509.ldap.ldapUrl=ldap://localhost:1389",
-        "cas.authn.x509.ldap.useSsl=false",
         "cas.authn.x509.ldap.baseDn=ou=people,dc=example,dc=org",
         "cas.authn.x509.ldap.searchFilter=cn=X509",
         "cas.authn.x509.ldap.bindDn=cn=Directory Manager,dc=example,dc=org",
@@ -103,12 +105,14 @@ public class LdaptiveResourceCRLFetcherTests extends AbstractX509LdapTests imple
         SchedulingUtils.prepScheduledAnnotationBeanPostProcessor(applicationContext);
     }
 
+    private UserManagedCache<URI, byte[]> getCache(final int entries) {
+        return UserManagedCacheBuilder.newUserManagedCacheBuilder(URI.class, byte[].class)
+            .withResourcePools(ResourcePoolsBuilder.heap(entries)).build();
+    }
+
     @Test
     public void getCrlFromLdap() throws Exception {
-        CacheManager.getInstance().removeAllCaches();
-        val cache = new Cache("crlCache-1", 100, false, false, 20, 10);
-        CacheManager.getInstance().addCache(cache);
-
+        val cache = getCache(100);
         for (var i = 0; i < 10; i++) {
             val checker =
                 new CRLDistributionPointRevocationChecker(false, new AllowRevocationPolicy(), null,
@@ -121,9 +125,7 @@ public class LdaptiveResourceCRLFetcherTests extends AbstractX509LdapTests imple
     @Test
     public void getCrlFromLdapWithNoCaching() throws Exception {
         for (var i = 0; i < 10; i++) {
-            CacheManager.getInstance().removeAllCaches();
-            val cache = new Cache("crlCache-1", 100, false, false, 20, 10);
-            CacheManager.getInstance().addCache(cache);
+            val cache = getCache(100);
             val checker = new CRLDistributionPointRevocationChecker(
                 false, new AllowRevocationPolicy(), null,
                 cache, fetcher, true);

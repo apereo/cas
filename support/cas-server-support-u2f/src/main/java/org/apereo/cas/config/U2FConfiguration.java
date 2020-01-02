@@ -89,7 +89,7 @@ public class U2FConfiguration {
         final LoadingCache<String, Map<String, String>> userStorage =
             Caffeine.newBuilder()
                 .expireAfterWrite(u2f.getExpireDevices(), u2f.getExpireDevicesTimeUnit())
-                .build(key -> new HashMap<>());
+                .build(key -> new HashMap<>(0));
         return new U2FInMemoryDeviceRepository(userStorage, requestStorage);
     }
 

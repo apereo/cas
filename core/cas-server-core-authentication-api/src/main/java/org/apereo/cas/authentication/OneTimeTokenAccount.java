@@ -61,7 +61,7 @@ public class OneTimeTokenAccount implements Serializable, Comparable<OneTimeToke
     @ElementCollection
     @CollectionTable(name = TABLE_NAME_SCRATCH_CODES, joinColumns = @JoinColumn(name = "username"))
     @Column(nullable = false)
-    private List<Integer> scratchCodes = new ArrayList<>();
+    private List<Integer> scratchCodes = new ArrayList<>(0);
 
     @Column(nullable = false, unique = true)
     private String username;

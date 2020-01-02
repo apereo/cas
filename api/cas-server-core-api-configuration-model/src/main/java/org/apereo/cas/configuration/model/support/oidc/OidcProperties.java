@@ -84,14 +84,14 @@ public class OidcProperties implements Serializable {
      * Mapping of user-defined scopes. Key is the new scope name
      * and value is a comma-separated list of claims mapped to the scope.
      */
-    private Map<String, String> userDefinedScopes = new HashMap<>();
+    private Map<String, String> userDefinedScopes = new HashMap<>(0);
 
     /**
      * Map fixed claims to CAS attributes.
      * Key is the existing claim name for a scope and value is the new attribute
      * that should take its place and value.
      */
-    private Map<String, String> claimsMap = new HashMap<>();
+    private Map<String, String> claimsMap = new HashMap<>(0);
 
     /**
      * Supported response types.

@@ -76,8 +76,7 @@ public abstract class AbstractCRLRevocationChecker implements RevocationChecker 
             return;
         }
 
-        val expiredCrls = new ArrayList<X509CRL>();
-
+        val expiredCrls = new ArrayList<X509CRL>(crls.size());
         crls.stream().filter(CertUtils::isExpired).forEach(crl -> {
             LOGGER.warn("CRL data expired on [{}]", crl.getNextUpdate());
             expiredCrls.add(crl);

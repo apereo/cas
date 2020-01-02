@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class DefaultComponentSerializationPlan implements ComponentSerializationPlan {
 
-    private final List<Pair<Class, Integer>> registeredClasses = new ArrayList<>();
+    private final List<Pair<Class, Integer>> registeredClasses = new ArrayList<>(0);
 
     @Override
     public void registerSerializableClass(final Class clazz) {

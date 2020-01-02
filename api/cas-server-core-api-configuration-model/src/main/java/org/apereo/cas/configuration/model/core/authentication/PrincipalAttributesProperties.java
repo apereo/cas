@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
+import org.apereo.cas.configuration.model.support.azuread.AzureActiveDirectoryAttributesProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
@@ -79,37 +80,42 @@ public class PrincipalAttributesProperties implements Serializable {
      * and additionally allow other specific principal attributes for only some applications
      * per their attribute release policy.
      */
-    private Set<String> defaultAttributesToRelease = new HashSet<>();
+    private Set<String> defaultAttributesToRelease = new HashSet<>(0);
 
     /**
      * Retrieve attributes from multiple JDBC repositories.
      */
-    private List<JdbcPrincipalAttributesProperties> jdbc = new ArrayList<>();
+    private List<JdbcPrincipalAttributesProperties> jdbc = new ArrayList<>(0);
+
+    /**
+     * Retrieve attributes from multiple Microsoft Graph instances.
+     */
+    private List<AzureActiveDirectoryAttributesProperties> azureActiveDirectory = new ArrayList<>(0);
 
     /**
      * Retrieve attributes from multiple REST endpoints.
      */
-    private List<RestPrincipalAttributesProperties> rest = new ArrayList<>();
+    private List<RestPrincipalAttributesProperties> rest = new ArrayList<>(0);
 
     /**
      * Retrieve attributes from multiple Groovy scripts.
      */
-    private List<GroovyPrincipalAttributesProperties> groovy = new ArrayList<>();
+    private List<GroovyPrincipalAttributesProperties> groovy = new ArrayList<>(0);
 
     /**
      * Retrieve attributes from multiple LDAP servers.
      */
-    private List<LdapPrincipalAttributesProperties> ldap = new ArrayList<>();
+    private List<LdapPrincipalAttributesProperties> ldap = new ArrayList<>(0);
 
     /**
      * Retrieve attributes from multiple JSON file repositories.
      */
-    private List<JsonPrincipalAttributesProperties> json = new ArrayList<>();
+    private List<JsonPrincipalAttributesProperties> json = new ArrayList<>(0);
 
     /**
      * Retrieve attributes from redis repositories.
      */
-    private List<RedisPrincipalAttributesProperties> redis = new ArrayList<>();
+    private List<RedisPrincipalAttributesProperties> redis = new ArrayList<>(0);
 
     /**
      * Retrieve attributes from Couchbase repositories.
@@ -119,7 +125,7 @@ public class PrincipalAttributesProperties implements Serializable {
     /**
      * Retrieve attributes from multiple scripted repositories.
      */
-    private List<ScriptedPrincipalAttributesProperties> script = new ArrayList<>();
+    private List<ScriptedPrincipalAttributesProperties> script = new ArrayList<>(0);
 
     /**
      * Use stubbed attribute definitions as the underlying attribute repository source.

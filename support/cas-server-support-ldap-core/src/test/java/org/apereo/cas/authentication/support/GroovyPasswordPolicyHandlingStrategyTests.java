@@ -11,6 +11,7 @@ import org.ldaptive.auth.AuthenticationResponse;
 import org.ldaptive.auth.AuthenticationResultCode;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 
 import javax.security.auth.login.AccountExpiredException;
@@ -34,10 +35,10 @@ public class GroovyPasswordPolicyHandlingStrategyTests {
     public void verifyStrategySupportsDefault() {
         val resource = new ClassPathResource("lppe-strategy.groovy");
 
-        val s = new GroovyPasswordPolicyHandlingStrategy<AuthenticationResponse>(resource);
+        val s = new GroovyPasswordPolicyHandlingStrategy<AuthenticationResponse>(resource, mock(ApplicationContext.class));
         val res = mock(AuthenticationResponse.class);
         when(res.getAuthenticationResultCode()).thenReturn(AuthenticationResultCode.INVALID_CREDENTIAL);
-        when(res.getResult()).thenReturn(false);
+        when(res.isSuccess()).thenReturn(false);
 
         val results = s.handle(res, mock(PasswordPolicyContext.class));
 
@@ -49,7 +50,7 @@ public class GroovyPasswordPolicyHandlingStrategyTests {
     @Test
     public void verifyStrategyHandlesErrors() {
         val resource = new ClassPathResource("lppe-strategy-throws-error.groovy");
-        val s = new GroovyPasswordPolicyHandlingStrategy<AuthenticationResponse>(resource);
+        val s = new GroovyPasswordPolicyHandlingStrategy<AuthenticationResponse>(resource, mock(ApplicationContext.class));
         val res = mock(AuthenticationResponse.class);
         assertThrows(AccountExpiredException.class, () -> s.handle(res, mock(PasswordPolicyContext.class)));
     }

@@ -142,11 +142,11 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
 
+import java.time.Duration;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -350,7 +350,9 @@ public class OidcConfiguration implements WebMvcConfigurer {
     @Bean
     public HandlerInterceptorAdapter requiresAuthenticationAuthorizeInterceptor() {
         val name = oauthSecConfig.getObject().getClients()
-            .findClient(CasClient.class).get().getName();
+            .findClient(CasClient.class)
+            .orElseThrow()
+            .getName();
         val interceptor = new OidcSecurityInterceptor(oauthSecConfig.getObject(), name,
             oidcAuthorizationRequestSupport(),
             oauthDistributedSessionStore.getObject());
@@ -519,7 +521,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
     @Bean
     @RefreshScope
     public MultifactorAuthenticationTrigger oidcMultifactorAuthenticationTrigger() {
-        return new OidcMultifactorAuthenticationTrigger(casProperties, multifactorAuthenticationProviderResolver.getObject());
+        return new OidcMultifactorAuthenticationTrigger(casProperties, multifactorAuthenticationProviderResolver.getObject(), this.applicationContext);
     }
 
     @RefreshScope
@@ -588,7 +590,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
     public LoadingCache<String, Optional<RsaJsonWebKey>> oidcDefaultJsonWebKeystoreCache() {
         val oidc = casProperties.getAuthn().getOidc();
         return Caffeine.newBuilder().maximumSize(1)
-            .expireAfterWrite(oidc.getJwksCacheInMinutes(), TimeUnit.MINUTES)
+            .expireAfterWrite(Duration.ofMinutes(oidc.getJwksCacheInMinutes()))
             .build(oidcDefaultJsonWebKeystoreCacheLoader());
     }
 
@@ -599,7 +601,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
 
     @Bean
     public CacheLoader<OAuthRegisteredService, Optional<RsaJsonWebKey>> oidcServiceJsonWebKeystoreCacheLoader() {
-        return new OidcServiceJsonWebKeystoreCacheLoader();
+        return new OidcServiceJsonWebKeystoreCacheLoader(applicationContext);
     }
 
     @Bean
@@ -685,7 +687,8 @@ public class OidcConfiguration implements WebMvcConfigurer {
                 registeredServiceAccessStrategyEnforcer.getObject(),
                 ticketRegistry.getObject(),
                 webApplicationServiceFactory.getObject(),
-                casProperties));
+                casProperties,
+                applicationContext));
             privateKeyJwtClient.setName(OidcConstants.CAS_OAUTH_CLIENT_PRIVATE_KEY_JWT_AUTHN);
             privateKeyJwtClient.setUsernameParameter(OAuth20Constants.CLIENT_ASSERTION_TYPE);
             privateKeyJwtClient.setPasswordParameter(OAuth20Constants.CLIENT_ASSERTION);
@@ -702,7 +705,8 @@ public class OidcConfiguration implements WebMvcConfigurer {
                 registeredServiceAccessStrategyEnforcer.getObject(),
                 ticketRegistry.getObject(),
                 webApplicationServiceFactory.getObject(),
-                casProperties));
+                casProperties,
+                applicationContext));
             client.setName(OidcConstants.CAS_OAUTH_CLIENT_CLIENT_SECRET_JWT_AUTHN);
             client.setUsernameParameter(OAuth20Constants.CLIENT_ASSERTION_TYPE);
             client.setPasswordParameter(OAuth20Constants.CLIENT_ASSERTION);

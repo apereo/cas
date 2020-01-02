@@ -108,7 +108,7 @@ public abstract class AbstractPac4jAuthenticationHandler extends AbstractPreAndP
      */
     protected String determinePrincipalIdFrom(final CommonProfile profile, final BaseClient client) {
         var id = profile.getId();
-        val properties = client != null ? client.getCustomProperties() : new HashMap<>();
+        val properties = client != null ? client.getCustomProperties() : new HashMap<>(0);
         if (client != null && properties.containsKey(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_PRINCIPAL_ATTRIBUTE_ID)) {
             val attrObject = properties.get(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_PRINCIPAL_ATTRIBUTE_ID);
             if (attrObject != null) {

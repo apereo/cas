@@ -17,4 +17,29 @@ dependencies {
     implementation project(":support:cas-server-support-radius-core")
     implementation project(":support:cas-server-support-radius-core-mfa")
     implementation project(":support:cas-server-support-trusted-mfa-core")
+
+    compileOnly project(":support:cas-server-support-trusted-mfa")
+    
+    testImplementation project(":core:cas-server-core")
+    testImplementation project(":core:cas-server-core-authentication-mfa")
+    testImplementation project(":core:cas-server-core-configuration")
+    testImplementation project(":core:cas-server-core-tickets")
+    testImplementation project(":core:cas-server-core-util")
+    testImplementation project(":core:cas-server-core-web")
+    testImplementation project(":core:cas-server-core-rest")
+    testImplementation project(":core:cas-server-core-logout")
+    testImplementation project(":core:cas-server-core-authentication")
+    testImplementation project(":core:cas-server-core-cookie")
+
+    testImplementation project(":support:cas-server-support-person-directory")
+    testImplementation project(":support:cas-server-support-trusted-mfa")
+
+    testImplementation project(path: ":core:cas-server-core-authentication-mfa-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-webflow-mfa", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-webflow", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-webflow-mfa-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
 }

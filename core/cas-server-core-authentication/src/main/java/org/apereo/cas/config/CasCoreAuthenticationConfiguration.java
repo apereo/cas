@@ -50,12 +50,14 @@ public class CasCoreAuthenticationConfiguration {
     private ObjectProvider<AuthenticationEventExecutionPlan> authenticationEventExecutionPlan;
 
     @Bean
+    @RefreshScope
     public AuthenticationTransactionManager authenticationTransactionManager() {
         return new DefaultAuthenticationTransactionManager(applicationContext, casAuthenticationManager());
     }
 
     @ConditionalOnMissingBean(name = "casAuthenticationManager")
     @Bean
+    @RefreshScope
     public AuthenticationManager casAuthenticationManager() {
         return new PolicyBasedAuthenticationManager(
             authenticationEventExecutionPlan.getObject(),

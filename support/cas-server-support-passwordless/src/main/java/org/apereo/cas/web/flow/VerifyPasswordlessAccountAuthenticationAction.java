@@ -1,10 +1,8 @@
 package org.apereo.cas.web.flow;
 
-import org.apereo.cas.api.PasswordlessTokenRepository;
 import org.apereo.cas.api.PasswordlessUserAccountStore;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.binding.message.MessageBuilder;
@@ -19,13 +17,11 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 6.1.0
  */
 @RequiredArgsConstructor
-@Slf4j
 public class VerifyPasswordlessAccountAuthenticationAction extends AbstractAction {
-    private final PasswordlessTokenRepository passwordlessTokenRepository;
     private final PasswordlessUserAccountStore passwordlessUserAccountStore;
 
     @Override
-    public Event doExecute(final RequestContext requestContext) throws Exception {
+    public Event doExecute(final RequestContext requestContext) {
         val messageContext = requestContext.getMessageContext();
         val username = requestContext.getRequestParameters().get("username");
         if (StringUtils.isBlank(username)) {

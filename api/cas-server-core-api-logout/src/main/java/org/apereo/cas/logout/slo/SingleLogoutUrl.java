@@ -34,5 +34,5 @@ public class SingleLogoutUrl implements Serializable {
     /**
      * Additional settings relevant for the logout url.
      */
-    private final Map<String, String> properties = new LinkedHashMap<>();
+    private final Map<String, String> properties = new LinkedHashMap<>(2);
 }

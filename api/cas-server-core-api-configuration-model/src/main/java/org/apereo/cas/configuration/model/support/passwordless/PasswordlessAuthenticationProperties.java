@@ -59,7 +59,7 @@ public class PasswordlessAuthenticationProperties implements Serializable {
          * The key is the user identifier, while the value is the form of
          * contact such as email, sms, etc.
          */
-        private Map<String, String> simple = new LinkedHashMap<>();
+        private Map<String, String> simple = new LinkedHashMap<>(2);
     }
 
     @RequiresModule(name = "cas-server-support-passwordless")

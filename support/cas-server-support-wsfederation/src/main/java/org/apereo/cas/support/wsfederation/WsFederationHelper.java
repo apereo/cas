@@ -143,7 +143,7 @@ public class WsFederationHelper {
     }
 
     private static Decrypter buildAssertionDecrypter(final WsFederationConfiguration config) {
-        val list = new ArrayList<EncryptedKeyResolver>();
+        val list = new ArrayList<EncryptedKeyResolver>(3);
         list.add(new InlineEncryptedKeyResolver());
         list.add(new EncryptedElementTypeEncryptedKeyResolver());
         list.add(new SimpleRetrievalMethodEncryptedKeyResolver());

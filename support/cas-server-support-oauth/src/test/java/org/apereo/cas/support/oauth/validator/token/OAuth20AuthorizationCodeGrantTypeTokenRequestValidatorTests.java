@@ -1,6 +1,6 @@
 package org.apereo.cas.support.oauth.validator.token;
 
-import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
@@ -60,7 +60,7 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests extends
 
     private void registerTicket(final String name, final OAuthRegisteredService service) {
         val builder = new OAuth20CasAuthenticationBuilder(
-            new DefaultPrincipalFactory(),
+            PrincipalFactoryUtils.newPrincipalFactory(),
             new WebApplicationServiceFactory(),
             new DefaultOAuth20ProfileScopeToAttributesFilter(),
             new CasConfigurationProperties());

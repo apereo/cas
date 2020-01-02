@@ -11,9 +11,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.ldaptive.ConnectionFactory;
 import org.ldaptive.Credential;
 import org.ldaptive.ReturnAttributes;
-import org.ldaptive.SearchExecutor;
+import org.ldaptive.SearchOperation;
 import org.ldaptive.auth.AuthenticationRequest;
 import org.pac4j.core.authorization.authorizer.RequireAnyRoleAuthorizer;
 import org.pac4j.core.authorization.generator.AuthorizationGenerator;
@@ -64,12 +65,12 @@ public class MonitorEndpointLdapAuthenticationProvider implements Authentication
             val response = authenticator.authenticate(request);
             LOGGER.debug("LDAP response: [{}]", response);
 
-            if (response.getResult()) {
+            if (response.isSuccess()) {
 
                 val roles = securityProperties.getUser().getRoles();
                 if (roles.isEmpty()) {
                     LOGGER.info("No user security roles are defined for CAS to enable authorization. User [{}] is considered authorized", username);
-                    return generateAuthenticationToken(authentication, new ArrayList<>());
+                    return generateAuthenticationToken(authentication, new ArrayList<>(0));
                 }
 
                 val entry = response.getLdapEntry();
@@ -127,24 +128,24 @@ public class MonitorEndpointLdapAuthenticationProvider implements Authentication
 
         if (isGroupBasedAuthorization()) {
             LOGGER.debug("Handling LDAP authorization based on groups");
-            return new LdapUserGroupsToRolesAuthorizationGenerator(connectionFactory,
-                ldapAuthorizationGeneratorUserSearchExecutor(),
+            return new LdapUserGroupsToRolesAuthorizationGenerator(
+                ldapAuthorizationGeneratorUserSearchOperation(connectionFactory),
                 ldapAuthz.isAllowMultipleResults(),
                 ldapAuthz.getGroupAttribute(),
                 ldapAuthz.getGroupPrefix(),
-                ldapAuthorizationGeneratorGroupSearchExecutor());
+                ldapAuthorizationGeneratorGroupSearchOperation(connectionFactory));
         }
         if (isUserBasedAuthorization()) {
             LOGGER.debug("Handling LDAP authorization based on attributes and roles");
-            return new LdapUserAttributesToRolesAuthorizationGenerator(connectionFactory,
-                ldapAuthorizationGeneratorUserSearchExecutor(),
+            return new LdapUserAttributesToRolesAuthorizationGenerator(
+                ldapAuthorizationGeneratorUserSearchOperation(connectionFactory),
                 ldapAuthz.isAllowMultipleResults(),
                 ldapAuthz.getRoleAttribute(),
                 ldapAuthz.getRolePrefix());
         }
         val roles = securityProperties.getUser().getRoles();
         LOGGER.info("Could not determine authorization generator based on users or groups. Authorization will generate static roles based on [{}]", roles);
-        return new DefaultRolesPermissionsAuthorizationGenerator(roles, new ArrayList<>());
+        return new DefaultRolesPermissionsAuthorizationGenerator(roles, new ArrayList<>(0));
     }
 
     private boolean isGroupBasedAuthorization() {
@@ -157,16 +158,20 @@ public class MonitorEndpointLdapAuthenticationProvider implements Authentication
         return StringUtils.isNotBlank(ldapAuthz.getBaseDn()) && StringUtils.isNotBlank(ldapAuthz.getSearchFilter());
     }
 
-    private SearchExecutor ldapAuthorizationGeneratorUserSearchExecutor() {
+    private SearchOperation ldapAuthorizationGeneratorUserSearchOperation(final ConnectionFactory factory) {
         val ldapAuthz = this.ldapProperties.getLdapAuthz();
-        return LdapUtils.newLdaptiveSearchExecutor(ldapAuthz.getBaseDn(), ldapAuthz.getSearchFilter(),
+        val searchOperation = LdapUtils.newLdaptiveSearchOperation(ldapAuthz.getBaseDn(), ldapAuthz.getSearchFilter(),
             new ArrayList<>(0), CollectionUtils.wrap(ldapAuthz.getRoleAttribute()));
+        searchOperation.setConnectionFactory(factory);
+        return searchOperation;
     }
 
-    private SearchExecutor ldapAuthorizationGeneratorGroupSearchExecutor() {
+    private SearchOperation ldapAuthorizationGeneratorGroupSearchOperation(final ConnectionFactory factory) {
         val ldapAuthz = this.ldapProperties.getLdapAuthz();
-        return LdapUtils.newLdaptiveSearchExecutor(ldapAuthz.getGroupBaseDn(), ldapAuthz.getGroupFilter(),
+        val searchOperation = LdapUtils.newLdaptiveSearchOperation(ldapAuthz.getGroupBaseDn(), ldapAuthz.getGroupFilter(),
             new ArrayList<>(0), CollectionUtils.wrap(ldapAuthz.getGroupAttribute()));
+        searchOperation.setConnectionFactory(factory);
+        return searchOperation;
     }
 }
 

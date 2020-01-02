@@ -1,17 +1,10 @@
 package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.config.CasCoreHttpConfiguration;
-import org.apereo.cas.config.CasCoreServicesConfiguration;
-import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
-import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
-import org.apereo.cas.config.CasCoreTicketsConfiguration;
-import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasCoreTicketComponentSerializationConfiguration;
 import org.apereo.cas.config.CasCoreUtilSerializationConfiguration;
-import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasOAuth20ComponentSerializationConfiguration;
 import org.apereo.cas.config.MemcachedTicketRegistryConfiguration;
-import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.mock.MockServiceTicket;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -30,7 +23,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
 import java.util.HashMap;
 
@@ -44,18 +36,11 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = {
     MemcachedTicketRegistryConfiguration.class,
-    CasOAuth20ComponentSerializationConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class,
-    MemcachedTicketRegistryTests.MemcachedTicketRegistryTestConfiguration.class,
-    RefreshAutoConfiguration.class,
-    CasCoreUtilConfiguration.class,
-    CasCoreHttpConfiguration.class,
-    CasCoreWebConfiguration.class,
-    CasCoreServicesConfiguration.class,
     CasCoreUtilSerializationConfiguration.class,
-    CasCoreTicketsConfiguration.class,
-    CasCoreTicketIdGeneratorsConfiguration.class,
-    CasCoreTicketCatalogConfiguration.class
+    CasCoreTicketComponentSerializationConfiguration.class,
+    CasOAuth20ComponentSerializationConfiguration.class,
+    MemcachedTicketRegistryTests.MemcachedTicketRegistryTestConfiguration.class,
+    BaseTicketRegistryTests.SharedTestConfiguration.class
 },
     properties = {
         "cas.ticket.registry.memcached.servers=localhost:11211",

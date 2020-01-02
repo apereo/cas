@@ -30,8 +30,8 @@ buildscript {
     }
 
     dependencies {
-        classpath "gradle.plugin.com.ewerk.gradle.plugins:jaxb2-plugin:1.0.9"
-        classpath "com.github.jk1:gradle-license-report:1.11"
+        classpath "gradle.plugin.com.ewerk.gradle.plugins:jaxb2-plugin:1.0.10"
+        classpath "com.github.jk1:gradle-license-report:$gradleLicenseVersion"
         classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
         classpath "com.netflix.nebula:gradle-lint-plugin:$gradleLintVersion"
         classpath "gradle.plugin.com.gorylenko.gradle-git-properties:gradle-git-properties:$gradleGitVersion"
@@ -69,7 +69,7 @@ ext {
     remoteDebuggingSuspend = Boolean.getBoolean("remoteDebuggingSuspend") ? "y" : "n"
     generateGitProperties = Boolean.getBoolean("generateGitProperties")
 
-    continuousIntegrationBuild = Boolean.getBoolean("CI") || Boolean.getBoolean("TRAVIS") || Boolean.getBoolean("CONTINUOUS_INTEGRATION")
+    continuousIntegrationBuild = System.getenv("CI") || Boolean.getBoolean("CI") || Boolean.getBoolean("TRAVIS") || Boolean.getBoolean("CONTINUOUS_INTEGRATION")
 }
 
 def isArtifactSigningRequired = {
@@ -84,14 +84,16 @@ if (!Boolean.getBoolean("skipSonarqube")) {
     apply plugin: "org.sonarqube"
 }
 
-apply plugin: "build-time-tracker"
-buildtimetracker {
-    reporters {
-        summary {
-            ordered false
-            threshold 50
-            barstyle "unicode"
-            shortenTaskNames false
+if (continuousIntegrationBuild || Boolean.getBoolean("enableBuildTimeTracker")) {
+    apply plugin: "build-time-tracker"
+    buildtimetracker {
+        reporters {
+            summary {
+                ordered false
+                threshold 50
+                barstyle "unicode"
+                shortenTaskNames false
+            }
         }
     }
 }
@@ -258,20 +260,21 @@ subprojects {
             url "https://repo.spring.io/milestone/"
             mavenContent { releasesOnly() }
         }
-        maven { url "https://repo.spring.io/snapshot/" }
+        maven {
+            url "https://repo.spring.io/snapshot/"
+            mavenContent { snapshotsOnly() }
+        }
         maven {
             url "https://repo.spring.io/libs-milestone"
             mavenContent { releasesOnly() }
         }
         maven {
-            url "https://dl.bintray.com/uniconiam/maven"
+            url "https://splunk.jfrog.io/splunk/ext-releases-local"
             mavenContent { releasesOnly() }
         }
         maven {
-            url "https://jitpack.io"
-            content {
-                includeGroupByRegex "com\\.github\\.coova.*"
-            }
+            url "https://dl.bintray.com/uniconiam/maven"
+            mavenContent { releasesOnly() }
         }
         maven {
             url "https://oss.jfrog.org/artifactory/oss-snapshot-local"
@@ -293,7 +296,6 @@ subprojects {
 
             cacheDynamicVersionsFor 5, 'days'
             cacheChangingModulesFor 5, 'days'
-
             /**
              * Required for all JRadius modules
              */
@@ -434,7 +436,7 @@ subprojects {
         it.options.compilerArgs += casCompilerArgs
     }
 
-    def currentTime = java.time.ZonedDateTime.now()
+    def currentTime = java.time.ZonedDateTime.now(ZoneId.systemDefault())
     compileJava.doLast {
         buildDate = currentTime
         jar.manifest {

@@ -77,6 +77,7 @@ import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.webflow.execution.Action;
@@ -135,12 +136,14 @@ import static org.mockito.Mockito.*;
         "cas.authn.oidc.issuer=https://sso.example.org/cas/oidc",
         "cas.authn.oidc.jwksFile=classpath:keystore.jwks",
         "spring.mail.host=localhost",
-        "spring.mail.port=25000",
-        "spring.mail.testConnection=false"
+        "spring.mail.port=25000"
     })
 @DirtiesContext
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public abstract class AbstractOidcTests {
+    @Autowired
+    protected ConfigurableApplicationContext applicationContext;
+
     @Autowired
     protected ResourceLoader resourceLoader;
 
