@@ -27,7 +27,9 @@ public class OneTimeTokenAccountCheckRegistrationAction extends AbstractAction {
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
-        val uid = WebUtils.getAuthentication(requestContext).getPrincipal().getId();
+		val auth = WebUtils.getAuthentication(requestContext);
+		val uid = auth.getPrincipal().getId();
+        //val uid = WebUtils.getAuthentication(requestContext).getPrincipal().getId();
 
         val acct = repository.get(uid);
 
@@ -41,6 +43,7 @@ public class OneTimeTokenAccountCheckRegistrationAction extends AbstractAction {
 			}
             val keyAccount = this.repository.create(uid);
             val keyUri = "otpauth://totp/" + this.label + ':' + uid + "?secret=" + keyAccount.getSecretKey() + "&issuer=" + this.issuer;
+			auth.addAttribute("newOtpRegistrationAccount", keyAccount);
             requestContext.getFlowScope().put("key", keyAccount);
             requestContext.getFlowScope().put("keyUri", keyUri);
 			requestContext.getFlowScope().put("newOtpRegistration", true);

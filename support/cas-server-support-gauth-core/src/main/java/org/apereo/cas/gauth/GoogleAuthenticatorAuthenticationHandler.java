@@ -68,8 +68,12 @@ public class GoogleAuthenticatorAuthenticationHandler extends AbstractPreAndPost
         LOGGER.trace("Received principal id [{}]. Attempting to locate account in credential repository...", uid);
         val acct = this.credentialRepository.get(uid);
         if (acct == null || StringUtils.isBlank(acct.getSecretKey())) {
-            throw new AccountNotFoundException(uid + " cannot be found in the registry");
+			LOGGER.trace("Cannot find entry for id [{}]; checking for new registration...", uid);
+			acct = authentication.getAttributes().get("newOtpRegistrationAccount");
         }
+        if (acct == null || StringUtils.isBlank(acct.getSecretKey())) {
+        	throw new AccountNotFoundException(uid + " cannot be found in the registry");
+		}
 
         LOGGER.trace("Attempting to locate OTP token [{}] in token repository for [{}]...", otp, uid);
         if (this.tokenRepository.exists(uid, otp)) {
