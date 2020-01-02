@@ -67,11 +67,13 @@ public class GoogleAuthenticatorAuthenticationHandler extends AbstractPreAndPost
 		val authAttrs = authentication.getAttributes();
         val uid = authentication.getPrincipal().getId();
 
+		boolean isNewRegistration = false;
 		OneTimeTokenAccount acct;
         LOGGER.trace("Received principal id [{}]. Attempting to locate account in credential repository...", uid);
 		if (authAttrs.containsKey("newOtpRegistrationAccount")) {
 			LOGGER.trace("Found in-progress OTP registration for [{}]", uid);
 			acct = (OneTimeTokenAccount) authAttrs.get("newOtpRegistrationAccount").get(0);
+			isNewRegistration = true;
 		} else {
         	acct = this.credentialRepository.get(uid);
 		}
@@ -103,6 +105,10 @@ public class GoogleAuthenticatorAuthenticationHandler extends AbstractPreAndPost
         if (isCodeValid) {
             LOGGER.debug("Validated OTP token [{}] successfully for [{}]", otp, uid);
             this.tokenRepository.store(new GoogleAuthenticatorToken(otp, uid));
+			if (isNewRegistration) {
+				LOGGER.debug("Writing entry to repository for [{}]", uid);
+				this.credentialRepository.update(acct);
+			}
             LOGGER.debug("Creating authentication result and building principal for [{}]", uid);
             return createHandlerResult(tokenCredential, this.principalFactory.createPrincipal(uid));
         }
