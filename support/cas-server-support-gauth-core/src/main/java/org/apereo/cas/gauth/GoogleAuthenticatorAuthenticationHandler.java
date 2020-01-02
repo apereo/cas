@@ -63,10 +63,16 @@ public class GoogleAuthenticatorAuthenticationHandler extends AbstractPreAndPost
         LOGGER.trace("Received OTP [{}]", otp);
 
         val authentication = WebUtils.getInProgressAuthentication();
+		val authAttrs = authentication.getAttributes();
         val uid = authentication.getPrincipal().getId();
 
         LOGGER.trace("Received principal id [{}]. Attempting to locate account in credential repository...", uid);
-        val acct = this.credentialRepository.get(uid) ?: authentication.getAttributes().get("newOtpRegistrationAccount");
+		if (authAttrs.containsKey("newOtpRegistrationAccount")) {
+			LOGGER.trace("Found in-progress OTP registration for [{}]", uid);
+			val acct = authAttrs.get("newOtpRegistrationAccount");
+		} else {
+        	val acct = this.credentialRepository.get(uid);
+		}
 		/*
         if (acct == null || StringUtils.isBlank(acct.getSecretKey())) {
 			LOGGER.trace("Cannot find entry for id [{}]; checking for new registration...", uid);
