@@ -71,7 +71,7 @@ public class GoogleAuthenticatorAuthenticationHandler extends AbstractPreAndPost
         LOGGER.trace("Received principal id [{}]. Attempting to locate account in credential repository...", uid);
 		if (authAttrs.containsKey("newOtpRegistrationAccount")) {
 			LOGGER.trace("Found in-progress OTP registration for [{}]", uid);
-			acct = authAttrs.get("newOtpRegistrationAccount").get(0);
+			acct = (OneTimeTokenAccount) authAttrs.get("newOtpRegistrationAccount").get(0);
 		} else {
         	acct = this.credentialRepository.get(uid);
 		}
