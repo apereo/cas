@@ -23,7 +23,7 @@
 	<view-state id="viewRegistration" view="casGoogleAuthenticatorRegistrationView" model="credential">
 		<binder>
 			<binding property="token" required="true"/>
-		</binder
+		</binder>
         <on-entry>
             <set name="viewScope.principal" value="conversationScope.authentication.principal" />
         </on-entry>
