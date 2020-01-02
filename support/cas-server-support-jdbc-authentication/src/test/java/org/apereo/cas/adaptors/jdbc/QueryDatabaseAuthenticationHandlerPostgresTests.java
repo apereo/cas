@@ -117,7 +117,6 @@ public class QueryDatabaseAuthenticationHandlerPostgresTests {
         @Column
         private String password;
 
-        //@Type(type = "string-array")
         @Column(
             name = "locations",
             columnDefinition = "text[]"

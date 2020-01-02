@@ -5,6 +5,7 @@ import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -25,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @DirtiesContext
+@Tag("Webflow")
 public class AcceptableUsagePolicyVerifyActionTests extends BaseAcceptableUsagePolicyActionTests {
 
     @Autowired

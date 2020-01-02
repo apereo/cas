@@ -58,7 +58,7 @@ public abstract class BaseConsentRepositoryTests {
         val repo = getRepository("verifyConsentDecisionIsNotFound");
         val decision = BUILDER.build(SVC, REG_SVC, "casuser", ATTR);
         decision.setId(1);
-        repo.storeConsentDecision(decision);
+        assertTrue(repo.storeConsentDecision(decision));
         assertFalse(repo.findConsentDecisions().isEmpty());
         assertNull(repo.findConsentDecision(SVC, REG_SVC, CoreAuthenticationTestUtils.getAuthentication()));
     }
@@ -68,7 +68,7 @@ public abstract class BaseConsentRepositoryTests {
         val repo = getRepository("verifyConsentDecisionIsFound");
         val decision = BUILDER.build(SVC, REG_SVC, CASUSER_2, ATTR);
         decision.setId(100);
-        repo.storeConsentDecision(decision);
+        assertTrue(repo.storeConsentDecision(decision));
 
         val d = repo.findConsentDecision(SVC, REG_SVC, CoreAuthenticationTestUtils.getAuthentication(CASUSER_2));
         assertNotNull(d);

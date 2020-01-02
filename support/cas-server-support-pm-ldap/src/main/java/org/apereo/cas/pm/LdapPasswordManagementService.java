@@ -80,7 +80,7 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
                 LOGGER.debug("LDAP response for security questions [{}]", response);
 
                 if (LdapUtils.containsResultEntry(response)) {
-                    val entry = response.getResult().getEntry();
+                    val entry = response.getEntry();
                     LOGGER.debug("Located LDAP entry [{}] in the response", entry);
                     val questionsAndAnswers = ldap.getSecurityQuestionsAttributes();
                     LOGGER.debug("Security question attributes are defined to be [{}]", questionsAndAnswers);
@@ -125,7 +125,7 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
                     LOGGER.debug("LDAP response is [{}]", response);
 
                     if (LdapUtils.containsResultEntry(response)) {
-                        val entry = response.getResult().getEntry();
+                        val entry = response.getEntry();
                         LOGGER.debug("Found LDAP entry [{}] to use", entry);
 
                         return attributeNames.stream()
@@ -173,7 +173,7 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
                     LOGGER.debug("LDAP response to update password is [{}]", response);
 
                     if (LdapUtils.containsResultEntry(response)) {
-                        val dn = response.getResult().getEntry().getDn();
+                        val dn = response.getEntry().getDn();
                         LOGGER.debug("Updating account password for [{}]", dn);
                         if (LdapUtils.executePasswordModifyOperation(dn, ldapConnectionFactory, c.getPassword(), bean.getPassword(),
                             ldap.getType())) {

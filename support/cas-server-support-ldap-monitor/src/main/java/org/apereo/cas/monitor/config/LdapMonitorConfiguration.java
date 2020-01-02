@@ -9,7 +9,7 @@ import org.apereo.cas.util.LdapUtils;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.ldaptive.pool.SearchValidator;
+import org.ldaptive.SearchConnectionValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.autoconfigure.health.ConditionalOnEnabledHealthIndicator;
 import org.springframework.boot.actuate.health.CompositeHealthContributor;
@@ -47,7 +47,7 @@ public class LdapMonitorConfiguration {
                 executor.afterPropertiesSet();
                 val connectionFactory = LdapUtils.newLdaptivePooledConnectionFactory(ldap);
                 val healthIndicator = new PooledLdapConnectionFactoryHealthIndicator(Beans.newDuration(ldap.getMaxWait()).toMillis(),
-                    connectionFactory, executor.getObject(), new SearchValidator());
+                    connectionFactory, executor.getObject(), new SearchConnectionValidator());
                 val name = StringUtils.defaultIfBlank(ldap.getName(), UUID.randomUUID().toString());
                 return Pair.of(name, healthIndicator);
             })

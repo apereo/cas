@@ -12,6 +12,7 @@ import com.authy.api.Tokens;
 import com.authy.api.User;
 import com.authy.api.Users;
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
@@ -32,6 +33,7 @@ import static org.mockito.Mockito.*;
  * @since 6.1.0
  */
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
+@Tag("Webflow")
 public class AuthyAuthenticationRegistrationWebflowActionTests {
     @Test
     public void verifyOperation() throws Exception {

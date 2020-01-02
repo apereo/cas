@@ -71,11 +71,13 @@ public class SamlValidateEndpoint extends BaseCasActuatorEndpoint {
         val credential = new UsernamePasswordCredential(username, password);
         val result = this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(selectedService, credential);
         val authentication = result.getAuthentication();
-
         val principal = authentication.getPrincipal();
+
         val attributesToRelease = registeredService.getAttributeReleasePolicy().getAttributes(principal, selectedService, registeredService);
         val principalId = registeredService.getUsernameAttributeProvider().resolveUsername(principal, selectedService, registeredService);
+
         val modifiedPrincipal = this.principalFactory.createPrincipal(principalId, attributesToRelease);
+
         val builder = DefaultAuthenticationBuilder.newInstance(authentication);
         builder.setPrincipal(modifiedPrincipal);
         val finalAuthentication = builder.build();
