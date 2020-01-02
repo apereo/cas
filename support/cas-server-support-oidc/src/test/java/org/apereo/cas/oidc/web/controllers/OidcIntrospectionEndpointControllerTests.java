@@ -15,6 +15,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -45,6 +46,7 @@ public class OidcIntrospectionEndpointControllerTests extends AbstractOidcTests 
         request.addParameter(OAuth20Constants.TOKEN, accessToken.getId());
         val result = oidcIntrospectionEndpointController.handleRequest(request, response);
         assertNotNull(result.getBody());
+        assertTrue(Instant.ofEpochSecond(result.getBody().getExp()).isAfter(Instant.ofEpochSecond(result.getBody().getIat())));
         assertTrue(result.getBody().isActive());
         assertEquals(accessToken.getScopes(), Set.of(result.getBody().getScope().split(" ")));
     }

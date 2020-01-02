@@ -4,6 +4,7 @@ import org.apereo.cas.web.FlowExecutionExceptionResolver;
 import org.apereo.cas.web.flow.executor.ClientFlowExecutionRepositoryException;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -19,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@Tag("Webflow")
 public class FlowExecutionExceptionResolverTests {
     @Test
     public void verifyActionNull() {

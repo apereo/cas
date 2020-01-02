@@ -12,6 +12,7 @@ import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.webflow.test.MockRequestContext;
 
@@ -26,6 +27,7 @@ import static org.mockito.Mockito.*;
  * @author Dmitriy Kopylenko
  * @since 3.5.0
  */
+@Tag("Webflow")
 public class ServiceAuthorizationCheckActionMockitoTests {
     private final WebApplicationService authorizedService = mock(WebApplicationService.class);
     private final WebApplicationService unauthorizedService = mock(WebApplicationService.class);

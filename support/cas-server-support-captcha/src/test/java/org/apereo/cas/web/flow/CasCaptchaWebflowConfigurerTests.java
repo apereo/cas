@@ -3,6 +3,7 @@ package org.apereo.cas.web.flow;
 import org.apereo.cas.web.flow.config.CasCaptchaConfiguration;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration;
 import org.springframework.context.annotation.Import;
@@ -25,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCaptchaConfiguration.class,
     BaseWebflowConfigurerTests.SharedTestConfiguration.class
 })
+@Tag("Webflow")
 public class CasCaptchaWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Test
     public void verifyOperation() {

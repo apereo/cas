@@ -170,7 +170,7 @@ public class X509AuthenticationConfiguration {
         switch (x509.getCrlFetcher().toLowerCase()) {
             case "ldap":
                 return new LdaptiveResourceCRLFetcher(LdapUtils.newLdaptiveConnectionConfig(x509.getLdap()),
-                    LdapUtils.newLdaptiveSearchExecutor(x509.getLdap().getBaseDn(),
+                    LdapUtils.newLdaptiveSearchOperation(x509.getLdap().getBaseDn(),
                         x509.getLdap().getSearchFilter()), x509.getLdap().getCertificateAttribute());
             case "resource":
             default:
