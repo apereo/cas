@@ -601,7 +601,7 @@ ext.libraries = [
                 dependencies.create("org.javassist:javassist:$javassistVersion") {
                     force = true
                 },
-                dependencies.create("org.springmodules:spring-modules-cache:0.8") {
+                dependencies.create("org.springmodules:spring-modules-cache:0.8a") {
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "ant", module: "ant")
                     exclude(group: "xstream", module: "xstream")
