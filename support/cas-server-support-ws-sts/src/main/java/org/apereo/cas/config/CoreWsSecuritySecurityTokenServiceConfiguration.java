@@ -267,7 +267,8 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
 
     @RefreshScope
     @Bean
-    public Map<String, RealmProperties> realms() {
+    @ConditionalOnMissingBean(name = "securityTokenServiceRealms")
+    public Map<String, RealmProperties> securityTokenServiceRealms() {
         val idp = casProperties.getAuthn().getWsfedIdp().getIdp();
         val realms = new HashMap<String, RealmProperties>();
         realms.put(idp.getRealmName(), casRealm());
@@ -284,7 +285,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
     @Bean
     public JWTTokenProvider transportJwtTokenProvider() {
         val provider = new JWTTokenProvider();
-        provider.setRealmMap(realms());
+        provider.setRealmMap(securityTokenServiceRealms());
         provider.setSignToken(true);
         return provider;
     }
@@ -308,6 +309,9 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
             case "transient":
                 s.setSubjectNameIDFormat(NameID.TRANSIENT);
                 break;
+            case "persistent":
+                s.setSubjectNameIDFormat(NameID.PERSISTENT);
+                break;
             case "unspecified":
             default:
                 s.setSubjectNameIDFormat(NameID.UNSPECIFIED);
@@ -323,7 +327,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
 
         val provider = new SAMLTokenProvider();
         provider.setAttributeStatementProviders(CollectionUtils.wrap(new ClaimsAttributeStatementProvider()));
-        provider.setRealmMap(realms());
+        provider.setRealmMap(securityTokenServiceRealms());
         provider.setConditionsProvider(c);
         provider.setSubjectProvider(s);
         provider.setSignToken(wsfed.isSignTokens());
@@ -376,7 +380,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
 
         val s = new StaticSTSProperties();
         s.setIssuer(getClass().getSimpleName());
-        s.setRealmParser(new UriRealmParser(realms()));
+        s.setRealmParser(new UriRealmParser(securityTokenServiceRealms()));
         s.setSignatureCryptoProperties(CryptoUtils.getSecurityProperties(wsfed.getSigningKeystoreFile(), wsfed.getSigningKeystorePassword()));
         s.setEncryptionCryptoProperties(CryptoUtils.getSecurityProperties(wsfed.getEncryptionKeystoreFile(), wsfed.getEncryptionKeystorePassword()));
 
