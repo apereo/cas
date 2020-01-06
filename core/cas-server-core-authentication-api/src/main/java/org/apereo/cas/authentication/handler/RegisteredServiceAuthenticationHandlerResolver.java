@@ -2,6 +2,7 @@ package org.apereo.cas.authentication.handler;
 
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationHandlerResolver;
+import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationTransaction;
 import org.apereo.cas.authentication.handler.support.HttpBasedServiceCredentialsAuthenticationHandler;
 import org.apereo.cas.services.ServicesManager;
@@ -31,9 +32,14 @@ public class RegisteredServiceAuthenticationHandlerResolver implements Authentic
      */
     protected final ServicesManager servicesManager;
 
+    /**
+     * The service selection plan.
+     */
+    protected final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan;
+
     @Override
     public boolean supports(final Set<AuthenticationHandler> handlers, final AuthenticationTransaction transaction) {
-        val service = transaction.getService();
+        val service = authenticationServiceSelectionPlan.resolveService(transaction.getService());
         if (service != null) {
             val registeredService = this.servicesManager.findServiceBy(service);
             LOGGER.trace("Located registered service definition [{}] for this authentication transaction", registeredService);
@@ -48,7 +54,7 @@ public class RegisteredServiceAuthenticationHandlerResolver implements Authentic
 
     @Override
     public Set<AuthenticationHandler> resolve(final Set<AuthenticationHandler> candidateHandlers, final AuthenticationTransaction transaction) {
-        val service = transaction.getService();
+        val service = authenticationServiceSelectionPlan.resolveService(transaction.getService());
         val registeredService = this.servicesManager.findServiceBy(service);
 
         val requiredHandlers = registeredService.getRequiredHandlers();
