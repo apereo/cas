@@ -63,6 +63,14 @@ public class WsFederationProperties implements Serializable {
 
         /**
          * When generating a SAML token, indicates the subject name-id format to use.
+         * Accepted values are:
+         * <ul>
+         *     <li>unspecified</li>
+         *     <li>email</li>
+         *     <li>transient</li>
+         *     <li>persistent</li>
+         *     <li>entity</li>
+         * </ul>
          */
         private String subjectNameIdFormat = "unspecified";
 
