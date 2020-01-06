@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandlerResolver;
+import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.AuthenticationTransactionManager;
 import org.apereo.cas.authentication.DefaultAuthenticationSystemSupport;
@@ -51,6 +52,10 @@ public class CasCoreAuthenticationSupportConfiguration {
     @Qualifier("authenticationTransactionManager")
     private ObjectProvider<AuthenticationTransactionManager> authenticationTransactionManager;
 
+    @Autowired
+    @Qualifier("authenticationServiceSelectionPlan")
+    private ObjectProvider<AuthenticationServiceSelectionPlan> authenticationServiceSelectionPlan;
+
     @Bean
     public AuthenticationSystemSupport defaultAuthenticationSystemSupport() {
         return new DefaultAuthenticationSystemSupport(authenticationTransactionManager.getObject(),
@@ -61,7 +66,8 @@ public class CasCoreAuthenticationSupportConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "registeredServiceAuthenticationHandlerResolver")
     public AuthenticationHandlerResolver registeredServiceAuthenticationHandlerResolver() {
-        val resolver = new RegisteredServiceAuthenticationHandlerResolver(servicesManager.getObject());
+        val resolver = new RegisteredServiceAuthenticationHandlerResolver(servicesManager.getObject(),
+                authenticationServiceSelectionPlan.getObject());
         resolver.setOrder(casProperties.getAuthn().getCore().getServiceAuthenticationResolution().getOrder());
         return resolver;
     }
