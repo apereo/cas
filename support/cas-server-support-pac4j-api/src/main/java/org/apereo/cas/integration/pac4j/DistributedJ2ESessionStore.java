@@ -121,7 +121,9 @@ public class DistributedJ2ESessionStore implements SessionStore<JEEContext>, Log
     public void handle(final TicketGrantingTicket ticketGrantingTicket) {
         val request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
         val response = HttpRequestUtils.getHttpServletResponseFromRequestAttributes();
-        destroySession(new JEEContext(request, response, this));
+        if (request != null && response != null) {
+            destroySession(new JEEContext(request, response, this));
+        }
     }
 
     @Override
