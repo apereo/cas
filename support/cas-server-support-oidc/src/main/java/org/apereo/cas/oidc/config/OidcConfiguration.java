@@ -200,7 +200,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
     private ObjectProvider<Set<OAuth20AuthorizationResponseBuilder>> oauthAuthorizationResponseBuilders;
 
     @Autowired
-    @Qualifier("webApplicationServiceFactory")
+    @Qualifier("oauthApplicationServiceFactory")
     private ObjectProvider<ServiceFactory<WebApplicationService>> webApplicationServiceFactory;
 
     @Autowired

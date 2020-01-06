@@ -163,7 +163,7 @@ public class OAuth20IntrospectionEndpointController extends BaseOAuth20Controlle
 
         if (OAuth20Utils.checkClientSecret(registeredService, credentials.getPassword(),
             getOAuthConfigurationContext().getRegisteredServiceCipherExecutor())) {
-            val service = getOAuthConfigurationContext().getWebApplicationServiceServiceFactory().createService(registeredService.getServiceId());
+            val service = getOAuthConfigurationContext().getWebApplicationServiceServiceFactory().createService(registeredService.getClientId());
             val audit = AuditableContext.builder()
                 .service(service)
                 .registeredService(registeredService)

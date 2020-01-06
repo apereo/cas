@@ -12,6 +12,8 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.util.EncodingUtils;
+import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -59,7 +61,7 @@ public class OidcMultifactorAuthenticationTrigger implements MultifactorAuthenti
             var builderContext = new URIBuilder(url);
             val idx = builderContext.getQueryParams().stream().filter(p -> p.getName().equals(CasProtocolConstants.PARAMETER_SERVICE)).findFirst();
             if (idx.isPresent()) {
-                builderContext = new URIBuilder(idx.get().getValue());
+                builderContext = new URIBuilder(EncodingUtils.urlEncode(idx.get().getValue()));
             }
 
             val parameter = builderContext.getQueryParams()

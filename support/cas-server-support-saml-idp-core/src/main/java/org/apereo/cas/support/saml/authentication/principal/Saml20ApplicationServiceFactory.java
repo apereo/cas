@@ -83,13 +83,13 @@ public class Saml20ApplicationServiceFactory extends AbstractServiceFactory<WebA
     }
 
     private static String extractEntityId(final String param) {
-        if (StringUtils.isBlank(param) || !param.contains(SamlProtocolConstants.PARAMETER_ENTITY_ID)) {
+        if (StringUtils.isBlank(param) || param.contains("ExtCas") || !param.contains(SamlProtocolConstants.PARAMETER_ENTITY_ID)) {
             return null;
         }
         val start = param.indexOf(SamlProtocolConstants.PARAMETER_ENTITY_ID + "=") + SamlProtocolConstants.PARAMETER_ENTITY_ID.length() + 1;
         val end = param.indexOf("&", start);
-        val id = param.substring(start, end);
-        return EncodingUtils.urlDecode(id);
+        val id = EncodingUtils.urlDecode(param.substring(start, end));
+        return id;
     }
 
     @Override

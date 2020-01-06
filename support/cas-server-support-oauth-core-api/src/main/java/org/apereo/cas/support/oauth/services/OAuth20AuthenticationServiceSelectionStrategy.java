@@ -6,9 +6,6 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
-import org.apereo.cas.support.oauth.OAuth20GrantTypes;
-import org.apereo.cas.support.oauth.util.OAuth20Utils;
-import org.apereo.cas.util.HttpRequestUtils;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -85,25 +82,7 @@ public class OAuth20AuthenticationServiceSelectionStrategy implements Authentica
         val clientId = resolveClientIdFromService(service);
 
         if (clientId.isPresent()) {
-            val redirectUri = resolveRedirectUri(service);
-            if (redirectUri.isPresent()) {
-                return this.webApplicationServiceFactory.createService(redirectUri.get().getValue());
-            }
-            val grantType = resolveGrantType(service);
-            if (grantType.isPresent()) {
-                var id = StringUtils.EMPTY;
-                val grantValue = grantType.get().getValue();
-                if (OAuth20Utils.isGrantType(grantValue, OAuth20GrantTypes.CLIENT_CREDENTIALS)) {
-                    LOGGER.debug("Located grant type [{}]; checking for service headers", grantValue);
-                    val request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
-                    id = OAuth20Utils.getServiceRequestHeaderIfAny(request);
-                }
-                if (StringUtils.isBlank(id)) {
-                    id = clientId.get().getValue();
-                }
-                LOGGER.debug("Built web application service based on identifier [{}]", id);
-                return this.webApplicationServiceFactory.createService(id);
-            }
+            return this.webApplicationServiceFactory.createService(clientId.get().getValue());
         }
         return service;
     }

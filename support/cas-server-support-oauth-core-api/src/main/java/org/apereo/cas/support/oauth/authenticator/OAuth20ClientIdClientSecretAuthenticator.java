@@ -62,7 +62,7 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator<U
             return;
         }
         if (canAuthenticate(context)) {
-            val service = this.webApplicationServiceServiceFactory.createService(registeredService.getServiceId());
+            val service = this.webApplicationServiceServiceFactory.createService(registeredService.getClientId());
             val audit = AuditableContext.builder()
                 .service(service)
                 .registeredService(registeredService)

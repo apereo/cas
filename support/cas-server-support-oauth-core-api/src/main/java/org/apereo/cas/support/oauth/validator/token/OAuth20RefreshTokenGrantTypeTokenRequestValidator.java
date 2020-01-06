@@ -64,7 +64,7 @@ public class OAuth20RefreshTokenGrantTypeTokenRequestValidator extends BaseOAuth
             return false;
         }
         val service = getConfigurationContext().getWebApplicationServiceServiceFactory()
-            .createService(registeredService.getServiceId());
+            .createService(clientId);
         val audit = AuditableContext.builder()
             .service(service)
             .registeredService(registeredService)

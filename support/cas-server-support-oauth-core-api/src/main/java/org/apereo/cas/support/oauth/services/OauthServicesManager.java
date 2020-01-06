@@ -39,6 +39,16 @@ public class OauthServicesManager extends AbstractServicesManager {
     }
 
     @Override
+    public RegisteredService findServiceBy(final String serviceId) {
+        return this.mappedServiecs.get(serviceId);
+    }
+
+    @Override
+    public RegisteredService findServiceBy(final Service service) {
+        return this.mappedServiecs.get(service.getId());
+    }
+
+    @Override
     protected Collection<RegisteredService> getCandidateServicesToMatch(final String serviceId) {
         return this.mappedServiecs.values();
     }
@@ -54,10 +64,7 @@ public class OauthServicesManager extends AbstractServicesManager {
         this.mappedServiecs.put(oauthService.getClientId(), service);
     }
 
-    @Override
-    public RegisteredService findServiceBy(final Service service) {
-        return this.mappedServiecs.get(service.getId());
-    }
+
 
     @Override
     protected void loadInternal() {
@@ -80,5 +87,9 @@ public class OauthServicesManager extends AbstractServicesManager {
     @Override
     public boolean supports(final RegisteredService service) {
         return service != null && service instanceof OAuthRegisteredService;
+    }
+
+    public boolean supports(final Class clazz) {
+        return clazz != null && clazz.isAssignableFrom(OAuthRegisteredService.class);
     }
 }

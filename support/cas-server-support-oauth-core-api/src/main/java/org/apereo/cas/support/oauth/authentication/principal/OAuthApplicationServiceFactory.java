@@ -87,7 +87,7 @@ public class OAuthApplicationServiceFactory extends AbstractServiceFactory<WebAp
         }
         val start = param.indexOf(OAuth20Constants.CLIENT_ID + "=") + OAuth20Constants.CLIENT_ID.length() + 1;
         val end = param.indexOf("&", start);
-        val id = param.substring(start, end);
+        val id = param.substring(start, end > -1 ? end : param.length());
         return id;
     }
 
@@ -108,7 +108,7 @@ public class OAuthApplicationServiceFactory extends AbstractServiceFactory<WebAp
     public WebApplicationService createService(final String id) {
         val request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
         val clientId = extractClientId(id);
-        return newWebApplicationService(request, clientId, id);
+        return newWebApplicationService(request, clientId != null ? clientId : id, id);
     }
 
     @Override

@@ -37,10 +37,9 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
 
         LOGGER.debug("OAuth grant type is [{}]", grantType);
 
-        val redirectUri = getRegisteredServiceIdentifierFromRequest(request);
         val registeredService = getOAuthRegisteredServiceBy(request);
         if (registeredService == null) {
-            throw new UnauthorizedServiceException("Unable to locate service in registry for redirect URI " + redirectUri);
+            throw new UnauthorizedServiceException("Unable to locate service in registry for redirect URI ");
         }
 
         val requestedScopes = OAuth20Utils.parseRequestScopes(request);
@@ -49,7 +48,7 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
             throw new InvalidTicketException(getOAuthParameter(request));
         }
         val scopes = extractRequestedScopesByToken(requestedScopes, token, request);
-        val service = getOAuthConfigurationContext().getWebApplicationServiceServiceFactory().createService(redirectUri);
+        val service = getOAuthConfigurationContext().getWebApplicationServiceServiceFactory().createService(registeredService.getClientId());
 
         val generateRefreshToken = isAllowedToGenerateRefreshToken() && registeredService.isGenerateRefreshToken();
         val builder = AccessTokenRequestDataHolder.builder()
@@ -100,7 +99,7 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
      * @return the registered service identifier from request
      */
     protected String getRegisteredServiceIdentifierFromRequest(final HttpServletRequest request) {
-        return request.getParameter(OAuth20Constants.REDIRECT_URI);
+        return request.getParameter(OAuth20Constants.CLIENT_ID);
     }
 
     /**
@@ -169,22 +168,15 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
 
     /**
      * Gets oauth registered service from the request.
-     * Implementation attempts to locate the redirect uri from request and
+     * Implementation attempts to locate the client id from request and
      * check with service registry to find a matching oauth service.
      *
      * @param request the request
      * @return the registered service
      */
     protected OAuthRegisteredService getOAuthRegisteredServiceBy(final HttpServletRequest request) {
-        val redirectUri = getRegisteredServiceIdentifierFromRequest(request);
-        var registeredService = OAuth20Utils.getRegisteredOAuthServiceByRedirectUri(
-            getOAuthConfigurationContext().getServicesManager(), redirectUri);
-        if (registeredService == null) {
-            val clientId = request.getParameter(OAuth20Constants.CLIENT_ID);
-            registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(
-                getOAuthConfigurationContext().getServicesManager(), clientId);
-        }
-        LOGGER.debug("Located registered service [{}]", registeredService);
-        return registeredService;
+        val clientId = request.getParameter(OAuth20Constants.CLIENT_ID);
+        val sm = getOAuthConfigurationContext().getServicesManager();
+        return sm.findServiceBy(clientId, OAuthRegisteredService.class);
     }
 }

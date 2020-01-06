@@ -10,7 +10,6 @@ import org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.OidcSubjectTypes;
 import org.apereo.cas.services.PairwiseOidcRegisteredServiceUsernameAttributeProvider;
-import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.BaseOAuth20Controller;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoder;
@@ -38,7 +37,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * This is {@link OidcDynamicClientRegistrationEndpointController}.
@@ -81,7 +79,8 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuth20
                 throw new IllegalArgumentException("Redirect URI cannot contain a fragment");
             }
 
-            val servicesManager = getOAuthConfigurationContext().getServicesManager();
+            val registeredService = new OidcRegisteredService();
+            /*
             val registeredService = registrationRequest.getRedirectUris()
                 .stream()
                 .map(uri -> (OidcRegisteredService)
@@ -89,6 +88,7 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuth20
                 .filter(Objects::nonNull)
                 .findFirst()
                 .orElseGet(OidcRegisteredService::new);
+            */
 
             if (StringUtils.isNotBlank(registrationRequest.getClientName())) {
                 registeredService.setName(registrationRequest.getClientName());

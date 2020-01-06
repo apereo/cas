@@ -47,6 +47,10 @@ public class ChainingServicesManager implements ServicesManager {
         return serviceManagers.stream().filter(s -> s.supports(service)).findFirst();
     }
 
+    private Optional<ServicesManager> getManager(final Class clazz) {
+        return serviceManagers.stream().filter(s -> s.supports(clazz)).findFirst();
+    }
+
     @Override
     public RegisteredService save(final RegisteredService registeredService) {
         val manager = getManager(registeredService);
@@ -119,11 +123,8 @@ public class ChainingServicesManager implements ServicesManager {
 
     @Override
     public <T extends RegisteredService> T findServiceBy(final String serviceId, final Class<T> clazz) {
-        return serviceManagers.stream()
-                .map(s -> s.findServiceBy(serviceId, clazz))
-                .filter(Objects::nonNull)
-                .findFirst()
-                .orElse(null);
+        val manager = getManager(clazz);
+        return manager.isPresent() ? manager.get().findServiceBy(serviceId, clazz) : null;
     }
 
     @Override

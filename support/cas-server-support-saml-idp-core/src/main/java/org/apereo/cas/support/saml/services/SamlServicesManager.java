@@ -86,4 +86,9 @@ public class SamlServicesManager extends AbstractServicesManager {
     public boolean supports(final RegisteredService service) {
         return service != null && service instanceof SamlRegisteredService;
     }
+
+    @Override
+    public boolean supports(final Class clazz) {
+        return clazz != null && clazz.isAssignableFrom(SamlRegisteredService.class);
+    }
 }

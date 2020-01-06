@@ -214,6 +214,16 @@ public interface ServicesManager {
     }
 
     /**
+     * Returns true if this manager supports the type of registered service.
+     *
+     * @param clazz - class types that are supported
+     * @return - true if supported
+     */
+    default boolean supports(final Class clazz) {
+        return true;
+    }
+
+    /**
      * Deletes all services of a given type handeled by this manager.
      *
      * @param service - service type

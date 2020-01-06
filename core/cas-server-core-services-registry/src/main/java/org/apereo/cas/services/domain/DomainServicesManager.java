@@ -116,6 +116,10 @@ public class DomainServicesManager extends AbstractServicesManager {
 
     @Override
     public boolean supports(final RegisteredService service) {
-        return service != null && service.getClass().getCanonicalName().equals(RegexRegisteredService.class.getCanonicalName());
+        return this.supports(service.getClass());
+    }
+
+    public boolean supports(final Class clazz) {
+        return clazz != null && clazz.getCanonicalName().equals(RegexRegisteredService.class.getCanonicalName());
     }
 }

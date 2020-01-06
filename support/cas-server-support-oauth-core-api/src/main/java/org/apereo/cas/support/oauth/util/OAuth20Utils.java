@@ -16,7 +16,6 @@ import org.apereo.cas.web.flow.CasWebflowConstants;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
@@ -44,7 +43,6 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -89,36 +87,8 @@ public class OAuth20Utils {
         if (StringUtils.isBlank(clientId)) {
             return null;
         }
-        return getRegisteredOAuthServiceByPredicate(servicesManager, s -> s.getClientId().equalsIgnoreCase(clientId));
+        return servicesManager.findServiceBy(clientId, OAuthRegisteredService.class);
     }
-
-    /**
-     * Gets registered oauth service by redirect uri.
-     *
-     * @param servicesManager the services manager
-     * @param redirectUri     the redirect uri
-     * @return the registered OAuth service by redirect uri
-     */
-    public static OAuthRegisteredService getRegisteredOAuthServiceByRedirectUri(final ServicesManager servicesManager,
-                                                                                final String redirectUri) {
-        if (StringUtils.isBlank(redirectUri)) {
-            return null;
-        }
-        return getRegisteredOAuthServiceByPredicate(servicesManager, s -> s.matches(redirectUri));
-    }
-
-    @SuppressFBWarnings("PRMC_POSSIBLY_REDUNDANT_METHOD_CALLS")
-    private static OAuthRegisteredService getRegisteredOAuthServiceByPredicate(final ServicesManager servicesManager,
-                                                                               final Predicate<OAuthRegisteredService> predicate) {
-        val services = servicesManager.getAllServices();
-        return services.stream()
-            .filter(OAuthRegisteredService.class::isInstance)
-            .map(OAuthRegisteredService.class::cast)
-            .filter(predicate)
-            .findFirst()
-            .orElse(null);
-    }
-
 
     /**
      * Gets attributes.

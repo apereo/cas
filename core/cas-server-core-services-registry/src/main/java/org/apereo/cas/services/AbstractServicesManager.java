@@ -103,7 +103,7 @@ public abstract class AbstractServicesManager implements ServicesManager {
             return null;
         }
         val service = findServiceBy(serviceId);
-        if (service != null && service.getClass().equals(clazz)) {
+        if (service != null && clazz.isAssignableFrom(service.getClass())) {
             return (T) service;
         }
         return null;

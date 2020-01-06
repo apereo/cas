@@ -51,7 +51,7 @@ public class OidcRevocationEndpointController extends BaseOAuth20Controller {
             val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(
                 getOAuthConfigurationContext().getServicesManager(),
                 credentials.getUsername());
-            val service = getOAuthConfigurationContext().getWebApplicationServiceServiceFactory().createService(registeredService.getServiceId());
+            val service = getOAuthConfigurationContext().getWebApplicationServiceServiceFactory().createService(registeredService.getClientId());
 
             val audit = AuditableContext.builder()
                 .service(service)
