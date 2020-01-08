@@ -1,4 +1,3 @@
-<script type="text/javascript" th:src="@{#{webjars.zxcvbn.js}}"></script>
 <script type="text/javascript" th:src="@{#{webjars.jqueryui.js}}"></script>
 <script src="//www.google.com/recaptcha/api.js" async defer th:if="${recaptchaSiteKey != null and recaptchaVersion=='v2'}"></script>
 <script th:src="${'//www.google.com/recaptcha/api.js?render=' + recaptchaSiteKey}" th:if="${recaptchaSiteKey != null and recaptchaVersion == 'v3'}"></script>
