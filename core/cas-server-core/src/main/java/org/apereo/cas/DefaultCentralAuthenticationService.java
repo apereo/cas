@@ -196,7 +196,6 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         action = "PROXY_GRANTING_TICKET",
         actionResolverName = "CREATE_PROXY_GRANTING_TICKET_RESOLVER",
         resourceResolverName = "CREATE_PROXY_GRANTING_TICKET_RESOURCE_RESOLVER")
-
     @Override
     public ProxyGrantingTicket createProxyGrantingTicket(final String serviceTicketId, final AuthenticationResult authenticationResult)
         throws AuthenticationException, AbstractTicketException {
