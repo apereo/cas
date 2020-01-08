@@ -1657,7 +1657,7 @@ ext.libraries = [
                     exclude(group: "org.mockito", module: "mockito-all")
                     force = true
                 },
-                dependencies.create("junit:junit:4.12") {
+                dependencies.create("junit:junit:4.13") {
                     force = true
                 },
                 dependencies.create("org.junit.jupiter:junit-jupiter-api:$junitVersion") {
