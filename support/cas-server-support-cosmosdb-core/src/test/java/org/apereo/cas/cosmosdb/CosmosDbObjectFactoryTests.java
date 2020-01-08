@@ -1,6 +1,7 @@
 package org.apereo.cas.cosmosdb;
 
 import org.apereo.cas.configuration.model.support.cosmosdb.CosmosDbServiceRegistryProperties;
+import org.apereo.cas.util.EncodingUtils;
 
 import lombok.val;
 import org.junit.jupiter.api.Test;
@@ -34,7 +35,7 @@ public class CosmosDbObjectFactoryTests {
         val factory = new CosmosDbObjectFactory(applicationContext);
         val properties = new CosmosDbServiceRegistryProperties();
         properties.setUri("http://localhost:1234");
-        properties.setKey("123456");
+        properties.setKey(EncodingUtils.encodeBase64("123456"));
         assertNotNull(factory.createDocumentClient(properties));
     }
 
@@ -43,7 +44,7 @@ public class CosmosDbObjectFactoryTests {
         val factory = new CosmosDbObjectFactory(applicationContext);
         val properties = new CosmosDbServiceRegistryProperties();
         properties.setUri("http://localhost:1234");
-        properties.setKey("123456");
+        properties.setKey(EncodingUtils.encodeBase64("123456"));
         assertNotNull(factory.createDocumentDbFactory(properties));
     }
 
@@ -52,7 +53,7 @@ public class CosmosDbObjectFactoryTests {
         val factory = new CosmosDbObjectFactory(applicationContext);
         val properties = new CosmosDbServiceRegistryProperties();
         properties.setUri("http://localhost:1234");
-        properties.setKey("123456");
+        properties.setKey(EncodingUtils.encodeBase64("123456"));
         assertNotNull(factory.createDocumentDbTemplate(factory.createDocumentDbFactory(properties), properties));
     }
 
