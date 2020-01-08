@@ -26,6 +26,7 @@ import java.util.Objects;
 @Endpoint(id = "duoPing", enableByDefault = false)
 public class DuoSecurityPingEndpoint extends BaseCasActuatorEndpoint {
     private static final int MAP_SIZE = 8;
+
     private final ApplicationContext applicationContext;
 
     public DuoSecurityPingEndpoint(final CasConfigurationProperties casProperties,
