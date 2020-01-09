@@ -7,6 +7,7 @@ import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 import com.unboundid.ldap.sdk.LDAPConnection;
 import lombok.Cleanup;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.jupiter.api.BeforeAll;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,8 +27,9 @@ import org.springframework.test.context.TestPropertySource;
     "cas.consent.ldap.consentAttributeName=description",
     "cas.consent.ldap.bindDn=cn=Directory Manager",
     "cas.consent.ldap.bindCredential=password"
-    })
+})
 @EnabledIfContinuousIntegration
+@Slf4j
 public class LdapContinuousIntegrationConsentRepositoryTests extends BaseLdapConsentRepositoryTests {
     private static final int LDAP_PORT = 10389;
 
@@ -40,10 +42,9 @@ public class LdapContinuousIntegrationConsentRepositoryTests extends BaseLdapCon
         @Cleanup
         val localhost = new LDAPConnection("localhost", LDAP_PORT,
             "cn=Directory Manager", "password");
-        LdapIntegrationTestsOperations.populateEntries(
-            localhost,
-            new ClassPathResource("ldif/ldap-consent.ldif").getInputStream(),
-            "ou=people,dc=example,dc=org");
+        val resource = new ClassPathResource("ldif/ldap-consent.ldif");
+        LOGGER.debug("Populating LDAP entries from [{}]", resource);
+        LdapIntegrationTestsOperations.populateEntries(localhost, resource.getInputStream(), "ou=people,dc=example,dc=org");
     }
 
     @Override
