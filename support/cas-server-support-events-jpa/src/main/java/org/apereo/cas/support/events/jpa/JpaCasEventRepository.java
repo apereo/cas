@@ -1,5 +1,6 @@
 package org.apereo.cas.support.events.jpa;
 
+import org.apereo.cas.support.events.CasEventRepositoryFilter;
 import org.apereo.cas.support.events.dao.AbstractCasEventRepository;
 import org.apereo.cas.support.events.dao.CasEvent;
 
@@ -29,8 +30,12 @@ public class JpaCasEventRepository extends AbstractCasEventRepository {
     @PersistenceContext(unitName = "eventsEntityManagerFactory")
     private transient EntityManager entityManager;
 
+    public JpaCasEventRepository(final CasEventRepositoryFilter eventRepositoryFilter) {
+        super(eventRepositoryFilter);
+    }
+
     @Override
-    public void save(final CasEvent event) {
+    public void saveInternal(final CasEvent event) {
         this.entityManager.merge(event);
     }
 
