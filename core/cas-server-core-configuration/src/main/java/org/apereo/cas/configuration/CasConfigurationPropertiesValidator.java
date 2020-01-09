@@ -97,7 +97,7 @@ public class CasConfigurationPropertiesValidator {
                     if (cause != null) {
                         message += cause.getUnboundProperties()
                             .stream()
-                            .map(property -> String.format("\n\t%s = %s (Origin: %s)", property.getName(), property.getValue(), property.getOrigin()))
+                            .map(property -> String.format("%n\t%s = %s (Origin: %s)", property.getName(), property.getValue(), property.getOrigin()))
                             .collect(Collectors.joining("\n"));
                     }
                 }
