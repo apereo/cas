@@ -16,6 +16,7 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -67,19 +68,22 @@ public abstract class BaseLdapConsentRepositoryTests extends BaseConsentReposito
 
     @AfterEach
     public void cleanDecisions() {
-        val conn = getConnection();
-        try {
+
+        try (val conn = getConnection()) {
             val res = conn.search(USER_DN, SearchScope.SUB, DEF_FILTER, ATTR_NAME);
             if (res.getEntryCount() != 0 && res.getSearchEntry(USER_DN).hasAttribute(ATTR_NAME)) {
-                conn.modify(USER_DN, new Modification(ModificationType.DELETE, ATTR_NAME));
+                LOGGER.debug("Clearing out [{}] for [{}]", ATTR_NAME, USER_DN);
+                conn.modify(USER_DN, new Modification(ModificationType.REPLACE, ATTR_NAME, StringUtils.EMPTY));
             }
         } catch (final Exception e) {
             LOGGER.debug(e.getMessage(), e);
         }
-        try {
+
+        try (val conn = getConnection()) {
             val res2 = conn.search(USER2_DN, SearchScope.SUB, DEF_FILTER, ATTR_NAME);
             if (res2.getEntryCount() != 0 && res2.getSearchEntry(USER2_DN).hasAttribute(ATTR_NAME)) {
-                conn.modify(USER2_DN, new Modification(ModificationType.DELETE, ATTR_NAME));
+                LOGGER.debug("Clearing out [{}] for [{}]", ATTR_NAME, USER_DN);
+                conn.modify(USER2_DN, new Modification(ModificationType.REPLACE, ATTR_NAME, StringUtils.EMPTY));
             }
         } catch (final Exception e) {
             LOGGER.debug(e.getMessage(), e);
