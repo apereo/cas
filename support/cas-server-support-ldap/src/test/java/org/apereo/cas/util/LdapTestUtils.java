@@ -64,14 +64,18 @@ public class LdapTestUtils {
         try (val reader = new BufferedReader(new InputStreamReader(ldif, StandardCharsets.UTF_8))) {
             ldapString = reader.lines()
                 .map(line -> {
+                    LOGGER.debug("Reading LDAP entry line [{}]", line);
                     if (line.contains(BASE_DN_PLACEHOLDER)) {
                         return line.replace(BASE_DN_PLACEHOLDER, baseDn);
                     }
                     return line;
                 })
                 .collect(Collectors.joining(NEWLINE));
+            LOGGER.debug("LDIF to process is [{}]", ldapString);
+            val entries = new LdifReader(new StringReader(ldapString)).read().getEntries();
+            LOGGER.debug("Total entries read from LDAP are [{}] with baseDn [{}]", entries.size(), baseDn);
+            return entries;
         }
-        return new LdifReader(new StringReader(ldapString)).read().getEntries();
     }
 
     /**
@@ -87,9 +91,9 @@ public class LdapTestUtils {
     /**
      * Creates the given LDAP entries.
      *
-     * @param connection  Open LDAP connection used to connect to directory.
-     * @param entries     Collection of LDAP entries.
-     * @param connInit    the connection initializer
+     * @param connection Open LDAP connection used to connect to directory.
+     * @param entries    Collection of LDAP entries.
+     * @param connInit   the connection initializer
      */
     public static void createLdapEntries(final LDAPConnection connection, final Collection<LdapEntry> entries,
                                          final BindConnectionInitializer connInit) {
@@ -118,9 +122,9 @@ public class LdapTestUtils {
     /**
      * Modify ldap entries.
      *
-     * @param connection  the connection
-     * @param entries     the entries
-     * @param connInit    the connection initializer
+     * @param connection the connection
+     * @param entries    the entries
+     * @param connInit   the connection initializer
      */
     public static void modifyLdapEntries(final LDAPConnection connection, final Collection<LdapEntry> entries,
                                          final BindConnectionInitializer connInit) {
@@ -140,11 +144,11 @@ public class LdapTestUtils {
     /**
      * Modify ldap entry.
      *
-     * @param serverCon   the server con
-     * @param dn          the dn
-     * @param attr        the attr
-     * @param add         the add
-     * @param connInit    the connection initializer
+     * @param serverCon the server con
+     * @param dn        the dn
+     * @param attr      the attr
+     * @param add       the add
+     * @param connInit  the connection initializer
      */
     public static void modifyLdapEntry(final LDAPConnection serverCon, final String dn,
                                        final LdapAttribute attr,
@@ -168,10 +172,10 @@ public class LdapTestUtils {
     /**
      * Modify ldap entry.
      *
-     * @param serverCon   the server con
-     * @param dn          the dn
-     * @param attr        the attr
-     * @param connInit    the connection initializer
+     * @param serverCon the server con
+     * @param dn        the dn
+     * @param attr      the attr
+     * @param connInit  the connection initializer
      */
     public static void modifyLdapEntry(final LDAPConnection serverCon, final LdapEntry dn,
                                        final LdapAttribute attr,
