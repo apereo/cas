@@ -97,25 +97,26 @@ public class LdapTestUtils {
      */
     public static void createLdapEntries(final LDAPConnection connection, final Collection<LdapEntry> entries,
                                          final BindConnectionInitializer connInit) {
-        try {
-            for (val entry : entries) {
-                val attrs = new ArrayList<Attribute>(entry.getAttributeNames().length);
-                attrs.addAll(entry.getAttributes().stream()
-                    .map(a -> new Attribute(a.getName(), a.getStringValues()))
-                    .collect(Collectors.toList()));
+        for (val entry : entries) {
+            val attrs = new ArrayList<Attribute>(entry.getAttributeNames().length);
+            attrs.addAll(entry.getAttributes().stream()
+                .map(a -> new Attribute(a.getName(), a.getStringValues()))
+                .collect(Collectors.toList()));
 
-                val ad = new AddRequest(entry.getDn(), attrs);
-                LOGGER.debug("Creating entry [{}] with attributes [{}]", entry, attrs);
+            val ad = new AddRequest(entry.getDn(), attrs);
+            LOGGER.debug("Creating entry [{}] with attributes [{}]", entry, attrs);
+            try {
                 connection.add(ad);
-            }
-        } catch (final LDAPException e) {
-            if (e.getResultCode().equals(ResultCode.ENTRY_ALREADY_EXISTS)) {
-                modifyLdapEntries(connection, entries, connInit);
-            } else {
+            } catch (final LDAPException e) {
+                LOGGER.debug(e.getMessage(), e);
+                if (e.getResultCode().equals(ResultCode.ENTRY_ALREADY_EXISTS)) {
+                    modifyLdapEntries(connection, entries, connInit);
+                } else {
+                    LOGGER.error(e.getMessage(), e);
+                }
+            } catch (final Exception e) {
                 LOGGER.error(e.getMessage(), e);
             }
-        } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
         }
     }
 
@@ -128,7 +129,10 @@ public class LdapTestUtils {
      */
     public static void modifyLdapEntries(final LDAPConnection connection, final Collection<LdapEntry> entries,
                                          final BindConnectionInitializer connInit) {
-        entries.forEach(entry -> entry.getAttributes().forEach(ldapAttribute -> modifyLdapEntry(connection, entry, ldapAttribute, connInit)));
+        entries.forEach(entry -> {
+            LOGGER.debug("Modifying LDAP entry [{}]", entry);
+            entry.getAttributes().forEach(ldapAttribute -> modifyLdapEntry(connection, entry, ldapAttribute, connInit));
+        });
     }
 
     /**
@@ -155,15 +159,17 @@ public class LdapTestUtils {
                                        final AttributeModification.Type add,
                                        final BindConnectionInitializer connInit) {
 
-        try {
-            val address = "ldap://" + serverCon.getConnectedAddress() + ':' + serverCon.getConnectedPort();
-            val config = new ConnectionConfig(address);
-            if (connInit != null) {
-                config.setConnectionInitializers(connInit);
-            }
-            val connectionFactory = new DefaultConnectionFactory(config);
+        val address = "ldap://" + serverCon.getConnectedAddress() + ':' + serverCon.getConnectedPort();
+        val config = new ConnectionConfig(address);
+        if (connInit != null) {
+            config.setConnectionInitializers(connInit);
+        }
+        LOGGER.debug("Created modification request connection configuration [{}] for [{}]", config, address);
+        try (val connectionFactory = new DefaultConnectionFactory(config)) {
             val modify = new ModifyOperation(connectionFactory);
-            modify.execute(new ModifyRequest(dn, new AttributeModification(add, attr)));
+            val request = new ModifyRequest(dn, new AttributeModification(add, attr));
+            LOGGER.debug("Executing modification request [{}] with type [{}] for [{}]", request, add, dn);
+            modify.execute(request);
         } catch (final Exception e) {
             LOGGER.debug(e.getMessage(), e);
         }
