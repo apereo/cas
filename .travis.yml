@@ -137,6 +137,9 @@ jobs:
       script: ./ci/tests/webapp/validate-eurekaserver-webapp.sh
       name: "Validate Eureka Discovery Server"
     - stage: validate
+      script: ./ci/tests/webapp/validate-bootadmin-webapp.sh
+      name: "Validate Spring Boot Admin Server"
+    - stage: validate
       if: NOT (head_branch =~ env(DEPENDENCY_BOT_BRANCH) and type = pull_request)
       script: ./ci/tests/validate-tests.sh
       name: "Validate Tests & Test Suites"
