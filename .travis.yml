@@ -151,11 +151,20 @@ jobs:
       script: ./ci/tests/groovy/run-tests-groovy.sh
       name: "Groovy Tests"
     - stage: test
+      script: ./ci/tests/filesystem/run-tests-filesystem.sh
+      name: "FileSystem Tests"
+    - stage: test
+      script: ./ci/tests/jdbc/run-tests-jdbc.sh
+      name: "JDBC Tests"
+    - stage: test
       script: ./ci/tests/webflow/run-tests-webflow.sh
       name: "Spring Webflow Tests"
     - stage: test
       script: ./ci/tests/restful/run-tests-restful.sh
       name: "RESTful Tests"
+    - stage: test
+      script: ./ci/tests/ldap/run-tests-ldap.sh
+      name: "LDAP Tests"
     - stage: test
       script: ./ci/tests/amazon/run-tests-aws.sh
       name: "AWS Tests"
@@ -178,20 +187,11 @@ jobs:
       script: ./ci/tests/ehcache/run-tests-ehcache.sh
       name: "Ehcache Tests"
     - stage: test
-      script: ./ci/tests/filesystem/run-tests-filesystem.sh
-      name: "FileSystem Tests"
-    - stage: test
-      script: ./ci/tests/jdbc/run-tests-jdbc.sh
-      name: "JDBC Tests"
-    - stage: test
       script: ./ci/tests/ignite/run-tests-ignite.sh
       name: "Apache Ignite Tests"
     - stage: test
       script: ./ci/tests/influxdb/run-tests-influxdb.sh
       name: "InfluxDb Tests"
-    - stage: test
-      script: ./ci/tests/ldap/run-tests-ldap.sh
-      name: "LDAP Tests"
     - stage: test
       script: ./ci/tests/mail/run-tests-mail.sh
       name: "Mail Tests"
