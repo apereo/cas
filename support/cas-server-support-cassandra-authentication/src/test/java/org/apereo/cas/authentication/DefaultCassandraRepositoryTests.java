@@ -6,6 +6,9 @@ import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
+import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
+import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
@@ -40,12 +43,14 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasPersonDirectoryTestConfiguration.class,
-    CasCoreUtilConfiguration.class,
     CasCoreHttpConfiguration.class,
     CasCoreAuthenticationConfiguration.class,
     CasCoreAuthenticationSupportConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
+    CasCoreTicketIdGeneratorsConfiguration.class,
+    CasCoreTicketCatalogConfiguration.class,
+    CasCoreTicketsConfiguration.class,
     CasCoreWebConfiguration.class,
     CasCoreUtilConfiguration.class,
     CasCoreLogoutConfiguration.class,
