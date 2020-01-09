@@ -40,8 +40,7 @@ public class LdapContinuousIntegrationConsentRepositoryTests extends BaseLdapCon
     @SneakyThrows
     public static void bootstrap() {
         @Cleanup
-        val localhost = new LDAPConnection("localhost", LDAP_PORT,
-            "cn=Directory Manager", "password");
+        val localhost = new LDAPConnection("localhost", LDAP_PORT, "cn=Directory Manager", "password");
         val resource = new ClassPathResource("ldif/ldap-consent.ldif");
         LOGGER.debug("Populating LDAP entries from [{}]", resource);
         LdapIntegrationTestsOperations.populateEntries(localhost, resource.getInputStream(), "ou=people,dc=example,dc=org");
