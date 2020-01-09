@@ -5,8 +5,6 @@ import org.apereo.cas.couchdb.events.EventCouchDbRepository;
 import org.apereo.cas.support.events.dao.AbstractCasEventRepository;
 import org.apereo.cas.support.events.dao.CasEvent;
 
-import lombok.RequiredArgsConstructor;
-
 import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.concurrent.ExecutorService;
@@ -19,7 +17,6 @@ import java.util.stream.Collectors;
  * @author Timur Duehr
  * @since 6.0.0
  */
-@RequiredArgsConstructor
 public class CouchDbCasEventRepository extends AbstractCasEventRepository {
 
     private final EventCouchDbRepository couchDb;
@@ -28,32 +25,20 @@ public class CouchDbCasEventRepository extends AbstractCasEventRepository {
 
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
+    public CouchDbCasEventRepository(final CasEventRepositoryFilter eventRepositoryFilter,
+                                     final EventCouchDbRepository couchDb, final boolean asynchronous) {
+        super(eventRepositoryFilter);
+        this.couchDb = couchDb;
+        this.asynchronous = asynchronous;
+    }
+
     private static Collection<CasEvent> castEvents(final Collection<CouchDbCasEvent> events) {
         return events.stream().map(event -> (CasEvent) event).collect(Collectors.toSet());
     }
 
     @Override
-    public void save(final CasEvent event) {
-        if (asynchronous) {
-            this.executorService.execute(() -> couchDb.add(new CouchDbCasEvent(event)));
-        } else {
-            couchDb.add(new CouchDbCasEvent(event));
-        }
-    }
-
-    @Override
     public Collection<? extends CasEvent> load() {
         return couchDb.getAll();
-    }
-
-    @Override
-    public Collection<CasEvent> getEventsOfType(final String type) {
-        return castEvents(couchDb.findByType(type));
-    }
-
-    @Override
-    public Collection<CasEvent> getEventsOfType(final String type, final ZonedDateTime dateTime) {
-        return castEvents(couchDb.findByTypeSince(type, dateTime.toLocalDateTime()));
     }
 
     @Override
@@ -67,12 +52,31 @@ public class CouchDbCasEventRepository extends AbstractCasEventRepository {
     }
 
     @Override
-    public Collection<CasEvent> getEventsForPrincipal(final String id, final ZonedDateTime dateTime) {
-        return castEvents(couchDb.findByPrincipalSince(id, dateTime.toLocalDateTime()));
+    public Collection<CasEvent> getEventsOfType(final String type) {
+        return castEvents(couchDb.findByType(type));
+    }
+
+    @Override
+    public Collection<CasEvent> getEventsOfType(final String type, final ZonedDateTime dateTime) {
+        return castEvents(couchDb.findByTypeSince(type, dateTime.toLocalDateTime()));
     }
 
     @Override
     public Collection<CasEvent> getEventsForPrincipal(final String id) {
         return castEvents(couchDb.findByPrincipalId(id));
+    }
+
+    @Override
+    public Collection<CasEvent> getEventsForPrincipal(final String id, final ZonedDateTime dateTime) {
+        return castEvents(couchDb.findByPrincipalSince(id, dateTime.toLocalDateTime()));
+    }
+
+    @Override
+    public void saveInternal(final CasEvent event) {
+        if (asynchronous) {
+            this.executorService.execute(() -> couchDb.add(new CouchDbCasEvent(event)));
+        } else {
+            couchDb.add(new CouchDbCasEvent(event));
+        }
     }
 }

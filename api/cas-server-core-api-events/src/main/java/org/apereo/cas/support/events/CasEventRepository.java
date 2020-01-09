@@ -12,6 +12,16 @@ import java.util.Collection;
  * @since 5.0.0
  */
 public interface CasEventRepository {
+
+    /**
+     * Gets event repository filter.
+     *
+     * @return the event repository filter
+     */
+    default CasEventRepositoryFilter getEventRepositoryFilter() {
+        return CasEventRepositoryFilter.noOp();
+    }
+
     /**
      * Save.
      *
