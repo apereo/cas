@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml.web;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.config.CoreSamlConfiguration;
 import org.apereo.cas.config.SamlConfiguration;
 import org.apereo.cas.config.authentication.support.SamlAuthenticationEventExecutionPlanConfiguration;
@@ -49,8 +50,9 @@ public class SamlValidateEndpointTests extends AbstractCasEndpointTests {
 
     @Test
     public void verifyOperation() {
-        val results = samlValidateEndpoint.handle("sample", "sample",
-            CoreAuthenticationTestUtils.getService().getId());
+        val service = CoreAuthenticationTestUtils.getService();
+        assertNotNull(samlValidateEndpoint);
+        val results = samlValidateEndpoint.handle("sample", "sample", service.getId());
         assertNotNull(results);
         assertFalse(results.isEmpty());
     }
