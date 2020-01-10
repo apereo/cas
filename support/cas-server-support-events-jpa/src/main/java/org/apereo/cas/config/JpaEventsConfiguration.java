@@ -27,6 +27,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
+
 import java.util.List;
 
 /**
@@ -90,7 +91,8 @@ public class JpaEventsConfiguration {
     }
 
     @Bean
-    public CasEventRepository casEventRepository() {
-        return new JpaCasEventRepository(jpaEventRepositoryFilter());
+    @Autowired
+    public CasEventRepository casEventRepository(@Qualifier("transactionManagerEvents") final PlatformTransactionManager transactionManager) {
+        return new JpaCasEventRepository(jpaEventRepositoryFilter(), transactionManager);
     }
 }
