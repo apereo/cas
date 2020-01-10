@@ -1,7 +1,6 @@
 package org.apereo.cas.support.saml.web;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.config.CoreSamlConfiguration;
 import org.apereo.cas.config.SamlConfiguration;
 import org.apereo.cas.config.authentication.support.SamlAuthenticationEventExecutionPlanConfiguration;
