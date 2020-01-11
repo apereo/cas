@@ -16,7 +16,6 @@ import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.authentication.SamlResponseBuilder;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
@@ -31,16 +30,21 @@ import java.util.Map;
  * @since 6.1.0
  */
 @Endpoint(id = "samlValidate", enableByDefault = false)
-@Slf4j
 public class SamlValidateEndpoint extends BaseCasActuatorEndpoint {
     private final ServicesManager servicesManager;
+
     private final AuthenticationSystemSupport authenticationSystemSupport;
+
     private final ServiceFactory<WebApplicationService> serviceFactory;
+
     private final PrincipalFactory principalFactory;
+
     private final SamlResponseBuilder samlResponseBuilder;
+
     private final OpenSamlConfigBean openSamlConfigBean;
+
     private final AuditableExecution registeredServiceAccessStrategyEnforcer;
-    
+
     public SamlValidateEndpoint(final CasConfigurationProperties casProperties,
                                 final ServicesManager servicesManager,
                                 final AuthenticationSystemSupport authenticationSystemSupport,
