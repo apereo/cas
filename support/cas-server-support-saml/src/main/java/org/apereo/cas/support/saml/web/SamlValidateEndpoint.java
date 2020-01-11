@@ -1,6 +1,8 @@
 package org.apereo.cas.support.saml.web;
 
 import org.apereo.cas.CasViewConstants;
+import org.apereo.cas.audit.AuditableContext;
+import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
@@ -14,6 +16,7 @@ import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.authentication.SamlResponseBuilder;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
@@ -28,6 +31,7 @@ import java.util.Map;
  * @since 6.1.0
  */
 @Endpoint(id = "samlValidate", enableByDefault = false)
+@Slf4j
 public class SamlValidateEndpoint extends BaseCasActuatorEndpoint {
     private final ServicesManager servicesManager;
     private final AuthenticationSystemSupport authenticationSystemSupport;
@@ -35,14 +39,16 @@ public class SamlValidateEndpoint extends BaseCasActuatorEndpoint {
     private final PrincipalFactory principalFactory;
     private final SamlResponseBuilder samlResponseBuilder;
     private final OpenSamlConfigBean openSamlConfigBean;
-
+    private final AuditableExecution registeredServiceAccessStrategyEnforcer;
+    
     public SamlValidateEndpoint(final CasConfigurationProperties casProperties,
                                 final ServicesManager servicesManager,
                                 final AuthenticationSystemSupport authenticationSystemSupport,
                                 final ServiceFactory<WebApplicationService> serviceFactory,
                                 final PrincipalFactory principalFactory,
                                 final SamlResponseBuilder samlResponseBuilder,
-                                final OpenSamlConfigBean openSamlConfigBean) {
+                                final OpenSamlConfigBean openSamlConfigBean,
+                                final AuditableExecution registeredServiceAccessStrategyEnforcer) {
         super(casProperties);
         this.servicesManager = servicesManager;
         this.authenticationSystemSupport = authenticationSystemSupport;
@@ -50,6 +56,7 @@ public class SamlValidateEndpoint extends BaseCasActuatorEndpoint {
         this.principalFactory = principalFactory;
         this.samlResponseBuilder = samlResponseBuilder;
         this.openSamlConfigBean = openSamlConfigBean;
+        this.registeredServiceAccessStrategyEnforcer = registeredServiceAccessStrategyEnforcer;
     }
 
     /**
@@ -61,16 +68,22 @@ public class SamlValidateEndpoint extends BaseCasActuatorEndpoint {
      * @return the map
      */
     @ReadOperation
-    public Map<String, Object> handle(final String username,
-                                      final String password,
-                                      final String service) {
-
-        val selectedService = this.serviceFactory.createService(service);
-        val registeredService = this.servicesManager.findServiceBy(selectedService);
-
+    public Map<String, Object> handle(final String username, final String password, final String service) {
         val credential = new UsernamePasswordCredential(username, password);
+        val selectedService = this.serviceFactory.createService(service);
         val result = this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(selectedService, credential);
         val authentication = result.getAuthentication();
+
+        val registeredService = this.servicesManager.findServiceBy(selectedService);
+        val audit = AuditableContext.builder()
+            .service(selectedService)
+            .authentication(authentication)
+            .registeredService(registeredService)
+            .retrievePrincipalAttributesFromReleasePolicy(Boolean.TRUE)
+            .build();
+        val accessResult = registeredServiceAccessStrategyEnforcer.execute(audit);
+        accessResult.throwExceptionIfNeeded();
+
         val principal = authentication.getPrincipal();
 
         val attributesToRelease = registeredService.getAttributeReleasePolicy().getAttributes(principal, selectedService, registeredService);
