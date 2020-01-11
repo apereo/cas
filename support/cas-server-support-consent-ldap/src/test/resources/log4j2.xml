@@ -6,9 +6,8 @@
         </Console>
     </Appenders>
     <Loggers>
-        <Logger name="org.apereo.cas" level="warn" />
-        <Logger name="org.apereo.cas.consent" level="debug" />
-        <Logger name="org.ldaptive" level="debug" />
+        <Logger name="org.apereo.cas" level="info" />
+        <Logger name="org.ldaptive" level="warn" />
         <Logger name="com.unboundid" level="warn" />
         <Root level="error">
             <AppenderRef ref="console"/>

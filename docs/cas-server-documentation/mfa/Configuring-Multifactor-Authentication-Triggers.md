@@ -317,7 +317,8 @@ class MyExampleScript {
         def service = args[0]
         def registeredService = args[1]
         def authentication = args[2]
-        def logger = args[3]
+        def httpRequest = args[3]
+        def logger = args[4]
 
         if (service.id == "https://www.example.com") {
             logger.info("Evaluating principal attributes [{}]", authentication.principal.attributes)
