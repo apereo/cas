@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
@@ -113,6 +114,10 @@ public class SamlConfiguration {
     @Qualifier("serviceValidationAuthorizers")
     private ObjectProvider<ServiceTicketValidationAuthorizersExecutionPlan> validationAuthorizers;
 
+    @Autowired
+    @Qualifier("registeredServiceAccessStrategyEnforcer")
+    private ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer;
+
     @ConditionalOnMissingBean(name = "samlResponseBuilder")
     @RefreshScope
     @Bean
@@ -201,6 +206,7 @@ public class SamlConfiguration {
             webApplicationServiceFactory.getObject(),
             PrincipalFactoryUtils.newPrincipalFactory(),
             samlResponseBuilder(),
-            openSamlConfigBean.getObject());
+            openSamlConfigBean.getObject(),
+            registeredServiceAccessStrategyEnforcer.getObject());
     }
 }
