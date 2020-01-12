@@ -19,12 +19,13 @@ import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.boot.actuate.endpoint.annotation.Selector;
 
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 
 /**
  * SSO Report web controller that produces JSON data for the view.
@@ -42,6 +43,7 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
     private static final String STATUS = "status";
 
     private static final String TICKET_GRANTING_TICKET = "ticketGrantingTicket";
+
     private final CentralAuthenticationService centralAuthenticationService;
 
     public SingleSignOnSessionsEndpoint(final CentralAuthenticationService centralAuthenticationService,
@@ -57,11 +59,12 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
      * @return the sso sessions
      */
     private Collection<Map<String, Object>> getActiveSsoSessions(final SsoSessionReportOptions option) {
-        val activeSessions = new ArrayList<Map<String, Object>>();
         val dateFormat = new ISOStandardDateFormat();
-        getNonExpiredTicketGrantingTickets().stream().map(TicketGrantingTicket.class::cast)
+        return getNonExpiredTicketGrantingTickets()
+            .stream()
+            .map(TicketGrantingTicket.class::cast)
             .filter(tgt -> !(option == SsoSessionReportOptions.DIRECT && tgt.getProxiedBy() != null))
-            .forEach(tgt -> {
+            .map(tgt -> {
                 val authentication = tgt.getAuthentication();
                 val principal = authentication.getPrincipal();
                 val sso = new HashMap<String, Object>(SsoSessionAttributeKeys.values().length);
@@ -82,9 +85,9 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
                     }
                 }
                 sso.put(SsoSessionAttributeKeys.AUTHENTICATED_SERVICES.toString(), tgt.getServices());
-                activeSessions.add(sso);
-            });
-        return activeSessions;
+                return sso;
+            })
+            .collect(Collectors.toList());
     }
 
     /**

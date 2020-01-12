@@ -61,6 +61,7 @@ public class CouchbaseAuditTrailManager extends AbstractAuditTrailManager {
                                       final boolean asynchronous) {
         this(couchbase, serializer);
         this.asynchronous = asynchronous;
+        com.couchbase.client.java.String
     }
 
     @Override
