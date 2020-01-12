@@ -25,7 +25,7 @@ public class MultiphaseAuthenticationWebflowConfigurer extends AbstractCasWebflo
 	public static final String TRANSITION_ID_MULTIPHASE_GET_USERID = "multiphaseGetUserId";
     public static final String TRANSITION_ID_MULTIPHASE_REDIRECT = "multiphaseRedirect";
 
-    static final String STATE_ID_MULTIPHASE_REDIRECT = "multiphaseRedirectView";
+    //static final String STATE_ID_MULTIPHASE_REDIRECT = "multiphaseRedirectView";
 	static final String STATE_ID_MULTIPHASE_GET_USERID = "multiphaseGetUserIdView";
 	//static final String STATE_ID_STORE_USERID = "storeUserIdForAuthentication";
 	static final String ACTION_ID_STORE_USERID_FOR_AUTHENTICATION = "storeUserIdForAuthenticationAction";
