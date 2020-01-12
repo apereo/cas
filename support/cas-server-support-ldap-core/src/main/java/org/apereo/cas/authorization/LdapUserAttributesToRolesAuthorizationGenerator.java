@@ -3,9 +3,8 @@ package org.apereo.cas.authorization;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapEntry;
-import org.ldaptive.SearchExecutor;
+import org.ldaptive.SearchOperation;
 import org.pac4j.core.authorization.generator.AuthorizationGenerator;
 import org.pac4j.core.profile.UserProfile;
 
@@ -30,20 +29,18 @@ public class LdapUserAttributesToRolesAuthorizationGenerator extends BaseUseAttr
     /**
      * Creates a new instance with the given required parameters.
      *
-     * @param factory              Source of LDAP connections for searches.
-     * @param userSearchExecutor   Executes the LDAP search for user data.
+     * @param userSearchOperation   Executes the LDAP search for user data.
      * @param allowMultipleResults allow multiple search results in which case the first result
      *                             returned is used to construct user details, or false to indicate that
      *                             a runtime exception should be raised on multiple search results for user details.
      * @param roleAttribute        the role attribute
      * @param rolePrefix           the role prefix
      */
-    public LdapUserAttributesToRolesAuthorizationGenerator(final ConnectionFactory factory,
-                                                           final SearchExecutor userSearchExecutor,
+    public LdapUserAttributesToRolesAuthorizationGenerator(final SearchOperation userSearchOperation,
                                                            final boolean allowMultipleResults,
                                                            final String roleAttribute,
                                                            final String rolePrefix) {
-        super(factory, userSearchExecutor, allowMultipleResults);
+        super(userSearchOperation, allowMultipleResults);
         this.roleAttribute = roleAttribute;
         this.rolePrefix = rolePrefix;
     }

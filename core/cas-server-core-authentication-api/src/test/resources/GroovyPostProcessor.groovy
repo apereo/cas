@@ -6,7 +6,7 @@ def run(Object[] args) {
     def logger = args[2]
 
     def credential = transaction.getPrimaryCredential().get()
-    builder.successes["test"].addWarning(new DefaultMessageDescriptor("some.authn.message"))
+    builder.successes["SimpleTestUsernamePasswordAuthenticationHandler"].addWarning(new DefaultMessageDescriptor("some.authn.message"))
     true
 }
 

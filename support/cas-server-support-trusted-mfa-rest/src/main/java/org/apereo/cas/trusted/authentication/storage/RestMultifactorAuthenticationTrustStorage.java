@@ -52,7 +52,7 @@ public class RestMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
 
     @Override
     public void expire(final LocalDateTime onOrBefore) {
-        val entity = getHttpEntity(onOrBefore);
+        val entity = getHttpEntity(onOrBefore.toString());
         restTemplate.exchange(getEndpointUrl(null), HttpMethod.POST, entity, Object.class);
     }
 

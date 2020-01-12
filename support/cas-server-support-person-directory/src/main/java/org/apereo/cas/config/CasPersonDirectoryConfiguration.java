@@ -280,12 +280,8 @@ public class CasPersonDirectoryConfiguration {
                 }
                 constraints.setDerefLinkFlag(true);
                 ldapDao.setSearchControls(constraints);
-
                 ldapDao.setOrder(ldap.getOrder());
-
-                LOGGER.debug("Initializing LDAP attribute source for [{}]", ldap.getLdapUrl());
-                ldapDao.initialize();
-
+                LOGGER.debug("Adding LDAP attribute source for [{}]", ldap.getLdapUrl());
                 list.add(ldapDao);
             });
 

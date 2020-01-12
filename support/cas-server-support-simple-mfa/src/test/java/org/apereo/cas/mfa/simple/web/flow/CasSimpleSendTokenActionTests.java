@@ -49,7 +49,6 @@ import static org.junit.jupiter.api.Assertions.*;
     properties = {
         "spring.mail.host=localhost",
         "spring.mail.port=25000",
-        "spring.mail.testConnection=true",
         "cas.authn.mfa.simple.mail.from=admin@example.org",
         "cas.authn.mfa.simple.mail.subject=CAS Token",
         "cas.authn.mfa.simple.mail.text=CAS Token is %s",

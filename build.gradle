@@ -69,7 +69,7 @@ ext {
     remoteDebuggingSuspend = Boolean.getBoolean("remoteDebuggingSuspend") ? "y" : "n"
     generateGitProperties = Boolean.getBoolean("generateGitProperties")
 
-    continuousIntegrationBuild = Boolean.getBoolean("CI") || Boolean.getBoolean("TRAVIS") || Boolean.getBoolean("CONTINUOUS_INTEGRATION")
+    continuousIntegrationBuild = System.getenv("CI") || Boolean.getBoolean("CI") || Boolean.getBoolean("TRAVIS") || Boolean.getBoolean("CONTINUOUS_INTEGRATION")
 }
 
 def isArtifactSigningRequired = {
@@ -84,7 +84,7 @@ if (!Boolean.getBoolean("skipSonarqube")) {
     apply plugin: "org.sonarqube"
 }
 
-if (continuousIntegrationBuild) {
+if (continuousIntegrationBuild || Boolean.getBoolean("enableBuildTimeTracker")) {
     apply plugin: "build-time-tracker"
     buildtimetracker {
         reporters {

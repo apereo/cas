@@ -24,6 +24,7 @@ dependencies {
     testImplementation project(":core:cas-server-core-monitor")
     testImplementation project(":core:cas-server-core-tickets")
     testImplementation project(":core:cas-server-core-cookie")
+    testImplementation project(":core:cas-server-core-logout")
     testImplementation project(":core:cas-server-core-cookie-api")
     
     testImplementation project(path: ":support:cas-server-support-ldap", configuration: "tests")

@@ -10,9 +10,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.ldaptive.LdapException;
-import org.ldaptive.Response;
 import org.ldaptive.ReturnAttributes;
-import org.ldaptive.SearchResult;
+import org.ldaptive.SearchResponse;
 
 /**
  * This is {@link LdapUserGraphicalAuthenticationRepository}.
@@ -33,7 +32,7 @@ public class LdapUserGraphicalAuthenticationRepository implements UserGraphicalA
             val gua = casProperties.getAuthn().getGua();
             val response = searchForId(username);
             if (LdapUtils.containsResultEntry(response)) {
-                val entry = response.getResult().getEntry();
+                val entry = response.getEntry();
                 val attribute = entry.getAttribute(gua.getLdap().getImageAttribute());
                 if (attribute != null && attribute.isBinary()) {
                     return ByteSource.wrap(attribute.getBinaryValue());
@@ -45,7 +44,7 @@ public class LdapUserGraphicalAuthenticationRepository implements UserGraphicalA
         return ByteSource.empty();
     }
 
-    private Response<SearchResult> searchForId(final String id) throws LdapException {
+    private SearchResponse searchForId(final String id) throws LdapException {
         val gua = casProperties.getAuthn().getGua();
         val filter = LdapUtils.newLdaptiveSearchFilter(gua.getLdap().getSearchFilter(),
             LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,

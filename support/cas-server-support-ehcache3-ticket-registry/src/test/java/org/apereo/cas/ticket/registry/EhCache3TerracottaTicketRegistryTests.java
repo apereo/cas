@@ -21,7 +21,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 }, properties = {
     "spring.mail.host=localhost",
     "spring.mail.port=25000",
-    "spring.mail.testConnection=false",
+
     "cas.ticket.registry.ehcache3.terracottaClusterUri=terracotta://localhost:9410/cas-application"
 })
 @EnabledIfContinuousIntegration

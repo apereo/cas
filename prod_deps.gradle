@@ -1,0 +1,25 @@
+dependencies {
+	implementation project(":webapp:cas-server-webapp-init-tomcat")
+	implementation project(":core:cas-server-core-events-configuration")
+	implementation project(":support:cas-server-support-redis-ticket-registry")
+	//implementation project(":support:cas-server-support-git-service-registry")
+	implementation project(":support:cas-server-support-json-service-registry")
+	
+	implementation project(":support:cas-server-support-ldap")
+	implementation project(":support:cas-server-support-ldap-monitor")
+	implementation project(":support:cas-server-support-gua")
+	implementation project(":support:cas-server-support-pac4j-webflow")
+	implementation project(":support:cas-server-support-saml")
+	implementation project(":support:cas-server-support-saml-idp")
+	implementation project(":support:cas-server-support-oauth-webflow")
+	implementation project(":support:cas-server-support-oidc")
+	implementation project(":support:cas-server-support-gauth")
+	implementation project(":support:cas-server-support-gauth-redis")
+	implementation project(":support:cas-server-support-trusted-mfa")
+	
+	implementation project(":support:cas-server-support-javamelody")
+	implementation project(":support:cas-server-support-sleuth")
+	implementation project(":support:cas-server-support-audit-rest")
+	implementation project(":support:cas-server-support-reports")
+	implementation project(":support:cas-server-support-metrics")
+}
