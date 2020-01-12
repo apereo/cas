@@ -30,8 +30,10 @@ public class PrepareForMultiphaseAuthenticationActionTests extends BaseMultiphas
     public void verifyAction() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
-        assertEquals(MultiphaseAuthenticationWebflowConfigurer.TRANSITION_ID_MULTIPHASE_GET_USERID, initializeLoginAction.execute(context).getId());
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), 
+                    request, new MockHttpServletResponse()));
+        assertEquals(MultiphaseAuthenticationWebflowConfigurer.TRANSITION_ID_MULTIPHASE_GET_USERID, 
+                initializeLoginAction.execute(context).getId());
         WebUtils.putMultiphaseAuthenticationUsername(context, "casuser");
         assertEquals("success", initializeLoginAction.execute(context).getId());
     }

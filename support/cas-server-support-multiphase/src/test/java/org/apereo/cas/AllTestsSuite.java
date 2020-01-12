@@ -9,7 +9,7 @@ import org.apereo.cas.web.flow.StoreUserIdForAuthenticationActionTests;
 
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWithl
+import org.junit.runner.RunWith;
 
 /**
  * This is {@link AllTestsSuite}
