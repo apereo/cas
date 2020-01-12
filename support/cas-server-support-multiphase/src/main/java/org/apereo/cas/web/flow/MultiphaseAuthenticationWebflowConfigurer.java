@@ -68,17 +68,18 @@ public class MultiphaseAuthenticationWebflowConfigurer extends AbstractCasWebflo
 
 			val actionState = createActionState(flow, CasWebflowConstants.STATE_ID_MULTIPHASE_STORE_USERID,
                     createEvaluateAction(ACTION_ID_STORE_USERID_FOR_AUTHENTICATION));
-            /*
+            
             LOGGER.debug("Creating transition with id [{}] for state [{}] to state [{}]",
                     CasWebflowConstants.TRANSITION_ID_SUCCESS, actionState.getId(), targetStateId);
             createTransitionForState(actionState, CasWebflowConstants.TRANSITION_ID_SUCCESS, targetStateId);
+            /*
 
             LOGGER.debug("Creating transition with id [{}] for state [{}] to state [{}]",
                     TRANSITION_ID_MULTIPHASE_REDIRECT, actionState.getId(), STATE_ID_MULTIPHASE_REDIRECT);
             createTransitionForState(actionState, TRANSITION_ID_MULTIPHASE_REDIRECT, STATE_ID_MULTIPHASE_REDIRECT);
             LOGGER.debug("Current possible outcomes: {}", (Object) flow.getPossibleOutcomes());
             */
-			createStateDefaultTransition(actionState, targetStateId);
+			//createStateDefaultTransition(actionState, targetStateId);
             // TODO: GUA, passwordless, any others using multiphase auth should
             // attach to CasWebflowConstants.STATE_ID_MULTIPHASE_STORE_USERID
 		}
