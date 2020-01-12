@@ -72,7 +72,8 @@ public class LdapIntegrationTestsOperations {
      * @throws Exception the exception
      */
     public static void populateEntries(final LDAPConnection c, final InputStream rs, final String baseDn) throws Exception {
-        LdapTestUtils.createLdapEntries(c, LdapTestUtils.readLdif(rs, baseDn), null);
+        val entries = LdapTestUtils.readLdif(rs, baseDn);
+        LdapTestUtils.createLdapEntries(c, entries, null);
     }
 
     /**

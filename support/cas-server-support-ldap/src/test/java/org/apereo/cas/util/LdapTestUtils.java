@@ -64,14 +64,18 @@ public class LdapTestUtils {
         try (val reader = new BufferedReader(new InputStreamReader(ldif, StandardCharsets.UTF_8))) {
             ldapString = reader.lines()
                 .map(line -> {
+                    LOGGER.debug("Reading LDAP entry line [{}]", line);
                     if (line.contains(BASE_DN_PLACEHOLDER)) {
                         return line.replace(BASE_DN_PLACEHOLDER, baseDn);
                     }
                     return line;
                 })
                 .collect(Collectors.joining(NEWLINE));
+            LOGGER.debug("LDIF to process is [{}]", ldapString);
+            val entries = new LdifReader(new StringReader(ldapString)).read().getEntries();
+            LOGGER.debug("Total entries read from LDAP are [{}] with baseDn [{}]", entries.size(), baseDn);
+            return entries;
         }
-        return new LdifReader(new StringReader(ldapString)).read().getEntries();
     }
 
     /**
@@ -87,44 +91,48 @@ public class LdapTestUtils {
     /**
      * Creates the given LDAP entries.
      *
-     * @param connection  Open LDAP connection used to connect to directory.
-     * @param entries     Collection of LDAP entries.
-     * @param connInit    the connection initializer
+     * @param connection Open LDAP connection used to connect to directory.
+     * @param entries    Collection of LDAP entries.
+     * @param connInit   the connection initializer
      */
     public static void createLdapEntries(final LDAPConnection connection, final Collection<LdapEntry> entries,
                                          final BindConnectionInitializer connInit) {
-        try {
-            for (val entry : entries) {
-                val attrs = new ArrayList<Attribute>(entry.getAttributeNames().length);
-                attrs.addAll(entry.getAttributes().stream()
-                    .map(a -> new Attribute(a.getName(), a.getStringValues()))
-                    .collect(Collectors.toList()));
+        for (val entry : entries) {
+            val attrs = new ArrayList<Attribute>(entry.getAttributeNames().length);
+            attrs.addAll(entry.getAttributes().stream()
+                .map(a -> new Attribute(a.getName(), a.getStringValues()))
+                .collect(Collectors.toList()));
 
-                val ad = new AddRequest(entry.getDn(), attrs);
-                LOGGER.debug("Creating entry [{}] with attributes [{}]", entry, attrs);
+            val ad = new AddRequest(entry.getDn(), attrs);
+            LOGGER.debug("Creating entry [{}] with attributes [{}]", entry, attrs);
+            try {
                 connection.add(ad);
-            }
-        } catch (final LDAPException e) {
-            if (e.getResultCode().equals(ResultCode.ENTRY_ALREADY_EXISTS)) {
-                modifyLdapEntries(connection, entries, connInit);
-            } else {
+            } catch (final LDAPException e) {
+                LOGGER.debug(e.getMessage(), e);
+                if (e.getResultCode().equals(ResultCode.ENTRY_ALREADY_EXISTS)) {
+                    modifyLdapEntries(connection, entries, connInit);
+                } else {
+                    LOGGER.error(e.getMessage(), e);
+                }
+            } catch (final Exception e) {
                 LOGGER.error(e.getMessage(), e);
             }
-        } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
         }
     }
 
     /**
      * Modify ldap entries.
      *
-     * @param connection  the connection
-     * @param entries     the entries
-     * @param connInit    the connection initializer
+     * @param connection the connection
+     * @param entries    the entries
+     * @param connInit   the connection initializer
      */
     public static void modifyLdapEntries(final LDAPConnection connection, final Collection<LdapEntry> entries,
                                          final BindConnectionInitializer connInit) {
-        entries.forEach(entry -> entry.getAttributes().forEach(ldapAttribute -> modifyLdapEntry(connection, entry, ldapAttribute, connInit)));
+        entries.forEach(entry -> {
+            LOGGER.debug("Modifying LDAP entry [{}]", entry);
+            entry.getAttributes().forEach(ldapAttribute -> modifyLdapEntry(connection, entry, ldapAttribute, connInit));
+        });
     }
 
     /**
@@ -140,26 +148,28 @@ public class LdapTestUtils {
     /**
      * Modify ldap entry.
      *
-     * @param serverCon   the server con
-     * @param dn          the dn
-     * @param attr        the attr
-     * @param add         the add
-     * @param connInit    the connection initializer
+     * @param serverCon the server con
+     * @param dn        the dn
+     * @param attr      the attr
+     * @param add       the add
+     * @param connInit  the connection initializer
      */
     public static void modifyLdapEntry(final LDAPConnection serverCon, final String dn,
                                        final LdapAttribute attr,
                                        final AttributeModification.Type add,
                                        final BindConnectionInitializer connInit) {
 
-        try {
-            val address = "ldap://" + serverCon.getConnectedAddress() + ':' + serverCon.getConnectedPort();
-            val config = new ConnectionConfig(address);
-            if (connInit != null) {
-                config.setConnectionInitializers(connInit);
-            }
-            val connectionFactory = new DefaultConnectionFactory(config);
+        val address = "ldap://" + serverCon.getConnectedAddress() + ':' + serverCon.getConnectedPort();
+        val config = new ConnectionConfig(address);
+        if (connInit != null) {
+            config.setConnectionInitializers(connInit);
+        }
+        LOGGER.debug("Created modification request connection configuration [{}] for [{}]", config, address);
+        try (val connectionFactory = new DefaultConnectionFactory(config)) {
             val modify = new ModifyOperation(connectionFactory);
-            modify.execute(new ModifyRequest(dn, new AttributeModification(add, attr)));
+            val request = new ModifyRequest(dn, new AttributeModification(add, attr));
+            LOGGER.debug("Executing modification request [{}] with type [{}] for [{}]", request, add, dn);
+            modify.execute(request);
         } catch (final Exception e) {
             LOGGER.debug(e.getMessage(), e);
         }
@@ -168,10 +178,10 @@ public class LdapTestUtils {
     /**
      * Modify ldap entry.
      *
-     * @param serverCon   the server con
-     * @param dn          the dn
-     * @param attr        the attr
-     * @param connInit    the connection initializer
+     * @param serverCon the server con
+     * @param dn        the dn
+     * @param attr      the attr
+     * @param connInit  the connection initializer
      */
     public static void modifyLdapEntry(final LDAPConnection serverCon, final LdapEntry dn,
                                        final LdapAttribute attr,
