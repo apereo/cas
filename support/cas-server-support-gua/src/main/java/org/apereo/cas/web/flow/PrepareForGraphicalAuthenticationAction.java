@@ -23,9 +23,11 @@ public class PrepareForGraphicalAuthenticationAction extends InitializeLoginActi
     @Override
     public Event doExecute(final RequestContext requestContext) throws Exception {
         WebUtils.putGraphicalUserAuthenticationEnabled(requestContext, Boolean.TRUE);
+        /*
         if (!WebUtils.containsGraphicalUserAuthenticationUsername(requestContext)) {
             return new EventFactorySupport().event(this, GraphicalUserAuthenticationWebflowConfigurer.TRANSITION_ID_GUA_GET_USERID);
         }
+        */
         return super.doExecute(requestContext);
     }
 }
