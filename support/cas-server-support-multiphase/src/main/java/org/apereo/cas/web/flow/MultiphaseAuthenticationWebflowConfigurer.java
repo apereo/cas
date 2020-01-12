@@ -79,6 +79,8 @@ public class MultiphaseAuthenticationWebflowConfigurer extends AbstractCasWebflo
             LOGGER.debug("Current possible outcomes: {}", (Object) flow.getPossibleOutcomes());
             */
 			createStateDefaultTransition(actionState, targetStateId);
+            // TODO: GUA, passwordless, any others using multiphase auth should
+            // attach to CasWebflowConstants.STATE_ID_MULTIPHASE_STORE_USERID
 		}
 	}
 }

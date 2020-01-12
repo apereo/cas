@@ -20,10 +20,10 @@ public class GraphicalUserAuthenticationWebflowConfigurer extends AbstractCasWeb
     /**
      * Transition to obtain username.
      */
-    public static final String TRANSITION_ID_GUA_GET_USERID = "guaGetUserId";
+    //public static final String TRANSITION_ID_GUA_GET_USERID = "guaGetUserId";
 
     static final String STATE_ID_ACCEPT_GUA = "acceptUserGraphicsForAuthentication";
-    static final String STATE_ID_GUA_GET_USERID = "guaGetUserIdView";
+    //static final String STATE_ID_GUA_GET_USERID = "guaGetUserIdView";
     static final String STATE_ID_GUA_DISPLAY_USER_GFX = "guaDisplayUserGraphics";
     static final String ACTION_ID_DISPLAY_USER_GRAPHICS_BEFORE_AUTHENTICATION = "displayUserGraphicsBeforeAuthenticationAction";
 
@@ -40,6 +40,7 @@ public class GraphicalUserAuthenticationWebflowConfigurer extends AbstractCasWeb
     protected void doInitialize() {
         val flow = getLoginFlow();
         if (flow != null) {
+            /*
             val state = getState(flow, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM, ActionState.class);
             val transition = (Transition) state.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS);
             val targetStateId = transition.getTargetStateId();
@@ -47,6 +48,12 @@ public class GraphicalUserAuthenticationWebflowConfigurer extends AbstractCasWeb
 
             val viewState = createViewState(flow, STATE_ID_GUA_GET_USERID, "casGuaGetUserIdView");
             createTransitionForState(viewState, CasWebflowConstants.TRANSITION_ID_SUBMIT, STATE_ID_GUA_DISPLAY_USER_GFX);
+            */
+            val actionStateStoreUserid = getState(flow, CasWebflowConstants.STATE_ID_MULTIPHASE_STORE_USERID,
+                    ActionState.class);
+            createTransitionForState(actionStateStoreUserid, CasWebflowConstants.TRANSITION_ID_SUCCESS,
+                    STATE_ID_GUA_DISPLAY_USER_GFX);
+
 
             val viewStateGfx = createViewState(flow, STATE_ID_GUA_DISPLAY_USER_GFX, "casGuaDisplayUserGraphicsView");
             viewStateGfx.getRenderActionList().add(createEvaluateAction(ACTION_ID_DISPLAY_USER_GRAPHICS_BEFORE_AUTHENTICATION));

@@ -1,6 +1,7 @@
 package org.apereo.cas.gua.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.config.MultiphaseAuthenticationConfiguration;
 import org.apereo.cas.gua.api.UserGraphicalAuthenticationRepository;
 import org.apereo.cas.gua.impl.LdapUserGraphicalAuthenticationRepository;
 import org.apereo.cas.gua.impl.StaticUserGraphicalAuthenticationRepository;
@@ -18,6 +19,7 @@ import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -37,6 +39,7 @@ import org.springframework.webflow.execution.Action;
  */
 @Configuration("graphicalUserAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@AutoConfigureAfter(MultiphaseAuthenticationConfiguration.class)
 public class GraphicalUserAuthenticationConfiguration {
 
     @Autowired
