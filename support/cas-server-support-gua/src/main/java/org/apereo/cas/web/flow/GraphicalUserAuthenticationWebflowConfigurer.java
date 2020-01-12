@@ -51,6 +51,8 @@ public class GraphicalUserAuthenticationWebflowConfigurer extends AbstractCasWeb
             */
             val actionStateStoreUserid = getState(flow, CasWebflowConstants.STATE_ID_MULTIPHASE_STORE_USERID,
                     ActionState.class);
+            val transition = (Transition) actionStateStoreUserid.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS);
+            val targetStateId = transition.getTargetStateId();
             createTransitionForState(actionStateStoreUserid, CasWebflowConstants.TRANSITION_ID_SUCCESS,
                     STATE_ID_GUA_DISPLAY_USER_GFX);
 
