@@ -7,6 +7,15 @@ if (hasTestsOfCategory(project, "Cassandra")) {
     }
 }
 
+if (hasTestsOfCategory(project, "Webflow")) {
+    task testWebflow(type: Test) {
+        enabled = shouldTest(project, "Webflow")
+        useJUnitPlatform {
+            includeTags "Webflow"
+        }
+    }
+}
+
 if (hasTestsOfCategory(project, "CosmosDb")) {
     task testCosmosDb(type: Test) {
         enabled = shouldTest(project, "CosmosDb")
@@ -283,7 +292,7 @@ test {
                 "MongoDb", "MsSqlServer", "MySQL", "Postgres", "Redis",
                 "Radius", "AmazonWebServices", "RestfulApi", "Groovy",
                 "OAuth", "OIDC", "SAML", "UMA", "Oracle", "ActiveMQ",
-                "ZooKeeper"
+                "ZooKeeper", "Webflow"
     }
     enabled = "SIMPLE".equalsIgnoreCase(rootProject.testCategoryType) && !Boolean.getBoolean("skipTests")
 }

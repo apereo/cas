@@ -27,8 +27,6 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
-import javax.servlet.http.HttpSessionEvent;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -53,8 +51,7 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class
 }, properties = {
     "spring.mail.host=localhost",
-    "spring.mail.port=25000",
-    "spring.mail.testConnection=false"
+    "spring.mail.port=25000"
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class DistributedJ2ESessionStoreTests {
@@ -70,7 +67,7 @@ public class DistributedJ2ESessionStoreTests {
     public void verifyOperation() {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
-        val store = new DistributedJ2ESessionStore(this.ticketRegistry, this.ticketFactory, "JSESSIONID");
+        val store = new DistributedJ2ESessionStore(this.ticketRegistry, this.ticketFactory, new CasConfigurationProperties());
         val context = new JEEContext(request, response, store);
 
         assertNotNull(request.getSession());
@@ -92,7 +89,7 @@ public class DistributedJ2ESessionStoreTests {
         assertTrue(value.isPresent());
         assertEquals("test3", value.get());
 
-        store.sessionDestroyed(new HttpSessionEvent(request.getSession()));
+        store.destroySession(context);
         value = store.get(context, "attribute");
         assertTrue(value.isEmpty());
     }

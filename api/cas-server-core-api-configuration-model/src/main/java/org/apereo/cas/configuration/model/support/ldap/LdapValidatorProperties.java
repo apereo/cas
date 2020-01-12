@@ -7,9 +7,6 @@ import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * This is {@link LdapValidatorProperties}.
@@ -58,7 +55,7 @@ public class LdapValidatorProperties implements Serializable {
     /**
      * Attribute values to use for the compare validator.
      */
-    private List<String> attributeValues = Stream.of("top").collect(Collectors.toList());
+    private String attributeValue = "top";
 
     /**
      * DN to compare to use for the compare validator.

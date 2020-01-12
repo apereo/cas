@@ -39,7 +39,6 @@ import org.springframework.context.annotation.Bean;
 }, properties = {
     "spring.mail.host=localhost",
     "spring.mail.port=25000",
-    "spring.mail.testConnection=true",
     "cas.serviceRegistry.sms.text=Service %s has expired in CAS service registry",
     "cas.serviceRegistry.sms.from=3477563421",
     "cas.serviceRegistry.mail.from=admin@example.org",

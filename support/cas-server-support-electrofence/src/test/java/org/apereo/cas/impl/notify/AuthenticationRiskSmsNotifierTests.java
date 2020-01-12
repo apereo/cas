@@ -21,7 +21,6 @@ import java.util.List;
 @TestPropertySource(properties = {
     "spring.mail.host=localhost",
     "spring.mail.port=25000",
-    "spring.mail.testConnection=true",
 
     "cas.authn.adaptive.risk.response.mail.from=cas@example.org",
     "cas.authn.adaptive.risk.response.mail.text=Message",

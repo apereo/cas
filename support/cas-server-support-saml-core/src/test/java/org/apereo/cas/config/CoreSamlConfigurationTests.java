@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
+import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -31,7 +32,9 @@ import org.springframework.scheduling.annotation.EnableScheduling;
     CasCoreTicketCatalogConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasPersonDirectoryConfiguration.class,
-    CasCoreServicesConfiguration.class
+    CasCoreServicesConfiguration.class,
+    CasCoreLogoutConfiguration.class,
+    CasCoreConfiguration.class
 })
 @EnableScheduling
 @Tag("SAML")

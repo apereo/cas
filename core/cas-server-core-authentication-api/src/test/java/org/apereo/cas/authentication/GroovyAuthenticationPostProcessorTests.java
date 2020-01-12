@@ -30,7 +30,8 @@ public class GroovyAuthenticationPostProcessorTests {
         assertTrue(g.supports(creds));
         val authenticationBuilder = CoreAuthenticationTestUtils.getAuthenticationBuilder();
         g.process(authenticationBuilder, transaction);
-        assertFalse(authenticationBuilder.getSuccesses().isEmpty());
-        assertFalse(authenticationBuilder.getSuccesses().get("test").getWarnings().isEmpty());
+        val successes = authenticationBuilder.getSuccesses();
+        assertFalse(successes.isEmpty());
+        assertFalse(successes.get("SimpleTestUsernamePasswordAuthenticationHandler").getWarnings().isEmpty());
     }
 }

@@ -42,6 +42,7 @@ import org.apereo.cas.web.support.DefaultArgumentExtractor;
 
 import lombok.SneakyThrows;
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.client.Clients;
@@ -88,6 +89,7 @@ import static org.mockito.Mockito.*;
  * @since 3.5.2
  */
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
+@Tag("Webflow")
 public class DelegatedClientAuthenticationActionTests {
 
     private static final String TGT_ID = "TGT-00-xxxxxxxxxxxxxxxxxxxxxxxxxx.cas0";

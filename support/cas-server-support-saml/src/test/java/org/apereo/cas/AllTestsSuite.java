@@ -6,6 +6,7 @@ import org.apereo.cas.support.saml.authentication.SamlAuthenticationRequestTests
 import org.apereo.cas.support.saml.authentication.principal.SamlServiceFactoryTests;
 import org.apereo.cas.support.saml.authentication.principal.SamlServiceTests;
 import org.apereo.cas.support.saml.util.SamlCompliantUniqueTicketIdGeneratorTests;
+import org.apereo.cas.support.saml.web.SamlValidateEndpointTests;
 import org.apereo.cas.support.saml.web.support.WebUtilTests;
 import org.apereo.cas.support.saml.web.view.Saml10FailureResponseViewTests;
 import org.apereo.cas.support.saml.web.view.Saml10SuccessResponseViewTests;
@@ -26,6 +27,7 @@ import org.junit.runner.RunWith;
     SamlAuthenticationRequestTests.class,
     SamlCompliantUniqueTicketIdGeneratorTests.class,
     WebUtilTests.class,
+    SamlValidateEndpointTests.class,
     SamlServiceFactoryTests.class,
     Saml10FailureResponseViewTests.class,
     Saml10SuccessResponseViewTests.class,

@@ -218,7 +218,13 @@ ext.libraries = [
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
                     exclude(group: "io.dropwizard.metrics", module: "metrics-annotation")
                     exclude(group: "io.dropwizard.metrics", module: "metrics-jvm")
+                    exclude(group: "com.datastax.cassandra", module: "cassandra-driver-mapping")
                     exclude(group: "com.google.guava", module: "guava")
+                    exclude(group: "io.netty", module: "netty-handler")
+                    exclude(group: "io.netty", module: "netty-buffer")
+                    exclude(group: "io.netty", module: "netty-transport")
+                    exclude(group: "io.netty", module: "netty-codec")
+                    exclude(group: "io.netty", module: "netty-common")
                     force = true
                 },
                 dependencies.create("com.datastax.cassandra:cassandra-driver-mapping:$cassandraDriverVersion") {
@@ -228,7 +234,17 @@ ext.libraries = [
                     exclude(group: "io.dropwizard.metrics", module: "metrics-annotation")
                     exclude(group: "io.dropwizard.metrics", module: "metrics-jvm")
                     exclude(group: "com.google.guava", module: "guava")
+                    exclude(group: "io.netty", module: "netty-handler")
+                    exclude(group: "io.netty", module: "netty-buffer")
+                    exclude(group: "io.netty", module: "netty-transport")
+                    exclude(group: "io.netty", module: "netty-codec")
+                    exclude(group: "io.netty", module: "netty-common")
                     force = true
+                },
+                dependencies.create("io.netty:netty-handler:$nettyVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.bouncycastle", module: "bcprov-jdk15")
+                    exclude(group: "org.bouncycastle", module: "bcpkix-jdk15on")
                 }
         ],
         apachefediz             : [
@@ -1641,7 +1657,7 @@ ext.libraries = [
                     exclude(group: "org.mockito", module: "mockito-all")
                     force = true
                 },
-                dependencies.create("junit:junit:4.12") {
+                dependencies.create("junit:junit:4.13") {
                     force = true
                 },
                 dependencies.create("org.junit.jupiter:junit-jupiter-api:$junitVersion") {
@@ -1739,12 +1755,6 @@ ext.libraries = [
                 dependencies.create("org.ldaptive:ldaptive-beans:$ldaptiveVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "commons-cli", module: "commons-cli")
-                    force = true
-                },
-                dependencies.create("org.ldaptive:ldaptive-unboundid:$ldaptiveVersion") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "commons-cli", module: "commons-cli")
-                    exclude(group: "com.unboundid", module: "unboundid-ldapsdk")
                     force = true
                 },
                 dependencies.create("com.unboundid:unboundid-ldapsdk:$unboundidVersion") {

@@ -5,9 +5,8 @@ import org.apereo.cas.util.LdapUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapEntry;
-import org.ldaptive.SearchExecutor;
+import org.ldaptive.SearchOperation;
 import org.pac4j.core.authorization.generator.AuthorizationGenerator;
 import org.pac4j.core.profile.UserProfile;
 
@@ -31,45 +30,42 @@ import java.util.Optional;
 @Slf4j
 public class LdapUserGroupsToRolesAuthorizationGenerator extends BaseUseAttributesAuthorizationGenerator {
 
-
     private final String groupAttributeName;
+
     private final String groupPrefix;
-    private final SearchExecutor groupSearchExecutor;
+
+    private final SearchOperation groupSearchOperation;
 
     /**
      * Instantiates a new Ldap user groups to roles authorization generator.
      *
-     * @param factory              the factory
-     * @param userSearchExecutor   the user search executor
+     * @param userSearchOperation  the user search executor
      * @param allowMultipleResults the allow multiple results
      * @param groupAttributeName   the group attribute name
      * @param groupPrefix          the group prefix
-     * @param groupSearchExecutor  the group search executor
+     * @param groupSearchOperation the group search executor
      */
-    public LdapUserGroupsToRolesAuthorizationGenerator(final ConnectionFactory factory,
-                                                       final SearchExecutor userSearchExecutor,
+    public LdapUserGroupsToRolesAuthorizationGenerator(final SearchOperation userSearchOperation,
                                                        final boolean allowMultipleResults,
                                                        final String groupAttributeName,
                                                        final String groupPrefix,
-                                                       final SearchExecutor groupSearchExecutor) {
-        super(factory, userSearchExecutor, allowMultipleResults);
+                                                       final SearchOperation groupSearchOperation) {
+        super(userSearchOperation, allowMultipleResults);
         this.groupAttributeName = groupAttributeName;
         this.groupPrefix = groupPrefix;
-        this.groupSearchExecutor = groupSearchExecutor;
+        this.groupSearchOperation = groupSearchOperation;
     }
 
     @Override
     protected Optional<UserProfile> generateAuthorizationForLdapEntry(final UserProfile profile, final LdapEntry userEntry) {
         try {
             LOGGER.debug("Attempting to get roles for user [{}].", userEntry.getDn());
-            val response = this.groupSearchExecutor.search(
-                this.connectionFactory,
-                LdapUtils.newLdaptiveSearchFilter(this.groupSearchExecutor.getSearchFilter().getFilter(),
+            val response = this.groupSearchOperation.execute(
+                LdapUtils.newLdaptiveSearchFilter(this.groupSearchOperation.getTemplate().getFilter(),
                     LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME, CollectionUtils.wrap(userEntry.getDn())));
             LOGGER.debug("LDAP role search response: [{}]", response);
-            val groupResult = response.getResult();
 
-            for (val entry : groupResult.getEntries()) {
+            for (val entry : response.getEntries()) {
                 val groupAttribute = entry.getAttribute(this.groupAttributeName);
                 if (groupAttribute == null) {
                     LOGGER.warn("Role attribute not found on entry [{}]", entry);
