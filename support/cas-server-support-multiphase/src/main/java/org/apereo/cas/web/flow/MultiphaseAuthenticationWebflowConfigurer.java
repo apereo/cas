@@ -27,7 +27,7 @@ public class MultiphaseAuthenticationWebflowConfigurer extends AbstractCasWebflo
 
     static final String STATE_ID_MULTIPHASE_REDIRECT = "multiphaseRedirectView";
 	static final String STATE_ID_MULTIPHASE_GET_USERID = "multiphaseGetUserIdView";
-	static final String STATE_ID_STORE_USERID = "storeUserIdForAuthentication";
+	//static final String STATE_ID_STORE_USERID = "storeUserIdForAuthentication";
 	static final String ACTION_ID_STORE_USERID_FOR_AUTHENTICATION = "storeUserIdForAuthenticationAction";
 
 	public MultiphaseAuthenticationWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
@@ -61,11 +61,14 @@ public class MultiphaseAuthenticationWebflowConfigurer extends AbstractCasWebflo
 
 			val getUserIdState = createViewState(flow, STATE_ID_MULTIPHASE_GET_USERID, "casMultiphaseGetUserIdView");
             LOGGER.debug("Creating transition with id [{}] for state [{}] to state [{}]",
-                    CasWebflowConstants.TRANSITION_ID_SUBMIT, getUserIdState.getId(), STATE_ID_STORE_USERID);
-			createTransitionForState(getUserIdState, CasWebflowConstants.TRANSITION_ID_SUBMIT, STATE_ID_STORE_USERID);
+                    CasWebflowConstants.TRANSITION_ID_SUBMIT, getUserIdState.getId(), 
+                    CasWebflowConstants.STATE_ID_MULTIPHASE_STORE_USERID);
+			createTransitionForState(getUserIdState, CasWebflowConstants.TRANSITION_ID_SUBMIT, 
+                    CasWebflowConstants.STATE_ID_MULTIPHASE_STORE_USERID);
 
-			val actionState = createActionState(flow, STATE_ID_STORE_USERID,
+			val actionState = createActionState(flow, CasWebflowConstants.STATE_ID_MULTIPHASE_STORE_USERID,
                     createEvaluateAction(ACTION_ID_STORE_USERID_FOR_AUTHENTICATION));
+            /*
             LOGGER.debug("Creating transition with id [{}] for state [{}] to state [{}]",
                     CasWebflowConstants.TRANSITION_ID_SUCCESS, actionState.getId(), targetStateId);
             createTransitionForState(actionState, CasWebflowConstants.TRANSITION_ID_SUCCESS, targetStateId);
@@ -74,7 +77,8 @@ public class MultiphaseAuthenticationWebflowConfigurer extends AbstractCasWebflo
                     TRANSITION_ID_MULTIPHASE_REDIRECT, actionState.getId(), STATE_ID_MULTIPHASE_REDIRECT);
             createTransitionForState(actionState, TRANSITION_ID_MULTIPHASE_REDIRECT, STATE_ID_MULTIPHASE_REDIRECT);
             LOGGER.debug("Current possible outcomes: {}", (Object) flow.getPossibleOutcomes());
-			//createStateDefaultTransition(actionState, targetStateId);
+            */
+			createStateDefaultTransition(actionState, targetStateId);
 		}
 	}
 }

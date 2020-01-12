@@ -487,6 +487,11 @@ public interface CasWebflowConstants {
      */
     String STATE_ID_REGISTER_DEVICE = "registerDeviceView";
 
+    /**
+     * Action state storing userid during multiphase authentication.
+     */
+    String STATE_ID_MULTIPHASE_STORE_USERID = "multiphaseStoreUserId";
+
     /*
      ****************************************
      * Views.
