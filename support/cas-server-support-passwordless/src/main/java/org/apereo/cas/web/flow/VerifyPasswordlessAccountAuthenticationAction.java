@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.api.PasswordlessUserAccountStore;
+import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -23,12 +24,8 @@ public class VerifyPasswordlessAccountAuthenticationAction extends AbstractActio
     @Override
     public Event doExecute(final RequestContext requestContext) {
         val messageContext = requestContext.getMessageContext();
-        val username = requestContext.getRequestParameters().get("username");
-        if (StringUtils.isBlank(username)) {
-            val message = new MessageBuilder().error().code("passwordless.error.unknown.user").build();
-            messageContext.addMessage(message);
-            return error();
-        }
+        //val username = requestContext.getRequestParameters().get("username");
+        val username = WebUtils.getMultiphaseUsername(requestContext);
         val account = passwordlessUserAccountStore.findUser(username);
         if (account.isEmpty()) {
             val message = new MessageBuilder().error().code("passwordless.error.unknown.user").build();
