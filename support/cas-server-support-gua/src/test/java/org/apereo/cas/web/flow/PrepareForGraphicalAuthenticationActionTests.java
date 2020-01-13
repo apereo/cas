@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow;
 
+import org.apereo.cas.web.support.WebUtils;
+
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -25,6 +27,7 @@ public class PrepareForGraphicalAuthenticationActionTests extends AbstractGraphi
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         val event = initializeLoginAction.execute(context);
+        assertEquals(context.getFlowScope().contains("guaEnabled"), Boolean.TRUE);
         assertEquals(GraphicalUserAuthenticationWebflowConfigurer.TRANSITION_ID_GUA_GET_USERID, event.getId());
     }
 }
