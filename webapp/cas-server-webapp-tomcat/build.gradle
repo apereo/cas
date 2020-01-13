@@ -5,4 +5,4 @@ dependencies {
     implementation project(":webapp:cas-server-webapp-init-tomcat")
 }
 
-apply from: rootProject.file("multiphase_deps.gradle")
+//apply from: rootProject.file("multiphase_deps.gradle")
