@@ -22,11 +22,13 @@ public class StoreUserIdForAuthenticationAction extends AbstractAction {
 	@Override
 	public Event doExecute(final RequestContext requestContext) {
 		val username = requestContext.getRequestParameters().get("username");
+        /*
         if (StringUtils.isBlank(username)) {
             val message = new MessageBuilder().error().code("TODO").build();
             messageContext.addMessage(message);
             return error();
         }
+        */
         /*
         if (username.endsWith("@example.com")) {
             return result(MultiphaseAuthenticationWebflowConfigurer.TRANSITION_ID_MULTIPHASE_REDIRECT);
