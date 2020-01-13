@@ -945,10 +945,18 @@ public class WebUtils {
      * Has multiphase userid stored.
      *
      * @param requestContext the requestContext
-     * @param value          the value
      */
     public static boolean hasMultiphaseAuthenticationUsername(final RequestContext requestContext) {
         return requestContext.getFlowScope().contains("multiphaseUsername");
+    }
+
+    /**
+     * Get stored multiphase userid.
+     *
+     * @param requestContext the request context
+     */
+    public static String getMultiphaseAuthenticationUsername(final RequestContext requestContext) {
+        return requestContext.getFlowScope().get("multiphaseUsername");
     }
 
 
