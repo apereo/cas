@@ -22,10 +22,6 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 public class PrepareForMultiphaseAuthenticationActionTests extends BaseMultiphaseAuthenticationActiontests {
-    @Autowired
-    @Qualifier("initializeLoginAction")
-    private Action initializeLoginAction;
-
     @Test
     public void verifyAction() throws Exception {
         val context = new MockRequestContext();

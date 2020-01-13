@@ -68,11 +68,8 @@ import org.springframework.webflow.execution.Action;
     properties = {
         "cas.authn.multiphase.enabled=true"
 })
-public class BaseMultiphaseAuthenticationActionTests {}
-/*
-public abstract class BaseMultiphaseAuthenticationActionTests {
+public class BaseMultiphaseAuthenticationActionTests {
     @Autowired
     @Qualifier("initializeLoginAction")
     protected Action initializeLoginAction;
 }
-*/

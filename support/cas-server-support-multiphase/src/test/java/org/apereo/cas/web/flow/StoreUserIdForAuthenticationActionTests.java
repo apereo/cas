@@ -39,7 +39,9 @@ public class StoreUserIdForAuthenticationActionTests extends BaseMultiphaseAuthe
         context.setExternalContext(new ServletExternalContext(new MockServletContext(),
                     request, new MockHttpServletResponse()));
         request.addParameter("username", "casuser");
-        assertEquals("success", storeUserIdForAuthenticationAction.execute(context).getId());
+        val event = storeUserIdForAuthenticationAction.execute(context);
+        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, event.getId());
+        assertTrue(WebUtils.hasMultiphaseAuthenticationUsername(context));
     }
 }
 
