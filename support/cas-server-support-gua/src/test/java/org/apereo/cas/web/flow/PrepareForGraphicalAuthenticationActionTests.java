@@ -26,7 +26,7 @@ public class PrepareForGraphicalAuthenticationActionTests extends AbstractGraphi
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
-        val event = initializeLoginAction.execute(context);
+        initializeLoginAction.execute(context);
         assertEquals(context.getFlowScope().contains("guaEnabled"), Boolean.TRUE);
     }
 }
