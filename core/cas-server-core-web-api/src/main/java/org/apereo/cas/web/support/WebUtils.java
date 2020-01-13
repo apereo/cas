@@ -935,7 +935,7 @@ public class WebUtils {
      * Put multiphase user authentication username.
      *
      * @param requestContext the request context
-     * @param value             the value
+     * @param username       the username to store
      */
     public static void putMultiphaseAuthenticationUsername(final RequestContext requestContext, final String username) {
         requestContext.getFlowScope().put("multiphaseUsername", username);
@@ -945,6 +945,7 @@ public class WebUtils {
      * Has multiphase userid stored.
      *
      * @param requestContext the requestContext
+     * @return boolean truth value
      */
     public static boolean hasMultiphaseAuthenticationUsername(final RequestContext requestContext) {
         return requestContext.getFlowScope().contains("multiphaseUsername");
@@ -954,6 +955,7 @@ public class WebUtils {
      * Get stored multiphase userid.
      *
      * @param requestContext the request context
+     * @return the username
      */
     public static String getMultiphaseAuthenticationUsername(final RequestContext requestContext) {
         return (String) requestContext.getFlowScope().get("multiphaseUsername", String.class);
