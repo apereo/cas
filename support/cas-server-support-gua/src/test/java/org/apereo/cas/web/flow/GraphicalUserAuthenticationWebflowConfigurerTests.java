@@ -38,8 +38,5 @@ public class GraphicalUserAuthenticationWebflowConfigurerTests extends BaseWebfl
 
         state = (TransitionableState) flow.getState(GraphicalUserAuthenticationWebflowConfigurer.STATE_ID_GUA_DISPLAY_USER_GFX);
         assertNotNull(state);
-
-        state = (TransitionableState) flow.getState(GraphicalUserAuthenticationWebflowConfigurer.STATE_ID_GUA_GET_USERID);
-        assertNotNull(state);
     }
 }

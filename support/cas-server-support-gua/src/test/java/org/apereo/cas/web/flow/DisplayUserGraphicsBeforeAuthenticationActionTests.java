@@ -30,6 +30,5 @@ public class DisplayUserGraphicsBeforeAuthenticationActionTests extends Abstract
         val event = displayUserGraphicsBeforeAuthenticationAction.execute(context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, event.getId());
         assertTrue(WebUtils.containsGraphicalUserAuthenticationImage(context));
-        assertTrue(WebUtils.containsGraphicalUserAuthenticationUsername(context));
     }
 }
