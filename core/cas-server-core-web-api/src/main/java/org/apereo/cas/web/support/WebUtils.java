@@ -956,7 +956,7 @@ public class WebUtils {
      * @param requestContext the request context
      */
     public static String getMultiphaseAuthenticationUsername(final RequestContext requestContext) {
-        return requestContext.getFlowScope().get("multiphaseUsername");
+        return (String) requestContext.getFlowScope().get("multiphaseUsername");
     }
 
 
