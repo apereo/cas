@@ -11,7 +11,7 @@ dependencies {
     implementation project(":core:cas-server-core-logout-api")
     implementation project(":core:cas-server-core-webflow")
     implementation project(":core:cas-server-core-web")
-    implementation proejct(":support:cas-server-support-multiphase")
+    implementation project(":support:cas-server-support-multiphase")
     implementation project(":support:cas-server-support-actions")
 
     testImplementation project(":core:cas-server-core-cookie")
