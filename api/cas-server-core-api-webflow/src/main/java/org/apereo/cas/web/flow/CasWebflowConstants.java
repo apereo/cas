@@ -492,6 +492,7 @@ public interface CasWebflowConstants {
      */
     String STATE_ID_MULTIPHASE_STORE_USERID = "multiphaseStoreUserId";
 
+
     /*
      ****************************************
      * Views.
@@ -612,6 +613,12 @@ public interface CasWebflowConstants {
      * View name used for form-login into admin/actuator endpoints.
      */
     String VIEW_ID_ENDPOINT_ADMIN_LOGIN_VIEW = "casAdminLoginView";
+    
+    /**
+     * View state retrieving userid during multiphase authentication.
+     */
+    String VIEW_ID_MULTIPHASE_GET_USERID = "multiphaseGetUserIdView";
+
     /*
      ****************************************
      * Decisions.

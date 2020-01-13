@@ -26,7 +26,7 @@ public class MultiphaseAuthenticationWebflowConfigurer extends AbstractCasWebflo
     public static final String TRANSITION_ID_MULTIPHASE_REDIRECT = "multiphaseRedirect";
 
     //static final String STATE_ID_MULTIPHASE_REDIRECT = "multiphaseRedirectView";
-	static final String STATE_ID_MULTIPHASE_GET_USERID = "multiphaseGetUserIdView";
+	//static final String STATE_ID_MULTIPHASE_GET_USERID = "multiphaseGetUserIdView";
 	//static final String STATE_ID_STORE_USERID = "storeUserIdForAuthentication";
 	static final String ACTION_ID_STORE_USERID_FOR_AUTHENTICATION = "storeUserIdForAuthenticationAction";
 
@@ -56,8 +56,8 @@ public class MultiphaseAuthenticationWebflowConfigurer extends AbstractCasWebflo
             // add a transition from init state on get_userid transition to
             // get_userid state
             LOGGER.debug("Creating transition with id [{}] for state [{}] to state [{}]",
-                    TRANSITION_ID_MULTIPHASE_GET_USERID, initState.getId(), STATE_ID_MULTIPHASE_GET_USERID);
-			createTransitionForState(initState, TRANSITION_ID_MULTIPHASE_GET_USERID, STATE_ID_MULTIPHASE_GET_USERID);
+                    TRANSITION_ID_MULTIPHASE_GET_USERID, initState.getId(), CasWebflowConstants.VIEW_ID_MULTIPHASE_GET_USERID);
+			createTransitionForState(initState, TRANSITION_ID_MULTIPHASE_GET_USERID, CasWebflowConstants.VIEW_ID_MULTIPHASE_GET_USERID);
 
 			val getUserIdState = createViewState(flow, STATE_ID_MULTIPHASE_GET_USERID, "casMultiphaseGetUserIdView");
             LOGGER.debug("Creating transition with id [{}] for state [{}] to state [{}]",
