@@ -47,7 +47,7 @@ public class DisplayBeforePasswordlessAuthenticationActionTests extends BasePass
         context.setCurrentEvent(new Event(this, "processing"));
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
-        WebUtils.putMultiphaseAuthenticationUsername("casuser");
+        WebUtils.putMultiphaseAuthenticationUsername(context, "casuser");
         assertEquals("success", displayBeforePasswordlessAuthenticationAction.execute(context).getId());
     }
 
