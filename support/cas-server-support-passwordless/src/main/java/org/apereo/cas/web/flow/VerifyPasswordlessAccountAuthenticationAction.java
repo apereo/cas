@@ -25,7 +25,7 @@ public class VerifyPasswordlessAccountAuthenticationAction extends AbstractActio
     public Event doExecute(final RequestContext requestContext) {
         val messageContext = requestContext.getMessageContext();
         //val username = requestContext.getRequestParameters().get("username");
-        val username = WebUtils.getMultiphaseUsername(requestContext);
+        val username = WebUtils.getMultiphaseAuthenticationUsername(requestContext);
         val account = passwordlessUserAccountStore.findUser(username);
         if (account.isEmpty()) {
             val message = new MessageBuilder().error().code("passwordless.error.unknown.user").build();

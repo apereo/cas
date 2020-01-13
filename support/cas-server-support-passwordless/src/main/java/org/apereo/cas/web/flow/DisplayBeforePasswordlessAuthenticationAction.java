@@ -38,7 +38,7 @@ public class DisplayBeforePasswordlessAuthenticationAction extends AbstractActio
             WebUtils.putPasswordlessAuthenticationAccount(requestContext, user);
             return success();
         }
-        val username = WebUtils.getMultiphaseAuthenticationUsername();
+        val username = WebUtils.getMultiphaseAuthenticationUsername(requestContext);
         if (StringUtils.isBlank(username)) {
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
         }
