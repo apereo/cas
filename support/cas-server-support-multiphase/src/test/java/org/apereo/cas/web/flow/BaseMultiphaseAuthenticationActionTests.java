@@ -64,7 +64,7 @@ import org.springframework.webflow.execution.Action;
     CasCookieConfiguration.class,
     CasCoreHttpConfiguration.class,
     CasCoreUtilConfiguration.class
-},
+    },
     properties = {
         "cas.authn.multiphase.enabled=true"
 })

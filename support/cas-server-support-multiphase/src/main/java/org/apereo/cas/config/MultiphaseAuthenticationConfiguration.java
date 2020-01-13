@@ -51,10 +51,10 @@ public class MultiphaseAuthenticationConfiguration {
     @Autowired
     private ObjectProvider<FlowBuilderServices> flowBuilderServices;
 
-	@Bean
-	public Action initializeLoginAction() {
-		return new PrepareForMultiphaseAuthenticationAction(servicesManager.getObject());
-	}
+    @Bean
+    public Action initializeLoginAction() {
+        return new PrepareForMultiphaseAuthenticationAction(servicesManager.getObject());
+    }
 
     @Bean
     @ConditionalOnMissingBean(name = "multiphaseAuthenticationWebflowConfigurer")

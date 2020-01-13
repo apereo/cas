@@ -19,9 +19,9 @@ import org.springframework.webflow.execution.RequestContext;
 public class StoreUserIdForAuthenticationAction extends AbstractAction {
     //private final MultiphaseUserEventResolver multiphaseUserEventResolver;
 
-	@Override
-	public Event doExecute(final RequestContext requestContext) {
-		val username = requestContext.getRequestParameters().get("username");
+    @Override
+    public Event doExecute(final RequestContext requestContext) {
+        val username = requestContext.getRequestParameters().get("username");
         /*
         if (StringUtils.isBlank(username)) {
             val message = new MessageBuilder().error().code("TODO").build();
@@ -29,13 +29,8 @@ public class StoreUserIdForAuthenticationAction extends AbstractAction {
             return error();
         }
         */
-        /*
-        if (username.endsWith("@example.com")) {
-            return result(MultiphaseAuthenticationWebflowConfigurer.TRANSITION_ID_MULTIPHASE_REDIRECT);
-        }
-        */
-		WebUtils.putCredential(requestContext, new UsernamePasswordCredential(username, null));
-		WebUtils.putMultiphaseAuthenticationUsername(requestContext, username);
-		return success();
-	}
+        WebUtils.putCredential(requestContext, new UsernamePasswordCredential(username, null));
+        WebUtils.putMultiphaseAuthenticationUsername(requestContext, username);
+        return success();
+    }
 }

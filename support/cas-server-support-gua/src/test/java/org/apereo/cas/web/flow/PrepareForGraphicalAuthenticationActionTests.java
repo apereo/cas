@@ -28,6 +28,5 @@ public class PrepareForGraphicalAuthenticationActionTests extends AbstractGraphi
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         val event = initializeLoginAction.execute(context);
         assertEquals(context.getFlowScope().contains("guaEnabled"), Boolean.TRUE);
-        assertEquals(GraphicalUserAuthenticationWebflowConfigurer.TRANSITION_ID_GUA_GET_USERID, event.getId());
     }
 }

@@ -19,70 +19,64 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
  */
 @Slf4j
 public class MultiphaseAuthenticationWebflowConfigurer extends AbstractCasWebflowConfigurer {
-	/**
-	 * Transition to obtain username.
-	 */
-	public static final String TRANSITION_ID_MULTIPHASE_GET_USERID = "multiphaseGetUserId";
+    /**
+     * Transition to obtain username.
+     */
+    public static final String TRANSITION_ID_MULTIPHASE_GET_USERID = "multiphaseGetUserId";
     public static final String TRANSITION_ID_MULTIPHASE_REDIRECT = "multiphaseRedirect";
 
-    //static final String STATE_ID_MULTIPHASE_REDIRECT = "multiphaseRedirectView";
-	//static final String STATE_ID_MULTIPHASE_GET_USERID = "multiphaseGetUserIdView";
-	//static final String STATE_ID_STORE_USERID = "storeUserIdForAuthentication";
-	static final String ACTION_ID_STORE_USERID_FOR_AUTHENTICATION = "storeUserIdForAuthenticationAction";
+    static final String ACTION_ID_STORE_USERID_FOR_AUTHENTICATION = "storeUserIdForAuthenticationAction";
 
-	public MultiphaseAuthenticationWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
-                                                        final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-                                                        final ApplicationContext applicationContext,
-                                                        final CasConfigurationProperties casProperties) {
+    public MultiphaseAuthenticationWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
+                                                     final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+                                                     final ApplicationContext applicationContext,
+                                                     final CasConfigurationProperties casProperties) {
         super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
     }
 
-	@Override
-	protected void doInitialize() {
-		val flow = getLoginFlow();
-		if (flow != null) {
+    @Override
+    protected void doInitialize() {
+        val flow = getLoginFlow();
+        if (flow != null) {
             LOGGER.debug("Current state ids: [{}]", (Object) flow.getStateIds());
             LOGGER.debug("Current possible outcomes: {}", (Object) flow.getPossibleOutcomes());
             LOGGER.debug("Configuring multiphase webflow");
             // init login state form
-			val initState = getState(flow, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM, ActionState.class);
+            val initState = getState(flow, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM, ActionState.class);
             LOGGER.debug("Locating transition id [{}] for state [{}]", 
                     CasWebflowConstants.TRANSITION_ID_SUCCESS, initState.getId());
             // transition object with id of success from init state
-			val initTransition = (Transition) initState.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS);
+            val initTransition = (Transition) initState.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS);
             // target following that transition (maybe main page; could be
             // otherwise)
-			val targetStateId = initTransition.getTargetStateId();
+            val targetStateId = initTransition.getTargetStateId();
             // add a transition from init state on get_userid transition to
             // get_userid state
             LOGGER.debug("Creating transition with id [{}] for state [{}] to state [{}]",
-                    TRANSITION_ID_MULTIPHASE_GET_USERID, initState.getId(), CasWebflowConstants.VIEW_ID_MULTIPHASE_GET_USERID);
-			createTransitionForState(initState, TRANSITION_ID_MULTIPHASE_GET_USERID, CasWebflowConstants.VIEW_ID_MULTIPHASE_GET_USERID);
+                    TRANSITION_ID_MULTIPHASE_GET_USERID, initState.getId(), 
+                    CasWebflowConstants.VIEW_ID_MULTIPHASE_GET_USERID);
+            createTransitionForState(initState, 
+                    TRANSITION_ID_MULTIPHASE_GET_USERID, 
+                    CasWebflowConstants.VIEW_ID_MULTIPHASE_GET_USERID);
 
-			val getUserIdState = createViewState(flow, CasWebflowConstants.VIEW_ID_MULTIPHASE_GET_USERID, 
+            val getUserIdState = createViewState(flow, 
+                    CasWebflowConstants.VIEW_ID_MULTIPHASE_GET_USERID, 
                     "casMultiphaseGetUserIdView");
+
             LOGGER.debug("Creating transition with id [{}] for state [{}] to state [{}]",
                     CasWebflowConstants.TRANSITION_ID_SUBMIT, getUserIdState.getId(), 
                     CasWebflowConstants.STATE_ID_MULTIPHASE_STORE_USERID);
-			createTransitionForState(getUserIdState, CasWebflowConstants.TRANSITION_ID_SUBMIT, 
+            createTransitionForState(getUserIdState, 
+                    CasWebflowConstants.TRANSITION_ID_SUBMIT, 
                     CasWebflowConstants.STATE_ID_MULTIPHASE_STORE_USERID);
 
-			val actionState = createActionState(flow, CasWebflowConstants.STATE_ID_MULTIPHASE_STORE_USERID,
+            val actionState = createActionState(flow, 
+                    CasWebflowConstants.STATE_ID_MULTIPHASE_STORE_USERID,
                     createEvaluateAction(ACTION_ID_STORE_USERID_FOR_AUTHENTICATION));
             
             LOGGER.debug("Creating transition with id [{}] for state [{}] to state [{}]",
                     CasWebflowConstants.TRANSITION_ID_SUCCESS, actionState.getId(), targetStateId);
             createTransitionForState(actionState, CasWebflowConstants.TRANSITION_ID_SUCCESS, targetStateId);
-            /*
-
-            LOGGER.debug("Creating transition with id [{}] for state [{}] to state [{}]",
-                    TRANSITION_ID_MULTIPHASE_REDIRECT, actionState.getId(), STATE_ID_MULTIPHASE_REDIRECT);
-            createTransitionForState(actionState, TRANSITION_ID_MULTIPHASE_REDIRECT, STATE_ID_MULTIPHASE_REDIRECT);
-            LOGGER.debug("Current possible outcomes: {}", (Object) flow.getPossibleOutcomes());
-            */
-			//createStateDefaultTransition(actionState, targetStateId);
-            // TODO: GUA, passwordless, any others using multiphase auth should
-            // attach to CasWebflowConstants.STATE_ID_MULTIPHASE_STORE_USERID
-		}
-	}
+        }
+    }
 }

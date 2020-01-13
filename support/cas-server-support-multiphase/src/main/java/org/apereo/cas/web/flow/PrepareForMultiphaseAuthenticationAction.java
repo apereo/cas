@@ -18,18 +18,18 @@ import org.springframework.webflow.execution.RequestContext;
  */
 @Slf4j
 public class PrepareForMultiphaseAuthenticationAction extends InitializeLoginAction {
-	public PrepareForMultiphaseAuthenticationAction(final ServicesManager servicesManager) {
-		super(servicesManager);
-	}
+    public PrepareForMultiphaseAuthenticationAction(final ServicesManager servicesManager) {
+        super(servicesManager);
+    }
 
-	@Override
-	public Event doExecute(final RequestContext requestContext) throws Exception {
+    @Override
+    public Event doExecute(final RequestContext requestContext) throws Exception {
         LOGGER.debug("doExecute on PrepareForMultiphaseAuthenticationAction called");
-		WebUtils.putMultiphaseAuthenticationEnabled(requestContext, Boolean.TRUE);
-		if (!WebUtils.hasMultiphaseAuthenticationUsername(requestContext)) {
-			return new EventFactorySupport().event(this, 
-					MultiphaseAuthenticationWebflowConfigurer.TRANSITION_ID_MULTIPHASE_GET_USERID);
-		}
-		return super.doExecute(requestContext);
-	}
+        WebUtils.putMultiphaseAuthenticationEnabled(requestContext, Boolean.TRUE);
+        if (!WebUtils.hasMultiphaseAuthenticationUsername(requestContext)) {
+            return new EventFactorySupport().event(this, 
+                    MultiphaseAuthenticationWebflowConfigurer.TRANSITION_ID_MULTIPHASE_GET_USERID);
+        }
+        return super.doExecute(requestContext);
+    }
 }
