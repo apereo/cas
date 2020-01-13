@@ -1,4 +1,4 @@
-import org.apereo.cas.web.flow;
+package org.apereo.cas.web.flow;
 
 import org.apereo.cas.web.support.WebUtils;
 
@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Hayden Sartoris
  * @since 6.2.0
  */
-public class PrepareForMultiphaseAuthenticationActionTests extends BaseMultiphaseAuthenticationActiontests {
+public class PrepareForMultiphaseAuthenticationActionTests extends BaseMultiphaseAuthenticationActionTests {
     @Test
     public void verifyAction() throws Exception {
         val context = new MockRequestContext();
