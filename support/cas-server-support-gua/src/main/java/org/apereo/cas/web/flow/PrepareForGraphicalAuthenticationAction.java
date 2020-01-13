@@ -1,7 +1,6 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.services.ServicesManager;
-//import org.apereo.cas.web.flow.login.InitializeLoginAction;
 import org.apereo.cas.web.flow.PrepareForMultiphaseAuthenticationAction;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -24,11 +23,6 @@ public class PrepareForGraphicalAuthenticationAction extends PrepareForMultiphas
     @Override
     public Event doExecute(final RequestContext requestContext) throws Exception {
         WebUtils.putGraphicalUserAuthenticationEnabled(requestContext, Boolean.TRUE);
-        /*
-        if (!WebUtils.containsGraphicalUserAuthenticationUsername(requestContext)) {
-            return new EventFactorySupport().event(this, GraphicalUserAuthenticationWebflowConfigurer.TRANSITION_ID_GUA_GET_USERID);
-        }
-        */
         return super.doExecute(requestContext);
     }
 }
