@@ -35,8 +35,7 @@ public class MultiphaseAuthenticationWebflowConfigurerTests extends BaseWebflowC
         var state = (TransitionableState) flow.getState(CasWebflowConstants.STATE_ID_MULTIPHASE_STORE_USERID);
         assertNotNull(state);
 
-        state = (TransitionableState) flow.getState(
-                MultiphaseAuthenticationWebflowConfigurer.STATE_ID_MULTIPHASE_GET_USERID);
+        state = (TransitionableState) flow.getState(CasWebflowConstants.VIEW_ID_MULTIPHASE_GET_USERID);
         assertNotNull(state);
     }
 }
