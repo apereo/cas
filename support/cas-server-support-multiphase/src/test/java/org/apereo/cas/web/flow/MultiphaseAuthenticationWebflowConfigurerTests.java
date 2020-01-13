@@ -1,8 +1,6 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.config.MultiphaseAuthenticationConfiguration;
-import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
-import org.apereo.cas.config.CasMultifactorAuthenticationWebflowConfiguration;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -23,8 +21,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @Import({
     ThymeleafAutoConfiguration.class,
     MultiphaseAuthenticationConfiguration.class,
-    CasCoreMultifactorAuthenticationConfiguration.class,
-    CasMultifactorAuthenticationWebflowConfiguration.class,
     BaseWebflowConfigurerTests.SharedTestConfiguration.class
 })
 @Tag("Webflow")
