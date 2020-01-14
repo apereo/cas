@@ -105,7 +105,7 @@ The parameters passed are as follows:
 As an example, the following script skips multifactor authentication if the application requesting it is registered in the CAS service registry under the name `MyApplication` and only does so if the provider is Duo Security and the authenticated principal contains an attribute named `mustBypassMfa` whose values contains `true`.
 
 ```groovy
-def String run(final Object... args) {
+def boolean run(final Object... args) {
     def authentication = args[0]
     def principal = args[1]
     def service = args[2]
