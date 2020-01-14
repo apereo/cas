@@ -3,8 +3,8 @@ package org.apereo.cas.web.flow;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
 
-import lombok.val;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.context.ApplicationContext;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ActionState;
@@ -23,6 +23,7 @@ public class MultiphaseAuthenticationWebflowConfigurer extends AbstractCasWebflo
      * Transition to obtain username.
      */
     public static final String TRANSITION_ID_MULTIPHASE_GET_USERID = "multiphaseGetUserId";
+
     public static final String TRANSITION_ID_MULTIPHASE_REDIRECT = "multiphaseRedirect";
 
     static final String ACTION_ID_STORE_USERID_FOR_AUTHENTICATION = "storeUserIdForAuthenticationAction";
@@ -38,20 +39,13 @@ public class MultiphaseAuthenticationWebflowConfigurer extends AbstractCasWebflo
     protected void doInitialize() {
         val flow = getLoginFlow();
         if (flow != null) {
-            LOGGER.debug("Current state ids: [{}]", (Object) flow.getStateIds());
-            LOGGER.debug("Current possible outcomes: {}", (Object) flow.getPossibleOutcomes());
-            LOGGER.debug("Configuring multiphase webflow");
-            // init login state form
             val initState = getState(flow, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM, ActionState.class);
+
             LOGGER.debug("Locating transition id [{}] for state [{}]", 
                     CasWebflowConstants.TRANSITION_ID_SUCCESS, initState.getId());
-            // transition object with id of success from init state
             val initTransition = (Transition) initState.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS);
-            // target following that transition (maybe main page; could be
-            // otherwise)
             val targetStateId = initTransition.getTargetStateId();
-            // add a transition from init state on get_userid transition to
-            // get_userid state
+
             LOGGER.debug("Creating transition with id [{}] for state [{}] to state [{}]",
                     TRANSITION_ID_MULTIPHASE_GET_USERID, initState.getId(), 
                     CasWebflowConstants.VIEW_ID_MULTIPHASE_GET_USERID);
