@@ -1,7 +1,5 @@
 package org.apereo.cas.web.flow;
 
-import org.apereo.cas.config.MultiphaseAuthenticationConfiguration;
-
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -20,6 +18,7 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
+import org.apereo.cas.config.MultiphaseAuthenticationConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.web.config.CasCookieConfiguration;
@@ -64,8 +63,7 @@ import org.springframework.webflow.execution.Action;
     CasCookieConfiguration.class,
     CasCoreHttpConfiguration.class,
     CasCoreUtilConfiguration.class
-    },
-    properties = {
+}, properties = {
         "cas.authn.multiphase.enabled=true"
 })
 public class BaseMultiphaseAuthenticationActionTests {

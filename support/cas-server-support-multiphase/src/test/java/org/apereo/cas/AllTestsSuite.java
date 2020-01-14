@@ -1,7 +1,7 @@
 package org.apereo.cas;
 
-import org.apereo.cas.web.flow.PrepareForMultiphaseAuthenticationActionTests;
 import org.apereo.cas.web.flow.MultiphaseAuthenticationWebflowConfigurerTests;
+import org.apereo.cas.web.flow.PrepareForMultiphaseAuthenticationActionTests;
 import org.apereo.cas.web.flow.StoreUserIdForAuthenticationActionTests;
 
 import org.junit.platform.runner.JUnitPlatform;
@@ -15,9 +15,9 @@ import org.junit.runner.RunWith;
  * @since 6.2.0
  */
 @SelectClasses({
-	PrepareForMultiphaseAuthenticationActionTests.class,
-	MultiphaseAuthenticationWebflowConfigurerTests.class,
-	StoreUserIdForAuthenticationActionTests.class
+    PrepareForMultiphaseAuthenticationActionTests.class,
+    MultiphaseAuthenticationWebflowConfigurerTests.class,
+    StoreUserIdForAuthenticationActionTests.class
 })
 @RunWith(JUnitPlatform.class)
 public class AllTestsSuite {}
