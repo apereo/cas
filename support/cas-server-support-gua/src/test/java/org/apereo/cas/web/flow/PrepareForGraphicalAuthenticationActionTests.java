@@ -1,7 +1,5 @@
 package org.apereo.cas.web.flow;
 
-import org.apereo.cas.web.support.WebUtils;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
