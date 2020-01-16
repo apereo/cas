@@ -31,6 +31,22 @@ public interface MultifactorAuthenticationTrigger extends Ordered {
                                                             HttpServletRequest httpServletRequest,
                                                             Service service);
 
+    /**
+     * Supports.
+     *
+     * @param request           the request
+     * @param registeredService the registered service
+     * @param authentication    the authentication
+     * @param service           the service
+     * @return true/false
+     */
+    default boolean supports(final HttpServletRequest request,
+                             final RegisteredService registeredService,
+                             final Authentication authentication,
+                             final Service service) {
+        return true;
+    }
+    
     @Override
     default int getOrder() {
         return Ordered.LOWEST_PRECEDENCE;

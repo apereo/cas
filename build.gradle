@@ -500,7 +500,7 @@ subprojects {
         [spotbugsMain, spotbugsTest].each {
             it.reports {
                 xml.enabled = true
-                html.enabled = false
+                html.enabled = !rootProject.continuousIntegrationBuild
             }
             it.pluginClasspath = project.configurations.spotbugsPlugins
             it.finalizedBy outputSpotbugsReports
@@ -648,7 +648,7 @@ task jacocoRootReport(type: JacocoReport, group: "Coverage reports") {
     }
     executionData jacocoMerge.destinationFile
     reports {
-        html.enabled = false
+        html.enabled = !rootProject.continuousIntegrationBuild
         xml.enabled = true
     }
 }
