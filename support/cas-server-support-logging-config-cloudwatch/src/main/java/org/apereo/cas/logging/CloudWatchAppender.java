@@ -80,8 +80,9 @@ public class CloudWatchAppender extends AbstractAppender {
      * @param credentialSecretKey              the credential secret key
      * @param awsLogRegionName                 the aws log region name
      * @param layout                           the layout
-     * @param createIfNeeded                   whether to create the resources if needed. Default value is `true`. A
-     *                                         value of `true` takes precedence over the other `create*IfNeeded`.
+     * @param createIfNeeded                   whether to create the resources if needed. Default value is `true`. If
+     *                                         either `createLogGroupIfNeeded` or `createLogStreamIfNeeded` is set, this
+     *                                         will default to `false`.
      * @param createLogGroupIfNeeded           whether to create a Cloud Watch log group if needed. Default value is
      *                                         `false`. A value of `true takes precedence over a value of `false` for
      *                                         `createIfNeeded`
@@ -98,9 +99,9 @@ public class CloudWatchAppender extends AbstractAppender {
                               final String credentialSecretKey,
                               final String awsLogRegionName,
                               final Layout<Serializable> layout,
-                              final boolean createIfNeeded,
-                              final boolean createLogGroupIfNeeded,
-                              final boolean createLogStreamIfNeeded) {
+                              final Boolean createIfNeeded,
+                              final Boolean createLogGroupIfNeeded,
+                              final Boolean createLogStreamIfNeeded) {
         this(name, awsLogGroupName, awsLogStreamName, awsLogStreamFlushPeriodInSeconds, layout, createIfNeeded, createLogGroupIfNeeded, createLogStreamIfNeeded);
 
         try {
@@ -138,9 +139,9 @@ public class CloudWatchAppender extends AbstractAppender {
                               final String awsLogStreamName,
                               final String awsLogStreamFlushPeriodInSeconds,
                               final Layout<Serializable> layout,
-                              final boolean createIfNeeded,
-                              final boolean createLogGroupIfNeeded,
-                              final boolean createLogStreamIfNeeded,
+                              final Boolean createIfNeeded,
+                              final Boolean createLogGroupIfNeeded,
+                              final Boolean createLogStreamIfNeeded,
                               final AWSLogs awsLogs) {
         this(name, awsLogGroupName, awsLogStreamName, awsLogStreamFlushPeriodInSeconds, layout, createIfNeeded, createLogGroupIfNeeded, createLogStreamIfNeeded);
         this.awsLogsClient = awsLogs;
@@ -151,9 +152,9 @@ public class CloudWatchAppender extends AbstractAppender {
                               final String awsLogStreamName,
                               final String awsLogStreamFlushPeriodInSeconds,
                               final Layout<Serializable> layout,
-                              final boolean createIfNeeded,
-                              final boolean createLogGroupIfNeeded,
-                              final boolean createLogStreamIfNeeded) {
+                              final Boolean createIfNeeded,
+                              final Boolean createLogGroupIfNeeded,
+                              final Boolean createLogStreamIfNeeded) {
         super(name, null, layout == null ? PatternLayout.createDefaultLayout() : layout, false, Property.EMPTY_ARRAY);
 
         var flushPeriod = AWS_LOG_STREAM_FLUSH_PERIOD_IN_SECONDS;
@@ -199,9 +200,9 @@ public class CloudWatchAppender extends AbstractAppender {
                                                     @PluginAttribute("credentialSecretKey") final String credentialSecretKey,
                                                     @PluginAttribute("awsLogRegionName") final String awsLogRegionName,
                                                     @PluginElement("Layout") final Layout<Serializable> layout,
-                                                    @PluginAttribute(value = "createIfNeeded", defaultBoolean = true) final boolean createIfNeeded,
-                                                    @PluginAttribute(value = "createLogGroupIfNeeded", defaultBoolean = false) final boolean createLogGroupIfNeeded,
-                                                    @PluginAttribute(value = "createLogStreamIfNeeded", defaultBoolean = false) final boolean createLogStreamIfNeeded) {
+                                                    @PluginAttribute(value = "createIfNeeded", defaultBoolean = true) final Boolean createIfNeeded,
+                                                    @PluginAttribute(value = "createLogGroupIfNeeded") final Boolean createLogGroupIfNeeded,
+                                                    @PluginAttribute(value = "createLogStreamIfNeeded") final Boolean createLogStreamIfNeeded) {
         return new CloudWatchAppender(
             name,
             awsLogGroupName,

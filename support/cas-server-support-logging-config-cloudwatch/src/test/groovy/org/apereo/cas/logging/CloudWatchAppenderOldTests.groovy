@@ -15,7 +15,7 @@ import org.apache.logging.log4j.core.config.builder.api.ConfigurationBuilderFact
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
 
-class CloudWatchAppenderTests {
+class CloudWatchAppenderOldTests {
     @Test
     void "make sure that log4j plugin file is generated"() {
         def builder = ConfigurationBuilderFactory.newConfigurationBuilder()
@@ -35,15 +35,12 @@ class CloudWatchAppenderTests {
             it
         })
         Mockito.when(mock.describeLogGroups(Mockito.any(DescribeLogGroupsRequest))).thenReturn(new DescribeLogGroupsResult().with {
-            it.logGroups.add(new LogGroup().with {
-                it.logGroupName = 'test'
-                it
-            })
+            it.logGroups.add(new LogGroup(logGroupName: 'test'))
             it
         })
 
         // we do this because the lifecycle is a little different for this sort of programmatic configuration
-        def appender = new CloudWatchAppender('test', 'test', 'test', '30', null, false, mock)
+        def appender = new CloudWatchAppender('test', 'test', 'test', '30', null, false, false, false, mock)
         appender.initialize()
 
         def builder = ConfigurationBuilderFactory.newConfigurationBuilder()
@@ -63,7 +60,7 @@ class CloudWatchAppenderTests {
         def mock = Mockito.mock(AWSLogs)
 
         // we do this because the lifecycle is a little different for this sort of programmatic configuration
-        def appender = new CloudWatchAppender('test', 'test', 'test', '30', null, true, mock)
+        def appender = new CloudWatchAppender('test', 'test', 'test', '30', null, true, false, false, mock)
         appender.initialize()
 
         def builder = ConfigurationBuilderFactory.newConfigurationBuilder()
