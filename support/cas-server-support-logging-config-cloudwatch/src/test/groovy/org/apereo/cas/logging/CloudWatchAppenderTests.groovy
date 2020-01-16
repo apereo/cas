@@ -31,11 +31,7 @@ class CloudWatchAppenderTests {
     void "`createIfNeeded` is false"() {
         def mock = Mockito.mock(AWSLogs)
         Mockito.when(mock.describeLogStreams(Mockito.any(DescribeLogStreamsRequest))).thenReturn(new DescribeLogStreamsResult().with {
-            it.logStreams.add(new LogStream().with {
-                it.logStreamName = 'test'
-                it.uploadSequenceToken = 'test'
-                it
-            })
+            it.logStreams.add(new LogStream(logStreamName: 'test', uploadSequenceToken: 'test'))
             it
         })
         Mockito.when(mock.describeLogGroups(Mockito.any(DescribeLogGroupsRequest))).thenReturn(new DescribeLogGroupsResult().with {
