@@ -107,8 +107,9 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
      * @return the sso sessions
      */
     @ReadOperation
+    @SuppressWarnings("PSC_SUBOPTIMAL_COLLECTION_SIZING")
     public Map<String, Object> getSsoSessions(final String type) {
-        val sessionsMap = Maps.<String, Object>newHashMapWithExpectedSize(6);
+        val sessionsMap = new HashMap<String, Object>();
         val option = SsoSessionReportOptions.valueOf(type);
         val activeSsoSessions = getActiveSsoSessions(option);
         sessionsMap.put("activeSsoSessions", activeSsoSessions);
