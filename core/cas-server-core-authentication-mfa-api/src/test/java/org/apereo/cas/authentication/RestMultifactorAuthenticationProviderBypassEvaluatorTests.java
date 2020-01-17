@@ -18,13 +18,13 @@ import java.nio.charset.StandardCharsets;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link RestMultifactorAuthenticationProviderBypassTests}.
+ * This is {@link RestMultifactorAuthenticationProviderBypassEvaluatorTests}.
  *
  * @author Misagh Moayyed
  * @since 6.0.0
  */
 @Tag("RestfulApi")
-public class RestMultifactorAuthenticationProviderBypassTests {
+public class RestMultifactorAuthenticationProviderBypassEvaluatorTests {
     @Test
     public void verifyOperationShouldProceed() {
         try (val webServer = new MockWebServer(9316,

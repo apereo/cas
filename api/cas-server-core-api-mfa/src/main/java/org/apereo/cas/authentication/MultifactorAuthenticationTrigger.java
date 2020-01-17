@@ -6,6 +6,7 @@ import org.apereo.cas.services.RegisteredService;
 import org.springframework.core.Ordered;
 
 import javax.servlet.http.HttpServletRequest;
+
 import java.util.Optional;
 
 /**
@@ -46,9 +47,13 @@ public interface MultifactorAuthenticationTrigger extends Ordered {
                              final Service service) {
         return true;
     }
-    
+
     @Override
     default int getOrder() {
         return Ordered.LOWEST_PRECEDENCE;
+    }
+
+    default String getName() {
+        return getClass().getSimpleName();
     }
 }

@@ -11,8 +11,8 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.webflow.execution.Event;
 
 import javax.servlet.http.HttpServletRequest;
+
 import java.util.Collection;
-import java.util.Set;
 
 /**
  * This is {@link CompositeProviderSelectionMultifactorWebflowEventResolver}.
@@ -29,8 +29,8 @@ public class CompositeProviderSelectionMultifactorWebflowEventResolver extends S
     }
 
     @Override
-    protected Pair<Set<Event>, Collection<MultifactorAuthenticationProvider>> filterEventsByMultifactorAuthenticationProvider(
-        final Set<Event> resolveEvents,
+    protected Pair<Collection<Event>, Collection<MultifactorAuthenticationProvider>> filterEventsByMultifactorAuthenticationProvider(
+        final Collection<Event> resolveEvents,
         final Authentication authentication,
         final RegisteredService registeredService,
         final HttpServletRequest request) {

@@ -16,13 +16,13 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
- * This is {@link GroovyMultifactorAuthenticationProviderBypassTests}.
+ * This is {@link GroovyMultifactorAuthenticationProviderBypassEvaluatorTests}.
  *
  * @author Misagh Moayyed
  * @since 5.3.0
  */
 @Tag("Groovy")
-public class GroovyMultifactorAuthenticationProviderBypassTests {
+public class GroovyMultifactorAuthenticationProviderBypassEvaluatorTests {
     @Test
     public void verifyAction() {
         assertTrue(runGroovyBypassFor("casuser"));
