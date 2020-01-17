@@ -35,6 +35,7 @@ public class PrepareForPasswordlessAuthenticationActionTests extends BasePasswor
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
 
+        WebUtils.putMultiphaseAuthenticationUsername(context, "casuser");
         WebUtils.putPasswordlessAuthenticationAccount(context, new PasswordlessUserAccount("casuser", "email", "phone", "casuser"));
         assertEquals("success", initializeLoginAction.execute(context).getId());
     }
