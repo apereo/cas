@@ -8,6 +8,7 @@ import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.ISOStandardDateFormat;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
+import com.google.common.collect.Maps;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
@@ -107,7 +108,7 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
      */
     @ReadOperation
     public Map<String, Object> getSsoSessions(final String type) {
-        val sessionsMap = new HashMap<String, Object>(6);
+        val sessionsMap = Maps.<String, Object>newHashMapWithExpectedSize(6);
         val option = SsoSessionReportOptions.valueOf(type);
         val activeSsoSessions = getActiveSsoSessions(option);
         sessionsMap.put("activeSsoSessions", activeSsoSessions);
