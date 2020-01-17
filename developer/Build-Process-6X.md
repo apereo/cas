@@ -319,7 +319,7 @@ To simplify the test execution process, you may take advantage of the `testcas.s
 
 ```bash
 # chmod +x ./testcas.sh
-./testcas.sh <category> [tests] [debug]
+./testcas.sh --category <category> [--test <test-class>] [--debug] [--coverage]
 ```
 
 The accepted parameters are:
@@ -327,5 +327,6 @@ The accepted parameters are:
 | Parameter            | Description
 |----------------------+--------------------------------+
 | `category`           | `testCategoryType` to use.
-| `tests`              | Optional. When specified using the syntax `<fully-qualified-class-name#testMethodName>`, it will filter test execution by class and/or method.
+| `test`               | Optional. When specified using the syntax `<fully-qualified-class-name#testMethodName>`, it will filter test execution by class and/or method.
 | `debug`              | Optional. When set to `true`, it will launch the tests in debug mode.
+| `coverage`           | Optional. When set to `true`, it will launch collect test coverage results.
