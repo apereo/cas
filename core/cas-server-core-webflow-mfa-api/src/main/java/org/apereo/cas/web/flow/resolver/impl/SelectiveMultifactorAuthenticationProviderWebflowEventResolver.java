@@ -14,9 +14,12 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.HttpServletRequest;
+
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * This is {@link SelectiveMultifactorAuthenticationProviderWebflowEventResolver}
@@ -38,7 +41,7 @@ public class SelectiveMultifactorAuthenticationProviderWebflowEventResolver
 
     @Override
     public Set<Event> resolveInternal(final RequestContext context) {
-        val resolvedEvents = getResolvedEventsAsAttribute(context);
+        val resolvedEvents = WebUtils.getResolvedEventsAsAttribute(context);
         val authentication = WebUtils.getAuthentication(context);
         val registeredService = resolveRegisteredServiceInRequestContext(context);
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
@@ -57,7 +60,7 @@ public class SelectiveMultifactorAuthenticationProviderWebflowEventResolver
      * @param context           the request context
      * @return the set of resolved events
      */
-    protected Set<Event> resolveEventsInternal(final Set<Event> resolveEvents,
+    protected Set<Event> resolveEventsInternal(final Collection<Event> resolveEvents,
                                                final Authentication authentication,
                                                final RegisteredService registeredService,
                                                final HttpServletRequest request,
@@ -72,7 +75,7 @@ public class SelectiveMultifactorAuthenticationProviderWebflowEventResolver
         }
         val pair = filterEventsByMultifactorAuthenticationProvider(resolveEvents, authentication, registeredService, request);
         WebUtils.putResolvedMultifactorAuthenticationProviders(context, pair.getValue());
-        return pair.getKey();
+        return new HashSet<>(pair.getKey());
     }
 
     /**
@@ -84,8 +87,8 @@ public class SelectiveMultifactorAuthenticationProviderWebflowEventResolver
      * @param request           the request
      * @return the set of events
      */
-    protected Pair<Set<Event>, Collection<MultifactorAuthenticationProvider>> filterEventsByMultifactorAuthenticationProvider(
-        final Set<Event> resolveEvents,
+    protected Pair<Collection<Event>, Collection<MultifactorAuthenticationProvider>> filterEventsByMultifactorAuthenticationProvider(
+        final Collection<Event> resolveEvents,
         final Authentication authentication,
         final RegisteredService registeredService,
         final HttpServletRequest request) {
@@ -105,6 +108,8 @@ public class SelectiveMultifactorAuthenticationProviderWebflowEventResolver
         resolveEvents.removeIf(e -> providerValues.stream().noneMatch(p -> p.matches(e.getId())));
 
         LOGGER.debug("Finalized set of resolved events are [{}]", resolveEvents);
-        return Pair.of(resolveEvents, providerValues);
+        val finalEvents = new TreeSet<>(Comparator.comparing(Event::getId));
+        finalEvents.addAll(resolveEvents);
+        return Pair.of(finalEvents, providerValues);
     }
 }

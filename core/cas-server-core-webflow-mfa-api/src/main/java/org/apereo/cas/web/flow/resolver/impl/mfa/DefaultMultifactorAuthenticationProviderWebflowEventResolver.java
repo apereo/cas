@@ -42,8 +42,9 @@ public class DefaultMultifactorAuthenticationProviderWebflowEventResolver extend
         val result = multifactorAuthenticationTrigger.isActivated(authentication, registeredService, request, service);
         return result.map(provider -> {
             LOGGER.trace("Building event based on the authentication provider [{}] and service [{}]", provider, registeredService);
-            var eventMap = MultifactorAuthenticationUtils.buildEventAttributeMap(authentication.getPrincipal(),
+            val eventMap = MultifactorAuthenticationUtils.buildEventAttributeMap(authentication.getPrincipal(),
                 Optional.ofNullable(registeredService), provider);
+            eventMap.put(MultifactorAuthenticationTrigger.class.getSimpleName(), multifactorAuthenticationTrigger.getName());
             val event = MultifactorAuthenticationUtils.validateEventIdForMatchingTransitionInContext(
                 provider.getId(), Optional.of(context), eventMap);
             return CollectionUtils.wrapSet(event);
