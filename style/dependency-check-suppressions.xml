@@ -4,6 +4,9 @@
         <cve>CVE-2019-10174</cve>
     </suppress>
     <suppress>
+        <cve>CVE-2019-20330</cve>
+    </suppress>
+    <suppress>
         <cve>CVE-2019-10158</cve>
     </suppress>
     <suppress>
