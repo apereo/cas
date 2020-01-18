@@ -9,13 +9,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import javax.persistence.Transient;
+
 import java.util.Set;
 
 /**
@@ -73,20 +73,6 @@ public class GroovyRegisteredServiceMultifactorPolicy implements RegisteredServi
         return this.groovyPolicyInstance.getPrincipalAttributeValueToMatch();
     }
 
-    @Override
-    @JsonIgnore
-    public String getBypassPrincipalAttributeName() {
-        buildGroovyMultifactorPolicyInstanceIfNeeded();
-        return this.groovyPolicyInstance.getBypassPrincipalAttributeName();
-    }
-
-    @Override
-    @JsonIgnore
-    public String getBypassPrincipalAttributeValue() {
-        buildGroovyMultifactorPolicyInstanceIfNeeded();
-        return this.groovyPolicyInstance.getBypassPrincipalAttributeValue();
-    }
-
     @JsonIgnore
     @Override
     public boolean isBypassEnabled() {
@@ -106,6 +92,27 @@ public class GroovyRegisteredServiceMultifactorPolicy implements RegisteredServi
     public boolean isBypassTrustedDeviceEnabled() {
         buildGroovyMultifactorPolicyInstanceIfNeeded();
         return this.groovyPolicyInstance.isBypassTrustedDeviceEnabled();
+    }
+
+    @Override
+    @JsonIgnore
+    public String getBypassPrincipalAttributeName() {
+        buildGroovyMultifactorPolicyInstanceIfNeeded();
+        return this.groovyPolicyInstance.getBypassPrincipalAttributeName();
+    }
+
+    @Override
+    @JsonIgnore
+    public String getBypassPrincipalAttributeValue() {
+        buildGroovyMultifactorPolicyInstanceIfNeeded();
+        return this.groovyPolicyInstance.getBypassPrincipalAttributeValue();
+    }
+
+    @Override
+    @JsonIgnore
+    public String getScript() {
+        buildGroovyMultifactorPolicyInstanceIfNeeded();
+        return this.groovyPolicyInstance.getScript();
     }
 
     @SneakyThrows

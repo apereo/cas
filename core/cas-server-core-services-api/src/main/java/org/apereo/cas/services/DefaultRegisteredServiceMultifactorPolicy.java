@@ -43,4 +43,6 @@ public class DefaultRegisteredServiceMultifactorPolicy implements RegisteredServ
     private String bypassPrincipalAttributeName;
 
     private String bypassPrincipalAttributeValue;
+
+    private String script;
 }
