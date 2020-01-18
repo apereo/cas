@@ -43,8 +43,6 @@ import org.springframework.context.annotation.Configuration;
 @Configuration(value = "casReportsConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasReportsConfiguration {
-
-
     @Autowired
     @Qualifier("defaultTicketRegistrySupport")
     private ObjectProvider<TicketRegistrySupport> ticketRegistrySupport;
@@ -168,7 +166,7 @@ public class CasReportsConfiguration {
         @Bean
         @ConditionalOnAvailableEndpoint
         public StatusEndpoint statusEndpoint() {
-            return new StatusEndpoint(casProperties, healthEndpoint.getObject());
+            return new StatusEndpoint(casProperties, healthEndpoint.getIfAvailable());
         }
     }
 }

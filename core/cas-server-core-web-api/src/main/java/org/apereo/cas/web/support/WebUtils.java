@@ -42,6 +42,7 @@ import org.springframework.webflow.execution.RequestContextHolder;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import java.io.Serializable;
 import java.net.URI;
 import java.util.Collection;
@@ -65,16 +66,47 @@ public class WebUtils {
     public static final String PARAMETER_TICKET_GRANTING_TICKET_ID = "ticketGrantingTicketId";
 
     private static final String PUBLIC_WORKSTATION_ATTRIBUTE = "publicWorkstation";
+
     private static final String PARAMETER_AUTHENTICATION = "authentication";
+
     private static final String PARAMETER_AUTHENTICATION_RESULT_BUILDER = "authenticationResultBuilder";
+
     private static final String PARAMETER_AUTHENTICATION_RESULT = "authenticationResult";
+
     private static final String PARAMETER_CREDENTIAL = "credential";
+
     private static final String PARAMETER_UNAUTHORIZED_REDIRECT_URL = "unauthorizedRedirectUrl";
+
     private static final String PARAMETER_REGISTERED_SERVICE = "registeredService";
+
     private static final String PARAMETER_SERVICE = "service";
+
     private static final String PARAMETER_SERVICE_TICKET_ID = "serviceTicketId";
+
     private static final String PARAMETER_LOGOUT_REQUESTS = "logoutRequests";
+
     private static final String PARAMETER_SERVICE_UI_METADATA = "serviceUIMetadata";
+
+    /**
+     * Gets resolved events as attribute.
+     *
+     * @param context the context
+     * @return the resolved events as attribute
+     */
+    public static Collection<Event> getResolvedEventsAsAttribute(final RequestContext context) {
+        return context.getAttributes().get("resolvedAuthenticationEvents", Collection.class);
+    }
+
+    /**
+     * Put resolved events as attribute.
+     *
+     * @param context        the context
+     * @param resolvedEvents the resolved events
+     */
+    public static void putResolvedEventsAsAttribute(final RequestContext context,
+                                                    final Collection<Event> resolvedEvents) {
+        context.getAttributes().put("resolvedAuthenticationEvents", resolvedEvents);
+    }
 
     /**
      * Gets the http servlet request from the context.

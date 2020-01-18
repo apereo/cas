@@ -88,7 +88,8 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
                         attributeScriptCache.put(mappedAttributeName, new GroovyShellScript(matcherInline.group(1)));
                     } else if (matcherFile.find()) {
                         try {
-                            val resource = ResourceUtils.getRawResourceFrom(SpringExpressionLanguageValueResolver.getInstance().resolve(matcherFile.group(2)));
+                            val scriptPath = SpringExpressionLanguageValueResolver.getInstance().resolve(matcherFile.group());
+                            val resource = ResourceUtils.getRawResourceFrom(scriptPath);
                             attributeScriptCache.put(mappedAttributeName, new WatchableGroovyScriptResource(resource));
                         } catch (final Exception e) {
                             LOGGER.error(e.getMessage(), e);

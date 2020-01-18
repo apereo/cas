@@ -205,7 +205,8 @@
     {
       "groupName": "ApacheCXF",
       "packagePatterns": [
-        "^org.apache.cxf:"
+        "^org.apache.cxf:",
+        "^org.apache.cxf.services.sts:"
       ]
     },
     {
