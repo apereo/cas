@@ -48,13 +48,27 @@ public class InitialFlowSetupAction extends AbstractAction {
     private final List<ArgumentExtractor> argumentExtractors;
 
     private final ServicesManager servicesManager;
+
     private final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
+
     private final CasCookieBuilder ticketGrantingTicketCookieGenerator;
+
     private final CasCookieBuilder warnCookieGenerator;
+
     private final CasConfigurationProperties casProperties;
+
     private final AuthenticationEventExecutionPlan authenticationEventExecutionPlan;
+
     private final SingleSignOnParticipationStrategy renewalStrategy;
+
     private final TicketRegistrySupport ticketRegistrySupport;
+
+    private static void configureWebflowForPostParameters(final RequestContext context) {
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
+        if (request.getMethod().equalsIgnoreCase(HttpMethod.POST.name())) {
+            WebUtils.putInitialHttpRequestPostParameters(context);
+        }
+    }
 
     @Override
     public Event doExecute(final RequestContext context) {
@@ -87,13 +101,6 @@ public class InitialFlowSetupAction extends AbstractAction {
 
     private void configureWebflowForCustomFields(final RequestContext context) {
         WebUtils.putCustomLoginFormFields(context, casProperties.getView().getCustomLoginFormFields());
-    }
-
-    private static void configureWebflowForPostParameters(final RequestContext context) {
-        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
-        if (request.getMethod().equalsIgnoreCase(HttpMethod.POST.name())) {
-            WebUtils.putInitialHttpRequestPostParameters(context);
-        }
     }
 
     private void configureWebflowForServices(final RequestContext context) {

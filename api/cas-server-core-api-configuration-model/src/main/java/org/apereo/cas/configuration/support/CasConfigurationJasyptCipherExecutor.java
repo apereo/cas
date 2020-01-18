@@ -261,6 +261,7 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
          */
         @Getter
         private final String propertyName;
+
         /**
          * The Default value.
          */
