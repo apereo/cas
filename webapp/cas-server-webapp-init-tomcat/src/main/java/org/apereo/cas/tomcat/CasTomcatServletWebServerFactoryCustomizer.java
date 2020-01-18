@@ -137,7 +137,6 @@ public class CasTomcatServletWebServerFactoryCustomizer extends ServletWebServer
             valve.setEnabled(true);
             valve.setRotatable(true);
             valve.setBuffered(true);
-            tomcat.addContextValves(valve);
             tomcat.addEngineValves(valve);
         }
     }
