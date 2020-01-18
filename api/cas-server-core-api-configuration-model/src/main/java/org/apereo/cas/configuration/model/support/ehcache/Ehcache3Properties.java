@@ -98,7 +98,6 @@ public class Ehcache3Properties implements Serializable {
     private Consistency clusteredCacheConsistency = Consistency.STRONG;
 
     /**
-     *
      * Enumeration of the different consistency levels supported in clustered caches.
      */
     public enum Consistency {
