@@ -21,7 +21,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration(value = "ehcacheMonitorConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Deprecated
+@Deprecated(since = "6.2.0", forRemoval = true)
 public class EhCacheMonitorConfiguration {
 
     @Autowired

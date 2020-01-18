@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
  * @deprecated Since 6.2, due to Ehcache 2.x being unmaintained. Other registries are available, including Ehcache 3.x.
  */
 @Slf4j
-@Deprecated
+@Deprecated(since = "6.2.0", forRemoval = true)
 public class EhCacheTicketRegistry extends AbstractTicketRegistry {
 
 

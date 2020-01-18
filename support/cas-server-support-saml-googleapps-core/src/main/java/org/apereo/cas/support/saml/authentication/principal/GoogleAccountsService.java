@@ -25,7 +25,7 @@ import javax.persistence.Entity;
 @Getter
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-@Deprecated
+@Deprecated(since = "6.2.0", forRemoval = true)
 public class GoogleAccountsService extends AbstractWebApplicationService {
 
     private static final long serialVersionUID = 6678711809842282833L;

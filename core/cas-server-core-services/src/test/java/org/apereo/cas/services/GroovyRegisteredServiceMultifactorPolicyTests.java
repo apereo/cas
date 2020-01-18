@@ -16,8 +16,10 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  * @author Misagh Moayyed
  * @since 5.3.0
+ * @deprecated This component is deprecated as of 6.2.0 and is scheduled to be removed.
  */
 @Tag("Groovy")
+@Deprecated(since = "6.2.0", forRemoval = true)
 public class GroovyRegisteredServiceMultifactorPolicyTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "GroovyRegisteredServiceMultifactorPolicyTests.json");
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();

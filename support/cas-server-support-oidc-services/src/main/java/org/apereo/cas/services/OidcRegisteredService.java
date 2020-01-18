@@ -88,7 +88,7 @@ public class OidcRegisteredService extends OAuthRegisteredService {
 
     @JsonIgnore
     @Column
-    @Deprecated
+    @Deprecated(since = "6.2.0", forRemoval = true)
     @Transient
     @org.springframework.data.annotation.Transient
     private transient boolean implicit;
