@@ -37,8 +37,8 @@ public class PrincipalMultifactorAuthenticationProviderBypassEvaluatorTests {
     public void verifyOperation() {
         val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
 
-        val eval = new CompositeMultifactorAuthenticationProviderBypassEvaluator(TestMultifactorAuthenticationProvider.ID);
-        eval.addBypassEvaluator(new PrincipalMultifactorAuthenticationProviderBypassEvaluator("cn", "exam.+", TestMultifactorAuthenticationProvider.ID));
+        val eval = new DefaultChainingMultifactorAuthenticationBypassProvider();
+        eval.addMultifactorAuthenticationProviderBypassEvaluator(new PrincipalMultifactorAuthenticationProviderBypassEvaluator("cn", "exam.+", TestMultifactorAuthenticationProvider.ID));
 
         val principal = CoreAuthenticationTestUtils.getPrincipal(Map.of("cn", List.of("example")));
         val authentication = CoreAuthenticationTestUtils.getAuthentication(principal);
@@ -53,11 +53,11 @@ public class PrincipalMultifactorAuthenticationProviderBypassEvaluatorTests {
     public void verifyOperationByProperty() {
         val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
 
-        val eval = new CompositeMultifactorAuthenticationProviderBypassEvaluator(TestMultifactorAuthenticationProvider.ID);
+        val eval = new DefaultChainingMultifactorAuthenticationBypassProvider();
         val bypassProps = new MultifactorAuthenticationProviderBypassProperties();
         bypassProps.setPrincipalAttributeName("cn");
         bypassProps.setAuthenticationAttributeValue("ex.+");
-        eval.addBypassEvaluator(new PrincipalMultifactorAuthenticationProviderBypassEvaluator(bypassProps, TestMultifactorAuthenticationProvider.ID));
+        eval.addMultifactorAuthenticationProviderBypassEvaluator(new PrincipalMultifactorAuthenticationProviderBypassEvaluator(bypassProps, TestMultifactorAuthenticationProvider.ID));
 
         val principal = CoreAuthenticationTestUtils.getPrincipal(Map.of("cn", List.of("example")));
         val authentication = CoreAuthenticationTestUtils.getAuthentication(principal);

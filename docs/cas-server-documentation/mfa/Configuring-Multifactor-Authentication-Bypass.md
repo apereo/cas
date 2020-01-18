@@ -61,6 +61,26 @@ whose access should bypass MFA may be defined as such in the CAS service registr
 }
 ```
 
+### Bypass Per Principal Attribute & Service
+
+This is similar to the above option, except that bypass is only activated for
+the registered application if the authenticated principal contains an attribute
+with the specified value(s). 
+
+```json
+{
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId" : "^(https|imaps)://.*",
+  "id" : 100,
+  "multifactorPolicy" : {
+    "@class" : "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
+    "bypassPrincipalAttributeName": "attributeForBypass",
+    "bypassPrincipalAttributeValue": "^bypass-value-[A-Z].+",
+    "bypassEnabled" : "true"
+  }
+}
+```
+
 ## Additional Bypass Providers
 
 In addition to the configurable default bypass rules, the following bypass providers can be defined and executed after default bypass rules are calculated.

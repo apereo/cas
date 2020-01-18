@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.bypass.HttpRequestMultifactorAuthentication
 import org.apereo.cas.authentication.bypass.MultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.authentication.bypass.PrincipalMultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.authentication.bypass.RegisteredServiceMultifactorAuthenticationProviderBypassEvaluator;
+import org.apereo.cas.authentication.bypass.RegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.authentication.bypass.RestMultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 
@@ -44,6 +45,7 @@ public class U2FAuthenticationMultifactorProviderBypassConfiguration {
             bypass.addMultifactorAuthenticationProviderBypassEvaluator(u2fPrincipalMultifactorAuthenticationProviderBypass());
         }
         bypass.addMultifactorAuthenticationProviderBypassEvaluator(u2fRegisteredServiceMultifactorAuthenticationProviderBypass());
+        bypass.addMultifactorAuthenticationProviderBypassEvaluator(u2fRegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator());
         if (StringUtils.isNotBlank(props.getAuthenticationAttributeName())
             || StringUtils.isNotBlank(props.getAuthenticationHandlerName())
             || StringUtils.isNotBlank(props.getAuthenticationMethodName())) {
@@ -90,6 +92,14 @@ public class U2FAuthenticationMultifactorProviderBypassConfiguration {
         val u2f = casProperties.getAuthn().getMfa().getU2f();
         val props = u2f.getBypass();
         return new HttpRequestMultifactorAuthenticationProviderBypassEvaluator(props, u2f.getId());
+    }
+
+    @ConditionalOnMissingBean(name = "u2fRegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator")
+    @Bean
+    @RefreshScope
+    public MultifactorAuthenticationProviderBypassEvaluator u2fRegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator() {
+        val u2f = casProperties.getAuthn().getMfa().getU2f();
+        return new RegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator(u2f.getId());
     }
 
     @Bean

@@ -1,11 +1,11 @@
 package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.bypass.AuthenticationMultifactorAuthenticationProviderBypassEvaluatorTests;
-import org.apereo.cas.authentication.bypass.CompositeMultifactorAuthenticationProviderBypassEvaluatorTests;
 import org.apereo.cas.authentication.bypass.CredentialMultifactorAuthenticationProviderBypassEvaluatorTests;
 import org.apereo.cas.authentication.bypass.NeverAllowMultifactorAuthenticationProviderBypassEvaluatorTests;
 import org.apereo.cas.authentication.bypass.PrincipalMultifactorAuthenticationProviderBypassEvaluatorTests;
 import org.apereo.cas.authentication.bypass.RegisteredServiceMultifactorAuthenticationProviderBypassEvaluatorTests;
+import org.apereo.cas.authentication.bypass.RegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluatorTests;
 
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
@@ -20,7 +20,7 @@ import org.junit.runner.RunWith;
 @SelectClasses({
     DefaultMultifactorAuthenticationProviderResolverTests.class,
     DefaultMultifactorAuthenticationFailureModeEvaluatorTests.class,
-    CompositeMultifactorAuthenticationProviderBypassEvaluatorTests.class,
+    RegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluatorTests.class,
     NeverAllowMultifactorAuthenticationProviderBypassEvaluatorTests.class,
     AuthenticationMultifactorAuthenticationProviderBypassEvaluatorTests.class,
     CredentialMultifactorAuthenticationProviderBypassEvaluatorTests.class,

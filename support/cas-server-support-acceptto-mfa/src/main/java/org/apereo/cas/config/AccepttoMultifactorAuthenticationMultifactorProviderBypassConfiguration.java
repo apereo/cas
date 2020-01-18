@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.bypass.HttpRequestMultifactorAuthentication
 import org.apereo.cas.authentication.bypass.MultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.authentication.bypass.PrincipalMultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.authentication.bypass.RegisteredServiceMultifactorAuthenticationProviderBypassEvaluator;
+import org.apereo.cas.authentication.bypass.RegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.authentication.bypass.RestMultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 
@@ -44,6 +45,8 @@ public class AccepttoMultifactorAuthenticationMultifactorProviderBypassConfigura
             bypass.addMultifactorAuthenticationProviderBypassEvaluator(casAccepttoMultifactorPrincipalMultifactorAuthenticationProviderBypass());
         }
         bypass.addMultifactorAuthenticationProviderBypassEvaluator(casAccepttoMultifactorRegisteredServiceMultifactorAuthenticationProviderBypass());
+        bypass.addMultifactorAuthenticationProviderBypassEvaluator(casAccepttoMultifactorRegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator());
+        
         if (StringUtils.isNotBlank(props.getAuthenticationAttributeName())
             || StringUtils.isNotBlank(props.getAuthenticationHandlerName())
             || StringUtils.isNotBlank(props.getAuthenticationMethodName())) {
@@ -63,6 +66,15 @@ public class AccepttoMultifactorAuthenticationMultifactorProviderBypassConfigura
             bypass.addMultifactorAuthenticationProviderBypassEvaluator(casAccepttoMultifactorRestMultifactorAuthenticationProviderBypass());
         }
         return bypass;
+    }
+
+
+    @ConditionalOnMissingBean(name = "casAccepttoMultifactorRegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator")
+    @Bean
+    @RefreshScope
+    public MultifactorAuthenticationProviderBypassEvaluator casAccepttoMultifactorRegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator() {
+        val simple = casProperties.getAuthn().getMfa().getAcceptto();
+        return new RegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator(simple.getId());
     }
 
     @ConditionalOnMissingBean(name = "casAccepttoMultifactorRestMultifactorAuthenticationProviderBypass")

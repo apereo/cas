@@ -36,8 +36,8 @@ public class RegisteredServiceMultifactorAuthenticationProviderBypassEvaluatorTe
     public void verifyOperation() {
         val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
 
-        val eval = new CompositeMultifactorAuthenticationProviderBypassEvaluator(TestMultifactorAuthenticationProvider.ID);
-        eval.addBypassEvaluator(
+        val eval = new DefaultChainingMultifactorAuthenticationBypassProvider();
+        eval.addMultifactorAuthenticationProviderBypassEvaluator(
             new RegisteredServiceMultifactorAuthenticationProviderBypassEvaluator(TestMultifactorAuthenticationProvider.ID));
 
         val principal = CoreAuthenticationTestUtils.getPrincipal(Map.of("cn", List.of("example")));

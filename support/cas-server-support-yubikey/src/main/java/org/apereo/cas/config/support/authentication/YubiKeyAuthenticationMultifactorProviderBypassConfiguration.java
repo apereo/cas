@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.bypass.HttpRequestMultifactorAuthentication
 import org.apereo.cas.authentication.bypass.MultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.authentication.bypass.PrincipalMultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.authentication.bypass.RegisteredServiceMultifactorAuthenticationProviderBypassEvaluator;
+import org.apereo.cas.authentication.bypass.RegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.authentication.bypass.RestMultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 
@@ -44,6 +45,8 @@ public class YubiKeyAuthenticationMultifactorProviderBypassConfiguration {
             bypass.addMultifactorAuthenticationProviderBypassEvaluator(yubikeyPrincipalMultifactorAuthenticationProviderBypass());
         }
         bypass.addMultifactorAuthenticationProviderBypassEvaluator(yubikeyRegisteredServiceMultifactorAuthenticationProviderBypass());
+        bypass.addMultifactorAuthenticationProviderBypassEvaluator(
+            yubikeyRegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator());
         if (StringUtils.isNotBlank(props.getAuthenticationAttributeName())
             || StringUtils.isNotBlank(props.getAuthenticationHandlerName())
             || StringUtils.isNotBlank(props.getAuthenticationMethodName())) {
@@ -90,6 +93,14 @@ public class YubiKeyAuthenticationMultifactorProviderBypassConfiguration {
         val yubikey = casProperties.getAuthn().getMfa().getYubikey();
         val props = yubikey.getBypass();
         return new HttpRequestMultifactorAuthenticationProviderBypassEvaluator(props, yubikey.getId());
+    }
+
+    @ConditionalOnMissingBean(name = "yubikeyRegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator")
+    @Bean
+    @RefreshScope
+    public MultifactorAuthenticationProviderBypassEvaluator yubikeyRegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator() {
+        val yubikey = casProperties.getAuthn().getMfa().getYubikey();
+        return new RegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator(yubikey.getId());
     }
 
     @Bean
