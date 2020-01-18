@@ -33,9 +33,8 @@ import java.util.stream.Collectors;
  * @deprecated Since 6.2, due to Ehcache 2.x being unmaintained. Other registries are available, including Ehcache 3.x.
  */
 @Slf4j
-@Deprecated(since = "6.2.0", forRemoval = true)
+@Deprecated(since = "6.2.0")
 public class EhCacheTicketRegistry extends AbstractTicketRegistry {
-
 
     private final TicketCatalog ticketCatalog;
 
@@ -53,6 +52,15 @@ public class EhCacheTicketRegistry extends AbstractTicketRegistry {
         this.cacheManager = cacheManager;
         setCipherExecutor(cipher);
         LOGGER.info("Setting up Ehcache Ticket Registry...");
+    }
+
+    private static Map<Object, Element> getAllUnexpired(final Ehcache map) {
+        try {
+            return map.getAll(map.getKeysWithExpiryCheck());
+        } catch (final Exception e) {
+            LOGGER.warn(e.getMessage(), e);
+            return new HashMap<>(0);
+        }
     }
 
     @Override
@@ -81,35 +89,6 @@ public class EhCacheTicketRegistry extends AbstractTicketRegistry {
         LOGGER.debug("Adding ticket [{}] to the cache [{}] to live [{}] seconds and stay idle for [{}] seconds",
             ticket.getId(), cache.getName(), aliveValue, idleValue);
         cache.put(element);
-    }
-
-    @Override
-    public boolean deleteSingleTicket(final String ticketId) {
-        val ticket = getTicket(ticketId, Predicates.alwaysTrue());
-        if (ticket == null) {
-            LOGGER.debug("Ticket [{}] cannot be retrieved from the cache", ticketId);
-            return true;
-        }
-
-        val metadata = this.ticketCatalog.find(ticket);
-        val cache = getTicketCacheFor(metadata);
-
-        if (cache.remove(encodeTicketId(ticket.getId()))) {
-            LOGGER.debug("Ticket [{}] is removed", ticket.getId());
-        }
-        return true;
-    }
-
-    @Override
-    public long deleteAll() {
-        return ticketCatalog.findAll().stream()
-            .map(this::getTicketCacheFor)
-            .filter(Objects::nonNull)
-            .mapToLong(instance -> {
-                val size = instance.getSize();
-                instance.removeAll();
-                return size;
-            }).sum();
     }
 
     @Override
@@ -149,6 +128,18 @@ public class EhCacheTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
+    public long deleteAll() {
+        return ticketCatalog.findAll().stream()
+            .map(this::getTicketCacheFor)
+            .filter(Objects::nonNull)
+            .mapToLong(instance -> {
+                val size = instance.getSize();
+                instance.removeAll();
+                return size;
+            }).sum();
+    }
+
+    @Override
     public Collection<? extends Ticket> getTickets() {
         return this.ticketCatalog.findAll().stream()
             .map(this::getTicketCacheFor)
@@ -164,18 +155,26 @@ public class EhCacheTicketRegistry extends AbstractTicketRegistry {
         return ticket;
     }
 
+    @Override
+    public boolean deleteSingleTicket(final String ticketId) {
+        val ticket = getTicket(ticketId, Predicates.alwaysTrue());
+        if (ticket == null) {
+            LOGGER.debug("Ticket [{}] cannot be retrieved from the cache", ticketId);
+            return true;
+        }
+
+        val metadata = this.ticketCatalog.find(ticket);
+        val cache = getTicketCacheFor(metadata);
+
+        if (cache.remove(encodeTicketId(ticket.getId()))) {
+            LOGGER.debug("Ticket [{}] is removed", ticket.getId());
+        }
+        return true;
+    }
+
     private Ehcache getTicketCacheFor(final TicketDefinition metadata) {
         val mapName = metadata.getProperties().getStorageName();
         LOGGER.debug("Locating cache name [{}] for ticket definition [{}]", mapName, metadata);
         return this.cacheManager.getCache(mapName);
-    }
-
-    private static Map<Object, Element> getAllUnexpired(final Ehcache map) {
-        try {
-            return map.getAll(map.getKeysWithExpiryCheck());
-        } catch (final Exception e) {
-            LOGGER.warn(e.getMessage(), e);
-            return new HashMap<>(0);
-        }
     }
 }

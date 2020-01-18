@@ -1,7 +1,6 @@
 package org.apereo.cas.web;
 
 import lombok.val;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.core.env.CompositePropertySource;
 import org.springframework.core.env.PropertiesPropertySource;
@@ -12,7 +11,7 @@ import org.springframework.core.io.support.PropertiesLoaderUtils;
 import java.io.IOException;
 import java.util.Arrays;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Webjar paths aren't always consistent from version to version so check that the paths exist in the jars.

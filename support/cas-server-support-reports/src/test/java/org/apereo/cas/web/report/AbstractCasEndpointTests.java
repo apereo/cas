@@ -38,6 +38,7 @@ import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringBootConfiguration;
+import org.springframework.boot.actuate.autoconfigure.health.HealthEndpointAutoConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
@@ -81,6 +82,7 @@ public abstract class AbstractCasEndpointTests {
 
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
+        HealthEndpointAutoConfiguration.class,
         MailSenderAutoConfiguration.class,
         AopAutoConfiguration.class
     })

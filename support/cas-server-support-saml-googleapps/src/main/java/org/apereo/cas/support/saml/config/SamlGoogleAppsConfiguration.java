@@ -35,7 +35,7 @@ import org.springframework.context.annotation.Lazy;
 @Configuration("samlGoogleAppsConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-@Deprecated(since = "6.2.0", forRemoval = true)
+@Deprecated(since = "6.2.0")
 public class SamlGoogleAppsConfiguration implements InitializingBean {
 
     @Autowired
