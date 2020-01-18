@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration(value = "ehcacheTicketRegistryTicketCatalogConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Deprecated(since = "6.2.0", forRemoval = true)
+@Deprecated(since = "6.2.0")
 public class EhcacheTicketRegistryTicketCatalogConfiguration extends BaseTicketDefinitionBuilderSupportConfiguration {
 
     public EhcacheTicketRegistryTicketCatalogConfiguration(final CasConfigurationProperties casProperties) {

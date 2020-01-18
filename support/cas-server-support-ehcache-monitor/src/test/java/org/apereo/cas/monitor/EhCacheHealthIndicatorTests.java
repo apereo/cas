@@ -34,6 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  * @author Marvin S. Addison
  * @since 3.5.1
+ * @deprecated Since 6.2
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
@@ -54,6 +55,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "spring.mail.port=25000"
 })
 @Tag("Ehcache")
+@Deprecated(since = "6.2.0")
 public class EhCacheHealthIndicatorTests {
     @Autowired
     @Qualifier("ticketRegistry")

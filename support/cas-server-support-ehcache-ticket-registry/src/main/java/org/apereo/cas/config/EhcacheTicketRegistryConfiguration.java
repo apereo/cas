@@ -46,7 +46,7 @@ import java.util.Objects;
 @Configuration("ehcacheTicketRegistryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnProperty(prefix = "cas.ticket.registry.ehcache", name = "enabled", havingValue = "true", matchIfMissing = true)
-@Deprecated(since = "6.2.0", forRemoval = true)
+@Deprecated(since = "6.2.0")
 @Slf4j
 public class EhcacheTicketRegistryConfiguration implements InitializingBean {
     @Autowired
@@ -143,7 +143,7 @@ public class EhcacheTicketRegistryConfiguration implements InitializingBean {
     }
 
     /**
-     * Create ticket registry bean with all nececessary caches.
+     * Create ticket registry bean with all necessary caches.
      * Using the spring ehcache wrapper bean so it can be initialized after the caches are built.
      * @param manager Spring EhCache manager bean, wraps EhCache manager and is used for cache actuator endpoint.
      * @param ticketCatalog Ticket Catalog
@@ -177,11 +177,7 @@ public class EhcacheTicketRegistryConfiguration implements InitializingBean {
         });
 
         manager.initializeCaches();
-
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("The following caches are available: [{}]", manager.getCacheNames());
-        }
-
+        LOGGER.debug("The following caches are available: [{}]", manager.getCacheNames());
         return new EhCacheTicketRegistry(ticketCatalog, ehCacheManager, CoreTicketUtils.newTicketRegistryCipherExecutor(crypto, "ehcache"));
     }
 
