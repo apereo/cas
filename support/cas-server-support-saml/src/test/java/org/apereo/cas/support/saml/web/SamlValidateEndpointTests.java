@@ -49,8 +49,9 @@ public class SamlValidateEndpointTests extends AbstractCasEndpointTests {
 
     @Test
     public void verifyOperation() {
-        val results = samlValidateEndpoint.handle("sample", "sample",
-            CoreAuthenticationTestUtils.getService().getId());
+        val service = CoreAuthenticationTestUtils.getService();
+        assertNotNull(samlValidateEndpoint);
+        val results = samlValidateEndpoint.handle("sample", "sample", service.getId());
         assertNotNull(results);
         assertFalse(results.isEmpty());
     }
