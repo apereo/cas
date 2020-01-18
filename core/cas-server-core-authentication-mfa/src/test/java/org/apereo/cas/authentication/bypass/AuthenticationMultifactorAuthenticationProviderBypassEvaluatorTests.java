@@ -37,11 +37,11 @@ public class AuthenticationMultifactorAuthenticationProviderBypassEvaluatorTests
     public void verifyOperation() {
         val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
 
-        val eval = new CompositeMultifactorAuthenticationProviderBypassEvaluator(TestMultifactorAuthenticationProvider.ID);
+        val eval = new DefaultChainingMultifactorAuthenticationBypassProvider();
         val bypassProps = new MultifactorAuthenticationProviderBypassProperties();
         bypassProps.setAuthenticationAttributeName("cn");
         bypassProps.setAuthenticationAttributeValue("ex.+");
-        eval.addBypassEvaluator(new AuthenticationMultifactorAuthenticationProviderBypassEvaluator(bypassProps, TestMultifactorAuthenticationProvider.ID));
+        eval.addMultifactorAuthenticationProviderBypassEvaluator(new AuthenticationMultifactorAuthenticationProviderBypassEvaluator(bypassProps, TestMultifactorAuthenticationProvider.ID));
 
         val principal = CoreAuthenticationTestUtils.getPrincipal(Map.of("cn", List.of("example")));
         val authentication = CoreAuthenticationTestUtils.getAuthentication(principal);

@@ -21,15 +21,14 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
- * This is {@link CompositeMultifactorAuthenticationProviderBypassEvaluatorTests}.
+ * This is {@link RegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluatorTests}.
  *
  * @author Misagh Moayyed
  * @since 6.2.0
  */
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class CompositeMultifactorAuthenticationProviderBypassEvaluatorTests {
-
+public class RegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluatorTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 
@@ -37,17 +36,17 @@ public class CompositeMultifactorAuthenticationProviderBypassEvaluatorTests {
     public void verifyOperation() {
         val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
 
-        val eval = new CompositeMultifactorAuthenticationProviderBypassEvaluator(TestMultifactorAuthenticationProvider.ID);
-        eval.addBypassEvaluator(
-            new RegisteredServiceMultifactorAuthenticationProviderBypassEvaluator(TestMultifactorAuthenticationProvider.ID));
-        eval.addBypassEvaluator(
-            new PrincipalMultifactorAuthenticationProviderBypassEvaluator("cn", "exam.+", TestMultifactorAuthenticationProvider.ID));
+        val eval = new DefaultChainingMultifactorAuthenticationBypassProvider();
+        eval.addMultifactorAuthenticationProviderBypassEvaluator(
+            new RegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator(TestMultifactorAuthenticationProvider.ID));
 
         val principal = CoreAuthenticationTestUtils.getPrincipal(Map.of("cn", List.of("example")));
         val authentication = CoreAuthenticationTestUtils.getAuthentication(principal);
         val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
         val policy = new DefaultRegisteredServiceMultifactorPolicy();
         policy.setBypassEnabled(true);
+        policy.setBypassPrincipalAttributeName("cn");
+        policy.setBypassPrincipalAttributeValue("^e[x]am.*");
         when(registeredService.getMultifactorPolicy()).thenReturn(policy);
         assertFalse(eval.shouldMultifactorAuthenticationProviderExecute(authentication, registeredService, provider, new MockHttpServletRequest()));
     }

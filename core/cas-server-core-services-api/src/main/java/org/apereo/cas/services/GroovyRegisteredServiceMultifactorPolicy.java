@@ -65,6 +65,20 @@ public class GroovyRegisteredServiceMultifactorPolicy implements RegisteredServi
         return this.groovyPolicyInstance.getPrincipalAttributeValueToMatch();
     }
 
+    @Override
+    @JsonIgnore
+    public String getBypassPrincipalAttributeName() {
+        buildGroovyMultifactorPolicyInstanceIfNeeded();
+        return this.groovyPolicyInstance.getBypassPrincipalAttributeName();
+    }
+
+    @Override
+    @JsonIgnore
+    public String getBypassPrincipalAttributeValue() {
+        buildGroovyMultifactorPolicyInstanceIfNeeded();
+        return this.groovyPolicyInstance.getBypassPrincipalAttributeValue();
+    }
+
     @JsonIgnore
     @Override
     public boolean isBypassEnabled() {
