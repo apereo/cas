@@ -26,6 +26,11 @@ public class DefaultPasswordPolicyHandlingStrategy<AuthnResponse> implements Aut
             return new ArrayList<>(0);
         }
         val accountStateHandler = configuration.getAccountStateHandler();
+        if (accountStateHandler == null) {
+            LOGGER.debug("No password policy account state handler is defined");
+            return new ArrayList<>(0);
+        }
+        
         LOGGER.debug("Applying password policy [{}] to [{}]", response, accountStateHandler);
         return accountStateHandler.handle(response, configuration);
     }
