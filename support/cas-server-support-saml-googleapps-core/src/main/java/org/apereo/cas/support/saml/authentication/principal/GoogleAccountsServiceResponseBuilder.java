@@ -44,7 +44,7 @@ import java.util.stream.Stream;
 @Slf4j
 @Getter
 @Setter
-@Deprecated
+@Deprecated(since = "6.2.0", forRemoval = true)
 @EqualsAndHashCode(callSuper = true,
     of = {"publicKeyLocation", "privateKeyLocation", "keyAlgorithm", "samlObjectBuilder", "skewAllowance"})
 public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplicationServiceResponseBuilder {

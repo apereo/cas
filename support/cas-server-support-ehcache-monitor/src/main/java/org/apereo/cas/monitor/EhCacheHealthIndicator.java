@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
  * @since 3.5.1
  * @deprecated Since 6.2, due to Ehcache 2.x being unmaintained. Other registries are available, including Ehcache 3.x.
  */
-@Deprecated
+@Deprecated(since = "6.2.0", forRemoval = true)
 public class EhCacheHealthIndicator extends AbstractCacheHealthIndicator {
 
     /**

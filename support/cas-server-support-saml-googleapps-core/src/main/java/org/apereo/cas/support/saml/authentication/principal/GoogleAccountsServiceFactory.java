@@ -21,7 +21,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 @Slf4j
 @RequiredArgsConstructor
-@Deprecated
+@Deprecated(since = "6.2.0", forRemoval = true)
 public class GoogleAccountsServiceFactory extends AbstractServiceFactory<GoogleAccountsService> {
     private final GoogleSaml20ObjectBuilder googleSaml20ObjectBuilder;
 

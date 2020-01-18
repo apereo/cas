@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.util.AsciiArtUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.scripting.ScriptingUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
@@ -11,6 +12,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import javax.persistence.Transient;
@@ -21,12 +23,14 @@ import java.util.Set;
  *
  * @author Misagh Moayyed
  * @since 5.3.0
+ * @deprecated This component is deprecated as of 6.2.0 and is scheduled to be removed.
  */
 @Getter
 @Setter
-@NoArgsConstructor
 @EqualsAndHashCode
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@Deprecated(since = "6.2.0", forRemoval = true)
+@Slf4j
 public class GroovyRegisteredServiceMultifactorPolicy implements RegisteredServiceMultifactorPolicy {
     private static final long serialVersionUID = -3075860754996106437L;
 
@@ -36,6 +40,10 @@ public class GroovyRegisteredServiceMultifactorPolicy implements RegisteredServi
     @Transient
     @org.springframework.data.annotation.Transient
     private transient RegisteredServiceMultifactorPolicy groovyPolicyInstance;
+
+    public GroovyRegisteredServiceMultifactorPolicy() {
+        AsciiArtUtils.printAsciiArtWarning(LOGGER, getClass().getName() + " is now deprecated and scheduled to be removed in the future.");
+    }
 
     @JsonIgnore
     @Override

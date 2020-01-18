@@ -46,7 +46,7 @@ import java.util.Objects;
 @Configuration("ehcacheTicketRegistryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnProperty(prefix = "cas.ticket.registry.ehcache", name = "enabled", havingValue = "true", matchIfMissing = true)
-@Deprecated
+@Deprecated(since = "6.2.0", forRemoval = true)
 @Slf4j
 public class EhcacheTicketRegistryConfiguration implements InitializingBean {
     @Autowired

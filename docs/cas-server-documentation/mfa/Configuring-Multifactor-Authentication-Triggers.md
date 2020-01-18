@@ -66,6 +66,11 @@ The following fields are accepted by the policy definition
 
 ### Groovy Per Application
 
+<div class="alert alert-warning"><strong>Usage</strong>
+<p><strong>This feature is deprecated and is scheduled to be removed in the future.</strong> If you can, consider using
+alternatives outlined below to trigger multifactor authentication per service using Groovy.</p>
+</div>
+
 Additionally, you may determine the multifactor authentication policy for a registered service using a Groovy script:
 
 ```json
