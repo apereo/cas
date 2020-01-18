@@ -78,4 +78,12 @@ public interface RegisteredServiceMultifactorPolicy extends Serializable {
      * @return the principal attribute value to match
      */
     String getBypassPrincipalAttributeValue();
+
+    /**
+     * Path to an external/embedded script
+     * that allows for triggering of MFA.
+     *
+     * @return MFA trigger as a script path or embedded script.
+     */
+    String getScript();
 }

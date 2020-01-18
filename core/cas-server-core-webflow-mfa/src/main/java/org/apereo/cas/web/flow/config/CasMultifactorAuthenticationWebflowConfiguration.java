@@ -23,6 +23,7 @@ import org.apereo.cas.authentication.trigger.PrincipalAttributeMultifactorAuthen
 import org.apereo.cas.authentication.trigger.RegisteredServiceMultifactorAuthenticationTrigger;
 import org.apereo.cas.authentication.trigger.RegisteredServicePrincipalAttributeMultifactorAuthenticationTrigger;
 import org.apereo.cas.authentication.trigger.RestEndpointMultifactorAuthenticationTrigger;
+import org.apereo.cas.authentication.trigger.ScriptedRegisteredServiceMultifactorAuthenticationTrigger;
 import org.apereo.cas.authentication.trigger.TimedMultifactorAuthenticationTrigger;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
@@ -266,6 +267,7 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
         r.addDelegate(httpRequestAuthenticationPolicyWebflowEventResolver());
         r.addDelegate(restEndpointAuthenticationPolicyWebflowEventResolver());
         r.addDelegate(groovyScriptAuthenticationPolicyWebflowEventResolver());
+        r.addDelegate(scriptedRegisteredServiceAuthenticationPolicyWebflowEventResolver());
         r.addDelegate(registeredServicePrincipalAttributeAuthenticationPolicyWebflowEventResolver());
         r.addDelegate(predicatedPrincipalAttributeMultifactorAuthenticationPolicyEventResolver());
         r.addDelegate(principalAttributeAuthenticationPolicyWebflowEventResolver());
@@ -374,6 +376,21 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
     public CasWebflowEventResolver registeredServicePrincipalAttributeAuthenticationPolicyWebflowEventResolver() {
         return new DefaultMultifactorAuthenticationProviderWebflowEventResolver(getWebflowConfigurationContext(),
             registeredServicePrincipalAttributeMultifactorAuthenticationTrigger());
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "scriptedRegisteredServiceMultifactorAuthenticationTrigger")
+    @RefreshScope
+    public MultifactorAuthenticationTrigger scriptedRegisteredServiceMultifactorAuthenticationTrigger() {
+        return new ScriptedRegisteredServiceMultifactorAuthenticationTrigger(casProperties, applicationContext);
+    }
+
+    @ConditionalOnMissingBean(name = "scriptedRegisteredServiceAuthenticationPolicyWebflowEventResolver")
+    @Bean
+    @RefreshScope
+    public CasWebflowEventResolver scriptedRegisteredServiceAuthenticationPolicyWebflowEventResolver() {
+        return new DefaultMultifactorAuthenticationProviderWebflowEventResolver(getWebflowConfigurationContext(),
+            scriptedRegisteredServiceMultifactorAuthenticationTrigger());
     }
 
     @Bean

@@ -51,10 +51,12 @@ public abstract class BaseMultifactorAuthenticationTriggerTests {
 
     protected MockHttpServletRequest httpRequest;
 
+    protected TestMultifactorAuthenticationProvider multifactorAuthenticationProvider;
+
     @BeforeEach
     public void setup() {
         ApplicationContextProvider.holdApplicationContext(applicationContext);
-        TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
+        this.multifactorAuthenticationProvider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
 
         this.authentication = mock(Authentication.class);
         val principal = mock(Principal.class);

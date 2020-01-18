@@ -63,7 +63,7 @@ public class GroovyRegisteredServiceUsernameProvider extends BaseRegisteredServi
             val matcherFile = ScriptingUtils.getMatcherForExternalGroovyScript(groovyScript);
 
             if (matcherFile.find()) {
-                val script = SpringExpressionLanguageValueResolver.getInstance().resolve(matcherFile.group(1));
+                val script = SpringExpressionLanguageValueResolver.getInstance().resolve(matcherFile.group());
                 val resource = ResourceUtils.getRawResourceFrom(script);
                 this.executableScript = new WatchableGroovyScriptResource(resource);
             } else if (matcherInline.find()) {
