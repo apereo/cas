@@ -130,7 +130,7 @@ Scripts will receive and have access to the following variable bindings:
   "description" : "sample",
   "usernameAttributeProvider" : {
     "@class" : "org.apereo.cas.services.ScriptedRegisteredServiceUsernameProvider",
-    "script" : "file:/etc/cas/sampleService.[groovy|js|.py]",
+    "script" : "file:///etc/cas/sampleService.[groovy|js|.py]",
     "canonicalizationMode" : "UPPER"
   }
 }
@@ -200,7 +200,7 @@ The script must return a single `String` value.
   "description" : "sample",
   "usernameAttributeProvider" : {
     "@class" : "org.apereo.cas.services.GroovyRegisteredServiceUsernameProvider",
-    "groovyScript" : "file:/etc/cas/sampleService.groovy",
+    "groovyScript" : "file:///etc/cas/sampleService.groovy",
     "canonicalizationMode" : "UPPER"
   }
 }
