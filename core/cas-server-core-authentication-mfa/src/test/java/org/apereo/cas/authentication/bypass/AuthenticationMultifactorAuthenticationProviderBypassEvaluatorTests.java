@@ -41,10 +41,10 @@ public class AuthenticationMultifactorAuthenticationProviderBypassEvaluatorTests
         val bypassProps = new MultifactorAuthenticationProviderBypassProperties();
         bypassProps.setAuthenticationAttributeName("cn");
         bypassProps.setAuthenticationAttributeValue("ex.+");
-        eval.addMultifactorAuthenticationProviderBypassEvaluator(new AuthenticationMultifactorAuthenticationProviderBypassEvaluator(bypassProps, TestMultifactorAuthenticationProvider.ID));
+        eval.addMultifactorAuthenticationProviderBypassEvaluator(
+            new AuthenticationMultifactorAuthenticationProviderBypassEvaluator(bypassProps, TestMultifactorAuthenticationProvider.ID));
 
-        val principal = CoreAuthenticationTestUtils.getPrincipal(Map.of("cn", List.of("example")));
-        val authentication = CoreAuthenticationTestUtils.getAuthentication(principal);
+        val authentication = CoreAuthenticationTestUtils.getAuthentication("casuser", Map.of("cn", List.of("example")));
         val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
         val policy = new DefaultRegisteredServiceMultifactorPolicy();
         when(registeredService.getMultifactorPolicy()).thenReturn(policy);
