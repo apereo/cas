@@ -17,7 +17,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration(value = "samlGoogleAppsComponentSerializationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Deprecated
+@Deprecated(since = "6.2.0")
 public class SamlGoogleAppsComponentSerializationConfiguration implements ComponentSerializationPlanConfigurer {
 
     @Override

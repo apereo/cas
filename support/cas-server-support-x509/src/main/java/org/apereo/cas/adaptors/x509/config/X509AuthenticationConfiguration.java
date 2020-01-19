@@ -32,10 +32,8 @@ import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.model.Capacity;
 
 import lombok.val;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
-
 import org.ehcache.config.builders.ExpiryPolicyBuilder;
 import org.ehcache.config.builders.ResourcePoolsBuilder;
 import org.ehcache.config.builders.UserManagedCacheBuilder;

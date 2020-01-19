@@ -59,12 +59,82 @@ MFA can be triggered for a specific application registered inside the CAS servic
 The following fields are accepted by the policy definition
 
 | Field                 | Description
-|-----------------------|----------------------------------------------------------------------------------------
+|-----------------------|-----------------------------------------------------------------------------------------------------
 | `multifactorAuthenticationProviders` | Set of multifactor provider ids that should trigger for this application.
+| `script`                  | Path to a script, whether external or internal, to trigger multifactor authentication dynamically.
 | `bypassEnabled`           | Whether multifactor authentication should be [bypassed](Configuring-Multifactor-Authentication-Bypass.html) for this service.
 | `forceExecution`          | Whether multifactor authentication should forcefully trigger, even if the existing authentication context can be satisfied without MFA.
 
-### Groovy Per Application
+### Groovy Per Application 
+
+You may determine the multifactor authentication policy for a registered service using a Groovy script:
+
+```json
+{
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId" : "^(https|imaps)://.*",
+  "id" : 100,
+  "name": "test",
+  "multifactorPolicy" : {
+    "@class" : "org.apereo.cas.services.GroovyRegisteredServiceMultifactorPolicy",
+    "script" : "file:///etc/cas/config/mfa-policy.groovy"
+  }
+}
+``` 
+
+The script may also be embedded directly in the service definition, as such:
+
+you may determine the multifactor authentication policy for a registered service using a Groovy script:
+
+```json
+{
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId" : "^(https|imaps)://.*",
+  "id" : 100,
+  "name": "test",
+  "multifactorPolicy" : {
+    "@class" : "org.apereo.cas.services.GroovyRegisteredServiceMultifactorPolicy",
+    "script" : "groovy { ... }"
+  }
+}
+```
+
+The script itself may be designed as follows:
+
+```groovy
+def run(final Object... args) {
+    def authentication = args[0]
+    def registeredService = args[1]
+    def httpRequest = args[2]
+    def service = args[3]
+    def applicationContext = args[4]
+    def logger = args[5]
+
+    logger.debug("Determine mfa provider for ${registeredService} and ${authentication}")
+    return "mfa-duo"
+}
+```  
+
+The parameters passed are as follows:
+
+| Parameter             | Description
+|-----------------------|------------------------------------------------------------------------------------
+| `registeredService`   | The object representing the corresponding service definition in the registry.
+| `authentication`      |  The object representing the `Authentication` object.
+| `httpRequest`         | The object representing the HTTP servlet request.
+| `service`             | The object representing the service request, associated with this http request.
+| `applicationContext`  | The object representing the Spring application context.
+| `logger`              | The object responsible for issuing log messages such as `logger.info(...)`.               
+
+The expected outcome of the script is either `null` in case multifactor authentication should be skipped by this trigger,
+or the identifier of the multifactor provider that should be considered for activation.
+
+### Groovy Per Application (Deprecated)
+
+<div class="alert alert-warning"><strong>Usage</strong>
+<p><strong>This feature is deprecated and is scheduled to be removed in the future.</strong> If you can, consider using
+alternatives outlined here to trigger multifactor authentication per service using Groovy.</p>
+</div>
 
 Additionally, you may determine the multifactor authentication policy for a registered service using a Groovy script:
 

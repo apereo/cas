@@ -4,8 +4,10 @@ import org.apereo.cas.config.CasWebAppSecurityConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.actuate.autoconfigure.beans.BeansEndpointAutoConfiguration;
 import org.springframework.boot.actuate.autoconfigure.endpoint.EndpointAutoConfiguration;
 import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointAutoConfiguration;
+import org.springframework.boot.actuate.autoconfigure.info.InfoEndpointAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -23,11 +25,17 @@ import org.springframework.test.context.web.WebAppConfiguration;
     CasWebAppSecurityConfiguration.class,
     SecurityAutoConfiguration.class,
     EndpointAutoConfiguration.class,
+    InfoEndpointAutoConfiguration.class,
+    BeansEndpointAutoConfiguration.class,
     WebEndpointAutoConfiguration.class,
     AopAutoConfiguration.class,
     RefreshAutoConfiguration.class
 },
     properties = {
+        "management.endpoint.info.enabled=true",
+        "management.endpoint.beans.enabled=true",
+        "management.endpoints.web.exposure.include=*",
+        
         "cas.monitor.endpoints.jaas.login-config=classpath:/jaas-endpoints.conf",
         "cas.monitor.endpoints.jaas.login-context-name=CAS",
 

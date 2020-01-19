@@ -6,6 +6,7 @@ import org.apereo.cas.util.io.FileWatcherService;
 import groovy.lang.GroovyObject;
 import lombok.Getter;
 import lombok.SneakyThrows;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
 
@@ -17,6 +18,7 @@ import org.springframework.core.io.Resource;
  */
 @Slf4j
 @Getter
+@ToString(of = "resource")
 public class WatchableGroovyScriptResource implements AutoCloseable, ExecutableCompiledGroovyScript {
     private transient FileWatcherService watcherService;
     private transient GroovyObject groovyScript;

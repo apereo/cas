@@ -55,7 +55,7 @@ public class SelectiveMultifactorAuthenticationProviderWebflowEventResolverTests
         val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
 
         val resolvedEvents = CollectionUtils.wrapHashSet(new EventFactorySupport().event(this, provider.getId()));
-        context.getAttributes().put(AbstractCasWebflowEventResolver.RESOLVED_AUTHENTICATION_EVENTS, resolvedEvents);
+        WebUtils.putResolvedEventsAsAttribute(context, resolvedEvents);
         val result = selectiveAuthenticationProviderWebflowEventResolver.resolve(context);
         assertNotNull(result);
         assertNotNull(WebUtils.getResolvedMultifactorAuthenticationProviders(context));
