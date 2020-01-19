@@ -20,6 +20,7 @@ import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.services.UnauthorizedSsoServiceException;
 import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.ticket.ExpirationPolicy;
+import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
@@ -266,6 +267,19 @@ public class DefaultCentralAuthenticationServiceTests extends AbstractCentralAut
         val assertion = getCentralAuthenticationService().getObject().validateServiceTicket(serviceTicket.getId(), svc);
         val auth = assertion.getPrimaryAuthentication();
         assertEquals(auth.getPrincipal().getId(), cred.getUsername());
+    }
+
+    @Test
+    public void verifyTicketState() {
+        val svc = getService("testDefault");
+        val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), svc);
+        val ticketGrantingTicket = getCentralAuthenticationService().getObject().createTicketGrantingTicket(ctx);
+        var result = getCentralAuthenticationService().getObject().getTicket(ticketGrantingTicket.getId());
+        assertEquals(result, ticketGrantingTicket);
+        result.markTicketExpired();
+        result = getCentralAuthenticationService().getObject().updateTicket(result);
+        assertTrue(result.isExpired());
+        assertThrows(InvalidTicketException.class, () -> getCentralAuthenticationService().getObject().getTicket(ticketGrantingTicket.getId()));
     }
 
     @Test

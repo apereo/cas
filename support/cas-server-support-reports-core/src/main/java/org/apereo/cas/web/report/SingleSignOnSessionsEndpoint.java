@@ -8,6 +8,7 @@ import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.ISOStandardDateFormat;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
@@ -106,7 +107,7 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
      * @return the sso sessions
      */
     @ReadOperation
-    @SuppressWarnings("PSC_SUBOPTIMAL_COLLECTION_SIZING")
+    @SuppressFBWarnings("PSC_SUBOPTIMAL_COLLECTION_SIZING")
     public Map<String, Object> getSsoSessions(final String type) {
         val sessionsMap = new HashMap<String, Object>();
         val option = SsoSessionReportOptions.valueOf(type);
