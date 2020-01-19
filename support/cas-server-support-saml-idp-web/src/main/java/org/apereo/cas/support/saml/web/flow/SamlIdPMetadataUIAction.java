@@ -36,17 +36,19 @@ public class SamlIdPMetadataUIAction extends AbstractAction {
         val service = this.serviceSelectionStrategy.resolveService(WebUtils.getService(requestContext));
         if (service != null) {
             val samlService = this.servicesManager.findServiceBy(service, SamlRegisteredService.class);
-            RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, samlService);
-            val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(resolver, samlService, service.getId());
+            if (samlService != null) {
+                RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, samlService);
+                val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(resolver, samlService, service.getId());
 
-            if (adaptor.isEmpty()) {
-                LOGGER.debug("Cannot find SAML2 metadata linked to [{}]. Skipping MDUI...", service.getId());
-                return success();
+                if (adaptor.isEmpty()) {
+                    LOGGER.debug("Cannot find SAML2 metadata linked to [{}]. Skipping MDUI...", service.getId());
+                    return success();
+                }
+
+                val mdui = MetadataUIUtils.locateMetadataUserInterfaceForEntityId(adaptor.get().getEntityDescriptor(),
+                    service.getId(), samlService, WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext));
+                WebUtils.putServiceUserInterfaceMetadata(requestContext, mdui);
             }
-
-            val mdui = MetadataUIUtils.locateMetadataUserInterfaceForEntityId(adaptor.get().getEntityDescriptor(),
-                service.getId(), samlService, WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext));
-            WebUtils.putServiceUserInterfaceMetadata(requestContext, mdui);
         }
         return success();
     }
