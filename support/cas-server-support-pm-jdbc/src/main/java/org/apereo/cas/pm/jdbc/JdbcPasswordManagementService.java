@@ -35,9 +35,11 @@ import java.util.Map;
 public class JdbcPasswordManagementService extends BasePasswordManagementService {
 
     private final JdbcTemplate jdbcTemplate;
+
     private final TransactionTemplate transactionTemplate;
+
     private final PasswordEncoder passwordEncoder;
-    
+
     public JdbcPasswordManagementService(final CipherExecutor<Serializable, String> cipherExecutor,
                                          final String issuer,
                                          final PasswordManagementProperties passwordManagementProperties,
@@ -53,7 +55,7 @@ public class JdbcPasswordManagementService extends BasePasswordManagementService
 
     @Override
     public boolean changeInternal(final Credential credential, final PasswordChangeRequest bean) {
-        val result = (Boolean) this.transactionTemplate.execute(action -> {
+        var result = this.transactionTemplate.execute(action -> {
             val c = (UsernamePasswordCredential) credential;
             val password = passwordEncoder.encode(bean.getPassword());
             val count = this.jdbcTemplate.update(properties.getJdbc().getSqlChangePassword(), password, c.getId());
@@ -64,9 +66,15 @@ public class JdbcPasswordManagementService extends BasePasswordManagementService
 
     @Override
     public String findEmail(final String username) {
+        val query = properties.getJdbc().getSqlFindEmail();
+        if (StringUtils.isBlank(query)) {
+            LOGGER.debug("No SQL query is defined to retrieve email addresses");
+            return null;
+        }
+
         try {
             return this.transactionTemplate.execute(action -> {
-                val email = this.jdbcTemplate.queryForObject(properties.getJdbc().getSqlFindEmail(), String.class, username);
+                val email = this.jdbcTemplate.queryForObject(query, String.class, username);
                 if (StringUtils.isNotBlank(email) && EmailValidator.getInstance().isValid(email)) {
                     return email;
                 }
@@ -81,9 +89,14 @@ public class JdbcPasswordManagementService extends BasePasswordManagementService
 
     @Override
     public String findPhone(final String username) {
+        val query = properties.getJdbc().getSqlFindPhone();
+        if (StringUtils.isBlank(query)) {
+            LOGGER.debug("No SQL query is defined to retrieve phone numbers");
+            return null;
+        }
         try {
             return this.transactionTemplate.execute(action -> {
-                val phone = this.jdbcTemplate.queryForObject(properties.getJdbc().getSqlFindPhone(), String.class, username);
+                val phone = this.jdbcTemplate.queryForObject(query, String.class, username);
                 if (StringUtils.isNotBlank(phone)) {
                     return phone;
                 }
