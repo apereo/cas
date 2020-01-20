@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCrypt
 import org.apereo.cas.configuration.model.support.email.EmailProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.sms.SmsProperties;
+import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.SpringResourceProperties;
 import org.apereo.cas.util.crypto.CipherExecutor;
@@ -163,11 +164,13 @@ public class PasswordManagementProperties implements Serializable {
         /**
          * Username for Basic-Auth at the password management endpoints.
          */
+        @RequiredProperty
         private String endpointUsername;
 
         /**
          * Password for Basic-Auth at the password management endpoints.
          */
+        @RequiredProperty
         private String endpointPassword;
     }
 

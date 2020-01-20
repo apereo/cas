@@ -44,6 +44,7 @@ public class RegisteredServiceMultifactorAuthenticationProviderBypassEvaluatorTe
         val authentication = CoreAuthenticationTestUtils.getAuthentication(principal);
         val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
         val policy = new DefaultRegisteredServiceMultifactorPolicy();
+        policy.setBypassEnabled(true);
         when(registeredService.getMultifactorPolicy()).thenReturn(policy);
         assertFalse(eval.shouldMultifactorAuthenticationProviderExecute(authentication, registeredService, provider, new MockHttpServletRequest()));
     }
