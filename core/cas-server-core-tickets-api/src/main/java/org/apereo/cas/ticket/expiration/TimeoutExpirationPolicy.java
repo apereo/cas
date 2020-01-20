@@ -71,12 +71,12 @@ public class TimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
     @JsonIgnore
     @Override
     public Long getTimeToLive() {
-        return Long.MAX_VALUE;
+        return this.timeToKillInSeconds;
     }
 
     @Override
     public Long getTimeToIdle() {
-        return this.timeToKillInSeconds;
+        return Long.MAX_VALUE;
     }
 
 
