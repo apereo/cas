@@ -3,6 +3,7 @@ package org.apereo.cas.web.flow.configurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
+import org.apereo.cas.web.support.WebUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -17,6 +18,9 @@ import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.engine.TransitionableState;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.engine.support.DefaultTargetStateResolver;
+import org.springframework.webflow.execution.Action;
+import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.RequestContext;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -126,6 +130,10 @@ public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCa
         }
 
         val mfaFlow = (Flow) mfaProviderFlowRegistry.getFlowDefinition(subflowId);
+        mfaFlow.getStartActionList().add(requestContext -> {
+            WebUtils.createCredential(requestContext);
+            return null;
+        });
         mfaFlow.getStartActionList().add(createSetAction("flowScope.".concat(CasWebflowConstants.VAR_ID_MFA_PROVIDER_ID), StringUtils.quote(providerId)));
 
         val initStartState = (ActionState) mfaFlow.getStartState();
