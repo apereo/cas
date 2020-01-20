@@ -16,7 +16,7 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public class GraphicalUserAuthenticationWebflowConfigurer extends AbstractCasWebflowConfigurer {
+public class GraphicalUserAuthenticationWebflowConfigurer extends MultiphaseAuthenticationWebflowConfigurer {
 
     static final String STATE_ID_ACCEPT_GUA = "acceptUserGraphicsForAuthentication";
     static final String STATE_ID_GUA_DISPLAY_USER_GFX = "guaDisplayUserGraphics";
@@ -33,6 +33,7 @@ public class GraphicalUserAuthenticationWebflowConfigurer extends AbstractCasWeb
 
     @Override
     protected void doInitialize() {
+        super.doInitialize();
         val flow = getLoginFlow();
         if (flow != null) {
             val state = getState(flow, CasWebflowConstants.STATE_ID_MULTIPHASE_STORE_USERID, ActionState.class);
