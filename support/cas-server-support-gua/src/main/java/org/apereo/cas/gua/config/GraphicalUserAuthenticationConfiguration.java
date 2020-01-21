@@ -1,6 +1,5 @@
 package org.apereo.cas.gua.config;
 
-import org.apereo.cas.config.MultiphaseAuthenticationConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.gua.api.UserGraphicalAuthenticationRepository;
 import org.apereo.cas.gua.impl.LdapUserGraphicalAuthenticationRepository;
@@ -39,7 +38,6 @@ import org.springframework.webflow.execution.Action;
  */
 @Configuration("graphicalUserAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@AutoConfigureAfter(MultiphaseAuthenticationConfiguration.class)
 public class GraphicalUserAuthenticationConfiguration {
 
     @Autowired
