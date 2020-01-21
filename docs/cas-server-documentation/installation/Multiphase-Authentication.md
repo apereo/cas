@@ -10,11 +10,11 @@ Multiphase Authentication describes an authentication flow wherein users are
 required to enter an identifier; i.e., their username, before being prompted to
 enter the corresponding password. This may be desirable in situations where
 some users will authenticate against a 
-[delegated authentication provider](../integration/Delegate-Authentication.md),
+[delegated authentication provider](../integration/Delegate-Authentication.html),
 but it is not acceptable to present available delegation options on the main 
 login page, or where you wish to make use of
-[Passwordless](installation/Passwordless-Authentication.md) or
-[Graphical](installation/GUA-Authentication.md) authentication.
+[Passwordless](installation/Passwordless-Authentication.html) or
+[Graphical](installation/GUA-Authentication.html) authentication.
 
 ## Overview
 
