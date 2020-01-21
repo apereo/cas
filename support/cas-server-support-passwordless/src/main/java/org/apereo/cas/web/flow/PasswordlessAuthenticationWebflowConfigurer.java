@@ -39,14 +39,8 @@ public class PasswordlessAuthenticationWebflowConfigurer extends MultiphaseAuthe
         val flow = getLoginFlow();
         if (flow != null) {
             val state = getState(flow, CasWebflowConstants.STATE_ID_MULTIPHASE_STORE_USERID, ActionState.class);
-            /*
-            createTransitionForState(state, TRANSITION_ID_PASSWORDLESS_GET_USERID, STATE_ID_PASSWORDLESS_GET_USERID);
-
-            val viewState = createViewState(flow, STATE_ID_PASSWORDLESS_GET_USERID, "casPasswordlessGetUserIdView");
-            createTransitionForState(viewState, CasWebflowConstants.TRANSITION_ID_SUBMIT, STATE_ID_PASSWORDLESS_VERIFY_ACCOUNT);
-            */
             createTransitionForState(state, CasWebflowConstants.TRANSITION_ID_SUCCESS,
-                    STATE_ID_PASSWORDLESS_VERIFY_ACCOUNT);
+                    STATE_ID_PASSWORDLESS_VERIFY_ACCOUNT, true);
 
             val verifyAccountState = createActionState(flow, STATE_ID_PASSWORDLESS_VERIFY_ACCOUNT, "verifyPasswordlessAccountAuthenticationAction");
             createTransitionForState(verifyAccountState, CasWebflowConstants.TRANSITION_ID_ERROR, 
