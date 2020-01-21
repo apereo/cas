@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
 
 import lombok.val;
 import org.springframework.context.ApplicationContext;
@@ -15,7 +16,7 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-public class PasswordlessAuthenticationWebflowConfigurer extends MultiphaseAuthenticationWebflowConfigurer {
+public class PasswordlessAuthenticationWebflowConfigurer extends AbstractCasWebflowConfigurer {
     /**
      * Transition to obtain username.
      */
@@ -35,7 +36,7 @@ public class PasswordlessAuthenticationWebflowConfigurer extends MultiphaseAuthe
 
     @Override
     protected void doInitialize() {
-        super.doInitialize();
+        //super.doInitialize();
         val flow = getLoginFlow();
         if (flow != null) {
             val state = getState(flow, CasWebflowConstants.STATE_ID_MULTIPHASE_STORE_USERID, ActionState.class);
