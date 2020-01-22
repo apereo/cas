@@ -20,9 +20,11 @@ import org.springframework.webflow.execution.RequestContext;
 public class StoreUserIdForAuthenticationAction extends AbstractAction {
     //private final MultiphaseUserEventResolver multiphaseUserEventResolver;
     
+    /*
     @Audit(action = "AUTHENTICATION_EVENT",
         actionResolverName = "AUTHENTICATION_EVENT_ACTION_RESOLVER",
         resourceResolverName = "AUTHENTICATION_EVENT_RESOURCE_RESOLVER")
+        */
     @Override
     public Event doExecute(final RequestContext requestContext) {
         val username = requestContext.getRequestParameters().get("username");
