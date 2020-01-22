@@ -1419,7 +1419,7 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     force = true
                 },
-                dependencies.create("org.messaginghub:pooled-jms:1.1.0") {
+                dependencies.create("org.messaginghub:pooled-jms:1.1.1") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.slf4j", module: "slf4j-log4j12")
                     exclude(group: "org.apache.commons", module: "commons-pool2")
