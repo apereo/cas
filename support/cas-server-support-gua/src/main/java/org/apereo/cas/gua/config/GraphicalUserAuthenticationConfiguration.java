@@ -1,6 +1,7 @@
 package org.apereo.cas.gua.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.config.MultiphaseAuthenticationConfiguration;
 import org.apereo.cas.gua.api.UserGraphicalAuthenticationRepository;
 import org.apereo.cas.gua.impl.LdapUserGraphicalAuthenticationRepository;
 import org.apereo.cas.gua.impl.StaticUserGraphicalAuthenticationRepository;
