@@ -10,9 +10,9 @@ import org.junit.runner.RunWith;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@SelectClasses({
+@SelectClasses(
     MaxmindDatabaseGeoLocationServiceTests.class
-})
+)
 @RunWith(JUnitPlatform.class)
 public class AllTestsSuite {
 }
