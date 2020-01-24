@@ -30,10 +30,13 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class JwtTokenTicketBuilder implements TokenTicketBuilder {
     private final TicketValidator ticketValidator;
+
     private final ExpirationPolicyBuilder expirationPolicy;
+
     private final JwtBuilder jwtBuilder;
+
     private final ServicesManager servicesManager;
-    
+
     @Override
     @SneakyThrows
     public String build(final String serviceTicketId, final Service service) {
@@ -45,8 +48,7 @@ public class JwtTokenTicketBuilder implements TokenTicketBuilder {
             assertion.getValidUntilDate() != null,
             assertion::getValidUntilDate,
             () -> {
-                val dt = ZonedDateTime.now(ZoneOffset.UTC)
-                    .plusSeconds(expirationPolicy.buildTicketExpirationPolicy().getTimeToLive());
+                val dt = ZonedDateTime.now(ZoneOffset.UTC).plusSeconds(getTimeToLive());
                 return DateTimeUtils.dateOf(dt);
             })
             .get();
@@ -71,7 +73,7 @@ public class JwtTokenTicketBuilder implements TokenTicketBuilder {
         val attributes = new HashMap<String, List<Object>>(authentication.getAttributes());
         attributes.putAll(authentication.getPrincipal().getAttributes());
 
-        val dt = ZonedDateTime.now(ZoneOffset.UTC).plusSeconds(expirationPolicy.buildTicketExpirationPolicy().getTimeToLive());
+        val dt = ZonedDateTime.now(ZoneOffset.UTC).plusSeconds(getTimeToLive());
         val validUntilDate = DateTimeUtils.dateOf(dt);
 
         val builder = JwtBuilder.JwtRequest.builder();
@@ -84,5 +86,10 @@ public class JwtTokenTicketBuilder implements TokenTicketBuilder {
             .attributes(attributes)
             .build();
         return jwtBuilder.build(request);
+    }
+
+    protected Long getTimeToLive() {
+        val timeToLive = expirationPolicy.buildTicketExpirationPolicy().getTimeToLive();
+        return Long.MAX_VALUE == timeToLive ? Long.valueOf(Integer.MAX_VALUE) : timeToLive;
     }
 }
