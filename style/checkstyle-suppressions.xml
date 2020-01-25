@@ -32,5 +32,6 @@
     <suppress checks="InterfaceIsType"  files=".*Constants\.java"/>
     <suppress checks="\w+" files="(\.(crt|crl|class|keystore))|rebel.xml"/>
     <suppress checks="." files="com[\\/]duosecurity[\\/]duoweb[\\/]"/>
+    <suppress checks="." files="com[\\/]yubico"/>
     <suppress checks="." files="org[\\/]apereo[\\/]cas[\\/]authentication[\\/]soap[\\/]"/>
 </suppressions>

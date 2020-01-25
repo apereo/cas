@@ -74,7 +74,11 @@ ext.libraries = [
                     exclude(group: "org.bouncycastle", module: "bcpkix-jdk15on")
                     force = true
                 },
-                dependencies.create("org.webjars.npm:text-encoding:0.6.4") {
+                dependencies.create("com.upokecenter:cbor:4.0.1") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    force = true
+                },
+                dependencies.create("org.webjars.npm:text-encoding:0.7.0") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     force = true
                 },
