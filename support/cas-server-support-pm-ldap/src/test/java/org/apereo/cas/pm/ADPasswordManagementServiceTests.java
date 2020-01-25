@@ -41,16 +41,14 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreUtilConfiguration.class
 }, properties = {
     "cas.authn.pm.reset.sms.attributeName=telephoneNumber",
-    "cas.authn.pm.ldap[0].ldapUrl=ldap://localhost:10636",
+    "cas.authn.pm.ldap[0].ldapUrl=ldaps://localhost:10636",
     "cas.authn.pm.ldap[0].bindDn=CN=admin,CN=Users,DC=cas,DC=example,DC=org",
     "cas.authn.pm.ldap[0].bindCredential=P@ssw0rd",
     "cas.authn.pm.ldap[0].baseDn=CN=Users,DC=cas,DC=example,DC=org",
     "cas.authn.pm.ldap[0].searchFilter=cn={user}",
-    "cas.authn.pm.ldap[0].useSsl=true",
     "cas.authn.pm.ldap[0].type=AD",
     "cas.authn.pm.ldap[0].securityQuestionsAttributes.department=company",
     "cas.authn.pm.ldap[0].securityQuestionsAttributes.description=physicalDeliveryOfficeName",
-    "cas.authn.pm.ldap[0].providerClass=org.ldaptive.provider.unboundid.UnboundIDProvider",
     "cas.authn.pm.ldap[0].trustStore=file:/tmp/adcacerts.jks",
     "cas.authn.pm.ldap[0].trustStoreType=JKS",
     "cas.authn.pm.ldap[0].trustStorePassword=changeit",
@@ -59,7 +57,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @DirtiesContext
 @EnabledIfContinuousIntegration
-@EnabledIfPortOpen(port = 10390)
+@EnabledIfPortOpen(port = 10636)
 public class ADPasswordManagementServiceTests {
 
     @Autowired

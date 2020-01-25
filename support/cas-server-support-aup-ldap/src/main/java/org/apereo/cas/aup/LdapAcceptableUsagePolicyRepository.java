@@ -11,8 +11,7 @@ import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jooq.lambda.Unchecked;
 import org.ldaptive.ConnectionFactory;
-import org.ldaptive.Response;
-import org.ldaptive.SearchResult;
+import org.ldaptive.SearchResponse;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.util.Comparator;
@@ -51,7 +50,7 @@ public class LdapAcceptableUsagePolicyRepository extends AbstractPrincipalAttrib
      * @return the optional
      * @throws Exception the exception
      */
-    protected Optional<Pair<ConnectionFactory, Response<SearchResult>>> searchLdapForId(final LdapAcceptableUsagePolicyProperties ldap,
+    protected Optional<Pair<ConnectionFactory, SearchResponse>> searchLdapForId(final LdapAcceptableUsagePolicyProperties ldap,
                                                                                         final String id) throws Exception {
         val filter = LdapUtils.newLdaptiveSearchFilter(ldap.getSearchFilter(),
             LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
@@ -76,7 +75,7 @@ public class LdapAcceptableUsagePolicyRepository extends AbstractPrincipalAttrib
 
             if (response.isPresent()) {
                 val result = response.get().get();
-                val currentDn = result.getValue().getResult().getEntry().getDn();
+                val currentDn = result.getValue().getEntry().getDn();
                 LOGGER.debug("Updating [{}]", currentDn);
                 val attributes = CollectionUtils.<String, Set<String>>wrap(this.aupAttributeName,
                     CollectionUtils.wrapSet(Boolean.TRUE.toString().toUpperCase()));

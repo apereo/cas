@@ -73,7 +73,7 @@ public class SurrogateLdapAuthenticationService extends BaseSurrogateAuthenticat
                 return new ArrayList<>(0);
             }
 
-            val ldapEntry = response.getResult().getEntry();
+            val ldapEntry = response.getEntry();
             val attribute = ldapEntry.getAttribute(ldapProperties.getMemberAttributeName());
             LOGGER.debug("Locating LDAP entry [{}] with attribute [{}]", ldapEntry, attribute);
 

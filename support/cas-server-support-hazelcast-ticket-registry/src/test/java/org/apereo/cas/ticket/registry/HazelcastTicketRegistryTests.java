@@ -20,8 +20,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 }, properties = {
     "cas.ticket.registry.hazelcast.cluster.instanceName=testlocalhostinstance",
     "spring.mail.host=localhost",
-    "spring.mail.port=25000",
-    "spring.mail.testConnection=false"
+    "spring.mail.port=25000"
 })
 public class HazelcastTicketRegistryTests extends BaseTicketRegistryTests {
 

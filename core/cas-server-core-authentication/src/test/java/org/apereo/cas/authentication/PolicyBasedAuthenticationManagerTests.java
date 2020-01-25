@@ -214,7 +214,8 @@ public class PolicyBasedAuthenticationManagerTests {
     private static AuthenticationEventExecutionPlan getAuthenticationExecutionPlan(final Map<AuthenticationHandler, PrincipalResolver> map) {
         val plan = new DefaultAuthenticationEventExecutionPlan();
         plan.registerAuthenticationHandlerWithPrincipalResolver(map);
-        plan.registerAuthenticationHandlerResolver(new RegisteredServiceAuthenticationHandlerResolver(mockServicesManager()));
+        plan.registerAuthenticationHandlerResolver(new RegisteredServiceAuthenticationHandlerResolver(mockServicesManager(),
+                new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy())));
         plan.registerAuthenticationHandlerResolver(new DefaultAuthenticationHandlerResolver());
         return plan;
     }

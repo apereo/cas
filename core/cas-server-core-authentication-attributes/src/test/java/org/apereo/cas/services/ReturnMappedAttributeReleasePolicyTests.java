@@ -31,6 +31,7 @@ import static org.mockito.Mockito.*;
 public class ReturnMappedAttributeReleasePolicyTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "returnMappedAttributeReleasePolicy.json");
+
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
     @Test
@@ -148,5 +149,24 @@ public class ReturnMappedAttributeReleasePolicyTests {
             CoreAttributesTestUtils.getService(), registeredService);
         assertTrue(result.containsKey(mappedAttribute));
         assertEquals(List.of("user@example.org"), result.get(mappedAttribute));
+    }
+
+    @Test
+    public void verifyClasspathGroovy() throws Exception {
+        val allowedAttributes = ArrayListMultimap.<String, Object>create();
+        allowedAttributes.put("attr1", "classpath:GroovyMappedAttribute.groovy");
+        val wrap = CollectionUtils.<String, Object>wrap(allowedAttributes);
+        val policyWritten = new ReturnMappedAttributeReleasePolicy(wrap);
+        val registeredService = CoreAttributesTestUtils.getRegisteredService();
+        when(registeredService.getAttributeReleasePolicy()).thenReturn(policyWritten);
+        val principalAttributes = new HashMap<String, List<Object>>();
+        principalAttributes.put("uid", List.of(CoreAttributesTestUtils.CONST_USERNAME));
+        val result = policyWritten.getAttributes(
+            CoreAttributesTestUtils.getPrincipal(CoreAttributesTestUtils.CONST_USERNAME, principalAttributes),
+            CoreAttributesTestUtils.getService(), registeredService);
+        assertTrue(result.containsKey("attr1"));
+        val attr1 = result.get("attr1");
+        assertTrue(attr1.contains("DOMAIN\\" + CoreAttributesTestUtils.CONST_USERNAME));
+        assertTrue(attr1.contains("testing"));
     }
 }

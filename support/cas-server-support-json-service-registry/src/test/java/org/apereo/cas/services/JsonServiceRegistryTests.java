@@ -7,6 +7,7 @@ import org.apereo.cas.util.io.WatcherService;
 
 import lombok.SneakyThrows;
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.io.ClassPathResource;
@@ -22,6 +23,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
+@Tag("FileSystem")
 public class JsonServiceRegistryTests extends AbstractResourceBasedServiceRegistryTests {
     @SneakyThrows
     @Override

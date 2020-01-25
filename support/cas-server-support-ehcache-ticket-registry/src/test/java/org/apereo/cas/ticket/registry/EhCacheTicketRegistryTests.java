@@ -29,8 +29,7 @@ import static org.mockito.Mockito.*;
 }, properties = {
     "cas.ticket.registry.ehcache.shared=true",
     "spring.mail.host=localhost",
-    "spring.mail.port=25000",
-    "spring.mail.testConnection=false"
+    "spring.mail.port=25000"
 })
 @Tag("Ehcache")
 public class EhCacheTicketRegistryTests extends BaseTicketRegistryTests {

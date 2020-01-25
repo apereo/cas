@@ -22,6 +22,7 @@ import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CasPropertiesConfiguration;
 import org.apereo.cas.config.CasWebAppConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
+import org.apereo.cas.config.support.authentication.AcceptUsersAuthenticationEventExecutionPlanConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logging.config.CasLoggingConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
@@ -79,6 +80,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreValidationConfiguration.class,
     CasCoreConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
+    AcceptUsersAuthenticationEventExecutionPlanConfiguration.class,
     CasCoreAuditConfiguration.class,
     CasPersonDirectoryConfiguration.class,
     ThymeleafAutoConfiguration.class,
@@ -88,7 +90,7 @@ import static org.junit.jupiter.api.Assertions.*;
 }, properties = {
     "spring.mail.host=localhost",
     "spring.mail.port=25000",
-    "spring.mail.testConnection=false"
+    "cas.httpWebRequest.cors.enabled=true"
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @WebAppConfiguration

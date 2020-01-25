@@ -4,6 +4,18 @@
         <cve>CVE-2019-10174</cve>
     </suppress>
     <suppress>
+        <cve>CVE-2019-20330</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2019-10158</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2019-17571</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2019-17563</cve>
+    </suppress>
+    <suppress>
         <cve>CVE-2018-5382</cve>
     </suppress>
     <suppress>

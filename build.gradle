@@ -31,6 +31,7 @@ buildscript {
 
     dependencies {
         classpath "gradle.plugin.com.ewerk.gradle.plugins:jaxb2-plugin:1.0.10"
+        classpath "org.gradle:test-retry-gradle-plugin:$gradleRetryVersion"
         classpath "com.github.jk1:gradle-license-report:$gradleLicenseVersion"
         classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
         classpath "com.netflix.nebula:gradle-lint-plugin:$gradleLintVersion"
@@ -69,7 +70,7 @@ ext {
     remoteDebuggingSuspend = Boolean.getBoolean("remoteDebuggingSuspend") ? "y" : "n"
     generateGitProperties = Boolean.getBoolean("generateGitProperties")
 
-    continuousIntegrationBuild = Boolean.getBoolean("CI") || Boolean.getBoolean("TRAVIS") || Boolean.getBoolean("CONTINUOUS_INTEGRATION")
+    continuousIntegrationBuild = System.getenv("CI") || Boolean.getBoolean("CI") || Boolean.getBoolean("TRAVIS") || Boolean.getBoolean("CONTINUOUS_INTEGRATION")
 }
 
 def isArtifactSigningRequired = {
@@ -84,7 +85,7 @@ if (!Boolean.getBoolean("skipSonarqube")) {
     apply plugin: "org.sonarqube"
 }
 
-if (continuousIntegrationBuild) {
+if (continuousIntegrationBuild || Boolean.getBoolean("enableBuildTimeTracker")) {
     apply plugin: "build-time-tracker"
     buildtimetracker {
         reporters {
@@ -141,6 +142,7 @@ allprojects {
     apply plugin: "eclipse"
     apply plugin: "jacoco"
     apply plugin: "java"
+    apply plugin: "org.gradle.test-retry"
 
     apply from: rootProject.file("gradle/tasks.gradle")
 
@@ -501,7 +503,7 @@ subprojects {
         [spotbugsMain, spotbugsTest].each {
             it.reports {
                 xml.enabled = true
-                html.enabled = false
+                html.enabled = !rootProject.continuousIntegrationBuild
             }
             it.pluginClasspath = project.configurations.spotbugsPlugins
             it.finalizedBy outputSpotbugsReports
@@ -649,7 +651,7 @@ task jacocoRootReport(type: JacocoReport, group: "Coverage reports") {
     }
     executionData jacocoMerge.destinationFile
     reports {
-        html.enabled = false
+        html.enabled = !rootProject.continuousIntegrationBuild
         xml.enabled = true
     }
 }

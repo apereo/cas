@@ -1,8 +1,8 @@
 package org.apereo.cas.web.flow.login;
 
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.NullPrincipal;
-import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
@@ -18,6 +18,8 @@ import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.util.Optional;
+
 /**
  * Action that should execute prior to rendering the generic-success login view.
  *
@@ -28,8 +30,11 @@ import org.springframework.webflow.execution.RequestContext;
 @RequiredArgsConstructor
 public class GenericSuccessViewAction extends AbstractAction {
     private final CentralAuthenticationService centralAuthenticationService;
+
     private final ServicesManager servicesManager;
+
     private final ServiceFactory serviceFactory;
+
     private final String redirectUrl;
 
     @Override
@@ -41,7 +46,7 @@ public class GenericSuccessViewAction extends AbstractAction {
             requestContext.getExternalContext().requestExternalRedirect(service.getId());
         } else {
             val tgt = WebUtils.getTicketGrantingTicketId(requestContext);
-            WebUtils.putPrincipal(requestContext, getAuthenticationPrincipal(tgt));
+            getAuthentication(tgt).ifPresent(authn -> WebUtils.putAuthentication(authn, requestContext));
         }
         return success();
     }
@@ -53,15 +58,15 @@ public class GenericSuccessViewAction extends AbstractAction {
      * @return the authentication principal, or {@link NullPrincipal}
      * if none was available.
      */
-    public Principal getAuthenticationPrincipal(final String ticketGrantingTicketId) {
+    public Optional<Authentication> getAuthentication(final String ticketGrantingTicketId) {
         try {
             val ticketGrantingTicket = this.centralAuthenticationService.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
-            return ticketGrantingTicket.getAuthentication().getPrincipal();
+            return Optional.of(ticketGrantingTicket.getAuthentication());
         } catch (final InvalidTicketException e) {
             LOGGER.warn("Ticket-granting ticket [{}] cannot be found in the ticket registry.", e.getMessage());
             LOGGER.debug(e.getMessage(), e);
         }
-        LOGGER.warn("In the absence of valid ticket-granting ticket, the authentication principal cannot be determined. Returning [{}]", NullPrincipal.class.getSimpleName());
-        return NullPrincipal.getInstance();
+        LOGGER.warn("In the absence of valid ticket-granting ticket, the authentication cannot be determined");
+        return Optional.empty();
     }
 }

@@ -90,8 +90,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
     ThymeleafAutoConfiguration.class
 }, properties = {
     "spring.mail.host=localhost",
-    "spring.mail.port=25000",
-    "spring.mail.testConnection=false"
+    "spring.mail.port=25000"
 })
 public class AbstractOpenIdTests {
     @Autowired

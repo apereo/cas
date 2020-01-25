@@ -8,6 +8,7 @@ import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -30,6 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
+@Tag("Webflow")
 public class SelectiveMultifactorAuthenticationProviderWebflowEventResolverTests extends BaseCasWebflowMultifactorAuthenticationTests {
     @Autowired
     @Qualifier("selectiveAuthenticationProviderWebflowEventResolver")
@@ -53,7 +55,7 @@ public class SelectiveMultifactorAuthenticationProviderWebflowEventResolverTests
         val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
 
         val resolvedEvents = CollectionUtils.wrapHashSet(new EventFactorySupport().event(this, provider.getId()));
-        context.getAttributes().put(AbstractCasWebflowEventResolver.RESOLVED_AUTHENTICATION_EVENTS, resolvedEvents);
+        WebUtils.putResolvedEventsAsAttribute(context, resolvedEvents);
         val result = selectiveAuthenticationProviderWebflowEventResolver.resolve(context);
         assertNotNull(result);
         assertNotNull(WebUtils.getResolvedMultifactorAuthenticationProviders(context));

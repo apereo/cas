@@ -29,6 +29,16 @@ create attribute release policies, etc. CAS at runtime will auto-configure all r
 A number of CAS configuration options equally apply to a number of modules and features. To understand and 
 take note of those options, please [review this guide](Configuration-Properties-Common.html).
 
+## Validation
+
+Configuration properties are automatically validated on CAS startup to report issues with configuration binding,
+specially if defined CAS settings cannot be recognized or validated by the configuration schema. The validation process
+is on by default and can be skipped on startup using a special *system property* `SKIP_CONFIG_VALIDATION` 
+that should be set to `true`. 
+
+Additional validation processes are also handled via [Configuration Metadata](Configuration-Metadata-Repository.html)
+and property migrations applied automatically on startup by Spring Boot and family.
+
 ## Custom Settings
 
 The following settings could be used to extend CAS with arbitrary configuration keys and values:
@@ -613,10 +623,10 @@ If none is specified, one is automatically detected and used by CAS.
 
 ## Session replication
 
-The `sessionCookieName` property defines the session cookie name for the session replication.
+The `sessionCookieName` property defines the specific session cookie name used for the session replication.
 
 ```properties
-# cas.sessionReplication.sessionCookieName=JSESSIONID
+# cas.sessionReplication.sessionCookieName=DISSESSION
 ```
 
 ## CAS Banner
@@ -645,8 +655,6 @@ To learn more about this topic, [please review this guide](../monitoring/Monitor
 
 # management.endpoints.jmx.exposure.exclude=*
 # management.endpoints.jmx.exposure.include=
-
-# management.server.add-application-context-header=false
 ```
 
 ### Basic Authentication Security
@@ -4095,7 +4103,6 @@ Control how CAS should respond and validate incoming HTTP requests.
 # cas.httpWebRequest.customHeaders.headerName2=headerValue2
 
 # spring.http.encoding.charset=UTF-8
-# spring.http.encoding.enabled=true
 # spring.http.encoding.force=true
 ```
 
@@ -4477,9 +4484,7 @@ To learn more about this topic, [please review this guide](../ticketing/Ehcache-
 ```properties
 # cas.ticket.registry.ehcache3.enabled=true
 # cas.ticket.registry.ehcache3.maxElementsInMemory=10000
-# cas.ticket.registry.ehcache3.maxSizeOnDisk=200MB
 # cas.ticket.registry.ehcache3.perCacheSizeOnDisk=20MB
-# cas.ticket.registry.ehcache3.maxSizeOffHeap=100MB
 # cas.ticket.registry.ehcache3.eternal=false
 # cas.ticket.registry.ehcache3.enableStatistics=true
 # cas.ticket.registry.ehcache3.enableManagement=true
@@ -4488,7 +4493,7 @@ To learn more about this topic, [please review this guide](../ticketing/Ehcache-
 # cas.ticket.registry.ehcache3.resourcePoolName=cas-ticket-pool
 # cas.ticket.registry.ehcache3.resourcePoolSize=15MB
 # cas.ticket.registry.ehcache3.rootDirectory=/tmp/cas/ehcache3
-# cas.ticket.registry.ehcache3.clusterConnectTimeout=150
+# cas.ticket.registry.ehcache3.clusterConnectionTimeout=150
 # cas.ticket.registry.ehcache3.clusterReadWriteTimeout=5
 # cas.ticket.registry.ehcache3.clusteredCacheConsistency=STRONG
 ```                                              
