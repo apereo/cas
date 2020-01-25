@@ -1,7 +1,6 @@
 package org.apereo.cas.webauthn.web.flow;
 
-import org.apereo.cas.webauthn.credential.repository.WebAuthnCredentialRepository;
-
+import com.yubico.webauthn.RegistrationStorage;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.webflow.action.AbstractAction;
@@ -17,8 +16,8 @@ import org.springframework.webflow.execution.RequestContext;
 @RequiredArgsConstructor
 @Getter
 public class WebAuthnStartRegistrationAction extends AbstractAction {
-    private final WebAuthnCredentialRepository webAuthnCredentialRepository;
-    
+    private final RegistrationStorage webAuthnCredentialRepository;
+
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {
         return null;

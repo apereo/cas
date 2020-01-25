@@ -28,33 +28,35 @@ package com.yubico.util;
 import java.util.Optional;
 import java.util.function.Function;
 
-public final class Either<L, R> {
+public class Either<L, R> {
 
-    private final boolean isRight;
-    private final L leftValue;
-    private final R rightValue;
+    private boolean isRight;
+    private L leftValue;
+    private R rightValue;
 
-    private Either(R rightValue) {
+    public Either<L, R> setRight(R rightValue) {
         this.isRight = true;
         this.leftValue = null;
         this.rightValue = rightValue;
+        return this;
     }
 
-    private Either(boolean dummy, L leftValue) {
+    public Either<L, R> setLeft(L leftValue) {
         this.isRight = false;
         this.leftValue = leftValue;
         this.rightValue = null;
+        return this;
     }
 
-    public final boolean isLeft() {
+    public boolean isLeft() {
         return !isRight();
     }
 
-    public final boolean isRight() {
+    public boolean isRight() {
         return isRight;
     }
 
-    public final Optional<L> left() {
+    public Optional<L> left() {
         if (isLeft()) {
             return Optional.of(leftValue);
         } else {
@@ -62,7 +64,7 @@ public final class Either<L, R> {
         }
     }
 
-    public final Optional<R> right() {
+    public Optional<R> right() {
         if (isRight()) {
             return Optional.of(rightValue);
         } else {
@@ -70,11 +72,11 @@ public final class Either<L, R> {
         }
     }
 
-    public final <RO> Either<L, RO> map(Function<R, RO> func) {
+    public <RO> Either<L, RO> map(Function<R, RO> func) {
        return flatMap(r -> Either.right(func.apply(r)));
     }
 
-    public final <RO> Either<L, RO> flatMap(Function<R, Either<L, RO>> func) {
+    public <RO> Either<L, RO> flatMap(Function<R, Either<L, RO>> func) {
         if (isRight()) {
             return func.apply(rightValue);
         } else {
@@ -83,11 +85,11 @@ public final class Either<L, R> {
     }
 
     public static <L, R> Either<L, R> left(L value) {
-        return new Either<>(false, value);
+        return new Either<L, R>().setLeft(value);
     }
 
     public static <L, R> Either<L, R> right(R value) {
-        return new Either<>(value);
+        return new Either<L, R>().setRight(value);
     }
 
 }

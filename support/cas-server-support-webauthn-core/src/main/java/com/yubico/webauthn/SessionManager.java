@@ -4,6 +4,7 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.yubico.webauthn.data.ByteArray;
 import java.security.SecureRandom;
+import java.time.Duration;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -19,7 +20,7 @@ public class SessionManager {
     private static <K, V> Cache<K, V> newCache() {
         return CacheBuilder.newBuilder()
             .maximumSize(100)
-            .expireAfterAccess(5, TimeUnit.MINUTES)
+            .expireAfterAccess(Duration.ofMinutes(5))
             .build();
     }
 

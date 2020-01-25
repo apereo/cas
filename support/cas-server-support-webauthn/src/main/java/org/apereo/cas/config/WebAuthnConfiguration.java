@@ -5,20 +5,17 @@ import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.bypass.MultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.webauthn.WebAuthnMultifactorAuthenticationProvider;
-import org.apereo.cas.webauthn.WebAuthnOperations;
-import org.apereo.cas.webauthn.WebAuthnRestController;
-import org.apereo.cas.webauthn.attestation.DefaultAttestationCertificateTrustResolver;
-import org.apereo.cas.webauthn.credential.repository.CachingInMemoryWebAuthnCredentialRepository;
-import org.apereo.cas.webauthn.credential.repository.WebAuthnCredentialRepository;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import com.google.common.collect.ArrayListMultimap;
-import com.yubico.internal.util.WebAuthnCodecs;
+import com.yubico.internal.util.JacksonCodecs;
+import com.yubico.webauthn.InMemoryRegistrationStorage;
+import com.yubico.webauthn.RegistrationStorage;
 import com.yubico.webauthn.RelyingParty;
+import com.yubico.webauthn.WebAuthnRestResource;
+import com.yubico.webauthn.WebAuthnServer;
 import com.yubico.webauthn.attestation.AttestationResolver;
 import com.yubico.webauthn.attestation.MetadataObject;
 import com.yubico.webauthn.attestation.MetadataService;
@@ -27,10 +24,10 @@ import com.yubico.webauthn.attestation.TrustResolver;
 import com.yubico.webauthn.attestation.resolver.CompositeAttestationResolver;
 import com.yubico.webauthn.attestation.resolver.CompositeTrustResolver;
 import com.yubico.webauthn.attestation.resolver.SimpleAttestationResolver;
-import com.yubico.webauthn.attestation.resolver.SimpleTrustResolver;
 import com.yubico.webauthn.data.AttestationConveyancePreference;
 import com.yubico.webauthn.data.RelyingPartyIdentity;
 import com.yubico.webauthn.extension.appid.AppId;
+import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectProvider;
@@ -44,11 +41,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.net.URL;
-import java.security.cert.X509Certificate;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
-import java.util.concurrent.TimeUnit;
 
 /**
  * This is {@link WebAuthnConfiguration}.
@@ -61,7 +56,7 @@ import java.util.concurrent.TimeUnit;
 public class WebAuthnConfiguration {
     private static final int CACHE_MAX_SIZE = 10_000;
 
-    private static final ObjectMapper MAPPER = WebAuthnCodecs.json().findAndRegisterModules();
+    private static final ObjectMapper MAPPER = JacksonCodecs.json().findAndRegisterModules();
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -80,21 +75,23 @@ public class WebAuthnConfiguration {
     private static <K, V> Cache<K, V> newCache() {
         return CacheBuilder.newBuilder()
             .maximumSize(CACHE_MAX_SIZE)
-            .expireAfterAccess(Duration.ofMinutes(1))
+            .expireAfterAccess(Duration.ofMinutes(5))
             .recordStats()
             .build();
     }
 
+    @ConditionalOnMissingBean(name = "webAuthnRestResource")
     @Bean
-    public WebAuthnRestController webAuthnRestController() throws Exception {
-        return new WebAuthnRestController(webAuthnOperations(), casProperties);
+    @SneakyThrows
+    public WebAuthnRestResource webAuthnRestResource() {
+        return new WebAuthnRestResource(webAuthnOperations(), casProperties);
     }
 
     @ConditionalOnMissingBean(name = "webAuthnCredentialRepository")
     @Bean
     @RefreshScope
-    public WebAuthnCredentialRepository webAuthnCredentialRepository() {
-        return new CachingInMemoryWebAuthnCredentialRepository();
+    public RegistrationStorage webAuthnCredentialRepository() {
+        return new InMemoryRegistrationStorage();
     }
 
     @ConditionalOnMissingBean(name = "webAuthnMultifactorAuthenticationProvider")
@@ -118,15 +115,6 @@ public class WebAuthnConfiguration {
         val trustResolvers = new ArrayList<TrustResolver>();
         trustResolvers.add(StandardMetadataService.createDefaultTrustResolver());
 
-        val resource = casProperties.getAuthn().getMfa().getWebAuthn().getTrustedDeviceMetadata().getLocation();
-        if (ResourceUtils.doesResourceExist(resource)) {
-            val metadata = MAPPER.readValue(resource.getInputStream(), MetadataObject.class);
-            val trustedCertificates = metadata.getParsedTrustedCertificates();
-            val resolver = new SimpleTrustResolver(trustedCertificates);
-            val trustedCerts = ArrayListMultimap.<String, X509Certificate>create();
-            trustedCertificates.forEach(cert -> trustedCerts.put(cert.getSubjectDN().getName(), cert));
-            trustResolvers.add(new DefaultAttestationCertificateTrustResolver(resolver, trustedCerts));
-        }
         trustResolvers.addAll(foundTrustResolvers.values());
         val trustResolver = new CompositeTrustResolver(trustResolvers);
 
@@ -134,6 +122,7 @@ public class WebAuthnConfiguration {
         val attestationResolvers = new ArrayList<AttestationResolver>();
         attestationResolvers.add(StandardMetadataService.createDefaultAttestationResolver(trustResolver));
 
+        val resource = casProperties.getAuthn().getMfa().getWebAuthn().getTrustedDeviceMetadata().getLocation();
         if (resource != null) {
             val metadata = MAPPER.readValue(resource.getInputStream(), MetadataObject.class);
             attestationResolvers.add(new SimpleAttestationResolver(CollectionUtils.wrapList(metadata), trustResolver));
@@ -146,7 +135,7 @@ public class WebAuthnConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "webAuthnOperations")
-    public WebAuthnOperations webAuthnOperations() throws Exception {
+    public WebAuthnServer webAuthnOperations() throws Exception {
         val webAuthn = casProperties.getAuthn().getMfa().getWebAuthn();
 
         val appId = new AppId(StringUtils.defaultString(webAuthn.getApplicationId(), casProperties.getServer().getName()));
@@ -176,11 +165,6 @@ public class WebAuthnConfiguration {
             .appId(appId)
             .build();
 
-        return new WebAuthnOperations(webAuthnCredentialRepository(),
-            newCache(),
-            newCache(),
-            newCache(),
-            relyingParty,
-            webAuthnMetadataService());
+        return new WebAuthnServer(webAuthnCredentialRepository(), newCache(), newCache(), relyingParty, webAuthnMetadataService());
     }
 }

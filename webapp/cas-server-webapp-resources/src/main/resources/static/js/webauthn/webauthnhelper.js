@@ -1,3 +1,7 @@
+let ceremonyState = {};
+let session = {
+};
+
 function extend(obj, more) {
     return Object.assign({}, obj, more);
 }
@@ -7,6 +11,43 @@ function rejectIfNotSuccess(response) {
         return response;
     } else {
         return new Promise((resolve, reject) => reject(response));
+    }
+}
+
+function updateSession(response) {
+    if (response.sessionToken) {
+        session.sessionToken = response.sessionToken;
+    }
+    if (response.username) {
+        session.username = response.username;
+    }
+    updateSessionBox();
+    updateRegisterButtons();
+    return response;
+}
+
+function logout() {
+    session = {};
+    updateSession({});
+}
+
+function updateSessionBox() {
+    if (session.username) {
+        document.getElementById('session').textContent = `Logged in as ${session.username}`;
+        document.getElementById('logoutButton').disabled = false;
+    } else {
+        document.getElementById('session').textContent = 'Not logged in.';
+        document.getElementById('logoutButton').disabled = true;
+    }
+}
+
+function updateRegisterButtons() {
+    if (session.sessionToken) {
+        document.getElementById('registerButton').textContent = 'Add credential';
+        document.getElementById('registerRkButton').textContent = 'Add resident credential';
+    } else {
+        document.getElementById('registerButton').textContent = 'Register new account';
+        document.getElementById('registerRkButton').textContent = 'Register new account with resident credential';
     }
 }
 
@@ -41,7 +82,6 @@ function showJson(name, data) {
         .textContent = JSON.stringify(data, false, 2);
 }
 function showRequest(data) { return showJson('request', data); }
-
 function showAuthenticatorResponse(data) {
     const clientDataJson = data && (data.response && data.response.clientDataJSON || data.u2fResponse.clientDataJSON);
     return showJson('authenticator-response', extend(
@@ -75,8 +115,10 @@ function resetDisplays() {
 }
 
 function getIndexActions() {
-    return fetch('webauthn/')
-        .then(response => response.json());
+    return fetch('api/v1/')
+        .then(response => response.json())
+        .then(data => data.actions)
+        ;
 }
 
 function getRegisterRequest(urls, username, displayName, credentialNickname, requireResidentKey = false) {
@@ -86,10 +128,12 @@ function getRegisterRequest(urls, username, displayName, credentialNickname, req
             displayName,
             credentialNickname,
             requireResidentKey,
+            sessionToken: session.sessionToken || null,
         }),
         method: 'POST',
     })
         .then(response => response.json())
+        .then(updateSession)
         .then(rejectIfNotSuccess)
         ;
 }
@@ -105,7 +149,7 @@ function executeRegisterRequest(request, useU2f = false) {
 }
 
 function executeU2fRegisterRequest(request) {
-    const appId = 'https://localhost:8443';
+    const appId = 'https://mmoayyed.unicon.net:8443';
     console.log('appId', appId);
     return u2fRegister(
         appId,
@@ -170,19 +214,22 @@ function u2fRegister(appId, registerRequests, registeredKeys) {
     });
 }
 
-function submitResponse(url, requestId, response) {
-    console.log('submitResponse', url, requestId, response);
+function submitResponse(url, request, response) {
+    console.log('submitResponse', url, request, response);
 
     const body = {
-        requestId,
+        requestId: request.requestId,
         credential: response,
+        sessionToken: request.sessionToken || session.sessionToken || null,
     };
 
     return fetch(url, {
         method: 'POST',
         body: JSON.stringify(body),
-    }).then(response => response.json());
-    ;
+    })
+        .then(response => response.json())
+        .then(updateSession)
+        ;
 }
 
 function performCeremony(params) {
@@ -198,8 +245,6 @@ function performCeremony(params) {
     resetDisplays();
 
     return getIndexActions()
-        .then(data => data.actions)
-
         .then(urls => {
             setStatus(statusStrings.int);
             if (callbacks.init) {
@@ -216,28 +261,34 @@ function performCeremony(params) {
                 callbacks.authenticatorRequest({ request, urls });
             }
             showRequest(request);
+            ceremonyState = {
+                callbacks,
+                request,
+                statusStrings,
+                urls,
+                useU2f,
+            };
             return executeRequest(request)
-                .then(webauthn.responseToObject)
-                .then(response => ({
-                    request,
-                    urls,
-                    response,
-                }));
+                .then(webauthn.responseToObject);
         })
+        .then(finishCeremony)
+        ;
+}
 
-        .then((params) => {
-            const urls = params.urls;
-            const request = params.request;
-            const response = params.response;
+function finishCeremony(response) {
+    const callbacks = ceremonyState.callbacks;
+    const request = ceremonyState.request;
+    const statusStrings = ceremonyState.statusStrings;
+    const urls = ceremonyState.urls;
+    const useU2f = ceremonyState.useU2f;
 
-            setStatus(statusStrings.serverRequest || 'Sending response to server...');
-            if (callbacks.serverRequest) {
-                callbacks.serverRequest({ urls, request, response });
-            }
-            showAuthenticatorResponse(response);
-            return submitResponse(useU2f ? urls.finishU2f : urls.finish, request.requestId, response);
-        })
+    setStatus(statusStrings.serverRequest || 'Sending response to server...');
+    if (callbacks.serverRequest) {
+        callbacks.serverRequest({ urls, request, response });
+    }
+    showAuthenticatorResponse(response);
 
+    return submitResponse(useU2f ? urls.finishU2f : urls.finish, request, response)
         .then(data => {
             if (data && data.success) {
                 setStatus(statusStrings.success);
@@ -246,18 +297,17 @@ function performCeremony(params) {
             }
             showServerResponse(data);
             return data;
-        })
-        ;
+        });
 }
 
 function registerResidentKey() {
     return register(requireResidentKey = true);
 }
 function register(requireResidentKey = false, getRequest = getRegisterRequest) {
-    const username = "casuser";
-    const displayName = "";
-    const credentialNickname = "";
-    const useU2f = false;
+    const username = document.getElementById('username').value;
+    const displayName = document.getElementById('displayName').value;
+    const credentialNickname = document.getElementById('credentialNickname').value;
+    const useU2f = document.getElementById('useU2f').checked;
 
     var request;
 
@@ -324,19 +374,7 @@ function getAuthenticateRequest(urls, username) {
         method: 'POST',
     })
         .then(response => response.json())
-        .then(rejectIfNotSuccess)
-        ;
-}
-
-function getDeregisterRequest(urls, username, credentialId) {
-    return fetch(urls.deregister, {
-        body: new URLSearchParams({
-            username,
-            credentialId,
-        }),
-        method: 'POST',
-    })
-        .then(response => response.json())
+        .then(updateSession)
         .then(rejectIfNotSuccess)
         ;
 }
@@ -380,25 +418,32 @@ function authenticate(username = null, getRequest = getAuthenticateRequest) {
 }
 
 function deregister() {
-    const username = document.getElementById('username').value;
     const credentialId = document.getElementById('deregisterCredentialId').value;
+    addMessage('Deregistering credential...');
 
-    return performCeremony({
-        getIndexActions,
-        getRequest: urls => getDeregisterRequest(urls, username, credentialId),
-        statusStrings: {
-            init: 'Initiating authentication ceremony with server...',
-            authenticatorRequest: 'Asking authenticators to perform assertion...',
-            success: 'Authentication successful!',
-        },
-        executeRequest: executeAuthenticateRequest,
-    })
+    return getIndexActions()
+        .then(urls =>
+            fetch(urls.deregister, {
+                body: new URLSearchParams({
+                    credentialId,
+                    sessionToken: session.sessionToken || null,
+                }),
+                method: 'POST',
+            })
+        )
+        .then(response => response.json())
+        .then(updateSession)
+        .then(rejectIfNotSuccess)
         .then(data => {
             if (data.success) {
                 if (data.droppedRegistration) {
                     addMessage(`Successfully deregistered credential: ${data.droppedRegistration.credentialNickname || credentialId}`);
                 } else {
                     addMessage(`Successfully deregistered credential: ${credentialId}`);
+                }
+                if (data.accountDeleted) {
+                    addMessage('No credentials remain - account deleted.');
+                    logout();
                 }
             } else {
                 addMessage('Credential deregistration failed.');
@@ -414,33 +459,6 @@ function deregister() {
             console.error('Authentication failed', err);
             return rejected(err);
         });
-}
-
-function getAddCredentialRequest(url, username, credentialNickname) {
-    return fetch(url, {
-        body: new URLSearchParams({
-            username,
-            credentialNickname,
-        }),
-        method: 'POST',
-    }).then(response => response.json());
-}
-
-function addCredential(useU2f = false) {
-    const username = document.getElementById('username').value;
-    const credentialNickname = document.getElementById('credentialNickname').value;
-
-    return authenticate(
-        username,
-        urls => getAddCredentialRequest(urls.addCredential, username, credentialNickname)
-    )
-        .then(data =>
-            register(
-                username,
-                () => data
-            )
-        )
-        ;
 }
 
 function init() {

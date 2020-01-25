@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.bypass.HttpRequestMultifactorAuthentication
 import org.apereo.cas.authentication.bypass.MultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.authentication.bypass.PrincipalMultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.authentication.bypass.RegisteredServiceMultifactorAuthenticationProviderBypassEvaluator;
+import org.apereo.cas.authentication.bypass.RegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.authentication.bypass.RestMultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 
@@ -43,6 +44,8 @@ public class WebAuthnMultifactorProviderBypassConfiguration {
             bypass.addMultifactorAuthenticationProviderBypassEvaluator(webAuthnPrincipalMultifactorAuthenticationProviderBypass());
         }
         bypass.addMultifactorAuthenticationProviderBypassEvaluator(webAuthnRegisteredServiceMultifactorAuthenticationProviderBypass());
+        bypass.addMultifactorAuthenticationProviderBypassEvaluator(webAuthnRegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator());
+        
         if (StringUtils.isNotBlank(props.getAuthenticationAttributeName())
             || StringUtils.isNotBlank(props.getAuthenticationHandlerName())
             || StringUtils.isNotBlank(props.getAuthenticationMethodName())) {
@@ -64,6 +67,14 @@ public class WebAuthnMultifactorProviderBypassConfiguration {
         return bypass;
     }
 
+    @ConditionalOnMissingBean(name = "webAuthnRegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator")
+    @Bean
+    @RefreshScope
+    public MultifactorAuthenticationProviderBypassEvaluator webAuthnRegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator() {
+        val webAuthn = casProperties.getAuthn().getMfa().getWebAuthn();
+        return new RegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator(webAuthn.getId());
+    }
+    
     @ConditionalOnMissingBean(name = "webAuthnRestMultifactorAuthenticationProviderBypass")
     @Bean
     @RefreshScope

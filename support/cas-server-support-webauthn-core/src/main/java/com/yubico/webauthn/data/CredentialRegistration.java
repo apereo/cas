@@ -28,25 +28,28 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.yubico.webauthn.RegisteredCredential;
 import com.yubico.webauthn.attestation.Attestation;
-
-import java.time.Instant;
-import java.util.Optional;
 import lombok.Builder;
 import lombok.Value;
 import lombok.experimental.Wither;
 
+import java.time.Instant;
+import java.util.Optional;
+
 @Value
 @Builder
 @Wither
+@SuppressWarnings({"ReferenceEquality", "OptionalEquality"})
 public class CredentialRegistration {
 
     long signatureCount;
 
     UserIdentity userIdentity;
+
     Optional<String> credentialNickname;
 
     @JsonIgnore
     Instant registrationTime;
+
     RegisteredCredential credential;
 
     Optional<Attestation> attestationMetadata;
