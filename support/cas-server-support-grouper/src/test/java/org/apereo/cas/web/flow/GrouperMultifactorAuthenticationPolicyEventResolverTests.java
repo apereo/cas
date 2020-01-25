@@ -33,6 +33,7 @@ import org.apereo.cas.web.support.WebUtils;
 import edu.internet2.middleware.grouperClient.ws.beans.WsGetGroupsResult;
 import edu.internet2.middleware.grouperClient.ws.beans.WsGroup;
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -91,9 +92,9 @@ import static org.mockito.Mockito.*;
 }, properties = {
     "cas.authn.mfa.grouperGroupField=name",
     "spring.mail.host=localhost",
-    "spring.mail.port=25000",
-    "spring.mail.testConnection=false"
+    "spring.mail.port=25000"
 })
+@Tag("Webflow")
 public class GrouperMultifactorAuthenticationPolicyEventResolverTests {
     @Autowired
     @Qualifier("grouperMultifactorAuthenticationWebflowEventResolver")

@@ -63,4 +63,27 @@ public interface RegisteredServiceMultifactorPolicy extends Serializable {
      * @return true/false
      */
     boolean isBypassTrustedDeviceEnabled();
+
+    /**
+     * Gets principal attribute name trigger to enable bypass.
+     *
+     * @return the principal attribute name trigger
+     */
+    String getBypassPrincipalAttributeName();
+
+    /**
+     * Gets principal attribute value to match to enable bypass.
+     * Values may be regex patterns.
+     *
+     * @return the principal attribute value to match
+     */
+    String getBypassPrincipalAttributeValue();
+
+    /**
+     * Path to an external/embedded script
+     * that allows for triggering of MFA.
+     *
+     * @return MFA trigger as a script path or embedded script.
+     */
+    String getScript();
 }

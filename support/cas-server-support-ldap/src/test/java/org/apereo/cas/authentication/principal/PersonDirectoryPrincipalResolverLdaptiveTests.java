@@ -39,7 +39,6 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.attributeRepository.ldap[0].baseDn=dc=example,dc=org",
     "cas.authn.attributeRepository.ldap[0].ldapUrl=ldap://localhost:10389",
     "cas.authn.attributeRepository.ldap[0].searchFilter=cn={user}",
-    "cas.authn.attributeRepository.ldap[0].useSsl=false",
     "cas.authn.attributeRepository.ldap[0].attributes.cn=cn",
     "cas.authn.attributeRepository.ldap[0].attributes.description=description",
     "cas.authn.attributeRepository.ldap[0].bindDn=cn=Directory Manager",

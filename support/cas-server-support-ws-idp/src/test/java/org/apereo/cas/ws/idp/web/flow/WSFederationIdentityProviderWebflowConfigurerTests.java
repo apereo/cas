@@ -8,6 +8,7 @@ import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration;
 import org.springframework.context.annotation.Import;
@@ -36,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
     "spring.mail.host=localhost",
     "spring.mail.port=25000",
-    "spring.mail.testConnection=false",
+
 
     "cas.authn.wsfedIdp.sts.signingKeystoreFile=classpath:ststrust.jks",
     "cas.authn.wsfedIdp.sts.signingKeystorePassword=storepass",
@@ -53,6 +54,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.wsfedIdp.sts.realm.keyPassword=realma",
     "cas.authn.wsfedIdp.sts.realm.issuer=CAS"
 })
+@Tag("Webflow")
 public class WSFederationIdentityProviderWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Test
     public void verifyOperation() {

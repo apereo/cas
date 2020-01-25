@@ -44,7 +44,6 @@ public class ChainingAttributeReleasePolicy implements RegisteredServiceAttribut
 
     @Override
     public RegisteredServiceConsentPolicy getConsentPolicy() {
-        AnnotationAwareOrderComparator.sortIfNecessary(policies);
         val chainingConsentPolicy = new ChainingRegisteredServiceConsentPolicy();
         val newConsentPolicies = policies
             .stream()
@@ -57,7 +56,6 @@ public class ChainingAttributeReleasePolicy implements RegisteredServiceAttribut
 
     @Override
     public Map<String, List<Object>> getAttributes(final Principal p, final Service selectedService, final RegisteredService service) {
-        AnnotationAwareOrderComparator.sortIfNecessary(policies);
 
         val merger = CoreAuthenticationUtils.getAttributeMerger(mergingPolicy);
         val attributes = new HashMap<String, List<Object>>();
@@ -72,8 +70,6 @@ public class ChainingAttributeReleasePolicy implements RegisteredServiceAttribut
 
     @Override
     public Map<String, List<Object>> getConsentableAttributes(final Principal principal, final Service selectedService, final RegisteredService service) {
-        AnnotationAwareOrderComparator.sortIfNecessary(policies);
-
         val merger = CoreAuthenticationUtils.getAttributeMerger(mergingPolicy);
         val attributes = new HashMap<String, List<Object>>();
         policies.forEach(policy -> {
@@ -86,7 +82,7 @@ public class ChainingAttributeReleasePolicy implements RegisteredServiceAttribut
     }
 
     /**
-     * Add policy.
+     * Add policy. Call finalizePolicies when done if adding more than one policy.
      *
      * @param policy the policy
      */
@@ -95,12 +91,20 @@ public class ChainingAttributeReleasePolicy implements RegisteredServiceAttribut
     }
 
     /**
-     * Add policies.
+     * Add all policies at once and then sort them.
      *
      * @param policies the policies
      */
     public void addPolicies(final RegisteredServiceAttributeReleasePolicy... policies) {
         this.policies.addAll(Arrays.stream(policies).collect(Collectors.toList()));
+        finalizePolicies();
+    }
+
+    /**
+     * Call after done adding policies.
+     */
+    public void finalizePolicies() {
+        AnnotationAwareOrderComparator.sortIfNecessary(policies);
     }
 
     /**

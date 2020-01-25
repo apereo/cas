@@ -96,14 +96,12 @@ import org.springframework.webflow.execution.Action;
         "cas.authn.policy.any.tryAll=true",
         "cas.authn.x509.crlFetcher=ldap",
         "cas.authn.x509.ldap.ldapUrl=ldap://localhost:1389",
-        "cas.authn.x509.ldap.useSsl=false",
         "cas.authn.x509.ldap.baseDn=ou=people,dc=example,dc=org",
         "cas.authn.x509.ldap.searchFilter=cn=X509",
         "cas.authn.x509.ldap.bindDn=cn=Directory Manager,dc=example,dc=org",
         "cas.authn.x509.ldap.bindCredential=Password",
         "spring.mail.host=localhost",
-        "spring.mail.port=25000",
-        "spring.mail.testConnection=false"
+        "spring.mail.port=25000"
     })
 public abstract class BaseCertificateCredentialActionTests {
     public static final CasX509Certificate VALID_CERTIFICATE = new CasX509Certificate(true);

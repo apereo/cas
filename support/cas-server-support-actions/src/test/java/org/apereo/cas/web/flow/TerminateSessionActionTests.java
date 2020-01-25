@@ -3,6 +3,7 @@ package org.apereo.cas.web.flow;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @TestPropertySource(properties = "cas.tgc.crypto.enabled=false")
+@Tag("Webflow")
 public class TerminateSessionActionTests extends AbstractWebflowActionsTests {
     @Autowired
     @Qualifier("terminateSessionAction")

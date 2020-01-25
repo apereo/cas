@@ -1,11 +1,9 @@
 package org.apereo.cas.support.oauth.validator.token;
 
 import org.apereo.cas.audit.AuditableContext;
-import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
-import org.apereo.cas.util.HttpRequestUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -35,11 +33,12 @@ public class OAuth20PasswordGrantTypeTokenRequestValidator extends BaseOAuth20To
     protected boolean validateInternal(final JEEContext context, final String grantType,
                                        final ProfileManager manager, final UserProfile uProfile) {
 
-        val request = context.getNativeRequest();
-        if (!HttpRequestUtils.doesParameterExist(request, OAuth20Constants.CLIENT_ID)) {
+        val clientIdAndSecret = OAuth20Utils.getClientIdAndClientSecret(context);
+
+        if (clientIdAndSecret == null || StringUtils.isBlank(clientIdAndSecret.getKey())) {
             return false;
         }
-        val clientId = context.getRequestParameter(OAuth20Constants.CLIENT_ID).map(String::valueOf).orElse(StringUtils.EMPTY);
+        val clientId = clientIdAndSecret.getKey();
         LOGGER.debug("Received grant type [{}] with client id [{}]", grantType, clientId);
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(getConfigurationContext().getServicesManager(), clientId);
         val service = getConfigurationContext().getWebApplicationServiceServiceFactory().createService(registeredService.getServiceId());

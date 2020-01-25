@@ -8,6 +8,7 @@ import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfigu
 import org.apereo.cas.web.flow.config.WsFederationAuthenticationWebflowConfiguration;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration;
 import org.springframework.context.annotation.Import;
@@ -40,6 +41,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.wsfed[0].signingCertificateResources=classpath:adfs-signing.cer",
     "cas.authn.wsfed[0].identityAttribute=upn"
 })
+@Tag("Webflow")
 public class WsFederationWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Test
     public void verifyOperation() {

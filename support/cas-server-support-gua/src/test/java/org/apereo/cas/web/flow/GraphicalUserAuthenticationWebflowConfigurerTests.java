@@ -3,6 +3,7 @@ package org.apereo.cas.web.flow;
 import org.apereo.cas.gua.config.GraphicalUserAuthenticationConfiguration;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration;
 import org.springframework.context.annotation.Import;
@@ -24,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
     BaseWebflowConfigurerTests.SharedTestConfiguration.class
 })
 @TestPropertySource(properties = "cas.authn.gua.resource.location=classpath:example.png")
+@Tag("Webflow")
 public class GraphicalUserAuthenticationWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Test
     public void verifyOperation() {

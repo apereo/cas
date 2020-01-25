@@ -1,6 +1,7 @@
 package org.apereo.cas.web;
 
 import org.apereo.cas.CasEmbeddedValueResolver;
+import org.apereo.cas.configuration.CasConfigurationPropertiesValidator;
 
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -29,9 +30,13 @@ public class CasWebApplicationContext extends AnnotationConfigServletWebServerAp
     @Override
     protected void onRefresh() {
         val sch = (ScheduledAnnotationBeanPostProcessor) getBeanFactory()
-            .getBean(TaskManagementConfigUtils.SCHEDULED_ANNOTATION_PROCESSOR_BEAN_NAME,
-                BeanPostProcessor.class);
+            .getBean(TaskManagementConfigUtils.SCHEDULED_ANNOTATION_PROCESSOR_BEAN_NAME, BeanPostProcessor.class);
         sch.setEmbeddedValueResolver(new CasEmbeddedValueResolver(this));
+
+        if (!Boolean.getBoolean("SKIP_CONFIG_VALIDATION")) {
+            val validator = new CasConfigurationPropertiesValidator(this);
+            validator.validate();
+        }
         super.onRefresh();
     }
 }

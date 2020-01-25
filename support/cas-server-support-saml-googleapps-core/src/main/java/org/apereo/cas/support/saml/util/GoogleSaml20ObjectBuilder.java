@@ -22,7 +22,7 @@ import javax.xml.namespace.QName;
  * @deprecated Since 6.2, to be replaced with CAS SAML2 identity provider functionality.
  */
 @EqualsAndHashCode(callSuper = true)
-@Deprecated
+@Deprecated(since = "6.2.0")
 public class GoogleSaml20ObjectBuilder extends AbstractSaml20ObjectBuilder {
     private static final long serialVersionUID = 2979638064754730668L;
 

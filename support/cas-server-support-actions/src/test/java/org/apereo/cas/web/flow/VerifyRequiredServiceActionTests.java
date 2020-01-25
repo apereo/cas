@@ -11,6 +11,7 @@ import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -36,6 +37,7 @@ import static org.mockito.Mockito.*;
     "cas.sso.required-service-pattern=^https://www.google.com.*",
     "cas.tgc.crypto.enabled=false"
 })
+@Tag("Webflow")
 public class VerifyRequiredServiceActionTests extends AbstractWebflowActionsTests {
 
     private Action verifyRequiredServiceAction;

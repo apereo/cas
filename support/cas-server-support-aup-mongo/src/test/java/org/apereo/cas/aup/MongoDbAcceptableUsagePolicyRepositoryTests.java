@@ -29,8 +29,7 @@ import org.springframework.test.context.TestPropertySource;
     "cas.acceptableUsagePolicy.mongo.databaseName=acceptableUsagePolicy",
     "cas.acceptableUsagePolicy.mongo.authenticationDatabaseName=admin",
     "cas.acceptableUsagePolicy.aupAttributeName=accepted"
-}
-)
+})
 @Getter
 public class MongoDbAcceptableUsagePolicyRepositoryTests extends BaseAcceptableUsagePolicyRepositoryTests {
 

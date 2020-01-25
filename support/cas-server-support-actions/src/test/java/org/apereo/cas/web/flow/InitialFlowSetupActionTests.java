@@ -4,6 +4,7 @@ import org.apereo.cas.web.support.WebUtils;
 
 import lombok.SneakyThrows;
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Scott Battaglia
  * @since 3.0.0
  */
+@Tag("Webflow")
 public class InitialFlowSetupActionTests extends AbstractWebflowActionsTests {
     @Autowired
     @Qualifier("initialFlowSetupAction")

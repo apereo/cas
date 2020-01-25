@@ -33,14 +33,25 @@
                 <span th:each="err : ${#fields.errors('*')}" th:utext="${err}">Error text</span>
             </div>
 
-            <div class="form-group">
-                <span class="fa fa-lock"></span>&nbsp;<label for="password" th:utext="#{screen.pm.enterpsw}">Enter Password:</label>&nbsp;
-                <input class="form-control" type="password" id="password" th:field="*{password}" required/>
-            </div>
-            <div class="form-group">
-                <span class="fa fa-lock"></span>&nbsp;<label for="confirmedPassword" th:utext="#{screen.pm.confirmpsw}">Confirm Password:</label>&nbsp;
-                <input class="form-control" type="password" id="confirmedPassword" th:field="*{confirmedPassword}" required/>
-            </div>
+            <section class="form-group">
+                <span th:utext="#{screen.pm.enterpsw}">Enter Password:</span>
+                <div class="input-group">
+                    <input class="form-control required pwd" type="password" id="password" th:field="*{password}" required/>
+                    <span class="input-group-btn">
+                        <button class="btn btn-default reveal-password" type="button">
+                            <i class="fa fa-eye reveal-password-icon reveal-password-icon" aria-hidden="true"></i>
+                        </button>
+                    </span>
+                </div>
+            </section>
+
+            <section class="form-group">
+                <span th:utext="#{screen.pm.confirmpsw}">Confirm Password:</span>
+                <div class="input-group">
+                    <input class="form-control required pwd" type="password" id="confirmedPassword" th:field="*{confirmedPassword}" required/>
+                </div>
+
+            </section>
 
             <div class="form-group">
                 <div>

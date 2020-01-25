@@ -22,10 +22,10 @@ public class RejectResultCodeLdapPasswordPolicyHandlingStrategyTests {
         when(res.getAuthenticationResultCode()).thenReturn(AuthenticationResultCode.INVALID_CREDENTIAL);
         assertFalse(s.supports(null));
 
-        when(res.getResult()).thenReturn(false);
+        when(res.isSuccess()).thenReturn(false);
         assertFalse(s.supports(res));
 
-        when(res.getResult()).thenReturn(true);
+        when(res.isSuccess()).thenReturn(true);
         assertFalse(s.supports(res));
     }
 }

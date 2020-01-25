@@ -3,6 +3,7 @@ package org.apereo.cas.web.flow.actions;
 import org.apereo.cas.web.flow.CasDefaultFlowUrlHandler;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
@@ -12,6 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Auke van Leeuwen
  * @since 4.2.0
  */
+@Tag("Webflow")
 public class CasDefaultFlowUrlHandlerTests {
 
     private final CasDefaultFlowUrlHandler urlHandler = new CasDefaultFlowUrlHandler();

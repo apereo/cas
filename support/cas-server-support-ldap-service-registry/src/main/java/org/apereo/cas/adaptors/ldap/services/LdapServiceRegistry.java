@@ -14,8 +14,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapException;
-import org.ldaptive.Response;
-import org.ldaptive.SearchResult;
+import org.ldaptive.SearchResponse;
 import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.ArrayList;
@@ -103,7 +102,7 @@ public class LdapServiceRegistry extends AbstractServiceRegistry {
         try {
             val response = searchForServiceById(rs.getId());
             if (LdapUtils.containsResultEntry(response)) {
-                return response.getResult().getEntry().getDn();
+                return response.getEntry().getDn();
             }
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
@@ -116,7 +115,7 @@ public class LdapServiceRegistry extends AbstractServiceRegistry {
         try {
             val response = searchForServiceById(registeredService.getId());
             if (LdapUtils.containsResultEntry(response)) {
-                val entry = response.getResult().getEntry();
+                val entry = response.getEntry();
                 return LdapUtils.executeDeleteOperation(this.connectionFactory, entry);
             }
         } catch (final LdapException e) {
@@ -140,7 +139,7 @@ public class LdapServiceRegistry extends AbstractServiceRegistry {
         try {
             val response = getSearchResultResponse();
             if (LdapUtils.containsResultEntry(response)) {
-                return response.getResult().getEntries()
+                return response.getEntries()
                     .stream()
                     .map(this.ldapServiceMapper::mapToRegisteredService)
                     .filter(Objects::nonNull)
@@ -158,7 +157,7 @@ public class LdapServiceRegistry extends AbstractServiceRegistry {
         try {
             val response = getSearchResultResponse();
             if (LdapUtils.containsResultEntry(response)) {
-                response.getResult().getEntries()
+                response.getEntries()
                     .stream()
                     .map(this.ldapServiceMapper::mapToRegisteredService)
                     .filter(Objects::nonNull)
@@ -175,7 +174,7 @@ public class LdapServiceRegistry extends AbstractServiceRegistry {
         return list;
     }
 
-    private Response<SearchResult> getSearchResultResponse() throws LdapException {
+    private SearchResponse getSearchResultResponse() throws LdapException {
         val filter = LdapUtils.newLdaptiveSearchFilter(ldapProperties.getLoadFilter());
         return LdapUtils.executeSearchOperation(this.connectionFactory, this.baseDn, filter, ldapProperties.getPageSize());
     }
@@ -185,7 +184,7 @@ public class LdapServiceRegistry extends AbstractServiceRegistry {
         try {
             val response = searchForServiceById(id);
             if (LdapUtils.containsResultEntry(response)) {
-                return this.ldapServiceMapper.mapToRegisteredService(response.getResult().getEntry());
+                return this.ldapServiceMapper.mapToRegisteredService(response.getEntry());
             }
         } catch (final LdapException e) {
             LOGGER.error(e.getMessage(), e);
@@ -200,7 +199,7 @@ public class LdapServiceRegistry extends AbstractServiceRegistry {
      * @return the response
      * @throws LdapException the ldap exception
      */
-    private Response<SearchResult> searchForServiceById(final Long id) throws LdapException {
+    private SearchResponse searchForServiceById(final Long id) throws LdapException {
         val filter = LdapUtils.newLdaptiveSearchFilter(ldapProperties.getSearchFilter(),
             LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME, CollectionUtils.wrap(id.toString()));
         return LdapUtils.executeSearchOperation(this.connectionFactory, this.baseDn, filter, ldapProperties.getPageSize());

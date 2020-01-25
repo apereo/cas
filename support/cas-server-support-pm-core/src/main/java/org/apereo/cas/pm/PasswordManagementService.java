@@ -47,7 +47,6 @@ public interface PasswordManagementService {
         return null;
     }
 
-    
     /**
      * Find username linked to the email.
      *

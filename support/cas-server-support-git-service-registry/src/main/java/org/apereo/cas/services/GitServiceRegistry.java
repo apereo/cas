@@ -38,7 +38,7 @@ public class GitServiceRegistry extends AbstractServiceRegistry {
     private static final Pattern PATTERN_ACCEPTED_REPOSITORY_FILES = RegexUtils.createPattern(".+\\.("
         + String.join("|", FILE_EXTENSIONS) + ')', Pattern.CASE_INSENSITIVE);
 
-    private final Collection<RegisteredService> registeredServices = new ArrayList<>(0);
+    private Collection<RegisteredService> registeredServices = new ArrayList<>(0);
 
     private final GitRepository gitRepository;
     private final Collection<StringSerializer<RegisteredService>> registeredServiceSerializers;
@@ -111,15 +111,14 @@ public class GitServiceRegistry extends AbstractServiceRegistry {
         }
 
         val objects = this.gitRepository.getObjectsInRepository(new PathRegexPatternTreeFilter(PATTERN_ACCEPTED_REPOSITORY_FILES));
-        registeredServices.clear();
-        registeredServices.addAll(objects
+        registeredServices = objects
             .stream()
             .filter(Objects::nonNull)
             .map(this::parseGitObjectContentIntoRegisteredService)
             .flatMap(Collection::stream)
             .map(this::invokeServiceRegistryListenerPostLoad)
             .filter(Objects::nonNull)
-            .collect(Collectors.toList()));
+            .collect(Collectors.toList());
         return registeredServices;
     }
 

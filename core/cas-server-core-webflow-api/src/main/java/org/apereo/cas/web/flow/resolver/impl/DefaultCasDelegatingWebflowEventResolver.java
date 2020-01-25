@@ -18,12 +18,11 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import java.util.TreeSet;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 /**
@@ -65,7 +64,7 @@ public class DefaultCasDelegatingWebflowEventResolver extends AbstractCasWebflow
             val resolvedEvents = resolveCandidateAuthenticationEvents(context, service, registeredService);
             if (!resolvedEvents.isEmpty()) {
                 LOGGER.trace("The set of authentication events resolved for [{}] are [{}]. Beginning to select the final event...", service, resolvedEvents);
-                putResolvedEventsAsAttribute(context, resolvedEvents);
+                WebUtils.putResolvedEventsAsAttribute(context, resolvedEvents);
                 val finalResolvedEvent = this.selectiveResolver.resolveSingle(context);
                 LOGGER.debug("The final authentication event resolved for [{}] is [{}]", service, finalResolvedEvent);
                 if (finalResolvedEvent != null) {
@@ -131,13 +130,9 @@ public class DefaultCasDelegatingWebflowEventResolver extends AbstractCasWebflow
      * @param registeredService the registered service
      * @return the set
      */
-    protected Set<Event> resolveCandidateAuthenticationEvents(final RequestContext context,
-                                                              final Service service,
-                                                              final RegisteredService registeredService) {
-
-        val byEventId = Comparator.comparing(Event::getId);
-        val supplier = (Supplier<TreeSet<Event>>) () -> new TreeSet<>(byEventId);
-
+    protected Collection<Event> resolveCandidateAuthenticationEvents(final RequestContext context,
+                                                                     final Service service,
+                                                                     final RegisteredService registeredService) {
         return this.orderedResolvers
             .stream()
             .map(resolver -> {
@@ -145,7 +140,8 @@ public class DefaultCasDelegatingWebflowEventResolver extends AbstractCasWebflow
                 return resolver.resolveSingle(context);
             })
             .filter(Objects::nonNull)
-            .collect(Collectors.toCollection(supplier));
+            .sorted(Comparator.comparing(Event::getId))
+            .collect(Collectors.toList());
     }
 
     @Override

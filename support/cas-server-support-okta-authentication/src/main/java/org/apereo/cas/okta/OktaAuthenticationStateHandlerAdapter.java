@@ -66,7 +66,6 @@ public class OktaAuthenticationStateHandlerAdapter extends AuthenticationStateHa
             userAttributes.put("status", CollectionUtils.wrapList(successResponse.getStatusString()));
             userAttributes.put("type", CollectionUtils.wrapList(successResponse.getType()));
             userAttributes.put("expiration", CollectionUtils.wrapList(successResponse.getExpiresAt()));
-
             userAttributes.put("id", CollectionUtils.wrapList(user.getId()));
             userAttributes.put("passwordChanged", CollectionUtils.wrapList(user.getPasswordChanged()));
 

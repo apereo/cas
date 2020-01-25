@@ -19,7 +19,7 @@ import java.util.Collection;
 public class RejectResultCodeLdapPasswordPolicyHandlingStrategy extends RejectResultCodePasswordPolicyHandlingStrategy<AuthenticationResponse> {
     @Override
     protected boolean isAuthenticationResponseWithResult(final AuthenticationResponse response) {
-        return response.getResult();
+        return response.isSuccess();
     }
 
     @Override

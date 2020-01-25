@@ -1,5 +1,6 @@
 import org.apereo.cas.services.*
 
+@Deprecated
 class GroovyMultifactorPolicy extends DefaultRegisteredServiceMultifactorPolicy {
     @Override
     Set<String> getMultifactorAuthenticationProviders() {
@@ -35,4 +36,5 @@ class GroovyMultifactorPolicy extends DefaultRegisteredServiceMultifactorPolicy 
     boolean isBypassTrustedDeviceEnabled() {
         true
     }
+    
 }

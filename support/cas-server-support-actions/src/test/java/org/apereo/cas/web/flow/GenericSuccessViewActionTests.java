@@ -3,7 +3,6 @@ package org.apereo.cas.web.flow;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.authentication.principal.NullPrincipal;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.InvalidTicketException;
@@ -12,6 +11,7 @@ import org.apereo.cas.web.flow.login.GenericSuccessViewAction;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -23,6 +23,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
+@Tag("Webflow")
 public class GenericSuccessViewActionTests {
 
     @Test
@@ -32,16 +33,16 @@ public class GenericSuccessViewActionTests {
         val factory = mock(ServiceFactory.class);
 
         val authn = mock(Authentication.class);
-        when(authn.getPrincipal()).thenReturn(
-            CoreAuthenticationTestUtils.getPrincipal("cas"));
+        when(authn.getPrincipal()).thenReturn(CoreAuthenticationTestUtils.getPrincipal("cas"));
         val tgt = mock(TicketGrantingTicket.class);
         when(tgt.getAuthentication()).thenReturn(authn);
 
         when(cas.getTicket(any(String.class), any())).thenReturn(tgt);
         val action = new GenericSuccessViewAction(cas, mgr, factory, StringUtils.EMPTY);
-        val p = action.getAuthenticationPrincipal("TGT-1");
+        val p = action.getAuthentication("TGT-1");
         assertNotNull(p);
-        assertEquals("cas", p.getId());
+        assertTrue(p.isPresent());
+        assertEquals("cas", p.get().getPrincipal().getId());
     }
 
     @Test
@@ -51,8 +52,8 @@ public class GenericSuccessViewActionTests {
         val factory = mock(ServiceFactory.class);
         when(cas.getTicket(any(String.class), any())).thenThrow(new InvalidTicketException("TGT-1"));
         val action = new GenericSuccessViewAction(cas, mgr, factory, StringUtils.EMPTY);
-        val p = action.getAuthenticationPrincipal("TGT-1");
+        val p = action.getAuthentication("TGT-1");
         assertNotNull(p);
-        assertTrue(p instanceof NullPrincipal);
+        assertFalse(p.isPresent());
     }
 }

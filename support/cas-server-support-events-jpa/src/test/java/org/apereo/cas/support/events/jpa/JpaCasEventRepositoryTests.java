@@ -20,9 +20,11 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@SpringBootTest(classes = {JpaEventsConfiguration.class,
+@SpringBootTest(classes = {
+    JpaEventsConfiguration.class,
     AopAutoConfiguration.class,
-    RefreshAutoConfiguration.class})
+    RefreshAutoConfiguration.class
+})
 @EnableTransactionManagement(proxyTargetClass = true)
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @Getter

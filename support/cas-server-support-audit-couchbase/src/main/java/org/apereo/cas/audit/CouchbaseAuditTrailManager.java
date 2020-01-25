@@ -25,8 +25,9 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static com.couchbase.client.java.query.Select.*;
-import static com.couchbase.client.java.query.dsl.Expression.*;
+import static com.couchbase.client.java.query.Select.select;
+import static com.couchbase.client.java.query.dsl.Expression.i;
+import static com.couchbase.client.java.query.dsl.Expression.x;
 
 /**
  * This is {@link CouchbaseAuditTrailManager}.
@@ -65,7 +66,6 @@ public class CouchbaseAuditTrailManager extends AbstractAuditTrailManager {
 
     @Override
     public void removeAll() {
-        
     }
 
     @SneakyThrows

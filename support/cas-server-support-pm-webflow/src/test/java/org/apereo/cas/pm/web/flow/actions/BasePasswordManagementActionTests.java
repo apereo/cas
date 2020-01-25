@@ -75,7 +75,6 @@ import org.springframework.webflow.execution.Action;
 }, properties = {
     "spring.mail.host=localhost",
     "spring.mail.port=25000",
-    "spring.mail.testConnection=true",
 
     "cas.authn.pm.enabled=true",
     "cas.authn.pm.groovy.location=classpath:PasswordManagementService.groovy",

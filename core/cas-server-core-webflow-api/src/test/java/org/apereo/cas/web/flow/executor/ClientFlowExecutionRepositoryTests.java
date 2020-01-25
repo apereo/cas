@@ -6,6 +6,7 @@ import org.cryptacular.bean.KeyStoreFactoryBean;
 import org.cryptacular.generator.sp80038d.RBGNonce;
 import org.cryptacular.io.ClassPathResource;
 import org.cryptacular.spec.AEADBlockCipherSpec;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -42,6 +43,7 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class
 })
 @DirtiesContext
+@Tag("Webflow")
 public class ClientFlowExecutionRepositoryTests {
 
     @Autowired

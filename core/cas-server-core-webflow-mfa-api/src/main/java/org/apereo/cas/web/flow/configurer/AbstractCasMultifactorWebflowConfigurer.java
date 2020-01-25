@@ -3,6 +3,7 @@ package org.apereo.cas.web.flow.configurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
+import org.apereo.cas.web.support.WebUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -126,6 +127,10 @@ public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCa
         }
 
         val mfaFlow = (Flow) mfaProviderFlowRegistry.getFlowDefinition(subflowId);
+        mfaFlow.getStartActionList().add(requestContext -> {
+            WebUtils.createCredential(requestContext);
+            return null;
+        });
         mfaFlow.getStartActionList().add(createSetAction("flowScope.".concat(CasWebflowConstants.VAR_ID_MFA_PROVIDER_ID), StringUtils.quote(providerId)));
 
         val initStartState = (ActionState) mfaFlow.getStartState();

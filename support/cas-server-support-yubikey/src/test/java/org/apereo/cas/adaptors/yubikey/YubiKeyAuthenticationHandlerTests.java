@@ -3,6 +3,7 @@ package org.apereo.cas.adaptors.yubikey;
 import org.apereo.cas.adaptors.yubikey.registry.WhitelistYubiKeyAccountRegistry;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -31,7 +32,7 @@ import static org.mockito.Mockito.*;
 public class YubiKeyAuthenticationHandlerTests {
 
     private static final Integer CLIENT_ID = 18421;
-    private static final String SECRET_KEY = "iBIehjui12aK8x82oe5qzGeb0As=";
+    private static final String SECRET_KEY = EncodingUtils.encodeBase64("iBIehjui12aK8x82oe5qzGeb0As=");
     private static final String OTP = "cccccccvlidcnlednilgctgcvcjtivrjidfbdgrefcvi";
 
     @BeforeEach
@@ -57,8 +58,7 @@ public class YubiKeyAuthenticationHandlerTests {
 
     @Test
     public void checkBadConfigAuthn() {
-        val handler = new YubiKeyAuthenticationHandler(YubicoClient.getClient(123456, "123456"));
-
+        val handler = new YubiKeyAuthenticationHandler(YubicoClient.getClient(123456, EncodingUtils.encodeBase64("123456")));
         assertThrows(AccountNotFoundException.class, () -> handler.authenticate(new YubiKeyCredential("casuser")));
     }
 

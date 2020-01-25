@@ -2,6 +2,7 @@ package org.apereo.cas.audit.spi;
 
 import lombok.val;
 import org.apereo.inspektr.audit.AuditActionContext;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.Date;
@@ -14,6 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
+@Tag("Webflow")
 public class AuditActionContextJsonSerializerTests {
     @Test
     public void verifyOperation() {

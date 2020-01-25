@@ -89,8 +89,8 @@
                         <section class="form-group">
                             <span th:utext="#{screen.welcome.label.password}">Password</span>
 
-                            <div>
-                                <input class="form-control required"
+                            <div class="input-group">
+                                <input class="form-control required pwd"
                                        type="password"
                                        id="password"
                                        size="25"
@@ -98,6 +98,11 @@
                                        th:accesskey="#{screen.welcome.label.password.accesskey}"
                                        th:field="*{password}"
                                        autocomplete="off"/>
+                                <span class="input-group-btn">
+                                    <button class="btn btn-default reveal-password" type="button">
+                                        <i id="reveal-password-icon" class="fa fa-eye reveal-password-icon" aria-hidden="true"></i>
+                                    </button>
+                                </span>
                                 <span id="capslock-on" style="display:none;">
                                 <p>
                                     <i class="fa fa-exclamation-circle"></i>

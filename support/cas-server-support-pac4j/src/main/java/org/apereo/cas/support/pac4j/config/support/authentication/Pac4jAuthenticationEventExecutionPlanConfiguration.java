@@ -194,8 +194,7 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
     private SessionStore<JEEContext> getDistributedSessionStore() {
         val replicate = casProperties.getAuthn().getPac4j().isReplicateSessions();
         if (replicate) {
-            return new DistributedJ2ESessionStore(ticketRegistry.getObject(), ticketFactory.getObject(),
-                casProperties.getSessionReplication().getSessionCookieName());
+            return new DistributedJ2ESessionStore(ticketRegistry.getObject(), ticketFactory.getObject(), casProperties);
         }
         return new JEESessionStore();
     }

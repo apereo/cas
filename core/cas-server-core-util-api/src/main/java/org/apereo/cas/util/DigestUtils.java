@@ -144,7 +144,7 @@ public class DigestUtils {
      */
     public static byte[] rawDigestSha256(final String data) {
         try {
-            return rawDigest(MessageDigestAlgorithms.SHA3_256, data.getBytes(StandardCharsets.UTF_8));
+            return rawDigest(MessageDigestAlgorithms.SHA_256, data.getBytes(StandardCharsets.UTF_8));
         } catch (final Exception cause) {
             throw new SecurityException(cause);
         }

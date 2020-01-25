@@ -27,6 +27,7 @@ import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -79,10 +80,10 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.google-analytics.cookie.attribute-name=membership",
     "cas.google-analytics.cookie.attribute-value-pattern=^(faculty|staff).*",
     "spring.mail.host=localhost",
-    "spring.mail.port=25000",
-    "spring.mail.testConnection=false"
+    "spring.mail.port=25000"
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Tag("Webflow")
 public class CreateGoogleAnalyticsCookieActionTests {
     @Autowired
     private CasConfigurationProperties casProperties;

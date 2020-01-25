@@ -12,10 +12,8 @@ import org.ldaptive.ConnectionFactory;
 import org.ldaptive.DefaultConnectionFactory;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapException;
-import org.ldaptive.Response;
-import org.ldaptive.ResultCode;
-import org.ldaptive.SearchExecutor;
-import org.ldaptive.SearchResult;
+import org.ldaptive.SearchOperation;
+import org.ldaptive.SearchResponse;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 
@@ -42,9 +40,9 @@ public class LdaptiveResourceCRLFetcher extends ResourceCRLFetcher {
     private final ConnectionConfig connectionConfig;
 
     /**
-     * Search exec that looks for the attribute.
+     * Search operation that looks for the attribute.
      */
-    private final SearchExecutor searchExecutor;
+    private final SearchOperation searchOperation;
 
     private final String certificateAttribute;
 
@@ -95,8 +93,8 @@ public class LdaptiveResourceCRLFetcher extends ResourceCRLFetcher {
             LOGGER.debug("Fetching CRL from ldap [{}]", ldapURL);
 
             val result = performLdapSearch(ldapURL);
-            if (result.getResultCode() == ResultCode.SUCCESS) {
-                val entry = result.getResult().getEntry();
+            if (result.isSuccess()) {
+                val entry = result.getEntry();
                 val attribute = entry.getAttribute(this.certificateAttribute);
 
                 if (attribute.isBinary()) {
@@ -149,9 +147,10 @@ public class LdaptiveResourceCRLFetcher extends ResourceCRLFetcher {
      * @return search result
      * @throws LdapException if an error occurs performing the search
      */
-    protected Response<SearchResult> performLdapSearch(final String ldapURL) throws LdapException {
-        val connectionFactory = prepareConnectionFactory(ldapURL);
-        return this.searchExecutor.search(connectionFactory);
+    protected SearchResponse performLdapSearch(final String ldapURL) throws LdapException {
+        val operation = SearchOperation.copy(this.searchOperation);
+        operation.setConnectionFactory(prepareConnectionFactory(ldapURL));
+        return operation.execute();
     }
 
     /**
@@ -161,7 +160,7 @@ public class LdaptiveResourceCRLFetcher extends ResourceCRLFetcher {
      * @return connection factory
      */
     protected ConnectionFactory prepareConnectionFactory(final String ldapURL) {
-        val cc = ConnectionConfig.newConnectionConfig(this.connectionConfig);
+        val cc = ConnectionConfig.copy(this.connectionConfig);
         cc.setLdapUrl(ldapURL);
         return new DefaultConnectionFactory(cc);
     }

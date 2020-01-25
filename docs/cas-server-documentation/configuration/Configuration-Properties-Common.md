@@ -1074,7 +1074,6 @@ The following settings may also need to be defined to describe the mail server s
 # spring.mail.port=
 # spring.mail.username=
 # spring.mail.password=
-# spring.mail.testConnection=true
 # spring.mail.properties.mail.smtp.auth=true
 # spring.mail.properties.mail.smtp.starttls.enable=true
 ```
@@ -1138,7 +1137,6 @@ The following  options apply  to features that integrate with an LDAP server (i.
 
 #${configurationKey}.poolPassivator=NONE|CLOSE|BIND
 #${configurationKey}.connectionStrategy=
-#${configurationKey}.providerClass=org.ldaptive.provider.unboundid.UnboundIDProvider
 #${configurationKey}.connectTimeout=PT5S
 #${configurationKey}.trustCertificates=
 #${configurationKey}.trustStore=
@@ -1157,7 +1155,7 @@ The following  options apply  to features that integrate with an LDAP server (i.
 #${configurationKey}.idleTime=PT10M
 #${configurationKey}.prunePeriod=PT2H
 #${configurationKey}.blockWaitTime=PT3S
-#${configurationKey}.useSsl=true
+
 #${configurationKey}.useStartTls=false
 #${configurationKey}.responseTimeout=PT5S
 #${configurationKey}.allowMultipleDns=false
@@ -1200,7 +1198,6 @@ If multiple URLs are provided as the LDAP url, this describes how each URL will 
 
 | Provider              | Description              
 |-----------------------|-----------------------------------------------------------------------------------------------
-| `DEFAULT`             | The default JNDI provider behavior will be used.    
 | `ACTIVE_PASSIVE`      | First LDAP will be used for every request unless it fails and then the next shall be used.    
 | `ROUND_ROBIN`         | For each new connection the next url in the list will be used.      
 | `RANDOM`              | For each new connection a random LDAP url will be selected.
@@ -1233,7 +1230,7 @@ The following LDAP validators can be used to test connection health status:
 #${configurationKey}.validator.searchFilter=(objectClass=*)
 #${configurationKey}.validator.scope=OBJECT|ONELEVEL|SUBTREE
 #${configurationKey}.validator.attributeName=objectClass
-#${configurationKey}.validator.attributeValues=top
+#${configurationKey}.validator.attributeValue=top
 #${configurationKey}.validator.dn=
 ```
 

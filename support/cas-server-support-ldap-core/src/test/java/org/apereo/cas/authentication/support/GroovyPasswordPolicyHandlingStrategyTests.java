@@ -38,7 +38,7 @@ public class GroovyPasswordPolicyHandlingStrategyTests {
         val s = new GroovyPasswordPolicyHandlingStrategy<AuthenticationResponse>(resource, mock(ApplicationContext.class));
         val res = mock(AuthenticationResponse.class);
         when(res.getAuthenticationResultCode()).thenReturn(AuthenticationResultCode.INVALID_CREDENTIAL);
-        when(res.getResult()).thenReturn(false);
+        when(res.isSuccess()).thenReturn(false);
 
         val results = s.handle(res, mock(PasswordPolicyContext.class));
 

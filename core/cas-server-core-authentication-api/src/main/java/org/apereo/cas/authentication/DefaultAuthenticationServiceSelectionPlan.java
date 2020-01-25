@@ -4,7 +4,7 @@ import org.apereo.cas.authentication.principal.Service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.springframework.core.OrderComparator;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
 import java.util.Arrays;
 import java.util.List;
@@ -22,13 +22,13 @@ public class DefaultAuthenticationServiceSelectionPlan implements Authentication
 
     public DefaultAuthenticationServiceSelectionPlan(final AuthenticationServiceSelectionStrategy... strategies) {
         this.strategies = Arrays.stream(strategies).collect(Collectors.toList());
-        OrderComparator.sort(this.strategies);
+        AnnotationAwareOrderComparator.sort(this.strategies);
     }
 
     @Override
     public void registerStrategy(final AuthenticationServiceSelectionStrategy strategy) {
         strategies.add(strategy);
-        OrderComparator.sort(this.strategies);
+        AnnotationAwareOrderComparator.sort(this.strategies);
     }
 
     @Override
