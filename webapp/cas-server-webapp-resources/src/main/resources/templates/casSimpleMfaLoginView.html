@@ -6,14 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
 
     <title th:text="#{cas.mfa.simple.pagetitle}">CAS Multifactor Authentication View</title>
-    <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag" />
+    <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag"/>
 </head>
 
 <body>
 <main role="main" class="container mt-3 mb-3">
     <div layout:fragment="content" id="login">
         <form method="post" id="fm1" class="fm-v clearfix" th:object="${credential}" th:action="@{/login}">
-            
+
             <div class="alert alert-danger alert-dismissible fade show" th:if="${flowRequestContext.messageContext.hasErrorMessages()}">
                 <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
                 <p th:each="message : ${flowRequestContext.messageContext.allMessages}" th:utext="#{${message.text}}">Message Text</p>
@@ -24,19 +24,29 @@
                 <p th:each="message : ${flowRequestContext.messageContext.allMessages}" th:utext="#{${message.text}}">Message Text</p>
             </div>
 
-            <div class="form-group">
+            <section class="form-group">
                 <label for="token" class="fl-label" th:utext="#{cas.mfa.simple.label.token}">Token:</label>
-                <input type="password" class="form-control required" id="token" size="25" tabindex="1"
-                       th:field="*{token}"
-                       th:accesskey="#{screen.welcome.label.password.accesskey}" autocomplete="off"/>
-                <div>
-                    <p/>
+                <div class="input-group">
+
+                    <input type="password" class="form-control required pwd" id="token" size="25" tabindex="1"
+                           th:field="*{token}"
+                           th:accesskey="#{screen.welcome.label.password.accesskey}" autocomplete="off"/>
+                    <span class="input-group-btn">
+                    <button class="btn btn-default reveal-password" type="button">
+                        <i id="reveal-password-icon" class="fa fa-eye" aria-hidden="true"></i>
+                    </button>
+                    </span>
                 </div>
+            </section>
+
+            <div>
+                <p/>
             </div>
-            <input type="hidden" id="eventId" name="_eventId" value="submit" />
+            
+            <input type="hidden" id="eventId" name="_eventId" value="submit"/>
             <input class="btn btn-submit" accesskey="l" th:value="#{screen.welcome.button.login}" tabindex="4" type="submit"/>
             &nbsp;
-            <input class="btn btn-submit" type="submit" name="resend" th:value="#{cas.mfa.simple.label.resend}" onclick="$('#eventId').val('resend');" />
+            <input class="btn btn-submit" type="submit" name="resend" th:value="#{cas.mfa.simple.label.resend}" onclick="$('#eventId').val('resend');"/>
             <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
             <input type="hidden" name="geolocation"/>
         </form>
