@@ -15,7 +15,6 @@ import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
-import org.apereo.cas.webauthn.credential.repository.WebAuthnCredentialRepository;
 import org.apereo.cas.webauthn.web.flow.WebAuthnAccountCheckRegistrationAction;
 import org.apereo.cas.webauthn.web.flow.WebAuthnAccountSaveRegistrationAction;
 import org.apereo.cas.webauthn.web.flow.WebAuthnAuthenticationWebflowAction;
@@ -25,6 +24,7 @@ import org.apereo.cas.webauthn.web.flow.WebAuthnMultifactorWebflowConfigurer;
 import org.apereo.cas.webauthn.web.flow.WebAuthnStartAuthenticationAction;
 import org.apereo.cas.webauthn.web.flow.WebAuthnStartRegistrationAction;
 
+import com.yubico.webauthn.RegistrationStorage;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,7 +64,7 @@ public class WebAuthnWebflowConfiguration {
 
     @Autowired
     @Qualifier("webAuthnCredentialRepository")
-    private ObjectProvider<WebAuthnCredentialRepository> webAuthnCredentialRepository;
+    private ObjectProvider<RegistrationStorage> webAuthnCredentialRepository;
 
     @Autowired
     private ConfigurableApplicationContext applicationContext;

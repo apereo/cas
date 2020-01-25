@@ -24,138 +24,92 @@
 
 package com.yubico.webauthn;
 
-import javax.ws.rs.DELETE;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.FormParam;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.ResponseBuilder;
-import javax.ws.rs.core.Response.Status;
-import javax.ws.rs.core.UriInfo;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 
-import com.yubico.webauthn.data.AssertionRequestWrapper;
-import com.yubico.webauthn.data.RegistrationRequest;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.yubico.internal.util.JacksonCodecs;
 import com.yubico.util.Either;
+import com.yubico.webauthn.data.AssertionRequestWrapper;
 import com.yubico.webauthn.data.ByteArray;
-import com.yubico.webauthn.data.exception.Base64UrlException;
-import com.yubico.webauthn.extension.appid.InvalidAppIdException;
+import com.yubico.webauthn.data.RegistrationRequest;
 import com.yubico.webauthn.meta.VersionInfo;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.security.cert.CertificateException;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
-import lombok.NonNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-@Path("/v1")
-@Produces(MediaType.APPLICATION_JSON)
+@RestController("webAuthnRestResource")
+@Slf4j
+@RequiredArgsConstructor
 public class WebAuthnRestResource {
-    private static final Logger logger = LoggerFactory.getLogger(WebAuthnRestResource.class);
+    private static final String API_VERSION = "/api/v1";
+
+    private static final ObjectMapper MAPPER = JacksonCodecs.json().findAndRegisterModules();
 
     private final WebAuthnServer server;
-    private final ObjectMapper jsonMapper = JacksonCodecs.json();
+
+    private final CasConfigurationProperties casProperties;
+
     private final JsonNodeFactory jsonFactory = JsonNodeFactory.instance;
 
-    public WebAuthnRestResource() throws InvalidAppIdException, CertificateException {
-        this(new WebAuthnServer());
+    private static ResponseEntity<Object> jsonFail() {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+            .body("{\"messages\":[\"Failed to encode response as JSON\"]}");
     }
 
-    public WebAuthnRestResource(WebAuthnServer server) {
-        this.server = server;
-    }
-
-    @Context
-    private UriInfo uriInfo;
-
-    private final class IndexResponse {
-        public final Index actions = new Index();
-        public final Info info = new Info();
-        private IndexResponse() throws MalformedURLException {
-        }
-    }
-    private final class Index {
-        public final URL authenticate;
-        public final URL deleteAccount;
-        public final URL deregister;
-        public final URL register;
-
-
-        public Index() throws MalformedURLException {
-            authenticate = uriInfo.getAbsolutePathBuilder().path("authenticate").build().toURL();
-            deleteAccount = uriInfo.getAbsolutePathBuilder().path("delete-account").build().toURL();
-            deregister = uriInfo.getAbsolutePathBuilder().path("action").path("deregister").build().toURL();
-            register = uriInfo.getAbsolutePathBuilder().path("register").build().toURL();
-        }
-    }
-    private final class Info {
-        public final URL version;
-
-        public Info() throws MalformedURLException {
-            version = uriInfo.getAbsolutePathBuilder().path("version").build().toURL();
-        }
-
-    }
-
-    @GET
-    public Response index() throws IOException {
-        return Response.ok(writeJson(new IndexResponse())).build();
-    }
-
-    private static final class VersionResponse {
-        public final VersionInfo version = VersionInfo.getInstance();
-    }
-    @GET
-    @Path("version")
-    public Response version() throws JsonProcessingException {
-        return Response.ok(writeJson(new VersionResponse())).build();
-    }
-
-
-    private final class StartRegistrationResponse {
-        public final boolean success = true;
-        public final RegistrationRequest request;
-        public final StartRegistrationActions actions = new StartRegistrationActions();
-        private StartRegistrationResponse(RegistrationRequest request) throws MalformedURLException {
-            this.request = request;
-        }
-    }
-    private final class StartRegistrationActions {
-        public final URL finish = uriInfo.getAbsolutePathBuilder().path("finish").build().toURL();
-        public final URL finishU2f = uriInfo.getAbsolutePathBuilder().path("finish-u2f").build().toURL();
-        private StartRegistrationActions() throws MalformedURLException {
+    private static ResponseEntity<Object> startResponse(String operationName, Object request) {
+        try {
+            LOGGER.trace("Operation: {}", operationName);
+            return ResponseEntity.ok(writeJson(request));
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            return jsonFail();
         }
     }
 
-    @Path("register")
-    @POST
-    public Response startRegistration(
-        @NonNull @FormParam("username") String username,
-        @NonNull @FormParam("displayName") String displayName,
-        @FormParam("credentialNickname") String credentialNickname,
-        @FormParam("requireResidentKey") @DefaultValue("false") boolean requireResidentKey,
-        @FormParam("sessionToken") String sessionTokenBase64
-    ) throws MalformedURLException, ExecutionException {
-        logger.trace("startRegistration username: {}, displayName: {}, credentialNickname: {}, requireResidentKey: {}", username, displayName, credentialNickname, requireResidentKey);
-        Either<String, RegistrationRequest> result = server.startRegistration(
+    @SneakyThrows
+    private static String writeJson(final Object o) {
+        return MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(o);
+    }
+
+    @GetMapping(API_VERSION)
+    public ResponseEntity<Object> index() {
+        return new ResponseEntity<>(writeJson(new IndexResponse()), HttpStatus.OK);
+    }
+
+    @GetMapping(API_VERSION + "/version")
+    public ResponseEntity<Object> version() {
+        return new ResponseEntity<>(writeJson(new VersionResponse()), HttpStatus.OK);
+    }
+
+    @PostMapping(API_VERSION + "/register")
+    public ResponseEntity<Object> startRegistration(
+        @NonNull @RequestParam("username") String username,
+        @NonNull @RequestParam("displayName") String displayName,
+        @RequestParam(value = "credentialNickname", required = false, defaultValue = "true") String credentialNickname,
+        @RequestParam(value = "requireResidentKey", required = false) boolean requireResidentKey,
+        @RequestParam(value = "sessionToken", required = false, defaultValue = "") String sessionTokenBase64) throws Exception {
+        val result = server.startRegistration(
             username,
             Optional.of(displayName),
             Optional.ofNullable(credentialNickname),
@@ -163,7 +117,7 @@ public class WebAuthnRestResource {
             Optional.ofNullable(sessionTokenBase64).map(base64 -> {
                 try {
                     return ByteArray.fromBase64Url(base64);
-                } catch (Base64UrlException e) {
+                } catch (final Exception e) {
                     throw new RuntimeException(e);
                 }
             })
@@ -171,19 +125,17 @@ public class WebAuthnRestResource {
 
         if (result.isRight()) {
             return startResponse("startRegistration", new StartRegistrationResponse(result.right().get()));
-        } else {
-            return messagesJson(
-                Response.status(Status.BAD_REQUEST),
-                result.left().get()
-            );
         }
+        return messagesJson(
+            ResponseEntity.badRequest(),
+            result.left().get()
+        );
+
     }
 
-    @Path("register/finish")
-    @POST
-    public Response finishRegistration(@NonNull String responseJson) {
-        logger.trace("finishRegistration responseJson: {}", responseJson);
-        Either<List<String>, WebAuthnServer.SuccessfulRegistrationResult> result = server.finishRegistration(responseJson);
+    @PostMapping(API_VERSION + "/register/finish")
+    public ResponseEntity finishRegistration(@NonNull String responseJson) {
+        val result = server.finishRegistration(responseJson);
         return finishResponse(
             result,
             "Attestation verification failed; further error message(s) were unfortunately lost to an internal server error.",
@@ -192,11 +144,9 @@ public class WebAuthnRestResource {
         );
     }
 
-    @Path("register/finish-u2f")
-    @POST
-    public Response finishU2fRegistration(@NonNull String responseJson) throws ExecutionException {
-        logger.trace("finishRegistration responseJson: {}", responseJson);
-        Either<List<String>, WebAuthnServer.SuccessfulU2fRegistrationResult> result = server.finishU2fRegistration(responseJson);
+    @PostMapping(API_VERSION + "/register/finish-u2f")
+    public ResponseEntity finishU2fRegistration(@NonNull String responseJson) throws ExecutionException {
+        val result = server.finishU2fRegistration(responseJson);
         return finishResponse(
             result,
             "U2F registration failed; further error message(s) were unfortunately lost to an internal server error.",
@@ -205,38 +155,18 @@ public class WebAuthnRestResource {
         );
     }
 
-    private final class StartAuthenticationResponse {
-        public final boolean success = true;
-        public final AssertionRequestWrapper request;
-        public final StartAuthenticationActions actions = new StartAuthenticationActions();
-        private StartAuthenticationResponse(AssertionRequestWrapper request) throws MalformedURLException {
-            this.request = request;
-        }
-    }
-    private final class StartAuthenticationActions {
-        public final URL finish = uriInfo.getAbsolutePathBuilder().path("finish").build().toURL();
-        private StartAuthenticationActions() throws MalformedURLException {
-        }
-    }
-    @Path("authenticate")
-    @POST
-    public Response startAuthentication(
-        @FormParam("username") String username
-    ) throws MalformedURLException {
-        logger.trace("startAuthentication username: {}", username);
+    @PostMapping(API_VERSION + "/authenticate")
+    public ResponseEntity startAuthentication(@RequestParam("username") String username) throws MalformedURLException {
         Either<List<String>, AssertionRequestWrapper> request = server.startAuthentication(Optional.ofNullable(username));
         if (request.isRight()) {
             return startResponse("startAuthentication", new StartAuthenticationResponse(request.right().get()));
-        } else {
-            return messagesJson(Response.status(Status.BAD_REQUEST), request.left().get());
         }
+        return messagesJson(ResponseEntity.badRequest(), request.left().get());
+
     }
 
-    @Path("authenticate/finish")
-    @POST
-    public Response finishAuthentication(@NonNull String responseJson) {
-        logger.trace("finishAuthentication responseJson: {}", responseJson);
-
+    @PostMapping(API_VERSION + "/authenticate/finish")
+    public ResponseEntity finishAuthentication(@NonNull String responseJson) {
         Either<List<String>, WebAuthnServer.SuccessfulAuthenticationResult> result = server.finishAuthentication(responseJson);
 
         return finishResponse(
@@ -247,132 +177,175 @@ public class WebAuthnRestResource {
         );
     }
 
-    @Path("action/deregister")
-    @POST
-    public Response deregisterCredential(
-        @NonNull @FormParam("sessionToken") String sessionTokenBase64,
-        @NonNull @FormParam("credentialId") String credentialIdBase64
-    ) throws MalformedURLException, Base64UrlException {
-        logger.trace("deregisterCredential sesion: {}, credentialId: {}", sessionTokenBase64, credentialIdBase64);
+    @PostMapping(API_VERSION + "/action/deregister")
+    public ResponseEntity deregisterCredential(
+        @NonNull @RequestParam("sessionToken") String sessionTokenBase64,
+        @NonNull @RequestParam("credentialId") String credentialIdBase64) throws Exception {
 
-        final ByteArray credentialId;
         try {
-            credentialId = ByteArray.fromBase64Url(credentialIdBase64);
-        } catch (Base64UrlException e) {
+            val credentialId = ByteArray.fromBase64Url(credentialIdBase64);
+
+            val result = server.deregisterCredential(
+                ByteArray.fromBase64Url(sessionTokenBase64),
+                credentialId
+            );
+
+            if (result.isRight()) {
+                return finishResponse(
+                    result,
+                    "Failed to deregister credential; further error message(s) were unfortunately lost to an internal server error.",
+                    "deregisterCredential",
+                    ""
+                );
+            }
             return messagesJson(
-                Response.status(Status.BAD_REQUEST),
+                ResponseEntity.badRequest(),
+                result.left().get()
+            );
+
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            return messagesJson(
+                ResponseEntity.badRequest(),
                 "Credential ID is not valid Base64Url data: " + credentialIdBase64
             );
         }
 
-        Either<List<String>, WebAuthnServer.DeregisterCredentialResult> result = server.deregisterCredential(
-            ByteArray.fromBase64Url(sessionTokenBase64),
-            credentialId
-        );
 
-        if (result.isRight()) {
-            return finishResponse(
-                result,
-                "Failed to deregister credential; further error message(s) were unfortunately lost to an internal server error.",
-                "deregisterCredential",
-                ""
-            );
-        } else {
-            return messagesJson(
-                Response.status(Status.BAD_REQUEST),
-                result.left().get()
-            );
-        }
     }
 
-    @Path("delete-account")
-    @DELETE
-    public Response deleteAccount(
-        @NonNull @FormParam("username") String username
-    ) {
-        logger.trace("deleteAccount username: {}", username);
-
-        Either<List<String>, JsonNode> result = server.deleteAccount(username, () ->
+    @DeleteMapping(API_VERSION + "/delete-account")
+    public ResponseEntity deleteAccount(@NonNull @RequestParam("username") String username) {
+        val result = server.deleteAccount(username, () ->
             ((ObjectNode) jsonFactory.objectNode()
                 .set("success", jsonFactory.booleanNode(true)))
                 .set("deletedAccount", jsonFactory.textNode(username))
         );
 
         if (result.isRight()) {
-            return Response.ok(result.right().get().toString()).build();
-        } else {
-            return messagesJson(
-                Response.status(Status.BAD_REQUEST),
-                result.left().get()
-            );
+            return ResponseEntity.ok(writeJson(result.right().get().toString()));
         }
+        return messagesJson(
+            ResponseEntity.badRequest(),
+            result.left().get()
+        );
     }
 
-    private Response startResponse(String operationName, Object request) {
-        try {
-            String json = writeJson(request);
-            logger.debug("{} JSON response: {}", operationName, json);
-            return Response.ok(json).build();
-        } catch (IOException e) {
-            logger.error("Failed to encode response as JSON: {}", request, e);
-            return jsonFail();
-        }
-    }
-
-    private Response finishResponse(Either<List<String>, ?> result, String jsonFailMessage, String methodName, String responseJson) {
+    private ResponseEntity<Object> finishResponse(Either<List<String>, ?> result, String jsonFailMessage, String methodName, String responseJson) {
         if (result.isRight()) {
             try {
-                return Response.ok(
-                    writeJson(result.right().get())
-                ).build();
-            } catch (JsonProcessingException e) {
-                logger.error("Failed to encode response as JSON: {}", result.right().get(), e);
+                LOGGER.trace("[{}]: {}", methodName, responseJson);
+                return ResponseEntity.ok(result.right().get());
+            } catch (final Exception e) {
+                LOGGER.error(e.getMessage(), e);
                 return messagesJson(
-                    Response.ok(),
+                    ResponseEntity.ok(),
                     jsonFailMessage
                 );
             }
-        } else {
-            logger.debug("fail {} responseJson: {}", methodName, responseJson);
-            return messagesJson(
-                Response.status(Status.BAD_REQUEST),
-                result.left().get()
-            );
         }
+        return messagesJson(
+            ResponseEntity.badRequest(),
+            result.left().get()
+        );
     }
 
-    private Response jsonFail() {
-        return Response.status(Status.INTERNAL_SERVER_ERROR)
-            .entity("{\"messages\":[\"Failed to encode response as JSON\"]}")
-            .build();
+    private ResponseEntity<Object> messagesJson(ResponseEntity.BodyBuilder response, String message) {
+        return messagesJson(response, Collections.singletonList(message));
     }
 
-    private Response messagesJson(ResponseBuilder response, String message) {
-        return messagesJson(response, Arrays.asList(message));
-    }
-
-    private Response messagesJson(ResponseBuilder response, List<String> messages) {
-        logger.debug("Encoding messages as JSON: {}", messages);
+    private ResponseEntity<Object> messagesJson(ResponseEntity.BodyBuilder response, List<String> messages) {
         try {
-            return response.entity(
-                writeJson(
-                    jsonFactory.objectNode()
-                        .set("messages", jsonFactory.arrayNode()
-                            .addAll(messages.stream().map(jsonFactory::textNode).collect(Collectors.toList()))
-                        )
-                )
-            ).build();
-        } catch (JsonProcessingException e) {
-            logger.error("Failed to encode messages as JSON: {}", messages, e);
+            return response.body(
+                writeJson(jsonFactory.objectNode()
+                    .set("messages", jsonFactory.arrayNode()
+                        .addAll(messages.stream().map(jsonFactory::textNode).collect(Collectors.toList()))
+                    )
+                ));
+        } catch (final Exception e) {
+            LOGGER.error("Failed to encode messages as JSON: {}", messages, e);
             return jsonFail();
         }
     }
 
-    private String writeJson(Object o) throws JsonProcessingException {
-        if (uriInfo.getQueryParameters().keySet().contains("pretty")) {
-            return jsonMapper.writerWithDefaultPrettyPrinter().writeValueAsString(o);
-        } else {
-            return jsonMapper.writeValueAsString(o);
+    @Getter
+    private static final class VersionResponse {
+        private final VersionInfo version = VersionInfo.getInstance();
+    }
+
+    @Getter
+    private final class Info {
+        private final URL version;
+
+        public Info() {
+            version = casProperties.getServer().buildContextRelativeUrl(API_VERSION + "/version");
+        }
+    }
+
+    @RequiredArgsConstructor
+    @Getter
+    private final class StartAuthenticationResponse {
+        private final boolean success = true;
+
+        private final AssertionRequestWrapper request;
+
+        private final StartAuthenticationActions actions = new StartAuthenticationActions();
+    }
+
+    @RequiredArgsConstructor
+    @Getter
+    private final class StartRegistrationResponse {
+        private final boolean success = true;
+
+        private final RegistrationRequest request;
+
+        private final StartRegistrationActions actions = new StartRegistrationActions();
+    }
+
+    @Getter
+    private final class StartRegistrationActions {
+        private final URL finish;
+
+        private final URL finishU2f;
+
+        public StartRegistrationActions() {
+            finish = casProperties.getServer().buildContextRelativeUrl(API_VERSION + "/register/finish");
+            finishU2f = casProperties.getServer().buildContextRelativeUrl(API_VERSION + "/register/finish-u2f");
+        }
+    }
+
+    @Getter
+    private final class StartAuthenticationActions {
+        private final URL finish;
+
+        public StartAuthenticationActions() {
+            finish = casProperties.getServer().buildContextRelativeUrl(API_VERSION + "/authenticate/finish");
+        }
+    }
+
+    @NoArgsConstructor
+    @Getter
+    private final class IndexResponse {
+        private final Index actions = new Index();
+
+        private final Info info = new Info();
+    }
+
+    @Getter
+    private final class Index {
+        private final URL authenticate;
+
+        private final URL deleteAccount;
+
+        private final URL deregister;
+
+        private final URL register;
+
+        public Index() {
+            authenticate = casProperties.getServer().buildContextRelativeUrl(API_VERSION + "/authenticate");
+            deleteAccount = casProperties.getServer().buildContextRelativeUrl(API_VERSION + "/delete-account");
+            deregister = casProperties.getServer().buildContextRelativeUrl(API_VERSION + "/action/deregister");
+            register = casProperties.getServer().buildContextRelativeUrl(API_VERSION + "/register");
         }
     }
 

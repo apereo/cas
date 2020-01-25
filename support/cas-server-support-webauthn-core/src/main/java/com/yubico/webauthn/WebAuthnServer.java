@@ -24,9 +24,6 @@
 
 package com.yubico.webauthn;
 
-import com.yubico.webauthn.data.AssertionRequestWrapper;
-import com.yubico.webauthn.data.AssertionResponse;
-import com.yubico.webauthn.data.RegistrationRequest;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.JsonSerializer;
@@ -34,46 +31,41 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.io.Closeables;
 import com.upokecenter.cbor.CBORObject;
 import com.yubico.internal.util.CertificateParser;
 import com.yubico.internal.util.ExceptionUtil;
 import com.yubico.internal.util.JacksonCodecs;
 import com.yubico.util.Either;
 import com.yubico.webauthn.attestation.Attestation;
-import com.yubico.webauthn.attestation.AttestationResolver;
-import com.yubico.webauthn.attestation.MetadataObject;
 import com.yubico.webauthn.attestation.MetadataService;
-import com.yubico.webauthn.attestation.StandardMetadataService;
-import com.yubico.webauthn.attestation.TrustResolver;
-import com.yubico.webauthn.attestation.resolver.CompositeAttestationResolver;
-import com.yubico.webauthn.attestation.resolver.CompositeTrustResolver;
-import com.yubico.webauthn.attestation.resolver.SimpleAttestationResolver;
-import com.yubico.webauthn.attestation.resolver.SimpleTrustResolverWithEquality;
-import com.yubico.webauthn.data.AttestationConveyancePreference;
+import com.yubico.webauthn.data.AssertionRequestWrapper;
+import com.yubico.webauthn.data.AssertionResponse;
 import com.yubico.webauthn.data.AuthenticatorData;
 import com.yubico.webauthn.data.AuthenticatorSelectionCriteria;
 import com.yubico.webauthn.data.ByteArray;
 import com.yubico.webauthn.data.COSEAlgorithmIdentifier;
-import com.yubico.webauthn.data.PublicKeyCredentialDescriptor;
-import com.yubico.webauthn.data.RelyingPartyIdentity;
-import com.yubico.webauthn.data.UserIdentity;
-import com.yubico.webauthn.exception.AssertionFailedException;
-import com.yubico.webauthn.exception.RegistrationFailedException;
-import com.yubico.webauthn.extension.appid.AppId;
-import com.yubico.webauthn.extension.appid.InvalidAppIdException;
 import com.yubico.webauthn.data.CredentialRegistration;
+import com.yubico.webauthn.data.PublicKeyCredentialDescriptor;
+import com.yubico.webauthn.data.RegistrationRequest;
 import com.yubico.webauthn.data.RegistrationResponse;
 import com.yubico.webauthn.data.U2fRegistrationResponse;
 import com.yubico.webauthn.data.U2fRegistrationResult;
+import com.yubico.webauthn.data.UserIdentity;
+import com.yubico.webauthn.exception.AssertionFailedException;
+import com.yubico.webauthn.exception.RegistrationFailedException;
+import lombok.AllArgsConstructor;
+import lombok.NonNull;
+import lombok.Value;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
-import java.io.InputStream;
 import java.security.SecureRandom;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.time.Clock;
+import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -81,115 +73,70 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
-import lombok.AllArgsConstructor;
-import lombok.NonNull;
-import lombok.Value;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class WebAuthnServer {
     private static final Logger logger = LoggerFactory.getLogger(WebAuthnServer.class);
+
     private static final SecureRandom random = new SecureRandom();
-
-    private static final String PREVIEW_METADATA_PATH = "/preview-metadata.json";
-
+    
     private final Cache<ByteArray, AssertionRequestWrapper> assertRequestStorage;
+
     private final Cache<ByteArray, RegistrationRequest> registerRequestStorage;
+
     private final RegistrationStorage userStorage;
+
     private final SessionManager sessions = new SessionManager();
 
+    private final MetadataService metadataService;
 
-    private final TrustResolver trustResolver = new CompositeTrustResolver(Arrays.asList(
-        StandardMetadataService.createDefaultTrustResolver(),
-        createExtraTrustResolver()
-    ));
+    private final Clock clock = Clock.system(ZoneId.systemDefault());
 
-    private final MetadataService metadataService = new StandardMetadataService(
-        new CompositeAttestationResolver(Arrays.asList(
-            StandardMetadataService.createDefaultAttestationResolver(trustResolver),
-            createExtraMetadataResolver(trustResolver)
-        ))
-    );
-
-    private final Clock clock = Clock.systemDefaultZone();
-    private final ObjectMapper jsonMapper = JacksonCodecs.json();
+    private final ObjectMapper jsonMapper = JacksonCodecs.json().findAndRegisterModules();
 
     private final RelyingParty rp;
 
-    public WebAuthnServer() throws InvalidAppIdException, CertificateException {
-        this(new InMemoryRegistrationStorage(), newCache(), newCache(), Config.getRpIdentity(), Config.getOrigins(), Config.getAppId());
-    }
-
-    public WebAuthnServer(RegistrationStorage userStorage, Cache<ByteArray, RegistrationRequest> registerRequestStorage, Cache<ByteArray, AssertionRequestWrapper> assertRequestStorage, RelyingPartyIdentity rpIdentity, Set<String> origins, Optional<AppId> appId) throws InvalidAppIdException, CertificateException {
+    public WebAuthnServer(final RegistrationStorage userStorage,
+                          final Cache<ByteArray, RegistrationRequest> registerRequestStorage,
+                          final Cache<ByteArray, AssertionRequestWrapper> assertRequestStorage,
+                          final RelyingParty relyingParty,
+                          final MetadataService metadataService) {
         this.userStorage = userStorage;
         this.registerRequestStorage = registerRequestStorage;
         this.assertRequestStorage = assertRequestStorage;
-
-        rp = RelyingParty.builder()
-            .identity(rpIdentity)
-            .credentialRepository(this.userStorage)
-            .origins(origins)
-            .attestationConveyancePreference(Optional.of(AttestationConveyancePreference.DIRECT))
-            .metadataService(Optional.of(metadataService))
-            .allowOriginPort(false)
-            .allowOriginSubdomain(false)
-            .allowUnrequestedExtensions(true)
-            .allowUntrustedAttestation(true)
-            .validateSignatureCounter(true)
-            .appId(appId)
-            .build();
+        this.rp = relyingParty;
+        this.metadataService = metadataService;
     }
 
-    private static ByteArray generateRandom(int length) {
+    private static ByteArray generateRandom(final int length) {
         byte[] bytes = new byte[length];
         random.nextBytes(bytes);
         return new ByteArray(bytes);
     }
 
-    private static MetadataObject readPreviewMetadata() {
-        InputStream is = WebAuthnServer.class.getResourceAsStream(PREVIEW_METADATA_PATH);
-        try {
-            return JacksonCodecs.json().readValue(is, MetadataObject.class);
-        } catch (IOException e) {
-            throw ExceptionUtil.wrapAndLog(logger, "Failed to read metadata from " + PREVIEW_METADATA_PATH, e);
-        } finally {
-            Closeables.closeQuietly(is);
-        }
-    }
+    static ByteArray rawEcdaKeyToCose(ByteArray key) {
+        final byte[] keyBytes = key.getBytes();
 
-    /**
-     * Create a {@link TrustResolver} that accepts attestation certificates that are directly recognised as trust anchors.
-     */
-    private static TrustResolver createExtraTrustResolver() {
-        try {
-            MetadataObject metadata = readPreviewMetadata();
-            return new SimpleTrustResolverWithEquality(metadata.getParsedTrustedCertificates());
-        } catch (CertificateException e) {
-            throw ExceptionUtil.wrapAndLog(logger, "Failed to read trusted certificate(s)", e);
+        if (!(keyBytes.length == 64 || (keyBytes.length == 65 && keyBytes[0] == 0x04))) {
+            throw new IllegalArgumentException(String.format(
+                "Raw key must be 64 bytes long or be 65 bytes long and start with 0x04, was %d bytes starting with %02x",
+                keyBytes.length,
+                keyBytes[0]
+            ));
         }
-    }
 
-    /**
-     * Create a {@link AttestationResolver} with additional metadata for unreleased YubiKey Preview devices.
-     */
-    private static AttestationResolver createExtraMetadataResolver(TrustResolver trustResolver) {
-        try {
-            MetadataObject metadata = readPreviewMetadata();
-            return new SimpleAttestationResolver(Collections.singleton(metadata), trustResolver);
-        } catch (CertificateException e) {
-            throw ExceptionUtil.wrapAndLog(logger, "Failed to read trusted certificate(s)", e);
-        }
-    }
+        final int start = keyBytes.length == 64 ? 0 : 1;
 
-    private static <K, V> Cache<K, V> newCache() {
-        return CacheBuilder.newBuilder()
-            .maximumSize(100)
-            .expireAfterAccess(10, TimeUnit.MINUTES)
-            .build();
+        Map<Long, Object> coseKey = new HashMap<>();
+
+        coseKey.put(1L, 2L); // Key type: EC
+        coseKey.put(3L, COSEAlgorithmIdentifier.ES256.getId());
+        coseKey.put(-1L, 1L); // Curve: P-256
+        coseKey.put(-2L, Arrays.copyOfRange(keyBytes, start, start + 32)); // x
+        coseKey.put(-3L, Arrays.copyOfRange(keyBytes, start + 32, start + 64)); // y
+
+        return new ByteArray(CBORObject.FromObject(coseKey).EncodeToBytes());
     }
 
     public Either<String, RegistrationRequest> startRegistration(
@@ -237,75 +184,6 @@ public class WebAuthnServer {
             return Either.right(request);
         } else {
             return Either.left("The username \"" + username + "\" is already registered.");
-        }
-    }
-
-    @Value
-    public static class SuccessfulRegistrationResult {
-        final boolean success = true;
-        RegistrationRequest request;
-        RegistrationResponse response;
-        CredentialRegistration registration;
-        boolean attestationTrusted;
-        Optional<AttestationCertInfo> attestationCert;
-        @JsonSerialize(using = AuthDataSerializer.class)
-        AuthenticatorData authData;
-        String username;
-        ByteArray sessionToken;
-
-        public SuccessfulRegistrationResult(RegistrationRequest request, RegistrationResponse response, CredentialRegistration registration, boolean attestationTrusted, ByteArray sessionToken) {
-            this.request = request;
-            this.response = response;
-            this.registration = registration;
-            this.attestationTrusted = attestationTrusted;
-            attestationCert = Optional.ofNullable(
-                response.getCredential().getResponse().getAttestation().getAttestationStatement().get("x5c")
-            ).map(certs -> certs.get(0))
-            .flatMap((JsonNode certDer) -> {
-                try {
-                    return Optional.of(new ByteArray(certDer.binaryValue()));
-                } catch (IOException e) {
-                    logger.error("Failed to get binary value from x5c element: {}", certDer, e);
-                    return Optional.empty();
-                }
-            })
-            .map(AttestationCertInfo::new);
-            this.authData = response.getCredential().getResponse().getParsedAuthenticatorData();
-            this.username = request.getUsername();
-            this.sessionToken = sessionToken;
-        }
-
-    }
-
-    @Value
-    public class SuccessfulU2fRegistrationResult {
-        final boolean success = true;
-        final RegistrationRequest request;
-        final U2fRegistrationResponse response;
-        final CredentialRegistration registration;
-        boolean attestationTrusted;
-        Optional<AttestationCertInfo> attestationCert;
-        final String username;
-        final ByteArray sessionToken;
-    }
-
-    @Value
-    public static class AttestationCertInfo {
-        final ByteArray der;
-        final String text;
-        public AttestationCertInfo(ByteArray certDer) {
-            der = certDer;
-            X509Certificate cert = null;
-            try {
-                cert = CertificateParser.parseDer(certDer.getBytes());
-            } catch (CertificateException e) {
-                logger.error("Failed to parse attestation certificate");
-            }
-            if (cert == null) {
-                text = null;
-            } else {
-                text = cert.toString();
-            }
         }
     }
 
@@ -474,31 +352,6 @@ public class WebAuthnServer {
         }
     }
 
-    @Value
-    @AllArgsConstructor
-    public static final class SuccessfulAuthenticationResult {
-        private final boolean success = true;
-        private final AssertionRequestWrapper request;
-        private final AssertionResponse response;
-        private final Collection<CredentialRegistration> registrations;
-        @JsonSerialize(using = AuthDataSerializer.class) AuthenticatorData authData;
-        private final String username;
-        private final ByteArray sessionToken;
-        private final List<String> warnings;
-
-        public SuccessfulAuthenticationResult(AssertionRequestWrapper request, AssertionResponse response, Collection<CredentialRegistration> registrations, String username, ByteArray sessionToken, List<String> warnings) {
-            this(
-                request,
-                response,
-                registrations,
-                response.getCredential().getResponse().getParsedAuthenticatorData(),
-                username,
-                sessionToken,
-                warnings
-            );
-        }
-    }
-
     public Either<List<String>, SuccessfulAuthenticationResult> finishAuthentication(String responseJson) {
         logger.trace("finishAuthentication responseJson: {}", responseJson);
 
@@ -557,13 +410,6 @@ public class WebAuthnServer {
                 return Either.left(Arrays.asList("Assertion failed unexpectedly; this is likely a bug.", e.getMessage()));
             }
         }
-    }
-
-    @Value
-    public static final class DeregisterCredentialResult {
-        boolean success = true;
-        CredentialRegistration droppedRegistration;
-        boolean accountDeleted;
     }
 
     public Either<List<String>, DeregisterCredentialResult> deregisterCredential(
@@ -683,33 +529,118 @@ public class WebAuthnServer {
         return reg;
     }
 
-    static ByteArray rawEcdaKeyToCose(ByteArray key) {
-        final byte[] keyBytes = key.getBytes();
+    @Value
+    public static class SuccessfulRegistrationResult {
+        final boolean success = true;
 
-        if (!(keyBytes.length == 64 || (keyBytes.length == 65 && keyBytes[0] == 0x04))) {
-            throw new IllegalArgumentException(String.format(
-                "Raw key must be 64 bytes long or be 65 bytes long and start with 0x04, was %d bytes starting with %02x",
-                keyBytes.length,
-                keyBytes[0]
-            ));
+        RegistrationRequest request;
+
+        RegistrationResponse response;
+
+        CredentialRegistration registration;
+
+        boolean attestationTrusted;
+
+        Optional<AttestationCertInfo> attestationCert;
+
+        @JsonSerialize(using = AuthDataSerializer.class)
+        AuthenticatorData authData;
+
+        String username;
+
+        ByteArray sessionToken;
+
+        public SuccessfulRegistrationResult(RegistrationRequest request, RegistrationResponse response, CredentialRegistration registration, boolean attestationTrusted, ByteArray sessionToken) {
+            this.request = request;
+            this.response = response;
+            this.registration = registration;
+            this.attestationTrusted = attestationTrusted;
+            attestationCert = Optional.ofNullable(
+                response.getCredential().getResponse().getAttestation().getAttestationStatement().get("x5c")
+            ).map(certs -> certs.get(0))
+                .flatMap((JsonNode certDer) -> {
+                    try {
+                        return Optional.of(new ByteArray(certDer.binaryValue()));
+                    } catch (IOException e) {
+                        logger.error("Failed to get binary value from x5c element: {}", certDer, e);
+                        return Optional.empty();
+                    }
+                })
+                .map(AttestationCertInfo::new);
+            this.authData = response.getCredential().getResponse().getParsedAuthenticatorData();
+            this.username = request.getUsername();
+            this.sessionToken = sessionToken;
         }
 
-        final int start = keyBytes.length == 64 ? 0 : 1;
-
-        Map<Long, Object> coseKey = new HashMap<>();
-
-        coseKey.put(1L, 2L); // Key type: EC
-        coseKey.put(3L, COSEAlgorithmIdentifier.ES256.getId());
-        coseKey.put(-1L, 1L); // Curve: P-256
-        coseKey.put(-2L, Arrays.copyOfRange(keyBytes, start, start + 32)); // x
-        coseKey.put(-3L, Arrays.copyOfRange(keyBytes, start + 32, start + 64)); // y
-
-        return new ByteArray(CBORObject.FromObject(coseKey).EncodeToBytes());
     }
 
+    @Value
+    public static class AttestationCertInfo {
+        final ByteArray der;
+
+        final String text;
+
+        public AttestationCertInfo(ByteArray certDer) {
+            der = certDer;
+            X509Certificate cert = null;
+            try {
+                cert = CertificateParser.parseDer(certDer.getBytes());
+            } catch (CertificateException e) {
+                logger.error("Failed to parse attestation certificate");
+            }
+            if (cert == null) {
+                text = null;
+            } else {
+                text = cert.toString();
+            }
+        }
+    }
+
+    @Value
+    @AllArgsConstructor
+    public static final class SuccessfulAuthenticationResult {
+        private final boolean success = true;
+
+        private final AssertionRequestWrapper request;
+
+        private final AssertionResponse response;
+
+        private final Collection<CredentialRegistration> registrations;
+
+        @JsonSerialize(using = AuthDataSerializer.class)
+        AuthenticatorData authData;
+
+        private final String username;
+
+        private final ByteArray sessionToken;
+
+        private final List<String> warnings;
+
+        public SuccessfulAuthenticationResult(AssertionRequestWrapper request, AssertionResponse response, Collection<CredentialRegistration> registrations, String username, ByteArray sessionToken, List<String> warnings) {
+            this(
+                request,
+                response,
+                registrations,
+                response.getCredential().getResponse().getParsedAuthenticatorData(),
+                username,
+                sessionToken,
+                warnings
+            );
+        }
+    }
+
+    @Value
+    public static final class DeregisterCredentialResult {
+        boolean success = true;
+
+        CredentialRegistration droppedRegistration;
+
+        boolean accountDeleted;
+    }
 
     private static class AuthDataSerializer extends JsonSerializer<AuthenticatorData> {
-        @Override public void serialize(AuthenticatorData value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+        @Override
+        public void serialize(AuthenticatorData value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
             gen.writeStartObject();
             gen.writeStringField("rpIdHash", value.getRpIdHash().getHex());
             gen.writeObjectField("flags", value.getFlags());
@@ -728,6 +659,25 @@ public class WebAuthnServer {
             gen.writeObjectField("extensions", value.getExtensions());
             gen.writeEndObject();
         }
+    }
+
+    @Value
+    public static class SuccessfulU2fRegistrationResult {
+        final boolean success = true;
+
+        final RegistrationRequest request;
+
+        final U2fRegistrationResponse response;
+
+        final CredentialRegistration registration;
+
+        boolean attestationTrusted;
+
+        Optional<AttestationCertInfo> attestationCert;
+
+        final String username;
+
+        final ByteArray sessionToken;
     }
 
 }
