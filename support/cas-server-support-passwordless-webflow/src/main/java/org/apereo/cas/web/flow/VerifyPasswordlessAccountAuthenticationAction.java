@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.api.PasswordlessUserAccountStore;
+import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -41,6 +42,7 @@ public class VerifyPasswordlessAccountAuthenticationAction extends AbstractActio
             messageContext.addMessage(message);
             return error();
         }
+        WebUtils.putPasswordlessAuthenticationAccount(requestContext, user);
         return success();
     }
 }

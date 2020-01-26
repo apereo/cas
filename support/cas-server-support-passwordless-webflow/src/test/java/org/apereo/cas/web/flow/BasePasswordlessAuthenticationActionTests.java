@@ -21,6 +21,7 @@ import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.PasswordlessAuthenticationConfiguration;
+import org.apereo.cas.config.PasswordlessAuthenticationWebflowConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.web.config.CasCookieConfiguration;
@@ -40,6 +41,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
  */
 @SpringBootTest(classes = {
     PasswordlessAuthenticationConfiguration.class,
+    PasswordlessAuthenticationWebflowConfiguration.class,
     CasCoreAuthenticationPolicyConfiguration.class,
     CasCoreAuthenticationConfiguration.class,
     CasCoreAuthenticationHandlersConfiguration.class,
