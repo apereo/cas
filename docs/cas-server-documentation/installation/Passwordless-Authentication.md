@@ -25,7 +25,7 @@ Support is enabled by including the following module in the overlay:
 ```xml
 <dependency>
     <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-passwordless</artifactId>
+    <artifactId>cas-server-support-passwordless-webflow</artifactId>
     <version>${cas.version}</version>
 </dependency>
 ```
@@ -42,6 +42,12 @@ using CAS settings and are activated depending on the presence of configuration 
 This strategy provides a static map of usernames that are linked to their method of contact, such as email or phone number. It is best used
 for testing and demo purposes. The key in the map is taken to be the username eligible for authentication while the value can either be an email
 address or phone number that would be used to contact the user with issued tokens.
+
+### LDAP
+
+This strategy simply allows one to locate a user record in an LDAP directory. The record is expected to carry the user's phone number
+or email address via configurable attributes. To see the relevant list of CAS 
+properties, please [review this guide](../configuration/Configuration-Properties.html#passwordless-authentication).
 
 ### Groovy
 
@@ -66,7 +72,8 @@ def run(Object[] args) {
     account.setUsername(username)
     account.setEmail("username@example.org")
     account.setName("TestUser")
-    account.setPhone("123-456-7890")
+    account.setPhone("123-456-7890") 
+    account.setAttributes(Map.of("...", List.of("...", "..."))
     return account
 }
 ```
@@ -82,7 +89,8 @@ would produce a response body similar to the following:
   "username" : "casuser",
   "email" : "cas@example.org",
   "phone" : "123-456-7890",
-  "name" : "CASUser"
+  "name" : "CASUser",
+  "attributes":{ "lastName" : ["...", "..."] }
 }
 ```
 
