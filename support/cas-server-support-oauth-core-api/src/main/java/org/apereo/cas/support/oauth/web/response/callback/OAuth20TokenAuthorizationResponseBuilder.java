@@ -123,13 +123,13 @@ public class OAuth20TokenAuthorizationResponseBuilder implements OAuth20Authoriz
             stringBuilder.append('&')
                 .append(OAuth20Constants.STATE)
                 .append('=')
-                .append(EncodingUtils.urlEncode(state));
+                .append(state);
         }
         if (StringUtils.isNotBlank(nonce)) {
             stringBuilder.append('&')
                 .append(OAuth20Constants.NONCE)
                 .append('=')
-                .append(EncodingUtils.urlEncode(nonce));
+                .append(nonce);
         }
         builder.setFragment(stringBuilder.toString());
         val url = builder.toString();
