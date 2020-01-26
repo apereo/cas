@@ -104,7 +104,7 @@ public class OAuth20TokenAuthorizationResponseBuilderTest extends AbstractOAuth2
         verifyParam(params, OAuth20Constants.NONCE, NONCE);
     }
 
-    private void verifyParam(Map<String, List<String>> params, String paramName, String expectedParamValue) {
+    private void verifyParam(final Map<String, List<String>> params, final String paramName, final String expectedParamValue) {
         Assert.assertTrue("Expected " + paramName + "  param in redirect URL", params.containsKey(paramName));
         Assert.assertEquals("Expected one value for " + paramName + " param",
                             1,
@@ -118,7 +118,7 @@ public class OAuth20TokenAuthorizationResponseBuilderTest extends AbstractOAuth2
                                 .get(0));
     }
 
-    private Map<String, List<String>> splitQuery(String fragment) {
+    private Map<String, List<String>> splitQuery(final String fragment) {
         if (StringUtils.isBlank(fragment)) {
             return Collections.emptyMap();
         }
@@ -130,7 +130,7 @@ public class OAuth20TokenAuthorizationResponseBuilderTest extends AbstractOAuth2
                                            Collectors.mapping(Map.Entry::getValue, Collectors.toList())));
     }
 
-    private AbstractMap.SimpleImmutableEntry<String, String> splitQueryParameter(String it) {
+    private AbstractMap.SimpleImmutableEntry<String, String> splitQueryParameter(final String it) {
         final int idx = it.indexOf("=");
         final String key = idx > 0 ? it.substring(0, idx) : it;
         final String value = idx > 0 && it.length() > idx + 1 ? it.substring(idx + 1) : null;
