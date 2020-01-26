@@ -76,7 +76,6 @@ public class PasswordlessAuthenticationWebflowConfigurer extends AbstractCasWebf
         val verifyAccountState = createActionState(flow, STATE_ID_PASSWORDLESS_VERIFY_ACCOUNT, "verifyPasswordlessAccountAuthenticationAction");
         createTransitionForState(verifyAccountState, CasWebflowConstants.TRANSITION_ID_ERROR, STATE_ID_PASSWORDLESS_GET_USERID);
         createTransitionForState(verifyAccountState, CasWebflowConstants.TRANSITION_ID_SUCCESS, STATE_ID_PASSWORDLESS_DISPLAY);
-//        createTransitionForState(verifyAccountState, "mfa-duo", "mfa-duo");
     }
 
     protected void createStateGetUserIdentifier(final Flow flow) {
