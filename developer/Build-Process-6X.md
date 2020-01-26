@@ -49,7 +49,7 @@ git checkout master
 When done, you may build the codebase via the following command:
 
 ```bash
-./gradlew build install --parallel -x test -x javadoc -x check
+./gradlew build install --parallel -x test -x javadoc -x check --build-cache --configure-on-demand
 ```
 
 The following commandline boolean flags are supported by the build and can be passed in form of system properties via `-D`:
