@@ -22,8 +22,9 @@ public class PrepareForPasswordlessAuthenticationAction extends InitializeLoginA
     @Override
     public Event doExecute(final RequestContext requestContext) throws Exception {
         WebUtils.putPasswordlessAuthenticationEnabled(requestContext, Boolean.TRUE);
-        if (!WebUtils.hasPasswordlessAuthenticationAccount(requestContext)) {
-            return new EventFactorySupport().event(this, PasswordlessAuthenticationWebflowConfigurer.TRANSITION_ID_PASSWORDLESS_GET_USERID);
+        if (!WebUtils.hasPasswordlessAuthenticationAccount(requestContext) && isLoginFlowActive(requestContext)) {
+            return new EventFactorySupport().event(this,
+                PasswordlessAuthenticationWebflowConfigurer.TRANSITION_ID_PASSWORDLESS_GET_USERID);
         }
         return super.doExecute(requestContext);
     }

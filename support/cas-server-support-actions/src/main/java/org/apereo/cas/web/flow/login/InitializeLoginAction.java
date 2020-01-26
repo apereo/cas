@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow.login;
 
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.web.flow.CasWebflowConfigurer;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,5 +27,9 @@ public class InitializeLoginAction extends AbstractAction {
     protected Event doExecute(final RequestContext requestContext) throws Exception {
         LOGGER.trace("Initialized login sequence");
         return success();
+    }
+
+    protected static boolean isLoginFlowActive(final RequestContext requestContext) {
+        return requestContext.getActiveFlow().getId().equalsIgnoreCase(CasWebflowConfigurer.FLOW_ID_LOGIN);
     }
 }

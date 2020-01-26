@@ -18,7 +18,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 
 import lombok.val;
-import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.History;
@@ -51,7 +51,7 @@ public class DefaultLoginWebflowConfigurer extends AbstractCasWebflowConfigurer 
      */
     public DefaultLoginWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
                                          final FlowDefinitionRegistry flowDefinitionRegistry,
-                                         final ApplicationContext applicationContext,
+                                         final ConfigurableApplicationContext applicationContext,
                                          final CasConfigurationProperties casProperties) {
         super(flowBuilderServices, flowDefinitionRegistry, applicationContext, casProperties);
     }

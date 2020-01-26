@@ -5,7 +5,7 @@ import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
-import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ActionState;
@@ -29,7 +29,7 @@ public class CasCaptchaWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
     public CasCaptchaWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
                                        final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-                                       final ApplicationContext applicationContext,
+                                       final ConfigurableApplicationContext applicationContext,
                                        final CasConfigurationProperties casProperties) {
         super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
     }

@@ -3,14 +3,14 @@ package org.apereo.cas.adaptors.duo.web.flow;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityCredential;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorProperties;
+import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.configurer.AbstractMultifactorTrustedDeviceWebflowConfigurer;
 import org.apereo.cas.web.flow.configurer.DynamicFlowModelBuilder;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.config.FlowDefinitionRegistryBuilder;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.model.FlowModelFlowBuilder;
@@ -30,6 +30,7 @@ import org.springframework.webflow.engine.model.builder.DefaultFlowModelHolder;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * This is {@link DuoSecurityMultifactorWebflowConfigurer}.
@@ -42,15 +43,23 @@ import java.util.List;
 public class DuoSecurityMultifactorWebflowConfigurer extends AbstractMultifactorTrustedDeviceWebflowConfigurer {
 
     static final String STATE_ID_VIEW_LOGIN_FORM_DUO = "viewLoginFormDuo";
+
     static final String STATE_ID_FINALIZE_AUTHENTICATION = "finalizeAuthentication";
+
     static final String STATE_ID_DETERMINE_DUO_USER_ACCOUNT = "determineDuoUserAccount";
+
     static final String STATE_ID_DUO_NON_WEB_AUTHENTICATION = "doNonWebAuthentication";
+
     static final String STATE_ID_DETERMINE_DUO_REQUEST = "determineDuoRequest";
 
     private static final String ACTION_CHECK_WEB_AUTHENTICATION_REQUEST = "checkWebAuthenticationRequestAction";
+
     private static final String ACTION_DUO_AUTHENTICATION_WEBFLOW = "duoAuthenticationWebflowAction";
+
     private static final String ACTION_DETERMINE_DUO_USER_ACCOUNT = "determineDuoUserAccountAction";
+
     private static final String ACTION_PREPARE_DUO_WEB_LOGIN_FORM_ACTION = "prepareDuoWebLoginFormAction";
+
     private static final String ACTION_DUO_NON_WEB_AUTHENTICATION_ACTION = "duoNonWebAuthenticationAction";
 
     private static final String VIEW_ID_REDIRECT_TO_DUO_REGISTRATION = "redirectToDuoRegistration";
@@ -58,54 +67,10 @@ public class DuoSecurityMultifactorWebflowConfigurer extends AbstractMultifactor
     public DuoSecurityMultifactorWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
                                                    final FlowDefinitionRegistry loginFlowDefinitionRegistry,
                                                    final boolean enableDeviceRegistration,
-                                                   final ApplicationContext applicationContext,
+                                                   final ConfigurableApplicationContext applicationContext,
                                                    final CasConfigurationProperties casProperties) {
-        super(flowBuilderServices, loginFlowDefinitionRegistry, enableDeviceRegistration, applicationContext, casProperties);
-    }
-
-    @Override
-    protected void doInitialize() {
-        val duoConfig = casProperties.getAuthn().getMfa().getDuo();
-
-        duoConfig.forEach(duo -> {
-            val duoFlowRegistry = buildDuoFlowRegistry(duo);
-            applicationContext.getAutowireCapableBeanFactory().initializeBean(duoFlowRegistry, duo.getId());
-            val cfg = (ConfigurableListableBeanFactory) applicationContext.getAutowireCapableBeanFactory();
-            cfg.registerSingleton(duo.getId(), duoFlowRegistry);
-            registerMultifactorProviderAuthenticationWebflow(getLoginFlow(), duo.getId(), duoFlowRegistry, duo.getId());
-        });
-
-        duoConfig
-            .stream()
-            .filter(DuoSecurityMultifactorProperties::isTrustedDeviceEnabled)
-            .forEach(duo -> {
-                val id = duo.getId();
-                try {
-                    LOGGER.debug("Activating multifactor trusted authentication for webflow [{}]", id);
-                    val registry = applicationContext.getBean(id, FlowDefinitionRegistry.class);
-                    registerMultifactorTrustedAuthentication(registry);
-                } catch (final Exception e) {
-                    LOGGER.error("Failed to register multifactor trusted authentication for [{}]", id, e);
-                }
-            });
-    }
-
-    private FlowDefinitionRegistry buildDuoFlowRegistry(final DuoSecurityMultifactorProperties p) {
-        val modelBuilder = new DynamicFlowModelBuilder();
-
-        createDuoFlowVariables(modelBuilder);
-        createDuoFlowStartActions(modelBuilder);
-        createDuoFlowStates(modelBuilder);
-
-        return createDuoFlowDefinitionRegistry(p, modelBuilder);
-    }
-
-    private FlowDefinitionRegistry createDuoFlowDefinitionRegistry(final DuoSecurityMultifactorProperties p, final DynamicFlowModelBuilder modelBuilder) {
-        val holder = new DefaultFlowModelHolder(modelBuilder);
-        val flowBuilder = new FlowModelFlowBuilder(holder);
-        val builder = new FlowDefinitionRegistryBuilder(this.applicationContext, flowBuilderServices);
-        builder.addFlowBuilder(flowBuilder, p.getId());
-        return builder.build();
+        super(flowBuilderServices, loginFlowDefinitionRegistry,
+            enableDeviceRegistration, applicationContext, casProperties, Optional.empty());
     }
 
     private static void createDuoFlowStates(final DynamicFlowModelBuilder modelBuilder) {
@@ -319,5 +284,48 @@ public class DuoSecurityMultifactorWebflowConfigurer extends AbstractMultifactor
         val vars = new ArrayList<VarModel>(1);
         vars.add(new VarModel(CasWebflowConstants.VAR_ID_CREDENTIAL, DuoSecurityCredential.class.getName()));
         modelBuilder.setVars(vars);
+    }
+
+    @Override
+    protected void doInitialize() {
+        val duoConfig = casProperties.getAuthn().getMfa().getDuo();
+
+        duoConfig.forEach(duo -> {
+            val duoFlowRegistry = buildDuoFlowRegistry(duo);
+            ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext, duoFlowRegistry, duo.getId());
+            registerMultifactorProviderAuthenticationWebflow(getLoginFlow(), duo.getId(), duo.getId());
+        });
+
+        duoConfig
+            .stream()
+            .filter(DuoSecurityMultifactorProperties::isTrustedDeviceEnabled)
+            .forEach(duo -> {
+                val id = duo.getId();
+                try {
+                    LOGGER.debug("Activating multifactor trusted authentication for webflow [{}]", id);
+                    val registry = applicationContext.getBean(id, FlowDefinitionRegistry.class);
+                    registerMultifactorTrustedAuthentication(registry);
+                } catch (final Exception e) {
+                    LOGGER.error("Failed to register multifactor trusted authentication for [{}]", id, e);
+                }
+            });
+    }
+
+    private FlowDefinitionRegistry buildDuoFlowRegistry(final DuoSecurityMultifactorProperties p) {
+        val modelBuilder = new DynamicFlowModelBuilder();
+
+        createDuoFlowVariables(modelBuilder);
+        createDuoFlowStartActions(modelBuilder);
+        createDuoFlowStates(modelBuilder);
+
+        return createDuoFlowDefinitionRegistry(p, modelBuilder);
+    }
+
+    private FlowDefinitionRegistry createDuoFlowDefinitionRegistry(final DuoSecurityMultifactorProperties p, final DynamicFlowModelBuilder modelBuilder) {
+        val holder = new DefaultFlowModelHolder(modelBuilder);
+        val flowBuilder = new FlowModelFlowBuilder(holder);
+        val builder = new FlowDefinitionRegistryBuilder(this.applicationContext, flowBuilderServices);
+        builder.addFlowBuilder(flowBuilder, p.getId());
+        return builder.build();
     }
 }
