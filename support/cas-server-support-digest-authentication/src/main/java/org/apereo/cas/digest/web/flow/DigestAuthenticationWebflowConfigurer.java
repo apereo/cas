@@ -5,7 +5,7 @@ import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
 
 import lombok.val;
-import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 
@@ -21,7 +21,7 @@ public class DigestAuthenticationWebflowConfigurer extends AbstractCasWebflowCon
 
     public DigestAuthenticationWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
                                                  final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-                                                 final ApplicationContext applicationContext,
+                                                 final ConfigurableApplicationContext applicationContext,
                                                  final CasConfigurationProperties casProperties) {
         super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
     }

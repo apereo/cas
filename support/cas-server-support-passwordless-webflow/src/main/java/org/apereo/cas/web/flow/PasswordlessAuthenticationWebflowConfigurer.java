@@ -2,14 +2,17 @@ package org.apereo.cas.web.flow;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
+import org.apereo.cas.web.flow.configurer.CasMultifactorWebflowConfigurer;
 
 import lombok.val;
-import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
+
+import java.util.Arrays;
 
 /**
  * This is {@link PasswordlessAuthenticationWebflowConfigurer}.
@@ -25,6 +28,8 @@ public class PasswordlessAuthenticationWebflowConfigurer extends AbstractCasWebf
 
     static final String STATE_ID_PASSWORDLESS_DISPLAY = "passwordlessDisplayUser";
 
+    static final String STATE_ID_DETERMINE_MFA = "determineMultifactorAuthentication";
+
     static final String STATE_ID_PASSWORDLESS_VERIFY_ACCOUNT = "passwordlessVerifyAccount";
 
     static final String STATE_ID_ACCEPT_PASSWORDLESS_AUTHENTICATION = "acceptPasswordlessAuthentication";
@@ -33,7 +38,7 @@ public class PasswordlessAuthenticationWebflowConfigurer extends AbstractCasWebf
 
     public PasswordlessAuthenticationWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
                                                        final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-                                                       final ApplicationContext applicationContext,
+                                                       final ConfigurableApplicationContext applicationContext,
                                                        final CasConfigurationProperties casProperties) {
         super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
     }
@@ -46,6 +51,7 @@ public class PasswordlessAuthenticationWebflowConfigurer extends AbstractCasWebf
             createStateGetUserIdentifier(flow);
             createStateVerifyPasswordlessAccount(flow);
             createStateDisplayPasswordless(flow);
+            createStateDetermineMultifactorAuthenticationAction(flow);
             createStateAcceptPasswordless(flow);
         }
     }
@@ -75,7 +81,21 @@ public class PasswordlessAuthenticationWebflowConfigurer extends AbstractCasWebf
     protected void createStateVerifyPasswordlessAccount(final Flow flow) {
         val verifyAccountState = createActionState(flow, STATE_ID_PASSWORDLESS_VERIFY_ACCOUNT, "verifyPasswordlessAccountAuthenticationAction");
         createTransitionForState(verifyAccountState, CasWebflowConstants.TRANSITION_ID_ERROR, STATE_ID_PASSWORDLESS_GET_USERID);
+        createTransitionForState(verifyAccountState, CasWebflowConstants.TRANSITION_ID_SUCCESS, STATE_ID_DETERMINE_MFA);
+    }
+
+    protected void createStateDetermineMultifactorAuthenticationAction(final Flow flow) {
+        val verifyAccountState = createActionState(flow, STATE_ID_DETERMINE_MFA, "determineMultifactorAuthenticationAction");
         createTransitionForState(verifyAccountState, CasWebflowConstants.TRANSITION_ID_SUCCESS, STATE_ID_PASSWORDLESS_DISPLAY);
+
+        val cfgs = applicationContext.getBeansOfType(CasMultifactorWebflowConfigurer.class).values();
+        cfgs.forEach(cfg -> {
+            cfg.getMultifactorAuthenticationFlowDefinitionRegistries().forEach(registry -> {
+                Arrays.stream(registry.getFlowDefinitionIds()).forEach(id -> {
+                    createTransitionForState(verifyAccountState, id, id);
+                });
+            });
+        });
     }
 
     protected void createStateGetUserIdentifier(final Flow flow) {
