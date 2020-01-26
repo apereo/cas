@@ -49,7 +49,7 @@ public class LoadSurrogatesListAction extends AbstractAction {
             val registeredService = WebUtils.getRegisteredService(requestContext);
             val result = surrogatePrincipalBuilder.buildSurrogateAuthenticationResult(authenticationResultBuilder, currentCredential,
                 credential.getSurrogateUsername(), registeredService);
-            result.ifPresent(authenticationResultBuilder1 -> WebUtils.putAuthenticationResultBuilder(authenticationResultBuilder1, requestContext));
+            result.ifPresent(builder -> WebUtils.putAuthenticationResultBuilder(builder, requestContext));
         }
         return success();
     }
