@@ -7,6 +7,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * This is {@link PasswordlessUserAccount}.
@@ -21,9 +24,15 @@ import java.io.Serializable;
 @Builder
 public class PasswordlessUserAccount implements Serializable {
     private static final long serialVersionUID = 5783908770607793373L;
-    
+
     private String username;
+
     private String email;
+
     private String phone;
+
     private String name;
+
+    @Builder.Default
+    private Map<String, Collection<String>> attributes = new LinkedHashMap<>();
 }
