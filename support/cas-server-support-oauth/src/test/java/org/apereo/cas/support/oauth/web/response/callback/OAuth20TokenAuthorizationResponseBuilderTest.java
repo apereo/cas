@@ -85,7 +85,8 @@ public class OAuth20TokenAuthorizationResponseBuilderTest extends AbstractOAuth2
         val tokenAuthorizationResponseBuilder = new OAuth20TokenAuthorizationResponseBuilder(oauthTokenGenerator,
                                                                                              tokenExpirationPolicyBuilder,
                                                                                              servicesManager,
-                                                                                             accessTokenJwtBuilder);
+                                                                                             accessTokenJwtBuilder,
+                                                                                             casProperties);
 
         val modelAndView = tokenAuthorizationResponseBuilder.buildCallbackUrlResponseType(holder,
                                                                                           REDIRECT_URI,
