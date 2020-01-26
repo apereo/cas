@@ -30,10 +30,12 @@ class CloudWatchAppenderOldTests {
     @Test
     void "`createIfNeeded` is false"() {
         def mock = Mockito.mock(AWSLogs)
-        Mockito.when(mock.describeLogStreams(Mockito.any(DescribeLogStreamsRequest))).thenReturn(new DescribeLogStreamsResult().with {
-            it.logStreams.add(new LogStream(logStreamName: 'test', uploadSequenceToken: 'test'))
-            it
-        })
+        Mockito.when(mock.describeLogStreams(Mockito.any(DescribeLogStreamsRequest))).thenReturn(
+                new DescribeLogStreamsResult().with {
+                    it.logStreams.add(new LogStream(logStreamName: 'test', uploadSequenceToken: 'test'))
+                    it
+                }
+        )
         Mockito.when(mock.describeLogGroups(Mockito.any(DescribeLogGroupsRequest))).thenReturn(new DescribeLogGroupsResult().with {
             it.logGroups.add(new LogGroup(logGroupName: 'test'))
             it

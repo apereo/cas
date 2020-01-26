@@ -30,6 +30,7 @@ import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -165,9 +166,29 @@ public class CloudWatchAppender extends AbstractAppender {
 
         this.logGroupName = awsLogGroupName;
         this.logStreamName = awsLogStreamName;
-        this.createIfNeeded = createIfNeeded;
-        this.createLogGroupIfNeeded = createLogGroupIfNeeded;
-        this.createLogStreamIfNeeded = createLogStreamIfNeeded;
+
+        //ToDO - Logic if 2 or 3 is not null, then it is set, therefore 1 is now false
+        if (createIfNeeded == null) {
+            if (createLogGroupIfNeeded != null) {
+                this.createIfNeeded = false;
+            } else {
+                this.createIfNeeded = true;
+            }
+            if (createLogStreamIfNeeded != null) {
+                this.createIfNeeded = false;
+            } else {
+                this.createIfNeeded = true;
+            }
+        } else {
+            if (createIfNeeded) {
+                this.createIfNeeded = true;
+            } else {
+                this.createIfNeeded = false;
+            }
+        }
+
+        this.createLogGroupIfNeeded = Objects.requireNonNullElse(createLogGroupIfNeeded, false);
+        this.createLogStreamIfNeeded = Objects.requireNonNullElse(createLogStreamIfNeeded, false);
     }
 
     public void initialize() {
@@ -269,6 +290,7 @@ public class CloudWatchAppender extends AbstractAppender {
     }
 
     private String createLogGroupAndLogStreamIfNeeded() {
+
         if (this.createIfNeeded || this.createLogGroupIfNeeded) {
             LOGGER.debug("Attempting to locate the log group [{}]", logGroupName);
             val describeLogGroupsResult =
@@ -284,6 +306,7 @@ public class CloudWatchAppender extends AbstractAppender {
             }
         }
 
+        //TODO - Here is where the issue is occurring.
         var logSequenceToken = StringUtils.EMPTY;
         var createLogStream = true;
         LOGGER.debug("Attempting to locate the log stream [{}] for group [{}]", logStreamName, logGroupName);
@@ -311,6 +334,7 @@ public class CloudWatchAppender extends AbstractAppender {
         }
         return logSequenceToken;
     }
+
 
     @Override
     public void start() {
