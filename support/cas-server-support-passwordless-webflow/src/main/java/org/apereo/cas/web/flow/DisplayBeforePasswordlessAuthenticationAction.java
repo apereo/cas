@@ -9,6 +9,7 @@ import org.apereo.cas.util.io.CommunicationsManager;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.webflow.action.AbstractAction;
@@ -22,10 +23,14 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 5.3.0
  */
 @RequiredArgsConstructor
+@Slf4j
 public class DisplayBeforePasswordlessAuthenticationAction extends AbstractAction {
     private final PasswordlessTokenRepository passwordlessTokenRepository;
+
     private final PasswordlessUserAccountStore passwordlessUserAccountStore;
+
     private final CommunicationsManager communicationsManager;
+
     private final PasswordlessAuthenticationProperties passwordlessProperties;
 
     @Override
@@ -44,6 +49,7 @@ public class DisplayBeforePasswordlessAuthenticationAction extends AbstractActio
         }
         val account = passwordlessUserAccountStore.findUser(username);
         if (account.isEmpty()) {
+            LOGGER.error("Unable to locate passwordless user account for [{}]", username);
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
         }
         val user = account.get();

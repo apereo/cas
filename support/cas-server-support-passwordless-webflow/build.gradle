@@ -1,4 +1,5 @@
 description = "Apereo CAS Passwordless Authentication Webflow Support"
+
 dependencies {
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-authentication-api")
@@ -6,6 +7,7 @@ dependencies {
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-webflow-api")
+    implementation project(":core:cas-server-core-webflow-mfa-api")
     implementation project(":core:cas-server-core-cookie-api")
     implementation project(":core:cas-server-core-tickets-api")
     implementation project(":core:cas-server-core-logout-api")
@@ -35,4 +37,6 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-webflow", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-webflow-mfa-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-webflow-mfa", configuration: "tests")
 }

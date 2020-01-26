@@ -11,8 +11,10 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.ldaptive.ConnectionFactory;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -49,8 +51,8 @@ public class LdapPasswordlessUserAccountStore implements PasswordlessUserAccount
                 if (entry.getAttribute(ldapProperties.getPhoneAttribute()) != null) {
                     acctBuilder.phone(entry.getAttribute(ldapProperties.getPhoneAttribute()).getStringValue());
                 }
-                val attributes = new LinkedHashMap<String, Collection<String>>(entry.getAttributes().size());
-                entry.getAttributes().forEach(attr -> attributes.put(attr.getName(), attr.getStringValues()));
+                val attributes = new LinkedHashMap<String, List<String>>(entry.getAttributes().size());
+                entry.getAttributes().forEach(attr -> attributes.put(attr.getName(), new ArrayList<>(attr.getStringValues())));
                 val acct = acctBuilder.attributes(attributes).build();
                 return Optional.of(acct);
             }
