@@ -11,7 +11,6 @@ import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
 import org.apereo.cas.token.JwtBuilder;
-import org.apereo.cas.util.EncodingUtils;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
