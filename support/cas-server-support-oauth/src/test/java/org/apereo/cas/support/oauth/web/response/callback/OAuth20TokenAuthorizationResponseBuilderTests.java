@@ -11,7 +11,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
@@ -22,15 +21,11 @@ import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequ
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessTokenExpirationPolicyBuilder;
 import org.jasig.cas.client.util.URIBuilder;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.pac4j.core.context.JEEContext;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.servlet.view.RedirectView;
-
 
 /**
  * This is {@link OAuth20TokenAuthorizationResponseBuilderTests}.
@@ -43,9 +38,6 @@ public class OAuth20TokenAuthorizationResponseBuilderTests extends AbstractOAuth
 
     private static final String STATE = "%123=";
     private static final String NONCE = "%123=";
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
 
     @Test
     public void verifyUnchangedStateAndNonceParameter() throws Exception {
@@ -93,8 +85,7 @@ public class OAuth20TokenAuthorizationResponseBuilderTests extends AbstractOAuth
             oAuth20AccessToken,
             Collections.emptyList(),
             null,
-            new JEEContext(new MockHttpServletRequest(),
-                new MockHttpServletResponse()));
+            new JEEContext(new MockHttpServletRequest(), new MockHttpServletResponse()));
 
         Assertions.assertTrue(modelAndView.getView() instanceof RedirectView, "Expected RedirectView");
 
@@ -126,9 +117,7 @@ public class OAuth20TokenAuthorizationResponseBuilderTests extends AbstractOAuth
         return Arrays
             .stream(fragment.split("&"))
             .map(this::splitQueryParameter)
-            .collect(Collectors.groupingBy(AbstractMap.SimpleImmutableEntry::getKey,
-                LinkedHashMap::new,
-                Collectors.mapping(Map.Entry::getValue, Collectors.toList())));
+            .collect(Collectors.groupingBy(AbstractMap.SimpleImmutableEntry::getKey, LinkedHashMap::new, Collectors.mapping(Map.Entry::getValue, Collectors.toList())));
     }
 
     private AbstractMap.SimpleImmutableEntry<String, String> splitQueryParameter(final String it) {
