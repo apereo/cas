@@ -194,7 +194,6 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
             LOGGER.trace("Found existing single sign-on session");
             populateContextWithService(context, webContext, clientName);
             if (singleSignOnSessionAuthorizedForService(context)) {
-                prepareRequestContextForSingleSignOn(context, webContext, clientName);
                 prepareDelegatedClients(context);
                 LOGGER.trace("Skipping delegation and routing back to CAS authentication flow");
                 return super.doExecute(context);
@@ -225,7 +224,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         return error();
     }
 
-    private Service populateContextWithService(final RequestContext context, final JEEContext webContext, final String clientName) {
+    protected Service populateContextWithService(final RequestContext context, final JEEContext webContext, final String clientName) {
         val service = restoreAuthenticationRequestInContext(context, webContext, clientName);
         val resolvedService = authenticationRequestServiceSelectionStrategies.resolveService(service);
         LOGGER.trace("Authentication is resolved by service request from [{}]", service);
@@ -401,7 +400,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         }
     }
 
-    private boolean singleSignOnSessionAuthorizedForService(final RequestContext context) {
+    protected boolean singleSignOnSessionAuthorizedForService(final RequestContext context) {
         val resolvedService = resolveServiceFromRequestContext(context);
         val authentication = getSingleSignOnAuthenticationFrom(context);
         return authentication
@@ -441,14 +440,6 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
                 LOGGER.trace("Located a valid ticket-granting ticket. Examining existing single sign-on session strategies...");
                 val authentication = authn.get();
                 val builder = this.authenticationSystemSupport.establishAuthenticationContextFromInitial(authentication);
-                val credentials = authentication.getCredentials();
-                if (!credentials.isEmpty()) {
-                    credentials.forEach(c -> {
-                        val credential = c.toCredential();
-                        builder.collect(credential);
-                    });
-                    builder.getInitialCredential().ifPresent(c -> WebUtils.putCredential(requestContext, c));
-                }
                 LOGGER.trace("Recording and tracking initial authentication results in the request context");
                 WebUtils.putAuthenticationResultBuilder(builder, requestContext);
                 WebUtils.putAuthentication(authentication, requestContext);
@@ -463,29 +454,8 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         return false;
     }
 
-    /**
-     * Prepare the request context if there is a SSO session.
-     *
-     * @param context the request context
-     * @param webContext the web context
-     * @param clientName the client name
-     */
-    protected void prepareRequestContextForSingleSignOn(final RequestContext context,
-                                                      final JEEContext webContext,
-                                                      final String clientName) {
-        val resolvedService = WebUtils.getService(argumentExtractors, context);
-        WebUtils.putServiceIntoFlowScope(context, resolvedService);
-        val registeredService = servicesManager.findServiceBy(resolvedService);
-        WebUtils.putRegisteredService(context, registeredService);
-        if (StringUtils.isNotBlank(clientName)) {
-            val client = findDelegatedClientByName(webContext.getNativeRequest(), clientName, resolvedService);
-            populateContextWithClientCredential(client, webContext, context);
-        }
-    }
-
     private boolean isDelegatedClientAuthorizedForService(final Client<Credentials> client,
                                                           final Service service) {
         return delegatedAuthenticationAccessStrategyHelper.isDelegatedClientAuthorizedForService(client, service);
     }
-
 }
