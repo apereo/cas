@@ -1,16 +1,5 @@
 package org.apereo.cas.support.oauth.web.response.callback;
 
-import java.util.AbstractMap;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -21,8 +10,10 @@ import org.apereo.cas.support.oauth.web.AbstractOAuth20Tests;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestDataHolder;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessTokenExpirationPolicyBuilder;
+
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.client.util.URIBuilder;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.core.context.JEEContext;
@@ -30,6 +21,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.servlet.view.RedirectView;
+
+import java.util.AbstractMap;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 
 /**
@@ -74,7 +77,7 @@ public class OAuth20TokenAuthorizationResponseBuilderTests extends AbstractOAuth
         if (generatedToken
             .getAccessToken()
             .isEmpty()) {
-            Assertions.fail("Expected access token");
+            fail("Expected access token");
         }
 
         final OAuth20AccessToken oAuth20AccessToken = generatedToken
@@ -95,7 +98,7 @@ public class OAuth20TokenAuthorizationResponseBuilderTests extends AbstractOAuth
             new JEEContext(new MockHttpServletRequest(),
                 new MockHttpServletResponse()));
 
-        Assertions.assertTrue(modelAndView.getView() instanceof RedirectView, "Expected RedirectView");
+        assertTrue(modelAndView.getView() instanceof RedirectView, "Expected RedirectView");
 
         val redirectUrl = ((RedirectView) modelAndView.getView()).getUrl();
         val params = splitQuery(new URIBuilder(redirectUrl).getFragment());
@@ -105,13 +108,13 @@ public class OAuth20TokenAuthorizationResponseBuilderTests extends AbstractOAuth
     }
 
     private void verifyParam(final Map<String, List<String>> params, final String paramName, final String expectedParamValue) {
-        Assertions.assertTrue(params.containsKey(paramName), "Expected " + paramName + "  param in redirect URL");
-        Assertions.assertEquals(1,
+        assertTrue(params.containsKey(paramName), "Expected " + paramName + "  param in redirect URL");
+        assertEquals(1,
             params
                 .get(paramName)
                 .size(),
             "Expected one value for " + paramName + " param");
-        Assertions.assertEquals(expectedParamValue,
+        assertEquals(expectedParamValue,
             params
                 .get(paramName)
                 .get(0),
