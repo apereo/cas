@@ -1,7 +1,16 @@
 package org.apereo.cas.support.oauth.web.response.callback;
 
+import java.util.AbstractMap;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.val;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -13,24 +22,15 @@ import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequ
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessTokenExpirationPolicyBuilder;
 import org.jasig.cas.client.util.URIBuilder;
-import org.junit.*;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.*;
 import org.pac4j.core.context.JEEContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.servlet.view.RedirectView;
 
-import java.util.AbstractMap;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link OAuth20TokenAuthorizationResponseBuilderTest}.
@@ -74,7 +74,7 @@ public class OAuth20TokenAuthorizationResponseBuilderTest extends AbstractOAuth2
         if (generatedToken
             .getAccessToken()
             .isEmpty()) {
-            Assert.fail("Expected access token");
+            Assertions.fail("Expected access token");
         }
 
         final OAuth20AccessToken oAuth20AccessToken = generatedToken
@@ -83,19 +83,19 @@ public class OAuth20TokenAuthorizationResponseBuilderTest extends AbstractOAuth2
 
         val tokenExpirationPolicyBuilder = new OAuth20AccessTokenExpirationPolicyBuilder(casProperties);
         val tokenAuthorizationResponseBuilder = new OAuth20TokenAuthorizationResponseBuilder(oauthTokenGenerator,
-                                                                                             tokenExpirationPolicyBuilder,
-                                                                                             servicesManager,
-                                                                                             accessTokenJwtBuilder);
+            tokenExpirationPolicyBuilder,
+            servicesManager,
+            accessTokenJwtBuilder);
 
         val modelAndView = tokenAuthorizationResponseBuilder.buildCallbackUrlResponseType(holder,
-                                                                                          REDIRECT_URI,
-                                                                                          oAuth20AccessToken,
-                                                                                          Collections.emptyList(),
-                                                                                          null,
-                                                                                          new JEEContext(new MockHttpServletRequest(),
-                                                                                                         new MockHttpServletResponse()));
+            REDIRECT_URI,
+            oAuth20AccessToken,
+            Collections.emptyList(),
+            null,
+            new JEEContext(new MockHttpServletRequest(),
+                new MockHttpServletResponse()));
 
-        Assert.assertTrue("Expected RedirectView", modelAndView.getView() instanceof RedirectView);
+        Assertions.assertTrue(modelAndView.getView() instanceof RedirectView, "Expected RedirectView");
 
         val redirectUrl = ((RedirectView) modelAndView.getView()).getUrl();
         val params = splitQuery(new URIBuilder(redirectUrl).getFragment());
@@ -105,17 +105,17 @@ public class OAuth20TokenAuthorizationResponseBuilderTest extends AbstractOAuth2
     }
 
     private void verifyParam(final Map<String, List<String>> params, final String paramName, final String expectedParamValue) {
-        Assert.assertTrue("Expected " + paramName + "  param in redirect URL", params.containsKey(paramName));
-        Assert.assertEquals("Expected one value for " + paramName + " param",
-                            1,
-                            params
-                                .get(paramName)
-                                .size());
-        Assert.assertEquals("Expected unchanged " + paramName + "  param",
-                            expectedParamValue,
-                            params
-                                .get(paramName)
-                                .get(0));
+        Assertions.assertTrue(params.containsKey(paramName), "Expected " + paramName + "  param in redirect URL");
+        Assertions.assertEquals(1,
+            params
+                .get(paramName)
+                .size(),
+            "Expected one value for " + paramName + " param");
+        Assertions.assertEquals(expectedParamValue,
+            params
+                .get(paramName)
+                .get(0),
+            "Expected unchanged " + paramName + "  param");
     }
 
     private Map<String, List<String>> splitQuery(final String fragment) {
@@ -126,14 +126,14 @@ public class OAuth20TokenAuthorizationResponseBuilderTest extends AbstractOAuth2
             .stream(fragment.split("&"))
             .map(this::splitQueryParameter)
             .collect(Collectors.groupingBy(AbstractMap.SimpleImmutableEntry::getKey,
-                                           LinkedHashMap::new,
-                                           Collectors.mapping(Map.Entry::getValue, Collectors.toList())));
+                LinkedHashMap::new,
+                Collectors.mapping(Map.Entry::getValue, Collectors.toList())));
     }
 
     private AbstractMap.SimpleImmutableEntry<String, String> splitQueryParameter(final String it) {
-        final int idx = it.indexOf("=");
-        final String key = idx > 0 ? it.substring(0, idx) : it;
-        final String value = idx > 0 && it.length() > idx + 1 ? it.substring(idx + 1) : null;
+        val idx = it.indexOf("=");
+        val key = idx > 0 ? it.substring(0, idx) : it;
+        val value = idx > 0 && it.length() > idx + 1 ? it.substring(idx + 1) : null;
         return new AbstractMap.SimpleImmutableEntry<>(key, value);
     }
 
