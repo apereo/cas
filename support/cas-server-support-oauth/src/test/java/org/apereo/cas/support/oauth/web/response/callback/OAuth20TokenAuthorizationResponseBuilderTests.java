@@ -33,13 +33,13 @@ import org.springframework.web.servlet.view.RedirectView;
 
 
 /**
- * This is {@link OAuth20TokenAuthorizationResponseBuilderTest}.
+ * This is {@link OAuth20TokenAuthorizationResponseBuilderTests}.
  *
  * @author David Albrecht
  * @since 6.1.3
  */
 @Tag("OAuth")
-public class OAuth20TokenAuthorizationResponseBuilderTest extends AbstractOAuth20Tests {
+public class OAuth20TokenAuthorizationResponseBuilderTests extends AbstractOAuth20Tests {
 
     private static final String STATE = "%123=";
     private static final String NONCE = "%123=";
@@ -86,7 +86,7 @@ public class OAuth20TokenAuthorizationResponseBuilderTest extends AbstractOAuth2
             tokenExpirationPolicyBuilder,
             servicesManager,
             accessTokenJwtBuilder,
-                                                                                             casProperties);
+            casProperties);
 
         val modelAndView = tokenAuthorizationResponseBuilder.buildCallbackUrlResponseType(holder,
             REDIRECT_URI,
