@@ -2,7 +2,7 @@ package org.apereo.cas.adaptors.x509.authentication.principal;
 
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 
-import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import org.apereo.services.persondir.IPersonAttributeDao;
 
@@ -16,20 +16,26 @@ import java.util.Set;
  * @since 3.0.0
  */
 @ToString(callSuper = true)
-@NoArgsConstructor
+@RequiredArgsConstructor
 public class X509SubjectDNPrincipalResolver extends AbstractX509PrincipalResolver {
+
+    private final String subjectDnFormat;
 
     public X509SubjectDNPrincipalResolver(final IPersonAttributeDao attributeRepository, final PrincipalFactory principalFactory,
                                           final boolean returnNullIfNoAttributes, final String principalAttributeName,
                                           final boolean useCurrentPrincipalId, final boolean resolveAttributes,
-                                          final Set<String> activeAttributeRepositoryIdentifiers) {
+                                          final Set<String> activeAttributeRepositoryIdentifiers,
+                                          final String subjectDnFormat) {
         super(attributeRepository, principalFactory, returnNullIfNoAttributes,
             principalAttributeName, useCurrentPrincipalId, resolveAttributes,
             activeAttributeRepositoryIdentifiers);
+        this.subjectDnFormat = subjectDnFormat;
     }
 
     @Override
     protected String resolvePrincipalInternal(final X509Certificate certificate) {
-        return certificate.getSubjectDN().getName();
+        return subjectDnFormat == null
+            ? certificate.getSubjectDN().getName()
+            : certificate.getSubjectX500Principal().getName(subjectDnFormat);
     }
 }

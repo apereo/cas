@@ -2493,6 +2493,9 @@ To fetch CRLs, the following options are available:
 # cas.authn.x509.refreshIntervalSeconds=3600
 # cas.authn.x509.maxPathLengthAllowUnspecified=false
 
+# SUBJECT_DN
+# cas.authn.x509.subjectDn.format=[DEFAULT,RFC1779,RFC2253,CANONICAL]
+
 # SERIAL_NO_DN
 # cas.authn.x509.serialNoDn.serialNumberPrefix=SERIALNUMBER=
 # cas.authn.x509.serialNoDn.valueDelimiter=,
