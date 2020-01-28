@@ -11,7 +11,6 @@ import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
 import org.apereo.cas.token.JwtBuilder;
-import org.apereo.cas.util.EncodingUtils;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -126,13 +125,13 @@ public class OAuth20TokenAuthorizationResponseBuilder implements OAuth20Authoriz
             stringBuilder.append('&')
                 .append(OAuth20Constants.STATE)
                 .append('=')
-                .append(EncodingUtils.urlEncode(state));
+                .append(state);
         }
         if (StringUtils.isNotBlank(nonce)) {
             stringBuilder.append('&')
                 .append(OAuth20Constants.NONCE)
                 .append('=')
-                .append(EncodingUtils.urlEncode(nonce));
+                .append(nonce);
         }
         builder.setFragment(stringBuilder.toString());
         val url = builder.toString();
