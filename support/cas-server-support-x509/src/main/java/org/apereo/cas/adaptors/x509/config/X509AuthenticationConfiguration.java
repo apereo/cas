@@ -32,10 +32,8 @@ import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.model.Capacity;
 
 import lombok.val;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
-
 import org.ehcache.config.builders.ExpiryPolicyBuilder;
 import org.ehcache.config.builders.ResourcePoolsBuilder;
 import org.ehcache.config.builders.UserManagedCacheBuilder;
@@ -229,6 +227,7 @@ public class X509AuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "x509SubjectDNPrincipalResolver")
     public PrincipalResolver x509SubjectDNPrincipalResolver() {
         val x509 = casProperties.getAuthn().getX509();
+        val subjectDn = x509.getSubjectDn();
         val personDirectory = casProperties.getPersonDirectory();
         val principal = x509.getPrincipal();
         val principalAttribute = StringUtils.defaultIfBlank(principal.getPrincipalAttribute(), personDirectory.getPrincipalAttribute());
@@ -239,7 +238,8 @@ public class X509AuthenticationConfiguration {
             principalAttribute,
             principal.isUseExistingPrincipalId() || personDirectory.isUseExistingPrincipalId(),
             principal.isAttributeResolutionEnabled(),
-            org.springframework.util.StringUtils.commaDelimitedListToSet(principal.getActiveAttributeRepositoryIds()));
+            org.springframework.util.StringUtils.commaDelimitedListToSet(principal.getActiveAttributeRepositoryIds()),
+            subjectDn.getSubjectDnFormat());
     }
 
     @Bean

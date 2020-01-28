@@ -319,6 +319,11 @@ tasks.withType(Test) {
         showExceptions = true
         showCauses = true
     }
+    retry {
+        maxRetries = 3
+        maxFailures = 5
+        failOnPassedAfterRetry = false
+    }
 }
 
 def shouldTest(Project project, String category) {

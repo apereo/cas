@@ -4,6 +4,7 @@ import groovy.lang.Script;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.val;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.util.Map;
 
@@ -16,9 +17,11 @@ import java.util.Map;
 @Getter
 public class GroovyShellScript implements ExecutableCompiledGroovyScript {
     private final transient Script groovyScript;
+    private final transient String script;
 
     @SneakyThrows
     public GroovyShellScript(final String script) {
+        this.script = script;
         this.groovyScript = ScriptingUtils.parseGroovyShellScript(script);
     }
 
@@ -68,5 +71,12 @@ public class GroovyShellScript implements ExecutableCompiledGroovyScript {
             val binding = this.groovyScript.getBinding();
             variables.forEach(binding::setVariable);
         }
+    }
+    
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+            .append("script", script)
+            .toString();
     }
 }

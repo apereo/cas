@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.support.passwordless;
 
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.email.EmailProperties;
+import org.apereo.cas.configuration.model.support.ldap.AbstractLdapSearchProperties;
 import org.apereo.cas.configuration.model.support.sms.SmsProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.RestEndpointProperties;
@@ -50,6 +51,12 @@ public class PasswordlessAuthenticationProperties implements Serializable {
         private Rest rest = new Rest();
 
         /**
+         * Passwordless authentication settings via LDAP.
+         */
+        private Ldap ldap = new Ldap();
+
+
+        /**
          * Passwordless authentication settings via Groovy.
          */
         private Groovy groovy = new Groovy();
@@ -96,6 +103,25 @@ public class PasswordlessAuthenticationProperties implements Serializable {
     @Setter
     public static class Groovy extends SpringResourceProperties {
         private static final long serialVersionUID = 8079027843747126083L;
+    }
+
+    @RequiresModule(name = "cas-server-support-passwordless")
+    @Getter
+    @Setter
+    public static class Ldap extends AbstractLdapSearchProperties {
+        private static final long serialVersionUID = -1102345678378393382L;
+
+        /**
+         * Name of the LDAP attribute that
+         * indicates the user's email address.
+         */
+        private String emailAttribute = "mail";
+
+        /**
+         * Name of the LDAP attribute that
+         * indicates the user's phone.
+         */
+        private String phoneAttribute = "phoneNumber";
     }
 
     @RequiresModule(name = "cas-server-support-passwordless")

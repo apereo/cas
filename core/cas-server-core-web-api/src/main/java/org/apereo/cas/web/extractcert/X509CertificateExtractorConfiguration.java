@@ -3,7 +3,6 @@ package org.apereo.cas.web.extractcert;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 
 import lombok.val;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;

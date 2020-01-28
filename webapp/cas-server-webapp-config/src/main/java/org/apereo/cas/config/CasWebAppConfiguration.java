@@ -12,7 +12,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -29,6 +28,7 @@ import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Optional;
@@ -52,7 +52,6 @@ public class CasWebAppConfiguration implements WebMvcConfigurer {
 
     @RefreshScope
     @Bean
-    @Lazy
     public ThemeChangeInterceptor themeChangeInterceptor() {
         val bean = new ThemeChangeInterceptor();
         bean.setParamName(casProperties.getTheme().getParamName());
@@ -61,7 +60,6 @@ public class CasWebAppConfiguration implements WebMvcConfigurer {
 
     @ConditionalOnMissingBean(name = "localeResolver")
     @Bean
-    @Lazy
     public LocaleResolver localeResolver() {
         val localeProps = casProperties.getLocale();
         val localeCookie = localeProps.getCookie();
@@ -89,7 +87,6 @@ public class CasWebAppConfiguration implements WebMvcConfigurer {
     }
 
     @Bean
-    @Lazy
     protected UrlFilenameViewController passThroughController() {
         return new UrlFilenameViewController();
     }
@@ -110,7 +107,6 @@ public class CasWebAppConfiguration implements WebMvcConfigurer {
     }
 
     @Bean
-    @Lazy
     public SimpleUrlHandlerMapping handlerMapping() {
         val mapping = new SimpleUrlHandlerMapping();
 
@@ -126,7 +122,6 @@ public class CasWebAppConfiguration implements WebMvcConfigurer {
     }
 
     @Bean
-    @Lazy
     public SimpleControllerHandlerAdapter simpleControllerHandlerAdapter() {
         return new SimpleControllerHandlerAdapter();
     }

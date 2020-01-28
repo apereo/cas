@@ -29,15 +29,18 @@ public abstract class AbstractLdapProperties implements Serializable {
      * Ignores keystore-related settings when activated and used.
      */
     private String trustCertificates;
+
     /**
      * Path to the keystore used for SSL connections.
      * Typically contains SSL certificates for the LDAP server.
      */
     private String keystore;
+
     /**
      * Keystore password.
      */
     private String keystorePassword;
+
     /**
      * The type of keystore. {@code PKCS12} or {@code JKS}.
      * If left blank, defaults to the default keystore type indicated
@@ -70,10 +73,12 @@ public abstract class AbstractLdapProperties implements Serializable {
      * Size the pool should be initialized to and pruned to
      */
     private int minPoolSize = 3;
+
     /**
      * Maximum LDAP connection pool size which the pool can use to grow.
      */
     private int maxPoolSize = 10;
+
     /**
      * You may receive unexpected LDAP failures, when CAS is configured to authenticate
      * using DIRECT or AUTHENTICATED types and LDAP is locked down to not allow anonymous binds/searches.
@@ -89,37 +94,45 @@ public abstract class AbstractLdapProperties implements Serializable {
      * to what it should be after each bind request.
      */
     private String poolPassivator = "BIND";
+
     /**
      * Whether connections should be validated when loaned out from the pool.
      */
     private boolean validateOnCheckout = true;
+
     /**
      * Whether connections should be validated periodically when the pool is idle.
      */
     private boolean validatePeriodically = true;
+
     /**
      * Period at which validation operations may time out.
      */
     private String validateTimeout = "PT5S";
+
     /**
      * Period at which pool should be validated.
      */
     private String validatePeriod = "PT5M";
+
     /**
      * Attempt to populate the connection pool early on startup
      * and fail quickly if something goes wrong.
      */
     private boolean failFast = true;
+
     /**
      * Removes connections from the pool based on how long they have been idle in the available queue.
      * Prunes connections that have been idle for more than the indicated amount.
      */
     private String idleTime = "PT10M";
+
     /**
      * Removes connections from the pool based on how long they have been idle in the available queue.
      * Run the pruning process at the indicated interval.
      */
     private String prunePeriod = "PT2H";
+
     /**
      * The length of time the pool will block.
      * By default the pool will block indefinitely and there is no guarantee that
@@ -128,6 +141,7 @@ public abstract class AbstractLdapProperties implements Serializable {
      * number of connections that can be created
      */
     private String blockWaitTime = "PT3S";
+
     /**
      * If multiple URLs are provided as the ldapURL this describes how each URL will be processed.
      * <ul>
@@ -138,27 +152,33 @@ public abstract class AbstractLdapProperties implements Serializable {
      * </ul>
      */
     private String connectionStrategy;
+
     /**
      * The LDAP url to the server. More than one may be specified, separated by space and/or comma.
      */
     private String ldapUrl;
+
     /**
      * Whether TLS should be used and enabled when establishing the connection.
      */
     private boolean useStartTls;
+
     /**
      * Sets the maximum amount of time that connects will block.
      */
     private String connectTimeout = "PT5S";
+
     /**
      * Duration of time to wait for responses.
      */
     private String responseTimeout = "PT5S";
+
     /**
      * Whether search/query results are allowed to match on multiple DNs,
      * or whether a single unique DN is expected for the result.
      */
     private boolean allowMultipleDns;
+
     /**
      * The bind DN to use when connecting to LDAP.
      * LDAP connection configuration injected into the LDAP connection pool can be initialized with the following parameters:
@@ -170,39 +190,48 @@ public abstract class AbstractLdapProperties implements Serializable {
      * </ul>
      */
     private String bindDn;
+
     /**
      * The bind credential to use when connecting to LDAP.
      */
     private String bindCredential;
+
     /**
      * The SASL realm.
      */
     private String saslRealm;
+
     /**
      * The SASL mechanism.
      */
     private String saslMechanism;
+
     /**
      * SASL authorization id.
      */
     private String saslAuthorizationId;
+
     /**
      * SASL security strength.
      */
     private String saslSecurityStrength;
+
     /**
      * SASL mutual auth is enabled?
      */
     private Boolean saslMutualAuth;
+
     /**
      * SASL quality of protected.
      */
     private String saslQualityOfProtection;
+
     /**
      * LDAP connection validator settings.
      */
     @NestedConfigurationProperty
     private LdapValidatorProperties validator = new LdapValidatorProperties();
+
     /**
      * Hostname verification options.
      * Accepted values are {@link LdapHostnameVerifierOptions#DEFAULT} and {@link LdapHostnameVerifierOptions#ANY}.

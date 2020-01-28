@@ -17,15 +17,25 @@
                 <span th:each="err : ${#fields.errors('*')}" th:utext="${err + ' '}"/>
             </div>
 
-            <div class="form-group">
+            <section class="form-group">
                 <label for="token" class="fl-label" th:utext="#{cas.mfa.googleauth.label.token}">Token:</label>
-                <input type="password" class="form-control required" id="token" size="25" tabindex="1"
-                       th:field="*{token}"
-                       th:accesskey="#{screen.welcome.label.password.accesskey}" autocomplete="off"/>
-                <div>
-                    <p/>
+
+                <div class="input-group">
+                    <input type="password" class="form-control required pwd" id="token" size="25" tabindex="1"
+                           th:field="*{token}"
+                           th:accesskey="#{screen.welcome.label.password.accesskey}" autocomplete="off"/>
+                    <span class="input-group-btn">
+                        <button class="btn btn-default reveal-password" type="button">
+                            <i id="reveal-password-icon" class="fa fa-eye reveal-password-icon" aria-hidden="true"></i>
+                        </button>
+                    </span>
                 </div>
+            </section>
+            
+            <div>
+                <p/>
             </div>
+
             <input class="btn btn-submit" accesskey="l"
                    th:value="#{screen.welcome.button.login}" tabindex="4" type="submit"/>
             <input type="hidden" name="_eventId_submit" value="Login"/>

@@ -3,8 +3,8 @@ package org.apereo.cas;
 
 import org.apereo.cas.web.RegisteredServiceResponseHeadersEnforcementFilterTests;
 import org.apereo.cas.web.SimpleUrlValidatorFactoryBeanTests;
-
 import org.apereo.cas.web.WebjarValidationTests;
+
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
 import org.junit.runner.RunWith;
