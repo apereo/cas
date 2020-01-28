@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordA
 import lombok.val;
 import org.junit.jupiter.api.Test;
 
+import javax.security.auth.x500.X500Principal;
 import java.security.cert.X509Certificate;
 import java.util.Optional;
 
@@ -21,7 +22,9 @@ import static org.junit.jupiter.api.Assertions.*;
 public class X509SubjectDNPrincipalResolverTests {
     private static final CasX509Certificate VALID_CERTIFICATE = new CasX509Certificate(true);
 
-    private final X509SubjectDNPrincipalResolver resolver = new X509SubjectDNPrincipalResolver();
+    private final X509SubjectDNPrincipalResolver resolver = new X509SubjectDNPrincipalResolver(null);
+
+    private final X509SubjectDNPrincipalResolver resolverRFC2253 = new X509SubjectDNPrincipalResolver(X500Principal.RFC2253);
 
     @Test
     public void verifyResolvePrincipalInternal() {
@@ -31,6 +34,16 @@ public class X509SubjectDNPrincipalResolverTests {
             Optional.of(CoreAuthenticationTestUtils.getPrincipal()),
             Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler())).getId());
     }
+
+    @Test
+    public void verifyResolvePrincipalInternalRFC2253() {
+        val c = new X509CertificateCredential(new X509Certificate[]{VALID_CERTIFICATE});
+        c.setCertificate(VALID_CERTIFICATE);
+        assertEquals(VALID_CERTIFICATE.getSubjectX500Principal().getName(X500Principal.RFC2253), this.resolverRFC2253.resolve(c,
+            Optional.of(CoreAuthenticationTestUtils.getPrincipal()),
+            Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler())).getId());
+    }
+
 
     @Test
     public void verifySupport() {

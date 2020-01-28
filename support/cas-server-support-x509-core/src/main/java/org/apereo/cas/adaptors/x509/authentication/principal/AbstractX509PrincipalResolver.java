@@ -135,6 +135,14 @@ public abstract class AbstractX509PrincipalResolver extends PersonDirectoryPrinc
             if (subjectPrincipal != null) {
                 attributes.put("subjectX500Principal", CollectionUtils.wrapList(subjectPrincipal.getName()));
             }
+            val issuerDn = certificate.getIssuerDN();
+            if (issuerDn != null) {
+                attributes.put("issuerDn", CollectionUtils.wrapList(issuerDn.getName()));
+            }
+            val issuerPrincipal = certificate.getIssuerX500Principal();
+            if (issuerPrincipal != null) {
+                attributes.put("issuerX500Principal", CollectionUtils.wrapList(issuerPrincipal.getName()));
+            }
             try {
                 val rfc822Email = getRFC822EmailAddress(certificate.getSubjectAlternativeNames());
                 if (rfc822Email != null) {
