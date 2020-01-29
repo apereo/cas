@@ -19,14 +19,4 @@ public interface SmsSender {
     default boolean send(final String from, final String to, final String message) {
         return false;
     }
-
-    /**
-     * No op sms sender.
-     *
-     * @return the sms sender
-     */
-    static SmsSender noOp() {
-        return new SmsSender() {
-        };
-    }
 }
