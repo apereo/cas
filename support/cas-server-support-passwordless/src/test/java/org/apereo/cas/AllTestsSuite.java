@@ -2,8 +2,8 @@ package org.apereo.cas;
 
 import org.apereo.cas.authentication.PasswordlessTokenAuthenticationHandlerTests;
 import org.apereo.cas.impl.account.GroovyPasswordlessUserAccountStoreTests;
-import org.apereo.cas.impl.account.LdapPasswordlessUserAccountStoreTests;
 import org.apereo.cas.impl.account.RestfulPasswordlessUserAccountStoreTests;
+import org.apereo.cas.impl.token.InMemoryPasswordlessTokenRepositoryTests;
 import org.apereo.cas.impl.token.RestfulPasswordlessTokenRepositoryTests;
 
 import org.junit.platform.runner.JUnitPlatform;
@@ -20,7 +20,7 @@ import org.junit.runner.RunWith;
     RestfulPasswordlessTokenRepositoryTests.class,
     RestfulPasswordlessUserAccountStoreTests.class,
     GroovyPasswordlessUserAccountStoreTests.class,
-    LdapPasswordlessUserAccountStoreTests.class,
+    InMemoryPasswordlessTokenRepositoryTests.class,
     PasswordlessTokenAuthenticationHandlerTests.class
 })
 @RunWith(JUnitPlatform.class)

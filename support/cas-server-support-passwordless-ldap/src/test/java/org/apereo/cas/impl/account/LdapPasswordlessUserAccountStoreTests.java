@@ -2,6 +2,7 @@ package org.apereo.cas.impl.account;
 
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
 import org.apereo.cas.api.PasswordlessUserAccountStore;
+import org.apereo.cas.config.LdapPasswordlessAuthenticationConfiguration;
 import org.apereo.cas.impl.BasePasswordlessUserAccountStoreTests;
 import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 
@@ -15,6 +16,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Import;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.TestPropertySource;
 
@@ -24,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * This is {@link LdapPasswordlessUserAccountStoreTests}.
  *
  * @author Misagh Moayyed
- * @since 5.3.0
+ * @since 6.2.0
  */
 @Tag("Ldap")
 @EnabledIfContinuousIntegration
@@ -38,6 +40,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.passwordless.accounts.ldap.phone-attribute=telephoneNumber"
 })
 @Slf4j
+@Import(LdapPasswordlessAuthenticationConfiguration.class)
 public class LdapPasswordlessUserAccountStoreTests extends BasePasswordlessUserAccountStoreTests {
     @Autowired
     @Qualifier("passwordlessUserAccountStore")
@@ -52,7 +55,7 @@ public class LdapPasswordlessUserAccountStoreTests extends BasePasswordlessUserA
         LOGGER.debug("Populating LDAP entries from [{}]", resource);
         LdapIntegrationTestsOperations.populateEntries(localhost, resource.getInputStream(), "ou=people,dc=example,dc=org");
     }
-    
+
     @Test
     public void verifyAction() {
         val user = passwordlessUserAccountStore.findUser("passwordlessuser");
