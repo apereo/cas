@@ -3,9 +3,11 @@ package org.apereo.cas.adaptors.yubikey.web.flow;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.configurer.AbstractCasMultifactorWebflowConfigurer;
 
-import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
+
+import java.util.Optional;
 
 /**
  * This is {@link YubiKeyMultifactorWebflowConfigurer}.
@@ -20,20 +22,17 @@ public class YubiKeyMultifactorWebflowConfigurer extends AbstractCasMultifactorW
      */
     public static final String MFA_YUBIKEY_EVENT_ID = "mfa-yubikey";
 
-    private final FlowDefinitionRegistry yubikeyFlowRegistry;
-
     public YubiKeyMultifactorWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
                                                final FlowDefinitionRegistry loginFlowDefinitionRegistry,
                                                final FlowDefinitionRegistry flowDefinitionRegistry,
-                                               final ApplicationContext applicationContext,
+                                               final ConfigurableApplicationContext applicationContext,
                                                final CasConfigurationProperties casProperties) {
-        super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
-        this.yubikeyFlowRegistry = flowDefinitionRegistry;
+        super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties, Optional.of(flowDefinitionRegistry));
     }
 
     @Override
     protected void doInitialize() {
         registerMultifactorProviderAuthenticationWebflow(getLoginFlow(), MFA_YUBIKEY_EVENT_ID,
-                this.yubikeyFlowRegistry, casProperties.getAuthn().getMfa().getYubikey().getId());
+            casProperties.getAuthn().getMfa().getYubikey().getId());
     }
 }
