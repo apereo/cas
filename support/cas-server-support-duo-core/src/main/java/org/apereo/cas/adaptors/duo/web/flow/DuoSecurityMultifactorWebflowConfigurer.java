@@ -10,6 +10,7 @@ import org.apereo.cas.web.flow.configurer.DynamicFlowModelBuilder;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.config.FlowDefinitionRegistryBuilder;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
@@ -31,6 +32,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link DuoSecurityMultifactorWebflowConfigurer}.
@@ -290,11 +292,17 @@ public class DuoSecurityMultifactorWebflowConfigurer extends AbstractMultifactor
     protected void doInitialize() {
         val duoConfig = casProperties.getAuthn().getMfa().getDuo();
 
-        duoConfig.forEach(duo -> {
-            val duoFlowRegistry = buildDuoFlowRegistry(duo);
-            ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext, duoFlowRegistry, duo.getId());
-            registerMultifactorProviderAuthenticationWebflow(getLoginFlow(), duo.getId(), duo.getId());
-        });
+        var flowRegistryBeans = duoConfig
+            .stream()
+            .map(duo -> {
+                val duoFlowRegistry = buildDuoFlowRegistry(duo);
+                var duoFlowRegistryInstance = ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext, duoFlowRegistry, duo.getId());
+                return Pair.of(duo.getId(), duoFlowRegistryInstance);
+            })
+            .collect(Collectors.toList());
+        val flowRegistries = flowRegistryBeans.stream().map(Pair::getValue).collect(Collectors.toList());
+        getMultifactorAuthenticationFlowDefinitionRegistries().addAll(flowRegistries);
+        flowRegistryBeans.forEach(duo -> registerMultifactorProviderAuthenticationWebflow(getLoginFlow(), duo.getKey(), duo.getKey()));
 
         duoConfig
             .stream()

@@ -23,12 +23,23 @@ import static org.junit.jupiter.api.Assertions.*;
 public class FilterAndDelegateAuditTrailManagerTests {
 
     @Test
+    public void verifyExcludeOperationForAllActions() {
+        val ctx = new AuditActionContext("casuser", "TEST", "TEST",
+            "CAS", new Date(), "1.2.3.4",
+            "1.2.3.4");
+        val mock = new MockAuditTrailManager();
+        val mgr = new FilterAndDelegateAuditTrailManager(List.of(mock), List.of("*"), List.of("TES.+"));
+        mgr.record(ctx);
+        assertTrue(mock.getAuditRecords().isEmpty());
+    }
+    
+    @Test
     public void verifyOperationForAllActions() {
         val ctx = new AuditActionContext("casuser", "TEST", "TEST",
             "CAS", new Date(), "1.2.3.4",
             "1.2.3.4");
         val mock = new MockAuditTrailManager();
-        val mgr = new FilterAndDelegateAuditTrailManager(List.of(mock), List.of("*"));
+        val mgr = new FilterAndDelegateAuditTrailManager(List.of(mock), List.of("*"), List.of());
         mgr.record(ctx);
         assertFalse(mock.getAuditRecords().isEmpty());
     }
@@ -39,7 +50,7 @@ public class FilterAndDelegateAuditTrailManagerTests {
             "CAS", new Date(), "1.2.3.4",
             "1.2.3.4");
         val mock = new MockAuditTrailManager();
-        val mgr = new FilterAndDelegateAuditTrailManager(List.of(mock), List.of("TEST.*"));
+        val mgr = new FilterAndDelegateAuditTrailManager(List.of(mock), List.of("TEST.*"), List.of());
         mgr.record(ctx);
         assertFalse(mock.getAuditRecords().isEmpty());
     }
@@ -50,7 +61,7 @@ public class FilterAndDelegateAuditTrailManagerTests {
             "CAS", new Date(), "1.2.3.4",
             "1.2.3.4");
         val mock = new MockAuditTrailManager();
-        val mgr = new FilterAndDelegateAuditTrailManager(List.of(mock), List.of("PASSED.*"));
+        val mgr = new FilterAndDelegateAuditTrailManager(List.of(mock), List.of("PASSED.*"), List.of());
         mgr.record(ctx);
         assertTrue(mock.getAuditRecords().isEmpty());
     }
@@ -63,7 +74,7 @@ public class FilterAndDelegateAuditTrailManagerTests {
             "1.2.3.4",
             "1.2.3.4");
         val mock = new MockAuditTrailManager();
-        val mgr = new FilterAndDelegateAuditTrailManager(List.of(mock), List.of("TEST.*"));
+        val mgr = new FilterAndDelegateAuditTrailManager(List.of(mock), List.of("TEST.*"), List.of());
         mgr.record(ctx);
         assertFalse(mock.getAuditRecords().isEmpty());
         assertEquals(1, mock.getAuditRecordsSince(LocalDate.now(ZoneOffset.UTC)).size());

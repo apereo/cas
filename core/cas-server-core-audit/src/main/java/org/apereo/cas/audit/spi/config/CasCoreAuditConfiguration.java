@@ -82,16 +82,17 @@ public class CasCoreAuditConfiguration {
 
     @Bean
     public AuditTrailManagementAspect auditTrailManagementAspect() {
-        val supportedActions = casProperties.getAudit().getSupportedActions();
-        val auditManager = new FilterAndDelegateAuditTrailManager(auditTrailExecutionPlan.getObject().getAuditTrailManagers(), supportedActions);
+        val audit = casProperties.getAudit();
+        val auditManager = new FilterAndDelegateAuditTrailManager(auditTrailExecutionPlan.getObject().getAuditTrailManagers(),
+            audit.getSupportedActions(), audit.getExcludedActions());
         val auditRecordResolutionPlan = auditTrailRecordResolutionPlan.getObject();
         val aspect = new AuditTrailManagementAspect(
-            casProperties.getAudit().getAppCode(),
+            audit.getAppCode(),
             auditablePrincipalResolver(auditPrincipalIdProvider()),
             CollectionUtils.wrapList(auditManager),
             auditRecordResolutionPlan.getAuditActionResolvers(),
             auditRecordResolutionPlan.getAuditResourceResolvers());
-        aspect.setFailOnAuditFailures(!casProperties.getAudit().isIgnoreAuditFailures());
+        aspect.setFailOnAuditFailures(!audit.isIgnoreAuditFailures());
         return aspect;
     }
 

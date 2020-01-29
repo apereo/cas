@@ -12,7 +12,10 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
+import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.execution.Action;
+import org.springframework.webflow.test.MockFlowExecutionContext;
+import org.springframework.webflow.test.MockFlowSession;
 import org.springframework.webflow.test.MockRequestContext;
 
 import java.util.Map;
@@ -33,13 +36,15 @@ public class PrepareForPasswordlessAuthenticationActionTests extends BasePasswor
 
     @Test
     public void verifyAction() throws Exception {
-        val context = new MockRequestContext();
+        val exec = new MockFlowExecutionContext(new MockFlowSession(new Flow(CasWebflowConfigurer.FLOW_ID_LOGIN)));
+        val context = new MockRequestContext(exec);
+
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         assertEquals(PasswordlessAuthenticationWebflowConfigurer.TRANSITION_ID_PASSWORDLESS_GET_USERID, initializeLoginAction.execute(context).getId());
+        val account = new PasswordlessUserAccount("casuser", "email", "phone", "casuser", Map.of(), false);
+        WebUtils.putPasswordlessAuthenticationAccount(context, account);
 
-        WebUtils.putPasswordlessAuthenticationAccount(context,
-            new PasswordlessUserAccount("casuser", "email", "phone", "casuser", Map.of()));
         assertEquals("success", initializeLoginAction.execute(context).getId());
     }
 }

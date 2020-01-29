@@ -6,6 +6,7 @@ import org.apereo.cas.web.flow.configurer.CasMultifactorWebflowConfigurer;
 
 import lombok.val;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.core.Ordered;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.Flow;
@@ -28,7 +29,7 @@ public class PasswordlessAuthenticationWebflowConfigurer extends AbstractCasWebf
 
     static final String STATE_ID_PASSWORDLESS_DISPLAY = "passwordlessDisplayUser";
 
-    static final String STATE_ID_DETERMINE_MFA = "determineMultifactorAuthentication";
+    static final String STATE_ID_PASSWORDLESS_DETERMINE_MFA = "determineMultifactorPasswordlessAuthentication";
 
     static final String STATE_ID_PASSWORDLESS_VERIFY_ACCOUNT = "passwordlessVerifyAccount";
 
@@ -41,6 +42,7 @@ public class PasswordlessAuthenticationWebflowConfigurer extends AbstractCasWebf
                                                        final ConfigurableApplicationContext applicationContext,
                                                        final CasConfigurationProperties casProperties) {
         super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
+        setOrder(Ordered.LOWEST_PRECEDENCE);
     }
 
     @Override
@@ -81,12 +83,13 @@ public class PasswordlessAuthenticationWebflowConfigurer extends AbstractCasWebf
     protected void createStateVerifyPasswordlessAccount(final Flow flow) {
         val verifyAccountState = createActionState(flow, STATE_ID_PASSWORDLESS_VERIFY_ACCOUNT, "verifyPasswordlessAccountAuthenticationAction");
         createTransitionForState(verifyAccountState, CasWebflowConstants.TRANSITION_ID_ERROR, STATE_ID_PASSWORDLESS_GET_USERID);
-        createTransitionForState(verifyAccountState, CasWebflowConstants.TRANSITION_ID_SUCCESS, STATE_ID_DETERMINE_MFA);
+        createTransitionForState(verifyAccountState, CasWebflowConstants.TRANSITION_ID_SUCCESS, STATE_ID_PASSWORDLESS_DETERMINE_MFA);
     }
 
     protected void createStateDetermineMultifactorAuthenticationAction(final Flow flow) {
-        val verifyAccountState = createActionState(flow, STATE_ID_DETERMINE_MFA, "determineMultifactorAuthenticationAction");
+        val verifyAccountState = createActionState(flow, STATE_ID_PASSWORDLESS_DETERMINE_MFA, "determineMultifactorPasswordlessAuthenticationAction");
         createTransitionForState(verifyAccountState, CasWebflowConstants.TRANSITION_ID_SUCCESS, STATE_ID_PASSWORDLESS_DISPLAY);
+        createTransitionForState(verifyAccountState, CasWebflowConstants.TRANSITION_ID_ERROR, STATE_ID_PASSWORDLESS_GET_USERID);
 
         val cfgs = applicationContext.getBeansOfType(CasMultifactorWebflowConfigurer.class).values();
         cfgs.forEach(cfg -> {

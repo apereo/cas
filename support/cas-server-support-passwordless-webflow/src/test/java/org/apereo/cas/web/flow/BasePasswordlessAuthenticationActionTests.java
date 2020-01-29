@@ -29,9 +29,11 @@ import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 
 /**
  * This is {@link BasePasswordlessAuthenticationActionTests}.
@@ -75,4 +77,6 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
     "spring.mail.port=25000"
 })
 public class BasePasswordlessAuthenticationActionTests {
+    @Autowired
+    protected ConfigurableApplicationContext applicationContext;
 }

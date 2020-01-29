@@ -6,6 +6,7 @@ import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.ResourceUtils;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -38,7 +39,7 @@ public class FileSystemResourceMetadataResolver extends BaseSamlRegisteredServic
     @Override
     public Collection<? extends MetadataResolver> resolve(final SamlRegisteredService service, final CriteriaSet criteriaSet) {
         try {
-            val metadataLocation = service.getMetadataLocation();
+            val metadataLocation = SpringExpressionLanguageValueResolver.getInstance().resolve(service.getMetadataLocation());
             LOGGER.info("Loading SAML metadata from [{}]", metadataLocation);
             val metadataResource = ResourceUtils.getResourceFrom(metadataLocation);
 
@@ -63,7 +64,7 @@ public class FileSystemResourceMetadataResolver extends BaseSamlRegisteredServic
     @Override
     public boolean supports(final SamlRegisteredService service) {
         try {
-            val metadataLocation = service.getMetadataLocation();
+            val metadataLocation = SpringExpressionLanguageValueResolver.getInstance().resolve(service.getMetadataLocation());
             val metadataResource = ResourceUtils.getResourceFrom(metadataLocation);
             return metadataResource instanceof FileSystemResource;
         } catch (final Exception e) {

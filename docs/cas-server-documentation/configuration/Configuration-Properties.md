@@ -3834,8 +3834,10 @@ To learn more about this topic, [please review this guide](../installation/Audit
 # cas.audit.includeValidationAssertion=false
 # cas.audit.alternateServerAddrHeaderName=
 # cas.audit.alternateClientAddrHeaderName=X-Forwarded-For
-# cas.audit.useServerHostAddress=false
-# cas.audit.supportedActions=AUTHENTICATION_.+,OTHER_\w+_ACTION
+# cas.audit.useServerHostAddress=false  
+
+# cas.audit.supportedActions=*
+# cas.audit.excludedActions=
 ```
 
 ### Slf4j Audits

@@ -879,19 +879,26 @@ public class WebUtils {
      * @return the passwordless authentication account
      */
     public static <T> T getPasswordlessAuthenticationAccount(final Event event, final Class<T> clazz) {
-        return event.getAttributes().get("passwordlessAccount", clazz);
+        if (event != null) {
+            return event.getAttributes().get("passwordlessAccount", clazz);
+        }
+        return null;
     }
 
     /**
      * Gets passwordless authentication account.
      *
      * @param <T>   the type parameter
-     * @param event the event
+     * @param requestContext the context
      * @param clazz the clazz
      * @return the passwordless authentication account
      */
-    public static <T> T getPasswordlessAuthenticationAccount(final RequestContext event, final Class<T> clazz) {
-        return getPasswordlessAuthenticationAccount(event.getCurrentEvent(), clazz);
+    public static <T> T getPasswordlessAuthenticationAccount(final RequestContext requestContext, final Class<T> clazz) {
+        var result = getPasswordlessAuthenticationAccount(requestContext.getCurrentEvent(), clazz);
+        if (result == null) {
+            result = requestContext.getFlowScope().get("passwordlessAccount", clazz);
+        }
+        return result;
     }
 
     /**

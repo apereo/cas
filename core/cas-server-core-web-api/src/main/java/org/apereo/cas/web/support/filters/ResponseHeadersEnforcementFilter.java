@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 /**
@@ -43,10 +44,12 @@ public class ResponseHeadersEnforcementFilter extends AbstractSecurityFilter imp
      * Enable CACHE_CONTROL.
      */
     public static final String INIT_PARAM_ENABLE_CACHE_CONTROL = "enableCacheControl";
+
     /**
      * Enable XCONTENT_OPTIONS.
      */
     public static final String INIT_PARAM_ENABLE_XCONTENT_OPTIONS = "enableXContentTypeOptions";
+
     /**
      * Enable STRICT_TRANSPORT_SECURITY.
      */
@@ -56,6 +59,7 @@ public class ResponseHeadersEnforcementFilter extends AbstractSecurityFilter imp
      * Enable STRICT_XFRAME_OPTIONS.
      */
     public static final String INIT_PARAM_ENABLE_STRICT_XFRAME_OPTIONS = "enableXFrameOptions";
+
     /**
      * The constant INIT_PARAM_STRICT_XFRAME_OPTIONS.
      */
@@ -65,6 +69,7 @@ public class ResponseHeadersEnforcementFilter extends AbstractSecurityFilter imp
      * Enable XSS_PROTECTION.
      */
     public static final String INIT_PARAM_ENABLE_XSS_PROTECTION = "enableXSSProtection";
+
     /**
      * XSS protection value.
      */
@@ -74,7 +79,10 @@ public class ResponseHeadersEnforcementFilter extends AbstractSecurityFilter imp
      * Consent security policy.
      */
     public static final String INIT_PARAM_CONTENT_SECURITY_POLICY = "contentSecurityPolicy";
+
     private static final Pattern CACHE_CONTROL_STATIC_RESOURCES_PATTERN = Pattern.compile(".css|.js|.png|.txt|.jpg|.ico|.jpeg|.bmp|.gif");
+
+    private final Object lock = new Object();
 
     private boolean enableCacheControl;
 
@@ -92,6 +100,7 @@ public class ResponseHeadersEnforcementFilter extends AbstractSecurityFilter imp
     private String strictTransportSecurityHeader = "max-age=15768000 ; includeSubDomains";
 
     private boolean enableXFrameOptions;
+
     private String xframeOptions = "DENY";
 
     private boolean enableXSSProtection;
@@ -200,13 +209,17 @@ public class ResponseHeadersEnforcementFilter extends AbstractSecurityFilter imp
                 val httpServletResponse = (HttpServletResponse) servletResponse;
                 val httpServletRequest = (HttpServletRequest) servletRequest;
 
-                decideInsertCacheControlHeader(httpServletResponse, httpServletRequest);
-                decideInsertStrictTransportSecurityHeader(httpServletResponse, httpServletRequest);
-                decideInsertXContentTypeOptionsHeader(httpServletResponse, httpServletRequest);
-                decideInsertXFrameOptionsHeader(httpServletResponse, httpServletRequest);
-                decideInsertXSSProtectionHeader(httpServletResponse, httpServletRequest);
-                decideInsertContentSecurityPolicyHeader(httpServletResponse, httpServletRequest);
+                val result = prepareFilterBeforeExecution(httpServletResponse, httpServletRequest);
+
+                decideInsertCacheControlHeader(httpServletResponse, httpServletRequest, result);
+                decideInsertStrictTransportSecurityHeader(httpServletResponse, httpServletRequest, result);
+                decideInsertXContentTypeOptionsHeader(httpServletResponse, httpServletRequest, result);
+                decideInsertXFrameOptionsHeader(httpServletResponse, httpServletRequest, result);
+                decideInsertXSSProtectionHeader(httpServletResponse, httpServletRequest, result);
+                decideInsertContentSecurityPolicyHeader(httpServletResponse, httpServletRequest, result);
+
             }
+
         } catch (final Exception e) {
             logException(new ServletException(getClass().getSimpleName()
                 + " is blocking this request. Examine the cause in this stack trace to understand why.", e));
@@ -215,7 +228,17 @@ public class ResponseHeadersEnforcementFilter extends AbstractSecurityFilter imp
         filterChain.doFilter(servletRequest, servletResponse);
     }
 
-    protected void decideInsertContentSecurityPolicyHeader(final HttpServletResponse httpServletResponse, final HttpServletRequest httpServletRequest) {
+    @Override
+    public void destroy() {
+    }
+
+    protected Optional<Object> prepareFilterBeforeExecution(final HttpServletResponse httpServletResponse,
+                                                    final HttpServletRequest httpServletRequest) {
+        return Optional.empty();
+    }
+
+    protected void decideInsertContentSecurityPolicyHeader(final HttpServletResponse httpServletResponse,
+                                                           final HttpServletRequest httpServletRequest, final Optional<Object> result) {
         if (this.contentSecurityPolicy == null) {
             return;
         }
@@ -235,7 +258,8 @@ public class ResponseHeadersEnforcementFilter extends AbstractSecurityFilter imp
         LOGGER.trace("Adding Content-Security-Policy response header [{}] for [{}]", contentSecurityPolicy, uri);
     }
 
-    protected void decideInsertXSSProtectionHeader(final HttpServletResponse httpServletResponse, final HttpServletRequest httpServletRequest) {
+    protected void decideInsertXSSProtectionHeader(final HttpServletResponse httpServletResponse,
+                                                   final HttpServletRequest httpServletRequest, final Optional<Object> result) {
         if (!this.enableXSSProtection) {
             return;
         }
@@ -253,7 +277,9 @@ public class ResponseHeadersEnforcementFilter extends AbstractSecurityFilter imp
         LOGGER.trace("Adding X-XSS Protection [{}] response headers for [{}]", value, uri);
     }
 
-    protected void decideInsertXFrameOptionsHeader(final HttpServletResponse httpServletResponse, final HttpServletRequest httpServletRequest) {
+    protected void decideInsertXFrameOptionsHeader(final HttpServletResponse httpServletResponse,
+                                                   final HttpServletRequest httpServletRequest,
+                                                   final Optional<Object> result) {
         if (!this.enableXFrameOptions) {
             return;
         }
@@ -273,7 +299,9 @@ public class ResponseHeadersEnforcementFilter extends AbstractSecurityFilter imp
         LOGGER.trace("Adding X-Frame Options [{}] response headers for [{}]", value, uri);
     }
 
-    protected void decideInsertXContentTypeOptionsHeader(final HttpServletResponse httpServletResponse, final HttpServletRequest httpServletRequest) {
+    protected void decideInsertXContentTypeOptionsHeader(final HttpServletResponse httpServletResponse,
+                                                         final HttpServletRequest httpServletRequest,
+                                                         final Optional<Object> result) {
         if (!this.enableXContentTypeOptions) {
             return;
         }
@@ -293,7 +321,9 @@ public class ResponseHeadersEnforcementFilter extends AbstractSecurityFilter imp
         LOGGER.trace("Adding X-Content Type response headers [{}] for [{}]", value, uri);
     }
 
-    protected void decideInsertCacheControlHeader(final HttpServletResponse httpServletResponse, final HttpServletRequest httpServletRequest) {
+    protected void decideInsertCacheControlHeader(final HttpServletResponse httpServletResponse,
+                                                  final HttpServletRequest httpServletRequest,
+                                                  final Optional<Object> result) {
         if (!this.enableCacheControl) {
             return;
         }
@@ -317,7 +347,9 @@ public class ResponseHeadersEnforcementFilter extends AbstractSecurityFilter imp
         }
     }
 
-    protected void decideInsertStrictTransportSecurityHeader(final HttpServletResponse httpServletResponse, final HttpServletRequest httpServletRequest) {
+    protected void decideInsertStrictTransportSecurityHeader(final HttpServletResponse httpServletResponse,
+                                                             final HttpServletRequest httpServletRequest,
+                                                             final Optional<Object> result) {
         if (!this.enableStrictTransportSecurity) {
             return;
         }
@@ -338,9 +370,5 @@ public class ResponseHeadersEnforcementFilter extends AbstractSecurityFilter imp
             httpServletResponse.addHeader("Strict-Transport-Security", strictTransportSecurityHeader);
             LOGGER.trace("Adding HSTS response headers for [{}]", uri);
         }
-    }
-
-    @Override
-    public void destroy() {
     }
 }

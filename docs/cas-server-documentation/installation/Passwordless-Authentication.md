@@ -73,7 +73,8 @@ def run(Object[] args) {
     account.setEmail("username@example.org")
     account.setName("TestUser")
     account.setPhone("123-456-7890") 
-    account.setAttributes(Map.of("...", List.of("...", "..."))
+    account.setAttributes(Map.of("...", List.of("...", "...")) 
+    account.setMultifactorAuthenticationEligible(false)
     return account
 }
 ```
@@ -89,7 +90,8 @@ would produce a response body similar to the following:
   "username" : "casuser",
   "email" : "cas@example.org",
   "phone" : "123-456-7890",
-  "name" : "CASUser",
+  "name" : "CASUser",        
+  "multifactorAuthenticationEligible": false,
   "attributes":{ "lastName" : ["...", "..."] }
 }
 ```

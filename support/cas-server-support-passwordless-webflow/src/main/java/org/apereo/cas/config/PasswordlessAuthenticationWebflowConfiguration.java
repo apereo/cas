@@ -12,7 +12,7 @@ import org.apereo.cas.util.io.CommunicationsManager;
 import org.apereo.cas.web.flow.AcceptPasswordlessAuthenticationAction;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
-import org.apereo.cas.web.flow.DetermineMultifactorAuthenticationAction;
+import org.apereo.cas.web.flow.DetermineMultifactorPasswordlessAuthenticationAction;
 import org.apereo.cas.web.flow.DisplayBeforePasswordlessAuthenticationAction;
 import org.apereo.cas.web.flow.PasswordlessAuthenticationWebflowConfigurer;
 import org.apereo.cas.web.flow.PrepareForPasswordlessAuthenticationAction;
@@ -104,13 +104,14 @@ public class PasswordlessAuthenticationWebflowConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean(name = "determineMultifactorAuthenticationAction")
+    @ConditionalOnMissingBean(name = "determineMultifactorPasswordlessAuthenticationAction")
     @RefreshScope
-    public Action determineMultifactorAuthenticationAction() {
-        return new DetermineMultifactorAuthenticationAction(
+    public Action determineMultifactorPasswordlessAuthenticationAction() {
+        return new DetermineMultifactorPasswordlessAuthenticationAction(
             multifactorTriggerSelectionStrategy.getObject(),
             passwordlessPrincipalFactory.getObject(),
-            authenticationSystemSupport.getObject());
+            authenticationSystemSupport.getObject(),
+            casProperties);
     }
 
     @Bean

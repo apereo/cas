@@ -67,7 +67,8 @@ public class GlobalMultifactorAuthenticationTrigger implements MultifactorAuthen
             val provider = providerFound.get();
             return Optional.of(provider);
         }
-        LOGGER.warn("No multifactor provider could be found for [{}]", globalProviderId);
-        throw new AuthenticationException();
+        val message = String.format("No multifactor provider could be found for [%s]", globalProviderId);
+        LOGGER.warn(message, globalProviderId);
+        throw new MultifactorAuthenticationProviderAbsentException(message);
     }
 }

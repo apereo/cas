@@ -123,8 +123,8 @@ public class SamlIdPConfiguration {
     private ObjectProvider<VelocityEngine> velocityEngineFactory;
 
     @Autowired
-    @Qualifier("webApplicationServiceFactory")
-    private ObjectProvider<ServiceFactory> webApplicationServiceFactory;
+    @Qualifier("samlIdPServiceFactory")
+    private ObjectProvider<ServiceFactory> samlIdPServiceFactory;
 
     @Autowired
     @Qualifier("urlValidator")
@@ -187,7 +187,7 @@ public class SamlIdPConfiguration {
     public SamlArtifactTicketFactory samlArtifactTicketFactory() {
         return new DefaultSamlArtifactTicketFactory(samlArtifactTicketExpirationPolicy(),
             openSamlConfigBean.getObject(),
-            webApplicationServiceFactory.getObject());
+            samlIdPServiceFactory.getObject());
     }
 
     @ConditionalOnMissingBean(name = "samlArtifactTicketExpirationPolicy")
@@ -362,7 +362,7 @@ public class SamlIdPConfiguration {
     @RefreshScope
     public SamlAttributeQueryTicketFactory samlAttributeQueryTicketFactory() {
         return new DefaultSamlAttributeQueryTicketFactory(samlAttributeQueryTicketExpirationPolicy(),
-            webApplicationServiceFactory.getObject(),
+            samlIdPServiceFactory.getObject(),
             openSamlConfigBean.getObject());
     }
 
@@ -396,7 +396,9 @@ public class SamlIdPConfiguration {
         };
     }
 
-    private SamlProfileSamlResponseBuilderConfigurationContext.SamlProfileSamlResponseBuilderConfigurationContextBuilder getSamlResponseBuilderConfigurationContextBuilder() {
+    private SamlProfileSamlResponseBuilderConfigurationContext.
+        SamlProfileSamlResponseBuilderConfigurationContextBuilder getSamlResponseBuilderConfigurationContextBuilder() {
+
         return SamlProfileSamlResponseBuilderConfigurationContext.builder()
             .openSamlConfigBean(openSamlConfigBean.getObject())
             .samlObjectSigner(samlObjectSigner())

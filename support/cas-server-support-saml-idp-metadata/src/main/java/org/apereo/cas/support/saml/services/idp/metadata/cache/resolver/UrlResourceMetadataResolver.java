@@ -11,6 +11,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.HttpUtils;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -158,7 +159,7 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
      * @return the metadata location for service
      */
     protected String getMetadataLocationForService(final SamlRegisteredService service, final CriteriaSet criteriaSet) {
-        return service.getMetadataLocation();
+        return SpringExpressionLanguageValueResolver.getInstance().resolve(service.getMetadataLocation());
     }
 
     private void cleanUpExpiredBackupMetadataFilesFor(final AbstractResource metadataResource, final SamlRegisteredService service) {
@@ -216,9 +217,11 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
         if (StringUtils.isBlank(mdFileName)) {
             throw new FileNotFoundException("Unable to determine filename for " + metadataResource);
         }
-        val fileName = SamlUtils.isDynamicMetadataQueryConfigured(service.getMetadataLocation())
+        val metadataLocation = SpringExpressionLanguageValueResolver.getInstance().resolve(service.getMetadataLocation());
+        val fileName = SamlUtils.isDynamicMetadataQueryConfigured(metadataLocation)
                 ? service.getServiceId()
-                : service.getMetadataLocation();
+                : metadataLocation;
+
         val sha = DigestUtils.sha(fileName);
         LOGGER.trace("Metadata backup file for metadata location [{}] is linked to [{}]", fileName, sha);
         return sha;
@@ -240,7 +243,8 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
     @Override
     public boolean isAvailable(final SamlRegisteredService service) {
         if (supports(service)) {
-            val status = HttpRequestUtils.pingUrl(service.getMetadataLocation());
+            val metadataLocation = SpringExpressionLanguageValueResolver.getInstance().resolve(service.getMetadataLocation());
+            val status = HttpRequestUtils.pingUrl(metadataLocation);
             return !status.isError();
         }
         return false;

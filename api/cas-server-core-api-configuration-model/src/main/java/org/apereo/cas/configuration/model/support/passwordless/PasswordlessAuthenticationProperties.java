@@ -39,12 +39,28 @@ public class PasswordlessAuthenticationProperties implements Serializable {
      */
     private Tokens tokens = new Tokens();
 
+    /**
+     * Allow passwordless authentication to skip its own flow
+     * in favor of multifactor authentication providers that may be available
+     * and defined in CAS.
+     * 
+     * If multifactor authentication is activated, and defined MFA triggers
+     * in CAS signal availability and eligibility of an MFA flow for
+     * the given passwordless user, CAS will skip its normal passwordless
+     * authentication flow in favor of the requested multifactor authentication
+     * provider. If no MFA providers are available, or if no triggers require
+     * MFA for the verified passwordless user, passwordless authentication flow
+     * will commence as usual.
+     */
+    private boolean multifactorAuthenticationActivated;
+
     @RequiresModule(name = "cas-server-support-passwordless")
     @Getter
     @Setter
     public static class Accounts implements Serializable {
 
         private static final long serialVersionUID = -8424650395669337488L;
+
         /**
          * Passwordless authentication settings via REST.
          */
@@ -75,6 +91,7 @@ public class PasswordlessAuthenticationProperties implements Serializable {
     public static class Tokens implements Serializable {
 
         private static final long serialVersionUID = 8371063350377031703L;
+
         /**
          * Indicate how long should the token be considered valid.
          */
