@@ -2,6 +2,7 @@ package org.apereo.cas.web.flow;
 
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
 import org.apereo.cas.config.PasswordlessAuthenticationConfiguration;
+import org.apereo.cas.config.PasswordlessAuthenticationWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
 
 import lombok.val;
@@ -22,10 +23,11 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Import({
     ThymeleafAutoConfiguration.class,
-    PasswordlessAuthenticationConfiguration.class,
     CasCoreMultifactorAuthenticationConfiguration.class,
     CasMultifactorAuthenticationWebflowConfiguration.class,
-    BaseWebflowConfigurerTests.SharedTestConfiguration.class
+    BaseWebflowConfigurerTests.SharedTestConfiguration.class,
+    PasswordlessAuthenticationConfiguration.class,
+    PasswordlessAuthenticationWebflowConfiguration.class
 })
 @Tag("Webflow")
 public class PasswordlessAuthenticationWebflowConfigurerTests extends BaseWebflowConfigurerTests {
@@ -43,6 +45,8 @@ public class PasswordlessAuthenticationWebflowConfigurerTests extends BaseWebflo
         state = (TransitionableState) flow.getState(PasswordlessAuthenticationWebflowConfigurer.STATE_ID_PASSWORDLESS_GET_USERID);
         assertNotNull(state);
         state = (TransitionableState) flow.getState(PasswordlessAuthenticationWebflowConfigurer.STATE_ID_PASSWORDLESS_VERIFY_ACCOUNT);
+        assertNotNull(state);
+        state = (TransitionableState) flow.getState(PasswordlessAuthenticationWebflowConfigurer.STATE_ID_PASSWORDLESS_DETERMINE_MFA);
         assertNotNull(state);
     }
 }

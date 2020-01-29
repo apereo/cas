@@ -4,7 +4,6 @@ import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.ServiceFactory;
-import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.InMemoryResourceMetadataResolver;
@@ -103,8 +102,8 @@ public class SamlIdPMetadataConfiguration {
     private ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport;
 
     @Autowired
-    @Qualifier("webApplicationServiceFactory")
-    private ObjectProvider<ServiceFactory<WebApplicationService>> webApplicationServiceFactory;
+    @Qualifier("samlIdPServiceFactory")
+    private ObjectProvider<ServiceFactory> samlIdPServiceFactory;
 
     @Autowired
     @Qualifier("samlProfileSamlResponseBuilder")
@@ -229,7 +228,7 @@ public class SamlIdPMetadataConfiguration {
         return new SSOSamlPostProfileHandlerEndpoint(casProperties,
             servicesManager.getObject(),
             authenticationSystemSupport.getObject(),
-            webApplicationServiceFactory.getObject(),
+            samlIdPServiceFactory.getObject(),
             PrincipalFactoryUtils.newPrincipalFactory(),
             samlProfileSamlResponseBuilder.getObject(),
             defaultSamlRegisteredServiceCachingMetadataResolver(),

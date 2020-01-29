@@ -6,5 +6,5 @@ def run(Object[] args) {
     logger.info("Testing username $username")
 
     return new PasswordlessUserAccount("casuser",
-            "casuser@example.org", "123-456-7890", "CAS", Map.of())
+            "casuser@example.org", "123-456-7890", "CAS", Map.of(), false)
 }

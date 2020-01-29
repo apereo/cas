@@ -35,4 +35,6 @@ public class PasswordlessUserAccount implements Serializable {
 
     @Builder.Default
     private Map<String, List<String>> attributes = new LinkedHashMap<>();
+
+    private boolean multifactorAuthenticationEligible;
 }
