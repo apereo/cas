@@ -61,6 +61,7 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
     }
 
     private static void configureAttributeNameFormat(final Attribute attribute, final String nameFormat) {
+        LOGGER.trace("Configuring Attribute's: [{}] nameFormat: [{}]", attribute, nameFormat);
         if (StringUtils.isBlank(nameFormat)) {
             return;
         }
@@ -125,6 +126,8 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
     public Response newResponse(final String id, final ZonedDateTime issueInstant,
                                 final String recipient, final WebApplicationService service) {
 
+        LOGGER.trace("Creating Response instance for id: [{}], issueInstant: [{}}], recipient: [{}], service: [{}]",
+                id, issueInstant, recipient, service.getOriginalUrl());
         val samlResponse = newSamlObject(Response.class);
         samlResponse.setID(id);
         samlResponse.setIssueInstant(DateTimeUtils.dateTimeOf(issueInstant));
@@ -146,6 +149,7 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
      * @return the status
      */
     public Status newStatus(final String codeValue, final String statusMessage) {
+        LOGGER.trace("Creating new SAML Status for code value: [{}], status message: [{}]", codeValue, statusMessage);
         val status = newSamlObject(Status.class);
         val statusCode = newSamlObject(StatusCode.class);
         statusCode.setValue(codeValue);
@@ -159,7 +163,7 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
     }
 
     /**
-     * Create a new SAML1 response object.
+     * Create a new SAML2 Assertion object.
      *
      * @param authnStatement the authn statement
      * @param issuer         the issuer
@@ -185,6 +189,7 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
      */
     public Assertion newAssertion(final List<Statement> authnStatement, final String issuer,
                                   final ZonedDateTime issuedAt, final String id) {
+        LOGGER.trace("Creating new SAML Assertion with id: [{}], for issuer: [{}], issued at: [{}]", id, issuer, issuedAt);
         val assertion = newSamlObject(Assertion.class);
         assertion.setID(id);
         assertion.setIssueInstant(DateTimeUtils.dateTimeOf(issuedAt));
@@ -207,6 +212,9 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
     public LogoutRequest newLogoutRequest(final String id, final DateTime issueInstant,
                                           final String destination, final Issuer issuer,
                                           final String sessionIndex, final NameID nameId) {
+
+        LOGGER.trace("Creating new SAML LogoutRequest with id: [{}], for issuer: [{}], for destination: [{}], for NameID: [{}],issued at: [{}]",
+                id, issuer, destination, nameId, issueInstant);
         val request = newSamlObject(LogoutRequest.class);
         request.setID(id);
         request.setVersion(SAMLVersion.VERSION_20);
@@ -255,6 +263,8 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
                                                     final Map<String, String> configuredNameFormats,
                                                     final String defaultNameFormat,
                                                     final Saml20AttributeBuilder builder) {
+        LOGGER.trace("Building new SAML AttributeStatement for attributes: {}, friendlyNames: {}, value types: {}, configured name formats: {}, default name format: [{}]",
+                attributes, attributeFriendlyNames, attributeValueTypes, configuredNameFormats, defaultNameFormat);
         val attrStatement = newSamlObject(AttributeStatement.class);
         for (val e : attributes.entrySet()) {
             if (e.getValue() instanceof Collection<?> && ((Collection<?>) e.getValue()).isEmpty()) {
