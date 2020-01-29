@@ -11,14 +11,12 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.impl.account.GroovyPasswordlessUserAccountStore;
-import org.apereo.cas.impl.account.LdapPasswordlessUserAccountStore;
 import org.apereo.cas.impl.account.RestfulPasswordlessUserAccountStore;
 import org.apereo.cas.impl.account.SimplePasswordlessUserAccountStore;
 import org.apereo.cas.impl.token.InMemoryPasswordlessTokenRepository;
 import org.apereo.cas.impl.token.PasswordlessTokenCipherExecutor;
 import org.apereo.cas.impl.token.RestfulPasswordlessTokenRepository;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
@@ -83,12 +81,6 @@ public class PasswordlessAuthenticationConfiguration {
 
         if (StringUtils.isNotBlank(accounts.getRest().getUrl())) {
             return new RestfulPasswordlessUserAccountStore(accounts.getRest());
-        }
-
-        val ldap = accounts.getLdap();
-        if (StringUtils.isNotBlank(ldap.getLdapUrl()) && StringUtils.isNotBlank(ldap.getSearchFilter())) {
-            val connectionFactory = LdapUtils.newLdaptivePooledConnectionFactory(ldap);
-            return new LdapPasswordlessUserAccountStore(connectionFactory, ldap);
         }
 
         var simple = accounts.getSimple()

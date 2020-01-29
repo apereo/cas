@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.support.passwordless;
 
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.email.EmailProperties;
+import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapSearchProperties;
 import org.apereo.cas.configuration.model.support.sms.SmsProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
@@ -71,7 +72,6 @@ public class PasswordlessAuthenticationProperties implements Serializable {
          */
         private Ldap ldap = new Ldap();
 
-
         /**
          * Passwordless authentication settings via Groovy.
          */
@@ -103,6 +103,11 @@ public class PasswordlessAuthenticationProperties implements Serializable {
         private RestTokens rest = new RestTokens();
 
         /**
+         * Passwordless authentication settings via JPA.
+         */
+        private Jpa jpa = new Jpa();
+
+        /**
          * Email settings for notifications.
          */
         @NestedConfigurationProperty
@@ -122,7 +127,7 @@ public class PasswordlessAuthenticationProperties implements Serializable {
         private static final long serialVersionUID = 8079027843747126083L;
     }
 
-    @RequiresModule(name = "cas-server-support-passwordless")
+    @RequiresModule(name = "cas-server-support-passwordless-ldap")
     @Getter
     @Setter
     public static class Ldap extends AbstractLdapSearchProperties {
@@ -139,6 +144,14 @@ public class PasswordlessAuthenticationProperties implements Serializable {
          * indicates the user's phone.
          */
         private String phoneAttribute = "phoneNumber";
+    }
+
+    @RequiresModule(name = "cas-server-support-passwordless-jpa")
+    @Getter
+    @Setter
+    public static class Jpa extends AbstractJpaProperties {
+
+        private static final long serialVersionUID = 7647381223153797806L;
     }
 
     @RequiresModule(name = "cas-server-support-passwordless")

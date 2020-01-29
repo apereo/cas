@@ -156,7 +156,7 @@ then
 fi
 
 cmd="./gradlew $task $coverage $debug -DtestCategoryType=$category $tests \
---build-cache --parallel -x javadoc -x check -DignoreTestFailures=false -DskipNestedConfigMetadataGen=true \
+--build-cache -x javadoc -x check -DignoreTestFailures=false -DskipNestedConfigMetadataGen=true \
 -DskipGradleLint=true -DshowStandardStreams=true --no-daemon --configure-on-demand "
 
 
