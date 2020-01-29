@@ -49,6 +49,16 @@ This strategy simply allows one to locate a user record in an LDAP directory. Th
 or email address via configurable attributes. To see the relevant list of CAS 
 properties, please [review this guide](../configuration/Configuration-Properties.html#passwordless-authentication).
 
+Support is enabled by including the following module in the overlay:
+
+```xml
+<dependency>
+    <groupId>org.apereo.cas</groupId>
+    <artifactId>cas-server-support-passwordless-ldap</artifactId>
+    <version>${cas.version}</version>
+</dependency>
+```
+
 ### Groovy
 
 This strategy allows one to locate user records via a Groovy script. The body of the script may be defined as such:
@@ -105,6 +115,23 @@ The following strategies define how issued tokens may be managed by CAS.
 This is the default option where tokens are kept in memory using a cache with a configurable expiration period. Needless to say, this option 
 is not appropriate in clustered CAS deployments inside there is not a way to synchronize and replicate tokens across CAS nodes.
 
+### JPA
+
+This strategy allows one to store tokens and manage their expiration policy using a relational database.
+
+Support is enabled by including the following module in the overlay:
+
+```xml
+<dependency>
+    <groupId>org.apereo.cas</groupId>
+    <artifactId>cas-server-support-passwordless-jpa</artifactId>
+    <version>${cas.version}</version>
+</dependency>
+```     
+
+To see the relevant list of CAS 
+properties, please [review this guide](../configuration/Configuration-Properties.html#passwordless-authentication).
+
 ### REST
 
 This strategy allows one design REST endpoints in charge of managing tokens and their expiration policy entirely. 
@@ -125,3 +152,17 @@ The following operations need to be supported by the endpoint:
 Users may be notified of tokens via text messages, mail, etc.
 To learn more about available options, please [see this guide](../notifications/SMS-Messaging-Configuration.html)
 or [this guide](../notifications/Sending-Email-Configuration.html).
+
+## Multifactor Authentication Integration
+
+Passwordless authentication can be integrated with [CAS multifactor authentication providers](../mfa/Configuring-Multifactor-Authentication.html). In this scenario,
+once CAS configuration is enabled to support this behavior or the located passwordless user account is considered *eligible* for multifactor authentication,
+CAS will allow passwordless authentication to skip its own *intended normal* flow (i.e. as described above with token generation, etc) in favor of 
+multifactor authentication providers that may be available and defined in CAS.
+
+This means that if [multifactor authentication providers](../mfa/Configuring-Multifactor-Authentication.html) are defined and activated, and defined 
+[multifactor triggers](../mfa/Configuring-Multifactor-Authentication-Triggers.html) in CAS signal availability and eligibility of an multifactor flow for the given passwordless user, CAS will skip 
+its normal passwordless authentication flow in favor of the requested multifactor authentication provider and its flow. If no multifactor providers 
+are available, or if no triggers require the use of multifactor authentication for the verified passwordless user, passwordless 
+authentication flow will commence as usual.
+
