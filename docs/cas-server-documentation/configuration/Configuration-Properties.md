@@ -1674,7 +1674,9 @@ To learn more about this topic, [please review this guide](../installation/Passw
 
 ### Account Stores
 
-```properties
+```properties   
+cas.authn.passwordless.multifactorAuthenticationActivated=false
+
 # cas.authn.passwordless.accounts.simple.casuser=cas@example.org
 # cas.authn.passwordless.accounts.groovy.location=file:/etc/cas/config/pwdless.groovy
 ```
@@ -1700,6 +1702,9 @@ the configuration key `cas.authn.passwordless.tokens.rest`.
 Email notifications settings for this feature are available [here](Configuration-Properties-Common.html#email-notifications) 
 under the configuration key `cas.authn.passwordless.tokens`. SMS notifications settings for this feature are 
 available [here](Configuration-Properties-Common.html#sms-notifications) under the configuration key `cas.authn.passwordless.tokens`.
+
+Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under 
+the configuration key `cas.authn.passwordless.tokens.jpa`.
 
 ## Email Submissions
 
