@@ -5,7 +5,7 @@ import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
 
 import lombok.val;
-import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ViewState;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
@@ -22,7 +22,7 @@ public class SamlIdPMetadataUIWebflowConfigurer extends AbstractCasWebflowConfig
     private final Action samlMetadataUIParserAction;
 
     public SamlIdPMetadataUIWebflowConfigurer(final FlowBuilderServices flowBuilderServices, final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-                                              final Action samlMetadataUIParserAction, final ApplicationContext applicationContext,
+                                              final Action samlMetadataUIParserAction, final ConfigurableApplicationContext applicationContext,
                                               final CasConfigurationProperties casProperties) {
         super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
         this.samlMetadataUIParserAction = samlMetadataUIParserAction;

@@ -3,12 +3,13 @@ package org.apereo.cas.config;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategyConfigurer;
 import org.apereo.cas.authentication.principal.ServiceFactory;
-import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.authentication.principal.ServiceFactoryConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.support.saml.authentication.SamlIdPServiceFactory;
 import org.apereo.cas.support.saml.services.SamlIdPEntityIdAuthenticationServiceSelectionStrategy;
+import org.apereo.cas.util.CollectionUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -27,14 +28,10 @@ public class SamlIdPAuthenticationServiceSelectionStrategyConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    @Autowired
-    @Qualifier("webApplicationServiceFactory")
-    private ServiceFactory<WebApplicationService> webApplicationServiceFactory;
-
     @ConditionalOnMissingBean(name = "samlIdPEntityIdValidationServiceSelectionStrategy")
     @Bean
     public AuthenticationServiceSelectionStrategy samlIdPEntityIdValidationServiceSelectionStrategy() {
-        return new SamlIdPEntityIdAuthenticationServiceSelectionStrategy(webApplicationServiceFactory,
+        return new SamlIdPEntityIdAuthenticationServiceSelectionStrategy(samlIdPServiceFactory(),
             casProperties.getServer().getPrefix());
     }
 
@@ -43,4 +40,13 @@ public class SamlIdPAuthenticationServiceSelectionStrategyConfiguration {
         return plan -> plan.registerStrategy(samlIdPEntityIdValidationServiceSelectionStrategy());
     }
 
+    @Bean
+    public ServiceFactory samlIdPServiceFactory() {
+        return new SamlIdPServiceFactory();
+    }
+
+    @Bean
+    public ServiceFactoryConfigurer samlIdPServiceFactoryConfigurer() {
+        return () -> CollectionUtils.wrap(samlIdPServiceFactory());
+    }
 }

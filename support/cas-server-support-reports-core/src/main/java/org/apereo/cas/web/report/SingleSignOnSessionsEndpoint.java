@@ -14,10 +14,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.actuate.endpoint.annotation.DeleteOperation;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.boot.actuate.endpoint.annotation.Selector;
+import org.springframework.lang.Nullable;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -169,11 +171,25 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
     /**
      * Destroy sso sessions map.
      *
-     * @param type the type
+     * @param type     the type
+     * @param username the username
      * @return the map
      */
     @DeleteOperation
-    public Map<String, Object> destroySsoSessions(final String type) {
+    public Map<String, Object> destroySsoSessions(@Nullable final String type, @Nullable final String username) {
+
+        if (StringUtils.isBlank(username) && StringUtils.isBlank(type)) {
+            return Map.of(STATUS, HttpServletResponse.SC_BAD_REQUEST);
+        }
+
+        if (StringUtils.isNotBlank(username)) {
+            val sessionsMap = new HashMap<String, Object>(1);
+            val tickets = centralAuthenticationService.getTickets(ticket -> ticket instanceof TicketGrantingTicket
+                && ((TicketGrantingTicket) ticket).getAuthentication().getPrincipal().getId().equalsIgnoreCase(username));
+            tickets.forEach(ticket -> sessionsMap.put(ticket.getId(), destroySsoSession(ticket.getId())));
+            return sessionsMap;
+        }
+
         val sessionsMap = new HashMap<String, Object>();
         val failedTickets = new HashMap<String, String>();
         val option = SsoSessionReportOptions.valueOf(type);

@@ -41,7 +41,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
-import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
@@ -70,7 +70,7 @@ public class CasCoreAuditConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Autowired
-    private ApplicationContext applicationContext;
+    private ConfigurableApplicationContext applicationContext;
 
     @Autowired
     @Qualifier("auditTrailExecutionPlan")
@@ -82,16 +82,17 @@ public class CasCoreAuditConfiguration {
 
     @Bean
     public AuditTrailManagementAspect auditTrailManagementAspect() {
-        val supportedActions = casProperties.getAudit().getSupportedActions();
-        val auditManager = new FilterAndDelegateAuditTrailManager(auditTrailExecutionPlan.getObject().getAuditTrailManagers(), supportedActions);
+        val audit = casProperties.getAudit();
+        val auditManager = new FilterAndDelegateAuditTrailManager(auditTrailExecutionPlan.getObject().getAuditTrailManagers(),
+            audit.getSupportedActions(), audit.getExcludedActions());
         val auditRecordResolutionPlan = auditTrailRecordResolutionPlan.getObject();
         val aspect = new AuditTrailManagementAspect(
-            casProperties.getAudit().getAppCode(),
+            audit.getAppCode(),
             auditablePrincipalResolver(auditPrincipalIdProvider()),
             CollectionUtils.wrapList(auditManager),
             auditRecordResolutionPlan.getAuditActionResolvers(),
             auditRecordResolutionPlan.getAuditResourceResolvers());
-        aspect.setFailOnAuditFailures(!casProperties.getAudit().isIgnoreAuditFailures());
+        aspect.setFailOnAuditFailures(!audit.isIgnoreAuditFailures());
         return aspect;
     }
 

@@ -48,10 +48,15 @@ import javax.servlet.http.HttpServletRequest;
 @RequiredArgsConstructor
 public class ServiceTicketResource {
     private final AuthenticationSystemSupport authenticationSystemSupport;
+
     private final TicketRegistrySupport ticketRegistrySupport;
+
     private final ArgumentExtractor argumentExtractor;
+
     private final ServiceTicketResourceEntityResponseFactory serviceTicketResourceEntityResponseFactory;
+
     private final RestHttpRequestCredentialFactory credentialFactory;
+
     private final ApplicationContext applicationContext;
 
     /**
@@ -85,13 +90,13 @@ public class ServiceTicketResource {
                     authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, credential);
 
                 return this.serviceTicketResourceEntityResponseFactory.build(tgtId, service, authenticationResult);
-            } else {
-                val builder = new DefaultAuthenticationResultBuilder();
-                val authenticationResult = builder
-                    .collect(authn)
-                    .build(this.authenticationSystemSupport.getPrincipalElectionStrategy(), service);
-                return this.serviceTicketResourceEntityResponseFactory.build(tgtId, service, authenticationResult);
             }
+            val builder = new DefaultAuthenticationResultBuilder();
+            val authenticationResult = builder
+                .collect(authn)
+                .build(this.authenticationSystemSupport.getPrincipalElectionStrategy(), service);
+            return this.serviceTicketResourceEntityResponseFactory.build(tgtId, service, authenticationResult);
+
         } catch (final InvalidTicketException e) {
             return new ResponseEntity<>(tgtId + " could not be found or is considered invalid", HttpStatus.NOT_FOUND);
         } catch (final AuthenticationException e) {

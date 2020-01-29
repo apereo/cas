@@ -5,7 +5,7 @@ import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
 
 import lombok.val;
-import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ViewState;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
@@ -24,7 +24,7 @@ public class OAuth20WebflowConfigurer extends AbstractCasWebflowConfigurer {
     public OAuth20WebflowConfigurer(final FlowBuilderServices flowBuilderServices,
                                     final FlowDefinitionRegistry loginFlowDefinitionRegistry,
                                     final Action oauth20RegisteredServiceUIAction,
-                                    final ApplicationContext applicationContext,
+                                    final ConfigurableApplicationContext applicationContext,
                                     final CasConfigurationProperties casProperties) {
         super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
         this.oauth20RegisteredServiceUIAction = oauth20RegisteredServiceUIAction;

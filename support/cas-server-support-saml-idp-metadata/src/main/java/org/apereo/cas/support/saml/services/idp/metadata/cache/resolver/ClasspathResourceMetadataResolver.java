@@ -5,6 +5,7 @@ import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.ResourceUtils;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -31,7 +32,7 @@ public class ClasspathResourceMetadataResolver extends BaseSamlRegisteredService
 
     @Override
     public Collection<? extends MetadataResolver> resolve(final SamlRegisteredService service, final CriteriaSet criteriaSet) {
-        val metadataLocation = service.getMetadataLocation();
+        val metadataLocation = SpringExpressionLanguageValueResolver.getInstance().resolve(service.getMetadataLocation());
         LOGGER.info("Loading SAML metadata from [{}]", metadataLocation);
         try (val in = ResourceUtils.getResourceFrom(metadataLocation).getInputStream()) {
             LOGGER.debug("Parsing metadata from [{}]", metadataLocation);
@@ -50,7 +51,7 @@ public class ClasspathResourceMetadataResolver extends BaseSamlRegisteredService
     @Override
     public boolean supports(final SamlRegisteredService service) {
         try {
-            val metadataLocation = service.getMetadataLocation();
+            val metadataLocation = SpringExpressionLanguageValueResolver.getInstance().resolve(service.getMetadataLocation());
             val metadataResource = ResourceUtils.getResourceFrom(metadataLocation);
             return metadataResource instanceof ClassPathResource;
         } catch (final Exception e) {

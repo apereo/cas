@@ -271,6 +271,12 @@ public class X509Properties implements Serializable {
     }
 
     /**
+     * Principal resolver properties for SUBJECT_DN resolver type.
+     */
+    @NestedConfigurationProperty
+    private SubjectDnPrincipalResolverProperties subjectDn = new SubjectDnPrincipalResolverProperties();
+
+    /**
      * Principal resolver properties for CN_EDIPI resolver type.
      */
     @NestedConfigurationProperty

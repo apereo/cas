@@ -10,7 +10,7 @@ import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
-import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.Flow;
@@ -50,7 +50,7 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
 
     public PasswordManagementWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
                                                final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-                                               final ApplicationContext applicationContext,
+                                               final ConfigurableApplicationContext applicationContext,
                                                final CasConfigurationProperties casProperties,
                                                final Action initPasswordChangeAction) {
         super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);

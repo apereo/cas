@@ -5,7 +5,7 @@ import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.configurer.AbstractCasMultifactorWebflowConfigurer;
 
 import lombok.val;
-import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.action.EventFactorySupport;
@@ -14,6 +14,8 @@ import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
+
+import java.util.Optional;
 
 /**
  * This is {@link AccepttoMultifactorWebflowConfigurer}.
@@ -28,15 +30,12 @@ public class AccepttoMultifactorWebflowConfigurer extends AbstractCasMultifactor
      */
     public static final String MFA_ACCEPTTO_EVENT_ID = "mfa-acceptto";
 
-    private final FlowDefinitionRegistry flowDefinitionRegistry;
-
     public AccepttoMultifactorWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
                                                 final FlowDefinitionRegistry loginFlowDefinitionRegistry,
                                                 final FlowDefinitionRegistry flowDefinitionRegistry,
-                                                final ApplicationContext applicationContext,
+                                                final ConfigurableApplicationContext applicationContext,
                                                 final CasConfigurationProperties casProperties) {
-        super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
-        this.flowDefinitionRegistry = flowDefinitionRegistry;
+        super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties, Optional.of(flowDefinitionRegistry));
     }
 
     @Override
@@ -45,7 +44,7 @@ public class AccepttoMultifactorWebflowConfigurer extends AbstractCasMultifactor
 
         if (flow != null) {
             registerMultifactorProviderAuthenticationWebflow(flow, MFA_ACCEPTTO_EVENT_ID,
-                this.flowDefinitionRegistry, casProperties.getAuthn().getMfa().getAcceptto().getId());
+                casProperties.getAuthn().getMfa().getAcceptto().getId());
             val startState = getStartState(flow);
             addActionsToActionStateExecutionListAt(flow, startState.getId(), 0,
                 createEvaluateAction("mfaAccepttoMultifactorValidateChannelAction"));
