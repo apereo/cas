@@ -223,9 +223,9 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
             LOGGER.warn("Principal resolution for authentication by [{}] produced a null principal.", authenticationHandlerName);
         } else {
             builder.setPrincipal(principal);
+            LOGGER.debug("Final principal resolved for this authentication event is [{}]", principal);
+            publishEvent(new CasAuthenticationPrincipalResolvedEvent(this, principal));
         }
-        LOGGER.debug("Final principal resolved for this authentication event is [{}]", principal);
-        publishEvent(new CasAuthenticationPrincipalResolvedEvent(this, principal));
     }
 
 

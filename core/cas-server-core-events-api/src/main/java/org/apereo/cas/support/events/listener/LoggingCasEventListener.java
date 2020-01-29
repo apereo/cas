@@ -10,6 +10,7 @@ import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketDestroyedEven
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 
@@ -79,7 +80,12 @@ public class LoggingCasEventListener {
     @EventListener
     @Async
     public void logAuthenticationPrincipalResolvedEvent(final CasAuthenticationPrincipalResolvedEvent e) {
-        LOGGER.debug(PRINCIPAL_RESOLVED_MSG, e.getPrincipal().getId(), e.getPrincipal().getAttributes());
+        var principal = e.getPrincipal();
+        if (principal != null) {
+            LOGGER.debug(PRINCIPAL_RESOLVED_MSG, principal.getId(), principal.getAttributes());
+        } else {
+            LOGGER.debug(PRINCIPAL_RESOLVED_MSG, StringUtils.EMPTY, StringUtils.EMPTY);
+        }
     }
 
     /**
