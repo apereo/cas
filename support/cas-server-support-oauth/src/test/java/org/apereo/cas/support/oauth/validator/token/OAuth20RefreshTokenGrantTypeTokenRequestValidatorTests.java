@@ -7,6 +7,7 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.authentication.principal.OAuthApplicationServiceFactory;
 import org.apereo.cas.support.oauth.authenticator.Authenticators;
+import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -71,6 +72,12 @@ public class OAuth20RefreshTokenGrantTypeTokenRequestValidatorTests {
             RequestValidatorTestUtils.SHARED_SECRET);
         when(servicesManager.getAllServices()).thenReturn(CollectionUtils.wrapList(supportingService,
             nonSupportingService, promiscuousService));
+        when(servicesManager.findServiceBy(RequestValidatorTestUtils.SUPPORTING_CLIENT_ID, OAuthRegisteredService.class))
+                .thenReturn(supportingService);
+        when(servicesManager.findServiceBy(RequestValidatorTestUtils.NON_SUPPORTING_CLIENT_ID, OAuthRegisteredService.class))
+                .thenReturn(nonSupportingService);
+        when(servicesManager.findServiceBy(RequestValidatorTestUtils.PROMISCUOUS_CLIENT_ID, OAuthRegisteredService.class))
+                .thenReturn(promiscuousService);
 
         this.ticketRegistry = mock(TicketRegistry.class);
 

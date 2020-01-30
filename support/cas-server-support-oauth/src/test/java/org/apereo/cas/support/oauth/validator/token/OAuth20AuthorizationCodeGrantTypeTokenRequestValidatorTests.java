@@ -1,7 +1,6 @@
 package org.apereo.cas.support.oauth.validator.token;
 
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
-import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyAuditableEnforcer;
@@ -9,6 +8,7 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
+import org.apereo.cas.support.oauth.authentication.principal.OAuthApplicationServiceFactory;
 import org.apereo.cas.support.oauth.authenticator.Authenticators;
 import org.apereo.cas.support.oauth.authenticator.OAuth20CasAuthenticationBuilder;
 import org.apereo.cas.support.oauth.profile.DefaultOAuth20ProfileScopeToAttributesFilter;
@@ -61,7 +61,7 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests extends
     private void registerTicket(final String name, final OAuthRegisteredService service) {
         val builder = new OAuth20CasAuthenticationBuilder(
             PrincipalFactoryUtils.newPrincipalFactory(),
-            new WebApplicationServiceFactory(),
+            new OAuthApplicationServiceFactory(),
             new DefaultOAuth20ProfileScopeToAttributesFilter(),
             new CasConfigurationProperties());
         val oauthCasAuthenticationBuilderService = builder.buildService(service, null, false);
@@ -119,11 +119,17 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests extends
                 supportingService,
                 nonSupportingService,
                 promiscuousService));
+        when(serviceManager.findServiceBy(RequestValidatorTestUtils.SUPPORTING_CLIENT_ID, OAuthRegisteredService.class))
+                .thenReturn(supportingService);
+        when(serviceManager.findServiceBy(RequestValidatorTestUtils.NON_SUPPORTING_CLIENT_ID, OAuthRegisteredService.class))
+                .thenReturn(nonSupportingService);
+        when(serviceManager.findServiceBy(RequestValidatorTestUtils.PROMISCUOUS_CLIENT_ID, OAuthRegisteredService.class))
+                .thenReturn(promiscuousService);
 
         val context = OAuth20ConfigurationContext.builder()
             .servicesManager(serviceManager)
             .ticketRegistry(mockingTicketRegistry)
-            .webApplicationServiceServiceFactory(new WebApplicationServiceFactory())
+            .webApplicationServiceServiceFactory(new OAuthApplicationServiceFactory())
             .registeredServiceAccessStrategyEnforcer(new RegisteredServiceAccessStrategyAuditableEnforcer())
             .build();
 

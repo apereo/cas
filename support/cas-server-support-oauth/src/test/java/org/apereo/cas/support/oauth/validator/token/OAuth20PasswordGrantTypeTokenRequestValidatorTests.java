@@ -1,11 +1,11 @@
 package org.apereo.cas.support.oauth.validator.token;
 
-import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyAuditableEnforcer;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
+import org.apereo.cas.support.oauth.authentication.principal.OAuthApplicationServiceFactory;
 import org.apereo.cas.support.oauth.authenticator.Authenticators;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
@@ -60,10 +60,16 @@ public class OAuth20PasswordGrantTypeTokenRequestValidatorTests {
 
         when(serviceManager.getAllServices()).thenReturn(CollectionUtils.wrapList(
                 supportingService, nonSupportingService, promiscuousService));
+        when(serviceManager.findServiceBy(RequestValidatorTestUtils.SUPPORTING_CLIENT_ID, OAuthRegisteredService.class))
+                .thenReturn(supportingService);
+        when(serviceManager.findServiceBy(RequestValidatorTestUtils.NON_SUPPORTING_CLIENT_ID, OAuthRegisteredService.class))
+                .thenReturn(nonSupportingService);
+        when(serviceManager.findServiceBy(RequestValidatorTestUtils.PROMISCUOUS_CLIENT_ID, OAuthRegisteredService.class))
+                .thenReturn(promiscuousService);
 
         val context = OAuth20ConfigurationContext.builder()
             .servicesManager(serviceManager)
-            .webApplicationServiceServiceFactory(new WebApplicationServiceFactory())
+            .webApplicationServiceServiceFactory(new OAuthApplicationServiceFactory())
             .registeredServiceAccessStrategyEnforcer(new RegisteredServiceAccessStrategyAuditableEnforcer())
             .build();
         this.validator = new OAuth20PasswordGrantTypeTokenRequestValidator(context);

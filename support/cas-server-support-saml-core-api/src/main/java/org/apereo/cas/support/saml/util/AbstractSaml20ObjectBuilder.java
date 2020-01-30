@@ -127,7 +127,7 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
                                 final String recipient, final WebApplicationService service) {
 
         LOGGER.trace("Creating Response instance for id: [{}], issueInstant: [{}}], recipient: [{}], service: [{}]",
-                id, issueInstant, recipient, service.getOriginalUrl());
+                id, issueInstant, recipient, service != null ? service.getOriginalUrl() : "null");
         val samlResponse = newSamlObject(Response.class);
         samlResponse.setID(id);
         samlResponse.setIssueInstant(DateTimeUtils.dateTimeOf(issueInstant));
