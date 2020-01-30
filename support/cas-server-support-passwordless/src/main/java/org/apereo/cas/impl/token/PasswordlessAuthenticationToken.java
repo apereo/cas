@@ -44,7 +44,7 @@ public class PasswordlessAuthenticationToken implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native", strategy = "native")
     @JsonProperty
-    private long id = -1;
+    private long id;
 
     @Column(nullable = false)
     private String username;

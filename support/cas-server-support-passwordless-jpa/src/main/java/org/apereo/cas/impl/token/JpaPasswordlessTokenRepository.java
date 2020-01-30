@@ -1,6 +1,5 @@
 package org.apereo.cas.impl.token;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,7 +15,6 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Slf4j
 @EnableTransactionManagement(proxyTargetClass = true)
 @Transactional(transactionManager = "passwordlessTransactionManager")
 public class JpaPasswordlessTokenRepository extends BasePasswordlessTokenRepository {
