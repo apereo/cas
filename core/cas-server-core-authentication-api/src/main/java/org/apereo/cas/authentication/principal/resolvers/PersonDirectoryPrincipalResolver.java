@@ -10,6 +10,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.util.CollectionUtils;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -93,7 +94,9 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
     /**
      * Map to store objects to synchronize on for retrieval of attributes one at a time per user.
      */
-    protected Map<String, PersonAttributeRetriever> retrieverMap = new HashMap<>();
+    @Getter(AccessLevel.NONE)
+    @ToString.Exclude
+    private Map<String, PersonAttributeRetriever> retrieverMap = new HashMap<>();
 
     public PersonDirectoryPrincipalResolver() {
         this(new StubPersonAttributeDao(new HashMap<>(0)), PrincipalFactoryUtils.newPrincipalFactory(), false,
@@ -330,10 +333,12 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
     @RequiredArgsConstructor
     @Getter
     @Setter
+    @ToString
     public class PersonAttributeRetriever {
 
         private final String principalId;
 
+        @ToString.Exclude
         private final Credential credential;
 
         @Synchronized
