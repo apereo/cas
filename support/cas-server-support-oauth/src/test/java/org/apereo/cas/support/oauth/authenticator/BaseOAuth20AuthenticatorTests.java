@@ -23,6 +23,7 @@ import org.apereo.cas.config.CasOAuth20Configuration;
 import org.apereo.cas.config.CasOAuth20ServicesConfiguration;
 import org.apereo.cas.config.CasOAuth20TicketSerializationConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
+import org.apereo.cas.config.OAuthWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
@@ -80,7 +81,8 @@ import static org.mockito.Mockito.*;
     CasOAuth20ComponentSerializationConfiguration.class,
     CasOAuth20Configuration.class,
     CasOAuth20ServicesConfiguration.class,
-    CasOAuth20TicketSerializationConfiguration.class
+    CasOAuth20TicketSerializationConfiguration.class,
+    OAuthWebApplicationServiceFactoryConfiguration.class
 })
 @DirtiesContext
 @EnableConfigurationProperties(CasConfigurationProperties.class)

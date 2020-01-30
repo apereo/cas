@@ -1,8 +1,5 @@
 package org.apereo.cas.support.oauth;
 
-import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.support.oauth.util.OAuth20Utils;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -28,11 +25,8 @@ public class OAuth20ClientIdAwareProfileManager<U extends CommonProfile> extends
 
     private static final String SESSION_CLIENT_ID = "oauthClientId";
 
-    private final ServicesManager servicesManager;
-
-    public OAuth20ClientIdAwareProfileManager(final WebContext context, final SessionStore sessionStore, final ServicesManager servicesManager) {
+    public OAuth20ClientIdAwareProfileManager(final WebContext context, final SessionStore sessionStore) {
         super(context, sessionStore);
-        this.servicesManager = servicesManager;
     }
 
     @Override

@@ -9,7 +9,6 @@ import org.apereo.cas.support.saml.authentication.principal.Saml20WebApplication
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
 import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.Collection;

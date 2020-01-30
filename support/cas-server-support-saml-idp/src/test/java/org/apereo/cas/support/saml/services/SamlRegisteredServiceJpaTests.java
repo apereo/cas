@@ -49,7 +49,7 @@ public class SamlRegisteredServiceJpaTests extends BaseSamlIdPConfigurationTests
         servicesManager.save(service);
         servicesManager.load();
         val services = servicesManager.getAllServices();
-        assertEquals(2, services.size());
+        assertEquals(1, services.size());
         services.forEach(s -> servicesManager.delete(s.getId()));
         assertEquals(0, servicesManager.count());
     }

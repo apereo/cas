@@ -33,6 +33,7 @@ import org.apereo.cas.config.CasOAuth20Configuration;
 import org.apereo.cas.config.CasOAuth20ThrottleConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CasThrottlingConfiguration;
+import org.apereo.cas.config.OAuthWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
@@ -153,7 +154,8 @@ import static org.mockito.Mockito.*;
     RefreshAutoConfiguration.class,
     CasCoreLogoutConfiguration.class,
     CasCoreUtilConfiguration.class,
-    CasCoreWebConfiguration.class
+    CasCoreWebConfiguration.class,
+    OAuthWebApplicationServiceFactoryConfiguration.class
 })
 @DirtiesContext
 @EnableConfigurationProperties(CasConfigurationProperties.class)

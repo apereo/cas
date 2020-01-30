@@ -1,7 +1,6 @@
 package org.apereo.cas.support.oauth.validator.token;
 
 import org.apereo.cas.audit.AuditableContext;
-import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
@@ -39,16 +38,13 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidator extends Base
         val request = context.getNativeRequest();
         val clientId = uProfile.getId();
         val redirectUri = request.getParameter(OAuth20Constants.REDIRECT_URI);
-        
-        LOGGER.debug("Locating registered service for client id [{}]", clientId);
-        val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(
+        val clientRegisteredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(
             getConfigurationContext().getServicesManager(), clientId);
-        RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
-        
+
         LOGGER.debug("Received grant type [{}] with client id [{}] and redirect URI [{}]", grantType, clientId, redirectUri);
         val valid = HttpRequestUtils.doesParameterExist(request, OAuth20Constants.REDIRECT_URI)
             && HttpRequestUtils.doesParameterExist(request, OAuth20Constants.CODE)
-            && OAuth20Utils.checkCallbackValid(registeredService, redirectUri);
+            && OAuth20Utils.checkCallbackValid(clientRegisteredService, redirectUri);
 
         if (valid) {
             val code = context.getRequestParameter(OAuth20Constants.CODE)
@@ -72,14 +68,14 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidator extends Base
             val accessResult = getConfigurationContext().getRegisteredServiceAccessStrategyEnforcer().execute(audit);
             accessResult.throwExceptionIfNeeded();
 
-            if (!registeredService.equals(codeRegisteredService)) {
+            if (!clientRegisteredService.equals(codeRegisteredService)) {
                 LOGGER.warn("The OAuth code [{}] issued to service [{}] does not match the registered service [{}] provided in the request given the redirect URI [{}]",
-                    code, id, registeredService.getName(), redirectUri);
+                    code, id, clientRegisteredService.getName(), redirectUri);
                 return false;
             }
 
-            if (!isGrantTypeSupportedBy(registeredService, grantType)) {
-                LOGGER.warn("Requested grant type [{}] is not authorized by service definition [{}]", getGrantType(), registeredService.getServiceId());
+            if (!isGrantTypeSupportedBy(clientRegisteredService, grantType)) {
+                LOGGER.warn("Requested grant type [{}] is not authorized by service definition [{}]", getGrantType(), clientRegisteredService.getServiceId());
                 return false;
             }
 

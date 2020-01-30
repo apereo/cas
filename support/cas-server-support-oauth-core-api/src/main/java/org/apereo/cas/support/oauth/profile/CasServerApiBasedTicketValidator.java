@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-
 import org.jasig.cas.client.authentication.AttributePrincipalImpl;
 import org.jasig.cas.client.validation.Assertion;
 import org.jasig.cas.client.validation.AssertionImpl;

@@ -23,6 +23,7 @@ import org.apereo.cas.config.CasWsSecurityTokenTicketCatalogConfiguration;
 import org.apereo.cas.config.JpaTicketRegistryConfiguration;
 import org.apereo.cas.config.JpaTicketRegistryTicketCatalogConfiguration;
 import org.apereo.cas.config.OAuth20ProtocolTicketCatalogConfiguration;
+import org.apereo.cas.config.OAuthWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -84,7 +85,8 @@ import static org.junit.jupiter.api.Assertions.assertNull;
     CasCookieConfiguration.class,
     OAuth20ProtocolTicketCatalogConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
-    CasWsSecurityTokenTicketCatalogConfiguration.class
+    CasWsSecurityTokenTicketCatalogConfiguration.class,
+    OAuthWebApplicationServiceFactoryConfiguration.class
 })
 @Transactional(transactionManager = "ticketTransactionManager", isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
 @ResourceLock("oauth-jpa-tickets")

@@ -110,6 +110,11 @@ public interface CasProtocolConstants {
      */
     String PARAMETER_PROXY_GRANTING_TICKET_URL = "pgtUrl";
 
+    /**
+     * Constant representing the client_id in the request.
+     */
+    String PARAMETER_CLIENT_ID = "client_id";
+
     /* CAS Protocol Error Codes. **/
 
     /**

@@ -4,6 +4,7 @@ import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfig
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasOAuth20AuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.CasOAuth20WebflowConfiguration;
+import org.apereo.cas.config.OAuthWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 
@@ -26,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
     ThymeleafAutoConfiguration.class,
     CasCoreConfiguration.class,
     CasOAuth20AuthenticationServiceSelectionStrategyConfiguration.class,
+    OAuthWebApplicationServiceFactoryConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     CasOAuth20WebflowConfiguration.class,
     BaseWebflowConfigurerTests.SharedTestConfiguration.class

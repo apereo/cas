@@ -59,4 +59,10 @@ public class DefaultServicesManager extends AbstractServicesManager {
     public boolean supports(final RegisteredService service) {
         return service != null && service.getClass().getCanonicalName().equals(RegexRegisteredService.class.getCanonicalName());
     }
+
+    @Override
+    public boolean supports(final Class clazz) {
+        return clazz != null && clazz.getCanonicalName().equals(RegexRegisteredService.class.getCanonicalName());
+    }
+
 }

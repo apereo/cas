@@ -86,6 +86,8 @@ public class RegisteredServiceTestUtils {
         return (AbstractWebApplicationService) new WebApplicationServiceFactory().createService(request);
     }
 
+
+
     public static Service getService2() {
         return getService(CONST_TEST_URL2);
     }

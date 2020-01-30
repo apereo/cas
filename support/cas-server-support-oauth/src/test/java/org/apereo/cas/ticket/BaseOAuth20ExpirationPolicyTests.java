@@ -17,6 +17,7 @@ import org.apereo.cas.config.CasOAuth20AuthenticationServiceSelectionStrategyCon
 import org.apereo.cas.config.CasOAuth20ComponentSerializationConfiguration;
 import org.apereo.cas.config.CasOAuth20Configuration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
+import org.apereo.cas.config.OAuthWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
@@ -65,7 +66,8 @@ import java.util.HashMap;
     CasCoreLogoutConfiguration.class,
     CasOAuth20ComponentSerializationConfiguration.class,
     CasDefaultServiceTicketIdGeneratorsConfiguration.class,
-    CasOAuth20AuthenticationServiceSelectionStrategyConfiguration.class
+    CasOAuth20AuthenticationServiceSelectionStrategyConfiguration.class,
+    OAuthWebApplicationServiceFactoryConfiguration.class
 })
 public abstract class BaseOAuth20ExpirationPolicyTests {
     protected static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "oAuthTokenExpirationPolicy.json");

@@ -1,5 +1,7 @@
 package org.apereo.cas.support.oauth.web.flow;
 
+import org.apereo.cas.CasProtocolConstants;
+import org.apereo.cas.authentication.principal.AbstractWebApplicationService;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -18,14 +20,17 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasOAuth20AuthenticationServiceSelectionStrategyConfiguration;
+import org.apereo.cas.config.CasOAuth20Configuration;
 import org.apereo.cas.config.CasOAuth20WebflowConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
+import org.apereo.cas.config.OAuthWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.web.config.CasThemesConfiguration;
+import org.apereo.cas.support.oauth.authentication.principal.OAuthApplicationServiceFactory;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
@@ -40,6 +45,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.test.MockRequestContext;
 
@@ -81,7 +87,10 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreServicesAuthenticationConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     CasOAuth20AuthenticationServiceSelectionStrategyConfiguration.class,
-    CasOAuth20WebflowConfiguration.class})
+    CasOAuth20WebflowConfiguration.class,
+    CasOAuth20Configuration.class,
+    OAuthWebApplicationServiceFactoryConfiguration.class
+})
 @Tag("OAuth")
 public class OAuth20RegisteredServiceUIActionTests {
     @Autowired
@@ -95,7 +104,7 @@ public class OAuth20RegisteredServiceUIActionTests {
     @Test
     public void verifyOAuthActionWithoutMDUI() throws Exception {
         val ctx = new MockRequestContext();
-        WebUtils.putServiceIntoFlowScope(ctx, RegisteredServiceTestUtils.getService());
+        WebUtils.putServiceIntoFlowScope(ctx, getOauthService(RegisteredServiceTestUtils.CONST_TEST_URL));
         val event = oauth20RegisteredServiceUIAction.execute(ctx);
         assertEquals("success", event.getId());
         val mdui = WebUtils.getServiceUserInterfaceMetadata(ctx, Serializable.class);
@@ -116,7 +125,7 @@ public class OAuth20RegisteredServiceUIActionTests {
         servicesManager.save(svc);
 
         val ctx = new MockRequestContext();
-        WebUtils.putServiceIntoFlowScope(ctx, RegisteredServiceTestUtils.getService(
+        WebUtils.putServiceIntoFlowScope(ctx, getOauthService(
             "https://www.example.org?client_id=id&client_secret=secret&redirect_uri=https://oauth.example.org"));
         val event = oauth20RegisteredServiceUIAction.execute(ctx);
         assertEquals("success", event.getId());
@@ -129,5 +138,11 @@ public class OAuth20RegisteredServiceUIActionTests {
         assertEquals(mdui.getPrivacyStatementURL(), svc.getPrivacyUrl());
         assertEquals(mdui.getLogoUrl(), svc.getLogo());
 
+    }
+
+    public static AbstractWebApplicationService getOauthService(final String name) {
+        val request = new MockHttpServletRequest();
+        request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, name);
+        return (AbstractWebApplicationService) new OAuthApplicationServiceFactory().createService(request);
     }
 }

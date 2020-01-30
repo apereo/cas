@@ -27,7 +27,7 @@ public class CasOAuth20ServicesConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Autowired
-    @Qualifier("webApplicationServiceFactory")
+    @Qualifier("oauthApplicationServiceFactory")
     private ObjectProvider<ServiceFactory> webApplicationServiceFactory;
 
     @Bean

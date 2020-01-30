@@ -24,9 +24,11 @@ import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasOAuth20AuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.CasOAuth20Configuration;
 import org.apereo.cas.config.CasOAuth20ThrottleConfiguration;
+import org.apereo.cas.config.CasOAuth20WebflowConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.CasThrottlingConfiguration;
+import org.apereo.cas.config.OAuthWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
@@ -130,7 +132,9 @@ import static org.mockito.Mockito.*;
     CasMultifactorAuthenticationWebflowConfiguration.class,
     CasCoreMultifactorAuthenticationConfiguration.class,
     CasOAuth20AuthenticationServiceSelectionStrategyConfiguration.class,
-    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class
+    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
+    CasOAuth20WebflowConfiguration.class,
+    OAuthWebApplicationServiceFactoryConfiguration.class
 },
     properties = {
         "cas.authn.oidc.issuer=https://sso.example.org/cas/oidc",
@@ -301,7 +305,7 @@ public abstract class AbstractOidcTests {
     }
 
     protected static OAuth20AccessToken getAccessToken() {
-        return getAccessToken(StringUtils.EMPTY, "clientId");
+        return getAccessToken(StringUtils.EMPTY, "clientid");
     }
 
     protected static OAuth20AccessToken getAccessToken(final String idToken, final String clientId) {

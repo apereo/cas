@@ -13,7 +13,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.util.EncodingUtils;
-import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

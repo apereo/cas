@@ -50,33 +50,6 @@ public class OAuth20AuthenticationServiceSelectionStrategy implements Authentica
         return Optional.empty();
     }
 
-    private static Optional<NameValuePair> resolveRedirectUri(final Service service) {
-        try {
-            val builder = new URIBuilder(service.getId());
-            return builder.getQueryParams()
-                .stream()
-                .filter(p -> p.getName().equals(OAuth20Constants.REDIRECT_URI))
-                .findFirst();
-        } catch (final Exception e) {
-            LOGGER.error(e.getMessage());
-        }
-        return Optional.empty();
-    }
-
-    private static Optional<NameValuePair> resolveGrantType(final Service service) {
-        try {
-            val builder = new URIBuilder(service.getId());
-            return builder.getQueryParams()
-                .stream()
-                .filter(p -> p.getName()
-                    .equals(OAuth20Constants.GRANT_TYPE))
-                .findFirst();
-        } catch (final Exception e) {
-            LOGGER.error(e.getMessage());
-        }
-        return Optional.empty();
-    }
-
     @Override
     public Service resolveServiceFrom(final Service service) {
         val clientId = resolveClientIdFromService(service);

@@ -185,10 +185,6 @@ public class CasOAuth20Configuration {
     private CasConfigurationProperties casProperties;
 
     @Autowired
-    @Qualifier("webApplicationServiceFactory")
-    private ObjectProvider<ServiceFactory> webApplicationServiceFactory;
-
-    @Autowired
     @Qualifier("oauthApplicationServiceFactory")
     private ObjectProvider<ServiceFactory> oauthWebApplicationServiceFactory;
 
@@ -279,7 +275,7 @@ public class CasOAuth20Configuration {
         val config = new Config(OAuth20Utils.casOAuthCallbackUrl(casProperties.getServer().getPrefix()), clientList);
         config.setSessionStore(oauthDistributedSessionStore());
         Config.setProfileManagerFactory("CASOAuthSecurityProfileManager", webContext ->
-            new OAuth20ClientIdAwareProfileManager(webContext, config.getSessionStore(), servicesManager.getObject()));
+            new OAuth20ClientIdAwareProfileManager(webContext, config.getSessionStore()));
         return config;
     }
 

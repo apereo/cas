@@ -1,11 +1,11 @@
 package org.apereo.cas.support.oauth.validator.token;
 
-import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyAuditableEnforcer;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
+import org.apereo.cas.support.oauth.authentication.principal.OAuthApplicationServiceFactory;
 import org.apereo.cas.support.oauth.authenticator.Authenticators;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
@@ -81,7 +81,7 @@ public class OAuth20RefreshTokenGrantTypeTokenRequestValidatorTests {
         val context = OAuth20ConfigurationContext.builder()
             .servicesManager(servicesManager)
             .ticketRegistry(ticketRegistry)
-            .webApplicationServiceServiceFactory(new WebApplicationServiceFactory())
+            .webApplicationServiceServiceFactory(new OAuthApplicationServiceFactory())
             .registeredServiceAccessStrategyEnforcer(new RegisteredServiceAccessStrategyAuditableEnforcer())
             .build();
         this.validator = new OAuth20RefreshTokenGrantTypeTokenRequestValidator(context);

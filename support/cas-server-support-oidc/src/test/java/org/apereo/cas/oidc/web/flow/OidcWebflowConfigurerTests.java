@@ -5,6 +5,7 @@ import org.apereo.cas.config.CasOAuth20AuthenticationServiceSelectionStrategyCon
 import org.apereo.cas.config.CasOAuth20Configuration;
 import org.apereo.cas.config.CasOAuth20ThrottleConfiguration;
 import org.apereo.cas.config.CasOAuth20WebflowConfiguration;
+import org.apereo.cas.config.OAuthWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.oidc.config.OidcComponentSerializationConfiguration;
 import org.apereo.cas.oidc.config.OidcConfiguration;
 import org.apereo.cas.oidc.config.OidcThrottleConfiguration;
@@ -39,7 +40,8 @@ import static org.junit.jupiter.api.Assertions.*;
     CasOAuth20WebflowConfiguration.class,
     CasCoreMultifactorAuthenticationConfiguration.class,
     CasMultifactorAuthenticationWebflowConfiguration.class,
-    BaseWebflowConfigurerTests.SharedTestConfiguration.class
+    BaseWebflowConfigurerTests.SharedTestConfiguration.class,
+    OAuthWebApplicationServiceFactoryConfiguration.class
 })
 @TestPropertySource(properties = "cas.authn.oidc.jwksFile=classpath:keystore.jwks")
 @Tag("OIDC")

@@ -39,7 +39,7 @@ public class AccessTokenRefreshTokenGrantRequestExtractor extends AccessTokenAut
     protected AccessTokenRequestDataHolder extractInternal(final HttpServletRequest request,
                                                            final HttpServletResponse response,
                                                            final AccessTokenRequestDataHolder.AccessTokenRequestDataHolderBuilder builder) {
-        val registeredService = getOAuthRegisteredServiceBy(request);
+        val registeredService = getOAuthRegisteredServiceBy(request, response);
         if (registeredService == null) {
             throw new UnauthorizedServiceException("Unable to locate service in registry ");
         }
@@ -63,16 +63,11 @@ public class AccessTokenRefreshTokenGrantRequestExtractor extends AccessTokenAut
     }
 
     @Override
-    protected OAuthRegisteredService getOAuthRegisteredServiceBy(final HttpServletRequest request) {
-        val clientId = getRegisteredServiceIdentifierFromRequest(request);
+    protected OAuthRegisteredService getOAuthRegisteredServiceBy(final HttpServletRequest request, final HttpServletResponse response) {
+        val clientId = getRegisteredServiceIdentifierFromRequest(request, response);
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(getOAuthConfigurationContext().getServicesManager(), clientId);
         LOGGER.debug("Located registered service [{}]", registeredService);
         return registeredService;
-    }
-
-    @Override
-    protected String getRegisteredServiceIdentifierFromRequest(final HttpServletRequest request) {
-        return request.getParameter(OAuth20Constants.CLIENT_ID);
     }
 
     /**

@@ -9,7 +9,6 @@ import org.apereo.cas.support.oauth.authentication.principal.OAuthWebApplication
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
 import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.Collection;

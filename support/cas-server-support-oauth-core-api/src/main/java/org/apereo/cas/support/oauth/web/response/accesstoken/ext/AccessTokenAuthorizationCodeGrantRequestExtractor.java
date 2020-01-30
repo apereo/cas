@@ -12,6 +12,7 @@ import org.apereo.cas.ticket.OAuth20Token;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.pac4j.core.context.JEEContext;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -37,7 +38,7 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
 
         LOGGER.debug("OAuth grant type is [{}]", grantType);
 
-        val registeredService = getOAuthRegisteredServiceBy(request);
+        var registeredService = getOAuthRegisteredServiceBy(request, response);
         if (registeredService == null) {
             throw new UnauthorizedServiceException("Unable to locate service in registry for redirect URI ");
         }
@@ -96,10 +97,11 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
      * Gets registered service identifier from request.
      *
      * @param request the request
+     * @param response the response
      * @return the registered service identifier from request
      */
-    protected String getRegisteredServiceIdentifierFromRequest(final HttpServletRequest request) {
-        return request.getParameter(OAuth20Constants.CLIENT_ID);
+    protected String getRegisteredServiceIdentifierFromRequest(final HttpServletRequest request, final HttpServletResponse response) {
+        return OAuth20Utils.getClientIdAndClientSecret(new JEEContext(request, response)).getLeft();
     }
 
     /**
@@ -172,11 +174,12 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
      * check with service registry to find a matching oauth service.
      *
      * @param request the request
+     * @param response the response
      * @return the registered service
      */
-    protected OAuthRegisteredService getOAuthRegisteredServiceBy(final HttpServletRequest request) {
-        val clientId = request.getParameter(OAuth20Constants.CLIENT_ID);
+    protected OAuthRegisteredService getOAuthRegisteredServiceBy(final HttpServletRequest request, final HttpServletResponse response) {
         val sm = getOAuthConfigurationContext().getServicesManager();
+        val clientId = getRegisteredServiceIdentifierFromRequest(request, response);
         return sm.findServiceBy(clientId, OAuthRegisteredService.class);
     }
 }

@@ -108,8 +108,7 @@ public class Saml20ApplicationServiceFactory extends AbstractServiceFactory<WebA
     @Override
     public WebApplicationService createService(final String id) {
         val request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
-        val entityId = extractEntityId(id);
-        return newWebApplicationService(request, entityId, id);
+        return newWebApplicationService(request, id, id);
     }
 
     @Override

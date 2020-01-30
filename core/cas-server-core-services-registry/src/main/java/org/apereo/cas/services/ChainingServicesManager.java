@@ -3,7 +3,6 @@ package org.apereo.cas.services;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.domain.DomainServicesManager;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import java.util.ArrayList;
@@ -22,7 +21,6 @@ import static java.util.stream.Collectors.toList;
  * @author Travis Schmidt
  * @since 6.1.0
  */
-@Slf4j
 public class ChainingServicesManager implements ServicesManager {
 
     private List<ServicesManager> serviceManagers;
@@ -109,10 +107,9 @@ public class ChainingServicesManager implements ServicesManager {
     @Override
     public Collection<RegisteredService> findServiceBy(final Predicate<RegisteredService> clazz) {
         return serviceManagers.stream()
-                .map(s -> s.findServiceBy(clazz))
-                .filter(Objects::nonNull)
-                .findFirst()
-                .orElse(null);
+                .flatMap(s -> s.findServiceBy(clazz).stream())
+                .collect(Collectors.toList());
+
     }
 
     @Override

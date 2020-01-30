@@ -117,8 +117,9 @@ public class OAuth20IntrospectionEndpointController extends BaseOAuth20Controlle
             }
 
             val credentials = credentialsResult.get();
+            val clientId = getRegisteredServiceIdentifierFromRequest(request, response);
             val service = OAuth20Utils.getRegisteredOAuthServiceByClientId(
-                getOAuthConfigurationContext().getServicesManager(), credentials.getUsername());
+                getOAuthConfigurationContext().getServicesManager(), clientId);
             val validationError = validateIntrospectionRequest(service, credentials, request);
             if (validationError.isPresent()) {
                 result = validationError.get();
@@ -217,5 +218,16 @@ public class OAuth20IntrospectionEndpointController extends BaseOAuth20Controlle
             introspect.setActive(false);
         }
         return introspect;
+    }
+
+    /**
+     * Gets registered service identifier from request.
+     *
+     * @param request the request
+     * @param response the response
+     * @return the registered service identifier from request
+     */
+    protected String getRegisteredServiceIdentifierFromRequest(final HttpServletRequest request, final HttpServletResponse response) {
+        return OAuth20Utils.getClientIdAndClientSecret(new JEEContext(request, response)).getLeft();
     }
 }
