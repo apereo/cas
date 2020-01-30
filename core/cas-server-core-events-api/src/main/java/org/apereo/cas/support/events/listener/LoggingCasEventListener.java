@@ -10,7 +10,7 @@ import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketDestroyedEven
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 
