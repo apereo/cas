@@ -3,13 +3,16 @@ package org.apereo.cas.config;
 import org.apereo.cas.api.PasswordlessTokenRepository;
 import org.apereo.cas.api.PasswordlessUserAccountStore;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.MultifactorAuthenticationTriggerSelectionStrategy;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.io.CommunicationsManager;
 import org.apereo.cas.web.flow.AcceptPasswordlessAuthenticationAction;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
+import org.apereo.cas.web.flow.DetermineMultifactorPasswordlessAuthenticationAction;
 import org.apereo.cas.web.flow.DisplayBeforePasswordlessAuthenticationAction;
 import org.apereo.cas.web.flow.PasswordlessAuthenticationWebflowConfigurer;
 import org.apereo.cas.web.flow.PrepareForPasswordlessAuthenticationAction;
@@ -23,7 +26,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
@@ -43,7 +46,11 @@ public class PasswordlessAuthenticationWebflowConfiguration {
     @Autowired
     @Qualifier("communicationsManager")
     private ObjectProvider<CommunicationsManager> communicationsManager;
-    
+
+    @Autowired
+    @Qualifier("passwordlessPrincipalFactory")
+    private ObjectProvider<PrincipalFactory> passwordlessPrincipalFactory;
+
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -64,7 +71,7 @@ public class PasswordlessAuthenticationWebflowConfiguration {
     private ObjectProvider<PasswordlessTokenRepository> passwordlessTokenRepository;
 
     @Autowired
-    private ApplicationContext applicationContext;
+    private ConfigurableApplicationContext applicationContext;
 
     @Autowired
     private ObjectProvider<FlowBuilderServices> flowBuilderServices;
@@ -84,12 +91,27 @@ public class PasswordlessAuthenticationWebflowConfiguration {
     @Autowired
     @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
     private ObjectProvider<CasDelegatingWebflowEventResolver> initialAuthenticationAttemptWebflowEventResolver;
-    
+
+    @Autowired
+    @Qualifier("defaultMultifactorTriggerSelectionStrategy")
+    private ObjectProvider<MultifactorAuthenticationTriggerSelectionStrategy> multifactorTriggerSelectionStrategy;
+
     @Bean
     @ConditionalOnMissingBean(name = "verifyPasswordlessAccountAuthenticationAction")
     @RefreshScope
     public Action verifyPasswordlessAccountAuthenticationAction() {
         return new VerifyPasswordlessAccountAuthenticationAction(passwordlessUserAccountStore.getObject());
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "determineMultifactorPasswordlessAuthenticationAction")
+    @RefreshScope
+    public Action determineMultifactorPasswordlessAuthenticationAction() {
+        return new DetermineMultifactorPasswordlessAuthenticationAction(
+            multifactorTriggerSelectionStrategy.getObject(),
+            passwordlessPrincipalFactory.getObject(),
+            authenticationSystemSupport.getObject(),
+            casProperties);
     }
 
     @Bean

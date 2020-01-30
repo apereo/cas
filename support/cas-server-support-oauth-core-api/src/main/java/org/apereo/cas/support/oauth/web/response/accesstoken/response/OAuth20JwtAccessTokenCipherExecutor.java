@@ -2,17 +2,16 @@ package org.apereo.cas.support.oauth.web.response.accesstoken.response;
 
 import org.apereo.cas.token.cipher.JwtTicketCipherExecutor;
 
+import lombok.NoArgsConstructor;
+
 /**
  * This is {@link OAuth20JwtAccessTokenCipherExecutor}.
  *
  * @author Misagh Moayyed
  * @since 6.1.0
  */
+@NoArgsConstructor
 public class OAuth20JwtAccessTokenCipherExecutor extends JwtTicketCipherExecutor {
-    public OAuth20JwtAccessTokenCipherExecutor() {
-        super();
-    }
-
     public OAuth20JwtAccessTokenCipherExecutor(final boolean encryptionEnabled,
                                                final boolean signingEnabled) {
         super(null, null, null, encryptionEnabled, signingEnabled, 0, 0);

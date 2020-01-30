@@ -5,7 +5,7 @@ import org.apereo.cas.util.scripting.ScriptingUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 
@@ -18,7 +18,7 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 @Slf4j
 public class GroovyWebflowConfigurer extends AbstractCasWebflowConfigurer {
     public GroovyWebflowConfigurer(final FlowBuilderServices flowBuilderServices, final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-                                   final ApplicationContext applicationContext, final CasConfigurationProperties casProperties) {
+                                   final ConfigurableApplicationContext applicationContext, final CasConfigurationProperties casProperties) {
         super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
     }
 

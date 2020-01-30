@@ -3,7 +3,6 @@ package org.apereo.cas.config;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
-import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
@@ -83,8 +82,8 @@ public class SamlIdPEndpointsConfiguration {
     private ObjectProvider<SamlRegisteredServiceCachingMetadataResolver> defaultSamlRegisteredServiceCachingMetadataResolver;
 
     @Autowired
-    @Qualifier("webApplicationServiceFactory")
-    private ObjectProvider<ServiceFactory<WebApplicationService>> webApplicationServiceFactory;
+    @Qualifier("samlIdPServiceFactory")
+    private ObjectProvider<ServiceFactory> samlIdPServiceFactory;
 
     @Autowired
     @Qualifier("defaultAuthenticationSystemSupport")
@@ -297,7 +296,7 @@ public class SamlIdPEndpointsConfiguration {
     @Bean
     public Service samlIdPCallbackService() {
         val service = casProperties.getServer().getPrefix().concat(SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_POST_CALLBACK);
-        return this.webApplicationServiceFactory.getObject().createService(service);
+        return this.samlIdPServiceFactory.getObject().createService(service);
     }
 
     private SamlProfileHandlerConfigurationContext.SamlProfileHandlerConfigurationContextBuilder getSamlProfileHandlerConfigurationContextBuilder() {
@@ -305,7 +304,7 @@ public class SamlIdPEndpointsConfiguration {
             .samlObjectSigner(samlObjectSigner.getObject())
             .authenticationSystemSupport(authenticationSystemSupport.getObject())
             .servicesManager(servicesManager.getObject())
-            .webApplicationServiceFactory(webApplicationServiceFactory.getObject())
+            .webApplicationServiceFactory(samlIdPServiceFactory.getObject())
             .samlRegisteredServiceCachingMetadataResolver(defaultSamlRegisteredServiceCachingMetadataResolver.getObject())
             .openSamlConfigBean(openSamlConfigBean.getObject())
             .casProperties(casProperties)

@@ -1,3 +1,13 @@
+def testCategories = [
+    "Cassandra", "CosmosDb", "Couchbase", "CouchDb",
+    "Ehcache", "FileSystem", "Ignite", "InfluxDb",
+    "Ldap", "Mail", "MariaDb", "Memcached", "JDBC",
+    "MongoDb", "MsSqlServer", "MySQL", "Postgres", "Redis",
+    "Radius", "AmazonWebServices", "RestfulApi", "Groovy",
+    "OAuth", "OIDC", "SAML", "UMA", "Oracle", "ActiveMQ",
+    "ZooKeeper", "Webflow", "DynamoDb"
+] as String[]
+
 if (hasTestsOfCategory(project, "Cassandra")) {
     task testCassandra(type: Test) {
         enabled = shouldTest(project, "Cassandra")
@@ -286,13 +296,7 @@ if (hasTestsOfCategory(project, "JDBC")) {
 
 test {
     useJUnitPlatform {
-        excludeTags "Cassandra", "CosmosDb", "Couchbase", "CouchDb", "DynamoDb",
-                "Ehcache", "FileSystem", "Ignite", "InfluxDb",
-                "Ldap", "Mail", "MariaDb", "Memcached", "JDBC",
-                "MongoDb", "MsSqlServer", "MySQL", "Postgres", "Redis",
-                "Radius", "AmazonWebServices", "RestfulApi", "Groovy",
-                "OAuth", "OIDC", "SAML", "UMA", "Oracle", "ActiveMQ",
-                "ZooKeeper", "Webflow"
+        excludeTags testCategories
     }
     enabled = "SIMPLE".equalsIgnoreCase(rootProject.testCategoryType) && !Boolean.getBoolean("skipTests")
 }
@@ -353,3 +357,4 @@ def hasTestsOfCategory(Project project, String category) {
     }
     res.contains(category)
 }
+

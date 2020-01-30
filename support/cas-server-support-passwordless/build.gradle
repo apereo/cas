@@ -1,7 +1,5 @@
 description = "Apereo CAS Passwordless Authentication Support"
 dependencies {
-    implementation libraries.ldaptive
-
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-services")
@@ -13,8 +11,7 @@ dependencies {
     implementation project(":core:cas-server-core-logout-api")
     implementation project(":core:cas-server-core-webflow")
     implementation project(":core:cas-server-core-web")
-    
-    implementation project(":support:cas-server-support-ldap-core")
+
     implementation project(":support:cas-server-support-actions")
 
     testImplementation project(":core:cas-server-core-cookie")
@@ -38,5 +35,5 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-webflow", configuration: "tests")
-    testImplementation project(path: ":support:cas-server-support-ldap", configuration: "tests")
+
 }
