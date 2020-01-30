@@ -1,7 +1,6 @@
 package org.apereo.cas.impl.token;
 
 import org.apereo.cas.api.PasswordlessTokenRepository;
-import org.apereo.cas.api.PasswordlessUserAccountStore;
 import org.apereo.cas.config.JpaPasswordlessAuthenticationConfiguration;
 import org.apereo.cas.impl.BasePasswordlessUserAccountStoreTests;
 
