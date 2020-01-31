@@ -28,7 +28,8 @@ public class CasSimpleMultifactorAuthenticationTicketFactory implements Transien
      */
     public static final String PREFIX = "CASMFA";
 
-    private final ExpirationPolicyBuilder expirationPolicy;
+    private final ExpirationPolicyBuilder expirationPolicyBuilder;
+
     private final UniqueTicketIdGenerator ticketIdGenerator;
 
     /**
@@ -41,13 +42,15 @@ public class CasSimpleMultifactorAuthenticationTicketFactory implements Transien
     @Override
     public TransientSessionTicket create(final Service service, final Map<String, Serializable> properties) {
         val id = ticketIdGenerator.getNewTicketId(PREFIX);
-        return new TransientSessionTicketImpl(id, expirationPolicy.buildTicketExpirationPolicy(), service, properties);
+        val expirationPolicy = TransientSessionTicketFactory.buildExpirationPolicy(this.expirationPolicyBuilder, properties);
+        return new TransientSessionTicketImpl(id, expirationPolicy, service, properties);
     }
 
     @Override
     public TransientSessionTicket create(final String id, final Map<String, Serializable> properties) {
+        val expirationPolicy = TransientSessionTicketFactory.buildExpirationPolicy(expirationPolicyBuilder, properties);
         return new TransientSessionTicketImpl(TransientSessionTicketFactory.normalizeTicketId(id),
-            expirationPolicy.buildTicketExpirationPolicy(), null, properties);
+            expirationPolicy, null, properties);
     }
 
     @Override
