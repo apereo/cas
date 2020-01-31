@@ -18,6 +18,7 @@ import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.CasWsSecurityTokenTicketCatalogConfiguration;
 import org.apereo.cas.config.CoreWsSecurityIdentityProviderConfiguration;
+import org.apereo.cas.config.CoreWsSecurityIdentityProviderWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.CoreWsSecuritySecurityTokenServiceConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -49,6 +50,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasWsSecurityTokenTicketCatalogConfiguration.class,
     CoreWsSecuritySecurityTokenServiceConfiguration.class,
     CoreWsSecurityIdentityProviderConfiguration.class,
+    CoreWsSecurityIdentityProviderWebApplicationServiceFactoryConfiguration.class,
     CasCoreConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreLogoutConfiguration.class,
