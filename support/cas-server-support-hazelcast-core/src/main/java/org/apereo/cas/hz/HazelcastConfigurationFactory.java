@@ -126,11 +126,7 @@ public class HazelcastConfigurationFactory {
             networkConfig.setPublicAddress(cluster.getPublicAddress());
         }
 
-        if (!org.springframework.util.CollectionUtils.isEmpty(cluster.getOutboundPorts())) {
-            for (val port : cluster.getOutboundPorts()) {
-                networkConfig.addOutboundPortDefinition(port);
-            }
-        }
+        cluster.getOutboundPorts().forEach(port -> networkConfig.addOutboundPortDefinition(port));
 
         if (cluster.getWanReplication().isEnabled()) {
             if (!StringUtils.hasText(hz.getLicenseKey())) {
