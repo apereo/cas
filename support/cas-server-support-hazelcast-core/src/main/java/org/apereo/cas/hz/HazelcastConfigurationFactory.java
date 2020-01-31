@@ -126,6 +126,8 @@ public class HazelcastConfigurationFactory {
             networkConfig.setPublicAddress(cluster.getPublicAddress());
         }
 
+        cluster.getOutboundPorts().forEach(port -> networkConfig.addOutboundPortDefinition(port));
+
         if (cluster.getWanReplication().isEnabled()) {
             if (!StringUtils.hasText(hz.getLicenseKey())) {
                 throw new IllegalArgumentException("Cannot activate WAN replication, a Hazelcast enterprise feature, without a license key");
