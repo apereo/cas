@@ -24,7 +24,8 @@ import java.util.Map;
  */
 @RequiredArgsConstructor
 public class DefaultTransientSessionTicketFactory implements TransientSessionTicketFactory {
-    private final ExpirationPolicyBuilder<TransientSessionTicket> expirationPolicy;
+    private final ExpirationPolicyBuilder<TransientSessionTicket> expirationPolicyBuilder;
+
     private final UniqueTicketIdGenerator ticketIdGenerator = new DefaultUniqueTicketIdGenerator();
 
     /**
@@ -37,13 +38,15 @@ public class DefaultTransientSessionTicketFactory implements TransientSessionTic
     @Override
     public TransientSessionTicket create(final Service service, final Map<String, Serializable> properties) {
         val id = ticketIdGenerator.getNewTicketId(TransientSessionTicket.PREFIX);
-        return new TransientSessionTicketImpl(id, expirationPolicy.buildTicketExpirationPolicy(), service, properties);
+        val expirationPolicy = TransientSessionTicketFactory.buildExpirationPolicy(this.expirationPolicyBuilder, properties);
+        return new TransientSessionTicketImpl(id, expirationPolicy, service, properties);
     }
 
     @Override
     public TransientSessionTicket create(final String id, final Map<String, Serializable> properties) {
+        val expirationPolicy = TransientSessionTicketFactory.buildExpirationPolicy(this.expirationPolicyBuilder, properties);
         return new TransientSessionTicketImpl(TransientSessionTicketFactory.normalizeTicketId(id),
-            expirationPolicy.buildTicketExpirationPolicy(), null, properties);
+            expirationPolicy, null, properties);
     }
 
     @Override

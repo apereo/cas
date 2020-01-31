@@ -17,6 +17,7 @@ import org.junit.runner.RunWith;
     CasSimpleMultifactorAuthenticationProviderTests.class,
     CasSimpleMultifactorAuthenticationUniqueTicketIdGeneratorTests.class,
     CasSimpleSendTokenActionTests.class,
+    CasSimpleMultifactorAuthenticationTicketFactoryTests.class,
     CasSimpleMultifactorWebflowConfigurerTests.class
 })
 @RunWith(JUnitPlatform.class)
