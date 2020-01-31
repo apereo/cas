@@ -526,6 +526,8 @@ More advanced Hazelcast configuration settings are listed below, given the compo
 
 # ${configurationKey}.cluster.localAddress=
 # ${configurationKey}.cluster.publicAddress=
+
+# ${configurationKey}.cluster.outboundPorts[0]=45000
 ```
 
 ### Management Center

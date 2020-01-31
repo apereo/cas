@@ -5,9 +5,11 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.web.flow.PasswordManagementWebflowUtils;
+import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.ticket.TransientSessionTicketFactory;
+import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.io.CommunicationsManager;
@@ -28,6 +30,7 @@ import org.springframework.webflow.execution.RequestContext;
 
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
+import java.util.concurrent.TimeUnit;
 
 /**
  * This is {@link SendPasswordResetInstructionsAction}.
@@ -80,7 +83,11 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
         val token = passwordManagementService.createToken(username);
         if (StringUtils.isNotBlank(token)) {
             val transientFactory = (TransientSessionTicketFactory) this.ticketFactory.get(TransientSessionTicket.class);
-            val properties = CollectionUtils.<String, Serializable>wrap(PasswordManagementWebflowUtils.FLOWSCOPE_PARAMETER_NAME_TOKEN, token);
+            val pm = casProperties.getAuthn().getPm();
+            val expirationSeconds = TimeUnit.MINUTES.toSeconds(pm.getReset().getExpirationMinutes());
+            val properties = CollectionUtils.<String, Serializable>wrap(
+                PasswordManagementWebflowUtils.FLOWSCOPE_PARAMETER_NAME_TOKEN, token,
+                ExpirationPolicy.class.getName(), HardTimeoutExpirationPolicy.builder().timeToKillInSeconds(expirationSeconds).build());
             val ticket = transientFactory.create(service, properties);
             this.ticketRegistry.addTicket(ticket);
             
