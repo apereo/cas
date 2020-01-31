@@ -91,6 +91,11 @@ public class HazelcastClusterProperties implements Serializable {
     private int port = 5701;
 
     /**
+     * The outbount ports for the Hazelcast configuration.
+     */
+    private List<String> outboundPorts;
+
+    /**
      * Define how data items in Hazelcast maps are merged together from source to destination.
      * Requires the fully qualified class name of the merge policy component.
      * By default, merges map entries from source to destination if they don't exist in the destination map.
