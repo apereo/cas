@@ -27,13 +27,13 @@ import static java.util.stream.Collectors.toList;
  * @since 6.1
  */
 @Slf4j
-public class OauthServicesManager extends AbstractServicesManager {
+public class Oauth20ServicesManager extends AbstractServicesManager {
 
     private Set<RegisteredService> orderedServices = new ConcurrentSkipListSet<>();
 
     private Map<String, RegisteredService> mappedServiecs = new ConcurrentHashMap<String, RegisteredService>();
 
-    public OauthServicesManager(final ServiceRegistry serviceRegistry, final ApplicationEventPublisher eventPublisher, final Set<String> environments) {
+    public Oauth20ServicesManager(final ServiceRegistry serviceRegistry, final ApplicationEventPublisher eventPublisher, final Set<String> environments) {
         super(serviceRegistry, eventPublisher, environments);
     }
 

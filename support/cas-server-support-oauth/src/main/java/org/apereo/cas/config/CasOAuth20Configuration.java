@@ -31,7 +31,7 @@ import org.apereo.cas.support.oauth.profile.DefaultOAuth20UserProfileDataCreator
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.profile.OAuth20UserProfileDataCreator;
 import org.apereo.cas.support.oauth.services.OAuth20RegisteredServiceCipherExecutor;
-import org.apereo.cas.support.oauth.services.OauthServicesManager;
+import org.apereo.cas.support.oauth.services.Oauth20ServicesManager;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationRequestValidator;
@@ -229,7 +229,7 @@ public class CasOAuth20Configuration {
     @ConditionalOnMissingBean(name = "oauthServicesManager")
     public ServicesManager oauthServicesManager() {
         val activeProfiles = Arrays.stream(environment.getActiveProfiles()).collect(Collectors.toSet());
-        return new OauthServicesManager(serviceRegistry.getIfAvailable(), eventPublisher, activeProfiles);
+        return new Oauth20ServicesManager(serviceRegistry.getIfAvailable(), eventPublisher, activeProfiles);
     }
 
     @Bean

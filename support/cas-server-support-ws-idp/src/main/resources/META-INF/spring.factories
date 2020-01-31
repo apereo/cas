@@ -1,4 +1,4 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.config.CoreWsSecurityIdentityProviderConfiguration,\
   org.apereo.cas.config.CoreWsSecurityIdentityProviderWebflowConfiguration,\
-  org.apereo.cas.config.CoreWsSecurityIdentityProviderComponentSerializationConfiguration\
+  org.apereo.cas.config.CoreWsSecurityIdentityProviderComponentSerializationConfiguration,\
   org.apereo.cas.config.CoreWsSecurityIdentityProviderWebApplicationServiceFactoryConfiguration

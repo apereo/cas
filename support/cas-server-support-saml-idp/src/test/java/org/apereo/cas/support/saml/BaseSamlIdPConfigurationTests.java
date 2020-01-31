@@ -20,11 +20,11 @@ import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CoreSamlConfiguration;
-import org.apereo.cas.config.Saml20WebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.SamlIdPAuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.SamlIdPConfiguration;
 import org.apereo.cas.config.SamlIdPEndpointsConfiguration;
 import org.apereo.cas.config.SamlIdPMetadataConfiguration;
+import org.apereo.cas.config.SamlIdpWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
@@ -112,7 +112,7 @@ import static org.mockito.Mockito.*;
     CoreSamlConfiguration.class,
     CasPersonDirectoryConfiguration.class,
     CasCoreUtilConfiguration.class,
-    Saml20WebApplicationServiceFactoryConfiguration.class
+    SamlIdpWebApplicationServiceFactoryConfiguration.class
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("SAML")

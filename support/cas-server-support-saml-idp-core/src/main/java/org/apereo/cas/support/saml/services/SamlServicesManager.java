@@ -5,7 +5,7 @@ import org.apereo.cas.services.AbstractServicesManager;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.support.saml.authentication.principal.Saml20WebApplicationService;
+import org.apereo.cas.support.saml.authentication.principal.SamlIdpWebApplicationService;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -78,7 +78,7 @@ public class SamlServicesManager extends AbstractServicesManager {
 
     @Override
     public boolean supports(final Service service) {
-        return service != null && service instanceof Saml20WebApplicationService;
+        return service != null && service instanceof SamlIdpWebApplicationService;
     }
 
     @Override

@@ -6,6 +6,7 @@ import org.apereo.cas.config.SamlIdPConfiguration;
 import org.apereo.cas.config.SamlIdPEndpointsConfiguration;
 import org.apereo.cas.config.SamlIdPMetadataConfiguration;
 import org.apereo.cas.config.SamlIdPWebflowConfiguration;
+import org.apereo.cas.config.SamlIdpWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.support.saml.idp.metadata.locator.FileSystemSamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
 
@@ -38,6 +39,7 @@ import static org.junit.jupiter.api.Assertions.*;
     SamlIdPMetadataConfiguration.class,
     SamlIdPEndpointsConfiguration.class,
     SamlIdPWebflowConfiguration.class,
+    SamlIdpWebApplicationServiceFactoryConfiguration.class,
     BaseWebflowConfigurerTests.SharedTestConfiguration.class
 })
 @Tag("SAML")

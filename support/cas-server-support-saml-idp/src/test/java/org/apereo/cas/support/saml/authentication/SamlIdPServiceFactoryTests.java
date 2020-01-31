@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml.authentication;
 
 import org.apereo.cas.support.saml.SamlIdPConstants;
+import org.apereo.cas.support.saml.authentication.principal.SamlIdpApplicationServiceFactory;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -21,7 +22,7 @@ public class SamlIdPServiceFactoryTests {
     public void verifyOperation() {
         val request = new MockHttpServletRequest();
         request.setParameter(SamlIdPConstants.PROVIDER_ID, "example-sp-entityid");
-        val input = new SamlIdPServiceFactory();
+        val input = new SamlIdpApplicationServiceFactory();
         val service = input.createService(request);
         assertNotNull(service);
         assertEquals("example-sp-entityid", service.getId());

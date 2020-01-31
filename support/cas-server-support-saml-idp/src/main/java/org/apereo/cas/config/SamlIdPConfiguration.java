@@ -131,7 +131,7 @@ public class SamlIdPConfiguration {
     private ObjectProvider<VelocityEngine> velocityEngineFactory;
 
     @Autowired
-    @Qualifier("samlIdPServiceFactory")
+    @Qualifier("samlIdpApplicationServiceFactory")
     private ObjectProvider<ServiceFactory> samlIdPServiceFactory;
 
     @Autowired

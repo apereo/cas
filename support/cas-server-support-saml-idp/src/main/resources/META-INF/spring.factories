@@ -6,4 +6,4 @@ org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.co
   org.apereo.cas.config.SamlIdPMetadataConfiguration,\
   org.apereo.cas.config.SamlIdPTicketCatalogConfiguration,\
   org.apereo.cas.config.SamlIdPTicketSerializationConfiguration,\
-  org.apereo.cas.config.Saml20WebApplicationServiceFactoryConfiguration
+  org.apereo.cas.config.SamlIdpWebApplicationServiceFactoryConfiguration

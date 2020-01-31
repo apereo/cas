@@ -82,7 +82,7 @@ public class SamlIdPEndpointsConfiguration {
     private ObjectProvider<SamlRegisteredServiceCachingMetadataResolver> defaultSamlRegisteredServiceCachingMetadataResolver;
 
     @Autowired
-    @Qualifier("samlIdPServiceFactory")
+    @Qualifier("samlIdpApplicationServiceFactory")
     private ObjectProvider<ServiceFactory> samlIdPServiceFactory;
 
     @Autowired
@@ -293,7 +293,6 @@ public class SamlIdPEndpointsConfiguration {
         return new Saml2AttributeQueryProfileHandlerController(context);
     }
 
-    @Bean
     public Service samlIdPCallbackService() {
         val service = casProperties.getServer().getPrefix().concat(SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_POST_CALLBACK);
         return this.samlIdPServiceFactory.getObject().createService(service);

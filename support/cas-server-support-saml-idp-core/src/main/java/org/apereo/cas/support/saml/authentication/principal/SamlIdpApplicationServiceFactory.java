@@ -4,6 +4,7 @@ import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.principal.AbstractServiceFactory;
 import org.apereo.cas.authentication.principal.AbstractWebApplicationService;
 import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.HttpRequestUtils;
@@ -16,14 +17,14 @@ import org.apache.commons.lang3.StringUtils;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * The {@link Saml20ApplicationServiceFactory} is responsible for
+ * The {@link SamlIdpApplicationServiceFactory} is responsible for
  * creating {@link WebApplicationService} objects.
  *
  * @author Travis Schmidt
  * @since 6.1.0
  */
 @Slf4j
-public class Saml20ApplicationServiceFactory extends AbstractServiceFactory<WebApplicationService> {
+public class SamlIdpApplicationServiceFactory extends AbstractServiceFactory<WebApplicationService> {
 
     /**
      * Determine web application format boolean.
@@ -59,7 +60,7 @@ public class Saml20ApplicationServiceFactory extends AbstractServiceFactory<WebA
                                                                             final String serviceToUse) {
         val artifactId = request != null ? request.getParameter(CasProtocolConstants.PARAMETER_TICKET) : null;
         val id = StringUtils.isNotBlank(entityId) ? entityId : extractEntityId(serviceToUse);
-        val newService = new Saml20WebApplicationService(id, serviceToUse, artifactId);
+        val newService = new SamlIdpWebApplicationService(id, serviceToUse, artifactId);
         determineWebApplicationFormat(request, newService);
         val source = getSourceParameter(request, CasProtocolConstants.PARAMETER_TARGET_SERVICE,
             CasProtocolConstants.PARAMETER_SERVICE);
@@ -95,6 +96,10 @@ public class Saml20ApplicationServiceFactory extends AbstractServiceFactory<WebA
     @Override
     public WebApplicationService createService(final HttpServletRequest request) {
         val serviceParam = request.getParameter(CasProtocolConstants.PARAMETER_SERVICE);
+        val providerId = request.getParameter(SamlIdPConstants.PROVIDER_ID);
+        if (StringUtils.isNotBlank(providerId)) {
+            return newWebApplicationService(request, providerId, serviceParam);
+        }
         val entityId = request.getParameterMap().containsKey(SamlProtocolConstants.PARAMETER_ENTITY_ID)
                 ? getEntityId(request)
                 : extractEntityId(serviceParam);

@@ -6,7 +6,7 @@ import org.apereo.cas.services.InMemoryServiceRegistry;
 import org.apereo.cas.services.JsonServiceRegistry;
 import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingStrategy;
-import org.apereo.cas.support.saml.authentication.principal.Saml20ApplicationServiceFactory;
+import org.apereo.cas.support.saml.authentication.principal.SamlIdpApplicationServiceFactory;
 import org.apereo.cas.util.io.WatcherService;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -94,7 +94,7 @@ public class SamlRegisteredServiceTests {
         val impl = new SamlServicesManager(dao, mock(ApplicationEventPublisher.class), new HashSet<>());
         impl.load();
 
-        val s = impl.findServiceBy(new Saml20ApplicationServiceFactory()
+        val s = impl.findServiceBy(new SamlIdpApplicationServiceFactory()
             .createService("http://mmoayyed.unicon.net:8081/sp/saml/SSO"));
         assertNotNull(s);
     }

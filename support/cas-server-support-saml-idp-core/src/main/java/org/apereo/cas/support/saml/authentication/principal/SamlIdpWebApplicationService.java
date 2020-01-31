@@ -20,7 +20,7 @@ import javax.persistence.Entity;
 @DiscriminatorValue("saml")
 @JsonIgnoreProperties(ignoreUnknown = true)
 @NoArgsConstructor
-public class Saml20WebApplicationService extends AbstractWebApplicationService {
+public class SamlIdpWebApplicationService extends AbstractWebApplicationService {
 
     /**
      * Instantiates a new Simple web application service.
@@ -30,9 +30,9 @@ public class Saml20WebApplicationService extends AbstractWebApplicationService {
      * @param artifactId  the artifact id
      */
     @JsonCreator
-    protected Saml20WebApplicationService(@JsonProperty("id") final String id,
-                                          @JsonProperty("originalUrl") final String originalUrl,
-                                          @JsonProperty("artifactId") final String artifactId) {
+    protected SamlIdpWebApplicationService(@JsonProperty("id") final String id,
+                                           @JsonProperty("originalUrl") final String originalUrl,
+                                           @JsonProperty("artifactId") final String artifactId) {
         super(id, originalUrl, artifactId);
     }
 }

@@ -25,6 +25,7 @@ import org.apereo.cas.config.SamlIdPEndpointsConfiguration;
 import org.apereo.cas.config.SamlIdPJpaIdPMetadataConfiguration;
 import org.apereo.cas.config.SamlIdPJpaRegisteredServiceMetadataConfiguration;
 import org.apereo.cas.config.SamlIdPMetadataConfiguration;
+import org.apereo.cas.config.SamlIdpWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
@@ -100,6 +101,7 @@ public abstract class BaseJpaSamlMetadataTests {
         SamlIdPAuthenticationServiceSelectionStrategyConfiguration.class,
         SamlIdPEndpointsConfiguration.class,
         SamlIdPMetadataConfiguration.class,
+        SamlIdpWebApplicationServiceFactoryConfiguration.class,
         RefreshAutoConfiguration.class,
         AopAutoConfiguration.class,
         CasCoreTicketsConfiguration.class,
