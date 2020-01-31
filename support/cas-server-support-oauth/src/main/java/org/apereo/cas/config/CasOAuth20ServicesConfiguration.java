@@ -19,7 +19,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Configuration("casOAuth20ServicesConfiguration")
+@Configuration(value = "casOAuth20ServicesConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasOAuth20ServicesConfiguration {
 
