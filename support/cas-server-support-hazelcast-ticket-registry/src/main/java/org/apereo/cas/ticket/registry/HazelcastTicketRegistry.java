@@ -91,7 +91,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements A
         val encTicketId = encodeTicketId(ticketIdToDelete);
         val metadata = this.ticketCatalog.find(ticketIdToDelete);
         val map = getTicketMapInstanceByMetadata(metadata);
-        return map.remove(encTicketId) != null;
+        return map != null && map.remove(encTicketId) != null;
     }
 
     @Override

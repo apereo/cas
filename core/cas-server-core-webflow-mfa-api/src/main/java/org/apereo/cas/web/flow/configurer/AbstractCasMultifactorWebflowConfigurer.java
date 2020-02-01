@@ -45,6 +45,8 @@ public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCa
 
     private static final String MFA_CHECK_FAILURE_BEAN_ID = "mfaFailureAction";
 
+    private static final String LOG_MESSAGE_TRANSITION_ID = "Locating transition id [{}] to process multifactor authentication for state [{}]...";
+
     /**
      * The flow definition registry for the mfa flow.
      */
@@ -68,6 +70,10 @@ public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCa
         multifactorAuthenticationFlowDefinitionRegistries.addAll(Arrays.stream(mfaFlowDefinitionRegistry)
             .filter(Objects::nonNull)
             .collect(Collectors.toList()));
+    }
+
+    private static Collection<String> getCandidateStatesForMultifactorAuthentication() {
+        return CollectionUtils.wrapSet(CasWebflowConstants.STATE_ID_REAL_SUBMIT);
     }
 
     /**
@@ -200,17 +206,16 @@ public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCa
                     CasWebflowConstants.TRANSITION_ID_UNAVAILABLE, CasWebflowConstants.STATE_ID_MFA_UNAVAILABLE, stateId);
                 createTransitionForState(actionState, CasWebflowConstants.TRANSITION_ID_UNAVAILABLE, CasWebflowConstants.STATE_ID_MFA_UNAVAILABLE);
 
-                LOGGER.trace("Locating transition id [{}] to process multifactor authentication for state [{}]", CasWebflowConstants.TRANSITION_ID_SUCCESS, stateId);
+                LOGGER.trace(LOG_MESSAGE_TRANSITION_ID, CasWebflowConstants.TRANSITION_ID_SUCCESS, stateId);
                 val targetSuccessId = actionState.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS).getTargetStateId();
 
-                LOGGER.trace("Locating transition id [{}] to process multifactor authentication for state [{}]",
-                    CasWebflowConstants.TRANSITION_ID_SUCCESS_WITH_WARNINGS, stateId);
+                LOGGER.trace(LOG_MESSAGE_TRANSITION_ID, CasWebflowConstants.TRANSITION_ID_SUCCESS_WITH_WARNINGS, stateId);
                 val targetWarningsId = actionState.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS_WITH_WARNINGS).getTargetStateId();
 
-                LOGGER.trace("Locating transition id [{}] to process multifactor authentication for state [{}]", CasWebflowConstants.TRANSITION_ID_DENY, stateId);
+                LOGGER.trace(LOG_MESSAGE_TRANSITION_ID, CasWebflowConstants.TRANSITION_ID_DENY, stateId);
                 val targetDenied = actionState.getTransition(CasWebflowConstants.TRANSITION_ID_DENY).getTargetStateId();
 
-                LOGGER.trace("Location transition id [{}] to process multifactor authentication for stat [{}]",
+                LOGGER.trace("Location transition id [{}] to process multifactor authentication for state [{}]",
                     CasWebflowConstants.TRANSITION_ID_UNAVAILABLE, stateId);
                 val targetUnavailable = actionState.getTransition(CasWebflowConstants.TRANSITION_ID_UNAVAILABLE).getTargetStateId();
 
@@ -259,9 +264,5 @@ public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCa
             createEvaluateAction(MFA_CHECK_BYPASS_BEAN_ID));
         createTransitionForState(bypassAction, CasWebflowConstants.TRANSITION_ID_NO, CasWebflowConstants.STATE_ID_MFA_CHECK_AVAILABLE);
         createTransitionForState(bypassAction, CasWebflowConstants.TRANSITION_ID_YES, CasWebflowConstants.TRANSITION_ID_SUCCESS);
-    }
-
-    private static Collection<String> getCandidateStatesForMultifactorAuthentication() {
-        return CollectionUtils.wrapSet(CasWebflowConstants.STATE_ID_REAL_SUBMIT);
     }
 }
