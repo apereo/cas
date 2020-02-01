@@ -16,6 +16,7 @@ import java.util.Optional;
 @Slf4j
 public class InMemoryPasswordlessTokenRepository extends BasePasswordlessTokenRepository {
     private static final int INITIAL_CACHE_SIZE = 50;
+
     private static final long MAX_CACHE_SIZE = 100_000_000;
 
     private final LoadingCache<String, String> storage;
@@ -50,5 +51,10 @@ public class InMemoryPasswordlessTokenRepository extends BasePasswordlessTokenRe
     @Override
     public void saveToken(final String username, final String token) {
         this.storage.put(username, token);
+    }
+
+    @Override
+    public void clean() {
+        this.storage.cleanUp();
     }
 }

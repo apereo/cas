@@ -9,6 +9,7 @@ import lombok.Setter;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -89,6 +90,11 @@ public class HazelcastClusterProperties implements Serializable {
      */
     @RequiredProperty
     private int port = 5701;
+
+    /**
+     * The outbound ports for the Hazelcast configuration.
+     */
+    private List<String> outboundPorts = new ArrayList<>();
 
     /**
      * Define how data items in Hazelcast maps are merged together from source to destination.

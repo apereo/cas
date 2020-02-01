@@ -18,7 +18,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Configuration("ldapPasswordlessAuthenticationConfiguration")
+@Configuration(value = "ldapPasswordlessAuthenticationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class LdapPasswordlessAuthenticationConfiguration {
 

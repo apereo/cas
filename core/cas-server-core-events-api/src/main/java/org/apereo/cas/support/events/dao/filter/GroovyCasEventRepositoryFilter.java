@@ -17,7 +17,7 @@ import org.springframework.core.io.Resource;
  */
 @Slf4j
 public class GroovyCasEventRepositoryFilter implements CasEventRepositoryFilter, DisposableBean {
-    private final transient WatchableGroovyScriptResource watchableScript;
+    private final WatchableGroovyScriptResource watchableScript;
 
     public GroovyCasEventRepositoryFilter(final Resource groovyResource) {
         this.watchableScript = new WatchableGroovyScriptResource(groovyResource);

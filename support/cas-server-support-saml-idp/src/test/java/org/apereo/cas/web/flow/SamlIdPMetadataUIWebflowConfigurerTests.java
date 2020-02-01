@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.config.CoreSamlConfiguration;
+import org.apereo.cas.config.SamlIdPAuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.SamlIdPConfiguration;
 import org.apereo.cas.config.SamlIdPEndpointsConfiguration;
 import org.apereo.cas.config.SamlIdPMetadataConfiguration;
@@ -33,6 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
     SamlIdPMetadataUIWebflowConfigurerTests.SamlIdPMetadataTestConfiguration.class,
     CoreSamlConfiguration.class,
     SamlIdPConfiguration.class,
+    SamlIdPAuthenticationServiceSelectionStrategyConfiguration.class,
     SamlIdPMetadataConfiguration.class,
     SamlIdPEndpointsConfiguration.class,
     SamlIdPWebflowConfiguration.class,

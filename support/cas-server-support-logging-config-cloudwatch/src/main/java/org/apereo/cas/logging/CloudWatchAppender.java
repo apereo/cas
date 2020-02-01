@@ -248,7 +248,7 @@ public class CloudWatchAppender extends AbstractAppender {
         shutdown = true;
         if (deliveryThread != null) {
             synchronized (monitor) {
-                monitor.notify();
+                monitor.notifyAll();
             }
             try {
                 deliveryThread.join(SHUTDOWN_TIMEOUT_MILLIS);

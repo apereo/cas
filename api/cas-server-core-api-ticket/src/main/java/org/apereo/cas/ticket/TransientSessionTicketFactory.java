@@ -14,6 +14,32 @@ import java.util.Map;
  */
 public interface TransientSessionTicketFactory extends TicketFactory {
     /**
+     * Normalize ticket id string.
+     *
+     * @param id the id
+     * @return the string
+     */
+    static String normalizeTicketId(final String id) {
+        return TransientSessionTicket.PREFIX + '-' + id;
+    }
+
+    /**
+     * Build expiration policy expiration policy.
+     *
+     * @param expirationPolicyBuilder the expiration policy builder
+     * @param properties              the properties
+     * @return the expiration policy
+     */
+    static ExpirationPolicy buildExpirationPolicy(final ExpirationPolicyBuilder expirationPolicyBuilder,
+                                                  final Map<String, Serializable> properties) {
+        var expirationPolicy = expirationPolicyBuilder.buildTicketExpirationPolicy();
+        if (properties.containsKey(ExpirationPolicy.class.getName())) {
+            expirationPolicy = ExpirationPolicy.class.cast(properties.remove(ExpirationPolicy.class.getName()));
+        }
+        return expirationPolicy;
+    }
+
+    /**
      * Create delegated authentication request ticket.
      *
      * @param service    the service
@@ -39,15 +65,5 @@ public interface TransientSessionTicketFactory extends TicketFactory {
      */
     default TransientSessionTicket create(final Service service) {
         return create(service, new LinkedHashMap<>(0));
-    }
-
-    /**
-     * Normalize ticket id string.
-     *
-     * @param id the id
-     * @return the string
-     */
-    static String normalizeTicketId(final String id) {
-        return TransientSessionTicket.PREFIX + '-' + id;
     }
 }

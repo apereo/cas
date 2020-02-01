@@ -17,7 +17,7 @@ import java.util.Map;
 @Getter
 public class GroovyShellScript implements ExecutableCompiledGroovyScript {
     private final transient Script groovyScript;
-    private final transient String script;
+    private final String script;
 
     @SneakyThrows
     public GroovyShellScript(final String script) {
