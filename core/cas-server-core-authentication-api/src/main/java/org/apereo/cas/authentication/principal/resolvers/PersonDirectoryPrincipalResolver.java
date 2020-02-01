@@ -289,12 +289,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
      */
     @Synchronized
     protected PersonAttributeRetriever getPersonAttributeRetriever(final String principalId, final Credential credential) {
-        var retriever = retrieverMap.get(principalId);
-        if (retriever == null) {
-            retriever = new PersonAttributeRetriever(principalId, credential);
-            retrieverMap.put(principalId, retriever);
-        }
-        return retriever;
+        return retrieverMap.computeIfAbsent(principalId, s -> new PersonAttributeRetriever(principalId, credential));
     }
 
     /**

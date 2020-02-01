@@ -41,30 +41,14 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
     public static final String ENDPOINT_URL_ADMIN_FORM_LOGIN = "/adminlogin";
 
     private final CasConfigurationProperties casProperties;
+
     private final SecurityProperties securityProperties;
+
     private final CasWebSecurityExpressionHandler casWebSecurityExpressionHandler;
+
     private final PathMappedEndpoints pathMappedEndpoints;
+
     private final ApplicationContext applicationContext;
-
-    @Override
-    protected void configure(final HttpSecurity http) throws Exception {
-        http.csrf().disable()
-            .headers().disable()
-            .logout()
-            .disable()
-            .requiresChannel()
-            .requestMatchers(r -> r.getHeader("X-Forwarded-Proto") != null)
-            .requiresSecure();
-
-        val requests = http.authorizeRequests().expressionHandler(casWebSecurityExpressionHandler);
-        val endpoints = casProperties.getMonitor().getEndpoints().getEndpoint();
-        endpoints.forEach(Unchecked.biConsumer((k, v) -> {
-            val endpoint = EndpointRequest.to(k);
-            v.getAccess().forEach(Unchecked.consumer(access -> configureEndpointAccess(http, requests, access, v, endpoint)));
-        }));
-        configureEndpointAccessToDenyUndefined(http, requests);
-        configureEndpointAccessForStaticResources(requests);
-    }
 
     @Override
     protected void configure(final AuthenticationManagerBuilder auth) throws Exception {
@@ -92,6 +76,26 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
         if (!auth.isConfigured()) {
             super.configure(auth);
         }
+    }
+
+    @Override
+    protected void configure(final HttpSecurity http) throws Exception {
+        http.csrf().disable()
+            .headers().disable()
+            .logout()
+            .disable()
+            .requiresChannel()
+            .requestMatchers(r -> r.getHeader("X-Forwarded-Proto") != null)
+            .requiresSecure();
+
+        val requests = http.authorizeRequests().expressionHandler(casWebSecurityExpressionHandler);
+        val endpoints = casProperties.getMonitor().getEndpoints().getEndpoint();
+        endpoints.forEach(Unchecked.biConsumer((k, v) -> {
+            val endpoint = EndpointRequest.to(k);
+            v.getAccess().forEach(Unchecked.consumer(access -> configureEndpointAccess(http, requests, access, v, endpoint)));
+        }));
+        configureEndpointAccessToDenyUndefined(http, requests);
+        configureEndpointAccessForStaticResources(requests);
     }
 
     /**
@@ -126,11 +130,12 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
      * @throws Exception the exception
      */
     protected void configureJdbcAuthenticationProvider(final AuthenticationManagerBuilder auth, final MonitorProperties.Endpoints.JdbcSecurity jdbc) throws Exception {
-        val cfg = auth.jdbcAuthentication();
-        cfg.usersByUsernameQuery(jdbc.getQuery());
-        cfg.rolePrefix(jdbc.getRolePrefix());
-        cfg.dataSource(JpaBeans.newDataSource(jdbc));
-        cfg.passwordEncoder(PasswordEncoderUtils.newPasswordEncoder(jdbc.getPasswordEncoder(), applicationContext));
+        val passwordEncoder = PasswordEncoderUtils.newPasswordEncoder(jdbc.getPasswordEncoder(), applicationContext);
+        auth.jdbcAuthentication()
+            .passwordEncoder(passwordEncoder)
+            .usersByUsernameQuery(jdbc.getQuery())
+            .rolePrefix(jdbc.getRolePrefix())
+            .dataSource(JpaBeans.newDataSource(jdbc));
     }
 
     /**
@@ -300,6 +305,6 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
             && StringUtils.isNotBlank(ldap.getLdapUrl())
             && StringUtils.isNotBlank(ldap.getSearchFilter())
             && (StringUtils.isNotBlank(ldap.getLdapAuthz().getRoleAttribute())
-               || StringUtils.isNotBlank(ldap.getLdapAuthz().getGroupAttribute()));
+            || StringUtils.isNotBlank(ldap.getLdapAuthz().getGroupAttribute()));
     }
 }
