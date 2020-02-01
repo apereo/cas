@@ -227,6 +227,7 @@ public class SimpleHttpClientFactoryBean implements HttpClientFactory {
      * @return the built HTTP client
      */
     @SneakyThrows
+    @SuppressWarnings("java:S2095")
     private CloseableHttpClient buildHttpClient() {
         val plainSocketFactory = PlainConnectionSocketFactory.getSocketFactory();
         val registry = RegistryBuilder.<ConnectionSocketFactory>create()

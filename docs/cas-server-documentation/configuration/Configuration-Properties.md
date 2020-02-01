@@ -1704,7 +1704,7 @@ under the configuration key `cas.authn.passwordless.tokens`. SMS notifications s
 available [here](Configuration-Properties-Common.html#sms-notifications) under the configuration key `cas.authn.passwordless.tokens`.
 
 Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under 
-the configuration key `cas.authn.passwordless.tokens.jpa`.
+the configuration key `cas.authn.passwordless.tokens.jpa`. Scheduler settings for this feature are available [here](Configuration-Properties-Common.html#job-scheduling) under the configuration key `cas.authn.passwordless.tokens.jpa.cleaner`.
 
 ## Email Submissions
 

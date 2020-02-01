@@ -123,7 +123,7 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator<U
 
         val code = context.getRequestParameter(OAuth20Constants.CODE);
 
-        if (!code.isEmpty()) {
+        if (code.isPresent()) {
             LOGGER.debug("Checking if the OAuth code issued contains code challenge");
             val token = this.ticketRegistry.getTicket(code.get(), OAuth20Code.class);
 

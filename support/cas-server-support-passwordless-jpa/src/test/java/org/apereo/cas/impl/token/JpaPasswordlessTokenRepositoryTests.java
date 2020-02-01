@@ -1,12 +1,12 @@
 package org.apereo.cas.impl.token;
 
 import org.apereo.cas.api.PasswordlessTokenRepository;
-import org.apereo.cas.api.PasswordlessUserAccountStore;
 import org.apereo.cas.config.JpaPasswordlessAuthenticationConfiguration;
 import org.apereo.cas.impl.BasePasswordlessUserAccountStoreTests;
 
 import lombok.Getter;
 import lombok.val;
+import org.joda.time.DateTimeUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +14,12 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Import;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+
+import java.time.Clock;
+import java.time.LocalDate;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -29,21 +35,34 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("JDBC")
 @Import(JpaPasswordlessAuthenticationConfiguration.class)
 public class JpaPasswordlessTokenRepositoryTests extends BasePasswordlessUserAccountStoreTests {
-    private static final String CAS_USER = "casuser";
-
     @Autowired
     @Qualifier("passwordlessTokenRepository")
     private PasswordlessTokenRepository repository;
 
     @Test
     public void verifyAction() {
-        val token = repository.createToken(CAS_USER);
-        assertTrue(repository.findToken(CAS_USER).isEmpty());
+        val uid = UUID.randomUUID().toString();
+        val token = repository.createToken(uid);
+        assertTrue(repository.findToken(uid).isEmpty());
 
-        repository.saveToken(CAS_USER, token);
-        assertTrue(repository.findToken(CAS_USER).isPresent());
+        repository.saveToken(uid, token);
+        assertTrue(repository.findToken(uid).isPresent());
 
-        repository.deleteToken(CAS_USER, token);
-        assertTrue(repository.findToken(CAS_USER).isEmpty());
+        repository.deleteToken(uid, token);
+        assertTrue(repository.findToken(uid).isEmpty());
+    }
+
+    @Test
+    public void verifyCleaner() {
+        val uid = UUID.randomUUID().toString();
+        val token = repository.createToken(uid);
+        repository.saveToken(uid, token);
+        assertTrue(repository.findToken(uid).isPresent());
+
+        val tt = ZonedDateTime.now(ZoneOffset.UTC).plusHours(5).toInstant().toEpochMilli();
+        DateTimeUtils.setCurrentMillisFixed(tt);
+        repository.clean();
+        
+        assertTrue(repository.findToken(uid).isEmpty());
     }
 }

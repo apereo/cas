@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCrypt
 import org.apereo.cas.configuration.model.support.email.EmailProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapSearchProperties;
+import org.apereo.cas.configuration.model.support.quartz.ScheduledJobProperties;
 import org.apereo.cas.configuration.model.support.sms.SmsProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.RestEndpointProperties;
@@ -152,6 +153,12 @@ public class PasswordlessAuthenticationProperties implements Serializable {
     public static class Jpa extends AbstractJpaProperties {
 
         private static final long serialVersionUID = 7647381223153797806L;
+
+        /**
+         * Settings that control the background cleaner process.
+         */
+        @NestedConfigurationProperty
+        private ScheduledJobProperties cleaner = new ScheduledJobProperties("PT15S", "PT2M");
     }
 
     @RequiresModule(name = "cas-server-support-passwordless")

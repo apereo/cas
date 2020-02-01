@@ -91,6 +91,8 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
 
     private static final long serialVersionUID = -6833230731146922780L;
 
+    private static final String LOG_MESSAGE_ATTR_CREATED = "Created attribute value XMLObject: [{}]";
+
     /**
      * The Config bean.
      */
@@ -146,7 +148,7 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
      * @return the element
      */
     private static org.jdom.Element signSamlElement(final org.jdom.Element element, final PrivateKey privKey, final PublicKey pubKey) {
-        LOGGER.trace("Attempting to sign org.jdom.Element: {}", element);
+        LOGGER.trace("Attempting to sign org.jdom.Element: [{}]", element);
         try {
             val providerName = System.getProperty("jsr105Provider", SIGNATURE_FACTORY_PROVIDER_CLASS);
 
@@ -233,7 +235,7 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
      * @return the org.w3c.dom. document
      */
     private static org.w3c.dom.Document toDom(final Document doc) {
-        LOGGER.trace("Creating org.w3c.dom.Document from: {}", doc);
+        LOGGER.trace("Creating org.w3c.dom.Document from: [{}]", doc);
         try {
             val xmlOutputter = new XMLOutputter();
             val elemStrWriter = new StringWriter();
@@ -276,7 +278,7 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
     @SneakyThrows
     public <T extends SAMLObject> T newSamlObject(final Class<T> objectType) {
         val qName = getSamlObjectQName(objectType);
-        LOGGER.trace("Attempting to create SAMLObject for type: {} and QName: {}", objectType, qName);
+        LOGGER.trace("Attempting to create SAMLObject for type: [{}] and QName: [{}]", objectType, qName);
         val builder = (SAMLObjectBuilder<T>)
             XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(qName);
         if (builder == null) {
@@ -295,7 +297,7 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
     @SneakyThrows
     public <T extends SOAPObject> T newSoapObject(final Class<T> objectType) {
         val qName = getSamlObjectQName(objectType);
-        LOGGER.trace("Attempting to create SOAPObject for type: {} and QName: {}", objectType, qName);
+        LOGGER.trace("Attempting to create SOAPObject for type: [{}] and QName: [{}]", objectType, qName);
         val builder = (SOAPObjectBuilder<T>)
             XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(qName);
         if (builder == null) {
@@ -330,12 +332,12 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
      * @return the xS string
      */
     protected XMLObject newAttributeValue(final Object value, final String valueType, final QName elementName) {
-        LOGGER.trace("Creting new attribute value XMLObject for value: {}, value type: {}, QName: {}", value, valueType, elementName);
+        LOGGER.trace("Creating new attribute value XMLObject for value: [{}], value type: [{}], QName: [{}]", value, valueType, elementName);
         if (XSString.class.getSimpleName().equalsIgnoreCase(valueType)) {
             val builder = new XSStringBuilder();
             val attrValueObj = builder.buildObject(elementName, XSString.TYPE_NAME);
             attrValueObj.setValue(value.toString());
-            LOGGER.trace("Created attribute value XMLObject: {}", attrValueObj);
+            LOGGER.trace(LOG_MESSAGE_ATTR_CREATED, attrValueObj);
             return attrValueObj;
         }
 
@@ -343,7 +345,7 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
             val builder = new XSURIBuilder();
             val attrValueObj = builder.buildObject(elementName, XSURI.TYPE_NAME);
             attrValueObj.setValue(value.toString());
-            LOGGER.trace("Created attribute value XMLObject: {}", attrValueObj);
+            LOGGER.trace(LOG_MESSAGE_ATTR_CREATED, attrValueObj);
             return attrValueObj;
         }
 
@@ -351,7 +353,7 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
             val builder = new XSBooleanBuilder();
             val attrValueObj = builder.buildObject(elementName, XSBoolean.TYPE_NAME);
             attrValueObj.setValue(XSBooleanValue.valueOf(value.toString().toLowerCase()));
-            LOGGER.trace("Created attribute value XMLObject: {}", attrValueObj);
+            LOGGER.trace(LOG_MESSAGE_ATTR_CREATED, attrValueObj);
             return attrValueObj;
         }
 
@@ -359,7 +361,7 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
             val builder = new XSIntegerBuilder();
             val attrValueObj = builder.buildObject(elementName, XSInteger.TYPE_NAME);
             attrValueObj.setValue(Integer.valueOf(value.toString()));
-            LOGGER.trace("Created attribute value XMLObject: {}", attrValueObj);
+            LOGGER.trace(LOG_MESSAGE_ATTR_CREATED, attrValueObj);
             return attrValueObj;
         }
 
@@ -367,7 +369,7 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
             val builder = new XSDateTimeBuilder();
             val attrValueObj = builder.buildObject(elementName, XSDateTime.TYPE_NAME);
             attrValueObj.setValue(DateTime.parse(value.toString()));
-            LOGGER.trace("Created attribute value XMLObject: {}", attrValueObj);
+            LOGGER.trace(LOG_MESSAGE_ATTR_CREATED, attrValueObj);
             return attrValueObj;
         }
 
@@ -375,7 +377,7 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
             val builder = new XSBase64BinaryBuilder();
             val attrValueObj = builder.buildObject(elementName, XSBase64Binary.TYPE_NAME);
             attrValueObj.setValue(value.toString());
-            LOGGER.trace("Created attribute value XMLObject: {}", attrValueObj);
+            LOGGER.trace(LOG_MESSAGE_ATTR_CREATED, attrValueObj);
             return attrValueObj;
         }
 
@@ -384,14 +386,14 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
             val builder = new XSAnyBuilder();
             val attrValueObj = builder.buildObject(elementName);
             attrValueObj.setTextContent(mapper.writeValueAsString(value));
-            LOGGER.trace("Created attribute value XMLObject: {}", attrValueObj);
+            LOGGER.trace(LOG_MESSAGE_ATTR_CREATED, attrValueObj);
             return attrValueObj;
         }
 
         val builder = new XSAnyBuilder();
         val attrValueObj = builder.buildObject(elementName);
         attrValueObj.setTextContent(value.toString());
-        LOGGER.trace("Created attribute value XMLObject: {}", attrValueObj);
+        LOGGER.trace(LOG_MESSAGE_ATTR_CREATED, attrValueObj);
         return attrValueObj;
     }
 
