@@ -24,7 +24,7 @@ echo -e "\t\tsigning.secretKeyRingFile=/path/to/.gnupg/secring.gpg"
 echo -e "\t- Disable the Gradle daemon and parallel processing via properties '~/.gradle/gradle.properties'."
 echo -e "\t\torg.gradle.daemon=false"
 echo -e "\t\torg.gradle.parallel=false"
-echo -e "\nFor more information, please visit https://apereo.github.io/cas/developer/Release-Process.html\n"
+echo -e "\nFor more information, please visit\n\thttps://apereo.github.io/cas/developer/Release-Process.html\n"
 
 read -s -p "If you are ready, press ENTER to continue..." anykey
 clear
