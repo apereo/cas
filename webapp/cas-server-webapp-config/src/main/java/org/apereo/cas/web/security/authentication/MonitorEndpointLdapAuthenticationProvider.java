@@ -122,6 +122,7 @@ public class MonitorEndpointLdapAuthenticationProvider implements Authentication
         return UsernamePasswordAuthenticationToken.class.isAssignableFrom(aClass);
     }
 
+    @SuppressWarnings("java:S2095")
     private AuthorizationGenerator buildAuthorizationGenerator() {
         val ldapAuthz = this.ldapProperties.getLdapAuthz();
         val connectionFactory = LdapUtils.newLdaptivePooledConnectionFactory(this.ldapProperties);

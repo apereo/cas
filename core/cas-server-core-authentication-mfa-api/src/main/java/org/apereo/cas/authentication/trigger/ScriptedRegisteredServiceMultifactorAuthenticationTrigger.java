@@ -54,7 +54,7 @@ public class ScriptedRegisteredServiceMultifactorAuthenticationTrigger implement
     @JsonIgnore
     @Transient
     @org.springframework.data.annotation.Transient
-    private transient Map<String, ExecutableCompiledGroovyScript> scriptCache = new ConcurrentHashMap<>(0);
+    private Map<String, ExecutableCompiledGroovyScript> scriptCache = new ConcurrentHashMap<>(0);
 
     @Override
     public Optional<MultifactorAuthenticationProvider> isActivated(final Authentication authentication,

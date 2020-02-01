@@ -27,6 +27,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -105,6 +106,7 @@ public class MultifactorAuthnTrustConfiguration {
         return CipherExecutor.noOp();
     }
 
+    @ConditionalOnProperty(prefix = "cas.authn.mfa.trusted.cleaner.schedule", name = "enabled", havingValue = "true", matchIfMissing = true)
     @ConditionalOnMissingBean(name = "mfaTrustStorageCleaner")
     @Bean
     public MultifactorAuthenticationTrustStorageCleaner mfaTrustStorageCleaner() {

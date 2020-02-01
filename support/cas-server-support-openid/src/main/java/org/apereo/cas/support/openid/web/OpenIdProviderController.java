@@ -32,7 +32,7 @@ public class OpenIdProviderController {
      * @return the model and view
      */
     @GetMapping("/openid/*")
-    protected ModelAndView handleRequestInternal(final HttpServletRequest request,
+    public ModelAndView handleRequestInternal(final HttpServletRequest request,
                                                  final HttpServletResponse response) {
         return new ModelAndView("openIdProviderView",
             CollectionUtils.wrap("openid_server", casProperties.getServer().getPrefix()));

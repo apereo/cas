@@ -48,6 +48,24 @@ public class SurrogatePrincipalResolver extends PersonDirectoryPrincipalResolver
     }
 
     @Override
+    public boolean supports(final Credential credential) {
+        return super.supports(credential) && SurrogateUsernamePasswordCredential.class.isAssignableFrom(credential.getClass());
+    }
+
+    @Override
+    protected Principal buildResolvedPrincipal(final String id, final Map<String, List<Object>> attributes,
+                                               final Credential credential, final Optional<Principal> currentPrincipal,
+                                               final Optional<AuthenticationHandler> handler) {
+        if (!supports(credential)) {
+            return super.buildResolvedPrincipal(id, attributes, credential, currentPrincipal, handler);
+        }
+        if (currentPrincipal.isEmpty()) {
+            throw new IllegalArgumentException("Current principal resolved cannot be empty");
+        }
+        return surrogatePrincipalBuilder.buildSurrogatePrincipal(id, currentPrincipal.get());
+    }
+
+    @Override
     protected String extractPrincipalId(final Credential credential, final Optional<Principal> currentPrincipal) {
         LOGGER.debug("Attempting to extract principal id for principal [{}]", currentPrincipal);
         if (!supports(credential)) {
@@ -60,21 +78,6 @@ public class SurrogatePrincipalResolver extends PersonDirectoryPrincipalResolver
         val id = SurrogateUsernamePasswordCredential.class.cast(credential).getSurrogateUsername();
         LOGGER.debug("Resolving principal id for surrogate authentication as [{}]", id);
         return id;
-    }
-
-    @Override
-    protected Principal buildResolvedPrincipal(final String id, final Map<String, List<Object>> attributes,
-                                               final Credential credential, final Optional<Principal> currentPrincipal,
-                                               final Optional<AuthenticationHandler> handler) {
-        if (!supports(credential)) {
-            return super.buildResolvedPrincipal(id, attributes, credential, currentPrincipal, handler);
-        }
-        return surrogatePrincipalBuilder.buildSurrogatePrincipal(id, currentPrincipal.get());
-    }
-
-    @Override
-    public boolean supports(final Credential credential) {
-        return super.supports(credential) && SurrogateUsernamePasswordCredential.class.isAssignableFrom(credential.getClass());
     }
 
     @Override

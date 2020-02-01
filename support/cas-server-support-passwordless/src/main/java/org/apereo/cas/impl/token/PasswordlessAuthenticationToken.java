@@ -1,5 +1,6 @@
 package org.apereo.cas.impl.token;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.AllArgsConstructor;
@@ -9,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.val;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.Column;
@@ -19,6 +21,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import java.io.Serializable;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 
 /**
  * This is {@link PasswordlessAuthenticationToken}.
@@ -51,4 +55,13 @@ public class PasswordlessAuthenticationToken implements Serializable {
 
     @Column(nullable = false)
     private String token;
+
+    @Column(name = "EXP_DATE", length = Integer.MAX_VALUE, nullable = false)
+    private ZonedDateTime expirationDate;
+
+    @JsonIgnore
+    public boolean isExpired() {
+        val now = ZonedDateTime.now(ZoneOffset.UTC);
+        return now.isAfter(getExpirationDate()) || now.isEqual(getExpirationDate());
+    }
 }

@@ -79,7 +79,7 @@ public class OidcDefaultJsonWebKeystoreCacheLoader implements CacheLoader<String
                 }
 
                 val webKey = getJsonSigningWebKeyFromJwks(jsonWebKeySet);
-                if (webKey.getPrivateKey() == null) {
+                if (webKey != null && webKey.getPrivateKey() == null) {
                     LOGGER.warn("JSON web key retrieved [{}] has no associated private key", webKey.getKeyId());
                     return Optional.empty();
                 }

@@ -132,6 +132,7 @@ public class TerminateSessionAction extends AbstractAction {
      * @param request  the request
      * @param response the response
      */
+    @SuppressWarnings("java:S2441")
     protected void destroyApplicationSession(final HttpServletRequest request, final HttpServletResponse response) {
         LOGGER.trace("Destroying application session");
         val context = new JEEContext(request, response, new JEESessionStore());
