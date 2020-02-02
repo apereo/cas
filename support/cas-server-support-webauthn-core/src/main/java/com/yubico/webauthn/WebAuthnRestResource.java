@@ -47,6 +47,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -134,7 +135,7 @@ public class WebAuthnRestResource {
     }
 
     @PostMapping(API_VERSION + "/register/finish")
-    public ResponseEntity finishRegistration(@NonNull String responseJson) {
+    public ResponseEntity finishRegistration(@RequestBody String responseJson) throws Exception {
         val result = server.finishRegistration(responseJson);
         return finishResponse(
             result,
@@ -145,7 +146,7 @@ public class WebAuthnRestResource {
     }
 
     @PostMapping(API_VERSION + "/register/finish-u2f")
-    public ResponseEntity finishU2fRegistration(@NonNull String responseJson) throws ExecutionException {
+    public ResponseEntity finishU2fRegistration(@RequestBody final String responseJson) throws ExecutionException {
         val result = server.finishU2fRegistration(responseJson);
         return finishResponse(
             result,
@@ -235,7 +236,7 @@ public class WebAuthnRestResource {
         if (result.isRight()) {
             try {
                 LOGGER.trace("[{}]: {}", methodName, responseJson);
-                return ResponseEntity.ok(result.right().get());
+                return ResponseEntity.ok(writeJson(result.right().get()));
             } catch (final Exception e) {
                 LOGGER.error(e.getMessage(), e);
                 return messagesJson(
