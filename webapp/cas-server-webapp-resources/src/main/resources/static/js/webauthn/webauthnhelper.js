@@ -1,6 +1,5 @@
 let ceremonyState = {};
-let session = {
-};
+let session = {};
 
 function extend(obj, more) {
     return Object.assign({}, obj, more);
@@ -22,7 +21,6 @@ function updateSession(response) {
         session.username = response.username;
     }
     updateSessionBox();
-    updateRegisterButtons();
     return response;
 }
 
@@ -33,21 +31,11 @@ function logout() {
 
 function updateSessionBox() {
     if (session.username) {
-        document.getElementById('session').textContent = `Logged in as ${session.username}`;
+        document.getElementById('session').textContent = `Identified in as ${session.username}`;
         document.getElementById('logoutButton').disabled = false;
     } else {
-        document.getElementById('session').textContent = 'Not logged in.';
+        document.getElementById('session').textContent = 'Not identified yet.';
         document.getElementById('logoutButton').disabled = true;
-    }
-}
-
-function updateRegisterButtons() {
-    if (session.sessionToken) {
-        document.getElementById('registerButton').textContent = 'Add credential';
-        document.getElementById('registerRkButton').textContent = 'Add resident credential';
-    } else {
-        document.getElementById('registerButton').textContent = 'Register new account';
-        document.getElementById('registerRkButton').textContent = 'Register new account with resident credential';
     }
 }
 
@@ -78,8 +66,9 @@ function clearMessages() {
 }
 
 function showJson(name, data) {
-    const el = document.getElementById(name)
-        .textContent = JSON.stringify(data, false, 2);
+    if (data != null) {
+        document.getElementById(name).textContent = JSON.stringify(data, false, 4);
+    }
 }
 function showRequest(data) { return showJson('request', data); }
 function showAuthenticatorResponse(data) {
@@ -149,7 +138,6 @@ function executeRegisterRequest(request, useU2f = false) {
 }
 
 function executeU2fRegisterRequest(request) {
-    const appId = 'https://mmoayyed.unicon.net:8443';
     console.log('appId', appId);
     return u2fRegister(
         appId,

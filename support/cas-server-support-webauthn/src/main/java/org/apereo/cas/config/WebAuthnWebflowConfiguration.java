@@ -132,7 +132,7 @@ public class WebAuthnWebflowConfiguration {
     @ConditionalOnMissingBean(name = "webAuthnStartRegistrationAction")
     @Bean
     public Action webAuthnStartRegistrationAction() {
-        return new WebAuthnStartRegistrationAction(webAuthnCredentialRepository.getIfAvailable());
+        return new WebAuthnStartRegistrationAction(webAuthnCredentialRepository.getIfAvailable(), casProperties);
     }
 
     @ConditionalOnMissingBean(name = "webAuthnCheckAccountRegistrationAction")
@@ -187,7 +187,7 @@ public class WebAuthnWebflowConfiguration {
             val deviceRegistrationEnabled = casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled();
             return new WebAuthnMultifactorTrustWebflowConfigurer(flowBuilderServices,
                 deviceRegistrationEnabled, loginFlowDefinitionRegistry.getIfAvailable(),
-                applicationContext, casProperties);
+                applicationContext, casProperties, webAuthnFlowRegistry());
         }
 
         @Override

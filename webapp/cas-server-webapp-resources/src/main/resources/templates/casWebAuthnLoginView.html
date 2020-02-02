@@ -7,20 +7,14 @@
 
     <title>Web AuthN Registration View</title>
     <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag"/>
-
+    
     <script th:src="@{/js/u2f/u2f-api.js}"></script>
 
     <script type="text/javascript" th:src="@{/webjars/text-encoding/0.7.0/lib/encoding.js}"></script>
     <script type="text/javascript" th:src="@{/webjars/text-encoding/0.7.0/lib/encoding-indexes.js}"></script>
     <script type="text/javascript" th:src="@{/webjars/whatwg-fetch/3.0.0/fetch.js}"></script>
     <script type="text/javascript" th:src="@{/webjars/base64-js/1.3.0/base64js.min.js}"></script>
-
-    <script type="text/javascript" th:inline="javascript">
-    /*<![CDATA[*/
-    var appId = /*[[${webauthnApplicationId}]]*/ ;
-    /*]]>*/
-    </script>
-
+    
     <script th:src="@{/js/webauthn/base64url.js}"></script>
     <script th:src="@{/js/webauthn/webauthn.js}"></script>
     <script th:src="@{/js/webauthn/webauthnhelper.js}"></script>
@@ -28,28 +22,21 @@
 </head>
 
 <body onload="javascript:register()">
-<main role="main" class="container mt-3 mb-3">
-    <div layout:fragment="content" id="login">
+    <main role="main" class="container mt-3 mb-3">
+        <div layout:fragment="content" id="login">
 
-        <p id="status" style="display: none"></p>
-        <div id="messages" style="display: none"></div>
-        <button style="display: none" id="logoutButton" disabled="disabled" onClick="javascript:logout()">Log out</button>
-
-        <div id="device-info" style="display: none">
-            <img id="device-icon"/>
-
-            <div>
-                <b>Device:</b>
-                <p id="device-name"></p>
-
-                <b>Nickname:</b>
-                <p id="device-nickname"></p>
+            <p id="status"></p>
+            <div id="messages"></div>
+            <button id="logoutButton" disabled="disabled" onClick="javascript:logout()">Log out</button>
+            
+            <div id="device-info">
+                <img id="device-icon"/>
+                <b>Device: </b><span id="device-name"></span>
+                <b>Nickname: </b><span id="device-nickname"></span>
             </div>
-        </div>
 
-        <form method="POST" id="form" th:action="@{/login}">
-            <input type="hidden" id="username" th:value="${principal.id}"/>
-            <input type="hidden" id="displayName"/>
+            <input type="hidden" id="username" th:value="${principal.id}" />
+            <input type="hidden" id="displayName" />
             <input type="hidden" id="credentialNickname"/>
             <input type="checkbox" id="useU2f" style="display: none"/>
 
@@ -62,36 +49,27 @@
                         data-target="#authenticatorResponse" aria-expanded="false" aria-controls="authenticatorResponse">
                     Authenticator Response
                 </button>
-                <button class="btn btn-primary" type="button" data-toggle="collapse"
-                        data-target="#requestPanel" aria-expanded="false" aria-controls="requestPanel">
-                    Request
-                </button>
             </p>
+
             <div class="collapse" id="serverResponse">
                 <div class="card card-body">
-                    <h4>Server Response:</h4>
-                    <pre id="session"></pre>
+                    <p id="session">Not logged in.</p>
                     <pre id="server-response"></pre>
                 </div>
             </div>
             <div class="collapse" id="authenticatorResponse">
                 <div class="card card-body">
-                    <h4>Authenticator Response:</h4>
                     <pre id="authenticator-response"></pre>
                 </div>
             </div>
-            <div class="collapse" id="requestPanel">
-                <div class="card card-body">
-                    <h4>WebAuthN Request:</h4>
-                    <pre id="request"></pre>
-                </div>
-            </div>
-            
-            <input type="hidden" name="_eventId" value="submit"/>
-            <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
-        </form>
 
-    </div>
-</main>
+            <div class="alert alert-info">
+                <form method="POST" id="form">
+                    <input type="hidden" name="_eventId" value="submit"/>
+                    <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+                </form>
+            </div>
+        </div>
+    </main>
 </body>
 </html>
