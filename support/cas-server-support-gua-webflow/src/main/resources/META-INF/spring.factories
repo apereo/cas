@@ -1,1 +1,1 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.gua.config.GraphicalUserAuthenticationWebflowConfiguration
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.config.GraphicalUserAuthenticationWebflowConfiguration
