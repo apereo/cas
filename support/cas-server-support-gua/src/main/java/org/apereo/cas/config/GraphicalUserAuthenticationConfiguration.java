@@ -34,10 +34,6 @@ public class GraphicalUserAuthenticationConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    @Autowired
-    @Qualifier("servicesManager")
-    private ObjectProvider<ServicesManager> servicesManager;
-
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "userGraphicalAuthenticationRepository")

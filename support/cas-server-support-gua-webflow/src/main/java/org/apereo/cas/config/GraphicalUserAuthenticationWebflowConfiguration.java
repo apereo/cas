@@ -40,7 +40,7 @@ import org.springframework.webflow.execution.Action;
 @Configuration("graphicalUserAuthenticationWebflowConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @AutoConfigureAfter(MultiphaseAuthenticationWebflowConfiguration.class)
-public class GraphicalUserAuthenticationConfiguration {
+public class GraphicalUserAuthenticationWebflowConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
