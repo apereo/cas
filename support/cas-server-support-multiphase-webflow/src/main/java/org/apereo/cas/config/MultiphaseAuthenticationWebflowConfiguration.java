@@ -23,15 +23,15 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
 
 /**
- * This is {@link MultiphaseAuthenticationConfiguration}.
+ * This is {@link MultiphaseAuthenticationWebflowConfiguration}.
  *
  * @author Hayden Sartoris
  * @since 6.2.0
  */
 
-@Configuration("multiphaseAuthenticationConfiguration")
+@Configuration("multiphaseAuthenticationWebflowConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class MultiphaseAuthenticationConfiguration {
+public class MultiphaseAuthenticationWebflowConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
