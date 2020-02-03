@@ -61,7 +61,7 @@ public interface AttributeDefinition extends Serializable, Comparable<AttributeD
      *
      * @return the template
      */
-    String getTemplate();
+    String getPatternFormat();
 
     /**
      * Groovy script definition (embedded or external) that should be invoked to determine

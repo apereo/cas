@@ -38,7 +38,7 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
 
     private String attribute;
 
-    private String template;
+    private String patternFormat;
 
     private String script;
 
