@@ -29,7 +29,7 @@ public class GraphicalUserAuthenticationProperties implements Serializable {
     /**
      * Display user graphics on main login page, rather than separate interstitial.
      */
-    private Boolean graphicOnMainLogin = false;
+    private boolean graphicOnMainLogin = false;
 
     /**
      * Locate GUA settings and images from LDAP.
