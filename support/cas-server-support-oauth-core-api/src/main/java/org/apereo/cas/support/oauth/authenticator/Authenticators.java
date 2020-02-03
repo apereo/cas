@@ -32,7 +32,7 @@ public interface Authenticators {
      */
     String CAS_OAUTH_CLIENT_DIRECT_FORM_PROOF_KEY_CODE_EXCHANGE_AUTHN = "pkceFormAuthn";
     /**
-     * OAuth authn for PKCE with basic authn
+     * OAuth authn for PKCE with basic authn.
      */
     String CAS_OAUTH_CLIENT_BASIC_PROOF_KEY_CODE_EXCHANGE_AUTHN = "pkceBasicAuthn";
 }
