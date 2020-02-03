@@ -39,7 +39,7 @@ import org.springframework.webflow.execution.Action;
  * @since 5.3.0
  */
 @SpringBootTest(classes = {
-    GraphicalUserAuthenticationConfiguration.class,
+    GraphicalUserAuthenticationWebflowConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreAuthenticationConfiguration.class,
     CasCoreServicesAuthenticationConfiguration.class,
