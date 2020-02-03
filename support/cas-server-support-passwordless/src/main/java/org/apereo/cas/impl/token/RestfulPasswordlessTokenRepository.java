@@ -24,6 +24,7 @@ import java.util.Optional;
 @Slf4j
 public class RestfulPasswordlessTokenRepository extends BasePasswordlessTokenRepository {
     private final PasswordlessAuthenticationProperties.RestTokens restProperties;
+
     private final CipherExecutor cipherExecutor;
 
     public RestfulPasswordlessTokenRepository(final int tokenExpirationInSeconds,
@@ -99,6 +100,20 @@ public class RestfulPasswordlessTokenRepository extends BasePasswordlessTokenRep
             response = HttpUtils.execute(restProperties.getUrl(), HttpMethod.POST.name(),
                 restProperties.getBasicAuthUsername(), restProperties.getBasicAuthPassword(),
                 parameters, new HashMap<>(0));
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        } finally {
+            HttpUtils.close(response);
+        }
+    }
+
+    @Override
+    public void clean() {
+        HttpResponse response = null;
+        try {
+            response = HttpUtils.execute(restProperties.getUrl(), HttpMethod.DELETE.name(),
+                restProperties.getBasicAuthUsername(), restProperties.getBasicAuthPassword(),
+                new HashMap<>(0), new HashMap<>(0));
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         } finally {

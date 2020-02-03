@@ -57,6 +57,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
+    @SuppressWarnings("java:S2583")
     public long deleteAll() {
         val redisKeys = this.client.keys(getPatternTicketRedisKey());
         if (redisKeys == null) {

@@ -3,7 +3,7 @@ package org.apereo.cas.web.flow;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 
 import lombok.val;
-import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.Transition;
@@ -25,7 +25,7 @@ public class GraphicalUserAuthenticationWebflowConfigurer extends MultiphaseAuth
 
     public GraphicalUserAuthenticationWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
                                                         final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-                                                        final ApplicationContext applicationContext,
+                                                        final ConfigurableApplicationContext applicationContext,
                                                         final CasConfigurationProperties casProperties) {
         super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
     }

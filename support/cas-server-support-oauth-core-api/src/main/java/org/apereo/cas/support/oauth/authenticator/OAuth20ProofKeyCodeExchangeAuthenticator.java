@@ -43,7 +43,7 @@ public class OAuth20ProofKeyCodeExchangeAuthenticator extends OAuth20ClientIdCli
 
     @Override
     protected boolean canAuthenticate(final WebContext context) {
-        return !context.getRequestParameter(OAuth20Constants.CODE_VERIFIER).isEmpty();
+        return context.getRequestParameter(OAuth20Constants.CODE_VERIFIER).isPresent();
     }
 
     @Override

@@ -66,7 +66,7 @@ public class CasAppender extends AbstractAppender {
                 LOGGER.warn("No log appender could be found for [{}]", refName);
             }
         } else {
-            LOGGER.warn("No log appender reference could be located in logging configuration.");
+            LOGGER.warn("No log appender reference for [{}] could be located in logging configuration.", refName);
         }
     }
 }

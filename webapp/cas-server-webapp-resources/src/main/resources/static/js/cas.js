@@ -103,12 +103,12 @@ function resourceLoadedSuccessfully() {
         let $revealpassword = $('.reveal-password');
         $revealpassword.mouseup(function() {
             $('.pwd').attr('type', 'password');
-            $("#reveal-password-icon").removeClass("fa fa-eye-slash").addClass("fa fa-eye");
+            $(".reveal-password-icon").removeClass("fa fa-eye-slash").addClass("fa fa-eye");
         })
 
         $revealpassword.mousedown(function() {
             $('.pwd').attr('type', 'text');
-            $("#reveal-password-icon").removeClass("fa fa-eye").addClass("fa fa-eye-slash");
+            $(".reveal-password-icon").removeClass("fa fa-eye").addClass("fa fa-eye-slash");
         })
         
         if (typeof(jqueryReady) == 'function') {

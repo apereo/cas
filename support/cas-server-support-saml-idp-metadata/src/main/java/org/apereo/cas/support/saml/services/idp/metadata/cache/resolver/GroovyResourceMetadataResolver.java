@@ -6,6 +6,7 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.scripting.ScriptingUtils;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -31,7 +32,7 @@ public class GroovyResourceMetadataResolver extends BaseSamlRegisteredServiceMet
     @Override
     public Collection<? extends MetadataResolver> resolve(final SamlRegisteredService service, final CriteriaSet criteriaSet) {
         try {
-            val metadataLocation = service.getMetadataLocation();
+            val metadataLocation = SpringExpressionLanguageValueResolver.getInstance().resolve(service.getMetadataLocation());
             LOGGER.info("Loading SAML metadata via [{}]", metadataLocation);
             val metadataResource = ResourceUtils.getResourceFrom(metadataLocation);
             val args = new Object[]{service, this.configBean, this.samlIdPProperties, criteriaSet, LOGGER};
@@ -47,14 +48,14 @@ public class GroovyResourceMetadataResolver extends BaseSamlRegisteredServiceMet
 
     @Override
     public boolean supports(final SamlRegisteredService service) {
-        val metadataLocation = service.getMetadataLocation();
+        val metadataLocation = SpringExpressionLanguageValueResolver.getInstance().resolve(service.getMetadataLocation());
         return ScriptingUtils.isExternalGroovyScript(metadataLocation);
     }
 
     @Override
     public boolean isAvailable(final SamlRegisteredService service) {
         if (supports(service)) {
-            val metadataLocation = service.getMetadataLocation();
+            val metadataLocation = SpringExpressionLanguageValueResolver.getInstance().resolve(service.getMetadataLocation());
             return ResourceUtils.doesResourceExist(metadataLocation);
         }
         return false;

@@ -5,7 +5,7 @@ import org.apereo.cas.web.flow.CasWebflowConstants;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.Flow;
@@ -14,6 +14,7 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.engine.support.DefaultTargetStateResolver;
 
 import java.util.Arrays;
+import java.util.Optional;
 
 /**
  * This is {@link AbstractMultifactorTrustedDeviceWebflowConfigurer}.
@@ -29,32 +30,38 @@ public abstract class AbstractMultifactorTrustedDeviceWebflowConfigurer extends 
     public static final String MFA_TRUSTED_AUTHN_SCOPE_ATTR = "mfaTrustedAuthentication";
 
     private static final String ACTION_ID_MFA_VERIFY_TRUST_ACTION = "mfaVerifyTrustAction";
+
     private static final String ACTION_ID_MFA_SET_TRUST_ACTION = "mfaSetTrustAction";
+
     private static final String ACTION_ID_MFA_PREPARE_TRUST_DEVICE_VIEW_ACTION = "mfaPrepareTrustDeviceViewAction";
 
     private final boolean enableDeviceRegistration;
 
     public AbstractMultifactorTrustedDeviceWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
                                                              final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-                                                             final boolean enableDeviceRegistration, final ApplicationContext applicationContext,
-                                                             final CasConfigurationProperties casProperties) {
-        super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
+                                                             final boolean enableDeviceRegistration,
+                                                             final ConfigurableApplicationContext applicationContext,
+                                                             final CasConfigurationProperties casProperties,
+                                                             final Optional<FlowDefinitionRegistry> mfaFlowDefinitionRegistry) {
+        super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties, mfaFlowDefinitionRegistry);
         this.enableDeviceRegistration = enableDeviceRegistration;
     }
 
     /**
      * Register multifactor trusted authentication into webflow.
-     *
-     * @param flowDefinitionRegistry the flow definition registry
      */
-    protected void registerMultifactorTrustedAuthentication(final FlowDefinitionRegistry flowDefinitionRegistry) {
-        validateFlowDefinitionConfiguration(flowDefinitionRegistry);
+    protected void registerMultifactorTrustedAuthentication() {
+        this.multifactorAuthenticationFlowDefinitionRegistries.forEach(this::registerMultifactorTrustedAuthentication);
+    }
 
-        LOGGER.trace("Flow definitions found in the registry are [{}]", (Object[]) flowDefinitionRegistry.getFlowDefinitionIds());
-        val flowId = Arrays.stream(flowDefinitionRegistry.getFlowDefinitionIds()).findFirst().orElseThrow();
+    protected void registerMultifactorTrustedAuthentication(final FlowDefinitionRegistry registry) {
+        validateFlowDefinitionConfiguration();
+
+        LOGGER.trace("Flow definitions found in the registry are [{}]", (Object[]) registry.getFlowDefinitionIds());
+        val flowId = Arrays.stream(registry.getFlowDefinitionIds()).findFirst().orElseThrow();
         LOGGER.trace("Processing flow definition [{}]", flowId);
 
-        val flow = (Flow) flowDefinitionRegistry.getFlowDefinition(flowId);
+        val flow = (Flow) registry.getFlowDefinition(flowId);
 
         val state = getState(flow, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM, ActionState.class);
         val transition = (Transition) state.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS);
@@ -103,24 +110,27 @@ public abstract class AbstractMultifactorTrustedDeviceWebflowConfigurer extends 
         createTransitionForState(viewRegister, CasWebflowConstants.TRANSITION_ID_SUBMIT, CasWebflowConstants.STATE_ID_REGISTER_TRUSTED_DEVICE);
     }
 
-    private void validateFlowDefinitionConfiguration(final FlowDefinitionRegistry flowDefinitionRegistry) {
-        if (flowDefinitionRegistry.getFlowDefinitionCount() <= 0) {
-            throw new IllegalArgumentException("Flow definition registry has no flow definitions");
-        }
+    private void validateFlowDefinitionConfiguration() {
+        this.multifactorAuthenticationFlowDefinitionRegistries.forEach(registry -> {
+            if (registry.getFlowDefinitionCount() <= 0) {
+                throw new IllegalArgumentException("Flow definition registry has no flow definitions");
+            }
 
-        val msg = "CAS application context cannot find bean [%s]. "
-            + "This typically indicates that configuration is attempting to activate trusted-devices functionality for "
-            + "multifactor authentication, yet the configuration modules that auto-configure the webflow are absent "
-            + "from the CAS application runtime. If you have no need for trusted-devices functionality and wish to let the "
-            + "multifactor authentication provider (and not CAS) remember and record trusted devices for you, you need to "
-            + "turn this behavior off.";
+            val msg = "CAS application context cannot find bean [%s]. "
+                + "This typically indicates that configuration is attempting to activate trusted-devices functionality for "
+                + "multifactor authentication, yet the configuration modules that auto-configure the webflow are absent "
+                + "from the CAS application runtime. If you have no need for trusted-devices functionality and wish to let the "
+                + "multifactor authentication provider (and not CAS) remember and record trusted devices for you, you need to "
+                + "turn this behavior off.";
 
-        if (!applicationContext.containsBean(ACTION_ID_MFA_SET_TRUST_ACTION)) {
-            throw new IllegalArgumentException(String.format(msg, ACTION_ID_MFA_SET_TRUST_ACTION));
-        }
+            if (!applicationContext.containsBean(ACTION_ID_MFA_SET_TRUST_ACTION)) {
+                throw new IllegalArgumentException(String.format(msg, ACTION_ID_MFA_SET_TRUST_ACTION));
+            }
 
-        if (!applicationContext.containsBean(ACTION_ID_MFA_VERIFY_TRUST_ACTION)) {
-            throw new IllegalArgumentException(String.format(msg, ACTION_ID_MFA_VERIFY_TRUST_ACTION));
-        }
+            if (!applicationContext.containsBean(ACTION_ID_MFA_VERIFY_TRUST_ACTION)) {
+                throw new IllegalArgumentException(String.format(msg, ACTION_ID_MFA_VERIFY_TRUST_ACTION));
+            }
+        });
+
     }
 }
