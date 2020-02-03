@@ -14,7 +14,7 @@ import java.io.Serializable;
  * @author Hayden Sartoris
  * @since 6.2.0
  */
-@RequiresModule(name = "cas-server-support-multiphase")
+@RequiresModule(name = "cas-server-support-multiphase-webflow")
 @Getter
 @Setter
 public class MultiphaseAuthenticationProperties implements Serializable {

@@ -23,7 +23,7 @@ Support is enabled by including the following module in the overlay:
 ```xml
 <dependency>
 	<groupId>org.apereo.cas</groupId>
-	<artifactId>cas-server-support-multiphase</artifactId>
+	<artifactId>cas-server-support-multiphase-webflow</artifactId>
 	<version>${cas.version}</version>
 </dependency>
 ```
