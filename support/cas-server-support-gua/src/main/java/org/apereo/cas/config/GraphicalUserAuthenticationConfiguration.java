@@ -1,10 +1,9 @@
-package org.apereo.cas.gua.config;
+package org.apereo.cas.config;
 
-import org.apereo.cas.config.MultiphaseAuthenticationConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.gua.api.UserGraphicalAuthenticationRepository;
-import org.apereo.cas.gua.impl.LdapUserGraphicalAuthenticationRepository;
-import org.apereo.cas.gua.impl.StaticUserGraphicalAuthenticationRepository;
+import org.apereo.cas.api.UserGraphicalAuthenticationRepository;
+import org.apereo.cas.impl.LdapUserGraphicalAuthenticationRepository;
+import org.apereo.cas.impl.StaticUserGraphicalAuthenticationRepository;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.flow.AcceptUserGraphicsForAuthenticationAction;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;

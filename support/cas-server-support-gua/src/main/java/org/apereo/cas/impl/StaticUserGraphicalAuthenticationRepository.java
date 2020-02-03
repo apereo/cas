@@ -1,6 +1,6 @@
-package org.apereo.cas.gua.impl;
+package org.apereo.cas.impl;
 
-import org.apereo.cas.gua.api.UserGraphicalAuthenticationRepository;
+import org.apereo.cas.api.UserGraphicalAuthenticationRepository;
 
 import com.google.common.io.ByteSource;
 import lombok.RequiredArgsConstructor;

@@ -1,4 +1,4 @@
-package org.apereo.cas.gua.api;
+package org.apereo.cas.api;
 
 import com.google.common.io.ByteSource;
 
