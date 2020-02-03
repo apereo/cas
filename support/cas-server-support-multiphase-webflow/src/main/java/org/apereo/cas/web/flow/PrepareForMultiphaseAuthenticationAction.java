@@ -24,8 +24,8 @@ public class PrepareForMultiphaseAuthenticationAction extends InitializeLoginAct
     @Override
     public Event doExecute(final RequestContext requestContext) throws Exception {
         WebUtils.putMultiphaseAuthenticationEnabled(requestContext, Boolean.TRUE);
-        if (!WebUtils.hasMultiphaseAuthenticationUsername(requestContext) &&
-                WebUtils.getAuthentication(requestContext) == null) {
+        if (!WebUtils.hasMultiphaseAuthenticationUsername(requestContext) && isLoginFlowActive(requestContext)) {
+                //WebUtils.getAuthentication(requestContext) == null) {
             return new EventFactorySupport().event(this, 
                     MultiphaseAuthenticationWebflowConfigurer.TRANSITION_ID_MULTIPHASE_GET_USERID);
         }
