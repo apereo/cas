@@ -71,12 +71,14 @@ public class GraphicalUserAuthenticationWebflowConfiguration {
     @Qualifier("userGraphicalAuthenticationRepository")
     private ObjectProvider<UserGraphicalAuthenticationRepository> userGraphicalAuthenticationRepository;
 
+    /*
     @Bean
     @ConditionalOnMissingBean(name = "acceptUserGraphicsForAuthenticationAction")
     @RefreshScope
     public Action acceptUserGraphicsForAuthenticationAction() {
         return new AcceptUserGraphicsForAuthenticationAction();
     }
+    */
 
     @Bean
     @RefreshScope
