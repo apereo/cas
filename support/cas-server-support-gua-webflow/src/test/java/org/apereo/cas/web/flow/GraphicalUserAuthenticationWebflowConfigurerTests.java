@@ -33,7 +33,7 @@ public class GraphicalUserAuthenticationWebflowConfigurerTests extends BaseWebfl
         val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
         assertNotNull(flow);
 
-        state = (TransitionableState) flow.getState(GraphicalUserAuthenticationWebflowConfigurer.STATE_ID_GUA_DISPLAY_USER_GFX);
+        val state = (TransitionableState) flow.getState(GraphicalUserAuthenticationWebflowConfigurer.STATE_ID_GUA_DISPLAY_USER_GFX);
         assertNotNull(state);
     }
 }
