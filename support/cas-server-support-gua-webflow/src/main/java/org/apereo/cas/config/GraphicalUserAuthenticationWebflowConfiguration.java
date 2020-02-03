@@ -31,38 +31,69 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
 
 /**
- * This is {@link GraphicalUserAuthenticationConfiguration}.
+ * This is {@link GraphicalUserAuthenticationWebflowConfiguration}.
  *
  * @author Misagh Moayyed
+ * @author Hayden Sartoris
  * @since 5.1.0
  */
-@Configuration("graphicalUserAuthenticationConfiguration")
+@Configuration("graphicalUserAuthenticationWebflowConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@AutoConfigureAfter(MultiphaseAuthenticationWebflowConfiguration.class)
 public class GraphicalUserAuthenticationConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
 
     @Autowired
+    @Qualifier("loginFlowRegistry")
+    private ObjectProvider<FlowDefinitionRegistry> loginFlowDefinitionRegistry;
+
+    @Autowired
     @Qualifier("servicesManager")
     private ObjectProvider<ServicesManager> servicesManager;
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+
+    @Autowired
+    private ObjectProvider<FlowBuilderServices> flowBuilderServices;
+
+    @ConditionalOnMissingBean(name = "graphicalUserAuthenticationWebflowConfigurer")
+    @Bean
+    @DependsOn("defaultWebflowConfigurer")
+    public CasWebflowConfigurer graphicalUserAuthenticationWebflowConfigurer() {
+        return new GraphicalUserAuthenticationWebflowConfigurer(flowBuilderServices.getObject(),
+            loginFlowDefinitionRegistry.getObject(), applicationContext, casProperties);
+    }
+
+    @Autowired
+    @Qualifier("userGraphicalAuthenticationRepository")
+    private ObjectProvider<UserGraphicalAuthenticationRepository> userGraphicalAuthenticationRepository;
+
+    @Bean
+    @ConditionalOnMissingBean(name = "acceptUserGraphicsForAuthenticationAction")
+    @RefreshScope
+    public Action acceptUserGraphicsForAuthenticationAction() {
+        return new AcceptUserGraphicsForAuthenticationAction();
+    }
+
     @Bean
     @RefreshScope
-    @ConditionalOnMissingBean(name = "userGraphicalAuthenticationRepository")
-    public UserGraphicalAuthenticationRepository userGraphicalAuthenticationRepository() {
-        val gua = casProperties.getAuthn().getGua();
-        if (gua.getResource().getLocation() != null) {
-            return new StaticUserGraphicalAuthenticationRepository(gua.getResource().getLocation());
-        }
+    @ConditionalOnMissingBean(name = "displayUserGraphicsBeforeAuthenticationAction")
+    public Action displayUserGraphicsBeforeAuthenticationAction() {
+        return new DisplayUserGraphicsBeforeAuthenticationAction(userGraphicalAuthenticationRepository.getObject());
+    }
 
-        val ldap = gua.getLdap();
-        if (StringUtils.isNotBlank(ldap.getLdapUrl())
-            && StringUtils.isNotBlank(ldap.getSearchFilter())
-            && StringUtils.isNotBlank(ldap.getBaseDn())
-            && StringUtils.isNotBlank(ldap.getImageAttribute())) {
-            return new LdapUserGraphicalAuthenticationRepository(casProperties);
-        }
-        throw new BeanCreationException("A repository instance must be configured to locate user-defined graphics");
+    @Bean
+    @RefreshScope
+    public Action initializeLoginAction() {
+        return new PrepareForGraphicalAuthenticationAction(servicesManager.getObject());
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "graphicalUserAuthenticationCasWebflowExecutionPlanConfigurer")
+    public CasWebflowExecutionPlanConfigurer graphicalUserAuthenticationCasWebflowExecutionPlanConfigurer() {
+        return plan -> plan.registerWebflowConfigurer(graphicalUserAuthenticationWebflowConfigurer());
     }
 }
