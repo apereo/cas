@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication.attribute;
 
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
@@ -8,6 +10,8 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 
 import java.io.File;
+import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -22,28 +26,109 @@ public class DefaultAttributeDefinitionStoreTests {
 
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
-    protected static AttributeDefinition getAttributeDefinition() {
-        return DefaultAttributeDefinition.builder()
+    @Test
+    public void verifyAttrDefnNotFound() {
+        val store = new DefaultAttributeDefinitionStore();
+        store.setScope("example.org");
+        val defn = DefaultAttributeDefinition.builder()
+            .key("eduPersonPrincipalName")
+            .attribute("invalid")
+            .scoped(true)
+            .build();
+        store.registerAttributeDefinition(defn);
+        var values = store.getAttributeValues("whatever", CoreAuthenticationTestUtils.getAttributes());
+        assertTrue(values.isEmpty());
+        values = store.getAttributeValues("eduPersonPrincipalName", CoreAuthenticationTestUtils.getAttributes());
+        assertTrue(values.isEmpty());
+    }
+
+    @Test
+    public void verifyScopedAttrDefn() {
+        val store = new DefaultAttributeDefinitionStore();
+        store.setScope("example.org");
+        val defn = DefaultAttributeDefinition.builder()
             .key("eduPersonPrincipalName")
             .attribute("uid")
-            .friendlyName("eduPersonPrincipalName")
             .scoped(true)
-            .name("urn:oid:1.3.6.1.4.1.5923.1.1.1.6")
-            .script("groovy { return 'hello' }")
             .build();
+        store.registerAttributeDefinition(defn);
+        var values = (Optional<List<Object>>) store.getAttributeValues("eduPersonPrincipalName", CoreAuthenticationTestUtils.getAttributes());
+        assertTrue(values.isPresent());
+        assertTrue(values.get().contains("test@example.org"));
+    }
+
+    @Test
+    public void verifyScriptedEmbeddedAttrDefn() {
+        val store = new DefaultAttributeDefinitionStore();
+        store.setScope("example.org");
+        val defn = DefaultAttributeDefinition.builder()
+            .key("eduPersonPrincipalName")
+            .attribute("uid")
+            .scoped(true)
+            .script("groovy { logger.info(\" name: ${attributeName}, values: ${attributeValues} \"); return ['hello', 'world'] } ")
+            .build();
+        store.registerAttributeDefinition(defn);
+        var values = (Optional<List<Object>>) store.getAttributeValues("eduPersonPrincipalName", CoreAuthenticationTestUtils.getAttributes());
+        assertTrue(values.isPresent());
+        assertTrue(values.get().contains("hello@example.org"));
+        assertTrue(values.get().contains("world@example.org"));
+    }
+
+    @Test
+    public void verifyScriptedExternalAttrDefn() {
+        val store = new DefaultAttributeDefinitionStore();
+        store.setScope("system.org");
+        val defn = DefaultAttributeDefinition.builder()
+            .key("eduPersonPrincipalName")
+            .attribute("uid")
+            .scoped(true)
+            .script("classpath:/attribute-definition.groovy")
+            .build();
+        store.registerAttributeDefinition(defn);
+        var values = (Optional<List<Object>>) store.getAttributeValues("eduPersonPrincipalName", CoreAuthenticationTestUtils.getAttributes());
+        assertTrue(values.isPresent());
+        assertTrue(values.get().contains("casuser@system.org"));
+        assertTrue(values.get().contains("groovy@system.org"));
+    }
+
+    @Test
+    public void verifyFormattedAttrDefn() {
+        val store = new DefaultAttributeDefinitionStore();
+        store.setScope("example.org");
+        val defn = DefaultAttributeDefinition.builder()
+            .key("eduPersonPrincipalName")
+            .attribute("givenName")
+            .scoped(true)
+            .patternFormat("hello,{0}")
+            .build();
+        store.registerAttributeDefinition(defn);
+        var values = (Optional<List<Object>>) store.getAttributeValues("eduPersonPrincipalName", CoreAuthenticationTestUtils.getAttributes());
+        assertTrue(values.isPresent());
+        assertTrue(values.get().contains("hello,test@example.org"));
     }
 
     @Test
     public void verifyOperation() {
         val store = new DefaultAttributeDefinitionStore();
-        store.registerAttributeDefinition(getAttributeDefinition());
+        store.setScope("example.org");
+        val defn = DefaultAttributeDefinition.builder()
+            .key("eduPersonPrincipalName")
+            .friendlyName("eduPersonPrincipalName")
+            .name("urn:oid:1.3.6.1.4.1.5923.1.1.1.6")
+            .build();
+
+        store.registerAttributeDefinition(defn);
         assertNotNull(store.locateAttributeDefinition("eduPersonPrincipalName"));
         assertFalse(store.getAttributeDefinitions().isEmpty());
     }
 
     @Test
     public void verifySerialization() throws Exception {
-        val defn = getAttributeDefinition();
+        val defn = DefaultAttributeDefinition.builder()
+            .key("eduPersonPrincipalName")
+            .friendlyName("eduPersonPrincipalName")
+            .name("urn:oid:1.3.6.1.4.1.5923.1.1.1.6")
+            .build();
         MAPPER.writeValue(JSON_FILE, defn);
         val read = MAPPER.readValue(JSON_FILE, AttributeDefinition.class);
         assertEquals(read, defn);
@@ -51,7 +136,13 @@ public class DefaultAttributeDefinitionStoreTests {
 
     @Test
     public void verifyStoreSerialization() throws Exception {
-        val store = new DefaultAttributeDefinitionStore(getAttributeDefinition());
+        val defn = DefaultAttributeDefinition.builder()
+            .key("eduPersonPrincipalName")
+            .friendlyName("eduPersonPrincipalName")
+            .name("urn:oid:1.3.6.1.4.1.5923.1.1.1.6")
+            .build();
+        val store = new DefaultAttributeDefinitionStore(defn);
+        store.setScope("example.org");
         val file = File.createTempFile("attr", "json");
         store.to(file);
         assertTrue(file.exists());
