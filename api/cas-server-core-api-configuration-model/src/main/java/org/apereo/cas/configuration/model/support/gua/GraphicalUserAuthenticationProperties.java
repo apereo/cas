@@ -27,6 +27,11 @@ public class GraphicalUserAuthenticationProperties implements Serializable {
     private static final long serialVersionUID = 7527953699378415460L;
 
     /**
+     * Display user graphics on main login page, rather than separate interstitial.
+     */
+    private Boolean graphicOnMainLogin = false;
+
+    /**
      * Locate GUA settings and images from LDAP.
      */
     private Ldap ldap = new Ldap();
