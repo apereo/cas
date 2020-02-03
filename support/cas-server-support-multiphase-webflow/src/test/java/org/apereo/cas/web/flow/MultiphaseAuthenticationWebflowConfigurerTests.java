@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Import({
     ThymeleafAutoConfiguration.class,
-    MultiphaseAuthenticationConfiguration.class,
+    MultiphaseAuthenticationWebflowConfiguration.class,
     BaseWebflowConfigurerTests.SharedTestConfiguration.class
 })
 @Tag("Webflow")

@@ -18,7 +18,7 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
-import org.apereo.cas.config.MultiphaseAuthenticationConfiguration;
+import org.apereo.cas.config.MultiphaseAuthenticationWebflowConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.web.config.CasCookieConfiguration;
@@ -38,7 +38,7 @@ import org.springframework.webflow.execution.Action;
  * @since 6.2.0
  */
 @SpringBootTest(classes = {
-    MultiphaseAuthenticationConfiguration.class,
+    MultiphaseAuthenticationWebflowConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreAuthenticationConfiguration.class,
     CasCoreServicesAuthenticationConfiguration.class,
