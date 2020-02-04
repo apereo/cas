@@ -1,6 +1,8 @@
 package org.apereo.cas.web.flow;
 
+import org.apereo.cas.config.MultiphaseAuthenticationWebflowConfiguration;
 import org.apereo.cas.config.GraphicalUserAuthenticationConfiguration;
+import org.apereo.cas.config.GraphicalUserAuthenticationWebflowConfiguration;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -21,10 +23,12 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Import({
     ThymeleafAutoConfiguration.class,
+    MultiphaseAuthenticationWebflowConfiguration.class,
     GraphicalUserAuthenticationConfiguration.class,
+    GraphicalUserAuthenticationWebflowConfiguration.class,
     BaseWebflowConfigurerTests.SharedTestConfiguration.class
 })
-@TestPropertySource(properties = "cas.authn.resource.location=classpath:example.png")
+@TestPropertySource(properties = "cas.authn.gua.resource.location=classpath:example.png")
 @Tag("Webflow")
 public class GraphicalUserAuthenticationWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Test
