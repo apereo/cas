@@ -49,9 +49,11 @@ public class GraphicalUserAuthenticationWebflowConfiguration {
     @Qualifier("loginFlowRegistry")
     private ObjectProvider<FlowDefinitionRegistry> loginFlowDefinitionRegistry;
 
+    /*
     @Autowired
     @Qualifier("servicesManager")
     private ObjectProvider<ServicesManager> servicesManager;
+    */
 
     @Autowired
     private ConfigurableApplicationContext applicationContext;
@@ -59,9 +61,9 @@ public class GraphicalUserAuthenticationWebflowConfiguration {
     @Autowired
     private ObjectProvider<FlowBuilderServices> flowBuilderServices;
 
-    @ConditionalOnMissingBean(name = "graphicalUserAuthenticationWebflowConfigurer")
     @Bean
-    @DependsOn("defaultWebflowConfigurer")
+    @ConditionalOnMissingBean(name = "graphicalUserAuthenticationWebflowConfigurer")
+    @DependsOn("multiphaseAuthenticationWebflowConfigurer")
     public CasWebflowConfigurer graphicalUserAuthenticationWebflowConfigurer() {
         return new GraphicalUserAuthenticationWebflowConfigurer(flowBuilderServices.getObject(),
             loginFlowDefinitionRegistry.getObject(), applicationContext, casProperties);
@@ -87,11 +89,13 @@ public class GraphicalUserAuthenticationWebflowConfiguration {
         return new DisplayUserGraphicsBeforeAuthenticationAction(userGraphicalAuthenticationRepository.getObject());
     }
 
+    /*
     @Bean
     @RefreshScope
     public Action initializeLoginAction() {
         return new PrepareForGraphicalAuthenticationAction(servicesManager.getObject());
     }
+    */
 
     @Bean
     @ConditionalOnMissingBean(name = "graphicalUserAuthenticationCasWebflowExecutionPlanConfigurer")
