@@ -8,6 +8,7 @@ import lombok.val;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ActionState;
+import org.springframework.webflow.engine.ViewState;
 import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 
@@ -37,38 +38,21 @@ public class MultiphaseAuthenticationWebflowConfigurer extends AbstractCasWebflo
     protected void doInitialize() {
         val flow = getLoginFlow();
         if (flow != null) {
-            val initState = getState(flow, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM, ActionState.class);
-
+            val viewStateLogin = getState(flow, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM, ViewState.class);
             LOGGER.debug("Locating transition id [{}] for state [{}]", 
-                    CasWebflowConstants.TRANSITION_ID_SUCCESS, initState.getId());
-            val initTransition = (Transition) initState.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS);
+                    CasWebflowConstants.TRANSITION_ID_SUBMIT, viewStateLogin.getId());
+            val initTransition = (Transition) viewStateLogin.getTransition(CasWebflowConstants.TRANSITION_ID_SUBMIT);
             val targetStateId = initTransition.getTargetStateId();
 
-            LOGGER.debug("Creating transition with id [{}] for state [{}] to state [{}]",
-                    TRANSITION_ID_MULTIPHASE_GET_USERID, initState.getId(), 
-                    CasWebflowConstants.VIEW_ID_MULTIPHASE_GET_USERID);
-            createTransitionForState(initState, 
-                    TRANSITION_ID_MULTIPHASE_GET_USERID, 
-                    CasWebflowConstants.VIEW_ID_MULTIPHASE_GET_USERID);
-
-            val getUserIdState = createViewState(flow, 
-                    CasWebflowConstants.VIEW_ID_MULTIPHASE_GET_USERID, 
-                    "casMultiphaseGetUserIdView");
-
-            LOGGER.debug("Creating transition with id [{}] for state [{}] to state [{}]",
-                    CasWebflowConstants.TRANSITION_ID_SUBMIT, getUserIdState.getId(), 
-                    CasWebflowConstants.STATE_ID_MULTIPHASE_STORE_USERID);
-            createTransitionForState(getUserIdState, 
-                    CasWebflowConstants.TRANSITION_ID_SUBMIT, 
-                    CasWebflowConstants.STATE_ID_MULTIPHASE_STORE_USERID);
-
-            val actionState = createActionState(flow, 
-                    CasWebflowConstants.STATE_ID_MULTIPHASE_STORE_USERID,
-                    createEvaluateAction(ACTION_ID_STORE_USERID_FOR_AUTHENTICATION));
+            createTransitionForState(viewStateLogin, CasWebflowConstants.TRANSITION_ID_SUBMIT,
+                    CasWebflowConstants.STATE_ID_MULTIPHASE_STORE_USERID, true);
             
-            LOGGER.debug("Creating transition with id [{}] for state [{}] to state [{}]",
-                    CasWebflowConstants.TRANSITION_ID_SUCCESS, actionState.getId(), targetStateId);
-            createTransitionForState(actionState, CasWebflowConstants.TRANSITION_ID_SUCCESS, targetStateId);
+            val storeUserId = createActionState(flow, CasWebflowConstants.STATE_ID_MULTIPHASE_STORE_USERID,
+                    createEvaluateAction(ACTION_ID_STORE_USERID_FOR_AUTHENTICATION));
+
+            createTransitionForState(storeUserId, CasWebflowConstants.TRANSITION_ID_SUCCESS, 
+                    viewStateLogin.getId());
+            createTransitionForState(storeUserId, CasWebflowConstants.TRANSITION_ID_PROCEED, targetStateId);
         }
     }
 }

@@ -24,7 +24,13 @@ public class StoreUserIdForAuthenticationAction extends AbstractAction {
         resourceResolverName = "AUTHENTICATION_EVENT_RESOURCE_RESOLVER")
     @Override
     public Event doExecute(final RequestContext requestContext) {
-        val username = requestContext.getRequestParameters().get("username");
+        // TODO: something something isLoginFlow or whatever
+        if (!WebUtils.hasMultiphaseAuthenticationUsername(requestContext) && isLoginFlowActive(requestContext)) {
+            val username = requestContext.getRequestParameters().get("username");
+            storeUsername(requestContext, username);
+            return success();
+        }
+        return result(CasWebflowConstants.TRANSITION_ID_PROCEED);
         /*
         if (StringUtils.isBlank(username)) {
             val message = new MessageBuilder().error().code("TODO").build();
@@ -33,9 +39,13 @@ public class StoreUserIdForAuthenticationAction extends AbstractAction {
         }
         WebUtils.putCredential(requestContext, new UsernamePasswordCredential(username, null));
         WebUtils.putMultiphaseAuthenticationUsername(requestContext, username);
-        */
         storeUsername(requestContext, username);
         return success();
+        */
+    }
+
+    protected static boolean isLoginFlowActive(final RequestContext requestContext) {
+        return requestContext.getActiveFlow().getId().equalsIgnoreCase(CasWebflowConfigurer.FLOW_ID_LOGIN);
     }
 
     protected void storeUsername(final RequestContext requestContext, final String username) {
