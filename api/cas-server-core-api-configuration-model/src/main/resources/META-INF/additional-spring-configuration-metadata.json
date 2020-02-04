@@ -149,6 +149,15 @@
         "reason": "management endpoints security under cas.monitor.endpoints.endpoint.*. e.g. cas.monitor.endpoints.endpoint.defaults.access[0].",
         "level": "error"
       }
+    },
+    {
+      "name": "cas.authn.pac4j.saml[0].signLogoutRequests",
+      "type": "java.lang.Boolean",
+      "description": "Whether logout requests and responses should be signed.",
+      "deprecation": {
+        "reason": "It is a duplication of signServiceProviderLogoutRequest.",
+        "level": "error"
+      }
     }
   ]
 }
