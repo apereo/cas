@@ -27,7 +27,7 @@ import org.springframework.context.annotation.DependsOn;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration("graphicalUserAuthenticationConfiguration")
+@Configuration(value = "graphicalUserAuthenticationConfiguration", proxyBeanMethods = true)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class GraphicalUserAuthenticationConfiguration {
 
