@@ -1,20 +1,12 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.api.UserGraphicalAuthenticationRepository;
-import org.apereo.cas.impl.LdapUserGraphicalAuthenticationRepository;
-import org.apereo.cas.impl.StaticUserGraphicalAuthenticationRepository;
-import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.web.flow.AcceptUserGraphicsForAuthenticationAction;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.DisplayUserGraphicsBeforeAuthenticationAction;
 import org.apereo.cas.web.flow.GraphicalUserAuthenticationWebflowConfigurer;
-import org.apereo.cas.web.flow.PrepareForGraphicalAuthenticationAction;
 
-import lombok.val;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -61,6 +53,10 @@ public class GraphicalUserAuthenticationWebflowConfiguration {
     @Autowired
     private ObjectProvider<FlowBuilderServices> flowBuilderServices;
 
+    @Autowired
+    @Qualifier("userGraphicalAuthenticationRepository")
+    private ObjectProvider<UserGraphicalAuthenticationRepository> userGraphicalAuthenticationRepository;
+
     @Bean
     @ConditionalOnMissingBean(name = "graphicalUserAuthenticationWebflowConfigurer")
     @DependsOn("multiphaseAuthenticationWebflowConfigurer")
@@ -68,10 +64,6 @@ public class GraphicalUserAuthenticationWebflowConfiguration {
         return new GraphicalUserAuthenticationWebflowConfigurer(flowBuilderServices.getObject(),
             loginFlowDefinitionRegistry.getObject(), applicationContext, casProperties);
     }
-
-    @Autowired
-    @Qualifier("userGraphicalAuthenticationRepository")
-    private ObjectProvider<UserGraphicalAuthenticationRepository> userGraphicalAuthenticationRepository;
 
     /*
     @Bean
