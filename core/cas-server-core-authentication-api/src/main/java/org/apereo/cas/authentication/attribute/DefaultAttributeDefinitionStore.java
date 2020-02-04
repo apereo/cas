@@ -107,7 +107,7 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
     }
 
     @Override
-    public Optional<List<Object>> getAttributeValues(final String key, final Map<String, List<Object>> attributes) {
+    public Optional<List<Object>> resolveAttributeValues(final String key, final Map<String, List<Object>> attributes) {
         val result = locateAttributeDefinition(key);
         if (result.isEmpty()) {
             return Optional.empty();

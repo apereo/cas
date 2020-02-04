@@ -44,5 +44,5 @@ public interface AttributeDefinitionStore {
      * @param values the values
      * @return the attribute values
      */
-    Optional<List<Object>> getAttributeValues(String key, Map<String, List<Object>> values);
+    Optional<List<Object>> resolveAttributeValues(String key, Map<String, List<Object>> values);
 }

@@ -36,9 +36,9 @@ public class DefaultAttributeDefinitionStoreTests {
             .scoped(true)
             .build();
         store.registerAttributeDefinition(defn);
-        var values = store.getAttributeValues("whatever", CoreAuthenticationTestUtils.getAttributes());
+        var values = store.resolveAttributeValues("whatever", CoreAuthenticationTestUtils.getAttributes());
         assertTrue(values.isEmpty());
-        values = store.getAttributeValues("eduPersonPrincipalName", CoreAuthenticationTestUtils.getAttributes());
+        values = store.resolveAttributeValues("eduPersonPrincipalName", CoreAuthenticationTestUtils.getAttributes());
         assertTrue(values.isEmpty());
     }
 
@@ -52,7 +52,7 @@ public class DefaultAttributeDefinitionStoreTests {
             .scoped(true)
             .build();
         store.registerAttributeDefinition(defn);
-        var values = (Optional<List<Object>>) store.getAttributeValues("eduPersonPrincipalName", CoreAuthenticationTestUtils.getAttributes());
+        var values = (Optional<List<Object>>) store.resolveAttributeValues("eduPersonPrincipalName", CoreAuthenticationTestUtils.getAttributes());
         assertTrue(values.isPresent());
         assertTrue(values.get().contains("test@example.org"));
     }
@@ -68,7 +68,7 @@ public class DefaultAttributeDefinitionStoreTests {
             .script("groovy { logger.info(\" name: ${attributeName}, values: ${attributeValues} \"); return ['hello', 'world'] } ")
             .build();
         store.registerAttributeDefinition(defn);
-        var values = (Optional<List<Object>>) store.getAttributeValues("eduPersonPrincipalName", CoreAuthenticationTestUtils.getAttributes());
+        var values = (Optional<List<Object>>) store.resolveAttributeValues("eduPersonPrincipalName", CoreAuthenticationTestUtils.getAttributes());
         assertTrue(values.isPresent());
         assertTrue(values.get().contains("hello@example.org"));
         assertTrue(values.get().contains("world@example.org"));
@@ -85,7 +85,7 @@ public class DefaultAttributeDefinitionStoreTests {
             .script("classpath:/attribute-definition.groovy")
             .build();
         store.registerAttributeDefinition(defn);
-        var values = (Optional<List<Object>>) store.getAttributeValues("eduPersonPrincipalName", CoreAuthenticationTestUtils.getAttributes());
+        var values = (Optional<List<Object>>) store.resolveAttributeValues("eduPersonPrincipalName", CoreAuthenticationTestUtils.getAttributes());
         assertTrue(values.isPresent());
         assertTrue(values.get().contains("casuser@system.org"));
         assertTrue(values.get().contains("groovy@system.org"));
@@ -102,7 +102,7 @@ public class DefaultAttributeDefinitionStoreTests {
             .patternFormat("hello,{0}")
             .build();
         store.registerAttributeDefinition(defn);
-        var values = (Optional<List<Object>>) store.getAttributeValues("eduPersonPrincipalName", CoreAuthenticationTestUtils.getAttributes());
+        var values = (Optional<List<Object>>) store.resolveAttributeValues("eduPersonPrincipalName", CoreAuthenticationTestUtils.getAttributes());
         assertTrue(values.isPresent());
         assertTrue(values.get().contains("hello,test@example.org"));
     }
