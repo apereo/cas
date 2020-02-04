@@ -125,6 +125,7 @@ public class GitRepositoryBuilder {
      *
      * @return the git repository
      */
+    @SuppressWarnings("java:S2095")
     public GitRepository build() {
         try {
             val transportCallback = buildTransportConfigCallback();

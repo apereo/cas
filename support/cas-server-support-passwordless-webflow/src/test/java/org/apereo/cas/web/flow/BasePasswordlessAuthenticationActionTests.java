@@ -21,6 +21,7 @@ import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.PasswordlessAuthenticationConfiguration;
+import org.apereo.cas.config.PasswordlessAuthenticationWebflowConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.web.config.CasCookieConfiguration;
@@ -28,9 +29,11 @@ import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 
 /**
  * This is {@link BasePasswordlessAuthenticationActionTests}.
@@ -40,6 +43,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
  */
 @SpringBootTest(classes = {
     PasswordlessAuthenticationConfiguration.class,
+    PasswordlessAuthenticationWebflowConfiguration.class,
     CasCoreAuthenticationPolicyConfiguration.class,
     CasCoreAuthenticationConfiguration.class,
     CasCoreAuthenticationHandlersConfiguration.class,
@@ -73,4 +77,6 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
     "spring.mail.port=25000"
 })
 public class BasePasswordlessAuthenticationActionTests {
+    @Autowired
+    protected ConfigurableApplicationContext applicationContext;
 }

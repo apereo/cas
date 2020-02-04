@@ -7,8 +7,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -34,5 +34,7 @@ public class PasswordlessUserAccount implements Serializable {
     private String name;
 
     @Builder.Default
-    private Map<String, Collection<String>> attributes = new LinkedHashMap<>();
+    private Map<String, List<String>> attributes = new LinkedHashMap<>();
+
+    private boolean multifactorAuthenticationEligible;
 }

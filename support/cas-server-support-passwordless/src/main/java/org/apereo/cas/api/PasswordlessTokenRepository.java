@@ -48,4 +48,9 @@ public interface PasswordlessTokenRepository {
      * @param token    the token
      */
     void saveToken(String username, String token);
+
+    /**
+     * Clean the repository to remove expired records.
+     */
+    void clean();
 }

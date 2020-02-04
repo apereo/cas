@@ -1,8 +1,11 @@
 package org.apereo.cas;
 
+import org.apereo.cas.web.flow.AcceptPasswordlessAccountAuthenticationActionTests;
+import org.apereo.cas.web.flow.DetermineMultifactorPasswordlessAuthenticationActionTests;
 import org.apereo.cas.web.flow.DisplayBeforePasswordlessAuthenticationActionTests;
 import org.apereo.cas.web.flow.PasswordlessAuthenticationWebflowConfigurerTests;
 import org.apereo.cas.web.flow.PrepareForPasswordlessAuthenticationActionTests;
+import org.apereo.cas.web.flow.VerifyPasswordlessAccountAuthenticationActionTests;
 
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
@@ -17,6 +20,9 @@ import org.junit.runner.RunWith;
 @SelectClasses({
     PasswordlessAuthenticationWebflowConfigurerTests.class,
     DisplayBeforePasswordlessAuthenticationActionTests.class,
+    VerifyPasswordlessAccountAuthenticationActionTests.class,
+    DetermineMultifactorPasswordlessAuthenticationActionTests.class,
+    AcceptPasswordlessAccountAuthenticationActionTests.class,
     PrepareForPasswordlessAuthenticationActionTests.class
 })
 @RunWith(JUnitPlatform.class)
