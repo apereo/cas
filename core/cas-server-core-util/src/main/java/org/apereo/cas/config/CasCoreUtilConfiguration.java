@@ -112,7 +112,7 @@ public class CasCoreUtilConfiguration implements InitializingBean {
         if (StringUtils.isNotBlank(rest.getUrl())) {
             return new RestfulSmsSender(rest);
         }
-        return null;
+        return SmsSender.noOp();
     }
 
     /**
