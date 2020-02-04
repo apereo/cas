@@ -148,7 +148,7 @@ public class OAuth20ProofKeyCodeExchangeAuthenticatorTests extends BaseOAuth20Au
             new HardTimeoutExpirationPolicy(10),
             new MockTicketGrantingTicket("casuser"),
             new ArrayList<>(), hash, "s256", "clientid12345", new HashMap<>());
-        ticketRegistry.addTicket(ticket);request.addHeader("Authorization", "Basic " + new String(EncodingUtils.encodeBase64("client:secret")));
+        ticketRegistry.addTicket(ticket);
         request.addHeader("Authorization", "Basic " + new String(EncodingUtils.encodeBase64("client:secret")));
         request.addParameter(OAuth20Constants.CODE_VERIFIER, "ABCD123");
         request.addParameter(OAuth20Constants.CODE, ticket.getId());
