@@ -37,6 +37,7 @@ public class PasswordEncoderUtils {
      * @param applicationContext the application context
      * @return the password encoder
      */
+    @SuppressWarnings("java:S5344")
     public static PasswordEncoder newPasswordEncoder(final PasswordEncoderProperties properties,
                                                      final ApplicationContext applicationContext) {
         val type = properties.getType();
