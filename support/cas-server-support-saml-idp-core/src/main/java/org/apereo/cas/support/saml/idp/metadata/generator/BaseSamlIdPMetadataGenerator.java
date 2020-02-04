@@ -116,7 +116,7 @@ public abstract class BaseSamlIdPMetadataGenerator implements SamlIdPMetadataGen
             IOUtils.copy(template.getInputStream(), writer, StandardCharsets.UTF_8);
             val metadata = writer.toString()
                 .replace("${entityId}", idp.getEntityId())
-                .replace("${scope}", idp.getScope())
+                .replace("${scope}", configurationContext.getCasProperties().getServer().getScope())
                 .replace("${idpEndpointUrl}", getIdPEndpointUrl())
                 .replace("${encryptionKey}", encryptionCert)
                 .replace("${signingKey}", signingCert);

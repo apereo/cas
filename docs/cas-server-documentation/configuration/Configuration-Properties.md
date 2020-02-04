@@ -617,7 +617,8 @@ If none is specified, one is automatically detected and used by CAS.
 
 ```properties
 # cas.server.name=https://cas.example.org:8443
-# cas.server.prefix=https://cas.example.org:8443/cas
+# cas.server.prefix=https://cas.example.org:8443/cas 
+# cas.server.scope=example.org
 # cas.host.name=
 ```
 
@@ -3125,7 +3126,6 @@ To learn more about this topic, [please review this guide](../installation/Confi
 
 ```properties
 # cas.authn.samlIdp.entityId=https://cas.example.org/idp
-# cas.authn.samlIdp.scope=example.org
 
 # cas.authn.samlIdp.authenticationContextClassMappings[0]=urn:oasis:names:tc:SAML:2.0:ac:classes:SomeClassName->mfa-duo
 # cas.authn.samlIdp.authenticationContextClassMappings[1]=https://refeds.org/profile/mfa->mfa-gauth
