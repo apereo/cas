@@ -38,11 +38,6 @@ public class SamlIdPProperties implements Serializable {
     @RequiredProperty
     private String entityId = "https://cas.example.org/idp";
 
-    /**
-     * The scope used in generation of metadata.
-     */
-    @RequiredProperty
-    private String scope = "example.org";
 
     /**
      * A mapping of authentication context class refs.
