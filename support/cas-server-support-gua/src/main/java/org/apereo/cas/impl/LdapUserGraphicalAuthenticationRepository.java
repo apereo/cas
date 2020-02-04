@@ -1,7 +1,7 @@
 package org.apereo.cas.impl;
 
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.api.UserGraphicalAuthenticationRepository;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapUtils;
 
