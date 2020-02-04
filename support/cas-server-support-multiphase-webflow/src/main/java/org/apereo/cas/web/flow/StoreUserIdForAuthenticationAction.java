@@ -24,7 +24,6 @@ public class StoreUserIdForAuthenticationAction extends AbstractAction {
         resourceResolverName = "AUTHENTICATION_EVENT_RESOURCE_RESOLVER")
     @Override
     public Event doExecute(final RequestContext requestContext) {
-        // TODO: something something isLoginFlow or whatever
         if (!WebUtils.hasMultiphaseAuthenticationUsername(requestContext) && isLoginFlowActive(requestContext)) {
             val username = requestContext.getRequestParameters().get("username");
             storeUsername(requestContext, username);
