@@ -30,7 +30,7 @@ public class CommunicationsManager {
     }
 
     public boolean isSmsSenderDefined() {
-        return this.smsSender != null;
+        return this.smsSender != null && this.smsSender.canSend();
     }
 
     /**
