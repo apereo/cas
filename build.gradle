@@ -5,7 +5,6 @@ defaultTasks "clean", "build"
 
 buildscript {
     repositories {
-        mavenLocal()
         jcenter()
         maven {
             url "https://maven.eveoh.nl/content/repositories/releases"
@@ -178,7 +177,12 @@ allprojects {
     }
 
     repositories {
-        mavenLocal()
+        mavenLocal{
+            content {
+                includeModuleByRegex "org\\.apereo", "person-directory.*"
+                includeGroupByRegex "$mavenLocalGroupInclude"
+            }
+        }
         mavenCentral()
         jcenter()
         maven {
@@ -237,7 +241,12 @@ subprojects {
     ext.libraries = rootProject.ext.libraries
 
     repositories {
-        mavenLocal()
+        mavenLocal{
+            content {
+                includeModuleByRegex "org\\.apereo", "person-directory.*"
+                includeGroupByRegex "$mavenLocalGroupInclude"
+            }
+        }
         mavenCentral()
         maven {
             url "https://build.shibboleth.net/nexus/content/repositories/releases"
