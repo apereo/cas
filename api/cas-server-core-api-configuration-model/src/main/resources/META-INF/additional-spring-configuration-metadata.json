@@ -155,7 +155,7 @@
       "type": "java.lang.Boolean",
       "description": "Whether logout requests and responses should be signed.",
       "deprecation": {
-        "reason": "It is a duplication of cas.authn.pac4j.saml[0].signServiceProviderLogoutRequest.",
+        "reason": "It is a duplication of cas.authn.pac4j.saml[0].sign-service-provider-logout-request.",
         "level": "error"
       }
     }
