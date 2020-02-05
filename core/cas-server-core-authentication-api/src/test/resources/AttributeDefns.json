@@ -1,0 +1,12 @@
+{
+  "@class" : "java.util.TreeMap",
+  "eduPersonPrincipalName" : {
+    "@class" : "org.apereo.cas.authentication.attribute.DefaultAttributeDefinition",
+    "key" : "eduPersonPrincipalName",
+    "name" : "urn:oid:1.3.6.1.4.1.5923.1.1.1.6",
+    "friendlyName" : "eduPersonPrincipalName",
+    "scoped" : true,
+    "attribute" : "uid",
+    "script" : "groovy { return 'hello' }"
+  }
+}

@@ -22,6 +22,17 @@
       }
     },
     {
+      "name": "cas.authn.saml-idp.scope",
+      "type": "java.lang.String",
+      "description": "Definition of scope for CAS acting as a SAML IdP",
+      "deprecated": true,
+      "deprecation": {
+        "replacement": "cas.server.scope",
+        "reason": "Property is moved to cas.server.scope to be applied globally.",
+        "level": "error"
+      }
+    },
+    {
       "name": "cas.authn.throttle.appcode",
       "type": "java.lang.String",
       "description": "Throttling application code to record.",
