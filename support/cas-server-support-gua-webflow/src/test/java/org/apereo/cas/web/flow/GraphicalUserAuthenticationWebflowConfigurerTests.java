@@ -1,8 +1,8 @@
 package org.apereo.cas.web.flow;
 
-import org.apereo.cas.config.MultiphaseAuthenticationWebflowConfiguration;
 import org.apereo.cas.config.GraphicalUserAuthenticationConfiguration;
 import org.apereo.cas.config.GraphicalUserAuthenticationWebflowConfiguration;
+import org.apereo.cas.config.MultiphaseAuthenticationWebflowConfiguration;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
