@@ -178,7 +178,7 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
         val json = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(this.attributeDefinitions);
         LOGGER.trace("Storing attribute definitions as [{}] to [{}]", json, resource);
         try (val writer = Files.newBufferedWriter(resource.toPath(), StandardCharsets.UTF_8)) {
-            IOUtils.copy(new StringReader(json), writer);
+            writer.write(json);
             writer.flush();
         }
         return this;
