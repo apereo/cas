@@ -50,5 +50,6 @@ public class StoreUserIdForAuthenticationAction extends AbstractAction {
     protected void storeUsername(final RequestContext requestContext, final String username) {
         WebUtils.putCredential(requestContext, new UsernamePasswordCredential(username, null));
         WebUtils.putMultiphaseAuthenticationUsername(requestContext, username);
+        WebUtils.putMultiphaseNeedsUsername(requestContext, Boolean.FALSE);
     }
 }

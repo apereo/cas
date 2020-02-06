@@ -13,8 +13,7 @@
     <div class="row">
         <div class="col-md">
             <!-- Login form template begins here -->
-            <div th:fragment="loginform" class="card"
-                th:with="multiphaseGetUserId=${multiphaseEnabled && multiphaseUsername == null},buttonMessage=${'screen.welcome.button.' + (multiphaseGetUserId ? 'next' : 'login')}">
+            <div th:fragment="loginform" class="card">
                 <div class="card-header" th:if="${delegatedAuthenticationProviderPrimary == null}"
                      th:replace="fragments/serviceui :: serviceUI">
                     <a href="fragments/serviceui.html">service ui fragment</a>
@@ -101,7 +100,7 @@
                             </div>
                         </section>
 
-                        <div th:unless="${multiphaseGetUserId}" th:remove="tag">
+                        <div th:unless="${multiphaseNeedsUsername}" th:remove="tag">
 						    <section class="form-group">
                                 <span th:utext="#{screen.welcome.label.password}">Password</span>
 
@@ -220,12 +219,13 @@
                          </span>
                     </form>
 
-                    <div th:unless="${multiphaseGetUserId}" th:replace="fragments/pmlinks :: pmlinks"/>
+                    <div th:unless="${multiphaseNeedsUsername}" th:replace="fragments/pmlinks :: pmlinks"/>
 
                     <script type="text/javascript" th:inline="javascript">
                         /*<![CDATA[*/
                         var i = /*[[@{#{screen.welcome.button.loginwip}}]]*/
-                        var j = /*[[@{#{${buttonMessage}}}]]*/
+                        var j = /*[[@{#{${multiphaseNeedsUsername == true ?
+                                'screen.welcome.button.next' : 'screen.welcome.button.login'}}}]]*/
                             /*]]>*/
                             $(window).on('pageshow', function(){
                                 $(':submit').prop('disabled', false);

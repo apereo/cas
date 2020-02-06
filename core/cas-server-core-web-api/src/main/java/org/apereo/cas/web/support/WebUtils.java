@@ -971,6 +971,17 @@ public class WebUtils {
     }
 
     /**
+     * Indicate that multiphase webflow needs a username to be provided.
+     *
+     * @param requestContext the request context
+     * @param value          the value
+     */
+    public static void putMultiphaseNeedsUsername(final RequestContext requestContext, final Boolean value) {
+        requestContext.getFlowScope().put("multiphaseNeedsUsername", value);
+    }
+
+
+    /**
      * Put multiphase user authentication username.
      *
      * @param requestContext the request context
