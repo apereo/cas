@@ -46,15 +46,14 @@ public class OAuth20ProofKeyCodeExchangeAuthenticator extends OAuth20ClientIdCli
     @Override
     protected void validateCredentials(final UsernamePasswordCredentials credentials,
                                        final OAuthRegisteredService registeredService, final WebContext context) {
-        val clientSecret = context.getRequestParameter(OAuth20Constants.CLIENT_SECRET)
-                .map(String::valueOf)
-                .orElse(StringUtils.EMPTY);
+        val clientSecret = OAuth20Utils.getClientIdAndClientSecret(context).getRight();
 
         if (!OAuth20Utils.checkClientSecret(registeredService, clientSecret, getRegisteredServiceCipherExecutor())) {
             throw new CredentialsException("Client Credentials provided is not valid for registered service: " + registeredService.getName());
         }
 
-        val codeVerifier = credentials.getPassword();
+        val codeVerifier = context.getRequestParameter(OAuth20Constants.CODE_VERIFIER)
+            .map(String::valueOf).orElse(StringUtils.EMPTY);
         val code = context.getRequestParameter(OAuth20Constants.CODE)
             .map(String::valueOf).orElse(StringUtils.EMPTY);
 
