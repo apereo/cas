@@ -1,9 +1,11 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
 import org.apereo.cas.configuration.support.RequiresModule;
+import org.apereo.cas.configuration.support.SpringResourceProperties;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
 
@@ -63,4 +65,23 @@ public class PersonDirectoryPrincipalResolverProperties implements Serializable 
      * The list here may include identifiers separated by comma.
      */
     private String activeAttributeRepositoryIds;
+
+    /**
+     * Reference to the attribute definition store
+     * that contains metadata about attributes and their encoding specifics.
+     */
+    private AttributeDefinitionStoreProperties attributeDefinitionStore = new AttributeDefinitionStoreProperties();
+
+    @RequiresModule(name = "cas-server-core-authentication", automated = true)
+    @Getter
+    @Setter
+    public static class AttributeDefinitionStoreProperties implements Serializable {
+        private static final long serialVersionUID = 1248812041234879300L;
+
+        /**
+         * Load attribute definitions from a JSON resource.
+         */
+        @NestedConfigurationProperty
+        private SpringResourceProperties json = new SpringResourceProperties();
+    }
 }
