@@ -149,11 +149,6 @@ public class Pac4jSamlClientProperties extends Pac4jBaseClientProperties {
     private boolean wantsAssertionsSigned;
 
     /**
-     * Whether logout requests and responses should be signed.
-     */
-    private boolean signLogoutRequests;
-
-    /**
      * Whether the signature validation should be disabled.
      * Never set this property to {@code true} in production.
      */
