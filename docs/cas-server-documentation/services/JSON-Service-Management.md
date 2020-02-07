@@ -149,11 +149,8 @@ An example legacy JSON file is listed below for reference:
     "@class" : "org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy",
     "principalAttributesRepository" : {
       "@class" : "org.jasig.cas.authentication.principal.cache.CachingPrincipalAttributesRepository",
-      "duration" : {
-        "@class" : "javax.cache.expiry.Duration",
-        "timeUnit" : [ "java.util.concurrent.TimeUnit", "HOURS" ],
-        "expiration" : 2
-      },
+      "timeUnit" : "HOURS",
+      "expiration" : 2,
       "mergingStrategy" : "NONE"
     },
     "authorizedToReleaseCredentialPassword" : false,
