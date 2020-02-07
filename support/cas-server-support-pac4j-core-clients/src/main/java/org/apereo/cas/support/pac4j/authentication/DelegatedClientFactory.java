@@ -422,7 +422,7 @@ public class DelegatedClientFactory {
                 cfg.setUseNameQualifier(saml.isUseNameQualifier());
                 cfg.setAttributeConsumingServiceIndex(saml.getAttributeConsumingServiceIndex());
                 
-                try{
+                try {
                     val clazz = ClassUtils.getClass(
                             DelegatedClientFactory.class.getClassLoader(), saml.getMessageStoreFactory());
                     cfg.setSamlMessageStoreFactory(
