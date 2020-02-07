@@ -423,13 +423,12 @@ public class DelegatedClientFactory {
                 cfg.setAttributeConsumingServiceIndex(saml.getAttributeConsumingServiceIndex());
                 
                 try{
-                    Class<?> clazz = ClassUtils.getClass(
+                    val clazz = ClassUtils.getClass(
                             DelegatedClientFactory.class.getClassLoader(), saml.getMessageStoreFactory());
                     cfg.setSamlMessageStoreFactory(
                             SAMLMessageStoreFactory.class.cast(clazz.getDeclaredConstructor().newInstance()));
-                }catch(final Exception e){
-                    LOGGER.error(
-                            "Unable to instantiate message store factory class [{}]", saml.getMessageStoreFactory(), e);
+                } catch (final Exception e) {
+                    LOGGER.error("Unable to instantiate message store factory class [{}]", saml.getMessageStoreFactory(), e);
                 }
                 
                 if (saml.getAssertionConsumerServiceIndex() >= 0) {
