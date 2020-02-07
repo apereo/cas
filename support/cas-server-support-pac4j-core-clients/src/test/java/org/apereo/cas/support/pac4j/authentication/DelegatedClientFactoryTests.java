@@ -80,7 +80,7 @@ public class DelegatedClientFactoryTests {
         saml.setServiceProviderMetadataPath(new File(FileUtils.getTempDirectoryPath(), "sp.xml").getCanonicalPath());
         saml.setServiceProviderEntityId("test-entityid");
         saml.setForceKeystoreGeneration(true);
-        saml.setMessageStoreFactory("org.pac4j.saml.store.HttpSessionStoreFactory");
+        saml.setMessageStoreFactory(org.pac4j.saml.store.HttpSessionStoreFactory.class.getName());
         props.getSaml().add(saml);
 
         val casSettings = new CasConfigurationProperties();
@@ -89,9 +89,8 @@ public class DelegatedClientFactoryTests {
         val clients = factory.build();
         assertEquals(1, clients.size());
         
-        // Check for instantiation of SAML2 message store factory
-        assertTrue(SAML2Client.class.cast(clients.iterator().next()).getConfiguration().getSamlMessageStoreFactory() instanceof 
-                org.pac4j.saml.store.HttpSessionStoreFactory);
+        assertTrue(SAML2Client.class.cast(clients.iterator().next()).getConfiguration().
+                getSamlMessageStoreFactory() instanceof org.pac4j.saml.store.HttpSessionStoreFactory);
     }
 
     @Test

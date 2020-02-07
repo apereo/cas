@@ -11,12 +11,12 @@ import org.apereo.cas.util.RandomUtils;
 
 import com.github.scribejava.core.model.Verb;
 import com.nimbusds.jose.JWSAlgorithm;
-import java.lang.reflect.InvocationTargetException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.cas.config.CasConfiguration;
@@ -45,10 +45,10 @@ import org.pac4j.oidc.client.OidcClient;
 import org.pac4j.oidc.config.AzureAdOidcConfiguration;
 import org.pac4j.oidc.config.KeycloakOidcConfiguration;
 import org.pac4j.oidc.config.OidcConfiguration;
-import org.pac4j.saml.store.SAMLMessageStoreFactory;
 import org.pac4j.saml.client.SAML2Client;
 import org.pac4j.saml.config.SAML2Configuration;
 import org.pac4j.saml.metadata.SAML2ServiceProvicerRequestedAttribute;
+import org.pac4j.saml.store.SAMLMessageStoreFactory;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -423,15 +423,13 @@ public class DelegatedClientFactory {
                 cfg.setAttributeConsumingServiceIndex(saml.getAttributeConsumingServiceIndex());
                 
                 try{
-                    cfg.setSamlMessageStoreFactory(SAMLMessageStoreFactory.class.cast(
-                        Class.forName(saml.getMessageStoreFactory()).getDeclaredConstructor().newInstance()));
-                }catch(ClassNotFoundException 
-                        | InstantiationException 
-                        | IllegalAccessException 
-                        | NoSuchMethodException 
-                        | InvocationTargetException e){
+                    Class<?> clazz = ClassUtils.getClass(
+                            DelegatedClientFactory.class.getClassLoader(), saml.getMessageStoreFactory());
+                    cfg.setSamlMessageStoreFactory(
+                            SAMLMessageStoreFactory.class.cast(clazz.getDeclaredConstructor().newInstance()));
+                }catch(final Exception e){
                     LOGGER.error(
-                            "Unable to instantiate message store factory class {}", saml.getMessageStoreFactory(), e);
+                            "Unable to instantiate message store factory class [{}]", saml.getMessageStoreFactory(), e);
                 }
                 
                 if (saml.getAssertionConsumerServiceIndex() >= 0) {
