@@ -43,7 +43,7 @@ public class SamlSPUtils {
 
     /**
      * New saml service provider registration.
-     *
+     * Precedence of services is lowest so generated service can be overridden by non-generated version.
      * @param sp       the properties
      * @param resolver the resolver
      * @return the saml registered service
@@ -59,7 +59,7 @@ public class SamlSPUtils {
         val service = new SamlRegisteredService();
         service.setName(sp.getName());
         service.setDescription(sp.getDescription());
-        service.setEvaluationOrder(Ordered.HIGHEST_PRECEDENCE);
+        service.setEvaluationOrder(Ordered.LOWEST_PRECEDENCE);
         service.setMetadataLocation(sp.getMetadata());
         val attributesToRelease = new ArrayList<String>(sp.getAttributes());
         if (StringUtils.isNotBlank(sp.getNameIdAttribute())) {
