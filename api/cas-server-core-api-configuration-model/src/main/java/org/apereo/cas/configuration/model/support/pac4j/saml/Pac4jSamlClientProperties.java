@@ -229,6 +229,14 @@ public class Pac4jSamlClientProperties extends Pac4jBaseClientProperties {
      * the presenter's user agent or the identity provider.
      */
     private String providerName;
+    
+    /**
+     * Factory implementing this interface provide services for storing and retrieval of SAML messages for
+     * e.g. verification of retrieved responses.
+     * The default store factory is just for an always empty store and it is not useful for the verification of 
+     * retrieved responses.
+     */
+    private String messageStoreFactory = "org.pac4j.saml.store.EmptyStoreFactory";
 
     @RequiresModule(name = "cas-server-support-pac4j-webflow")
     @Getter

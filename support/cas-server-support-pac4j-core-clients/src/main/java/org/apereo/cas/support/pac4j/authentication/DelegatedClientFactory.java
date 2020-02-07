@@ -11,6 +11,7 @@ import org.apereo.cas.util.RandomUtils;
 
 import com.github.scribejava.core.model.Verb;
 import com.nimbusds.jose.JWSAlgorithm;
+import java.lang.reflect.InvocationTargetException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -44,6 +45,7 @@ import org.pac4j.oidc.client.OidcClient;
 import org.pac4j.oidc.config.AzureAdOidcConfiguration;
 import org.pac4j.oidc.config.KeycloakOidcConfiguration;
 import org.pac4j.oidc.config.OidcConfiguration;
+import org.pac4j.saml.store.SAMLMessageStoreFactory;
 import org.pac4j.saml.client.SAML2Client;
 import org.pac4j.saml.config.SAML2Configuration;
 import org.pac4j.saml.metadata.SAML2ServiceProvicerRequestedAttribute;
@@ -419,6 +421,19 @@ public class DelegatedClientFactory {
                 cfg.setWantsAssertionsSigned(saml.isWantsAssertionsSigned());
                 cfg.setUseNameQualifier(saml.isUseNameQualifier());
                 cfg.setAttributeConsumingServiceIndex(saml.getAttributeConsumingServiceIndex());
+                
+                try{
+                    cfg.setSamlMessageStoreFactory(SAMLMessageStoreFactory.class.cast(
+                        Class.forName(saml.getMessageStoreFactory()).getDeclaredConstructor().newInstance()));
+                }catch(ClassNotFoundException 
+                        | InstantiationException 
+                        | IllegalAccessException 
+                        | NoSuchMethodException 
+                        | InvocationTargetException e){
+                    LOGGER.error(
+                            "Unable to instantiate message store factory class {}", saml.getMessageStoreFactory(), e);
+                }
+                
                 if (saml.getAssertionConsumerServiceIndex() >= 0) {
                     cfg.setAssertionConsumerServiceIndex(saml.getAssertionConsumerServiceIndex());
                 }
