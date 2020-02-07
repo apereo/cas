@@ -35,8 +35,6 @@ notifications:
   webhooks:
     # Coveralls: https://docs.coveralls.io/parallel-build-webhook
     secure: "e3Lkn/iMpq9IjNrBQqMAKAxCbKUcd5t6zbow+l39a5n7trIUcBzgK9YXlSBigRyVnKXwNmI08WQN0GMJuWoT2u9cda5qttgZ5C8p/RFWxGKz6qhlmKwcwmipasU0ykvMARB6nrTMwMeMV/O5btt2xko8KfsRQdmqyZGJBglhDsc="
-matrix:
-  fast_finish: true
 env:
   global:
   - JAVA_OPTS="-Xms512m -Xmx3048m -Xss128m -XX:ReservedCodeCacheSize=512m -XX:+UseG1GC -Xverify:none -server"
