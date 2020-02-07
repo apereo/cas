@@ -60,11 +60,8 @@ Sample configuration follows:
     "@class" : "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy",
     "principalAttributesRepository" : {
       "@class" : "org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesRepository",
-      "duration" : {
-        "@class" : "javax.cache.expiry.Duration",
-        "timeUnit" : [ "java.util.concurrent.TimeUnit", "HOURS" ],
-        "expiration" : 2
-      },
+      "timeUnit" : "HOURS",
+      "expiration" : 2,
       "mergingStrategy" : "NONE"
     }
   }
@@ -97,11 +94,8 @@ For example:
     "@class" : "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy",
     "principalAttributesRepository" : {
       "@class" : "org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesRepository",
-      "duration" : {
-        "@class" : "javax.cache.expiry.Duration",
-        "timeUnit" : [ "java.util.concurrent.TimeUnit", "HOURS" ],
-        "expiration" : 2
-      },
+      "timeUnit" : "HOURS",
+      "expiration" : 2,
       "mergingStrategy" : "MULTIVALUED"
     }
   }
@@ -128,11 +122,8 @@ For example:
     "@class" : "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy",
     "principalAttributesRepository" : {
       "@class" : "org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesRepository",
-      "duration" : {
-        "@class" : "javax.cache.expiry.Duration",
-        "timeUnit" : [ "java.util.concurrent.TimeUnit", "HOURS" ],
-        "expiration" : 2
-      },
+      "timeUnit" : "HOURS",
+      "expiration" : 2,
       "mergingStrategy" : "ADD"
     }
   }
@@ -160,11 +151,8 @@ For example:
     "@class" : "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy",
     "principalAttributesRepository" : {
       "@class" : "org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesRepository",
-      "duration" : {
-        "@class" : "javax.cache.expiry.Duration",
-        "timeUnit" : [ "java.util.concurrent.TimeUnit", "HOURS" ],
-        "expiration" : 2
-      },
+      "timeUnit" : "HOURS",
+      "expiration" : 2,
       "mergingStrategy" : "REPLACE"
     }
   }
@@ -188,11 +176,8 @@ again to fetch attributes and cache them for `30` minutes.
     "@class" : "org.apereo.cas.services.ReturnAllAttributeReleasePolicy",
     "principalAttributesRepository" : {
         "@class" : "org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesRepository",
-        "duration" : {
-          "@class" : "javax.cache.expiry.Duration",
-          "timeUnit" : [ "java.util.concurrent.TimeUnit", "MINUTES" ],
-          "expiration" : 30
-        },
+        "timeUnit" : "MINUTES",
+        "expiration" : 30,
         "ignoreResolvedAttributes": true,
         "attributeRepositoryIds": ["java.util.HashSet", [ "MyJsonRepository" ]],
         "mergingStrategy" : "MULTIVALUED"
