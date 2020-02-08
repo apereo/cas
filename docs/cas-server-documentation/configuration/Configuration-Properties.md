@@ -3570,6 +3570,9 @@ prefixes for the `keystorePath` or `identityProviderMetadataPath` property).
 
 # cas.authn.pac4j.saml[0].mappedAttributes[0].name=urn:oid:2.5.4.42
 # cas.authn.pac4j.saml[0].mappedAttributes[0].mappedAs=displayName
+
+# cas.authn.pac4j.saml[0].messageStoreFactory=org.pac4j.saml.store.EmptyStoreFactory
+
 ```
 
 Examine the generated metadata after accessing the CAS login screen to ensure all 
