@@ -33,14 +33,6 @@ public interface AttributeDefinition extends Serializable, Comparable<AttributeD
     String getName();
 
     /**
-     * Gets name that may be the same as the key, used for rendering
-     * the attribute in responses that have a friendly-name concept.
-     *
-     * @return the friendly name
-     */
-    String getFriendlyName();
-
-    /**
      * Indicate if the attribute value should
      * be scoped based on the scope defined in the CAS configuration.
      *

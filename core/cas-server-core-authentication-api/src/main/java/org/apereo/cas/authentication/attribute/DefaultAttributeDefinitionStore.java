@@ -15,6 +15,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.ToString;
@@ -22,12 +23,12 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.core.io.Resource;
 
 import javax.persistence.Transient;
 
 import java.io.File;
-import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.text.MessageFormat;
@@ -68,6 +69,7 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
     private transient Map<String, ExecutableCompiledGroovyScript> attributeScriptCache = new LinkedHashMap<>(0);
 
     @Setter
+    @Getter
     private String scope = StringUtils.EMPTY;
 
     public DefaultAttributeDefinitionStore(final AttributeDefinition... defns) {
@@ -78,6 +80,10 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
         defns.forEach(this::registerAttributeDefinition);
     }
 
+    public DefaultAttributeDefinitionStore(final Map<String, AttributeDefinition> attributeDefns) {
+        attributeDefns.forEach(this::registerAttributeDefinition);
+    }
+
     @SneakyThrows
     public static DefaultAttributeDefinitionStore from(final Resource resource) {
         LOGGER.trace("Loading attribute definitions from [{}]", resource);
@@ -85,13 +91,26 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
         LOGGER.trace("Loaded attribute definitions [{}] from [{}]", json, resource);
         val map = MAPPER.readValue(json, new TypeReference<Map<String, AttributeDefinition>>() {
         });
-        return new DefaultAttributeDefinitionStore(map.values());
+        return new DefaultAttributeDefinitionStore(map);
     }
 
     @Override
     public AttributeDefinitionStore registerAttributeDefinition(final AttributeDefinition defn) {
-        LOGGER.trace("Registering attribute definition [{}]", defn);
-        attributeDefinitions.put(defn.getKey(), defn);
+        return registerAttributeDefinition(defn.getKey(), defn);
+    }
+
+    @Override
+    public AttributeDefinitionStore registerAttributeDefinition(final String key, final AttributeDefinition defn) {
+        LOGGER.trace("Registering attribute definition [{}] by key [{}]", defn, key);
+
+        if (StringUtils.isNotBlank(defn.getKey()) && !StringUtils.equalsIgnoreCase(defn.getKey(), key)) {
+            LOGGER.warn("Attribute definition contains a key property [{}] that differs from its registering key [{}]. "
+                + "This is likely due to misconfiguration of the attribute definition, and CAS will use the key property [{}] "
+                + "to register the attribute definition in the attribute store", defn.getKey(), key, defn.getKey());
+            attributeDefinitions.put(defn.getKey(), defn);
+        } else {
+            attributeDefinitions.put(key, defn);
+        }
         return this;
     }
 
@@ -107,21 +126,16 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
     }
 
     @Override
-    public Optional<List<Object>> resolveAttributeValues(final String key, final Map<String, List<Object>> attributes) {
+    public Optional<Pair<AttributeDefinition, List<Object>>> resolveAttributeValues(final String key, final List<Object> attributeValues) {
         val result = locateAttributeDefinition(key);
         if (result.isEmpty()) {
             return Optional.empty();
         }
         val definition = result.get();
-        val attributeKey = StringUtils.defaultIfBlank(definition.getAttribute(), key);
-
-        if (!attributes.containsKey(attributeKey)) {
-            return Optional.empty();
-        }
-        List<Object> currentValues = new ArrayList<>(attributes.get(attributeKey));
-
+        
+        List<Object> currentValues = new ArrayList<>(attributeValues);
         if (StringUtils.isNotBlank(definition.getScript())) {
-            currentValues = getScriptedAttributeValue(attributeKey, currentValues, definition);
+            currentValues = getScriptedAttributeValue(key, currentValues, definition);
         }
         if (definition.isScoped()) {
             currentValues = currentValues
@@ -137,7 +151,12 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
                 .collect(Collectors.toCollection(ArrayList::new));
         }
 
-        return Optional.of(currentValues);
+        return Optional.of(Pair.of(definition, currentValues));
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return attributeDefinitions.isEmpty();
     }
 
     private List<Object> getScriptedAttributeValue(final String attributeKey,

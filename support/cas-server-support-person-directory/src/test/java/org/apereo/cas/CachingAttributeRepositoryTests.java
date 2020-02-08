@@ -21,7 +21,8 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = {
     CasPersonDirectoryConfiguration.class,
-    RefreshAutoConfiguration.class},
+    RefreshAutoConfiguration.class
+},
     properties = {
         "cas.authn.attributeRepository.stub.attributes.uid=uid",
         "cas.authn.attributeRepository.stub.attributes.givenName=givenName",

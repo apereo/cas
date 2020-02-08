@@ -16,6 +16,7 @@ import org.junit.runner.RunWith;
     JdbcSingleRowAttributeRepositoryTests.class,
     RestfulPersonAttributeDaoTests.class,
     CachingAttributeRepositoryTests.class,
+    DefaultAttributeDefinitionStoreTests.class,
     JdbcSingleRowAttributeRepositoryPostgresTests.class
 })
 @RunWith(JUnitPlatform.class)
