@@ -32,8 +32,6 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
 
     private String name;
 
-    private String friendlyName;
-
     private boolean scoped;
 
     private String attribute;
