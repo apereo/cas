@@ -33,12 +33,14 @@ import org.apereo.cas.ticket.expiration.builder.TransientSessionTicketExpiration
 import org.apereo.cas.ticket.factory.DefaultTransientSessionTicketFactory;
 import org.apereo.cas.ticket.registry.DefaultTicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.validation.DelegatedAuthenticationAccessStrategyHelper;
 import org.apereo.cas.web.DelegatedClientIdentityProviderConfiguration;
 import org.apereo.cas.web.DelegatedClientIdentityProviderConfigurationFactory;
 import org.apereo.cas.web.DelegatedClientWebflowManager;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.DefaultArgumentExtractor;
+import org.apereo.cas.web.support.WebUtils;
 
 import lombok.SneakyThrows;
 import lombok.val;
@@ -103,10 +105,31 @@ public class DelegatedClientAuthenticationActionTests {
     private static final String MY_SERVICE = "http://myservice";
 
     private static final String MY_THEME = "my_theme";
+
     private static final List<String> CLIENTS = Arrays.asList("FacebookClient", "TwitterClient");
 
     @Autowired
     private ConfigurableApplicationContext applicationContext;
+
+    private static TransientSessionTicketExpirationPolicyBuilder getExpirationPolicyBuilder() {
+        val props = new CasConfigurationProperties();
+        props.getTicket().getTst().setTimeToKillInSeconds(60);
+        return new TransientSessionTicketExpirationPolicyBuilder(props);
+    }
+
+    private static ServicesManager getServicesManagerWith(final Service service, final RegisteredServiceAccessStrategy accessStrategy) {
+        val mgr = mock(ServicesManager.class);
+        val regSvc = Optional.ofNullable(service)
+            .map(svc -> RegisteredServiceTestUtils.getRegisteredService(svc.getId()))
+            .orElse(null);
+
+        if (regSvc != null) {
+            regSvc.setAccessStrategy(accessStrategy);
+        }
+        when(mgr.findServiceBy(any(Service.class))).thenReturn(regSvc);
+
+        return mgr;
+    }
 
     @Test
     public void verifyStartAuthenticationNoService() {
@@ -176,9 +199,8 @@ public class DelegatedClientAuthenticationActionTests {
         assertEquals(MY_THEME, mockRequest.getAttribute(ThemeChangeInterceptor.DEFAULT_PARAM_NAME));
         assertEquals(Locale.getDefault().getCountry(), mockRequest.getAttribute(LocaleChangeInterceptor.DEFAULT_PARAM_NAME));
         assertEquals(HttpMethod.POST.name(), mockRequest.getAttribute(CasProtocolConstants.PARAMETER_METHOD));
-        val flowScope = mockRequestContext.getFlowScope();
         val urls = (Set<DelegatedClientIdentityProviderConfiguration>)
-            flowScope.get(DelegatedClientAuthenticationAction.FLOW_ATTRIBUTE_PROVIDER_URLS);
+            WebUtils.getDelegatedAuthenticationProviderConfigurations(mockRequestContext);
 
         assertFalse(urls.isEmpty());
         assertSame(2, urls.size());
@@ -206,12 +228,6 @@ public class DelegatedClientAuthenticationActionTests {
                 assertEquals(1, testLocale.size());
                 assertTrue(testLocale.contains(locale));
             });
-    }
-
-    private static TransientSessionTicketExpirationPolicyBuilder getExpirationPolicyBuilder() {
-        val props = new CasConfigurationProperties();
-        props.getTicket().getTst().setTimeToKillInSeconds(60);
-        return new TransientSessionTicketExpirationPolicyBuilder(props);
     }
 
     @Test
@@ -290,20 +306,6 @@ public class DelegatedClientAuthenticationActionTests {
         assertTrue(credential.getId().startsWith(ClientCredential.NOT_YET_AUTHENTICATED));
     }
 
-    private static ServicesManager getServicesManagerWith(final Service service, final RegisteredServiceAccessStrategy accessStrategy) {
-        val mgr = mock(ServicesManager.class);
-        val regSvc = Optional.ofNullable(service)
-            .map(svc -> RegisteredServiceTestUtils.getRegisteredService(svc.getId()))
-            .orElse(null);
-
-        if (regSvc != null) {
-            regSvc.setAccessStrategy(accessStrategy);
-        }
-        when(mgr.findServiceBy(any(Service.class))).thenReturn(regSvc);
-
-        return mgr;
-    }
-
     private AbstractAction getDelegatedClientAction(final BaseClient client,
                                                     final Service service,
                                                     final Clients clients,
@@ -331,10 +333,11 @@ public class DelegatedClientAuthenticationActionTests {
         val enforcer = mock(AuditableExecution.class);
         when(enforcer.execute(any())).thenReturn(new AuditableExecutionResult());
         val ticketRegistry = new DefaultTicketRegistry();
+        val selectionPlan = new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy());
         val manager = new DelegatedClientWebflowManager(ticketRegistry,
             new DefaultTransientSessionTicketFactory(getExpirationPolicyBuilder()),
             new CasConfigurationProperties(),
-            new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()),
+            selectionPlan,
             new DefaultArgumentExtractor(new WebApplicationServiceFactory()));
         val webContext = new JEEContext(mockRequest, new MockHttpServletResponse(), new JEESessionStore());
         val ticket = manager.store(webContext, client);
@@ -343,20 +346,25 @@ public class DelegatedClientAuthenticationActionTests {
         val initialResolver = mock(CasDelegatingWebflowEventResolver.class);
         when(initialResolver.resolveSingle(any())).thenReturn(new Event(this, "success"));
 
+        val servicesManager = getServicesManagerWith(service, accessStrategy);
         return new DelegatedClientAuthenticationAction(
             initialResolver,
             mock(CasWebflowEventResolver.class),
             mock(AdaptiveAuthenticationPolicy.class),
             clients,
-            getServicesManagerWith(service, accessStrategy),
+            servicesManager,
             enforcer,
             manager,
             support,
             new CasConfigurationProperties(),
-            new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()),
+            selectionPlan,
             mock(CentralAuthenticationService.class),
             SingleSignOnParticipationStrategy.alwaysParticipating(),
             new JEESessionStore(),
-            CollectionUtils.wrap(new DefaultArgumentExtractor(new WebApplicationServiceFactory())));
+            CollectionUtils.wrap(new DefaultArgumentExtractor(new WebApplicationServiceFactory())),
+            new DelegatedClientIdentityProviderConfigurationFunction(servicesManager, selectionPlan, clients,
+                new JEESessionStore(),
+                new DelegatedAuthenticationAccessStrategyHelper(servicesManager, enforcer),
+                new CasConfigurationProperties()));
     }
 }

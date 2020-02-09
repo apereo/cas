@@ -22,8 +22,6 @@ import org.springframework.webflow.test.MockFlowExecutionContext;
 import org.springframework.webflow.test.MockFlowSession;
 import org.springframework.webflow.test.MockRequestContext;
 
-import java.util.Map;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -52,8 +50,12 @@ public class AcceptPasswordlessAccountAuthenticationActionTests extends BasePass
         val exec = new MockFlowExecutionContext(new MockFlowSession(new Flow(CasWebflowConfigurer.FLOW_ID_LOGIN)));
         val context = new MockRequestContext(exec);
 
-        val account = new PasswordlessUserAccount("casuser", "email",
-            "phone", "casuser", Map.of(), false);
+        val account = PasswordlessUserAccount.builder()
+            .email("email")
+            .phone("phone")
+            .username("casuser")
+            .name("casuser")
+            .build();
         WebUtils.putPasswordlessAuthenticationAccount(context, account);
         
         val token = passwordlessTokenRepository.createToken("casuser");

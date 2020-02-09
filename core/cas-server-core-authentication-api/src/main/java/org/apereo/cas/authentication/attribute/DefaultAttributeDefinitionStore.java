@@ -1,5 +1,8 @@
 package org.apereo.cas.authentication.attribute;
 
+import org.apereo.cas.util.ResourceUtils;
+import org.apereo.cas.util.io.FileWatcherService;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -15,9 +18,12 @@ import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.beans.factory.DisposableBean;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Arrays;
@@ -37,7 +43,7 @@ import java.util.TreeMap;
 @Slf4j
 @EqualsAndHashCode(of = "attributeDefinitions")
 @ToString(of = "attributeDefinitions")
-public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore {
+public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore, DisposableBean, AutoCloseable {
     private static final ObjectMapper MAPPER = new ObjectMapper()
         .enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY)
         .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
@@ -46,30 +52,39 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
 
     private final Map<String, AttributeDefinition> attributeDefinitions = new TreeMap<>();
 
+    private FileWatcherService storeWatcherService;
+
     @Setter
     @Getter
     private String scope = StringUtils.EMPTY;
+
+    public DefaultAttributeDefinitionStore(final Resource resource) throws Exception {
+        if (ResourceUtils.doesResourceExist(resource)) {
+            loadAttributeDefinitionsFromInputStream(resource);
+
+            if (ResourceUtils.isFile(resource)) {
+                this.storeWatcherService = new FileWatcherService(resource.getFile(), file -> {
+                    try {
+                        loadAttributeDefinitionsFromInputStream(new FileSystemResource(file));
+                    } catch (final Exception e) {
+                        LOGGER.error(e.getMessage(), e);
+                    }
+                });
+            }
+        }
+    }
 
     public DefaultAttributeDefinitionStore(final AttributeDefinition... defns) {
         Arrays.stream(defns).forEach(this::registerAttributeDefinition);
     }
 
-    public DefaultAttributeDefinitionStore(final Collection<AttributeDefinition> defns) {
-        defns.forEach(this::registerAttributeDefinition);
-    }
-
-    public DefaultAttributeDefinitionStore(final Map<String, AttributeDefinition> attributeDefns) {
-        attributeDefns.forEach(this::registerAttributeDefinition);
-    }
-
-    @SneakyThrows
-    public static DefaultAttributeDefinitionStore from(final Resource resource) {
+    private void loadAttributeDefinitionsFromInputStream(final Resource resource) throws IOException {
         LOGGER.trace("Loading attribute definitions from [{}]", resource);
         val json = IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8);
         LOGGER.trace("Loaded attribute definitions [{}] from [{}]", json, resource);
         val map = MAPPER.readValue(json, new TypeReference<Map<String, AttributeDefinition>>() {
         });
-        return new DefaultAttributeDefinitionStore(map);
+        map.forEach(this::registerAttributeDefinition);
     }
 
     @Override
@@ -128,5 +143,17 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
             writer.flush();
         }
         return this;
+    }
+
+    @Override
+    public void close() {
+        if (this.storeWatcherService != null) {
+            this.storeWatcherService.close();
+        }
+    }
+
+    @Override
+    public void destroy() {
+        close();
     }
 }

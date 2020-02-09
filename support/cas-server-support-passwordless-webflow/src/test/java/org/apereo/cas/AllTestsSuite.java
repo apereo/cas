@@ -1,6 +1,7 @@
 package org.apereo.cas;
 
 import org.apereo.cas.web.flow.AcceptPasswordlessAccountAuthenticationActionTests;
+import org.apereo.cas.web.flow.DetermineDelegatedAuthenticationActionTests;
 import org.apereo.cas.web.flow.DetermineMultifactorPasswordlessAuthenticationActionTests;
 import org.apereo.cas.web.flow.DisplayBeforePasswordlessAuthenticationActionTests;
 import org.apereo.cas.web.flow.PasswordlessAuthenticationWebflowConfigurerTests;
@@ -21,6 +22,7 @@ import org.junit.runner.RunWith;
     PasswordlessAuthenticationWebflowConfigurerTests.class,
     DisplayBeforePasswordlessAuthenticationActionTests.class,
     VerifyPasswordlessAccountAuthenticationActionTests.class,
+    DetermineDelegatedAuthenticationActionTests.class,
     DetermineMultifactorPasswordlessAuthenticationActionTests.class,
     AcceptPasswordlessAccountAuthenticationActionTests.class,
     PrepareForPasswordlessAuthenticationActionTests.class
