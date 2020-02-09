@@ -2,6 +2,7 @@
 package org.apereo.cas;
 
 import org.apereo.cas.monitor.CacheHealthIndicatorTests;
+import org.apereo.cas.monitor.CasCoreMonitorConfigurationTests;
 import org.apereo.cas.monitor.MemoryHealthIndicatorTests;
 import org.apereo.cas.monitor.PoolHealthIndicatorTests;
 import org.apereo.cas.monitor.SessionHealthIndicatorTests;
@@ -17,6 +18,7 @@ import org.junit.runner.RunWith;
  * @since 6.0.0-RC3
  */
 @SelectClasses({
+    CasCoreMonitorConfigurationTests.class,
     MemoryHealthIndicatorTests.class,
     PoolHealthIndicatorTests.class,
     SessionHealthIndicatorTests.class,
