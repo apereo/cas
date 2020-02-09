@@ -1688,7 +1688,8 @@ To learn more about this topic, [please review this guide](../installation/Passw
 ### Account Stores
 
 ```properties   
-cas.authn.passwordless.multifactorAuthenticationActivated=false
+# cas.authn.passwordless.multifactorAuthenticationActivated=false
+# cas.authn.passwordless.delegatedAuthenticationActivated=false
 
 # cas.authn.passwordless.accounts.simple.casuser=cas@example.org
 # cas.authn.passwordless.accounts.groovy.location=file:/etc/cas/config/pwdless.groovy

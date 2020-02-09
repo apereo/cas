@@ -25,7 +25,7 @@ import org.springframework.webflow.test.MockRequestContext;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link DetermineMultifactorPasswordlessAuthenticationActionTests}.
+ * This is {@link DetermineDelegatedAuthenticationActionTests}.
  *
  * @author Misagh Moayyed
  * @since 6.2.0
@@ -37,13 +37,17 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Webflow")
 @TestPropertySource(properties = {
     "cas.authn.passwordless.accounts.simple.casuser=casuser@example.org",
-    "cas.authn.passwordless.multifactorAuthenticationActivated=true",
-    "cas.authn.mfa.globalProviderId=" + TestMultifactorAuthenticationProvider.ID
+    "cas.authn.passwordless.delegatedAuthenticationActivated=true",
+
+    "cas.authn.passwordless.delegatedAuthenticationSelectorScript.location=classpath:/DelegatedAuthenticationSelectorScript.groovy",
+
+    "cas.authn.pac4j.cas[0].loginUrl=https://casserver.herokuapp.com/cas/login",
+    "cas.authn.pac4j.cas[0].protocol=CAS30"
 })
-public class DetermineMultifactorPasswordlessAuthenticationActionTests extends BasePasswordlessAuthenticationActionTests {
+public class DetermineDelegatedAuthenticationActionTests extends BasePasswordlessAuthenticationActionTests {
     @Autowired
-    @Qualifier("determineMultifactorPasswordlessAuthenticationAction")
-    private Action determineMultifactorPasswordlessAuthenticationAction;
+    @Qualifier("determineDelegatedAuthenticationAction")
+    private Action determineDelegatedAuthenticationAction;
 
     @Test
     public void verifyAction() throws Exception {
@@ -60,7 +64,6 @@ public class DetermineMultifactorPasswordlessAuthenticationActionTests extends B
             .build();
         WebUtils.putPasswordlessAuthenticationAccount(context, account);
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
-        assertEquals(TestMultifactorAuthenticationProvider.ID, determineMultifactorPasswordlessAuthenticationAction.execute(context).getId());
-
+        assertEquals(CasWebflowConstants.TRANSITION_ID_REDIRECT, determineDelegatedAuthenticationAction.execute(context).getId());
     }
 }

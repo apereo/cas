@@ -101,7 +101,8 @@ would produce a response body similar to the following:
   "email" : "cas@example.org",
   "phone" : "123-456-7890",
   "name" : "CASUser",        
-  "multifactorAuthenticationEligible": false,
+  "multifactorAuthenticationEligible": false,  
+  "delegatedAuthenticationEligible": false,
   "attributes":{ "lastName" : ["...", "..."] }
 }
 ```

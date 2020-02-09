@@ -46,9 +46,11 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.Serializable;
 import java.net.URI;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -888,9 +890,9 @@ public class WebUtils {
     /**
      * Gets passwordless authentication account.
      *
-     * @param <T>   the type parameter
+     * @param <T>            the type parameter
      * @param requestContext the context
-     * @param clazz the clazz
+     * @param clazz          the clazz
      * @return the passwordless authentication account
      */
     public static <T> T getPasswordlessAuthenticationAccount(final RequestContext requestContext, final Class<T> clazz) {
@@ -1144,5 +1146,30 @@ public class WebUtils {
         val flow = (Flow) requestContext.getActiveFlow();
         val var = flow.getVariable(CasWebflowConstants.VAR_ID_CREDENTIAL);
         var.create(requestContext);
+    }
+
+    /**
+     * Put delegated authentication provider configurations.
+     *
+     * @param context the context
+     * @param urls    the urls
+     */
+    public static void putDelegatedAuthenticationProviderConfigurations(final RequestContext context,
+                                                                        final Set<? extends Serializable> urls) {
+        context.getFlowScope().get("delegatedAuthenticationProviderConfigurations", urls);
+    }
+
+    /**
+     * Gets delegated authentication provider configurations.
+     *
+     * @param context the context
+     * @return the delegated authentication provider configurations
+     */
+    public static Set<? extends Serializable> getDelegatedAuthenticationProviderConfigurations(final RequestContext context) {
+        val scope = context.getFlowScope();
+        if (scope.contains("delegatedAuthenticationProviderConfigurations", Set.class)) {
+            return scope.get("delegatedAuthenticationProviderConfigurations", Set.class);
+        }
+        return new HashSet<>(0);
     }
 }

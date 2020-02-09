@@ -100,11 +100,9 @@ public class CasPersonDirectoryConfiguration {
     @ConditionalOnMissingBean(name = "attributeDefinitionStore")
     @Bean
     @RefreshScope
-    public AttributeDefinitionStore attributeDefinitionStore() {
+    public AttributeDefinitionStore attributeDefinitionStore() throws Exception {
         val resource = casProperties.getPersonDirectory().getAttributeDefinitionStore().getJson().getLocation();
-        val store = ResourceUtils.doesResourceExist(resource)
-            ? DefaultAttributeDefinitionStore.from(resource)
-            : new DefaultAttributeDefinitionStore();
+        val store = new DefaultAttributeDefinitionStore(resource);
         store.setScope(casProperties.getServer().getScope());
         return store;
     }

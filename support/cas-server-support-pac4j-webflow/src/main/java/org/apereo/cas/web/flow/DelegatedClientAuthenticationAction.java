@@ -9,7 +9,6 @@ import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.principal.ClientCredential;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
@@ -17,7 +16,6 @@ import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.validation.DelegatedAuthenticationAccessStrategyHelper;
 import org.apereo.cas.web.DelegatedClientIdentityProviderConfiguration;
-import org.apereo.cas.web.DelegatedClientIdentityProviderConfigurationFactory;
 import org.apereo.cas.web.DelegatedClientWebflowManager;
 import org.apereo.cas.web.flow.actions.AbstractAuthenticationAction;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
@@ -33,7 +31,6 @@ import org.apache.commons.text.StringEscapeUtils;
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.client.Clients;
-import org.pac4j.core.client.IndirectClient;
 import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.Pac4jConstants;
 import org.pac4j.core.context.session.SessionStore;
@@ -47,9 +44,10 @@ import org.springframework.webflow.execution.RequestContext;
 import javax.servlet.http.HttpServletRequest;
 
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 /**
@@ -66,11 +64,6 @@ import java.util.stream.Stream;
 @Slf4j
 @Getter
 public class DelegatedClientAuthenticationAction extends AbstractAuthenticationAction {
-    /**
-     * All the urls and names of the provider clients.
-     */
-    public static final String FLOW_ATTRIBUTE_PROVIDER_URLS = "delegatedAuthenticationProviderUrls";
-
     /**
      * The Clients.
      */
@@ -110,6 +103,8 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
 
     private final List<ArgumentExtractor> argumentExtractors;
 
+    private final Function<RequestContext, Set<DelegatedClientIdentityProviderConfiguration>> delegatedClientIdentityProvidersFunction;
+
     public DelegatedClientAuthenticationAction(final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
                                                final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
                                                final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy,
@@ -123,7 +118,8 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
                                                final CentralAuthenticationService centralAuthenticationService,
                                                final SingleSignOnParticipationStrategy singleSignOnParticipationStrategy,
                                                final SessionStore<JEEContext> sessionStore,
-                                               final List<ArgumentExtractor> argumentExtractors) {
+                                               final List<ArgumentExtractor> argumentExtractors,
+                                               final Function<RequestContext, Set<DelegatedClientIdentityProviderConfiguration>> delegatedClientIdentityProvidersFunction) {
         super(initialAuthenticationAttemptWebflowEventResolver, serviceTicketRequestWebflowEventResolver, adaptiveAuthenticationPolicy);
         this.clients = clients;
         this.servicesManager = servicesManager;
@@ -138,6 +134,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         this.delegatedAuthenticationAccessStrategyHelper =
             new DelegatedAuthenticationAccessStrategyHelper(this.servicesManager, delegatedAuthenticationPolicyEnforcer);
         this.argumentExtractors = argumentExtractors;
+        this.delegatedClientIdentityProvidersFunction = delegatedClientIdentityProvidersFunction;
     }
 
     /**
@@ -194,8 +191,8 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
             LOGGER.trace("Found existing single sign-on session");
             populateContextWithService(context, webContext, clientName);
             if (singleSignOnSessionAuthorizedForService(context)) {
-                prepareDelegatedClients(context);
-                LOGGER.trace("Skipping delegation and routing back to CAS authentication flow");
+                val providers = delegatedClientIdentityProvidersFunction.apply(context);
+                LOGGER.trace("Skipping delegation and routing back to CAS authentication flow with providers [{}]", providers);
                 return super.doExecute(context);
             }
             val resolvedService = resolveServiceFromRequestContext(context);
@@ -215,8 +212,8 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
             return super.doExecute(context);
         }
 
-        prepareDelegatedClients(context);
-
+        val providers = delegatedClientIdentityProvidersFunction.apply(context);
+        LOGGER.trace("Delegated authentication providers are finalized as [{}]", providers);
         WebUtils.createCredential(context);
         if (response.getStatus() == HttpStatus.UNAUTHORIZED.value()) {
             return stopWebflow();
@@ -287,81 +284,6 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         client.init();
         return client;
     }
-
-    /**
-     * Prepare the data for the login page.
-     *
-     * @param context The current webflow context
-     */
-    protected void prepareDelegatedClients(final RequestContext context) {
-        val currentService = WebUtils.getService(context);
-        val service = authenticationRequestServiceSelectionStrategies.resolveService(currentService, WebApplicationService.class);
-
-        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
-        val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
-        val webContext = new JEEContext(request, response, this.sessionStore);
-
-        val allClients = this.clients.findAllClients();
-        val urls = new LinkedHashSet<DelegatedClientIdentityProviderConfiguration>(allClients.size());
-        allClients
-            .stream()
-            .filter(client -> client instanceof IndirectClient && isDelegatedClientAuthorizedForService(client, service))
-            .map(IndirectClient.class::cast)
-            .forEach(client -> {
-                try {
-                    client.init();
-                    val provider = DelegatedClientIdentityProviderConfigurationFactory.builder()
-                        .client(client)
-                        .webContext(webContext)
-                        .service(currentService)
-                        .casProperties(casProperties)
-                        .build()
-                        .resolve();
-
-                    provider.ifPresent(p -> {
-                        urls.add(p);
-                        determineAutoRedirectPolicyForProvider(context, service, p);
-                    });
-                } catch (final Exception e) {
-                    LOGGER.error("Cannot process client [{}]", client, e);
-                }
-            });
-
-        if (!urls.isEmpty()) {
-            context.getFlowScope().put(FLOW_ATTRIBUTE_PROVIDER_URLS, urls);
-        } else if (response.getStatus() != HttpStatus.UNAUTHORIZED.value()) {
-            LOGGER.warn("No delegated authentication providers could be determined based on the provided configuration. "
-                + "Either no clients are configured, or the current access strategy rules prohibit CAS from using authentication providers for this request.");
-        }
-    }
-
-    /**
-     * Determine auto redirect policy for provider.
-     *
-     * @param context  the context
-     * @param service  the service
-     * @param provider the provider
-     */
-    protected void determineAutoRedirectPolicyForProvider(final RequestContext context,
-                                                          final WebApplicationService service,
-                                                          final DelegatedClientIdentityProviderConfiguration provider) {
-        if (service != null) {
-            val registeredService = servicesManager.findServiceBy(service);
-            val delegatedPolicy = registeredService.getAccessStrategy().getDelegatedAuthenticationPolicy();
-            if (delegatedPolicy.isExclusive() && delegatedPolicy.getAllowedProviders().size() == 1
-                && provider.getName().equalsIgnoreCase(delegatedPolicy.getAllowedProviders().iterator().next())) {
-                LOGGER.trace("Registered service [{}] is exclusively allowed to use provider [{}]", registeredService, provider);
-                provider.setAutoRedirect(true);
-                WebUtils.putDelegatedAuthenticationProviderPrimary(context, provider);
-            }
-        }
-
-        if (WebUtils.getDelegatedAuthenticationProviderPrimary(context) == null && provider.isAutoRedirect()) {
-            LOGGER.trace("Provider [{}] is configured to auto-redirect", provider);
-            WebUtils.putDelegatedAuthenticationProviderPrimary(context, provider);
-        }
-    }
-
 
     /**
      * Stop webflow event.

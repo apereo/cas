@@ -166,13 +166,13 @@ public class DefaultAttributeDefinitionStoreTests {
         val file = File.createTempFile("attr", "json");
         store.to(file);
         assertTrue(file.exists());
-        val store2 = DefaultAttributeDefinitionStore.from(new FileSystemResource(file));
+        val store2 = new DefaultAttributeDefinitionStore(new FileSystemResource(file));
         assertEquals(store2, store);
     }
 
     @Test
-    public void verifyExternalImport() {
-        val store = DefaultAttributeDefinitionStore.from(new ClassPathResource("AttributeDefns.json"));
+    public void verifyExternalImport() throws Exception {
+        val store = new DefaultAttributeDefinitionStore(new ClassPathResource("AttributeDefns.json"));
         assertFalse(store.getAttributeDefinitions().isEmpty());
         assertNotNull(store.locateAttributeDefinition("eduPersonPrincipalName"));
     }
