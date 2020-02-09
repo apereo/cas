@@ -171,9 +171,14 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
             return principalAttributes;
         }
         LOGGER.trace("Located application context. Retrieving attribute definition store and attribute definitions...");
-        val attributeDefinitionStore = ctx.getAutowireCapableBeanFactory().getBean(AttributeDefinitionStore.class);
+        val beanFactory = ctx.getAutowireCapableBeanFactory();
+        if (!beanFactory.containsBean("attributeDefinitionStore")) {
+            LOGGER.trace("No attribute definition store is available in application context");
+            return principalAttributes;
+        }
+        val attributeDefinitionStore = beanFactory.getBean(AttributeDefinitionStore.class);
         if (attributeDefinitionStore.isEmpty()) {
-            LOGGER.trace("No attribute definitions are defined in the attribute defintion store");
+            LOGGER.trace("No attribute definitions are defined in the attribute definition store");
             return principalAttributes;
         }
         return attributeDefinitionStore.resolveAttributeValues(principalAttributes);
