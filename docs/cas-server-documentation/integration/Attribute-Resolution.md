@@ -113,3 +113,9 @@ If the resolver is configured to use `cn` as the attribute for the principal id,
 construct attributes from attribute repository sources. It then sees `sAMAccoutName` as the attribute and sees the principal id is to be created by `cn`.
 So it would remove the `cn` from the attributes. The final result is is a principal whose id is `John Smith`
 who has a `sAMAccountName` attribute of `johnsmith`.
+
+## Attribute Definitions
+
+CAS attributes may be decorated with additional metadata which can later be used depending on the 
+requirements of the protocol and nature of the integration with a target application. To learn 
+more, please [see this guide](Attribute-Definitions.html).

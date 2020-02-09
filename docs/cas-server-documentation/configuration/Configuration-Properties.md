@@ -1285,7 +1285,8 @@ Defines whether CAS should include and release protocol attributes defined in th
 principal attributes. By default all authentication attributes are released when protocol attributes are enabled for
 release. If you wish to restrict which authentication attributes get released, you can use the below settings to control authentication attributes more globally.
 
-Protocol/authentication attributes may also be released conditionally on a per-service basis. To learn more about this topic, [please review this guide](../integration/Attribute-Release.html).
+Protocol/authentication attributes may also be released conditionally on a per-service 
+basis. To learn more about this topic, [please review this guide](../integration/Attribute-Release.html).
 
 ```properties
 # cas.authn.authenticationAttributeRelease.onlyRelease=authenticationDate,isFromNewLogin
@@ -1295,8 +1296,19 @@ Protocol/authentication attributes may also be released conditionally on a per-s
 
 ## Principal Resolution
 
-In the event that a separate resolver is put into place, control how the final principal should be constructed by default. Principal resolution and Person Directory settings for this feature are available [here](Configuration-Properties-Common.html#person-directory-principal-resolution) under the configuration key `cas.personDirectory`.
+In the event that a separate resolver is put into place, control how the final principal should be constructed by default. Principal resolution 
+and Person Directory settings for this feature are 
+available [here](Configuration-Properties-Common.html#person-directory-principal-resolution) under the configuration key `cas.person-directory`.
 
+## Attribute Definitions
+
+An attribute definition store allows one to describe metadata about necessary attributes 
+with special decorations to be considered during attribute resolution and release.
+
+```properties
+# cas.person-directory.attribute-definition-store.json.location=file:/etc/cas/config/attribute-defns.json
+```
+ 
 ## Authentication Engine
 
 Control inner-workings of the CAS authentication engine, before and after the execution.
