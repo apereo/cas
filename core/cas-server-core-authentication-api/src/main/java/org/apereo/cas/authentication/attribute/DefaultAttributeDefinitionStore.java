@@ -1,14 +1,5 @@
 package org.apereo.cas.authentication.attribute;
 
-import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.ResourceUtils;
-import org.apereo.cas.util.scripting.ExecutableCompiledGroovyScript;
-import org.apereo.cas.util.scripting.GroovyShellScript;
-import org.apereo.cas.util.scripting.ScriptingUtils;
-import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
-import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -26,21 +17,15 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.core.io.Resource;
 
-import javax.persistence.Transient;
-
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link DefaultAttributeDefinitionStore}.
@@ -53,8 +38,6 @@ import java.util.stream.Collectors;
 @EqualsAndHashCode(of = "attributeDefinitions")
 @ToString(of = "attributeDefinitions")
 public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore {
-    private static final int MAP_SIZE = 20;
-
     private static final ObjectMapper MAPPER = new ObjectMapper()
         .enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY)
         .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
@@ -62,11 +45,6 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
         .findAndRegisterModules();
 
     private final Map<String, AttributeDefinition> attributeDefinitions = new TreeMap<>();
-
-    @JsonIgnore
-    @Transient
-    @org.springframework.data.annotation.Transient
-    private transient Map<String, ExecutableCompiledGroovyScript> attributeScriptCache = new LinkedHashMap<>(0);
 
     @Setter
     @Getter
@@ -132,64 +110,13 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
             return Optional.empty();
         }
         val definition = result.get();
-        
-        List<Object> currentValues = new ArrayList<>(attributeValues);
-        if (StringUtils.isNotBlank(definition.getScript())) {
-            currentValues = getScriptedAttributeValue(key, currentValues, definition);
-        }
-        if (definition.isScoped()) {
-            currentValues = currentValues
-                .stream()
-                .map(v -> String.format("%s@%s", v, this.scope))
-                .collect(Collectors.toCollection(ArrayList::new));
-        }
-
-        if (StringUtils.isNotBlank(definition.getPatternFormat())) {
-            currentValues = currentValues
-                .stream()
-                .map(v -> MessageFormat.format(definition.getPatternFormat(), v))
-                .collect(Collectors.toCollection(ArrayList::new));
-        }
-
+        val currentValues = definition.resolveAttributeValues(attributeValues, this.scope);
         return Optional.of(Pair.of(definition, currentValues));
     }
 
     @Override
     public boolean isEmpty() {
         return attributeDefinitions.isEmpty();
-    }
-
-    private List<Object> getScriptedAttributeValue(final String attributeKey,
-                                                   final List<Object> currentValues,
-                                                   final AttributeDefinition definition) {
-        if (this.attributeScriptCache == null) {
-            this.attributeScriptCache = new LinkedHashMap<>(MAP_SIZE);
-        }
-        LOGGER.trace("Locating attribute value via script for definition [{}]", definition);
-        if (!attributeScriptCache.containsKey(attributeKey)) {
-            val matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(definition.getScript());
-            val matcherFile = ScriptingUtils.getMatcherForExternalGroovyScript(definition.getScript());
-            if (matcherInline.find()) {
-                attributeScriptCache.put(attributeKey, new GroovyShellScript(matcherInline.group(1)));
-            } else if (matcherFile.find()) {
-                try {
-                    val scriptPath = SpringExpressionLanguageValueResolver.getInstance().resolve(matcherFile.group());
-                    val resource = ResourceUtils.getRawResourceFrom(scriptPath);
-                    attributeScriptCache.put(attributeKey, new WatchableGroovyScriptResource(resource));
-                } catch (final Exception e) {
-                    LOGGER.error(e.getMessage(), e);
-                }
-            }
-        }
-        if (!attributeScriptCache.containsKey(attributeKey)) {
-            LOGGER.error("Unable to locate scripted attribute definition for attribute [{}]", attributeKey);
-            return new ArrayList<>(0);
-        }
-        val script = attributeScriptCache.get(attributeKey);
-        val args = CollectionUtils.<String, Object>wrap("attributeName", attributeKey,
-            "attributeValues", currentValues, "logger", LOGGER);
-        script.setBinding(args);
-        return script.execute(args.values().toArray(), List.class);
     }
 
     @SneakyThrows

@@ -104,6 +104,14 @@ public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20Obje
 
         val globalFriendlyNames = samlIdPProperties.getAttributeFriendlyNames();
         val friendlyNames = new HashMap<String, String>(CollectionUtils.convertDirectedListToMap(globalFriendlyNames));
+
+        attributeDefinitionStore.getAttributeDefinitions()
+            .stream()
+            .filter(defn -> defn instanceof SamlIdPAttributeDefinition)
+            .map(SamlIdPAttributeDefinition.class::cast)
+            .filter(defn -> StringUtils.isNotBlank(defn.getFriendlyName()))
+            .forEach(defn -> friendlyNames.put(defn.getKey(), defn.getFriendlyName()));
+
         friendlyNames.putAll(samlRegisteredService.getAttributeFriendlyNames());
 
         for (val e : attributes.entrySet()) {
