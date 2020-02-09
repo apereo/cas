@@ -16,6 +16,7 @@ be considered to achieve suitable security.
 
 ## Announcements
 
+- [Feb 8 2020 Vulnerability Disclosure](https://apereo.github.io/2020/02/08/webflowcrypto/)
 - [Dec 20 2019 Vulnerability Disclosure](https://apereo.github.io/2019/12/20/surrogatevuln/)
 - [Nov 21 2019 Vulnerability Disclosure](https://apereo.github.io/2019/11/24/smfavuln/)
 - [Sep 27 2019 Vulnerability Disclosure](https://apereo.github.io/2019/09/27/numvulndisc/)
