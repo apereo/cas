@@ -1,6 +1,9 @@
 description = "Apereo CAS Passwordless Authentication Webflow Support"
 
 dependencies {
+
+    implementation libraries.pac4jcore
+
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-authentication-mfa-api")
@@ -29,6 +32,7 @@ dependencies {
     testImplementation project(":core:cas-server-core-authentication-mfa")
     testImplementation project(":core:cas-server-core-services-authentication")
     testImplementation project(":core:cas-server-core-authentication-attributes")
+    
     testImplementation project(":support:cas-server-support-themes")
 
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")

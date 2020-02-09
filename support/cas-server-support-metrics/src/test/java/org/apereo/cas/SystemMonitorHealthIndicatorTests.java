@@ -6,7 +6,7 @@ import org.apereo.cas.monitor.SystemMonitorHealthIndicator;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.actuate.autoconfigure.metrics.CompositeMeterRegistryAutoConfiguration;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.metrics.MetricsAutoConfiguration;
 import org.springframework.boot.actuate.autoconfigure.metrics.MetricsEndpointAutoConfiguration;
 import org.springframework.boot.actuate.autoconfigure.metrics.export.simple.SimpleMetricsExportAutoConfiguration;
@@ -41,6 +41,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class SystemMonitorHealthIndicatorTests {
 
     @Autowired
+    @Qualifier("metricsEndpoint")
     private MetricsEndpoint metrics;
     
     @Test
