@@ -92,4 +92,10 @@ public class CacheHealthIndicatorTests {
         };
         assertEquals("WARN", monitor.health().getStatus().getCode());
     }
+
+    @Test
+    public void verifyToString() {
+        val stat = new SimpleCacheStatistics(100, 110, 0, "test");
+        assertNotNull(stat.toString(new StringBuilder()));
+    }
 }
