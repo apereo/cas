@@ -61,7 +61,6 @@ public class BaseWebflowConfigurerTests {
     
     @Import({
         RefreshAutoConfiguration.class,
-        MailSenderAutoConfiguration.class,
         CasCoreAuthenticationConfiguration.class,
         CasCoreAuthenticationHandlersConfiguration.class,
         CasCoreAuthenticationMetadataConfiguration.class,
@@ -83,6 +82,7 @@ public class BaseWebflowConfigurerTests {
         CasCookieConfiguration.class,
         CasPersonDirectoryTestConfiguration.class,
         CasCoreConfiguration.class,
+        MailSenderAutoConfiguration.class,
         CasWebApplicationServiceFactoryConfiguration.class,
         CasCoreUtilConfiguration.class
     })

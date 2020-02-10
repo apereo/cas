@@ -1,6 +1,7 @@
 
 package org.apereo.cas;
 
+import org.apereo.cas.web.CasCoreViewsConfigurationTests;
 import org.apereo.cas.web.RegisteredServiceResponseHeadersEnforcementFilterTests;
 import org.apereo.cas.web.SimpleUrlValidatorFactoryBeanTests;
 import org.apereo.cas.web.WebjarValidationTests;
@@ -18,7 +19,8 @@ import org.junit.runner.RunWith;
 @SelectClasses({
     RegisteredServiceResponseHeadersEnforcementFilterTests.class,
     SimpleUrlValidatorFactoryBeanTests.class,
-    WebjarValidationTests.class
+    WebjarValidationTests.class,
+    CasCoreViewsConfigurationTests.class
 })
 @RunWith(JUnitPlatform.class)
 public class AllTestsSuite {
