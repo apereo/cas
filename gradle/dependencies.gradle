@@ -159,10 +159,14 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "com.squareup.okhttp3", module: "okhttp")
                     exclude(group: "com.squareup.okio", module: "okio")
+                    exclude(group: "org.jetbrains.kotlin", module: "kotlin-stdlib-common")
+                    exclude(group: "org.jetbrains.kotlin", module: "kotlin-stdlib")
                     force = true
                 },
                 dependencies.create("com.squareup.okhttp3:okhttp:$okhttp3Version") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.jetbrains.kotlin", module: "kotlin-stdlib-common")
+                    exclude(group: "org.jetbrains.kotlin", module: "kotlin-stdlib")
                     force = true
                 }
         ],
@@ -441,7 +445,7 @@ ext.libraries = [
                     force = true
                 }
         ],
-        ehcache3                 : [
+        ehcache3                : [
                 dependencies.create("org.ehcache:ehcache:$ehcache3Version") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.glassfish.jaxb", module: "jaxb-runtime")
@@ -565,15 +569,23 @@ ext.libraries = [
                 },
                 dependencies.create("com.squareup.okhttp3:okhttp:$okhttp3Version") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.jetbrains.kotlin", module: "kotlin-stdlib-common")
+                    exclude(group: "org.jetbrains.kotlin", module: "kotlin-stdlib")
                     force = true
                 }
         ],
         okhttp                  : [
                 dependencies.create("com.squareup.okhttp:okhttp-urlconnection:$okioHttpVersion") {
                     exclude(group: "com.squareup.okio", module: "okio")
+                    exclude(group: "org.jetbrains.kotlin", module: "kotlin-stdlib-common")
+                    exclude(group: "org.jetbrains.kotlin", module: "kotlin-stdlib")
                     force = true
                 },
                 dependencies.create("com.squareup.okio:okio:$okioVersion") {
+                    exclude(group: "com.google.guava", module: "guava")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.jetbrains.kotlin", module: "kotlin-stdlib-common")
+                    exclude(group: "org.jetbrains.kotlin", module: "kotlin-stdlib")
                     force = true
                 }
         ],
@@ -1578,7 +1590,7 @@ ext.libraries = [
                     force = true
                 }
         ],
-        azuread : [
+        azuread                 : [
                 dependencies.create("com.microsoft.azure:adal4j:$azureadVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.apache.commons", module: "commons-lang3")
@@ -1593,7 +1605,7 @@ ext.libraries = [
                     force = true
                 }
         ],
-        oktasdk : [
+        oktasdk                 : [
                 dependencies.create("com.okta.authn.sdk:okta-authn-sdk-api:$oktaSdkVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                 },
@@ -1806,20 +1818,20 @@ ext.libraries = [
         ],
         metrics                 : [
                 createMetricsDependencies(
-                    "com.timgroup:java-statsd-client:$statsdVersion",
-                    "io.micrometer:micrometer-core:$micrometerVersion",
-                    "io.micrometer:micrometer-registry-prometheus:$micrometerVersion",
-                    "io.micrometer:micrometer-registry-graphite:$micrometerVersion",
-                    "io.micrometer:micrometer-registry-ganglia:$micrometerVersion",
-                    "io.micrometer:micrometer-registry-jmx:$micrometerVersion",
-                    "io.micrometer:micrometer-registry-influx:$micrometerVersion",
-                    "io.micrometer:micrometer-registry-statsd:$micrometerVersion",
-                    "io.micrometer:micrometer-registry-atlas:$micrometerVersion",
-                    "io.micrometer:micrometer-registry-signalfx:$micrometerVersion",
-                    "io.micrometer:micrometer-registry-wavefront:$micrometerVersion",
-                    "io.micrometer:micrometer-registry-new-relic:$micrometerVersion",
-                    "io.micrometer:micrometer-registry-cloudwatch:$micrometerVersion",
-                    "com.signalfx.public:signalfx-java:$signalFxVersion")
+                        "com.timgroup:java-statsd-client:$statsdVersion",
+                        "io.micrometer:micrometer-core:$micrometerVersion",
+                        "io.micrometer:micrometer-registry-prometheus:$micrometerVersion",
+                        "io.micrometer:micrometer-registry-graphite:$micrometerVersion",
+                        "io.micrometer:micrometer-registry-ganglia:$micrometerVersion",
+                        "io.micrometer:micrometer-registry-jmx:$micrometerVersion",
+                        "io.micrometer:micrometer-registry-influx:$micrometerVersion",
+                        "io.micrometer:micrometer-registry-statsd:$micrometerVersion",
+                        "io.micrometer:micrometer-registry-atlas:$micrometerVersion",
+                        "io.micrometer:micrometer-registry-signalfx:$micrometerVersion",
+                        "io.micrometer:micrometer-registry-wavefront:$micrometerVersion",
+                        "io.micrometer:micrometer-registry-new-relic:$micrometerVersion",
+                        "io.micrometer:micrometer-registry-cloudwatch:$micrometerVersion",
+                        "com.signalfx.public:signalfx-java:$signalFxVersion")
         ],
         mongo                   : [
                 dependencies.create("org.mongodb:mongo-java-driver:$mongoDriverVersion") {
@@ -2368,6 +2380,8 @@ ext.libraries = [
         persondirectory         : dependencies.create("org.apereo.service.persondir:person-directory-impl:$personDirectoryVersion") {
             exclude(group: "commons-logging", module: "commons-logging")
             exclude(group: "org.slf4j", module: "slf4j-api")
+            exclude(group: "com.squareup.retrofit2", module: "retrofit")
+            exclude(group: "com.squareup.okio", module: "okio")
             exclude(group: "org.apache.httpcomponents", module: "httpclient")
             exclude(group: "org.apache.commons", module: "commons-lang3")
             exclude(group: "org.apache.commons", module: "commons-collections4")
@@ -2379,6 +2393,8 @@ ext.libraries = [
             exclude(group: "com.google.guava", module: "guava")
             exclude(group: "commons-io", module: "commons-io")
             exclude(group: "com.sun.xml.bind", module: "jaxb-impl")
+            exclude(group: "org.jetbrains.kotlin", module: "kotlin-stdlib-common")
+            exclude(group: "org.jetbrains.kotlin", module: "kotlin-stdlib")
             force = true
         },
         quartz                  : dependencies.create("org.quartz-scheduler:quartz:$quartzVersion") {

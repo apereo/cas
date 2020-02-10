@@ -245,7 +245,9 @@ public class CasOAuth20Configuration {
     @Bean
     @ConditionalOnMissingBean(name = "oauthSecConfigClients")
     public List<Client> oauthSecConfigClients() {
-        val cfg = new CasConfiguration(casProperties.getServer().getLoginUrl());
+        val server = casProperties.getServer();
+        
+        val cfg = new CasConfiguration(server.getLoginUrl());
         cfg.setDefaultTicketValidator(new CasServerApiBasedTicketValidator(centralAuthenticationService.getObject()));
 
         val oauthCasClient = new CasClient(cfg);
@@ -253,7 +255,7 @@ public class CasOAuth20Configuration {
             oauthCasClientRedirectActionBuilder().build(oauthCasClient, webContext));
         oauthCasClient.setName(Authenticators.CAS_OAUTH_CLIENT);
         oauthCasClient.setUrlResolver(casCallbackUrlResolver());
-        oauthCasClient.setCallbackUrl(OAuth20Utils.casOAuthCallbackUrl(casProperties.getServer().getPrefix()));
+        oauthCasClient.setCallbackUrl(OAuth20Utils.casOAuthCallbackUrl(server.getPrefix()));
         oauthCasClient.init();
 
         val authenticator = oAuthClientAuthenticator();
@@ -286,7 +288,6 @@ public class CasOAuth20Configuration {
         accessTokenClient.setAuthenticator(oAuthAccessTokenAuthenticator());
         accessTokenClient.setName(Authenticators.CAS_OAUTH_CLIENT_ACCESS_TOKEN_AUTHN);
         accessTokenClient.init();
-
 
         val clientList = new ArrayList<Client>();
 

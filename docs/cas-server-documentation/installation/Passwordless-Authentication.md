@@ -107,6 +107,19 @@ would produce a response body similar to the following:
 }
 ```
 
+### Custom
+
+You may also define your own user account store using the following bean definition and by implementing `PasswordlessUserAccountStore`:
+
+```java 
+@Bean
+public PasswordlessUserAccountStore passwordlessUserAccountStore() {
+    ...
+}
+```
+
+[See this guide](../configuration/Configuration-Management-Extensions.html) to learn more about how to register configurations into the CAS runtime.
+
 ## Token Management
 
 The following strategies define how issued tokens may be managed by CAS. 
@@ -148,6 +161,19 @@ The following operations need to be supported by the endpoint:
 | `DELETE`    | Delete a single token for the user.       | `username`, `token`   | N/A
 | `POST`      | Save a token for the user.                | `username`, `token`   | N/A
 
+### Custom
+
+You may also define your own token management store using the following bean definition and by implementing `PasswordlessTokenRepository`:
+
+```java 
+@Bean
+public PasswordlessTokenRepository passwordlessTokenRepository() {
+    ...
+}
+```
+
+[See this guide](../configuration/Configuration-Management-Extensions.html) to learn more about how to register configurations into the CAS runtime.
+
 ### Messaging & Notifications
 
 Users may be notified of tokens via text messages, mail, etc.
@@ -157,7 +183,7 @@ or [this guide](../notifications/Sending-Email-Configuration.html).
 ## Multifactor Authentication Integration
 
 Passwordless authentication can be integrated with [CAS multifactor authentication providers](../mfa/Configuring-Multifactor-Authentication.html). In this scenario,
-once CAS configuration is enabled to support this behavior or the located passwordless user account is considered *eligible* for multifactor authentication,
+once CAS configuration is enabled to support this behavior via settings  or the located passwordless user account is considered *eligible* for multifactor authentication,
 CAS will allow passwordless authentication to skip its own *intended normal* flow (i.e. as described above with token generation, etc) in favor of 
 multifactor authentication providers that may be available and defined in CAS.
 
@@ -167,3 +193,47 @@ its normal passwordless authentication flow in favor of the requested multifacto
 are available, or if no triggers require the use of multifactor authentication for the verified passwordless user, passwordless 
 authentication flow will commence as usual.
 
+To see the relevant list of CAS 
+properties, please [review this guide](../configuration/Configuration-Properties.html#passwordless-authentication).
+
+## Delegated Authentication Integration
+
+Passwordless authentication can be integrated with [CAS delegated authentication](../integration/Delegate-Authentication.html). In this scenario,
+once CAS configuration is enabled to support this behavior via settings or the located passwordless user account is considered *eligible* for delegated authentication,
+CAS will allow passwordless authentication to skip its own *intended normal* flow (i.e. as described above with token generation, etc) in favor of 
+delegated authentication that may be available and defined in CAS.
+
+This means that if [delegated authentication providers](../integration/Delegate-Authentication.html) are defined and activated, CAS will skip 
+its normal passwordless authentication flow in favor of the requested multifactor authentication provider and its flow. If no delegated identity providers 
+are available, passwordless authentication flow will commence as usual.
+
+The selection of a delegated authentication identity provider for a passwordless user is handled 
+using a script. The script may be defined as such:
+
+```groovy
+def run(Object[] args) {
+    def passwordlessUser = args[0]
+    def clients = (Set) args[1]
+    def httpServletRequest = args[2]
+    def logger = args[3]
+    
+    logger.info("Testing username $passwordlessUser")
+
+    return clients[0]
+}
+``` 
+
+The parameters passed are as follows:
+
+| Parameter             | Description
+|-----------------------|-----------------------------------------------------------------------
+| `passwordlessUser`    | The object representing the `PasswordlessUserAccount`.
+| `clients`             | The object representing the collection of identity provider configurations.
+| `httpServletRequest`  | The object representing the http request.
+| `logger`              | The object responsible for issuing log messages such as `logger.info(...)`.
+
+The outcome of the script can be `null` to skip delegated authentication for the user, or it could a selection from the available identity providers
+passed into the script.
+
+To see the relevant list of CAS 
+properties, please [review this guide](../configuration/Configuration-Properties.html#passwordless-authentication).
