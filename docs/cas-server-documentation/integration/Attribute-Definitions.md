@@ -133,7 +133,7 @@ Same use case as above, except the attribute value be additional processed by an
       "name" : "urn:oid:1.3.6.1.4.1.5923.1.1.1.6",
       "friendlyName" : "eduPersonPrincipalName",
       "scoped" : true,
-      "script": " groovy { logger.info(" name: ${attributeName}, values: ${attributeValues} "); return ['hello', 'world'] } "
+      "script": " groovy { logger.info(\" name: ${attributeName}, values: ${attributeValues} \"); return ['hello', 'world'] } "
     }
 }
 ```  
