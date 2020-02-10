@@ -1156,7 +1156,7 @@ public class WebUtils {
      */
     public static void putDelegatedAuthenticationProviderConfigurations(final RequestContext context,
                                                                         final Set<? extends Serializable> urls) {
-        context.getFlowScope().get("delegatedAuthenticationProviderConfigurations", urls);
+        context.getFlowScope().put("delegatedAuthenticationProviderConfigurations", urls);
     }
 
     /**
