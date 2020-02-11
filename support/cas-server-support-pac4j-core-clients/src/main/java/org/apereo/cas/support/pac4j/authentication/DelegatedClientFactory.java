@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.cas.config.CasConfiguration;
@@ -47,6 +48,7 @@ import org.pac4j.oidc.config.OidcConfiguration;
 import org.pac4j.saml.client.SAML2Client;
 import org.pac4j.saml.config.SAML2Configuration;
 import org.pac4j.saml.metadata.SAML2ServiceProvicerRequestedAttribute;
+import org.pac4j.saml.store.SAMLMessageStoreFactory;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -415,10 +417,19 @@ public class DelegatedClientFactory {
                     cfg.setAttributeAsId(saml.getPrincipalIdAttribute());
                 }
                 cfg.setWantsAssertionsSigned(saml.isWantsAssertionsSigned());
-                cfg.setSpLogoutRequestSigned(saml.isSignLogoutRequests());
                 cfg.setAllSignatureValidationDisabled(saml.isAllSignatureValidationDisabled());
                 cfg.setUseNameQualifier(saml.isUseNameQualifier());
                 cfg.setAttributeConsumingServiceIndex(saml.getAttributeConsumingServiceIndex());
+                
+                try {
+                    val clazz = ClassUtils.getClass(
+                            DelegatedClientFactory.class.getClassLoader(), saml.getMessageStoreFactory());
+                    cfg.setSamlMessageStoreFactory(
+                            SAMLMessageStoreFactory.class.cast(clazz.getDeclaredConstructor().newInstance()));
+                } catch (final Exception e) {
+                    LOGGER.error("Unable to instantiate message store factory class [{}]", saml.getMessageStoreFactory(), e);
+                }
+                
                 if (saml.getAssertionConsumerServiceIndex() >= 0) {
                     cfg.setAssertionConsumerServiceIndex(saml.getAssertionConsumerServiceIndex());
                 }

@@ -617,7 +617,8 @@ If none is specified, one is automatically detected and used by CAS.
 
 ```properties
 # cas.server.name=https://cas.example.org:8443
-# cas.server.prefix=https://cas.example.org:8443/cas
+# cas.server.prefix=https://cas.example.org:8443/cas 
+# cas.server.scope=example.org
 # cas.host.name=
 ```
 
@@ -1284,7 +1285,8 @@ Defines whether CAS should include and release protocol attributes defined in th
 principal attributes. By default all authentication attributes are released when protocol attributes are enabled for
 release. If you wish to restrict which authentication attributes get released, you can use the below settings to control authentication attributes more globally.
 
-Protocol/authentication attributes may also be released conditionally on a per-service basis. To learn more about this topic, [please review this guide](../integration/Attribute-Release.html).
+Protocol/authentication attributes may also be released conditionally on a per-service 
+basis. To learn more about this topic, [please review this guide](../integration/Attribute-Release.html).
 
 ```properties
 # cas.authn.authenticationAttributeRelease.onlyRelease=authenticationDate,isFromNewLogin
@@ -1294,8 +1296,19 @@ Protocol/authentication attributes may also be released conditionally on a per-s
 
 ## Principal Resolution
 
-In the event that a separate resolver is put into place, control how the final principal should be constructed by default. Principal resolution and Person Directory settings for this feature are available [here](Configuration-Properties-Common.html#person-directory-principal-resolution) under the configuration key `cas.personDirectory`.
+In the event that a separate resolver is put into place, control how the final principal should be constructed by default. Principal resolution 
+and Person Directory settings for this feature are 
+available [here](Configuration-Properties-Common.html#person-directory-principal-resolution) under the configuration key `cas.person-directory`.
 
+## Attribute Definitions
+
+An attribute definition store allows one to describe metadata about necessary attributes 
+with special decorations to be considered during attribute resolution and release.
+
+```properties
+# cas.person-directory.attribute-definition-store.json.location=file:/etc/cas/config/attribute-defns.json
+```
+ 
 ## Authentication Engine
 
 Control inner-workings of the CAS authentication engine, before and after the execution.
@@ -1675,7 +1688,8 @@ To learn more about this topic, [please review this guide](../installation/Passw
 ### Account Stores
 
 ```properties   
-cas.authn.passwordless.multifactorAuthenticationActivated=false
+# cas.authn.passwordless.multifactorAuthenticationActivated=false
+# cas.authn.passwordless.delegatedAuthenticationActivated=false
 
 # cas.authn.passwordless.accounts.simple.casuser=cas@example.org
 # cas.authn.passwordless.accounts.groovy.location=file:/etc/cas/config/pwdless.groovy
@@ -3125,7 +3139,6 @@ To learn more about this topic, [please review this guide](../installation/Confi
 
 ```properties
 # cas.authn.samlIdp.entityId=https://cas.example.org/idp
-# cas.authn.samlIdp.scope=example.org
 
 # cas.authn.samlIdp.authenticationContextClassMappings[0]=urn:oasis:names:tc:SAML:2.0:ac:classes:SomeClassName->mfa-duo
 # cas.authn.samlIdp.authenticationContextClassMappings[1]=https://refeds.org/profile/mfa->mfa-gauth
@@ -3546,7 +3559,6 @@ prefixes for the `keystorePath` or `identityProviderMetadataPath` property).
 # cas.authn.pac4j.saml[0].passive=false
 
 # cas.authn.pac4j.saml[0].wantsAssertionsSigned=
-# cas.authn.pac4j.saml[0].signLogoutRequests=
 # cas.authn.pac4j.saml[0].allSignatureValidationDisabled=false
 # cas.authn.pac4j.saml[0].signServiceProviderMetadata=false
 # cas.authn.pac4j.saml[0].principalIdAttribute=eduPersonPrincipalName
@@ -3571,6 +3583,9 @@ prefixes for the `keystorePath` or `identityProviderMetadataPath` property).
 
 # cas.authn.pac4j.saml[0].mappedAttributes[0].name=urn:oid:2.5.4.42
 # cas.authn.pac4j.saml[0].mappedAttributes[0].mappedAs=displayName
+
+# cas.authn.pac4j.saml[0].messageStoreFactory=org.pac4j.saml.store.EmptyStoreFactory
+
 ```
 
 Examine the generated metadata after accessing the CAS login screen to ensure all 

@@ -12,6 +12,7 @@ import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Test;
 import org.pac4j.cas.config.CasProtocol;
+import org.pac4j.saml.client.SAML2Client;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
@@ -79,6 +80,7 @@ public class DelegatedClientFactoryTests {
         saml.setServiceProviderMetadataPath(new File(FileUtils.getTempDirectoryPath(), "sp.xml").getCanonicalPath());
         saml.setServiceProviderEntityId("test-entityid");
         saml.setForceKeystoreGeneration(true);
+        saml.setMessageStoreFactory(org.pac4j.saml.store.HttpSessionStoreFactory.class.getName());
         props.getSaml().add(saml);
 
         val casSettings = new CasConfigurationProperties();
@@ -86,6 +88,9 @@ public class DelegatedClientFactoryTests {
         val factory = new DelegatedClientFactory(casSettings);
         val clients = factory.build();
         assertEquals(1, clients.size());
+        
+        assertTrue(SAML2Client.class.cast(clients.iterator().next()).getConfiguration().
+                getSamlMessageStoreFactory() instanceof org.pac4j.saml.store.HttpSessionStoreFactory);
     }
 
     @Test

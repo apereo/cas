@@ -80,12 +80,14 @@ layout: null
     
 * [Attributes](#casattributes)
     *   [Attribute Resolution](/$version/integration/Attribute-Resolution.html)
+        *   [Definitions](/$version/integration/Attribute-Definitions.html)
     *   [Attribute Release](/$version/integration/Attribute-Release.html)
         *   [Principal Id](/$version/integration/Attribute-Release-PrincipalId.html)
         *   [Release Policies](/$version/integration/Attribute-Release-Policies.html)
         *   [Value Filters](/$version/integration/Attribute-Value-Release-Policies.html)
         *   [Consent](/$version/integration/Attribute-Release-Consent.html)
         *   [Caching](/$version/integration/Attribute-Release-Caching.html)
+        *   [Definitions](/$version/integration/Attribute-Definitions.html)
         
 * [Multifactor Authentication](#mfaauthn)
     *   [Overview](/$version/mfa/Configuring-Multifactor-Authentication.html)
@@ -259,4 +261,4 @@ layout: null
     *   [Release Process](/cas/developer/Release-Process.html)
     *   [Build Process](/cas/developer/Build-Process.html)
         *   [6.x](/cas/developer/Build-Process-6X.html)
-        *   [5.x](cas/developer/Build-Process-5X.html)
+        *   [5.x](/cas/developer/Build-Process-5X.html)
