@@ -11,7 +11,6 @@ dependencies {
     implementation project(":core:cas-server-core-services-api")
     implementation project(":support:cas-server-support-spnego")
     implementation project(":support:cas-server-support-ldap-core")
-    implementation project(":support:cas-server-support-pm-webflow")
 
     implementation libraries.jcifs
     

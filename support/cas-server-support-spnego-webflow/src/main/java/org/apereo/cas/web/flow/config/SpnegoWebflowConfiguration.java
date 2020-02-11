@@ -1,7 +1,6 @@
 package org.apereo.cas.web.flow.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.pm.config.PasswordManagementWebflowConfiguration;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.SpengoWebflowConfigurer;
@@ -9,7 +8,6 @@ import org.apereo.cas.web.flow.SpengoWebflowConfigurer;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
@@ -27,7 +25,6 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
  */
 @Configuration("spnegoWebflowConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@AutoConfigureBefore(PasswordManagementWebflowConfiguration.class)
 public class SpnegoWebflowConfiguration {
     @Autowired
     private ApplicationContext applicationContext;

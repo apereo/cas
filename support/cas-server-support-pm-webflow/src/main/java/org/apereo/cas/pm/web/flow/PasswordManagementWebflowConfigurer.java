@@ -7,6 +7,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
+import org.apereo.cas.web.flow.configurer.WebflowConfigurersOrder;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
@@ -54,6 +55,7 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
                                                final Action initPasswordChangeAction) {
         super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
         this.initPasswordChangeAction = initPasswordChangeAction;
+        setOrder(WebflowConfigurersOrder.PM);
     }
 
     @Override

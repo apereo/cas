@@ -2,6 +2,7 @@ package org.apereo.cas.web.flow;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
+import org.apereo.cas.web.flow.configurer.WebflowConfigurersOrder;
 
 import lombok.val;
 import org.springframework.context.ApplicationContext;
@@ -29,6 +30,7 @@ public class SpengoWebflowConfigurer extends AbstractCasWebflowConfigurer {
                                    final ApplicationContext applicationContext,
                                    final CasConfigurationProperties casProperties) {
         super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
+        setOrder(WebflowConfigurersOrder.SPNEGO);
     }
 
     @Override
