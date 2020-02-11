@@ -22,7 +22,7 @@ import org.springframework.context.annotation.Configuration;
  * @since 5.2.0
  */
 @Configuration(value = "ldapPasswordManagementConfiguration", proxyBeanMethods = false)
-@ConditionalOnProperty(prefix = "cas.authn.pm.ldap", name = "ldapUrl")
+@ConditionalOnProperty("cas.authn.pm.ldap[0].ldapUrl")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class LdapPasswordManagementConfiguration {
     @Autowired
