@@ -26,6 +26,7 @@ printHelp() {
 }
 
 PARAMS=""
+parallel="--parallel"
 while (( "$#" )); do
     case "$1" in
     --coverage)
@@ -34,6 +35,7 @@ while (( "$#" )); do
         ;;
     --debug)
         debug="--debug-jvm"
+        parallel=""
         shift
         ;;
     --test)
@@ -155,9 +157,9 @@ then
   exit 1
 fi
 
-cmd="./gradlew $task $coverage $debug -DtestCategoryType=$category $tests \
+cmd="./gradlew $task -DtestCategoryType=$category $tests \
 --build-cache -x javadoc -x check -DignoreTestFailures=false -DskipNestedConfigMetadataGen=true \
--DskipGradleLint=true -DshowStandardStreams=true --no-daemon --configure-on-demand "
+-DskipGradleLint=true -DshowStandardStreams=true --no-daemon --configure-on-demand $coverage $debug $parallel "
 
 
 echo -e "$cmd\n"

@@ -1,9 +1,9 @@
 package org.apereo.cas.monitor;
 
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.IMap;
-import com.hazelcast.instance.HazelcastInstanceProxy;
-import com.hazelcast.memory.MemoryStats;
+import com.hazelcast.instance.impl.HazelcastInstanceProxy;
+import com.hazelcast.internal.memory.MemoryStats;
+import com.hazelcast.map.IMap;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
