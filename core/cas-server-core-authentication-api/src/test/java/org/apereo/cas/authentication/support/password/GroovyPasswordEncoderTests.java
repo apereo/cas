@@ -19,7 +19,6 @@ public class GroovyPasswordEncoderTests {
     @Test
     public void verifyOperation() {
         val enc = new GroovyPasswordEncoder(new ClassPathResource("GroovyPasswordEncoder.groovy"));
-        val encoded = enc.encode("helloworld");
-        assertTrue(enc.matches("helloworld", encoded));
+        assertTrue(enc.matches("helloworld", "6adfb183a4a2c94a2f92dab5ade762a47889a5a1"));
     }
 }
