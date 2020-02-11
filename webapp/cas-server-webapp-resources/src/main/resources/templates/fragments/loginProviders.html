@@ -15,42 +15,21 @@
         <div th:fragment="loginProviders" th:remove="tag" class="login-providers">
             <div id="list-providers card d-sm-none d-md-block bg-light">
             
-                <div class="card-body pb-4">
+                <div class="card-body">
             
-                    <h3 class="card-title text-center mt-md-0 mt-4" th:if="${delegatedAuthenticationProviderPrimary == null}">
+                    <h3 class="card-title text-center mt-md-0 mt-4">
                         <i class="fas fa-user-shield"></i>
                         <span th:utext="#{screen.welcome.label.loginwith}">External Identity Providers</span>
                     </h3>
             
-                    <div class="card-title" th:if="${delegatedAuthenticationProviderPrimary != null}">
+                    <!--<div class="card-title" th:if="${delegatedAuthenticationProviderPrimary != null}">
                         <div class="alert alert-success" role="alert">
                             <span th:utext="#{screen.welcome.label.navto}" />
                         </div>
-                    </div>
-                    <div class="card-text d-flex justify-content-center" th:style="'display:' + ${delegatedAuthenticationProviderPrimary != null ? 'none' : 'block'}">
+                    </div>-->
+                    <div class="card-text d-flex justify-content-center">
                         <ul class="list-unstyled d-flex flex-column m-0 flex-fill">
-                            <li th:each="entry: ${delegatedAuthenticationProviderUrls}" th:switch="${entry.type}"  class="p-1 login-provider-item">
-                                <a class="mdc-button mdc-button--raised mdc-button-twitter w-100" th:classappend="'mdc-btn-' + ${entry.type}" th:href="@{${entry.redirectUrl}}"
-                                    th:attr="autoredirect=${entry.autoRedirect}" th:inline="text" th:title="${entry.name}">
-                            
-                                    <span th:case="twitter" class="mdi mdi-twitter"></span>
-                                    <span th:case="windowslive" class="mdi mdi-windows"></span>
-                                    <span th:case="yahoo" class="mdi mdi-yahoo"></span>
-                                    <span th:case="bitbucket" class="mdi mdi-bitbucket"></span>
-                                    <span th:case="wordpress" class="mdi mdi-wordpress"></span>
-                                    <span th:case="google2" class="mdi mdi-google-plus"></span>
-                                    <span th:case="github" class="mdi mdi-github-circle"></span>
-                                    <span th:case="dropbox" class="mdi mdi-dropbox"></span>
-                                    <span th:case="linkedin" class="mdi mdi-linkedin"></span>
-                                    <span th:case="facebook" class="mdi mdi-facebook"></span>
-                                    <span th:case="oidc" class="mdi mdi-openid"></span>
-                                    <span th:case="saml2" th:class="${entry.cssClass}"></span>
-                                    <span th:case="*" class="mdi mdi-login"></span>
-                            
-                                    [[${entry.name}]]
-                                </a>
-                            </li>
-                            <!--<li class="p-1 login-provider-item">
+                            <li class="p-1 login-provider-item">
                                 <a class="mdc-button mdc-button--raised mdc-button-twitter w-100" href="#">
             
                                     <span class="mdi mdi-twitter"></span>
@@ -98,7 +77,7 @@
                             <li class="p-1 login-provider-item">
                                 <a class="mdc-button mdc-button--raised mdc-button-github w-100" href="#">
                             
-                                    <span class="mdi mdi-github"></span>
+                                    <span class="mdi mdi-github-circle"></span>
                                     Github
                                 </a>
                             </li>
@@ -141,7 +120,7 @@
                             
                                     Alternate
                                 </a>
-                            </li>-->
+                            </li>
                         </ul>
                     </div>
                 </div>
