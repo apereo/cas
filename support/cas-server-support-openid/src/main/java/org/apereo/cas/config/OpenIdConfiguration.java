@@ -52,11 +52,13 @@ import java.util.Properties;
  * This is {@link OpenIdConfiguration}.
  *
  * @author Misagh Moayyed
+ * @deprecated 6.2
  * @since 5.0.0
  */
 @Configuration("openidConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
+@Deprecated(since = "6.2")
 public class OpenIdConfiguration {
     @Autowired
     @Qualifier("serviceValidationViewFactory")

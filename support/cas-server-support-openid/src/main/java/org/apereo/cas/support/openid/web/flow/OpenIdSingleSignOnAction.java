@@ -25,8 +25,10 @@ import org.springframework.webflow.execution.RequestContext;
  * not entered by the user.
  *
  * @author Scott Battaglia
+ * @deprecated 6.2
  * @since 3.1
  */
+@Deprecated(since = "6.2")
 public class OpenIdSingleSignOnAction extends AbstractNonInteractiveCredentialsAction {
 
     private final TicketRegistrySupport ticketRegistrySupport;
@@ -63,16 +65,15 @@ public class OpenIdSingleSignOnAction extends AbstractNonInteractiveCredentialsA
     private String getOpenIdSelectedIdentifier(final RequestContext context, final String ticketGrantingTicketId,
                                                final String openidIdentityParameter) {
         if (OpenIdProtocolConstants.OPENID_IDENTIFIERSELECT.equals(openidIdentityParameter)) {
-            context.getFlowScope().remove(OpenIdProtocolConstants.OPENID_LOCALID);
+            WebUtils.putOpenIdLocalUserId(context, null);
             val p = ticketRegistrySupport.getAuthenticatedPrincipalFrom(ticketGrantingTicketId);
             if (p != null) {
                 return p.getId();
             }
             return OpenIdProtocolConstants.OPENID_IDENTIFIERSELECT;
         }
-
         val userName = this.extractor.extractLocalUsernameFromUri(openidIdentityParameter);
-        context.getFlowScope().put(OpenIdProtocolConstants.OPENID_LOCALID, userName);
+        WebUtils.putOpenIdLocalUserId(context, userName);
         return userName;
     }
 }

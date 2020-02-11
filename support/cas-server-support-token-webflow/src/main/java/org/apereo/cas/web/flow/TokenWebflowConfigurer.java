@@ -26,6 +26,7 @@ public class TokenWebflowConfigurer extends AbstractCasWebflowConfigurer {
                                   final ConfigurableApplicationContext applicationContext,
                                   final CasConfigurationProperties casProperties) {
         super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
+        setOrder(casProperties.getAuthn().getToken().getWebflow().getOrder());
     }
 
     @Override
