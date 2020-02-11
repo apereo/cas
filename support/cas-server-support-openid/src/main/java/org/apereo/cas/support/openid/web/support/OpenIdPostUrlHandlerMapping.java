@@ -11,8 +11,10 @@ import javax.servlet.http.HttpServletRequest;
  * OpenID url handling mappings.
  *
  * @author Scott Battaglia
+ * @deprecated 6.2
  * @since 3.1
  */
+@Deprecated(since = "6.2")
 public class OpenIdPostUrlHandlerMapping extends SimpleUrlHandlerMapping {
 
     @Override

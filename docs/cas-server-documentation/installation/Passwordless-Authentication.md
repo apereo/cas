@@ -84,7 +84,8 @@ def run(Object[] args) {
     account.setName("TestUser")
     account.setPhone("123-456-7890") 
     account.setAttributes(Map.of("...", List.of("...", "...")) 
-    account.setMultifactorAuthenticationEligible(false)
+    account.setMultifactorAuthenticationEligible(false)  
+    account.setRequestPassword(false)
     return account
 }
 ```
@@ -102,7 +103,8 @@ would produce a response body similar to the following:
   "phone" : "123-456-7890",
   "name" : "CASUser",        
   "multifactorAuthenticationEligible": false,  
-  "delegatedAuthenticationEligible": false,
+  "delegatedAuthenticationEligible": false,  
+  "requestPassword": false,
   "attributes":{ "lastName" : ["...", "..."] }
 }
 ```
@@ -179,6 +181,13 @@ public PasswordlessTokenRepository passwordlessTokenRepository() {
 Users may be notified of tokens via text messages, mail, etc.
 To learn more about available options, please [see this guide](../notifications/SMS-Messaging-Configuration.html)
 or [this guide](../notifications/Sending-Email-Configuration.html).
+
+## Disabling Passwordless Authentication Flow
+
+Passwordless authentication can be disabled conditionally on a per-user basis. If the passwordless account retrieved from the account store
+carries a user whose `requestPassword` is set to `true`, the passwordless flow (i.e. as described above with token generation, etc) will
+be disabled and skipped in favor of the more usual CAS authentication flow, challenging the user for a password. Support for this behavior may depend
+on each individual account store implementation.
 
 ## Multifactor Authentication Integration
 

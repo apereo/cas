@@ -6,9 +6,11 @@ import lombok.experimental.UtilityClass;
  * OpenID constants.
  *
  * @author Jerome Leleu
+ * @deprecated 6.2
  * @since 4.1.0
  */
 @UtilityClass
+@Deprecated(since = "6.2")
 public class OpenIdProtocolConstants {
     /**
      * The application callback url.
@@ -44,11 +46,6 @@ public class OpenIdProtocolConstants {
      * When the user can select its own username for login.
      */
     public static final String OPENID_IDENTIFIERSELECT = "http://specs.openid.net/auth/2.0/identifier_select";
-
-    /**
-     * The name of the OpenID username for the login page.
-     */
-    public static final String OPENID_LOCALID = "openIdLocalId";
 
     /**
      * The OpenID associate mode.

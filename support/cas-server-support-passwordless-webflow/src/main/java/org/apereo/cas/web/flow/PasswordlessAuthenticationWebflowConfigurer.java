@@ -87,6 +87,10 @@ public class PasswordlessAuthenticationWebflowConfigurer extends AbstractCasWebf
         val verifyAccountState = createActionState(flow, STATE_ID_PASSWORDLESS_VERIFY_ACCOUNT, "verifyPasswordlessAccountAuthenticationAction");
         createTransitionForState(verifyAccountState, CasWebflowConstants.TRANSITION_ID_ERROR, STATE_ID_PASSWORDLESS_GET_USERID);
         createTransitionForState(verifyAccountState, CasWebflowConstants.TRANSITION_ID_SUCCESS, STATE_ID_PASSWORDLESS_DETERMINE_DELEGATED_AUTHN);
+
+        val state = getTransitionableState(flow, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM);
+        val transition = state.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS);
+        createTransitionForState(verifyAccountState, CasWebflowConstants.TRANSITION_ID_PROMPT, transition.getTargetStateId());
     }
 
     protected void createStateDetermineDelegatedAuthenticationAction(final Flow flow) {
@@ -94,7 +98,6 @@ public class PasswordlessAuthenticationWebflowConfigurer extends AbstractCasWebf
         createTransitionForState(verifyAccountState, CasWebflowConstants.TRANSITION_ID_ERROR, STATE_ID_PASSWORDLESS_GET_USERID);
         createTransitionForState(verifyAccountState, CasWebflowConstants.TRANSITION_ID_SUCCESS, STATE_ID_PASSWORDLESS_DETERMINE_MFA);
         createTransitionForState(verifyAccountState, CasWebflowConstants.TRANSITION_ID_REDIRECT, "redirectToDelegatedIdentityProviderView");
-
         createEndState(flow, "redirectToDelegatedIdentityProviderView", "flashScope.delegatedClientIdentityProvider.redirectUrl", true);
     }
 

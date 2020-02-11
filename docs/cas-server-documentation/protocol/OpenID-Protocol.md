@@ -9,6 +9,11 @@ category: Protocols
 OpenID is an open, decentralized, free framework for user-centric digital identity. Users represent
 themselves using URIs. For more information see the [http://www.openid.net](http://www.openid.net).
 
+<div class="alert alert-warning"><strong>Usage</strong>
+<p><strong>This feature is deprecated and is scheduled to be removed in the future.</strong> If you can, consider using
+a more mainstream and recent authentication protocol.</p>
+</div>
+
 CAS supports both the "dumb" and "smart" modes of the OpenID protocol. Dumb mode acts in a similar fashion
 to the existing CAS protocol. The smart mode differs in that it establishes an association between the client and
 the openId provider (OP) at the beginning. Thanks to that association and the key exchange done during association,

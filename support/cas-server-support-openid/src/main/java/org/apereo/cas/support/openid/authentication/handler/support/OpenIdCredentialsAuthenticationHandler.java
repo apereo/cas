@@ -21,8 +21,10 @@ import java.security.GeneralSecurityException;
  * TicketGrantingTicket. Otherwise, fail authentication.
  *
  * @author Scott Battaglia
+ * @deprecated 6.2
  * @since 3.1
  */
+@Deprecated(since = "6.2")
 public class OpenIdCredentialsAuthenticationHandler extends AbstractAuthenticationHandler {
 
     private final TicketRegistry ticketRegistry;

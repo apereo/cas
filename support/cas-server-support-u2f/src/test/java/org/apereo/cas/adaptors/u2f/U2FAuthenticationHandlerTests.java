@@ -103,7 +103,7 @@ public class U2FAuthenticationHandlerTests {
             + '}';
 
         val authnData = "{\"appId\":\"https://mmoayyed.unicon.net:8443\","
-            + "\"challenge\":\"NEnAEZPOoSTvD33crTed8YENizvWZ5muFZYffYp3AeU\",\"signRequests\":[{\"version\":\"U2F_V2\","
+            + "\"challenge\":\"NEnAEZPOoSTvD33crTPasswordlessAuthenticationWebflowConfigurerTestsed8YENizvWZ5muFZYffYp3AeU\",\"signRequests\":[{\"version\":\"U2F_V2\","
             + "\"challenge\":\"NEnAEZPOoSTvD33crTed8YENizvWZ5muFZYffYp3AeU\",\"appId\":\"https://mmoayyed.unicon.net:8443\","
             + "\"keyHandle\":\"2_QYgDSPYcOgYBGBe8c9PVCunjigbD-3o5HcliXhu-Up_GKckYMxxVF6AgSPWubqfWy8WmJNDYQEJ1QKZe343Q\"}]}";
         u2fDeviceRepository.requestDeviceAuthentication("NEnAEZPOoSTvD33crTed8YENizvWZ5muFZYffYp3AeU", "casuser", authnData);

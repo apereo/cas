@@ -2,7 +2,7 @@ package org.apereo.cas.configuration.model.support.pm;
 
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
-import org.apereo.cas.configuration.model.support.WebflowAutoConfigurationProperties;
+import org.apereo.cas.configuration.model.core.web.flow.WebflowAutoConfigurationProperties;
 import org.apereo.cas.configuration.model.support.email.EmailProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.sms.SmsProperties;

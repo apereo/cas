@@ -27,6 +27,10 @@ public interface CasWebflowConstants {
      * The transition state 'yes'.
      */
     String TRANSITION_ID_YES = "yes";
+    /**
+     * The transition state 'prompt'.
+     */
+    String TRANSITION_ID_PROMPT = "prompt";
 
     /**
      * The transition state 'finalize'.

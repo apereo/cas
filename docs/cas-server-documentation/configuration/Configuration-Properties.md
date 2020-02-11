@@ -2161,11 +2161,8 @@ Principal resolution and Person Directory settings for this feature are availabl
 
 ### Webflow configuration
 
-It defines in which order the SPNEGO webflow must be configured.
-
-```properties
-# cas.authn.spnego.webflow.order=100
-```
+Webflow auto-configuration settings for this feature are available [here](Configuration-Properties-Common.html#webflow-auto-configuration) under 
+the configuration key `cas.authn.spnego.webflow`.
 
 ### System Settings
 
@@ -2275,6 +2272,11 @@ To learn more about this topic, [please review this guide](../installation/JWT-A
 ```properties
 # cas.authn.token.name=
 ```
+
+### Webflow configuration
+
+Webflow auto-configuration settings for this feature are available [here](Configuration-Properties-Common.html#webflow-auto-configuration) under 
+the configuration key `cas.authn.token.webflow`.
 
 ### JWT Tickets
 
@@ -2428,6 +2430,11 @@ Password encoding settings for this feature are available [here](Configuration-P
 ## X509 Authentication
 
 To learn more about this topic, [please review this guide](../installation/X509-Authentication.html).
+
+### Webflow configuration
+
+Webflow auto-configuration settings for this feature are available [here](Configuration-Properties-Common.html#webflow-auto-configuration) under 
+the configuration key `cas.authn.x509.webflow`.
 
 ### Principal Resolution
 
@@ -5186,6 +5193,11 @@ To learn more about this topic, [please review this guide](../integration/Attrib
 
 Signing & encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.consent`. The signing and encryption keys [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`.
 
+### Webflow configuration
+
+Webflow auto-configuration settings for this feature are available [here](Configuration-Properties-Common.html#webflow-auto-configuration) under 
+the configuration key `cas.consent.webflow`.
+
 ### JSON Attribute Consent
 
 ```properties
@@ -5286,11 +5298,8 @@ The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`. Signing & encrypt
 
 ### Webflow configuration
 
-It defines in which order the password management webflow must be configured.
-
-```properties
-# cas.authn.pm.webflow.order=200
-```
+Webflow auto-configuration settings for this feature are available [here](Configuration-Properties-Common.html#webflow-auto-configuration) under 
+the configuration key `cas.authn.pm.webflow`.
 
 ### Password History
 

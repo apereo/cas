@@ -27,9 +27,11 @@ import java.util.Map;
  * Builds responses to Openid authN requests.
  *
  * @author Misagh Moayyed
+ * @deprecated 6.2
  * @since 4.2
  */
 @Slf4j
+@Deprecated(since = "6.2")
 public class OpenIdServiceResponseBuilder extends AbstractWebApplicationServiceResponseBuilder {
 
     private static final long serialVersionUID = -4581238964007702423L;

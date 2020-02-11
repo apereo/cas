@@ -16,9 +16,11 @@ import java.util.Set;
  * user name to a Principal.
  *
  * @author Scott Battaglia
+ * @deprecated 6.2
  * @since 3.1
  */
 @ToString(callSuper = true)
+@Deprecated(since = "6.2")
 public class OpenIdPrincipalResolver extends PersonDirectoryPrincipalResolver {
 
     public OpenIdPrincipalResolver(final IPersonAttributeDao attributeRepository, final PrincipalFactory principalFactory,
