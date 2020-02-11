@@ -186,6 +186,15 @@ def byte[] run(final Object... args) {
     logger.debug("Encoding password...")
     return ...
 }
+
+def Boolean matches(final Object... args) {
+    def rawPassword = args[0]
+    def encodedPassword = args[1]
+    def logger = args[2]
+    def casApplicationContext = args[3]
+
+   logger.debug("Does match or not ?");
+   return ...
 ```
 
 ## Authentication Principal Transformation
