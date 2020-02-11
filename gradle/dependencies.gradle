@@ -3765,6 +3765,15 @@ ext.libraries = [
                     exclude(group: "org.webjars", module: "jquery")
                     exclude(group: "org.webjars", module: "bootstrap")
                     force = true
+                },
+                dependencies.create("org.webjars.npm:material-components-web:$materialVersion") {
+                    force = true
+                },
+                dependencies.create("org.webjars.npm:mdi__font:$mdiFontVersion") {
+                    force = true
+                },
+                dependencies.create("org.webjars.npm:normalize.css:$normalizeVersion") {
+                    force = true
                 }
         ]
 ]
