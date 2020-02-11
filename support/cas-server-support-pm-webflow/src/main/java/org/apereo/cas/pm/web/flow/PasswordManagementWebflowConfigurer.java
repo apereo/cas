@@ -55,6 +55,7 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
                                                final Action initPasswordChangeAction) {
         super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
         this.initPasswordChangeAction = initPasswordChangeAction;
+        setOrder(casProperties.getAuthn().getPm().getWebflow().getOrder());
     }
 
     @Override

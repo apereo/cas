@@ -38,11 +38,11 @@ public class SpengoWebflowConfigurerTests extends BaseWebflowConfigurerTests {
         assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());
         val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
         assertNotNull(flow);
-        var state = (TransitionableState) flow.getState(SpengoWebflowConfigurer.STATE_ID_EVALUATE_SPNEGO_CLIENT);
+        var state = (TransitionableState) flow.getState(SpnegoWebflowConfigurer.STATE_ID_EVALUATE_SPNEGO_CLIENT);
         assertNotNull(state);
-        state = (TransitionableState) flow.getState(SpengoWebflowConfigurer.STATE_ID_SPNEGO);
+        state = (TransitionableState) flow.getState(SpnegoWebflowConfigurer.STATE_ID_SPNEGO);
         assertNotNull(state);
-        state = (TransitionableState) flow.getState(SpengoWebflowConfigurer.STATE_ID_START_SPNEGO_AUTHENTICATE);
+        state = (TransitionableState) flow.getState(SpnegoWebflowConfigurer.STATE_ID_START_SPNEGO_AUTHENTICATE);
         assertNotNull(state);
     }
 }
