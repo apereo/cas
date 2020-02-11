@@ -161,6 +161,15 @@
         "reason": "This setting no longer applies to the ehcache 3 cache used for x509 CRL caching.",
         "level": "error"
       }
+    },
+    {
+      "name": "cas.authn.pac4j.saml[0].single-logout-requests",
+      "type": "java.lang.Boolean",
+      "description": "Whether logout requests and responses should be signed.",
+      "deprecation": {
+        "reason": "It is a duplication of cas.authn.pac4j.saml[0].sign-service-provider-logout-request.",
+        "level": "error"
+      }
     }
   ]
 }

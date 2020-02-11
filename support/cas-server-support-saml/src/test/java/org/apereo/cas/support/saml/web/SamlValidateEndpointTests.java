@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml.web;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CoreSamlConfiguration;
 import org.apereo.cas.config.SamlConfiguration;
 import org.apereo.cas.config.authentication.support.SamlAuthenticationEventExecutionPlanConfiguration;
@@ -31,6 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
     ThymeleafAutoConfiguration.class,
     CoreSamlConfiguration.class,
     CasValidationConfiguration.class,
+    CasPersonDirectoryConfiguration.class,
     CasProtocolViewsConfiguration.class,
     SamlServiceFactoryConfiguration.class,
     SamlUniqueTicketIdGeneratorConfiguration.class,

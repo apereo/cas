@@ -40,8 +40,13 @@ public class RestfulPasswordlessUserAccountStoreTests extends BasePasswordlessUs
     @Test
     @SneakyThrows
     public void verifyAction() {
-        val u = new PasswordlessUserAccount("casuser", "casuser@example.org",
-            "123-456-7890", "CAS", Map.of("lastName", List.of("Smith")), false);
+        val u = PasswordlessUserAccount.builder()
+            .email("casuser@example.org")
+            .phone("1234567890")
+            .username("casuser")
+            .name("casuser")
+            .attributes(Map.of("lastName", List.of("Smith")))
+            .build();
         val data = MAPPER.writeValueAsString(u);
         try (val webServer = new MockWebServer(9291,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {

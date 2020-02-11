@@ -40,3 +40,9 @@ CAS by default supports the ability to encrypt certain attributes, such as the p
 ticket and the credential conditionally. The default implementation of the attribute encoder 
 will use a per-service key-pair to encrypt sensitive attributes. 
 See [this guide](../services/Service-Management.html) to learn more.
+
+## Attribute Definitions
+
+CAS attributes may be decorated with additional metadata which can later be used depending on the 
+requirements of the protocol and nature of the integration with a target application. To learn 
+more, please [see this guide](Attribute-Definitions.html).

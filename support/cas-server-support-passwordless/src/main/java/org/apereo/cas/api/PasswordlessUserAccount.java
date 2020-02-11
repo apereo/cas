@@ -37,4 +37,7 @@ public class PasswordlessUserAccount implements Serializable {
     private Map<String, List<String>> attributes = new LinkedHashMap<>();
 
     private boolean multifactorAuthenticationEligible;
+
+    private boolean delegatedAuthenticationEligible;
+    
 }

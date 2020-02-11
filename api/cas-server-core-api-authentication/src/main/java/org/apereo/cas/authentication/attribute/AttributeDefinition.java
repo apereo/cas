@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * This is {@link AttributeDefinition}.
@@ -31,14 +32,6 @@ public interface AttributeDefinition extends Serializable, Comparable<AttributeD
      * @return the name
      */
     String getName();
-
-    /**
-     * Gets name that may be the same as the key, used for rendering
-     * the attribute in responses that have a friendly-name concept.
-     *
-     * @return the friendly name
-     */
-    String getFriendlyName();
 
     /**
      * Indicate if the attribute value should
@@ -70,4 +63,13 @@ public interface AttributeDefinition extends Serializable, Comparable<AttributeD
      * @return the script
      */
     String getScript();
+
+    /**
+     * Resolve attribute values as list.
+     *
+     * @param attributeValues the attribute values
+     * @param scope           the scope
+     * @return the list
+     */
+    List<Object> resolveAttributeValues(List<Object> attributeValues, String scope);
 }
