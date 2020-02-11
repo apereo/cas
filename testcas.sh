@@ -10,6 +10,7 @@ printHelp() {
     echo -e "\t - groovy"
     echo -e "\t - ldap"
     echo -e "\t - rest"
+    echo -e "\t - mfa"
     echo -e "\t - jdbc"
     echo -e "\t - oracle"
     echo -e "\t - radius"
@@ -103,6 +104,10 @@ while (( "$#" )); do
             oidc)
                 task="testOIDC"
                 category="OIDC"
+                ;;
+            mfa|duo|gauth|authy|fido|u2f)
+                task="testMFA"
+                category="MFA"
                 ;;
             saml|saml2)
                 task="testSAML"

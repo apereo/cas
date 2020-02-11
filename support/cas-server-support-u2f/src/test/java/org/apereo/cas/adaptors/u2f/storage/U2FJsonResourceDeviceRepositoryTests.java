@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -26,6 +27,7 @@ import java.io.File;
     RefreshAutoConfiguration.class
 }, properties = "cas.authn.mfa.u2f.json.location=file:/tmp/u2f.json")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Tag("FileSystem")
 public class U2FJsonResourceDeviceRepositoryTests extends AbstractU2FDeviceRepositoryTests {
     @Autowired
     @Qualifier("u2fDeviceRepository")

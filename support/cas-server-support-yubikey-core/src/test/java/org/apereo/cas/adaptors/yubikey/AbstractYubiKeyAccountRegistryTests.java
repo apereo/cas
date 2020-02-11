@@ -1,6 +1,7 @@
 package org.apereo.cas.adaptors.yubikey;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -14,6 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Timur Duehr
  * @since 6.0.0
  */
+@Tag("MFA")
 public abstract class AbstractYubiKeyAccountRegistryTests {
     private static final String OTP = "cccccccvlidcnlednilgctgcvcjtivrjidfbdgrefcvi";
     private static final String BAD_TOKEN = "123456";
