@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.support.pm;
 
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
+import org.apereo.cas.configuration.model.support.WebflowAutoConfigurationProperties;
 import org.apereo.cas.configuration.model.support.email.EmailProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.sms.SmsProperties;
@@ -56,11 +57,6 @@ public class PasswordManagementProperties implements Serializable {
     private List<LdapPasswordManagementProperties> ldap = new ArrayList<>();
 
     /**
-     * The configuration order of the password management webflow compared to other webflows.
-     */
-    private int webflowOrder = 200;
-
-    /**
      * Manage account passwords in database.
      */
     private Jdbc jdbc = new Jdbc();
@@ -94,6 +90,12 @@ public class PasswordManagementProperties implements Serializable {
      * Handle password policy via Groovy script.
      */
     private Groovy groovy = new Groovy();
+
+    /**
+     * The webflow configuration.
+     */
+    @NestedConfigurationProperty
+    private WebflowAutoConfigurationProperties webflow = new WebflowAutoConfigurationProperties(200);
 
     @RequiresModule(name = "cas-server-support-pm-jdbc")
     @Getter

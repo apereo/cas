@@ -32,7 +32,7 @@ public class SpnegoWebflowConfigurer extends AbstractCasWebflowConfigurer {
                                    final ConfigurableApplicationContext applicationContext,
                                    final CasConfigurationProperties casProperties) {
         super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
-        setOrder(casProperties.getAuthn().getSpnego().getWebflowOrder());
+        setOrder(casProperties.getAuthn().getSpnego().getWebflow().getOrder());
     }
 
     @Override
