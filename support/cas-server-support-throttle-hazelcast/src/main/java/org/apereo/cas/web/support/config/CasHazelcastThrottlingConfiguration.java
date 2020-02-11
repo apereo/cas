@@ -5,7 +5,7 @@ import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.hz.HazelcastConfigurationFactory;
 
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.IMap;
+import com.hazelcast.map.IMap;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
@@ -40,9 +40,8 @@ public class CasHazelcastThrottlingConfiguration {
     public IMap throttleSubmissionMap() {
         val hz = casProperties.getAuthn().getThrottle().getHazelcast();
         val timeout = Beans.newDuration(casProperties.getAuthn().getThrottle().getSchedule().getRepeatInterval()).getSeconds();
-        val factory = new HazelcastConfigurationFactory();
         LOGGER.debug("Creating [{}] to record failed logins for throttling with timeout set to [{}]", MAP_KEY, timeout);
-        val ipMapConfig = factory.buildMapConfig(hz, MAP_KEY, timeout);
+        val ipMapConfig = HazelcastConfigurationFactory.buildMapConfig(hz, MAP_KEY, timeout);
         val hazelcastInstance = this.casTicketRegistryHazelcastInstance.getObject();
         hazelcastInstance.getConfig().addMapConfig(ipMapConfig);
         return hazelcastInstance.getMap(MAP_KEY);

@@ -69,15 +69,6 @@ public class HazelcastDockerSwarmDiscoveryProperties implements Serializable {
          * Enable provider.
          */
         private boolean enabled;
-        /**
-         * Configuration group name.
-         */
-        private String groupName;
-
-        /**
-         * Configuration group password.
-         */
-        private String groupPassword;
 
         /**
          * Comma delimited list of Docker network names to discover matching services on.
