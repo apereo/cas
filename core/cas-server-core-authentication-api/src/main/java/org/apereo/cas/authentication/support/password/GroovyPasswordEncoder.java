@@ -35,6 +35,12 @@ public class GroovyPasswordEncoder extends AbstractPasswordEncoder implements Di
     }
 
     @Override
+    public boolean matches(final CharSequence rawPassword, final String encodedPassword) {
+        val args = new Object[]{rawPassword, encodedPassword, LOGGER, this.applicationContext};
+        return watchableScript.execute("matches", Boolean.class, args);
+    }
+
+    @Override
     public void destroy() {
         this.watchableScript.close();
     }
