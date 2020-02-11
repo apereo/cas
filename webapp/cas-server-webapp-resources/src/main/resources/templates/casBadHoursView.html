@@ -11,12 +11,10 @@
 
 <body>
 <main role="main" class="container mt-3 mb-3">
-    <div layout:fragment="content">
-        <div class="alert alert-danger alert-dismissible fade show">
-            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-            <h2 th:utext="#{screen.badhours.heading}">Your account is forbidden to login at this time.</h2>
-            <p th:utext="#{screen.badhours.message}">Please try again later.</p>
-        </div>
+    <div layout:fragment="content" class="banner banner-danger mdc-card p-4 m-auto w-lg-66">
+        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+        <h2 th:utext="#{screen.badhours.heading}">Your account is forbidden to login at this time.</h2>
+        <p th:utext="#{screen.badhours.message}">Please try again later.</p>
     </div>
 </main>
 </body>
