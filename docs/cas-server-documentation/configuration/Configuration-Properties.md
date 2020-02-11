@@ -281,6 +281,18 @@ are available [here](Configuration-Properties-Common.html#database-settings) und
 # cas.spring.cloud.jdbc.sql=SELECT id, name, value FROM CAS_SETTINGS_TABLE
 ```
 
+### REST
+
+Allow the CAS Spring Cloud configuration server to load settings from a REST API.
+
+```properties
+# cas.spring.cloud.rest.url=
+# cas.spring.cloud.rest.basicAuthUsername=
+# cas.spring.cloud.rest.basicAuthPassword=
+# cas.spring.cloud.rest.method=
+# cas.spring.cloud.rest.headers=Header1:Value1;Header2:Value2
+```
+
 ## Configuration Security
 
 To learn more about how sensitive CAS settings can be
