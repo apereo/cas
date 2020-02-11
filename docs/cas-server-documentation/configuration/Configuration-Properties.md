@@ -2159,6 +2159,14 @@ Principal resolution and Person Directory settings for this feature are availabl
 # cas.authn.spnego.ntlm=false
 ```
 
+### Webflow configuration
+
+It defines in which order the SPNEGO webflow must be configured.
+
+```properties
+# cas.authn.spnego.webflow.order=100
+```
+
 ### System Settings
 
 ```properties
@@ -5275,6 +5283,14 @@ available [here](Configuration-Properties-Common.html#sms-notifications) under t
 
 The signing and encryption keys [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`.
 The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`. Signing & encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.authn.pm.reset`.
+
+### Webflow configuration
+
+It defines in which order the password management webflow must be configured.
+
+```properties
+# cas.authn.pm.webflow.order=200
+```
 
 ### Password History
 
