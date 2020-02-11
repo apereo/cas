@@ -56,6 +56,11 @@ public class PasswordManagementProperties implements Serializable {
     private List<LdapPasswordManagementProperties> ldap = new ArrayList<>();
 
     /**
+     * The configuration order of the password management webflow compared to other webflows.
+     */
+    private int webflowOrder = 200;
+
+    /**
      * Manage account passwords in database.
      */
     private Jdbc jdbc = new Jdbc();

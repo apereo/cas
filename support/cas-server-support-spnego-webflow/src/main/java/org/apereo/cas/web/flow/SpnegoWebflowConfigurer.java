@@ -2,7 +2,6 @@ package org.apereo.cas.web.flow;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
-import org.apereo.cas.web.flow.configurer.WebflowConfigurersOrder;
 
 import lombok.val;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -12,13 +11,13 @@ import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 
 /**
- * The {@link SpengoWebflowConfigurer} is responsible for
+ * The {@link SpnegoWebflowConfigurer} is responsible for
  * adjusting the CAS webflow context for spnego integration.
  *
  * @author Misagh Moayyed
  * @since 4.2
  */
-public class SpengoWebflowConfigurer extends AbstractCasWebflowConfigurer {
+public class SpnegoWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
     static final String STATE_ID_SPNEGO = "spnego";
 
@@ -28,12 +27,12 @@ public class SpengoWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
     private static final String ACTION_ID_SPNEGO_NEGOTIATE = "negociateSpnego";
 
-    public SpengoWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
+    public SpnegoWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
                                    final FlowDefinitionRegistry loginFlowDefinitionRegistry,
                                    final ConfigurableApplicationContext applicationContext,
                                    final CasConfigurationProperties casProperties) {
         super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
-        setOrder(WebflowConfigurersOrder.SPNEGO);
+        setOrder(casProperties.getAuthn().getSpnego().getWebflowOrder());
     }
 
     @Override

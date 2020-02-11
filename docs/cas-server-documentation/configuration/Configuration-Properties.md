@@ -2157,6 +2157,7 @@ Principal resolution and Person Directory settings for this feature are availabl
 # cas.authn.spnego.principalWithDomainName=false
 # cas.authn.spnego.name=
 # cas.authn.spnego.ntlm=false
+# cas.authn.spnego.webflowOrder=100
 ```
 
 ### System Settings
@@ -5267,6 +5268,8 @@ To learn more about this topic, [please review this guide](../installation/Passw
 
 # Automatically log in after successful password change
 # cas.authn.pm.autoLogin=false
+
+# cas.authn.pm.webflowOrder=200
 ```
 
 Common email notifications settings for this feature are available [here](Configuration-Properties-Common.html#email-notifications) 

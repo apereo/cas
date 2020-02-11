@@ -65,6 +65,11 @@ public class SpnegoProperties implements Serializable {
     private String hostNameClientActionStrategy = "hostnameSpnegoClientAction";
 
     /**
+     * The configuration order of the SPNEGO webflow compared to other webflows.
+     */
+    private int webflowOrder = 100;
+
+    /**
      * LDAP settings for spnego to validate clients, etc.
      */
     private Ldap ldap = new Ldap();
