@@ -12,20 +12,20 @@ import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 
 /**
- * The {@link SpengoWebflowConfigurer} is responsible for
+ * The {@link SpnegoWebflowConfigurer} is responsible for
  * adjusting the CAS webflow context for spnego integration.
  *
  * @author Misagh Moayyed
  * @since 4.2
  */
-public class SpengoWebflowConfigurer extends AbstractCasWebflowConfigurer {
+public class SpnegoWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
     private static final String SPNEGO = "spnego";
     private static final String START_SPNEGO_AUTHENTICATE = "startSpnegoAuthenticate";
     private static final String SPNEGO_NEGOTIATE = "negociateSpnego";
     private static final String EVALUATE_SPNEGO_CLIENT = "evaluateClientRequest";
 
-    public SpengoWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
+    public SpnegoWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
                                    final FlowDefinitionRegistry loginFlowDefinitionRegistry,
                                    final ApplicationContext applicationContext,
                                    final CasConfigurationProperties casProperties) {
