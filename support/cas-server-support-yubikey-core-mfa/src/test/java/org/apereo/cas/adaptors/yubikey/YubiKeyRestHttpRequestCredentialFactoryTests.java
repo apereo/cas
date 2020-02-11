@@ -1,6 +1,7 @@
 package org.apereo.cas.adaptors.yubikey;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.util.LinkedMultiValueMap;
 
@@ -12,6 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@Tag("MFA")
 public class YubiKeyRestHttpRequestCredentialFactoryTests {
     @Test
     public void verifyAction() {

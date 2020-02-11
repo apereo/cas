@@ -6,6 +6,7 @@ import org.apereo.cas.util.SchedulingUtils;
 
 import lombok.Getter;
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.0.0
  */
 @Getter
+@Tag("MFA")
 public abstract class BaseOneTimeTokenRepositoryTests {
     public static final String CASUSER = "casuser";
 

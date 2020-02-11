@@ -7,6 +7,7 @@ import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationP
 import org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -29,6 +30,7 @@ import static org.mockito.Mockito.*;
  */
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Tag("MFA")
 public class PrincipalMultifactorAuthenticationProviderBypassEvaluatorTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;

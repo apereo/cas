@@ -11,6 +11,7 @@ import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -29,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = BaseCasSimpleMultifactorAuthenticationTests.SharedTestConfiguration.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Tag("MFA")
 public class CasSimpleMultifactorAuthenticationTicketFactoryTests extends BaseAbstractMultifactorAuthenticationProviderTests {
     @Autowired
     @Qualifier("casSimpleMultifactorAuthenticationTicketFactory")

@@ -6,6 +6,7 @@ import org.apereo.cas.util.http.HttpClient;
 
 import com.yubico.client.v2.YubicoClient;
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 
 import static org.mockito.Mockito.*;
 
@@ -15,6 +16,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
+@Tag("MFA")
 public class YubiKeyMultifactorAuthenticationProviderTests extends BaseAbstractMultifactorAuthenticationProviderTests {
     @Override
     public AbstractMultifactorAuthenticationProvider getMultifactorAuthenticationProvider() {

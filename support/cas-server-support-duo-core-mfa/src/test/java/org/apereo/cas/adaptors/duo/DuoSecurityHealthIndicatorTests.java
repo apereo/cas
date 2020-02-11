@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorProp
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.health.Status;
@@ -23,6 +24,7 @@ import static org.mockito.Mockito.*;
  * @since 6.1.0
  */
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
+@Tag("MFA")
 public class DuoSecurityHealthIndicatorTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;

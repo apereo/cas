@@ -9,6 +9,7 @@ import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -38,6 +39,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.mfa.swivel.sharedSecret=$ecret",
         "cas.authn.mfa.swivel.ignoreSslErrors=true"
     })
+@Tag("MFA")
 public class SwivelAuthenticationHandlerTests {
     @Autowired
     @Qualifier("swivelAuthenticationHandler")

@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 
 import lombok.val;
 import org.aspectj.lang.JoinPoint;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -22,6 +23,7 @@ import static org.mockito.Mockito.*;
  * @since 6.1.0
  */
 @SpringBootTest(classes = AopAutoConfiguration.class)
+@Tag("MFA")
 public class MultifactorAuthenticationProviderBypassAuditResourceResolverTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;
