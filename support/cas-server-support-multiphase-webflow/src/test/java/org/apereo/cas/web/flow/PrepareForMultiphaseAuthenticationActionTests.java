@@ -25,8 +25,8 @@ public class PrepareForMultiphaseAuthenticationActionTests extends BaseMultiphas
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), 
                     request, new MockHttpServletResponse()));
-        assertEquals(MultiphaseAuthenticationWebflowConfigurer.TRANSITION_ID_MULTIPHASE_GET_USERID, 
-                initializeLoginAction.execute(context).getId());
+        initializeLoginAction.execute(context);
+        assertTrue(context.getFlowScope().get("multiphaseEnabled", Boolean.class));
         WebUtils.putMultiphaseAuthenticationUsername(context, "casuser");
         assertEquals("success", initializeLoginAction.execute(context).getId());
     }
