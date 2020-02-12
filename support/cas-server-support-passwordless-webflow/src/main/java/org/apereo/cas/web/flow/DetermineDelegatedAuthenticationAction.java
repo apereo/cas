@@ -3,7 +3,6 @@ package org.apereo.cas.web.flow;
 import org.apereo.cas.api.PasswordlessUserAccount;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
-import org.apereo.cas.web.DelegatedClientIdentityProviderConfiguration;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -31,7 +30,7 @@ import java.util.function.Function;
 public class DetermineDelegatedAuthenticationAction extends AbstractAction implements DisposableBean {
     private final CasConfigurationProperties casProperties;
 
-    private final Function<RequestContext, Set<DelegatedClientIdentityProviderConfiguration>> providerConfigurationFunction;
+    private final Function<RequestContext, Set<? extends Serializable>> providerConfigurationFunction;
 
     private final transient WatchableGroovyScriptResource watchableScript;
 
@@ -74,12 +73,12 @@ public class DetermineDelegatedAuthenticationAction extends AbstractAction imple
      * @param clients        the clients
      * @return the optional
      */
-    protected Optional<DelegatedClientIdentityProviderConfiguration> determineDelegatedIdentityProviderConfiguration(final RequestContext requestContext,
-                                                                                                                     final PasswordlessUserAccount user,
-                                                                                                                     final Set<? extends Serializable> clients) {
+    protected Optional<Serializable> determineDelegatedIdentityProviderConfiguration(final RequestContext requestContext,
+                                                                                     final PasswordlessUserAccount user,
+                                                                                     final Set<? extends Serializable> clients) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         val args = new Object[]{user, clients, request, LOGGER};
-        return Optional.ofNullable(watchableScript.execute(args, DelegatedClientIdentityProviderConfiguration.class));
+        return Optional.ofNullable(watchableScript.execute(args, Serializable.class));
     }
 
     /**

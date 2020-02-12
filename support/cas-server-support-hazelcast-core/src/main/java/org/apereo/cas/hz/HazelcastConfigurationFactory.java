@@ -5,22 +5,33 @@ import org.apereo.cas.configuration.model.support.hazelcast.HazelcastClusterProp
 import org.apereo.cas.util.CollectionUtils;
 
 import com.hazelcast.config.Config;
+import com.hazelcast.config.ConsistencyCheckStrategy;
 import com.hazelcast.config.DiscoveryConfig;
 import com.hazelcast.config.DiscoveryStrategyConfig;
+import com.hazelcast.config.EvictionConfig;
 import com.hazelcast.config.EvictionPolicy;
 import com.hazelcast.config.JoinConfig;
 import com.hazelcast.config.ManagementCenterConfig;
 import com.hazelcast.config.MapConfig;
-import com.hazelcast.config.MaxSizeConfig;
+import com.hazelcast.config.MaxSizePolicy;
 import com.hazelcast.config.MergePolicyConfig;
 import com.hazelcast.config.MulticastConfig;
 import com.hazelcast.config.NetworkConfig;
 import com.hazelcast.config.PartitionGroupConfig;
 import com.hazelcast.config.TcpIpConfig;
-import com.hazelcast.config.WANQueueFullBehavior;
 import com.hazelcast.config.WanAcknowledgeType;
-import com.hazelcast.config.WanPublisherConfig;
+import com.hazelcast.config.WanBatchPublisherConfig;
+import com.hazelcast.config.WanQueueFullBehavior;
 import com.hazelcast.config.WanReplicationConfig;
+import com.hazelcast.config.WanSyncConfig;
+import com.hazelcast.spi.merge.DiscardMergePolicy;
+import com.hazelcast.spi.merge.ExpirationTimeMergePolicy;
+import com.hazelcast.spi.merge.HigherHitsMergePolicy;
+import com.hazelcast.spi.merge.LatestAccessMergePolicy;
+import com.hazelcast.spi.merge.LatestUpdateMergePolicy;
+import com.hazelcast.spi.merge.PassThroughMergePolicy;
+import com.hazelcast.spi.merge.PutIfAbsentMergePolicy;
+import com.hazelcast.wan.WanPublisherState;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
@@ -39,38 +50,6 @@ import java.util.UUID;
  */
 @Slf4j
 public class HazelcastConfigurationFactory {
-
-    /**
-     * Build map config map config.
-     *
-     * @param hz             the hz
-     * @param mapName        the storage name
-     * @param timeoutSeconds the timeoutSeconds
-     * @return the map config
-     */
-    public MapConfig buildMapConfig(final BaseHazelcastProperties hz, final String mapName, final long timeoutSeconds) {
-        val cluster = hz.getCluster();
-        val evictionPolicy = EvictionPolicy.valueOf(cluster.getEvictionPolicy());
-
-        LOGGER.trace("Creating Hazelcast map configuration for [{}] with idle timeoutSeconds [{}] second(s)", mapName, timeoutSeconds);
-        val maxSizeConfig = new MaxSizeConfig()
-            .setMaxSizePolicy(MaxSizeConfig.MaxSizePolicy.valueOf(cluster.getMaxSizePolicy()))
-            .setSize(cluster.getMaxHeapSizePercentage());
-
-        val mergePolicyConfig = new MergePolicyConfig();
-        if (StringUtils.hasText(cluster.getMapMergePolicy())) {
-            mergePolicyConfig.setPolicy(cluster.getMapMergePolicy());
-        }
-
-        return new MapConfig()
-            .setName(mapName)
-            .setMergePolicyConfig(mergePolicyConfig)
-            .setMaxIdleSeconds((int) timeoutSeconds)
-            .setBackupCount(cluster.getBackupCount())
-            .setAsyncBackupCount(cluster.getAsyncBackupCount())
-            .setEvictionPolicy(evictionPolicy)
-            .setMaxSizeConfig(maxSizeConfig);
-    }
 
     /**
      * Build config.
@@ -110,9 +89,7 @@ public class HazelcastConfigurationFactory {
 
         config.setLicenseKey(hz.getLicenseKey());
 
-        if (hz.getManagementCenter().isEnabled()) {
-            buildManagementCenterConfig(hz, config);
-        }
+        buildManagementCenterConfig(config);
 
         val networkConfig = new NetworkConfig()
             .setPort(cluster.getPort())
@@ -126,7 +103,7 @@ public class HazelcastConfigurationFactory {
             networkConfig.setPublicAddress(cluster.getPublicAddress());
         }
 
-        cluster.getOutboundPorts().forEach(port -> networkConfig.addOutboundPortDefinition(port));
+        cluster.getOutboundPorts().forEach(networkConfig::addOutboundPortDefinition);
 
         if (cluster.getWanReplication().isEnabled()) {
             if (!StringUtils.hasText(hz.getLicenseKey())) {
@@ -157,12 +134,9 @@ public class HazelcastConfigurationFactory {
             .setProperty(BaseHazelcastProperties.MAX_HEARTBEAT_SECONDS_PROP, String.valueOf(cluster.getMaxNoHeartbeatSeconds()));
     }
 
-    private static void buildManagementCenterConfig(final BaseHazelcastProperties hz, final Config config) {
+    private static void buildManagementCenterConfig(final Config config) {
         val managementCenter = new ManagementCenterConfig();
-        val center = hz.getManagementCenter();
-        managementCenter.setEnabled(center.isEnabled());
-        managementCenter.setUrl(center.getUrl());
-        managementCenter.setUpdateInterval(center.getUpdateInterval());
+        managementCenter.setScriptingEnabled(true);
         config.setManagementCenterConfig(managementCenter);
     }
 
@@ -173,24 +147,24 @@ public class HazelcastConfigurationFactory {
         wanReplicationConfig.setName(wan.getReplicationName());
 
         wan.getTargets().forEach(target -> {
-            val nextCluster = new WanPublisherConfig();
+            val nextCluster = new WanBatchPublisherConfig();
             nextCluster.setClassName(target.getPublisherClassName());
-            nextCluster.setGroupName(target.getGroupName());
-            nextCluster.setQueueFullBehavior(WANQueueFullBehavior.valueOf(target.getQueueFullBehavior()));
+            nextCluster.setQueueFullBehavior(WanQueueFullBehavior.valueOf(target.getQueueFullBehavior()));
             nextCluster.setQueueCapacity(target.getQueueCapacity());
-
-            val props = nextCluster.getProperties();
-            props.put("batch.size", target.getBatchSize());
-            props.put("batch.max.delay.millis", target.getBatchMaximumDelayMilliseconds());
-            props.put("response.timeout.millis", target.getResponseTimeoutMilliseconds());
-            props.put("snapshot.enabled", target.isSnapshotEnabled());
-            props.put("endpoints", target.getEndpoints());
-            if (StringUtils.hasText(target.getGroupPassword())) {
-                props.put("group.password", target.getGroupPassword());
-            }
-            props.put("ack.type", WanAcknowledgeType.valueOf(target.getAcknowledgeType()));
-            props.put("executorThreadCount", target.getExecutorThreadCount());
-            wanReplicationConfig.addWanPublisherConfig(nextCluster);
+            nextCluster.setAcknowledgeType(WanAcknowledgeType.valueOf(target.getAcknowledgeType()));
+            nextCluster.setBatchSize(target.getBatchSize());
+            nextCluster.setBatchMaxDelayMillis(target.getBatchMaximumDelayMilliseconds());
+            nextCluster.setResponseTimeoutMillis(target.getResponseTimeoutMilliseconds());
+            nextCluster.setSnapshotEnabled(target.isSnapshotEnabled());
+            nextCluster.setTargetEndpoints(target.getEndpoints());
+            nextCluster.setClusterName(target.getClusterName());
+            nextCluster.setPublisherId(target.getPublisherId());
+            nextCluster.setMaxConcurrentInvocations(target.getExecutorThreadCount());
+            nextCluster.setInitialPublisherState(WanPublisherState.REPLICATING);
+            nextCluster.setProperties(target.getProperties());
+            nextCluster.setSyncConfig(new WanSyncConfig()
+                .setConsistencyCheckStrategy(ConsistencyCheckStrategy.valueOf(target.getConsistencyCheckStrategy())));
+            wanReplicationConfig.addBatchReplicationPublisherConfig(nextCluster);
         });
         config.addWanReplicationConfig(wanReplicationConfig);
     }
@@ -260,5 +234,60 @@ public class HazelcastConfigurationFactory {
             partitionGroupConfig.setEnabled(true).setGroupType(type);
         }
         return config;
+    }
+
+    /**
+     * Build map config map config.
+     *
+     * @param hz             the hz
+     * @param mapName        the storage name
+     * @param timeoutSeconds the timeoutSeconds
+     * @return the map config
+     */
+    public static MapConfig buildMapConfig(final BaseHazelcastProperties hz, final String mapName, final long timeoutSeconds) {
+        val cluster = hz.getCluster();
+
+        val evictionPolicy = EvictionPolicy.valueOf(cluster.getEvictionPolicy());
+
+        val evictionConfig = new EvictionConfig();
+        evictionConfig.setEvictionPolicy(evictionPolicy);
+        evictionConfig.setMaxSizePolicy(MaxSizePolicy.valueOf(cluster.getMaxSizePolicy()));
+        evictionConfig.setSize(cluster.getMaxSize());
+
+        val mergePolicyConfig = new MergePolicyConfig();
+        if (StringUtils.hasText(cluster.getMapMergePolicy())) {
+            switch (cluster.getMapMergePolicy().trim().toLowerCase()) {
+                case "discard":
+                    mergePolicyConfig.setPolicy(DiscardMergePolicy.class.getName());
+                    break;
+                case "pass_through":
+                    mergePolicyConfig.setPolicy(PassThroughMergePolicy.class.getName());
+                    break;
+                case "expiration_time":
+                    mergePolicyConfig.setPolicy(ExpirationTimeMergePolicy.class.getName());
+                    break;
+                case "higher_hits":
+                    mergePolicyConfig.setPolicy(HigherHitsMergePolicy.class.getName());
+                    break;
+                case "latest_update":
+                    mergePolicyConfig.setPolicy(LatestUpdateMergePolicy.class.getName());
+                    break;
+                case "latest_access":
+                    mergePolicyConfig.setPolicy(LatestAccessMergePolicy.class.getName());
+                    break;
+                case "put_if_absent":
+                default:
+                    mergePolicyConfig.setPolicy(PutIfAbsentMergePolicy.class.getName());
+                    break;
+            }
+        }
+
+        return new MapConfig()
+            .setName(mapName)
+            .setMergePolicyConfig(mergePolicyConfig)
+            .setMaxIdleSeconds((int) timeoutSeconds)
+            .setBackupCount(cluster.getBackupCount())
+            .setAsyncBackupCount(cluster.getAsyncBackupCount())
+            .setEvictionConfig(evictionConfig);
     }
 }

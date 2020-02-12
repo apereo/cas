@@ -18,9 +18,11 @@ import java.util.List;
  * If none is found, an error is generated.
  *
  * @author Frederic Esnault
+ * @deprecated 6.2
  * @since 3.5
  */
 @Setter
+@Deprecated(since = "6.2")
 public class DelegatingController extends AbstractController {
 
     /**

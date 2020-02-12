@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.DefaultMultifactorAuthenticationContextVali
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -23,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @DirtiesContext
 @SpringBootTest(classes = AopAutoConfiguration.class)
+@Tag("MFA")
 public class DefaultMultifactorAuthenticationContextValidatorTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;

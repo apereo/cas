@@ -28,6 +28,7 @@ import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
@@ -973,6 +974,16 @@ public class WebUtils {
     }
 
     /**
+     * Put graphical user authentication enabled.
+     *
+     * @param requestContext the request context
+     * @return the boolean
+     */
+    public static boolean isGraphicalUserAuthenticationEnabled(final RequestContext requestContext) {
+        return BooleanUtils.isTrue(requestContext.getFlowScope().get("guaEnabled", Boolean.class));
+    }
+
+    /**
      * Put graphical user authentication username.
      *
      * @param requestContext the request context
@@ -1171,5 +1182,29 @@ public class WebUtils {
             return scope.get("delegatedAuthenticationProviderConfigurations", Set.class);
         }
         return new HashSet<>(0);
+    }
+
+    /**
+     * Put open id local user id.
+     *
+     * @param context the context
+     * @param user    the user
+     */
+    public static void putOpenIdLocalUserId(final RequestContext context, final String user) {
+        if (StringUtils.isBlank(user)) {
+            context.getFlowScope().remove("openIdLocalId");
+        } else {
+            context.getFlowScope().put("openIdLocalId", user);
+        }
+    }
+
+    /**
+     * Gets open id local user id.
+     *
+     * @param context the context
+     * @return the open id local user id
+     */
+    public static String getOpenIdLocalUserId(final RequestContext context) {
+        return context.getFlowScope().get("openIdLocalId", String.class);
     }
 }

@@ -21,10 +21,12 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
  * This is {@link OpenIdWebflowConfiguration}.
  *
  * @author Misagh Moayyed
+ * @deprecated 6.2
  * @since 5.0.0
  */
 @Configuration("openIdWebflowConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Deprecated(since = "6.2")
 public class OpenIdWebflowConfiguration {
 
     @Autowired

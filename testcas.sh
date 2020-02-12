@@ -10,6 +10,7 @@ printHelp() {
     echo -e "\t - groovy"
     echo -e "\t - ldap"
     echo -e "\t - rest"
+    echo -e "\t - mfa"
     echo -e "\t - jdbc"
     echo -e "\t - oracle"
     echo -e "\t - radius"
@@ -26,6 +27,7 @@ printHelp() {
 }
 
 PARAMS=""
+parallel="--parallel"
 while (( "$#" )); do
     case "$1" in
     --coverage)
@@ -34,6 +36,7 @@ while (( "$#" )); do
         ;;
     --debug)
         debug="--debug-jvm"
+        parallel=""
         shift
         ;;
     --test)
@@ -102,6 +105,10 @@ while (( "$#" )); do
                 task="testOIDC"
                 category="OIDC"
                 ;;
+            mfa|duo|gauth|authy|fido|u2f)
+                task="testMFA"
+                category="MFA"
+                ;;
             saml|saml2)
                 task="testSAML"
                 category="SAML"
@@ -155,9 +162,9 @@ then
   exit 1
 fi
 
-cmd="./gradlew $task $coverage $debug -DtestCategoryType=$category $tests \
+cmd="./gradlew $task -DtestCategoryType=$category $tests \
 --build-cache -x javadoc -x check -DignoreTestFailures=false -DskipNestedConfigMetadataGen=true \
--DskipGradleLint=true -DshowStandardStreams=true --no-daemon --configure-on-demand "
+-DskipGradleLint=true -DshowStandardStreams=true --no-daemon --configure-on-demand $coverage $debug $parallel "
 
 
 echo -e "$cmd\n"

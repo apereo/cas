@@ -30,6 +30,7 @@ import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
+import org.junit.jupiter.api.Tag;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -43,6 +44,7 @@ import org.springframework.context.annotation.Import;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
+@Tag("MFA")
 public abstract class BaseDuoSecurityTests {
     
     @ImportAutoConfiguration({

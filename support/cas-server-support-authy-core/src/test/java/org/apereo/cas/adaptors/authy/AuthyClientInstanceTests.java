@@ -5,6 +5,7 @@ import org.apereo.cas.util.CollectionUtils;
 
 import com.authy.api.Error;
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -25,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class,
     AopAutoConfiguration.class
 })
+@Tag("MFA")
 public class AuthyClientInstanceTests {
     @Test
     public void verifyAction() {

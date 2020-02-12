@@ -43,6 +43,7 @@ public class X509WebflowConfigurer extends AbstractCasWebflowConfigurer {
                                  final ConfigurableApplicationContext applicationContext,
                                  final CasConfigurationProperties casProperties) {
         super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
+        setOrder(casProperties.getAuthn().getX509().getWebflow().getOrder());
     }
 
     @Override
