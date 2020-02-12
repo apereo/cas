@@ -4,9 +4,11 @@ import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.config.CasThymeleafConfiguration;
 import org.apereo.cas.mock.MockValidationSpecification;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.services.web.config.CasThemesConfiguration;
 import org.apereo.cas.ticket.proxy.ProxyHandler;
 import org.apereo.cas.ticket.proxy.support.Cas10ProxyHandler;
 import org.apereo.cas.ticket.proxy.support.Cas20ProxyHandler;
@@ -21,7 +23,6 @@ import org.apereo.cas.web.config.CasValidationConfiguration;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -29,6 +30,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+
 import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -38,15 +40,30 @@ import static org.mockito.Mockito.*;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@Import({CasProtocolViewsConfiguration.class, CasValidationConfiguration.class, ThymeleafAutoConfiguration.class})
+@Import({
+    CasProtocolViewsConfiguration.class,
+    CasThemesConfiguration.class,
+    CasThymeleafConfiguration.class,
+    CasValidationConfiguration.class
+})
 public abstract class AbstractServiceValidateControllerTests extends AbstractCentralAuthenticationServiceTests {
     protected static final String SUCCESS = "Success";
+
     protected static final Service SERVICE = RegisteredServiceTestUtils.getService("https://www.casinthecloud.com");
+
     protected static final Service DEFAULT_SERVICE = RegisteredServiceTestUtils.getService();
 
     private static final String GITHUB_URL = "https://www.github.com";
 
     protected AbstractServiceValidateController serviceValidateController;
+
+    protected static CasProtocolValidationSpecification getValidationSpecification() {
+        return new Cas20WithoutProxyingValidationSpecification(mock(ServicesManager.class));
+    }
+
+    protected static ProxyHandler getProxyHandler() {
+        return new Cas20ProxyHandler(new SimpleHttpClientFactoryBean().getObject(), new DefaultUniqueTicketIdGenerator());
+    }
 
     @BeforeEach
     public void onSetUp() {
@@ -116,7 +133,6 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
             new MockHttpServletResponse()).getView()).toString().contains(SUCCESS));
     }
 
-
     @Test
     public void verifyRenewSpecFailsCorrectly() throws Exception {
         assertFalse(Objects.requireNonNull(this.serviceValidateController.handleRequestInternal(getHttpServletRequest(),
@@ -140,7 +156,6 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         assertFalse(Objects.requireNonNull(this.serviceValidateController.handleRequestInternal(request,
             new MockHttpServletResponse()).getView()).toString().contains(SUCCESS));
     }
-
 
     @Test
     public void verifyValidServiceTicketWithValidPgtAndProxyHandling() throws Exception {
@@ -229,7 +244,6 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         val modelAndView = this.serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse());
         assertTrue(Objects.requireNonNull(modelAndView.getView()).toString().contains("Success"));
     }
-
 
     @Test
     public void verifyValidServiceTicketRuntimeExceptionWithSpec() throws Exception {
@@ -336,12 +350,4 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
     }
 
     public abstract AbstractServiceValidateController getServiceValidateControllerInstance();
-
-    protected static CasProtocolValidationSpecification getValidationSpecification() {
-        return new Cas20WithoutProxyingValidationSpecification(mock(ServicesManager.class));
-    }
-
-    protected static ProxyHandler getProxyHandler() {
-        return new Cas20ProxyHandler(new SimpleHttpClientFactoryBean().getObject(), new DefaultUniqueTicketIdGenerator());
-    }
 }
