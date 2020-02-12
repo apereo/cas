@@ -8,6 +8,7 @@
 
     <Loggers>
         <Logger name="org.apereo.cas" level="error" />
+        <Logger name="org.springframework.boot" level="error" />
         <Root level="off">
             <AppenderRef ref="console"/>
         </Root>

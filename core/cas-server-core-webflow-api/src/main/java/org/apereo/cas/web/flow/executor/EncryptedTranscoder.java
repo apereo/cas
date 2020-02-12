@@ -43,8 +43,7 @@ public class EncryptedTranscoder implements Transcoder {
      * Flag to indicate whether to Gzip compression before encryption.
      */
     private boolean compression = true;
-
-
+    
     public EncryptedTranscoder(final CipherBean cipherBean) {
         setCipherBean(cipherBean);
     }

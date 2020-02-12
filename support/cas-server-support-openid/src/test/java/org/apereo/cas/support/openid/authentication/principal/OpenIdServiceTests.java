@@ -1,5 +1,7 @@
 package org.apereo.cas.support.openid.authentication.principal;
 
+import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.services.DefaultServicesManager;
 import org.apereo.cas.services.ServiceRegistry;
@@ -13,6 +15,9 @@ import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openid4java.association.Association;
+import org.openid4java.server.ServerManager;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.mock.web.MockHttpServletRequest;
 
@@ -26,15 +31,39 @@ import static org.mockito.Mockito.*;
 /**
  * @author Scott Battaglia
  * @since 3.1
+ * @deprecated 6.2
  */
 @Slf4j
+@Deprecated
 public class OpenIdServiceTests extends AbstractOpenIdTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "openIdService.json");
+
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+
     private static final String OPEN_ID_PREFIX_URL = "http://openid.ja-sig.org/battags";
+
     private static final String RETURN_TO_URL = "http://www.ja-sig.org/?service=fa";
+
     private final MockHttpServletRequest request = new MockHttpServletRequest();
+
+    @Autowired
+    @Qualifier("serverManager")
+    private ServerManager serverManager;
+
+    @Autowired
+    @Qualifier("openIdServiceFactory")
+    private OpenIdServiceFactory openIdServiceFactory;
+
+    @Autowired
+    @Qualifier("centralAuthenticationService")
+    private CentralAuthenticationService centralAuthenticationService;
+
+    @Autowired
+    @Qualifier("defaultAuthenticationSystemSupport")
+    private AuthenticationSystemSupport authenticationSystemSupport;
+
     private OpenIdService openIdService;
+
     private Association association;
 
     @BeforeEach
@@ -63,7 +92,7 @@ public class OpenIdServiceTests extends AbstractOpenIdTests {
             request.addParameter(OpenIdProtocolConstants.OPENID_ASSOCHANDLE, association.getHandle());
 
             openIdService = openIdServiceFactory.createService(request);
-            val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), openIdService);
+            val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(authenticationSystemSupport, openIdService);
 
             val tgt = centralAuthenticationService.createTicketGrantingTicket(ctx).getId();
             val st = centralAuthenticationService.grantServiceTicket(tgt, openIdService, ctx).getId();
@@ -96,7 +125,7 @@ public class OpenIdServiceTests extends AbstractOpenIdTests {
             request.addParameter(OpenIdProtocolConstants.OPENID_ASSOCHANDLE, association.getHandle());
 
             openIdService = openIdServiceFactory.createService(request);
-            val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), openIdService);
+            val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(authenticationSystemSupport, openIdService);
             val tgt = centralAuthenticationService.createTicketGrantingTicket(ctx).getId();
             val st = centralAuthenticationService.grantServiceTicket(tgt, openIdService, ctx).getId();
             centralAuthenticationService.validateServiceTicket(st, openIdService);
