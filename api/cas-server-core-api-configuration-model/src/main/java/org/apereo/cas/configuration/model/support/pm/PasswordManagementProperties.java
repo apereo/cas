@@ -267,6 +267,16 @@ public class PasswordManagementProperties implements Serializable {
         private boolean securityQuestionsEnabled = true;
 
         /**
+         * Whether the Password Management Token will contain the server IP Address.
+         */
+        private boolean checkServerIpAddress = true;
+
+        /**
+         * Whether the Password Management Token will contain the client IP Address.
+         */
+        private boolean checkClientIpAddress = true;
+
+        /**
          * How long in minutes should the password expiration link remain valid.
          */
         private long expirationMinutes = 1;
