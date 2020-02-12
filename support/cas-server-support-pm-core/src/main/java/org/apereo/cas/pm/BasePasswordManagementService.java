@@ -74,11 +74,11 @@ public class BasePasswordManagementService implements PasswordManagementService 
             }
 
             val holder = ClientInfoHolder.getClientInfo();
-            if (!claims.getStringClaimValue("origin").equals(holder.getServerIpAddress())) {
+            if (properties.getReset().isCheckServerIpAddress() && !claims.getStringClaimValue("origin").equals(holder.getServerIpAddress())) {
                 LOGGER.error("Token origin server IP address does not match CAS");
                 return null;
             }
-            if (!claims.getStringClaimValue("client").equals(holder.getClientIpAddress())) {
+            if (properties.getReset().isCheckClientIpAddress() && !claims.getStringClaimValue("client").equals(holder.getClientIpAddress())) {
                 LOGGER.error("Token client IP address does not match CAS");
                 return null;
             }
@@ -110,8 +110,12 @@ public class BasePasswordManagementService implements PasswordManagementService 
 
             val holder = ClientInfoHolder.getClientInfo();
             if (holder != null) {
-                claims.setStringClaim("origin", holder.getServerIpAddress());
-                claims.setStringClaim("client", holder.getClientIpAddress());
+                if (properties.getReset().isCheckServerIpAddress()) {
+                    claims.setStringClaim("origin", holder.getServerIpAddress());
+                }
+                if (properties.getReset().isCheckClientIpAddress()) {
+                    claims.setStringClaim("client", holder.getClientIpAddress());
+                }
             }
             claims.setSubject(to);
             LOGGER.debug("Creating password management token for [{}]", to);
