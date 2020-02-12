@@ -39,6 +39,5 @@ dependencies {
     testImplementation project(":core:cas-server-core-services-authentication")
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":support:cas-server-support-validation")
-
-    testImplementation libraries.thymeleaf
+    testImplementation project(":support:cas-server-support-thymeleaf")
 }

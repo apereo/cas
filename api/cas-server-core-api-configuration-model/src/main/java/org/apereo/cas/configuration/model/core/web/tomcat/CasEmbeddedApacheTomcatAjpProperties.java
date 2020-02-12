@@ -43,6 +43,11 @@ public class CasEmbeddedApacheTomcatAjpProperties implements Serializable {
     private boolean secure;
 
     /**
+     * Set the secret that must be included with every request.
+     */
+    private String secret;
+
+    /**
      * A boolean value which can be used to enable or disable
      * the TRACE HTTP method. If not specified, this attribute is set to false.
      */

@@ -1,18 +1,33 @@
-package org.apereo.cas.support.openid.web.support;
+package org.apereo.cas.web.flow;
 
 import org.apereo.cas.support.openid.AbstractOpenIdTests;
+import org.apereo.cas.support.openid.web.support.OpenIdUserNameExtractor;
+import org.apereo.cas.web.flow.config.OpenIdWebflowConfiguration;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Scott Battaglia
  * @since 3.1
+ * @deprecated 6.2
  */
-public class DefaultOpenIdUserNameExtractorTests extends AbstractOpenIdTests {
+@Tag("Webflow")
+@SpringBootTest(classes = {
+    AbstractOpenIdTests.SharedTestConfiguration.class,
+    OpenIdWebflowConfiguration.class
+},
+    properties = {
+        "spring.mail.host=localhost",
+        "spring.mail.port=25000"
+    })
+@Deprecated
+public class DefaultOpenIdUserNameExtractorTests {
 
     @Autowired
     @Qualifier("defaultOpenIdUserNameExtractor")

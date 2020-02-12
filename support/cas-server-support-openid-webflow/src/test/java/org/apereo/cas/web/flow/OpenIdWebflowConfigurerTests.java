@@ -1,7 +1,9 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
+import org.apereo.cas.config.CasThymeleafConfiguration;
 import org.apereo.cas.config.OpenIdConfiguration;
+import org.apereo.cas.services.web.config.CasThemesConfiguration;
 import org.apereo.cas.validation.config.CasCoreValidationConfiguration;
 import org.apereo.cas.web.config.CasProtocolViewsConfiguration;
 import org.apereo.cas.web.config.CasValidationConfiguration;
@@ -22,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  * @author Misagh Moayyed
  * @since 6.2.0
+ * @deprecated 6.2
  */
 @Import({
     BaseWebflowConfigurerTests.SharedTestConfiguration.class,
@@ -29,12 +32,15 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreMultifactorAuthenticationConfiguration.class,
     CasCoreValidationConfiguration.class,
     CasValidationConfiguration.class,
+    CasThemesConfiguration.class,
+    CasThymeleafConfiguration.class,
+    CasProtocolViewsConfiguration.class,
     ThymeleafAutoConfiguration.class,
     OpenIdConfiguration.class,
-    OpenIdWebflowConfiguration.class,
-    CasProtocolViewsConfiguration.class
+    OpenIdWebflowConfiguration.class
 })
 @Tag("Webflow")
+@Deprecated
 public class OpenIdWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Test
     public void verifyOperation() {

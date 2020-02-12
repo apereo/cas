@@ -1,4 +1,4 @@
-package org.apereo.cas.support.openid.web.flow;
+package org.apereo.cas.web.flow;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.support.openid.AbstractOpenIdTests;
@@ -7,6 +7,7 @@ import org.apereo.cas.support.openid.authentication.principal.OpenIdServiceFacto
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.web.flow.config.OpenIdWebflowConfiguration;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
@@ -15,6 +16,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -27,9 +29,19 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * @author Scott Battaglia
  * @since 3.1
+ * @deprecated 6.2
  */
 @Tag("Webflow")
-public class OpenIdSingleSignOnActionTests extends AbstractOpenIdTests {
+@Deprecated
+@SpringBootTest(classes = {
+    AbstractOpenIdTests.SharedTestConfiguration.class,
+    OpenIdWebflowConfiguration.class
+},
+    properties = {
+        "spring.mail.host=localhost",
+        "spring.mail.port=25000"
+    })
+public class OpenIdSingleSignOnActionTests {
 
     @Autowired
     @Qualifier("openIdSingleSignOnAction")

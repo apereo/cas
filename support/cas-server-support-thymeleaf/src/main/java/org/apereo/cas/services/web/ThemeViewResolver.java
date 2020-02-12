@@ -51,17 +51,20 @@ public class ThemeViewResolver extends AbstractCachingViewResolver {
         val path = thymeleafProperties.getPrefix().concat(templateName).concat(thymeleafProperties.getSuffix());
         LOGGER.trace("Attempting to locate theme location at [{}]", path);
         val location = new TemplateLocation(path);
-        if (location.exists(getApplicationContext())) {
+        val applicationContext = getApplicationContext();
+        if (applicationContext != null && location.exists(applicationContext)) {
             thymeleafView.setTemplateName(templateName);
         }
     }
 
     /**
-     * {@link ThemeViewResolverFactory} that will create a ThemeViewResolver for the specified theme.
+     * {@link ThemeViewResolverFactory} that will
+     * create a {@link ThemeViewResolver} for the specified theme.
      */
     @Getter
     @Setter
     @Slf4j
+    @RequiredArgsConstructor
     public static class Factory implements ThemeViewResolverFactory, ApplicationContextAware {
 
         private final ViewResolver delegate;
@@ -69,11 +72,6 @@ public class ThemeViewResolver extends AbstractCachingViewResolver {
         private final ThymeleafProperties thymeleafProperties;
 
         private ApplicationContext applicationContext;
-
-        public Factory(final ViewResolver delegate, final ThymeleafProperties thymeleafProperties) {
-            this.delegate = delegate;
-            this.thymeleafProperties = thymeleafProperties;
-        }
 
         @Override
         public ThemeViewResolver create(final String theme) {
