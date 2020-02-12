@@ -1,6 +1,7 @@
 description = "Apereo CAS WS-Security IdP API"
 dependencies {
     implementation libraries.opensaml
+    implementation libraries.dropwizard
     implementation libraries.bouncycastle
     implementation libraries.apachecxf
     implementation libraries.apachefediz

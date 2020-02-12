@@ -4,6 +4,7 @@ dependencies {
     api project(":api:cas-server-core-api-cookie")
     
     implementation libraries.opensaml
+    implementation libraries.dropwizard
     implementation libraries.shibidpjavasupport
     
     implementation project(":core:cas-server-core-web-api")
