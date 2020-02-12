@@ -13,118 +13,104 @@
 <body>
     <main role="main" class="container mt-3 mb-3">
         <div th:fragment="loginProviders" th:remove="tag" class="login-providers">
-            <div id="list-providers card d-sm-none d-md-block bg-light">
-            
+            <div th:if="${delegatedAuthenticationProviderConfigurations}">
+
+                <h3 class="text-center mt-md-0 mt-4">
+                    <i class="fas fa-user-shield"></i>
+                    <span th:utext="#{screen.welcome.label.loginwith}">External Identity Providers</span>
+                </h3>
+
+                <div class="card-title" th:if="${delegatedAuthenticationProviderPrimary != null}">
+                    <div class="banner banner-success" role="alert">
+                        <span th:utext="#{screen.welcome.label.navto}" />
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-center" th:style="'display:' + ${delegatedAuthenticationProviderPrimary != null ? 'none' : 'block'}">
+                    <ul class="list-unstyled d-flex flex-column m-0 flex-fill">
+                        <li class="p-1 login-provider-item"
+                            th:each="entry: ${delegatedAuthenticationProviderConfigurations}"
+                            th:switch="${entry.type}">
+                            <a class="mdc-button mdc-button--raised w-100"
+                                th:classappend="'mdc-button-' + ${entry.type}"
+                                th:href="@{${entry.redirectUrl}}" th:attr="autoredirect=${entry.autoRedirect}"
+                                th:inline="text" th:title="${entry.name}">
+                
+                                <span th:case="twitter" class="mdi mdi-twitter"></span>
+                                <span th:case="windowslive" class="mdi mdi-windows"></span>
+                                <span th:case="yahoo" class="mdi mdi-yahoo"></span>
+                                <span th:case="bitbucket" class="mdi mdi-bitbucket"></span>
+                                <span th:case="wordpress" class="mdi mdi-wordpress"></span>
+                                <span th:case="google2" class="mdi mdi-google-plus"></span>
+                                <span th:case="github" class="mdi mdi-github-circle"></span>
+                                <span th:case="dropbox" class="mdi mdi-dropbox"></span>
+                                <span th:case="linkedin" class="mdi mdi-linkedin"></span>
+                                <span th:case="facebook" class="mdi mdi-facebook"></span>
+                                <span th:case="oidc" class="mdi mdi-openid"></span>
+                                <span th:case="saml2" th:class="${entry.cssClass}"></span>
+                                <span th:case="*" class="mdi mdi-login"></span>
+                
+                                [[${entry.name}]]
+                            </a>
+                        </li>
+                        <li th:if="${identityProviderDiscoveryEnabled}">
+                            <script type="text/javascript" th:inline="javascript">
+                                /*<![CDATA[*/
+                                var url = /*[[@{/idp/discovery}]]*/ ;
+
+                                var returnUrl = /*[[${cas.server.name} + @{/idp/discovery/redirect}]]*/ ;
+
+                                if (window.location.search) {
+                                    returnUrl += encodeURIComponent(window.location.search);
+                                }
+                                url += "?return=" + returnUrl;
+                                var link = `<a href='${url}' class='btn btn-block btn-social btn-primary'>
+                                                                    <span class='fas fa-shield-alt' aria-hidden='true'></span>
+                                                                    SAML2 Identity Provider Discovery</a>`;
+                                document.write(link);
+                                                        /*]]>*/
+                            </script>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div th:if="${wsfedUrls}" id="list-providers"
+                th:class="${delegatedAuthenticationProviderPrimary == null ? 'card d-sm-none d-md-block bg-light' : ''}">
+
                 <div class="card-body">
-            
-                    <h3 class="card-title text-center mt-md-0 mt-4">
-                        <i class="fas fa-user-shield"></i>
-                        <span th:utext="#{screen.welcome.label.loginwith}">External Identity Providers</span>
-                    </h3>
-            
-                    <!--<div class="card-title" th:if="${delegatedAuthenticationProviderPrimary != null}">
-                        <div class="alert alert-success" role="alert">
+                    <h3 class="card-title" th:utext="#{screen.welcome.label.loginwith}"
+                        th:if="${delegatedAuthenticationProviderPrimary == null}">Login with:</h3>
+                    <div class="card-title" th:if="${delegatedAuthenticationProviderPrimary != null}">
+                        <div class="alert alert-info">
                             <span th:utext="#{screen.welcome.label.navto}" />
                         </div>
-                    </div>-->
-                    <div class="card-text d-flex justify-content-center">
-                        <ul class="list-unstyled d-flex flex-column m-0 flex-fill">
-                            <li class="p-1 login-provider-item">
-                                <a class="mdc-button mdc-button--raised mdc-button-twitter w-100" href="#">
-            
-                                    <span class="mdi mdi-twitter"></span>
-            
-                                    Twitter
-                                </a>
-                            </li>
-                            <li class="p-1 login-provider-item">
-                                <a class="mdc-button mdc-button--raised mdc-button-windows w-100" href="#">
-                            
-                                    <span class="mdi mdi-windows"></span>
-                                    Windows
-                                </a>
-                            </li>
-                            <li class="p-1 login-provider-item">
-                                <a class="mdc-button mdc-button--raised mdc-button-yahoo w-100" href="#">
-                            
-                                    <span class="mdi mdi-yahoo"></span>
-                            
-                                    Yahoo
-                                </a>
-                            </li>
-                            <li class="p-1  login-provider-item">
-                                <a class="mdc-button mdc-button--raised mdc-button-bitbucket w-100" href="#">
-                            
-                                    <span class="mdi mdi-bitbucket"></span>
-                                    Bitbucket
-                                </a>
-                            </li>
-                            <li class="p-1 login-provider-item">
-                                <a class="mdc-button mdc-button--raised mdc-button-wordpress w-100" href="#">
-                            
-                                    <span class="mdi mdi-wordpress"></span>
-                            
-                                    Wordpress
-                                </a>
-                            </li>
-                            <li class="p-1 login-provider-item">
-                                <a class="mdc-button mdc-button--raised mdc-button-google w-100" href="#">
-                            
-                                    <span class="mdi mdi-google-plus"></span>
-                                    Google Plus
-                                </a>
-                            </li>
-                            <li class="p-1 login-provider-item">
-                                <a class="mdc-button mdc-button--raised mdc-button-github w-100" href="#">
-                            
-                                    <span class="mdi mdi-github-circle"></span>
-                                    Github
-                                </a>
-                            </li>
-                            <li class="p-1 login-provider-item">
-                                <a class="mdc-button mdc-button--raised mdc-button-dropbox w-100" href="#">
-                            
-                                    <span class="mdi mdi-dropbox"></span>
-                            
-                                    Dropbox
-                                </a>
-                            </li>
-                            <li class="p-1 login-provider-item">
-                                <a class="mdc-button mdc-button--raised mdc-button-linkedin w-100" href="#">
-                            
-                                    <span class="mdi mdi-linkedin"></span>
-                            
-                                    LinkedIn
-                                </a>
-                            </li>
-                            <li class="p-1 login-provider-item">
-                                <a class="mdc-button mdc-button--raised mdc-button-facebook w-100" href="#">
-                            
-                                    <span class="mdi mdi-facebook"></span>
-                            
-                                    Facebook
-                                </a>
-                            </li>
-                            <li class="p-1 login-provider-item">
-                                <a class="mdc-button mdc-button--raised mdc-button-openid w-100" href="#">
-                            
-                                    <span class="mdi mdi-openid"></span>
-                            
-                                    Open ID
-                                </a>
-                            </li>
-                            <li class="p-1 login-provider-item">
-                                <a class="mdc-button mdc-button--raised w-100" href="#">
-                            
-                                    <span class="mdi mdi-login"></span>
-                            
-                                    Alternate
+                    </div>
+
+                    <div class="card-text"
+                        th:style="'display:' + ${delegatedAuthenticationProviderPrimary != null ? 'none' : 'block'}">
+                        <ul>
+                            <li th:each="entry: ${wsfedUrls}">
+                                <a class="btn btn-block btn-social" th:classappend="btn-sm"
+                                    th:href="@{${entry.redirectUrl}}" th:inline="text" onload=""
+                                    th:attr="autoredirect=${entry.autoRedirect}" th:title="${entry.name}">
+
+                                    <span class="fab fa-windows"></span>
+
+                                    [[${entry.name}]]
                                 </a>
                             </li>
                         </ul>
                     </div>
                 </div>
             </div>
+
+            <script>
+                var redirectTo = $("a[autoRedirect=true]").attr("href");
+                if (redirectTo != null && redirectTo != undefined) {
+                    window.location.href = redirectTo;
+                }
+            </script>
         </div>
     </main>
 </body>

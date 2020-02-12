@@ -1,5 +1,4 @@
 (function (material) {
-    console.log(material);
     var cas = {
         init: function () {
             cas.attachFields();
@@ -14,6 +13,8 @@
                     field.foundation_.adapter_.registerInputInteractionHandler('keypress', cas.checkCaps);
                 }
             });
+
+            //MDCTextFieldIconAdapter
         },
         checkCaps: function (ev) {
             var s = String.fromCharCode(ev.which);
@@ -103,6 +104,7 @@ function preventFormResubmission() {
 }
 
 function resourceLoadedSuccessfully() {
+    console.log('resourceLoadedSuccessfully');
     $(document).ready(function () {
 
         if (trackGeoLocation) {
@@ -118,7 +120,19 @@ function resourceLoadedSuccessfully() {
         $('#fm1 input[name="username"],[name="password"]').trigger('input');
         $('#fm1 input[name="username"]').focus();
 
-        
+        let $revealpassword = $('.reveal-password');
+        $revealpassword.mouseup(function (ev) {
+            $('.pwd').attr('type', 'password');
+            $(".reveal-password-icon").removeClass("mdi mdi-eye-off").addClass("mdi mdi-eye");
+            ev.preventDefault();
+        })
+
+        $revealpassword.mousedown(function (ev) {
+            $('.pwd').attr('type', 'text');
+            $(".reveal-password-icon").removeClass("mdi mdi-eye").addClass("mdi mdi-eye-off");
+            ev.preventDefault();
+        });
+
         if (typeof (jqueryReady) == 'function') {
             jqueryReady();
         }

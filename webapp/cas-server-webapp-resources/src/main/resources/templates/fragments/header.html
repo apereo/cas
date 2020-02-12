@@ -29,7 +29,7 @@
                                     .cls-1 {
                                         fill: #024d71;
                                     }
-        
+
                                     .cls-2 {
                                         fill: #74c163;
                                     }
@@ -65,7 +65,7 @@
                     </button>
                 </section>
             </nav>
-            
+
         </header>
         <aside id="app-drawer" class="mdc-drawer mdc-drawer--dismissible mdc-drawer--modal">
             <div class="mdc-drawer__header">
@@ -110,8 +110,8 @@
                 </nav>
             </div>
         </aside>
-        <div class="mdc-dialog cas-notification-dialog" id="cas-notification-dialog" role="alertdialog" aria-modal="true"
-            aria-labelledby="notif-dialog-title" aria-describedby="notif-dialog-content">
+        <div class="mdc-dialog cas-notification-dialog" id="cas-notification-dialog" role="alertdialog"
+            aria-modal="true" aria-labelledby="notif-dialog-title" aria-describedby="notif-dialog-content">
             <div class="mdc-dialog__container">
                 <div class="mdc-dialog__surface">
                     <h2 class="mdc-dialog__title mt-2" id="notif-dialog-title">
@@ -127,7 +127,8 @@
                                 instead.
                             </p>
                         </div>
-                        <div class="cas-notification-message mdc-typography--body1" th:if="${not #httpServletRequest.secure}">
+                        <div class="cas-notification-message mdc-typography--body1"
+                            th:if="${not #httpServletRequest.secure}">
                             <h5 class="mdc-typography--headline6" th:utext="#{screen.nonsecure.title}" />
                             <p class="text-wrap small" th:utext="#{screen.nonsecure.message}">
                                 Unsure Connection
@@ -216,11 +217,11 @@
                         $('#notifications-count').text("(" + countMessages + ")")
                     }
                 });
-            })(mdc, jQuery);
+            })(mdc);
         </script>
     </div>
-    
-    
+
+
 </body>
 
 </html>

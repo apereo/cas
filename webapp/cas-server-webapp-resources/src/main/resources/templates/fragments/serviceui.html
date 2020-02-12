@@ -11,51 +11,51 @@
 <body>
 <main role="main" class="container mt-3 mb-3">
 <div th:fragment="serviceUI" th:if="${registeredService}" id="serviceui" class="alert alert-info">
-    <div th:if="${serviceUIMetadata}">
-        <table>
-            <tr>
-                <td>
-                    <img th:if="${serviceUIMetadata.logoUrl}"
-                         th:title="${serviceUIMetadata.displayName}"
-                         th:alt="${serviceUIMetadata.displayName}"
-                         th:src="${serviceUIMetadata.logoUrl}"
-                         th:width="${serviceUIMetadata.logoWidth}"
-                         th:height="${serviceUIMetadata.logoHeight}"/>
-
-                    <img th:unless="${serviceUIMetadata.logoUrl}"
-                         th:title="${serviceUIMetadata.displayName}"
-                         th:alt="${serviceUIMetadata.displayName}"
-                         th:src="@{images/webapp.png}"
-                         th:width="${serviceUIMetadata.logoWidth}"
-                         th:height="${serviceUIMetadata.logoHeight}"/>
-                </td>
-            </tr>
-            <tr>
-                <td id="servicedesc">
-                    <h2 th:text="${serviceUIMetadata.displayName}">serviceUIMetadata.displayName</h2>
-                    <p th:text="${serviceUIMetadata.description}">serviceUIMetadata.description</p>
-
-                    <p th:if="${serviceUIMetadata.informationURL}"
-                       th:utext="#{screen.mdui.infolink.text(${serviceUIMetadata.informationURL})}">screen.mdui.infolink.text</p>
-                    <p th:if="${serviceUIMetadata.privacyStatementURL}"
-                       th:utext="#{screen.mdui.privacylink.text(${serviceUIMetadata.privacyStatementURL})}">serviceUIMetadata.privacyStatementURL</p>
-                </td>
-            </tr>
+    <div th:if="${serviceUIMetadata}" class="mdc-data-table my-2 py-2">
+        <table class="mdc-data-table__table">
+            <tbody class="mdc-data-table__content">
+                <tr class="mdc-data-table__row">
+                    <td class="mdc-data-table__cell">
+                        <img th:if="${serviceUIMetadata.logoUrl}" th:title="${serviceUIMetadata.displayName}"
+                            th:alt="${serviceUIMetadata.displayName}" th:src="${serviceUIMetadata.logoUrl}"
+                            th:width="${serviceUIMetadata.logoWidth}" th:height="${serviceUIMetadata.logoHeight}" />
+                
+                        <img th:unless="${serviceUIMetadata.logoUrl}" th:title="${serviceUIMetadata.displayName}"
+                            th:alt="${serviceUIMetadata.displayName}" th:src="@{images/webapp.png}"
+                            th:width="${serviceUIMetadata.logoWidth}" th:height="${serviceUIMetadata.logoHeight}" />
+                    </td>
+                </tr>
+                <tr class="mdc-data-table__row">
+                    <td id="servicedesc" class="mdc-data-table__cell">
+                        <h2 th:text="${serviceUIMetadata.displayName}">serviceUIMetadata.displayName</h2>
+                        <p th:text="${serviceUIMetadata.description}">serviceUIMetadata.description</p>
+                
+                        <p th:if="${serviceUIMetadata.informationURL}"
+                            th:utext="#{screen.mdui.infolink.text(${serviceUIMetadata.informationURL})}">screen.mdui.infolink.text</p>
+                        <p th:if="${serviceUIMetadata.privacyStatementURL}"
+                            th:utext="#{screen.mdui.privacylink.text(${serviceUIMetadata.privacyStatementURL})}">
+                            serviceUIMetadata.privacyStatementURL</p>
+                    </td>
+                </tr>
+            </tbody>
+            
         </table>
     </div>
 
-    <div th:unless="${serviceUIMetadata}">
-        <table>
-            <tr>
-                <td>
-                    <img th:src="${registeredService.logo}" th:if="${registeredService.logo}" style="padding-right: 10px;"/>
-                    <img th:src="@{images/webapp.png}" th:unless="${registeredService.logo}" style="padding-right: 10px;"/>
-                </td>
-                <td id="servicedesc">
-                    <h5 th:text="${registeredService.name}">Registered Service Name</h5>
-                    <p th:text="${registeredService.description}">Registered Service Description</p>
-                </td>
-            </tr>
+    <div th:unless="${serviceUIMetadata}" class="mdc-data-table my-2 py-2">
+        <table class="mdc-data-table__table">
+            <tbody class="mdc-data-table__content">
+                <tr class="mdc-data-table__row">
+                    <td class="mdc-data-table__cell">
+                        <img th:src="${registeredService.logo}" th:if="${registeredService.logo}" style="padding-right: 10px;" />
+                        <img th:src="@{images/webapp.png}" th:unless="${registeredService.logo}" style="padding-right: 10px;" />
+                    </td>
+                    <td id="servicedesc" class="mdc-data-table__cell">
+                        <h5 th:text="${registeredService.name}">Registered Service Name</h5>
+                        <p th:text="${registeredService.description}">Registered Service Description</p>
+                    </td>
+                </tr>
+            </tbody>
         </table>
     </div>
 </div>

@@ -1,7 +1,7 @@
-<script type="text/javascript" th:src="@{${#themes.code('webjars.zxcvbn.js')}}"></script>
-<script type="text/javascript" th:src="@{${#themes.code('webjars.jquery.js')}}"></script>
-<script src="//www.google.com/recaptcha/api.js" async defer th:if="${recaptchaSiteKey != null and recaptchaVersion=='v2'}"></script>
-<script th:src="${'//www.google.com/recaptcha/api.js?render=' + recaptchaSiteKey}" th:if="${recaptchaSiteKey != null and recaptchaVersion == 'v3'}"></script>
+<script src="//www.google.com/recaptcha/api.js" async defer
+    th:if="${recaptchaSiteKey != null and recaptchaVersion=='v2'}"></script>
+<script th:src="${'//www.google.com/recaptcha/api.js?render=' + recaptchaSiteKey}"
+    th:if="${recaptchaSiteKey != null and recaptchaVersion == 'v3'}"></script>
 
 <script type="text/javascript" th:src="@{${#themes.code('webjars.headmin.js')}}"></script>
 <script type="text/javascript" th:src="@{${#themes.code('webjars.material-components.js')}}"></script>
@@ -10,17 +10,12 @@
 <script th:inline="javascript">
     head.ready(document, function () {
         if (!window.jQuery) {
-            var jqueryUrl = /*[[@{#{webjars.jquerymin.js}}]]*/;
-            head.load(jqueryUrl, loadjQueryUI);
+            var jqueryUrl = /*[[@{${#themes.code('webjars.jquery.js')}}]]*/;
+            head.load(jqueryUrl);
         } else {
             notifyResourcesAreLoaded(resourceLoadedSuccessfully);
         }
     });
-
-    function loadjQueryUI() {
-        var jqueryUrl = /*[[@{#{webjars.jqueryui.js}}]]*/;
-        head.load(jqueryUrl, notifyResourcesAreLoaded(resourceLoadedSuccessfully));
-    }
 
     function notifyResourcesAreLoaded(callback) {
         if (typeof callback === "function") {

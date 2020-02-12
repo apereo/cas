@@ -271,6 +271,49 @@ button.close {
     font-size: 24px;
 }
 
+/* custom components */
+
+.mdc-input-group {
+    display: flex;
+    align-items: stretch;
+}
+
+.mdc-input-group .mdc-input-group-field {
+    flex: 1 1 auto;
+    order: 1;
+}
+
+.mdc-input-group .mdc-input-group-field .mdc-text-field {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.mdc-input-group .mdc-input-group-append {
+    order: 2;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.mdc-input-group .mdc-input-group-prepend, .mdc-input-group .mdc-input-group-append {
+    height: 56px;
+}
+
+.mdc-input-group .mdc-input-group-prepend {
+    order: 0;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.mdc-input-group .mdc-input-group-field.mdc-input-group-field-prepend .mdc-text-field .mdc-notched-outline__trailing {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.mdc-input-group .mdc-input-group-field.mdc-input-group-field-append .mdc-text-field .mdc-notched-outline__trailing {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
 /* utilities */
 
 .text-warning {
@@ -470,11 +513,6 @@ button.close {
 }
 
 /* legacy */
-
-#serviceui.alert {
-    background-color: #17a2b8;
-    color: #fff;
-}
 
 #duo_iframe {
     width: 100%;
