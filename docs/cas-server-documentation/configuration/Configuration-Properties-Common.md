@@ -1096,7 +1096,15 @@ The following options are shared and apply when CAS is configured to send SMS no
 
 You will also need to ensure a provider is defined that is able to send SMS messages. To learn more about this 
 topic, [please review this guide](../notifications/SMS-Messaging-Configuration.html).
- 
+
+## Webflow Auto Configuration
+
+Control aspects of webflow that relate to auto-configuration of webflow states, transitions and execution order.
+
+```properties
+# ${configurationKey}.order=
+``` 
+
 ## Delegated Authentication Settings
 
 The following options are shared and apply when CAS is configured to delegate authentication 
