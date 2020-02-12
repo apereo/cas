@@ -43,6 +43,7 @@ buildscript {
         classpath "gradle.plugin.com.github.spotbugs:spotbugs-gradle-plugin:$gradleSpotbugsVersion"
         classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:$gradleSonarqubeVersion"
         classpath "net.rdrei.android.buildtimetracker:gradle-plugin:$gradleTimeTrackerVersion"
+        classpath "org.gradle:test-retry-gradle-plugin:$gradleRetryVersion"
     }
 }
 
@@ -150,6 +151,7 @@ allprojects {
     apply plugin: "eclipse"
     apply plugin: "jacoco"
     apply plugin: "java"
+    apply plugin: "org.gradle.test-retry"
 
     apply from: rootProject.file("gradle/tasks.gradle")
 
