@@ -28,7 +28,7 @@ import java.util.Properties;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Configuration("restfulCloudConfigBootstrapConfiguration")
+@Configuration(value = "restfulCloudConfigBootstrapConfiguration", proxyBeanMethods = false)
 @Slf4j
 public class RestfulCloudConfigBootstrapConfiguration implements PropertySourceLocator {
     /**

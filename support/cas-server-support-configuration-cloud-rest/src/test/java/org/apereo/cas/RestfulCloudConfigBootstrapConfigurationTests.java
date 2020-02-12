@@ -39,7 +39,7 @@ public class RestfulCloudConfigBootstrapConfigurationTests {
 
     private static final String STATIC_AUTHN_USERS = "casuser::WHATEVER";
 
-    private static MockWebServer webServer;
+    private static MockWebServer SERVER;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -49,14 +49,14 @@ public class RestfulCloudConfigBootstrapConfigurationTests {
         val response = MAPPER.writeValueAsString(Map.of("cas.authn.accept.users", STATIC_AUTHN_USERS));
         System.setProperty(RestfulCloudConfigBootstrapConfiguration.CAS_CONFIGURATION_PREFIX + '.' + "url", "http://localhost:9345");
         System.setProperty(RestfulCloudConfigBootstrapConfiguration.CAS_CONFIGURATION_PREFIX + '.' + "headers", "H1:V1;H2:V2");
-        webServer = new MockWebServer(9345,
+        SERVER = new MockWebServer(9345,
             new ByteArrayResource(response.getBytes(StandardCharsets.UTF_8), "Output"), HttpStatus.TOO_MANY_REQUESTS);
-        webServer.start();
+        SERVER.start();
     }
 
     @AfterAll
     public static void tearDown() {
-        webServer.close();
+        SERVER.close();
     }
 
     @Test
