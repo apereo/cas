@@ -3,7 +3,7 @@ package org.apereo.cas.web.flow.config;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
-import org.apereo.cas.web.flow.SpengoWebflowConfigurer;
+import org.apereo.cas.web.flow.SpnegoWebflowConfigurer;
 
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +43,7 @@ public class SpnegoWebflowConfiguration {
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer spnegoWebflowConfigurer() {
-        return new SpengoWebflowConfigurer(flowBuilderServices.getObject(),
+        return new SpnegoWebflowConfigurer(flowBuilderServices.getObject(),
             loginFlowDefinitionRegistry.getIfAvailable(),
             applicationContext, casProperties);
     }
