@@ -281,6 +281,18 @@ are available [here](Configuration-Properties-Common.html#database-settings) und
 # cas.spring.cloud.jdbc.sql=SELECT id, name, value FROM CAS_SETTINGS_TABLE
 ```
 
+### REST
+
+Allow the CAS Spring Cloud configuration server to load settings from a REST API.
+
+```properties
+# cas.spring.cloud.rest.url=
+# cas.spring.cloud.rest.basicAuthUsername=
+# cas.spring.cloud.rest.basicAuthPassword=
+# cas.spring.cloud.rest.method=
+# cas.spring.cloud.rest.headers=Header1:Value1;Header2:Value2
+```
+
 ## Configuration Security
 
 To learn more about how sensitive CAS settings can be
@@ -2159,6 +2171,11 @@ Principal resolution and Person Directory settings for this feature are availabl
 # cas.authn.spnego.ntlm=false
 ```
 
+### Webflow configuration
+
+Webflow auto-configuration settings for this feature are available [here](Configuration-Properties-Common.html#webflow-auto-configuration) under 
+the configuration key `cas.authn.spnego.webflow`.
+
 ### System Settings
 
 ```properties
@@ -2267,6 +2284,11 @@ To learn more about this topic, [please review this guide](../installation/JWT-A
 ```properties
 # cas.authn.token.name=
 ```
+
+### Webflow configuration
+
+Webflow auto-configuration settings for this feature are available [here](Configuration-Properties-Common.html#webflow-auto-configuration) under 
+the configuration key `cas.authn.token.webflow`.
 
 ### JWT Tickets
 
@@ -2420,6 +2442,11 @@ Password encoding settings for this feature are available [here](Configuration-P
 ## X509 Authentication
 
 To learn more about this topic, [please review this guide](../installation/X509-Authentication.html).
+
+### Webflow configuration
+
+Webflow auto-configuration settings for this feature are available [here](Configuration-Properties-Common.html#webflow-auto-configuration) under 
+the configuration key `cas.authn.x509.webflow`.
 
 ### Principal Resolution
 
@@ -5178,6 +5205,11 @@ To learn more about this topic, [please review this guide](../integration/Attrib
 
 Signing & encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.consent`. The signing and encryption keys [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`.
 
+### Webflow configuration
+
+Webflow auto-configuration settings for this feature are available [here](Configuration-Properties-Common.html#webflow-auto-configuration) under 
+the configuration key `cas.consent.webflow`.
+
 ### JSON Attribute Consent
 
 ```properties
@@ -5275,6 +5307,11 @@ available [here](Configuration-Properties-Common.html#sms-notifications) under t
 
 The signing and encryption keys [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`.
 The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`. Signing & encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.authn.pm.reset`.
+
+### Webflow configuration
+
+Webflow auto-configuration settings for this feature are available [here](Configuration-Properties-Common.html#webflow-auto-configuration) under 
+the configuration key `cas.authn.pm.webflow`.
 
 ### Password History
 

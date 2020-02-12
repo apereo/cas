@@ -186,6 +186,15 @@ def byte[] run(final Object... args) {
     logger.debug("Encoding password...")
     return ...
 }
+
+def Boolean matches(final Object... args) {
+    def rawPassword = args[0]
+    def encodedPassword = args[1]
+    def logger = args[2]
+    def casApplicationContext = args[3]
+
+   logger.debug("Does match or not ?");
+   return ...
 ```
 
 ## Authentication Principal Transformation
@@ -512,13 +521,13 @@ More advanced Hazelcast configuration settings are listed below, given the compo
 # ${configurationKey}.cluster.tcpipEnabled=true
 
 # ${configurationKey}.cluster.partitionMemberGroupType=HOST_AWARE|CUSTOM|PER_MEMBER|ZONE_AWARE|SPI
-# ${configurationKey}.cluster.mapMergePolicy=com.hazelcast.map.merge.PutIfAbsentMapMergePolicy
+# ${configurationKey}.cluster.mapMergePolicy=PUT_IF_ABSENT|HIGHER_HITS|DISCARD|PASS_THROUGH|EXPIRATION_TIME|LATEST_UPDATE|LATEST_ACCESS
 
 # ${configurationKey}.cluster.evictionPolicy=LRU
 # ${configurationKey}.cluster.maxNoHeartbeatSeconds=300
 # ${configurationKey}.cluster.loggingType=slf4j
 # ${configurationKey}.cluster.portAutoIncrement=true
-# ${configurationKey}.cluster.maxHeapSizePercentage=85
+# ${configurationKey}.cluster.maxSize=85
 # ${configurationKey}.cluster.backupCount=1
 # ${configurationKey}.cluster.asyncBackupCount=0
 # ${configurationKey}.cluster.maxSizePolicy=USED_HEAP_PERCENTAGE
@@ -530,32 +539,27 @@ More advanced Hazelcast configuration settings are listed below, given the compo
 # ${configurationKey}.cluster.outboundPorts[0]=45000
 ```
 
-### Management Center
-
-```properties
-# ${configurationKey}.managementCenter.url=
-# ${configurationKey}.managementCenter.enabled=false
-# ${configurationKey}.managementCenter.updateInterval=5
-```
-
 ### Static WAN Replication
 
 ```properties
 # ${configurationKey}.cluster.wanReplication.enabled=false
 # ${configurationKey}.cluster.wanReplication.replicationName=CAS
 
-# ${configurationKey}.cluster.wanReplication[0].groupName=
-# ${configurationKey}.cluster.wanReplication[0].groupPassword=
-# ${configurationKey}.cluster.wanReplication[0].endpoints=1.2.3.4,4.5.6.7
-# ${configurationKey}.cluster.wanReplication[0].publisherClassName=com.hazelcast.enterprise.wan.replication.WanBatchReplication
-# ${configurationKey}.cluster.wanReplication[0].queueFullBehavior=THROW_EXCEPTION
-# ${configurationKey}.cluster.wanReplication[0].acknowledgeType=ACK_ON_OPERATION_COMPLETE
-# ${configurationKey}.cluster.wanReplication[0].queueCapacity=10000
-# ${configurationKey}.cluster.wanReplication[0].batchSize=500
-# ${configurationKey}.cluster.wanReplication[0].snapshotEnabled=false
-# ${configurationKey}.cluster.wanReplication[0].batchMaximumDelayMilliseconds=1000
-# ${configurationKey}.cluster.wanReplication[0].responseTimeoutMilliseconds=60000
-# ${configurationKey}.cluster.wanReplication[0].executorThreadCount=2
+# ${configurationKey}.cluster.wanReplication.targets[0].endpoints=1.2.3.4,4.5.6.7
+# ${configurationKey}.cluster.wanReplication.targets[0].publisherClassName=com.hazelcast.enterprise.wan.replication.WanBatchReplication
+# ${configurationKey}.cluster.wanReplication.targets[0].queueFullBehavior=THROW_EXCEPTION
+# ${configurationKey}.cluster.wanReplication.targets[0].acknowledgeType=ACK_ON_OPERATION_COMPLETE
+# ${configurationKey}.cluster.wanReplication.targets[0].queueCapacity=10000
+# ${configurationKey}.cluster.wanReplication.targets[0].batchSize=500
+# ${configurationKey}.cluster.wanReplication.targets[0].snapshotEnabled=false
+# ${configurationKey}.cluster.wanReplication.targets[0].batchMaximumDelayMilliseconds=1000
+# ${configurationKey}.cluster.wanReplication.targets[0].responseTimeoutMilliseconds=60000
+# ${configurationKey}.cluster.wanReplication.targets[0].executorThreadCount=2
+
+# ${configurationKey}.cluster.wanReplication.targets[0].consistencyCheckStrategy=NONE|MERKLE_TREES
+# ${configurationKey}.cluster.wanReplication.targets[0].clusterName=
+# ${configurationKey}.cluster.wanReplication.targets[0].publisherId=
+# ${configurationKey}.cluster.wanReplication.targets[0].properties=
 ```
 
 ### Multicast Discovery
@@ -1092,7 +1096,15 @@ The following options are shared and apply when CAS is configured to send SMS no
 
 You will also need to ensure a provider is defined that is able to send SMS messages. To learn more about this 
 topic, [please review this guide](../notifications/SMS-Messaging-Configuration.html).
- 
+
+## Webflow Auto Configuration
+
+Control aspects of webflow that relate to auto-configuration of webflow states, transitions and execution order.
+
+```properties
+# ${configurationKey}.order=
+``` 
+
 ## Delegated Authentication Settings
 
 The following options are shared and apply when CAS is configured to delegate authentication 
