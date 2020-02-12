@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.util.HttpUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Splitter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
@@ -48,6 +49,11 @@ public class RestfulCloudConfigBootstrapConfiguration implements PropertySourceL
         HttpResponse response = null;
         try {
             val url = getProperty(environment, "url");
+            if (StringUtils.isBlank(url)) {
+                LOGGER.debug("No URL endpoint is defined to fetch CAS settings");
+                return new PropertiesPropertySource(getClass().getSimpleName(), props);
+            }
+            
             val basicAuthUsername = getProperty(environment, "basicAuthUsername");
             val basicAuthPassword = getProperty(environment, "basicAuthPassword");
             val headersPassed = getProperty(environment, "headers");
@@ -55,8 +61,10 @@ public class RestfulCloudConfigBootstrapConfiguration implements PropertySourceL
             val headers = new HashMap<String, Object>();
             if (StringUtils.isNotBlank(headersPassed)) {
                 Arrays.stream(headersPassed.split(";")).forEach(headerAndValue -> {
-                    val pair = headerAndValue.split(":");
-                    headers.put(pair[0], pair[1]);
+                    val values = Splitter.on(":").splitToList(headerAndValue);
+                    if (values.size() == 2) {
+                        headers.put(values.get(0), values.get(1));
+                    }
                 });
             }
             val method = StringUtils.defaultIfBlank(getProperty(environment, "method"), HttpMethod.GET.name());
