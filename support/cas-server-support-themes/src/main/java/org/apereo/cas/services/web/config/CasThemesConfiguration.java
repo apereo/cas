@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration("casThemesConfiguration")
+@Configuration(value = "casThemesConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasThemesConfiguration {
     @Autowired

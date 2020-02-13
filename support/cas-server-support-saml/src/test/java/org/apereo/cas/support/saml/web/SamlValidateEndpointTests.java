@@ -7,7 +7,6 @@ import org.apereo.cas.config.SamlConfiguration;
 import org.apereo.cas.config.authentication.support.SamlAuthenticationEventExecutionPlanConfiguration;
 import org.apereo.cas.config.authentication.support.SamlServiceFactoryConfiguration;
 import org.apereo.cas.config.authentication.support.SamlUniqueTicketIdGeneratorConfiguration;
-import org.apereo.cas.web.config.CasProtocolViewsConfiguration;
 import org.apereo.cas.web.config.CasValidationConfiguration;
 import org.apereo.cas.web.report.AbstractCasEndpointTests;
 
@@ -33,7 +32,6 @@ import static org.junit.jupiter.api.Assertions.*;
     CoreSamlConfiguration.class,
     CasValidationConfiguration.class,
     CasPersonDirectoryConfiguration.class,
-    CasProtocolViewsConfiguration.class,
     SamlServiceFactoryConfiguration.class,
     SamlUniqueTicketIdGeneratorConfiguration.class,
     SamlAuthenticationEventExecutionPlanConfiguration.class,
