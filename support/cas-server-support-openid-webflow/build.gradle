@@ -4,10 +4,12 @@ dependencies {
     
     implementation project(":core:cas-server-core-services-api")
     implementation project(":core:cas-server-core-services-registry")
+    implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-webflow")
     implementation project(":core:cas-server-core-webflow-mfa")
     implementation project(":core:cas-server-core-webflow-api")
     implementation project(":core:cas-server-core-configuration-api")
+    implementation project(":core:cas-server-core-validation-api")
 
     implementation project(":support:cas-server-support-openid")
     implementation project(":support:cas-server-support-validation")
@@ -23,6 +25,11 @@ dependencies {
     testImplementation project(":core:cas-server-core-validation")
     testImplementation project(":core:cas-server-core")
 
+    testImplementation project(":support:cas-server-support-thymeleaf")
+    testImplementation project(":support:cas-server-support-themes")
+    testImplementation project(":support:cas-server-support-person-directory")
+    testImplementation project(":support:cas-server-support-validation")
+
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-web", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-webflow", configuration: "tests")
@@ -31,4 +38,5 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-util", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")
+    testImplementation project(path: ":support:cas-server-support-openid", configuration: "tests")
 }

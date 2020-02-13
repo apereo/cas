@@ -2,6 +2,7 @@ package org.apereo.cas.services.web;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -27,6 +28,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 @Setter
 @Getter
+@RequiredArgsConstructor
 public class ThemeBasedViewResolver implements ViewResolver, Ordered {
 
     private final ThemeResolver themeResolver;
@@ -36,11 +38,6 @@ public class ThemeBasedViewResolver implements ViewResolver, Ordered {
     private final Map<String, ViewResolver> resolvers = new ConcurrentHashMap<>();
 
     private int order = LOWEST_PRECEDENCE;
-
-    public ThemeBasedViewResolver(final ThemeResolver themeResolver, final ThemeViewResolverFactory viewResolverFactory) {
-        this.themeResolver = themeResolver;
-        this.viewResolverFactory = viewResolverFactory;
-    }
 
     @Override
     @SuppressFBWarnings("PRMC_POSSIBLY_REDUNDANT_METHOD_CALLS")
@@ -71,7 +68,6 @@ public class ThemeBasedViewResolver implements ViewResolver, Ordered {
         if (resolvers.containsKey(theme)) {
             return resolvers.get(theme);
         }
-
         val resolver = viewResolverFactory.create(theme);
         resolvers.put(theme, resolver);
         return resolver;

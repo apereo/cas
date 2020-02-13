@@ -15,14 +15,13 @@ dependencies {
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-authentication-api")
+    implementation project(":core:cas-server-core-validation-api")
     implementation project(":support:cas-server-support-validation-core")
 
-    testImplementation libraries.thymeleaf
-    testImplementation libraries.thymeleafdialect
-
+    testImplementation project(":support:cas-server-support-thymeleaf")
+    testImplementation project(":support:cas-server-support-themes")
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":support:cas-server-support-validation")
-    
     
     testImplementation project(":core:cas-server-core-validation")
     testImplementation project(":core:cas-server-core-validation-api")

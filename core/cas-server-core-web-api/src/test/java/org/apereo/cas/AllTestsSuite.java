@@ -1,10 +1,7 @@
-
 package org.apereo.cas;
 
 import org.apereo.cas.web.support.filters.AddResponseHeadersFilterTests;
 import org.apereo.cas.web.support.filters.RequestParameterPolicyEnforcementFilterTests;
-import org.apereo.cas.web.view.ChainingTemplateViewResolverTests;
-import org.apereo.cas.web.view.RestfulUrlTemplateResolverTests;
 
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
@@ -17,8 +14,6 @@ import org.junit.runner.RunWith;
  * @since 6.0.0-RC3
  */
 @SelectClasses({
-    ChainingTemplateViewResolverTests.class,
-    RestfulUrlTemplateResolverTests.class,
     RequestParameterPolicyEnforcementFilterTests.class,
     AddResponseHeadersFilterTests.class
 })
