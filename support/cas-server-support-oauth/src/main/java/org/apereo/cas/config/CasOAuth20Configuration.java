@@ -9,6 +9,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.core.CasServerProperties;
 import org.apereo.cas.integration.pac4j.DistributedJ2ESessionStore;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.ServicesManager;
@@ -239,7 +240,8 @@ public class CasOAuth20Configuration {
     @Bean
     @ConditionalOnMissingBean(name = "oauthSecConfigClients")
     public List<Client> oauthSecConfigClients() {
-        val cfg = new CasConfiguration(casProperties.getServer().getLoginUrl());
+        val server = casProperties.getServer();
+        val cfg = new CasConfiguration(server.getLoginUrl());
         cfg.setDefaultTicketValidator(new CasServerApiBasedTicketValidator(centralAuthenticationService.getObject()));
 
         val oauthCasClient = new CasClient(cfg);
@@ -247,7 +249,7 @@ public class CasOAuth20Configuration {
             oauthCasClientRedirectActionBuilder().build(oauthCasClient, webContext));
         oauthCasClient.setName(Authenticators.CAS_OAUTH_CLIENT);
         oauthCasClient.setUrlResolver(casCallbackUrlResolver());
-        oauthCasClient.setCallbackUrl(OAuth20Utils.casOAuthCallbackUrl(casProperties.getServer().getPrefix()));
+        oauthCasClient.setCallbackUrl(OAuth20Utils.casOAuthCallbackUrl(server.getPrefix()));
         oauthCasClient.init();
 
         val authenticator = oAuthClientAuthenticator();
