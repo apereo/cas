@@ -1,36 +1,9 @@
-/* declarations */
-
-@font-face {
-  font-family: 'Roboto';
-  font-style: normal;
-  font-weight: lighter;
-  src: local('Roboto Light'),
-    local('Roboto-Light'),
-    url(../font/roboto/Roboto-Light.woff2) format('woff2');
-}
-
-@font-face {
-  font-family: 'Roboto';
-  font-style: normal;
-  font-weight: normal;
-  src: local('Roboto Regular'),
-    local('Roboto-Regular'),
-    url(../font/roboto/Roboto-Regular.woff2) format('woff2');
-}
-
-@font-face {
-  font-family: 'Roboto';
-  font-style: normal;
-  font-weight: bold;
-  src: local('Roboto Bold'),
-    local('Roboto-Bold'),
-    url(../font/roboto/Roboto-Bold.woff2) format('woff2');
-}
-
 /* Root / Reset */
 
 :root {
     --cas-theme-primary: #153e50;
+    --cas-theme-primary-bg: rgba(21, 62, 80, 0.2);
+
     --cas-theme-primary-light: #006d85;
     --cas-theme-secondary: #74C163;
     --cas-theme-success: var(--cas-theme-secondary);
@@ -61,7 +34,7 @@ body {
     padding: 0;
     flex-direction: column;
     justify-content: space-between;
-    font-family: 'Roboto', sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
     background: #EFEFEF;
 }
 
@@ -314,7 +287,27 @@ button.close {
     border-bottom-right-radius: 0;
 }
 
+.custom-select {
+    display: inline-block;
+    min-width: 200px;
+    height: 56px;
+    padding: .375rem 1.75rem .375rem .75rem;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: rgba(0, 0, 0, 0.87);
+    vertical-align: middle;
+    background: #fff url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='4' height='5' viewBox='0 0 4 5'%3e%3cpath fill='%23343a40' d='M2 0L0 2h4zm0 5L0 3h4z'/%3e%3c/svg%3e") no-repeat right .75rem center/8px 10px;
+    border: 1px solid #ced4da;
+    border-radius: .25rem;
+    -webkit-appearance: none;
+}
+
 /* utilities */
+
+.bg-primary {
+    background-color: var(--cas-theme-primary-bg);
+}
 
 .text-warning {
     color: var(--cas-theme-warning);
@@ -520,4 +513,9 @@ button.close {
     height: 330px;
     border: none;
     padding: 0 20px;
+}
+
+#serviceui {
+    background-color: #17a3b844;
+    border-radius: 4px;
 }
