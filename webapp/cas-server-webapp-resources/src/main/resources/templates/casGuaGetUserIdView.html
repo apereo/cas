@@ -2,38 +2,42 @@
 <html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
 
 <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 
     <title th:text="#{cas.login.pagetitle}">Gua Get User Id View</title>
     <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag" />
 </head>
 
 <body>
-<main role="main" class="container mt-3 mb-3">
-    <div layout:fragment="content" id="login">
-        <form method="post" id="fm1" class="fm-v clearfix" th:action="@{/login}">
-            <div class="form-group">
-                <label for="username" th:utext="#{screen.welcome.label.netid}"><span class="accesskey">U</span>sername:</label>
-                <input class="form-control"
-                       type="password"
-                       id="username"
-                       name="username"
-                       size="25"
-                       tabindex="2"
-                       th:accesskey="#{screen.welcome.label.netid.accesskey}"
-                       autocomplete="off"
-                       required/>
-                <div>
-                    <p/>
-                </div>
-                <input class="btn btn-submit" accesskey="l"
-                       th:value="#{screen.welcome.button.login}" tabindex="4" type="submit"/>
-                <input type="hidden" name="_eventId_submit" value="LOGIN" />
+    <main role="main" class="container mt-3 mb-3">
+        <div layout:fragment="content" id="login" class="d-flex justify-content-center">
+            <div class="mdc-card mdc-card-content w-lg-50 p-4">
+                <form method="post" id="fm1" th:action="@{/login}">
+                    <input type="hidden" name="_eventId_submit" value="LOGIN" />
+                    <input type="hidden" name="execution" th:value="${flowExecutionKey}" />
+                    <div class="cas-field my-3">
+                        <div class="mdc-text-field mdc-text-field--outlined w-100">
+                            <input class="mdc-text-field__input" id="username" name="username" size="25"
+                                th:accesskey="#{screen.welcome.label.netid.accesskey}" autocomplete="off" required />
+                            <div class="mdc-notched-outline">
+                                <div class="mdc-notched-outline__leading"></div>
+                                <div class="mdc-notched-outline__notch">
+                                    <label for="username" class="mdc-floating-label"
+                                        th:utext="#{screen.welcome.label.netid}">Username</label>
+                                </div>
+                                <div class="mdc-notched-outline__trailing"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="mdc-button mdc-button--raised" accesskey="l" type="submit">
+                        <span class="mdc-button__label" th:text="#{screen.welcome.button.login}">Login</span>
+                    </button>
+
+                </form>
             </div>
-            <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
-        </form>
-    </div>
-</main>
+        </div>
+    </main>
 </body>
+
 </html>
