@@ -14,7 +14,6 @@
     <div layout:fragment="content" id="login">
         <form method="post" id="fm1" class="fm-v clearfix" th:object="${credential}" th:action="@{/login}">
             <div class="alert alert-danger alert-dismissible fade show" th:if="${#fields.hasErrors('*')}">
-                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
                 <span th:each="err : ${#fields.errors('*')}" th:utext="${err + ' '}">error message</span>
             </div>
 

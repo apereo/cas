@@ -16,7 +16,6 @@
 
         <form method="post" id="fm1" class="fm-v clearfix" th:object="${credential}" th:action="@{/login}">
             <div id="msg" class="alert alert-danger alert-dismissible fade show errors" th:if="${#fields.hasErrors('*')}">
-                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
                 <span th:each="err : ${#fields.errors('*')}" th:utext="${err + ' '}">Error message</span>
             </div>
 

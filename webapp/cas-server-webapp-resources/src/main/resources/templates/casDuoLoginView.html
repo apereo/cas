@@ -14,7 +14,6 @@
     <div layout:fragment="content">
         <form method="post" id="duo_form" class="fm-v clearfix" th:object="${credential}" th:action="@{/login}">
             <div id="msg" class="alert alert-danger alert-dismissible fade show" role="alert" th:if="${#fields.hasErrors('*')}">
-                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
                 <span th:each="err : ${#fields.errors('*')}" th:utext="${err + ' '}">this error block and text is only shown if there are errors</span>
             </div>
 

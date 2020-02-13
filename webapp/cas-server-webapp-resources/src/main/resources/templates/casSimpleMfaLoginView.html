@@ -15,12 +15,10 @@
         <form method="post" id="fm1" class="fm-v clearfix" th:object="${credential}" th:action="@{/login}">
 
             <div class="alert alert-danger alert-dismissible fade show" th:if="${flowRequestContext.messageContext.hasErrorMessages()}">
-                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
                 <p th:each="message : ${flowRequestContext.messageContext.allMessages}" th:utext="#{${message.text}}">Message Text</p>
             </div>
 
             <div class="alert alert-info alert-dismissible fade show" th:unless="${flowRequestContext.messageContext.hasErrorMessages()}">
-                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
                 <p th:each="message : ${flowRequestContext.messageContext.allMessages}" th:utext="#{${message.text}}">Message Text</p>
             </div>
 
