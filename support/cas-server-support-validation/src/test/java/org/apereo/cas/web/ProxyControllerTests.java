@@ -8,7 +8,6 @@ import org.apereo.cas.config.CasThymeleafConfiguration;
 import org.apereo.cas.services.web.config.CasThemesConfiguration;
 import org.apereo.cas.ticket.ProxyGrantingTicketImpl;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
-import org.apereo.cas.web.config.CasProtocolViewsConfiguration;
 import org.apereo.cas.web.config.CasValidationConfiguration;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.cas.web.v2.ProxyController;
@@ -34,7 +33,6 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = {
     BaseCasCoreTests.SharedTestConfiguration.class,
-    CasProtocolViewsConfiguration.class,
     CasThemesConfiguration.class,
     CasThymeleafConfiguration.class,
     CasValidationConfiguration.class

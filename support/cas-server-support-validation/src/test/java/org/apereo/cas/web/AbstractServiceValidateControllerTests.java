@@ -17,7 +17,6 @@ import org.apereo.cas.util.http.SimpleHttpClientFactoryBean;
 import org.apereo.cas.validation.Cas20WithoutProxyingValidationSpecification;
 import org.apereo.cas.validation.CasProtocolValidationSpecification;
 import org.apereo.cas.validation.ValidationResponseType;
-import org.apereo.cas.web.config.CasProtocolViewsConfiguration;
 import org.apereo.cas.web.config.CasValidationConfiguration;
 
 import lombok.val;
@@ -41,7 +40,6 @@ import static org.mockito.Mockito.*;
  * @since 3.0.0
  */
 @Import({
-    CasProtocolViewsConfiguration.class,
     CasThemesConfiguration.class,
     CasThymeleafConfiguration.class,
     CasValidationConfiguration.class

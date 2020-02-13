@@ -30,7 +30,6 @@ import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.services.web.config.CasThemesConfiguration;
 import org.apereo.cas.validation.config.CasCoreValidationConfiguration;
 import org.apereo.cas.web.config.CasCookieConfiguration;
-import org.apereo.cas.web.config.CasProtocolViewsConfiguration;
 import org.apereo.cas.web.config.CasValidationConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
@@ -84,7 +83,6 @@ public class AbstractOpenIdTests {
         CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
         CasThemesConfiguration.class,
         CasThymeleafConfiguration.class,
-        CasProtocolViewsConfiguration.class,
         CasCoreWebConfiguration.class,
         CasDefaultServiceTicketIdGeneratorsConfiguration.class,
         CasCoreTicketIdGeneratorsConfiguration.class,

@@ -5,7 +5,6 @@ import org.apereo.cas.config.CasThymeleafConfiguration;
 import org.apereo.cas.config.OpenIdConfiguration;
 import org.apereo.cas.services.web.config.CasThemesConfiguration;
 import org.apereo.cas.validation.config.CasCoreValidationConfiguration;
-import org.apereo.cas.web.config.CasProtocolViewsConfiguration;
 import org.apereo.cas.web.config.CasValidationConfiguration;
 import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.web.flow.config.OpenIdWebflowConfiguration;
@@ -34,7 +33,6 @@ import static org.junit.jupiter.api.Assertions.*;
     CasValidationConfiguration.class,
     CasThemesConfiguration.class,
     CasThymeleafConfiguration.class,
-    CasProtocolViewsConfiguration.class,
     ThymeleafAutoConfiguration.class,
     OpenIdConfiguration.class,
     OpenIdWebflowConfiguration.class
