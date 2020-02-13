@@ -23,7 +23,9 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * @author Scott Battaglia
  * @since 3.1
+ * @deprecated 6.2
  */
+@Deprecated
 public class OpenIdCredentialsAuthenticationHandlerTests extends AbstractOpenIdTests {
 
     private static final String TGT_ID = "test";

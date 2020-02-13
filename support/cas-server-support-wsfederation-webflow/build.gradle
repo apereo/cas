@@ -3,6 +3,7 @@ dependencies {
     api project(":api:cas-server-core-api-webflow")
     
     implementation libraries.opensaml
+    implementation libraries.dropwizard
     implementation libraries.shibidpjavasupport
     
     implementation project(":support:cas-server-support-saml-core")

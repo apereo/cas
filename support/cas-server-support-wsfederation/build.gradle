@@ -4,6 +4,7 @@ dependencies {
     api project(":api:cas-server-core-api-cookie")
     
     implementation libraries.opensaml
+    implementation libraries.dropwizard
     implementation libraries.shibidpjavasupport
     
     implementation project(":core:cas-server-core-web-api")
@@ -49,5 +50,5 @@ dependencies {
     testImplementation project(":core:cas-server-core-services-authentication")
     testImplementation project(":core:cas-server-core-services-registry")
 
-    testImplementation libraries.thymeleaf
+    testImplementation project(":support:cas-server-support-thymeleaf")
 }

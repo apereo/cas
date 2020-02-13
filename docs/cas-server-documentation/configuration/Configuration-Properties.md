@@ -4789,6 +4789,8 @@ To learn more about this topic, [please review this guide](../webflow/Webflow-Cu
 # cas.webflow.alwaysPauseRedirect=false
 # cas.webflow.refresh=true
 # cas.webflow.redirectSameState=false
+# cas.webflow.autoconfigure=true
+# cas.webflow.basePath=
 ```
 
 ### Spring Webflow Login Decorations

@@ -4,6 +4,8 @@ import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
 import org.apereo.cas.BaseCasCoreTests;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.config.CasThymeleafConfiguration;
+import org.apereo.cas.services.web.config.CasThemesConfiguration;
 import org.apereo.cas.ticket.ProxyGrantingTicketImpl;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.web.config.CasProtocolViewsConfiguration;
@@ -33,6 +35,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     BaseCasCoreTests.SharedTestConfiguration.class,
     CasProtocolViewsConfiguration.class,
+    CasThemesConfiguration.class,
+    CasThymeleafConfiguration.class,
     CasValidationConfiguration.class
 }, properties = {
     "spring.mail.host=localhost",
