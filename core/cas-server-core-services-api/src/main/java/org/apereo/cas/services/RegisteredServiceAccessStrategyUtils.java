@@ -47,7 +47,7 @@ public class RegisteredServiceAccessStrategyUtils {
      */
     public static void ensureServiceAccessIsAllowed(final String service, final RegisteredService registeredService) {
         if (registeredService == null) {
-            LOGGER.warn("Unauthorized Service Access. Service {} is not found in service registry.", service);
+            LOGGER.warn("Unauthorized Service Access. Service [{}] is not found in service registry.", service);
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, "Service is not found in service registry.");
         }
         if (!registeredService.getAccessStrategy().isServiceAccessAllowed()) {
