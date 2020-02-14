@@ -29,7 +29,10 @@ dependencies {
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core-configuration")
     testImplementation project(":core:cas-server-core-events")
+
     testImplementation project(":support:cas-server-support-validation")
+    testImplementation project(":support:cas-server-support-themes")
+    testImplementation project(":support:cas-server-support-thymeleaf")
     testImplementation project(":support:cas-server-support-metrics")
     testImplementation project(":support:cas-server-support-discovery-profile")
     testImplementation project(":support:cas-server-support-trusted-mfa")

@@ -2,11 +2,13 @@ package org.apereo.cas.support.saml.web;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
+import org.apereo.cas.config.CasThymeleafConfiguration;
 import org.apereo.cas.config.CoreSamlConfiguration;
 import org.apereo.cas.config.SamlConfiguration;
 import org.apereo.cas.config.authentication.support.SamlAuthenticationEventExecutionPlanConfiguration;
 import org.apereo.cas.config.authentication.support.SamlServiceFactoryConfiguration;
 import org.apereo.cas.config.authentication.support.SamlUniqueTicketIdGeneratorConfiguration;
+import org.apereo.cas.services.web.config.CasThemesConfiguration;
 import org.apereo.cas.web.config.CasValidationConfiguration;
 import org.apereo.cas.web.report.AbstractCasEndpointTests;
 
@@ -33,6 +35,8 @@ import static org.junit.jupiter.api.Assertions.*;
     SamlServiceFactoryConfiguration.class,
     SamlUniqueTicketIdGeneratorConfiguration.class,
     SamlAuthenticationEventExecutionPlanConfiguration.class,
+    CasThemesConfiguration.class,
+    CasThymeleafConfiguration.class,
     SamlConfiguration.class
 },
     properties = {

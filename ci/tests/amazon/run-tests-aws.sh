@@ -29,7 +29,7 @@ echo -e "***********************************************"
 
 ./ci/tests/amazon/run-aws-server.sh
 
-gradleBuild="$gradleBuild testAWSS3 jacocoRootReport -x test -x javadoc -x check \
+gradleBuild="$gradleBuild testAWS jacocoRootReport -x test -x javadoc -x check \
     -DskipGradleLint=true --parallel \
     -DskipNestedConfigMetadataGen=true "
 

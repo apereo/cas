@@ -3,27 +3,39 @@
 clear
 
 printHelp() {
-    echo -e "Usage: ./testcas.sh --category [category1,category2,...] [--debug] [--coverage]\n"
-    echo -e "Available categories are:\n"
+    echo -e "Usage: ./testcas.sh --category [category1,category2,...] [--help] [--debug] [--coverage]\n"
+    echo -e "Available test categories are:\n"
     echo -e "\t - simple"
     echo -e "\t - memcached"
+    echo -e "\t - cassandra"
     echo -e "\t - groovy"
     echo -e "\t - ldap"
     echo -e "\t - rest"
     echo -e "\t - mfa"
     echo -e "\t - jdbc"
+    echo -e "\t - mssql"
     echo -e "\t - oracle"
     echo -e "\t - radius"
+    echo -e "\t - couchdb"
+    echo -e "\t - mariadb"
     echo -e "\t - files"
+    echo -e "\t - postgres"
+    echo -e "\t - dynamodb"
+    echo -e "\t - couchbase"
     echo -e "\t - saml"
     echo -e "\t - mail"
+    echo -e "\t - aws"
+    echo -e "\t - activemq"
     echo -e "\t - oauth"
     echo -e "\t - oidc"
     echo -e "\t - redis"
     echo -e "\t - webflow"
     echo -e "\t - mongo"
+    echo -e "\t - ignite"
+    echo -e "\t - influxdb"
+    echo -e "\t - zookeeper"
     echo -e "\t - mysql"
-    echo -e "\nSee the script for more available categories.\n"
+    echo -e "\nPlease see the test script for more available categories.\n"
 }
 
 parallel="--parallel "
@@ -33,6 +45,10 @@ while (( "$#" )); do
     --coverage)
         coverage="jacocoRootReport "
         shift
+        ;;
+    --help)
+        printHelp
+        exit 0
         ;;
     --debug)
         debug="--debug-jvm "
@@ -44,11 +60,10 @@ while (( "$#" )); do
         shift 2
         ;;
     --category)
-
         for item in $(echo "$2" | sed "s/,/ /g")
         do
             case "${item}" in
-            test|simple|run|basic|unit)
+            test|simple|run|basic|unit|unittests)
                 task+="test "
                 category+="SIMPLE,"
                 ;;
@@ -60,13 +75,29 @@ while (( "$#" )); do
                 task+="testFileSystem "
                 category+="FILESYSTEM,"
                 ;;
-            groovy)
+            groovy|script)
                 task+="testGroovy "
                 category+="GROOVY,"
                 ;;
-            ldap)
+            mssql)
+                task+="testMsSqlServer "
+                category+="MsSqlServer,"
+                ;;
+            ignite)
+                task+="testIgnite "
+                category+="Ignite,"
+                ;;
+            influx|influxdb)
+                task+="testInfluxDb "
+                category+="InfluxDb,"
+                ;;
+            ldap|ad|activedirectory)
                 task+="testLdap "
                 category+="LDAP,"
+                ;;
+            couchbase)
+                task+="testCouchbase "
+                category+="COUCHBASE,"
                 ;;
             mongo|mongodb)
                 task+="testMongoDb "
@@ -76,7 +107,7 @@ while (( "$#" )); do
                 task+="testCouchDb "
                 category+="COUCHDB,"
                 ;;
-            rest|restful)
+            rest|restful|restapi)
                 task+="testRestful "
                 category+="RESTFULAPI,"
                 ;;
@@ -88,7 +119,7 @@ while (( "$#" )); do
                 task+="testMariaDb "
                 category+="MariaDb,"
                 ;;
-            jdbc|jpa|database|hibernate)
+            jdbc|jpa|database|hibernate|rdbms|hsql)
                 task+="testJDBC "
                 category+="JDBC,"
                 ;;
@@ -103,6 +134,10 @@ while (( "$#" )); do
             oauth)
                 task+="testOAuth "
                 category+="OAUTH,"
+                ;;
+            aws)
+                task+="testAWS "
+                category+="AmazonWebServices,"
                 ;;
             oidc)
                 task+="testOIDC "
