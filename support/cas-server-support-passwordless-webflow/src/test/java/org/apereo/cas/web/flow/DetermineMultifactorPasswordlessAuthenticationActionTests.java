@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration;
 import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -30,10 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Import({
-    ThymeleafAutoConfiguration.class,
-    BaseWebflowConfigurerTests.SharedTestConfiguration.class
-})
+@Import(BaseWebflowConfigurerTests.SharedTestConfiguration.class)
 @Tag("Webflow")
 @TestPropertySource(properties = {
     "cas.authn.passwordless.accounts.simple.casuser=casuser@example.org",

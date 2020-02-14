@@ -15,7 +15,6 @@ import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
@@ -31,7 +30,6 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Import({
-    ThymeleafAutoConfiguration.class,
     SamlIdPMetadataUIWebflowConfigurerTests.SamlIdPMetadataTestConfiguration.class,
     CoreSamlConfiguration.class,
     SamlIdPConfiguration.class,

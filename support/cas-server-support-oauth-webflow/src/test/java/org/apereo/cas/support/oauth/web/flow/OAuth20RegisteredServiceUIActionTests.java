@@ -21,6 +21,7 @@ import org.apereo.cas.config.CasOAuth20AuthenticationServiceSelectionStrategyCon
 import org.apereo.cas.config.CasOAuth20WebflowConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
+import org.apereo.cas.config.CasThymeleafConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -73,6 +74,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreAuthenticationConfiguration.class,
     CasCookieConfiguration.class,
     CasThemesConfiguration.class,
+    CasThymeleafConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreAuthenticationHandlersConfiguration.class,
     CasCoreAuthenticationMetadataConfiguration.class,
@@ -81,7 +83,8 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreServicesAuthenticationConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     CasOAuth20AuthenticationServiceSelectionStrategyConfiguration.class,
-    CasOAuth20WebflowConfiguration.class})
+    CasOAuth20WebflowConfiguration.class
+})
 @Tag("OAuth")
 public class OAuth20RegisteredServiceUIActionTests {
     @Autowired

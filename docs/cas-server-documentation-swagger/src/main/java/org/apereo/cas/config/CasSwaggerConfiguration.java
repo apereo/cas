@@ -22,16 +22,16 @@ public class CasSwaggerConfiguration {
     @Bean
     public Docket api() {
         return new Docket(DocumentationType.SWAGGER_2)
-                .select()
-                .apis(RequestHandlerSelectors.any())
-                .paths(PathSelectors.any())
-                .build()
-                .apiInfo(new ApiInfoBuilder()
-                        .title("CAS Swagger API Documentation")
-                        .license("Apache v2")
-                        .licenseUrl("https://github.com/apereo/cas/blob/master/LICENSE")
-                        .description("CAS Swagger API Documentation")
-                        .version("1.0.0")
-                        .build());
+            .select()
+            .apis(RequestHandlerSelectors.any())
+            .paths(PathSelectors.any())
+            .build()
+            .apiInfo(new ApiInfoBuilder()
+                .title("CAS Swagger API Documentation")
+                .license("Apache v2")
+                .licenseUrl("https://github.com/apereo/cas/blob/master/LICENSE")
+                .description("CAS Swagger API Documentation")
+                .version("1.0.0")
+                .build());
     }
 }

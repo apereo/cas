@@ -49,6 +49,7 @@ public class ChainingAttributeReleasePolicy implements RegisteredServiceAttribut
             .stream()
             .map(policy -> policy.getConsentPolicy().getPolicies())
             .flatMap(List::stream)
+            .sorted(AnnotationAwareOrderComparator.INSTANCE)
             .collect(Collectors.toCollection(LinkedHashSet::new));
         chainingConsentPolicy.addPolicies(newConsentPolicies);
         return chainingConsentPolicy;
@@ -59,7 +60,7 @@ public class ChainingAttributeReleasePolicy implements RegisteredServiceAttribut
 
         val merger = CoreAuthenticationUtils.getAttributeMerger(mergingPolicy);
         val attributes = new HashMap<String, List<Object>>();
-        policies.forEach(policy -> {
+        policies.stream().sorted(AnnotationAwareOrderComparator.INSTANCE).forEach(policy -> {
             LOGGER.trace("Fetching attributes from policy [{}] for principal [{}]", policy.getName(), p.getId());
             val policyAttributes = policy.getAttributes(p, selectedService, service);
             merger.mergeAttributes(attributes, policyAttributes);
@@ -72,7 +73,7 @@ public class ChainingAttributeReleasePolicy implements RegisteredServiceAttribut
     public Map<String, List<Object>> getConsentableAttributes(final Principal principal, final Service selectedService, final RegisteredService service) {
         val merger = CoreAuthenticationUtils.getAttributeMerger(mergingPolicy);
         val attributes = new HashMap<String, List<Object>>();
-        policies.forEach(policy -> {
+        policies.stream().sorted(AnnotationAwareOrderComparator.INSTANCE).forEach(policy -> {
             LOGGER.trace("Fetching consentable attributes from policy [{}] for principal [{}]", policy.getName(), principal.getId());
             val policyAttributes = policy.getConsentableAttributes(principal, selectedService, service);
             merger.mergeAttributes(attributes, policyAttributes);
@@ -82,7 +83,7 @@ public class ChainingAttributeReleasePolicy implements RegisteredServiceAttribut
     }
 
     /**
-     * Add policy. Call finalizePolicies when done if adding more than one policy.
+     * Add policy.
      *
      * @param policy the policy
      */
@@ -97,14 +98,6 @@ public class ChainingAttributeReleasePolicy implements RegisteredServiceAttribut
      */
     public void addPolicies(final RegisteredServiceAttributeReleasePolicy... policies) {
         this.policies.addAll(Arrays.stream(policies).collect(Collectors.toList()));
-        finalizePolicies();
-    }
-
-    /**
-     * Call after done adding policies.
-     */
-    public void finalizePolicies() {
-        AnnotationAwareOrderComparator.sortIfNecessary(policies);
     }
 
     /**

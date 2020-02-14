@@ -1,6 +1,7 @@
 package org.apereo.cas.adaptors.duo.config;
 
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.adaptors.duo.config.cond.ConditionalOnDuoSecurityConfigured;
 import org.apereo.cas.adaptors.duo.web.flow.DuoSecurityAuthenticationWebflowEventResolver;
 import org.apereo.cas.adaptors.duo.web.flow.action.DuoSecurityAuthenticationWebflowAction;
 import org.apereo.cas.adaptors.duo.web.flow.action.DuoSecurityDirectAuthenticationAction;
@@ -34,6 +35,7 @@ import org.springframework.webflow.execution.Action;
  */
 @Configuration("duoSecurityConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ConditionalOnDuoSecurityConfigured
 public class DuoSecurityConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;

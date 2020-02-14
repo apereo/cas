@@ -38,7 +38,6 @@ import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
-import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Import;
@@ -60,8 +59,7 @@ public class AbstractOpenIdTests {
 
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
-        MailSenderAutoConfiguration.class,
-        ThymeleafAutoConfiguration.class
+        MailSenderAutoConfiguration.class
     })
     @SpringBootConfiguration
     @Import({
