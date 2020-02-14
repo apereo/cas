@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.authentication.AuthenticationCredentialsThreadLocalBinder;
 import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.principal.DefaultPrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.Principal;
@@ -94,6 +95,8 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
         LOGGER.debug("Initiating attributes release phase for principal [{}] accessing service [{}] defined by registered service [{}]...",
             principal.getId(), selectedService, registeredService.getServiceId());
         LOGGER.trace("Locating principal attributes for [{}]", principal.getId());
+
+        AuthenticationCredentialsThreadLocalBinder.bindInProgressPrincipal(principal);
 
         val principalAttributes = resolveAttributesFromPrincipalAttributeRepository(principal, registeredService);
         LOGGER.debug("Found principal attributes [{}] for [{}]", principalAttributes, principal.getId());

@@ -1,6 +1,9 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.authentication.principal.Principal;
+
 import lombok.NoArgsConstructor;
+import lombok.val;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -24,11 +27,30 @@ public class AuthenticationCredentialsThreadLocalBinder {
 
     private static final ThreadLocal<Authentication> CURRENT_AUTHENTICATION = new ThreadLocal<>();
 
+    private static final ThreadLocal<Principal> IN_PROGRESS_PRINCIPAL = new ThreadLocal<>();
+
     private static final ThreadLocal<Authentication> IN_PROGRESS_AUTHENTICATION = new ThreadLocal<>();
 
     private static final ThreadLocal<AuthenticationBuilder> CURRENT_AUTHENTICATION_BUILDER = new ThreadLocal<>();
 
     private static final ThreadLocal<String[]> CURRENT_CREDENTIAL_IDS = new ThreadLocal<>();
+
+    /**
+     * Bind Principal to ThreadLocal for principal that has been authenticated but for which attributes have not yet been retrieved.
+     * This can make attributes from the authentication event (e.g. X509, LDAP, WSFED) available to scripted attribute repositories.
+     * If a principal is already bound, combine the attributes with new attributes overriding existing.
+     * CAS won't use this as the principal, this principal is just an attribute bucket that will start with authentication
+     * attributes and collect more attributes as attribute repositories are queried.
+     * @param principal the "in progress" principal
+     */
+    public static void bindInProgressPrincipal(final Principal principal) {
+        val inProgressPrincipal = IN_PROGRESS_PRINCIPAL.get();
+        if (inProgressPrincipal != null) {
+            inProgressPrincipal.getAttributes().putAll(principal.getAttributes());
+        } else {
+            IN_PROGRESS_PRINCIPAL.set(principal);
+        }
+    }
 
     /**
      * Bind Authentication to ThreadLocal for authentication event that has internally being processed and yet hasn't been fully established
@@ -123,10 +145,27 @@ public class AuthenticationCredentialsThreadLocalBinder {
     }
 
     /**
-     * Clear ThreadLocal state.
+     * Get Principal from ThreadLocal.
+     *
+     * @return principal
+     */
+    public static Principal getInProgressPrincipal() {
+        return IN_PROGRESS_PRINCIPAL.get();
+    }
+
+
+    /**
+     * Clear ThreadLocal state of IN_PROGRESS_AUTHENTICATION.
      */
     public static void clearInProgressAuthentication() {
         IN_PROGRESS_AUTHENTICATION.remove();
+    }
+
+    /**
+     * Clear ThreadLocal state of IN_PROGRESS_PRINCIPAL.
+     */
+    public static void clearInProgressPrincipal() {
+        IN_PROGRESS_PRINCIPAL.remove();
     }
 
     /**
@@ -136,6 +175,7 @@ public class AuthenticationCredentialsThreadLocalBinder {
         CURRENT_CREDENTIAL_IDS.remove();
         CURRENT_AUTHENTICATION.remove();
         CURRENT_AUTHENTICATION_BUILDER.remove();
+        clearInProgressPrincipal();
         clearInProgressAuthentication();
     }
 }

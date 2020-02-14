@@ -1,5 +1,6 @@
 package org.apereo.cas.support.wsfederation.authentication.principal;
 
+import org.apereo.cas.authentication.AuthenticationCredentialsThreadLocalBinder;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -78,16 +79,25 @@ public class WsFederationCredentialsToPrincipalResolver extends PersonDirectoryP
         return null;
     }
 
+    /**
+     * Retrieve attributes from WSFED credentials, from CAS, or from BOTH.
+     * If getting credentials for both, load "in progress" principal as thread local so the WSFED
+     * attributes are available to other attribute repositories, e.g. script attribute repositories.
+     */
     @Override
     protected Map<String, List<Object>> retrievePersonAttributes(final String principalId, final Credential credential) {
         val wsFedCredentials = (WsFederationCredential) credential;
-        if (this.configuration.getAttributesType() == WsFederationConfiguration.WsFedPrincipalResolutionAttributesType.WSFED) {
+        val wsFedAttributesType = this.configuration.getAttributesType();
+        if (wsFedAttributesType == WsFederationConfiguration.WsFedPrincipalResolutionAttributesType.WSFED) {
             return wsFedCredentials.getAttributes();
         }
-        if (this.configuration.getAttributesType() == WsFederationConfiguration.WsFedPrincipalResolutionAttributesType.CAS) {
+        if (wsFedAttributesType == WsFederationConfiguration.WsFedPrincipalResolutionAttributesType.CAS) {
             return super.retrievePersonAttributes(principalId, credential);
         }
-        val mergedAttributes = new HashMap<String, List<Object>>(wsFedCredentials.getAttributes());
+        val wsFedAttributes = wsFedCredentials.getAttributes();
+        val inProgressPrincipal = principalFactory.createPrincipal(principalId, wsFedAttributes);
+        AuthenticationCredentialsThreadLocalBinder.bindInProgressPrincipal(inProgressPrincipal);
+        val mergedAttributes = new HashMap<String, List<Object>>(wsFedAttributes);
         mergedAttributes.putAll(super.retrievePersonAttributes(principalId, credential));
         return mergedAttributes;
     }

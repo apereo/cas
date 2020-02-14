@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.principal.resolvers;
 
+import org.apereo.cas.authentication.AuthenticationCredentialsThreadLocalBinder;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.Credential;
@@ -173,6 +174,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
         }
         LOGGER.debug("Creating principal for [{}]", principalId);
         if (this.resolveAttributes) {
+            currentPrincipal.ifPresent(AuthenticationCredentialsThreadLocalBinder::bindInProgressPrincipal);
             val attributes = retrievePersonAttributes(principalId, credential);
             if (attributes == null || attributes.isEmpty()) {
                 LOGGER.debug("Principal id [{}] did not specify any attributes", principalId);
@@ -186,6 +188,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
             LOGGER.debug("Retrieved [{}] attribute(s) from the repository", attributes.size());
             val pair = convertPersonAttributesToPrincipal(principalId, attributes);
             val principal = buildResolvedPrincipal(pair.getKey(), pair.getValue(), credential, currentPrincipal, handler);
+            AuthenticationCredentialsThreadLocalBinder.bindInProgressPrincipal(principal);
             LOGGER.debug("Final resolved principal by [{}] is [{}]", getName(), principal);
             return principal;
         }

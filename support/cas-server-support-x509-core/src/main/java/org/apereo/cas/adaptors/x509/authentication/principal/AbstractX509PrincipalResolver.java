@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
+import org.apereo.cas.authentication.AuthenticationCredentialsThreadLocalBinder;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -190,11 +191,18 @@ public abstract class AbstractX509PrincipalResolver extends PersonDirectoryPrinc
         return email.map(objects -> (String) objects.get(1)).orElse(null);
     }
 
+    /**
+     * Extract various attributes from certificate and then from normal CAS attribute processes.
+     * Make x509 attributes available to other attribute repositories via thread local containing principal with attributes.
+     */
     @Override
     protected Map<String, List<Object>> retrievePersonAttributes(final String principalId, final Credential credential) {
-        val attributes = new LinkedHashMap<String, List<Object>>(super.retrievePersonAttributes(principalId, credential));
         val certificate = ((X509CertificateCredential) credential).getCertificate();
-        attributes.putAll(extractPersonAttributes(certificate));
+        val x509Attributes = extractPersonAttributes(certificate);
+        val inProgressPrincipal = principalFactory.createPrincipal(principalId, x509Attributes);
+        AuthenticationCredentialsThreadLocalBinder.bindInProgressPrincipal(inProgressPrincipal);
+        val attributes = new LinkedHashMap<String, List<Object>>(super.retrievePersonAttributes(principalId, credential));
+        attributes.putAll(x509Attributes);
         return attributes;
     }
 }

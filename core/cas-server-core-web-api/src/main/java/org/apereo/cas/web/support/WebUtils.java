@@ -854,6 +854,16 @@ public class WebUtils {
     }
 
     /**
+     * Gets in progress principal for use by scripted attribute repositories.
+     * This method just allows scripts to use WebUtils instead of the longer class that is more likely to change.
+     *
+     * @return the in progress principal
+     */
+    public static Principal getInProgressPrincipal() {
+        return AuthenticationCredentialsThreadLocalBinder.getInProgressPrincipal();
+    }
+
+    /**
      * Put passwordless authentication enabled.
      *
      * @param requestContext the request context
