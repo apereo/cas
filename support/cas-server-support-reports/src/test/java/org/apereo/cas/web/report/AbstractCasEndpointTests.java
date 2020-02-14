@@ -26,10 +26,12 @@ import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.CasReportsConfiguration;
+import org.apereo.cas.config.CasThymeleafConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.services.web.config.CasThemesConfiguration;
 import org.apereo.cas.validation.config.CasCoreValidationConfiguration;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
@@ -114,9 +116,6 @@ public abstract class AbstractCasEndpointTests {
         CasCoreWebConfiguration.class,
         CasCoreLogoutConfiguration.class,
         CasCookieConfiguration.class,
-        RefreshAutoConfiguration.class,
-        MailSenderAutoConfiguration.class,
-        AopAutoConfiguration.class,
         CasPersonDirectoryTestConfiguration.class,
         CasWebflowContextConfiguration.class,
         CasCoreWebflowConfiguration.class,

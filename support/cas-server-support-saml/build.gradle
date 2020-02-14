@@ -34,10 +34,12 @@ dependencies {
     testImplementation project(":core:cas-server-core-audit")
     testImplementation project(":core:cas-server-core-cookie-api")
     testImplementation project(":core:cas-server-core-tickets")
+    
     testImplementation project(":support:cas-server-support-validation")
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":support:cas-server-support-reports")
     testImplementation project(":support:cas-server-support-thymeleaf")
+    testImplementation project(":support:cas-server-support-themes")
 
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
