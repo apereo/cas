@@ -59,6 +59,7 @@ public class BasePasswordManagementService implements PasswordManagementService 
         try {
             val json = this.cipherExecutor.decode(token);
             val claims = JwtClaims.parse(json);
+            val resetProperties = properties.getReset();
 
             if (!claims.getIssuer().equals(issuer)) {
                 LOGGER.error("Token issuer does not match CAS");
@@ -74,11 +75,11 @@ public class BasePasswordManagementService implements PasswordManagementService 
             }
 
             val holder = ClientInfoHolder.getClientInfo();
-            if (!claims.getStringClaimValue("origin").equals(holder.getServerIpAddress())) {
+            if (resetProperties.isIncludeServerIpAddress() && !claims.getStringClaimValue("origin").equals(holder.getServerIpAddress())) {
                 LOGGER.error("Token origin server IP address does not match CAS");
                 return null;
             }
-            if (!claims.getStringClaimValue("client").equals(holder.getClientIpAddress())) {
+            if (resetProperties.isIncludeClientIpAddress() && !claims.getStringClaimValue("client").equals(holder.getClientIpAddress())) {
                 LOGGER.error("Token client IP address does not match CAS");
                 return null;
             }
@@ -102,16 +103,21 @@ public class BasePasswordManagementService implements PasswordManagementService 
         try {
             val token = UUID.randomUUID().toString();
             val claims = new JwtClaims();
+            val resetProperties = properties.getReset();
             claims.setJwtId(token);
             claims.setIssuer(issuer);
             claims.setAudience(issuer);
-            claims.setExpirationTimeMinutesInTheFuture(properties.getReset().getExpirationMinutes());
+            claims.setExpirationTimeMinutesInTheFuture(resetProperties.getExpirationMinutes());
             claims.setIssuedAtToNow();
 
             val holder = ClientInfoHolder.getClientInfo();
             if (holder != null) {
-                claims.setStringClaim("origin", holder.getServerIpAddress());
-                claims.setStringClaim("client", holder.getClientIpAddress());
+                if (resetProperties.isIncludeServerIpAddress()) {
+                    claims.setStringClaim("origin", holder.getServerIpAddress());
+                }
+                if (resetProperties.isIncludeClientIpAddress()) {
+                    claims.setStringClaim("client", holder.getClientIpAddress());
+                }
             }
             claims.setSubject(to);
             LOGGER.debug("Creating password management token for [{}]", to);
