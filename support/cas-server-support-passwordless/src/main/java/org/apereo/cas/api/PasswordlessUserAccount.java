@@ -1,10 +1,16 @@
 package org.apereo.cas.api;
 
+import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.io.Serializable;
 import java.util.LinkedHashMap;
@@ -17,12 +23,15 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Data
+@Getter
+@Setter
+@ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @Builder
-public class PasswordlessUserAccount implements Serializable {
+public class PasswordlessUserAccount extends BasicIdentifiableCredential implements Serializable {
     private static final long serialVersionUID = 5783908770607793373L;
 
     private String username;
@@ -37,4 +46,20 @@ public class PasswordlessUserAccount implements Serializable {
     private Map<String, List<String>> attributes = new LinkedHashMap<>();
 
     private boolean multifactorAuthenticationEligible;
+
+    private boolean delegatedAuthenticationEligible;
+
+    private boolean requestPassword;
+
+    @Override
+    @JsonIgnore
+    public String getId() {
+        return getUsername();
+    }
+
+    @Override
+    @JsonIgnore
+    public void setId(final String id) {
+        setUsername(id);
+    }
 }

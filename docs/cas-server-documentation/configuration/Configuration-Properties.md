@@ -281,6 +281,18 @@ are available [here](Configuration-Properties-Common.html#database-settings) und
 # cas.spring.cloud.jdbc.sql=SELECT id, name, value FROM CAS_SETTINGS_TABLE
 ```
 
+### REST
+
+Allow the CAS Spring Cloud configuration server to load settings from a REST API.
+
+```properties
+# cas.spring.cloud.rest.url=
+# cas.spring.cloud.rest.basicAuthUsername=
+# cas.spring.cloud.rest.basicAuthPassword=
+# cas.spring.cloud.rest.method=
+# cas.spring.cloud.rest.headers=Header1:Value1;Header2:Value2
+```
+
 ## Configuration Security
 
 To learn more about how sensitive CAS settings can be
@@ -617,7 +629,8 @@ If none is specified, one is automatically detected and used by CAS.
 
 ```properties
 # cas.server.name=https://cas.example.org:8443
-# cas.server.prefix=https://cas.example.org:8443/cas
+# cas.server.prefix=https://cas.example.org:8443/cas 
+# cas.server.scope=example.org
 # cas.host.name=
 ```
 
@@ -1284,7 +1297,8 @@ Defines whether CAS should include and release protocol attributes defined in th
 principal attributes. By default all authentication attributes are released when protocol attributes are enabled for
 release. If you wish to restrict which authentication attributes get released, you can use the below settings to control authentication attributes more globally.
 
-Protocol/authentication attributes may also be released conditionally on a per-service basis. To learn more about this topic, [please review this guide](../integration/Attribute-Release.html).
+Protocol/authentication attributes may also be released conditionally on a per-service 
+basis. To learn more about this topic, [please review this guide](../integration/Attribute-Release.html).
 
 ```properties
 # cas.authn.authenticationAttributeRelease.onlyRelease=authenticationDate,isFromNewLogin
@@ -1294,8 +1308,19 @@ Protocol/authentication attributes may also be released conditionally on a per-s
 
 ## Principal Resolution
 
-In the event that a separate resolver is put into place, control how the final principal should be constructed by default. Principal resolution and Person Directory settings for this feature are available [here](Configuration-Properties-Common.html#person-directory-principal-resolution) under the configuration key `cas.personDirectory`.
+In the event that a separate resolver is put into place, control how the final principal should be constructed by default. Principal resolution 
+and Person Directory settings for this feature are 
+available [here](Configuration-Properties-Common.html#person-directory-principal-resolution) under the configuration key `cas.person-directory`.
 
+## Attribute Definitions
+
+An attribute definition store allows one to describe metadata about necessary attributes 
+with special decorations to be considered during attribute resolution and release.
+
+```properties
+# cas.person-directory.attribute-definition-store.json.location=file:/etc/cas/config/attribute-defns.json
+```
+ 
 ## Authentication Engine
 
 Control inner-workings of the CAS authentication engine, before and after the execution.
@@ -1675,7 +1700,8 @@ To learn more about this topic, [please review this guide](../installation/Passw
 ### Account Stores
 
 ```properties   
-cas.authn.passwordless.multifactorAuthenticationActivated=false
+# cas.authn.passwordless.multifactorAuthenticationActivated=false
+# cas.authn.passwordless.delegatedAuthenticationActivated=false
 
 # cas.authn.passwordless.accounts.simple.casuser=cas@example.org
 # cas.authn.passwordless.accounts.groovy.location=file:/etc/cas/config/pwdless.groovy
@@ -2145,6 +2171,11 @@ Principal resolution and Person Directory settings for this feature are availabl
 # cas.authn.spnego.ntlm=false
 ```
 
+### Webflow configuration
+
+Webflow auto-configuration settings for this feature are available [here](Configuration-Properties-Common.html#webflow-auto-configuration) under 
+the configuration key `cas.authn.spnego.webflow`.
+
 ### System Settings
 
 ```properties
@@ -2253,6 +2284,11 @@ To learn more about this topic, [please review this guide](../installation/JWT-A
 ```properties
 # cas.authn.token.name=
 ```
+
+### Webflow configuration
+
+Webflow auto-configuration settings for this feature are available [here](Configuration-Properties-Common.html#webflow-auto-configuration) under 
+the configuration key `cas.authn.token.webflow`.
 
 ### JWT Tickets
 
@@ -2406,6 +2442,11 @@ Password encoding settings for this feature are available [here](Configuration-P
 ## X509 Authentication
 
 To learn more about this topic, [please review this guide](../installation/X509-Authentication.html).
+
+### Webflow configuration
+
+Webflow auto-configuration settings for this feature are available [here](Configuration-Properties-Common.html#webflow-auto-configuration) under 
+the configuration key `cas.authn.x509.webflow`.
 
 ### Principal Resolution
 
@@ -3125,7 +3166,6 @@ To learn more about this topic, [please review this guide](../installation/Confi
 
 ```properties
 # cas.authn.samlIdp.entityId=https://cas.example.org/idp
-# cas.authn.samlIdp.scope=example.org
 
 # cas.authn.samlIdp.authenticationContextClassMappings[0]=urn:oasis:names:tc:SAML:2.0:ac:classes:SomeClassName->mfa-duo
 # cas.authn.samlIdp.authenticationContextClassMappings[1]=https://refeds.org/profile/mfa->mfa-gauth
@@ -3546,7 +3586,6 @@ prefixes for the `keystorePath` or `identityProviderMetadataPath` property).
 # cas.authn.pac4j.saml[0].passive=false
 
 # cas.authn.pac4j.saml[0].wantsAssertionsSigned=
-# cas.authn.pac4j.saml[0].signLogoutRequests=
 # cas.authn.pac4j.saml[0].allSignatureValidationDisabled=false
 # cas.authn.pac4j.saml[0].signServiceProviderMetadata=false
 # cas.authn.pac4j.saml[0].principalIdAttribute=eduPersonPrincipalName
@@ -3571,6 +3610,9 @@ prefixes for the `keystorePath` or `identityProviderMetadataPath` property).
 
 # cas.authn.pac4j.saml[0].mappedAttributes[0].name=urn:oid:2.5.4.42
 # cas.authn.pac4j.saml[0].mappedAttributes[0].mappedAs=displayName
+
+# cas.authn.pac4j.saml[0].messageStoreFactory=org.pac4j.saml.store.EmptyStoreFactory
+
 ```
 
 Examine the generated metadata after accessing the CAS login screen to ensure all 
@@ -4747,6 +4789,8 @@ To learn more about this topic, [please review this guide](../webflow/Webflow-Cu
 # cas.webflow.alwaysPauseRedirect=false
 # cas.webflow.refresh=true
 # cas.webflow.redirectSameState=false
+# cas.webflow.autoconfigure=true
+# cas.webflow.basePath=
 ```
 
 ### Spring Webflow Login Decorations
@@ -5163,6 +5207,11 @@ To learn more about this topic, [please review this guide](../integration/Attrib
 
 Signing & encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.consent`. The signing and encryption keys [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`.
 
+### Webflow configuration
+
+Webflow auto-configuration settings for this feature are available [here](Configuration-Properties-Common.html#webflow-auto-configuration) under 
+the configuration key `cas.consent.webflow`.
+
 ### JSON Attribute Consent
 
 ```properties
@@ -5249,6 +5298,9 @@ To learn more about this topic, [please review this guide](../installation/Passw
 
 # cas.authn.pm.reset.expirationMinutes=1
 # cas.authn.pm.reset.securityQuestionsEnabled=true
+# Whether the Password Management Token will contain the client or server IP Address.
+# cas.authn.pm.reset.includeServerIpAddress=true
+# cas.authn.pm.reset.includeClientIpAddress=true
 
 # Automatically log in after successful password change
 # cas.authn.pm.autoLogin=false
@@ -5260,6 +5312,11 @@ available [here](Configuration-Properties-Common.html#sms-notifications) under t
 
 The signing and encryption keys [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`.
 The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`. Signing & encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.authn.pm.reset`.
+
+### Webflow configuration
+
+Webflow auto-configuration settings for this feature are available [here](Configuration-Properties-Common.html#webflow-auto-configuration) under 
+the configuration key `cas.authn.pm.webflow`.
 
 ### Password History
 

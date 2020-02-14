@@ -19,6 +19,7 @@ import java.util.List;
 public class SystemMonitorHealthIndicator extends AbstractHealthIndicator {
 
     private final MetricsEndpoint metrics;
+
     private final int threshold;
 
     @Override
@@ -26,16 +27,16 @@ public class SystemMonitorHealthIndicator extends AbstractHealthIndicator {
         val systemLoad = getMetricsFor("system.load.average.1m");
 
         builder
-                .withDetail("systemUsage", getMetricsFor("system.cpu.usage"))
-                .withDetail("systemLoad", getMetricsFor("system.load.average.1m"))
-                .withDetail("processUsage", getMetricsFor("process.cpu.usage"))
-                .withDetail("jvmUsed", getMetricsFor("jvm.memory.used"))
-                .withDetail("jvmCommitted", getMetricsFor("jvm.memory.committed"))
-                .withDetail("heapUsed", getMetricsFor("jvm.memory.used", List.of("area:heap")))
-                .withDetail("heapCommitted", getMetricsFor("jvm.memory.committed", List.of("area:heap")))
-                .withDetail("uptime", getMetricsFor("process.uptime"))
-                .withDetail("requests", getMetricsFor("http.server.requests"))
-                .withDetail("maxRequest", getMetricsFor("http.server.requests", 2));
+            .withDetail("systemUsage", getMetricsFor("system.cpu.usage"))
+            .withDetail("systemLoad", getMetricsFor("system.load.average.1m"))
+            .withDetail("processUsage", getMetricsFor("process.cpu.usage"))
+            .withDetail("jvmUsed", getMetricsFor("jvm.memory.used"))
+            .withDetail("jvmCommitted", getMetricsFor("jvm.memory.committed"))
+            .withDetail("heapUsed", getMetricsFor("jvm.memory.used", List.of("area:heap")))
+            .withDetail("heapCommitted", getMetricsFor("jvm.memory.committed", List.of("area:heap")))
+            .withDetail("uptime", getMetricsFor("process.uptime"))
+            .withDetail("requests", getMetricsFor("http.server.requests"))
+            .withDetail("maxRequest", getMetricsFor("http.server.requests", 2));
 
         if (systemLoad > threshold) {
             builder.status("WARN");

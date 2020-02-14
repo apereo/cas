@@ -26,10 +26,12 @@ import org.springframework.context.annotation.Configuration;
  *
  * @author Misagh Moayyed
  * @author Dmitriy Kopylenko
+ * @deprecated 6.2
  * @since 5.1.0
  */
 @Configuration("openIdAuthenticationEventExecutionPlanConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Deprecated(since = "6.2")
 public class OpenIdAuthenticationEventExecutionPlanConfiguration {
     @Autowired
     @Qualifier("servicesManager")

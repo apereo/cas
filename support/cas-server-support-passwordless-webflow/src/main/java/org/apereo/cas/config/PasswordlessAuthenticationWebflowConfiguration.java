@@ -9,9 +9,11 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.io.CommunicationsManager;
+import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
 import org.apereo.cas.web.flow.AcceptPasswordlessAuthenticationAction;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
+import org.apereo.cas.web.flow.DetermineDelegatedAuthenticationAction;
 import org.apereo.cas.web.flow.DetermineMultifactorPasswordlessAuthenticationAction;
 import org.apereo.cas.web.flow.DisplayBeforePasswordlessAuthenticationAction;
 import org.apereo.cas.web.flow.PasswordlessAuthenticationWebflowConfigurer;
@@ -20,6 +22,7 @@ import org.apereo.cas.web.flow.VerifyPasswordlessAccountAuthenticationAction;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 
+import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -30,9 +33,15 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
+import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
+import org.springframework.webflow.execution.RequestContext;
+
+import java.io.Serializable;
+import java.util.Set;
+import java.util.function.Function;
 
 /**
  * This is {@link PasswordlessAuthenticationWebflowConfiguration}.
@@ -96,6 +105,10 @@ public class PasswordlessAuthenticationWebflowConfiguration {
     @Qualifier("defaultMultifactorTriggerSelectionStrategy")
     private ObjectProvider<MultifactorAuthenticationTriggerSelectionStrategy> multifactorTriggerSelectionStrategy;
 
+    @Autowired
+    @Qualifier("delegatedClientIdentityProviderConfigurationFunction")
+    private ObjectProvider<Function<RequestContext, Set<? extends Serializable>>> delegatedClientProviderFunction;
+
     @Bean
     @ConditionalOnMissingBean(name = "verifyPasswordlessAccountAuthenticationAction")
     @RefreshScope
@@ -112,6 +125,18 @@ public class PasswordlessAuthenticationWebflowConfiguration {
             passwordlessPrincipalFactory.getObject(),
             authenticationSystemSupport.getObject(),
             casProperties);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "determineDelegatedAuthenticationAction")
+    @RefreshScope
+    public Action determineDelegatedAuthenticationAction() {
+        if (delegatedClientProviderFunction.getIfAvailable() != null) {
+            val selectorScriptResource = casProperties.getAuthn().getPasswordless().getDelegatedAuthenticationSelectorScript().getLocation();
+            return new DetermineDelegatedAuthenticationAction(casProperties, delegatedClientProviderFunction.getObject(),
+                new WatchableGroovyScriptResource(selectorScriptResource));
+        }
+        return requestContext -> new EventFactorySupport().success(this);
     }
 
     @Bean

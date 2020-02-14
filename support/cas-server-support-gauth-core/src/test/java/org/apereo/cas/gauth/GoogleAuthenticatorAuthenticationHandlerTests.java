@@ -19,6 +19,7 @@ import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -42,6 +43,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
+@Tag("MFA")
 public class GoogleAuthenticatorAuthenticationHandlerTests {
     private IGoogleAuthenticator googleAuthenticator;
     private GoogleAuthenticatorAuthenticationHandler handler;

@@ -20,17 +20,24 @@ import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
+import org.apereo.cas.config.CoreSamlConfiguration;
 import org.apereo.cas.config.PasswordlessAuthenticationConfiguration;
 import org.apereo.cas.config.PasswordlessAuthenticationWebflowConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
+import org.apereo.cas.support.pac4j.config.Pac4jDelegatedAuthenticationConfiguration;
+import org.apereo.cas.support.pac4j.config.support.authentication.Pac4jAuthenticationEventExecutionPlanConfiguration;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
+import org.apereo.cas.web.flow.config.DelegatedAuthenticationWebflowConfiguration;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration;
+import org.springframework.boot.test.autoconfigure.web.servlet.MockMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -42,18 +49,23 @@ import org.springframework.context.ConfigurableApplicationContext;
  * @since 5.3.0
  */
 @SpringBootTest(classes = {
-    PasswordlessAuthenticationConfiguration.class,
-    PasswordlessAuthenticationWebflowConfiguration.class,
+    RefreshAutoConfiguration.class,
+    MailSenderAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
+    MockMvcAutoConfiguration.class,
+    ErrorMvcAutoConfiguration.class,
     CasCoreAuthenticationPolicyConfiguration.class,
     CasCoreAuthenticationConfiguration.class,
     CasCoreAuthenticationHandlersConfiguration.class,
     CasCoreAuthenticationMetadataConfiguration.class,
     CasCoreAuthenticationSupportConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class,
-    RefreshAutoConfiguration.class,
-    MailSenderAutoConfiguration.class,
+    Pac4jDelegatedAuthenticationConfiguration.class,
+    Pac4jAuthenticationEventExecutionPlanConfiguration.class,
+    DelegatedAuthenticationWebflowConfiguration.class,
     CasCoreWebflowConfiguration.class,
     CasWebflowContextConfiguration.class,
+    CoreSamlConfiguration.class,
     CasCoreConfiguration.class,
     CasCookieConfiguration.class,
     CasCoreTicketsConfiguration.class,
@@ -71,7 +83,9 @@ import org.springframework.context.ConfigurableApplicationContext;
     CasRegisteredServicesTestConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
     CasAuthenticationEventExecutionPlanTestConfiguration.class,
-    CasDefaultServiceTicketIdGeneratorsConfiguration.class
+    CasDefaultServiceTicketIdGeneratorsConfiguration.class,
+    PasswordlessAuthenticationConfiguration.class,
+    PasswordlessAuthenticationWebflowConfiguration.class
 }, properties = {
     "spring.mail.host=localhost",
     "spring.mail.port=25000"

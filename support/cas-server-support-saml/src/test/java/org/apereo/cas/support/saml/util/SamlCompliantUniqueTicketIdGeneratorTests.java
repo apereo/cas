@@ -5,7 +5,6 @@ import org.apereo.cas.support.saml.AbstractOpenSamlTests;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -16,7 +15,6 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 3.4.3
  */
 @Tag("SAML")
-@SpringBootTest(classes = AbstractOpenSamlTests.SharedTestConfiguration.class)
 public class SamlCompliantUniqueTicketIdGeneratorTests extends AbstractOpenSamlTests {
 
     @Test

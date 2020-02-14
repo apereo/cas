@@ -21,9 +21,11 @@ import java.util.HashMap;
  * This controller is part of the {@link org.apereo.cas.web.DelegatingController}.
  *
  * @author Misagh Moayyed
+ * @deprecated 6.2
  * @since 4.2
  */
 @Slf4j
+@Deprecated(since = "6.2")
 public class OpenIdValidateController extends AbstractServiceValidateController {
 
     private final ServerManager serverManager;

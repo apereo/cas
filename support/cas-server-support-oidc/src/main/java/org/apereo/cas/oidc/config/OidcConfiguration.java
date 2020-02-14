@@ -98,6 +98,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.gen.DefaultRandomStringGenerator;
 import org.apereo.cas.util.serialization.StringSerializer;
+import org.apereo.cas.validation.CasProtocolViewFactory;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
@@ -135,6 +136,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
@@ -249,6 +251,10 @@ public class OidcConfiguration implements WebMvcConfigurer {
     @Autowired
     private CasConfigurationProperties casProperties;
 
+    @Autowired
+    @Qualifier("casProtocolViewFactory")
+    private ObjectProvider<CasProtocolViewFactory> casProtocolViewFactory;
+    
     @Autowired
     private ResourceLoader resourceLoader;
 
@@ -737,6 +743,10 @@ public class OidcConfiguration implements WebMvcConfigurer {
             oidcUserProfileSigningAndEncryptionService());
     }
 
+    @Bean
+    public View oidcConfirmView() {
+        return casProtocolViewFactory.getObject().create(applicationContext, "protocol/oidc/confirm");
+    }
 
     private OAuth20ConfigurationContext buildConfigurationContext() {
         return OAuth20ConfigurationContext.builder()

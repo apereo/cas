@@ -16,9 +16,11 @@ import javax.servlet.http.HttpServletResponse;
  * OpenId Identity Provider.
  *
  * @author Scott Battaglia
+ * @deprecated 6.2
  * @since 3.1
  */
 @Controller("openIdProviderController")
+@Deprecated(since = "6.2")
 public class OpenIdProviderController {
 
     @Autowired
