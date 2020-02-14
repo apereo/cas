@@ -7,6 +7,7 @@ gradleBuildOptions="--build-cache --configure-on-demand --no-daemon "
 tomcatVersion="9.0.31"
 tomcatVersionTag="v${tomcatVersion}"
 tomcatUrl="https://www-eu.apache.org/dist/tomcat/tomcat-9/${tomcatVersionTag}/bin/apache-tomcat-${tomcatVersion}.zip"
+tomcatBackupUrl="https://archive.apache.org/dist/tomcat/tomcat-9/${tomcatVersionTag}/bin/apache-tomcat-${tomcatVersion}.zip"
 
 echo -e "***********************************************"
 echo -e "Gradle build started at `date` for web application server"
@@ -47,6 +48,10 @@ else
         export CATALINA_HOME=./apache-tomcat-${tomcatVersion}
         rm -Rf ${CATALINA_HOME}
         wget ${tomcatUrl}
+        if [[ $? -ne 0 ]]; then
+          echo -e "Using backup tomcat URL, version probably needs to be updated."
+          wget ${tomcatBackupUrl}
+        fi
         unzip apache-tomcat-${tomcatVersion}.zip
 
         mv webapp/cas-server-webapp/build/libs/cas-server-webapp-*.war ${CATALINA_HOME}/webapps/cas.war
