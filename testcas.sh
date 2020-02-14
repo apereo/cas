@@ -206,7 +206,7 @@ fi
 flags="--build-cache -x javadoc -x check -DignoreTestFailures=false -DskipNestedConfigMetadataGen=true \
 -DskipGradleLint=true -DshowStandardStreams=true --no-daemon --configure-on-demand"
 
-cmdstring="\033[1m./gradlew \e[32m$task\e[39m-DtestCategoryType=\e[33m$category\e[36m$tests\e[39m $flags ${coverage}${debug}${parallel}\e[39m"
+cmdstring="\033[1m./gradlew jacocoRootReport \e[32m$task\e[39m-DtestCategoryType=\e[33m$category\e[36m$tests\e[39m $flags ${coverage}${debug}${parallel}\e[39m"
 printf "$cmdstring \e[0m\n"
 
 cmd="./gradlew $task -DtestCategoryType=$category $tests $flags ${coverage} ${debug} ${parallel}"
