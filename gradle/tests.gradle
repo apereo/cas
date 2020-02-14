@@ -307,7 +307,7 @@ test {
     useJUnitPlatform {
         excludeTags testCategories
     }
-    enabled = "SIMPLE".equalsIgnoreCase(rootProject.testCategoryType) && !Boolean.getBoolean("skipTests")
+    enabled = "SIMPLE".contains(rootProject.testCategoryType) && !Boolean.getBoolean("skipTests")
 }
 
 tasks.withType(Test) {
@@ -340,7 +340,7 @@ tasks.withType(Test) {
 }
 
 def shouldTest(Project project, String category) {
-    !Boolean.getBoolean("skipTests") && category.equalsIgnoreCase(rootProject.testCategoryType) && hasTestsOfCategory(project, category)
+    !Boolean.getBoolean("skipTests") && rootProject.testCategoryType.toLowerCase().contains(category.toLowerCase()) && hasTestsOfCategory(project, category)
 }
 
 def hasTestsOfCategory(Project project, String category) {

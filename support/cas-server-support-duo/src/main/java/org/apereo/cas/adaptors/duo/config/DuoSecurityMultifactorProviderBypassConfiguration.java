@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.duo.config;
 
+import org.apereo.cas.adaptors.duo.config.cond.ConditionalOnDuoSecurityConfigured;
 import org.apereo.cas.authentication.bypass.AuthenticationMultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.authentication.bypass.ChainingMultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.authentication.bypass.CredentialMultifactorAuthenticationProviderBypassEvaluator;
@@ -31,6 +32,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("duoSecurityMultifactorProviderBypassConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ConditionalOnDuoSecurityConfigured
 public class DuoSecurityMultifactorProviderBypassConfiguration {
 
     @Autowired

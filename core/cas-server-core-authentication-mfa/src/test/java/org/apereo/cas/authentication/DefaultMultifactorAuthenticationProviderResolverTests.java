@@ -28,7 +28,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.binding.expression.support.LiteralExpression;
 import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
-import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -57,7 +56,6 @@ import static org.mockito.Mockito.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     MailSenderAutoConfiguration.class,
-    ThymeleafAutoConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreHttpConfiguration.class,
@@ -104,7 +102,7 @@ public class DefaultMultifactorAuthenticationProviderResolverTests {
         when(selector.resolve(any(), any(), any())).thenReturn(provider);
 
         val resolver = new DefaultMultifactorAuthenticationProviderResolver(selector);
-        
+
         val authentication = CoreAuthenticationTestUtils.getAuthentication("casuser", CollectionUtils.wrap("authlevel", List.of(provider.getId())));
         val results = resolver.resolveEventViaAuthenticationAttribute(authentication,
             List.of("authlevel"), CoreAuthenticationTestUtils.getRegisteredService(),
