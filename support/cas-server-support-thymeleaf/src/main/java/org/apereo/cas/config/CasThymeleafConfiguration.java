@@ -20,6 +20,7 @@ import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration;
@@ -29,7 +30,6 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 import org.springframework.core.OrderComparator;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.servlet.ThemeResolver;
@@ -56,7 +56,7 @@ import java.util.Set;
 @Configuration(value = "casThymeleafConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnClass(SpringTemplateEngine.class)
-@Import(ThymeleafAutoConfiguration.class)
+@ImportAutoConfiguration(ThymeleafAutoConfiguration.class)
 public class CasThymeleafConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -73,13 +73,13 @@ public class CasThymeleafConfiguration {
     private ObjectProvider<ThymeleafViewResolver> thymeleafViewResolver;
 
     @Autowired
-    private List<CasThymeleafViewResolverConfigurer> thymeleafViewResolverConfigurers;
+    private ObjectProvider<List<CasThymeleafViewResolverConfigurer>> thymeleafViewResolverConfigurers;
 
     @Autowired
-    private SpringTemplateEngine springTemplateEngine;
+    private ObjectProvider<SpringTemplateEngine> springTemplateEngine;
 
     @Autowired
-    private ThymeleafProperties thymeleafProperties;
+    private ObjectProvider<ThymeleafProperties> thymeleafProperties;
 
     @Bean
     @RefreshScope
@@ -152,7 +152,7 @@ public class CasThymeleafConfiguration {
     @Bean
     @RefreshScope
     public ThemeViewResolverFactory themeViewResolverFactory() {
-        val factory = new ThemeViewResolver.Factory(nonCachingThymeleafViewResolver(), thymeleafProperties);
+        val factory = new ThemeViewResolver.Factory(nonCachingThymeleafViewResolver(), thymeleafProperties.getObject());
         factory.setApplicationContext(applicationContext);
         return factory;
     }
@@ -161,7 +161,7 @@ public class CasThymeleafConfiguration {
     @Bean
     @RefreshScope
     public CasProtocolViewFactory casProtocolViewFactory() {
-        return new CasProtocolThymeleafViewFactory(this.springTemplateEngine, this.thymeleafProperties);
+        return new CasProtocolThymeleafViewFactory(this.springTemplateEngine.getObject(), thymeleafProperties.getObject());
     }
 
     private ThymeleafViewResolver nonCachingThymeleafViewResolver() {
@@ -189,7 +189,7 @@ public class CasThymeleafConfiguration {
 
             @Override
             public Set<IPostProcessor> getPostProcessors() {
-                return CollectionUtils.wrapSet(new PostProcessor(TemplateMode.parse(thymeleafProperties.getMode()),
+                return CollectionUtils.wrapSet(new PostProcessor(TemplateMode.parse(thymeleafProperties.getObject().getMode()),
                     CasThymeleafOutputTemplateHandler.class, Integer.MAX_VALUE));
             }
 
@@ -203,7 +203,7 @@ public class CasThymeleafConfiguration {
         r.setViewNames(thymeleafResolver.getViewNames());
         r.setCache(false);
 
-        thymeleafViewResolverConfigurers.stream()
+        thymeleafViewResolverConfigurers.getObject().stream()
             .sorted(OrderComparator.INSTANCE)
             .forEach(configurer -> configurer.configureThymeleafViewResolver(r));
 
@@ -211,12 +211,13 @@ public class CasThymeleafConfiguration {
     }
 
     private void configureTemplateViewResolver(final AbstractConfigurableTemplateResolver resolver) {
-        resolver.setCacheable(thymeleafProperties.isCache());
-        resolver.setCharacterEncoding(thymeleafProperties.getEncoding().name());
-        resolver.setCheckExistence(thymeleafProperties.isCheckTemplateLocation());
+        val props = thymeleafProperties.getObject();
+        resolver.setCacheable(props.isCache());
+        resolver.setCharacterEncoding(props.getEncoding().name());
+        resolver.setCheckExistence(props.isCheckTemplateLocation());
         resolver.setForceTemplateMode(true);
         resolver.setOrder(0);
         resolver.setSuffix(".html");
-        resolver.setTemplateMode(thymeleafProperties.getMode());
+        resolver.setTemplateMode(props.getMode());
     }
 }

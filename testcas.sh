@@ -3,39 +3,55 @@
 clear
 
 printHelp() {
-    echo -e "Usage: ./testcas.sh --category [category] [--debug] [--coverage]\n"
-    echo -e "Available categories are:\n"
+    echo -e "Usage: ./testcas.sh --category [category1,category2,...] [--help] [--debug] [--coverage]\n"
+    echo -e "Available test categories are:\n"
     echo -e "\t - simple"
     echo -e "\t - memcached"
+    echo -e "\t - cassandra"
     echo -e "\t - groovy"
     echo -e "\t - ldap"
     echo -e "\t - rest"
     echo -e "\t - mfa"
     echo -e "\t - jdbc"
+    echo -e "\t - mssql"
     echo -e "\t - oracle"
     echo -e "\t - radius"
+    echo -e "\t - couchdb"
+    echo -e "\t - mariadb"
     echo -e "\t - files"
+    echo -e "\t - postgres"
+    echo -e "\t - dynamodb"
+    echo -e "\t - couchbase"
     echo -e "\t - saml"
     echo -e "\t - mail"
+    echo -e "\t - aws"
+    echo -e "\t - activemq"
     echo -e "\t - oauth"
     echo -e "\t - oidc"
     echo -e "\t - redis"
     echo -e "\t - webflow"
     echo -e "\t - mongo"
+    echo -e "\t - ignite"
+    echo -e "\t - influxdb"
+    echo -e "\t - zookeeper"
     echo -e "\t - mysql"
-    echo -e "\nSee the script for more available categories.\n"
+    echo -e "\nPlease see the test script for more available categories.\n"
 }
 
-PARAMS=""
-parallel="--parallel"
+parallel="--parallel "
+
 while (( "$#" )); do
     case "$1" in
     --coverage)
-        coverage="jacocoRootReport"
+        coverage="jacocoRootReport "
         shift
         ;;
+    --help)
+        printHelp
+        exit 0
+        ;;
     --debug)
-        debug="--debug-jvm"
+        debug="--debug-jvm "
         parallel=""
         shift
         ;;
@@ -44,108 +60,131 @@ while (( "$#" )); do
         shift 2
         ;;
     --category)
-        case "$2" in
-            test|simple|run|basic|unit)
-                task="test"
-                category="SIMPLE"
+        for item in $(echo "$2" | sed "s/,/ /g")
+        do
+            case "${item}" in
+            test|simple|run|basic|unit|unittests)
+                task+="test "
+                category+="SIMPLE,"
                 ;;
             memcached|memcache|kryo)
-                task="testMemcached"
-                category="MEMCACHED"
+                task+="testMemcached "
+                category+="MEMCACHED,"
                 ;;
             filesystem|files|file|fsys)
-                task="testFileSystem"
-                category="FILESYSTEM"
+                task+="testFileSystem "
+                category+="FILESYSTEM,"
                 ;;
-            groovy)
-                task="testGroovy"
-                category="GROOVY"
+            groovy|script)
+                task+="testGroovy "
+                category+="GROOVY,"
                 ;;
-            ldap)
-                task="testLdap"
-                category="LDAP"
+            mssql)
+                task+="testMsSqlServer "
+                category+="MsSqlServer,"
+                ;;
+            ignite)
+                task+="testIgnite "
+                category+="Ignite,"
+                ;;
+            influx|influxdb)
+                task+="testInfluxDb "
+                category+="InfluxDb,"
+                ;;
+            ldap|ad|activedirectory)
+                task+="testLdap "
+                category+="LDAP,"
+                ;;
+            couchbase)
+                task+="testCouchbase "
+                category+="COUCHBASE,"
                 ;;
             mongo|mongodb)
-                task="testMongoDb"
-                category="MONGODB"
+                task+="testMongoDb "
+                category+="MONGODB,"
                 ;;
             couchdb)
-                task="testCouchDb"
-                category="COUCHDB"
+                task+="testCouchDb "
+                category+="COUCHDB,"
                 ;;
-            rest|restful)
-                task="testRestful"
-                category="RESTFULAPI"
+            rest|restful|restapi)
+                task+="testRestful "
+                category+="RESTFULAPI,"
                 ;;
             mysql)
-                task="testMySQL"
-                category="MYSQL"
+                task+="testMySQL "
+                category+="MYSQL,"
                 ;;
             maria|mariadb)
-                task="testMariaDb"
-                category="MariaDb"
+                task+="testMariaDb "
+                category+="MariaDb,"
                 ;;
-            jdbc|jpa|database|hibernate)
-                task="testJDBC"
-                category="JDBC"
+            jdbc|jpa|database|hibernate|rdbms|hsql)
+                task+="testJDBC "
+                category+="JDBC,"
                 ;;
             postgres|pg|postgresql)
-                task="testPostgres"
-                category="POSTGRES"
+                task+="testPostgres "
+                category+="POSTGRES,"
                 ;;
             cassandra)
-                task="testCassandra"
-                category="CASSANDRA"
+                task+="testCassandra "
+                category+="CASSANDRA,"
                 ;;
             oauth)
-                task="testOAuth"
-                category="OAUTH"
+                task+="testOAuth "
+                category+="OAUTH,"
+                ;;
+            aws)
+                task+="testAWS "
+                category+="AmazonWebServices,"
                 ;;
             oidc)
-                task="testOIDC"
-                category="OIDC"
+                task+="testOIDC "
+                category+="OIDC,"
                 ;;
-            mfa|duo|gauth|authy|fido|u2f)
-                task="testMFA"
-                category="MFA"
+            mfa|duo|gauth|webauthn|authy|fido|u2f|swivelacceptto)
+                task+="testMFA "
+                category+="MFA,"
                 ;;
             saml|saml2)
-                task="testSAML"
-                category="SAML"
+                task+="testSAML "
+                category+="SAML,"
                 ;;
             radius)
-                task="testRadius"
-                category="RADIUS"
+                task+="testRadius "
+                category+="RADIUS,"
                 ;;
             mail|email)
-                task="testMail"
-                category="MAIL"
+                task+="testMail "
+                category+="MAIL,"
                 ;;
             zoo|zookeeper)
-                task="testZooKeeper"
-                category="ZOOKEEPER"
+                task+="testZooKeeper "
+                category+="ZOOKEEPER,"
                 ;;
             dynamodb|dynamo)
-                task="testDynamoDb"
-                category="DYNAMODB"
+                task+="testDynamoDb "
+                category+="DYNAMODB,"
                 ;;
             webflow|swf)
-                task="testWebflow"
-                category="WEBFLOW"
+                task+="testWebflow "
+                category+="WEBFLOW,"
                 ;;
             oracle)
-                task="testOracle"
-                category="ORACLE"
+                task+="testOracle "
+                category+="ORACLE,"
                 ;;
             redis)
-                task="testRedis"
-                category="REDIS"
+                task+="testRedis "
+                category+="REDIS,"
                 ;;
             activemq|amq)
-                task="testActiveMQ"
-                category="ActiveMQ"
+                task+="testActiveMQ "
+                category+="ActiveMQ,"
                 ;;
-        esac
+            esac
+        done
         shift 2
         ;;
     *)
@@ -156,17 +195,20 @@ while (( "$#" )); do
     esac
 done
 
+category=`echo $category | sed 's/,$//'`
+
 if [[ -z "$task" || -z "$category" ]]
 then
   printHelp
   exit 1
 fi
 
-cmd="./gradlew $task -DtestCategoryType=$category $tests \
---build-cache -x javadoc -x check -DignoreTestFailures=false -DskipNestedConfigMetadataGen=true \
--DskipGradleLint=true -DshowStandardStreams=true --no-daemon --configure-on-demand $coverage $debug $parallel "
+flags="--build-cache -x javadoc -x check -DignoreTestFailures=false -DskipNestedConfigMetadataGen=true \
+-DskipGradleLint=true -DshowStandardStreams=true --no-daemon --configure-on-demand"
 
+cmdstring="\033[1m./gradlew \e[32m$task\e[39m-DtestCategoryType=\e[33m$category\e[36m$tests\e[39m $flags ${coverage}${debug}${parallel}\e[39m"
+printf "$cmdstring \e[0m\n"
 
-echo -e "$cmd\n"
+cmd="./gradlew $task -DtestCategoryType=$category $tests $flags ${coverage} ${debug} ${parallel}"
 eval "$cmd"
 
