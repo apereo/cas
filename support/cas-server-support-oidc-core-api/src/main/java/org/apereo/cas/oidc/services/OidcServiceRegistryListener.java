@@ -113,7 +113,6 @@ public class OidcServiceRegistryListener implements ServiceRegistryListener {
                 + "No claims/attributes will be released to [{}]", oidcService.getServiceId());
             oidcService.setAttributeReleasePolicy(new DenyAllAttributeReleasePolicy());
         } else {
-            policyChain.finalizePolicies();
             oidcService.setAttributeReleasePolicy(policyChain);
         }
 

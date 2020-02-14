@@ -29,14 +29,24 @@ import java.util.Set;
 @Builder
 public class ServiceValidateConfigurationContext {
     private final Set<CasProtocolValidationSpecification> validationSpecifications;
+
     private final ServiceTicketValidationAuthorizersExecutionPlan validationAuthorizers;
+
     private final AuthenticationSystemSupport authenticationSystemSupport;
+
     private final ServicesManager servicesManager;
+
     private final CentralAuthenticationService centralAuthenticationService;
-    private ProxyHandler proxyHandler;
+
     private final ArgumentExtractor argumentExtractor;
+
     private final RequestedAuthenticationContextValidator<MultifactorAuthenticationProvider> requestedContextValidator;
+
     private final String authnContextAttribute;
+
     private final boolean renewEnabled;
+
     private final ServiceValidationViewFactory validationViewFactory;
+
+    private ProxyHandler proxyHandler;
 }

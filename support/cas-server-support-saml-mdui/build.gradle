@@ -15,6 +15,7 @@ dependencies {
     implementation project(":core:cas-server-core-services")
 
     implementation libraries.opensaml
+    implementation libraries.dropwizard
 
     testImplementation project(path: ":support:cas-server-support-saml", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")
@@ -38,6 +39,5 @@ dependencies {
     testImplementation project(":core:cas-server-core-services-authentication")
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":support:cas-server-support-validation")
-
-    testImplementation libraries.thymeleaf
+    testImplementation project(":support:cas-server-support-thymeleaf")
 }

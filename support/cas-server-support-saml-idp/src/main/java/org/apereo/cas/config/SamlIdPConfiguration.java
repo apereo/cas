@@ -4,6 +4,7 @@ import org.apereo.cas.audit.AuditTrailConstants;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
+import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.principal.PersistentIdGenerator;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -141,6 +142,10 @@ public class SamlIdPConfiguration {
     @Autowired
     @Qualifier("authenticationServiceSelectionPlan")
     private ObjectProvider<AuthenticationServiceSelectionPlan> authenticationServiceSelectionPlan;
+
+    @Autowired
+    @Qualifier("attributeDefinitionStore")
+    private ObjectProvider<AttributeDefinitionStore> attributeDefinitionStore;
 
     @ConditionalOnMissingBean(name = "samlSingleLogoutServiceLogoutUrlBuilder")
     @Bean
@@ -310,7 +315,8 @@ public class SamlIdPConfiguration {
             openSamlConfigBean.getObject(),
             samlAttributeEncoder(),
             casProperties.getAuthn().getSamlIdp(),
-            samlObjectEncrypter());
+            samlObjectEncrypter(), 
+            attributeDefinitionStore.getObject());
     }
 
     @ConditionalOnMissingBean(name = "samlAttributeEncoder")

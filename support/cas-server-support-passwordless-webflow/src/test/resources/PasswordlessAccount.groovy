@@ -5,6 +5,10 @@ def run(Object[] args) {
     def logger = args[1]
     logger.info("Testing username $username")
 
-    return new PasswordlessUserAccount("casuser",
-            "casuser@example.org", "123-456-7890", "CAS", Map.of(), false)
+    return PasswordlessUserAccount.builder()
+        .email("casuser@example.org")
+        .phone("123-456-7890")
+        .username("casuser")
+        .name("CAS")
+        .build();
 }

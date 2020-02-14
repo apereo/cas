@@ -56,6 +56,25 @@ public class PasswordlessAuthenticationProperties implements Serializable {
      */
     private boolean multifactorAuthenticationActivated;
 
+    /**
+     * Allow passwordless authentication to skip its own flow
+     * in favor of delegated authentication providers that may be available
+     * and defined in CAS.
+     *
+     * If delegated authentication is activated, CAS will skip its normal passwordless
+     * authentication flow in favor of the requested delegated authentication
+     * provider. If no delegated providers are available, passwordless authentication flow
+     * will commence as usual.
+     */
+    private boolean delegatedAuthenticationActivated;
+
+    /**
+     * Select the delegated identity provider for the passwordless
+     * user using a script.
+     */
+    @NestedConfigurationProperty
+    private SpringResourceProperties delegatedAuthenticationSelectorScript = new SpringResourceProperties();
+    
     @RequiresModule(name = "cas-server-support-passwordless")
     @Getter
     @Setter

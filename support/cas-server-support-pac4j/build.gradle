@@ -22,6 +22,7 @@ dependencies {
     implementation libraries.jose4j
     implementation libraries.shibidpjavasupport
     implementation libraries.opensaml
+    implementation libraries.dropwizard
 
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")

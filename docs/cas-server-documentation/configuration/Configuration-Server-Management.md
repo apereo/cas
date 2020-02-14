@@ -401,6 +401,24 @@ Support is provided via the following dependency in the WAR overlay:
 By default, settings are expected to be found under a `CAS_SETTINGS_TABLE` that contains the fields: `id`, `name` and `value`.
 To see the relevant list of CAS properties for this feature, please [review this guide](Configuration-Properties.html#jdbc).
 
+##### REST
+
+CAS is also able to locate properties and settings using a REST API.
+
+Support is provided via the following dependency in the WAR overlay:
+
+```xml
+<dependency>
+     <groupId>org.apereo.cas</groupId>
+     <artifactId>cas-server-support-configuration-cloud-rest</artifactId>
+     <version>${cas.version}</version>
+</dependency>
+```
+
+The REST endpoint is expected to produce a `Map` in the payload with keys as the setting names
+and values as the setting value. To see the relevant list of CAS properties for this 
+feature, please [review this guide](Configuration-Properties.html#rest).
+
 #### CAS Server Cloud Configuration
 
 The cloud configuration modules provided above on this page by the CAS project directly may also be used verbatim inside 

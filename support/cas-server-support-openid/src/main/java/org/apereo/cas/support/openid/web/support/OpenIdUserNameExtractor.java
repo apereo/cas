@@ -4,9 +4,11 @@ package org.apereo.cas.support.openid.web.support;
  * Extract the userid for OpenID protocol.
  *
  * @author Scott Battaglia
+ * @deprecated 6.2
  * @since 3.1
  */
 @FunctionalInterface
+@Deprecated(since = "6.2")
 public interface OpenIdUserNameExtractor {
 
     /**

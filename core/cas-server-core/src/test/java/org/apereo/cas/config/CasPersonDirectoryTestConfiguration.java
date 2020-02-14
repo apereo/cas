@@ -29,8 +29,8 @@ public class CasPersonDirectoryTestConfiguration {
     @Bean
     public IPersonAttributeDao attributeRepository() {
         val attrs = CollectionUtils.wrap("uid", CollectionUtils.wrap("uid"),
-                "eduPersonAffiliation", CollectionUtils.wrap("developer"),
-                "groupMembership", CollectionUtils.wrap("adopters"));
+            "eduPersonAffiliation", CollectionUtils.wrap("developer"),
+            "groupMembership", CollectionUtils.wrap("adopters"));
         return new StubPersonAttributeDao((Map) attrs);
     }
 }

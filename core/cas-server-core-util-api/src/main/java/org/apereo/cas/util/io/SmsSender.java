@@ -21,12 +21,26 @@ public interface SmsSender {
     }
 
     /**
+     * Whether it can send an SMS.
+     *
+     * @return whether it can send an SMS
+     */
+    default boolean canSend() {
+        return true;
+    }
+
+    /**
      * No op sms sender.
      *
      * @return the sms sender
      */
     static SmsSender noOp() {
         return new SmsSender() {
+
+            @Override
+            public boolean canSend() {
+                return false;
+            }
         };
     }
 }

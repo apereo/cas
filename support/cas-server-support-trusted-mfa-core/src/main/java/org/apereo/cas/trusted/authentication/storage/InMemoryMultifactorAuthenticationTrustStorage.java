@@ -10,6 +10,7 @@ import lombok.val;
 
 import java.time.LocalDateTime;
 import java.util.LinkedHashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -72,6 +73,7 @@ public class InMemoryMultifactorAuthenticationTrustStorage extends BaseMultifact
         return storage.asMap()
             .values()
             .stream()
+            .filter(Objects::nonNull)
             .filter(entry -> entry.getId() == id)
             .sorted()
             .findFirst()

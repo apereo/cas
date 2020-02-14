@@ -42,6 +42,12 @@ public class CasServerProperties implements Serializable {
     private String prefix = name.concat("/cas");
 
     /**
+     * The CAS Server scope.
+     */
+    @RequiredProperty
+    private String scope = "example.org";
+
+    /**
      * Configuration settings that control the embedded Apache Tomcat container.
      */
     @NestedConfigurationProperty

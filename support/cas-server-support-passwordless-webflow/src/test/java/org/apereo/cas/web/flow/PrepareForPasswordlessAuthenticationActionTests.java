@@ -18,8 +18,6 @@ import org.springframework.webflow.test.MockFlowExecutionContext;
 import org.springframework.webflow.test.MockFlowSession;
 import org.springframework.webflow.test.MockRequestContext;
 
-import java.util.Map;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -42,7 +40,12 @@ public class PrepareForPasswordlessAuthenticationActionTests extends BasePasswor
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         assertEquals(PasswordlessAuthenticationWebflowConfigurer.TRANSITION_ID_PASSWORDLESS_GET_USERID, initializeLoginAction.execute(context).getId());
-        val account = new PasswordlessUserAccount("casuser", "email", "phone", "casuser", Map.of(), false);
+        val account = PasswordlessUserAccount.builder()
+            .email("email")
+            .phone("phone")
+            .username("casuser")
+            .name("casuser")
+            .build();
         WebUtils.putPasswordlessAuthenticationAccount(context, account);
 
         assertEquals("success", initializeLoginAction.execute(context).getId());

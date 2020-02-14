@@ -1,0 +1,15 @@
+description = "Apereo CAS Themes Collection"
+dependencies {
+    implementation project(":core:cas-server-core-services-api")
+    implementation project(":core:cas-server-core-services")
+    implementation project(":core:cas-server-core-web-api")
+    implementation project(":core:cas-server-core-web")
+    implementation project(":core:cas-server-core-webflow")
+    implementation project(":core:cas-server-core-util-api")
+    implementation project(":core:cas-server-core-util")
+    implementation project(":core:cas-server-core-authentication-api")
+    implementation project(":core:cas-server-core-authentication")
+
+    implementation project(":support:cas-server-support-themes-core")
+    implementation project(":support:cas-server-support-themes")
+}

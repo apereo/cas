@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.mfa.MultifactorAuthenticationTestUtils;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
@@ -19,6 +20,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
+@Tag("MFA")
 public class DefaultMultifactorTriggerSelectionStrategyTests {
     @Test
     public void verifyOperation() {

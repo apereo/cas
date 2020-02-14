@@ -53,6 +53,11 @@ public class CasEmbeddedApacheTomcatHttpProxyProperties implements Serializable 
     private String protocol = "AJP/1.3";
 
     /**
+     * Set the secret that must be included with every request.
+     */
+    private String secret;
+
+    /**
      * Custom attributes to set on the proxy connector.
      */
     private Map<String, Object> attributes = new LinkedHashMap<>();

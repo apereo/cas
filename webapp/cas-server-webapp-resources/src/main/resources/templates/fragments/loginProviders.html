@@ -11,7 +11,7 @@
 <body>
 <main role="main" class="container mt-3 mb-3">
     <div th:fragment="loginProviders" th:remove="tag">
-        <div th:if="${delegatedAuthenticationProviderUrls}" id="list-providers"
+        <div th:if="${delegatedAuthenticationProviderConfigurations}" id="list-providers"
              th:class="${delegatedAuthenticationProviderPrimary == null ? 'card d-sm-none d-md-block bg-light' : ''}">
             
             <div class="card-body">
@@ -28,7 +28,7 @@
                 </div>
                 <div class="card-text" th:style="'display:' + ${delegatedAuthenticationProviderPrimary != null ? 'none' : 'block'}">
                     <ul>
-                        <li th:each="entry: ${delegatedAuthenticationProviderUrls}" th:switch="${entry.type}">
+                        <li th:each="entry: ${delegatedAuthenticationProviderConfigurations}" th:switch="${entry.type}">
                             <a class="btn btn-block btn-social"
                                th:classappend="'btn-' + ${entry.type}"
                                th:href="@{${entry.redirectUrl}}"

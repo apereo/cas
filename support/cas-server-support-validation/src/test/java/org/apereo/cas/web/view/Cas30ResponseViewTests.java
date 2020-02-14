@@ -9,7 +9,9 @@ import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.authentication.support.DefaultCasProtocolAttributeEncoder;
+import org.apereo.cas.config.CasThymeleafConfiguration;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.services.web.config.CasThemesConfiguration;
 import org.apereo.cas.services.web.view.AbstractCasView;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
@@ -20,7 +22,6 @@ import org.apereo.cas.web.AbstractServiceValidateController;
 import org.apereo.cas.web.AbstractServiceValidateControllerTests;
 import org.apereo.cas.web.ServiceValidateConfigurationContext;
 import org.apereo.cas.web.ServiceValidationViewFactory;
-import org.apereo.cas.web.config.CasProtocolViewsConfiguration;
 import org.apereo.cas.web.config.CasValidationConfiguration;
 import org.apereo.cas.web.v2.ServiceValidateController;
 import org.apereo.cas.web.view.attributes.DefaultCas30ProtocolAttributesRenderer;
@@ -72,7 +73,8 @@ import static org.junit.jupiter.api.Assertions.*;
     classes = {
         Cas30ResponseViewTests.AttributeRepositoryTestConfiguration.class,
         BaseCasCoreTests.SharedTestConfiguration.class,
-        CasProtocolViewsConfiguration.class,
+        CasThemesConfiguration.class,
+        CasThymeleafConfiguration.class,
         CasValidationConfiguration.class
     })
 public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTests {

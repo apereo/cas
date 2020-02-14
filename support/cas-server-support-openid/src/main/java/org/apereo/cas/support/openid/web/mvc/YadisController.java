@@ -17,12 +17,12 @@ import java.nio.charset.StandardCharsets;
  * This is {@link YadisController}.
  *
  * @author Misagh Moayyed
+ * @deprecated 6.2
  * @since 5.1.0
  */
 @Controller("yadisController")
+@Deprecated(since = "6.2")
 public class YadisController {
-
-
     @Autowired
     private CasConfigurationProperties casProperties;
 

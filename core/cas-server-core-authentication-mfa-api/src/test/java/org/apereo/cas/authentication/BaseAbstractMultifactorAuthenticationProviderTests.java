@@ -3,6 +3,7 @@ package org.apereo.cas.authentication;
 import org.apereo.cas.services.RegisteredServiceMultifactorPolicyFailureModes;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -13,6 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
+@Tag("MFA")
 public abstract class BaseAbstractMultifactorAuthenticationProviderTests {
 
     public abstract AbstractMultifactorAuthenticationProvider getMultifactorAuthenticationProvider();

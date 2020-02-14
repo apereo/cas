@@ -10,6 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
 import org.springframework.webflow.action.AbstractAction;
+import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -58,6 +59,9 @@ public class VerifyPasswordlessAccountAuthenticationAction extends AbstractActio
             return error();
         }
         WebUtils.putPasswordlessAuthenticationAccount(requestContext, user);
+        if (user.isRequestPassword()) {
+            return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_PROMPT);
+        }
         return success();
     }
 }

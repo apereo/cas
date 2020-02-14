@@ -16,7 +16,6 @@ import org.opensaml.core.xml.XMLObject;
 import org.opensaml.saml.common.SAMLVersion;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.Attribute;
-import org.opensaml.saml.saml2.core.AttributeStatement;
 import org.opensaml.saml.saml2.core.AttributeValue;
 import org.opensaml.saml.saml2.core.Audience;
 import org.opensaml.saml.saml2.core.AudienceRestriction;
@@ -41,7 +40,6 @@ import org.opensaml.soap.soap11.ActorBearing;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -127,7 +125,7 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
                                 final String recipient, final WebApplicationService service) {
 
         LOGGER.trace("Creating Response instance for id: [{}], issueInstant: [{}}], recipient: [{}], service: [{}]",
-                id, issueInstant, recipient, service);
+            id, issueInstant, recipient, service);
         val samlResponse = newSamlObject(Response.class);
         samlResponse.setID(id);
         samlResponse.setIssueInstant(DateTimeUtils.dateTimeOf(issueInstant));
@@ -214,7 +212,7 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
                                           final String sessionIndex, final NameID nameId) {
 
         LOGGER.trace("Creating new SAML LogoutRequest with id: [{}], for issuer: [{}], for destination: [{}], for NameID: [{}],issued at: [{}]",
-                id, issuer, destination, nameId, issueInstant);
+            id, issuer, destination, nameId, issueInstant);
         val request = newSamlObject(LogoutRequest.class);
         request.setID(id);
         request.setVersion(SAMLVersion.VERSION_20);
@@ -247,59 +245,6 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
     }
 
     /**
-     * New attribute statement.
-     *
-     * @param attributes             the attributes
-     * @param attributeFriendlyNames the attribute friendly names
-     * @param attributeValueTypes    the attribute value types
-     * @param configuredNameFormats  the configured name formats
-     * @param defaultNameFormat      the default name format
-     * @param builder                the builder
-     * @return the attribute statement
-     */
-    public AttributeStatement newAttributeStatement(final Map<String, Object> attributes,
-                                                    final Map<String, String> attributeFriendlyNames,
-                                                    final Map<String, String> attributeValueTypes,
-                                                    final Map<String, String> configuredNameFormats,
-                                                    final String defaultNameFormat,
-                                                    final Saml20AttributeBuilder builder) {
-        LOGGER.trace("Building new SAML AttributeStatement for attributes: {}, friendlyNames: {}, value types: {}, configured name formats: {}, default name format: [{}]",
-                attributes, attributeFriendlyNames, attributeValueTypes, configuredNameFormats, defaultNameFormat);
-        val attrStatement = newSamlObject(AttributeStatement.class);
-        for (val e : attributes.entrySet()) {
-            if (e.getValue() instanceof Collection<?> && ((Collection<?>) e.getValue()).isEmpty()) {
-                LOGGER.info("Skipping attribute [{}] because it does not have any values.", e.getKey());
-                continue;
-            }
-            val friendlyName = attributeFriendlyNames.getOrDefault(e.getKey(), null);
-            val attribute = newAttribute(friendlyName, e.getKey(), e.getValue(),
-                configuredNameFormats, defaultNameFormat, attributeValueTypes);
-            builder.build(attrStatement, attribute);
-        }
-
-        return attrStatement;
-    }
-
-    /**
-     * New attribute statement attribute statement.
-     *
-     * @param attributes             the attributes
-     * @param attributeFriendlyNames the attribute friendly names
-     * @param attributeValueTypes    the attribute value types
-     * @param configuredNameFormats  the configured name formats
-     * @param defaultNameFormat      the default name format
-     * @return the attribute statement
-     */
-    public AttributeStatement newAttributeStatement(final Map<String, Object> attributes,
-                                                    final Map<String, String> attributeFriendlyNames,
-                                                    final Map<String, String> attributeValueTypes,
-                                                    final Map<String, String> configuredNameFormats,
-                                                    final String defaultNameFormat) {
-        return newAttributeStatement(attributes, attributeFriendlyNames, attributeValueTypes,
-            configuredNameFormats, defaultNameFormat, new DefaultSaml20AttributeBuilder());
-    }
-
-    /**
      * Add saml2 attribute values for attribute.
      *
      * @param attributeName  the attribute name
@@ -311,7 +256,8 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
                                                    final Object attributeValue,
                                                    final String valueType,
                                                    final List<XMLObject> attributeList) {
-        addAttributeValuesToSamlAttribute(attributeName, attributeValue, valueType, attributeList, AttributeValue.DEFAULT_ELEMENT_NAME);
+        addAttributeValuesToSamlAttribute(attributeName, attributeValue, valueType,
+            attributeList, AttributeValue.DEFAULT_ELEMENT_NAME);
     }
 
     /**

@@ -253,6 +253,7 @@ public class CloudWatchAppender extends AbstractAppender {
             try {
                 deliveryThread.join(SHUTDOWN_TIMEOUT_MILLIS);
             } catch (final InterruptedException e) {
+                deliveryThread.interrupt();
                 LOGGER.error(e.getMessage(), e);
             }
         }

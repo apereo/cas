@@ -26,6 +26,7 @@ dependencies {
     implementation libraries.shibidp
     implementation libraries.shibidpjavasupport
     implementation libraries.opensaml
+    implementation libraries.dropwizard
     implementation libraries.pac4jcore
     implementation libraries.pac4jsaml
     implementation libraries.nimbus

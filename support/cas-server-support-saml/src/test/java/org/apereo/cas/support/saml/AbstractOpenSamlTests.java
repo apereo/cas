@@ -19,13 +19,13 @@ import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
+import org.apereo.cas.config.CasThymeleafConfiguration;
 import org.apereo.cas.config.CoreSamlConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
-import org.apereo.cas.util.SchedulingUtils;
+import org.apereo.cas.services.web.config.CasThemesConfiguration;
 import org.apereo.cas.validation.config.CasCoreValidationConfiguration;
 import org.apereo.cas.web.config.CasCookieConfiguration;
-import org.apereo.cas.web.config.CasProtocolViewsConfiguration;
 import org.apereo.cas.web.config.CasValidationConfiguration;
 
 import net.shibboleth.utilities.java.support.xml.ParserPool;
@@ -35,21 +35,16 @@ import org.opensaml.core.xml.XMLObjectBuilderFactory;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.core.xml.io.MarshallerFactory;
 import org.opensaml.core.xml.io.UnmarshallerFactory;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
-import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafProperties;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
-import org.thymeleaf.spring5.SpringTemplateEngine;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -117,27 +112,6 @@ public abstract class AbstractOpenSamlTests {
         assertNotNull(this.parserPool.getBuilder());
     }
 
-    @TestConfiguration("SamlTestConfiguration")
-    public static class SamlTestConfiguration implements InitializingBean {
-        @Autowired
-        protected ApplicationContext applicationContext;
-
-        @Bean
-        public SpringTemplateEngine springTemplateEngine() {
-            return new SpringTemplateEngine();
-        }
-
-        @Bean
-        public ThymeleafProperties thymeleafProperties() {
-            return new ThymeleafProperties();
-        }
-
-        @Override
-        public void afterPropertiesSet() {
-            SchedulingUtils.prepScheduledAnnotationBeanPostProcessor(applicationContext);
-        }
-    }
-
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
         MailSenderAutoConfiguration.class,
@@ -145,15 +119,14 @@ public abstract class AbstractOpenSamlTests {
     })
     @SpringBootConfiguration
     @Import({
-        AbstractOpenSamlTests.SamlTestConfiguration.class,
+        CasThymeleafConfiguration.class,
+        CasThemesConfiguration.class,
         CasRegisteredServicesTestConfiguration.class,
         CoreSamlConfiguration.class,
-        RefreshAutoConfiguration.class,
         CasCoreWebConfiguration.class,
         CasPersonDirectoryConfiguration.class,
         CasCoreServicesConfiguration.class,
         CasCoreValidationConfiguration.class,
-        CasProtocolViewsConfiguration.class,
         CasValidationConfiguration.class,
         CasCoreAuthenticationConfiguration.class,
         CasCoreServicesAuthenticationConfiguration.class,

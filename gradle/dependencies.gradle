@@ -215,6 +215,13 @@ ext.libraries = [
                     force = true
                 }
         ],
+        dropwizard            : [
+                dependencies.create("io.dropwizard.metrics:metrics-core:$dropwizardVersion") {
+                    exclude(group: "commons-cli", module: "commons-cli")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    force = true
+                }
+        ],
         sentry                  : [
                 dependencies.create("com.getsentry.raven:raven:$sentryRavenVersion") {
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
@@ -1425,15 +1432,6 @@ ext.libraries = [
                 dependencies.create("javax.servlet:jstl:$javaxJstlVersion"),
                 dependencies.create("javax.transaction:jta:$jtaVersion")
         ],
-        thymeleafdialect        : [
-                dependencies.create("nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:$thymeleafDialectVersion") {
-                    exclude(group: "org.javassist", module: "javassist")
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "org.codehaus.groovy", module: "groovy")
-                    exclude(group: "org.thymeleaf", module: "thymeleaf")
-                    force = true
-                }
-        ],
         activemq                : [
                 dependencies.create("org.springframework.boot:spring-boot-starter-activemq:$springBootVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
@@ -1469,6 +1467,13 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-context")
                     exclude(group: "org.springframework", module: "spring-core")
                     exclude(group: "org.springframework", module: "spring-aop")
+                    force = true
+                },
+                dependencies.create("nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:$thymeleafDialectVersion") {
+                    exclude(group: "org.javassist", module: "javassist")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.codehaus.groovy", module: "groovy")
+                    exclude(group: "org.thymeleaf", module: "thymeleaf")
                     force = true
                 },
                 dependencies.create("org.springframework.boot:spring-boot-starter-thymeleaf:$springBootVersion") {
@@ -1737,6 +1742,8 @@ ext.libraries = [
                     exclude(group: "junit", module: "junit")
                     exclude(group: "org.mockito", module: "mockito-all")
                     exclude(group: "org.mockito", module: "mockito-core")
+                    exclude(group: "ch.qos.logback", module: "logback-core")
+                    exclude(group: "ch.qos.logback", module: "logback-classic")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
                     force = true
                 },
@@ -1748,6 +1755,8 @@ ext.libraries = [
                 },
                 dependencies.create("org.springframework:spring-test:$springVersion") {
                     exclude(group: "junit", module: "junit")
+                    exclude(group: "ch.qos.logback", module: "logback-core")
+                    exclude(group: "ch.qos.logback", module: "logback-classic")
                     force = true
                 },
                 dependencies.create("org.json:json:$jsonVersion") {
@@ -1923,7 +1932,6 @@ ext.libraries = [
                     exclude(group: "org.apache.httpcomponents", module: "httpclient")
                     exclude(group: "org.cryptacular", module: "cryptacular")
                     exclude(group: "commons-collections", module: "commons-collections")
-                    exclude(group: "io.dropwizard.metrics", module: "metrics-core")
                     exclude(group: "net.shibboleth.utilities", module: "java-support")
                     exclude(group: "org.opensaml", module: "opensaml-core")
                     force = true
@@ -1939,7 +1947,6 @@ ext.libraries = [
                     exclude(group: "com.google.guava", module: "guava")
                     exclude(group: "org.cryptacular", module: "cryptacular")
                     exclude(group: "commons-collections", module: "commons-collections")
-                    exclude(group: "io.dropwizard.metrics", module: "metrics-core")
                     exclude(group: "net.shibboleth.utilities", module: "java-support")
                     exclude(group: "commons-codec", module: "commons-codec")
                     exclude(group: "org.apache.velocity", module: "velocity")
@@ -1962,7 +1969,6 @@ ext.libraries = [
                     exclude(group: "com.google.guava", module: "guava")
                     exclude(group: "org.cryptacular", module: "cryptacular")
                     exclude(group: "commons-collections", module: "commons-collections")
-                    exclude(group: "io.dropwizard.metrics", module: "metrics-core")
                     exclude(group: "net.shibboleth.utilities", module: "java-support")
                     exclude(group: "org.apache.velocity", module: "velocity")
                     exclude(group: "org.opensaml", module: "opensaml-core")
@@ -1983,7 +1989,6 @@ ext.libraries = [
                     exclude(group: "com.google.guava", module: "guava")
                     exclude(group: "org.cryptacular", module: "cryptacular")
                     exclude(group: "commons-collections", module: "commons-collections")
-                    exclude(group: "io.dropwizard.metrics", module: "metrics-core")
                     exclude(group: "net.shibboleth.utilities", module: "java-support")
                     exclude(group: "org.apache.velocity", module: "velocity")
                     exclude(group: "org.opensaml", module: "opensaml-core")
@@ -2003,7 +2008,6 @@ ext.libraries = [
                     exclude(group: "com.google.guava", module: "guava")
                     exclude(group: "org.cryptacular", module: "cryptacular")
                     exclude(group: "commons-collections", module: "commons-collections")
-                    exclude(group: "io.dropwizard.metrics", module: "metrics-core")
                     exclude(group: "net.shibboleth.utilities", module: "java-support")
                     exclude(group: "org.opensaml", module: "opensaml-core")
                     force = true
@@ -2017,7 +2021,6 @@ ext.libraries = [
                     exclude(group: "org.apache.httpcomponents", module: "httpclient")
                     exclude(group: "com.google.guava", module: "guava")
                     exclude(group: "org.cryptacular", module: "cryptacular")
-                    exclude(group: "io.dropwizard.metrics", module: "metrics-core")
                     exclude(group: "commons-collections", module: "commons-collections")
                     exclude(group: "commons-lang", module: "commons-lang")
                     exclude(group: "net.shibboleth.utilities", module: "java-support")
@@ -2034,7 +2037,6 @@ ext.libraries = [
                     exclude(group: "org.apache.httpcomponents", module: "httpclient")
                     exclude(group: "com.google.guava", module: "guava")
                     exclude(group: "org.cryptacular", module: "cryptacular")
-                    exclude(group: "io.dropwizard.metrics", module: "metrics-core")
                     exclude(group: "net.shibboleth.utilities", module: "java-support")
                     exclude(group: "commons-codec", module: "commons-codec")
                     exclude(group: "commons-collections", module: "commons-collections")
@@ -2055,7 +2057,6 @@ ext.libraries = [
                     exclude(group: "com.google.guava", module: "guava")
                     exclude(group: "org.cryptacular", module: "cryptacular")
                     exclude(group: "commons-collections", module: "commons-collections")
-                    exclude(group: "io.dropwizard.metrics", module: "metrics-core")
                     exclude(group: "net.shibboleth.utilities", module: "java-support")
                     exclude(group: "commons-codec", module: "commons-codec")
                     exclude(group: "commons-lang", module: "commons-lang")
@@ -2076,7 +2077,6 @@ ext.libraries = [
                     exclude(group: "com.google.code.findbugs", module: "jsr305")
                     exclude(group: "org.cryptacular", module: "cryptacular")
                     exclude(group: "commons-collections", module: "commons-collections")
-                    exclude(group: "io.dropwizard.metrics", module: "metrics-core")
                     exclude(group: "net.shibboleth.utilities", module: "java-support")
                     exclude(group: "commons-codec", module: "commons-codec")
                     exclude(group: "commons-lang", module: "commons-lang")
@@ -2096,7 +2096,6 @@ ext.libraries = [
                     exclude(group: "com.google.guava", module: "guava")
                     exclude(group: "org.cryptacular", module: "cryptacular")
                     exclude(group: "commons-collections", module: "commons-collections")
-                    exclude(group: "io.dropwizard.metrics", module: "metrics-core")
                     exclude(group: "net.shibboleth.utilities", module: "java-support")
                     exclude(group: "commons-codec", module: "commons-codec")
                     exclude(group: "commons-lang", module: "commons-lang")
@@ -2115,7 +2114,6 @@ ext.libraries = [
                     exclude(group: "com.google.guava", module: "guava")
                     exclude(group: "org.cryptacular", module: "cryptacular")
                     exclude(group: "commons-collections", module: "commons-collections")
-                    exclude(group: "io.dropwizard.metrics", module: "metrics-core")
                     exclude(group: "com.google.code.findbugs", module: "jsr305")
                     exclude(group: "net.shibboleth.utilities", module: "java-support")
                     exclude(group: "commons-codec", module: "commons-codec")
@@ -2146,7 +2144,6 @@ ext.libraries = [
                     exclude(group: "com.google.guava", module: "guava")
                     exclude(group: "org.ldaptive", module: "ldaptive")
                     exclude(group: "org.cryptacular", module: "cryptacular")
-                    exclude(group: "io.dropwizard.metrics", module: "metrics-core")
                     exclude(group: "net.shibboleth.utilities", module: "java-support")
                     exclude(group: "org.apache.velocity", module: "velocity")
                     exclude(group: "commons-lang", module: "commons-lang")

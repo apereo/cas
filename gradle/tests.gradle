@@ -5,8 +5,17 @@ def testCategories = [
     "MongoDb", "MsSqlServer", "MySQL", "Postgres", "Redis",
     "Radius", "AmazonWebServices", "RestfulApi", "Groovy",
     "OAuth", "OIDC", "SAML", "UMA", "Oracle", "ActiveMQ",
-    "ZooKeeper", "Webflow", "DynamoDb"
+    "ZooKeeper", "Webflow", "DynamoDb", "MFA"
 ] as String[]
+
+if (hasTestsOfCategory(project, "MFA")) {
+    task testMFA(type: Test) {
+        enabled = shouldTest(project, "MFA")
+        useJUnitPlatform {
+            includeTags "MFA"
+        }
+    }
+}
 
 if (hasTestsOfCategory(project, "Cassandra")) {
     task testCassandra(type: Test) {
@@ -54,7 +63,7 @@ if (hasTestsOfCategory(project, "ActiveMQ")) {
 }
 
 if (hasTestsOfCategory(project, "AmazonWebServices")) {
-    task testAWSS3(type: Test) {
+    task testAWS(type: Test) {
         enabled = shouldTest(project, "AmazonWebServices")
         useJUnitPlatform {
             includeTags "AmazonWebServices"
@@ -298,7 +307,7 @@ test {
     useJUnitPlatform {
         excludeTags testCategories
     }
-    enabled = "SIMPLE".equalsIgnoreCase(rootProject.testCategoryType) && !Boolean.getBoolean("skipTests")
+    enabled = rootProject.testCategoryType != null && rootProject.testCategoryType.toLowerCase().contains("simple") && !Boolean.getBoolean("skipTests")
 }
 
 tasks.withType(Test) {
@@ -331,7 +340,7 @@ tasks.withType(Test) {
 }
 
 def shouldTest(Project project, String category) {
-    !Boolean.getBoolean("skipTests") && category.equalsIgnoreCase(rootProject.testCategoryType) && hasTestsOfCategory(project, category)
+    !Boolean.getBoolean("skipTests") && rootProject.testCategoryType != null && rootProject.testCategoryType.toLowerCase().contains(category.toLowerCase()) && hasTestsOfCategory(project, category)
 }
 
 def hasTestsOfCategory(Project project, String category) {

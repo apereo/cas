@@ -10,6 +10,7 @@ import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -38,6 +39,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.adaptive.requireTimedMultifactor[0].onOrAfterHour=-1",
     "cas.authn.adaptive.requireTimedMultifactor[0].onDays=Saturday,Sunday,Monday,Tuesday,Wednesday,Thursday,Friday"
 })
+@Tag("Webflow")
 public class TimedMultifactorAuthenticationPolicyEventResolverTests extends BaseCasWebflowMultifactorAuthenticationTests {
 
     @Autowired

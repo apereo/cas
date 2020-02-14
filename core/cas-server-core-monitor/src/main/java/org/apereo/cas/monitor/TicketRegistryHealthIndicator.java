@@ -41,7 +41,8 @@ public class TicketRegistryHealthIndicator extends AbstractHealthIndicator {
         val ticketCount = this.registryState.serviceTicketCount();
 
         if (sessionCount == Integer.MIN_VALUE || ticketCount == Integer.MIN_VALUE) {
-            val msg = String.format("Ticket registry %s reports unknown session and/or ticket counts.", this.registryState.getClass().getName());
+            val msg = String.format("Ticket registry %s reports unknown session and/or ticket counts.",
+                this.registryState.getClass().getName());
             buildHealthCheckStatus(builder.unknown(), sessionCount, ticketCount, msg);
             return;
         }

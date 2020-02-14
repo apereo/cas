@@ -5,7 +5,6 @@ defaultTasks "clean", "build"
 
 buildscript {
     repositories {
-        mavenLocal()
         jcenter()
         maven {
             url "https://maven.eveoh.nl/content/repositories/releases"
@@ -178,7 +177,12 @@ allprojects {
     }
 
     repositories {
-        mavenLocal()
+        mavenLocal{
+            content {
+                includeModuleByRegex "org\\.apereo", "person-directory.*"
+                includeGroupByRegex "$mavenLocalGroupInclude"
+            }
+        }
         mavenCentral()
         jcenter()
         maven {
@@ -237,7 +241,12 @@ subprojects {
     ext.libraries = rootProject.ext.libraries
 
     repositories {
-        mavenLocal()
+        mavenLocal{
+            content {
+                includeModuleByRegex "org\\.apereo", "person-directory.*"
+                includeGroupByRegex "$mavenLocalGroupInclude"
+            }
+        }
         mavenCentral()
         maven {
             url "https://build.shibboleth.net/nexus/content/repositories/releases"
@@ -438,14 +447,6 @@ subprojects {
         it.options.compilerArgs += casCompilerArgs
     }
 
-    def currentTime = java.time.ZonedDateTime.now(ZoneId.systemDefault())
-    compileJava.doLast {
-        buildDate = currentTime
-        jar.manifest {
-            attributes("Implementation-Date": project.buildDate)
-        }
-    }
-
     tasks.jar.onlyIf {
         project.buildDate != null || !project.buildJarFile.exists()
     }
@@ -460,12 +461,13 @@ subprojects {
     jar {
         manifest {
             attributes(
-                    "Automatic-Module-Name": project.name,
-                    "Implementation-Title": project.name,
-                    "Implementation-Vendor": project.group,
-                    "Created-By": project.group,
-                    "Specification-Version": "${-> project.ext.has("gitProps") ? project.ext.gitProps['git.commit.id'] : 'N/A'}",
-                    "Implementation-Version": project.version)
+                "Automatic-Module-Name": project.name,
+                "Implementation-Title": project.name,
+                "Implementation-Vendor": project.group,
+                "Created-By": project.group,
+                "Implementation-Date": java.time.ZonedDateTime.now(ZoneId.systemDefault()),
+                "Specification-Version": "${-> project.ext.has("gitProps") ? project.ext.gitProps['git.commit.id'] : 'N/A'}",
+                "Implementation-Version": project.version)
         }
     }
 

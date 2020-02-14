@@ -18,6 +18,7 @@ import javax.net.ssl.SSLPeerUnverifiedException;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -67,49 +68,6 @@ public class ValidateEndpointCommand {
             LOGGER.trace(e.getMessage(), e);
         }
         return new X509TrustManager[]{};
-    }
-
-    /**
-     * Validate endpoint.
-     *
-     * @param url     the url
-     * @param proxy   the proxy
-     * @param timeout the timeout
-     */
-    @ShellMethod(key = "validate-endpoint", value = "Test connections to an endpoint to verify connectivity, SSL, etc")
-    public void validateEndpoint(
-        @ShellOption(value = { "url", "--url" },
-            help = "Endpoint URL to test") final String url,
-        @ShellOption(value = { "proxy", "--proxy" },
-            help = "Proxy address to use when testing the endpoint url") final String proxy,
-        @ShellOption(value = { "timeout", "--timeout" },
-            help = "Timeout to use in milliseconds when testing the url",
-            defaultValue = "5000") final int timeout) {
-
-        try {
-            LOGGER.info("Trying to connect to [{}]", url);
-            val conn = createConnection(url, proxy);
-
-            LOGGER.info("Setting connection timeout to [{}]", timeout);
-            conn.setConnectTimeout(timeout);
-
-            try (val reader = new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8);
-                 val in = new BufferedReader(reader)) {
-                in.readLine();
-
-                if (conn instanceof HttpURLConnection) {
-                    val code = ((HttpURLConnection) conn).getResponseCode();
-                    LOGGER.info("Response status code received: [{}]", code);
-                }
-                LOGGER.info("Successfully connected to url [{}]", url);
-            }
-        } catch (final Exception e) {
-            LOGGER.info("Could not connect to the host address [{}]", url);
-            LOGGER.info("The error is: [{}]", e.getMessage());
-            LOGGER.info("Here are the details:");
-            LOGGER.error(consolidateExceptionMessages(e));
-            testBadTlsConnection(url, proxy);
-        }
     }
 
     private static URLConnection createConnection(final String url, final String proxy) throws Exception {
@@ -229,6 +187,50 @@ public class ValidateEndpointCommand {
 
         }}, null);
         return sslContext;
+    }
+
+    /**
+     * Validate endpoint.
+     *
+     * @param url     the url
+     * @param proxy   the proxy
+     * @param timeout the timeout
+     */
+    @ShellMethod(key = "validate-endpoint", value = "Test connections to an endpoint to verify connectivity, SSL, etc")
+    public void validateEndpoint(
+        @ShellOption(value = {"url", "--url"},
+            help = "Endpoint URL to test") final String url,
+        @ShellOption(value = {"proxy", "--proxy"},
+            help = "Proxy address to use when testing the endpoint url",
+            defaultValue = StringUtils.EMPTY) final String proxy,
+        @ShellOption(value = {"timeout", "--timeout"},
+            help = "Timeout to use in milliseconds when testing the url",
+            defaultValue = "5000") final int timeout) {
+
+        try {
+            LOGGER.info("Trying to connect to [{}]", url);
+            val conn = createConnection(url, proxy);
+
+            LOGGER.info("Setting connection timeout to [{}]", timeout);
+            conn.setConnectTimeout(timeout);
+
+            try (val reader = new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8);
+                 val in = new BufferedReader(reader)) {
+                in.readLine();
+
+                if (conn instanceof HttpURLConnection) {
+                    val code = ((HttpURLConnection) conn).getResponseCode();
+                    LOGGER.info("Response status code received: [{}]", code);
+                }
+                LOGGER.info("Successfully connected to url [{}]", url);
+            }
+        } catch (final Exception e) {
+            LOGGER.info("Could not connect to the host address [{}]", url);
+            LOGGER.info("The error is: [{}]", e.getMessage());
+            LOGGER.info("Here are the details:");
+            LOGGER.error(consolidateExceptionMessages(e));
+            testBadTlsConnection(url, proxy);
+        }
     }
 }
 

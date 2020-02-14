@@ -36,7 +36,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
-import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
@@ -83,7 +82,6 @@ import static org.junit.jupiter.api.Assertions.*;
     AcceptUsersAuthenticationEventExecutionPlanConfiguration.class,
     CasCoreAuditConfiguration.class,
     CasPersonDirectoryConfiguration.class,
-    ThymeleafAutoConfiguration.class,
     AopAutoConfiguration.class,
     MailSenderAutoConfiguration.class,
     RefreshAutoConfiguration.class

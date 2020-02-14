@@ -27,6 +27,11 @@ public interface CasWebflowConstants {
      * The transition state 'yes'.
      */
     String TRANSITION_ID_YES = "yes";
+    
+    /**
+     * The transition state 'prompt'.
+     */
+    String TRANSITION_ID_PROMPT = "prompt";
 
     /**
      * The transition state 'finalize'.
@@ -236,7 +241,7 @@ public interface CasWebflowConstants {
      * The state 'realSubmit'.
      */
     String STATE_ID_REAL_SUBMIT = "realSubmit";
-    
+
     /**
      * 'finishMfaTrustedAuth' state id.
      */
@@ -673,7 +678,7 @@ public interface CasWebflowConstants {
      * Action id 'initialFlowSetupAction'.
      */
     String ACTION_ID_INITIAL_FLOW_SETUP = "initialFlowSetupAction";
-    
+
     /**
      * Action id 'verifyRequiredServiceAction'.
      */

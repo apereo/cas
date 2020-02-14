@@ -1,6 +1,8 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
+import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
+import org.apereo.cas.authentication.attribute.DefaultAttributeDefinitionStore;
 import org.apereo.cas.authentication.principal.resolvers.InternalGroovyScriptDao;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.authentication.JdbcPrincipalAttributesProperties;
@@ -93,6 +95,16 @@ public class CasPersonDirectoryConfiguration {
         LOGGER.debug("Configured multi-row JDBC column mappings for [{}] are [{}]", jdbc.getUrl(), jdbc.getColumnMappings());
         jdbcDao.setNameValueColumnMappings(jdbc.getColumnMappings());
         return jdbcDao;
+    }
+
+    @ConditionalOnMissingBean(name = "attributeDefinitionStore")
+    @Bean
+    @RefreshScope
+    public AttributeDefinitionStore attributeDefinitionStore() throws Exception {
+        val resource = casProperties.getPersonDirectory().getAttributeDefinitionStore().getJson().getLocation();
+        val store = new DefaultAttributeDefinitionStore(resource);
+        store.setScope(casProperties.getServer().getScope());
+        return store;
     }
 
     @ConditionalOnMissingBean(name = "attributeRepositories")

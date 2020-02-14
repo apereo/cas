@@ -5,6 +5,8 @@ import org.apereo.cas.adaptors.duo.authn.DuoSecurityAuthenticationService;
 import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.BaseAbstractMultifactorAuthenticationProviderTests;
 
+import org.junit.jupiter.api.Tag;
+
 import static org.mockito.Mockito.*;
 
 /**
@@ -13,6 +15,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
+@Tag("MFA")
 public class DefaultDuoSecurityMultifactorAuthenticationProviderTests extends BaseAbstractMultifactorAuthenticationProviderTests {
     @Override
     public AbstractMultifactorAuthenticationProvider getMultifactorAuthenticationProvider() {

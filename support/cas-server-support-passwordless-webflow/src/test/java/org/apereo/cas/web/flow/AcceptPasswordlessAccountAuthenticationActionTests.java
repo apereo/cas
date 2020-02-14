@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration;
 import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -22,8 +21,6 @@ import org.springframework.webflow.test.MockFlowExecutionContext;
 import org.springframework.webflow.test.MockFlowSession;
 import org.springframework.webflow.test.MockRequestContext;
 
-import java.util.Map;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -32,10 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Import({
-    ThymeleafAutoConfiguration.class,
-    BaseWebflowConfigurerTests.SharedTestConfiguration.class
-})
+@Import(BaseWebflowConfigurerTests.SharedTestConfiguration.class)
 @Tag("Webflow")
 @TestPropertySource(properties = "cas.authn.passwordless.accounts.simple.casuser=casuser@example.org")
 public class AcceptPasswordlessAccountAuthenticationActionTests extends BasePasswordlessAuthenticationActionTests {
@@ -52,8 +46,12 @@ public class AcceptPasswordlessAccountAuthenticationActionTests extends BasePass
         val exec = new MockFlowExecutionContext(new MockFlowSession(new Flow(CasWebflowConfigurer.FLOW_ID_LOGIN)));
         val context = new MockRequestContext(exec);
 
-        val account = new PasswordlessUserAccount("casuser", "email",
-            "phone", "casuser", Map.of(), false);
+        val account = PasswordlessUserAccount.builder()
+            .email("email")
+            .phone("phone")
+            .username("casuser")
+            .name("casuser")
+            .build();
         WebUtils.putPasswordlessAuthenticationAccount(context, account);
         
         val token = passwordlessTokenRepository.createToken("casuser");

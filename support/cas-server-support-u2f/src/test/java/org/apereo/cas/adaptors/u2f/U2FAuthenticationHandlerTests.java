@@ -29,6 +29,7 @@ import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -82,6 +83,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "spring.mail.host=localhost",
     "spring.mail.port=25000"})
 @DirtiesContext
+@Tag("MFA")
 public class U2FAuthenticationHandlerTests {
     @Autowired
     @Qualifier("u2fAuthenticationHandler")
@@ -101,7 +103,7 @@ public class U2FAuthenticationHandlerTests {
             + '}';
 
         val authnData = "{\"appId\":\"https://mmoayyed.unicon.net:8443\","
-            + "\"challenge\":\"NEnAEZPOoSTvD33crTed8YENizvWZ5muFZYffYp3AeU\",\"signRequests\":[{\"version\":\"U2F_V2\","
+            + "\"challenge\":\"NEnAEZPOoSTvD33crTPasswordlessAuthenticationWebflowConfigurerTestsed8YENizvWZ5muFZYffYp3AeU\",\"signRequests\":[{\"version\":\"U2F_V2\","
             + "\"challenge\":\"NEnAEZPOoSTvD33crTed8YENizvWZ5muFZYffYp3AeU\",\"appId\":\"https://mmoayyed.unicon.net:8443\","
             + "\"keyHandle\":\"2_QYgDSPYcOgYBGBe8c9PVCunjigbD-3o5HcliXhu-Up_GKckYMxxVF6AgSPWubqfWy8WmJNDYQEJ1QKZe343Q\"}]}";
         u2fDeviceRepository.requestDeviceAuthentication("NEnAEZPOoSTvD33crTed8YENizvWZ5muFZYffYp3AeU", "casuser", authnData);

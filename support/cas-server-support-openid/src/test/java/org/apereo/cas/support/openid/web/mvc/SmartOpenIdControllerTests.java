@@ -18,7 +18,9 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  * @author Frederic Esnault
  * @since 3.0.0
+ * @deprecated 6.2
  */
+@Deprecated
 public class SmartOpenIdControllerTests extends AbstractOpenIdTests {
 
     private static final String OPENID_MODE_PARAM = "openid.mode";

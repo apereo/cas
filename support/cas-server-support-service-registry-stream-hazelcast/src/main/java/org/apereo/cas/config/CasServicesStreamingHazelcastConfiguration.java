@@ -65,11 +65,11 @@ public class CasServicesStreamingHazelcastConfiguration {
     public HazelcastInstance casRegisteredServiceHazelcastInstance() {
         val name = CasRegisteredServiceHazelcastStreamPublisher.class.getSimpleName();
         LOGGER.debug("Creating Hazelcast instance [{}] to publish service definitions", name);
-        val factory = new HazelcastConfigurationFactory();
+
         val stream = casProperties.getServiceRegistry().getStream().getHazelcast();
         val hzConfig = stream.getConfig();
         val duration = Beans.newDuration(stream.getDuration()).toMillis();
-        val mapConfig = factory.buildMapConfig(hzConfig, name, TimeUnit.MILLISECONDS.toSeconds(duration));
+        val mapConfig = HazelcastConfigurationFactory.buildMapConfig(hzConfig, name, TimeUnit.MILLISECONDS.toSeconds(duration));
 
         val hazelcastInstance = Hazelcast.newHazelcastInstance(HazelcastConfigurationFactory.build(hzConfig));
         hazelcastInstance.getConfig().addMapConfig(mapConfig);

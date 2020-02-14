@@ -2,23 +2,19 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
-import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.principal.ResponseBuilder;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.openid.authentication.principal.OpenIdServiceResponseBuilder;
 import org.apereo.cas.support.openid.web.OpenIdProviderController;
-import org.apereo.cas.support.openid.web.flow.OpenIdSingleSignOnAction;
 import org.apereo.cas.support.openid.web.mvc.OpenIdValidateController;
 import org.apereo.cas.support.openid.web.mvc.SmartOpenIdController;
 import org.apereo.cas.support.openid.web.mvc.YadisController;
-import org.apereo.cas.support.openid.web.support.DefaultOpenIdUserNameExtractor;
 import org.apereo.cas.support.openid.web.support.OpenIdPostUrlHandlerMapping;
-import org.apereo.cas.support.openid.web.support.OpenIdUserNameExtractor;
 import org.apereo.cas.ticket.proxy.ProxyHandler;
-import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.validation.CasProtocolValidationSpecification;
+import org.apereo.cas.validation.CasProtocolViewFactory;
 import org.apereo.cas.validation.RequestedAuthenticationContextValidator;
 import org.apereo.cas.validation.ServiceTicketValidationAuthorizersExecutionPlan;
 import org.apereo.cas.web.AbstractDelegateController;
@@ -26,8 +22,6 @@ import org.apereo.cas.web.DelegatingController;
 import org.apereo.cas.web.ServiceValidateConfigurationContext;
 import org.apereo.cas.web.ServiceValidationViewFactory;
 import org.apereo.cas.web.ServiceValidationViewFactoryConfigurer;
-import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
-import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.ArgumentExtractor;
 
 import lombok.extern.slf4j.Slf4j;
@@ -38,13 +32,15 @@ import org.openid4java.server.ServerManager;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Scope;
 import org.springframework.web.servlet.View;
-import org.springframework.webflow.execution.Action;
 
 import java.util.Properties;
 
@@ -53,26 +49,16 @@ import java.util.Properties;
  *
  * @author Misagh Moayyed
  * @since 5.0.0
+ * @deprecated 6.2
  */
 @Configuration("openidConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
+@Deprecated(since = "6.2")
 public class OpenIdConfiguration {
     @Autowired
     @Qualifier("serviceValidationViewFactory")
     private ObjectProvider<ServiceValidationViewFactory> serviceValidationViewFactory;
-
-    @Autowired
-    @Qualifier("adaptiveAuthenticationPolicy")
-    private ObjectProvider<AdaptiveAuthenticationPolicy> adaptiveAuthenticationPolicy;
-
-    @Autowired
-    @Qualifier("serviceTicketRequestWebflowEventResolver")
-    private ObjectProvider<CasWebflowEventResolver> serviceTicketRequestWebflowEventResolver;
-
-    @Autowired
-    @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
-    private ObjectProvider<CasDelegatingWebflowEventResolver> initialAuthenticationAttemptWebflowEventResolver;
 
     @Autowired
     @Qualifier("casOpenIdServiceSuccessView")
@@ -98,6 +84,9 @@ public class OpenIdConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Autowired
+    private ConfigurableApplicationContext applicationContext;
+
+    @Autowired
     @Qualifier("centralAuthenticationService")
     private ObjectProvider<CentralAuthenticationService> centralAuthenticationService;
 
@@ -116,10 +105,6 @@ public class OpenIdConfiguration {
     @Autowired
     @Qualifier("servicesManager")
     private ObjectProvider<ServicesManager> servicesManager;
-
-    @Autowired
-    @Qualifier("defaultTicketRegistrySupport")
-    private ObjectProvider<TicketRegistrySupport> ticketRegistrySupport;
 
     @Autowired
     @Qualifier("serviceValidationAuthorizers")
@@ -162,20 +147,6 @@ public class OpenIdConfiguration {
     }
 
     @Bean
-    public Action openIdSingleSignOnAction() {
-        return new OpenIdSingleSignOnAction(initialAuthenticationAttemptWebflowEventResolver.getObject(),
-            serviceTicketRequestWebflowEventResolver.getObject(),
-            adaptiveAuthenticationPolicy.getObject(),
-            defaultOpenIdUserNameExtractor(),
-            ticketRegistrySupport.getObject());
-    }
-
-    @Bean
-    public OpenIdUserNameExtractor defaultOpenIdUserNameExtractor() {
-        return new DefaultOpenIdUserNameExtractor();
-    }
-
-    @Bean
     public OpenIdPostUrlHandlerMapping openIdPostUrlHandlerMapping() {
         val context = ServiceValidateConfigurationContext.builder()
             .validationSpecifications(CollectionUtils.wrapSet(cas20WithoutProxyProtocolValidationSpecification.getObject()))
@@ -208,5 +179,42 @@ public class OpenIdConfiguration {
         return factory ->
             factory.registerView(OpenIdValidateController.class,
                 Pair.of(casOpenIdServiceSuccessView.getObject(), casOpenIdServiceFailureView.getObject()));
+    }
+
+
+    /**
+     * The openid protocol views.
+     */
+    @Configuration("OpenIdProtocolViews")
+    public class OpenIdProtocolViews {
+
+        @Autowired
+        @Qualifier("casProtocolViewFactory")
+        private ObjectProvider<CasProtocolViewFactory> casProtocolViewFactory;
+
+        @Bean
+        @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+        public View casOpenIdServiceFailureView() {
+            return casProtocolViewFactory.getObject().create(applicationContext, "protocol/openid/casOpenIdServiceFailureView");
+        }
+
+        @Bean
+        @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+        public View casOpenIdServiceSuccessView() {
+            return casProtocolViewFactory.getObject().create(applicationContext, "protocol/openid/casOpenIdServiceSuccessView");
+        }
+
+        @Bean
+        @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+        public View casOpenIdAssociationSuccessView() {
+            return casProtocolViewFactory.getObject().create(applicationContext, "protocol/openid/casOpenIdAssociationSuccessView");
+        }
+
+        @Bean
+        @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+        public View openIdProviderView() {
+            return casProtocolViewFactory.getObject().create(applicationContext, "protocol/openid/user");
+        }
+
     }
 }

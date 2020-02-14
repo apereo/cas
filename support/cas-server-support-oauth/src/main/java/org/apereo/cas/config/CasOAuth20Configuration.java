@@ -245,7 +245,9 @@ public class CasOAuth20Configuration {
     @Bean
     @ConditionalOnMissingBean(name = "oauthSecConfigClients")
     public List<Client> oauthSecConfigClients() {
-        val cfg = new CasConfiguration(casProperties.getServer().getLoginUrl());
+        val server = casProperties.getServer();
+
+        val cfg = new CasConfiguration(server.getLoginUrl());
         cfg.setDefaultTicketValidator(new CasServerApiBasedTicketValidator(centralAuthenticationService.getObject()));
 
         val oauthCasClient = new CasClient(cfg);
@@ -253,7 +255,7 @@ public class CasOAuth20Configuration {
             oauthCasClientRedirectActionBuilder().build(oauthCasClient, webContext));
         oauthCasClient.setName(Authenticators.CAS_OAUTH_CLIENT);
         oauthCasClient.setUrlResolver(casCallbackUrlResolver());
-        oauthCasClient.setCallbackUrl(OAuth20Utils.casOAuthCallbackUrl(casProperties.getServer().getPrefix()));
+        oauthCasClient.setCallbackUrl(OAuth20Utils.casOAuthCallbackUrl(server.getPrefix()));
         oauthCasClient.init();
 
         val authenticator = oAuthClientAuthenticator();
@@ -267,11 +269,15 @@ public class CasOAuth20Configuration {
         directFormClient.setPasswordParameter(OAuth20Constants.CLIENT_SECRET);
         directFormClient.init();
 
-        val pkceAuthnClient = new DirectFormClient(oAuthProofKeyCodeExchangeAuthenticator());
-        pkceAuthnClient.setName(Authenticators.CAS_OAUTH_CLIENT_PROOF_KEY_CODE_EXCHANGE_AUTHN);
-        pkceAuthnClient.setUsernameParameter(OAuth20Constants.CLIENT_ID);
-        pkceAuthnClient.setPasswordParameter(OAuth20Constants.CODE_VERIFIER);
-        pkceAuthnClient.init();
+        val pkceAuthnFormClient = new DirectFormClient(oAuthProofKeyCodeExchangeAuthenticator());
+        pkceAuthnFormClient.setName(Authenticators.CAS_OAUTH_CLIENT_DIRECT_FORM_PROOF_KEY_CODE_EXCHANGE_AUTHN);
+        pkceAuthnFormClient.setUsernameParameter(OAuth20Constants.CLIENT_ID);
+        pkceAuthnFormClient.setPasswordParameter(OAuth20Constants.CODE_VERIFIER);
+        pkceAuthnFormClient.init();
+
+        val pkceBasicAuthClient = new DirectBasicAuthClient(oAuthProofKeyCodeExchangeAuthenticator());
+        pkceBasicAuthClient.setName(Authenticators.CAS_OAUTH_CLIENT_BASIC_PROOF_KEY_CODE_EXCHANGE_AUTHN);
+        pkceBasicAuthClient.init();
 
         val userFormClient = new DirectFormClient(oAuthUserAuthenticator());
         userFormClient.setName(Authenticators.CAS_OAUTH_CLIENT_USER_FORM);
@@ -294,7 +300,8 @@ public class CasOAuth20Configuration {
 
         clientList.add(oauthCasClient);
         clientList.add(basicAuthClient);
-        clientList.add(pkceAuthnClient);
+        clientList.add(pkceAuthnFormClient);
+        clientList.add(pkceBasicAuthClient);
         clientList.add(directFormClient);
         clientList.add(userFormClient);
         clientList.add(accessTokenClient);
