@@ -63,7 +63,7 @@ public class RegisteredServicePrincipalAttributeMultifactorAuthenticationTrigger
         }
 
         val principal = authentication.getPrincipal();
-        val providers = MultifactorAuthenticationUtils.getAuthenticationProviderForService(registeredService);
+        val providers = MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderForService(registeredService);
         val result = multifactorAuthenticationProviderResolver.resolveEventViaPrincipalAttribute(principal,
             org.springframework.util.StringUtils.commaDelimitedListToSet(policy.getPrincipalAttributeNameTrigger()),
             registeredService, Optional.empty(), providers, Pattern.compile(policy.getPrincipalAttributeValueToMatch()).asPredicate());

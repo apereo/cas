@@ -32,7 +32,7 @@ public class DefaultMultifactorAuthenticationContextValidatorTests {
     @Test
     public void verifyContextFailsValidationWithNoProviders() {
         val v = new DefaultMultifactorAuthenticationContextValidator("authn_method",
-            "OPEN", "trusted_authn", applicationContext);
+            "trusted_authn", applicationContext);
         val result = v.validate(
             MultifactorAuthenticationTestUtils.getAuthentication("casuser"),
             "invalid-context", MultifactorAuthenticationTestUtils.getRegisteredService());
@@ -43,7 +43,7 @@ public class DefaultMultifactorAuthenticationContextValidatorTests {
     public void verifyContextFailsValidationWithMissingProvider() {
         TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
         val v = new DefaultMultifactorAuthenticationContextValidator("authn_method",
-            "OPEN", "trusted_authn", applicationContext);
+            "trusted_authn", applicationContext);
         val result = v.validate(
             MultifactorAuthenticationTestUtils.getAuthentication("casuser"),
             "invalid-context",
@@ -55,7 +55,7 @@ public class DefaultMultifactorAuthenticationContextValidatorTests {
     public void verifyContextPassesValidationWithProvider() {
         TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
         val v = new DefaultMultifactorAuthenticationContextValidator("authn_method",
-            "OPEN", "trusted_authn", applicationContext);
+             "trusted_authn", applicationContext);
         val authentication = MultifactorAuthenticationTestUtils.getAuthentication(
             MultifactorAuthenticationTestUtils.getPrincipal("casuser"),
             CollectionUtils.wrap("authn_method", List.of("mfa-dummy")));
@@ -68,11 +68,31 @@ public class DefaultMultifactorAuthenticationContextValidatorTests {
     public void verifyTrustedAuthnFoundInContext() {
         TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
         val v = new DefaultMultifactorAuthenticationContextValidator("authn_method",
-            "OPEN", "trusted_authn", applicationContext);
+             "trusted_authn", applicationContext);
         val authentication = MultifactorAuthenticationTestUtils.getAuthentication(
             MultifactorAuthenticationTestUtils.getPrincipal("casuser"),
             CollectionUtils.wrap("authn_method", List.of("mfa-other"), "trusted_authn", List.of("mfa-dummy")));
         val result = v.validate(authentication,
+            "mfa-dummy", MultifactorAuthenticationTestUtils.getRegisteredService());
+        assertTrue(result.getKey());
+    }
+
+    @Test
+    public void verifyTrustedAuthnFoundFromContext() {
+        TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
+        val v = new DefaultMultifactorAuthenticationContextValidator("authn_method",
+             "trusted_authn", applicationContext);
+        val authentication = MultifactorAuthenticationTestUtils.getAuthentication(
+            MultifactorAuthenticationTestUtils.getPrincipal("casuser"),
+            CollectionUtils.wrap("authn_method", List.of("mfa-other")));
+        var result = v.validate(authentication,
+            "mfa-dummy", MultifactorAuthenticationTestUtils.getRegisteredService());
+        assertFalse(result.getKey());
+
+        val otherProvider = new TestMultifactorAuthenticationProvider();
+        otherProvider.setId("mfa-other");
+        TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext, otherProvider);
+        result = v.validate(authentication,
             "mfa-dummy", MultifactorAuthenticationTestUtils.getRegisteredService());
         assertTrue(result.getKey());
     }

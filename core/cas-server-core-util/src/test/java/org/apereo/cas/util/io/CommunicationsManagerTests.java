@@ -8,6 +8,7 @@ import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.val;
+import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,8 @@ import org.springframework.boot.autoconfigure.mail.MailSenderValidatorAutoConfig
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -34,12 +37,14 @@ import static org.mockito.Mockito.*;
     MailSenderAutoConfiguration.class,
     MailSenderValidatorAutoConfiguration.class
 },
-    properties = {"spring.mail.host=localhost", "spring.mail.port=25000"})
+    properties = {
+        "spring.mail.host=localhost",
+        "spring.mail.port=25000"
+    })
 @Tag("Mail")
 @EnabledIfContinuousIntegration
 @EnabledIfPortOpen(port = 25000)
 public class CommunicationsManagerTests {
-
     @Autowired
     @Qualifier("communicationsManager")
     private CommunicationsManager communicationsManager;
@@ -60,5 +65,21 @@ public class CommunicationsManagerTests {
         when(p.getId()).thenReturn("casuser");
         when(p.getAttributes()).thenReturn(CollectionUtils.wrap("email", List.of("cas@example.org")));
         assertTrue(communicationsManager.email(p, "email", props, props.getFormattedBody()));
+    }
+
+    @Test
+    public void verifyMailSenderWithTemplateBody() throws Exception {
+        assertTrue(communicationsManager.isMailSenderDefined());
+
+        val tempFile = Files.createTempFile("prefix", "postfix").toFile();
+        FileUtils.write(tempFile, "This is an example with %s %s", StandardCharsets.UTF_8);
+
+        val props = new EmailProperties();
+        props.setText(tempFile.getCanonicalPath());
+        props.setSubject("Subject");
+        props.setFrom("cas@example.org");
+
+        val body = props.getFormattedBody("param1", "param2");
+        assertTrue(communicationsManager.email(props, "sample@example.org", body));
     }
 }

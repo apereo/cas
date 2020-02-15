@@ -4,9 +4,11 @@ import org.apereo.cas.authentication.bypass.DefaultChainingMultifactorAuthentica
 import org.apereo.cas.authentication.bypass.MultifactorAuthenticationProviderBypassEvaluator;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.val;
+import org.springframework.core.OrderComparator;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -21,6 +23,7 @@ import java.util.List;
 @ToString
 @Getter
 @Setter
+@RequiredArgsConstructor
 public class DefaultChainingMultifactorAuthenticationProvider implements ChainingMultifactorAuthenticationProvider {
     private static final long serialVersionUID = -3199297701531604341L;
 
@@ -28,24 +31,15 @@ public class DefaultChainingMultifactorAuthenticationProvider implements Chainin
 
     private final MultifactorAuthenticationFailureModeEvaluator failureModeEvaluator;
 
-    public DefaultChainingMultifactorAuthenticationProvider(final MultifactorAuthenticationFailureModeEvaluator failureModeEvaluator) {
-        this.failureModeEvaluator = failureModeEvaluator;
-    }
-
     @Override
     public MultifactorAuthenticationProviderBypassEvaluator getBypassEvaluator() {
         val bypass = new DefaultChainingMultifactorAuthenticationBypassProvider();
         getMultifactorAuthenticationProviders()
             .stream()
-            .sorted()
+            .sorted(OrderComparator.INSTANCE)
             .map(MultifactorAuthenticationProvider::getBypassEvaluator)
             .forEach(bypass::addMultifactorAuthenticationProviderBypassEvaluator);
         return bypass;
-    }
-
-    @Override
-    public MultifactorAuthenticationFailureModeEvaluator getFailureModeEvaluator() {
-        return failureModeEvaluator;
     }
 
     @Override

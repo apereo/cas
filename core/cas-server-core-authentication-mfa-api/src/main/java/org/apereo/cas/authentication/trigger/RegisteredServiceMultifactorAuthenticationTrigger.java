@@ -60,7 +60,7 @@ public class RegisteredServiceMultifactorAuthenticationTrigger implements Multif
         }
 
         val principal = authentication.getPrincipal();
-        val providers = MultifactorAuthenticationUtils.getAuthenticationProviderForService(registeredService);
+        val providers = MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderForService(registeredService);
         if (providers != null && !providers.isEmpty()) {
             val provider = multifactorAuthenticationProviderSelector.resolve(providers, registeredService, principal);
             LOGGER.debug("Selected multifactor authentication provider for this transaction is [{}]", provider);
