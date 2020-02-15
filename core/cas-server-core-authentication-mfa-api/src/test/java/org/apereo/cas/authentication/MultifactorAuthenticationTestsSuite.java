@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.mfa.DefaultChainingMultifactorAuthenticatio
 import org.apereo.cas.authentication.mfa.DefaultMultifactorAuthenticationContextValidatorTests;
 import org.apereo.cas.authentication.mfa.DefaultRequestedAuthenticationContextValidatorTests;
 import org.apereo.cas.authentication.mfa.MultifactorAuthenticationProviderBypassTests;
+import org.apereo.cas.authentication.mfa.MultifactorAuthenticationUtilsTests;
 import org.apereo.cas.authentication.mfa.bypass.DefaultChainingMultifactorAuthenticationBypassProviderTests;
 import org.apereo.cas.authentication.mfa.bypass.audit.MultifactorAuthenticationProviderBypassAuditResourceResolverTests;
 import org.apereo.cas.authentication.mfa.trigger.AdaptiveMultifactorAuthenticationTriggerTests;
@@ -36,6 +37,7 @@ import org.junit.runner.RunWith;
     RestMultifactorAuthenticationProviderBypassEvaluatorTests.class,
     AdaptiveMultifactorAuthenticationTriggerTests.class,
     GlobalMultifactorAuthenticationTriggerTests.class,
+    MultifactorAuthenticationUtilsTests.class,
     ScriptedRegisteredServiceMultifactorAuthenticationTriggerTests.class,
     RegisteredServiceMultifactorAuthenticationTriggerTests.class,
     RegisteredServicePrincipalAttributeMultifactorAuthenticationTriggerTests.class,
