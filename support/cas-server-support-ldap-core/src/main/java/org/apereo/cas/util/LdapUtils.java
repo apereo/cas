@@ -340,8 +340,9 @@ public class LdapUtils {
                 })
                 .toArray(AttributeModification[]::new);
             val request = new ModifyRequest(currentDn, mods);
-            operation.execute(request);
-            return true;
+            val response = operation.execute(request);
+            LOGGER.debug("Result code [{}], message: [{}]", response.getResultCode(), response.getDiagnosticMessage());
+            return response.getResultCode() == ResultCode.SUCCESS;
         } catch (final LdapException e) {
             LOGGER.error(e.getMessage(), e);
         }
@@ -373,8 +374,9 @@ public class LdapUtils {
     public static boolean executeAddOperation(final ConnectionFactory connectionFactory, final LdapEntry entry) {
         try {
             val operation = new AddOperation(connectionFactory);
-            operation.execute(new AddRequest(entry.getDn(), entry.getAttributes()));
-            return true;
+            val response = operation.execute(new AddRequest(entry.getDn(), entry.getAttributes()));
+            LOGGER.debug("Result code [{}], message: [{}]", response.getResultCode(), response.getDiagnosticMessage());
+            return response.getResultCode() == ResultCode.SUCCESS;
         } catch (final LdapException e) {
             LOGGER.error(e.getMessage(), e);
         }
@@ -392,8 +394,9 @@ public class LdapUtils {
         try {
             val delete = new DeleteOperation(connectionFactory);
             val request = new DeleteRequest(entry.getDn());
-            val res = delete.execute(request);
-            return res.getResultCode() == ResultCode.SUCCESS;
+            val response = delete.execute(request);
+            LOGGER.debug("Result code [{}], message: [{}]", response.getResultCode(), response.getDiagnosticMessage());
+            return response.getResultCode() == ResultCode.SUCCESS;
         } catch (final LdapException e) {
             LOGGER.error(e.getMessage(), e);
         }
