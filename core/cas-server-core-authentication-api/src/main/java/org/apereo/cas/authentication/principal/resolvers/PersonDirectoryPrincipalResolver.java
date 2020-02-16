@@ -280,11 +280,12 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
 
     /**
      * This method is synchronized on this singleton but doesn't do anything expensive.
-     *
+     * <p>
      * The object returned from this method is specific to a user and it allows attribute retrieval to be synchronized
      * on a user (so the same attributes are not retrieved multiple times for the same user and attribute cache can be employed.
+     *
      * @param principalId User principal id
-     * @param credential User credentials
+     * @param credential  User credentials
      * @return PersonAttributeRetriever for given principal id
      */
     @Synchronized
@@ -327,19 +328,17 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
      */
     @RequiredArgsConstructor
     @Getter
-    @Setter
-    public class PersonAttributeRetriever {
-
+    private class PersonAttributeRetriever {
         private final String principalId;
 
         private final Credential credential;
 
         @Synchronized
         protected Map<String, List<Object>> retrievePersonAttributes() {
-            Map<String, List<Object>> attributes = CoreAuthenticationUtils.retrieveAttributesFromAttributeRepository(attributeRepository, principalId, activeAttributeRepositoryIdentifiers);
+            val attributes = CoreAuthenticationUtils.retrieveAttributesFromAttributeRepository(attributeRepository,
+                principalId, activeAttributeRepositoryIdentifiers);
             retrieverMap.remove(principalId);
             return attributes;
         }
     }
-
 }
