@@ -8,7 +8,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.jose4j.jwk.RsaJsonWebKey;
+import org.jose4j.jwk.PublicJsonWebKey;
 
 import java.util.Optional;
 
@@ -20,10 +20,10 @@ import java.util.Optional;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class OidcServiceJsonWebKeystoreCacheLoader implements CacheLoader<OAuthRegisteredService, Optional<RsaJsonWebKey>> {
+public class OidcServiceJsonWebKeystoreCacheLoader implements CacheLoader<OAuthRegisteredService, Optional<PublicJsonWebKey>> {
 
     @Override
-    public Optional<RsaJsonWebKey> load(final @NonNull OAuthRegisteredService service) {
+    public Optional<PublicJsonWebKey> load(final @NonNull OAuthRegisteredService service) {
         if (service instanceof OidcRegisteredService) {
             val svc = (OidcRegisteredService) service;
             val jwks = OidcJsonWebKeySetUtils.getJsonWebKeySet(svc);
