@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static java.util.stream.Collectors.toList;
 
@@ -92,8 +93,10 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
 
     /**
      * Map to store objects to synchronize on for retrieval of attributes one at a time per user.
+     * Needs to be ConcurrentHashMap because it is added to and removed from in two different methods
+     * synchronized on different objects.
      */
-    protected Map<String, PersonAttributeRetriever> retrieverMap = new HashMap<>();
+    protected Map<String, PersonAttributeRetriever> retrieverMap = new ConcurrentHashMap<>();
 
     public PersonDirectoryPrincipalResolver() {
         this(new StubPersonAttributeDao(new HashMap<>(0)), PrincipalFactoryUtils.newPrincipalFactory(), false,
