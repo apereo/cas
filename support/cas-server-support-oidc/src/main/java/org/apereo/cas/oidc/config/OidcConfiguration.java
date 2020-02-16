@@ -113,7 +113,7 @@ import com.github.benmanes.caffeine.cache.LoadingCache;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.jose4j.jwk.RsaJsonWebKey;
+import org.jose4j.jwk.PublicJsonWebKey;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.context.session.SessionStore;
@@ -254,7 +254,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
     @Autowired
     @Qualifier("casProtocolViewFactory")
     private ObjectProvider<CasProtocolViewFactory> casProtocolViewFactory;
-    
+
     @Autowired
     private ResourceLoader resourceLoader;
 
@@ -585,7 +585,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
     }
 
     @Bean
-    public LoadingCache<OAuthRegisteredService, Optional<RsaJsonWebKey>> oidcServiceJsonWebKeystoreCache() {
+    public LoadingCache<OAuthRegisteredService, Optional<PublicJsonWebKey>> oidcServiceJsonWebKeystoreCache() {
         return Caffeine.newBuilder()
             .maximumSize(1)
             .expireAfter(new OidcServiceJsonWebKeystoreCacheExpirationPolicy(casProperties))
@@ -593,7 +593,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
     }
 
     @Bean
-    public LoadingCache<String, Optional<RsaJsonWebKey>> oidcDefaultJsonWebKeystoreCache() {
+    public LoadingCache<String, Optional<PublicJsonWebKey>> oidcDefaultJsonWebKeystoreCache() {
         val oidc = casProperties.getAuthn().getOidc();
         return Caffeine.newBuilder().maximumSize(1)
             .expireAfterWrite(Duration.ofMinutes(oidc.getJwksCacheInMinutes()))
@@ -606,7 +606,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
     }
 
     @Bean
-    public CacheLoader<OAuthRegisteredService, Optional<RsaJsonWebKey>> oidcServiceJsonWebKeystoreCacheLoader() {
+    public CacheLoader<OAuthRegisteredService, Optional<PublicJsonWebKey>> oidcServiceJsonWebKeystoreCacheLoader() {
         return new OidcServiceJsonWebKeystoreCacheLoader(applicationContext);
     }
 
