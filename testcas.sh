@@ -22,6 +22,7 @@ printHelp() {
     echo -e "\t - postgres"
     echo -e "\t - dynamodb"
     echo -e "\t - couchbase"
+    echo -e "\t - uma"
     echo -e "\t - saml"
     echo -e "\t - mail"
     echo -e "\t - aws"
@@ -70,6 +71,10 @@ while (( "$#" )); do
             memcached|memcache|kryo)
                 task+="testMemcached "
                 category+="MEMCACHED,"
+                ;;
+            uma)
+                task+="testUma "
+                category+="UMA,"
                 ;;
             filesystem|files|file|fsys)
                 task+="testFileSystem "
