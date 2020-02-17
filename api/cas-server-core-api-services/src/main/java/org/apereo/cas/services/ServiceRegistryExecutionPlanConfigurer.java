@@ -14,6 +14,7 @@ public interface ServiceRegistryExecutionPlanConfigurer {
      * @param plan the plan
      */
     void configureServiceRegistry(ServiceRegistryExecutionPlan plan);
+
     /**
      * Gets name.
      *
