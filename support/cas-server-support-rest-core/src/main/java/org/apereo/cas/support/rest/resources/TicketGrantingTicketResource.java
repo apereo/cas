@@ -102,7 +102,7 @@ public class TicketGrantingTicketResource {
     @DeleteMapping(value = "/v1/tickets/{tgtId:.+}")
     public ResponseEntity<String> deleteTicketGrantingTicket(@PathVariable("tgtId") final String tgtId) {
         this.centralAuthenticationService.destroyTicketGrantingTicket(tgtId);
-        return new ResponseEntity<>(tgtId, HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     /**
