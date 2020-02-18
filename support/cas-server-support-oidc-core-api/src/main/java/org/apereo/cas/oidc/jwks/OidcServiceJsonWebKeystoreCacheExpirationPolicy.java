@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.jose4j.jwk.RsaJsonWebKey;
+import org.jose4j.jwk.PublicJsonWebKey;
 
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -22,26 +22,26 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class OidcServiceJsonWebKeystoreCacheExpirationPolicy implements Expiry<OAuthRegisteredService, Optional<RsaJsonWebKey>> {
+public class OidcServiceJsonWebKeystoreCacheExpirationPolicy implements Expiry<OAuthRegisteredService, Optional<PublicJsonWebKey>> {
     private final CasConfigurationProperties casProperties;
 
     @Override
     public long expireAfterCreate(final OAuthRegisteredService oidcRegisteredService,
-                                  final Optional<RsaJsonWebKey> rsaJsonWebKey,
+                                  final Optional<PublicJsonWebKey> rsaJsonWebKey,
                                   final long currentTime) {
         return getExpiration(oidcRegisteredService, currentTime);
     }
 
     @Override
     public long expireAfterUpdate(final OAuthRegisteredService oidcRegisteredService,
-                                  final Optional<RsaJsonWebKey> rsaJsonWebKey,
+                                  final Optional<PublicJsonWebKey> rsaJsonWebKey,
                                   final long currentTime, final long currentDuration) {
         return getExpiration(oidcRegisteredService, currentDuration);
     }
 
     @Override
     public long expireAfterRead(final OAuthRegisteredService oidcRegisteredService,
-                                final Optional<RsaJsonWebKey> rsaJsonWebKey,
+                                final Optional<PublicJsonWebKey> rsaJsonWebKey,
                                 final long currentTime,
                                 final long currentDuration) {
         return getExpiration(oidcRegisteredService, currentDuration);

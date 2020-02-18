@@ -11,7 +11,7 @@ import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jose4j.jwk.JsonWebKeySet;
-import org.jose4j.jwk.RsaJsonWebKey;
+import org.jose4j.jwk.PublicJsonWebKey;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 
@@ -81,13 +81,13 @@ public class OidcJsonWebKeySetUtils {
      * @param jwks the jwks
      * @return the json web key from jwks
      */
-    public static RsaJsonWebKey getJsonWebKeyFromJsonWebKeySet(final JsonWebKeySet jwks) {
+    public static PublicJsonWebKey getJsonWebKeyFromJsonWebKeySet(final JsonWebKeySet jwks) {
         if (jwks.getJsonWebKeys().isEmpty()) {
             LOGGER.warn("No JSON web keys are available in the keystore");
             return null;
         }
 
-        val key = (RsaJsonWebKey) jwks.getJsonWebKeys().get(0);
+        val key = (PublicJsonWebKey) jwks.getJsonWebKeys().get(0);
         if (StringUtils.isBlank(key.getAlgorithm())) {
             LOGGER.warn("Located JSON web key [{}] has no algorithm defined", key);
         }
