@@ -6,6 +6,11 @@ import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.AvailableSettings;
 import org.hibernate.dialect.HSQLDialect;
+import org.hibernate.dialect.MariaDB102Dialect;
+import org.hibernate.dialect.MariaDB103Dialect;
+import org.hibernate.dialect.MariaDB10Dialect;
+import org.hibernate.dialect.MariaDB53Dialect;
+import org.hibernate.dialect.MariaDBDialect;
 import org.hibernate.dialect.MySQL57Dialect;
 import org.hibernate.dialect.MySQL5Dialect;
 import org.hibernate.dialect.MySQLDialect;
@@ -32,6 +37,7 @@ import org.springframework.shell.standard.ShellOption;
 
 import javax.persistence.Entity;
 import javax.persistence.MappedSuperclass;
+
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
@@ -48,6 +54,7 @@ import java.util.TreeMap;
 @Slf4j
 public class GenerateDdlCommand {
     private static final Map<String, String> DIALECTS_MAP = new TreeMap<>();
+
     private static final Reflections REFLECTIONS = new Reflections("org.apereo.cas");
 
     static {
@@ -69,6 +76,12 @@ public class GenerateDdlCommand {
         DIALECTS_MAP.put("ORACLE10g", Oracle10gDialect.class.getName());
         DIALECTS_MAP.put("ORACLE12c", Oracle12cDialect.class.getName());
 
+        DIALECTS_MAP.put("MARIADB", MariaDBDialect.class.getName());
+        DIALECTS_MAP.put("MARIADB53", MariaDB53Dialect.class.getName());
+        DIALECTS_MAP.put("MARIADB10", MariaDB10Dialect.class.getName());
+        DIALECTS_MAP.put("MARIADB102", MariaDB102Dialect.class.getName());
+        DIALECTS_MAP.put("MARIADB103", MariaDB103Dialect.class.getName());
+
         DIALECTS_MAP.put("SQLSERVER", SQLServerDialect.class.getName());
         DIALECTS_MAP.put("SQLSERVER2005", SQLServer2005Dialect.class.getName());
         DIALECTS_MAP.put("SQLSERVER2008", SQLServer2008Dialect.class.getName());
@@ -89,32 +102,33 @@ public class GenerateDdlCommand {
      */
     @ShellMethod(key = "generate-ddl", value = "Generate database DDL scripts")
     public void generate(
-        @ShellOption(value = { "file", "--file" },
+        @ShellOption(value = {"file", "--file"},
             help = "DDL file to contain to generated script",
             defaultValue = "/etc/cas/config/cas-db-schema.sql") final String file,
-        @ShellOption(value = { "dialect", "--dialect" },
+        @ShellOption(value = {"dialect", "--dialect"},
             help = "Database dialect class",
             defaultValue = "HSQL") final String dialect,
-        @ShellOption(value = { "url", "--url" },
+        @ShellOption(value = {"url", "--url"},
             help = "JDBC database connection URL",
             defaultValue = "jdbc:hsqldb:mem:cas") final String jdbcUrl,
-        @ShellOption(value = { "delimiter", "--delimiter" },
+        @ShellOption(value = {"delimiter", "--delimiter"},
             help = "Delimiter to use for separation of statements when generating SQL",
             defaultValue = ";") final String delimiter,
-        @ShellOption(value = { "pretty", "--pretty" },
+        @ShellOption(value = {"pretty", "--pretty"},
             help = "Format DDL scripts and pretty-print the output",
             defaultValue = "true") final boolean pretty,
-        @ShellOption(value = { "dropSchema", "--dropSchema" },
+        @ShellOption(value = {"dropSchema", "--dropSchema"},
             help = "Generate DROP SQL statements in the DDL",
             defaultValue = "true") final boolean dropSchema,
-        @ShellOption(value = { "createSchema", "--createSchema" },
+        @ShellOption(value = {"createSchema", "--createSchema"},
             help = "Generate DROP SQL statements in the DDL",
             defaultValue = "true") final boolean createSchema,
-        @ShellOption(value = { "haltOnError", "--haltOnError" },
+        @ShellOption(value = {"haltOnError", "--haltOnError"},
             help = "Halt if an error occurs during the generation process",
             defaultValue = "true") final boolean haltOnError) {
 
-        val dialectName = DIALECTS_MAP.getOrDefault(dialect.trim().toUpperCase(), dialect);
+        LOGGER.info("Requested database dialect type [{}]", dialect);
+        val dialectName = DIALECTS_MAP.getOrDefault(dialect.trim(), dialect);
         LOGGER.info("Using database dialect class [{}]", dialectName);
         if (!dialectName.contains(".")) {
             LOGGER.warn("Dialect name must be a fully qualified class name. Supported dialects by default are [{}] "
@@ -125,7 +139,7 @@ public class GenerateDdlCommand {
         val svcRegistry = new StandardServiceRegistryBuilder();
 
         val settings = new HashMap<String, String>();
-        settings.put(AvailableSettings.DIALECT, dialect);
+        settings.put(AvailableSettings.DIALECT, dialectName);
         settings.put(AvailableSettings.URL, jdbcUrl);
         settings.put(AvailableSettings.HBM2DDL_AUTO, "none");
         settings.put(AvailableSettings.SHOW_SQL, "true");
