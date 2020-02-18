@@ -54,8 +54,18 @@ public class OidcProperties implements Serializable {
     /**
      * The key size for the generated jwks. This is an algorithm-specific metric,
      * such as modulus length, specified in number of bits.
+     * <p>
+     * If the keystore type is {@code EC}, the key size defined here
+     * should switch to one of {@code 256}, {@code 384} or {@code 521}.
+     * If using  {@code EC}, then the size should match the number of bits required.
      */
     private int jwksKeySize = 2048;
+
+    /**
+     * The type of the JWKS used to handle signing/encryption of authentication tokens.
+     * Accepted values are {@code RSA} or {@code EC}.
+     */
+    private String jwksType = "RSA";
 
     /**
      * Whether dynamic registration operates in {@code OPEN} or {@code PROTECTED} mode.
