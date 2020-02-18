@@ -7,7 +7,7 @@ import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jose4j.jwk.JsonWebKeySet;
-import org.jose4j.jwk.RsaJsonWebKey;
+import org.jose4j.jwk.PublicJsonWebKey;
 import org.springframework.core.io.Resource;
 
 import java.nio.charset.StandardCharsets;
@@ -22,16 +22,16 @@ import java.util.Optional;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class OidcDefaultJsonWebKeystoreCacheLoader implements CacheLoader<String, Optional<RsaJsonWebKey>> {
+public class OidcDefaultJsonWebKeystoreCacheLoader implements CacheLoader<String, Optional<PublicJsonWebKey>> {
     private final Resource jwksFile;
 
-    private static RsaJsonWebKey getJsonSigningWebKeyFromJwks(final JsonWebKeySet jwks) {
+    private static PublicJsonWebKey getJsonSigningWebKeyFromJwks(final JsonWebKeySet jwks) {
         if (jwks.getJsonWebKeys().isEmpty()) {
             LOGGER.warn("No JSON web keys are available in the keystore");
             return null;
         }
 
-        val key = (RsaJsonWebKey) jwks.getJsonWebKeys().get(0);
+        val key = (PublicJsonWebKey) jwks.getJsonWebKeys().get(0);
         if (StringUtils.isBlank(key.getAlgorithm())) {
             LOGGER.debug("Located JSON web key [{}] has no algorithm defined", key);
         }
@@ -102,7 +102,7 @@ public class OidcDefaultJsonWebKeystoreCacheLoader implements CacheLoader<String
     }
 
     @Override
-    public Optional<RsaJsonWebKey> load(final String issuer) {
+    public Optional<PublicJsonWebKey> load(final String issuer) {
         val jwks = buildJsonWebKeySet();
         if (jwks.isEmpty() || jwks.get().getJsonWebKeys().isEmpty()) {
             return Optional.empty();

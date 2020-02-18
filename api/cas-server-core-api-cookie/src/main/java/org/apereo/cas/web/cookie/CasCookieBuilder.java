@@ -2,8 +2,6 @@ package org.apereo.cas.web.cookie;
 
 import org.apereo.cas.authentication.RememberMeCredential;
 
-import org.springframework.webflow.execution.RequestContext;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -18,10 +16,13 @@ public interface CasCookieBuilder {
      * Adds the cookie, taking into account {@link RememberMeCredential#REQUEST_PARAMETER_REMEMBER_ME}
      * in the request.
      *
-     * @param requestContext the request context
-     * @param cookieValue    the cookie value
+     * @param request     the request
+     * @param response    the response
+     * @param rememberMe  the remember me
+     * @param cookieValue the cookie value
      */
-    void addCookie(RequestContext requestContext, String cookieValue);
+    void addCookie(HttpServletRequest request, HttpServletResponse response,
+                   boolean rememberMe, String cookieValue);
 
     /**
      * Add cookie.

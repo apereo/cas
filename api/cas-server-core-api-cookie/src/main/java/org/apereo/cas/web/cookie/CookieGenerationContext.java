@@ -2,6 +2,7 @@ package org.apereo.cas.web.cookie;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 import org.apache.commons.lang3.StringUtils;
 
@@ -26,6 +27,7 @@ public class CookieGenerationContext implements Serializable {
 
     private static final int DEFAULT_REMEMBER_ME_MAX_AGE = 7889231;
 
+    @Setter
     private String name;
 
     @Builder.Default
@@ -45,4 +47,7 @@ public class CookieGenerationContext implements Serializable {
 
     @Builder.Default
     private boolean httpOnly = true;
+
+    @Builder.Default
+    private String sameSitePolicy = StringUtils.EMPTY;
 }

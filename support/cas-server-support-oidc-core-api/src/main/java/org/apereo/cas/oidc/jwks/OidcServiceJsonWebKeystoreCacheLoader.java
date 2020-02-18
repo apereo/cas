@@ -7,7 +7,7 @@ import com.github.benmanes.caffeine.cache.CacheLoader;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.jose4j.jwk.RsaJsonWebKey;
+import org.jose4j.jwk.PublicJsonWebKey;
 import org.springframework.context.ApplicationContext;
 
 import java.util.Optional;
@@ -19,11 +19,11 @@ import java.util.Optional;
  * @since 5.1.0
  */
 @RequiredArgsConstructor
-public class OidcServiceJsonWebKeystoreCacheLoader implements CacheLoader<OAuthRegisteredService, Optional<RsaJsonWebKey>> {
+public class OidcServiceJsonWebKeystoreCacheLoader implements CacheLoader<OAuthRegisteredService, Optional<PublicJsonWebKey>> {
     private final ApplicationContext applicationContext;
 
     @Override
-    public Optional<RsaJsonWebKey> load(final @NonNull OAuthRegisteredService service) {
+    public Optional<PublicJsonWebKey> load(final @NonNull OAuthRegisteredService service) {
         if (service instanceof OidcRegisteredService) {
             val svc = (OidcRegisteredService) service;
             val jwks = OidcJsonWebKeySetUtils.getJsonWebKeySet(svc, applicationContext);

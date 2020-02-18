@@ -5,6 +5,7 @@ import org.apereo.cas.services.domain.DomainServicesManager;
 
 import lombok.Getter;
 import lombok.val;
+import org.apereo.inspektr.audit.annotation.Audit;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -42,16 +43,22 @@ public class ChainingServicesManager implements ServicesManager {
         return serviceManagers.stream().filter(s -> s.supports(service)).findFirst();
     }
 
-    private Optional<ServicesManager> findServicesManager(final Class clazz) {
+    private Optional<ServicesManager> findServicesManager(final Class<?> clazz) {
         return serviceManagers.stream().filter(s -> s.supports(clazz)).findFirst();
     }
 
+    @Audit(action = "SAVE_SERVICE",
+        actionResolverName = "SAVE_SERVICE_ACTION_RESOLVER",
+        resourceResolverName = "SAVE_SERVICE_RESOURCE_RESOLVER")
     @Override
     public RegisteredService save(final RegisteredService registeredService) {
         val manager = findServicesManager(registeredService);
         return manager.map(servicesManager -> servicesManager.save(registeredService)).orElse(null);
     }
 
+    @Audit(action = "SAVE_SERVICE",
+        actionResolverName = "SAVE_SERVICE_ACTION_RESOLVER",
+        resourceResolverName = "SAVE_SERVICE_RESOURCE_RESOLVER")
     @Override
     public RegisteredService save(final RegisteredService registeredService, final boolean publishEvent) {
         val manager = findServicesManager(registeredService);
@@ -63,6 +70,9 @@ public class ChainingServicesManager implements ServicesManager {
         serviceManagers.forEach(ServicesManager::deleteAll);
     }
 
+    @Audit(action = "DELETE_SERVICE",
+        actionResolverName = "DELETE_SERVICE_ACTION_RESOLVER",
+        resourceResolverName = "DELETE_SERVICE_RESOURCE_RESOLVER")
     @Override
     public RegisteredService delete(final long id) {
         return serviceManagers.stream()
@@ -72,10 +82,13 @@ public class ChainingServicesManager implements ServicesManager {
             .orElse(null);
     }
 
+    @Audit(action = "DELETE_SERVICE",
+        actionResolverName = "DELETE_SERVICE_ACTION_RESOLVER",
+        resourceResolverName = "DELETE_SERVICE_RESOURCE_RESOLVER")
     @Override
     public RegisteredService delete(final RegisteredService svc) {
         val manager = findServicesManager(svc);
-        return manager.isPresent() ? manager.get().delete(svc) : null;
+        return manager.map(servicesManager -> servicesManager.delete(svc)).orElse(null);
     }
 
     @Override
@@ -90,7 +103,7 @@ public class ChainingServicesManager implements ServicesManager {
     @Override
     public RegisteredService findServiceBy(final Service service) {
         val manager = findServicesManager(service);
-        return manager.isPresent() ? manager.get().findServiceBy(service) : null;
+        return manager.map(servicesManager -> servicesManager.findServiceBy(service)).orElse(null);
     }
 
     @Override
