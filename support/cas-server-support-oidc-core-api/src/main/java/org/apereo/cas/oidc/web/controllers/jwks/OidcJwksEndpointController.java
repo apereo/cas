@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -33,9 +34,10 @@ import java.nio.charset.StandardCharsets;
 public class OidcJwksEndpointController extends BaseOAuth20Controller {
     private final Resource jwksFile;
 
-    public OidcJwksEndpointController(final OAuth20ConfigurationContext oAuthConfigurationContext) {
+    public OidcJwksEndpointController(final OAuth20ConfigurationContext oAuthConfigurationContext,
+                                      final Resource jwksFile) {
         super(oAuthConfigurationContext);
-        this.jwksFile = oAuthConfigurationContext.getCasProperties().getAuthn().getOidc().getJwksFile();
+        this.jwksFile = jwksFile;
     }
 
     /**

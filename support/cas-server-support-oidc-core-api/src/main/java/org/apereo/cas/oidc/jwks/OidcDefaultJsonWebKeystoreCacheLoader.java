@@ -31,7 +31,7 @@ public class OidcDefaultJsonWebKeystoreCacheLoader implements CacheLoader<String
             return null;
         }
 
-        val key = (PublicJsonWebKey) jwks.getJsonWebKeys().get(0);
+        val key = PublicJsonWebKey.class.cast(jwks.getJsonWebKeys().get(0));
         if (StringUtils.isBlank(key.getAlgorithm())) {
             LOGGER.debug("Located JSON web key [{}] has no algorithm defined", key);
         }
@@ -50,6 +50,16 @@ public class OidcDefaultJsonWebKeystoreCacheLoader implements CacheLoader<String
         val json = IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8);
         LOGGER.debug("Retrieved JSON web key from [{}] as [{}]", resource, json);
         return buildJsonWebKeySet(json);
+    }
+
+    private static JsonWebKeySet buildJsonWebKeySet(final String json) throws Exception {
+        val jsonWebKeySet = new JsonWebKeySet(json);
+        val webKey = getJsonSigningWebKeyFromJwks(jsonWebKeySet);
+        if (webKey == null || webKey.getPrivateKey() == null) {
+            LOGGER.warn("JSON web key retrieved [{}] is not found or has no associated private key", webKey);
+            return null;
+        }
+        return jsonWebKeySet;
     }
 
     /**
@@ -89,16 +99,6 @@ public class OidcDefaultJsonWebKeystoreCacheLoader implements CacheLoader<String
             LOGGER.debug(e.getMessage(), e);
         }
         return Optional.empty();
-    }
-
-    private static JsonWebKeySet buildJsonWebKeySet(final String json) throws Exception {
-        val jsonWebKeySet = new JsonWebKeySet(json);
-        val webKey = getJsonSigningWebKeyFromJwks(jsonWebKeySet);
-        if (webKey == null || webKey.getPrivateKey() == null) {
-            LOGGER.warn("JSON web key retrieved [{}] is not found or has no associated private key", webKey);
-            return null;
-        }
-        return jsonWebKeySet;
     }
 
     @Override

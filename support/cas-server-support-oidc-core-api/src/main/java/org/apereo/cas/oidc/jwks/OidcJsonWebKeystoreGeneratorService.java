@@ -2,6 +2,7 @@ package org.apereo.cas.oidc.jwks;
 
 import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
 import org.apereo.cas.util.ResourceUtils;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -13,10 +14,12 @@ import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.JsonWebKeySet;
 import org.jose4j.jwk.PublicJsonWebKey;
 import org.jose4j.jwk.RsaJwkGenerator;
+import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.keys.EllipticCurves;
 import org.springframework.core.io.Resource;
 
 import java.nio.charset.StandardCharsets;
+import java.util.UUID;
 
 /**
  * This is {@link OidcJsonWebKeystoreGeneratorService}.
@@ -38,7 +41,9 @@ public class OidcJsonWebKeystoreGeneratorService {
      */
     @SneakyThrows
     public void generate() {
-        generate(oidcProperties.getJwksFile());
+        val resolve = SpringExpressionLanguageValueResolver.getInstance().resolve(oidcProperties.getJwksFile());
+        val resource = ResourceUtils.getRawResourceFrom(resolve);
+        generate(resource);
     }
 
     /**
@@ -49,13 +54,10 @@ public class OidcJsonWebKeystoreGeneratorService {
     @SneakyThrows
     public void generate(final Resource file) {
         if (!ResourceUtils.doesResourceExist(file)) {
-
             val jwk = generateJsonWebKey();
             val jsonWebKeySet = new JsonWebKeySet(jwk);
             val data = jsonWebKeySet.toJson(JsonWebKey.OutputControlLevel.INCLUDE_PRIVATE);
-            val location = ResourceUtils.isFile(file)
-                ? file.getFile()
-                : oidcProperties.getJwksFile().getFile();
+            val location = file.getFile();
             FileUtils.write(location, data, StandardCharsets.UTF_8);
             LOGGER.debug("Generated JSON web keystore at [{}]", location);
         } else {
@@ -73,12 +75,22 @@ public class OidcJsonWebKeystoreGeneratorService {
         switch (oidcProperties.getJwksType().toLowerCase()) {
             case "ec":
                 if (oidcProperties.getJwksKeySize() == JWK_EC_P384_SIZE) {
-                    return EcJwkGenerator.generateJwk(EllipticCurves.P384);
+                    val jwk = EcJwkGenerator.generateJwk(EllipticCurves.P384);
+                    jwk.setKeyId(UUID.randomUUID().toString());
+                    jwk.setAlgorithm(AlgorithmIdentifiers.ECDSA_USING_P384_CURVE_AND_SHA384);
+                    return jwk;
                 }
                 if (oidcProperties.getJwksKeySize() == JWK_EC_P512_SIZE) {
-                    return EcJwkGenerator.generateJwk(EllipticCurves.P521);
+                    val jwk = EcJwkGenerator.generateJwk(EllipticCurves.P521);
+                    jwk.setKeyId(UUID.randomUUID().toString());
+                    jwk.setAlgorithm(AlgorithmIdentifiers.ECDSA_USING_P521_CURVE_AND_SHA512);
+                    return jwk;
                 }
-                return EcJwkGenerator.generateJwk(EllipticCurves.P256);
+                val jwk = EcJwkGenerator.generateJwk(EllipticCurves.P256);
+                jwk.setKeyId(UUID.randomUUID().toString());
+                jwk.setAlgorithm(AlgorithmIdentifiers.ECDSA_USING_P521_CURVE_AND_SHA512);
+                return jwk;
+
             case "rsa":
             default:
                 return RsaJwkGenerator.generateJwk(oidcProperties.getJwksKeySize());
