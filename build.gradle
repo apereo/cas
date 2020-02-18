@@ -161,8 +161,10 @@ allprojects {
         gradleLint.rules = ["dependency-parentheses", "dependency-tuple"]
     }
 
-    jacoco {
-        toolVersion = "$gradleJacocoVersion"
+    afterEvaluate { project ->
+        jacoco {
+            toolVersion = "$gradleJacocoVersion"
+        }
     }
 
     idea {
@@ -636,10 +638,8 @@ task jacocoRootReport(type: JacocoReport, group: "Coverage reports") {
         fileTree(dir: it,
                 include: '**/*.class',
                 exclude: [
-                        '**/**Configuration.class',
                         '**/shell/cli/**',
                         '**/shell/commands/**',
-                        '**/**Configuration$**',
                         '**/**ConfigurationMetadataGenerator**',
                         '**/**Application.class',
                         '**/**Application$**',
@@ -652,7 +652,7 @@ task jacocoRootReport(type: JacocoReport, group: "Coverage reports") {
     }
     executionData jacocoMerge.destinationFile
     reports {
-        html.enabled = !rootProject.continuousIntegrationBuild
+        html.enabled = true
         xml.enabled = true
     }
 }
