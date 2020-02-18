@@ -64,6 +64,7 @@ in each case to learn the exact unit of measure.
 # ${configurationKey}.name=
 # ${configurationKey}.secure=true
 # ${configurationKey}.httpOnly=true
+# ${configurationKey}.sameSitePolicy=none|lax|strict
 ```                               
 
 ## Job Scheduling

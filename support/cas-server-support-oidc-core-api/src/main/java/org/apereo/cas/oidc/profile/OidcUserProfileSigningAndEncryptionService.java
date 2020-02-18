@@ -7,7 +7,7 @@ import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.jose4j.jwk.RsaJsonWebKey;
+import org.jose4j.jwk.PublicJsonWebKey;
 import org.jose4j.jws.AlgorithmIdentifiers;
 
 import java.util.Optional;
@@ -24,8 +24,8 @@ public class OidcUserProfileSigningAndEncryptionService extends BaseOidcJsonWebK
      */
     public static final String USER_INFO_RESPONSE_ENCRYPTION_ENCODING_DEFAULT = "A128CBC-HS256";
 
-    public OidcUserProfileSigningAndEncryptionService(final LoadingCache<String, Optional<RsaJsonWebKey>> defaultJsonWebKeystoreCache,
-                                                      final LoadingCache<OAuthRegisteredService, Optional<RsaJsonWebKey>> serviceJsonWebKeystoreCache,
+    public OidcUserProfileSigningAndEncryptionService(final LoadingCache<String, Optional<PublicJsonWebKey>> defaultJsonWebKeystoreCache,
+                                                      final LoadingCache<OAuthRegisteredService, Optional<PublicJsonWebKey>> serviceJsonWebKeystoreCache,
                                                       final String issuer) {
         super(defaultJsonWebKeystoreCache, serviceJsonWebKeystoreCache, issuer);
     }
