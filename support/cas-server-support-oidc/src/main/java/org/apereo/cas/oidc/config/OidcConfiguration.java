@@ -98,6 +98,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.gen.DefaultRandomStringGenerator;
 import org.apereo.cas.util.serialization.StringSerializer;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import org.apereo.cas.validation.CasProtocolViewFactory;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
@@ -110,6 +111,7 @@ import org.apereo.cas.web.flow.resolver.impl.mfa.DefaultMultifactorAuthenticatio
 import com.github.benmanes.caffeine.cache.CacheLoader;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -472,7 +474,9 @@ public class OidcConfiguration implements WebMvcConfigurer {
     @Bean
     public OidcJwksEndpointController oidcJwksController() {
         val context = buildConfigurationContext();
-        return new OidcJwksEndpointController(context);
+        val resource = SpringExpressionLanguageValueResolver.getInstance().resolve(
+            casProperties.getAuthn().getOidc().getJwksFile());
+        return new OidcJwksEndpointController(context, resourceLoader.getResource(resource));
     }
 
     @Autowired
@@ -601,8 +605,12 @@ public class OidcConfiguration implements WebMvcConfigurer {
     }
 
     @Bean
+    @SneakyThrows
     public OidcDefaultJsonWebKeystoreCacheLoader oidcDefaultJsonWebKeystoreCacheLoader() {
-        return new OidcDefaultJsonWebKeystoreCacheLoader(casProperties.getAuthn().getOidc().getJwksFile());
+        val resource = SpringExpressionLanguageValueResolver.getInstance()
+            .resolve(casProperties.getAuthn().getOidc().getJwksFile());
+        val jwksFile = resourceLoader.getResource(resource);
+        return new OidcDefaultJsonWebKeystoreCacheLoader(jwksFile);
     }
 
     @Bean
