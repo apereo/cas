@@ -49,11 +49,14 @@
                     </table>
                 </div>
             </div>
-            <p>
-                <a class="btn btn-submit" th:href="@{/login}" th:text="#{screen.pac4j.unauthz.login}">Back to CAS</a>
-                <a class="btn btn-submit" th:href="${service}" th:text="#{screen.pac4j.unauthz.gotoapp}">Goto
-                    Application</a>
-            </p>
+            <div class="d-flex">
+                <a class="mdc-button mdc-button--raised mr-2" th:href="@{/login}">
+                    <span class="mdc-button__label" th:text="#{screen.pac4j.unauthz.login}">Back to CAS</span>
+                </a>
+                <a class="mdc-button mdc-button--outlined" th:href="${service}">
+                    <span class="mdc-button__label" th:text="#{screen.pac4j.unauthz.gotoapp}">Goto Application</span>
+                </a>
+            </div>
         </div>
     </main>
 </body>
