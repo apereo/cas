@@ -13,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.inspektr.audit.annotation.Audit;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
 
@@ -40,36 +39,59 @@ import java.util.stream.Stream;
 public abstract class AbstractServicesManager implements ServicesManager {
 
     private final ServiceRegistry serviceRegistry;
+
     private final transient ApplicationEventPublisher eventPublisher;
+
     private final Set<String> environments;
 
     private Map<Long, RegisteredService> services = new ConcurrentHashMap<>();
 
-    @Override
-    public Collection<RegisteredService> getAllServices() {
-        return this.services.values()
-            .stream()
-            .filter(this::validateAndFilterServiceByEnvironment)
-            .filter(getRegisteredServicesFilteringPredicate())
-            .sorted()
-            .peek(RegisteredService::initialize)
-            .collect(Collectors.toList());
+    private static Predicate<RegisteredService> getRegisteredServicesFilteringPredicate(final Predicate<RegisteredService>... p) {
+        val predicates = Stream.of(p).collect(Collectors.toCollection(ArrayList::new));
+        return predicates.stream().reduce(x -> true, Predicate::and);
     }
 
+    @Override
+    public RegisteredService save(final RegisteredService registeredService) {
+        return save(registeredService, true);
+    }
 
     @Override
-    public Collection<RegisteredService> findServiceBy(final Predicate<RegisteredService> predicate) {
-        if (predicate == null) {
-            return new ArrayList<>(0);
+    public synchronized RegisteredService save(final RegisteredService registeredService, final boolean publishEvent) {
+        publishEvent(new CasRegisteredServicePreSaveEvent(this, registeredService));
+        val r = this.serviceRegistry.save(registeredService);
+        this.services.put(r.getId(), r);
+        saveInternal(registeredService);
+
+        if (publishEvent) {
+            publishEvent(new CasRegisteredServiceSavedEvent(this, r));
         }
+        return r;
+    }
 
-        return getAllServices()
-            .stream()
-            .filter(getRegisteredServicesFilteringPredicate(predicate))
-            .sorted()
-            .peek(RegisteredService::initialize)
-            .collect(Collectors.toList());
+    @Override
+    public synchronized void deleteAll() {
+        this.services.forEach((k, v) -> delete(v));
+        this.services.clear();
+        publishEvent(new CasRegisteredServicesDeletedEvent(this));
+    }
 
+    @Override
+    public synchronized RegisteredService delete(final long id) {
+        val service = findServiceBy(id);
+        return delete(service);
+    }
+
+    @Override
+    public synchronized RegisteredService delete(final RegisteredService service) {
+        if (service != null) {
+            publishEvent(new CasRegisteredServicePreDeleteEvent(this, service));
+            this.serviceRegistry.delete(service);
+            this.services.remove(service.getId());
+            deleteInternal(service);
+            publishEvent(new CasRegisteredServiceDeletedEvent(this, service));
+        }
+        return service;
     }
 
     @Override
@@ -98,6 +120,26 @@ public abstract class AbstractServicesManager implements ServicesManager {
     }
 
     @Override
+    public Collection<RegisteredService> findServiceBy(final Predicate<RegisteredService> predicate) {
+        if (predicate == null) {
+            return new ArrayList<>(0);
+        }
+
+        return getAllServices()
+            .stream()
+            .filter(getRegisteredServicesFilteringPredicate(predicate))
+            .sorted()
+            .peek(RegisteredService::initialize)
+            .collect(Collectors.toList());
+
+    }
+
+    @Override
+    public <T extends RegisteredService> T findServiceBy(final Service serviceId, final Class<T> clazz) {
+        return findServiceBy(serviceId.getId(), clazz);
+    }
+
+    @Override
     public <T extends RegisteredService> T findServiceBy(final String serviceId, final Class<T> clazz) {
         if (StringUtils.isBlank(serviceId)) {
             return null;
@@ -110,67 +152,20 @@ public abstract class AbstractServicesManager implements ServicesManager {
     }
 
     @Override
-    public <T extends RegisteredService> T findServiceBy(final Service serviceId, final Class<T> clazz) {
-        return findServiceBy(serviceId.getId(), clazz);
-    }
-
-    @Override
     public RegisteredService findServiceBy(final long id) {
         val result = this.services.get(id);
         return validateRegisteredService(result);
     }
 
     @Override
-    public int count() {
-        return services.size();
-    }
-
-    @Audit(action = "DELETE_SERVICE",
-        actionResolverName = "DELETE_SERVICE_ACTION_RESOLVER",
-        resourceResolverName = "DELETE_SERVICE_RESOURCE_RESOLVER")
-    @Override
-    public synchronized RegisteredService delete(final long id) {
-        val service = findServiceBy(id);
-        return delete(service);
-    }
-
-    @Audit(action = "DELETE_SERVICE",
-        actionResolverName = "DELETE_SERVICE_ACTION_RESOLVER",
-        resourceResolverName = "DELETE_SERVICE_RESOURCE_RESOLVER")
-    @Override
-    public synchronized RegisteredService delete(final RegisteredService service) {
-        if (service != null) {
-            publishEvent(new CasRegisteredServicePreDeleteEvent(this, service));
-            this.serviceRegistry.delete(service);
-            this.services.remove(service.getId());
-            deleteInternal(service);
-            publishEvent(new CasRegisteredServiceDeletedEvent(this, service));
-        }
-        return service;
-    }
-
-    @Audit(action = "SAVE_SERVICE",
-        actionResolverName = "SAVE_SERVICE_ACTION_RESOLVER",
-        resourceResolverName = "SAVE_SERVICE_RESOURCE_RESOLVER")
-    @Override
-    public RegisteredService save(final RegisteredService registeredService) {
-        return save(registeredService, true);
-    }
-
-    @Audit(action = "SAVE_SERVICE",
-        actionResolverName = "SAVE_SERVICE_ACTION_RESOLVER",
-        resourceResolverName = "SAVE_SERVICE_RESOURCE_RESOLVER")
-    @Override
-    public synchronized RegisteredService save(final RegisteredService registeredService, final boolean publishEvent) {
-        publishEvent(new CasRegisteredServicePreSaveEvent(this, registeredService));
-        val r = this.serviceRegistry.save(registeredService);
-        this.services.put(r.getId(), r);
-        saveInternal(registeredService);
-
-        if (publishEvent) {
-            publishEvent(new CasRegisteredServiceSavedEvent(this, r));
-        }
-        return r;
+    public Collection<RegisteredService> getAllServices() {
+        return this.services.values()
+            .stream()
+            .filter(this::validateAndFilterServiceByEnvironment)
+            .filter(getRegisteredServicesFilteringPredicate())
+            .sorted()
+            .peek(RegisteredService::initialize)
+            .collect(Collectors.toList());
     }
 
     /**
@@ -193,10 +188,8 @@ public abstract class AbstractServicesManager implements ServicesManager {
     }
 
     @Override
-    public synchronized void deleteAll() {
-        this.services.forEach((k, v) -> delete(v));
-        this.services.clear();
-        publishEvent(new CasRegisteredServicesDeletedEvent(this));
+    public int count() {
+        return services.size();
     }
 
     private void evaluateExpiredServiceDefinitions() {
@@ -205,11 +198,6 @@ public abstract class AbstractServicesManager implements ServicesManager {
             .filter(RegisteredServiceAccessStrategyUtils.getRegisteredServiceExpirationPolicyPredicate().negate())
             .filter(Objects::nonNull)
             .forEach(this::processExpiredRegisteredService);
-    }
-
-    private static Predicate<RegisteredService> getRegisteredServicesFilteringPredicate(final Predicate<RegisteredService>... p) {
-        val predicates = Stream.of(p).collect(Collectors.toCollection(ArrayList::new));
-        return predicates.stream().reduce(x -> true, Predicate::and);
     }
 
     private RegisteredService validateRegisteredService(final RegisteredService registeredService) {

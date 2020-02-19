@@ -15,6 +15,7 @@ import javax.persistence.Entity;
 
 /**
  * @author Scott Battaglia
+ * @deprecated 6.2
  * @since 3.1
  */
 @Entity
@@ -22,6 +23,7 @@ import javax.persistence.Entity;
 @Getter
 @NoArgsConstructor
 @Setter
+@Deprecated(since = "6.2")
 @EqualsAndHashCode(callSuper = true)
 public class OpenIdService extends AbstractWebApplicationService {
 

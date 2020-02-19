@@ -8,10 +8,12 @@ import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationP
 import org.apereo.cas.services.RegisteredServiceMultifactorPolicyFailureModes;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -22,7 +24,11 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@SpringBootTest(classes = AopAutoConfiguration.class)
+@SpringBootTest(classes = {
+    AopAutoConfiguration.class,
+    RefreshAutoConfiguration.class
+})
+@Tag("MFA")
 public class DefaultChainingMultifactorAuthenticationProviderTests {
 
     @Autowired

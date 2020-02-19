@@ -17,6 +17,10 @@ dependencies {
 
     implementation project(":support:cas-server-support-actions")
     implementation project(":support:cas-server-support-passwordless")
+    implementation project(":support:cas-server-support-pac4j-core")
+    implementation project(":support:cas-server-support-pac4j-api")
+
+    compileOnly project(":support:cas-server-support-pac4j-webflow")
 
     testImplementation project(":core:cas-server-core-cookie")
     testImplementation project(":core:cas-server-core-util")
@@ -29,7 +33,10 @@ dependencies {
     testImplementation project(":core:cas-server-core-authentication-mfa")
     testImplementation project(":core:cas-server-core-services-authentication")
     testImplementation project(":core:cas-server-core-authentication-attributes")
+    testImplementation project(":support:cas-server-support-pac4j-webflow")
     testImplementation project(":support:cas-server-support-themes")
+    testImplementation project(":support:cas-server-support-pac4j")
+    testImplementation project(":support:cas-server-support-saml-core")
 
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")

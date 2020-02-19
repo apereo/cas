@@ -74,4 +74,20 @@ public class CookieProperties implements Serializable {
      * the current session, such as IP address, user-agent, etc.
      */
     private boolean pinToSession = true;
+
+    /**
+     * If a cookie is only intended to be accessed in a first party context, the
+     * developer has the option to apply one of settings
+     * {@code SameSite=Lax or SameSite=Strict or SameSite=None} to prevent external access.
+     * <p>
+     * To safeguard more websites and their users, the new secure-by-default model
+     * assumes all cookies should be protected from external access unless otherwise
+     * specified. Developers must use a new cookie setting, {@code SameSite=None}, to designate
+     * cookies for cross-site access. When the {@code SameSite=None} attribute is present, an additional
+     * {@code Secure} attribute is used so cross-site cookies can only be accessed over HTTPS
+     * connections.
+     * </p>
+     * <p>Accepted values are: {@code Lax}, {@code Strict},  {@code None}.</p>
+     */
+    private String sameSitePolicy = StringUtils.EMPTY;
 }

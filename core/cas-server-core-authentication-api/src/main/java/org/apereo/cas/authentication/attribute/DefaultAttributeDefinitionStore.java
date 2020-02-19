@@ -1,45 +1,36 @@
 package org.apereo.cas.authentication.attribute;
 
-import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.ResourceUtils;
-import org.apereo.cas.util.scripting.ExecutableCompiledGroovyScript;
-import org.apereo.cas.util.scripting.GroovyShellScript;
-import org.apereo.cas.util.scripting.ScriptingUtils;
-import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
-import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
+import org.apereo.cas.util.io.FileWatcherService;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.beans.factory.DisposableBean;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 
-import javax.persistence.Transient;
-
 import java.io.File;
-import java.io.StringReader;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link DefaultAttributeDefinitionStore}.
@@ -51,9 +42,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @EqualsAndHashCode(of = "attributeDefinitions")
 @ToString(of = "attributeDefinitions")
-public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore {
-    private static final int MAP_SIZE = 20;
-
+public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore, DisposableBean, AutoCloseable {
     private static final ObjectMapper MAPPER = new ObjectMapper()
         .enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY)
         .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
@@ -62,36 +51,58 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
 
     private final Map<String, AttributeDefinition> attributeDefinitions = new TreeMap<>();
 
-    @JsonIgnore
-    @Transient
-    @org.springframework.data.annotation.Transient
-    private transient Map<String, ExecutableCompiledGroovyScript> attributeScriptCache = new LinkedHashMap<>(0);
+    private FileWatcherService storeWatcherService;
 
     @Setter
+    @Getter
     private String scope = StringUtils.EMPTY;
+
+    public DefaultAttributeDefinitionStore(final Resource resource) throws Exception {
+        if (ResourceUtils.doesResourceExist(resource)) {
+            loadAttributeDefinitionsFromInputStream(resource);
+
+            if (ResourceUtils.isFile(resource)) {
+                this.storeWatcherService = new FileWatcherService(resource.getFile(), file -> {
+                    try {
+                        loadAttributeDefinitionsFromInputStream(new FileSystemResource(file));
+                    } catch (final Exception e) {
+                        LOGGER.error(e.getMessage(), e);
+                    }
+                });
+            }
+        }
+    }
 
     public DefaultAttributeDefinitionStore(final AttributeDefinition... defns) {
         Arrays.stream(defns).forEach(this::registerAttributeDefinition);
     }
 
-    public DefaultAttributeDefinitionStore(final Collection<AttributeDefinition> defns) {
-        defns.forEach(this::registerAttributeDefinition);
-    }
-
-    @SneakyThrows
-    public static DefaultAttributeDefinitionStore from(final Resource resource) {
+    private void loadAttributeDefinitionsFromInputStream(final Resource resource) throws IOException {
         LOGGER.trace("Loading attribute definitions from [{}]", resource);
-        val json = IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8);
+        val json = new String(resource.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
         LOGGER.trace("Loaded attribute definitions [{}] from [{}]", json, resource);
         val map = MAPPER.readValue(json, new TypeReference<Map<String, AttributeDefinition>>() {
         });
-        return new DefaultAttributeDefinitionStore(map.values());
+        map.forEach(this::registerAttributeDefinition);
     }
 
     @Override
     public AttributeDefinitionStore registerAttributeDefinition(final AttributeDefinition defn) {
-        LOGGER.trace("Registering attribute definition [{}]", defn);
-        attributeDefinitions.put(defn.getKey(), defn);
+        return registerAttributeDefinition(defn.getKey(), defn);
+    }
+
+    @Override
+    public AttributeDefinitionStore registerAttributeDefinition(final String key, final AttributeDefinition defn) {
+        LOGGER.trace("Registering attribute definition [{}] by key [{}]", defn, key);
+
+        if (StringUtils.isNotBlank(defn.getKey()) && !StringUtils.equalsIgnoreCase(defn.getKey(), key)) {
+            LOGGER.warn("Attribute definition contains a key property [{}] that differs from its registering key [{}]. "
+                + "This is likely due to misconfiguration of the attribute definition, and CAS will use the key property [{}] "
+                + "to register the attribute definition in the attribute store", defn.getKey(), key, defn.getKey());
+            attributeDefinitions.put(defn.getKey(), defn);
+        } else {
+            attributeDefinitions.put(key, defn);
+        }
         return this;
     }
 
@@ -107,70 +118,19 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
     }
 
     @Override
-    public Optional<List<Object>> resolveAttributeValues(final String key, final Map<String, List<Object>> attributes) {
+    public Optional<Pair<AttributeDefinition, List<Object>>> resolveAttributeValues(final String key, final List<Object> attributeValues) {
         val result = locateAttributeDefinition(key);
         if (result.isEmpty()) {
             return Optional.empty();
         }
         val definition = result.get();
-        val attributeKey = StringUtils.defaultIfBlank(definition.getAttribute(), key);
-
-        if (!attributes.containsKey(attributeKey)) {
-            return Optional.empty();
-        }
-        List<Object> currentValues = new ArrayList<>(attributes.get(attributeKey));
-
-        if (StringUtils.isNotBlank(definition.getScript())) {
-            currentValues = getScriptedAttributeValue(attributeKey, currentValues, definition);
-        }
-        if (definition.isScoped()) {
-            currentValues = currentValues
-                .stream()
-                .map(v -> String.format("%s@%s", v, this.scope))
-                .collect(Collectors.toCollection(ArrayList::new));
-        }
-
-        if (StringUtils.isNotBlank(definition.getPatternFormat())) {
-            currentValues = currentValues
-                .stream()
-                .map(v -> MessageFormat.format(definition.getPatternFormat(), v))
-                .collect(Collectors.toCollection(ArrayList::new));
-        }
-
-        return Optional.of(currentValues);
+        val currentValues = definition.resolveAttributeValues(attributeValues, this.scope);
+        return Optional.of(Pair.of(definition, currentValues));
     }
 
-    private List<Object> getScriptedAttributeValue(final String attributeKey,
-                                                   final List<Object> currentValues,
-                                                   final AttributeDefinition definition) {
-        if (this.attributeScriptCache == null) {
-            this.attributeScriptCache = new LinkedHashMap<>(MAP_SIZE);
-        }
-        LOGGER.trace("Locating attribute value via script for definition [{}]", definition);
-        if (!attributeScriptCache.containsKey(attributeKey)) {
-            val matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(definition.getScript());
-            val matcherFile = ScriptingUtils.getMatcherForExternalGroovyScript(definition.getScript());
-            if (matcherInline.find()) {
-                attributeScriptCache.put(attributeKey, new GroovyShellScript(matcherInline.group(1)));
-            } else if (matcherFile.find()) {
-                try {
-                    val scriptPath = SpringExpressionLanguageValueResolver.getInstance().resolve(matcherFile.group());
-                    val resource = ResourceUtils.getRawResourceFrom(scriptPath);
-                    attributeScriptCache.put(attributeKey, new WatchableGroovyScriptResource(resource));
-                } catch (final Exception e) {
-                    LOGGER.error(e.getMessage(), e);
-                }
-            }
-        }
-        if (!attributeScriptCache.containsKey(attributeKey)) {
-            LOGGER.error("Unable to locate scripted attribute definition for attribute [{}]", attributeKey);
-            return new ArrayList<>(0);
-        }
-        val script = attributeScriptCache.get(attributeKey);
-        val args = CollectionUtils.<String, Object>wrap("attributeName", attributeKey,
-            "attributeValues", currentValues, "logger", LOGGER);
-        script.setBinding(args);
-        return script.execute(args.values().toArray(), List.class);
+    @Override
+    public boolean isEmpty() {
+        return attributeDefinitions.isEmpty();
     }
 
     @SneakyThrows
@@ -178,9 +138,21 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
         val json = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(this.attributeDefinitions);
         LOGGER.trace("Storing attribute definitions as [{}] to [{}]", json, resource);
         try (val writer = Files.newBufferedWriter(resource.toPath(), StandardCharsets.UTF_8)) {
-            IOUtils.copy(new StringReader(json), writer);
+            writer.write(json);
             writer.flush();
         }
         return this;
+    }
+
+    @Override
+    public void close() {
+        if (this.storeWatcherService != null) {
+            this.storeWatcherService.close();
+        }
+    }
+
+    @Override
+    public void destroy() {
+        close();
     }
 }

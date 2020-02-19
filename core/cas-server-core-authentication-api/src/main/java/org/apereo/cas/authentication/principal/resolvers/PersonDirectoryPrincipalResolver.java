@@ -10,7 +10,6 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.util.CollectionUtils;
 
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -31,6 +30,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static java.util.stream.Collectors.toList;
 
@@ -93,10 +93,10 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
 
     /**
      * Map to store objects to synchronize on for retrieval of attributes one at a time per user.
+     * Needs to be ConcurrentHashMap because it is updated in multiple threads.
      */
-    @Getter(AccessLevel.NONE)
     @ToString.Exclude
-    private Map<String, PersonAttributeRetriever> retrieverMap = new HashMap<>();
+    protected Map<String, PersonAttributeRetriever> retrieverMap = new ConcurrentHashMap<>();
 
     public PersonDirectoryPrincipalResolver() {
         this(new StubPersonAttributeDao(new HashMap<>(0)), PrincipalFactoryUtils.newPrincipalFactory(), false,
@@ -266,7 +266,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
     }
 
     /**
-     * Retrieve person attributes map.
+     * Retrieve person attributes map synchronizing on a specific user.
      *
      * @param principalId the principal id
      * @param credential  the credential whose id we have extracted. This is passed so that implementations
@@ -274,22 +274,10 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
      * @return the map
      */
     protected Map<String, List<Object>> retrievePersonAttributes(final String principalId, final Credential credential) {
-        val retriever = getPersonAttributeRetriever(principalId, credential);
-        return retriever.retrievePersonAttributes();
-    }
-
-    /**
-     * This method is synchronized on this singleton but doesn't do anything expensive.
-     *
-     * The object returned from this method is specific to a user and it allows attribute retrieval to be synchronized
-     * on a user (so the same attributes are not retrieved multiple times for the same user and attribute cache can be employed.
-     * @param principalId User principal id
-     * @param credential User credentials
-     * @return PersonAttributeRetriever for given principal id
-     */
-    @Synchronized
-    protected PersonAttributeRetriever getPersonAttributeRetriever(final String principalId, final Credential credential) {
-        return retrieverMap.computeIfAbsent(principalId, s -> new PersonAttributeRetriever(principalId, credential));
+        val retriever = retrieverMap.computeIfAbsent(principalId, s -> new PersonAttributeRetriever(principalId, credential));
+        val personAttributes = retriever.retrievePersonAttributes();
+        retrieverMap.remove(principalId);
+        return personAttributes;
     }
 
     /**
@@ -327,21 +315,14 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
      */
     @RequiredArgsConstructor
     @Getter
-    @Setter
-    @ToString
-    public class PersonAttributeRetriever {
-
+    private class PersonAttributeRetriever {
         private final String principalId;
 
-        @ToString.Exclude
         private final Credential credential;
 
         @Synchronized
         protected Map<String, List<Object>> retrievePersonAttributes() {
-            Map<String, List<Object>> attributes = CoreAuthenticationUtils.retrieveAttributesFromAttributeRepository(attributeRepository, principalId, activeAttributeRepositoryIdentifiers);
-            retrieverMap.remove(principalId);
-            return attributes;
+            return CoreAuthenticationUtils.retrieveAttributesFromAttributeRepository(attributeRepository, principalId, activeAttributeRepositoryIdentifiers);
         }
     }
-
 }

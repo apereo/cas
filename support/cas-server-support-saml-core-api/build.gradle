@@ -1,6 +1,7 @@
 description = "Apereo CAS SAML Core Functionality"
 dependencies {
     api libraries.opensaml
+    api libraries.dropwizard
     api libraries.bouncycastle
     api libraries.jdom
     api libraries.xmlapis

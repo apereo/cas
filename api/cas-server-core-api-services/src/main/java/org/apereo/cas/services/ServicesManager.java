@@ -192,4 +192,43 @@ public interface ServicesManager {
     default Collection<String> getDomains() {
         return Stream.of("default").collect(Collectors.toList());
     }
+
+    /**
+     * Gets name.
+     *
+     * @return the name
+     */
+    default String getName() {
+        return getClass().getSimpleName();
+    }
+
+    /**
+     * Returns true if this manager supports the type of service passed.
+     *
+     * @param service - the service
+     * @return - true if supported
+     */
+    default boolean supports(final Service service) {
+        return true;
+    }
+
+    /**
+     * Returns true if this manager supports the type of registered service.
+     *
+     * @param service - the registered service
+     * @return - true if supported
+     */
+    default boolean supports(final RegisteredService service) {
+        return true;
+    }
+
+    /**
+     * Returns true if this manager supports the type of registered service.
+     *
+     * @param clazz - class types that are supported
+     * @return - true if supported
+     */
+    default boolean supports(final Class clazz) {
+        return true;
+    }
 }

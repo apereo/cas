@@ -51,11 +51,17 @@ import static org.mockito.Mockito.*;
 public class RegisteredServiceAttributeReleasePolicyTests {
 
     private static final String ATTR_1 = "attr1";
+
     private static final String ATTR_2 = "attr2";
+
     private static final String ATTR_3 = "attr3";
+
     private static final String VALUE_1 = "value1";
+
     private static final String VALUE_2 = "value2";
+
     private static final String NEW_ATTR_1_VALUE = "newAttr1";
+
     private static final String PRINCIPAL_ID = "principalId";
 
     @Autowired
@@ -248,7 +254,8 @@ public class RegisteredServiceAttributeReleasePolicyTests {
 
         ApplicationContextProvider.registerBeanIntoApplicationContext(this.applicationContext, dao, "attributeRepository");
         val repository = new CachingPrincipalAttributesRepository(TimeUnit.MILLISECONDS.name(), 0);
-        val p = PrincipalFactoryUtils.newPrincipalFactory().createPrincipal("uid", Collections.singletonMap("mail", List.of("final@example.com")));
+        val p = PrincipalFactoryUtils.newPrincipalFactory().createPrincipal("uid",
+            Collections.singletonMap("mail", List.of("final@example.com")));
 
         repository.setAttributeRepositoryIds(CollectionUtils.wrapSet("SampleStubRepository".toUpperCase()));
         policy.setPrincipalAttributesRepository(repository);

@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This is {@link HazelcastWANReplicationTargetClusterProperties}.
@@ -20,22 +22,36 @@ public class HazelcastWANReplicationTargetClusterProperties implements Serializa
     private static final long serialVersionUID = 1635330607045885145L;
 
     /**
-     * Name of this cluster.
-     */
-    private String groupName;
-
-    /**
-     * Password for this cluster, if any.
-     */
-    private String groupPassword;
-
-    /**
      * Comma separated list of endpoints in this replication group.
      * IP addresses and ports of the cluster members for which the WAN replication is implemented. These endpoints are not necessarily
      * the entire target cluster and WAN does not perform the discovery of other members in the target cluster. It only expects
      * that these IP addresses (or at least some of them) are available.
      */
     private String endpoints;
+
+    /**
+     * Sets the cluster name used as an endpoint group password for authentication
+     * on the target endpoint.
+     * If there is no separate publisher ID property defined, this cluster name
+     * will also be used as a WAN publisher ID. This ID is then used for
+     * identifying the publisher.
+     */
+    private String clusterName;
+
+    /**
+     * Returns the publisher ID used for identifying the publisher.
+     */
+    private String publisherId;
+
+    /**
+     * The WAN publisher properties.
+     */
+    private Map<String, Comparable> properties = new HashMap<>();
+
+    /**
+     * Strategy for checking the consistency of data between replicas.
+     */
+    private String consistencyCheckStrategy = "NONE";
 
     /**
      * Publisher class name for WAN replication.

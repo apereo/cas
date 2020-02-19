@@ -21,8 +21,8 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import java.io.File;
@@ -39,11 +39,10 @@ import static org.mockito.Mockito.*;
  * @author Scott Battaglia
  * @since 3.1
  */
-@SpringBootTest(classes = {
+@Import({
     SamlAuthenticationEventExecutionPlanConfiguration.class,
     SamlServiceFactoryConfiguration.class,
-    SamlConfiguration.class,
-    AbstractOpenSamlTests.SharedTestConfiguration.class
+    SamlConfiguration.class
 })
 @Tag("SAML")
 public class SamlServiceTests extends AbstractOpenSamlTests {

@@ -2,6 +2,7 @@ package org.apereo.cas.adaptors.duo.config;
 
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityCredential;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityDirectCredential;
+import org.apereo.cas.adaptors.duo.config.cond.ConditionalOnDuoSecurityConfigured;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.serialization.ComponentSerializationPlan;
 import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurer;
@@ -17,6 +18,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration(value = "duoSecurityComponentSerializationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ConditionalOnDuoSecurityConfigured
 public class DuoSecurityComponentSerializationConfiguration implements ComponentSerializationPlanConfigurer {
     @Override
     public void configureComponentSerializationPlan(final ComponentSerializationPlan plan) {

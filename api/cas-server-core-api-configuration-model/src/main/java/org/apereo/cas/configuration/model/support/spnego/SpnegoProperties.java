@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.support.spnego;
 
 import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
+import org.apereo.cas.configuration.model.core.web.flow.WebflowAutoConfigurationProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapSearchProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -132,6 +133,12 @@ public class SpnegoProperties implements Serializable {
      * The order of the authentication handler in the chain.
      */
     private int order = Integer.MAX_VALUE;
+
+    /**
+     * The webflow configuration.
+     */
+    @NestedConfigurationProperty
+    private WebflowAutoConfigurationProperties webflow = new WebflowAutoConfigurationProperties(100);
 
     @Getter
     @Setter

@@ -12,6 +12,25 @@
       }
     },
     {
+      "name": "cas.ticket.registry.hazelcast.cluster.max-heap-size-percentage",
+      "type": "java.lang.Boolean",
+      "description": "Maximum size of the map.",
+      "deprecation": {
+        "replacement": "cas.ticket.registry.hazelcast.cluster.max-size",
+        "reason": "Property renamed to new\"cas.ticket.registry.hazelcast.cluster.max-size.",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.ticket.registry.hazelcast.cluster.wan-replication.targets[0].group-name",
+      "type": "java.lang.Boolean",
+      "description": "Maximum size of the map.",
+      "deprecation": {
+        "reason": "Property is removed in Hazelcast 4",
+        "level": "error"
+      }
+    },
+    {
       "name": "cas.service-registry.config.location",
       "type": "java.lang.String",
       "description": "Location of the JSON/YAML service registry files",
@@ -29,17 +48,6 @@
       "deprecation": {
         "replacement": "cas.server.scope",
         "reason": "Property is moved to cas.server.scope to be applied globally.",
-        "level": "error"
-      }
-    },
-    {
-      "name": "cas.authn.throttle.appcode",
-      "type": "java.lang.String",
-      "description": "Throttling application code to record.",
-      "defaultValue": "CAS",
-      "deprecation": {
-        "replacement": "cas.authn.throttle.app-code",
-        "reason": "Property is renamed to account for new property naming rules",
         "level": "error"
       }
     },
@@ -159,6 +167,16 @@
       "deprecation": {
         "replacement": "cas.authn.x509.cache-time-to-live-seconds",
         "reason": "This setting no longer applies to the ehcache 3 cache used for x509 CRL caching.",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.authn.pac4j.saml[0].single-logout-requests",
+      "type": "java.lang.Boolean",
+      "description": "Whether logout requests and responses should be signed.",
+      "deprecation": {
+        "replacement": "cas.authn.pac4j.saml[0].sign-service-provider-logout-request",
+        "reason": "It is a duplication of cas.authn.pac4j.saml[0].sign-service-provider-logout-request.",
         "level": "error"
       }
     }
