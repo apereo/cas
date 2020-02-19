@@ -1,6 +1,7 @@
 package org.apereo.cas.ticket.factory;
 
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.ServiceTicket;
@@ -8,6 +9,7 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
+import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicketFactory;
 import org.apereo.cas.util.crypto.CipherExecutor;
@@ -42,6 +44,11 @@ public class DefaultProxyGrantingTicketFactory implements ProxyGrantingTicketFac
      */
     protected final CipherExecutor<String, String> cipherExecutor;
 
+    /**
+     * The service manager.
+     */
+    protected final ServicesManager servicesManager;
+
     @Override
     public <T extends ProxyGrantingTicket> T create(final ServiceTicket serviceTicket,
                                                     final Authentication authentication, final Class<T> clazz) throws AbstractTicketException {
@@ -61,8 +68,11 @@ public class DefaultProxyGrantingTicketFactory implements ProxyGrantingTicketFac
      */
     protected <T extends ProxyGrantingTicket> T produceTicket(final ServiceTicket serviceTicket, final Authentication authentication,
                                                               final String pgtId, final Class<T> clazz) {
-        val result = serviceTicket.grantProxyGrantingTicket(pgtId, authentication,
-            this.ticketGrantingTicketExpirationPolicy.buildTicketExpirationPolicy());
+
+        val service = servicesManager.findServiceBy(serviceTicket.getService());
+        val pgtMaxTimeToLive = service.getProxyPolicy().getMaxTimeToLiveInSeconds();
+
+        val result = produceTicketWithAppropriateExpirationPolicy(pgtMaxTimeToLive, serviceTicket, authentication, pgtId);
 
         if (result == null) {
             throw new IllegalArgumentException("Unable to create the proxy-granting ticket object for identifier " + pgtId);
@@ -73,6 +83,29 @@ public class DefaultProxyGrantingTicketFactory implements ProxyGrantingTicketFac
                 + " when we were expecting " + clazz);
         }
         return (T) result;
+    }
+
+    /**
+     * Produce the ticket with the appropriate expiration policy.
+     *
+     * @param pgtMaxTimeToLive the PGT maximum time to live defined for this service
+     * @param serviceTicket    the service ticket
+     * @param authentication   the authentication
+     * @param pgtId            the PGT id
+     * @return the ticket
+     */
+    protected ProxyGrantingTicket produceTicketWithAppropriateExpirationPolicy(final int pgtMaxTimeToLive,
+                                                                                             final ServiceTicket serviceTicket,
+                                                                                             final Authentication authentication,
+                                                                                             final String pgtId) {
+        if (pgtMaxTimeToLive > 0) {
+            LOGGER.debug("Overriding PGT policy with the maxTimeToLive: {}", pgtMaxTimeToLive);
+            return serviceTicket.grantProxyGrantingTicket(pgtId, authentication, new HardTimeoutExpirationPolicy(pgtMaxTimeToLive));
+        } else {
+            LOGGER.debug("Using default TGT policy for PGT");
+            return serviceTicket.grantProxyGrantingTicket(pgtId, authentication,
+                    this.ticketGrantingTicketExpirationPolicy.buildTicketExpirationPolicy());
+        }
     }
 
     /**

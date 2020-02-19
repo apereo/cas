@@ -44,3 +44,5 @@ A proxy policy that only allows proxying to PGT urls that match the specified re
   }
 }
 ```
+
+You may set an additional `maxTimeToLiveInSeconds` property in the `proxyPolicy` to define a specific maximum time to live for the PGTs of this service (thus overriding the default TGT expiration policy).
