@@ -123,6 +123,9 @@ public class HazelcastConfigurationFactory {
         LOGGER.trace("Created Hazelcast network configuration [{}]", networkConfig);
         config.setNetworkConfig(networkConfig);
 
+        LOGGER.trace("Enables compression: {}", hz.isEnableCompression());
+        config.getSerializationConfig().setEnableCompression(hz.isEnableCompression());
+
         val instanceName = StringUtils.hasText(cluster.getInstanceName())
             ? cluster.getInstanceName()
             : UUID.randomUUID().toString();
