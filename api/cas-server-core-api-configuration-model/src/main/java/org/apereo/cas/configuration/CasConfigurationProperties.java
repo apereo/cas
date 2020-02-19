@@ -26,6 +26,7 @@ import org.apereo.cas.configuration.model.support.aup.AcceptableUsagePolicyPrope
 import org.apereo.cas.configuration.model.support.captcha.GoogleRecaptchaProperties;
 import org.apereo.cas.configuration.model.support.clearpass.ClearpassProperties;
 import org.apereo.cas.configuration.model.support.consent.ConsentProperties;
+import org.apereo.cas.configuration.model.support.cookie.DistributedSessionCookieProperties;
 import org.apereo.cas.configuration.model.support.cookie.TicketGrantingCookieProperties;
 import org.apereo.cas.configuration.model.support.cookie.WarningCookieProperties;
 import org.apereo.cas.configuration.model.support.custom.CasCustomProperties;
@@ -241,6 +242,11 @@ public class CasConfigurationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private WarningCookieProperties warningCookie = new WarningCookieProperties();
+
+    /**
+     * Distributed OAuth Session cookie.
+     */
+    private DistributedSessionCookieProperties distributedSessionCookie = new DistributedSessionCookieProperties();
 
     /**
      * SAML SP integration settings.
