@@ -23,26 +23,19 @@
                 <h3 th:utext="#{screen.welcome.instructions}">Enter your Username and Password</h3>
             
                 <section class="cas-field my-3">
-                    <div class="mdc-text-field mdc-text-field--outlined d-flex">
+                    <div class="mdc-text-field d-flex">
                         <input class="mdc-text-field__input"
                             id="username"
                             name="username"
                             size="25"
                             type="text"
                             autocomplete="off" />
-                        <div class="mdc-notched-outline">
-                            <div class="mdc-notched-outline__leading"></div>
-                            <div class="mdc-notched-outline__notch">
-                                <label for="username" class="mdc-floating-label"
-                                    th:utext="#{screen.welcome.label.netid}">Username</label>
-                            </div>
-                            <div class="mdc-notched-outline__trailing"></div>
-                        </div>
+                        <label for="username" class="mdc-floating-label" th:utext="#{screen.welcome.label.netid}">Username</label>
                     </div>
                 </section>
             
                 <section class="cas-field my-3">
-                    <div class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-trailing-icon d-flex caps-check">
+                    <div class="mdc-text-field mdc-text-field--with-trailing-icon d-flex caps-check">
                         <input class="mdc-text-field__input"
                             type="password"
                             name="password"
@@ -50,14 +43,7 @@
                             size="25"
                             autocomplete="off" />
                         <i class="mdi mdi-alert mdc-text-field__icon text-danger caps-warn"></i>
-                        <div class="mdc-notched-outline">
-                            <div class="mdc-notched-outline__leading"></div>
-                            <div class="mdc-notched-outline__notch">
-                                <label for="password" class="mdc-floating-label"
-                                    th:utext="#{screen.welcome.label.password}">Password</label>
-                            </div>
-                            <div class="mdc-notched-outline__trailing"></div>
-                        </div>
+                        <label for="password" class="mdc-floating-label" th:utext="#{screen.welcome.label.password}">Password</label>
                     </div>
                     <div class="mdc-text-field-helper-line caps-warn">
                         <p

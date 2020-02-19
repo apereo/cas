@@ -17,17 +17,10 @@
 
             <form method="post" id="registerform">
                 <div
-                    class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-trailing-icon d-flex caps-check">
+                    class="mdc-text-field  mdc-text-field--with-trailing-icon d-flex caps-check">
                     <input class="mdc-text-field__input pwd" type="text" id="deviceName" name="deviceName" size="25"
                         autocomplete="off" />
-                    <div class="mdc-notched-outline">
-                        <div class="mdc-notched-outline__leading"></div>
-                        <div class="mdc-notched-outline__notch">
-                            <label for="deviceName" class="mdc-floating-label"
-                                th:utext="#{cas.mfa.registerdevice.label.name}">Name</label>
-                        </div>
-                        <div class="mdc-notched-outline__trailing"></div>
-                    </div>
+                    <label for="deviceName" class="mdc-floating-label" th:utext="#{cas.mfa.registerdevice.label.name}">Name</label>
                 </div>
                 <div class="d-flex mt-3">
                     <button class="mdc-button mdc-button--raised" accesskey="s"

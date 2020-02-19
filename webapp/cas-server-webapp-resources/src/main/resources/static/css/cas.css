@@ -251,47 +251,6 @@ button.close {
 
 /* custom components */
 
-.mdc-input-group {
-    display: flex;
-    align-items: stretch;
-}
-
-.mdc-input-group .mdc-input-group-field {
-    flex: 1 1 auto;
-    order: 1;
-}
-
-.mdc-input-group .mdc-input-group-field .mdc-text-field {
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
-}
-
-.mdc-input-group .mdc-input-group-append {
-    order: 2;
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
-}
-
-.mdc-input-group .mdc-input-group-prepend, .mdc-input-group .mdc-input-group-append {
-    height: 56px;
-}
-
-.mdc-input-group .mdc-input-group-prepend {
-    order: 0;
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
-}
-
-.mdc-input-group .mdc-input-group-field.mdc-input-group-field-prepend .mdc-text-field .mdc-notched-outline__trailing {
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
-}
-
-.mdc-input-group .mdc-input-group-field.mdc-input-group-field-append .mdc-text-field .mdc-notched-outline__trailing {
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
-}
-
 .custom-select {
     display: inline-block;
     min-width: 200px;
@@ -340,6 +299,52 @@ button.close {
 
 .word-break-all {
     word-break: break-all;
+}
+
+.mdc-text-field > .mdc-text-field__input, .mdc-text-field:not(.mdc-text-field--disabled):not(.mdc-text-field--outlined):not(.mdc-text-field--textarea) > .mdc-text-field__input {
+    border: 1px solid var(--cas-theme-primary);
+    border-radius: 4px;
+}
+
+.mdc-input-group {
+    display: flex;
+    align-items: stretch;
+}
+
+.mdc-input-group .mdc-input-group-field {
+    flex: 1 1 auto;
+    order: 1;
+}
+
+.mdc-input-group .mdc-input-group-field .mdc-text-field {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.mdc-input-group .mdc-input-group-append {
+    order: 2;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.mdc-input-group .mdc-input-group-prepend, .mdc-input-group .mdc-input-group-append {
+    height: 56px;
+}
+
+.mdc-input-group .mdc-input-group-prepend {
+    order: 0;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.mdc-input-group .mdc-input-group-field.mdc-input-group-field-prepend .mdc-text-field > .mdc-text-field__input {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.mdc-input-group .mdc-input-group-field.mdc-input-group-field-append .mdc-text-field > .mdc-text-field__input  {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
 }
 
 .text-danger,

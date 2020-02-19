@@ -84,7 +84,7 @@
         </form>
 
         <div th:if="${interrupt.block}">
-            <a class="mdc-button--raised" id="cancel" name="cancel" th:href="@{/login}">
+            <a class="mdc-button mdc-button--outlined" id="cancel" name="cancel" th:href="@{/login}">
                 <span class="mdc-button__label" th:text="#{screen.interrupt.btn.cancel}">Cancel</span>
             </a>
         </div>

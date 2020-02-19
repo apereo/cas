@@ -26,12 +26,13 @@
                         accesskey="s">
                         <span class="mdc-button__label" th:value="#{screen.aup.button.accept}">ACCEPT</span>
                     </button>
-                    <button class="mdc-button mdc-button--raised"
+                    <button class="mdc-button mdc-button--outlined"
                         name="cancel"
+                        th:value="#{screen.aup.button.cancel}"
                         accesskey="c"
                         type="button"
                         onclick="location.href = location.href;">
-                        <span class="mdc-button__label" th:value="#{screen.aup.button.cancel}">CANCEL</span>
+                        <span class="mdc-button__label" th:text="#{screen.aup.button.cancel}">CANCEL</span>
                     </button>
                 </div>
             </div>

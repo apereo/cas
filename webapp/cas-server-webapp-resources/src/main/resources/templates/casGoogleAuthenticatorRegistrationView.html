@@ -39,8 +39,9 @@
                             onclick="window.print();">
                             <span class="mdc-button__label" th:text="#{screen.welcome.button.print}">Print</span>
                         </button>
-                        <button class="mdc-button" name="back" accesskey="c" type="button" value="Cancel"
-                            onclick="location.href = location.href;">
+                        <button class="mdc-button mdc-button--outlined" name="back" accesskey="c" type="button" value="Cancel"
+                            onclick="location.href = location.href;"
+                            th:value="#{screen.pm.button.cancel}">
                             <span class="mdc-button__label" th:text="#{screen.pm.button.cancel}">Cancel</span>
                         </button>
                     </div>
