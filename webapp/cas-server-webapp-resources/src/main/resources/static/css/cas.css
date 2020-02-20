@@ -273,6 +273,14 @@ button.close {
     background-color: var(--cas-theme-primary-bg);
 }
 
+.border-bottom {
+    border-bottom: 1px solid var(--cas-theme-primary);
+}
+
+.strong {
+    font-weight: bold;
+}
+
 .text-warning {
     color: var(--cas-theme-warning);
 }
