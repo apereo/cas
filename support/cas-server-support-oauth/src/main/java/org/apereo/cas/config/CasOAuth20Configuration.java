@@ -9,7 +9,6 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.core.CasServerProperties;
 import org.apereo.cas.integration.pac4j.DistributedJ2ESessionStore;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.ServicesManager;
@@ -263,13 +262,14 @@ public class CasOAuth20Configuration {
         directFormClient.setPasswordParameter(OAuth20Constants.CLIENT_SECRET);
         directFormClient.init();
 
-        val pkceAuthnFormClient = new DirectFormClient(oAuthProofKeyCodeExchangeAuthenticator());
+        val pkceAuthenticator = oAuthProofKeyCodeExchangeAuthenticator();
+        val pkceAuthnFormClient = new DirectFormClient(pkceAuthenticator);
         pkceAuthnFormClient.setName(Authenticators.CAS_OAUTH_CLIENT_DIRECT_FORM_PROOF_KEY_CODE_EXCHANGE_AUTHN);
         pkceAuthnFormClient.setUsernameParameter(OAuth20Constants.CLIENT_ID);
         pkceAuthnFormClient.setPasswordParameter(OAuth20Constants.CODE_VERIFIER);
         pkceAuthnFormClient.init();
 
-        val pkceBasicAuthClient = new DirectBasicAuthClient(oAuthProofKeyCodeExchangeAuthenticator());
+        val pkceBasicAuthClient = new DirectBasicAuthClient(pkceAuthenticator);
         pkceBasicAuthClient.setName(Authenticators.CAS_OAUTH_CLIENT_BASIC_PROOF_KEY_CODE_EXCHANGE_AUTHN);
         pkceBasicAuthClient.init();
 
