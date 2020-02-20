@@ -1,6 +1,7 @@
 package org.apereo.cas.ticket.factory;
 
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.services.RegisteredServiceProxyGrantingTicketExpirationPolicy;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
@@ -70,9 +71,9 @@ public class DefaultProxyGrantingTicketFactory implements ProxyGrantingTicketFac
                                                               final String pgtId, final Class<T> clazz) {
 
         val service = servicesManager.findServiceBy(serviceTicket.getService());
-        val pgtMaxTimeToLive = service.getProxyPolicy().getMaxTimeToLiveInSeconds();
+        val proxyGrantingTicketExpirationPolicy = service.getProxyGrantingTicketExpirationPolicy();
 
-        val result = produceTicketWithAppropriateExpirationPolicy(pgtMaxTimeToLive, serviceTicket, authentication, pgtId);
+        val result = produceTicketWithAdequateExpirationPolicy(proxyGrantingTicketExpirationPolicy, serviceTicket, authentication, pgtId);
 
         if (result == null) {
             throw new IllegalArgumentException("Unable to create the proxy-granting ticket object for identifier " + pgtId);
@@ -86,21 +87,23 @@ public class DefaultProxyGrantingTicketFactory implements ProxyGrantingTicketFac
     }
 
     /**
-     * Produce the ticket with the appropriate expiration policy.
+     * Produce the ticket with the adequate expiration policy.
      *
-     * @param pgtMaxTimeToLive the PGT maximum time to live defined for this service
+     * @param servicePgtPolicy the proxy granting ticket expiration policy
      * @param serviceTicket    the service ticket
      * @param authentication   the authentication
      * @param pgtId            the PGT id
      * @return the ticket
      */
-    protected ProxyGrantingTicket produceTicketWithAppropriateExpirationPolicy(final int pgtMaxTimeToLive,
-                                                                                             final ServiceTicket serviceTicket,
-                                                                                             final Authentication authentication,
-                                                                                             final String pgtId) {
-        if (pgtMaxTimeToLive > 0) {
-            LOGGER.debug("Overriding PGT policy with the maxTimeToLive: {}", pgtMaxTimeToLive);
-            return serviceTicket.grantProxyGrantingTicket(pgtId, authentication, new HardTimeoutExpirationPolicy(pgtMaxTimeToLive));
+    protected ProxyGrantingTicket produceTicketWithAdequateExpirationPolicy(
+            final RegisteredServiceProxyGrantingTicketExpirationPolicy servicePgtPolicy,
+            final ServiceTicket serviceTicket,
+            final Authentication authentication,
+            final String pgtId) {
+        if (servicePgtPolicy != null) {
+            LOGGER.debug("Overriding PGT policy with the specific policy: {}", servicePgtPolicy);
+            return serviceTicket.grantProxyGrantingTicket(pgtId, authentication,
+                    new HardTimeoutExpirationPolicy(servicePgtPolicy.getMaxTimeToLiveInSeconds()));
         } else {
             LOGGER.debug("Using default TGT policy for PGT");
             return serviceTicket.grantProxyGrantingTicket(pgtId, authentication,

@@ -16,8 +16,7 @@ import java.net.URL;
 
 /**
  * A proxy policy that only allows proxying to pgt urls
- * that match the specified regex pattern and
- * with an additional PGT maximum time to live.
+ * that match the specified regex pattern.
  *
  * @author Misagh Moayyed
  * @since 4.1.0
@@ -34,31 +33,21 @@ public class RegexMatchingRegisteredServiceProxyPolicy implements RegisteredServ
 
     private String pattern;
 
-    private int maxTimeToLiveInSeconds;
-
-    public RegexMatchingRegisteredServiceProxyPolicy(final String pgtUrlPattern) {
-        this(pgtUrlPattern, 0);
-    }
-
     /**
      * Init the policy with the pgt url regex pattern that
      * will determine the urls allowed to receive the pgt.
      * The matching by default is done in a case insensitive manner.
-     * An additional maximum time to live for the PGT may be defined.
      *
      * @param pgtUrlPattern the pgt url pattern
-     * @param maxTimeToLiveInSeconds the maximum time to live for the PGT
      */
     @JsonCreator
-    public RegexMatchingRegisteredServiceProxyPolicy(@JsonProperty("pattern") final String pgtUrlPattern,
-                                                     @JsonProperty("maxTimeToLiveInSeconds") final int maxTimeToLiveInSeconds) {
+    public RegexMatchingRegisteredServiceProxyPolicy(@JsonProperty("pattern") final String pgtUrlPattern) {
         if (RegexUtils.isValidRegex(pgtUrlPattern)) {
             this.pattern = pgtUrlPattern;
         } else {
             LOGGER.warn("Pattern specified [{}] is not a valid regular expression", pgtUrlPattern);
             this.pattern = RegexUtils.MATCH_NOTHING_PATTERN.pattern();
         }
-        this.maxTimeToLiveInSeconds = maxTimeToLiveInSeconds;
     }
 
     @JsonIgnore

@@ -11,7 +11,6 @@ import java.net.URL;
  * it may still want to restrict who is authorizes to receive
  * the proxy granting ticket. This interface defines the behavior
  * for both options.
- * An additional maximum time to live can be set.
  *
  * @author Misagh Moayyed
  * @since 4.1.0
@@ -36,13 +35,4 @@ public interface RegisteredServiceProxyPolicy extends Serializable {
      * @return true, if url allowed.
      */
     boolean isAllowedProxyCallbackUrl(URL pgtUrl);
-
-    /**
-     * Maximum time in seconds PGTs would live in CAS server (if defined by a value greater than zero).
-     *
-     * @return max time to live
-     */
-    default int getMaxTimeToLiveInSeconds() {
-        return 0;
-    }
 }
