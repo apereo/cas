@@ -65,7 +65,7 @@ public class EhCacheHealthIndicatorTests {
          * above 10% free WARN threshold
          */
         IntStream.range(0, 95)
-            .forEach(i -> this.ticketRegistry.addTicket(new MockServiceTicket("T" + i, RegisteredServiceTestUtils.getService(),
+            .forEach(i -> this.ticketRegistry.addTicket(new MockServiceTicket("ST-" + i, RegisteredServiceTestUtils.getService(),
                 new MockTicketGrantingTicket("test"))));
 
         status = monitor.health();
@@ -76,7 +76,7 @@ public class EhCacheHealthIndicatorTests {
          * which should report WARN status
          */
         IntStream.range(95, 110).forEach(i -> {
-            val st = new MockServiceTicket("T" + i, RegisteredServiceTestUtils.getService(),
+            val st = new MockServiceTicket("ST-" + i, RegisteredServiceTestUtils.getService(),
                 new MockTicketGrantingTicket("test"));
             this.ticketRegistry.addTicket(st);
         });
