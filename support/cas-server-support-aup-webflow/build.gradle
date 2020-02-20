@@ -29,6 +29,7 @@ dependencies {
     testImplementation project(":core:cas-server-core-services-authentication")
     testImplementation project(":core:cas-server-core-authentication-attributes")
     testImplementation project(":support:cas-server-support-themes")
+    testImplementation project(":support:cas-server-support-thymeleaf")
     
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-tickets", configuration: "tests")

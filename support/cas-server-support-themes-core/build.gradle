@@ -1,8 +1,5 @@
 description = "Apereo CAS Web Application Themes Support"
 dependencies {
-    implementation libraries.thymeleaf
-    implementation libraries.thymeleafdialect
-    
     implementation project(":core:cas-server-core-services")
     implementation project(":core:cas-server-core-services-api")
     implementation project(":core:cas-server-core-web-api")
@@ -21,9 +18,10 @@ dependencies {
     testImplementation project(":core:cas-server-core-services-registry")
     testImplementation project(":core:cas-server-core-tickets")
     testImplementation project(":core:cas-server-core-configuration")
-    testImplementation project(":core:cas-server-core-authentication-api")
     testImplementation project(":core:cas-server-core-services-authentication")
     testImplementation project(":core:cas-server-core-authentication-attributes")
 
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
 }

@@ -27,6 +27,7 @@ import org.apereo.cas.config.CasOAuth20ThrottleConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.CasThrottlingConfiguration;
+import org.apereo.cas.config.CasThymeleafConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
@@ -67,10 +68,11 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
 import org.jose4j.jwe.KeyManagementAlgorithmIdentifiers;
-import org.jose4j.jwk.RsaJsonWebKey;
+import org.jose4j.jwk.PublicJsonWebKey;
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.NumericDate;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
@@ -118,6 +120,7 @@ import static org.mockito.Mockito.*;
     CasCoreAuthenticationConfiguration.class,
     CasCookieConfiguration.class,
     CasThemesConfiguration.class,
+    CasThymeleafConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreAuthenticationHandlersConfiguration.class,
     CasCoreAuthenticationMetadataConfiguration.class,
@@ -140,6 +143,7 @@ import static org.mockito.Mockito.*;
     })
 @DirtiesContext
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Tag("OIDC")
 public abstract class AbstractOidcTests {
     @Autowired
     protected ConfigurableApplicationContext applicationContext;
@@ -184,7 +188,7 @@ public abstract class AbstractOidcTests {
 
     @Autowired
     @Qualifier("oidcDefaultJsonWebKeystoreCache")
-    protected LoadingCache<String, Optional<RsaJsonWebKey>> oidcDefaultJsonWebKeystoreCache;
+    protected LoadingCache<String, Optional<PublicJsonWebKey>> oidcDefaultJsonWebKeystoreCache;
 
     @Autowired
     @Qualifier("oidcTokenSigningAndEncryptionService")
@@ -192,7 +196,7 @@ public abstract class AbstractOidcTests {
 
     @Autowired
     @Qualifier("oidcServiceJsonWebKeystoreCache")
-    protected LoadingCache<OAuthRegisteredService, Optional<RsaJsonWebKey>> oidcServiceJsonWebKeystoreCache;
+    protected LoadingCache<OAuthRegisteredService, Optional<PublicJsonWebKey>> oidcServiceJsonWebKeystoreCache;
 
     @Autowired
     @Qualifier("oidcJsonWebKeystoreGeneratorService")

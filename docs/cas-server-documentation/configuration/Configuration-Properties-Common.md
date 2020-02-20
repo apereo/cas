@@ -64,6 +64,7 @@ in each case to learn the exact unit of measure.
 # ${configurationKey}.name=
 # ${configurationKey}.secure=true
 # ${configurationKey}.httpOnly=true
+# ${configurationKey}.sameSitePolicy=none|lax|strict
 ```                               
 
 ## Job Scheduling
@@ -513,6 +514,7 @@ The following options related to Hazelcast support in CAS apply equally to a num
 # ${configurationKey}.cluster.port=5701
 
 # ${configurationKey}.licenseKey=
+# ${configurationKey}.enableCompression=false
 ```
 
 More advanced Hazelcast configuration settings are listed below, given the component's *configuration key*:
@@ -1096,7 +1098,15 @@ The following options are shared and apply when CAS is configured to send SMS no
 
 You will also need to ensure a provider is defined that is able to send SMS messages. To learn more about this 
 topic, [please review this guide](../notifications/SMS-Messaging-Configuration.html).
- 
+
+## Webflow Auto Configuration
+
+Control aspects of webflow that relate to auto-configuration of webflow states, transitions and execution order.
+
+```properties
+# ${configurationKey}.order=
+``` 
+
 ## Delegated Authentication Settings
 
 The following options are shared and apply when CAS is configured to delegate authentication 

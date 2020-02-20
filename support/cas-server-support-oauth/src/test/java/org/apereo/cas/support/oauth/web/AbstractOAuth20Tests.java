@@ -33,6 +33,7 @@ import org.apereo.cas.config.CasOAuth20Configuration;
 import org.apereo.cas.config.CasOAuth20ThrottleConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CasThrottlingConfiguration;
+import org.apereo.cas.config.CasThymeleafConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
@@ -41,6 +42,7 @@ import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.services.web.config.CasThemesConfiguration;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
@@ -80,6 +82,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.http.HttpStatus;
+import org.junit.jupiter.api.Tag;
 import org.pac4j.core.context.HttpConstants;
 import org.pac4j.springframework.web.SecurityInterceptor;
 import org.springframework.beans.factory.InitializingBean;
@@ -123,6 +126,7 @@ import static org.mockito.Mockito.*;
  */
 @SpringBootTest(classes = {
     AopAutoConfiguration.class,
+    RefreshAutoConfiguration.class,
     CasCoreAuthenticationConfiguration.class,
     CasCoreServicesAuthenticationConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class,
@@ -136,29 +140,31 @@ import static org.mockito.Mockito.*;
     CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreHttpConfiguration.class,
     CasCoreServicesConfiguration.class,
-    CasOAuth20Configuration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreConfiguration.class,
     CasCookieConfiguration.class,
-    CasOAuth20ComponentSerializationConfiguration.class,
-    CasOAuth20ThrottleConfiguration.class,
     CasThrottlingConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-    CasOAuth20AuthenticationServiceSelectionStrategyConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
     CasCoreTicketComponentSerializationConfiguration.class,
     CasCoreUtilSerializationConfiguration.class,
     CasPersonDirectoryConfiguration.class,
     AbstractOAuth20Tests.OAuth20TestConfiguration.class,
-    RefreshAutoConfiguration.class,
+    CasThymeleafConfiguration.class,
+    CasThemesConfiguration.class,
     CasCoreLogoutConfiguration.class,
     CasCoreUtilConfiguration.class,
-    CasCoreWebConfiguration.class
+    CasCoreWebConfiguration.class,
+    CasOAuth20AuthenticationServiceSelectionStrategyConfiguration.class,
+    CasOAuth20ComponentSerializationConfiguration.class,
+    CasOAuth20Configuration.class,
+    CasOAuth20ThrottleConfiguration.class
 })
 @DirtiesContext
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement(proxyTargetClass = true)
 @EnableAspectJAutoProxy(proxyTargetClass = true)
+@Tag("OAuth")
 public abstract class AbstractOAuth20Tests {
 
     public static final ObjectMapper MAPPER = new ObjectMapper()

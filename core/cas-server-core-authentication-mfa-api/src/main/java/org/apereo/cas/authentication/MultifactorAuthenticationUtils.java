@@ -187,7 +187,7 @@ public class MultifactorAuthenticationUtils {
      * @param service the service
      * @return the authentication provider for service
      */
-    public Collection<MultifactorAuthenticationProvider> getAuthenticationProviderForService(final RegisteredService service) {
+    public Collection<MultifactorAuthenticationProvider> getMultifactorAuthenticationProviderForService(final RegisteredService service) {
         val policy = service.getMultifactorPolicy();
         if (policy != null) {
             return policy.getMultifactorAuthenticationProviders().stream()

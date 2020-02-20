@@ -281,6 +281,18 @@ are available [here](Configuration-Properties-Common.html#database-settings) und
 # cas.spring.cloud.jdbc.sql=SELECT id, name, value FROM CAS_SETTINGS_TABLE
 ```
 
+### REST
+
+Allow the CAS Spring Cloud configuration server to load settings from a REST API.
+
+```properties
+# cas.spring.cloud.rest.url=
+# cas.spring.cloud.rest.basicAuthUsername=
+# cas.spring.cloud.rest.basicAuthPassword=
+# cas.spring.cloud.rest.method=
+# cas.spring.cloud.rest.headers=Header1:Value1;Header2:Value2
+```
+
 ## Configuration Security
 
 To learn more about how sensitive CAS settings can be
@@ -624,11 +636,11 @@ If none is specified, one is automatically detected and used by CAS.
 
 ## Session replication
 
-The `sessionCookieName` property defines the specific session cookie name used for the session replication.
+Control aspects of session replication for certain CAS features, such as OAuth or OpenID Connect,
+allowing session and authentication profile data to be kept with the client as a cookie.
 
-```properties
-# cas.sessionReplication.sessionCookieName=DISSESSION
-```
+Common cookie properties found [here](Configuration-Properties-Common.html#cookie-properties) under 
+the configuration key `cas.sessionReplication.cookie`.
 
 ## CAS Banner
 
@@ -3375,6 +3387,7 @@ Allow CAS to become an OpenID Connect provider (OP). To learn more about this to
 # cas.authn.oidc.jwksFile=file:/etc/cas/config/keystore.jwks
 # cas.authn.oidc.jwksCacheInMinutes=60
 # cas.authn.oidc.jwksKeySize=2048
+# cas.authn.oidc.jwksType=RSA|EC
 
 # cas.authn.oidc.dynamicClientRegistrationMode=OPEN|PROTECTED
 
@@ -4777,6 +4790,8 @@ To learn more about this topic, [please review this guide](../webflow/Webflow-Cu
 # cas.webflow.alwaysPauseRedirect=false
 # cas.webflow.refresh=true
 # cas.webflow.redirectSameState=false
+# cas.webflow.autoconfigure=true
+# cas.webflow.basePath=
 ```
 
 ### Spring Webflow Login Decorations
@@ -5284,6 +5299,9 @@ To learn more about this topic, [please review this guide](../installation/Passw
 
 # cas.authn.pm.reset.expirationMinutes=1
 # cas.authn.pm.reset.securityQuestionsEnabled=true
+# Whether the Password Management Token will contain the client or server IP Address.
+# cas.authn.pm.reset.includeServerIpAddress=true
+# cas.authn.pm.reset.includeClientIpAddress=true
 
 # Automatically log in after successful password change
 # cas.authn.pm.autoLogin=false

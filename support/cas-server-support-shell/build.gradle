@@ -33,6 +33,7 @@ dependencies {
     implementation libraries.jasypt
     implementation libraries.bouncycastle
     implementation libraries.opensaml
+    implementation libraries.dropwizard
     implementation libraries.javaparser
 
     runtimeOnly project(":support:cas-server-support-jdbc-drivers")

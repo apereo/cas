@@ -15,7 +15,6 @@ import lombok.SneakyThrows;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.DisposableBean;
@@ -80,7 +79,7 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
 
     private void loadAttributeDefinitionsFromInputStream(final Resource resource) throws IOException {
         LOGGER.trace("Loading attribute definitions from [{}]", resource);
-        val json = IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8);
+        val json = new String(resource.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
         LOGGER.trace("Loaded attribute definitions [{}] from [{}]", json, resource);
         val map = MAPPER.readValue(json, new TypeReference<Map<String, AttributeDefinition>>() {
         });
