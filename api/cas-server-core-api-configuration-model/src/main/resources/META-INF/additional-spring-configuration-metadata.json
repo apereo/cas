@@ -1,6 +1,17 @@
 {
   "properties": [
     {
+      "name": "cas.session-seplication.session-cookie-name",
+      "type": "java.lang.String",
+      "description": "Choose the name of the cookie for session replication.",
+      "defaultValue": "DISSESSION",
+      "deprecation": {
+        "replacement": "cas.session-seplication.cookie.name",
+        "reason": "Cooki settings are moved to a new cookie namespace under cas.session-seplication",
+        "level": "error"
+      }
+    },
+    {
       "name": "cas.authn.release-protocol-attributes",
       "type": "java.lang.Boolean",
       "description": "Whether to release authentication attributes.",
