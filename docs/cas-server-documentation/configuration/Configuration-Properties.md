@@ -588,6 +588,7 @@ The `sessionCookieName` property defines the specific session cookie name used f
 
 ```properties
 # cas.sessionReplication.sessionCookieName=DISSESSION
+# cas.sessionReplication.path=/cas/
 ```
 
 ## CAS Banner
@@ -5089,6 +5090,9 @@ To learn more about this topic, [please review this guide](../installation/Passw
 
 # cas.authn.pm.reset.expirationMinutes=1
 # cas.authn.pm.reset.securityQuestionsEnabled=true
+# Whether the Password Management Token will contain the client or server IP Address.
+# cas.authn.pm.reset.includeServerIpAddress=true
+# cas.authn.pm.reset.includeClientIpAddress=true
 
 # Automatically log in after successful password change
 # cas.authn.pm.autoLogin=false

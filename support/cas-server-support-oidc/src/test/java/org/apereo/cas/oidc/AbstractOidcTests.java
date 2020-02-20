@@ -67,7 +67,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
 import org.jose4j.jwe.KeyManagementAlgorithmIdentifiers;
-import org.jose4j.jwk.RsaJsonWebKey;
+import org.jose4j.jwk.PublicJsonWebKey;
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.NumericDate;
 import org.junit.jupiter.api.BeforeEach;
@@ -176,7 +176,7 @@ public abstract class AbstractOidcTests {
 
     @Autowired
     @Qualifier("oidcDefaultJsonWebKeystoreCache")
-    protected LoadingCache<String, Optional<RsaJsonWebKey>> oidcDefaultJsonWebKeystoreCache;
+    protected LoadingCache<String, Optional<PublicJsonWebKey>> oidcDefaultJsonWebKeystoreCache;
 
     @Autowired
     @Qualifier("oidcTokenSigningAndEncryptionService")
@@ -184,7 +184,7 @@ public abstract class AbstractOidcTests {
 
     @Autowired
     @Qualifier("oidcServiceJsonWebKeystoreCache")
-    protected LoadingCache<OAuthRegisteredService, Optional<RsaJsonWebKey>> oidcServiceJsonWebKeystoreCache;
+    protected LoadingCache<OAuthRegisteredService, Optional<PublicJsonWebKey>> oidcServiceJsonWebKeystoreCache;
 
     @Autowired
     @Qualifier("oidcJsonWebKeystoreGeneratorService")

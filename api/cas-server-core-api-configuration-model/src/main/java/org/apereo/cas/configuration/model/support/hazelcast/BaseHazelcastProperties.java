@@ -69,6 +69,11 @@ public class BaseHazelcastProperties implements Serializable {
     private String licenseKey;
 
     /**
+     * Enables compression when default java serialization is used.
+     */
+    private boolean enableCompression;
+
+    /**
      * Hazelcast management center settings.
      */
     @NestedConfigurationProperty
