@@ -28,8 +28,9 @@
         <div th:utext="#{screen.unavailable.message}">screen.unavailable.message would go here</div>
         <pre id="errorMsg" class="mt-4" style="white-space: pre-wrap;" th:text="${'Error: ' + message}">error message would go here</pre>
         <p id="errorDetails" class="word-break-all">
-            <button type="button" class="btn btn-shutdown"
-                    onclick="showErrorDetails();">View Details
+            <button type="button" class="mdc-button mdc-button--raised"
+                    onclick="showErrorDetails();">
+                <span class="mdc-button__label">View Details</span>
             </button>
         </p>
     </div>

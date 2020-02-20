@@ -175,15 +175,16 @@
                         </span>
 
                         <span th:case="'v3'" th:remove="tag">
-                            <input class="btn btn-block btn-submit"
+                            <button class="mdc-button mdc-button--raised"
                                    th:if="${recaptchaSiteKey != null}"
                                    name="submit"
                                    th:attr="data-sitekey=${recaptchaSiteKey}"
                                    accesskey="l"
                                    th:value="#{screen.welcome.button.login}"
                                    type="submit"
-                                   value="Login3"
-                            />
+                                   value="Login3">
+                                <span class="mdc-button__label" th:text="#{screen.welcome.button.login}"></span>
+                            </button>
                          </span>
                     </span>
                 </form>

@@ -64,9 +64,9 @@
                                     returnUrl += encodeURIComponent(window.location.search);
                                 }
                                 url += "?return=" + returnUrl;
-                                var link = `<a href='${url}' class='btn btn-block btn-social btn-primary'>
-                                                                    <span class='fas fa-shield-alt' aria-hidden='true'></span>
-                                                                    SAML2 Identity Provider Discovery</a>`;
+                                var link = `<a href='${url}' class='mdc-button mdc-button--raised d-block'>
+                                                                    <i class='mdi mdi-shield' aria-hidden='true'></i>
+                                                                    <span class="mdc-button__label">SAML2 Identity Provider Discovery</span></a>`;
                                 document.write(link);
                                                         /*]]>*/
                             </script>
@@ -91,13 +91,13 @@
                         th:style="'display:' + ${delegatedAuthenticationProviderPrimary != null ? 'none' : 'block'}">
                         <ul>
                             <li th:each="entry: ${wsfedUrls}">
-                                <a class="btn btn-block btn-social" th:classappend="btn-sm"
+                                <a class="mdc-button mdc-button--raised d-block"
                                     th:href="@{${entry.redirectUrl}}" th:inline="text" onload=""
                                     th:attr="autoredirect=${entry.autoRedirect}" th:title="${entry.name}">
 
-                                    <span class="fab fa-windows"></span>
+                                    <i class="mdi mdi-windows"></i>
 
-                                    [[${entry.name}]]
+                                    <span class="mdc-button__label">[[${entry.name}]]</span>
                                 </a>
                             </li>
                         </ul>
