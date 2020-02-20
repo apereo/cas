@@ -46,6 +46,15 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishReleases && !rootP
             launchScript()
         }
 
+        /*
+         * Gradle performs a sanity check before uploading, to make sure you don’t upload stale files (files produced by another build).
+         * This introduces a problem with Spring Boot applications; the main jar task is disabled by the Spring Boot application,
+         * and the component expects it to be present. Because the bootJar task uses the same file as the main jar
+         * task by default, releases of Gradle would either publish a stale bootJar artifact or fail if the bootJar task hasn’t been called previously.
+         *
+         * A workaround is to tell Gradle what to upload. If you want to upload the bootJar, then you
+         * need to configure the outgoing configurations to do this:
+         */
         configurations {
             [apiElements, runtimeElements].each {
                 it.outgoing.artifacts.removeIf { it.buildDependencies.getDependencies(null).contains(jar) }
