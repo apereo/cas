@@ -40,28 +40,40 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 @Plugin(name = "CloudWatchAppender", category = "Core", elementType = "appender", printObject = true)
 @Slf4j
-public class CloudWatchAppender extends AbstractAppender {
+public class CloudWatchAppender extends AbstractAppender implements Serializable {
     private static final long serialVersionUID = 1044758913028847477L;
 
     private static final int AWS_DRAIN_LIMIT = 256;
+
     private static final int AWS_LOG_STREAM_MAX_QUEUE_DEPTH = 10000;
+
     private static final int SHUTDOWN_TIMEOUT_MILLIS = 10000;
+
     private static final int AWS_LOG_STREAM_FLUSH_PERIOD_IN_SECONDS = 5;
 
     private final BlockingQueue<InputLogEvent> queue = new LinkedBlockingQueue<>(AWS_LOG_STREAM_MAX_QUEUE_DEPTH);
+
     private final Object monitor = new Object();
+
     private volatile boolean shutdown;
+
     private int flushPeriodMillis;
+
     private Thread deliveryThread;
+
     /**
      * Every PutLogEvents request must include the sequenceToken obtained from the response of the previous request.
      */
     private String sequenceTokenCache;
+
     private long lastReportedTimestamp = -1;
 
     private String logGroupName;
+
     private String logStreamName;
+
     private AWSLogs awsLogsClient;
+
     private volatile boolean queueFull;
 
     public CloudWatchAppender(final String name,
