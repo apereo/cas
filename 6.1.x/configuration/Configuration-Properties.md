@@ -588,6 +588,7 @@ The `sessionCookieName` property defines the specific session cookie name used f
 
 ```properties
 # cas.sessionReplication.sessionCookieName=DISSESSION
+# cas.sessionReplication.path=/cas/
 ```
 
 ## CAS Banner
