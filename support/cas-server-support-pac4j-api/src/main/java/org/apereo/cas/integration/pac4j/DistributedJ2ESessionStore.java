@@ -8,7 +8,7 @@ import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.ticket.TransientSessionTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.HttpRequestUtils;
-import org.apereo.cas.web.cookie.CookieGenerationContext;
+import org.apereo.cas.web.support.CookieUtils;
 import org.apereo.cas.web.support.gen.CookieRetrievingCookieGenerator;
 
 import lombok.extern.slf4j.Slf4j;
@@ -40,11 +40,7 @@ public class DistributedJ2ESessionStore implements SessionStore<JEEContext>, Log
                                       final CasConfigurationProperties casProperties) {
         this.ticketRegistry = ticketRegistry;
         this.ticketFactory = ticketFactory;
-        val tgc = casProperties.getTgc();
-        val context = CookieGenerationContext.builder()
-                .name(casProperties.getSessionReplication().getSessionCookieName())
-                .path(tgc.getPath()).maxAge(tgc.getMaxAge()).secure(tgc.isSecure())
-                .domain(tgc.getDomain()).httpOnly(tgc.isHttpOnly()).build();
+        val context = CookieUtils.buildCookieGenerationContext(casProperties.getSessionReplication());
         this.cookieGenerator = new CookieRetrievingCookieGenerator(context);
     }
 
