@@ -636,11 +636,11 @@ If none is specified, one is automatically detected and used by CAS.
 
 ## Session replication
 
-The `sessionCookieName` property defines the specific session cookie name used for the session replication.
+Control aspects of session replication for certain CAS features, such as OAuth or OpenID Connect,
+allowing session and authentication profile data to be kept with the client as a cookie.
 
-```properties
-# cas.sessionReplication.sessionCookieName=DISSESSION
-```
+Common cookie properties found [here](Configuration-Properties-Common.html#cookie-properties) under 
+the configuration key `cas.sessionReplication.cookie`.
 
 ## CAS Banner
 

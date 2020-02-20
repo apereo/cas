@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.replication;
 
+import org.apereo.cas.configuration.model.support.cookie.CookieProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
@@ -17,11 +18,22 @@ import java.io.Serializable;
 @Getter
 @Setter
 public class SessionReplicationProperties implements Serializable {
-
     private static final long serialVersionUID = -3839399712674610962L;
 
     /**
-     * The name of the specific session cookie used for replication.
+     * Cookie setting for session replication.
      */
-    private String sessionCookieName = "DISSESSION";
+    private Cookie cookie = new Cookie();
+
+    @Getter
+    @Setter
+    public static class Cookie extends CookieProperties {
+        private static final long serialVersionUID = 6165162204295764362L;
+
+        public Cookie() {
+            setName("DISSESSION");
+            setPath("/cas/");
+        }
+    }
+
 }
