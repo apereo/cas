@@ -52,9 +52,8 @@ public class CasCoreMultifactorAuthenticationConfiguration {
     public MultifactorAuthenticationContextValidator authenticationContextValidator() {
         val mfa = casProperties.getAuthn().getMfa();
         val contextAttribute = mfa.getAuthenticationContextAttribute();
-        val failureMode = mfa.getGlobalFailureMode();
         val authnAttributeName = mfa.getTrusted().getAuthenticationContextAttribute();
-        return new DefaultMultifactorAuthenticationContextValidator(contextAttribute, failureMode, authnAttributeName, applicationContext);
+        return new DefaultMultifactorAuthenticationContextValidator(contextAttribute, authnAttributeName, applicationContext);
     }
 
     @Bean

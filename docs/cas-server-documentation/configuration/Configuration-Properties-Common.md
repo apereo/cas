@@ -64,6 +64,7 @@ in each case to learn the exact unit of measure.
 # ${configurationKey}.name=
 # ${configurationKey}.secure=true
 # ${configurationKey}.httpOnly=true
+# ${configurationKey}.sameSitePolicy=none|lax|strict
 ```                               
 
 ## Job Scheduling
@@ -513,6 +514,7 @@ The following options related to Hazelcast support in CAS apply equally to a num
 # ${configurationKey}.cluster.port=5701
 
 # ${configurationKey}.licenseKey=
+# ${configurationKey}.enableCompression=false
 ```
 
 More advanced Hazelcast configuration settings are listed below, given the component's *configuration key*:

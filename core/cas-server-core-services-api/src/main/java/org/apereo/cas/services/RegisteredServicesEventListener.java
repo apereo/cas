@@ -22,7 +22,9 @@ import org.springframework.scheduling.annotation.Async;
 @Slf4j
 public class RegisteredServicesEventListener {
     private final ServicesManager servicesManager;
+
     private final CasConfigurationProperties casProperties;
+
     private final CommunicationsManager communicationsManager;
 
     /**
@@ -53,11 +55,8 @@ public class RegisteredServicesEventListener {
             return;
         }
 
-        if (event.isDeleted()) {
-            LOGGER.info("Sending notification to [{}] as registered service [{}] is deleted from service registry", contacts, serviceName);
-        } else {
-            LOGGER.info("Sending notification to [{}] as registered service [{}] is expired in service registry", contacts, serviceName);
-        }
+        val logMessage = String.format("Sending notification to [{}] as service [{}] is %s from registry", event.isDeleted() ? "deleted" : "expired");
+        LOGGER.info(logMessage, contacts, serviceName);
 
         communicationsManager.validate();
         if (communicationsManager.isMailSenderDefined()) {

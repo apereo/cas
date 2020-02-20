@@ -13,7 +13,6 @@ import org.apereo.cas.util.CollectionUtils;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import lombok.Synchronized;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -30,7 +29,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 import static java.util.stream.Collectors.toList;
 
@@ -90,13 +88,6 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
      * to use for attribute resolution.
      */
     protected final Set<String> activeAttributeRepositoryIdentifiers;
-
-    /**
-     * Map to store objects to synchronize on for retrieval of attributes one at a time per user.
-     * Needs to be ConcurrentHashMap because it is updated in multiple threads.
-     */
-    @ToString.Exclude
-    protected Map<String, PersonAttributeRetriever> retrieverMap = new ConcurrentHashMap<>();
 
     public PersonDirectoryPrincipalResolver() {
         this(new StubPersonAttributeDao(new HashMap<>(0)), PrincipalFactoryUtils.newPrincipalFactory(), false,
@@ -274,10 +265,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
      * @return the map
      */
     protected Map<String, List<Object>> retrievePersonAttributes(final String principalId, final Credential credential) {
-        val retriever = retrieverMap.computeIfAbsent(principalId, s -> new PersonAttributeRetriever(principalId, credential));
-        Map<String, List<Object>> personAttributes = retriever.retrievePersonAttributes();
-        retrieverMap.remove(principalId);
-        return personAttributes;
+        return CoreAuthenticationUtils.retrieveAttributesFromAttributeRepository(attributeRepository, principalId, activeAttributeRepositoryIdentifiers);
     }
 
     /**
@@ -309,23 +297,4 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
         LOGGER.debug("Extracted principal id [{}]", id);
         return id;
     }
-
-    /**
-     * This object allows for synchronization of attribute retrieval for a particular user.
-     */
-    @RequiredArgsConstructor
-    @Getter
-    @Setter
-    public class PersonAttributeRetriever {
-
-        private final String principalId;
-
-        private final Credential credential;
-
-        @Synchronized
-        protected Map<String, List<Object>> retrievePersonAttributes() {
-            return CoreAuthenticationUtils.retrieveAttributesFromAttributeRepository(attributeRepository, principalId, activeAttributeRepositoryIdentifiers);
-        }
-    }
-
 }

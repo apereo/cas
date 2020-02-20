@@ -12,6 +12,7 @@ import org.junit.runner.RunWith;
  */
 @SelectClasses({
     CreateGoogleAnalyticsCookieActionTests.class,
+    CasGoogleAnalyticsCookieGeneratorTests.class,
     CasGoogleAnalyticsWebflowConfigurerTests.class
 })
 @RunWith(JUnitPlatform.class)
