@@ -67,7 +67,12 @@ public class BaseHazelcastProperties implements Serializable {
      * Hazelcast enterprise license key.
      */
     private String licenseKey;
-    
+
+    /**
+     * Enables compression when default java serialization is used.
+     */
+    private boolean enableCompression;
+
     /**
      * Hazelcast cluster settings if CAS is able to auto-create caches.
      */
