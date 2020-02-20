@@ -30,7 +30,7 @@ echo -e "***********************************************"
 ./ci/tests/mariadb/run-mariadb-server.sh
 
 gradleBuild="$gradleBuild testMariaDb jacocoRootReport -x test -x javadoc -x check \
-    -DskipGradleLint=true--parallel \
+    -DskipGradleLint=true --parallel \
     -DskipNestedConfigMetadataGen=true "
 
 if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[show streams]"* ]]; then
@@ -57,7 +57,6 @@ else
     waitloop="while sleep 9m; do echo -e '\n=====[ Gradle build is still running ]====='; done &"
     eval $waitloop
     waitRetVal=$?
-
 
     eval $tasks
     retVal=$?
