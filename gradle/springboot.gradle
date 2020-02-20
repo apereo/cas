@@ -45,6 +45,13 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishReleases && !rootP
             from "${buildDir}/resources/main", { into "WEB-INF/classes" }
             launchScript()
         }
+
+        configurations {
+            [apiElements, runtimeElements].each {
+                it.outgoing.artifacts.removeIf { it.buildDependencies.getDependencies(null).contains(jar) }
+                it.outgoing.artifact(bootJar)
+            }
+        }
     }
 
     bootRun {
