@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.logout;
 
+import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
@@ -25,7 +26,7 @@ public class LogoutProperties implements Serializable {
      * is indicated and extracted by a parameter name of your choosing here. If none specified,
      * the default will be used as {@code service}.
      */
-    private String redirectParameter;
+    private String redirectParameter = CasProtocolConstants.PARAMETER_SERVICE;
 
     /**
      * Whether CAS should be allowed to redirect to an alternative location after logout.
