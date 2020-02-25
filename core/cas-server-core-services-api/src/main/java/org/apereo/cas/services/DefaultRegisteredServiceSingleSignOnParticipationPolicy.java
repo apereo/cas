@@ -9,7 +9,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * This is {@link DefaultRegisteredServiceSingleSignOnParticipationPolicy}.
@@ -24,7 +23,6 @@ import lombok.extern.slf4j.Slf4j;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
-@Slf4j
 public class DefaultRegisteredServiceSingleSignOnParticipationPolicy implements RegisteredServiceSingleSignOnParticipationPolicy {
     private static final long serialVersionUID = -1223944598337761319L;
 

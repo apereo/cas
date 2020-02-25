@@ -9,7 +9,7 @@ import org.apereo.cas.throttle.AuthenticationThrottlingExecutionPlan;
 import org.apereo.cas.throttle.AuthenticationThrottlingExecutionPlanConfigurer;
 
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
+import org.pac4j.core.authorization.authorizer.DefaultAuthorizers;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.client.DirectClient;
 import org.pac4j.core.config.Config;
@@ -56,7 +56,7 @@ public class CasOAuth20ThrottleConfiguration {
     public SecurityInterceptor requiresAuthenticationAuthorizeInterceptor() {
         val interceptor = new SecurityInterceptor(oauthSecConfig.getObject(),
             Authenticators.CAS_OAUTH_CLIENT, JEEHttpActionAdapter.INSTANCE);
-        interceptor.setAuthorizers(StringUtils.EMPTY);
+        interceptor.setAuthorizers(DefaultAuthorizers.IS_FULLY_AUTHENTICATED);
         return interceptor;
     }
 
@@ -71,7 +71,7 @@ public class CasOAuth20ThrottleConfiguration {
             .map(Client::getName)
             .collect(Collectors.joining(","));
         val interceptor = new SecurityInterceptor(oauthSecConfig.getObject(), clients, JEEHttpActionAdapter.INSTANCE);
-        interceptor.setAuthorizers(StringUtils.EMPTY);
+        interceptor.setAuthorizers(DefaultAuthorizers.IS_FULLY_AUTHENTICATED);
         return interceptor;
     }
 
