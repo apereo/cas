@@ -34,7 +34,9 @@ public class DefaultSingleSignOnParticipationStrategy implements SingleSignOnPar
     private final boolean renewEnabled;
 
     private final TicketRegistrySupport ticketRegistrySupport;
+
     private final AuthenticationServiceSelectionPlan serviceSelectionStrategy;
+
     private int order = Ordered.LOWEST_PRECEDENCE;
 
     @Override
@@ -76,6 +78,19 @@ public class DefaultSingleSignOnParticipationStrategy implements SingleSignOnPar
         return true;
     }
 
+    @Override
+    public boolean isCreateCookieOnRenewedAuthentication(final RequestContext context) {
+        var createCookieOnRenewedAuthnForService = true;
+        val registeredService = determineRegisteredService(context);
+        if (registeredService != null) {
+            val ssoPolicy = registeredService.getSingleSignOnParticipationPolicy();
+            if (ssoPolicy != null) {
+                createCookieOnRenewedAuthnForService = ssoPolicy.isCreateCookieOnRenewedAuthentication();
+            }
+        }
+        return this.createCookieOnRenewedAuthentication || createCookieOnRenewedAuthnForService;
+    }
+
     private RegisteredService determineRegisteredService(final RequestContext requestContext) {
         val registeredService = WebUtils.getRegisteredService(requestContext);
         if (registeredService != null) {
@@ -87,10 +102,5 @@ public class DefaultSingleSignOnParticipationStrategy implements SingleSignOnPar
             return this.servicesManager.findServiceBy(serviceToUse);
         }
         return null;
-    }
-
-    @Override
-    public boolean isCreateCookieOnRenewedAuthentication(final RequestContext context) {
-        return this.createCookieOnRenewedAuthentication;
     }
 }

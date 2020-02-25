@@ -38,4 +38,14 @@ public interface RegisteredServiceSingleSignOnParticipationPolicy extends Serial
     default int getOrder() {
         return 0;
     }
+
+    /**
+     * Flag that indicates whether to create SSO session on re-newed authentication event
+     * when dealing with this service.
+     *
+     * @return true/false
+     */
+    default boolean isCreateCookieOnRenewedAuthentication() {
+        return true;
+    }
 }

@@ -31,7 +31,7 @@ import java.util.concurrent.TimeUnit;
 @AllArgsConstructor
 @EqualsAndHashCode
 @Slf4j
-public abstract class BaseDateTimeRegisteredServiceSingleSignOnParticipationPolicy implements RegisteredServiceSingleSignOnParticipationPolicy {
+public abstract class BaseDateTimeRegisteredServiceSingleSignOnParticipationPolicy extends DefaultRegisteredServiceSingleSignOnParticipationPolicy {
     private static final long serialVersionUID = -5923946898337761319L;
 
     private TimeUnit timeUnit = TimeUnit.SECONDS;
