@@ -30,7 +30,7 @@ echo -e "***********************************************"
 ./ci/tests/mariadb/run-mariadb-server.sh
 
 gradleBuild="$gradleBuild testMariaDb jacocoRootReport -x test -x javadoc -x check \
-    -DskipGradleLint=true --parallel \
+    --parallel \
     -DskipNestedConfigMetadataGen=true "
 
 if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[show streams]"* ]]; then

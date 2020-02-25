@@ -29,7 +29,7 @@ echo -e "***********************************************"
 
 gradleBuild="$gradleBuild sonarqube -x javadoc -Dsonar.organization=apereo \
             -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=${SONARCLOUD_TOKEN} \
-            -DskipGradleLint=true -DskipNestedConfigMetadataGen=true \
+            -DskipNestedConfigMetadataGen=true \
             --parallel "
 
 if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[show streams]"* ]]; then

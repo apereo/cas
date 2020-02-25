@@ -4,12 +4,12 @@ source ./ci/functions.sh
 runBuild=false
 echo "Reviewing changes that might affect the Gradle build..."
 
-casVersion=$(./gradlew casVersion --no-daemon -q -DskipGradleLint=true)
+casVersion=$(./gradlew casVersion --no-daemon -q)
 echo "Current CAS version is $casVersion"
 
 gradle="./gradlew $@"
 gradleBuild=""
-gradleBuildOptions="--build-cache --configure-on-demand --no-daemon -DskipGradleLint=true \
+gradleBuildOptions="--build-cache --configure-on-demand --no-daemon \
                     -Dorg.gradle.internal.http.socketTimeout=180000 \
                     -Dorg.gradle.internal.http.connectionTimeout=180000 "
 

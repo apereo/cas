@@ -30,7 +30,7 @@ echo -e "***********************************************"
 ./ci/tests/mail/run-mail-server.sh
 
 gradleBuild="$gradleBuild testMail jacocoRootReport -x test -x javadoc -x check \
-    -DskipGradleLint=true --parallel \
+    --parallel \
     -DskipNestedConfigMetadataGen=true "
 
 if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[show streams]"* ]]; then

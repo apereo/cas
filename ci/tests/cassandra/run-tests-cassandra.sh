@@ -30,7 +30,7 @@ echo -e "***********************************************"
 ./ci/tests/cassandra/run-cassandra-server.sh
 
 gradleBuild="$gradleBuild testCassandra jacocoRootReport -x test -x javadoc -x check \
-    -DskipGradleLint=true \
+    \
     -DskipNestedConfigMetadataGen=true "
 
 if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[show streams]"* ]]; then

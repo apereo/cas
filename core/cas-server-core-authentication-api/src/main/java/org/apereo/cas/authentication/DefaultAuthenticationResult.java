@@ -21,7 +21,10 @@ import lombok.ToString;
 @RequiredArgsConstructor
 public class DefaultAuthenticationResult implements AuthenticationResult {
     private static final long serialVersionUID = 8454900425245262824L;
+
     private final Authentication authentication;
+
     private final Service service;
+
     private boolean credentialProvided;
 }
