@@ -4,9 +4,8 @@ source ./ci/functions.sh
 runBuild=false
 echo "Reviewing changes that might affect the Gradle build..."
 
-casVersion=$(./gradlew casVersion --no-daemon -q)
+casVersion=$(./gradlew casVersion --no-daemon -q -DskipGradleLint=true)
 echo "Current CAS version is $casVersion"
-
 
 gradle="./gradlew $@"
 gradleBuild=""

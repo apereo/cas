@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-casVersion=$(./gradlew casVersion --no-daemon -q)
+casVersion=$(./gradlew casVersion --no-daemon -q -DskipGradleLint=true)
 echo "Current CAS version is $casVersion"
 gradle="./gradlew $@"
 gradleBuild=""
