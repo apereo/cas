@@ -42,7 +42,7 @@ public class CloudWatchAppenderTests {
     @ParameterizedTest(name="case {index}")
     @MethodSource("generateTestCases")
     @DisplayName("making sure incoming parameters are set correctly")
-    void specTest(TestCase tC) {
+    void specTest(final TestCase tC) {
         AWSLogs mock = Mockito.mock(AWSLogs.class);
         if (tC.logGroupExists) {
             Mockito.when(mock.describeLogStreams(Mockito.any(DescribeLogStreamsRequest.class))).thenReturn(createDescribeLogStreamsResult());
@@ -54,7 +54,7 @@ public class CloudWatchAppenderTests {
         // we do this because the lifecycle is a little different for this sort of programmatic configuration
         CloudWatchAppender appender = new CloudWatchAppender("test", "test", "test", "30", null, tC.createIfNeeded, tC.createLogGroupIfNeeded, tC.createLogStreamIfNeeded, mock);
         if (tC.throwsException) {
-            Assertions.assertThrows(RuntimeException.class, () -> { appender.initialize(); });
+            Assertions.assertThrows(RuntimeException.class, appender::initialize);
         } else {
             appender.initialize();
 
@@ -90,7 +90,7 @@ public class CloudWatchAppenderTests {
         return group;
     }
 
-    private static void createLogGroup(AWSLogs logs, Boolean value) {
+    private static void createLogGroup(AWSLogs logs, final Boolean value) {
         if (value) {
             Mockito.verify(logs, Mockito.atLeastOnce()).createLogGroup(Mockito.any(CreateLogGroupRequest.class));
         } else {
@@ -98,7 +98,7 @@ public class CloudWatchAppenderTests {
         }
     }
 
-    private static void createLogStream(AWSLogs logs, Boolean value) {
+    private static void createLogStream(AWSLogs logs, final Boolean value) {
         if (value) {
             Mockito.verify(logs, Mockito.atLeastOnce()).createLogStream(Mockito.any(CreateLogStreamRequest.class));
         } else {
@@ -145,24 +145,24 @@ public class CloudWatchAppenderTests {
     }
 
     public static class TestCase {
-        public Boolean createIfNeeded;
-        public Boolean createLogGroupIfNeeded;
-        public Boolean createLogStreamIfNeeded;
-        public Boolean resultCreateLogGroupIfNeeded;
-        public Boolean resultCreateLogStreamIfNeeded;
-        public Boolean logGroupExists;
-        public Boolean logStreamExists;
-        public Boolean throwsException;
+        public final Boolean createIfNeeded;
+        public final Boolean createLogGroupIfNeeded;
+        public final Boolean createLogStreamIfNeeded;
+        public final Boolean resultCreateLogGroupIfNeeded;
+        public final Boolean resultCreateLogStreamIfNeeded;
+        public final Boolean logGroupExists;
+        public final Boolean logStreamExists;
+        public final Boolean throwsException;
 
-        public TestCase(Boolean createIfNeeded, Boolean createLogGroupIfNeeded, Boolean createLogStreamIfNeeded, Boolean resultCreateLogGroupIfNeeded, Boolean resultCreateLogStreamIfNeeded) {
+        public TestCase(Boolean createIfNeeded, Boolean createLogGroupIfNeeded, Boolean createLogStreamIfNeeded, Boolean resultCreateLogGroupIfNeeded, final Boolean resultCreateLogStreamIfNeeded) {
             this(createIfNeeded, createLogGroupIfNeeded, createLogStreamIfNeeded, resultCreateLogGroupIfNeeded, resultCreateLogStreamIfNeeded, null, null, null);
         }
 
-        public TestCase(Boolean createIfNeeded, Boolean createLogGroupIfNeeded, Boolean createLogStreamIfNeeded, Boolean resultCreateLogGroupIfNeeded, Boolean resultCreateLogStreamIfNeeded, Boolean throwsException) {
+        public TestCase(Boolean createIfNeeded, Boolean createLogGroupIfNeeded, Boolean createLogStreamIfNeeded, Boolean resultCreateLogGroupIfNeeded, Boolean resultCreateLogStreamIfNeeded, final Boolean throwsException) {
             this(createIfNeeded, createLogGroupIfNeeded, createLogStreamIfNeeded, resultCreateLogGroupIfNeeded, resultCreateLogStreamIfNeeded, throwsException, null, null);
         }
 
-        public TestCase(Boolean createIfNeeded, Boolean createLogGroupIfNeeded, Boolean createLogStreamIfNeeded, Boolean resultCreateLogGroupIfNeeded, Boolean resultCreateLogStreamIfNeeded, Boolean throwsException, Boolean logGroupExists, Boolean logStreamExists) {
+        public TestCase(Boolean createIfNeeded, Boolean createLogGroupIfNeeded, Boolean createLogStreamIfNeeded, Boolean resultCreateLogGroupIfNeeded, Boolean resultCreateLogStreamIfNeeded, Boolean throwsException, Boolean logGroupExists, final Boolean logStreamExists) {
             this.createIfNeeded = createIfNeeded;
             this.createLogGroupIfNeeded = createLogGroupIfNeeded;
             this.createLogStreamIfNeeded = createLogStreamIfNeeded;
