@@ -3,7 +3,7 @@
 
 gradle="./gradlew $@"
 gradleBuild=""
-gradleBuildOptions="--build-cache --configure-on-demand --no-daemon "
+gradleBuildOptions="--build-cache --configure-on-demand --no-daemon -DskipGradleLint=true "
 
 echo -e "***********************************************"
 echo -e "Gradle build started at `date`"
