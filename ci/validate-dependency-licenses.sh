@@ -27,7 +27,7 @@ echo -e "Gradle build started at `date`"
 echo -e "***********************************************"
 
 gradleBuild="$gradleBuild checkLicense -x javadoc -x check  \
-    -DskipGradleLint=true -DskipNestedConfigMetadataGen=true --parallel"
+    -DskipNestedConfigMetadataGen=true --parallel"
 
 tasks="$gradle $gradleBuildOptions $gradleBuild"
 echo -e "***************************************************************************************"

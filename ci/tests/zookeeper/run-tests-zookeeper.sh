@@ -28,7 +28,7 @@ echo -e "Gradle build started at `date`"
 echo -e "***********************************************"
 
 gradleBuild="$gradleBuild testZooKeeper jacocoRootReport -x test -x javadoc -x check \
-    -DskipGradleLint=true --parallel \
+    --parallel \
     -DskipNestedConfigMetadataGen=true "
 
 if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[show streams]"* ]]; then

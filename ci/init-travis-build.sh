@@ -57,7 +57,7 @@ chmod -R 777 ./gradlew
 echo "Home directory: $HOME"
 
 echo "Gradle Home directory:"
-./gradlew gradleHome --no-daemon -DskipGradleLint=true
+./gradlew gradleHome --no-daemon
 
 echo -e "Configured build environment\n"
 echo -e "export JAVA_HOME=${JAVA_HOME}\n"
