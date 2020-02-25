@@ -168,6 +168,11 @@ public class OidcProperties implements Serializable {
         Stream.of("client_secret_basic", "client_secret_post", "client_secret_jwt", "private_key_jwt").collect(Collectors.toList());
 
     /**
+     * List of PKCE code challenge methods supported.
+     */
+    private List<String> codeChallengeMethodsSupported = Stream.of("plain", "S256").collect(Collectors.toList());
+
+    /**
      * OIDC webfinger protocol settings.
      */
     @NestedConfigurationProperty
