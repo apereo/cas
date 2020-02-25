@@ -4,7 +4,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
-import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.junit.jupiter.api.Tag;
