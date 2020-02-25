@@ -255,6 +255,11 @@ Allow the CAS Spring Cloud configuration server to load settings from an Apache 
 Common AWS settings for this feature are available [here](Configuration-Properties-Common.html#amazon-integration-settings)
 under the configuration key `cas.spring.cloud.aws.secretsManager`.
 
+### Amazon Parameter Store
+
+Common AWS settings for this feature are available [here](Configuration-Properties-Common.html#amazon-integration-settings)
+under the configuration key `cas.spring.cloud.aws.ssm`.
+
 ### Amazon S3
 
 The following settings may be passed using strategies outlined [here](Configuration-Management.html#overview) in order for CAS to establish a connection,

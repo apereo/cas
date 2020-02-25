@@ -21,7 +21,7 @@ import org.pac4j.cas.client.CasClient;
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.WebContext;
-import org.pac4j.core.state.StaticOrRandomStateGenerator;
+import org.pac4j.core.util.generator.StaticValueGenerator;
 import org.pac4j.oauth.client.OAuth10Client;
 import org.pac4j.oauth.client.OAuth20Client;
 import org.pac4j.oauth.config.OAuth20Configuration;
@@ -49,13 +49,19 @@ public class DelegatedClientWebflowManager {
      * Client identifier associated with this session/request.
      */
     public static final String PARAMETER_CLIENT_ID = "delegatedclientid";
+
     private static final String OAUTH10_CLIENT_ID_SESSION_KEY = "OAUTH10_CLIENT_ID";
+
     private static final String CAS_CLIENT_ID_SESSION_KEY = "CAS_CLIENT_ID";
 
     private final TicketRegistry ticketRegistry;
+
     private final TicketFactory ticketFactory;
+
     private final CasConfigurationProperties casProperties;
+
     private final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
+
     private final ArgumentExtractor argumentExtractor;
 
     /**
@@ -89,13 +95,13 @@ public class DelegatedClientWebflowManager {
             val oauthClient = (OAuth20Client) client;
             val config = oauthClient.getConfiguration();
             config.setWithState(true);
-            config.setStateGenerator(new StaticOrRandomStateGenerator(ticketId));
+            config.setStateGenerator(new StaticValueGenerator(ticketId));
         }
         if (client instanceof OidcClient) {
             val oidcClient = (OidcClient) client;
             val config = oidcClient.getConfiguration();
             config.setWithState(true);
-            config.setStateGenerator(new StaticOrRandomStateGenerator(ticketId));
+            config.setStateGenerator(new StaticValueGenerator(ticketId));
         }
         if (client instanceof CasClient) {
             sessionStore.set(webContext, CAS_CLIENT_ID_SESSION_KEY, ticket.getId());

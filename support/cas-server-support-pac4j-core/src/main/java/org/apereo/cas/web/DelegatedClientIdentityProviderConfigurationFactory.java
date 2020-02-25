@@ -10,8 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.client.IndirectClient;
-import org.pac4j.core.context.Pac4jConstants;
 import org.pac4j.core.context.WebContext;
+import org.pac4j.core.util.Pac4jConstants;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Optional;
