@@ -33,7 +33,6 @@ buildscript {
         classpath "org.gradle:test-retry-gradle-plugin:$gradleRetryVersion"
         classpath "com.github.jk1:gradle-license-report:$gradleLicenseVersion"
         classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
-        classpath "com.netflix.nebula:gradle-lint-plugin:$gradleLintVersion"
         classpath "gradle.plugin.com.gorylenko.gradle-git-properties:gradle-git-properties:$gradleGitVersion"
         classpath "io.franzbecker:gradle-lombok:$gradleLombokVersion"
         classpath "com.github.ben-manes:gradle-versions-plugin:$gradleDependencyVersionsVersion"
@@ -155,11 +154,6 @@ allprojects {
     }
 
     project.ext["forceBootifulArtifact"] = null
-
-    if (!rootProject.publishSnapshots && !Boolean.getBoolean("skipGradleLint")) {
-        apply plugin: "nebula.lint"
-        gradleLint.rules = ["dependency-parentheses", "dependency-tuple"]
-    }
 
     afterEvaluate { project ->
         jacoco {
