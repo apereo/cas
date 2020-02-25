@@ -66,7 +66,6 @@ public class CloudWatchAppender extends AbstractAppender {
     private AWSLogs awsLogsClient;
     private volatile boolean queueFull;
 
-    private boolean createIfNeeded;
     private boolean createLogGroupIfNeeded;
     private boolean createLogStreamIfNeeded;
 
@@ -167,28 +166,13 @@ public class CloudWatchAppender extends AbstractAppender {
         this.logGroupName = awsLogGroupName;
         this.logStreamName = awsLogStreamName;
 
-        //ToDO - Logic if 2 or 3 is not null, then it is set, therefore 1 is now false
-        if (createIfNeeded == null) {
-            if (createLogGroupIfNeeded != null) {
-                this.createIfNeeded = false;
-            } else {
-                this.createIfNeeded = true;
-            }
-            if (createLogStreamIfNeeded != null) {
-                this.createIfNeeded = false;
-            } else {
-                this.createIfNeeded = true;
-            }
+        if (createLogGroupIfNeeded == null && createLogStreamIfNeeded == null) {
+            this.createLogGroupIfNeeded = Objects.requireNonNullElse(createIfNeeded, true);
+            this.createLogStreamIfNeeded = Objects.requireNonNullElse(createIfNeeded, true);
         } else {
-            if (createIfNeeded) {
-                this.createIfNeeded = true;
-            } else {
-                this.createIfNeeded = false;
-            }
+            this.createLogGroupIfNeeded = Objects.requireNonNullElse(createLogGroupIfNeeded, false);
+            this.createLogStreamIfNeeded = Objects.requireNonNullElse(createLogStreamIfNeeded, false);
         }
-
-        this.createLogGroupIfNeeded = Objects.requireNonNullElse(createLogGroupIfNeeded, false);
-        this.createLogStreamIfNeeded = Objects.requireNonNullElse(createLogStreamIfNeeded, false);
     }
 
     public void initialize() {
@@ -291,7 +275,7 @@ public class CloudWatchAppender extends AbstractAppender {
 
     private String createLogGroupAndLogStreamIfNeeded() {
 
-        if (this.createIfNeeded || this.createLogGroupIfNeeded) {
+        if (this.createLogGroupIfNeeded) {
             LOGGER.debug("Attempting to locate the log group [{}]", logGroupName);
             val describeLogGroupsResult =
                     awsLogsClient.describeLogGroups(new DescribeLogGroupsRequest().withLogGroupNamePrefix(logGroupName));
@@ -324,7 +308,7 @@ public class CloudWatchAppender extends AbstractAppender {
         }
 
         if (createLogStream) {
-            if (!this.createIfNeeded && !this.createLogStreamIfNeeded) {
+            if (!this.createLogStreamIfNeeded) {
                 throw new RuntimeException("Log stream does not exist, yet `createIfNeeded` is false. This will not work");
             } else {
                 LOGGER.debug("Creating log stream [{}] for group [{}]", logStreamName, logGroupName);
