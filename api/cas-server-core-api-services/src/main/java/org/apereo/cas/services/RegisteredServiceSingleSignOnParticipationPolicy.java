@@ -1,6 +1,7 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.ticket.TicketState;
+import org.apereo.cas.util.model.TriStateBoolean;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -39,13 +40,14 @@ public interface RegisteredServiceSingleSignOnParticipationPolicy extends Serial
         return 0;
     }
 
+
     /**
      * Flag that indicates whether to create SSO session on re-newed authentication event
      * when dealing with this service.
      *
      * @return true/false
      */
-    default boolean isCreateCookieOnRenewedAuthentication() {
-        return true;
+    default TriStateBoolean isCreateCookieOnRenewedAuthentication() {
+        return TriStateBoolean.UNDEFINED;
     }
 }
