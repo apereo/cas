@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.util.model.TriStateBoolean;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.Getter;
@@ -79,16 +80,15 @@ public class DefaultSingleSignOnParticipationStrategy implements SingleSignOnPar
     }
 
     @Override
-    public boolean isCreateCookieOnRenewedAuthentication(final RequestContext context) {
-        var createCookieOnRenewedAuthnForService = true;
+    public TriStateBoolean isCreateCookieOnRenewedAuthentication(final RequestContext context) {
         val registeredService = determineRegisteredService(context);
         if (registeredService != null) {
             val ssoPolicy = registeredService.getSingleSignOnParticipationPolicy();
             if (ssoPolicy != null) {
-                createCookieOnRenewedAuthnForService = ssoPolicy.isCreateCookieOnRenewedAuthentication();
+                return ssoPolicy.isCreateCookieOnRenewedAuthentication();
             }
         }
-        return this.createCookieOnRenewedAuthentication || createCookieOnRenewedAuthnForService;
+        return TriStateBoolean.fromBoolean(this.createCookieOnRenewedAuthentication);
     }
 
     private RegisteredService determineRegisteredService(final RequestContext requestContext) {
