@@ -45,7 +45,7 @@ public interface SingleSignOnParticipationStrategy extends Ordered {
      * @return the boolean
      */
     default boolean isCreateCookieOnRenewedAuthentication(final RequestContext context) {
-        return true;
+        return false;
     }
 
     /**

@@ -39,6 +39,7 @@ public interface RegisteredServiceSingleSignOnParticipationPolicy extends Serial
         return 0;
     }
 
+
     /**
      * Flag that indicates whether to create SSO session on re-newed authentication event
      * when dealing with this service.

@@ -44,6 +44,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
     private static final int STREAM_BATCH_SIZE = 100;
 
     private final LockModeType lockType;
+
     private final TicketCatalog ticketCatalog;
 
     @PersistenceContext(unitName = "ticketEntityManagerFactory")
@@ -54,29 +55,10 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    public Ticket updateTicket(final Ticket ticket) {
-        LOGGER.trace("Updating ticket [{}]", ticket);
-        val encodeTicket = this.encodeTicket(ticket);
-        this.entityManager.merge(encodeTicket);
-        LOGGER.debug("Updated ticket [{}].", encodeTicket);
-        return encodeTicket;
-    }
-
-    @Override
     public void addTicket(final Ticket ticket) {
         val encodeTicket = encodeTicket(ticket);
         this.entityManager.persist(encodeTicket);
         LOGGER.debug("Added ticket [{}] to registry.", encodeTicket);
-    }
-
-    @Override
-    public long deleteAll() {
-        return this.ticketCatalog.findAll()
-            .stream()
-            .map(this::getTicketEntityName)
-            .map(entityName -> entityManager.createQuery(String.format("DELETE FROM %s", entityName)))
-            .mapToLong(Query::executeUpdate)
-            .sum();
     }
 
     @Override
@@ -107,6 +89,16 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
+    public long deleteAll() {
+        return this.ticketCatalog.findAll()
+            .stream()
+            .map(this::getTicketEntityName)
+            .map(entityName -> entityManager.createQuery(String.format("DELETE FROM %s", entityName)))
+            .mapToLong(Query::executeUpdate)
+            .sum();
+    }
+
+    @Override
     public Collection<? extends Ticket> getTickets() {
         if (isCipherExecutorEnabled()) {
             val sql = String.format("SELECT t FROM %s t", EncodedTicket.class.getSimpleName());
@@ -130,6 +122,15 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
             .flatMap(List::stream)
             .map(this::decodeTicket)
             .collect(Collectors.toList());
+    }
+
+    @Override
+    public Ticket updateTicket(final Ticket ticket) {
+        LOGGER.trace("Updating ticket [{}]", ticket);
+        val encodeTicket = this.encodeTicket(ticket);
+        this.entityManager.merge(encodeTicket);
+        LOGGER.debug("Updated ticket [{}].", encodeTicket);
+        return encodeTicket;
     }
 
     /**
