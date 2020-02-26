@@ -80,7 +80,7 @@ public class DefaultSingleSignOnParticipationStrategy implements SingleSignOnPar
 
     @Override
     public boolean isCreateCookieOnRenewedAuthentication(final RequestContext context) {
-        var createCookieOnRenewedAuthnForService = true;
+        var createCookieOnRenewedAuthnForService = false;
         val registeredService = determineRegisteredService(context);
         if (registeredService != null) {
             val ssoPolicy = registeredService.getSingleSignOnParticipationPolicy();
