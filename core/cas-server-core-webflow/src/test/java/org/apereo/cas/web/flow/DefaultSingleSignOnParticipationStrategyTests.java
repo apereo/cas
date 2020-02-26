@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionStrate
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.util.model.TriStateBoolean;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
@@ -41,7 +42,7 @@ public class DefaultSingleSignOnParticipationStrategyTests {
             mock(TicketRegistrySupport.class), mock(AuthenticationServiceSelectionPlan.class));
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
         request.addParameter(CasProtocolConstants.PARAMETER_RENEW, "true");
-        assertTrue(strategy.isParticipating(context) || strategy.isCreateCookieOnRenewedAuthentication(context));
+        assertTrue(strategy.isParticipating(context) || strategy.isCreateCookieOnRenewedAuthentication(context) == TriStateBoolean.TRUE);
     }
 
     @Test

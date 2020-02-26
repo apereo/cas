@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow;
 
+import org.apereo.cas.util.model.TriStateBoolean;
+
 import org.springframework.core.Ordered;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -44,8 +46,8 @@ public interface SingleSignOnParticipationStrategy extends Ordered {
      * @param context the context
      * @return the boolean
      */
-    default boolean isCreateCookieOnRenewedAuthentication(final RequestContext context) {
-        return false;
+    default TriStateBoolean isCreateCookieOnRenewedAuthentication(final RequestContext context) {
+        return TriStateBoolean.UNDEFINED;
     }
 
     /**
