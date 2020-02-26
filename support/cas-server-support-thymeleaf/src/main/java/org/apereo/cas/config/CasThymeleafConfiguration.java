@@ -181,24 +181,26 @@ public class CasThymeleafConfiguration {
         r.setForceContentType(thymeleafResolver.getForceContentType());
 
         val engine = SpringTemplateEngine.class.cast(thymeleafResolver.getTemplateEngine());
-        engine.addDialect(new IPostProcessorDialect() {
-            @Override
-            public int getDialectPostProcessorPrecedence() {
-                return Integer.MAX_VALUE;
-            }
+        if (!engine.isInitialized()) {
+            engine.addDialect(new IPostProcessorDialect() {
+                @Override
+                public int getDialectPostProcessorPrecedence() {
+                    return Integer.MAX_VALUE;
+                }
 
-            @Override
-            public Set<IPostProcessor> getPostProcessors() {
-                return CollectionUtils.wrapSet(new PostProcessor(TemplateMode.parse(thymeleafProperties.getObject().getMode()),
-                    CasThymeleafOutputTemplateHandler.class, Integer.MAX_VALUE));
-            }
+                @Override
+                public Set<IPostProcessor> getPostProcessors() {
+                    return CollectionUtils.wrapSet(new PostProcessor(TemplateMode.parse(thymeleafProperties.getObject().getMode()),
+                        CasThymeleafOutputTemplateHandler.class, Integer.MAX_VALUE));
+                }
 
-            @Override
-            public String getName() {
-                return CasThymeleafOutputTemplateHandler.class.getSimpleName();
-            }
-        });
-
+                @Override
+                public String getName() {
+                    return CasThymeleafOutputTemplateHandler.class.getSimpleName();
+                }
+            });
+        }
+        
         r.setTemplateEngine(engine);
         r.setViewNames(thymeleafResolver.getViewNames());
         r.setCache(false);
