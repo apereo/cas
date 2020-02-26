@@ -1,5 +1,6 @@
 package org.apereo.cas.interrupt.webflow;
 
+import org.apereo.cas.util.model.TriStateBoolean;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
 
 import lombok.val;
@@ -26,7 +27,7 @@ public class InterruptSingleSignOnParticipationStrategy implements SingleSignOnP
     }
 
     @Override
-    public boolean isCreateCookieOnRenewedAuthentication(final RequestContext context) {
-        return false;
+    public TriStateBoolean isCreateCookieOnRenewedAuthentication(final RequestContext context) {
+        return TriStateBoolean.FALSE;
     }
 }
