@@ -80,7 +80,7 @@ via CAS settings or on a per-service basis.
   "singleSignOnParticipationPolicy":
     {
       "@class": "org.apereo.cas.services.DefaultRegisteredServiceSingleSignOnParticipationPolicy",
-      "createCookieOnRenewedAuthentication": true
+      "createCookieOnRenewedAuthentication": "TRUE"
     }
 }
 ```
