@@ -148,6 +148,7 @@ package org.apereo.cas.support.interrupt;
 @Configuration("myInterruptConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class MyInterruptConfiguration {
+    @Bean
     public InterruptInquirer interruptInquirer() {
       ...
     }
