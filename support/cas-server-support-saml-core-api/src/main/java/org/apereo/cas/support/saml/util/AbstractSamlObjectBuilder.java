@@ -13,10 +13,10 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.xerces.xs.XSObject;
-import org.jdom.Document;
-import org.jdom.input.DOMBuilder;
-import org.jdom.input.SAXBuilder;
-import org.jdom.output.XMLOutputter;
+import org.jdom2.Document;
+import org.jdom2.input.DOMBuilder;
+import org.jdom2.input.SAXBuilder;
+import org.jdom2.output.XMLOutputter;
 import org.joda.time.DateTime;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
@@ -113,7 +113,7 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
         if (doc != null) {
             val signedElement = signSamlElement(doc.getRootElement(),
                 privateKey, publicKey);
-            doc.setRootElement((org.jdom.Element) signedElement.detach());
+            doc.setRootElement(signedElement.detach());
             return new XMLOutputter().outputString(doc);
         }
         throw new IllegalArgumentException("Error signing SAML Response: Null document");
@@ -126,7 +126,7 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
      * @return the document
      */
     public static Document constructDocumentFromXml(final String xmlString) {
-        LOGGER.trace("Attempting to construct an instance of org.jdom.Document from String xml: [{}]", xmlString);
+        LOGGER.trace("Attempting to construct an instance of Document from xml: [{}]", xmlString);
         try {
             val builder = new SAXBuilder();
             builder.setFeature("http://xml.org/sax/features/external-general-entities", false);
@@ -134,7 +134,6 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
             return builder.build(new ByteArrayInputStream(xmlString.getBytes(Charset.defaultCharset())));
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
-            LOGGER.trace("Returning null Document");
             return null;
         }
     }
@@ -147,8 +146,8 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
      * @param pubKey  the pub key
      * @return the element
      */
-    private static org.jdom.Element signSamlElement(final org.jdom.Element element, final PrivateKey privKey, final PublicKey pubKey) {
-        LOGGER.trace("Attempting to sign org.jdom.Element: [{}]", element);
+    private static org.jdom2.Element signSamlElement(final org.jdom2.Element element, final PrivateKey privKey, final PublicKey pubKey) {
+        LOGGER.trace("Attempting to sign Element: [{}]", element);
         try {
             val providerName = System.getProperty("jsr105Provider", SIGNATURE_FACTORY_PROVIDER_CLASS);
 
@@ -182,9 +181,7 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
 
             val signature = sigFactory.newXMLSignature(signedInfo, keyInfo);
             signature.sign(dsc);
-
-            return toJdom(w3cElement);
-
+            return new DOMBuilder().build(w3cElement);
         } catch (final Exception e) {
             throw new IllegalArgumentException("Error signing SAML element: " + e.getMessage(), e);
         }
@@ -194,13 +191,14 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
     private static SignatureMethod getSignatureMethodFromPublicKey(final PublicKey pubKey,
                                                                    final XMLSignatureFactory sigFactory) {
         val algorithm = pubKey.getAlgorithm();
-        if ("DSA".equals(algorithm)) {
+        if ("DSA".equalsIgnoreCase(algorithm)) {
             return sigFactory.newSignatureMethod(SignatureMethod.DSA_SHA1, null);
         }
-        if ("RSA".equals(algorithm)) {
+        if ("RSA".equalsIgnoreCase(algorithm)) {
             return sigFactory.newSignatureMethod(SignatureMethod.RSA_SHA1, null);
         }
-        throw new IllegalArgumentException(String.format("Error signing SAML element: Unsupported type of key algorithm: [%s]. Only DSA or RSA are supported", algorithm));
+        val format = String.format("Unsupported type of key algorithm: [%s]. Only DSA or RSA are supported", algorithm);
+        throw new IllegalArgumentException(format);
     }
 
     /**
@@ -224,7 +222,7 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
      * @param element the element
      * @return the org.w3c.dom. element
      */
-    private static Element toDom(final org.jdom.Element element) {
+    private static Element toDom(final org.jdom2.Element element) {
         return Objects.requireNonNull(toDom(element.getDocument())).getDocumentElement();
     }
 
@@ -253,19 +251,8 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
             return dbf.newDocumentBuilder().parse(new ByteArrayInputStream(xmlBytes));
         } catch (final Exception e) {
             LOGGER.trace("Caught error during creation of org.w3c.dom.Document: e.getMessage()", e);
-            LOGGER.trace("Returning null...");
             return null;
         }
-    }
-
-    /**
-     * Convert to a jdom element.
-     *
-     * @param e the e
-     * @return the element
-     */
-    private static org.jdom.Element toJdom(final Element e) {
-        return new DOMBuilder().build(e);
     }
 
     /**
