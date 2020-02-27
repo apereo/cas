@@ -152,6 +152,13 @@ public class MyInterruptConfiguration {
     public InterruptInquirer interruptInquirer() {
       ...
     }
+
+    @Bean
+    public InterruptInquiryExecutionPlanConfigurer myInterruptInquiryExecutionPlanConfigurer() {
+        return plan -> {
+            plan.registerInterruptInquirer(interruptInquirer());
+        };
+    }
 }
 ```
 
