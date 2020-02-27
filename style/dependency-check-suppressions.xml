@@ -4,6 +4,9 @@
         <cve>CVE-2019-20444</cve>
     </suppress>
     <suppress>
+        <cve>CVE-2020-8840</cve>
+    </suppress>
+    <suppress>
         <cve>CVE-2019-20445</cve>
     </suppress>
     <suppress>
