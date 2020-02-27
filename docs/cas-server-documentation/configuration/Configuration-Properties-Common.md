@@ -1151,7 +1151,7 @@ The following  options apply  to features that integrate with an LDAP server (i.
 #${configurationKey}.bindDn=cn=Directory Manager,dc=example,dc=org
 #${configurationKey}.bindCredential=Password
 
-#${configurationKey}.poolPassivator=NONE|CLOSE|BIND
+#${configurationKey}.poolPassivator=NONE|BIND
 #${configurationKey}.connectionStrategy=
 #${configurationKey}.connectTimeout=PT5S
 #${configurationKey}.trustCertificates=
@@ -1199,7 +1199,6 @@ The following options can be used to passivate objects when they are checked bac
 | Type                    | Description
 |-------------------------|----------------------------------------------------------------------------------------------------
 | `NONE`                  | No passivation takes place.
-| `CLOSE`                 | Passivates a connection by attempting to close it.
 | `BIND`                  | The default behavior which passivates a connection by performing a bind operation on it. This option requires the availability of bind credentials when establishing connections to LDAP.
 
 #### Why Passivators?
