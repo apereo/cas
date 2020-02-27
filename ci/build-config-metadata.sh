@@ -20,7 +20,7 @@ echo -e "***********************************************"
 
 gradleBuild="$gradleBuild :api:cas-server-core-api-configuration-model:build \
      -x check -x test -x javadoc \
-     -DskipGradleLint=true "
+     "
 
 if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[show streams]"* ]]; then
     gradleBuild="$gradleBuild -DshowStandardStreams=true "

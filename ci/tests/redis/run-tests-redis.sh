@@ -30,7 +30,7 @@ echo -e "***********************************************"
 ./ci/tests/redis/run-redis-server.sh
 
 gradleBuild="$gradleBuild testRedis jacocoRootReport -x test -x javadoc -x check \
-    -DskipGradleLint=true -DskipNestedConfigMetadataGen=true "
+    -DskipNestedConfigMetadataGen=true "
 
 if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[show streams]"* ]]; then
     gradleBuild="$gradleBuild -DshowStandardStreams=true "
