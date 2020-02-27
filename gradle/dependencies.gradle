@@ -1646,7 +1646,7 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "slf4j-api")
                 }
         ],
-        jdom                    : dependencies.create("jdom:jdom:$jdomVersion") {
+        jdom                    : dependencies.create("org.jdom:jdom2:$jdomVersion") {
             exclude(group: "xml-apis", module: "xml-apis")
             force = true
         },
