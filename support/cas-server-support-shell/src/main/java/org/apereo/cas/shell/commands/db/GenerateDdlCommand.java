@@ -99,9 +99,10 @@ public class GenerateDdlCommand {
      * @param dropSchema   the drop schema
      * @param createSchema the create schema
      * @param haltOnError  the halt on error
+     * @return the file
      */
     @ShellMethod(key = "generate-ddl", value = "Generate database DDL scripts")
-    public void generate(
+    public String generate(
         @ShellOption(value = {"file", "--file"},
             help = "DDL file to contain to generated script",
             defaultValue = "/etc/cas/config/cas-db-schema.sql") final String file,
@@ -133,7 +134,7 @@ public class GenerateDdlCommand {
         if (!dialectName.contains(".")) {
             LOGGER.warn("Dialect name must be a fully qualified class name. Supported dialects by default are [{}] "
                 + "or you may specify the dialect class directly", DIALECTS_MAP.keySet());
-            return;
+            return null;
         }
 
         val svcRegistry = new StandardServiceRegistryBuilder();
@@ -171,5 +172,6 @@ public class GenerateDdlCommand {
         LOGGER.info("Exporting Database DDL to [{}] using dialect [{}] with export type set to [{}]", file, dialect, action);
         export.execute(EnumSet.of(TargetType.SCRIPT, TargetType.STDOUT), SchemaExport.Action.BOTH, metadataSources);
         LOGGER.info("Database DDL is exported to [{}]", file);
+        return file;
     }
 }
