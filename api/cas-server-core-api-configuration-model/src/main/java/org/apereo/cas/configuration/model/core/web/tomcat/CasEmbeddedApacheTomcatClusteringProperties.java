@@ -40,7 +40,6 @@ public class CasEmbeddedApacheTomcatClusteringProperties implements Serializable
      */
     private String cloudMembershipProvider = "kubernetes";
 
-
     /**
      * When a web application is being shutdown, Tomcat issues an expire call to each session to notify all the listeners.
      * If you wish for all sessions to expire on all nodes when a shutdown occurs on one node, set this value to true. Default value is false.
