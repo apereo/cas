@@ -599,12 +599,15 @@ Enabling APR requires the following JVM system property that indicates the locat
 
 #### Session Clustering & Replication
 
-Enable session replication to replicate web application session deltas.
-
+Enable session replication to replicate web application session deltas. 
+Most settings apply to the DEFAULT clusteringType. The cloudMembershipProvider setting applies to the 
+CLOUD clusteringType.
+The DEFAULT clusteringType requires the clusterMembers property to be set.
 ```properties
 # cas.server.tomcat.clustering.enabled=false
 # cas.server.tomcat.clustering.clusterMembers=ip-address:port:index
-
+# cas.server.tomcat.clustering.clusteringType=DEFAULT|CLOUD
+# cas.server.tomcat.clustering.cloudMembershipProvider=kubernetes|dns|[MembershipProvider impl classname](https://github.com/apache/tomcat/blob/master/java/org/apache/catalina/tribes/MembershipProvider.java)
 # cas.server.tomcat.clustering.expireSessionsOnShutdown=false
 # cas.server.tomcat.clustering.channelSendOptions=8
 
