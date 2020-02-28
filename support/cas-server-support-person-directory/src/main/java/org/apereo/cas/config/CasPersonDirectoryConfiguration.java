@@ -226,7 +226,7 @@ public class CasPersonDirectoryConfiguration {
             .filter(jdbc -> StringUtils.isNotBlank(jdbc.getSql()) && StringUtils.isNotBlank(jdbc.getUrl()))
             .forEach(jdbc -> {
                 val jdbcDao = createJdbcPersonAttributeDao(jdbc);
-                FunctionUtils.doIfNotNull(jdbcDao.getId(), jdbcDao::setId);
+                FunctionUtils.doIfNotNull(jdbc.getId(), jdbcDao::setId);
 
                 jdbcDao.setQueryAttributeMapping(CollectionUtils.wrap("username", jdbc.getUsername()));
                 val mapping = jdbc.getAttributes();
