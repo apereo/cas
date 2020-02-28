@@ -1,7 +1,9 @@
 description = "Apereo CAS JPA Ticket Registry Support"
 dependencies {
     api project(":api:cas-server-core-api")
-    
+
+    implementation libraries.hibernate
+
     implementation project(":core:cas-server-core-tickets-api")
     implementation project(":core:cas-server-core-tickets")
     implementation project(":core:cas-server-core-monitor")
@@ -9,7 +11,6 @@ dependencies {
     implementation project(":core:cas-server-core-services-authentication")
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":support:cas-server-support-jpa-util")
-
 
     runtimeOnly project(":support:cas-server-support-jdbc-drivers")
 
@@ -34,7 +35,6 @@ dependencies {
     testImplementation project(":core:cas-server-core-configuration")
     testImplementation project(":core:cas-server-core-cookie-api")
     testImplementation project(":core:cas-server-core")
-    
 
     testImplementation project(":support:cas-server-support-oauth")
     testImplementation project(":support:cas-server-support-oauth-api")

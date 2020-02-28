@@ -1,6 +1,6 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.adaptors.yubikey.YubiKeyAccount;
+import org.apereo.cas.adaptors.yubikey.JpaYubiKeyAccount;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountRegistry;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
 import org.apereo.cas.adaptors.yubikey.dao.JpaYubiKeyAccountRegistry;
@@ -28,6 +28,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
+
 import java.util.List;
 
 /**
@@ -68,7 +69,7 @@ public class JpaYubiKeyConfiguration {
 
     @Bean
     public List<String> jpaYubiKeyPackagesToScan() {
-        return CollectionUtils.wrapList(YubiKeyAccount.class.getPackage().getName());
+        return CollectionUtils.wrapList(JpaYubiKeyAccount.class.getPackage().getName());
     }
 
     @Autowired
