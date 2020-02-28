@@ -13,6 +13,7 @@ import javax.naming.Context;
 import javax.naming.directory.DirContext;
 import javax.naming.directory.InitialDirContext;
 import javax.naming.directory.SearchControls;
+
 import java.util.Arrays;
 import java.util.Hashtable;
 
@@ -38,39 +39,45 @@ public class ValidateLdapConnectionCommand {
      * @param searchFilter   the search filter
      * @param userPassword   the user password
      * @param userAttributes the user attributes
+     * @return the boolean
      */
     @ShellMethod(key = "validate-ldap", value = "Test connections to an LDAP server to verify connectivity, SSL, etc")
-    public static void validateLdap(
-        @ShellOption(value = { "url", "--url" },
+    public static boolean validateLdap(
+        @ShellOption(value = {"url", "--url"},
             help = "LDAP URL to test, comma-separated.") final String url,
-        @ShellOption(value = { "bindDn", "--bindDn" },
+        @ShellOption(value = {"bindDn", "--bindDn"},
             help = "bindDn to use when testing the LDAP server") final String bindDn,
-        @ShellOption(value = { "bindCredential", "--bindCredential" },
+        @ShellOption(value = {"bindCredential", "--bindCredential"},
             help = "bindCredential to use when testing the LDAP server") final String bindCredential,
-        @ShellOption(value = { "baseDn", "--baseDn" },
+        @ShellOption(value = {"baseDn", "--baseDn"},
             help = "baseDn to use when testing the LDAP server, searching for accounts (i.e. OU=some,DC=org,DC=edu)") final String baseDn,
-        @ShellOption(value = { "searchFilter", "--searchFilter" },
+        @ShellOption(value = {"searchFilter", "--searchFilter"},
             help = "Filter to use when searching for accounts (i.e. (&(objectClass=*) (sAMAccountName=user)))") final String searchFilter,
-        @ShellOption(value = { "userPassword", "--userPassword" },
-            help = "Password for the user found in the search result, to attempt authentication") final String userPassword,
-        @ShellOption(value = { "userAttributes", "--userAttributes" },
-            help = "User attributes, comma-separated, to fetch for the user found in the search result") final String userAttributes) {
+        @ShellOption(value = {"userPassword", "--userPassword"},
+            help = "Password for the user found in the search result, to attempt authentication",
+            defaultValue = org.apache.commons.lang3.StringUtils.EMPTY) final String userPassword,
+        @ShellOption(value = {"userAttributes", "--userAttributes"},
+            help = "User attributes, comma-separated, to fetch for the user found in the search result",
+            defaultValue = org.apache.commons.lang3.StringUtils.EMPTY) final String userAttributes) {
         try {
-            connect(url, bindDn, bindCredential, baseDn, searchFilter, userAttributes, userPassword);
+            return connect(url, bindDn, bindCredential, baseDn, searchFilter, userAttributes, userPassword);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
+        return false;
     }
 
-    private static void connect(final String ldapUrl, final String bindDn,
-                                final String bindCredential,
-                                final String baseDn, final String searchFilter,
-                                final String userAttributes,
-                                final String userPassword) throws Exception {
+    private static boolean connect(final String ldapUrl,
+                                   final String bindDn,
+                                   final String bindCredential,
+                                   final String baseDn,
+                                   final String searchFilter,
+                                   final String userAttributes,
+                                   final String userPassword) throws Exception {
         val pair = getContext(ldapUrl, bindDn, bindCredential);
         if (pair == null) {
             LOGGER.error("Could not connect to any of the provided LDAP urls based on the given credentials.");
-            return;
+            return false;
         }
 
         val ctx = pair.getValue();
@@ -82,7 +89,7 @@ public class ValidateLdapConnectionCommand {
             LOGGER.info(log);
 
             if (!StringUtils.hasText(searchFilter)) {
-                return;
+                return true;
             }
 
             val attrIDs = userAttributes.split(",");
@@ -100,7 +107,7 @@ public class ValidateLdapConnectionCommand {
                     LOGGER.info("User name: [{}]", result.getName());
                     LOGGER.info("User full name: [{}]", result.getNameInNamespace());
 
-                    if (userPassword != null) {
+                    if (org.apache.commons.lang3.StringUtils.isNotBlank(userPassword)) {
                         LOGGER.info("Attempting to authenticate [{}] with password [{}]", result.getName(), userPassword);
 
                         val env = getLdapDirectoryContextSettings(result.getNameInNamespace(), userPassword, pair.getKey());
@@ -113,6 +120,7 @@ public class ValidateLdapConnectionCommand {
                         LOGGER.info("[{}] => [{}]", id, result.getAttributes().get(id));
                     }
                 }
+                return true;
             } else {
                 LOGGER.info("No search results could be found.");
             }
@@ -122,6 +130,7 @@ public class ValidateLdapConnectionCommand {
                 ctx.close();
             }
         }
+        return false;
     }
 
     private static SearchControls getSearchControls(final String[] attrIDs) {
