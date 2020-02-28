@@ -5,15 +5,12 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.GenericGenerator;
+import org.springframework.data.annotation.Id;
 
 import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.Lob;
-import javax.persistence.Table;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.Transient;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -24,8 +21,7 @@ import java.time.LocalDate;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Entity
-@Table(name = "U2FDeviceRegistration")
+@MappedSuperclass
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @Getter
 @Setter
@@ -33,10 +29,8 @@ import java.time.LocalDate;
 public class U2FDeviceRegistration implements Serializable {
     private static final long serialVersionUID = 7258490070277856614L;
 
-    @org.springframework.data.annotation.Id
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
-    @GenericGenerator(name = "native", strategy = "native")
+    @Transient
     private long id = -1;
 
     @Column(nullable = false)
