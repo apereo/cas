@@ -5,6 +5,8 @@ dependencies {
 
     implementation project(":support:cas-server-support-oauth-core")
     implementation project(":support:cas-server-support-oauth-core-api")
+    implementation project(":support:cas-server-support-oauth-uma-core")
+    implementation project(":support:cas-server-support-oauth-uma")
     implementation project(":support:cas-server-support-oauth-services")
     implementation project(":support:cas-server-support-oauth-api")
     implementation project(":support:cas-server-support-oauth")
@@ -25,7 +27,10 @@ dependencies {
     implementation libraries.pac4jcore
     implementation libraries.nimbus
     implementation libraries.jose4j
+    implementation libraries.hibernate
 
+    runtimeOnly project(":support:cas-server-support-jdbc-drivers")
+    
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core")
@@ -39,6 +44,7 @@ dependencies {
     testImplementation project(":core:cas-server-core-logout-api")
     testImplementation project(":core:cas-server-core-tickets")
     testImplementation project(":core:cas-server-core-cookie")
+    
 
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
@@ -50,4 +56,5 @@ dependencies {
     testImplementation project(path: ":support:cas-server-support-oauth", configuration: "tests")
     testImplementation project(path: ":support:cas-server-support-oauth-core", configuration: "tests")
     testImplementation project(path: ":support:cas-server-support-oauth-services", configuration: "tests")
+    testImplementation project(path: ":support:cas-server-support-oauth-uma", configuration: "tests")
 }

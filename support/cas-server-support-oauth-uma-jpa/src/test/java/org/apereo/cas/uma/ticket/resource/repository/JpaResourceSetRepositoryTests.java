@@ -27,7 +27,11 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("UMA")
 @Import(CasOAuthUmaJpaConfiguration.class)
-@TestPropertySource(properties = "cas.authn.uma.resourceSet.jpa.url=jdbc:hsqldb:mem:cas-uma-resourceset")
+@TestPropertySource(properties = {
+    "cas.authn.uma.resourceSet.jpa.url=jdbc:hsqldb:mem:cas-uma-resourceset",
+    "cas.jdbc.showSql=true",
+    "cas.authn.uma.resourceSet.jpa.ddlAuto=create-drop"
+})
 public class JpaResourceSetRepositoryTests extends BaseUmaEndpointControllerTests {
 
     @Autowired
@@ -60,8 +64,7 @@ public class JpaResourceSetRepositoryTests extends BaseUmaEndpointControllerTest
         umaResourceSetRepository.removeAll();
         assertTrue(umaResourceSetRepository.getAll().isEmpty());
     }
-
-
+    
     private static ResourceSet buildTestResource() {
         val r = new ResourceSet();
         r.setClientId("clientid");
