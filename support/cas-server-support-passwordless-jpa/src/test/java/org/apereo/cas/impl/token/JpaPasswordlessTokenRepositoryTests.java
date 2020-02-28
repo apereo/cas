@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import java.time.ZoneOffset;
@@ -32,6 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Getter
 @Tag("JDBC")
 @Import(JpaPasswordlessAuthenticationConfiguration.class)
+@TestPropertySource(properties = "cas.jdbc.showSql=true")
 public class JpaPasswordlessTokenRepositoryTests extends BasePasswordlessUserAccountStoreTests {
     @Autowired
     @Qualifier("passwordlessTokenRepository")
@@ -60,7 +62,7 @@ public class JpaPasswordlessTokenRepositoryTests extends BasePasswordlessUserAcc
         val tt = ZonedDateTime.now(ZoneOffset.UTC).plusHours(5).toInstant().toEpochMilli();
         DateTimeUtils.setCurrentMillisFixed(tt);
         repository.clean();
-        
+
         assertTrue(repository.findToken(uid).isEmpty());
     }
 }
