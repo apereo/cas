@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration(value = "casThemesConfiguration", proxyBeanMethods = false)
+@Configuration(value = "casThemesConfiguration", proxyBeanMethods = true)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasThemesConfiguration {
     @Autowired
@@ -46,7 +46,7 @@ public class CasThemesConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Bean
-    public Map<String, String> serviceThemeResolverSupportedBrowsers() {
+    protected Map<String, String> serviceThemeResolverSupportedBrowsers() {
         val map = new HashMap<String, String>();
         map.put(".*Android.*", "android");
         map.put(".*Safari.*Pre.*", "safari");

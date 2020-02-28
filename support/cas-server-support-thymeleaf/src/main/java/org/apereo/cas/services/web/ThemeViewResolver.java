@@ -37,7 +37,11 @@ public class ThemeViewResolver extends AbstractCachingViewResolver {
     @Override
     protected View loadView(final String viewName, final Locale locale) throws Exception {
         LOGGER.trace("Attempting to resolve view [{}] via locale [{}]", viewName, locale);
-        val view = delegate.resolveViewName(viewName, locale);
+        val applicationContext = obtainApplicationContext();
+        val view = applicationContext.containsBean(viewName)
+            ? applicationContext.getBean(viewName, View.class)
+            : delegate.resolveViewName(viewName, locale);
+        
         if (view instanceof AbstractThymeleafView) {
             val thymeleafView = (AbstractThymeleafView) view;
             configureTemplateThemeDefaultLocation(thymeleafView);

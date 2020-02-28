@@ -44,9 +44,7 @@ public class DistributedJ2ESessionStore implements SessionStore<JEEContext>, Log
                                       final CasConfigurationProperties casProperties) {
         this.ticketRegistry = ticketRegistry;
         this.ticketFactory = ticketFactory;
-        val tgc = casProperties.getTgc();
-        val context = CookieUtils.buildCookieGenerationContext(tgc);
-        context.setName(casProperties.getSessionReplication().getSessionCookieName());
+        val context = CookieUtils.buildCookieGenerationContext(casProperties.getSessionReplication().getCookie());
         this.cookieGenerator = new CookieRetrievingCookieGenerator(context);
     }
 

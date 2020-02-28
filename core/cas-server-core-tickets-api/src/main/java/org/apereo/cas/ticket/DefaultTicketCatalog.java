@@ -43,7 +43,7 @@ public class DefaultTicketCatalog implements TicketCatalog {
     @Override
     public TicketDefinition find(final Ticket ticket) {
         LOGGER.trace("Locating ticket definition for ticket [{}]", ticket);
-        return find(ticket.getPrefix());
+        return find(ticket.getId());
     }
 
     @Override

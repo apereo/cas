@@ -2,6 +2,7 @@ package org.apereo.cas.logging;
 
 import org.apereo.cas.aws.ChainingAWSCredentialsProvider;
 
+import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.logs.AWSLogs;
 import com.amazonaws.services.logs.AWSLogsClient;
 import com.amazonaws.services.logs.model.CreateLogGroupRequest;
@@ -40,31 +41,44 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 @Plugin(name = "CloudWatchAppender", category = "Core", elementType = "appender", printObject = true)
 @Slf4j
-public class CloudWatchAppender extends AbstractAppender {
+public class CloudWatchAppender extends AbstractAppender implements Serializable {
     private static final long serialVersionUID = 1044758913028847477L;
 
     private static final int AWS_DRAIN_LIMIT = 256;
+
     private static final int AWS_LOG_STREAM_MAX_QUEUE_DEPTH = 10000;
+
     private static final int SHUTDOWN_TIMEOUT_MILLIS = 10000;
+
     private static final int AWS_LOG_STREAM_FLUSH_PERIOD_IN_SECONDS = 5;
 
     private final BlockingQueue<InputLogEvent> queue = new LinkedBlockingQueue<>(AWS_LOG_STREAM_MAX_QUEUE_DEPTH);
+
     private final Object monitor = new Object();
+
     private volatile boolean shutdown;
+
     private int flushPeriodMillis;
+
     private Thread deliveryThread;
+
     /**
      * Every PutLogEvents request must include the sequenceToken obtained from the response of the previous request.
      */
     private String sequenceTokenCache;
+
     private long lastReportedTimestamp = -1;
 
     private String logGroupName;
+
     private String logStreamName;
+
     private AWSLogs awsLogsClient;
+
     private volatile boolean queueFull;
 
     public CloudWatchAppender(final String name,
+                              final String endpoint,
                               final String awsLogGroupName,
                               final String awsLogStreamName,
                               final String awsLogStreamFlushPeriodInSeconds,
@@ -82,8 +96,12 @@ public class CloudWatchAppender extends AbstractAppender {
 
             LOGGER.debug("Connecting to AWS CloudWatch...");
             val builder = AWSLogsClient.builder();
+            if (StringUtils.isNotBlank(endpoint)) {
+                builder.setEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(endpoint, awsLogRegionName));
+            } else {
+                builder.setRegion(awsLogRegionName);
+            }
             builder.setCredentials(ChainingAWSCredentialsProvider.getInstance(credentialAccessKey, credentialSecretKey));
-            builder.setRegion(awsLogRegionName);
 
             this.awsLogsClient = builder.build();
             this.logGroupName = awsLogGroupName;
@@ -98,6 +116,7 @@ public class CloudWatchAppender extends AbstractAppender {
      * Create appender cloud watch appender.
      *
      * @param name                             the name
+     * @param endpoint                         the endpoint
      * @param awsLogStreamName                 the aws log stream name
      * @param awsLogGroupName                  the aws log group name
      * @param awsLogStreamFlushPeriodInSeconds the aws log stream flush period in seconds
@@ -109,6 +128,7 @@ public class CloudWatchAppender extends AbstractAppender {
      */
     @PluginFactory
     public static CloudWatchAppender createAppender(@PluginAttribute("name") final String name,
+                                                    @PluginAttribute("endpoint") final String endpoint,
                                                     @PluginAttribute("awsLogStreamName") final String awsLogStreamName,
                                                     @PluginAttribute("awsLogGroupName") final String awsLogGroupName,
                                                     @PluginAttribute("awsLogStreamFlushPeriodInSeconds") final String awsLogStreamFlushPeriodInSeconds,
@@ -118,6 +138,7 @@ public class CloudWatchAppender extends AbstractAppender {
                                                     @PluginElement("Layout") final Layout<Serializable> layout) {
         return new CloudWatchAppender(
             name,
+            endpoint,
             awsLogGroupName,
             awsLogStreamName,
             awsLogStreamFlushPeriodInSeconds,
