@@ -3,8 +3,8 @@ package org.apereo.cas.config;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
 import org.apereo.cas.configuration.support.JpaBeans;
-import org.apereo.cas.consent.ConsentDecision;
 import org.apereo.cas.consent.ConsentRepository;
+import org.apereo.cas.consent.JpaConsentDecision;
 import org.apereo.cas.consent.JpaConsentRepository;
 import org.apereo.cas.util.CollectionUtils;
 
@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
+
 import java.util.List;
 
 /**
@@ -61,7 +62,7 @@ public class CasConsentJdbcConfiguration {
 
     @Bean
     public List<String> jpaConsentPackagesToScan() {
-        return CollectionUtils.wrapList(ConsentDecision.class.getPackage().getName());
+        return CollectionUtils.wrapList(JpaConsentDecision.class.getPackage().getName());
     }
 
     @Lazy

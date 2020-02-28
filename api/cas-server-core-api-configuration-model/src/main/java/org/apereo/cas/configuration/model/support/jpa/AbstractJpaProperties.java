@@ -7,7 +7,6 @@ import org.apereo.cas.configuration.support.RequiresModule;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
-import org.hibernate.cfg.AvailableSettings;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
@@ -95,8 +94,6 @@ public abstract class AbstractJpaProperties implements Serializable {
 
     /**
      * Additional settings provided by Hibernate in form of key-value pairs.
-     *
-     * @see AvailableSettings
      */
     private Map<String, String> properties = new HashMap<>(0);
 
