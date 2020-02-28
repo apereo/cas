@@ -71,7 +71,7 @@ public abstract class AbstractLdapProperties implements Serializable {
     /**
      * Whether to use a pooled connection factory in components.
      */
-    private boolean disablePooling = false;
+    private boolean disablePooling;
 
     /**
      * Minimum LDAP connection pool size.
