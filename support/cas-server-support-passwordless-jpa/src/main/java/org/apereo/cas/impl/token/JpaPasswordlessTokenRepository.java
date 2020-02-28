@@ -1,7 +1,9 @@
 package org.apereo.cas.impl.token;
 
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,9 +25,9 @@ import java.util.Optional;
 @Slf4j
 public class JpaPasswordlessTokenRepository extends BasePasswordlessTokenRepository {
 
-    private static final String SELECT_QUERY = "SELECT t FROM PasswordlessAuthenticationToken t ";
+    private static final String SELECT_QUERY = "SELECT t FROM JpaPasswordlessAuthenticationToken t ";
 
-    private static final String DELETE_QUERY = "DELETE FROM PasswordlessAuthenticationToken t ";
+    private static final String DELETE_QUERY = "DELETE FROM JpaPasswordlessAuthenticationToken t ";
 
     private static final String QUERY_PARAM_USERNAME = "username";
 
@@ -39,7 +41,7 @@ public class JpaPasswordlessTokenRepository extends BasePasswordlessTokenReposit
     @Override
     public Optional<String> findToken(final String username) {
         val query = SELECT_QUERY.concat(" WHERE t.username = :username");
-        val results = this.entityManager.createQuery(query, PasswordlessAuthenticationToken.class)
+        val results = this.entityManager.createQuery(query, JpaPasswordlessAuthenticationToken.class)
             .setParameter(QUERY_PARAM_USERNAME, username)
             .setMaxResults(1)
             .getResultList();
@@ -71,6 +73,7 @@ public class JpaPasswordlessTokenRepository extends BasePasswordlessTokenReposit
             .executeUpdate();
     }
 
+    @SneakyThrows
     @Override
     public void saveToken(final String username, final String token) {
         val entity = PasswordlessAuthenticationToken.builder()
@@ -78,8 +81,11 @@ public class JpaPasswordlessTokenRepository extends BasePasswordlessTokenReposit
             .username(username)
             .expirationDate(ZonedDateTime.now(ZoneOffset.UTC).plusSeconds(getTokenExpirationInSeconds()))
             .build();
-        LOGGER.debug("Saving token [{}]", entity);
-        entityManager.merge(entity);
+
+        val record = new JpaPasswordlessAuthenticationToken();
+        BeanUtils.copyProperties(record, entity);
+        LOGGER.debug("Saving token [{}]", record);
+        entityManager.merge(record);
     }
 
     @Override
