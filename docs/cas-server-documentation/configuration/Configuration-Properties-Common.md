@@ -1161,6 +1161,7 @@ The following  options apply  to features that integrate with an LDAP server (i.
 #${configurationKey}.keystore=
 #${configurationKey}.keystorePassword=
 #${configurationKey}.keystoreType=JKS|JCEKS|PKCS12
+#${configurationKey}.disablePooling=false
 #${configurationKey}.minPoolSize=3
 #${configurationKey}.maxPoolSize=10
 #${configurationKey}.validateOnCheckout=true

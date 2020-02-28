@@ -914,7 +914,7 @@ public class LdapUtils {
    * @return the connection factory
    */
     public static ConnectionFactory newLdaptiveConnectionFactory(final AbstractLdapProperties l) {
-      return l.isDisablePooling() ? newLdaptiveDefaultConnectionFactory(l) : newLdaptivePooledConnectionFactory(l);
+        return l.isDisablePooling() ? newLdaptiveDefaultConnectionFactory(l) : newLdaptivePooledConnectionFactory(l);
     }
 
     /**
