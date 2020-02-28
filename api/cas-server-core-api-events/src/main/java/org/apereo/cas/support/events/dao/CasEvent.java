@@ -10,18 +10,17 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.hibernate.annotations.GenericGenerator;
+import org.springframework.data.annotation.Id;
 
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.MapKeyColumn;
-import javax.persistence.Table;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.Transient;
+
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,19 +30,17 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Entity
-@Table(name = "CasEvent")
+@MappedSuperclass
 @ToString
 @Getter
 @Setter
 @AllArgsConstructor
-public class CasEvent {
+public class CasEvent implements Serializable {
+    private static final long serialVersionUID = -4206712375316470417L;
 
-    @org.springframework.data.annotation.Id
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
-    @GenericGenerator(name = "native", strategy = "native")
-    @JsonProperty("id")
+    @JsonProperty
+    @Transient
     private long id = -1;
 
     @JsonProperty("type")
