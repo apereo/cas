@@ -4,7 +4,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.pm.PasswordHistoryService;
-import org.apereo.cas.pm.impl.history.PasswordHistoryEntity;
+import org.apereo.cas.pm.jdbc.JdbcPasswordHistoryEntity;
 import org.apereo.cas.pm.jdbc.JdbcPasswordHistoryService;
 import org.apereo.cas.util.CollectionUtils;
 
@@ -27,6 +27,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
+
 import java.util.List;
 
 /**
@@ -58,7 +59,7 @@ public class JdbcPasswordHistoryManagementConfiguration {
 
     @Bean
     public List<String> jpaPasswordHistoryPackagesToScan() {
-        return CollectionUtils.wrapList(PasswordHistoryEntity.class.getPackage().getName());
+        return CollectionUtils.wrapList(JdbcPasswordHistoryEntity.class.getPackage().getName());
     }
 
     @Lazy

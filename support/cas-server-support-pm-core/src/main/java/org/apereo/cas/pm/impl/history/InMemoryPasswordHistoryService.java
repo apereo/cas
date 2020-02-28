@@ -29,12 +29,12 @@ public class InMemoryPasswordHistoryService extends BasePasswordHistoryService {
     }
 
     @Override
-    public Collection<PasswordHistoryEntity> fetchAll() {
+    public Collection<? extends PasswordHistoryEntity> fetchAll() {
         return new ArrayList<>(history);
     }
 
     @Override
-    public Collection<PasswordHistoryEntity> fetch(final String username) {
+    public Collection<? extends PasswordHistoryEntity> fetch(final String username) {
         return history
             .stream()
             .filter(p -> p.getUsername().equalsIgnoreCase(username))

@@ -41,7 +41,7 @@ public interface PasswordHistoryService extends Ordered {
      *
      * @return the collection
      */
-    Collection<PasswordHistoryEntity> fetchAll();
+    Collection<? extends PasswordHistoryEntity> fetchAll();
 
     /**
      * Fetch collection.
@@ -49,7 +49,7 @@ public interface PasswordHistoryService extends Ordered {
      * @param username the username
      * @return the collection
      */
-    Collection<PasswordHistoryEntity> fetch(String username);
+    Collection<? extends PasswordHistoryEntity> fetch(String username);
 
     /**
      * Remove.
