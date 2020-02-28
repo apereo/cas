@@ -17,6 +17,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest(classes = {
     CasConsentJdbcConfiguration.class,
     BaseConsentRepositoryTests.SharedTestConfiguration.class
+}, properties = {
+    "cas.jdbc.showSql=true",
+    "cas.authn.mfa.yubikey.jpa.ddlAuto=create-drop"
 })
 @Getter
 @Tag("JDBC")
