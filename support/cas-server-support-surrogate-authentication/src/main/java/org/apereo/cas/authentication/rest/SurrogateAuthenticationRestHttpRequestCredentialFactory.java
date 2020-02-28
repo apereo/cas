@@ -19,6 +19,7 @@ import org.springframework.util.MultiValueMap;
 
 import javax.servlet.http.HttpServletRequest;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -86,6 +87,10 @@ public class SurrogateAuthenticationRestHttpRequestCredentialFactory extends Use
             return credentials;
         }
         val credential = extractCredential(request, credentials);
+        if (credential == null) {
+            LOGGER.debug("Not a surrogate authentication attempt, returning parent class credentials");
+            return credentials;
+        }
         val surrogateAccounts = surrogateAuthenticationService.getEligibleAccountsForSurrogateToProxy(credential.getId());
         if (!surrogateAccounts.contains(credential.getSurrogateUsername())) {
             throw new SurrogateAuthenticationException("Unable to authorize surrogate authentication request for " + credential.getSurrogateUsername());
