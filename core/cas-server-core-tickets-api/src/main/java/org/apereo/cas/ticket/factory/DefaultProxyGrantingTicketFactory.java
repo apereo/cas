@@ -70,9 +70,7 @@ public class DefaultProxyGrantingTicketFactory implements ProxyGrantingTicketFac
     protected <T extends ProxyGrantingTicket> T produceTicket(final ServiceTicket serviceTicket, final Authentication authentication,
                                                               final String pgtId, final Class<T> clazz) {
 
-        val service = servicesManager.findServiceBy(serviceTicket.getService());
-        val proxyGrantingTicketExpirationPolicy = service.getProxyGrantingTicketExpirationPolicy();
-
+        val proxyGrantingTicketExpirationPolicy = getProxyGrantingTicketExpirationPolicy(serviceTicket);
         val result = produceTicketWithAdequateExpirationPolicy(proxyGrantingTicketExpirationPolicy, serviceTicket, authentication, pgtId);
 
         if (result == null) {
@@ -84,6 +82,21 @@ public class DefaultProxyGrantingTicketFactory implements ProxyGrantingTicketFac
                 + " when we were expecting " + clazz);
         }
         return (T) result;
+    }
+
+    /**
+     * Retrieve the proxy granting ticket expiration policy of the service.
+     *
+     * @param serviceTicket the service ticket
+     * @return the expiration policy
+     */
+    protected RegisteredServiceProxyGrantingTicketExpirationPolicy getProxyGrantingTicketExpirationPolicy(
+            final ServiceTicket serviceTicket) {
+        val service = servicesManager.findServiceBy(serviceTicket.getService());
+        if (service != null) {
+            return service.getProxyGrantingTicketExpirationPolicy();
+        }
+        return null;
     }
 
     /**
