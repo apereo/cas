@@ -5,7 +5,7 @@ import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.support.events.CasEventRepositoryFilter;
-import org.apereo.cas.support.events.dao.CasEvent;
+import org.apereo.cas.support.events.jpa.JpaCasEvent;
 import org.apereo.cas.support.events.jpa.JpaCasEventRepository;
 import org.apereo.cas.util.CollectionUtils;
 
@@ -58,8 +58,9 @@ public class JpaEventsConfiguration {
         return JpaBeans.newDataSource(casProperties.getEvents().getJpa());
     }
 
+    @Bean
     public List<String> jpaEventPackagesToScan() {
-        return CollectionUtils.wrap(CasEvent.class.getPackage().getName());
+        return CollectionUtils.wrap(JpaCasEvent.class.getPackage().getName());
     }
 
     @Lazy
