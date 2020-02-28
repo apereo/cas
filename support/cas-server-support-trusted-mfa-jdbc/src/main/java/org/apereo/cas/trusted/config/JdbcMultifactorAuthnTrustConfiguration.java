@@ -26,6 +26,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
+
 import java.util.List;
 
 /**
@@ -61,7 +62,7 @@ public class JdbcMultifactorAuthnTrustConfiguration {
 
     @Bean
     public List<String> jpaMfaTrustedAuthnPackagesToScan() {
-        return CollectionUtils.wrapList("org.apereo.cas.trusted.authentication.api");
+        return CollectionUtils.wrapList(JpaMultifactorAuthenticationTrustStorage.class.getPackage().getName());
     }
 
     @Lazy

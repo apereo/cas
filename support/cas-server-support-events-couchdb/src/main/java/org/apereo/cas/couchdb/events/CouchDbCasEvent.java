@@ -24,6 +24,8 @@ import java.util.Map;
 @AllArgsConstructor
 public class CouchDbCasEvent extends CasEvent {
 
+    private static final long serialVersionUID = 7707486620134127284L;
+
     /**
      * CouchDb id.
      */
