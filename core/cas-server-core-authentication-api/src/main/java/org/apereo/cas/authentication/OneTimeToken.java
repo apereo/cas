@@ -7,13 +7,12 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.apache.commons.lang3.builder.CompareToBuilder;
-import org.hibernate.annotations.GenericGenerator;
+import org.springframework.data.annotation.Id;
 
 import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.Transient;
+
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -34,11 +33,9 @@ public class OneTimeToken implements Serializable, Comparable<OneTimeToken> {
 
     private static final long serialVersionUID = -1329938047176583075L;
 
-    @org.springframework.data.annotation.Id
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
-    @GenericGenerator(name = "native", strategy = "native")
     @JsonProperty("id")
+    @Transient
     private long id;
 
     @Column(nullable = false)
