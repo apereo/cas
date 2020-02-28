@@ -13,7 +13,8 @@ dependencies {
     runtimeOnly project(":support:cas-server-support-jdbc-drivers")
     
     implementation libraries.jose4j
-    
+    implementation libraries.hibernate
+
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":core:cas-server-core-audit")
     testImplementation project(":core:cas-server-core-audit-api")
