@@ -101,14 +101,14 @@ public class DefaultProxyGrantingTicketFactory implements ProxyGrantingTicketFac
             final Authentication authentication,
             final String pgtId) {
         if (servicePgtPolicy != null) {
-            LOGGER.debug("Overriding PGT policy with the specific policy: {}", servicePgtPolicy);
+            LOGGER.trace("Overriding proxy-granting ticket policy with the specific policy: [{}]", servicePgtPolicy);
             return serviceTicket.grantProxyGrantingTicket(pgtId, authentication,
                     new HardTimeoutExpirationPolicy(servicePgtPolicy.getMaxTimeToLiveInSeconds()));
-        } else {
-            LOGGER.debug("Using default TGT policy for PGT");
-            return serviceTicket.grantProxyGrantingTicket(pgtId, authentication,
-                    this.ticketGrantingTicketExpirationPolicy.buildTicketExpirationPolicy());
-        }
+        } 
+        LOGGER.trace("Using default ticket-granting ticket policy for proxy-granting ticket");
+        return serviceTicket.grantProxyGrantingTicket(pgtId, authentication,
+            this.ticketGrantingTicketExpirationPolicy.buildTicketExpirationPolicy());
+        
     }
 
     /**
