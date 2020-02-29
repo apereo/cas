@@ -199,7 +199,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
         var totalCount = 0;
         val md = this.ticketCatalog.find(ticketIdToDelete);
 
-        if (md.getProperties().isCascade() && !isCipherExecutorEnabled()) {
+        if (md.getProperties().isCascadeRemovals() && !isCipherExecutorEnabled()) {
             totalCount = deleteTicketGrantingTickets(encTicketId);
         } else {
             val ticketEntityName = getTicketEntityName(md);
@@ -225,24 +225,28 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
     private int deleteTicketGrantingTickets(final String ticketId) {
         var totalCount = 0;
 
-        val st = this.ticketCatalog.find(ServiceTicket.PREFIX);
-
-        val sql1 = String.format("DELETE FROM %s s WHERE s.ticketGrantingTicket.id = :id", getTicketEntityName(st));
-        var query = entityManager.createQuery(sql1);
-        query.setParameter("id", ticketId);
-        totalCount += query.executeUpdate();
+        totalCount = this.ticketCatalog.findAll()
+            .stream()
+            .filter(defn -> !defn.getProperties().isExcludeFromCascade())
+            .mapToInt(defn -> {
+                try {
+                    val sql = String.format("DELETE FROM %s s WHERE s.ticketGrantingTicket.id = :id", getTicketEntityName(defn));
+                    LOGGER.trace("Creating query [{}]", sql);
+                    val query = entityManager.createQuery(sql);
+                    query.setParameter("id", ticketId);
+                    return query.executeUpdate();
+                } catch (final Exception e) {
+                    LOGGER.trace(e.getMessage(), e);
+                }
+                return 0;
+            })
+            .sum();
 
         val tgt = this.ticketCatalog.find(TicketGrantingTicket.PREFIX);
-        val sql2 = String.format("DELETE FROM %s s WHERE s.ticketGrantingTicket.id = :id", getTicketEntityName(tgt));
-        query = entityManager.createQuery(sql2);
+        val sql = String.format("DELETE FROM %s t WHERE t.id = :id", getTicketEntityName(tgt));
+        val query = entityManager.createQuery(sql);
         query.setParameter("id", ticketId);
         totalCount += query.executeUpdate();
-
-        val sql3 = String.format("DELETE FROM %s t WHERE t.id = :id", getTicketEntityName(tgt));
-        query = entityManager.createQuery(sql3);
-        query.setParameter("id", ticketId);
-        totalCount += query.executeUpdate();
-
         return totalCount;
     }
 

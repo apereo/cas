@@ -65,6 +65,7 @@ public class OAuth20ProtocolTicketCatalogConfiguration extends BaseTicketCatalog
         metadata.getProperties().setStorageName("oauthAccessTokensCache");
         val timeout = Beans.newDuration(casProperties.getAuthn().getOauth().getAccessToken().getMaxTimeToLiveInSeconds()).getSeconds();
         metadata.getProperties().setStorageTimeout(timeout);
+        metadata.getProperties().setExcludeFromCascade(casProperties.getLogout().isRemoveDescendantTickets());
         registerTicketDefinition(plan, metadata);
     }
 
@@ -72,6 +73,7 @@ public class OAuth20ProtocolTicketCatalogConfiguration extends BaseTicketCatalog
         metadata.getProperties().setStorageName("oauthRefreshTokensCache");
         val timeout = Beans.newDuration(casProperties.getAuthn().getOauth().getRefreshToken().getTimeToKillInSeconds()).getSeconds();
         metadata.getProperties().setStorageTimeout(timeout);
+        metadata.getProperties().setExcludeFromCascade(casProperties.getLogout().isRemoveDescendantTickets());
         registerTicketDefinition(plan, metadata);
     }
 
