@@ -6,7 +6,7 @@ greenlet==0.4.15
 idna==2.9
 Jinja2==2.11.1
 itsdangerous==1.1.0
-locustio==0.14.4
+locustio==0.14.5
 MarkupSafe==1.1.1
 msgpack-python==0.5.6
 pyzmq==18.1.1
