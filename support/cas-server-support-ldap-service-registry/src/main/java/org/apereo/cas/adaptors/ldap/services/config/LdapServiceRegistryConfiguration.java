@@ -55,7 +55,7 @@ public class LdapServiceRegistryConfiguration {
     @RefreshScope
     public ServiceRegistry ldapServiceRegistry() {
         val ldap = casProperties.getServiceRegistry().getLdap();
-        val connectionFactory = LdapUtils.newLdaptivePooledConnectionFactory(ldap);
+        val connectionFactory = LdapUtils.newLdaptiveConnectionFactory(ldap);
         return new LdapServiceRegistry(connectionFactory, ldap.getBaseDn(), ldapServiceRegistryMapper(),
             ldap, applicationContext, serviceRegistryListeners.getObject());
     }

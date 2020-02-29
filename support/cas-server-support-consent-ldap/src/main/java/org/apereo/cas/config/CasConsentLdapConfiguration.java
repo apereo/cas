@@ -27,7 +27,7 @@ public class CasConsentLdapConfiguration {
     @Bean
     public ConsentRepository consentRepository() {
         val ldap = casProperties.getConsent().getLdap();
-        val connectionFactory = LdapUtils.newLdaptivePooledConnectionFactory(ldap);
+        val connectionFactory = LdapUtils.newLdaptiveConnectionFactory(ldap);
         return new LdapConsentRepository(connectionFactory, ldap);
     }
 }
