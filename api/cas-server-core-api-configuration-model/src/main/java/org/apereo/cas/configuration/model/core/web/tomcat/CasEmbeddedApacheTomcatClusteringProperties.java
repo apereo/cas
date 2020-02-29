@@ -88,7 +88,6 @@ public class CasEmbeddedApacheTomcatClusteringProperties implements Serializable
     /**
      * Statically register members in the cluster. The syntax is: {@code address:port:index}
      */
-    @RequiredProperty
     private String clusterMembers;
 
     /**
@@ -157,8 +156,4 @@ public class CasEmbeddedApacheTomcatClusteringProperties implements Serializable
      * Enable tomcat session clustering.
      */
     private boolean enabled;
-
-    public boolean isSessionClusteringEnabled() {
-        return isEnabled() && (getClusteringType().equalsIgnoreCase("CLOUD") || StringUtils.isNotBlank(getClusterMembers()));
-    }
 }

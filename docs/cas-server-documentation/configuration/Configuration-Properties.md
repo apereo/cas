@@ -599,14 +599,25 @@ Enabling APR requires the following JVM system property that indicates the locat
 
 #### Session Clustering & Replication
 
-Enable session replication to replicate web application session deltas. 
+Enable in-memory session replication to replicate web application session deltas. 
 
-Most settings apply to the `DEFAULT` type, which requires membes to be defined. The `cloudMembershipProvider` setting applies to the `CLOUD` type.
+| Clustering Type      | Description
+|----------------------|-------------------------------------------------------
+| `DEFAULT`            | Discovers cluster members via multicast discovery and optionally via staticly defined cluster members using the `clusterMembers`. [SimpelTcpCluster with McastService](http://tomcat.apache.org/tomcat-9.0-doc/cluster-howto.html) 
+| `CLOUD`              | For use in Kubernetes where members are discovered via accessing the Kubernetes API or doing a DNS lookup of the members of a Kubernetes service. [Documentation](https://cwiki.apache.org/confluence/display/TOMCAT/ClusteringCloud) is currently light, see code for details.
+
+| `CLOUD` Membership Providers   | Description
+|----------------------|-------------------------------------------------------
+| `kubernetes`         | Uses [Kubernetes API](https://github.com/apache/tomcat/blob/master/java/org/apache/catalina/tribes/membership/cloud/KubernetesMembershipProvider.java) to find other pods in a deployment. API is discovered and accessed via information in environment variables set in the container.  
+| `dns`                | Uses [DNS lookups](https://github.com/apache/tomcat/blob/master/java/org/apache/catalina/tribes/membership/cloud/DNSMembershipProvider.java) to find addresses of the pods behind a service specified by DNS_MEMBERSHIP_SERVICE_NAME environment variable.  
+| [MembershipProvider impl classname](https://github.com/apache/tomcat/blob/master/java/org/apache/catalina/tribes/MembershipProvider.java) | Use a membership provider implementation of your choice.   
+
+Most settings apply to the `DEFAULT` clustering type, which requires members to be defined via `clusterMembers` if multicast discovery doesn't work. The `cloudMembershipProvider` setting applies to the `CLOUD` type.
 
 ```properties
 # cas.server.tomcat.clustering.enabled=false
-# cas.server.tomcat.clustering.clusterMembers=ip-address:port:index
 # cas.server.tomcat.clustering.clusteringType=DEFAULT|CLOUD
+# cas.server.tomcat.clustering.clusterMembers=ip-address:port:index
 # cas.server.tomcat.clustering.cloudMembershipProvider=kubernetes|dns|[MembershipProvider impl classname](https://github.com/apache/tomcat/blob/master/java/org/apache/catalina/tribes/MembershipProvider.java)
 # cas.server.tomcat.clustering.expireSessionsOnShutdown=false
 # cas.server.tomcat.clustering.channelSendOptions=8

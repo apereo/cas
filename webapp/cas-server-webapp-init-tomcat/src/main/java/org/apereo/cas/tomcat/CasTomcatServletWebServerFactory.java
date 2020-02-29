@@ -126,7 +126,7 @@ public class CasTomcatServletWebServerFactory extends TomcatServletWebServerFact
 
     private void configureSessionClustering(final Tomcat tomcat) {
         val clusteringProperties = casProperties.getServer().getTomcat().getClustering();
-        if (!clusteringProperties.isSessionClusteringEnabled()) {
+        if (!clusteringProperties.isEnabled()) {
             LOGGER.trace("Tomcat session clustering/replication is turned off");
             return;
         }
@@ -175,18 +175,21 @@ public class CasTomcatServletWebServerFactory extends TomcatServletWebServerFact
         groupChannel.addInterceptor(new TcpFailureDetector());
         groupChannel.addInterceptor(new MessageDispatchInterceptor());
 
-        val membership = new StaticMembershipInterceptor();
-        val memberSpecs = clusteringProperties.getClusterMembers().split(",", -1);
-        for (val spec : memberSpecs) {
-            val memberDesc = new ClusterMemberDesc(spec);
-            val member = new StaticMember();
-            member.setHost(memberDesc.getAddress());
-            member.setPort(memberDesc.getPort());
-            member.setDomain("CAS");
-            member.setUniqueId(memberDesc.getUniqueId());
-            membership.addStaticMember(member);
-            groupChannel.addInterceptor(membership);
-            cluster.setChannel(groupChannel);
+        val clusterMembers = clusteringProperties.getClusterMembers();
+        if (StringUtils.isNotBlank(clusterMembers)) {
+            val membership = new StaticMembershipInterceptor();
+            val memberSpecs = clusterMembers.split(",", -1);
+            for (val spec : memberSpecs) {
+                val memberDesc = new ClusterMemberDesc(spec);
+                val member = new StaticMember();
+                member.setHost(memberDesc.getAddress());
+                member.setPort(memberDesc.getPort());
+                member.setDomain("CAS");
+                member.setUniqueId(memberDesc.getUniqueId());
+                membership.addStaticMember(member);
+                groupChannel.addInterceptor(membership);
+                cluster.setChannel(groupChannel);
+            }
         }
         cluster.addValve(new ReplicationValve());
         cluster.addValve(new JvmRouteBinderValve());
@@ -197,7 +200,7 @@ public class CasTomcatServletWebServerFactory extends TomcatServletWebServerFact
 
     private void configureContextForSessionClustering() {
         val clusteringProperties = casProperties.getServer().getTomcat().getClustering();
-        if (!clusteringProperties.isSessionClusteringEnabled()) {
+        if (!clusteringProperties.isEnabled()) {
             LOGGER.trace("Tomcat session clustering/replication is turned off");
             return;
         }
