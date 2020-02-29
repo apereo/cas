@@ -1,6 +1,5 @@
 package org.apereo.cas.web.flow.logout;
 
-import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.model.core.logout.LogoutProperties;
@@ -52,7 +51,7 @@ public class LogoutAction extends AbstractLogoutAction {
             () -> Boolean.FALSE)
             .get();
 
-        val paramName = StringUtils.defaultIfEmpty(logoutProperties.getRedirectParameter(), CasProtocolConstants.PARAMETER_SERVICE);
+        val paramName = logoutProperties.getRedirectParameter();
         LOGGER.trace("Using parameter name [{}] to detect destination service, if any", paramName);
         val service = request.getParameter(paramName);
         LOGGER.trace("Located target service [{}] for redirection after logout", service);

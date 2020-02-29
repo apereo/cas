@@ -79,7 +79,7 @@ public class OidcLogoutEndpointController extends BaseOAuth20Controller {
             if (urls.isEmpty()) {
                 return getLogoutRedirectView(state, null);
             }
-            return getLogoutRedirectView(state, urls.toArray()[0].toString());
+            return getLogoutRedirectView(state, urls.iterator().next().getUrl());
         }
 
         return getLogoutRedirectView(state, null);
@@ -91,7 +91,7 @@ public class OidcLogoutEndpointController extends BaseOAuth20Controller {
             builder.queryParam(getOAuthConfigurationContext().getCasProperties().getLogout().getRedirectParameter(), redirectUrl);
         }
         if (StringUtils.isNotBlank(state)) {
-            builder.queryParam(OAuth20Constants.STATE, redirectUrl);
+            builder.queryParam(OAuth20Constants.STATE, state);
         }
         val logoutUrl = builder.build().toUriString();
         return new RedirectView(logoutUrl);
