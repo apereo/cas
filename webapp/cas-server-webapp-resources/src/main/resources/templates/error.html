@@ -23,14 +23,14 @@
 <body>
 <main role="main" class="container mt-3 mb-3">
 <div layout:fragment="content">
-    <div class="alert alert-danger alert-dismissible fade show">
-        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+    <div class="mdc-card p-4 banner banner-danger">
         <h2 th:utext="#{screen.unavailable.heading(${status},${error})}">CAS is unable to process this request: "{0}:{1}"</h2>
         <div th:utext="#{screen.unavailable.message}">screen.unavailable.message would go here</div>
         <pre id="errorMsg" class="mt-4" style="white-space: pre-wrap;" th:text="${'Error: ' + message}">error message would go here</pre>
-        <p id="errorDetails">
-            <button type="button" class="btn btn-shutdown"
-                    onclick="showErrorDetails();">View Details
+        <p id="errorDetails" class="word-break-all">
+            <button type="button" class="mdc-button mdc-button--raised"
+                    onclick="showErrorDetails();">
+                <span class="mdc-button__label">View Details</span>
             </button>
         </p>
     </div>

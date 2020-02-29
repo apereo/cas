@@ -2,8 +2,8 @@
 <html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
 
 <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 
     <title th:text="#{cas.mfa.u2f.pagetitle}">U2f Login View</title>
     <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag" />
@@ -22,7 +22,7 @@
         var keyHandle =  /*[[${u2fAuth.keyHandle}]]*/;
 
         setTimeout(function () {
-            var registeredKeys = [{version: version, keyHandle: keyHandle}];
+            var registeredKeys = [{ version: version, keyHandle: keyHandle }];
 
             u2f.sign(appId, challenge, registeredKeys, function (data) {
                 var form = document.getElementById('form');
@@ -39,9 +39,8 @@
 </head>
 
 <body>
-<main role="main" class="container mt-3 mb-3">
-    <div layout:fragment="content" id="login">
-        <div class="alert alert-info">
+    <main role="main" class="container mt-3 mb-3">
+        <div layout:fragment="content" id="login" class="mdc-card mdc-card-content w-lg-50 p-4 m-auto">
             <h3 th:text="#{cas.mfa.u2f.authentication.device}">Authenticate Device</h3>
             <div th:utext="#{cas.mfa.u2f.authentication.message}" th:remove="tag">
                 <p><strong>Please touch the flashing U2F device now.</strong></p>
@@ -50,13 +49,13 @@
             </div>
 
             <form method="POST" id="form" th:object="${credential}" th:action="@{/login}">
-                <input type="hidden" name="tokenResponse" id="tokenResponse" th:field="*{token}"/>
-                <input type="hidden" name="_eventId" value="submit"/>
-                <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
-                <input type="hidden" name="geolocation"/>
+                <input type="hidden" name="tokenResponse" id="tokenResponse" th:field="*{token}" />
+                <input type="hidden" name="_eventId" value="submit" />
+                <input type="hidden" name="execution" th:value="${flowExecutionKey}" />
+                <input type="hidden" name="geolocation" />
             </form>
         </div>
-    </div>
-</main>
+    </main>
 </body>
+
 </html>

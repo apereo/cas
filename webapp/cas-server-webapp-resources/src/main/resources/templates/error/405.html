@@ -12,14 +12,12 @@
 
 <body>
 <main role="main" class="container mt-3 mb-3">
-    <div layout:fragment="content">
-        <div class="alert alert-danger alert-dismissible fade show">
-            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-            <h2 th:utext="#{screen.error.page.requestunsupported}">The request type or syntax is not supported.</h2>
-            <p th:utext="#{screen.error.page.permissiondenied}">You do not have permission to view this page.</p>
-            <a class="btn btn-submit" th:href="@{/login}" th:utext="#{screen.error.page.loginagain}">Login
-                Again</a>
-        </div>
+    <div layout:fragment="content" class="mdc-card p-4 w-lg-66 m-auto">
+        <h2 th:utext="#{screen.error.page.requestunsupported}">The request type or syntax is not supported.</h2>
+        <p th:utext="#{screen.error.page.permissiondenied}">You do not have permission to view this page.</p>
+        <a class="mdc-button" th:href="@{/login}">
+            <span class="mdc-button__label" th:utext="#{screen.error.page.loginagain}">Login Again</span>
+        </a>
     </div>
 </body>
 </html>

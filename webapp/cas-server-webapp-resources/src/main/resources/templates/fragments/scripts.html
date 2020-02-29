@@ -1,25 +1,21 @@
-<script type="text/javascript" th:src="@{#{webjars.jqueryui.js}}"></script>
-<script src="//www.google.com/recaptcha/api.js" async defer th:if="${recaptchaSiteKey != null and recaptchaVersion=='v2'}"></script>
-<script th:src="${'//www.google.com/recaptcha/api.js?render=' + recaptchaSiteKey}" th:if="${recaptchaSiteKey != null and recaptchaVersion == 'v3'}"></script>
-<script type="text/javascript" th:src="@{#{webjars.bootstrapmin.js}}"></script>
+<script src="//www.google.com/recaptcha/api.js" async defer
+    th:if="${recaptchaSiteKey != null and recaptchaVersion=='v2'}"></script>
+<script th:src="${'//www.google.com/recaptcha/api.js?render=' + recaptchaSiteKey}"
+    th:if="${recaptchaSiteKey != null and recaptchaVersion == 'v3'}"></script>
 
-<script type="text/javascript" th:src="@{#{webjars.headmin.js}}"></script>
-<script type="text/javascript" th:src="@{${#themes.code('cas.javascript.file')}}"></script>
+<script type="text/javascript" th:src="@{${#themes.code('webjars.headmin.js')}}"></script>
+<script type="text/javascript" th:src="@{${#themes.code('webjars.material-components.js')}}"></script>
+<script type="text/javascript" th:src="@{${#themes.code('cas.standard.js.file')}}"></script>
 
 <script th:inline="javascript">
     head.ready(document, function () {
         if (!window.jQuery) {
-            var jqueryUrl = /*[[@{#{webjars.jquerymin.js}}]]*/;
-            head.load(jqueryUrl, loadjQueryUI);
+            var jqueryUrl = /*[[@{${#themes.code('webjars.jquery.js')}}]]*/;
+            head.load(jqueryUrl);
         } else {
             notifyResourcesAreLoaded(resourceLoadedSuccessfully);
         }
     });
-
-    function loadjQueryUI() {
-        var jqueryUrl = /*[[@{#{webjars.jqueryui.js}}]]*/;
-        head.load(jqueryUrl, notifyResourcesAreLoaded(resourceLoadedSuccessfully));
-    }
 
     function notifyResourcesAreLoaded(callback) {
         if (typeof callback === "function") {
@@ -58,18 +54,18 @@
 <span th:if="${recaptchaVersion=='v2'}" th:remove="tag">
     <script type="text/javascript" th:if="${recaptchaSiteKey != null AND recaptchaInvisible != null AND recaptchaInvisible}" th:inline="javascript">
         function onRecaptchaV2Submit(token) {
-            $('#fm1').submit();
+            document.getElementById('fm1').submit();
         }
     </script>
 </span>
 
 <span th:if="${recaptchaVersion=='v3'}" th:remove="tag">
     <script type="text/javascript" th:if="${recaptchaSiteKey != null}" th:inline="javascript">
-         grecaptcha.ready(function() {
-             grecaptcha.execute(/*[[${recaptchaSiteKey}]]*/, {action: 'login'})
-                 .then(function(token) {
-                    $("#g-recaptcha-token").val(token)
-                 });
-         });
+        grecaptcha.ready(function () {
+            grecaptcha.execute(/*[[${recaptchaSiteKey}]]*/, { action: 'login' })
+                .then(function (token) {
+                    document.getElementById('g-recaptcha-token').value(token)
+                });
+        });
     </script>
 </span>
