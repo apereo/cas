@@ -96,7 +96,7 @@ public class SpnegoWebflowActionsConfiguration {
     @RefreshScope
     public Action ldapSpnegoClientAction() {
         val spnegoProperties = casProperties.getAuthn().getSpnego();
-        val connectionFactory = LdapUtils.newLdaptivePooledConnectionFactory(spnegoProperties.getLdap());
+        val connectionFactory = LdapUtils.newLdaptiveConnectionFactory(spnegoProperties.getLdap());
         val filter = LdapUtils.newLdaptiveSearchFilter(spnegoProperties.getLdap().getSearchFilter());
 
         val searchRequest = LdapUtils.newLdaptiveSearchRequest(spnegoProperties.getLdap().getBaseDn(), filter);
