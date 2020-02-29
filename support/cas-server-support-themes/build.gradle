@@ -1,10 +1,11 @@
 description = "Apereo CAS Web Application Themes Support"
 dependencies {
+    runtimeOnly libraries.webjars
+
     implementation project(":core:cas-server-core-services-api")
     implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-authentication-api")
-
     implementation project(":support:cas-server-support-themes-core")
 
     testImplementation project(":support:cas-server-support-person-directory")

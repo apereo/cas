@@ -41,6 +41,7 @@ dependencies {
     implementation project(":core:cas-server-core-web")
 
     implementation project(":support:cas-server-support-actions")
+    implementation project(":support:cas-server-support-jpa-util")
     implementation project(":support:cas-server-support-person-directory")
     implementation project(":support:cas-server-support-themes")
     implementation project(":support:cas-server-support-validation")
@@ -55,5 +56,5 @@ dependencies {
     if (!rootProject.publishReleases && !rootProject.publishSnapshots) {
         runtimeClasspath libraries.springbootdevtools
     }
-    runtimeOnly libraries.webjars
+
 }

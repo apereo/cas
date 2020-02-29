@@ -907,12 +907,12 @@ public class LdapUtils {
         return sc;
     }
 
-  /**
-   * Returns a pooled connection factory or default connection factory based on {@link AbstractLdapProperties#isDisablePooling()}.
-   *
-   * @param l ldap properties
-   * @return the connection factory
-   */
+    /**
+     * Returns a pooled connection factory or default connection factory based on {@link AbstractLdapProperties#isDisablePooling()}.
+     *
+     * @param l ldap properties
+     * @return the connection factory
+     */
     public static ConnectionFactory newLdaptiveConnectionFactory(final AbstractLdapProperties l) {
         return l.isDisablePooling() ? newLdaptiveDefaultConnectionFactory(l) : newLdaptivePooledConnectionFactory(l);
     }

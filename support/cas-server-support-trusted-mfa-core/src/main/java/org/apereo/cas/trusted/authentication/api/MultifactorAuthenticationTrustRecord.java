@@ -45,7 +45,7 @@ public class MultifactorAuthenticationTrustRecord implements Comparable<Multifac
     private String principal;
 
     @JsonProperty("deviceFingerprint")
-    @Column(nullable = false)
+    @Column(nullable = false, length = 512)
     private String deviceFingerprint;
 
     @JsonProperty("recordDate")
@@ -55,12 +55,12 @@ public class MultifactorAuthenticationTrustRecord implements Comparable<Multifac
 
     @Lob
     @JsonProperty("recordKey")
-    @Column(length = 10_000, nullable = false)
+    @Column(length = Integer.MAX_VALUE, nullable = false)
     private String recordKey;
 
     @Lob
     @JsonProperty("name")
-    @Column(length = 10_000, nullable = false)
+    @Column(length = Integer.MAX_VALUE, nullable = false)
     private String name;
 
     public MultifactorAuthenticationTrustRecord() {

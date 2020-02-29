@@ -1,7 +1,6 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.security.CasWebSecurityConfigurerAdapter;
 import org.apereo.cas.web.security.CasWebSecurityExpressionHandler;
@@ -10,8 +9,8 @@ import org.apereo.cas.web.security.CasWebSecurityJdbcConfigurerAdapter;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.endpoint.web.PathMappedEndpoints;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -58,7 +57,7 @@ public class CasWebAppSecurityConfiguration implements WebMvcConfigurer {
             pathMappedEndpoints.getObject());
     }
 
-    @ConditionalOnClass(JpaBeans.class)
+    @ConditionalOnProperty(name = "cas.monitor.endpoints.jdbc.query")
     @Bean
     @ConditionalOnMissingBean(name = "casWebSecurityConfigurerJdbcAdapter")
     public CasWebSecurityJdbcConfigurerAdapter casWebSecurityConfigurerJdbcAdapter() {
