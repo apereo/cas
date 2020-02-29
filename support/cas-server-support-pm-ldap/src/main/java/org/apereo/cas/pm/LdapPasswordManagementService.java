@@ -75,7 +75,7 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
                     LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
                     CollectionUtils.wrap(username));
                 LOGGER.debug("Constructed LDAP filter [{}] to locate security questions", filter);
-                val ldapConnectionFactory = LdapUtils.newLdaptivePooledConnectionFactory(ldap);
+                val ldapConnectionFactory = LdapUtils.newLdaptiveConnectionFactory(ldap);
                 val response = LdapUtils.executeSearchOperation(ldapConnectionFactory, ldap.getBaseDn(), filter, ldap.getPageSize());
                 LOGGER.debug("LDAP response for security questions [{}]", response);
 
@@ -120,7 +120,7 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
                         LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
                         CollectionUtils.wrap(username));
                     LOGGER.debug("Constructed LDAP filter [{}] to locate account", filter);
-                    val ldapConnectionFactory = LdapUtils.newLdaptivePooledConnectionFactory(ldap);
+                    val ldapConnectionFactory = LdapUtils.newLdaptiveConnectionFactory(ldap);
                     val response = LdapUtils.executeSearchOperation(ldapConnectionFactory, ldap.getBaseDn(), filter, ldap.getPageSize());
                     LOGGER.debug("LDAP response is [{}]", response);
 
@@ -168,7 +168,7 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
                         LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
                         CollectionUtils.wrap(c.getId()));
                     LOGGER.debug("Constructed LDAP filter [{}] to update account password", filter);
-                    val ldapConnectionFactory = LdapUtils.newLdaptivePooledConnectionFactory(ldap);
+                    val ldapConnectionFactory = LdapUtils.newLdaptiveConnectionFactory(ldap);
                     val response = LdapUtils.executeSearchOperation(ldapConnectionFactory, ldap.getBaseDn(), filter, ldap.getPageSize());
                     LOGGER.debug("LDAP response to update password is [{}]", response);
 
