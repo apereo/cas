@@ -55,7 +55,7 @@ public class LdapAcceptableUsagePolicyRepository extends AbstractPrincipalAttrib
         val filter = LdapUtils.newLdaptiveSearchFilter(ldap.getSearchFilter(),
             LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
             CollectionUtils.wrap(id));
-        val connectionFactory = LdapUtils.newLdaptivePooledConnectionFactory(ldap);
+        val connectionFactory = LdapUtils.newLdaptiveConnectionFactory(ldap);
         val response = LdapUtils.executeSearchOperation(connectionFactory, ldap.getBaseDn(), filter, ldap.getPageSize());
         if (LdapUtils.containsResultEntry(response)) {
             return Optional.of(Pair.of(connectionFactory, response));
