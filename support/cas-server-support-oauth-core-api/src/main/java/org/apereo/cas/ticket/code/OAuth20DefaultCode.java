@@ -13,8 +13,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.apache.commons.lang3.ObjectUtils;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
@@ -23,6 +21,7 @@ import javax.persistence.Entity;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -57,7 +56,6 @@ public class OAuth20DefaultCode extends AbstractTicket implements OAuth20Code {
      * The {@link TicketGrantingTicket} this is associated with.
      */
     @ManyToOne(targetEntity = TicketGrantingTicketImpl.class)
-    @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonProperty("ticketGrantingTicket")
     private TicketGrantingTicket ticketGrantingTicket;
 
@@ -101,7 +99,6 @@ public class OAuth20DefaultCode extends AbstractTicket implements OAuth20Code {
         this.codeChallenge = codeChallenge;
         this.codeChallengeMethod = codeChallengeMethod;
         this.clientId = clientId;
-
         this.scopes.addAll(scopes);
         this.claims.putAll(requestClaims);
     }

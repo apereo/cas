@@ -48,8 +48,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit test for {@link JpaTicketRegistry} class in context of OAuth 2.0.
@@ -85,7 +84,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
     OAuth20ProtocolTicketCatalogConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
     CasWsSecurityTokenTicketCatalogConfiguration.class
-})
+}, properties = "cas.jdbc.showSql=true")
 @Transactional(transactionManager = "ticketTransactionManager", isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
 @ResourceLock("oauth-jpa-tickets")
 @Tag("OAuth")
@@ -116,8 +115,8 @@ public class OAuthJpaTicketRegistryTests {
         this.ticketRegistry.addTicket(tgt);
 
         val oAuthCode = oAuthCodeFactory.create(RegisteredServiceTestUtils.getService(),
-                originalAuthn, tgt, Collections.emptySet(), "challenge", "challenge_method",
-                "client_id", Collections.emptyMap());
+            originalAuthn, tgt, Collections.emptySet(), "challenge", "challenge_method",
+            "client_id", Collections.emptyMap());
 
         this.ticketRegistry.addTicket(oAuthCode);
 
