@@ -69,6 +69,11 @@ public abstract class AbstractLdapProperties implements Serializable {
     private String trustStoreType;
 
     /**
+     * Whether to use a pooled connection factory in components.
+     */
+    private boolean disablePooling;
+
+    /**
      * Minimum LDAP connection pool size.
      * Size the pool should be initialized to and pruned to
      */
@@ -291,10 +296,6 @@ public abstract class AbstractLdapProperties implements Serializable {
          * No passivator.
          */
         NONE,
-        /**
-         * Close passivator.
-         */
-        CLOSE,
         /**
          * Bind passivator.
          */

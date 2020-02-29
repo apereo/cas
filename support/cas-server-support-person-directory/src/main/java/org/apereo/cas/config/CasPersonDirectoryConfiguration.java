@@ -269,7 +269,7 @@ public class CasPersonDirectoryConfiguration {
                 val ldapDao = new LdaptivePersonAttributeDao();
                 FunctionUtils.doIfNotNull(ldap.getId(), ldapDao::setId);
                 LOGGER.debug("Configured LDAP attribute source for [{}] and baseDn [{}]", ldap.getLdapUrl(), ldap.getBaseDn());
-                ldapDao.setConnectionFactory(LdapUtils.newLdaptivePooledConnectionFactory(ldap));
+                ldapDao.setConnectionFactory(LdapUtils.newLdaptiveConnectionFactory(ldap));
                 ldapDao.setBaseDN(ldap.getBaseDn());
 
                 LOGGER.debug("LDAP attributes are fetched from [{}] via filter [{}]", ldap.getLdapUrl(), ldap.getSearchFilter());
