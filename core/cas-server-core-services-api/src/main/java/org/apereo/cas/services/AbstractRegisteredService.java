@@ -100,6 +100,10 @@ public abstract class AbstractRegisteredService implements RegisteredService {
     private RegisteredServiceProxyTicketExpirationPolicy proxyTicketExpirationPolicy;
 
     @Lob
+    @Column(name = "proxy_granting_ticket_expiration_policy", length = Integer.MAX_VALUE)
+    private RegisteredServiceProxyGrantingTicketExpirationPolicy proxyGrantingTicketExpirationPolicy;
+
+    @Lob
     @Column(name = "service_ticket_expiration_policy", length = Integer.MAX_VALUE)
     private RegisteredServiceServiceTicketExpirationPolicy serviceTicketExpirationPolicy;
 
