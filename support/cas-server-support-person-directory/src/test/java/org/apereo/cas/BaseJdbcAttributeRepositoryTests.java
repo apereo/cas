@@ -2,6 +2,7 @@ package org.apereo.cas;
 
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.JpaBeans;
 
 import lombok.Cleanup;
 import lombok.SneakyThrows;
