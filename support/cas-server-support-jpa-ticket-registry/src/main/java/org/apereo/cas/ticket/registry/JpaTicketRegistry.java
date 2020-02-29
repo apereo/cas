@@ -223,9 +223,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
      * @return the total count
      */
     private int deleteTicketGrantingTickets(final String ticketId) {
-        var totalCount = 0;
-
-        totalCount = this.ticketCatalog.findAll()
+        var totalCount = this.ticketCatalog.findAll()
             .stream()
             .filter(defn -> !defn.getProperties().isExcludeFromCascade())
             .mapToInt(defn -> {
