@@ -52,7 +52,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
- * This is {@link OauthJpaTicketRegistryCleanerTests}.
+ * This is {@link OAuthJpaTicketRegistryCleanerTests}.
  *
  * @author charlibot
  * @since 6.1.0
@@ -89,7 +89,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 @Transactional(transactionManager = "ticketTransactionManager", isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
 @ResourceLock("oauth-jpa-tickets")
 @Tag("OAuth")
-public class OauthJpaTicketRegistryCleanerTests {
+public class OAuthJpaTicketRegistryCleanerTests {
     @Autowired
     @Qualifier("defaultTicketFactory")
     protected TicketFactory ticketFactory;
