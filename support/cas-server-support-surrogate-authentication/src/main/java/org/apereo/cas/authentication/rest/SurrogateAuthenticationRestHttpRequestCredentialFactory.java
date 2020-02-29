@@ -87,7 +87,7 @@ public class SurrogateAuthenticationRestHttpRequestCredentialFactory extends Use
         }
         val credential = extractCredential(request, credentials);
         if (credential == null) {
-            LOGGER.debug("Not a surrogate authentication attempt, returning parent class credentials");
+            LOGGER.trace("Not a surrogate authentication attempt, returning parent class credentials");
             return credentials;
         }
         val surrogateAccounts = surrogateAuthenticationService.getEligibleAccountsForSurrogateToProxy(credential.getId());
