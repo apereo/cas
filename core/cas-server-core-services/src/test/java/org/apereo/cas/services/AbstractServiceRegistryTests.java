@@ -553,6 +553,7 @@ public abstract class AbstractServiceRegistryTests {
         r.setContacts(CollectionUtils.wrap(contact));
         this.serviceRegistry.save(r);
         this.serviceRegistry.load();
+        this.serviceRegistry.delete(r);
     }
 
     @ParameterizedTest
@@ -585,6 +586,7 @@ public abstract class AbstractServiceRegistryTests {
 
         val prop = r.getProperties().get("field1");
         assertEquals(2, prop.getValues().size());
+        this.serviceRegistry.delete(r);
     }
 
     /**
