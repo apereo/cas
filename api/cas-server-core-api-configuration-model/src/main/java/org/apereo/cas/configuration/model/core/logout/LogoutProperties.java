@@ -25,7 +25,7 @@ public class LogoutProperties implements Serializable {
      * is indicated and extracted by a parameter name of your choosing here. If none specified,
      * the default will be used as {@code service}.
      */
-    private String redirectParameter;
+    private String redirectParameter = "service";
 
     /**
      * Whether CAS should be allowed to redirect to an alternative location after logout.
