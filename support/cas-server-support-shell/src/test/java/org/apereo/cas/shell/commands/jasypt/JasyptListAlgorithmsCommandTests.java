@@ -1,24 +1,22 @@
-package org.apereo.cas.shell.commands.cipher;
+package org.apereo.cas.shell.commands.jasypt;
 
 import org.apereo.cas.shell.commands.BaseCasShellCommandTests;
 
-import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link GenerateCryptoKeysCommandTests}.
+ * This is {@link JasyptListAlgorithmsCommandTests}.
  *
  * @author Misagh Moayyed
  * @since 6.2.0
  */
 @EnableAutoConfiguration
-public class GenerateCryptoKeysCommandTests extends BaseCasShellCommandTests {
+public class JasyptListAlgorithmsCommandTests extends BaseCasShellCommandTests {
     @Test
     public void verifyOperation() {
-        val result = shell.evaluate(() -> "generate-key --key-size 512");
-        assertNotNull(result);
+        assertDoesNotThrow(() -> shell.evaluate(() -> "jasypt-list-providers --includeBC"));
     }
 }
