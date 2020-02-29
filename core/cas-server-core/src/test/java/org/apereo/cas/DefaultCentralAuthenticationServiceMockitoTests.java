@@ -190,7 +190,7 @@ public class DefaultCentralAuthenticationServiceMockitoTests extends BaseCasCore
         val factory = new DefaultTicketFactory();
         factory.addTicketFactory(ProxyGrantingTicket.class,
             new DefaultProxyGrantingTicketFactory(null,
-                null, CipherExecutor.noOpOfStringToString()));
+                null, CipherExecutor.noOpOfStringToString(), mock(ServicesManager.class)));
         factory.addTicketFactory(TicketGrantingTicket.class,
             new DefaultTicketGrantingTicketFactory(null,
                 null, CipherExecutor.noOpOfSerializableToString()));
