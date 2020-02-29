@@ -89,7 +89,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 @Transactional(transactionManager = "ticketTransactionManager", isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
 @ResourceLock("oauth-jpa-tickets")
 @Tag("OAuth")
-public class OauthJpaTicketRegistryTests {
+public class OAuthJpaTicketRegistryTests {
 
     @Autowired
     @Qualifier("defaultTicketFactory")
