@@ -14,12 +14,15 @@
 
         <script type="text/javascript" src="https://faye.acceptto.com/faye/faye.js"></script>
         <script type="text/javascript" src="https://dbfp.acceptto.com/bfp.js"></script>
-        <div class="card d-sm-none d-md-block bg-light">
+        <div class="card bg-light">
 
-            <div class="card-body">
+            <div class="card-body pb-4">
                 <div class="card-title">
                     <div class="text-center">
-                        <h3><i class="fas fa-qrcode"></i> Login with QR Code</h3>
+                        <h3 class="mt-md-0 mt-4">
+                            <i class="mdi mdi-qrcode-scan"></i>
+                            <span>Login with QR Code</span>
+                        </h3>
                         <p>Scan the QR code below, receive a push notification on your device. Approve and sign in!</p>
 
                         <div>
@@ -33,7 +36,6 @@
                     </div>
                 </div>
                 <div class="card-text">
-                    <p/>
                     <form method="post" id="fmAccepttoQRCode">
                         <script type="text/javascript" th:inline="javascript">
                             /*<![CDATA[*/

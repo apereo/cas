@@ -11,40 +11,30 @@
 
 <body id="cas">
 <main role="main" class="container mt-3 mb-3">
-    <div layout:fragment="content" id="login" class="card">
+    <div layout:fragment="content" id="login" class="mdc-card p-4 m-auto w-lg-66">
         <form method="post" id="fm1">
-            <div class="card-header text-center">
-                <h3 th:text="#{screen.aup.heading}">Acceptable Usage Policy</h3>
-            </div>
-            <div class="card-body">
-                <div>
-                    The purpose of this policy is to establish acceptable and unacceptable use of electronic devices and
-                    network resources in conjunction with the established culture of ethical and lawful behavior,
-                    openness, trust, and
-                    integrity.
-                    <div>
-                        <p/>
-                        <p>By using these resources, you agree to abide by the Acceptable Usage Policy.</p>
-                    </div>
-                </div>
+            <h3 th:text="#{screen.aup.heading}">Acceptable Usage Policy</h3>
+            <div class="aup">
+                <p>The purpose of this policy is to establish acceptable and unacceptable use of electronic devices and network resources in conjunction with the established culture of ethical and lawful behavior, openness, trust, and integrity.</p>
+                <p>By using these resources, you agree to abide by the Acceptable Usage Policy.</p>
 
                 <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
                 <input type="hidden" name="_eventId" value="submit"/>
-                <input class="btn btn-success"
-                       name="submit"
-                       accesskey="s"
-                       th:value="#{screen.aup.button.accept}"
-                       value="ACCEPT"
-                       type="submit"/>
-                <span style="width: 3px"></span>
-                <input
-                        class="btn btn-warning"
+                <div class="form-actions d-flex">
+                    <button class="mdc-button mdc-button--raised mr-2"
+                        name="submit"
+                        accesskey="s">
+                        <span class="mdc-button__label" th:value="#{screen.aup.button.accept}">ACCEPT</span>
+                    </button>
+                    <button class="mdc-button mdc-button--outlined"
                         name="cancel"
-                        accesskey="c"
                         th:value="#{screen.aup.button.cancel}"
-                        value="CANCEL"
+                        accesskey="c"
                         type="button"
-                        onclick="location.href = location.href;"/>
+                        onclick="location.href = location.href;">
+                        <span class="mdc-button__label" th:text="#{screen.aup.button.cancel}">CANCEL</span>
+                    </button>
+                </div>
             </div>
         </form>
     </div>
