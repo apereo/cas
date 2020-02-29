@@ -9,6 +9,10 @@ import org.apereo.cas.shell.commands.jasypt.JasyptTestAlgorithmsCommandTests;
 import org.apereo.cas.shell.commands.properties.AddPropertiesToConfigurationCommandTests;
 import org.apereo.cas.shell.commands.properties.FindPropertiesCommandTests;
 import org.apereo.cas.shell.commands.properties.ListUndocumentedPropertiesCommandTests;
+import org.apereo.cas.shell.commands.saml.GenerateSamlIdPMetadataCommandTests;
+import org.apereo.cas.shell.commands.services.AnonymousUsernameAttributeProviderCommandTests;
+import org.apereo.cas.shell.commands.services.ValidateRegisteredServiceCommandTests;
+import org.apereo.cas.shell.commands.util.GenerateJwtCommandTests;
 import org.apereo.cas.shell.commands.util.ValidateEndpointCommandTests;
 import org.apereo.cas.shell.commands.util.ValidateLdapConnectionCommandTests;
 
@@ -25,6 +29,11 @@ import org.junit.runner.RunWith;
 @SelectClasses({
     GenerateCryptoKeysCommandTests.class,
     GenerateDdlCommandTests.class,
+    GenerateJwtCommandTests.class,
+    AnonymousUsernameAttributeProviderCommandTests.class,
+    GenerateSamlIdPMetadataCommandTests.class,
+    ValidateRegisteredServiceCommandTests.class,
+    GenerateSamlIdPMetadataCommandTests.class,
     JasyptTestAlgorithmsCommandTests.class,
     ValidateEndpointCommandTests.class,
     ValidateLdapConnectionCommandTests.class,

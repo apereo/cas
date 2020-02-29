@@ -4,6 +4,7 @@ import org.apereo.cas.config.CasCommandLineShellConfiguration;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.ComponentScan;
@@ -26,6 +27,7 @@ import org.springframework.shell.standard.StandardAPIAutoConfiguration;
     CasCommandLineShellConfiguration.class
 }, properties = "spring.shell.interactive.enabled=false")
 @ComponentScan(basePackages = "org.apereo.cas.shell.commands")
+@EnableAutoConfiguration
 public abstract class BaseCasShellCommandTests {
     @Autowired
     @Qualifier("shell")
