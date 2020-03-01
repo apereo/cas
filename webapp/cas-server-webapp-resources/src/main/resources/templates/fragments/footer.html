@@ -1,15 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
-
-    <title>Footer Fragment</title>
-    <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag" />
-</head>
-<body>
-    <footer th:fragment="footer" class="footer" role="contentinfo">
-    </footer>
-</body>
-</html>
+<footer class="py-4 d-flex justify-content-center cas-footer">
+    <span id="copyright" th:utext="#{copyright}" class="mr-2 d-inline-block">Copyright Date Apereo, Inc</span>
+    <span class="mr-2 d-inline-block">Powered by <a href="https://github.com/apereo/cas">Apereo CAS</a></span>
+    <code class="version" th:text="${T(org.apereo.cas.util.CasVersion).getVersion() + ' ' + T(org.apereo.cas.util.CasVersion).getDateTime()}"></code>
+</footer>

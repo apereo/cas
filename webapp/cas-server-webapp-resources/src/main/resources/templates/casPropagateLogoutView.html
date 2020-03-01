@@ -77,10 +77,11 @@
 
             <p th:utext="#{screen.logout.security}">For security reasons, exit your web browser.</p>
 
-            <input type="button" th:if="${logoutRedirectUrl}"
-                   class="btn btn-primary btn-success" onclick="redirectToApp();"
+            <button type="button" th:if="${logoutRedirectUrl}"
+                   class="mdc-button mdc-button--raised" onclick="redirectToApp();"
                    th:value="${'Go to ' + logoutRedirectUrl}" value="Go to...">
-
+                   <span class="mdc-button__label" th:text="${'Go to ' + logoutRedirectUrl}"></span>
+            </button>
         </div>
     </div>
 </main>

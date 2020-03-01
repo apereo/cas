@@ -8,9 +8,9 @@ function jqueryReady() {
         //init settings
         var settings = $.extend({
             allProgressBarClasses: 'progress-bar-danger progress-bar-warning progress-bar-success progress-bar-striped active',
-            progressBarClass0: 'progress-bar-danger progress-bar-striped active',
-            progressBarClass1: 'progress-bar-danger progress-bar-striped active',
-            progressBarClass2: 'progress-bar-warning progress-bar-striped active',
+            progressBarClass0: 'progress-bar-danger',
+            progressBarClass1: 'progress-bar-danger',
+            progressBarClass2: 'progress-bar-warning',
             progressBarClass3: 'progress-bar-success',
             progressBarClass4: 'progress-bar-success'
         }, options);
@@ -27,59 +27,64 @@ function jqueryReady() {
 
         function UpdateProgressBar() {
             var progressBar = settings.progressBar;
-            var password = $('#password').val();
+            var materialBar = settings.materialBar.foundation_;
+
+            var indicator = document.getElementById('progress-strength-indicator');
+            var password = document.getElementById('password').value;
+
             if (password) {
                 var result = zxcvbn(password, settings.userInputs);
                 //result.score: 0, 1, 2, 3 or 4 - if crack time is less than 10**2, 10**4, 10**6, 10**8, Infinity.
                 var scorePercentage = (result.score + 1) * 20;
-                $(progressBar).css('width', scorePercentage + '%');
+                materialBar.setProgress(scorePercentage / 100);
 
                 if (result.score == 0) {
                     //weak
                     $(progressBar).removeClass(settings.allProgressBarClasses).addClass(settings.progressBarClass0);
-                    $(progressBar).html(strength[0]);
+                    $(indicator).html(strength[0]);
                 }
                 else if (result.score == 1) {
                     //normal
                     $(progressBar).removeClass(settings.allProgressBarClasses).addClass(settings.progressBarClass1);
-                    $(progressBar).html(strength[1]);
+                    $(indicator).html(strength[1]);
                 }
                 else if (result.score == 2) {
                     //medium
                     $(progressBar).removeClass(settings.allProgressBarClasses).addClass(settings.progressBarClass2);
-                    $(progressBar).html(strength[2]);
+                    $(indicator).html(strength[2]);
                 }
                 else if (result.score == 3) {
                     //strong
                     $(progressBar).removeClass(settings.allProgressBarClasses).addClass(settings.progressBarClass3);
-                    $(progressBar).html(strength[3]);
+                    $(indicator).html(strength[3]);
                 }
                 else if (result.score == 4) {
                     //very strong
                     $(progressBar).removeClass(settings.allProgressBarClasses).addClass(settings.progressBarClass4);
-                    $(progressBar).html(strength[4]);
+                    $(indicator).html(strength[4]);
                 }
-            }
-            else {
-                $(progressBar).css('width', '0%');
+            } else {
+                materialBar.setProgress(0);
                 $(progressBar).removeClass(settings.allProgressBarClasses).addClass(settings.progressBarClass0);
-                $(progressBar).html('');
+                $(indicator).html('');
             }
         }
     };
     var policyPatternRegex = new RegExp(policyPattern);
     var password = document.getElementById('password');
     var confirmed = document.getElementById('confirmedPassword');
+    var materialBarElement = document.getElementById('strengthProgressBar');
+    var materialBar = new mdc.linearProgress.MDCLinearProgress(materialBarElement);
 
     password.addEventListener('input', validate);
     confirmed.addEventListener('input', validate);
 
     var alertSettings = {
-        allAlertClasses: 'fa-times-circle fa-exclamation-circle fa-info-circle fa-check-circle',
-        alertClassDanger: 'fa-times-circle',
-        alertClassWarning: 'fa-exclamation-circle',
-        alertClassInfo: 'fa-info-circle',
-        alertClassSuccess: 'fa-check-circle'
+        allAlertClasses: 'mdi-close-circle mdi-alert-circle mdi-information mdi-check-circle text-danger text-warning text-secondary text-success',
+        alertClassDanger: 'mdi-close-circle text-danger',
+        alertClassWarning: 'mdi-alert-circle text-warning',
+        alertClassInfo: 'mdi-information text-secondary',
+        alertClassSuccess: 'mdi-check-circle text-success'
     };
 
     function validate() {
@@ -96,35 +101,36 @@ function jqueryReady() {
         $('#submit').prop('disabled', disableSubmit);
 
         var result = zxcvbn(val);
-        $('#strengthProgressBar').zxcvbnProgressBar({ passwordInput: '#password' });
+        $('#strengthProgressBar').zxcvbnProgressBar({ passwordInput: 'password', materialBar: materialBar });
 
         // Check strength, update the text indicator
         if (val !== '') {
+            $('#strengthProgressBar').show();
             $('#password-strength-warning').text(result.feedback.warning);
             $('#password-strength-suggestions').text(result.feedback.suggestions.join(' ').trim());
 
             var clz = alertSettings.alertClassDanger;
             switch (result.score) {
-            case 0:
-            case 1:
-                clz = alertSettings.alertClassDanger;
-                break;
-            case 2:
-                clz = alertSettings.alertClassWarning;
-                break;
-            case 3:
-                clz = alertSettings.alertClassInfo;
-                break;
-            case 4:
-            case 5:
-            default:
-                clz = alertSettings.alertClassSuccess;
-                break;
+                case 0:
+                case 1:
+                    clz = alertSettings.alertClassDanger;
+                    break;
+                case 2:
+                    clz = alertSettings.alertClassWarning;
+                    break;
+                case 3:
+                    clz = alertSettings.alertClassInfo;
+                    break;
+                case 4:
+                case 5:
+                default:
+                    clz = alertSettings.alertClassSuccess;
+                    break;
             }
 
             $('#password-strength-icon').removeClass(alertSettings.allAlertClasses).addClass(clz);
             // Check for suggestions
-            if ( result.feedback.warning > 0 || result.feedback.suggestions.length > 0 ) {
+            if (result.feedback.warning > 0 || result.feedback.suggestions.length > 0) {
                 $('#password-strength-msg').show();
             }
         } else {

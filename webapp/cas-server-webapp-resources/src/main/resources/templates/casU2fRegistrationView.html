@@ -2,8 +2,8 @@
 <html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
 
 <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 
     <title th:text="#{cas.mfa.u2f.pagetitle}">U2f Registration View</title>
     <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag" />
@@ -19,7 +19,7 @@
 
             var challenge =  /*[[${u2fReg.challenge}]]*/;
 
-            var registerRequests = [{version: version, challenge: challenge}];
+            var registerRequests = [{ version: version, challenge: challenge }];
             console.log(appId, registerRequests);
             u2f.register(appId, registerRequests, [], function (data) {
                 var form = document.getElementById('form');
@@ -39,9 +39,8 @@
 </head>
 
 <body>
-<main role="main" class="container mt-3 mb-3">
-    <div layout:fragment="content" id="login">
-        <div class="alert alert-info">
+    <main role="main" class="container mt-3 mb-3">
+        <div layout:fragment="content" id="login" class="mdc-card mdc-card-content w-lg-50 p-4 m-auto">
             <h3 th:text="#{cas.mfa.u2f.register.device}">Register Device</h3>
             <div th:utext="#{cas.mfa.u2f.authentication.message}" th:remove="tag">
                 <p><strong>Please touch the flashing U2F device now.</strong></p>
@@ -50,12 +49,12 @@
             </div>
 
             <form method="POST" id="form">
-                <input type="hidden" name="tokenResponse" id="tokenResponse"/>
-                <input type="hidden" name="_eventId" value="submit"/>
-                <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+                <input type="hidden" name="tokenResponse" id="tokenResponse" />
+                <input type="hidden" name="_eventId" value="submit" />
+                <input type="hidden" name="execution" th:value="${flowExecutionKey}" />
             </form>
         </div>
-    </div>
-</main>
+    </main>
 </body>
+
 </html>

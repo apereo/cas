@@ -12,11 +12,11 @@
 <body>
 <main role="main" class="container mt-3 mb-3">
     <div layout:fragment="content">
-        <div class="alert alert-success">
-            <h2 th:utext="#{screen.logout.header}">Logout successful</h2>
-            <p th:utext="#{screen.logout.success}">You have successfully logged out of the Central Authentication
+        <div class="w-50 m-auto mdc-card p-4">
+            <h2 class="banner-heading" th:utext="#{screen.logout.header}">Logout successful</h2>
+            <p class="banner-message" th:utext="#{screen.logout.success}">You have successfully logged out of the Central Authentication
                 Service. You may <a href="login">log in</a> again.</p>
-            <p th:utext="#{screen.logout.security}">For security reasons, exit your web browser.</p>
+            <p class="banner-message" th:utext="#{screen.logout.security}">For security reasons, exit your web browser.</p>
         </div>
     </div>
 </main>

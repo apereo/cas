@@ -9,7 +9,7 @@ itsdangerous==1.1.0
 locustio==0.14.5
 MarkupSafe==1.1.1
 msgpack-python==0.5.6
-pyzmq==18.1.1
+pyzmq==19.0.0
 pip==20.0.2
 requests==2.23.0
 setuptools==45.2.0
