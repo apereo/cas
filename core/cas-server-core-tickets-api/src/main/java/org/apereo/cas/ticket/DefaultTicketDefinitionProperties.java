@@ -20,7 +20,7 @@ public class DefaultTicketDefinitionProperties implements TicketDefinitionProper
     /**
      * Whether ticket operations require cascading down in the storage.
      */
-    private boolean cascade;
+    private boolean cascadeRemovals;
 
     /**
      * Storage/cache name that holds this ticket.
@@ -36,4 +36,12 @@ public class DefaultTicketDefinitionProperties implements TicketDefinitionProper
      * Password for this ticket storage, if any.
      */
     private String storagePassword;
+
+    /**
+     * If a ticket definition is going to be removed
+     * as part of a cascade operation, should this definition
+     * be be excluded from removals allowing the ticket
+     * to hang around without its parent?
+     */
+    private boolean excludeFromCascade;
 }

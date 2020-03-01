@@ -83,7 +83,10 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
     AopAutoConfiguration.class,
     RefreshAutoConfiguration.class
 },
-    properties = "cas.authn.mfa.gauth.crypto.enabled=false")
+    properties = {
+        "cas.jdbc.showSql=true",
+        "cas.authn.mfa.gauth.crypto.enabled=false"
+    })
 @EnableTransactionManagement(proxyTargetClass = true)
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @EnableScheduling

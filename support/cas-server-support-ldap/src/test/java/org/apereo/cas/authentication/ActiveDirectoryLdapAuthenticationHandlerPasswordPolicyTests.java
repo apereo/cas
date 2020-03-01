@@ -56,7 +56,7 @@ public class ActiveDirectoryLdapAuthenticationHandlerPasswordPolicyTests extends
         this.handler.forEach(Unchecked.consumer(h -> {
             val credential = new UsernamePasswordCredential(getUsername(), getSuccessPassword());
             val result = h.authenticate(credential);
-            assertTrue(result.getWarnings() != null && result.getWarnings().size() > 0);
+            assertTrue(result.getWarnings() != null && !result.getWarnings().isEmpty());
             assertTrue(result.getWarnings().stream().anyMatch(messageDescriptor -> messageDescriptor.getCode().equals("password.expiration.warning")));
             assertNotNull(result.getPrincipal());
             assertEquals(credential.getUsername(), result.getPrincipal().getId());

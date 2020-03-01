@@ -33,12 +33,12 @@ public class GroovyPasswordHistoryService extends BasePasswordHistoryService {
     }
 
     @Override
-    public Collection<PasswordHistoryEntity> fetchAll() {
+    public Collection<? extends PasswordHistoryEntity> fetchAll() {
         return this.watchableScript.execute("fetchAll", Collection.class, new Object[]{LOGGER});
     }
 
     @Override
-    public Collection<PasswordHistoryEntity> fetch(final String username) {
+    public Collection<? extends PasswordHistoryEntity> fetch(final String username) {
         return this.watchableScript.execute("fetch", Collection.class, new Object[]{username, LOGGER});
     }
 

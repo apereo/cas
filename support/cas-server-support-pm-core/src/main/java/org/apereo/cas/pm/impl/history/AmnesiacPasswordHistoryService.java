@@ -18,12 +18,12 @@ public class AmnesiacPasswordHistoryService extends BasePasswordHistoryService {
     }
 
     @Override
-    public Collection<PasswordHistoryEntity> fetchAll() {
+    public Collection<? extends PasswordHistoryEntity> fetchAll() {
         return new ArrayList<>(0);
     }
 
     @Override
-    public Collection<PasswordHistoryEntity> fetch(final String username) {
+    public Collection<? extends PasswordHistoryEntity> fetch(final String username) {
         return new ArrayList<>(0);
     }
 

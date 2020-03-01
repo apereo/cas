@@ -18,7 +18,7 @@ public interface ResourceSetRepository {
      *
      * @return the all
      */
-    Collection<ResourceSet> getAll();
+    Collection<? extends ResourceSet> getAll();
 
     /**
      * Gets by id.

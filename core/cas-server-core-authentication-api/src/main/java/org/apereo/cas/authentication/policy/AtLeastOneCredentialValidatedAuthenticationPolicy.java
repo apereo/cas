@@ -34,11 +34,11 @@ public class AtLeastOneCredentialValidatedAuthenticationPolicy implements Authen
         if (this.tryAll) {
             val sum = authn.getSuccesses().size() + authn.getFailures().size();
             if (authenticationHandlers.size() != sum) {
-                LOGGER.warn("Number of provided credentials [{}] does not match the sum of authentication successes and failures [{}]", authn.getCredentials().size(), sum);
+                LOGGER.warn("Number of credentials [{}] does not match the sum of authentication successes and failures [{}]", authn.getCredentials().size(), sum);
                 return false;
             }
             LOGGER.debug("Authentication policy is satisfied with all authentication transactions");
-            return true;
+            return !authn.getSuccesses().isEmpty();
         }
         if (!authn.getSuccesses().isEmpty()) {
             LOGGER.debug("Authentication policy is satisfied having found at least one authentication transactions");

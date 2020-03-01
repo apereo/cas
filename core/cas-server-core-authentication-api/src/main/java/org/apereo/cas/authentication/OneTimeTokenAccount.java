@@ -9,16 +9,15 @@ import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.ToString;
 import org.apache.commons.lang3.builder.CompareToBuilder;
-import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.Transient;
+
 import java.io.Serializable;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -45,10 +44,8 @@ public class OneTimeTokenAccount implements Serializable, Comparable<OneTimeToke
 
     private static final long serialVersionUID = -8289105320642735252L;
 
-    @org.springframework.data.annotation.Id
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
-    @GenericGenerator(name = "native", strategy = "native")
+    @Transient
     @JsonProperty("id")
     private long id = -1;
 

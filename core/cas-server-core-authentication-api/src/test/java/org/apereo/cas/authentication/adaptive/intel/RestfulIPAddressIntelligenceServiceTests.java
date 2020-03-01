@@ -54,4 +54,28 @@ public class RestfulIPAddressIntelligenceServiceTests {
         }
 
     }
+
+    @Test
+    public void verifyRankedOperation() {
+        try (val webServer = new MockWebServer(9306,
+            new ByteArrayResource("12.435".getBytes(StandardCharsets.UTF_8), "Output"), HttpStatus.PRECONDITION_REQUIRED)) {
+            webServer.start();
+            val props = new AdaptiveAuthenticationProperties();
+            props.getIpIntel().getRest().setUrl("http://localhost:9306");
+            var service = new RestfulIPAddressIntelligenceService(props);
+            var result = service.examine(new MockRequestContext(), "1.2.3.4");
+            assertNotNull(result);
+            assertTrue(result.isRanked());
+
+            props.setRejectIpAddresses("123\\..*");
+            service = new RestfulIPAddressIntelligenceService(props);
+            result = service.examine(new MockRequestContext(), "123.1.2.3");
+            assertNotNull(result);
+            assertTrue(result.isBanned());
+
+        } catch (final Exception e) {
+            throw new AssertionError(e.getMessage(), e);
+        }
+
+    }
 }

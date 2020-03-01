@@ -320,8 +320,9 @@ tasks.withType(Test) {
             logger.info "Maximum number of parallel forks is set to ${maxParallelForks}"
         }
     }
-
     systemProperty("spring.main.banner-mode", "off")
+    systemProperty("CI", System.getProperty("CI"))
+
     failFast = true
     jvmArgs.addAll(["-Xms512m", "-Xmx4g"])
     classpath = it.classpath + files("${projectDir}/src/main/resources") + files("${projectDir}/src/test/resources")

@@ -1,8 +1,8 @@
 package org.apereo.cas;
 
+import org.apereo.cas.authentication.ActiveDirectoryLdapAuthenticationHandlerPasswordPolicyTests;
 import org.apereo.cas.authentication.ActiveDirectorySamAccountNameLdapAuthenticationHandlerTests;
 import org.apereo.cas.authentication.ActiveDirectoryUPNLdapAuthenticationHandlerTests;
-import org.apereo.cas.authentication.ActiveDirectoryLdapAuthenticationHandlerPasswordPolicyTests;
 import org.apereo.cas.authentication.AuthenticatedLdapAuthenticationHandlerTests;
 import org.apereo.cas.authentication.DirectLdapAuthenticationHandlerTests;
 import org.apereo.cas.authentication.LdapPasswordSynchronizationAuthenticationPostProcessorTests;
