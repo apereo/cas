@@ -1,11 +1,9 @@
 package org.apereo.cas.configuration.model.core.web.tomcat;
 
-import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
 
