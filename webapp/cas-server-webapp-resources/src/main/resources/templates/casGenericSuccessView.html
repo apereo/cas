@@ -12,45 +12,44 @@
 <body>
 <main role="main" class="container mt-3 mb-3">
     <div layout:fragment="content" class="row">
-        <div class="card-body">
+        <div class="w-100 m-auto mdc-card p-4">
 
-            <div class="alert alert-success">
-                <h2 th:utext="#{screen.success.header}">Log In Successful</h2>
-                <p th:utext="#{screen.success.success(${authentication.principal.id})}">You, <strong>username</strong>, have successfully
-                    logged into the Central Authentication Service. This is what CAS knows about you:However, you are seeing this page because CAS does not
-                    know about your target destination and how to get you there. Examine the authentication request again
-                    and make sure a target service/application that is authorized and registered with CAS is specified.</p>
-
-                <p th:unless="${#maps.isEmpty(authentication.principal.attributes)}"><a data-toggle="collapse" href="#divPrincipalAttributes" aria-expanded="false" aria-controls="divPrincipalAttributes">Click here</a>
-                    to view attributes resolved and retrieved for <strong><span th:utext="${authentication.principal.id}"/></strong>.</p>
-
-                <p th:utext="#{screen.success.security}">When you are finished, for security reasons, please <a
-                        href="logout">log out</a> and exit your web browser.</p>
-            </div>
-            <div class="collapse" id="divPrincipalAttributes">
-                <table id="attributesTable" class="table table-striped table-bordered mt-3">
-                    <thead>
-                    <tr>
-                        <th>Attribute</th>
-                        <th>Value(s)</th>
-                        <th>Type</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr th:each="attribute : ${authentication.principal.attributes}">
-                        <td class="col-auto"><code><span th:utext="${attribute.key}"/></code></td>
-                        <td class="col-auto"><code><span th:utext="${attribute.value}"/></code></td>
-                        <td class="col-auto"><code>Principal</code></td>
-                    </tr>
-                    <tr th:each="attribute : ${authentication.attributes}">
-                        <td class="col-auto"><code><span th:utext="${attribute.key}"/></code></td>
-                        <td class="col-auto"><code><span th:utext="${attribute.value}"/></code></td>
-                        <td class="col-auto"><code>Authentication</code></td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
+            <h2 th:utext="#{screen.success.header}">Log In Successful</h2>
+            <p th:utext="#{screen.success.success(${authentication.principal.id})}">You, <strong>username</strong>, have successfully logged into the Central Authentication Service. This is what CAS knows about you:However, you are seeing this page because CAS does not know about your target destination and how to get you there. Examine the authentication request again and make sure a target service/application that is authorized and registered with CAS is specified.</p>
+            <p th:unless="${#maps.isEmpty(authentication.principal.attributes)}">
+                <a data-toggle="collapse" href="#divPrincipalAttributes" aria-expanded="false" aria-controls="divPrincipalAttributes">Click here</a> to view attributes resolved and retrieved for <strong><span th:utext="${authentication.principal.id}"/></strong>.
+            </p>
+            <p th:utext="#{screen.success.security}">
+                When you are finished, for security reasons, please <a href="logout">log out</a> and exit your web browser.
+            </p>
         </div>
+        <div class="w-100 mdc-data-table mx-auto my-4" id="divPrincipalAttributes">
+            <table id="attributesTable" class="mdc-data-table__table">
+                <thead>
+                    <tr class="mdc-data-table__header-row">
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Attribute</th>
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Value(s)</th>
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Type</th>
+                    </tr>
+                </thead>
+                <tbody class="mdc-data-table__content">
+                    <tr th:each="attribute : ${authentication.principal.attributes}" class="mdc-data-table__row">
+                        <td class="mdc-data-table__cell"><code><span th:utext="${attribute.key}"/></code></td>
+                        <td class="mdc-data-table__cell"><code><span th:utext="${attribute.value}"/></code></td>
+                        <td class="mdc-data-table__cell"><code>Principal</code></td>
+                    </tr>
+                    <tr th:each="attribute : ${authentication.attributes}" class="mdc-data-table__row">
+                        <td class="mdc-data-table__cell"><code><span th:utext="${attribute.key}"/></code></td>
+                        <td class="mdc-data-table__cell"><code><span th:utext="${attribute.value}"/></code></td>
+                        <td class="mdc-data-table__cell"><code>Authentication</code></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <script type="text/javascript" th:inline="javascript">
+            const dataTable = new material.dataTable.MDCDataTable(document.querySelector('#divPrincipalAttributes'));
+        </script>
+    </div>
 </main>
 </body>
 </html>

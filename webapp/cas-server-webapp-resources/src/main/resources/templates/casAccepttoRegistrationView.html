@@ -2,21 +2,19 @@
 <html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
 
 <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 
     <title>Acceptto Registration View</title>
-    <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag"/>
+    <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag" />
 
     <script type="text/javascript" src="https://faye.acceptto.com/faye/faye.js"></script>
     <script type="text/javascript" src="https://dbfp.acceptto.com/bfp.js"></script>
 </head>
 
 <body>
-<main role="main" class="container mt-3 mb-3">
-    <div layout:fragment="content" id="login">
-
-        <div>
+    <main role="main" class="container mt-3 mb-3">
+        <div layout:fragment="content" id="login" class="mdc-card p-4 m-auto w-lg-66">
             <h3>Register Device</h3>
 
             <ol>
@@ -26,12 +24,14 @@
                 <li>Scan this QR Code.</li>
             </ol>
 
-            <div>
-                <a href="https://itunes.apple.com/us/app/acceptto-itsme/id893534370?mt=8" target="_blank">
-                    <img src="https://s3-us-west-2.amazonaws.com/acceptto-log-and-graphics/Asset+14.png" alt="App Store" title="App Store" width="151.25" height="50">
+            <div class="d-flex justify-content-center">
+                <a href="https://itunes.apple.com/us/app/acceptto-itsme/id893534370?mt=8" target="_blank" class="mr-2">
+                    <img src="https://s3-us-west-2.amazonaws.com/acceptto-log-and-graphics/Asset+14.png" alt="App Store"
+                        title="App Store" width="151.25" height="50">
                 </a>
                 <a href="https://play.google.com/store/apps/details?id=com.acceptto.mfa&amp;amp;hl=en" target="_blank">
-                    <img src="https://s3-us-west-2.amazonaws.com/acceptto-log-and-graphics/Asset+13.png" alt="Google Play" title="Google Play" width="151.25" height="50">
+                    <img src="https://s3-us-west-2.amazonaws.com/acceptto-log-and-graphics/Asset+13.png"
+                        alt="Google Play" title="Google Play" width="151.25" height="50">
                 </a>
             </div>
 
@@ -52,32 +52,25 @@
                             }
                         );
                     });
-                    /*]]>*/
+                /*]]>*/
                 </script>
 
-                <input type="hidden" name="_eventId" value="success"/>
-                <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+                <input type="hidden" name="_eventId" value="success" />
+                <input type="hidden" name="execution" th:value="${flowExecutionKey}" />
             </form>
-            <center>
-
-                <img class="autowidth"
-                     id="qrLoginCode"
-                     width="250"/>
-
-                <br/>
-                <p/>
+            <div class="d-flex justify-content-center flex-column align-items-center">
+                <img class="autowidth my-4" id="qrLoginCode" width="250" />
                 <div class="progress" style="height: 35px;">
-                    <div class="progress-bar bg-info progress-bar-striped progress-bar-animated"
-                         role="progressbar" aria-valuenow="99"
-                         aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                    <div class="progress-bar bg-info progress-bar-striped progress-bar-animated" role="progressbar"
+                        aria-valuenow="99" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
                         <span style="font-size: larger">Waiting for device registration notification...</span>
                     </div>
                 </div>
-            </center>
+            </div>
         </div>
-    </div>
-</main>
+    </main>
 
 
 </body>
+
 </html>

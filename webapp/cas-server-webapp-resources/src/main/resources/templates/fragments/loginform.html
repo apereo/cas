@@ -1,145 +1,129 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 
     <title>Login Form Fragment</title>
-    <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag"/>
+    <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag" />
 </head>
+
 <body>
-<main role="main" class="container mt-3 mb-3">
-    <div class="row">
-        <div class="col-md">
-            <!-- Login form template begins here -->
-            <div th:fragment="loginform" class="card">
-                <div class="card-header" th:if="${delegatedAuthenticationProviderPrimary == null}"
-                     th:replace="fragments/serviceui :: serviceUI">
+    <main role="main" class="container mt-3 mb-3">
+        <!-- Login form template begins here -->
+        <div th:fragment="loginform" class="d-flex flex-column justify-content-between m-auto">
+            <div th:if="${delegatedAuthenticationProviderPrimary == null}">
+                <div class="service-ui" th:replace="fragments/serviceui :: serviceUI">
                     <a href="fragments/serviceui.html">service ui fragment</a>
                 </div>
-                <div class="card-body">
-                    <form method="post" id="fm1" th:object="${credential}" action="login">
-                        <div class="alert alert-danger alert-dismissible fade show" th:if="${#fields.hasErrors('*')}">
-                            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                            <span th:each="err : ${#fields.errors('*')}" th:utext="${err + ' '}">Example error</span>
-                        </div>
+            </div>
+            <div class="form-wrapper">
+                <form method="post" id="fm1" th:object="${credential}" action="login">
 
-                        <div th:if="${existingSingleSignOnSessionAvailable}">
-                            <h6>
-                                <i class="fas fa-info-circle"></i>&nbsp;
-                                <span th:utext="#{screen.welcome.forcedsso(${existingSingleSignOnSessionPrincipal.id})}"/>
-                            </h6>
-                        </div>
-                        <h3 th:unless="${existingSingleSignOnSessionAvailable}"
-                            style="text-align: center; margin-top:-15px">
-                            <i class="fas fa-id-card"></i>
-                            <span th:utext="#{screen.welcome.instructions}">Enter your Username and Password:</span>
-                        </h3>
+                    <div th:if="${existingSingleSignOnSessionAvailable}">
+                        <h6>
+                            <i class="fas fa-info-circle"></i>&nbsp;
+                            <span th:utext="#{screen.welcome.forcedsso(${existingSingleSignOnSessionPrincipal.id})}" />
+                        </h6>
+                    </div>
+                    <h3 th:unless="${existingSingleSignOnSessionAvailable}" class="text-center">
+                        <i class="fas fa-id-card"></i>
+                        <span th:utext="#{screen.welcome.instructions}">Enter your Username and Password:</span>
+                    </h3>
 
-                        <section class="form-group">
-                            <span th:if="${availableAuthenticationHandlerNames != null}">
-                                <span th:if="${availableAuthenticationHandlerNames.size() > 1}">
-                                    <label for="source" th:utext="#{screen.welcome.label.source}">Source</label>
-                                    <div>
-                                        <select class="form-control required"
-                                                id="source"
-                                                name="source"
-                                                tabindex="0"
-                                                th:field="*{source}">
-                                            <option th:each="handler : ${availableAuthenticationHandlerNames}"
-                                                    th:value="${handler}" th:text="${handler}">Source</option>
-                                        </select>
-                                    </div>
-                                </span>
-                                <span th:if="${availableAuthenticationHandlerNames.size() == 1}">
-                                     <input type="hidden"
+                    <div class="banner banner-danger banner-dismissible" th:if="${#fields.hasErrors('*')}">
+                        <p th:each="err : ${#fields.errors('*')}" th:utext="${err + ' '}">Example error</p>
+                        <!--<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>-->
+                    </div>
+                    
+                    <section class="cas-field my-2=3">
+                        <span th:if="${availableAuthenticationHandlerNames != null}">
+                            <span th:if="${availableAuthenticationHandlerNames.size() > 1}">
+                                <label for="source" th:utext="#{screen.welcome.label.source}">Source</label>
+                                <div>
+                                    <select class="form-control required"
                                             id="source"
                                             name="source"
-                                            th:value="${availableAuthenticationHandlerNames.get(0)}"/>
-                                </span>
-                            </span>
-                        </section>
-
-                        <section class="form-group">
-
-                            <span th:utext="#{screen.welcome.label.netid}">Username</span>
-                            <div th:if="${@casThymeleafLoginFormDirector.isLoginFormUsernameInputVisible(#vars)}">
-                                <input
-                                        class="form-control required"
-                                        id="username"
-                                        size="25"
-                                        tabindex="1"
-                                        type="text"
-                                        th:disabled="${@casThymeleafLoginFormDirector.isLoginFormUsernameInputDisabled(#vars)}"
-                                        th:field="*{username}"
-                                        th:accesskey="#{screen.welcome.label.netid.accesskey}"
-                                        autocomplete="off"/>
-                            </div>
-                            <div th:unless="${@casThymeleafLoginFormDirector.isLoginFormUsernameInputVisible(#vars)}">
-                                <strong>
-                                    <input class="form-control required" type="text" disabled th:value="${@casThymeleafLoginFormDirector.getLoginFormUsername(#vars)}"/>
-                                </strong>
-                                <input type="hidden"
-                                       id="username"
-                                       name="username"
-                                       th:value="${@casThymeleafLoginFormDirector.getLoginFormUsername(#vars)}"/>
-                            </div>
-
-                        </section>
-
-                        <section class="form-group">
-                            <span th:utext="#{screen.welcome.label.password}">Password</span>
-
-                            <div class="input-group">
-                                <input class="form-control required pwd"
-                                       type="password"
-                                       id="password"
-                                       size="25"
-                                       tabindex="2"
-                                       th:accesskey="#{screen.welcome.label.password.accesskey}"
-                                       th:field="*{password}"
-                                       autocomplete="off"/>
-                                <span class="input-group-btn">
-                                    <button class="btn btn-default reveal-password" type="button">
-                                        <i id="reveal-password-icon" class="fa fa-eye reveal-password-icon" aria-hidden="true"></i>
-                                    </button>
-                                </span>
-                                <span id="capslock-on" style="display:none;">
-                                <p>
-                                    <i class="fa fa-exclamation-circle"></i>
-                                    <span th:utext="#{screen.capslock.on}"/>
-                                </p>
-                            </span>
-                            </div>
-                        </section>
-
-                        <section class="form-group">
-                            <div th:each="entry: ${customLoginFormFields}">
-                                <div>
-                                    <span th:text="#{${entry.value.messageBundleKey}}">Label</span>
-                                    <input class="form-control required" type="text" name="data" th:field="*{customFields[__${entry.key}__]}">
-                                    <p/>
+                                            th:field="*{source}">
+                                        <option th:each="handler : ${availableAuthenticationHandlerNames}"
+                                                th:value="${handler}" th:text="${handler}">Source</option>
+                                    </select>
                                 </div>
+                            </span>
+                            <span th:if="${availableAuthenticationHandlerNames.size() == 1}">
+                                <input type="hidden"
+                                        id="source"
+                                        name="source"
+                                        th:value="${availableAuthenticationHandlerNames.get(0)}"/>
+                            </span>
+                        </span>
+                    </section>
+
+                    <section class="cas-field my-3">
+                        <div class="mdc-text-field  d-flex">
+                            <input class="mdc-text-field__input"
+                                id="username"
+                                size="25"
+                                type="text"
+                                th:readonly="!${@casThymeleafLoginFormDirector.isLoginFormUsernameInputVisible(#vars)}"
+                                th:disabled="${@casThymeleafLoginFormDirector.isLoginFormUsernameInputDisabled(#vars)}"
+                                th:field="*{username}"
+                                th:accesskey="#{screen.welcome.label.netid.accesskey}"
+                                th:value="${@casThymeleafLoginFormDirector.getLoginFormUsername(#vars)}"
+                                autocomplete="off" />
+                            <label for="username" class="mdc-floating-label" th:utext="#{screen.welcome.label.netid}">Username</label>
+                        </div>
+                    </section>
+
+                    <section class="cas-field my-3 mdc-input-group">
+                        <div class="mdc-input-group-field mdc-input-group-field-append">
+                            <div class="mdc-text-field  mdc-text-field--with-trailing-icon d-flex caps-check">
+                                <input class="mdc-text-field__input pwd" type="password" id="password" size="25"
+                                    th:accesskey="#{screen.welcome.label.password.accesskey}" th:field="*{password}" autocomplete="off" />
+                                <label for="username" class="mdc-floating-label" th:utext="#{screen.welcome.label.password}">Password</label>
                             </div>
-                        </section>
+                            <div class="mdc-text-field-helper-line caps-warn">
+                                <p
+                                    class="mdc-text-field-helper-text mdc-text-field-helper-text--persistent mdc-text-field-helper-text--validation-msg text-danger">
+                                    <span th:utext="#{screen.capslock.on}" />
+                                </p>
+                            </div>
+                        </div>
+                        <button class="reveal-password mdc-button mdc-button--raised mdc-input-group-append mdc-icon-button" type="button">
+                            <i class="mdi mdi-eye reveal-password-icon"></i>
+                            <span class="sr-only">Toggle Password</span>
+                        </button>
+                    </section>
 
-                        <section class="form-check"
-                                 th:if="${passwordManagementEnabled != null && passwordManagementEnabled && param.doChangePassword != null}">
-                            <p>
-                                <input type="checkbox" name="doChangePassword" id="doChangePassword"
-                                       value="true" th:checked="${param.doChangePassword != null}" tabindex="4"/>
-                                <label for="doChangePassword" th:text="#{screen.button.changePassword}">Change Password</label>
-                            </p>
-                        </section>
+                    <section class="cas-field my-3">
+                        <div th:each="entry: ${customLoginFormFields}">
+                            <div>
+                                <span th:text="#{${entry.value.messageBundleKey}}">Label</span>
+                                <input class="form-control required" type="text" name="data" th:field="*{customFields[__${entry.key}__]}">
+                                <p/>
+                            </div>
+                        </div>
+                    </section>
 
-                        <section class="form-check" th:if="${rememberMeAuthenticationEnabled}">
-                            <p>
-                                <input type="checkbox" name="rememberMe" id="rememberMe" value="true" tabindex="5"/>
-                                <label for="rememberMe" th:text="#{screen.rememberme.checkbox.title}">Remember Me</label>
-                            </p>
-                        </section>
+                    <section class="cas-field"
+                            th:if="${passwordManagementEnabled != null && passwordManagementEnabled && param.doChangePassword != null}">
+                        <p>
+                            <input type="checkbox" name="doChangePassword" id="doChangePassword"
+                                value="true" th:checked="${param.doChangePassword != null}"/>
+                            <label for="doChangePassword" th:text="#{screen.button.changePassword}">Change Password</label>
+                        </p>
+                    </section>
 
+                    <section class="cas-field" th:if="${rememberMeAuthenticationEnabled}">
+                        <p>
+                            <input type="checkbox" name="rememberMe" id="rememberMe" value="true"/>
+                            <label for="rememberMe" th:text="#{screen.rememberme.checkbox.title}">Remember Me</label>
+                        </p>
+                    </section>
+
+                    <section class="cas-field">
                         <span th:if="${recaptchaVersion=='v2'}" th:remove="tag">
                             <section class="form-group" th:if="${recaptchaSiteKey != null AND recaptchaInvisible != null AND !recaptchaInvisible}">
                                 <div class="g-recaptcha" th:attr="data-sitekey=${recaptchaSiteKey}"/>
@@ -159,75 +143,77 @@
                                 </span>
                             </span>
                         </p>
+                    </section>
 
-                        <input class="btn btn-block btn-submit"
-                               th:if="${recaptchaSiteKey == null}"
-                               name="submit"
-                               accesskey="l"
-                               th:value="#{screen.welcome.button.login}"
-                               tabindex="6"
-                               type="submit"
-                               value="Login8"
-                        />
+                    <button
+                        class="mdc-button mdc-button--raised"
+                        th:if="${recaptchaSiteKey == null}"
+                        name="submit"
+                        accesskey="l"
+                        type="submit">
+                        <span class="mdc-button__label" th:text="#{screen.welcome.button.login}">Login</span>
+                    </button>
 
-                        <span th:if="${recaptchaVersion=='v2'}" th:remove="tag">
-                            <input class="btn btn-block btn-submit"
-                                   th:unless="${recaptchaSiteKey != null AND recaptchaInvisible != null AND recaptchaInvisible}"
+                    <span th:unless="${recaptchaSiteKey == null}" th:switch="${recaptchaVersion}">
+                        <span th:case="'v2'" th:remove="tag">
+                            <button th:unless="${recaptchaSiteKey != null AND recaptchaInvisible != null AND recaptchaInvisible}"
+                                   class="mdc-button mdc-button--raised"
                                    name="submit"
                                    accesskey="l"
-                                   th:value="#{screen.welcome.button.login}"
-                                   tabindex="6"
                                    type="submit"
-                                   value="Login3"
-                            />
-                            <button class="btn btn-block btn-submit g-recaptcha"
-                                    th:if="${recaptchaSiteKey != null AND recaptchaInvisible != null AND recaptchaInvisible}"
+                                   value="Login3">
+                                <span class="mdc-button__label" th:text="#{screen.welcome.button.login}">Login</span>
+                            </button>
+                            <button th:if="${recaptchaSiteKey != null AND recaptchaInvisible != null AND recaptchaInvisible}"
+                                    class="mdc-button mdc-button--raised"
                                     th:attr="data-sitekey=${recaptchaSiteKey}, data-badge=${recaptchaPosition}"
                                     data-callback="onRecaptchaV2Submit"
                                     name="submitBtn"
-                                    accesskey="l"
-                                    th:text="#{screen.welcome.button.login}"
-                                    tabindex="6"
-                            />
+                                    accesskey="l">
+                                <span class="mdc-button__label" th:text="#{screen.welcome.button.login}"></span>
+                            </button>
                         </span>
 
-                        <span th:if="${recaptchaVersion=='v3'}" th:remove="tag">
-                            <input class="btn btn-block btn-submit"
+                        <span th:case="'v3'" th:remove="tag">
+                            <button class="mdc-button mdc-button--raised"
                                    th:if="${recaptchaSiteKey != null}"
                                    name="submit"
                                    th:attr="data-sitekey=${recaptchaSiteKey}"
                                    accesskey="l"
                                    th:value="#{screen.welcome.button.login}"
-                                   tabindex="6"
                                    type="submit"
-                                   value="Login3"
-                            />
+                                   value="Login3">
+                                <span class="mdc-button__label" th:text="#{screen.welcome.button.login}"></span>
+                            </button>
                          </span>
-                    </form>
+                    </span>
+                </form>
 
-                    <div th:replace="fragments/pmlinks :: pmlinks"/>
+                <hr class="my-4" />
 
-                    <script type="text/javascript" th:inline="javascript">
-                        /*<![CDATA[*/
-                        var i = /*[[@{#{screen.welcome.button.loginwip}}]]*/
-                        var j = /*[[@{#{screen.welcome.button.login}}]]*/
-                            /*]]>*/
-                            $(window).on('pageshow', function () {
-                                $(':submit').prop('disabled', false);
-                                $(':submit').attr('value', j);
-                            });
-                        $(document).ready(function () {
-                            $("#fm1").submit(function () {
-                                $(":submit").attr("disabled", true);
-                                $(":submit").attr("value", i);
-                                return true;
-                            });
+                <div th:replace="fragments/pmlinks :: pmlinks" />
+
+                <script type="text/javascript" th:inline="javascript">
+                    /*<![CDATA[*/
+                    var i = /*[[@{#{screen.welcome.button.loginwip}}]]*/
+                    var j = /*[[@{#{screen.welcome.button.login}}]]*/
+                        /*]]>*/
+                        $(window).on('pageshow', function () {
+                            $(':submit').prop('disabled', false);
+                            $(':submit').attr('value', j);
                         });
-                    </script>
+                    $(document).ready(function () {
+                        $("#fm1").submit(function () {
+                            $(":submit").attr("disabled", true);
+                            $(":submit").attr("value", i);
+                            return true;
+                        });
+                    });
+                </script>
 
-                    <div th:replace="fragments/loginsidebar :: loginsidebar"/>
-                </div>
+                
             </div>
+            <div th:replace="fragments/loginsidebar :: loginsidebar" />
         </div>
     </div>
 </main>

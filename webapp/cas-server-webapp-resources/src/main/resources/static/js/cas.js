@@ -1,12 +1,42 @@
-/* global trackGeoLocation, jqueryReady */
+(function (material) {
+    var cas = {
+        init: function () {
+            cas.attachFields();
+            material.autoInit();
+        },
+        attachFields: function () {
+            var divs = document.querySelectorAll('.mdc-text-field'),
+                field;
+            divs.forEach(function (div) {
+                field = material.textField.MDCTextField.attachTo(div);
+                if (div.classList.contains('caps-check')) {
+                    field.foundation_.adapter_.registerInputInteractionHandler('keypress', cas.checkCaps);
+                }
+            });
 
-/* exported resourceLoadedSuccessfully */
+            //MDCTextFieldIconAdapter
+        },
+        checkCaps: function (ev) {
+            var s = String.fromCharCode(ev.which);
+            if (s.toUpperCase() === s && s.toLowerCase() !== s && !ev.shiftKey) {
+                ev.target.parentElement.classList.add('caps-on');
+            } else {
+                console.log('caps off')
+                ev.target.parentElement.classList.remove('caps-on');
+            }
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        cas.init();
+    });
+})(mdc);
 
 function requestGeoPosition() {
     // console.log('Requesting GeoLocation data from the browser...');
     if (navigator.geolocation) {
         navigator.geolocation.watchPosition(showGeoPosition, logGeoLocationError,
-            {maximumAge: 600000, timeout: 8000, enableHighAccuracy: true});
+            { maximumAge: 600000, timeout: 8000, enableHighAccuracy: true });
     } else {
         console.log('Browser does not support Geo Location');
     }
@@ -14,18 +44,18 @@ function requestGeoPosition() {
 
 function logGeoLocationError(error) {
     switch (error.code) {
-    case error.PERMISSION_DENIED:
-        console.log('User denied the request for GeoLocation.');
-        break;
-    case error.POSITION_UNAVAILABLE:
-        console.log('Location information is unavailable.');
-        break;
-    case error.TIMEOUT:
-        console.log('The request to get user location timed out.');
-        break;
-    default:
-        console.log('An unknown error occurred.');
-        break;
+        case error.PERMISSION_DENIED:
+            console.log('User denied the request for GeoLocation.');
+            break;
+        case error.POSITION_UNAVAILABLE:
+            console.log('Location information is unavailable.');
+            break;
+        case error.TIMEOUT:
+            console.log('The request to get user location timed out.');
+            break;
+        default:
+            console.log('An unknown error occurred.');
+            break;
     }
 }
 
@@ -41,7 +71,7 @@ function preserveAnchorTagOnForm() {
     $('#fm1').submit(function () {
         var location = self.document.location;
         var hash = decodeURIComponent(location.hash);
-        
+
         if (hash != undefined && hash != '' && hash.indexOf('#') === -1) {
             hash = '#' + hash;
         }
@@ -58,7 +88,7 @@ function preserveAnchorTagOnForm() {
         }
         action += hash;
         $('#fm1').attr('action', action);
-        
+
     });
 }
 
@@ -74,6 +104,7 @@ function preventFormResubmission() {
 }
 
 function resourceLoadedSuccessfully() {
+    console.log('resourceLoadedSuccessfully');
     $(document).ready(function () {
 
         if (trackGeoLocation) {
@@ -86,32 +117,23 @@ function resourceLoadedSuccessfully() {
 
         preserveAnchorTagOnForm();
         preventFormResubmission();
-
-        $('#capslock-on').hide();
         $('#fm1 input[name="username"],[name="password"]').trigger('input');
         $('#fm1 input[name="username"]').focus();
 
-        $('#password').keypress(function (e) {
-            var s = String.fromCharCode(e.which);
-            if (s.toUpperCase() === s && s.toLowerCase() !== s && !e.shiftKey) {
-                $('#capslock-on').show();
-            } else {
-                $('#capslock-on').hide();
-            }
+        let $revealpassword = $('.reveal-password');
+        $revealpassword.mouseup(function (ev) {
+            $('.pwd').attr('type', 'password');
+            $(".reveal-password-icon").removeClass("mdi mdi-eye-off").addClass("mdi mdi-eye");
+            ev.preventDefault();
+        })
+
+        $revealpassword.mousedown(function (ev) {
+            $('.pwd').attr('type', 'text');
+            $(".reveal-password-icon").removeClass("mdi mdi-eye").addClass("mdi mdi-eye-off");
+            ev.preventDefault();
         });
 
-        let $revealpassword = $('.reveal-password');
-        $revealpassword.mouseup(function() {
-            $('.pwd').attr('type', 'password');
-            $(".reveal-password-icon").removeClass("fa fa-eye-slash").addClass("fa fa-eye");
-        })
-
-        $revealpassword.mousedown(function() {
-            $('.pwd').attr('type', 'text');
-            $(".reveal-password-icon").removeClass("fa fa-eye").addClass("fa fa-eye-slash");
-        })
-        
-        if (typeof(jqueryReady) == 'function') {
+        if (typeof (jqueryReady) == 'function') {
             jqueryReady();
         }
     });

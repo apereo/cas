@@ -6,12 +6,10 @@
 </head>
 
 <body id="cas">
-<div layout:fragment="content">
-    <h2 th:text="#{cas.oauth.device.confirmed.header}"/>
-    <div class="alert alert-info">
-        <p th:text="#{cas.oauth.device.confirmed.message}"/>
+    <div layout:fragment="content" class="banner banner-success mdc-card p-4 m-auto w-lg-66">
+        <h2 th:text="#{cas.oauth.device.confirmed.header}" />
+        <p th:text="#{cas.oauth.device.confirmed.message}" />
     </div>
-    <p>
-</div>
 </body>
+
 </html>
