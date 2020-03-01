@@ -11,17 +11,18 @@ java -version
 timeout=640000
 casVersion=(`cat ./gradle.properties | grep "version" | cut -d= -f2`)
 
+echo -e "\n"
 echo "***************************************************************"
 echo "Welcome to the release process for Apereo CAS ${casVersion}"
 echo "***************************************************************"
-
+echo -e "\n"
 echo -e "Make sure the following criteria is met:\n"
 echo -e "\t- Your Sonatype account (username/password) must be authorized to publish releases to 'org.apereo'."
-echo -e "\t- Your PGP signatures must be configured to sign the release artifacts apriori."
+echo -e "\t- Your PGP signatures must be configured via '~/.gradle/gradle.properties' to sign the release artifacts:"
 echo -e "\t\tsigning.keyId=YOUR_KEY_ID"
 echo -e "\t\tsigning.password=YOUR_KEY_PASSWORD"
 echo -e "\t\tsigning.secretKeyRingFile=/path/to/.gnupg/secring.gpg"
-echo -e "\t- Disable the Gradle daemon and parallel processing via properties '~/.gradle/gradle.properties'."
+echo -e "\t- Disable the Gradle daemon and parallel processing via '~/.gradle/gradle.properties':"
 echo -e "\t\torg.gradle.daemon=false"
 echo -e "\t\torg.gradle.parallel=false"
 echo -e "\nFor more information, please visit\n\thttps://apereo.github.io/cas/developer/Release-Process.html\n"

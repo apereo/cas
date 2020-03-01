@@ -1,6 +1,6 @@
 package org.apereo.cas.util.junit;
 
-import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
+import org.springframework.test.context.junit.jupiter.EnabledIf;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
@@ -16,8 +16,8 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * @author Timur Duehr
  * @since 6.1.0
  */
-@Target({ METHOD, TYPE, ANNOTATION_TYPE })
+@Target({METHOD, TYPE, ANNOTATION_TYPE})
 @Retention(RUNTIME)
-@EnabledIfEnvironmentVariable(named = "CI", matches = "true")
+@EnabledIf("#{ 'true'.equals(systemProperties['CI']) or 'true'.equals(systemEnvironment['CI']) }")
 public @interface EnabledIfContinuousIntegration {
 }

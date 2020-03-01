@@ -173,7 +173,7 @@ allprojects {
     }
 
     repositories {
-        mavenLocal{
+        mavenLocal {
             content {
                 includeModuleByRegex "org\\.apereo", "person-directory.*"
                 includeGroupByRegex "$mavenLocalGroupInclude"
@@ -237,7 +237,7 @@ subprojects {
     ext.libraries = rootProject.ext.libraries
 
     repositories {
-        mavenLocal{
+        mavenLocal {
             content {
                 includeModuleByRegex "org\\.apereo", "person-directory.*"
                 includeGroupByRegex "$mavenLocalGroupInclude"
@@ -289,7 +289,7 @@ subprojects {
         }
         jcenter()
     }
-    
+
     configurations {
         tests
     }
@@ -384,7 +384,7 @@ subprojects {
                     }
                 }
             }
-            
+
             signing {
                 required = isArtifactSigningRequired
                 sign publishing.publications
@@ -457,13 +457,13 @@ subprojects {
     jar {
         manifest {
             attributes(
-                "Automatic-Module-Name": project.name,
-                "Implementation-Title": project.name,
-                "Implementation-Vendor": project.group,
-                "Created-By": project.group,
-                "Implementation-Date": java.time.ZonedDateTime.now(ZoneId.systemDefault()),
-                "Specification-Version": "${-> project.ext.has("gitProps") ? project.ext.gitProps['git.commit.id'] : 'N/A'}",
-                "Implementation-Version": project.version)
+                    "Automatic-Module-Name": project.name,
+                    "Implementation-Title": project.name,
+                    "Implementation-Vendor": project.group,
+                    "Created-By": project.group,
+                    "Implementation-Date": java.time.ZonedDateTime.now(ZoneId.systemDefault()),
+                    "Specification-Version": "${-> project.ext.has("gitProps") ? project.ext.gitProps['git.commit.id'] : 'N/A'}",
+                    "Implementation-Version": project.version)
         }
     }
 
@@ -519,10 +519,11 @@ subprojects {
         api libraries.inspektr
         api libraries.persondirectory
         api libraries.spring
+        api libraries.bytebuddy
         api libraries.jackson
         api libraries.httpclient
         api libraries.quartz
-        api libraries.hibernate
+        api libraries.hibernatevalidator
         api libraries.groovy
         api libraries.caffein
         api libraries.springcloud

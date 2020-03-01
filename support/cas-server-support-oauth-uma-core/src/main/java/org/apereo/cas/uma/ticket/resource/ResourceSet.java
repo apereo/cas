@@ -6,17 +6,15 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
-import org.hibernate.annotations.GenericGenerator;
 import org.pac4j.core.profile.CommonProfile;
+import org.springframework.data.annotation.Id;
 import org.springframework.http.HttpStatus;
 
 import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.Lob;
-import javax.persistence.Table;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.Transient;
+
 import java.io.Serializable;
 import java.util.HashSet;
 
@@ -28,17 +26,14 @@ import java.util.HashSet;
  */
 @Getter
 @Setter
-@Table(name = "UMA_ResourceSet")
 @EqualsAndHashCode(of = "id")
-@Entity
 @NoArgsConstructor
+@MappedSuperclass
 public class ResourceSet implements Serializable {
     private static final long serialVersionUID = -5529923878827427102L;
 
-    @org.springframework.data.annotation.Id
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
-    @GenericGenerator(name = "native", strategy = "native")
+    @Transient
     private long id;
 
     @Column

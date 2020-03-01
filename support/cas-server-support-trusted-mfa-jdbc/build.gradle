@@ -1,5 +1,7 @@
 description = "Apereo CAS Trusted MFA Browser/Device JDBC Support"
 dependencies {
+    implementation libraries.hibernate
+    
     implementation project(":support:cas-server-support-trusted-mfa")
     implementation project(":support:cas-server-support-trusted-mfa-core")
     implementation project(":support:cas-server-support-jpa-util")
@@ -19,6 +21,7 @@ dependencies {
     testImplementation project(":core:cas-server-core-configuration")
     
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-services-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
     testImplementation project(path: ":support:cas-server-support-ldap", configuration: "tests")

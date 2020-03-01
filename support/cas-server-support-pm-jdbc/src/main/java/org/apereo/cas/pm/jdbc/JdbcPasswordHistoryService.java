@@ -22,7 +22,7 @@ import java.util.Collection;
 @Transactional(transactionManager = "transactionManagerPasswordHistory")
 @ToString
 public class JdbcPasswordHistoryService extends BasePasswordHistoryService {
-    private static final String SELECT_QUERY = "SELECT p FROM PasswordHistoryEntity p ";
+    private static final String SELECT_QUERY = "SELECT p FROM JdbcPasswordHistoryEntity p ";
 
     @PersistenceContext(unitName = "passwordHistoryEntityManagerFactory")
     private transient EntityManager entityManager;
@@ -31,7 +31,7 @@ public class JdbcPasswordHistoryService extends BasePasswordHistoryService {
     public boolean exists(final PasswordChangeRequest changeRequest) {
         val encodedPassword = encodePassword(changeRequest.getPassword());
         val query = SELECT_QUERY.concat("WHERE p.username = :username AND p.password = :password");
-        return !this.entityManager.createQuery(query, PasswordHistoryEntity.class)
+        return !this.entityManager.createQuery(query, JdbcPasswordHistoryEntity.class)
             .setParameter("username", changeRequest.getUsername())
             .setParameter("password", encodedPassword)
             .setMaxResults(1)
@@ -42,7 +42,7 @@ public class JdbcPasswordHistoryService extends BasePasswordHistoryService {
     @Override
     public boolean store(final PasswordChangeRequest changeRequest) {
         val encodedPassword = encodePassword(changeRequest.getPassword());
-        val entity = new PasswordHistoryEntity();
+        val entity = new JdbcPasswordHistoryEntity();
         entity.setUsername(changeRequest.getUsername());
         entity.setPassword(encodedPassword);
         this.entityManager.merge(entity);
@@ -50,13 +50,13 @@ public class JdbcPasswordHistoryService extends BasePasswordHistoryService {
     }
 
     @Override
-    public Collection<PasswordHistoryEntity> fetchAll() {
-        return this.entityManager.createQuery(SELECT_QUERY, PasswordHistoryEntity.class).getResultList();
+    public Collection<? extends PasswordHistoryEntity> fetchAll() {
+        return this.entityManager.createQuery(SELECT_QUERY, JdbcPasswordHistoryEntity.class).getResultList();
     }
 
     @Override
-    public Collection<PasswordHistoryEntity> fetch(final String username) {
-        return this.entityManager.createQuery(SELECT_QUERY.concat("WHERE p.username = :username"), PasswordHistoryEntity.class)
+    public Collection<? extends PasswordHistoryEntity> fetch(final String username) {
+        return this.entityManager.createQuery(SELECT_QUERY.concat("WHERE p.username = :username"), JdbcPasswordHistoryEntity.class)
             .setParameter("username", username)
             .getResultList();
     }
@@ -70,6 +70,6 @@ public class JdbcPasswordHistoryService extends BasePasswordHistoryService {
 
     @Override
     public void removeAll() {
-        this.entityManager.createQuery("DELETE FROM PasswordHistoryEntity p").executeUpdate();
+        this.entityManager.createQuery("DELETE FROM JdbcPasswordHistoryEntity p").executeUpdate();
     }
 }

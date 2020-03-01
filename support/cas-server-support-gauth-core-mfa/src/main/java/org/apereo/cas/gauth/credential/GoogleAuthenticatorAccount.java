@@ -6,8 +6,6 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
 import java.util.List;
 
 /**
@@ -16,8 +14,6 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Entity
-@Table(name = "GoogleAuthenticatorRegistrationRecord")
 @NoArgsConstructor
 public class GoogleAuthenticatorAccount extends OneTimeTokenAccount {
     private static final long serialVersionUID = 2441775052626253711L;

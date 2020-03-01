@@ -1,0 +1,5 @@
+<footer class="py-4 d-flex justify-content-center cas-footer">
+    <span id="copyright" th:utext="#{copyright}" class="mr-2 d-inline-block">Copyright Date Apereo, Inc</span>
+    <span class="mr-2 d-inline-block">Powered by <a href="https://github.com/apereo/cas">Apereo CAS</a></span>
+    <code class="version" th:text="${T(org.apereo.cas.util.CasVersion).getVersion() + ' ' + T(org.apereo.cas.util.CasVersion).getDateTime()}"></code>
+</footer>

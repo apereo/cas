@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+
+<head>
+    <title th:text="#{cas.oauth.confirm.pagetitle}"></title>
+</head>
+
+<body id="cas">
+    <div layout:fragment="content" class="banner banner-success mdc-card p-4 m-auto w-lg-66">
+        <h2 th:text="#{cas.oauth.device.confirmed.header}" />
+        <p th:text="#{cas.oauth.device.confirmed.message}" />
+    </div>
+</body>
+
+</html>

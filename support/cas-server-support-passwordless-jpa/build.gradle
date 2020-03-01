@@ -1,5 +1,7 @@
 description = "Apereo CAS Passwordless Authentication JPA Support"
 dependencies {
+    implementation libraries.hibernate
+
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-services")
@@ -14,6 +16,7 @@ dependencies {
 
     implementation project(":support:cas-server-support-actions")
     implementation project(":support:cas-server-support-passwordless")
+    implementation project(":support:cas-server-support-jpa-util")
     
     runtimeOnly project(":support:cas-server-support-jdbc-drivers")
 

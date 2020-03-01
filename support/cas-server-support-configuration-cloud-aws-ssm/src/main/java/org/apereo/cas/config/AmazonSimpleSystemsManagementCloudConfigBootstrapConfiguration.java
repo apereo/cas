@@ -51,7 +51,7 @@ public class AmazonSimpleSystemsManagementCloudConfigBootstrapConfiguration impl
                     val prefix = String.format("/cas/%s", profile);
                     val request = new GetParametersByPathRequest()
                         .withPath(prefix)
-                        .withWithDecryption(true)
+                        .withWithDecryption(Boolean.TRUE)
                         .withNextToken(nextToken);
                     val result = client.getParametersByPath(request);
                     nextToken = result.getNextToken();

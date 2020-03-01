@@ -704,6 +704,23 @@ ext.libraries = [
             exclude(group: "org.slf4j", module: "slf4j-api")
             force = true
         },
+        bytebuddy : [
+                dependencies.create("net.bytebuddy:byte-buddy:$bytebuddyVersion") {
+                    force = true
+                }
+        ],
+        hibernatevalidator : [
+                dependencies.create("org.hibernate:hibernate-validator:$hibernateValidatorVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.hibernate", module: "hibernate-core")
+                    exclude(group: "org.hibernate", module: "hibernate-entitymanager")
+                    force = true
+                },
+                dependencies.create("javax.persistence:javax.persistence-api:$jpaPersistenceApiVersion") {
+                    exclude(group: "xml-apis", module: "xml-apis")
+                    force = true
+                }
+        ],
         hibernate               : [
                 dependencies.create("org.hibernate:hibernate-core:$hibernateVersion") {
                     exclude(group: "org.hibernate", module: "hibernate-entitymanager")
@@ -721,9 +738,6 @@ ext.libraries = [
                 },
                 dependencies.create("org.dom4j:dom4j:$dom4jVersion") {
                     exclude(group: "xml-apis", module: "xml-apis")
-                    force = true
-                },
-                dependencies.create("net.bytebuddy:byte-buddy:$bytebuddyVersion") {
                     force = true
                 },
                 dependencies.create("org.hibernate:hibernate-hikaricp:$hibernateVersion") {
@@ -747,12 +761,6 @@ ext.libraries = [
                     exclude(group: "org.jboss.logging", module: "jboss-logging")
                     exclude(group: "org.hibernate", module: "hibernate-core")
                     exclude(group: "net.bytebuddy", module: "byte-buddy")
-                    force = true
-                },
-                dependencies.create("org.hibernate:hibernate-validator:$hibernateValidatorVersion") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "org.hibernate", module: "hibernate-core")
-                    exclude(group: "org.hibernate", module: "hibernate-entitymanager")
                     force = true
                 },
                 dependencies.create("com.zaxxer:HikariCP:$hikariVersion") {
@@ -1646,7 +1654,7 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "slf4j-api")
                 }
         ],
-        jdom                    : dependencies.create("jdom:jdom:$jdomVersion") {
+        jdom                    : dependencies.create("org.jdom:jdom2:$jdomVersion") {
             exclude(group: "xml-apis", module: "xml-apis")
             force = true
         },
@@ -3788,6 +3796,15 @@ ext.libraries = [
                 dependencies.create("org.webjars:bootstrap-select:$bootstrapSelectVersion") {
                     exclude(group: "org.webjars", module: "jquery")
                     exclude(group: "org.webjars", module: "bootstrap")
+                    force = true
+                },
+                dependencies.create("org.webjars.npm:material-components-web:$materialVersion") {
+                    force = true
+                },
+                dependencies.create("org.webjars.npm:mdi__font:$mdiFontVersion") {
+                    force = true
+                },
+                dependencies.create("org.webjars.npm:normalize.css:$normalizeVersion") {
                     force = true
                 }
         ]

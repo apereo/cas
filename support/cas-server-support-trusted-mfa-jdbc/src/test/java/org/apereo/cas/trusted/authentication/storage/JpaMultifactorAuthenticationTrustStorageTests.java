@@ -42,15 +42,21 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreAuditConfiguration.class,
     RefreshAutoConfiguration.class
 },
-    properties = "cas.jdbc.physicalTableNames.MultifactorAuthenticationTrustRecord=mfaauthntrustedrec")
+    properties = {
+        "cas.jdbc.showSql=true",
+        "cas.jdbc.physicalTableNames.MultifactorAuthenticationTrustRecord=mfaauthntrustedrec"
+    })
 @EnableTransactionManagement(proxyTargetClass = true)
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @EnableScheduling
 @Tag("JDBC")
 public class JpaMultifactorAuthenticationTrustStorageTests {
     private static final String PRINCIPAL = "principal";
+
     private static final String PRINCIPAL2 = "principal2";
+
     private static final String GEOGRAPHY = "geography";
+
     private static final String DEVICE_FINGERPRINT = "deviceFingerprint";
 
     @Autowired
