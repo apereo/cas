@@ -633,13 +633,9 @@ task jacocoRootReport(type: JacocoReport, group: "Coverage reports") {
         fileTree(dir: it,
                 include: '**/*.class',
                 exclude: [
-                        '**/shell/cli/**',
-                        '**/shell/commands/**',
                         '**/**ConfigurationMetadataGenerator**',
                         '**/**Application.class',
                         '**/**Application$**',
-                        '**/**Exception.class',
-                        '**/**Banner.class',
                         '**/**Exception$**',
                         '**/**Properties.class',
                         '**/**Properties$**'

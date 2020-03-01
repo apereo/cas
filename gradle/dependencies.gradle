@@ -2506,6 +2506,17 @@ ext.libraries = [
                     exclude(group: "commons-lang", module: "commons-lang")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-web")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-actuator")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-webflux")
+                    force = true
+                },
+                dependencies.create("org.springframework.boot:spring-boot-starter-webflux:$springBootVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.slf4j", module: "jul-to-slf4j")
+                    exclude(group: "com.google.guava", module: "guava")
+                    exclude(group: "commons-lang", module: "commons-lang")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-web")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-actuator")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
                     force = true
                 }
         ],
