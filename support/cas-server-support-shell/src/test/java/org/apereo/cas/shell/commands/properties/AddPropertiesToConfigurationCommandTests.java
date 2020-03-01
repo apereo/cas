@@ -3,7 +3,6 @@ package org.apereo.cas.shell.commands.properties;
 import org.apereo.cas.shell.commands.BaseCasShellCommandTests;
 
 import lombok.SneakyThrows;
-import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 
