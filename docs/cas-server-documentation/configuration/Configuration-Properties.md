@@ -963,10 +963,10 @@ If multiple attribute repository sources are defined, they are added into a list
 and their results are cached and merged.
 
 ```properties
-# cas.authn.attributeRepository.expirationTime=30
-# cas.authn.attributeRepository.expirationTimeUnit=MINUTES
-# cas.authn.attributeRepository.maximumCacheSize=10000
-# cas.authn.attributeRepository.merger=REPLACE|ADD|MULTIVALUED|NONE
+# cas.authn.attribute-repository.expirationTime=30
+# cas.authn.attribute-repository.expirationTimeUnit=MINUTES
+# cas.authn.attribute-repository.maximumCacheSize=10000
+# cas.authn.attribute-repository.merger=REPLACE|ADD|MULTIVALUED|NONE
 ```
 
 <div class="alert alert-info"><strong>Remember This</strong><p>Note that in certain cases,
@@ -1009,7 +1009,7 @@ if explicit attribute mappings are defined, then *only mapped attributes* are re
 Attributes may be allowed to be virtually renamed and remapped. The following definition, for instance, attempts to grab the attribute `uid` from the attribute source and rename it to `userId`:
 
 ```properties
-# cas.authn.attributeRepository.[type-placeholder].attributes.uid=userId
+# cas.authn.attribute-repository.[type-placeholder].attributes.uid=userId
 ```
 
 ### Merging Strategies
@@ -1028,26 +1028,26 @@ The following merging strategies can be used to resolve conflicts when the same 
 Static attributes that need to be mapped to a hardcoded value belong here.
 
 ```properties
-# cas.authn.attributeRepository.stub.id=
+# cas.authn.attribute-repository.stub.id=
 
-# cas.authn.attributeRepository.stub.attributes.uid=uid
-# cas.authn.attributeRepository.stub.attributes.displayName=displayName
-# cas.authn.attributeRepository.stub.attributes.cn=commonName
-# cas.authn.attributeRepository.stub.attributes.affiliation=groupMembership
+# cas.authn.attribute-repository.stub.attributes.uid=uid
+# cas.authn.attribute-repository.stub.attributes.displayName=displayName
+# cas.authn.attribute-repository.stub.attributes.cn=commonName
+# cas.authn.attribute-repository.stub.attributes.affiliation=groupMembership
 ```
 
 ### LDAP
 
-If you wish to directly and separately retrieve attributes from an LDAP source, LDAP settings for this feature are available [here](Configuration-Properties-Common.html#ldap-connection-settings) under the configuration key `cas.authn.attributeRepository.ldap[0]`.
+If you wish to directly and separately retrieve attributes from an LDAP source, LDAP settings for this feature are available [here](Configuration-Properties-Common.html#ldap-connection-settings) under the configuration key `cas.authn.attribute-repository.ldap[0]`.
 
 ```properties
-# cas.authn.attributeRepository.ldap[0].id=
-# cas.authn.attributeRepository.ldap[0].order=0
+# cas.authn.attribute-repository.ldap[0].id=
+# cas.authn.attribute-repository.ldap[0].order=0
 
-# cas.authn.attributeRepository.ldap[0].attributes.uid=uid
-# cas.authn.attributeRepository.ldap[0].attributes.displayName=displayName
-# cas.authn.attributeRepository.ldap[0].attributes.cn=commonName
-# cas.authn.attributeRepository.ldap[0].attributes.affiliation=groupMembership
+# cas.authn.attribute-repository.ldap[0].attributes.uid=uid
+# cas.authn.attribute-repository.ldap[0].attributes.displayName=displayName
+# cas.authn.attribute-repository.ldap[0].attributes.cn=commonName
+# cas.authn.attribute-repository.ldap[0].attributes.affiliation=groupMembership
 ```
 
 ### Groovy
@@ -1056,10 +1056,10 @@ If you wish to directly and separately retrieve attributes from a Groovy script,
 the following settings are then relevant:
 
 ```properties
-# cas.authn.attributeRepository.groovy[0].location=file:/etc/cas/attributes.groovy
-# cas.authn.attributeRepository.groovy[0].caseInsensitive=false
-# cas.authn.attributeRepository.groovy[0].order=0
-# cas.authn.attributeRepository.groovy[0].id=
+# cas.authn.attribute-repository.groovy[0].location=file:/etc/cas/attributes.groovy
+# cas.authn.attribute-repository.groovy[0].caseInsensitive=false
+# cas.authn.attribute-repository.groovy[0].order=0
+# cas.authn.attribute-repository.groovy[0].id=
 ```
 
 The Groovy script may be designed as:
@@ -1084,9 +1084,9 @@ If you wish to directly and separately retrieve attributes from a static JSON so
 the following settings are then relevant:
 
 ```properties
-# cas.authn.attributeRepository.json[0].location=file://etc/cas/attribute-repository.json
-# cas.authn.attributeRepository.json[0].order=0
-# cas.authn.attributeRepository.json[0].id=
+# cas.authn.attribute-repository.json[0].location=file://etc/cas/attribute-repository.json
+# cas.authn.attribute-repository.json[0].order=0
+# cas.authn.attribute-repository.json[0].id=
 ```
 
 The format of the file may be:
@@ -1106,12 +1106,12 @@ The format of the file may be:
 
 ### REST
 
-Retrieve attributes from a REST endpoint. RESTful settings for this feature are available [here](Configuration-Properties-Common.html#restful-integrations) under the configuration key `cas.authn.attributeRepository.rest[0]`.
+Retrieve attributes from a REST endpoint. RESTful settings for this feature are available [here](Configuration-Properties-Common.html#restful-integrations) under the configuration key `cas.authn.attribute-repository.rest[0]`.
 
 ```properties
-# cas.authn.attributeRepository.rest[0].order=0
-# cas.authn.attributeRepository.rest[0].id=
-# cas.authn.attributeRepository.rest[0].caseInsensitive=false
+# cas.authn.attribute-repository.rest[0].order=0
+# cas.authn.attribute-repository.rest[0].id=
+# cas.authn.attribute-repository.rest[0].caseInsensitive=false
 ```
 
 The authenticating user id is passed in form of a request parameter under `username`. The response is expected
@@ -1131,11 +1131,11 @@ Similar to the Groovy option but more versatile, this option takes advantage of 
 The following settings are relevant:
 
 ```properties
-# cas.authn.attributeRepository.script[0].location=file:/etc/cas/script.groovy
-# cas.authn.attributeRepository.script[0].order=0
-# cas.authn.attributeRepository.script[0].id=
-# cas.authn.attributeRepository.script[0].caseInsensitive=false
-# cas.authn.attributeRepository.script[0].engineName=js|groovy|ruby|python
+# cas.authn.attribute-repository.script[0].location=file:/etc/cas/script.groovy
+# cas.authn.attribute-repository.script[0].order=0
+# cas.authn.attribute-repository.script[0].id=
+# cas.authn.attribute-repository.script[0].caseInsensitive=false
+# cas.authn.attribute-repository.script[0].engineName=js|groovy|ruby|python
 ```
 
 While Javascript and Groovy should be natively supported by CAS, Python scripts may need
@@ -1182,29 +1182,29 @@ function run(uid, logger) {
 
 ### JDBC
 
-Retrieve attributes from a JDBC source. Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.authn.attributeRepository.jdbc[0]`.
+Retrieve attributes from a JDBC source. Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.authn.attribute-repository.jdbc[0]`.
 
 ```properties
 
-# cas.authn.attributeRepository.jdbc[0].attributes.uid=uid
-# cas.authn.attributeRepository.jdbc[0].attributes.displayName=displayName
-# cas.authn.attributeRepository.jdbc[0].attributes.cn=commonName
-# cas.authn.attributeRepository.jdbc[0].attributes.affiliation=groupMembership
+# cas.authn.attribute-repository.jdbc[0].attributes.uid=uid
+# cas.authn.attribute-repository.jdbc[0].attributes.displayName=displayName
+# cas.authn.attribute-repository.jdbc[0].attributes.cn=commonName
+# cas.authn.attribute-repository.jdbc[0].attributes.affiliation=groupMembership
 
-# cas.authn.attributeRepository.jdbc[0].singleRow=true
-# cas.authn.attributeRepository.jdbc[0].order=0
-# cas.authn.attributeRepository.jdbc[0].id=
-# cas.authn.attributeRepository.jdbc[0].requireAllAttributes=true
-# cas.authn.attributeRepository.jdbc[0].caseCanonicalization=NONE|LOWER|UPPER
-# cas.authn.attributeRepository.jdbc[0].queryType=OR|AND
+# cas.authn.attribute-repository.jdbc[0].singleRow=true
+# cas.authn.attribute-repository.jdbc[0].order=0
+# cas.authn.attribute-repository.jdbc[0].id=
+# cas.authn.attribute-repository.jdbc[0].requireAllAttributes=true
+# cas.authn.attribute-repository.jdbc[0].caseCanonicalization=NONE|LOWER|UPPER
+# cas.authn.attribute-repository.jdbc[0].queryType=OR|AND
 
 # Used only when there is a mapping of many rows to one user
-# cas.authn.attributeRepository.jdbc[0].columnMappings.columnAttrName1=columnAttrValue1
-# cas.authn.attributeRepository.jdbc[0].columnMappings.columnAttrName2=columnAttrValue2
-# cas.authn.attributeRepository.jdbc[0].columnMappings.columnAttrName3=columnAttrValue3
+# cas.authn.attribute-repository.jdbc[0].columnMappings.columnAttrName1=columnAttrValue1
+# cas.authn.attribute-repository.jdbc[0].columnMappings.columnAttrName2=columnAttrValue2
+# cas.authn.attribute-repository.jdbc[0].columnMappings.columnAttrName3=columnAttrValue3
 
-# cas.authn.attributeRepository.jdbc[0].sql=SELECT * FROM table WHERE {0}
-# cas.authn.attributeRepository.jdbc[0].username=uid
+# cas.authn.attribute-repository.jdbc[0].sql=SELECT * FROM table WHERE {0}
+# cas.authn.attribute-repository.jdbc[0].username=uid
 ```
 
 ### Grouper
@@ -1214,9 +1214,9 @@ as CAS attributes under a `grouperGroups` multi-valued attribute.
 To learn more about this topic, [please review this guide](../integration/Attribute-Resolution.html).
 
 ```properties
-# cas.authn.attributeRepository.grouper[0].enabled=true
-# cas.authn.attributeRepository.grouper[0].id=
-# cas.authn.attributeRepository.grouper[0].order=0
+# cas.authn.attribute-repository.grouper[0].enabled=true
+# cas.authn.attribute-repository.grouper[0].id=
+# cas.authn.attribute-repository.grouper[0].order=0
 ```
 
 You will also need to ensure `grouper.client.properties` is available on the classpath (i.e. `src/main/resources`)
@@ -1230,12 +1230,12 @@ with the following configured properties:
 
 ### Couchbase
 
-This option will fetch attributes from a Couchbase database for a given CAS principal. To learn more about this topic, [please review this guide](../installation/Couchbase-Authentication.html). Database settings for this feature are available [here](Configuration-Properties-Common.html#couchbase-integration-settings) under the configuration key `cas.authn.attributeRepository.couchbase`.
+This option will fetch attributes from a Couchbase database for a given CAS principal. To learn more about this topic, [please review this guide](../installation/Couchbase-Authentication.html). Database settings for this feature are available [here](Configuration-Properties-Common.html#couchbase-integration-settings) under the configuration key `cas.authn.attribute-repository.couchbase`.
 
 ```properties
-# cas.authn.attributeRepository.couchbase.usernameAttribute=username
-# cas.authn.attributeRepository.couchbase.order=0
-# cas.authn.attributeRepository.couchbase.id=
+# cas.authn.attribute-repository.couchbase.usernameAttribute=username
+# cas.authn.attribute-repository.couchbase.order=0
+# cas.authn.attribute-repository.couchbase.id=
 ```
 
 ### Redis
@@ -1245,11 +1245,11 @@ This option will fetch attributes from a Redis database for a given CAS principa
 To learn more about this topic, [please review this guide](../installation/Redis-Authentication.html).
 
 Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#redis-configuration) 
-under the configuration key `cas.authn.attributeRepository.redis`.
+under the configuration key `cas.authn.attribute-repository.redis`.
 
 ```properties
-# cas.authn.attributeRepository.redis.order=0
-# cas.authn.attributeRepository.redis.id=
+# cas.authn.attribute-repository.redis.order=0
+# cas.authn.attribute-repository.redis.id=
 ```
 
 ### Microsoft Azure Active Directory
@@ -1259,20 +1259,20 @@ This option will fetch attributes from Microsoft Azure Active Directory using th
 The following settings are available:
 
 ```properties
-# cas.authn.attributeRepository.azureActiveDirectory[0].clientId=
-# cas.authn.attributeRepository.azureActiveDirectory[0].clientSecret=
-# cas.authn.attributeRepository.azureActiveDirectory[0].clientSecret=
-# cas.authn.attributeRepository.azureActiveDirectory[0].tenant=
+# cas.authn.attribute-repository.azureActiveDirectory[0].clientId=
+# cas.authn.attribute-repository.azureActiveDirectory[0].clientSecret=
+# cas.authn.attribute-repository.azureActiveDirectory[0].clientSecret=
+# cas.authn.attribute-repository.azureActiveDirectory[0].tenant=
 
-# cas.authn.attributeRepository.azureActiveDirectory[0].id=
-# cas.authn.attributeRepository.azureActiveDirectory[0].order=0
-# cas.authn.attributeRepository.azureActiveDirectory[0].caseInsensitive=false
-# cas.authn.attributeRepository.azureActiveDirectory[0].resource=
-# cas.authn.attributeRepository.azureActiveDirectory[0].scope=
-# cas.authn.attributeRepository.azureActiveDirectory[0].grantType=
-# cas.authn.attributeRepository.azureActiveDirectory[0].apiBaseUrl=
-# cas.authn.attributeRepository.azureActiveDirectory[0].attributes=
-# cas.authn.attributeRepository.azureActiveDirectory[0].domain=
+# cas.authn.attribute-repository.azureActiveDirectory[0].id=
+# cas.authn.attribute-repository.azureActiveDirectory[0].order=0
+# cas.authn.attribute-repository.azureActiveDirectory[0].caseInsensitive=false
+# cas.authn.attribute-repository.azureActiveDirectory[0].resource=
+# cas.authn.attribute-repository.azureActiveDirectory[0].scope=
+# cas.authn.attribute-repository.azureActiveDirectory[0].grantType=
+# cas.authn.attribute-repository.azureActiveDirectory[0].apiBaseUrl=
+# cas.authn.attribute-repository.azureActiveDirectory[0].attributes=
+# cas.authn.attribute-repository.azureActiveDirectory[0].domain=
 # cas.authn.attributeRepository.azureActiveDirectory[0].loggingLevel=
 ```
 
