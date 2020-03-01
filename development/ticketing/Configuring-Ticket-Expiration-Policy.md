@@ -120,7 +120,27 @@ whose proxy ticket expiration policy is to deviate from the default configuratio
 ## Proxy-Granting Ticket Policies
 
 PGT expiration policy governs the time span during which CAS may grant PTs with a valid (non-expired) PGT.
-At this time, the expiration policy assigned to proxy-granting tickets is controlled by the same policy
-assigned to ticket-granting tickets.
+
+### Default
+
+By default, the expiration policy assigned to proxy-granting tickets is controlled by the same policy assigned to ticket-granting tickets.
+
+### Per Service
+
+The expiration policy of proxy granting tickets can be conditionally decided on a per-application basis. The candidate service
+whose proxy granting ticket expiration policy is to deviate from the default configuration must be designed as such:
+
+```json
+{
+    "@class" : "org.apereo.cas.services.RegexRegisteredService",
+    "serviceId" : "^https://.*",
+    "name" : "Sample",
+    "id" : 10,
+    "proxyGrantingTicketExpirationPolicy": {
+     "@class": "org.apereo.cas.services.DefaultRegisteredServiceProxyGrantingTicketExpirationPolicy",
+     "maxTimeToLiveInSeconds": 30
+    } 
+}
+```
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#proxy-granting-tickets-behavior).
