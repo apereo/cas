@@ -3,7 +3,7 @@
 clear
 
 printHelp() {
-    echo -e "Usage: ./testcas.sh --category [category1,category2,...] [--help] [--debug] [--coverage]\n"
+    echo -e "Usage: ./testcas.sh --category [category1,category2,...] [--help] [--no-wrapper] [--debug] [--coverage]\n"
     echo -e "Available test categories are:\n"
     echo -e "\t - simple"
     echo -e "\t - memcached"
@@ -40,11 +40,16 @@ printHelp() {
 }
 
 parallel="--parallel "
+gradleCmd="./gradlew"
 
 while (( "$#" )); do
     case "$1" in
     --coverage)
         coverage="jacocoRootReport "
+        shift
+        ;;
+    --no-wrapper)
+        gradleCmd="gradle"
         shift
         ;;
     --help)
@@ -211,9 +216,9 @@ fi
 flags="--build-cache -x javadoc -x check -DignoreTestFailures=false -DskipNestedConfigMetadataGen=true \
 -DshowStandardStreams=true --no-daemon --configure-on-demand"
 
-cmdstring="\033[1m./gradlew \e[32m$task\e[39m-DtestCategoryType=\e[33m$category\e[36m$tests\e[39m $flags ${coverage}${debug}${parallel}\e[39m"
+cmdstring="\033[1m$gradleCmd \e[32m$task\e[39m-DtestCategoryType=\e[33m$category\e[36m$tests\e[39m $flags ${coverage}${debug}${parallel}\e[39m"
 printf "$cmdstring \e[0m\n"
 
-cmd="./gradlew $task -DtestCategoryType=$category $tests $flags ${coverage} ${debug} ${parallel}"
+cmd="$gradleCmd $task -DtestCategoryType=$category $tests $flags ${coverage} ${debug} ${parallel}"
 eval "$cmd"
 

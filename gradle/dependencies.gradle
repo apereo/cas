@@ -704,6 +704,11 @@ ext.libraries = [
             exclude(group: "org.slf4j", module: "slf4j-api")
             force = true
         },
+        bytebuddy : [
+                dependencies.create("net.bytebuddy:byte-buddy:$bytebuddyVersion") {
+                    force = true
+                }
+        ],
         hibernatevalidator : [
                 dependencies.create("org.hibernate:hibernate-validator:$hibernateValidatorVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
@@ -733,9 +738,6 @@ ext.libraries = [
                 },
                 dependencies.create("org.dom4j:dom4j:$dom4jVersion") {
                     exclude(group: "xml-apis", module: "xml-apis")
-                    force = true
-                },
-                dependencies.create("net.bytebuddy:byte-buddy:$bytebuddyVersion") {
                     force = true
                 },
                 dependencies.create("org.hibernate:hibernate-hikaricp:$hibernateVersion") {
