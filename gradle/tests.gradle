@@ -320,8 +320,8 @@ tasks.withType(Test) {
             logger.info "Maximum number of parallel forks is set to ${maxParallelForks}"
         }
     }
-    systemProperties = System.properties
     systemProperty("spring.main.banner-mode", "off")
+    systemProperty("CI", System.getProperty("CI"))
 
     failFast = true
     jvmArgs.addAll(["-Xms512m", "-Xmx4g"])

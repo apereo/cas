@@ -10,7 +10,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 
 import java.io.File;
-import java.io.FileWriter;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -28,7 +29,7 @@ public class ValidateRegisteredServiceCommandTests extends BaseCasShellCommandTe
         val file = File.createTempFile("service", ".json");
         val yaml = File.createTempFile("service", ".yaml");
         val svc = RegisteredServiceTestUtils.getRegisteredService("example");
-        new RegisteredServiceJsonSerializer().to(new FileWriter(file), svc);
+        new RegisteredServiceJsonSerializer().to(Files.newBufferedWriter(file.toPath(), StandardCharsets.UTF_8), svc);
         assertTrue(file.exists());
         assertNotNull(shell.evaluate(() -> "generate-yaml --file " + file.getPath() + " --destination " + yaml.getPath()));
         assertTrue(yaml.exists());
