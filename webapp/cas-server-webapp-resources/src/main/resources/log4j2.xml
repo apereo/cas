@@ -77,12 +77,10 @@
         <AsyncLogger name="org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration" level="${sys:spring.security.log.level}" />
         <AsyncLogger name="org.springframework.boot.autoconfigure.security" level="${sys:spring.security.log.level}" />
         <AsyncLogger name="org.springframework.boot.devtools" level="debug" />
-
-
+        
         <AsyncLogger name="org.springframework" level="warn" includeLocation="true" />
         <AsyncLogger name="org.springframework.webflow" level="${sys:spring.webflow.log.level}" includeLocation="true"/>
         <AsyncLogger name="org.springframework.aop" level="warn" includeLocation="true" />
-        <AsyncLogger name="org.springframework.web" level="warn" includeLocation="true"/>
         <AsyncLogger name="org.springframework.session" level="warn" includeLocation="true"/>
         <AsyncLogger name="org.springframework.scheduling" level="info" includeLocation="true"/>
         <AsyncLogger name="org.springframework.cloud.vault" level="warn" includeLocation="true" />
@@ -97,7 +95,7 @@
         <AsyncLogger name="org.springframework.scheduling" level="warn" includeLocation="true"/>
         <AsyncLogger name="org.springframework.context.annotation" level="off" includeLocation="true"/>
         <AsyncLogger name="org.springframework.web.socket" level="warn" includeLocation="true"/>
-        <AsyncLogger name="org.springframework.boot.diagnostics.LoggingFailureAnalysisReporter" level="debug" includeLocation="true"/>
+        <AsyncLogger name="org.springframework.boot.diagnostics.LoggingFailureAnalysisReporter" level="trace" includeLocation="true"/>
 
         <AsyncLogger name="com.couchbase" level="warn" includeLocation="true" />
         <AsyncLogger name="org.apache" level="error" includeLocation="true"/>
