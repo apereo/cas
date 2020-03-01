@@ -3,6 +3,8 @@ package org.apereo.cas.shell.commands;
 import org.apereo.cas.shell.commands.cipher.GenerateCryptoKeysCommandTests;
 import org.apereo.cas.shell.commands.cipher.StringableCipherExecutorCommandTests;
 import org.apereo.cas.shell.commands.db.GenerateDdlCommandTests;
+import org.apereo.cas.shell.commands.jasypt.JasyptDecryptPropertyCommandTests;
+import org.apereo.cas.shell.commands.jasypt.JasyptEncryptPropertyCommandTests;
 import org.apereo.cas.shell.commands.jasypt.JasyptListAlgorithmsCommandTests;
 import org.apereo.cas.shell.commands.jasypt.JasyptListProvidersCommandTests;
 import org.apereo.cas.shell.commands.jasypt.JasyptTestAlgorithmsCommandTests;
@@ -11,6 +13,7 @@ import org.apereo.cas.shell.commands.properties.FindPropertiesCommandTests;
 import org.apereo.cas.shell.commands.properties.ListUndocumentedPropertiesCommandTests;
 import org.apereo.cas.shell.commands.saml.GenerateSamlIdPMetadataCommandTests;
 import org.apereo.cas.shell.commands.services.AnonymousUsernameAttributeProviderCommandTests;
+import org.apereo.cas.shell.commands.services.GenerateYamlRegisteredServiceCommandTests;
 import org.apereo.cas.shell.commands.services.ValidateRegisteredServiceCommandTests;
 import org.apereo.cas.shell.commands.util.GenerateJwtCommandTests;
 import org.apereo.cas.shell.commands.util.ValidateEndpointCommandTests;
@@ -41,6 +44,9 @@ import org.junit.runner.RunWith;
     JasyptListAlgorithmsCommandTests.class,
     StringableCipherExecutorCommandTests.class,
     FindPropertiesCommandTests.class,
+    JasyptDecryptPropertyCommandTests.class,
+    JasyptEncryptPropertyCommandTests.class,
+    GenerateYamlRegisteredServiceCommandTests.class
     ListUndocumentedPropertiesCommandTests.class,
     AddPropertiesToConfigurationCommandTests.class
 })
