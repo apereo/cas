@@ -20,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @TestPropertySource(properties = {
     "cas.authn.samlIdp.metadata.jpa.idpMetadataEnabled=true",
+    "cas.authn.samlIdp.metadata.jpa.ddlAuto=create-drop",
     "cas.jdbc.showSql=true"
 })
 @Tag("SAML")

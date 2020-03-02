@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CloudWatchAppenderTests {
     @Test
-    public void verifyOperation() throws Exception {
+    public void verifyOperation() {
         val context = LoggerContext.getContext(false);
         val logger = context.getLogger(CloudWatchAppender.class.getName());
         val appender = (CloudWatchAppender) logger.getAppenders().get("CloudWatchAppender");
