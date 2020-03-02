@@ -104,7 +104,7 @@ function preventFormResubmission() {
 }
 
 function resourceLoadedSuccessfully() {
-    console.log('resourceLoadedSuccessfully');
+    
     $(document).ready(function () {
 
         if (trackGeoLocation) {

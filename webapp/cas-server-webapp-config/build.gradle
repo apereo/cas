@@ -24,6 +24,7 @@ dependencies {
     testImplementation project(":support:cas-server-support-themes")
     testImplementation project(":support:cas-server-support-thymeleaf")
     testImplementation project(":support:cas-server-support-validation")
+    testImplementation project(":support:cas-server-support-jpa-util")
 
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-audit")
