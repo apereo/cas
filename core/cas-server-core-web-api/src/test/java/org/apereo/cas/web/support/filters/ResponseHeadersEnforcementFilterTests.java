@@ -44,7 +44,7 @@ public class ResponseHeadersEnforcementFilterTests {
     }
 
     @Test
-    public void verifyParam() throws Exception {
+    public void verifyParam() {
         filter.init(filterConfig);
         val servletRequest = new MockHttpServletRequest();
         servletRequest.setSecure(true);
