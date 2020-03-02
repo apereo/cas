@@ -46,7 +46,7 @@ import org.junit.runner.RunWith;
     FindPropertiesCommandTests.class,
     JasyptDecryptPropertyCommandTests.class,
     JasyptEncryptPropertyCommandTests.class,
-    GenerateYamlRegisteredServiceCommandTests.class
+    GenerateYamlRegisteredServiceCommandTests.class,
     ListUndocumentedPropertiesCommandTests.class,
     AddPropertiesToConfigurationCommandTests.class
 })
