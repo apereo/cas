@@ -47,6 +47,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 /**
@@ -59,6 +60,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement(proxyTargetClass = true)
 @Tag("SAML")
+@TestPropertySource(properties = "cas.jdbc.showSql=true")
 public abstract class BaseJpaSamlMetadataTests {
     @Autowired
     @Qualifier("jpaSamlRegisteredServiceMetadataResolver")
