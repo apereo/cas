@@ -11,8 +11,7 @@ If you would like to create your own `css/custom.css file`, for example, you wil
 
 ```bash
 cas.standard.css.file=/css/cas.css
-cas.admin.css.file=/css/admin.css
-cas.javascript.file=/js/cas.js
+cas.standard.js.file=/js/cas.js
 ```
 
 ## Responsive Design
@@ -29,7 +28,7 @@ You can also create your own `custom.js` file, for example, and call it from wit
 <script type="text/javascript" src="/js/custom.js"></script>
 ```
 
-If you are developing themes per service, each theme also has the ability to specify a custom `cas.js` file under the `cas.javascript.file` setting.
+If you are developing themes per service, each theme also has the ability to specify a custom `cas.js` file under the `cas.standard.js.file` setting.
 
 Most importantly, the following Javascript libraries are utilized by CAS automatically:
 
@@ -52,7 +51,7 @@ functions that depend on JQuery inside the actual page.
 
 ```javascript
 function jqueryReady() {
-    //Custom Javascript tasks can be carried out now via JQuery...
+    // Custom Javascript tasks can be carried out now via JQuery...
 }
 ```
 

@@ -15,11 +15,10 @@ sourceSets {
      * Application’s static resources are loaded from their source location.
      */
     bootRun {
-        if (project.name.matches('cas-server-webapp-(tomcat|jetty|undertow)')) {
-            resources {
-                srcDirs new File("//etc/cas/templates/"),
-                        new File("${project(":webapp").getProjectDir()}/cas-server-webapp-resources/src/main/resources/")
-            }
+        resources {
+            srcDirs new File("//etc/cas/templates/"),
+                    new File("${project(":webapp").getProjectDir()}/cas-server-webapp-resources/src/main/resources/"),
+                    new File("${project(":support").getProjectDir()}/cas-server-support-thymeleaf/src/main/resources/")
         }
     }
 }

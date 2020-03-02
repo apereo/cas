@@ -3783,13 +3783,6 @@ ext.libraries = [
                 dependencies.create("org.webjars:headjs:$headjsVersion") {
                     force = true
                 },
-                dependencies.create("org.webjars:font-awesome:$fontAwesomeVersion") {
-                    force = true
-                },
-                dependencies.create("org.webjars:jquery-ui:$jqueryUiVersion") {
-                    exclude(group: "org.webjars", module: "jquery")
-                    force = true
-                },
                 dependencies.create("org.webjars:jquery:$jqueryVersion") {
                     force = true
                 },
