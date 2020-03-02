@@ -2418,6 +2418,7 @@ ext.libraries = [
             exclude(group: "c3p0", module: "c3p0")
             exclude(group: "com.mchange", module: "c3p0")
             exclude(group: "com.zaxxer", module: "HikariCP-java6")
+            exclude(group: "com.zaxxer", module: "HikariCP-java7")
             force = true
         },
         shiro                   : [
