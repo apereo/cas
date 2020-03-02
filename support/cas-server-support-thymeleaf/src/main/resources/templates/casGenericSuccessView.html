@@ -47,7 +47,8 @@
             </table>
         </div>
         <script type="text/javascript" th:inline="javascript">
-            const dataTable = new material.dataTable.MDCDataTable(document.querySelector('#divPrincipalAttributes'));
+            let div = document.querySelector('#divPrincipalAttributes');
+            const dataTable = new mdc.dataTable.MDCDataTable(div);
         </script>
     </div>
 </main>

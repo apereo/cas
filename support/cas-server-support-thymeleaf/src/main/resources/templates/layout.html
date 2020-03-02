@@ -9,16 +9,13 @@
     <title layout:title-pattern="$CONTENT_TITLE - $LAYOUT_TITLE">CAS &#8211; Central Authentication Service</title>
 
     <!--/* Core CAS CSS */-->
-    <link rel="stylesheet" type="text/css" href="../static/css/normalize.css" th:href="@{${#themes.code('webjars.normalize.css')}}"/>
-    <link rel="stylesheet" type="text/css" href="../static/css/bootstrap-grid.min.css" th:href="@{${#themes.code('webjars.bootstrap-grid.css')}}"/>
-    <link rel="stylesheet" type="text/css" href="../static/css/material-components-web.min.css" th:href="@{${#themes.code('webjars.material-components.css')}}"/>
-    <link rel="stylesheet" type="text/css" href="../static/css/mdi-font.css" th:href="@{${#themes.code('webjars.mdi-font.css')}}" />
+    <link rel="stylesheet" type="text/css" href="../static/css/normalize.css" th:href="@{#{webjars.normalize.css}}" />
+    <link rel="stylesheet" type="text/css" href="../static/css/bootstrap-grid.min.css" th:href="@{#{webjars.bootstrap-grid.css}}" />
+    <link rel="stylesheet" type="text/css" href="../static/css/material-components-web.min.css" th:href="@{#{webjars.material-components.css}}" />
+    <link rel="stylesheet" type="text/css" href="../static/css/mdi-font.css" th:href="@{#{webjars.mdi-font.css}}" />
     <link rel="stylesheet" type="text/css" href="../static/css/cas.css" th:href="@{${#themes.code('cas.standard.css.file')}}"/>
 
     <link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon"/>
-
-    <script type="text/javascript" th:src="@{${#themes.code('webjars.jquery.js')}}"></script>
-
 </head>
 
 <body>

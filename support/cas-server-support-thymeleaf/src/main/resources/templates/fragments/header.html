@@ -110,6 +110,8 @@
                 </nav>
             </div>
         </aside>
+
+        <script>var countMessages = 0;</script>
         <div class="mdc-dialog cas-notification-dialog" id="cas-notification-dialog" role="alertdialog"
             aria-modal="true" aria-labelledby="notif-dialog-title" aria-describedby="notif-dialog-content">
             <div class="mdc-dialog__container">
@@ -119,6 +121,7 @@
                     </h2>
                     <div class="mdc-dialog__content" id="notif-dialog-content">
                         <div class="cas-notification-message mdc-typography--body1" th:if="${staticAuthentication}">
+                            <script>countMessages++;</script>
                             <h5 class="mdc-typography--headline6" th:utext="#{screen.defaultauthn.title}" />
                             <p class="text text-wrap small" th:utext="#{screen.defaultauthn.heading}">
                                 Static AuthN is ONLY useful for demo purposes. It is recommended that you connect CAS to
@@ -130,6 +133,7 @@
                         <div class="cas-notification-message mdc-typography--body1"
                             th:if="${not #httpServletRequest.secure}">
                             <h5 class="mdc-typography--headline6" th:utext="#{screen.nonsecure.title}" />
+                            <script>countMessages++;</script>
                             <p class="text-wrap small" th:utext="#{screen.nonsecure.message}">
                                 Unsure Connection
                             </p>
@@ -146,10 +150,10 @@
             <div class="mdc-dialog__scrim"></div>
         </div>
         <script type="text/javascript">
-            (function (material, $) {
+            
+            (function (material) {
                 var header = {
                     init: function () {
-                        console.log('header init');
                         header.attachTopbar();
                         material.autoInit();
                     },
@@ -206,15 +210,14 @@
                     }
                 }
 
+
                 document.addEventListener('DOMContentLoaded', function () {
                     header.init();
 
-                    var countMessages = 2;
-
                     if (countMessages == 0) {
-                        $('#notifications-count').remove();
+                        window.jQuery('#notifications-count').remove();
                     } else {
-                        $('#notifications-count').text("(" + countMessages + ")")
+                        window.jQuery('#notifications-count').text("(" + countMessages + ")")
                     }
                 });
             })(mdc);
