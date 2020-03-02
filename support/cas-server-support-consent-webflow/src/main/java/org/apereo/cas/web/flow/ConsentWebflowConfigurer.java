@@ -5,14 +5,10 @@ import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
 
 import lombok.val;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
-import org.springframework.webflow.execution.Action;
-import org.springframework.webflow.execution.Event;
-import org.springframework.webflow.execution.RequestContext;
 
 /**
  * This is {@link ConsentWebflowConfigurer}.
@@ -22,7 +18,9 @@ import org.springframework.webflow.execution.RequestContext;
  */
 public class ConsentWebflowConfigurer extends AbstractCasWebflowConfigurer {
     static final String VIEW_ID_CONSENT_VIEW = "casConsentView";
+
     static final String STATE_ID_CONSENT_CONFIRM = "confirmAttributeConsent";
+
     private static final String ACTION_GEN_SERVICE_TICKET_AFTER_CONSENT = "generateServiceTicketAfterConsent";
 
     public ConsentWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
@@ -38,20 +36,10 @@ public class ConsentWebflowConfigurer extends AbstractCasWebflowConfigurer {
         val flow = getLoginFlow();
 
         if (flow != null) {
-            createInitialConsentEnabledAction(flow);
             createConsentRequiredCheckAction(flow);
             createConsentTransitions(flow);
             createConsentView(flow);
         }
-    }
-
-    private void createInitialConsentEnabledAction(final Flow flow) {
-        flow.getStartActionList().add(new Action() {
-            @Override
-            public Event execute(final RequestContext requestContext) {
-                return new EventFactorySupport().success(this);
-            }
-        });
     }
 
     private void createConsentView(final Flow flow) {

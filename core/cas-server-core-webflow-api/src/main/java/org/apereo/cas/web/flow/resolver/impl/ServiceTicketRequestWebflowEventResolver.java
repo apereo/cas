@@ -123,12 +123,8 @@ public class ServiceTicketRequestWebflowEventResolver extends AbstractCasWebflow
                     ticketGrantingTicketId, existingAuthn.getPrincipal(), principal);
                 return null;
             }
-            LOGGER.trace("Attempting to generate service ticket for [{}] based on ticket-granting ticket [{}]", service, ticketGrantingTicketId);
-            val serviceTicketId = configContext.getCentralAuthenticationService()
-                .grantServiceTicket(ticketGrantingTicketId, service, authenticationResult);
-            WebUtils.putServiceTicketInRequestScope(context, serviceTicketId);
-            WebUtils.putWarnCookieIfRequestParameterPresent(configContext.getWarnCookieGenerator(), context);
-            return newEvent(CasWebflowConstants.TRANSITION_ID_WARN);
+
+            return newEvent(CasWebflowConstants.TRANSITION_ID_GENERATE_SERVICE_TICKET);
         } catch (final AuthenticationException | AbstractTicketException e) {
             LOGGER.trace(e.getMessage(), e);
             return newEvent(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, e);
