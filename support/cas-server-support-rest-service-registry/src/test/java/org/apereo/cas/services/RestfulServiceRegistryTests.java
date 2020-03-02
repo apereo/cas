@@ -88,7 +88,6 @@ public class RestfulServiceRegistryTests extends AbstractServiceRegistryTests {
     @TestConfiguration
     public static class RestServicesTestConfiguration {
 
-
         @RestController("servicesController")
         @RequestMapping("/")
         public static class ServicesController {
