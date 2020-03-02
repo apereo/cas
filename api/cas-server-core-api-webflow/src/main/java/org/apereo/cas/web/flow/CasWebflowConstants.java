@@ -89,6 +89,11 @@ public interface CasWebflowConstants {
     String TRANSITION_ID_TICKET_GRANTING_TICKET_VALID = "valid";
 
     /**
+     * Transition id to generate service tickets.
+     */
+    String TRANSITION_ID_GENERATE_SERVICE_TICKET = "generateServiceTicket";
+
+    /**
      * The transition state 'interruptSkipped'.
      */
     String TRANSITION_ID_INTERRUPT_SKIPPED = "interruptSkipped";

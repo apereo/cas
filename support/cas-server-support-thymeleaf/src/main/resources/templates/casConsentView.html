@@ -8,32 +8,24 @@
     <title th:text="#{screen.consent.title}">Consent View</title>
     <link type="text/css" href="../../static/css/cas.css" rel="stylesheet" th:remove="tag" />
 
-    <link type="text/css" rel="stylesheet" th:href="@{#{webjars.bootstrap-selectmin.css}}">
-    <script type="text/javascript" th:src="@{#{webjars.bootstrap-selectmin.js}}"></script>
-    <script type="text/javascript" th:src="@{#{webjars.bootstrapmin.js}}"></script>
-
-    <link type="text/css" rel="stylesheet" th:href="@{#{webjars.datatables.bootstrapmin.css}}"/>
-    <script type="text/javascript" th:src="@{#{webjars.datatables.jquery.datatablesmin.js}}"></script>
-    <script type="text/javascript" th:src="@{#{webjars.datatables.datatables.bootstrapmin.js}}"></script>
-
     <script th:inline="javascript">
+        
         /*<![CDATA[*/
         var data = {
             attributes: /*[[${attributes}]]*/
         };
-        var strings = {
-            info: /*[[#{screen.consent.attributes.data.info}]]*/
-        };
-        /*]]>*/
-    </script>
-    <script type="text/javascript" th:inline="javascript">
+
+        alert(strings.info);
 
         function jqueryReady() {
-            head.load(
-                /*[[@{/js/consent.js}]]*/
-            );
+            var consentjs = /*[[@{/js/consent.js}]]*/
+            $.getScript( consentjs, function( data, textStatus, jqxhr ) {
+            });
         }
+        
+        /*]]>*/
     </script>
+
 </head>
 
 <body>
@@ -70,17 +62,25 @@
         <form method="post" id="fm1" th:action="@{/login}" class="mdc-card p-4 m-auto d-block mb-4">
             <section id="consent-tab-0" class="consent-tab">
                 <div class="" id="attributesPanel" role="tabpanel" aria-labelledby="attributes-tab">
-                    <p th:utext="#{screen.consent.attributes.header(${service.id})}">The following attributes will
-                        be released to</p>
-                    <table id="attributesTable" class="display table table-striped table-bordered">
-                        <thead>
-                            <tr>
-                                <th th:text="#{screen.consent.attributes.attribute}">Attribute</th>
-                                <th th:text="#{screen.consent.attributes.values}">Value(s)</th>
+                    <p th:utext="#{screen.consent.attributes.header(${service.id})}">The following attributes will be released to</p>
+
+
+                    <div class="w-100 mdc-data-table mx-auto my-4" id="divAttributes">
+                        <table id="attributesTable" class="mdc-data-table__table">
+                            <thead>
+                            <tr class="mdc-data-table__header-row">
+                                <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Attribute</th>
+                                <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Value(s)</th>
                             </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
+                            </thead>
+                            <tbody class="mdc-data-table__content">
+                            <tr th:each="attribute : ${attributes}" class="mdc-data-table__row">
+                                <td class="mdc-data-table__cell"><code><span th:utext="${attribute.key}"/></code></td>
+                                <td class="mdc-data-table__cell"><code><span th:utext="${attribute.value}"/></code></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </section>
 
@@ -230,6 +230,12 @@
                 </a>
             </section>
         </form>
+
+        <script type="text/javascript" th:inline="javascript">
+            let div = document.querySelector('#divAttributes');
+            new mdc.dataTable.MDCDataTable(div);
+        </script>
+
     </div>
 </main>
 </body>
