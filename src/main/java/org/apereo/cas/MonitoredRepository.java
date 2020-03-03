@@ -15,7 +15,6 @@ import com.github.zafarkhaja.semver.Version;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
@@ -31,17 +30,15 @@ import java.util.stream.Collectors;
 /**
  * A repository that should be monitored.
  *
- * @author Andy Wilkinson
+ * @author Misagh Moayyed
  */
 @RequiredArgsConstructor
 @Getter
 @Slf4j
-public class MonitoredRepository implements InitializingBean {
+public class MonitoredRepository {
     private final GitHubOperations gitHub;
-    private final GitHubProperties gitHubProperties;
 
-    private final List<Milestone> milestones = new ArrayList<>();
-    private final List<Label> labels = new ArrayList<>();
+    private final GitHubProperties gitHubProperties;
 
     private Version currentVersionInMaster;
 
@@ -49,33 +46,43 @@ public class MonitoredRepository implements InitializingBean {
         return l -> l.getName().equals(name.getTitle());
     }
 
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        final RestTemplate rest = new RestTemplate();
-        final URI uri = URI.create(gitHubProperties.getRepository().getUrl() + "/raw/master/gradle.properties");
-        final ResponseEntity entity = rest.getForEntity(uri, String.class);
-        final Properties properties = new Properties();
-        properties.load(new StringReader(entity.getBody().toString()));
-        currentVersionInMaster = Version.valueOf(properties.get("version").toString());
-
-        log.info("Current master version is {}", currentVersionInMaster);
-
-        Page<Milestone> page = gitHub.getMilestones(getOrganization(), getName());
-        while (page != null) {
-            milestones.addAll(page.getContent());
-            page = page.next();
-        }
-        log.info("Available milestones are {}", this.milestones);
+    private List<Label> getActiveLabels() {
+        final List<Label> labels = new ArrayList<>();
         try {
             Page<Label> lbl = gitHub.getLabels(getOrganization(), getName());
             while (lbl != null) {
                 labels.addAll(lbl.getContent());
                 lbl = lbl.next();
             }
-            log.info("Available labels are {}", this.labels.stream().map(Object::toString).collect(Collectors.joining(",")));
+            log.info("Available labels are {}", labels.stream().map(Object::toString).collect(Collectors.joining(",")));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
+        return labels;
+    }
+
+    private List<Milestone> getActiveMilestones() {
+        final List<Milestone> milestones = new ArrayList<>();
+        try {
+            final RestTemplate rest = new RestTemplate();
+            final URI uri = URI.create(gitHubProperties.getRepository().getUrl() + "/raw/master/gradle.properties");
+            final ResponseEntity entity = rest.getForEntity(uri, String.class);
+            final Properties properties = new Properties();
+            properties.load(new StringReader(entity.getBody().toString()));
+            currentVersionInMaster = Version.valueOf(properties.get("version").toString());
+
+            log.info("Current master version is {}", currentVersionInMaster);
+
+            Page<Milestone> page = gitHub.getMilestones(getOrganization(), getName());
+            while (page != null) {
+                milestones.addAll(page.getContent());
+                page = page.next();
+            }
+            log.info("Available milestones are {}", milestones);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+        return milestones;
     }
 
     public String getOrganization() {
@@ -87,6 +94,8 @@ public class MonitoredRepository implements InitializingBean {
     }
 
     public Optional<Milestone> getMilestoneForMaster() {
+        List<Milestone> milestones = getActiveMilestones();
+
         final Version currentVersion = Version.valueOf(currentVersionInMaster.toString().replace("-SNAPSHOT", ""));
         Optional<Milestone> result = milestones
             .stream()
@@ -101,6 +110,7 @@ public class MonitoredRepository implements InitializingBean {
     }
 
     public Optional<Milestone> getMilestoneForBranch(final String branch) {
+        List<Milestone> milestones = getActiveMilestones();
         final Version branchVersion = Version.valueOf(branch.replace(".x", "." + Integer.MAX_VALUE));
         return milestones.stream()
             .filter(milestone -> {
