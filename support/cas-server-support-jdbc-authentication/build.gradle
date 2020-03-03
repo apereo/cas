@@ -20,5 +20,6 @@ dependencies {
     testImplementation project(":core:cas-server-core-services-authentication")
     
     testImplementation project(":support:cas-server-support-jpa-hibernate")
+    testImplementation project(":support:cas-server-support-jpa-util")
     
 }

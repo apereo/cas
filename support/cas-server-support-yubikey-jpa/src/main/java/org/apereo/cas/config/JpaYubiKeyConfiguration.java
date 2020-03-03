@@ -7,7 +7,7 @@ import org.apereo.cas.adaptors.yubikey.dao.JpaYubiKeyAccountRegistry;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigurationContext;
 import org.apereo.cas.configuration.support.JpaBeans;
-import org.apereo.cas.hibernate.CasHibernateJpaBeanFactory;
+import org.apereo.cas.jpa.JpaBeanFactory;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
@@ -17,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -49,18 +48,19 @@ public class JpaYubiKeyConfiguration {
     @Autowired
     @Qualifier("yubiKeyAccountValidator")
     private ObjectProvider<YubiKeyAccountValidator> yubiKeyAccountValidator;
-
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
-
+    
     @Autowired
     @Qualifier("yubikeyAccountCipherExecutor")
     private ObjectProvider<CipherExecutor> yubikeyAccountCipherExecutor;
 
+    @Autowired
+    @Qualifier("jpaBeanFactory")
+    private ObjectProvider<JpaBeanFactory> jpaBeanFactory;
+
     @RefreshScope
     @Bean
     public JpaVendorAdapter jpaYubiKeyVendorAdapter() {
-        return CasHibernateJpaBeanFactory.newJpaVendorAdapter(casProperties.getJdbc());
+        return jpaBeanFactory.getObject().newJpaVendorAdapter(casProperties.getJdbc());
     }
 
     @Bean
@@ -84,14 +84,13 @@ public class JpaYubiKeyConfiguration {
     @Lazy
     @Bean
     public LocalContainerEntityManagerFactoryBean yubiKeyEntityManagerFactory() {
-        return CasHibernateJpaBeanFactory.newEntityManagerFactoryBean(
-            new JpaConfigurationContext(
-                jpaYubiKeyVendorAdapter(),
-                "jpaYubiKeyRegistryContext",
-                jpaYubiKeyPackagesToScan(),
-                dataSourceYubiKey()),
-            casProperties.getAuthn().getMfa().getYubikey().getJpa(),
-            applicationContext);
+        val factory = jpaBeanFactory.getObject();
+        val ctx = new JpaConfigurationContext(
+            jpaYubiKeyVendorAdapter(),
+            "jpaYubiKeyRegistryContext",
+            jpaYubiKeyPackagesToScan(),
+            dataSourceYubiKey());
+        return factory.newEntityManagerFactoryBean(ctx, casProperties.getAuthn().getMfa().getYubikey().getJpa());
     }
 
     @Bean

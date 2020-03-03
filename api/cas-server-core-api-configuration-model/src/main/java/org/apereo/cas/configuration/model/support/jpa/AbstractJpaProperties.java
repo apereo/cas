@@ -166,7 +166,7 @@ public abstract class AbstractJpaProperties implements Serializable {
     /**
      * Fully-qualified name of the class that can control the physical naming strategy of hibernate.
      */
-    private String physicalNamingStrategyClassName = "org.apereo.cas.jpa.CasHibernatePhysicalNamingStrategy";
+    private String physicalNamingStrategyClassName = "org.apereo.cas.hibernate.CasHibernatePhysicalNamingStrategy";
     
     /**
      * Defines the isolation level for transactions.

@@ -2,10 +2,12 @@ package org.apereo.cas.adaptors.jdbc;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jpa.DatabaseProperties;
-import org.apereo.cas.hibernate.CasHibernateJpaBeanFactory;
+import org.apereo.cas.jpa.JpaBeanFactory;
 
 import lombok.SneakyThrows;
 import lombok.val;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -49,6 +51,10 @@ public class DatabaseAuthenticationTestConfiguration {
     @Value("${database.hbm2ddl:create-drop}")
     private String hbm2ddl;
 
+    @Autowired
+    @Qualifier("jpaBeanFactory")
+    private JpaBeanFactory jpaBeanFactory;
+
     @SneakyThrows
     @Bean
     public DataSource dataSource() {
@@ -65,7 +71,7 @@ public class DatabaseAuthenticationTestConfiguration {
         val properties = new DatabaseProperties();
         properties.setGenDdl(true);
         properties.setShowSql(true);
-        return CasHibernateJpaBeanFactory.newJpaVendorAdapter(properties);
+        return jpaBeanFactory.newJpaVendorAdapter(properties);
     }
 
     @Bean

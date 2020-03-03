@@ -3,7 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigurationContext;
 import org.apereo.cas.configuration.support.JpaBeans;
-import org.apereo.cas.hibernate.CasHibernateJpaBeanFactory;
+import org.apereo.cas.jpa.JpaBeanFactory;
 import org.apereo.cas.support.saml.idp.metadata.JpaSamlIdPMetadataCipherExecutor;
 import org.apereo.cas.support.saml.idp.metadata.JpaSamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.JpaSamlIdPMetadataLocator;
@@ -56,6 +56,10 @@ import java.util.List;
 public class SamlIdPJpaIdPMetadataConfiguration {
 
     @Autowired
+    @Qualifier("jpaBeanFactory")
+    private ObjectProvider<JpaBeanFactory> jpaBeanFactory;
+    
+    @Autowired
     @Qualifier("samlSelfSignedCertificateWriter")
     private ObjectProvider<SamlIdPCertificateAndKeyWriter> samlSelfSignedCertificateWriter;
 
@@ -68,7 +72,7 @@ public class SamlIdPJpaIdPMetadataConfiguration {
     @RefreshScope
     @Bean
     public JpaVendorAdapter jpaSamlMetadataIdPVendorAdapter() {
-        return CasHibernateJpaBeanFactory.newJpaVendorAdapter(casProperties.getJdbc());
+        return jpaBeanFactory.getObject().newJpaVendorAdapter(casProperties.getJdbc());
     }
 
     @RefreshScope
@@ -89,13 +93,13 @@ public class SamlIdPJpaIdPMetadataConfiguration {
     @Bean
     public LocalContainerEntityManagerFactoryBean samlMetadataIdPEntityManagerFactory() {
         val idp = casProperties.getAuthn().getSamlIdp().getMetadata();
-        return CasHibernateJpaBeanFactory.newEntityManagerFactoryBean(
-            new JpaConfigurationContext(
-                jpaSamlMetadataIdPVendorAdapter(),
-                "jpaSamlMetadataIdPContext",
-                jpaSamlMetadataIdPPackagesToScan(),
-                dataSourceSamlMetadataIdP()), idp.getJpa(),
-            applicationContext);
+        val factory = jpaBeanFactory.getObject();
+        val ctx = new JpaConfigurationContext(
+            jpaSamlMetadataIdPVendorAdapter(),
+            "jpaSamlMetadataIdPContext",
+            jpaSamlMetadataIdPPackagesToScan(),
+            dataSourceSamlMetadataIdP());
+        return factory.newEntityManagerFactoryBean(ctx, idp.getJpa());
     }
 
     @Autowired

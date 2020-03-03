@@ -1,5 +1,6 @@
 package org.apereo.cas.uma.ticket.resource.repository;
 
+import org.apereo.cas.config.CasHibernateJpaConfiguration;
 import org.apereo.cas.config.CasOAuthUmaJpaConfiguration;
 import org.apereo.cas.uma.ticket.resource.ResourceSet;
 import org.apereo.cas.uma.ticket.resource.ResourceSetPolicy;
@@ -26,7 +27,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.0.0
  */
 @Tag("UMA")
-@Import(CasOAuthUmaJpaConfiguration.class)
+@Import({
+    CasOAuthUmaJpaConfiguration.class,
+    CasHibernateJpaConfiguration.class
+})
 @TestPropertySource(properties = {
     "cas.authn.uma.resourceSet.jpa.url=jdbc:hsqldb:mem:cas-uma-resourceset",
     "cas.jdbc.showSql=true",

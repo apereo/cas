@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.u2f.storage;
 
+import org.apereo.cas.config.CasHibernateJpaConfiguration;
 import org.apereo.cas.config.U2FConfiguration;
 import org.apereo.cas.config.U2FJpaConfiguration;
 
@@ -22,6 +23,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
     {
         U2FJpaConfiguration.class,
         U2FConfiguration.class,
+        CasHibernateJpaConfiguration.class,
         AopAutoConfiguration.class,
         RefreshAutoConfiguration.class
     },
