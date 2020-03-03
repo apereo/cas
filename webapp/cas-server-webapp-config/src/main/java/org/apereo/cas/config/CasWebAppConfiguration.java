@@ -1,12 +1,14 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.web.CasSessionReplicationVerificationEndpoint;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -106,15 +108,14 @@ public class CasWebAppConfiguration implements WebMvcConfigurer {
     }
 
     @Bean
-    public SimpleUrlHandlerMapping handlerMapping() {
+    public SimpleUrlHandlerMapping handlerMapping(@Autowired final Controller rootController) {
         val mapping = new SimpleUrlHandlerMapping();
 
-        val root = rootController();
         mapping.setOrder(1);
         mapping.setAlwaysUseFullPath(true);
-        mapping.setRootHandler(root);
+        mapping.setRootHandler(rootController);
         val urls = new HashMap<String, Object>();
-        urls.put("/", root);
+        urls.put("/", rootController);
 
         mapping.setUrlMap(urls);
         return mapping;
@@ -125,4 +126,11 @@ public class CasWebAppConfiguration implements WebMvcConfigurer {
         registry.addInterceptor(localeChangeInterceptor.getObject())
             .addPathPatterns("/**");
     }
+
+    @Bean
+    @ConditionalOnAvailableEndpoint
+    public CasSessionReplicationVerificationEndpoint casSessionReplicationVerificationEndpoint() {
+        return new CasSessionReplicationVerificationEndpoint(casProperties);
+    }
+
 }

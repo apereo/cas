@@ -129,6 +129,9 @@ jobs:
       script: ./ci/tests/webapp/validate-embedded-webapp.sh undertow
       name: "Validate Web Application Server via Embedded Undertow"
     - stage: validate
+      script: ./ci/tests/webapp/validate-tomcat-default-cluster.sh
+      name: "Validate Tomcat Session Replication"
+    - stage: validate
       script: ./ci/tests/webapp/validate-configserver-webapp.sh
       name: "Validate Spring Cloud Configuration Server"
     - stage: validate
