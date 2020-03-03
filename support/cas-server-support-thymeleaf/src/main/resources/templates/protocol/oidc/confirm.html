@@ -58,6 +58,12 @@
                 th:href="@{${callbackUrl}}">
                 <span class="mdc-button__label" th:utext="#{screen.oauth.confirm.allow}"></span>
             </a>
+
+            <a class="mdc-button mdc-button--outlined" id="cancel" name="cancel"
+               th:href="@{/login}">
+                <span class="mdc-button__label" th:text="#{screen.oauth.confirm.deny}">Cancel</span>
+            </a>
+            
             <a th:if="${deniedApprovalUrl}" th:href="@{${deniedApprovalUrl}}"
                 class="mdc-button mdc-button--outlined" id="deny" name="deny" href="/">
                 <span class="mdc-button__label" th:utext="#{screen.oauth.confirm.deny}"></span>

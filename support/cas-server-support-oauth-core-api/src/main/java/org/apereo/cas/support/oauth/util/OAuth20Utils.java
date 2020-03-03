@@ -446,8 +446,11 @@ public class OAuth20Utils {
      * @return the client id from authenticated profile
      */
     public static String getClientIdFromAuthenticatedProfile(final CommonProfile profile) {
-        if (profile.containsAttribute(OAuth20Constants.CLIENT_ID)) {
-            val attribute = profile.getAttribute(OAuth20Constants.CLIENT_ID);
+        val attrs = new HashMap<>(profile.getAttributes());
+        attrs.putAll(profile.getAuthenticationAttributes());
+        
+        if (attrs.containsKey(OAuth20Constants.CLIENT_ID)) {
+            val attribute = attrs.get(OAuth20Constants.CLIENT_ID);
             return CollectionUtils.toCollection(attribute, ArrayList.class).get(0).toString();
         }
         return null;

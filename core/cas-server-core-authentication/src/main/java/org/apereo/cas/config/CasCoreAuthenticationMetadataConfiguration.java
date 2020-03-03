@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.metadata.AuthenticationCredentialTypeMetaDataPopulator;
+import org.apereo.cas.authentication.metadata.AuthenticationDateAttributeMetaDataPopulator;
 import org.apereo.cas.authentication.metadata.CacheCredentialsCipherExecutor;
 import org.apereo.cas.authentication.metadata.CacheCredentialsMetaDataPopulator;
 import org.apereo.cas.authentication.metadata.RememberMeAuthenticationMetaDataPopulator;
@@ -66,6 +67,12 @@ public class CasCoreAuthenticationMetadataConfiguration {
         return new AuthenticationCredentialTypeMetaDataPopulator();
     }
 
+    @ConditionalOnMissingBean(name = "authenticationDateMetaDataPopulator")
+    @Bean
+    public AuthenticationMetaDataPopulator authenticationDateMetaDataPopulator() {
+        return new AuthenticationDateAttributeMetaDataPopulator();
+    }
+
     @ConditionalOnMissingBean(name = "casCoreAuthenticationMetadataAuthenticationEventExecutionPlanConfigurer")
     @Bean
     public AuthenticationEventExecutionPlanConfigurer casCoreAuthenticationMetadataAuthenticationEventExecutionPlanConfigurer() {
@@ -73,6 +80,7 @@ public class CasCoreAuthenticationMetadataConfiguration {
             plan.registerAuthenticationMetadataPopulator(successfulHandlerMetaDataPopulator());
             plan.registerAuthenticationMetadataPopulator(rememberMeAuthenticationMetaDataPopulator());
             plan.registerAuthenticationMetadataPopulator(authenticationCredentialTypeMetaDataPopulator());
+            plan.registerAuthenticationMetadataPopulator(authenticationDateMetaDataPopulator());
 
             val cp = casProperties.getClearpass();
             if (cp.isCacheCredential()) {

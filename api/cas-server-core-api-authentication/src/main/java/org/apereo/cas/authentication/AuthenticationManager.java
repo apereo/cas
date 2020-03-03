@@ -14,6 +14,10 @@ public interface AuthenticationManager {
      * Authentication method attribute name.
      **/
     String AUTHENTICATION_METHOD_ATTRIBUTE = "authenticationMethod";
+    /**
+     * Authentication date attribute name.
+     **/
+    String AUTHENTICATION_DATE_ATTRIBUTE = "authenticationDate";
 
     /**
      * Authenticates the provided credentials. On success, an {@link Authentication} object
