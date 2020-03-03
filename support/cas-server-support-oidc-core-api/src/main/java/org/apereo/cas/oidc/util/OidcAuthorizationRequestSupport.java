@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 
 import lombok.NonNull;
@@ -19,7 +20,6 @@ import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.core.profile.ProfileManager;
-import org.pac4j.core.profile.UserProfile;
 
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -38,6 +38,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class OidcAuthorizationRequestSupport {
     private final CasCookieBuilder ticketGrantingTicketCookieGenerator;
+
     private final TicketRegistrySupport ticketRegistrySupport;
 
     /**
@@ -99,7 +100,7 @@ public class OidcAuthorizationRequestSupport {
     @SneakyThrows
     public static String getRedirectUrlWithError(final String originalRedirectUrl, final String errorCode) {
         val uriBuilder = new URIBuilder(originalRedirectUrl)
-                .addParameter(OAuth20Constants.ERROR, errorCode);
+            .addParameter(OAuth20Constants.ERROR, errorCode);
         return uriBuilder.build().toASCIIString();
     }
 
@@ -117,27 +118,6 @@ public class OidcAuthorizationRequestSupport {
                 .toASCIIString();
         }
         return url;
-    }
-
-    /**
-     * Is cas authentication available?
-     *
-     * @param context the context
-     * @return the optional authn
-     */
-    public Optional<Authentication> isCasAuthenticationAvailable(final WebContext context) {
-        val webContext = (JEEContext) context;
-        if (webContext != null) {
-            val tgtId = ticketGrantingTicketCookieGenerator.retrieveCookieValue(webContext.getNativeRequest());
-
-            if (StringUtils.isNotBlank(tgtId)) {
-                val authentication = ticketRegistrySupport.getAuthenticationFrom(tgtId);
-                if (authentication != null) {
-                    return Optional.of(authentication);
-                }
-            }
-        }
-        return Optional.empty();
     }
 
     /**
@@ -176,6 +156,26 @@ public class OidcAuthorizationRequestSupport {
     }
 
     /**
+     * Is cas authentication old for max age authorization request?
+     *
+     * @param context the context
+     * @param profile the profile
+     * @return true/false
+     */
+    public static boolean isCasAuthenticationOldForMaxAgeAuthorizationRequest(final WebContext context,
+                                                                              final CommonProfile profile) {
+        var authTime = profile.getAttribute(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_AUTHENTICATION_DATE);
+        if (authTime == null) {
+            authTime = profile.getAuthenticationAttribute(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_AUTHENTICATION_DATE);
+        }
+        if (authTime == null) {
+            return false;
+        }
+        val dt = ZonedDateTime.parse(CollectionUtils.toCollection(authTime).iterator().next().toString());
+        return isCasAuthenticationOldForMaxAgeAuthorizationRequest(context, dt);
+    }
+
+    /**
      * Is cas authentication available and old for max age authorization request?
      *
      * @param context the context
@@ -188,20 +188,25 @@ public class OidcAuthorizationRequestSupport {
     }
 
     /**
-     * Is cas authentication old for max age authorization request?
+     * Is cas authentication available?
      *
      * @param context the context
-     * @param profile the profile
-     * @return true/false
+     * @return the optional authn
      */
-    public static boolean isCasAuthenticationOldForMaxAgeAuthorizationRequest(final WebContext context,
-                                                                              final UserProfile profile) {
+    public Optional<Authentication> isCasAuthenticationAvailable(final WebContext context) {
+        val webContext = (JEEContext) context;
+        if (webContext != null) {
+            val tgtId = ticketGrantingTicketCookieGenerator.retrieveCookieValue(webContext.getNativeRequest());
 
-        val authTime = profile.getAttribute(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_AUTHENTICATION_DATE);
-        if (authTime == null) {
-            return false;
+            if (StringUtils.isNotBlank(tgtId)) {
+                val authentication = ticketRegistrySupport.getAuthenticationFrom(tgtId);
+                if (authentication != null) {
+                    return Optional.of(authentication);
+                }
+            }
         }
-        val dt = ZonedDateTime.parse(authTime.toString());
-        return isCasAuthenticationOldForMaxAgeAuthorizationRequest(context, dt);
+        return Optional.empty();
     }
+
+
 }
