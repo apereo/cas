@@ -10,11 +10,10 @@ dependencies {
     implementation project(":core:cas-server-core-webflow")
     implementation project(":core:cas-server-core-webflow-mfa")
     implementation project(":support:cas-server-support-jpa-util")
+    implementation project(":support:cas-server-support-jpa-hibernate")
     implementation project(":support:cas-server-support-yubikey-core-mfa")
     implementation project(":support:cas-server-support-yubikey-core")
     implementation project(":support:cas-server-support-yubikey")
-
-    implementation libraries.hibernate
 
     testImplementation project(":core:cas-server-core-web")
     testImplementation project(":core:cas-server-core-logout")
@@ -24,9 +23,9 @@ dependencies {
     testImplementation project(":core:cas-server-core-authentication-mfa")
     testImplementation project(":core:cas-server-core-configuration")
     testImplementation project(":core:cas-server-core-tickets")
-    
     testImplementation project(":core:cas-server-core-services")
     testImplementation project(":core:cas-server-core-util")
+
     testImplementation project(":support:cas-server-support-themes")
 
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")

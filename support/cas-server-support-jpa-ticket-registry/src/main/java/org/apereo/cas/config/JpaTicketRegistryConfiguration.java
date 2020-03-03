@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.configuration.support.JpaBeans;
+import org.apereo.cas.hibernate.HibernateBeans;
 import org.apereo.cas.ticket.AbstractTicket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.registry.JpaTicketRegistry;
@@ -76,9 +77,9 @@ public class JpaTicketRegistryConfiguration {
     @Bean
     public LocalContainerEntityManagerFactoryBean ticketEntityManagerFactory() {
         ApplicationContextProvider.holdApplicationContext(applicationContext);
-        return JpaBeans.newHibernateEntityManagerFactoryBean(
+        return HibernateBeans.newHibernateEntityManagerFactoryBean(
             new JpaConfigDataHolder(
-                JpaBeans.newHibernateJpaVendorAdapter(casProperties.getJdbc()),
+                HibernateBeans.newHibernateJpaVendorAdapter(casProperties.getJdbc()),
                 "jpaTicketRegistryContext",
                 ticketPackagesToScan(),
                 dataSourceTicket()),

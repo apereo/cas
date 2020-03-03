@@ -7,6 +7,7 @@ import org.apereo.cas.gauth.credential.GoogleAuthenticatorAccount;
 import org.apereo.cas.gauth.credential.JpaGoogleAuthenticatorTokenCredentialRepository;
 import org.apereo.cas.gauth.token.GoogleAuthenticatorJpaTokenRepository;
 import org.apereo.cas.gauth.token.JpaGoogleAuthenticatorToken;
+import org.apereo.cas.hibernate.HibernateBeans;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.otp.repository.token.OneTimeTokenRepository;
 import org.apereo.cas.util.CollectionUtils;
@@ -55,7 +56,7 @@ public class GoogleAuthenticatorJpaConfiguration {
     @RefreshScope
     @Bean
     public HibernateJpaVendorAdapter jpaGoogleAuthenticatorVendorAdapter() {
-        return JpaBeans.newHibernateJpaVendorAdapter(casProperties.getJdbc());
+        return HibernateBeans.newHibernateJpaVendorAdapter(casProperties.getJdbc());
     }
 
     @Bean
@@ -74,7 +75,7 @@ public class GoogleAuthenticatorJpaConfiguration {
     @Bean
     public LocalContainerEntityManagerFactoryBean googleAuthenticatorEntityManagerFactory() {
 
-        return JpaBeans.newHibernateEntityManagerFactoryBean(
+        return HibernateBeans.newHibernateEntityManagerFactoryBean(
             new JpaConfigDataHolder(
                 jpaGoogleAuthenticatorVendorAdapter(),
                 "jpaGoogleAuthenticatorContext",

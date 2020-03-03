@@ -1,4 +1,4 @@
-package org.apereo.cas.jpa;
+package org.apereo.cas.hibernate;
 
 import org.apereo.cas.util.scripting.ScriptingUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;

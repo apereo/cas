@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.consent.ConsentRepository;
 import org.apereo.cas.consent.JpaConsentDecision;
 import org.apereo.cas.consent.JpaConsentRepository;
+import org.apereo.cas.hibernate.HibernateBeans;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
@@ -52,7 +53,7 @@ public class CasConsentJdbcConfiguration {
     @RefreshScope
     @Bean
     public HibernateJpaVendorAdapter jpaConsentVendorAdapter() {
-        return JpaBeans.newHibernateJpaVendorAdapter(casProperties.getJdbc());
+        return HibernateBeans.newHibernateJpaVendorAdapter(casProperties.getJdbc());
     }
 
     @Bean
@@ -68,7 +69,7 @@ public class CasConsentJdbcConfiguration {
     @Lazy
     @Bean
     public LocalContainerEntityManagerFactoryBean consentEntityManagerFactory() {
-        return JpaBeans.newHibernateEntityManagerFactoryBean(
+        return HibernateBeans.newHibernateEntityManagerFactoryBean(
             new JpaConfigDataHolder(
                 jpaConsentVendorAdapter(),
                 "jpaConsentContext",

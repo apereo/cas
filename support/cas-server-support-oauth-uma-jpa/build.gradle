@@ -11,7 +11,9 @@ dependencies {
     implementation project(":support:cas-server-support-oauth-api")
     implementation project(":support:cas-server-support-oauth")
     implementation project(":support:cas-server-support-token-core-api")
-    
+    implementation project(":support:cas-server-support-jpa-util")
+    implementation project(":support:cas-server-support-jpa-hibernate")
+
     implementation project(":core:cas-server-core-audit-api")
     implementation project(":core:cas-server-core-services-registry")
     implementation project(":core:cas-server-core-services-api")
@@ -22,12 +24,11 @@ dependencies {
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-tickets-api")
     implementation project(":core:cas-server-core-cookie-api")
-    implementation project(":support:cas-server-support-jpa-util")
+
 
     implementation libraries.pac4jcore
     implementation libraries.nimbus
     implementation libraries.jose4j
-    implementation libraries.hibernate
 
     runtimeOnly project(":support:cas-server-support-jdbc-drivers")
     

@@ -6,6 +6,7 @@ import org.apereo.cas.adaptors.u2f.storage.U2FJpaDeviceRepository;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
 import org.apereo.cas.configuration.support.JpaBeans;
+import org.apereo.cas.hibernate.HibernateBeans;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
@@ -55,7 +56,7 @@ public class U2FJpaConfiguration {
     @RefreshScope
     @Bean
     public HibernateJpaVendorAdapter jpaU2fVendorAdapter() {
-        return JpaBeans.newHibernateJpaVendorAdapter(casProperties.getJdbc());
+        return HibernateBeans.newHibernateJpaVendorAdapter(casProperties.getJdbc());
     }
 
     @Bean
@@ -71,7 +72,7 @@ public class U2FJpaConfiguration {
     @Lazy
     @Bean
     public LocalContainerEntityManagerFactoryBean u2fEntityManagerFactory() {
-        return JpaBeans.newHibernateEntityManagerFactoryBean(
+        return HibernateBeans.newHibernateEntityManagerFactoryBean(
             new JpaConfigDataHolder(
                 jpaU2fVendorAdapter(),
                 "jpaU2fRegistryContext",

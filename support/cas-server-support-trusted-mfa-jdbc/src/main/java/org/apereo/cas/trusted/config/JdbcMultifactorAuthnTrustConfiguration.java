@@ -3,6 +3,7 @@ package org.apereo.cas.trusted.config;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
 import org.apereo.cas.configuration.support.JpaBeans;
+import org.apereo.cas.hibernate.HibernateBeans;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.authentication.storage.JpaMultifactorAuthenticationTrustStorage;
 import org.apereo.cas.util.CollectionUtils;
@@ -52,7 +53,7 @@ public class JdbcMultifactorAuthnTrustConfiguration {
     @RefreshScope
     @Bean
     public HibernateJpaVendorAdapter jpaMfaTrustedAuthnVendorAdapter() {
-        return JpaBeans.newHibernateJpaVendorAdapter(casProperties.getJdbc());
+        return HibernateBeans.newHibernateJpaVendorAdapter(casProperties.getJdbc());
     }
 
     @Bean
@@ -69,7 +70,7 @@ public class JdbcMultifactorAuthnTrustConfiguration {
     @Bean
     public LocalContainerEntityManagerFactoryBean mfaTrustedAuthnEntityManagerFactory() {
 
-        return JpaBeans.newHibernateEntityManagerFactoryBean(
+        return HibernateBeans.newHibernateEntityManagerFactoryBean(
             new JpaConfigDataHolder(
                 jpaMfaTrustedAuthnVendorAdapter(),
                 "jpaMfaTrustedAuthnContext",
