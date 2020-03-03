@@ -1,4 +1,4 @@
-package org.apereo.cas.jpa;
+package org.apereo.cas.hibernate;
 
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -40,7 +40,8 @@ public class CasHibernatePhysicalNamingStrategyTests {
     public void verifyMappedTable() {
         val strategy = new CasHibernatePhysicalNamingStrategy();
         strategy.setApplicationContext(this.applicationContext);
-        val id = strategy.toPhysicalTableName(Identifier.toIdentifier("CasHibernatePhysicalNamingStrategyTests"), mock(JdbcEnvironment.class));
+        val id = strategy.toPhysicalTableName(
+            Identifier.toIdentifier("CasHibernatePhysicalNamingStrategyTests"), mock(JdbcEnvironment.class));
         assertEquals("testtable", id.getText());
     }
 

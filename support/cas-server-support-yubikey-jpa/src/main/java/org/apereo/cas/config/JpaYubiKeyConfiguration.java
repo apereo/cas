@@ -7,6 +7,7 @@ import org.apereo.cas.adaptors.yubikey.dao.JpaYubiKeyAccountRegistry;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
 import org.apereo.cas.configuration.support.JpaBeans;
+import org.apereo.cas.hibernate.HibernateBeans;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
@@ -59,7 +60,7 @@ public class JpaYubiKeyConfiguration {
     @RefreshScope
     @Bean
     public HibernateJpaVendorAdapter jpaYubiKeyVendorAdapter() {
-        return JpaBeans.newHibernateJpaVendorAdapter(casProperties.getJdbc());
+        return HibernateBeans.newHibernateJpaVendorAdapter(casProperties.getJdbc());
     }
 
     @Bean
@@ -83,7 +84,7 @@ public class JpaYubiKeyConfiguration {
     @Lazy
     @Bean
     public LocalContainerEntityManagerFactoryBean yubiKeyEntityManagerFactory() {
-        return JpaBeans.newHibernateEntityManagerFactoryBean(
+        return HibernateBeans.newHibernateEntityManagerFactoryBean(
             new JpaConfigDataHolder(
                 jpaYubiKeyVendorAdapter(),
                 "jpaYubiKeyRegistryContext",

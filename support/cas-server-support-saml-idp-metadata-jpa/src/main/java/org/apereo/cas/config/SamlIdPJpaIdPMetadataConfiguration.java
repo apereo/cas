@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
 import org.apereo.cas.configuration.support.JpaBeans;
+import org.apereo.cas.hibernate.HibernateBeans;
 import org.apereo.cas.support.saml.idp.metadata.JpaSamlIdPMetadataCipherExecutor;
 import org.apereo.cas.support.saml.idp.metadata.JpaSamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.JpaSamlIdPMetadataLocator;
@@ -67,7 +68,7 @@ public class SamlIdPJpaIdPMetadataConfiguration {
     @RefreshScope
     @Bean
     public HibernateJpaVendorAdapter jpaSamlMetadataIdPVendorAdapter() {
-        return JpaBeans.newHibernateJpaVendorAdapter(casProperties.getJdbc());
+        return HibernateBeans.newHibernateJpaVendorAdapter(casProperties.getJdbc());
     }
 
     @RefreshScope
@@ -88,7 +89,7 @@ public class SamlIdPJpaIdPMetadataConfiguration {
     @Bean
     public LocalContainerEntityManagerFactoryBean samlMetadataIdPEntityManagerFactory() {
         val idp = casProperties.getAuthn().getSamlIdp().getMetadata();
-        return JpaBeans.newHibernateEntityManagerFactoryBean(
+        return HibernateBeans.newHibernateEntityManagerFactoryBean(
             new JpaConfigDataHolder(
                 jpaSamlMetadataIdPVendorAdapter(),
                 "jpaSamlMetadataIdPContext",

@@ -8,7 +8,9 @@ dependencies {
 
     implementation project(":core:cas-server-core-audit-api")
     implementation project(":core:cas-server-core-util-api")
+
     implementation project(":support:cas-server-support-jpa-util")
+    implementation project(":support:cas-server-support-jpa-hibernate")
 
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":core:cas-server-core-services")

@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
 import org.apereo.cas.configuration.support.JpaBeans;
+import org.apereo.cas.hibernate.HibernateBeans;
 import org.apereo.cas.uma.ticket.resource.ResourceSet;
 import org.apereo.cas.uma.ticket.resource.repository.ResourceSetRepository;
 import org.apereo.cas.uma.ticket.resource.repository.impl.JpaResourceSetRepository;
@@ -51,7 +52,7 @@ public class CasOAuthUmaJpaConfiguration {
     @RefreshScope
     @Bean
     public HibernateJpaVendorAdapter jpaUmaVendorAdapter() {
-        return JpaBeans.newHibernateJpaVendorAdapter(casProperties.getJdbc());
+        return HibernateBeans.newHibernateJpaVendorAdapter(casProperties.getJdbc());
     }
 
     @Bean
@@ -62,7 +63,7 @@ public class CasOAuthUmaJpaConfiguration {
     @Lazy
     @Bean
     public LocalContainerEntityManagerFactoryBean umaEntityManagerFactory() {
-        return JpaBeans.newHibernateEntityManagerFactoryBean(
+        return HibernateBeans.newHibernateEntityManagerFactoryBean(
             new JpaConfigDataHolder(jpaUmaVendorAdapter(), getClass().getSimpleName(), jpaUmaPackagesToScan(), dataSourceUma()),
             casProperties.getAuthn().getUma().getResourceSet().getJpa(), applicationContext);
     }

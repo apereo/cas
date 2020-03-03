@@ -1,0 +1,22 @@
+description = "Apereo CAS JPA Hibernate Support"
+
+dependencies {
+    api project(":api:cas-server-core-api-authentication")
+    api project(":api:cas-server-core-api-configuration-model")
+    api project(":api:cas-server-core-api-ticket")
+    api project(":api:cas-server-core-api-util")
+    api project(":api:cas-server-core-api-web")
+    
+    api libraries.hibernate
+
+    implementation libraries.hikaricp
+
+    implementation project(":support:cas-server-support-jpa-util")
+    implementation project(":core:cas-server-core-util")
+
+    runtimeOnly project(":support:cas-server-support-jdbc-drivers")
+
+    testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
+}

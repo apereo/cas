@@ -326,7 +326,7 @@ public class CasPersonDirectoryConfiguration {
     }
 
     @ConditionalOnClass(JpaBeans.class)
-    @ConditionalOnProperty("cas.authn.attribute-repository.jdbc[0].sql")
+    @ConditionalOnProperty(name = "cas.authn.attribute-repository.jdbc[0].sql")
     @Configuration("CasPersonDirectoryJdbcConfiguration")
     public class CasPersonDirectoryJdbcConfiguration implements PersonDirectoryAttributeRepositoryPlanConfigurer {
 
@@ -366,7 +366,7 @@ public class CasPersonDirectoryConfiguration {
         }
     }
 
-    @ConditionalOnProperty("cas.authn.attribute-repository.ldap[0].ldapUrl")
+    @ConditionalOnProperty(name = "cas.authn.attribute-repository.ldap[0].ldapUrl")
     @Configuration("CasPersonDirectoryLdapConfiguration")
     public class CasPersonDirectoryLdapConfiguration implements PersonDirectoryAttributeRepositoryPlanConfigurer {
 

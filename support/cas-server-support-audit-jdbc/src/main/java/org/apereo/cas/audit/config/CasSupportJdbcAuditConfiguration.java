@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.audit.AuditJdbcProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
 import org.apereo.cas.configuration.support.JpaBeans;
+import org.apereo.cas.hibernate.HibernateBeans;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
@@ -81,9 +82,9 @@ public class CasSupportJdbcAuditConfiguration {
 
     @Bean
     public LocalContainerEntityManagerFactoryBean inspektrAuditEntityManagerFactory() {
-        return JpaBeans.newHibernateEntityManagerFactoryBean(
+        return HibernateBeans.newHibernateEntityManagerFactoryBean(
             new JpaConfigDataHolder(
-                JpaBeans.newHibernateJpaVendorAdapter(casProperties.getJdbc()),
+                HibernateBeans.newHibernateJpaVendorAdapter(casProperties.getJdbc()),
                 "jpaInspektrAuditContext",
                 CollectionUtils.wrap(AuditTrailEntity.class.getPackage().getName()),
                 inspektrAuditTrailDataSource()),

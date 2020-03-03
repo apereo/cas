@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
 import org.apereo.cas.configuration.support.JpaBeans;
+import org.apereo.cas.hibernate.HibernateBeans;
 import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.support.events.CasEventRepositoryFilter;
 import org.apereo.cas.support.events.jpa.JpaCasEvent;
@@ -50,7 +51,7 @@ public class JpaEventsConfiguration {
     @RefreshScope
     @Bean
     public HibernateJpaVendorAdapter jpaEventVendorAdapter() {
-        return JpaBeans.newHibernateJpaVendorAdapter(casProperties.getJdbc());
+        return HibernateBeans.newHibernateJpaVendorAdapter(casProperties.getJdbc());
     }
 
     @Bean
@@ -67,7 +68,7 @@ public class JpaEventsConfiguration {
     @Bean
     public LocalContainerEntityManagerFactoryBean eventsEntityManagerFactory() {
 
-        return JpaBeans.newHibernateEntityManagerFactoryBean(
+        return HibernateBeans.newHibernateEntityManagerFactoryBean(
             new JpaConfigDataHolder(
                 jpaEventVendorAdapter(),
                 "jpaEventRegistryContext",

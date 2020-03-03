@@ -4,6 +4,7 @@ import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
 import org.apereo.cas.configuration.support.JpaBeans;
+import org.apereo.cas.hibernate.HibernateBeans;
 import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.JpaServiceRegistry;
 import org.apereo.cas.services.ServiceRegistry;
@@ -62,7 +63,7 @@ public class JpaServiceRegistryConfiguration {
     @RefreshScope
     @Bean
     public HibernateJpaVendorAdapter jpaServiceVendorAdapter() {
-        return JpaBeans.newHibernateJpaVendorAdapter(casProperties.getJdbc());
+        return HibernateBeans.newHibernateJpaVendorAdapter(casProperties.getJdbc());
     }
 
     @Bean
@@ -78,7 +79,7 @@ public class JpaServiceRegistryConfiguration {
     @Lazy
     @Bean
     public LocalContainerEntityManagerFactoryBean serviceEntityManagerFactory() {
-        return JpaBeans.newHibernateEntityManagerFactoryBean(
+        return HibernateBeans.newHibernateEntityManagerFactoryBean(
             new JpaConfigDataHolder(
                 jpaServiceVendorAdapter(),
                 "jpaServiceRegistryContext",

@@ -2,7 +2,7 @@ package org.apereo.cas.config.pm;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
-import org.apereo.cas.configuration.support.JpaBeans;
+import org.apereo.cas.hibernate.HibernateBeans;
 import org.apereo.cas.pm.PasswordHistoryService;
 import org.apereo.cas.pm.jdbc.JdbcPasswordHistoryEntity;
 import org.apereo.cas.pm.jdbc.JdbcPasswordHistoryService;
@@ -54,7 +54,7 @@ public class JdbcPasswordHistoryManagementConfiguration {
     @RefreshScope
     @Bean
     public HibernateJpaVendorAdapter jpaPasswordHistoryVendorAdapter() {
-        return JpaBeans.newHibernateJpaVendorAdapter(casProperties.getJdbc());
+        return HibernateBeans.newHibernateJpaVendorAdapter(casProperties.getJdbc());
     }
 
     @Bean
@@ -65,7 +65,7 @@ public class JdbcPasswordHistoryManagementConfiguration {
     @Lazy
     @Bean
     public LocalContainerEntityManagerFactoryBean passwordHistoryEntityManagerFactory() {
-        return JpaBeans.newHibernateEntityManagerFactoryBean(
+        return HibernateBeans.newHibernateEntityManagerFactoryBean(
             new JpaConfigDataHolder(
                 jpaPasswordHistoryVendorAdapter(),
                 "jpaPasswordHistoryContext",

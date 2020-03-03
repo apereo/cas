@@ -710,7 +710,7 @@ ext.libraries = [
                 }
         ],
         hibernatevalidator : [
-                dependencies.create("org.hibernate:hibernate-validator:$hibernateValidatorVersion") {
+                dependencies.create("org.hibernate.validator:hibernate-validator:$hibernateValidatorVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.hibernate", module: "hibernate-core")
                     exclude(group: "org.hibernate", module: "hibernate-entitymanager")
@@ -718,6 +718,13 @@ ext.libraries = [
                 },
                 dependencies.create("javax.persistence:javax.persistence-api:$jpaPersistenceApiVersion") {
                     exclude(group: "xml-apis", module: "xml-apis")
+                    force = true
+                }
+        ],
+        hikaricp : [
+                dependencies.create("com.zaxxer:HikariCP:$hikariVersion") {
+                    exclude(group: "xml-apis", module: "xml-apis")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
                     force = true
                 }
         ],
@@ -761,11 +768,6 @@ ext.libraries = [
                     exclude(group: "org.jboss.logging", module: "jboss-logging")
                     exclude(group: "org.hibernate", module: "hibernate-core")
                     exclude(group: "net.bytebuddy", module: "byte-buddy")
-                    force = true
-                },
-                dependencies.create("com.zaxxer:HikariCP:$hikariVersion") {
-                    exclude(group: "xml-apis", module: "xml-apis")
-                    exclude(group: "org.slf4j", module: "slf4j-api")
                     force = true
                 },
                 dependencies.create("javax.el:javax.el-api:3.0.0") {

@@ -1,16 +1,17 @@
 package org.apereo.cas.monitor;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.JpaBeans;
 
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.health.Status;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import javax.sql.DataSource;
 
@@ -33,10 +34,13 @@ public class JdbcDataSourceHealthIndicatorTests {
 
     private DataSource dataSource;
 
+    @Autowired
+    private CasConfigurationProperties casProperties;
+
     @BeforeEach
     public void initialize() {
-        val ctx = new ClassPathXmlApplicationContext("classpath:/jpaTestApplicationContext.xml");
-        this.dataSource = ctx.getBean("dataSource", DataSource.class);
+        val props = casProperties.getMonitor().getJdbc();
+        this.dataSource = JpaBeans.newDataSource(props);
     }
 
     @Test
