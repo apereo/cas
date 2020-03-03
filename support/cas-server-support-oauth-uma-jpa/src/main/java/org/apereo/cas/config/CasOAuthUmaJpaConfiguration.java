@@ -1,9 +1,9 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
+import org.apereo.cas.configuration.model.support.jpa.JpaConfigurationContext;
 import org.apereo.cas.configuration.support.JpaBeans;
-import org.apereo.cas.hibernate.HibernateBeans;
+import org.apereo.cas.hibernate.CasHibernateJpaBeanFactory;
 import org.apereo.cas.uma.ticket.resource.ResourceSet;
 import org.apereo.cas.uma.ticket.resource.repository.ResourceSetRepository;
 import org.apereo.cas.uma.ticket.resource.repository.impl.JpaResourceSetRepository;
@@ -22,8 +22,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
-import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
@@ -51,8 +51,8 @@ public class CasOAuthUmaJpaConfiguration {
 
     @RefreshScope
     @Bean
-    public HibernateJpaVendorAdapter jpaUmaVendorAdapter() {
-        return HibernateBeans.newHibernateJpaVendorAdapter(casProperties.getJdbc());
+    public JpaVendorAdapter jpaUmaVendorAdapter() {
+        return CasHibernateJpaBeanFactory.newJpaVendorAdapter(casProperties.getJdbc());
     }
 
     @Bean
@@ -63,8 +63,8 @@ public class CasOAuthUmaJpaConfiguration {
     @Lazy
     @Bean
     public LocalContainerEntityManagerFactoryBean umaEntityManagerFactory() {
-        return HibernateBeans.newHibernateEntityManagerFactoryBean(
-            new JpaConfigDataHolder(jpaUmaVendorAdapter(), getClass().getSimpleName(), jpaUmaPackagesToScan(), dataSourceUma()),
+        return CasHibernateJpaBeanFactory.newEntityManagerFactoryBean(
+            new JpaConfigurationContext(jpaUmaVendorAdapter(), getClass().getSimpleName(), jpaUmaPackagesToScan(), dataSourceUma()),
             casProperties.getAuthn().getUma().getResourceSet().getJpa(), applicationContext);
     }
 

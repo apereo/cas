@@ -2,10 +2,10 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
+import org.apereo.cas.configuration.model.support.jpa.JpaConfigurationContext;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.configuration.support.JpaBeans;
-import org.apereo.cas.hibernate.HibernateBeans;
+import org.apereo.cas.hibernate.CasHibernateJpaBeanFactory;
 import org.apereo.cas.ticket.AbstractTicket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.registry.JpaTicketRegistry;
@@ -77,9 +77,9 @@ public class JpaTicketRegistryConfiguration {
     @Bean
     public LocalContainerEntityManagerFactoryBean ticketEntityManagerFactory() {
         ApplicationContextProvider.holdApplicationContext(applicationContext);
-        return HibernateBeans.newHibernateEntityManagerFactoryBean(
-            new JpaConfigDataHolder(
-                HibernateBeans.newHibernateJpaVendorAdapter(casProperties.getJdbc()),
+        return CasHibernateJpaBeanFactory.newEntityManagerFactoryBean(
+            new JpaConfigurationContext(
+                CasHibernateJpaBeanFactory.newJpaVendorAdapter(casProperties.getJdbc()),
                 "jpaTicketRegistryContext",
                 ticketPackagesToScan(),
                 dataSourceTicket()),
