@@ -47,14 +47,10 @@ public class OidcSecurityInterceptor extends SecurityInterceptor {
         val authentication = authorizationRequestSupport.isCasAuthenticationAvailable(ctx);
         if (authentication.isEmpty()) {
             clearCreds = true;
-        }
-
-        val auth = OidcAuthorizationRequestSupport.isAuthenticationProfileAvailable(ctx);
-
-        if (auth.isPresent()) {
+        } else {
             val maxAge = OidcAuthorizationRequestSupport.getOidcMaxAgeFromAuthorizationRequest(ctx);
             if (maxAge.isPresent()) {
-                clearCreds = OidcAuthorizationRequestSupport.isCasAuthenticationOldForMaxAgeAuthorizationRequest(ctx, auth.get());
+                clearCreds = OidcAuthorizationRequestSupport.isCasAuthenticationOldForMaxAgeAuthorizationRequest(ctx, authentication.get());
             }
         }
 
