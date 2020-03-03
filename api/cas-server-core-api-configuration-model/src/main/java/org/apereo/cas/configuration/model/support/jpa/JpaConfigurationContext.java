@@ -6,6 +6,7 @@ import lombok.Setter;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 
 import javax.sql.DataSource;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -19,7 +20,7 @@ import java.util.List;
 @Getter
 @Setter
 @RequiredArgsConstructor
-public class JpaConfigDataHolder implements Serializable {
+public class JpaConfigurationContext implements Serializable {
 
     private static final long serialVersionUID = -3940423575751579622L;
 
@@ -31,7 +32,10 @@ public class JpaConfigDataHolder implements Serializable {
 
     private final transient DataSource dataSource;
 
-    public JpaConfigDataHolder(final JpaVendorAdapter jpaVendorAdapter, final String persistenceUnitName, final List<String> packagesToScan) {
+
+    public JpaConfigurationContext(final JpaVendorAdapter jpaVendorAdapter,
+                                   final String persistenceUnitName,
+                                   final List<String> packagesToScan) {
         this(jpaVendorAdapter, persistenceUnitName, packagesToScan, null);
     }
 

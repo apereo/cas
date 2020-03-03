@@ -2,9 +2,9 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
+import org.apereo.cas.configuration.model.support.jpa.JpaConfigurationContext;
 import org.apereo.cas.configuration.support.JpaBeans;
-import org.apereo.cas.hibernate.HibernateBeans;
+import org.apereo.cas.jpa.JpaBeanFactory;
 import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.JpaServiceRegistry;
 import org.apereo.cas.services.ServiceRegistry;
@@ -27,13 +27,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
-import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -54,16 +55,20 @@ public class JpaServiceRegistryConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Autowired
-    private ConfigurableApplicationContext applicationContext;
+    @Qualifier("jpaBeanFactory")
+    private ObjectProvider<JpaBeanFactory> jpaBeanFactory;
 
     @Autowired
     @Qualifier("serviceRegistryListeners")
     private ObjectProvider<Collection<ServiceRegistryListener>> serviceRegistryListeners;
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+
     @RefreshScope
     @Bean
-    public HibernateJpaVendorAdapter jpaServiceVendorAdapter() {
-        return HibernateBeans.newHibernateJpaVendorAdapter(casProperties.getJdbc());
+    public JpaVendorAdapter jpaServiceVendorAdapter() {
+        return jpaBeanFactory.getObject().newJpaVendorAdapter(casProperties.getJdbc());
     }
 
     @Bean
@@ -79,14 +84,14 @@ public class JpaServiceRegistryConfiguration {
     @Lazy
     @Bean
     public LocalContainerEntityManagerFactoryBean serviceEntityManagerFactory() {
-        return HibernateBeans.newHibernateEntityManagerFactoryBean(
-            new JpaConfigDataHolder(
-                jpaServiceVendorAdapter(),
-                "jpaServiceRegistryContext",
-                jpaServicePackagesToScan(),
-                dataSourceService()),
-            casProperties.getServiceRegistry().getJpa(),
-            applicationContext);
+
+        val factory = jpaBeanFactory.getObject();
+        val ctx = new JpaConfigurationContext(
+            jpaServiceVendorAdapter(),
+            "jpaServiceRegistryContext",
+            jpaServicePackagesToScan(),
+            dataSourceService());
+        return factory.newEntityManagerFactoryBean(ctx, casProperties.getServiceRegistry().getJpa());
     }
 
     @Autowired

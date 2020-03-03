@@ -1,6 +1,7 @@
 package org.apereo.cas.consent;
 
 import org.apereo.cas.config.CasConsentJdbcConfiguration;
+import org.apereo.cas.config.CasHibernateJpaConfiguration;
 
 import lombok.Getter;
 import org.junit.jupiter.api.Tag;
@@ -16,6 +17,7 @@ import org.springframework.boot.test.context.SpringBootTest;
  */
 @SpringBootTest(classes = {
     CasConsentJdbcConfiguration.class,
+    CasHibernateJpaConfiguration.class,
     BaseConsentRepositoryTests.SharedTestConfiguration.class
 }, properties = {
     "cas.jdbc.showSql=true",

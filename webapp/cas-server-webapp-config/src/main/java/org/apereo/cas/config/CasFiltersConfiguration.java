@@ -135,7 +135,8 @@ public class CasFiltersConfiguration {
         val initParams = new HashMap<String, String>();
         initParams.put(RequestParameterPolicyEnforcementFilter.PARAMETERS_TO_CHECK,
             httpWebRequest.getParamsToCheck());
-        initParams.put(RequestParameterPolicyEnforcementFilter.CHARACTERS_TO_FORBID, "none");
+        initParams.put(RequestParameterPolicyEnforcementFilter.CHARACTERS_TO_FORBID,
+            httpWebRequest.getCharactersToForbid());
         initParams.put(RequestParameterPolicyEnforcementFilter.ALLOW_MULTI_VALUED_PARAMETERS,
             BooleanUtils.toStringTrueFalse(httpWebRequest.isAllowMultiValueParameters()));
         initParams.put(RequestParameterPolicyEnforcementFilter.ONLY_POST_PARAMETERS,

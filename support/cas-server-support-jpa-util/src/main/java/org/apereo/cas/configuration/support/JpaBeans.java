@@ -1,15 +1,18 @@
 package org.apereo.cas.configuration.support;
 
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
+import org.apereo.cas.configuration.model.support.jpa.JpaConfigurationContext;
 
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.jdbc.datasource.lookup.DataSourceLookupFailureException;
 import org.springframework.jdbc.datasource.lookup.JndiDataSourceLookup;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 
 import javax.sql.DataSource;
 
@@ -81,6 +84,26 @@ public class JpaBeans {
         bean.setAllowPoolSuspension(jpaProperties.getPool().isSuspension());
         bean.setAutoCommit(jpaProperties.isAutocommit());
         bean.setValidationTimeout(jpaProperties.getPool().getTimeoutMillis());
+        return bean;
+    }
+
+    /**
+     * New entity manager factory bean.
+     *
+     * @param config the config
+     * @return the local container entity manager factory bean
+     */
+    public static LocalContainerEntityManagerFactoryBean newEntityManagerFactoryBean(final JpaConfigurationContext config) {
+        val bean = new LocalContainerEntityManagerFactoryBean();
+        bean.setJpaVendorAdapter(config.getJpaVendorAdapter());
+
+        if (StringUtils.isNotBlank(config.getPersistenceUnitName())) {
+            bean.setPersistenceUnitName(config.getPersistenceUnitName());
+        }
+        bean.setPackagesToScan(config.getPackagesToScan().toArray(ArrayUtils.EMPTY_STRING_ARRAY));
+        if (config.getDataSource() != null) {
+            bean.setDataSource(config.getDataSource());
+        }
         return bean;
     }
 }

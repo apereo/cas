@@ -16,6 +16,7 @@ import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
+import org.apereo.cas.config.CasHibernateJpaConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.pm.JdbcPasswordHistoryManagementConfiguration;
 import org.apereo.cas.config.pm.JdbcPasswordManagementConfiguration;
@@ -62,6 +63,7 @@ import javax.sql.DataSource;
     CasCoreUtilConfiguration.class,
     CasCoreLogoutConfiguration.class,
     CasCoreConfiguration.class,
+    CasHibernateJpaConfiguration.class,
     JdbcPasswordManagementConfiguration.class,
     JdbcPasswordHistoryManagementConfiguration.class,
     PasswordManagementConfiguration.class

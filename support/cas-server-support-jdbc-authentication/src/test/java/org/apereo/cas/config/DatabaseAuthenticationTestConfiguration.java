@@ -1,18 +1,19 @@
-package org.apereo.cas.adaptors.jdbc;
+package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.jpa.DatabaseProperties;
-import org.apereo.cas.hibernate.HibernateBeans;
+import org.apereo.cas.jpa.JpaBeanFactory;
 
 import lombok.SneakyThrows;
 import lombok.val;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
+import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
-import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 
 import javax.sql.DataSource;
 
@@ -49,6 +50,10 @@ public class DatabaseAuthenticationTestConfiguration {
     @Value("${database.hbm2ddl:create-drop}")
     private String hbm2ddl;
 
+    @Autowired
+    @Qualifier("jpaBeanFactory")
+    private JpaBeanFactory jpaBeanFactory;
+
     @SneakyThrows
     @Bean
     public DataSource dataSource() {
@@ -61,11 +66,8 @@ public class DatabaseAuthenticationTestConfiguration {
     }
 
     @Bean
-    public HibernateJpaVendorAdapter jpaVendorAdapter() {
-        val properties = new DatabaseProperties();
-        properties.setGenDdl(true);
-        properties.setShowSql(true);
-        return HibernateBeans.newHibernateJpaVendorAdapter(properties);
+    public JpaVendorAdapter jpaVendorAdapter() {
+        return jpaBeanFactory.newJpaVendorAdapter();
     }
 
     @Bean

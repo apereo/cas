@@ -1,8 +1,8 @@
 package org.apereo.cas.config.pm;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
-import org.apereo.cas.hibernate.HibernateBeans;
+import org.apereo.cas.configuration.model.support.jpa.JpaConfigurationContext;
+import org.apereo.cas.jpa.JpaBeanFactory;
 import org.apereo.cas.pm.PasswordHistoryService;
 import org.apereo.cas.pm.jdbc.JdbcPasswordHistoryEntity;
 import org.apereo.cas.pm.jdbc.JdbcPasswordHistoryService;
@@ -15,13 +15,12 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
-import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
@@ -43,18 +42,19 @@ import java.util.List;
 public class JdbcPasswordHistoryManagementConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
-
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
-
+    
     @Autowired
     @Qualifier("jdbcPasswordManagementDataSource")
     private ObjectProvider<DataSource> jdbcPasswordManagementDataSource;
 
+    @Autowired
+    @Qualifier("jpaBeanFactory")
+    private ObjectProvider<JpaBeanFactory> jpaBeanFactory;
+
     @RefreshScope
     @Bean
-    public HibernateJpaVendorAdapter jpaPasswordHistoryVendorAdapter() {
-        return HibernateBeans.newHibernateJpaVendorAdapter(casProperties.getJdbc());
+    public JpaVendorAdapter jpaPasswordHistoryVendorAdapter() {
+        return jpaBeanFactory.getObject().newJpaVendorAdapter(casProperties.getJdbc());
     }
 
     @Bean
@@ -65,14 +65,13 @@ public class JdbcPasswordHistoryManagementConfiguration {
     @Lazy
     @Bean
     public LocalContainerEntityManagerFactoryBean passwordHistoryEntityManagerFactory() {
-        return HibernateBeans.newHibernateEntityManagerFactoryBean(
-            new JpaConfigDataHolder(
-                jpaPasswordHistoryVendorAdapter(),
-                "jpaPasswordHistoryContext",
-                jpaPasswordHistoryPackagesToScan(),
-                jdbcPasswordManagementDataSource.getObject()),
-            casProperties.getAuthn().getPm().getJdbc(),
-            applicationContext);
+        val factory = jpaBeanFactory.getObject();
+        val ctx = new JpaConfigurationContext(
+            jpaPasswordHistoryVendorAdapter(),
+            "jpaPasswordHistoryContext",
+            jpaPasswordHistoryPackagesToScan(),
+            jdbcPasswordManagementDataSource.getObject());
+        return factory.newEntityManagerFactoryBean(ctx, casProperties.getAuthn().getPm().getJdbc());
     }
 
     @Autowired
