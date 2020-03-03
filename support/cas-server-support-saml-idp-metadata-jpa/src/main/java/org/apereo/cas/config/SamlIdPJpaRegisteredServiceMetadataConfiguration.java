@@ -3,7 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigurationContext;
 import org.apereo.cas.configuration.support.JpaBeans;
-import org.apereo.cas.hibernate.CasHibernateJpaBeanFactory;
+import org.apereo.cas.jpa.JpaBeanFactory;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.metadata.resolver.JpaSamlRegisteredServiceMetadataResolver;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlMetadataDocument;
@@ -18,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -30,6 +29,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
+
 import java.util.List;
 
 /**
@@ -44,15 +44,16 @@ import java.util.List;
 public class SamlIdPJpaRegisteredServiceMetadataConfiguration implements SamlRegisteredServiceMetadataResolutionPlanConfigurer {
 
     @Autowired
+    @Qualifier("jpaBeanFactory")
+    private ObjectProvider<JpaBeanFactory> jpaBeanFactory;
+
+    @Autowired
     private CasConfigurationProperties casProperties;
 
     @Autowired
     @Qualifier("shibboleth.OpenSAMLConfig")
     private ObjectProvider<OpenSamlConfigBean> openSamlConfigBean;
-
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
-
+    
     @Bean
     public SamlRegisteredServiceMetadataResolver jpaSamlRegisteredServiceMetadataResolver() {
         val idp = casProperties.getAuthn().getSamlIdp();
@@ -62,7 +63,7 @@ public class SamlIdPJpaRegisteredServiceMetadataConfiguration implements SamlReg
     @RefreshScope
     @Bean
     public JpaVendorAdapter jpaSamlMetadataVendorAdapter() {
-        return CasHibernateJpaBeanFactory.newJpaVendorAdapter(casProperties.getJdbc());
+        return jpaBeanFactory.getObject().newJpaVendorAdapter(casProperties.getJdbc());
     }
 
     @Bean
@@ -80,13 +81,14 @@ public class SamlIdPJpaRegisteredServiceMetadataConfiguration implements SamlReg
     @Bean
     public LocalContainerEntityManagerFactoryBean samlMetadataEntityManagerFactory() {
         val idp = casProperties.getAuthn().getSamlIdp().getMetadata();
-        return CasHibernateJpaBeanFactory.newEntityManagerFactoryBean(
-            new JpaConfigurationContext(
-                jpaSamlMetadataVendorAdapter(),
-                "jpaSamlMetadataContext",
-                jpaSamlMetadataPackagesToScan(),
-                dataSourceSamlMetadata()), idp.getJpa(),
-            applicationContext);
+
+        val factory = jpaBeanFactory.getObject();
+        val ctx = new JpaConfigurationContext(
+            jpaSamlMetadataVendorAdapter(),
+            "jpaSamlMetadataContext",
+            jpaSamlMetadataPackagesToScan(),
+            dataSourceSamlMetadata());
+        return factory.newEntityManagerFactoryBean(ctx, idp.getJpa());
     }
 
     @Autowired

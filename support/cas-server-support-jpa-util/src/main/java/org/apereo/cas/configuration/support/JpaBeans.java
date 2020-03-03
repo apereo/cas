@@ -104,7 +104,6 @@ public class JpaBeans {
         if (config.getDataSource() != null) {
             bean.setDataSource(config.getDataSource());
         }
-        bean.setJpaProperties(config.getProperties());
         return bean;
     }
 }
