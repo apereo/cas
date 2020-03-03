@@ -2,9 +2,9 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.api.PasswordlessTokenRepository;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
+import org.apereo.cas.configuration.model.support.jpa.JpaConfigurationContext;
 import org.apereo.cas.configuration.support.JpaBeans;
-import org.apereo.cas.hibernate.HibernateBeans;
+import org.apereo.cas.hibernate.CasHibernateJpaBeanFactory;
 import org.apereo.cas.impl.token.JpaPasswordlessTokenRepository;
 import org.apereo.cas.impl.token.PasswordlessAuthenticationToken;
 
@@ -21,8 +21,8 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
-import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.transaction.PlatformTransactionManager;
 
@@ -52,8 +52,8 @@ public class JpaPasswordlessAuthenticationConfiguration {
 
     @RefreshScope
     @Bean
-    public HibernateJpaVendorAdapter jpaPasswordlessVendorAdapter() {
-        return HibernateBeans.newHibernateJpaVendorAdapter(casProperties.getJdbc());
+    public JpaVendorAdapter jpaPasswordlessVendorAdapter() {
+        return CasHibernateJpaBeanFactory.newJpaVendorAdapter(casProperties.getJdbc());
     }
 
     @Bean
@@ -63,8 +63,8 @@ public class JpaPasswordlessAuthenticationConfiguration {
 
     @Bean
     public LocalContainerEntityManagerFactoryBean passwordlessEntityManagerFactory() {
-        return HibernateBeans.newHibernateEntityManagerFactoryBean(
-            new JpaConfigDataHolder(
+        return CasHibernateJpaBeanFactory.newEntityManagerFactoryBean(
+            new JpaConfigurationContext(
                 jpaPasswordlessVendorAdapter(),
                 "jpaPasswordlessAuthNContext",
                 jpaPasswordlessPackagesToScan(),

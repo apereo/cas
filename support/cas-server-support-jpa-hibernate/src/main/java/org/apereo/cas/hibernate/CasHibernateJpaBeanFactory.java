@@ -2,19 +2,20 @@ package org.apereo.cas.hibernate;
 
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.jpa.DatabaseProperties;
-import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
+import org.apereo.cas.configuration.model.support.jpa.JpaConfigurationContext;
 import org.apereo.cas.configuration.support.JpaBeans;
+import org.apereo.cas.jpa.JpaBeanFactory;
 
-import lombok.experimental.UtilityClass;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.boot.model.naming.PhysicalNamingStrategy;
 import org.hibernate.cfg.Environment;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 
@@ -22,51 +23,28 @@ import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 
 /**
- * This is {@link HibernateBeans}.
+ * This is {@link CasHibernateJpaBeanFactory}.
  *
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@UtilityClass
 @Slf4j
-public class HibernateBeans {
+@RequiredArgsConstructor
+public class CasHibernateJpaBeanFactory implements JpaBeanFactory {
 
-    /**
-     * New hibernate jpa vendor adapter.
-     *
-     * @param databaseProperties the database properties
-     * @return the hibernate jpa vendor adapter
-     */
-    public static HibernateJpaVendorAdapter newHibernateJpaVendorAdapter(final DatabaseProperties databaseProperties) {
+    private final ConfigurableApplicationContext applicationContext;
+
+    @Override
+    public JpaVendorAdapter newJpaVendorAdapter(final DatabaseProperties databaseProperties) {
         val bean = new HibernateJpaVendorAdapter();
         bean.setGenerateDdl(databaseProperties.isGenDdl());
         bean.setShowSql(databaseProperties.isShowSql());
         return bean;
     }
 
-
-    /**
-     * New entity manager factory bean.
-     *
-     * @param config             the config
-     * @param jpaProperties      the jpa properties
-     * @param applicationContext the application context
-     * @return the local container entity manager factory bean
-     */
-    public static LocalContainerEntityManagerFactoryBean newHibernateEntityManagerFactoryBean(final JpaConfigDataHolder config,
-                                                                                              final AbstractJpaProperties jpaProperties,
-                                                                                              final ApplicationContext applicationContext) {
-        val bean = new LocalContainerEntityManagerFactoryBean();
-        bean.setJpaVendorAdapter(config.getJpaVendorAdapter());
-
-        if (StringUtils.isNotBlank(config.getPersistenceUnitName())) {
-            bean.setPersistenceUnitName(config.getPersistenceUnitName());
-        }
-        bean.setPackagesToScan(config.getPackagesToScan().toArray(ArrayUtils.EMPTY_STRING_ARRAY));
-        if (config.getDataSource() != null) {
-            bean.setDataSource(config.getDataSource());
-        }
-
+    @Override
+    public LocalContainerEntityManagerFactoryBean newEntityManagerFactoryBean(final JpaConfigurationContext config,
+                                                                              final AbstractJpaProperties jpaProperties) {
         val properties = new Properties();
         properties.put(Environment.DIALECT, jpaProperties.getDialect());
         properties.put(Environment.HBM2DDL_AUTO, jpaProperties.getDdlAuto());
@@ -95,6 +73,8 @@ public class HibernateBeans {
             }
         }
         properties.putAll(jpaProperties.getProperties());
+
+        val bean = JpaBeans.newEntityManagerFactoryBean(config);
         bean.setJpaProperties(properties);
         return bean;
     }

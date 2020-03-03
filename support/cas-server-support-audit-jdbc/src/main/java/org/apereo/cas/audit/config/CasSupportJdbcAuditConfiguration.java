@@ -4,9 +4,9 @@ import org.apereo.cas.audit.AuditTrailExecutionPlanConfigurer;
 import org.apereo.cas.audit.spi.entity.AuditTrailEntity;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.audit.AuditJdbcProperties;
-import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
+import org.apereo.cas.configuration.model.support.jpa.JpaConfigurationContext;
 import org.apereo.cas.configuration.support.JpaBeans;
-import org.apereo.cas.hibernate.HibernateBeans;
+import org.apereo.cas.jpa.JpaBeanFactory;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
@@ -16,12 +16,13 @@ import org.apereo.inspektr.audit.support.JdbcAuditTrailManager;
 import org.apereo.inspektr.audit.support.MaxAgeWhereClauseMatchCriteria;
 import org.apereo.inspektr.audit.support.WhereClauseMatchCriteria;
 import org.apereo.inspektr.common.Cleanable;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
@@ -46,10 +47,11 @@ import javax.sql.DataSource;
 @EnableTransactionManagement(proxyTargetClass = true)
 public class CasSupportJdbcAuditConfiguration {
     @Autowired
-    private ConfigurableApplicationContext applicationContext;
+    private CasConfigurationProperties casProperties;
 
     @Autowired
-    private CasConfigurationProperties casProperties;
+    @Qualifier("jpaBeanFactory")
+    private ObjectProvider<JpaBeanFactory> jpaBeanFactory;
 
     private static String getAuditTableNameFrom(final AuditJdbcProperties jdbc) {
         var tableName = AuditTrailEntity.AUDIT_TRAIL_TABLE_NAME;
@@ -82,14 +84,13 @@ public class CasSupportJdbcAuditConfiguration {
 
     @Bean
     public LocalContainerEntityManagerFactoryBean inspektrAuditEntityManagerFactory() {
-        return HibernateBeans.newHibernateEntityManagerFactoryBean(
-            new JpaConfigDataHolder(
-                HibernateBeans.newHibernateJpaVendorAdapter(casProperties.getJdbc()),
-                "jpaInspektrAuditContext",
-                CollectionUtils.wrap(AuditTrailEntity.class.getPackage().getName()),
-                inspektrAuditTrailDataSource()),
-            casProperties.getAudit().getJdbc(),
-            applicationContext);
+        val factory = jpaBeanFactory.getObject();
+        val ctx = new JpaConfigurationContext(
+            factory.newJpaVendorAdapter(casProperties.getJdbc()),
+            "jpaInspektrAuditContext",
+            CollectionUtils.wrap(AuditTrailEntity.class.getPackage().getName()),
+            inspektrAuditTrailDataSource());
+        return factory.newEntityManagerFactoryBean(ctx, casProperties.getAudit().getJdbc());
     }
 
     @ConditionalOnMissingBean(name = "auditCleanupCriteria")
@@ -115,8 +116,9 @@ public class CasSupportJdbcAuditConfiguration {
     @Bean
     public TransactionTemplate inspektrAuditTransactionTemplate() {
         val t = new TransactionTemplate(inspektrAuditTransactionManager());
-        t.setIsolationLevelName(casProperties.getAudit().getJdbc().getIsolationLevelName());
-        t.setPropagationBehaviorName(casProperties.getAudit().getJdbc().getPropagationBehaviorName());
+        val jdbc = casProperties.getAudit().getJdbc();
+        t.setIsolationLevelName(jdbc.getIsolationLevelName());
+        t.setPropagationBehaviorName(jdbc.getPropagationBehaviorName());
         return t;
     }
 

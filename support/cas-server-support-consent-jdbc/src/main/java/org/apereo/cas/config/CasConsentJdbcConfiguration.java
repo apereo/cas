@@ -1,15 +1,17 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
+import org.apereo.cas.configuration.model.support.jpa.JpaConfigurationContext;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.consent.ConsentRepository;
 import org.apereo.cas.consent.JpaConsentDecision;
 import org.apereo.cas.consent.JpaConsentRepository;
-import org.apereo.cas.hibernate.HibernateBeans;
+import org.apereo.cas.hibernate.CasHibernateJpaBeanFactory;
+import org.apereo.cas.jpa.JpaBeanFactory;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -19,8 +21,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
-import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
@@ -40,7 +42,8 @@ import java.util.List;
 @EnableTransactionManagement(proxyTargetClass = true)
 public class CasConsentJdbcConfiguration {
     @Autowired
-    private ConfigurableApplicationContext applicationContext;
+    @Qualifier("jpaBeanFactory")
+    private ObjectProvider<JpaBeanFactory> jpaBeanFactory;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -52,8 +55,8 @@ public class CasConsentJdbcConfiguration {
 
     @RefreshScope
     @Bean
-    public HibernateJpaVendorAdapter jpaConsentVendorAdapter() {
-        return HibernateBeans.newHibernateJpaVendorAdapter(casProperties.getJdbc());
+    public JpaVendorAdapter jpaConsentVendorAdapter() {
+        return jpaBeanFactory.getObject().newJpaVendorAdapter(casProperties.getJdbc());
     }
 
     @Bean
@@ -69,14 +72,13 @@ public class CasConsentJdbcConfiguration {
     @Lazy
     @Bean
     public LocalContainerEntityManagerFactoryBean consentEntityManagerFactory() {
-        return HibernateBeans.newHibernateEntityManagerFactoryBean(
-            new JpaConfigDataHolder(
-                jpaConsentVendorAdapter(),
-                "jpaConsentContext",
-                jpaConsentPackagesToScan(),
-                dataSourceConsent()),
-            casProperties.getConsent().getJpa(),
-            applicationContext);
+        val factory = jpaBeanFactory.getObject();
+        val ctx = new JpaConfigurationContext(
+            jpaConsentVendorAdapter(),
+            "jpaConsentContext",
+            jpaConsentPackagesToScan(),
+            dataSourceConsent());
+        return factory.newEntityManagerFactoryBean(ctx, casProperties.getConsent().getJpa());
     }
 
     @Autowired

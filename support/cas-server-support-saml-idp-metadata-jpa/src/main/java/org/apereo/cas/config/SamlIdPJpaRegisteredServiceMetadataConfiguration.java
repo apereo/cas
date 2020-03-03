@@ -1,9 +1,9 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
+import org.apereo.cas.configuration.model.support.jpa.JpaConfigurationContext;
 import org.apereo.cas.configuration.support.JpaBeans;
-import org.apereo.cas.hibernate.HibernateBeans;
+import org.apereo.cas.hibernate.CasHibernateJpaBeanFactory;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.metadata.resolver.JpaSamlRegisteredServiceMetadataResolver;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlMetadataDocument;
@@ -23,8 +23,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
-import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
@@ -61,8 +61,8 @@ public class SamlIdPJpaRegisteredServiceMetadataConfiguration implements SamlReg
 
     @RefreshScope
     @Bean
-    public HibernateJpaVendorAdapter jpaSamlMetadataVendorAdapter() {
-        return HibernateBeans.newHibernateJpaVendorAdapter(casProperties.getJdbc());
+    public JpaVendorAdapter jpaSamlMetadataVendorAdapter() {
+        return CasHibernateJpaBeanFactory.newJpaVendorAdapter(casProperties.getJdbc());
     }
 
     @Bean
@@ -80,8 +80,8 @@ public class SamlIdPJpaRegisteredServiceMetadataConfiguration implements SamlReg
     @Bean
     public LocalContainerEntityManagerFactoryBean samlMetadataEntityManagerFactory() {
         val idp = casProperties.getAuthn().getSamlIdp().getMetadata();
-        return HibernateBeans.newHibernateEntityManagerFactoryBean(
-            new JpaConfigDataHolder(
+        return CasHibernateJpaBeanFactory.newEntityManagerFactoryBean(
+            new JpaConfigurationContext(
                 jpaSamlMetadataVendorAdapter(),
                 "jpaSamlMetadataContext",
                 jpaSamlMetadataPackagesToScan(),

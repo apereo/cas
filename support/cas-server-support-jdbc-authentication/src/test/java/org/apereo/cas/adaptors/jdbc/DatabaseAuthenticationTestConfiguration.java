@@ -2,7 +2,7 @@ package org.apereo.cas.adaptors.jdbc;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jpa.DatabaseProperties;
-import org.apereo.cas.hibernate.HibernateBeans;
+import org.apereo.cas.hibernate.CasHibernateJpaBeanFactory;
 
 import lombok.SneakyThrows;
 import lombok.val;
@@ -11,8 +11,8 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
+import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
-import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 
 import javax.sql.DataSource;
 
@@ -61,11 +61,11 @@ public class DatabaseAuthenticationTestConfiguration {
     }
 
     @Bean
-    public HibernateJpaVendorAdapter jpaVendorAdapter() {
+    public JpaVendorAdapter jpaVendorAdapter() {
         val properties = new DatabaseProperties();
         properties.setGenDdl(true);
         properties.setShowSql(true);
-        return HibernateBeans.newHibernateJpaVendorAdapter(properties);
+        return CasHibernateJpaBeanFactory.newJpaVendorAdapter(properties);
     }
 
     @Bean
