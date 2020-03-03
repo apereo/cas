@@ -1,7 +1,6 @@
-package org.apereo.cas.adaptors.jdbc;
+package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.jpa.DatabaseProperties;
 import org.apereo.cas.jpa.JpaBeanFactory;
 
 import lombok.SneakyThrows;
@@ -68,10 +67,7 @@ public class DatabaseAuthenticationTestConfiguration {
 
     @Bean
     public JpaVendorAdapter jpaVendorAdapter() {
-        val properties = new DatabaseProperties();
-        properties.setGenDdl(true);
-        properties.setShowSql(true);
-        return jpaBeanFactory.newJpaVendorAdapter(properties);
+        return jpaBeanFactory.newJpaVendorAdapter();
     }
 
     @Bean
