@@ -17,6 +17,7 @@ import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
+import org.apereo.cas.config.CasHibernateJpaConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.GoogleAuthenticatorJpaConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
@@ -48,6 +49,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
     JpaGoogleAuthenticatorTokenCredentialRepositoryTests.JpaTestConfiguration.class,
     GoogleAuthenticatorJpaConfiguration.class,
     GoogleAuthenticatorAuthenticationMultifactorProviderBypassConfiguration.class,
+    CasHibernateJpaConfiguration.class,
     CasCookieConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
