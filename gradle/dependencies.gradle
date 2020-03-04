@@ -728,6 +728,12 @@ ext.libraries = [
                     force = true
                 }
         ],
+        eclipselink : [
+                dependencies.create("org.eclipse.persistence:org.eclipse.persistence.jpa:$eclipseLinkVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    force = true
+                }
+        ],
         hibernate               : [
                 dependencies.create("org.hibernate:hibernate-core:$hibernateVersion") {
                     exclude(group: "org.hibernate", module: "hibernate-entitymanager")
