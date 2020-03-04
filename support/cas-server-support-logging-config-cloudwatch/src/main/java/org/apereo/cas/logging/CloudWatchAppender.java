@@ -41,6 +41,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 @Plugin(name = "CloudWatchAppender", category = "Core", elementType = "appender", printObject = true)
 @Slf4j
+@SuppressWarnings("java:S2055")
 public class CloudWatchAppender extends AbstractAppender implements Serializable {
     private static final long serialVersionUID = 1044758913028847477L;
 

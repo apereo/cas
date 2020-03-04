@@ -22,7 +22,7 @@ import java.time.ZonedDateTime;
 public class AuthenticationDateAttributeMetaDataPopulator extends BaseAuthenticationMetaDataPopulator {
     @Override
     public void populateAttributes(final AuthenticationBuilder builder, final AuthenticationTransaction transaction) {
-        builder.mergeAttribute(AuthenticationManager.AUTHENTICATION_DATE_ATTRIBUTE, ZonedDateTime.now(ZoneOffset.UTC));
+        builder.mergeAttribute(AuthenticationManager.AUTHENTICATION_DATE_ATTRIBUTE, ZonedDateTime.now(ZoneOffset.UTC).toEpochSecond());
     }
 
     @Override

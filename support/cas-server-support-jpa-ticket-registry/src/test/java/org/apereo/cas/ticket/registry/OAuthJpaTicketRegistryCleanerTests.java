@@ -17,6 +17,7 @@ import org.apereo.cas.config.CasCoreTicketsSchedulingConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
+import org.apereo.cas.config.CasHibernateJpaConfiguration;
 import org.apereo.cas.config.CasOAuth20Configuration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.JpaTicketRegistryConfiguration;
@@ -47,9 +48,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link OAuthJpaTicketRegistryCleanerTests}.
@@ -58,33 +57,34 @@ import static org.junit.jupiter.api.Assertions.assertNull;
  * @since 6.1.0
  */
 @SpringBootTest(classes = {
-        JpaTicketRegistryTicketCatalogConfiguration.class,
-        JpaTicketRegistryConfiguration.class,
-        CasOAuth20Configuration.class,
-        CasCoreTicketsSchedulingConfiguration.class,
-        CasCoreTicketIdGeneratorsConfiguration.class,
-        CasDefaultServiceTicketIdGeneratorsConfiguration.class,
-        RefreshAutoConfiguration.class,
-        AopAutoConfiguration.class,
-        CasCookieConfiguration.class,
-        CasCoreUtilConfiguration.class,
-        CasCoreAuthenticationConfiguration.class,
-        CasCoreServicesAuthenticationConfiguration.class,
-        CasCoreAuthenticationPrincipalConfiguration.class,
-        CasCoreAuthenticationPolicyConfiguration.class,
-        CasCoreAuthenticationMetadataConfiguration.class,
-        CasCoreAuthenticationSupportConfiguration.class,
-        CasCoreAuthenticationHandlersConfiguration.class,
-        CasCoreHttpConfiguration.class,
-        CasCoreServicesConfiguration.class,
-        CasPersonDirectoryConfiguration.class,
-        CasCoreLogoutConfiguration.class,
-        CasCoreConfiguration.class,
-        CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-        CasCoreTicketsConfiguration.class,
-        CasCoreWebConfiguration.class,
-        OAuth20ProtocolTicketCatalogConfiguration.class,
-        CasWebApplicationServiceFactoryConfiguration.class
+    JpaTicketRegistryTicketCatalogConfiguration.class,
+    JpaTicketRegistryConfiguration.class,
+    CasHibernateJpaConfiguration.class,
+    CasOAuth20Configuration.class,
+    CasCoreTicketsSchedulingConfiguration.class,
+    CasCoreTicketIdGeneratorsConfiguration.class,
+    CasDefaultServiceTicketIdGeneratorsConfiguration.class,
+    RefreshAutoConfiguration.class,
+    AopAutoConfiguration.class,
+    CasCookieConfiguration.class,
+    CasCoreUtilConfiguration.class,
+    CasCoreAuthenticationConfiguration.class,
+    CasCoreServicesAuthenticationConfiguration.class,
+    CasCoreAuthenticationPrincipalConfiguration.class,
+    CasCoreAuthenticationPolicyConfiguration.class,
+    CasCoreAuthenticationMetadataConfiguration.class,
+    CasCoreAuthenticationSupportConfiguration.class,
+    CasCoreAuthenticationHandlersConfiguration.class,
+    CasCoreHttpConfiguration.class,
+    CasCoreServicesConfiguration.class,
+    CasPersonDirectoryConfiguration.class,
+    CasCoreLogoutConfiguration.class,
+    CasCoreConfiguration.class,
+    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
+    CasCoreTicketsConfiguration.class,
+    CasCoreWebConfiguration.class,
+    OAuth20ProtocolTicketCatalogConfiguration.class,
+    CasWebApplicationServiceFactoryConfiguration.class
 })
 @Transactional(transactionManager = "ticketTransactionManager", isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
 @ResourceLock("oauth-jpa-tickets")
@@ -118,7 +118,7 @@ public class OAuthJpaTicketRegistryCleanerTests {
         ticketRegistry.addTicket(tgt);
 
         val at = accessTokenFactory.create(RegisteredServiceTestUtils.getService(),
-                RegisteredServiceTestUtils.getAuthentication(), tgt, Collections.singleton("scope1"), "client1", Collections.emptyMap());
+            RegisteredServiceTestUtils.getAuthentication(), tgt, Collections.singleton("scope1"), "client1", Collections.emptyMap());
 
         ticketRegistry.addTicket(at);
         ticketRegistry.updateTicket(tgt);
