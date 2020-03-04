@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.services;
 
+import org.apereo.cas.config.CasHibernateJpaConfiguration;
 import org.apereo.cas.config.JpaServiceRegistryConfiguration;
 import org.apereo.cas.services.ChainingAttributeReleasePolicy;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
@@ -23,7 +24,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Import(JpaServiceRegistryConfiguration.class)
+@Import({
+    CasHibernateJpaConfiguration.class,
+    JpaServiceRegistryConfiguration.class
+})
 @Tag("SAML")
 public class SamlRegisteredServiceJpaTests extends BaseSamlIdPConfigurationTests {
 
