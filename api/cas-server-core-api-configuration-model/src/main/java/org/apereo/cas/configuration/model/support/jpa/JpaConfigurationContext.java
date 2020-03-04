@@ -8,7 +8,9 @@ import org.springframework.orm.jpa.JpaVendorAdapter;
 import javax.sql.DataSource;
 
 import java.io.Serializable;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Simple structure to collect and pass around pieces of JPA config data reusable across
@@ -32,7 +34,8 @@ public class JpaConfigurationContext implements Serializable {
 
     private final transient DataSource dataSource;
 
-
+    private final Map<String, Object> jpaProperties = new LinkedHashMap<>();
+    
     public JpaConfigurationContext(final JpaVendorAdapter jpaVendorAdapter,
                                    final String persistenceUnitName,
                                    final List<String> packagesToScan) {
