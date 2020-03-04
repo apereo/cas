@@ -81,14 +81,6 @@ apply plugin: "com.github.ben-manes.versions"
 
 if (!Boolean.getBoolean("skipSonarqube")) {
     apply plugin: "org.sonarqube"
-
-    def reportPath = new File(rootProject.buildDir, "reports/jacoco/jacocoRootReport/jacocoRootReport.xml")
-    println "Report path is ${reportPath}"
-    sonarqube {
-        properties {
-            property "sonar.coverage.jacoco.xmlReportPaths", reportPath.canonicalPath
-        }
-    }
 }
 
 if (continuousIntegrationBuild || Boolean.getBoolean("enableBuildTimeTracker")) {
