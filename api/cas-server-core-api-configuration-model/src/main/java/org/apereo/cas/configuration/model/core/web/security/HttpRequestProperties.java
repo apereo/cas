@@ -30,6 +30,12 @@ public class HttpRequestProperties implements Serializable {
     private boolean allowMultiValueParameters;
 
     /**
+     * Characters to block in incoming requests.
+     * {@code none} is a special value. Separate characters by a space.
+     */
+    private String charactersToForbid = "none";
+
+    /**
      * Parameters that are only allowed and accepted during posts.
      */
     private String onlyPostParams = "username,password";

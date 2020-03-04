@@ -134,16 +134,18 @@ public class CasFiltersConfiguration {
         bean.setName("responseHeadersSecurityFilter");
         bean.setAsyncSupported(true);
         return bean;
-
     }
 
     @RefreshScope
     @Bean
     public FilterRegistrationBean requestParameterSecurityFilter() {
         final Map<String, String> initParams = new HashMap<>();
-        initParams.put(RequestParameterPolicyEnforcementFilter.PARAMETERS_TO_CHECK,
-            casProperties.getHttpWebRequest().getParamsToCheck());
-        initParams.put(RequestParameterPolicyEnforcementFilter.CHARACTERS_TO_FORBID, "none");
+        if (StringUtils.isNotBlank(casProperties.getHttpWebRequest().getParamsToCheck())) {
+            initParams.put(RequestParameterPolicyEnforcementFilter.PARAMETERS_TO_CHECK,
+                casProperties.getHttpWebRequest().getParamsToCheck());
+        }
+        initParams.put(RequestParameterPolicyEnforcementFilter.CHARACTERS_TO_FORBID,
+            casProperties.getHttpWebRequest().getCharactersToForbid());
         initParams.put(RequestParameterPolicyEnforcementFilter.ALLOW_MULTI_VALUED_PARAMETERS,
             BooleanUtils.toStringTrueFalse(casProperties.getHttpWebRequest().isAllowMultiValueParameters()));
         initParams.put(RequestParameterPolicyEnforcementFilter.ONLY_POST_PARAMETERS,
