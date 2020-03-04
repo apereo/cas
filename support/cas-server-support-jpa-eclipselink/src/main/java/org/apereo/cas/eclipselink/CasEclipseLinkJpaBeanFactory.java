@@ -6,7 +6,6 @@ import org.apereo.cas.configuration.model.support.jpa.JpaConfigurationContext;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.jpa.JpaBeanFactory;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.eclipse.persistence.config.BatchWriting;
 import org.eclipse.persistence.config.PersistenceUnitProperties;
@@ -23,7 +22,6 @@ import java.util.HashMap;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Slf4j
 public class CasEclipseLinkJpaBeanFactory implements JpaBeanFactory {
 
     @Override
