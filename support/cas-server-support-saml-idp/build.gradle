@@ -46,6 +46,8 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-webflow", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")
 
+    testImplementation project(":support:cas-server-support-jpa-hibernate")
+    testImplementation project(":support:cas-server-support-jpa-util")
     testImplementation project(":support:cas-server-support-json-service-registry")
     testImplementation project(":support:cas-server-support-jpa-service-registry")
     testImplementation project(":support:cas-server-support-jdbc-drivers")
