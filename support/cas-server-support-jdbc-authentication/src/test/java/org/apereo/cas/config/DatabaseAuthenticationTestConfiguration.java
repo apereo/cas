@@ -1,7 +1,10 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.jpa.JpaConfigurationContext;
+import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.jpa.JpaBeanFactory;
+import org.apereo.cas.util.CollectionUtils;
 
 import lombok.SneakyThrows;
 import lombok.val;
@@ -11,14 +14,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 
 import javax.sql.DataSource;
-
-import java.sql.Driver;
-import java.util.Properties;
 
 /**
  * This is {@link DatabaseAuthenticationTestConfiguration}.
@@ -57,12 +56,7 @@ public class DatabaseAuthenticationTestConfiguration {
     @SneakyThrows
     @Bean
     public DataSource dataSource() {
-        val ds = new SimpleDriverDataSource();
-        ds.setDriverClass((Class<Driver>) Class.forName(databaseDriverClassName));
-        ds.setUsername(databaseUser);
-        ds.setPassword(databasePassword);
-        ds.setUrl(this.databaseUrl + databaseName);
-        return ds;
+        return JpaBeans.newDataSource(databaseDriverClassName, databaseUser, databasePassword, this.databaseUrl + databaseName);
     }
 
     @Bean
@@ -72,17 +66,17 @@ public class DatabaseAuthenticationTestConfiguration {
 
     @Bean
     public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
-        val bean = new LocalContainerEntityManagerFactoryBean();
-        bean.setPersistenceUnitName("databaseAuthnContext");
-        bean.setJpaVendorAdapter(jpaVendorAdapter());
-        bean.setPackagesToScan("org.apereo.cas.adaptors.jdbc");
-        bean.setDataSource(dataSource());
+        val ctx = new JpaConfigurationContext(
+            jpaVendorAdapter(),
+            "databaseAuthnContext",
+            CollectionUtils.wrap("org.apereo.cas.adaptors.jdbc"),
+            dataSource());
 
-        val properties = new Properties();
-        properties.put("hibernate.dialect", databaseDialect);
-        properties.put("hibernate.hbm2ddl.auto", this.hbm2ddl);
-        properties.put("hibernate.jdbc.batch_size", 1);
-        bean.setJpaProperties(properties);
-        return bean;
+        val jpaProperties = ctx.getJpaProperties();
+        jpaProperties.put("hibernate.dialect", databaseDialect);
+        jpaProperties.put("hibernate.hbm2ddl.auto", this.hbm2ddl);
+        jpaProperties.put("hibernate.jdbc.batch_size", 1);
+
+        return JpaBeans.newEntityManagerFactoryBean(ctx);
     }
 }
