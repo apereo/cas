@@ -11,6 +11,7 @@ import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.EncodingUtils;
 
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
@@ -90,7 +91,7 @@ public class OAuth20RefreshTokenGrantTypeTokenRequestValidatorTests {
     }
 
     @Test
-    public void verifyOperation() {
+    public void verifyOperationClientSecretPost() {
         val request = new MockHttpServletRequest();
 
         val profile = new CommonProfile();
@@ -119,6 +120,42 @@ public class OAuth20RefreshTokenGrantTypeTokenRequestValidatorTests {
         session.setAttribute(Pac4jConstants.USER_PROFILES, profile);
         request.setParameter(OAuth20Constants.CLIENT_ID, RequestValidatorTestUtils.PROMISCUOUS_CLIENT_ID);
         request.setParameter(OAuth20Constants.CLIENT_SECRET, RequestValidatorTestUtils.SHARED_SECRET);
+        request.setParameter(OAuth20Constants.REFRESH_TOKEN, PROMISCUOUS_SERVICE_TICKET);
+        assertTrue(this.validator.validate(new JEEContext(request, response)));
+    }
+
+    @Test
+    public void verifyOperationClientSecretBasic() {
+        val request = new MockHttpServletRequest();
+
+        val profile = new CommonProfile();
+        profile.setClientName(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN);
+        profile.setId(RequestValidatorTestUtils.SUPPORTING_CLIENT_ID);
+        val session = request.getSession(true);
+        assertNotNull(session);
+        session.setAttribute(Pac4jConstants.USER_PROFILES, profile);
+
+        val response = new MockHttpServletResponse();
+        request.addHeader("Authorization",
+                          "Basic " + EncodingUtils.encodeBase64(RequestValidatorTestUtils.SUPPORTING_CLIENT_ID + ":" + RequestValidatorTestUtils.SHARED_SECRET));
+        request.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.REFRESH_TOKEN.getType());
+        request.setParameter(OAuth20Constants.REFRESH_TOKEN, SUPPORTING_SERVICE_TICKET);
+
+        assertTrue(this.validator.validate(new JEEContext(request, response)));
+
+        profile.setId(RequestValidatorTestUtils.NON_SUPPORTING_CLIENT_ID);
+        session.setAttribute(Pac4jConstants.USER_PROFILES, profile);
+        request.removeHeader("Authorization");
+        request.addHeader("Authorization",
+                          "Basic " + EncodingUtils.encodeBase64(RequestValidatorTestUtils.NON_SUPPORTING_CLIENT_ID + ":" + RequestValidatorTestUtils.SHARED_SECRET));
+        request.setParameter(OAuth20Constants.REFRESH_TOKEN, NON_SUPPORTING_SERVICE_TICKET);
+        assertFalse(this.validator.validate(new JEEContext(request, response)));
+
+        profile.setId(RequestValidatorTestUtils.PROMISCUOUS_CLIENT_ID);
+        session.setAttribute(Pac4jConstants.USER_PROFILES, profile);
+        request.removeHeader("Authorization");
+        request.addHeader("Authorization",
+                          "Basic " + EncodingUtils.encodeBase64(RequestValidatorTestUtils.PROMISCUOUS_CLIENT_ID + ":" + RequestValidatorTestUtils.SHARED_SECRET));
         request.setParameter(OAuth20Constants.REFRESH_TOKEN, PROMISCUOUS_SERVICE_TICKET);
         assertTrue(this.validator.validate(new JEEContext(request, response)));
     }
