@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.autoconfigure.mail.MailSenderValidatorAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -90,6 +91,7 @@ public class RegisteredServicesEventListenerTests {
     @TestConfiguration
     public static class RegisteredServicesEventListenerTestConfiguration {
 
+        @ConditionalOnMissingBean(name = "smsSender")
         @Bean
         public SmsSender smsSender() {
             return new MockSmsSender();
