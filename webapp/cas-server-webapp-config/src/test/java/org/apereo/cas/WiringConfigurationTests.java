@@ -32,16 +32,28 @@ import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
+import lombok.val;
+import org.apache.http.client.methods.HttpGet;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.web.servlet.LocaleResolver;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.mvc.Controller;
+
+import java.util.List;
+import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -82,6 +94,7 @@ import static org.junit.jupiter.api.Assertions.*;
     AcceptUsersAuthenticationEventExecutionPlanConfiguration.class,
     CasCoreAuditConfiguration.class,
     CasPersonDirectoryConfiguration.class,
+    WebMvcAutoConfiguration.class,
     AopAutoConfiguration.class,
     MailSenderAutoConfiguration.class,
     RefreshAutoConfiguration.class
@@ -93,13 +106,42 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @WebAppConfiguration
 @EnableAspectJAutoProxy(proxyTargetClass = true)
+@EnableWebMvc
 public class WiringConfigurationTests {
     @Autowired
     private ApplicationContext applicationContext;
+
+    @Autowired
+    @Qualifier("rootController")
+    private Controller rootController;
+
+    @Autowired
+    @Qualifier("localeResolver")
+    private LocaleResolver localeResolver;
 
     @Test
     public void verifyConfigurationClasses() {
         assertNotNull(applicationContext);
         assertTrue(applicationContext.getBeanDefinitionCount() > 0);
+    }
+
+    @Test
+    public void verifyRootController() throws Exception {
+        val request = new MockHttpServletRequest();
+        request.setMethod(HttpGet.METHOD_NAME);
+        request.setRequestURI("/cas/example");
+        request.setQueryString("param=value");
+        assertNotNull(rootController.handleRequest(request, new MockHttpServletResponse()));
+    }
+
+    @Test
+    public void verifyLocale() {
+        var request = new MockHttpServletRequest();
+        request.setPreferredLocales(List.of(Locale.ENGLISH));
+        assertEquals(Locale.ENGLISH, localeResolver.resolveLocale(request));
+
+        request = new MockHttpServletRequest();
+        request.setPreferredLocales(List.of(Locale.ITALIAN));
+        assertEquals(Locale.ITALIAN, localeResolver.resolveLocale(request));
     }
 }
