@@ -15,4 +15,10 @@ public interface OAuth20RefreshToken extends OAuth20Token {
      * The prefix for refresh tokens.
      */
     String PREFIX = "RT";
+
+    /**
+     * Client id for whom this access token was issued.
+     * @return client id.
+     */
+    String getClientId();
 }

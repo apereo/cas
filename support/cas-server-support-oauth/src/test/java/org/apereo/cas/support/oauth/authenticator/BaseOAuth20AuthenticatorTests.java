@@ -33,6 +33,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
+import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.web.config.CasCookieConfiguration;
@@ -130,6 +131,19 @@ public abstract class BaseOAuth20AuthenticatorTests {
         return accessToken;
     }
 
+    protected static OAuth20RefreshToken getRefreshToken(final OAuthRegisteredService service) {
+        val tgt = new MockTicketGrantingTicket("casuser");
+
+        val refreshToken = mock(OAuth20RefreshToken.class);
+        when(refreshToken.getId()).thenReturn("ABCD");
+        when(refreshToken.getTicketGrantingTicket()).thenReturn(tgt);
+        when(refreshToken.getAuthentication()).thenReturn(tgt.getAuthentication());
+        when(refreshToken.getClientId()).thenReturn(service.getClientId());
+        when(refreshToken.getExpirationPolicy()).thenReturn(NeverExpiresExpirationPolicy.INSTANCE);
+
+        return refreshToken;
+    }
+
     @BeforeEach
     public void initialize() {
         service = new OAuthRegisteredService();
@@ -152,7 +166,7 @@ public abstract class BaseOAuth20AuthenticatorTests {
         serviceJwtAccessToken.setClientSecret("clientsecret");
         serviceJwtAccessToken.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
         serviceJwtAccessToken.setJwtAccessToken(true);
-        
+
         servicesManager.save(service, serviceWithoutSecret, serviceJwtAccessToken);
     }
 }

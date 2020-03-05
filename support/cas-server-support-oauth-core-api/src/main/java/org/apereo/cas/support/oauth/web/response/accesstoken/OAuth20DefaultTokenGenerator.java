@@ -272,7 +272,7 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
             responseHolder.getAuthentication(),
             responseHolder.getTicketGrantingTicket(),
             responseHolder.getScopes(),
-            responseHolder.getClientId(),
+            responseHolder.getRegisteredService().getClientId(),
             responseHolder.getClaims());
         LOGGER.debug("Adding refresh token [{}] to the registry", refreshToken);
         addTicketToRegistry(refreshToken, responseHolder.getTicketGrantingTicket());
