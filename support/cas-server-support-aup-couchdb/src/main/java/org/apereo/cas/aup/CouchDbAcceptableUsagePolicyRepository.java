@@ -12,6 +12,8 @@ import lombok.val;
 import org.ektorp.UpdateConflictException;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.util.List;
+
 /**
  * This is {@link CouchDbAcceptableUsagePolicyRepository}.
  *
@@ -22,7 +24,9 @@ import org.springframework.webflow.execution.RequestContext;
 public class CouchDbAcceptableUsagePolicyRepository extends AbstractPrincipalAttributeAcceptableUsagePolicyRepository {
 
     private static final long serialVersionUID = -2391630070546362552L;
+
     private final transient ProfileCouchDbRepository couchDb;
+
     private final int conflictRetries;
 
     public CouchDbAcceptableUsagePolicyRepository(final TicketRegistrySupport ticketRegistrySupport, final String aupAttributeName,
@@ -49,7 +53,8 @@ public class CouchDbAcceptableUsagePolicyRepository extends AbstractPrincipalAtt
         val profile = couchDb.findByUsername(credential.getId());
         var accepted = false;
         if (profile != null) {
-            accepted = (Boolean) profile.getAttribute(aupAttributeName);
+            val values = CollectionUtils.toCollection(profile.getAttribute(aupAttributeName));
+            accepted = CollectionUtils.firstElement(values).map(value -> (Boolean) value).orElse(Boolean.FALSE);
         }
         if (accepted) {
             LOGGER.debug("Usage policy has been accepted by [{}]", profile.getUsername());
@@ -66,11 +71,13 @@ public class CouchDbAcceptableUsagePolicyRepository extends AbstractPrincipalAtt
         val username = credential.getId();
         val profile = couchDb.findByUsername(username);
         if (profile == null) {
-            couchDb.add(new CouchDbProfileDocument(username, null, CollectionUtils.wrap(aupAttributeName, Boolean.TRUE)));
+            val doc = new CouchDbProfileDocument(username, null,
+                CollectionUtils.wrap(aupAttributeName, List.of(Boolean.TRUE)));
+            couchDb.add(doc);
             return true;
         }
         var success = false;
-        profile.setAttribute(aupAttributeName, Boolean.TRUE);
+        profile.setAttribute(aupAttributeName, List.of(Boolean.TRUE));
         UpdateConflictException exception = null;
         for (int retries = 0; retries < conflictRetries; retries++) {
             try {

@@ -65,12 +65,11 @@ public class UsernamePasswordCredential extends AbstractCredential {
      * @param context the context
      */
     public void validate(final ValidationContext context) {
-        if (!context.getUserEvent().equalsIgnoreCase("submit")) {
-            super.validate(context);
+        val messages = context.getMessageContext();
+        if (!context.getUserEvent().equalsIgnoreCase("submit") || messages.hasErrorMessages()) {
             return;
         }
 
-        val messages = context.getMessageContext();
         ApplicationContextProvider.getCasConfigurationProperties().ifPresent(props -> {
             if (StringUtils.isBlank(source) && props.getAuthn().getPolicy().isSourceSelectionEnabled()) {
                 messages.addMessage(new MessageBuilder()
@@ -81,5 +80,6 @@ public class UsernamePasswordCredential extends AbstractCredential {
                     .build());
             }
         });
+        super.validate(context);
     }
 }
