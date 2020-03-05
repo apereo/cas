@@ -3,7 +3,7 @@
 clear
 
 printHelp() {
-    echo -e "Usage: ./testcas.sh --category [category1,category2,...] [--help] [--no-wrapper] [--debug] [--coverage]\n"
+    echo -e "Usage: ./testcas.sh --category [category1,category2,...] [--help] [--no-wrapper] [--no-retry] [--debug] [--coverage]\n"
     echo -e "Available test categories are:\n"
     echo -e "\t - simple"
     echo -e "\t - memcached"
@@ -66,6 +66,10 @@ while (( "$#" )); do
     --test)
         tests="--tests \"$2\" "
         shift 2
+        ;;
+    --no-retry)
+        flags+=" -DskipTestRetry=true"
+        shift
         ;;
     --category)
         for item in $(echo "$2" | sed "s/,/ /g")

@@ -38,7 +38,7 @@ public class CasEclipseLinkJpaBeanFactory implements JpaBeanFactory {
         val bean = JpaBeans.newEntityManagerFactoryBean(config);
 
         val map = new HashMap<String, Object>();
-        map.put(PersistenceUnitProperties.WEAVING, true);
+        map.put(PersistenceUnitProperties.WEAVING, Boolean.TRUE);
         map.put(PersistenceUnitProperties.DDL_GENERATION, jpaProperties.getDdlAuto());
         map.put(PersistenceUnitProperties.BATCH_WRITING_SIZE, jpaProperties.getBatchSize());
         map.put(PersistenceUnitProperties.BATCH_WRITING, BatchWriting.JDBC);

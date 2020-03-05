@@ -4,6 +4,12 @@
         <cve>CVE-2020-1938</cve>
     </suppress>
     <suppress>
+        <cve>CVE-2019-14893</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2019-14892</cve>
+    </suppress>
+    <suppress>
         <cve>CVE-2020-1938</cve>
     </suppress>
     <suppress>
