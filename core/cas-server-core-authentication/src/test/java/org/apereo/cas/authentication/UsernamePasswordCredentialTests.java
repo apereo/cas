@@ -57,7 +57,7 @@ public class UsernamePasswordCredentialTests {
     }
 
     @Test
-    public void verifyInvalid() {
+    public void verifyInvalidEvent() {
         ApplicationContextProvider.holdApplicationContext(applicationContext);
         val input = new UsernamePasswordCredential(null, "Mellon", StringUtils.EMPTY, Map.of());
 
@@ -68,7 +68,7 @@ public class UsernamePasswordCredentialTests {
 
         val validationContext = new DefaultValidationContext(context, "whatever", mock(MappingResults.class));
         input.validate(validationContext);
-        assertTrue(context.getMessageContext().hasErrorMessages());
+        assertFalse(context.getMessageContext().hasErrorMessages());
     }
 
     @Test

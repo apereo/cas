@@ -6,6 +6,7 @@ import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
 import org.apereo.cas.couchdb.events.EventCouchDbRepository;
 import org.apereo.cas.support.events.AbstractCasEventRepositoryTests;
 import org.apereo.cas.support.events.CasEventRepository;
+import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 
 import lombok.Getter;
 import org.junit.jupiter.api.AfterEach;
@@ -34,6 +35,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
         "cas.events.couchdb.password=password"
     })
 @Getter
+@EnabledIfContinuousIntegration
 public class CouchDbCasEventRepositoryTests extends AbstractCasEventRepositoryTests {
     @Autowired
     @Qualifier("couchDbEventRepository")
