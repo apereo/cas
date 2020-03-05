@@ -35,7 +35,7 @@ import java.util.ArrayList;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public class YubiKeyAccount implements Serializable {
     /**
-     * uername field.
+     * username field.
      */
     public static final String FIELD_USERNAME = "username";
 
