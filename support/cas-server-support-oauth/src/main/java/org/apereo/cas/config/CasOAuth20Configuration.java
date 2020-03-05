@@ -19,6 +19,7 @@ import org.apereo.cas.support.oauth.authenticator.OAuth20AccessTokenAuthenticato
 import org.apereo.cas.support.oauth.authenticator.OAuth20CasAuthenticationBuilder;
 import org.apereo.cas.support.oauth.authenticator.OAuth20ClientIdClientSecretAuthenticator;
 import org.apereo.cas.support.oauth.authenticator.OAuth20ProofKeyCodeExchangeAuthenticator;
+import org.apereo.cas.support.oauth.authenticator.OAuth20RefreshTokenAuthenticator;
 import org.apereo.cas.support.oauth.authenticator.OAuth20UsernamePasswordAuthenticator;
 import org.apereo.cas.support.oauth.authenticator.OAuthAuthenticationClientProvider;
 import org.apereo.cas.support.oauth.profile.CasServerApiBasedTicketValidator;
@@ -273,6 +274,17 @@ public class CasOAuth20Configuration {
         pkceBasicAuthClient.setName(Authenticators.CAS_OAUTH_CLIENT_BASIC_PROOF_KEY_CODE_EXCHANGE_AUTHN);
         pkceBasicAuthClient.init();
 
+        val refreshTokenAuthenticator = oAuthRefreshTokenAuthenticator();
+        val refreshTokenFormClient = new DirectFormClient(refreshTokenAuthenticator);
+        refreshTokenFormClient.setName(Authenticators.CAS_OAUTH_CLIENT_FORM_REFRESH_TOKEN_AUTHN);
+        refreshTokenFormClient.setUsernameParameter(OAuth20Constants.CLIENT_ID);
+        refreshTokenFormClient.setPasswordParameter(OAuth20Constants.REFRESH_TOKEN);
+        refreshTokenFormClient.init();
+
+        val refreshTokenBasicAuthClient = new DirectBasicAuthClient(refreshTokenAuthenticator);
+        refreshTokenBasicAuthClient.setName(Authenticators.CAS_OAUTH_CLIENT_BASIC_REFRESH_TOKEN_AUTHN);
+        refreshTokenBasicAuthClient.init();
+
         val userFormClient = new DirectFormClient(oAuthUserAuthenticator());
         userFormClient.setName(Authenticators.CAS_OAUTH_CLIENT_USER_FORM);
         userFormClient.init();
@@ -296,6 +308,8 @@ public class CasOAuth20Configuration {
         clientList.add(basicAuthClient);
         clientList.add(pkceAuthnFormClient);
         clientList.add(pkceBasicAuthClient);
+        clientList.add(refreshTokenFormClient);
+        clientList.add(refreshTokenBasicAuthClient);
         clientList.add(directFormClient);
         clientList.add(userFormClient);
         clientList.add(accessTokenClient);
@@ -328,6 +342,17 @@ public class CasOAuth20Configuration {
     @Bean
     public Authenticator<UsernamePasswordCredentials> oAuthProofKeyCodeExchangeAuthenticator() {
         return new OAuth20ProofKeyCodeExchangeAuthenticator(this.servicesManager.getObject(),
+            webApplicationServiceFactory.getObject(),
+            registeredServiceAccessStrategyEnforcer.getObject(),
+            ticketRegistry.getObject(),
+            oauthRegisteredServiceCipherExecutor());
+    }
+
+    @ConditionalOnMissingBean(name = "oAuthRefreshTokenAuthenticator")
+    @Bean
+    @RefreshScope
+    public Authenticator<UsernamePasswordCredentials> oAuthRefreshTokenAuthenticator() {
+        return new OAuth20RefreshTokenAuthenticator(this.servicesManager.getObject(),
             webApplicationServiceFactory.getObject(),
             registeredServiceAccessStrategyEnforcer.getObject(),
             ticketRegistry.getObject(),

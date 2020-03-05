@@ -20,6 +20,14 @@ public interface Authenticators {
      */
     String CAS_OAUTH_CLIENT_ACCESS_TOKEN_AUTHN = "clientAccessTokenAuth";
     /**
+     * OAuth authn for refresh token with client_id and secret.
+     */
+    String CAS_OAUTH_CLIENT_FORM_REFRESH_TOKEN_AUTHN = "clientRefreshTokenFormAuth";
+    /**
+     * OAuth authn for refresh token with basic authn.
+     */
+    String CAS_OAUTH_CLIENT_BASIC_REFRESH_TOKEN_AUTHN = "clientRefreshTokenBasicAuth";
+    /**
      * OAuth authn for client id and secret.
      */
     String CAS_OAUTH_CLIENT_DIRECT_FORM = "clientForm";
