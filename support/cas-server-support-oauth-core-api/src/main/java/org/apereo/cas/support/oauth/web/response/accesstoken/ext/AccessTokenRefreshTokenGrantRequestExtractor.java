@@ -11,6 +11,7 @@ import org.apereo.cas.ticket.OAuth20UnauthorizedScopeRequestException;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.pac4j.core.context.JEEContext;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -39,7 +40,9 @@ public class AccessTokenRefreshTokenGrantRequestExtractor extends AccessTokenAut
     protected AccessTokenRequestDataHolder extractInternal(final HttpServletRequest request,
                                                            final HttpServletResponse response,
                                                            final AccessTokenRequestDataHolder.AccessTokenRequestDataHolderBuilder builder) {
-        val registeredService = getOAuthRegisteredServiceBy(request);
+
+        val context = new JEEContext(request, response, getOAuthConfigurationContext().getSessionStore());
+        val registeredService = getOAuthRegisteredServiceBy(context);
         if (registeredService == null) {
             throw new UnauthorizedServiceException("Unable to locate service in registry ");
         }
@@ -63,16 +66,16 @@ public class AccessTokenRefreshTokenGrantRequestExtractor extends AccessTokenAut
     }
 
     @Override
-    protected OAuthRegisteredService getOAuthRegisteredServiceBy(final HttpServletRequest request) {
-        val clientId = getRegisteredServiceIdentifierFromRequest(request);
+    protected OAuthRegisteredService getOAuthRegisteredServiceBy(final JEEContext context) {
+        val clientId = getRegisteredServiceIdentifierFromRequest(context);
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(getOAuthConfigurationContext().getServicesManager(), clientId);
         LOGGER.debug("Located registered service [{}]", registeredService);
         return registeredService;
     }
 
     @Override
-    protected String getRegisteredServiceIdentifierFromRequest(final HttpServletRequest request) {
-        return request.getParameter(OAuth20Constants.CLIENT_ID);
+    protected String getRegisteredServiceIdentifierFromRequest(final JEEContext context) {
+        return OAuth20Utils.getClientIdAndClientSecret(context).getLeft();
     }
 
     /**
