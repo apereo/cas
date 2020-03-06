@@ -289,16 +289,11 @@ public class CasOAuth20Configuration {
         pkceBasicAuthClient.setName(Authenticators.CAS_OAUTH_CLIENT_BASIC_PROOF_KEY_CODE_EXCHANGE_AUTHN);
         pkceBasicAuthClient.init();
 
-        val refreshTokenAuthenticator = oAuthRefreshTokenAuthenticator();
-        val refreshTokenFormClient = new DirectFormClient(refreshTokenAuthenticator);
+        val refreshTokenFormClient = new DirectFormClient(oAuthRefreshTokenAuthenticator());
         refreshTokenFormClient.setName(Authenticators.CAS_OAUTH_CLIENT_FORM_REFRESH_TOKEN_AUTHN);
         refreshTokenFormClient.setUsernameParameter(OAuth20Constants.CLIENT_ID);
         refreshTokenFormClient.setPasswordParameter(OAuth20Constants.REFRESH_TOKEN);
         refreshTokenFormClient.init();
-
-        val refreshTokenBasicAuthClient = new DirectBasicAuthClient(refreshTokenAuthenticator);
-        refreshTokenBasicAuthClient.setName(Authenticators.CAS_OAUTH_CLIENT_BASIC_REFRESH_TOKEN_AUTHN);
-        refreshTokenBasicAuthClient.init();
 
         val userFormClient = new DirectFormClient(oAuthUserAuthenticator());
         userFormClient.setName(Authenticators.CAS_OAUTH_CLIENT_USER_FORM);
@@ -323,7 +318,6 @@ public class CasOAuth20Configuration {
         clientList.add(pkceAuthnFormClient);
         clientList.add(pkceBasicAuthClient);
         clientList.add(refreshTokenFormClient);
-        clientList.add(refreshTokenBasicAuthClient);
         clientList.add(directFormClient);
         clientList.add(userFormClient);
         clientList.add(accessTokenClient);

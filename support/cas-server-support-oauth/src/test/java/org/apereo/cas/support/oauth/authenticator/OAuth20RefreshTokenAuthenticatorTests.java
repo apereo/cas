@@ -43,7 +43,6 @@ public class OAuth20RefreshTokenAuthenticatorTests extends BaseOAuth20Authentica
         val credentials = new UsernamePasswordCredentials("clientWithoutSecret", refreshToken.getId());
         val request = new MockHttpServletRequest();
         request.addParameter(OAuth20Constants.GRANT_TYPE, "refresh_token");
-        request.addParameter(OAuth20Constants.CLIENT_ID, "clientWithoutSecret");
         request.addParameter(OAuth20Constants.REFRESH_TOKEN, refreshToken.getId());
         request.addParameter(OAuth20Constants.REDIRECT_URI, "https://www.example2.org");
 
@@ -53,10 +52,9 @@ public class OAuth20RefreshTokenAuthenticatorTests extends BaseOAuth20Authentica
         assertEquals("clientWithoutSecret", credentials.getUserProfile().getId());
 
 
-        val badClientIdCredentials = new UsernamePasswordCredentials("clientWithoutSecret", refreshToken.getId());
+        val badClientIdCredentials = new UsernamePasswordCredentials("client", refreshToken.getId());
         val badClientIdRequest = new MockHttpServletRequest();
         badClientIdRequest.addParameter(OAuth20Constants.GRANT_TYPE, "refresh_token");
-        badClientIdRequest.addParameter(OAuth20Constants.CLIENT_ID, "client");
         badClientIdRequest.addParameter(OAuth20Constants.REFRESH_TOKEN, refreshToken.getId());
         badClientIdRequest.addParameter(OAuth20Constants.REDIRECT_URI, "https://www.example.org");
 
@@ -66,86 +64,6 @@ public class OAuth20RefreshTokenAuthenticatorTests extends BaseOAuth20Authentica
 
         val badRefreshTokenCredentials = new UsernamePasswordCredentials("clientWithoutSecret", "badRefreshToken");
         val badRefreshTokenRequest = new MockHttpServletRequest();
-        badRefreshTokenRequest.addParameter(OAuth20Constants.GRANT_TYPE, "refresh_token");
-        badRefreshTokenRequest.addParameter(OAuth20Constants.CLIENT_ID, "clientWithoutSecret");
-        badRefreshTokenRequest.addParameter(OAuth20Constants.REFRESH_TOKEN, "badRefreshToken");
-        badRefreshTokenRequest.addParameter(OAuth20Constants.REDIRECT_URI, "https://www.example.org");
-
-        val badRefreshTokenCtx = new JEEContext(badRefreshTokenRequest, new MockHttpServletResponse());
-        assertThrows(CredentialsException.class, () -> authenticator.validate(badRefreshTokenCredentials, badRefreshTokenCtx));
-    }
-
-    @Test
-    public void verifyAuthenticationWithClientWithSecretTransmittedByFormAuthn() {
-        val refreshToken = getRefreshToken(service);
-        ticketRegistry.addTicket(refreshToken);
-
-        val credentials = new UsernamePasswordCredentials("client", "secret");
-        val request = new MockHttpServletRequest();
-        request.addParameter(OAuth20Constants.GRANT_TYPE, "refresh_token");
-        request.addParameter(OAuth20Constants.CLIENT_ID, "client");
-        request.addParameter(OAuth20Constants.CLIENT_SECRET, "secret");
-        request.addParameter(OAuth20Constants.REFRESH_TOKEN, refreshToken.getId());
-        request.addParameter(OAuth20Constants.REDIRECT_URI, "https://www.example.org");
-
-        val ctx = new JEEContext(request, new MockHttpServletResponse());
-        authenticator.validate(credentials, ctx);
-        assertNotNull(credentials.getUserProfile());
-        assertEquals("client", credentials.getUserProfile().getId());
-
-        val badSecretCredentials = new UsernamePasswordCredentials("client", "badsecret");
-        val badSecretRequest = new MockHttpServletRequest();
-        badSecretRequest.addParameter(OAuth20Constants.GRANT_TYPE, "refresh_token");
-        badSecretRequest.addParameter(OAuth20Constants.CLIENT_ID, "client");
-        badSecretRequest.addParameter(OAuth20Constants.CLIENT_SECRET, "badsecret");
-        badSecretRequest.addParameter(OAuth20Constants.REFRESH_TOKEN, refreshToken.getId());
-        badSecretRequest.addParameter(OAuth20Constants.REDIRECT_URI, "https://www.example.org");
-
-        val badSecretCtx = new JEEContext(badSecretRequest, new MockHttpServletResponse());
-        assertThrows(CredentialsException.class, () -> authenticator.validate(badSecretCredentials, badSecretCtx));
-
-        val badRefreshTokenCredentials = new UsernamePasswordCredentials("client", "badRefreshToken");
-        val badRefreshTokenRequest = new MockHttpServletRequest();
-        badRefreshTokenRequest.addParameter(OAuth20Constants.GRANT_TYPE, "refresh_token");
-        badRefreshTokenRequest.addParameter(OAuth20Constants.CLIENT_ID, "client");
-        badRefreshTokenRequest.addParameter(OAuth20Constants.CLIENT_SECRET, "secret");
-        badRefreshTokenRequest.addParameter(OAuth20Constants.REFRESH_TOKEN, "badRefreshToken");
-        badRefreshTokenRequest.addParameter(OAuth20Constants.REDIRECT_URI, "https://www.example.org");
-
-        val badRefreshTokenCtx = new JEEContext(badRefreshTokenRequest, new MockHttpServletResponse());
-        assertThrows(CredentialsException.class, () -> authenticator.validate(badRefreshTokenCredentials, badRefreshTokenCtx));
-    }
-
-    @Test
-    public void verifyAuthenticationWithClientWithSecretTransmittedByBasicAuthn() {
-        val refreshToken = getRefreshToken(service);
-        ticketRegistry.addTicket(refreshToken);
-
-        val credentials = new UsernamePasswordCredentials("client", "secret");
-        val request = new MockHttpServletRequest();
-        request.addHeader("Authorization", "Basic " + new String(EncodingUtils.encodeBase64("client:secret")));
-        request.addParameter(OAuth20Constants.GRANT_TYPE, "refresh_token");
-        request.addParameter(OAuth20Constants.REFRESH_TOKEN, refreshToken.getId());
-        request.addParameter(OAuth20Constants.REDIRECT_URI, "https://www.example.org");
-
-        val ctx = new JEEContext(request, new MockHttpServletResponse());
-        authenticator.validate(credentials, ctx);
-        assertNotNull(credentials.getUserProfile());
-        assertEquals("client", credentials.getUserProfile().getId());
-
-        val badSecretCredentials = new UsernamePasswordCredentials("client", "badsecret");
-        val badSecretRequest = new MockHttpServletRequest();
-        badSecretRequest.addHeader("Authorization", "Basic " + new String(EncodingUtils.encodeBase64("client:badRefreshToken")));
-        badSecretRequest.addParameter(OAuth20Constants.GRANT_TYPE, "refresh_token");
-        badSecretRequest.addParameter(OAuth20Constants.REFRESH_TOKEN, refreshToken.getId());
-        badSecretRequest.addParameter(OAuth20Constants.REDIRECT_URI, "https://www.example.org");
-
-        val badSecretCtx = new JEEContext(badSecretRequest, new MockHttpServletResponse());
-        assertThrows(CredentialsException.class, () -> authenticator.validate(badSecretCredentials, badSecretCtx));
-
-        val badRefreshTokenCredentials = new UsernamePasswordCredentials("client", "badRefreshToken");
-        val badRefreshTokenRequest = new MockHttpServletRequest();
-        badSecretRequest.addHeader("Authorization", "Basic " + new String(EncodingUtils.encodeBase64("client:badRefreshToken")));
         badRefreshTokenRequest.addParameter(OAuth20Constants.GRANT_TYPE, "refresh_token");
         badRefreshTokenRequest.addParameter(OAuth20Constants.REFRESH_TOKEN, "badRefreshToken");
         badRefreshTokenRequest.addParameter(OAuth20Constants.REDIRECT_URI, "https://www.example.org");

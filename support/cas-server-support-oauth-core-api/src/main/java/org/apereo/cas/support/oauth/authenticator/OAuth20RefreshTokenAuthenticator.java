@@ -53,19 +53,17 @@ public class OAuth20RefreshTokenAuthenticator extends OAuth20ClientIdClientSecre
     @Override
     protected void validateCredentials(final UsernamePasswordCredentials credentials,
                                        final OAuthRegisteredService registeredService, final WebContext context) {
-        val clientId = OAuth20Utils.getClientIdAndClientSecret(context).getLeft();
         val clientSecret = OAuth20Utils.getClientIdAndClientSecret(context).getRight();
 
         if (!OAuth20Utils.checkClientSecret(registeredService, clientSecret, getRegisteredServiceCipherExecutor())) {
             throw new CredentialsException("Client Credentials provided is not valid for registered service: " + registeredService.getName());
         }
 
-        val token = context.getRequestParameter(OAuth20Constants.REFRESH_TOKEN)
-            .map(String::valueOf).orElse(StringUtils.EMPTY);
+        val token = credentials.getPassword();
         LOGGER.trace("Received refresh token [{}] for authentication", token);
 
         val refreshToken = getTicketRegistry().getTicket(token, OAuth20RefreshToken.class);
-        if (refreshToken == null || refreshToken.isExpired() || !StringUtils.equals(refreshToken.getClientId(), clientId)) {
+        if (refreshToken == null || refreshToken.isExpired() || !StringUtils.equals(refreshToken.getClientId(), credentials.getUsername())) {
             LOGGER.error("Provided refresh token [{}] is either not found in the ticket registry or has expired or not related with the client provided");
             throw new CredentialsException("Invalid token: " + token);
         }
