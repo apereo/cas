@@ -28,6 +28,7 @@ import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
@@ -42,12 +43,15 @@ import org.springframework.webflow.execution.RequestContextHolder;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import java.io.Serializable;
 import java.net.URI;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -65,16 +69,47 @@ public class WebUtils {
     public static final String PARAMETER_TICKET_GRANTING_TICKET_ID = "ticketGrantingTicketId";
 
     private static final String PUBLIC_WORKSTATION_ATTRIBUTE = "publicWorkstation";
+
     private static final String PARAMETER_AUTHENTICATION = "authentication";
+
     private static final String PARAMETER_AUTHENTICATION_RESULT_BUILDER = "authenticationResultBuilder";
+
     private static final String PARAMETER_AUTHENTICATION_RESULT = "authenticationResult";
+
     private static final String PARAMETER_CREDENTIAL = "credential";
+
     private static final String PARAMETER_UNAUTHORIZED_REDIRECT_URL = "unauthorizedRedirectUrl";
+
     private static final String PARAMETER_REGISTERED_SERVICE = "registeredService";
+
     private static final String PARAMETER_SERVICE = "service";
+
     private static final String PARAMETER_SERVICE_TICKET_ID = "serviceTicketId";
+
     private static final String PARAMETER_LOGOUT_REQUESTS = "logoutRequests";
+
     private static final String PARAMETER_SERVICE_UI_METADATA = "serviceUIMetadata";
+
+    /**
+     * Gets resolved events as attribute.
+     *
+     * @param context the context
+     * @return the resolved events as attribute
+     */
+    public static Collection<Event> getResolvedEventsAsAttribute(final RequestContext context) {
+        return context.getAttributes().get("resolvedAuthenticationEvents", Collection.class);
+    }
+
+    /**
+     * Put resolved events as attribute.
+     *
+     * @param context        the context
+     * @param resolvedEvents the resolved events
+     */
+    public static void putResolvedEventsAsAttribute(final RequestContext context,
+                                                    final Collection<Event> resolvedEvents) {
+        context.getAttributes().put("resolvedAuthenticationEvents", resolvedEvents);
+    }
 
     /**
      * Gets the http servlet request from the context.
@@ -847,19 +882,26 @@ public class WebUtils {
      * @return the passwordless authentication account
      */
     public static <T> T getPasswordlessAuthenticationAccount(final Event event, final Class<T> clazz) {
-        return event.getAttributes().get("passwordlessAccount", clazz);
+        if (event != null) {
+            return event.getAttributes().get("passwordlessAccount", clazz);
+        }
+        return null;
     }
 
     /**
      * Gets passwordless authentication account.
      *
-     * @param <T>   the type parameter
-     * @param event the event
-     * @param clazz the clazz
+     * @param <T>            the type parameter
+     * @param requestContext the context
+     * @param clazz          the clazz
      * @return the passwordless authentication account
      */
-    public static <T> T getPasswordlessAuthenticationAccount(final RequestContext event, final Class<T> clazz) {
-        return getPasswordlessAuthenticationAccount(event.getCurrentEvent(), clazz);
+    public static <T> T getPasswordlessAuthenticationAccount(final RequestContext requestContext, final Class<T> clazz) {
+        var result = getPasswordlessAuthenticationAccount(requestContext.getCurrentEvent(), clazz);
+        if (result == null) {
+            result = requestContext.getFlowScope().get("passwordlessAccount", clazz);
+        }
+        return result;
     }
 
     /**
@@ -929,6 +971,16 @@ public class WebUtils {
      */
     public static void putGraphicalUserAuthenticationEnabled(final RequestContext requestContext, final Boolean value) {
         requestContext.getFlowScope().put("guaEnabled", value);
+    }
+
+    /**
+     * Put graphical user authentication enabled.
+     *
+     * @param requestContext the request context
+     * @return the boolean
+     */
+    public static boolean isGraphicalUserAuthenticationEnabled(final RequestContext requestContext) {
+        return BooleanUtils.isTrue(requestContext.getFlowScope().get("guaEnabled", Boolean.class));
     }
 
     /**
@@ -1102,8 +1154,57 @@ public class WebUtils {
      */
     public static void createCredential(final RequestContext requestContext) {
         removeCredential(requestContext);
-        val flow = (Flow) requestContext.getFlowExecutionContext().getDefinition();
+        val flow = (Flow) requestContext.getActiveFlow();
         val var = flow.getVariable(CasWebflowConstants.VAR_ID_CREDENTIAL);
         var.create(requestContext);
+    }
+
+    /**
+     * Put delegated authentication provider configurations.
+     *
+     * @param context the context
+     * @param urls    the urls
+     */
+    public static void putDelegatedAuthenticationProviderConfigurations(final RequestContext context,
+                                                                        final Set<? extends Serializable> urls) {
+        context.getFlowScope().put("delegatedAuthenticationProviderConfigurations", urls);
+    }
+
+    /**
+     * Gets delegated authentication provider configurations.
+     *
+     * @param context the context
+     * @return the delegated authentication provider configurations
+     */
+    public static Set<? extends Serializable> getDelegatedAuthenticationProviderConfigurations(final RequestContext context) {
+        val scope = context.getFlowScope();
+        if (scope.contains("delegatedAuthenticationProviderConfigurations", Set.class)) {
+            return scope.get("delegatedAuthenticationProviderConfigurations", Set.class);
+        }
+        return new HashSet<>(0);
+    }
+
+    /**
+     * Put open id local user id.
+     *
+     * @param context the context
+     * @param user    the user
+     */
+    public static void putOpenIdLocalUserId(final RequestContext context, final String user) {
+        if (StringUtils.isBlank(user)) {
+            context.getFlowScope().remove("openIdLocalId");
+        } else {
+            context.getFlowScope().put("openIdLocalId", user);
+        }
+    }
+
+    /**
+     * Gets open id local user id.
+     *
+     * @param context the context
+     * @return the open id local user id
+     */
+    public static String getOpenIdLocalUserId(final RequestContext context) {
+        return context.getFlowScope().get("openIdLocalId", String.class);
     }
 }

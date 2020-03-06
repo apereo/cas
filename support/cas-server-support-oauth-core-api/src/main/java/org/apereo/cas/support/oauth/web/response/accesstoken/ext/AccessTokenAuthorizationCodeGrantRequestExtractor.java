@@ -12,6 +12,7 @@ import org.apereo.cas.ticket.OAuth20Token;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.pac4j.core.context.JEEContext;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -33,12 +34,13 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
 
     @Override
     public AccessTokenRequestDataHolder extract(final HttpServletRequest request, final HttpServletResponse response) {
+        val context = new JEEContext(request, response, getOAuthConfigurationContext().getSessionStore());
         val grantType = request.getParameter(OAuth20Constants.GRANT_TYPE);
 
         LOGGER.debug("OAuth grant type is [{}]", grantType);
 
-        val redirectUri = getRegisteredServiceIdentifierFromRequest(request);
-        val registeredService = getOAuthRegisteredServiceBy(request);
+        val redirectUri = getRegisteredServiceIdentifierFromRequest(context);
+        val registeredService = getOAuthRegisteredServiceBy(context);
         if (registeredService == null) {
             throw new UnauthorizedServiceException("Unable to locate service in registry for redirect URI " + redirectUri);
         }
@@ -96,11 +98,11 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
     /**
      * Gets registered service identifier from request.
      *
-     * @param request the request
+     * @param context the context
      * @return the registered service identifier from request
      */
-    protected String getRegisteredServiceIdentifierFromRequest(final HttpServletRequest request) {
-        return request.getParameter(OAuth20Constants.REDIRECT_URI);
+    protected String getRegisteredServiceIdentifierFromRequest(final JEEContext context) {
+        return context.getRequestParameter(OAuth20Constants.REDIRECT_URI).get();
     }
 
     /**
@@ -168,19 +170,19 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
     }
 
     /**
-     * Gets oauth registered service from the request.
+     * Gets oauth registered service from the context.
      * Implementation attempts to locate the redirect uri from request and
      * check with service registry to find a matching oauth service.
      *
-     * @param request the request
+     * @param context the context
      * @return the registered service
      */
-    protected OAuthRegisteredService getOAuthRegisteredServiceBy(final HttpServletRequest request) {
-        val redirectUri = getRegisteredServiceIdentifierFromRequest(request);
+    protected OAuthRegisteredService getOAuthRegisteredServiceBy(final JEEContext context) {
+        val redirectUri = getRegisteredServiceIdentifierFromRequest(context);
         var registeredService = OAuth20Utils.getRegisteredOAuthServiceByRedirectUri(
             getOAuthConfigurationContext().getServicesManager(), redirectUri);
         if (registeredService == null) {
-            val clientId = request.getParameter(OAuth20Constants.CLIENT_ID);
+            val clientId = OAuth20Utils.getClientIdAndClientSecret(context).getLeft();
             registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(
                 getOAuthConfigurationContext().getServicesManager(), clientId);
         }

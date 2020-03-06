@@ -7,12 +7,12 @@
     </Appenders>
     <Loggers>
         <Logger name="org.apereo" level="error" />
-        <Logger name="org.opensaml" level="off" />
-        <Logger name="org.hibernate" level="info" />
+        <Logger name="org.opensaml" level="warn" />
+        <Logger name="org.hibernate" level="warn" />
         <Logger name="PROTOCOL_MESSAGE" level="off" />
         <Logger name="org.apache.xml.security" level="off" />
 
-        <Root level="off">
+        <Root level="warn">
             <AppenderRef ref="console"/>
         </Root>
     </Loggers>

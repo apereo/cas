@@ -52,14 +52,13 @@ public class HazelcastTicketRegistryConfiguration {
     @RefreshScope
     public TicketRegistry ticketRegistry() {
         val hz = casProperties.getTicket().getRegistry().getHazelcast();
-        val factory = new HazelcastConfigurationFactory();
         val hazelcastInstance = casTicketRegistryHazelcastInstance();
         var catalog = ticketCatalog.getObject();
         catalog.findAll()
             .stream()
             .map(TicketDefinition::getProperties)
             .peek(p -> LOGGER.debug("Created Hazelcast map configuration for [{}]", p))
-            .map(p -> factory.buildMapConfig(hz, p.getStorageName(), p.getStorageTimeout()))
+            .map(p -> HazelcastConfigurationFactory.buildMapConfig(hz, p.getStorageName(), p.getStorageTimeout()))
             .forEach(m -> hazelcastInstance.getConfig().addMapConfig(m));
         val r = new HazelcastTicketRegistry(hazelcastInstance,
             catalog,

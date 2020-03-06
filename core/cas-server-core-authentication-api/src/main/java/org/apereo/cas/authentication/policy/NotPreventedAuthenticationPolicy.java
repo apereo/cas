@@ -20,7 +20,6 @@ import java.util.Set;
 @Slf4j
 public class NotPreventedAuthenticationPolicy extends AtLeastOneCredentialValidatedAuthenticationPolicy {
 
-
     public NotPreventedAuthenticationPolicy() {
         super(true);
     }

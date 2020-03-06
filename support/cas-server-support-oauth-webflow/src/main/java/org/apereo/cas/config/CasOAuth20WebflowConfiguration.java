@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.web.flow.OAuth20RegisteredServiceUIAction;
 import org.apereo.cas.support.oauth.web.flow.OAuth20WebflowConfigurer;
+import org.apereo.cas.validation.CasProtocolViewFactory;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 
@@ -14,10 +15,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
+import org.springframework.web.servlet.View;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
@@ -31,6 +33,9 @@ import org.springframework.webflow.execution.Action;
 @Configuration("casOAuth20WebflowConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasOAuth20WebflowConfiguration {
+    @Autowired
+    @Qualifier("casProtocolViewFactory")
+    private ObjectProvider<CasProtocolViewFactory> casProtocolViewFactory;
 
     @Autowired
     @Qualifier("servicesManager")
@@ -49,7 +54,7 @@ public class CasOAuth20WebflowConfiguration {
     private ObjectProvider<AuthenticationServiceSelectionStrategy> oauth20AuthenticationServiceSelectionStrategy;
 
     @Autowired
-    private ApplicationContext applicationContext;
+    private ConfigurableApplicationContext applicationContext;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -73,6 +78,26 @@ public class CasOAuth20WebflowConfiguration {
     public Action oauth20RegisteredServiceUIAction() {
         return new OAuth20RegisteredServiceUIAction(servicesManager.getObject(),
             oauth20AuthenticationServiceSelectionStrategy.getObject());
+    }
+
+    @Bean
+    public View oauthConfirmView() {
+        return casProtocolViewFactory.getObject().create(applicationContext, "protocol/oauth/confirm");
+    }
+
+    @Bean
+    public View oauthDeviceCodeApprovalView() {
+        return casProtocolViewFactory.getObject().create(applicationContext, "protocol/oauth/deviceCodeApproval");
+    }
+
+    @Bean
+    public View oauthDeviceCodeApprovedView() {
+        return casProtocolViewFactory.getObject().create(applicationContext, "protocol/oauth/deviceCodeApproved");
+    }
+
+    @Bean
+    public View oauthSessionStaleMismatchErrorView() {
+        return casProtocolViewFactory.getObject().create(applicationContext, "protocol/oauth/sessionStaleMismatchError");
     }
 
     @Bean

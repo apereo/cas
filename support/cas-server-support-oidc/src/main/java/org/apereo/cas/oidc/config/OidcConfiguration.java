@@ -98,6 +98,8 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.gen.DefaultRandomStringGenerator;
 import org.apereo.cas.util.serialization.StringSerializer;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
+import org.apereo.cas.validation.CasProtocolViewFactory;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
@@ -109,11 +111,13 @@ import org.apereo.cas.web.flow.resolver.impl.mfa.DefaultMultifactorAuthenticatio
 import com.github.benmanes.caffeine.cache.CacheLoader;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.jose4j.jwk.RsaJsonWebKey;
+import org.jose4j.jwk.PublicJsonWebKey;
 import org.pac4j.cas.client.CasClient;
+import org.pac4j.core.authorization.authorizer.DefaultAuthorizers;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.credentials.TokenCredentials;
@@ -135,6 +139,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
@@ -250,6 +255,10 @@ public class OidcConfiguration implements WebMvcConfigurer {
     private CasConfigurationProperties casProperties;
 
     @Autowired
+    @Qualifier("casProtocolViewFactory")
+    private ObjectProvider<CasProtocolViewFactory> casProtocolViewFactory;
+
+    @Autowired
     private ResourceLoader resourceLoader;
 
     @Autowired
@@ -335,7 +344,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
             Authenticators.CAS_OAUTH_CLIENT_DIRECT_FORM,
             Authenticators.CAS_OAUTH_CLIENT_USER_FORM);
         val interceptor = new SecurityInterceptor(oauthSecConfig.getObject(), clients, JEEHttpActionAdapter.INSTANCE);
-        interceptor.setAuthorizers(StringUtils.EMPTY);
+        interceptor.setAuthorizers(DefaultAuthorizers.IS_FULLY_AUTHENTICATED);
         return interceptor;
     }
 
@@ -343,7 +352,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
     public HandlerInterceptorAdapter requiresAuthenticationClientConfigurationInterceptor() {
         val clients = String.join(",", OidcConstants.CAS_OAUTH_CLIENT_CONFIG_ACCESS_TOKEN_AUTHN);
         val interceptor = new SecurityInterceptor(oauthSecConfig.getObject(), clients, JEEHttpActionAdapter.INSTANCE);
-        interceptor.setAuthorizers(StringUtils.EMPTY);
+        interceptor.setAuthorizers(DefaultAuthorizers.IS_FULLY_AUTHENTICATED);
         return interceptor;
     }
 
@@ -466,7 +475,9 @@ public class OidcConfiguration implements WebMvcConfigurer {
     @Bean
     public OidcJwksEndpointController oidcJwksController() {
         val context = buildConfigurationContext();
-        return new OidcJwksEndpointController(context);
+        val resource = SpringExpressionLanguageValueResolver.getInstance().resolve(
+            casProperties.getAuthn().getOidc().getJwksFile());
+        return new OidcJwksEndpointController(context, resourceLoader.getResource(resource));
     }
 
     @Autowired
@@ -579,7 +590,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
     }
 
     @Bean
-    public LoadingCache<OAuthRegisteredService, Optional<RsaJsonWebKey>> oidcServiceJsonWebKeystoreCache() {
+    public LoadingCache<OAuthRegisteredService, Optional<PublicJsonWebKey>> oidcServiceJsonWebKeystoreCache() {
         return Caffeine.newBuilder()
             .maximumSize(1)
             .expireAfter(new OidcServiceJsonWebKeystoreCacheExpirationPolicy(casProperties))
@@ -587,7 +598,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
     }
 
     @Bean
-    public LoadingCache<String, Optional<RsaJsonWebKey>> oidcDefaultJsonWebKeystoreCache() {
+    public LoadingCache<String, Optional<PublicJsonWebKey>> oidcDefaultJsonWebKeystoreCache() {
         val oidc = casProperties.getAuthn().getOidc();
         return Caffeine.newBuilder().maximumSize(1)
             .expireAfterWrite(Duration.ofMinutes(oidc.getJwksCacheInMinutes()))
@@ -595,12 +606,16 @@ public class OidcConfiguration implements WebMvcConfigurer {
     }
 
     @Bean
+    @SneakyThrows
     public OidcDefaultJsonWebKeystoreCacheLoader oidcDefaultJsonWebKeystoreCacheLoader() {
-        return new OidcDefaultJsonWebKeystoreCacheLoader(casProperties.getAuthn().getOidc().getJwksFile());
+        val resource = SpringExpressionLanguageValueResolver.getInstance()
+            .resolve(casProperties.getAuthn().getOidc().getJwksFile());
+        val jwksFile = resourceLoader.getResource(resource);
+        return new OidcDefaultJsonWebKeystoreCacheLoader(jwksFile);
     }
 
     @Bean
-    public CacheLoader<OAuthRegisteredService, Optional<RsaJsonWebKey>> oidcServiceJsonWebKeystoreCacheLoader() {
+    public CacheLoader<OAuthRegisteredService, Optional<PublicJsonWebKey>> oidcServiceJsonWebKeystoreCacheLoader() {
         return new OidcServiceJsonWebKeystoreCacheLoader(applicationContext);
     }
 
@@ -737,6 +752,10 @@ public class OidcConfiguration implements WebMvcConfigurer {
             oidcUserProfileSigningAndEncryptionService());
     }
 
+    @Bean
+    public View oidcConfirmView() {
+        return casProtocolViewFactory.getObject().create(applicationContext, "protocol/oidc/confirm");
+    }
 
     private OAuth20ConfigurationContext buildConfigurationContext() {
         return OAuth20ConfigurationContext.builder()

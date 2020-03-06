@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.duo.config;
 
+import org.apereo.cas.adaptors.duo.config.cond.ConditionalOnDuoSecurityConfigured;
 import org.apereo.cas.authentication.bypass.AuthenticationMultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.authentication.bypass.ChainingMultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.authentication.bypass.CredentialMultifactorAuthenticationProviderBypassEvaluator;
@@ -10,6 +11,7 @@ import org.apereo.cas.authentication.bypass.MultifactorAuthenticationProviderByp
 import org.apereo.cas.authentication.bypass.NeverAllowMultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.authentication.bypass.PrincipalMultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.authentication.bypass.RegisteredServiceMultifactorAuthenticationProviderBypassEvaluator;
+import org.apereo.cas.authentication.bypass.RegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.authentication.bypass.RestMultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 
@@ -30,6 +32,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("duoSecurityMultifactorProviderBypassConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ConditionalOnDuoSecurityConfigured
 public class DuoSecurityMultifactorProviderBypassConfiguration {
 
     @Autowired
@@ -41,6 +44,7 @@ public class DuoSecurityMultifactorProviderBypassConfiguration {
     public ChainingMultifactorAuthenticationProviderBypassEvaluator duoSecurityBypassEvaluator() {
         val bypass = new DefaultChainingMultifactorAuthenticationBypassProvider();
         bypass.addMultifactorAuthenticationProviderBypassEvaluator(duoSecurityRegisteredServiceMultifactorAuthenticationProviderBypass());
+        bypass.addMultifactorAuthenticationProviderBypassEvaluator(duoSecurityRegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator());
         bypass.addMultifactorAuthenticationProviderBypassEvaluator(duoSecurityPrincipalMultifactorAuthenticationProviderBypass());
         bypass.addMultifactorAuthenticationProviderBypassEvaluator(duoSecurityAuthenticationMultifactorAuthenticationProviderBypass());
         bypass.addMultifactorAuthenticationProviderBypassEvaluator(duoSecurityCredentialMultifactorAuthenticationProviderBypass());
@@ -111,6 +115,23 @@ public class DuoSecurityMultifactorProviderBypassConfiguration {
             .stream()
             .filter(duo -> StringUtils.isNotBlank(duo.getBypass().getCredentialClassType()))
             .forEach(duo -> bypass.addMultifactorAuthenticationProviderBypassEvaluator(new CredentialMultifactorAuthenticationProviderBypassEvaluator(duo.getBypass(), duo.getId())));
+        if (bypass.isEmpty()) {
+            return NeverAllowMultifactorAuthenticationProviderBypassEvaluator.getInstance();
+        }
+        return bypass;
+    }
+
+    @ConditionalOnMissingBean(name = "duoSecurityRegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator")
+    @Bean
+    @RefreshScope
+    public MultifactorAuthenticationProviderBypassEvaluator duoSecurityRegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator() {
+        val duoProps = casProperties.getAuthn().getMfa().getDuo();
+        val bypass = new DefaultChainingMultifactorAuthenticationBypassProvider();
+        duoProps
+            .stream()
+            .filter(duo -> StringUtils.isNotBlank(duo.getBypass().getCredentialClassType()))
+            .forEach(duo -> bypass.addMultifactorAuthenticationProviderBypassEvaluator(
+                new RegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator(duo.getId())));
         if (bypass.isEmpty()) {
             return NeverAllowMultifactorAuthenticationProviderBypassEvaluator.getInstance();
         }

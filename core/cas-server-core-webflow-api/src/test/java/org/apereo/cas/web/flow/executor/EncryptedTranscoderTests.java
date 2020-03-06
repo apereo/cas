@@ -7,6 +7,7 @@ import org.cryptacular.bean.KeyStoreFactoryBean;
 import org.cryptacular.io.FileResource;
 import org.cryptacular.spec.AEADBlockCipherSpec;
 import org.cryptacular.spec.BufferedBlockCipherSpec;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -23,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.1
  */
+@Tag("Webflow")
 public class EncryptedTranscoderTests {
 
     public static Stream<Arguments> getParameters() throws Exception {

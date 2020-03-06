@@ -15,11 +15,11 @@ branches:
   only:
     - master
 before_cache:
-  - rm -rf $HOME/.gradle/caches/7.*/
-  - rm -rf $HOME/.gradle/caches/6.*/
+  - rm -rf $HOME/.gradle/caches/7.0.*/
+  - rm -rf $HOME/.gradle/caches/6.3.*/
+  - rm -rf $HOME/.gradle/caches/6.2.*/
+  - rm -rf $HOME/.gradle/caches/6.1.*/
   - rm -rf $HOME/.gradle/caches/6.0.*/
-  - rm -rf $HOME/.gradle/caches/5.*/
-  - rm -rf $HOME/.gradle/caches/4.*/
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
   - find ~/.gradle/caches/ -name "*.lock" -type f -delete
 cache:
@@ -120,13 +120,16 @@ jobs:
       name: "Validate CAS Command-line Shell"
     - stage: validate
       script: ./ci/tests/webapp/validate-embedded-webapp.sh tomcat
-      name: "Validate Web Application Server via Apache Tomcat"
+      name: "Validate Web Application Server via Embedded Apache Tomcat"
+    - stage: validate
+      script: ./ci/tests/webapp/validate-external-webapp.sh tomcat
+      name: "Validate Web Application Server via External Apache Tomcat"
     - stage: validate
       script: ./ci/tests/webapp/validate-embedded-webapp.sh jetty
-      name: "Validate Web Application Server via Jetty"
+      name: "Validate Web Application Server via Embedded Jetty"
     - stage: validate
       script: ./ci/tests/webapp/validate-embedded-webapp.sh undertow
-      name: "Validate Web Application Server via Undertow"
+      name: "Validate Web Application Server via Embedded Undertow"
     - stage: validate
       script: ./ci/tests/webapp/validate-configserver-webapp.sh
       name: "Validate Spring Cloud Configuration Server"
@@ -134,6 +137,10 @@ jobs:
       script: ./ci/tests/webapp/validate-eurekaserver-webapp.sh
       name: "Validate Eureka Discovery Server"
     - stage: validate
+      script: ./ci/tests/webapp/validate-bootadmin-webapp.sh
+      name: "Validate Spring Boot Admin Server"
+    - stage: validate
+      if: NOT (head_branch =~ env(DEPENDENCY_BOT_BRANCH) and type = pull_request)
       script: ./ci/tests/validate-tests.sh
       name: "Validate Tests & Test Suites"
     - stage: validate
@@ -147,11 +154,26 @@ jobs:
       script: ./ci/tests/groovy/run-tests-groovy.sh
       name: "Groovy Tests"
     - stage: test
+      script: ./ci/tests/filesystem/run-tests-filesystem.sh
+      name: "FileSystem Tests"
+    - stage: test
+      script: ./ci/tests/jdbc/run-tests-jdbc.sh
+      name: "JDBC Tests"
+    - stage: test
+      script: ./ci/tests/webflow/run-tests-webflow.sh
+      name: "Spring Webflow Tests"
+    - stage: test
       script: ./ci/tests/restful/run-tests-restful.sh
       name: "RESTful Tests"
     - stage: test
+      script: ./ci/tests/ldap/run-tests-ldap.sh
+      name: "LDAP Tests"
+    - stage: test
       script: ./ci/tests/amazon/run-tests-aws.sh
       name: "AWS Tests"
+    - stage: test
+      script: ./ci/tests/mfa/run-tests-mfa.sh
+      name: "Multifactor Authentication Tests"
     - stage: test
       script: ./ci/tests/cassandra/run-tests-cassandra.sh
       name: "Cassandra Tests"
@@ -171,20 +193,11 @@ jobs:
       script: ./ci/tests/ehcache/run-tests-ehcache.sh
       name: "Ehcache Tests"
     - stage: test
-      script: ./ci/tests/filesystem/run-tests-filesystem.sh
-      name: "FileSystem Tests"
-    - stage: test
-      script: ./ci/tests/jdbc/run-tests-jdbc.sh
-      name: "JDBC Tests"
-    - stage: test
       script: ./ci/tests/ignite/run-tests-ignite.sh
       name: "Apache Ignite Tests"
     - stage: test
       script: ./ci/tests/influxdb/run-tests-influxdb.sh
       name: "InfluxDb Tests"
-    - stage: test
-      script: ./ci/tests/ldap/run-tests-ldap.sh
-      name: "LDAP Tests"
     - stage: test
       script: ./ci/tests/mail/run-tests-mail.sh
       name: "Mail Tests"

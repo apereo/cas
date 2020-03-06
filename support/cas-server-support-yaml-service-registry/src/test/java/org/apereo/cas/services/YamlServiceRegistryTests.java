@@ -5,6 +5,7 @@ import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingSt
 import org.apereo.cas.util.io.WatcherService;
 
 import lombok.SneakyThrows;
+import org.junit.jupiter.api.Tag;
 import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.ArrayList;
@@ -17,6 +18,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Tag("FileSystem")
 public class YamlServiceRegistryTests extends AbstractResourceBasedServiceRegistryTests {
 
     @Override

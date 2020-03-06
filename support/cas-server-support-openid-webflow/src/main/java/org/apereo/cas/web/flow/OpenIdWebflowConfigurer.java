@@ -4,7 +4,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
 
 import lombok.val;
-import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 
@@ -13,11 +13,13 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
  * adjusting the CAS webflow context for openid integration.
  *
  * @author Misagh Moayyed
+ * @deprecated 6.2
  * @since 4.2
  */
+@Deprecated(since = "6.2")
 public class OpenIdWebflowConfigurer extends AbstractCasWebflowConfigurer {
     public OpenIdWebflowConfigurer(final FlowBuilderServices flowBuilderServices, final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-                                   final ApplicationContext applicationContext,
+                                   final ConfigurableApplicationContext applicationContext,
                                    final CasConfigurationProperties casProperties) {
         super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
     }

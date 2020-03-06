@@ -69,13 +69,19 @@ public class InMemoryMultifactorAuthenticationTrustStorage extends BaseMultifact
 
     @Override
     public MultifactorAuthenticationTrustRecord get(final long id) {
-        return storage.asMap()
+        val result = storage.asMap()
             .values()
             .stream()
             .filter(entry -> entry.getId() == id)
             .sorted()
-            .findFirst()
-            .orElse(null);
+            .findFirst();
+        
+        if (result.isPresent()) {
+            val record = result.get();
+            LOGGER.trace("Found multifactor authentication trust record [{}]", record);
+            return record;
+        }
+        return null;
     }
 
     @Override

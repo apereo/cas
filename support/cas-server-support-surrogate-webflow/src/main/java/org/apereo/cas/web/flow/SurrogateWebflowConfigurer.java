@@ -5,7 +5,7 @@ import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.Flow;
@@ -43,7 +43,7 @@ public class SurrogateWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
     public SurrogateWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
                                       final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-                                      final ApplicationContext applicationContext,
+                                      final ConfigurableApplicationContext applicationContext,
                                       final CasConfigurationProperties casProperties) {
         super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
     }
@@ -84,6 +84,7 @@ public class SurrogateWebflowConfigurer extends AbstractCasWebflowConfigurer {
         val actionState = getState(flow, CasWebflowConstants.STATE_ID_REAL_SUBMIT, ActionState.class);
         val targetSuccessId = actionState.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS).getTargetStateId();
         createTransitionForState(selectSurrogate, CasWebflowConstants.TRANSITION_ID_SUCCESS, targetSuccessId);
+        createTransitionForState(selectSurrogate, CasWebflowConstants.TRANSITION_ID_ERROR, STATE_ID_SURROGATE_VIEW);
     }
 
     private void createSurrogateListViewState(final Flow flow) {

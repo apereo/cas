@@ -1,3 +1,4 @@
 description = "Apereo CAS Core Webflow APIs"
 dependencies {
+    api project(":api:cas-server-core-api-util")
 }

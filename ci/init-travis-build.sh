@@ -60,3 +60,4 @@ echo "Gradle Home directory:"
 ./gradlew gradleHome --no-daemon
 
 echo -e "Configured build environment\n"
+echo -e "export JAVA_HOME=${JAVA_HOME}\n"

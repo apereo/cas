@@ -9,9 +9,6 @@ import lombok.ToString;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.CompareToBuilder;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
-import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
@@ -28,6 +25,7 @@ import javax.persistence.Lob;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.OrderColumn;
 import javax.persistence.Table;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -81,7 +79,7 @@ public abstract class AbstractRegisteredService implements RegisteredService {
     @org.springframework.data.annotation.Id
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
-    @GenericGenerator(name = "native", strategy = "native")
+    //@GenericGenerator(name = "native", strategy = "native")
     private long id = RegisteredService.INITIAL_IDENTIFIER_VALUE;
 
     @Column
@@ -98,6 +96,10 @@ public abstract class AbstractRegisteredService implements RegisteredService {
     @Lob
     @Column(name = "proxy_ticket_expiration_policy", length = Integer.MAX_VALUE)
     private RegisteredServiceProxyTicketExpirationPolicy proxyTicketExpirationPolicy;
+
+    @Lob
+    @Column(name = "proxy_granting_ticket_expiration_policy", length = Integer.MAX_VALUE)
+    private RegisteredServiceProxyGrantingTicketExpirationPolicy proxyGrantingTicketExpirationPolicy;
 
     @Lob
     @Column(name = "service_ticket_expiration_policy", length = Integer.MAX_VALUE)
@@ -151,14 +153,12 @@ public abstract class AbstractRegisteredService implements RegisteredService {
     private RegisteredServicePublicKey publicKey;
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @Cascade(CascadeType.ALL)
     @CollectionTable(name = "RegexRegisteredService_RegexRegisteredServiceProperty")
     @MapKeyColumn(name = "RegexRegisteredServiceProperty_name")
     @Column(name = "RegexRegisteredServiceProperty_value")
     private Map<String, DefaultRegisteredServiceProperty> properties = new HashMap<>(0);
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @Cascade(CascadeType.ALL)
     @CollectionTable(name = "RegexRegisteredService_RegisteredServiceImplContact")
     @OrderColumn
     private List<DefaultRegisteredServiceContact> contacts = new ArrayList<>(0);

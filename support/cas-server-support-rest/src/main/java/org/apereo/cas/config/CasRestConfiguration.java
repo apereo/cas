@@ -36,9 +36,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -76,7 +77,7 @@ public class CasRestConfiguration {
     private ObjectProvider<ArgumentExtractor> argumentExtractor;
 
     @Autowired
-    private ApplicationContext applicationContext;
+    private ConfigurableApplicationContext applicationContext;
 
     @Bean
     public TicketStatusResource ticketStatusResource() {
@@ -120,7 +121,7 @@ public class CasRestConfiguration {
 
     @Autowired
     @Bean
-    public TicketGrantingTicketResource ticketResourceRestController(
+    public TicketGrantingTicketResource ticketGrantingTicketResource(
         @Qualifier("restHttpRequestCredentialFactory") final RestHttpRequestCredentialFactory restHttpRequestCredentialFactory) {
         return new TicketGrantingTicketResource(authenticationSystemSupport.getObject(),
             restHttpRequestCredentialFactory,
@@ -145,7 +146,10 @@ public class CasRestConfiguration {
     @Bean
     public RestHttpRequestCredentialFactory restHttpRequestCredentialFactory(final List<RestHttpRequestCredentialFactoryConfigurer> configurers) {
         LOGGER.trace("building REST credential factory from [{}]", configurers);
+
         val factory = new ChainingRestHttpRequestCredentialFactory();
+        AnnotationAwareOrderComparator.sortIfNecessary(configurers);
+
         configurers.forEach(c -> {
             LOGGER.trace("Configuring credential factory: [{}]", c);
             c.configureCredentialFactory(factory);
@@ -153,6 +157,7 @@ public class CasRestConfiguration {
         return factory;
     }
 
+    @ConditionalOnMissingBean(name = "restHttpRequestCredentialFactoryConfigurer")
     @Bean
     public RestHttpRequestCredentialFactoryConfigurer restHttpRequestCredentialFactoryConfigurer() {
         return factory -> factory.registerCredentialFactory(new UsernamePasswordRestHttpRequestCredentialFactory());

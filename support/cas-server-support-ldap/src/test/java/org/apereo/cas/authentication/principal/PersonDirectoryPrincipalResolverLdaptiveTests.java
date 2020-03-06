@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.principal.resolvers.EchoingPrincipalResolve
 import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
+import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
@@ -36,18 +37,18 @@ import static org.junit.jupiter.api.Assertions.*;
     CasPersonDirectoryConfiguration.class,
     RefreshAutoConfiguration.class
 }, properties = {
-    "cas.authn.attributeRepository.ldap[0].baseDn=dc=example,dc=org",
-    "cas.authn.attributeRepository.ldap[0].ldapUrl=ldap://localhost:10389",
-    "cas.authn.attributeRepository.ldap[0].searchFilter=cn={user}",
-    "cas.authn.attributeRepository.ldap[0].useSsl=false",
-    "cas.authn.attributeRepository.ldap[0].attributes.cn=cn",
-    "cas.authn.attributeRepository.ldap[0].attributes.description=description",
-    "cas.authn.attributeRepository.ldap[0].bindDn=cn=Directory Manager",
-    "cas.authn.attributeRepository.ldap[0].bindCredential=password"
+    "cas.authn.attribute-repository.ldap[0].baseDn=dc=example,dc=org",
+    "cas.authn.attribute-repository.ldap[0].ldapUrl=ldap://localhost:10389",
+    "cas.authn.attribute-repository.ldap[0].searchFilter=cn={user}",
+    "cas.authn.attribute-repository.ldap[0].attributes.cn=cn",
+    "cas.authn.attribute-repository.ldap[0].attributes.description=description",
+    "cas.authn.attribute-repository.ldap[0].bindDn=cn=Directory Manager",
+    "cas.authn.attribute-repository.ldap[0].bindCredential=password"
 })
 @DirtiesContext
 @Tag("Ldap")
 @EnabledIfContinuousIntegration
+@EnabledIfPortOpen(port = 10389)
 public class PersonDirectoryPrincipalResolverLdaptiveTests {
     @Autowired
     @Qualifier("attributeRepository")
@@ -66,7 +67,7 @@ public class PersonDirectoryPrincipalResolverLdaptiveTests {
     @Test
     public void verifyChainedResolver() {
         val resolver = new PersonDirectoryPrincipalResolver(this.attributeRepository);
-        val chain = new ChainingPrincipalResolver();
+        val chain = new ChainingPrincipalResolver(new DefaultPrincipalElectionStrategy());
         chain.setChain(Arrays.asList(new EchoingPrincipalResolver(), resolver));
         val attributes = new HashMap<String, List<Object>>(2);
         attributes.put("a1", List.of("v1"));

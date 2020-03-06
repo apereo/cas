@@ -6,14 +6,16 @@ dependencies {
     implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-configuration-api")
+
     implementation project(":support:cas-server-support-pm")
+    implementation project(":support:cas-server-support-jpa-hibernate")
     implementation project(":support:cas-server-support-jpa-util")
     implementation project(":support:cas-server-support-pm-core")
 
     runtimeOnly project(":support:cas-server-support-jdbc-drivers")
     
     implementation libraries.jose4j
-    
+
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":core:cas-server-core-audit")
     testImplementation project(":core:cas-server-core-audit-api")
@@ -22,6 +24,8 @@ dependencies {
     testImplementation project(":core:cas-server-core-web")
     testImplementation project(":core:cas-server-core-configuration")
     testImplementation project(":core:cas-server-core-util")
+    testImplementation project(":core:cas-server-core-logout")
+    testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-authentication")
 
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")

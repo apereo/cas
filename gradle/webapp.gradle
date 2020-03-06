@@ -15,11 +15,10 @@ sourceSets {
      * Application’s static resources are loaded from their source location.
      */
     bootRun {
-        if (project.name.matches('cas-server-webapp-(tomcat|jetty|undertow)')) {
-            resources {
-                srcDirs new File("//etc/cas/templates/"),
-                        new File("${project(":webapp").getProjectDir()}/cas-server-webapp-resources/src/main/resources/")
-            }
+        resources {
+            srcDirs new File("//etc/cas/templates/"),
+                    new File("${project(":webapp").getProjectDir()}/cas-server-webapp-resources/src/main/resources/"),
+                    new File("${project(":support").getProjectDir()}/cas-server-support-thymeleaf/src/main/resources/")
         }
     }
 }
@@ -41,11 +40,13 @@ dependencies {
     implementation project(":core:cas-server-core-web")
 
     implementation project(":support:cas-server-support-actions")
+    implementation project(":support:cas-server-support-jpa-util")
     implementation project(":support:cas-server-support-person-directory")
     implementation project(":support:cas-server-support-themes")
     implementation project(":support:cas-server-support-validation")
+    implementation project(":support:cas-server-support-thymeleaf")
     implementation project(":support:cas-server-support-pm-webflow")
-
+    
     implementation project(":webapp:cas-server-webapp-config")
     implementation project(":webapp:cas-server-webapp-init")
     implementation project(":webapp:cas-server-webapp-resources")
@@ -54,5 +55,5 @@ dependencies {
     if (!rootProject.publishReleases && !rootProject.publishSnapshots) {
         runtimeClasspath libraries.springbootdevtools
     }
-    runtimeOnly libraries.webjars
+
 }

@@ -202,12 +202,14 @@ public class CasOAuth20Configuration {
 
     @ConditionalOnMissingBean(name = "accessTokenResponseGenerator")
     @Bean
+    @RefreshScope
     public OAuth20AccessTokenResponseGenerator accessTokenResponseGenerator() {
         return new OAuth20DefaultAccessTokenResponseGenerator(accessTokenJwtBuilder(), casProperties);
     }
 
     @ConditionalOnMissingBean(name = "accessTokenJwtBuilder")
     @Bean
+    @RefreshScope
     public JwtBuilder accessTokenJwtBuilder() {
         return new OAuth20JwtBuilder(casProperties.getServer().getPrefix(),
             oauthAccessTokenJwtCipherExecutor(),
@@ -217,22 +219,27 @@ public class CasOAuth20Configuration {
 
     @ConditionalOnMissingBean(name = "oauthRegisteredServiceJwtAccessTokenCipherExecutor")
     @Bean
+    @RefreshScope
     public RegisteredServiceCipherExecutor oauthRegisteredServiceJwtAccessTokenCipherExecutor() {
         return new OAuth20RegisteredServiceJwtAccessTokenCipherExecutor();
     }
 
     @ConditionalOnMissingBean(name = "oauthCasClientRedirectActionBuilder")
     @Bean
+    @RefreshScope
     public OAuth20CasClientRedirectActionBuilder oauthCasClientRedirectActionBuilder() {
         return new OAuth20DefaultCasClientRedirectActionBuilder();
     }
 
     @Bean
+    @RefreshScope
     public UrlResolver casCallbackUrlResolver() {
         return new OAuth20CasCallbackUrlResolver(OAuth20Utils.casOAuthCallbackUrl(casProperties.getServer().getPrefix()));
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "oauthSecConfig")
+    @RefreshScope
     public Config oauthSecConfig() {
         val clientList = oauthSecConfigClients();
         val config = new Config(OAuth20Utils.casOAuthCallbackUrl(casProperties.getServer().getPrefix()), clientList);
@@ -244,8 +251,11 @@ public class CasOAuth20Configuration {
 
     @Bean
     @ConditionalOnMissingBean(name = "oauthSecConfigClients")
+    @RefreshScope
     public List<Client> oauthSecConfigClients() {
-        val cfg = new CasConfiguration(casProperties.getServer().getLoginUrl());
+        val server = casProperties.getServer();
+
+        val cfg = new CasConfiguration(server.getLoginUrl());
         cfg.setDefaultTicketValidator(new CasServerApiBasedTicketValidator(centralAuthenticationService.getObject()));
 
         val oauthCasClient = new CasClient(cfg);
@@ -253,7 +263,7 @@ public class CasOAuth20Configuration {
             oauthCasClientRedirectActionBuilder().build(oauthCasClient, webContext));
         oauthCasClient.setName(Authenticators.CAS_OAUTH_CLIENT);
         oauthCasClient.setUrlResolver(casCallbackUrlResolver());
-        oauthCasClient.setCallbackUrl(OAuth20Utils.casOAuthCallbackUrl(casProperties.getServer().getPrefix()));
+        oauthCasClient.setCallbackUrl(OAuth20Utils.casOAuthCallbackUrl(server.getPrefix()));
         oauthCasClient.init();
 
         val authenticator = oAuthClientAuthenticator();
@@ -267,11 +277,16 @@ public class CasOAuth20Configuration {
         directFormClient.setPasswordParameter(OAuth20Constants.CLIENT_SECRET);
         directFormClient.init();
 
-        val pkceAuthnClient = new DirectFormClient(oAuthProofKeyCodeExchangeAuthenticator());
-        pkceAuthnClient.setName(Authenticators.CAS_OAUTH_CLIENT_PROOF_KEY_CODE_EXCHANGE_AUTHN);
-        pkceAuthnClient.setUsernameParameter(OAuth20Constants.CLIENT_ID);
-        pkceAuthnClient.setPasswordParameter(OAuth20Constants.CODE_VERIFIER);
-        pkceAuthnClient.init();
+        val pkceAuthenticator = oAuthProofKeyCodeExchangeAuthenticator();
+        val pkceAuthnFormClient = new DirectFormClient(pkceAuthenticator);
+        pkceAuthnFormClient.setName(Authenticators.CAS_OAUTH_CLIENT_DIRECT_FORM_PROOF_KEY_CODE_EXCHANGE_AUTHN);
+        pkceAuthnFormClient.setUsernameParameter(OAuth20Constants.CLIENT_ID);
+        pkceAuthnFormClient.setPasswordParameter(OAuth20Constants.CODE_VERIFIER);
+        pkceAuthnFormClient.init();
+
+        val pkceBasicAuthClient = new DirectBasicAuthClient(pkceAuthenticator);
+        pkceBasicAuthClient.setName(Authenticators.CAS_OAUTH_CLIENT_BASIC_PROOF_KEY_CODE_EXCHANGE_AUTHN);
+        pkceBasicAuthClient.init();
 
         val userFormClient = new DirectFormClient(oAuthUserAuthenticator());
         userFormClient.setName(Authenticators.CAS_OAUTH_CLIENT_USER_FORM);
@@ -282,8 +297,7 @@ public class CasOAuth20Configuration {
         accessTokenClient.setAuthenticator(oAuthAccessTokenAuthenticator());
         accessTokenClient.setName(Authenticators.CAS_OAUTH_CLIENT_ACCESS_TOKEN_AUTHN);
         accessTokenClient.init();
-
-
+        
         val clientList = new ArrayList<Client>();
 
         val beans = applicationContext.getBeansOfType(OAuthAuthenticationClientProvider.class, false, true);
@@ -294,7 +308,8 @@ public class CasOAuth20Configuration {
 
         clientList.add(oauthCasClient);
         clientList.add(basicAuthClient);
-        clientList.add(pkceAuthnClient);
+        clientList.add(pkceAuthnFormClient);
+        clientList.add(pkceBasicAuthClient);
         clientList.add(directFormClient);
         clientList.add(userFormClient);
         clientList.add(accessTokenClient);
@@ -303,6 +318,7 @@ public class CasOAuth20Configuration {
 
     @ConditionalOnMissingBean(name = "consentApprovalViewResolver")
     @Bean
+    @RefreshScope
     public ConsentApprovalViewResolver consentApprovalViewResolver() {
         return new OAuth20ConsentApprovalViewResolver(casProperties);
     }
@@ -316,6 +332,7 @@ public class CasOAuth20Configuration {
 
     @ConditionalOnMissingBean(name = "oAuthClientAuthenticator")
     @Bean
+    @RefreshScope
     public Authenticator<UsernamePasswordCredentials> oAuthClientAuthenticator() {
         return new OAuth20ClientIdClientSecretAuthenticator(servicesManager.getObject(),
             webApplicationServiceFactory.getObject(),
@@ -327,6 +344,7 @@ public class CasOAuth20Configuration {
 
     @ConditionalOnMissingBean(name = "oAuthProofKeyCodeExchangeAuthenticator")
     @Bean
+    @RefreshScope
     public Authenticator<UsernamePasswordCredentials> oAuthProofKeyCodeExchangeAuthenticator() {
         return new OAuth20ProofKeyCodeExchangeAuthenticator(this.servicesManager.getObject(),
             webApplicationServiceFactory.getObject(),
@@ -338,6 +356,7 @@ public class CasOAuth20Configuration {
 
     @ConditionalOnMissingBean(name = "oAuthUserAuthenticator")
     @Bean
+    @RefreshScope
     public Authenticator<UsernamePasswordCredentials> oAuthUserAuthenticator() {
         return new OAuth20UsernamePasswordAuthenticator(authenticationSystemSupport.getObject(),
             servicesManager.getObject(),
@@ -347,6 +366,7 @@ public class CasOAuth20Configuration {
 
     @ConditionalOnMissingBean(name = "oAuthAccessTokenAuthenticator")
     @Bean
+    @RefreshScope
     public Authenticator<TokenCredentials> oAuthAccessTokenAuthenticator() {
         return new OAuth20AccessTokenAuthenticator(ticketRegistry.getObject(), accessTokenJwtBuilder());
     }
@@ -494,6 +514,7 @@ public class CasOAuth20Configuration {
 
     @ConditionalOnMissingBean(name = "oAuth2UserProfileDataCreator")
     @Bean
+    @RefreshScope
     public OAuth20UserProfileDataCreator oAuth2UserProfileDataCreator() {
         return new DefaultOAuth20UserProfileDataCreator(servicesManager.getObject(),
             profileScopeToAttributesFilter());
@@ -549,6 +570,7 @@ public class CasOAuth20Configuration {
 
     @Bean
     @ConditionalOnMissingBean(name = "oauthDeviceCodeResponseTypeRequestValidator")
+    @RefreshScope
     public OAuth20TokenRequestValidator oauthDeviceCodeResponseTypeRequestValidator() {
         val svcManager = servicesManager.getObject();
         return new OAuth20DeviceCodeResponseTypeRequestValidator(svcManager, webApplicationServiceFactory.getObject());
@@ -556,6 +578,7 @@ public class CasOAuth20Configuration {
 
     @Bean
     @ConditionalOnMissingBean(name = "oauthRefreshTokenGrantTypeTokenRequestValidator")
+    @RefreshScope
     public OAuth20TokenRequestValidator oauthRefreshTokenGrantTypeTokenRequestValidator() {
         val context = buildConfigurationContext()
             .accessTokenGrantAuditableRequestExtractor(accessTokenGrantAuditableRequestExtractor())
@@ -566,6 +589,7 @@ public class CasOAuth20Configuration {
 
     @Bean
     @ConditionalOnMissingBean(name = "oauthPasswordGrantTypeTokenRequestValidator")
+    @RefreshScope
     public OAuth20TokenRequestValidator oauthPasswordGrantTypeTokenRequestValidator() {
         val context = buildConfigurationContext()
             .accessTokenGrantAuditableRequestExtractor(accessTokenGrantAuditableRequestExtractor())
@@ -575,6 +599,7 @@ public class CasOAuth20Configuration {
 
     @Bean
     @ConditionalOnMissingBean(name = "oauthClientCredentialsGrantTypeTokenRequestValidator")
+    @RefreshScope
     public OAuth20TokenRequestValidator oauthClientCredentialsGrantTypeTokenRequestValidator() {
         val context = buildConfigurationContext()
             .accessTokenGrantAuditableRequestExtractor(accessTokenGrantAuditableRequestExtractor())
@@ -724,6 +749,7 @@ public class CasOAuth20Configuration {
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "oauthAuditTrailRecordResolutionPlanConfigurer")
     public AuditTrailRecordResolutionPlanConfigurer oauthAuditTrailRecordResolutionPlanConfigurer() {
         return plan -> {
             plan.registerAuditActionResolver("OAUTH2_USER_PROFILE_ACTION_RESOLVER",
@@ -782,8 +808,7 @@ public class CasOAuth20Configuration {
     public SessionStore<JEEContext> oauthDistributedSessionStore() {
         val replicate = casProperties.getAuthn().getOauth().isReplicateSessions();
         if (replicate) {
-            return new DistributedJ2ESessionStore(ticketRegistry.getObject(), ticketFactory.getObject(),
-                    casProperties.getSessionReplication().getSessionCookieName());
+            return new DistributedJ2ESessionStore(ticketRegistry.getObject(), ticketFactory.getObject(), casProperties);
         }
         return new JEESessionStore();
     }

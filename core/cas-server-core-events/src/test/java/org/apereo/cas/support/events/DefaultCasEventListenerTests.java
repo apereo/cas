@@ -103,11 +103,11 @@ public class DefaultCasEventListenerTests {
     public static class EventTestConfiguration {
         @Bean
         public CasEventRepository casEventRepository() {
-            return new AbstractCasEventRepository() {
+            return new AbstractCasEventRepository(CasEventRepositoryFilter.noOp()) {
                 private final Collection<CasEvent> events = new LinkedHashSet<>();
 
                 @Override
-                public void save(final CasEvent event) {
+                public void saveInternal(final CasEvent event) {
                     events.add(event);
                 }
 

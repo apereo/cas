@@ -17,6 +17,7 @@ import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
+import org.apereo.cas.config.CasHibernateJpaConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.GoogleAuthenticatorJpaConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
@@ -54,6 +55,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @SpringBootTest(classes = {
     GoogleAuthenticatorJpaConfiguration.class,
     JpaGoogleAuthenticatorTokenCredentialRepositoryTests.JpaTestConfiguration.class,
+    CasHibernateJpaConfiguration.class,
     GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration.class,
     GoogleAuthenticatorAuthenticationMultifactorProviderBypassConfiguration.class,
     CasCoreTicketsConfiguration.class,
@@ -83,7 +85,10 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
     AopAutoConfiguration.class,
     RefreshAutoConfiguration.class
 },
-    properties = "cas.authn.mfa.gauth.crypto.enabled=false")
+    properties = {
+        "cas.jdbc.showSql=true",
+        "cas.authn.mfa.gauth.crypto.enabled=false"
+    })
 @EnableTransactionManagement(proxyTargetClass = true)
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @EnableScheduling

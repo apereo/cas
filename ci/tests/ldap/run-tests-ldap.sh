@@ -21,7 +21,7 @@ fi
 
 gradle="./gradlew $@"
 gradleBuild=""
-gradleBuildOptions="--build-cache --configure-on-demand --no-daemon -DtestCategoryType=LDAP "
+gradleBuildOptions="--build-cache --parallel --configure-on-demand --no-daemon -DtestCategoryType=LDAP "
 
 echo -e "***********************************************"
 echo -e "Gradle build started at `date`"
@@ -31,12 +31,9 @@ echo -e "***********************************************"
 ./ci/tests/ldap/run-ad-server.sh true
 
 gradleBuild="$gradleBuild testLdap jacocoRootReport -x test -x javadoc -x check \
-    -DskipGradleLint=true --parallel \
+    -DshowStandardStreams=true \
+    \
     -DskipNestedConfigMetadataGen=true "
-
-if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[show streams]"* ]]; then
-    gradleBuild="$gradleBuild -DshowStandardStreams=true "
-fi
 
 if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[rerun tasks]"* ]]; then
     gradleBuild="$gradleBuild --rerun-tasks "

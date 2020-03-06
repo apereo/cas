@@ -29,6 +29,16 @@ create attribute release policies, etc. CAS at runtime will auto-configure all r
 A number of CAS configuration options equally apply to a number of modules and features. To understand and 
 take note of those options, please [review this guide](Configuration-Properties-Common.html).
 
+## Validation
+
+Configuration properties are automatically validated on CAS startup to report issues with configuration binding,
+specially if defined CAS settings cannot be recognized or validated by the configuration schema. The validation process
+is on by default and can be skipped on startup using a special *system property* `SKIP_CONFIG_VALIDATION` 
+that should be set to `true`. 
+
+Additional validation processes are also handled via [Configuration Metadata](Configuration-Metadata-Repository.html)
+and property migrations applied automatically on startup by Spring Boot and family.
+
 ## Custom Settings
 
 The following settings could be used to extend CAS with arbitrary configuration keys and values:
@@ -39,7 +49,12 @@ The following settings could be used to extend CAS with arbitrary configuration 
 
 ## Configuration Storage
 
+This section outlines strategies that can be used to store CAS configuration and settings.
+
 ### Standalone
+
+This is the default configuration mode which indicates that CAS does NOT require connections 
+to an external configuration server and will run in an embedded standalone mode.
 
 #### By Directory
 
@@ -240,6 +255,11 @@ Allow the CAS Spring Cloud configuration server to load settings from an Apache 
 Common AWS settings for this feature are available [here](Configuration-Properties-Common.html#amazon-integration-settings)
 under the configuration key `cas.spring.cloud.aws.secretsManager`.
 
+### Amazon Parameter Store
+
+Common AWS settings for this feature are available [here](Configuration-Properties-Common.html#amazon-integration-settings)
+under the configuration key `cas.spring.cloud.aws.ssm`.
+
 ### Amazon S3
 
 The following settings may be passed using strategies outlined [here](Configuration-Management.html#overview) in order for CAS to establish a connection,
@@ -264,6 +284,18 @@ are available [here](Configuration-Properties-Common.html#database-settings) und
 
 ```properties
 # cas.spring.cloud.jdbc.sql=SELECT id, name, value FROM CAS_SETTINGS_TABLE
+```
+
+### REST
+
+Allow the CAS Spring Cloud configuration server to load settings from a REST API.
+
+```properties
+# cas.spring.cloud.rest.url=
+# cas.spring.cloud.rest.basicAuthUsername=
+# cas.spring.cloud.rest.basicAuthPassword=
+# cas.spring.cloud.rest.method=
+# cas.spring.cloud.rest.headers=Header1:Value1;Header2:Value2
 ```
 
 ## Configuration Security
@@ -363,9 +395,33 @@ server.ssl.keyPassword=changeit
 # server.ssl.trustStoreProvider=
 # server.ssl.trustStoreType=
 
-server.maxHttpHeaderSize=2097152
-server.useForwardHeaders=true
-server.connectionTimeout=20000
+# server.maxHttpHeaderSize=2097152
+# server.useForwardHeaders=true
+# server.connectionTimeout=20000
+```
+
+### Embedded Jetty Container
+
+The following settings affect the runtime behavior of the embedded Jetty container.
+
+```properties
+# server.jetty.acceptors=-1       
+
+# server.jetty.accesslog.append=false
+# server.jetty.accesslog.custom-format=
+# server.jetty.accesslog.enabled=false
+# server.jetty.accesslog.file-date-format=
+# server.jetty.accesslog.filename=
+# server.jetty.accesslog.format=
+# server.jetty.accesslog.ignore-paths=
+# server.jetty.accesslog.retention-period=31
+
+# server.jetty.connection-idle-timeout=
+# server.jetty.max-http-form-post-size=200000B
+# server.jetty.max-threads=200
+# server.jetty.min-threads=8
+# server.jetty.selectors=-1
+# server.jetty.thread-idle-timeout=-1
 ```
 
 ### Embedded Apache Tomcat Container
@@ -543,12 +599,26 @@ Enabling APR requires the following JVM system property that indicates the locat
 
 #### Session Clustering & Replication
 
-Enable session replication to replicate web application session deltas.
+Enable in-memory session replication to replicate web application session deltas. 
+
+| Clustering Type      | Description
+|----------------------|-------------------------------------------------------
+| `DEFAULT`            | Discovers cluster members via multicast discovery and optionally via staticly defined cluster members using the `clusterMembers`. [SimpelTcpCluster with McastService](http://tomcat.apache.org/tomcat-9.0-doc/cluster-howto.html) 
+| `CLOUD`              | For use in Kubernetes where members are discovered via accessing the Kubernetes API or doing a DNS lookup of the members of a Kubernetes service. [Documentation](https://cwiki.apache.org/confluence/display/TOMCAT/ClusteringCloud) is currently light, see code for details.
+
+| `CLOUD` Membership Providers   | Description
+|----------------------|-------------------------------------------------------
+| `kubernetes`         | Uses [Kubernetes API](https://github.com/apache/tomcat/blob/master/java/org/apache/catalina/tribes/membership/cloud/KubernetesMembershipProvider.java) to find other pods in a deployment. API is discovered and accessed via information in environment variables set in the container.  
+| `dns`                | Uses [DNS lookups](https://github.com/apache/tomcat/blob/master/java/org/apache/catalina/tribes/membership/cloud/DNSMembershipProvider.java) to find addresses of the pods behind a service specified by DNS_MEMBERSHIP_SERVICE_NAME environment variable.  
+| [MembershipProvider impl classname](https://github.com/apache/tomcat/blob/master/java/org/apache/catalina/tribes/MembershipProvider.java) | Use a membership provider implementation of your choice.   
+
+Most settings apply to the `DEFAULT` clustering type, which requires members to be defined via `clusterMembers` if multicast discovery doesn't work. The `cloudMembershipProvider` setting applies to the `CLOUD` type.
 
 ```properties
 # cas.server.tomcat.clustering.enabled=false
+# cas.server.tomcat.clustering.clusteringType=DEFAULT|CLOUD
 # cas.server.tomcat.clustering.clusterMembers=ip-address:port:index
-
+# cas.server.tomcat.clustering.cloudMembershipProvider=kubernetes|dns|[MembershipProvider impl classname](https://github.com/apache/tomcat/blob/master/java/org/apache/catalina/tribes/MembershipProvider.java)
 # cas.server.tomcat.clustering.expireSessionsOnShutdown=false
 # cas.server.tomcat.clustering.channelSendOptions=8
 
@@ -578,17 +648,18 @@ If none is specified, one is automatically detected and used by CAS.
 
 ```properties
 # cas.server.name=https://cas.example.org:8443
-# cas.server.prefix=https://cas.example.org:8443/cas
+# cas.server.prefix=https://cas.example.org:8443/cas 
+# cas.server.scope=example.org
 # cas.host.name=
 ```
 
 ## Session replication
 
-The `sessionCookieName` property defines the session cookie name for the session replication.
+Control aspects of session replication for certain CAS features, such as OAuth or OpenID Connect,
+allowing session and authentication profile data to be kept with the client as a cookie.
 
-```properties
-# cas.sessionReplication.sessionCookieName=JSESSIONID
-```
+Common cookie properties found [here](Configuration-Properties-Common.html#cookie-properties) under 
+the configuration key `cas.sessionReplication.cookie`.
 
 ## CAS Banner
 
@@ -616,8 +687,6 @@ To learn more about this topic, [please review this guide](../monitoring/Monitor
 
 # management.endpoints.jmx.exposure.exclude=*
 # management.endpoints.jmx.exposure.include=
-
-# management.server.add-application-context-header=false
 ```
 
 ### Basic Authentication Security
@@ -908,10 +977,10 @@ If multiple attribute repository sources are defined, they are added into a list
 and their results are cached and merged.
 
 ```properties
-# cas.authn.attributeRepository.expirationTime=30
-# cas.authn.attributeRepository.expirationTimeUnit=MINUTES
-# cas.authn.attributeRepository.maximumCacheSize=10000
-# cas.authn.attributeRepository.merger=REPLACE|ADD|MULTIVALUED|NONE
+# cas.authn.attribute-repository.expirationTime=30
+# cas.authn.attribute-repository.expirationTimeUnit=MINUTES
+# cas.authn.attribute-repository.maximumCacheSize=10000
+# cas.authn.attribute-repository.merger=REPLACE|ADD|MULTIVALUED|NONE
 ```
 
 <div class="alert alert-info"><strong>Remember This</strong><p>Note that in certain cases,
@@ -954,7 +1023,7 @@ if explicit attribute mappings are defined, then *only mapped attributes* are re
 Attributes may be allowed to be virtually renamed and remapped. The following definition, for instance, attempts to grab the attribute `uid` from the attribute source and rename it to `userId`:
 
 ```properties
-# cas.authn.attributeRepository.[type-placeholder].attributes.uid=userId
+# cas.authn.attribute-repository.[type-placeholder].attributes.uid=userId
 ```
 
 ### Merging Strategies
@@ -973,26 +1042,26 @@ The following merging strategies can be used to resolve conflicts when the same 
 Static attributes that need to be mapped to a hardcoded value belong here.
 
 ```properties
-# cas.authn.attributeRepository.stub.id=
+# cas.authn.attribute-repository.stub.id=
 
-# cas.authn.attributeRepository.stub.attributes.uid=uid
-# cas.authn.attributeRepository.stub.attributes.displayName=displayName
-# cas.authn.attributeRepository.stub.attributes.cn=commonName
-# cas.authn.attributeRepository.stub.attributes.affiliation=groupMembership
+# cas.authn.attribute-repository.stub.attributes.uid=uid
+# cas.authn.attribute-repository.stub.attributes.displayName=displayName
+# cas.authn.attribute-repository.stub.attributes.cn=commonName
+# cas.authn.attribute-repository.stub.attributes.affiliation=groupMembership
 ```
 
 ### LDAP
 
-If you wish to directly and separately retrieve attributes from an LDAP source, LDAP settings for this feature are available [here](Configuration-Properties-Common.html#ldap-connection-settings) under the configuration key `cas.authn.attributeRepository.ldap[0]`.
+If you wish to directly and separately retrieve attributes from an LDAP source, LDAP settings for this feature are available [here](Configuration-Properties-Common.html#ldap-connection-settings) under the configuration key `cas.authn.attribute-repository.ldap[0]`.
 
 ```properties
-# cas.authn.attributeRepository.ldap[0].id=
-# cas.authn.attributeRepository.ldap[0].order=0
+# cas.authn.attribute-repository.ldap[0].id=
+# cas.authn.attribute-repository.ldap[0].order=0
 
-# cas.authn.attributeRepository.ldap[0].attributes.uid=uid
-# cas.authn.attributeRepository.ldap[0].attributes.displayName=displayName
-# cas.authn.attributeRepository.ldap[0].attributes.cn=commonName
-# cas.authn.attributeRepository.ldap[0].attributes.affiliation=groupMembership
+# cas.authn.attribute-repository.ldap[0].attributes.uid=uid
+# cas.authn.attribute-repository.ldap[0].attributes.displayName=displayName
+# cas.authn.attribute-repository.ldap[0].attributes.cn=commonName
+# cas.authn.attribute-repository.ldap[0].attributes.affiliation=groupMembership
 ```
 
 ### Groovy
@@ -1001,10 +1070,10 @@ If you wish to directly and separately retrieve attributes from a Groovy script,
 the following settings are then relevant:
 
 ```properties
-# cas.authn.attributeRepository.groovy[0].location=file:/etc/cas/attributes.groovy
-# cas.authn.attributeRepository.groovy[0].caseInsensitive=false
-# cas.authn.attributeRepository.groovy[0].order=0
-# cas.authn.attributeRepository.groovy[0].id=
+# cas.authn.attribute-repository.groovy[0].location=file:/etc/cas/attributes.groovy
+# cas.authn.attribute-repository.groovy[0].caseInsensitive=false
+# cas.authn.attribute-repository.groovy[0].order=0
+# cas.authn.attribute-repository.groovy[0].id=
 ```
 
 The Groovy script may be designed as:
@@ -1029,9 +1098,9 @@ If you wish to directly and separately retrieve attributes from a static JSON so
 the following settings are then relevant:
 
 ```properties
-# cas.authn.attributeRepository.json[0].location=file://etc/cas/attribute-repository.json
-# cas.authn.attributeRepository.json[0].order=0
-# cas.authn.attributeRepository.json[0].id=
+# cas.authn.attribute-repository.json[0].location=file://etc/cas/attribute-repository.json
+# cas.authn.attribute-repository.json[0].order=0
+# cas.authn.attribute-repository.json[0].id=
 ```
 
 The format of the file may be:
@@ -1051,12 +1120,12 @@ The format of the file may be:
 
 ### REST
 
-Retrieve attributes from a REST endpoint. RESTful settings for this feature are available [here](Configuration-Properties-Common.html#restful-integrations) under the configuration key `cas.authn.attributeRepository.rest[0]`.
+Retrieve attributes from a REST endpoint. RESTful settings for this feature are available [here](Configuration-Properties-Common.html#restful-integrations) under the configuration key `cas.authn.attribute-repository.rest[0]`.
 
 ```properties
-# cas.authn.attributeRepository.rest[0].order=0
-# cas.authn.attributeRepository.rest[0].id=
-# cas.authn.attributeRepository.rest[0].caseInsensitive=false
+# cas.authn.attribute-repository.rest[0].order=0
+# cas.authn.attribute-repository.rest[0].id=
+# cas.authn.attribute-repository.rest[0].caseInsensitive=false
 ```
 
 The authenticating user id is passed in form of a request parameter under `username`. The response is expected
@@ -1076,11 +1145,11 @@ Similar to the Groovy option but more versatile, this option takes advantage of 
 The following settings are relevant:
 
 ```properties
-# cas.authn.attributeRepository.script[0].location=file:/etc/cas/script.groovy
-# cas.authn.attributeRepository.script[0].order=0
-# cas.authn.attributeRepository.script[0].id=
-# cas.authn.attributeRepository.script[0].caseInsensitive=false
-# cas.authn.attributeRepository.script[0].engineName=js|groovy|ruby|python
+# cas.authn.attribute-repository.script[0].location=file:/etc/cas/script.groovy
+# cas.authn.attribute-repository.script[0].order=0
+# cas.authn.attribute-repository.script[0].id=
+# cas.authn.attribute-repository.script[0].caseInsensitive=false
+# cas.authn.attribute-repository.script[0].engineName=js|groovy|ruby|python
 ```
 
 While Javascript and Groovy should be natively supported by CAS, Python scripts may need
@@ -1127,29 +1196,29 @@ function run(uid, logger) {
 
 ### JDBC
 
-Retrieve attributes from a JDBC source. Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.authn.attributeRepository.jdbc[0]`.
+Retrieve attributes from a JDBC source. Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.authn.attribute-repository.jdbc[0]`.
 
 ```properties
 
-# cas.authn.attributeRepository.jdbc[0].attributes.uid=uid
-# cas.authn.attributeRepository.jdbc[0].attributes.displayName=displayName
-# cas.authn.attributeRepository.jdbc[0].attributes.cn=commonName
-# cas.authn.attributeRepository.jdbc[0].attributes.affiliation=groupMembership
+# cas.authn.attribute-repository.jdbc[0].attributes.uid=uid
+# cas.authn.attribute-repository.jdbc[0].attributes.displayName=displayName
+# cas.authn.attribute-repository.jdbc[0].attributes.cn=commonName
+# cas.authn.attribute-repository.jdbc[0].attributes.affiliation=groupMembership
 
-# cas.authn.attributeRepository.jdbc[0].singleRow=true
-# cas.authn.attributeRepository.jdbc[0].order=0
-# cas.authn.attributeRepository.jdbc[0].id=
-# cas.authn.attributeRepository.jdbc[0].requireAllAttributes=true
-# cas.authn.attributeRepository.jdbc[0].caseCanonicalization=NONE|LOWER|UPPER
-# cas.authn.attributeRepository.jdbc[0].queryType=OR|AND
+# cas.authn.attribute-repository.jdbc[0].singleRow=true
+# cas.authn.attribute-repository.jdbc[0].order=0
+# cas.authn.attribute-repository.jdbc[0].id=
+# cas.authn.attribute-repository.jdbc[0].requireAllAttributes=true
+# cas.authn.attribute-repository.jdbc[0].caseCanonicalization=NONE|LOWER|UPPER
+# cas.authn.attribute-repository.jdbc[0].queryType=OR|AND
 
 # Used only when there is a mapping of many rows to one user
-# cas.authn.attributeRepository.jdbc[0].columnMappings.columnAttrName1=columnAttrValue1
-# cas.authn.attributeRepository.jdbc[0].columnMappings.columnAttrName2=columnAttrValue2
-# cas.authn.attributeRepository.jdbc[0].columnMappings.columnAttrName3=columnAttrValue3
+# cas.authn.attribute-repository.jdbc[0].columnMappings.columnAttrName1=columnAttrValue1
+# cas.authn.attribute-repository.jdbc[0].columnMappings.columnAttrName2=columnAttrValue2
+# cas.authn.attribute-repository.jdbc[0].columnMappings.columnAttrName3=columnAttrValue3
 
-# cas.authn.attributeRepository.jdbc[0].sql=SELECT * FROM table WHERE {0}
-# cas.authn.attributeRepository.jdbc[0].username=uid
+# cas.authn.attribute-repository.jdbc[0].sql=SELECT * FROM table WHERE {0}
+# cas.authn.attribute-repository.jdbc[0].username=uid
 ```
 
 ### Grouper
@@ -1159,9 +1228,9 @@ as CAS attributes under a `grouperGroups` multi-valued attribute.
 To learn more about this topic, [please review this guide](../integration/Attribute-Resolution.html).
 
 ```properties
-# cas.authn.attributeRepository.grouper[0].enabled=true
-# cas.authn.attributeRepository.grouper[0].id=
-# cas.authn.attributeRepository.grouper[0].order=0
+# cas.authn.attribute-repository.grouper[0].enabled=true
+# cas.authn.attribute-repository.grouper[0].id=
+# cas.authn.attribute-repository.grouper[0].order=0
 ```
 
 You will also need to ensure `grouper.client.properties` is available on the classpath (i.e. `src/main/resources`)
@@ -1175,12 +1244,12 @@ with the following configured properties:
 
 ### Couchbase
 
-This option will fetch attributes from a Couchbase database for a given CAS principal. To learn more about this topic, [please review this guide](../installation/Couchbase-Authentication.html). Database settings for this feature are available [here](Configuration-Properties-Common.html#couchbase-integration-settings) under the configuration key `cas.authn.attributeRepository.couchbase`.
+This option will fetch attributes from a Couchbase database for a given CAS principal. To learn more about this topic, [please review this guide](../installation/Couchbase-Authentication.html). Database settings for this feature are available [here](Configuration-Properties-Common.html#couchbase-integration-settings) under the configuration key `cas.authn.attribute-repository.couchbase`.
 
 ```properties
-# cas.authn.attributeRepository.couchbase.usernameAttribute=username
-# cas.authn.attributeRepository.couchbase.order=0
-# cas.authn.attributeRepository.couchbase.id=
+# cas.authn.attribute-repository.couchbase.usernameAttribute=username
+# cas.authn.attribute-repository.couchbase.order=0
+# cas.authn.attribute-repository.couchbase.id=
 ```
 
 ### Redis
@@ -1190,11 +1259,11 @@ This option will fetch attributes from a Redis database for a given CAS principa
 To learn more about this topic, [please review this guide](../installation/Redis-Authentication.html).
 
 Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#redis-configuration) 
-under the configuration key `cas.authn.attributeRepository.redis`.
+under the configuration key `cas.authn.attribute-repository.redis`.
 
 ```properties
-# cas.authn.attributeRepository.redis.order=0
-# cas.authn.attributeRepository.redis.id=
+# cas.authn.attribute-repository.redis.order=0
+# cas.authn.attribute-repository.redis.id=
 ```
 
 ### Microsoft Azure Active Directory
@@ -1204,20 +1273,20 @@ This option will fetch attributes from Microsoft Azure Active Directory using th
 The following settings are available:
 
 ```properties
-# cas.authn.attributeRepository.azureActiveDirectory[0].clientId=
-# cas.authn.attributeRepository.azureActiveDirectory[0].clientSecret=
-# cas.authn.attributeRepository.azureActiveDirectory[0].clientSecret=
-# cas.authn.attributeRepository.azureActiveDirectory[0].tenant=
+# cas.authn.attribute-repository.azureActiveDirectory[0].clientId=
+# cas.authn.attribute-repository.azureActiveDirectory[0].clientSecret=
+# cas.authn.attribute-repository.azureActiveDirectory[0].clientSecret=
+# cas.authn.attribute-repository.azureActiveDirectory[0].tenant=
 
-# cas.authn.attributeRepository.azureActiveDirectory[0].id=
-# cas.authn.attributeRepository.azureActiveDirectory[0].order=0
-# cas.authn.attributeRepository.azureActiveDirectory[0].caseInsensitive=false
-# cas.authn.attributeRepository.azureActiveDirectory[0].resource=
-# cas.authn.attributeRepository.azureActiveDirectory[0].scope=
-# cas.authn.attributeRepository.azureActiveDirectory[0].grantType=
-# cas.authn.attributeRepository.azureActiveDirectory[0].apiBaseUrl=
-# cas.authn.attributeRepository.azureActiveDirectory[0].attributes=
-# cas.authn.attributeRepository.azureActiveDirectory[0].domain=
+# cas.authn.attribute-repository.azureActiveDirectory[0].id=
+# cas.authn.attribute-repository.azureActiveDirectory[0].order=0
+# cas.authn.attribute-repository.azureActiveDirectory[0].caseInsensitive=false
+# cas.authn.attribute-repository.azureActiveDirectory[0].resource=
+# cas.authn.attribute-repository.azureActiveDirectory[0].scope=
+# cas.authn.attribute-repository.azureActiveDirectory[0].grantType=
+# cas.authn.attribute-repository.azureActiveDirectory[0].apiBaseUrl=
+# cas.authn.attribute-repository.azureActiveDirectory[0].attributes=
+# cas.authn.attribute-repository.azureActiveDirectory[0].domain=
 # cas.authn.attributeRepository.azureActiveDirectory[0].loggingLevel=
 ```
 
@@ -1247,7 +1316,8 @@ Defines whether CAS should include and release protocol attributes defined in th
 principal attributes. By default all authentication attributes are released when protocol attributes are enabled for
 release. If you wish to restrict which authentication attributes get released, you can use the below settings to control authentication attributes more globally.
 
-Protocol/authentication attributes may also be released conditionally on a per-service basis. To learn more about this topic, [please review this guide](../integration/Attribute-Release.html).
+Protocol/authentication attributes may also be released conditionally on a per-service 
+basis. To learn more about this topic, [please review this guide](../integration/Attribute-Release.html).
 
 ```properties
 # cas.authn.authenticationAttributeRelease.onlyRelease=authenticationDate,isFromNewLogin
@@ -1257,11 +1327,29 @@ Protocol/authentication attributes may also be released conditionally on a per-s
 
 ## Principal Resolution
 
-In the event that a separate resolver is put into place, control how the final principal should be constructed by default. Principal resolution and Person Directory settings for this feature are available [here](Configuration-Properties-Common.html#person-directory-principal-resolution) under the configuration key `cas.personDirectory`.
+In the event that a separate resolver is put into place, control how the final principal should be constructed by default. Principal resolution 
+and Person Directory settings for this feature are 
+available [here](Configuration-Properties-Common.html#person-directory-principal-resolution) under the configuration key `cas.person-directory`.
 
+## Attribute Definitions
+
+An attribute definition store allows one to describe metadata about necessary attributes 
+with special decorations to be considered during attribute resolution and release.
+
+```properties
+# cas.person-directory.attribute-definition-store.json.location=file:/etc/cas/config/attribute-defns.json
+```
+ 
 ## Authentication Engine
 
 Control inner-workings of the CAS authentication engine, before and after the execution.
+
+```properties
+cas.authn.core.groovy-authentication-resolution.location=file:/etc/cas/config/GroovyAuthentication.groovy
+cas.authn.core.groovy-authentication-resolution.order=0
+
+cas.authn.core.service-authentication-resolution.order=0
+```           
 
 ### Authentication Pre-Processing
 
@@ -1630,13 +1718,19 @@ To learn more about this topic, [please review this guide](../installation/Passw
 
 ### Account Stores
 
-```properties
+```properties   
+# cas.authn.passwordless.multifactorAuthenticationActivated=false
+# cas.authn.passwordless.delegatedAuthenticationActivated=false
+
 # cas.authn.passwordless.accounts.simple.casuser=cas@example.org
 # cas.authn.passwordless.accounts.groovy.location=file:/etc/cas/config/pwdless.groovy
 ```
 
 RESTful settings for this feature are available [here](Configuration-Properties-Common.html#restful-integrations) 
 under the configuration key `cas.authn.passwordless.accounts.rest`.
+
+LDAP settings for this feature are available [here](Configuration-Properties-Common.html#ldap-connection-settings) 
+under the configuration key `cas.authn.passwordless.accounts.ldap`.
 
 ### Token Management
 
@@ -1653,6 +1747,9 @@ the configuration key `cas.authn.passwordless.tokens.rest`.
 Email notifications settings for this feature are available [here](Configuration-Properties-Common.html#email-notifications) 
 under the configuration key `cas.authn.passwordless.tokens`. SMS notifications settings for this feature are 
 available [here](Configuration-Properties-Common.html#sms-notifications) under the configuration key `cas.authn.passwordless.tokens`.
+
+Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under 
+the configuration key `cas.authn.passwordless.tokens.jpa`. Scheduler settings for this feature are available [here](Configuration-Properties-Common.html#job-scheduling) under the configuration key `cas.authn.passwordless.tokens.jpa.cleaner`.
 
 ## Email Submissions
 
@@ -2093,6 +2190,11 @@ Principal resolution and Person Directory settings for this feature are availabl
 # cas.authn.spnego.ntlm=false
 ```
 
+### Webflow configuration
+
+Webflow auto-configuration settings for this feature are available [here](Configuration-Properties-Common.html#webflow-auto-configuration) under 
+the configuration key `cas.authn.spnego.webflow`.
+
 ### System Settings
 
 ```properties
@@ -2201,6 +2303,11 @@ To learn more about this topic, [please review this guide](../installation/JWT-A
 ```properties
 # cas.authn.token.name=
 ```
+
+### Webflow configuration
+
+Webflow auto-configuration settings for this feature are available [here](Configuration-Properties-Common.html#webflow-auto-configuration) under 
+the configuration key `cas.authn.token.webflow`.
 
 ### JWT Tickets
 
@@ -2355,6 +2462,11 @@ Password encoding settings for this feature are available [here](Configuration-P
 
 To learn more about this topic, [please review this guide](../installation/X509-Authentication.html).
 
+### Webflow configuration
+
+Webflow auto-configuration settings for this feature are available [here](Configuration-Properties-Common.html#webflow-auto-configuration) under 
+the configuration key `cas.authn.x509.webflow`.
+
 ### Principal Resolution
 
 X.509 principal resolution can act on the following principal types:
@@ -2446,6 +2558,17 @@ To fetch CRLs, the following options are available:
 # cas.authn.x509.refreshIntervalSeconds=3600
 # cas.authn.x509.maxPathLengthAllowUnspecified=false
 
+# SUBJECT_DN
+# cas.authn.x509.subjectDn.format=[DEFAULT,RFC1779,RFC2253,CANONICAL]
+```
+| Type          | Description
+|---------------|----------------------------------------------------------------------
+| `DEFAULT`     | Calls certificate.getSubjectDN() method for backwards compatibility but that method is ["denigrated"](https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/security/cert/X509Certificate.html#getIssuerDN()). 
+| `RFC1779`     | Calls [X500Principal.getName("RFC1779")](https://docs.oracle.com/en/java/javase/11/docs/api/java.base/javax/security/auth/x500/X500Principal.html#getName()) which emits a subject DN with the attribute keywords defined in RFC 1779 (CN, L, ST, O, OU, C, STREET). Any other attribute type is emitted as an OID.
+| `RFC2253`     | Calls [X500Principal.getName("RFC2253")](https://docs.oracle.com/en/java/javase/11/docs/api/java.base/javax/security/auth/x500/X500Principal.html#getName()) which emits a subject DN with the attribute keywords defined in RFC 2253 (CN, L, ST, O, OU, C, STREET, DC, UID). Any other attribute type is emitted as an OID.
+| `CANONICAL`   | Calls X500Principal.getName("CANONICAL" which emits a subject DN that starts with RFC 2253 and applies additional canonicalizations described in the [javadoc](https://docs.oracle.com/en/java/javase/11/docs/api/java.base/javax/security/auth/x500/X500Principal.html#getName()).
+
+```properties
 # SERIAL_NO_DN
 # cas.authn.x509.serialNoDn.serialNumberPrefix=SERIALNUMBER=
 # cas.authn.x509.serialNoDn.valueDelimiter=,
@@ -2870,8 +2993,13 @@ Configuration settings for this feature are available [here](Configuration-Prope
 
 ### YubiKey MongoDb Device Store
 
- Configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.authn.mfa.yubikey`.
+Configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.authn.mfa.yubikey`.
 
+### YubiKey Redis Device Store
+
+Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#redis-configuration)
+under the configuration key `cas.authn.mfa.yubikey`.
+ 
 ### Radius OTP
 
 To learn more about this topic, [please review this guide](../mfa/RADIUS-Authentication.html).
@@ -3057,7 +3185,6 @@ To learn more about this topic, [please review this guide](../installation/Confi
 
 ```properties
 # cas.authn.samlIdp.entityId=https://cas.example.org/idp
-# cas.authn.samlIdp.scope=example.org
 
 # cas.authn.samlIdp.authenticationContextClassMappings[0]=urn:oasis:names:tc:SAML:2.0:ac:classes:SomeClassName->mfa-duo
 # cas.authn.samlIdp.authenticationContextClassMappings[1]=https://refeds.org/profile/mfa->mfa-gauth
@@ -3279,6 +3406,7 @@ Allow CAS to become an OpenID Connect provider (OP). To learn more about this to
 # cas.authn.oidc.jwksFile=file:/etc/cas/config/keystore.jwks
 # cas.authn.oidc.jwksCacheInMinutes=60
 # cas.authn.oidc.jwksKeySize=2048
+# cas.authn.oidc.jwksType=RSA|EC
 
 # cas.authn.oidc.dynamicClientRegistrationMode=OPEN|PROTECTED
 
@@ -3294,6 +3422,7 @@ Allow CAS to become an OpenID Connect provider (OP). To learn more about this to
 # cas.authn.oidc.claimTypesSupported=normal
 # cas.authn.oidc.grantTypesSupported=authorization_code,password,client_credentials,refresh_token
 # cas.authn.oidc.tokenEndpointAuthMethodsSupported=client_secret_basic,client_secret_post,private_key_jwt,client_secret_jwt
+# cas.authn.oidc.codeChallengeMethodsSupported=plain,S256
 
 # cas.authn.oidc.idTokenSigningAlgValuesSupported=none,RS256,RS384,RS512,PS256,PS384,PS512,ES256,ES384,ES512,HS256,HS384,HS512
 # cas.authn.oidc.idTokenEncryptionAlgValuesSupported=RSA1_5,RSA-OAEP,RSA-OAEP-256,A128KW,A192KW,A256KW,\
@@ -3342,6 +3471,7 @@ To learn more about this topic, [please review this guide](../integration/Delega
 # cas.authn.pac4j.name=
 # cas.authn.pac4j.order=
 # cas.authn.pac4j.lazyInit=true
+# cas.authn.pac4j.replicateSessions=true
 ```
 
 The following external identity providers share [common blocks of settings](Configuration-Properties-Common.html#delegated-authentication-settings) 
@@ -3477,7 +3607,6 @@ prefixes for the `keystorePath` or `identityProviderMetadataPath` property).
 # cas.authn.pac4j.saml[0].passive=false
 
 # cas.authn.pac4j.saml[0].wantsAssertionsSigned=
-# cas.authn.pac4j.saml[0].signLogoutRequests=
 # cas.authn.pac4j.saml[0].allSignatureValidationDisabled=false
 # cas.authn.pac4j.saml[0].signServiceProviderMetadata=false
 # cas.authn.pac4j.saml[0].principalIdAttribute=eduPersonPrincipalName
@@ -3502,6 +3631,9 @@ prefixes for the `keystorePath` or `identityProviderMetadataPath` property).
 
 # cas.authn.pac4j.saml[0].mappedAttributes[0].name=urn:oid:2.5.4.42
 # cas.authn.pac4j.saml[0].mappedAttributes[0].mappedAs=displayName
+
+# cas.authn.pac4j.saml[0].messageStoreFactory=org.pac4j.saml.store.EmptyStoreFactory
+
 ```
 
 Examine the generated metadata after accessing the CAS login screen to ensure all 
@@ -3770,8 +3902,10 @@ To learn more about this topic, [please review this guide](../installation/Audit
 # cas.audit.includeValidationAssertion=false
 # cas.audit.alternateServerAddrHeaderName=
 # cas.audit.alternateClientAddrHeaderName=X-Forwarded-For
-# cas.audit.useServerHostAddress=false
-# cas.audit.supportedActions=AUTHENTICATION_.+,OTHER_\w+_ACTION
+# cas.audit.useServerHostAddress=false  
+
+# cas.audit.supportedActions=*
+# cas.audit.excludedActions=
 ```
 
 ### Slf4j Audits
@@ -4048,12 +4182,12 @@ Control how CAS should respond and validate incoming HTTP requests.
 # cas.httpWebRequest.onlyPostParams=username,password
 # cas.httpWebRequest.paramsToCheck=ticket,service,renew,gateway,warn,method,target,SAMLart,pgtUrl,pgt,pgtId,pgtIou,targetService,entityId,token
 # cas.httpWebRequest.patternToBlock=
+# cas.httpWebRequest.charactersToForbid=none
 
 # cas.httpWebRequest.customHeaders.headerName1=headerValue1
 # cas.httpWebRequest.customHeaders.headerName2=headerValue2
 
 # spring.http.encoding.charset=UTF-8
-# spring.http.encoding.enabled=true
 # spring.http.encoding.force=true
 ```
 
@@ -4435,9 +4569,7 @@ To learn more about this topic, [please review this guide](../ticketing/Ehcache-
 ```properties
 # cas.ticket.registry.ehcache3.enabled=true
 # cas.ticket.registry.ehcache3.maxElementsInMemory=10000
-# cas.ticket.registry.ehcache3.maxSizeOnDisk=200MB
 # cas.ticket.registry.ehcache3.perCacheSizeOnDisk=20MB
-# cas.ticket.registry.ehcache3.maxSizeOffHeap=100MB
 # cas.ticket.registry.ehcache3.eternal=false
 # cas.ticket.registry.ehcache3.enableStatistics=true
 # cas.ticket.registry.ehcache3.enableManagement=true
@@ -4446,7 +4578,7 @@ To learn more about this topic, [please review this guide](../ticketing/Ehcache-
 # cas.ticket.registry.ehcache3.resourcePoolName=cas-ticket-pool
 # cas.ticket.registry.ehcache3.resourcePoolSize=15MB
 # cas.ticket.registry.ehcache3.rootDirectory=/tmp/cas/ehcache3
-# cas.ticket.registry.ehcache3.clusterConnectTimeout=150
+# cas.ticket.registry.ehcache3.clusterConnectionTimeout=150
 # cas.ticket.registry.ehcache3.clusterReadWriteTimeout=5
 # cas.ticket.registry.ehcache3.clusteredCacheConsistency=STRONG
 ```                                              
@@ -4679,6 +4811,8 @@ To learn more about this topic, [please review this guide](../webflow/Webflow-Cu
 # cas.webflow.alwaysPauseRedirect=false
 # cas.webflow.refresh=true
 # cas.webflow.redirectSameState=false
+# cas.webflow.autoconfigure=true
+# cas.webflow.basePath=
 ```
 
 ### Spring Webflow Login Decorations
@@ -5095,6 +5229,11 @@ To learn more about this topic, [please review this guide](../integration/Attrib
 
 Signing & encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.consent`. The signing and encryption keys [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`.
 
+### Webflow configuration
+
+Webflow auto-configuration settings for this feature are available [here](Configuration-Properties-Common.html#webflow-auto-configuration) under 
+the configuration key `cas.consent.webflow`.
+
 ### JSON Attribute Consent
 
 ```properties
@@ -5181,6 +5320,9 @@ To learn more about this topic, [please review this guide](../installation/Passw
 
 # cas.authn.pm.reset.expirationMinutes=1
 # cas.authn.pm.reset.securityQuestionsEnabled=true
+# Whether the Password Management Token will contain the client or server IP Address.
+# cas.authn.pm.reset.includeServerIpAddress=true
+# cas.authn.pm.reset.includeClientIpAddress=true
 
 # Automatically log in after successful password change
 # cas.authn.pm.autoLogin=false
@@ -5192,6 +5334,11 @@ available [here](Configuration-Properties-Common.html#sms-notifications) under t
 
 The signing and encryption keys [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`.
 The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`. Signing & encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.authn.pm.reset`.
+
+### Webflow configuration
+
+Webflow auto-configuration settings for this feature are available [here](Configuration-Properties-Common.html#webflow-auto-configuration) under 
+the configuration key `cas.authn.pm.webflow`.
 
 ### Password History
 

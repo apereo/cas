@@ -4,6 +4,8 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 
 import javax.servlet.http.HttpServletRequest;
+
+import java.util.Collection;
 import java.util.Optional;
 
 /**
@@ -13,8 +15,8 @@ import java.util.Optional;
  * @author Daniel Frett
  * @since 5.0.0
  */
-@FunctionalInterface
 public interface MultifactorAuthenticationTriggerSelectionStrategy {
+
     /**
      * Resolve the multifactor authentication provider id.
      *
@@ -28,4 +30,11 @@ public interface MultifactorAuthenticationTriggerSelectionStrategy {
                              RegisteredService registeredService,
                              Authentication authentication,
                              Service service);
+
+    /**
+     * Gets multifactor authentication triggers.
+     *
+     * @return the multifactor authentication triggers
+     */
+    Collection<MultifactorAuthenticationTrigger> getMultifactorAuthenticationTriggers();
 }

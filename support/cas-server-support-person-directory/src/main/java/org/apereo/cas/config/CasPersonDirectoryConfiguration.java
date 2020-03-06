@@ -1,12 +1,15 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
+import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
+import org.apereo.cas.authentication.attribute.DefaultAttributeDefinitionStore;
 import org.apereo.cas.authentication.principal.resolvers.InternalGroovyScriptDao;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.authentication.JdbcPrincipalAttributesProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.persondir.DefaultPersonDirectoryAttributeRepositoryPlan;
+import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlan;
 import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlanConfigurer;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapUtils;
@@ -37,10 +40,12 @@ import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
@@ -69,7 +74,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class CasPersonDirectoryConfiguration {
     @Autowired
-    private ApplicationContext applicationContext;
+    private ConfigurableApplicationContext applicationContext;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -95,14 +100,22 @@ public class CasPersonDirectoryConfiguration {
         return jdbcDao;
     }
 
+    @ConditionalOnMissingBean(name = "attributeDefinitionStore")
+    @Bean
+    @RefreshScope
+    public AttributeDefinitionStore attributeDefinitionStore() throws Exception {
+        val resource = casProperties.getPersonDirectory().getAttributeDefinitionStore().getJson().getLocation();
+        val store = new DefaultAttributeDefinitionStore(resource);
+        store.setScope(casProperties.getServer().getScope());
+        return store;
+    }
+
     @ConditionalOnMissingBean(name = "attributeRepositories")
     @Bean
     @RefreshScope
     public List<IPersonAttributeDao> attributeRepositories() {
         val list = new ArrayList<IPersonAttributeDao>();
 
-        list.addAll(ldapAttributeRepositories());
-        list.addAll(jdbcAttributeRepositories());
         list.addAll(jsonAttributeRepositories());
         list.addAll(groovyAttributeRepositories());
         list.addAll(grouperAttributeRepositories());
@@ -215,83 +228,6 @@ public class CasPersonDirectoryConfiguration {
         return list;
     }
 
-    @ConditionalOnMissingBean(name = "jdbcAttributeRepositories")
-    @Bean
-    @RefreshScope
-    public List<IPersonAttributeDao> jdbcAttributeRepositories() {
-        val list = new ArrayList<IPersonAttributeDao>();
-        val attrs = casProperties.getAuthn().getAttributeRepository();
-        attrs.getJdbc()
-            .stream()
-            .filter(jdbc -> StringUtils.isNotBlank(jdbc.getSql()) && StringUtils.isNotBlank(jdbc.getUrl()))
-            .forEach(jdbc -> {
-                val jdbcDao = createJdbcPersonAttributeDao(jdbc);
-                FunctionUtils.doIfNotNull(jdbcDao.getId(), jdbcDao::setId);
-
-                jdbcDao.setQueryAttributeMapping(CollectionUtils.wrap("username", jdbc.getUsername()));
-                val mapping = jdbc.getAttributes();
-                if (mapping != null && !mapping.isEmpty()) {
-                    LOGGER.debug("Configured result attribute mapping for [{}] to be [{}]", jdbc.getUrl(), jdbc.getAttributes());
-                    jdbcDao.setResultAttributeMapping(mapping);
-                }
-                jdbcDao.setRequireAllQueryAttributes(jdbc.isRequireAllAttributes());
-                jdbcDao.setUsernameCaseCanonicalizationMode(jdbc.getCaseCanonicalization());
-                jdbcDao.setDefaultCaseCanonicalizationMode(jdbc.getCaseCanonicalization());
-                jdbcDao.setQueryType(jdbc.getQueryType());
-                jdbcDao.setOrder(jdbc.getOrder());
-                list.add(jdbcDao);
-            });
-        return list;
-    }
-
-    @ConditionalOnMissingBean(name = "ldapAttributeRepositories")
-    @Bean
-    @RefreshScope
-    public List<IPersonAttributeDao> ldapAttributeRepositories() {
-        val list = new ArrayList<IPersonAttributeDao>();
-        val attrs = casProperties.getAuthn().getAttributeRepository();
-        attrs.getLdap()
-            .stream()
-            .filter(ldap -> StringUtils.isNotBlank(ldap.getBaseDn()) && StringUtils.isNotBlank(ldap.getLdapUrl()))
-            .forEach(ldap -> {
-                val ldapDao = new LdaptivePersonAttributeDao();
-                FunctionUtils.doIfNotNull(ldap.getId(), ldapDao::setId);
-                LOGGER.debug("Configured LDAP attribute source for [{}] and baseDn [{}]", ldap.getLdapUrl(), ldap.getBaseDn());
-                ldapDao.setConnectionFactory(LdapUtils.newLdaptivePooledConnectionFactory(ldap));
-                ldapDao.setBaseDN(ldap.getBaseDn());
-
-                LOGGER.debug("LDAP attributes are fetched from [{}] via filter [{}]", ldap.getLdapUrl(), ldap.getSearchFilter());
-                ldapDao.setSearchFilter(ldap.getSearchFilter());
-
-                val constraints = new SearchControls();
-                if (ldap.getAttributes() != null && !ldap.getAttributes().isEmpty()) {
-                    LOGGER.debug("Configured result attribute mapping for [{}] to be [{}]", ldap.getLdapUrl(), ldap.getAttributes());
-                    ldapDao.setResultAttributeMapping(ldap.getAttributes());
-                    val attributes = (String[]) ldap.getAttributes().keySet().toArray(ArrayUtils.EMPTY_STRING_ARRAY);
-                    constraints.setReturningAttributes(attributes);
-                } else {
-                    LOGGER.debug("Retrieving all attributes as no explicit attribute mappings are defined for [{}]", ldap.getLdapUrl());
-                    constraints.setReturningAttributes(null);
-                }
-
-                if (ldap.isSubtreeSearch()) {
-                    LOGGER.debug("Configured subtree searching for [{}]", ldap.getLdapUrl());
-                    constraints.setSearchScope(SearchControls.SUBTREE_SCOPE);
-                }
-                constraints.setDerefLinkFlag(true);
-                ldapDao.setSearchControls(constraints);
-
-                ldapDao.setOrder(ldap.getOrder());
-
-                LOGGER.debug("Initializing LDAP attribute source for [{}]", ldap.getLdapUrl());
-                ldapDao.initialize();
-
-                list.add(ldapDao);
-            });
-
-        return list;
-    }
-
     @ConditionalOnMissingBean(name = "scriptedAttributeRepositories")
     @Bean
     @RefreshScope
@@ -387,6 +323,102 @@ public class CasPersonDirectoryConfiguration {
         }
 
         return mergingDao;
+    }
+
+    @ConditionalOnClass(JpaBeans.class)
+    @ConditionalOnProperty(name = "cas.authn.attribute-repository.jdbc[0].sql")
+    @Configuration("CasPersonDirectoryJdbcConfiguration")
+    public class CasPersonDirectoryJdbcConfiguration implements PersonDirectoryAttributeRepositoryPlanConfigurer {
+
+        @ConditionalOnMissingBean(name = "jdbcAttributeRepositories")
+        @Bean
+        @RefreshScope
+        public List<IPersonAttributeDao> jdbcAttributeRepositories() {
+            val list = new ArrayList<IPersonAttributeDao>();
+            val attrs = casProperties.getAuthn().getAttributeRepository();
+            attrs.getJdbc()
+                .stream()
+                .filter(jdbc -> StringUtils.isNotBlank(jdbc.getSql()) && StringUtils.isNotBlank(jdbc.getUrl()))
+                .forEach(jdbc -> {
+                    val jdbcDao = createJdbcPersonAttributeDao(jdbc);
+                    FunctionUtils.doIfNotNull(jdbc.getId(), jdbcDao::setId);
+
+                    jdbcDao.setQueryAttributeMapping(CollectionUtils.wrap("username", jdbc.getUsername()));
+                    val mapping = jdbc.getAttributes();
+                    if (mapping != null && !mapping.isEmpty()) {
+                        LOGGER.debug("Configured result attribute mapping for [{}] to be [{}]", jdbc.getUrl(), jdbc.getAttributes());
+                        jdbcDao.setResultAttributeMapping(mapping);
+                    }
+                    jdbcDao.setRequireAllQueryAttributes(jdbc.isRequireAllAttributes());
+                    jdbcDao.setUsernameCaseCanonicalizationMode(jdbc.getCaseCanonicalization());
+                    jdbcDao.setDefaultCaseCanonicalizationMode(jdbc.getCaseCanonicalization());
+                    jdbcDao.setQueryType(jdbc.getQueryType());
+                    jdbcDao.setOrder(jdbc.getOrder());
+                    list.add(jdbcDao);
+                });
+            return list;
+        }
+
+
+        @Override
+        public void configureAttributeRepositoryPlan(final PersonDirectoryAttributeRepositoryPlan plan) {
+            plan.registerAttributeRepositories(jdbcAttributeRepositories());
+        }
+    }
+
+    @ConditionalOnProperty(name = "cas.authn.attribute-repository.ldap[0].ldapUrl")
+    @Configuration("CasPersonDirectoryLdapConfiguration")
+    public class CasPersonDirectoryLdapConfiguration implements PersonDirectoryAttributeRepositoryPlanConfigurer {
+
+        @ConditionalOnMissingBean(name = "ldapAttributeRepositories")
+        @Bean
+        @RefreshScope
+        public List<IPersonAttributeDao> ldapAttributeRepositories() {
+            val list = new ArrayList<IPersonAttributeDao>();
+            val attrs = casProperties.getAuthn().getAttributeRepository();
+            attrs.getLdap()
+                .stream()
+                .filter(ldap -> StringUtils.isNotBlank(ldap.getBaseDn()) && StringUtils.isNotBlank(ldap.getLdapUrl()))
+                .forEach(ldap -> {
+                    val ldapDao = new LdaptivePersonAttributeDao();
+                    FunctionUtils.doIfNotNull(ldap.getId(), ldapDao::setId);
+                    LOGGER.debug("Configured LDAP attribute source for [{}] and baseDn [{}]", ldap.getLdapUrl(), ldap.getBaseDn());
+                    ldapDao.setConnectionFactory(LdapUtils.newLdaptiveConnectionFactory(ldap));
+                    ldapDao.setBaseDN(ldap.getBaseDn());
+
+                    LOGGER.debug("LDAP attributes are fetched from [{}] via filter [{}]", ldap.getLdapUrl(), ldap.getSearchFilter());
+                    ldapDao.setSearchFilter(ldap.getSearchFilter());
+
+                    val constraints = new SearchControls();
+                    if (ldap.getAttributes() != null && !ldap.getAttributes().isEmpty()) {
+                        LOGGER.debug("Configured result attribute mapping for [{}] to be [{}]", ldap.getLdapUrl(), ldap.getAttributes());
+                        ldapDao.setResultAttributeMapping(ldap.getAttributes());
+                        val attributes = (String[]) ldap.getAttributes().keySet().toArray(ArrayUtils.EMPTY_STRING_ARRAY);
+                        constraints.setReturningAttributes(attributes);
+                    } else {
+                        LOGGER.debug("Retrieving all attributes as no explicit attribute mappings are defined for [{}]", ldap.getLdapUrl());
+                        constraints.setReturningAttributes(null);
+                    }
+
+                    if (ldap.isSubtreeSearch()) {
+                        LOGGER.debug("Configured subtree searching for [{}]", ldap.getLdapUrl());
+                        constraints.setSearchScope(SearchControls.SUBTREE_SCOPE);
+                    }
+                    constraints.setDerefLinkFlag(true);
+                    ldapDao.setSearchControls(constraints);
+                    ldapDao.setOrder(ldap.getOrder());
+                    LOGGER.debug("Adding LDAP attribute source for [{}]", ldap.getLdapUrl());
+                    list.add(ldapDao);
+                });
+
+            return list;
+        }
+
+
+        @Override
+        public void configureAttributeRepositoryPlan(final PersonDirectoryAttributeRepositoryPlan plan) {
+            plan.registerAttributeRepositories(ldapAttributeRepositories());
+        }
     }
 }
 

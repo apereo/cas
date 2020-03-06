@@ -21,7 +21,7 @@ import org.pac4j.cas.client.CasClient;
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.WebContext;
-import org.pac4j.core.state.StaticOrRandomStateGenerator;
+import org.pac4j.core.util.generator.StaticValueGenerator;
 import org.pac4j.oauth.client.OAuth10Client;
 import org.pac4j.oauth.client.OAuth20Client;
 import org.pac4j.oauth.config.OAuth20Configuration;
@@ -49,12 +49,19 @@ public class DelegatedClientWebflowManager {
      * Client identifier associated with this session/request.
      */
     public static final String PARAMETER_CLIENT_ID = "delegatedclientid";
+
     private static final String OAUTH10_CLIENT_ID_SESSION_KEY = "OAUTH10_CLIENT_ID";
 
+    private static final String CAS_CLIENT_ID_SESSION_KEY = "CAS_CLIENT_ID";
+
     private final TicketRegistry ticketRegistry;
+
     private final TicketFactory ticketFactory;
+
     private final CasConfigurationProperties casProperties;
+
     private final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
+
     private final ArgumentExtractor argumentExtractor;
 
     /**
@@ -88,18 +95,16 @@ public class DelegatedClientWebflowManager {
             val oauthClient = (OAuth20Client) client;
             val config = oauthClient.getConfiguration();
             config.setWithState(true);
-            config.setStateGenerator(new StaticOrRandomStateGenerator(ticketId));
+            config.setStateGenerator(new StaticValueGenerator(ticketId));
         }
         if (client instanceof OidcClient) {
             val oidcClient = (OidcClient) client;
             val config = oidcClient.getConfiguration();
             config.setWithState(true);
-            config.setStateGenerator(new StaticOrRandomStateGenerator(ticketId));
+            config.setStateGenerator(new StaticValueGenerator(ticketId));
         }
         if (client instanceof CasClient) {
-            val casClient = (CasClient) client;
-            val config = casClient.getConfiguration();
-            config.addCustomParam(DelegatedClientWebflowManager.PARAMETER_CLIENT_ID, ticketId);
+            sessionStore.set(webContext, CAS_CLIENT_ID_SESSION_KEY, ticket.getId());
         }
         if (client instanceof OAuth10Client) {
             sessionStore.set(webContext, OAUTH10_CLIENT_ID_SESSION_KEY, ticket.getId());
@@ -216,10 +221,16 @@ public class DelegatedClientWebflowManager {
                 clientId = webContext.getRequestParameter(OAuth20Configuration.STATE_REQUEST_PARAMETER);
             }
             if (client instanceof OAuth10Client) {
-                LOGGER.debug("Client identifier could not be found as part of request parameters. Looking at state for the OAuth1 client");
+                LOGGER.debug("Client identifier could not be found as part of request parameters. Looking at session store for the OAuth1 client");
                 val sessionStore = webContext.getSessionStore();
                 clientId = sessionStore.get(webContext, OAUTH10_CLIENT_ID_SESSION_KEY);
                 sessionStore.set(webContext, OAUTH10_CLIENT_ID_SESSION_KEY, null);
+            }
+            if (client instanceof CasClient) {
+                LOGGER.debug("Client identifier could not be found as part of request parameters. Looking at the session store for the CAS client");
+                val sessionStore = webContext.getSessionStore();
+                clientId = sessionStore.get(webContext, CAS_CLIENT_ID_SESSION_KEY);
+                sessionStore.set(webContext, CAS_CLIENT_ID_SESSION_KEY, null);
             }
         }
         LOGGER.debug("Located delegated client identifier for this request as [{}]", clientId);

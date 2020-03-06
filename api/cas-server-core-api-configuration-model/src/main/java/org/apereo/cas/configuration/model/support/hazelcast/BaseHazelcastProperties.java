@@ -69,10 +69,9 @@ public class BaseHazelcastProperties implements Serializable {
     private String licenseKey;
 
     /**
-     * Hazelcast management center settings.
+     * Enables compression when default java serialization is used.
      */
-    @NestedConfigurationProperty
-    private HazelcastManagementCenterProperties managementCenter = new HazelcastManagementCenterProperties();
+    private boolean enableCompression;
 
     /**
      * Hazelcast cluster settings if CAS is able to auto-create caches.

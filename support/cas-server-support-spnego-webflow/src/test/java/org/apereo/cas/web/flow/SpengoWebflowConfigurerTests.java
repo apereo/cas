@@ -7,8 +7,8 @@ import org.apereo.cas.web.flow.config.SpnegoWebflowActionsConfiguration;
 import org.apereo.cas.web.flow.config.SpnegoWebflowConfiguration;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration;
 import org.springframework.context.annotation.Import;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.TransitionableState;
@@ -22,7 +22,6 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Import({
-    ThymeleafAutoConfiguration.class,
     CasCoreMultifactorAuthenticationConfiguration.class,
     CasMultifactorAuthenticationWebflowConfiguration.class,
     SpnegoConfiguration.class,
@@ -30,17 +29,18 @@ import static org.junit.jupiter.api.Assertions.*;
     SpnegoWebflowActionsConfiguration.class,
     BaseWebflowConfigurerTests.SharedTestConfiguration.class
 })
+@Tag("Webflow")
 public class SpengoWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Test
     public void verifyOperation() {
         assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());
         val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
         assertNotNull(flow);
-        var state = (TransitionableState) flow.getState(SpengoWebflowConfigurer.STATE_ID_EVALUATE_SPNEGO_CLIENT);
+        var state = (TransitionableState) flow.getState(SpnegoWebflowConfigurer.STATE_ID_EVALUATE_SPNEGO_CLIENT);
         assertNotNull(state);
-        state = (TransitionableState) flow.getState(SpengoWebflowConfigurer.STATE_ID_SPNEGO);
+        state = (TransitionableState) flow.getState(SpnegoWebflowConfigurer.STATE_ID_SPNEGO);
         assertNotNull(state);
-        state = (TransitionableState) flow.getState(SpengoWebflowConfigurer.STATE_ID_START_SPNEGO_AUTHENTICATE);
+        state = (TransitionableState) flow.getState(SpnegoWebflowConfigurer.STATE_ID_START_SPNEGO_AUTHENTICATE);
         assertNotNull(state);
     }
 }

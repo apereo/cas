@@ -64,6 +64,7 @@ in each case to learn the exact unit of measure.
 # ${configurationKey}.name=
 # ${configurationKey}.secure=true
 # ${configurationKey}.httpOnly=true
+# ${configurationKey}.sameSitePolicy=none|lax|strict
 ```                               
 
 ## Job Scheduling
@@ -186,6 +187,15 @@ def byte[] run(final Object... args) {
     logger.debug("Encoding password...")
     return ...
 }
+
+def Boolean matches(final Object... args) {
+    def rawPassword = args[0]
+    def encodedPassword = args[1]
+    def logger = args[2]
+    def casApplicationContext = args[3]
+
+   logger.debug("Does match or not ?");
+   return ...
 ```
 
 ## Authentication Principal Transformation
@@ -289,7 +299,7 @@ The following options related to JPA/JDBC support in CAS apply equally to a numb
 # ${configurationKey}.defaultCatalog=
 # ${configurationKey}.defaultSchema=
 # ${configurationKey}.ddlAuto=create-drop
-# ${configurationKey}.physicalNamingStrategyClassName=org.apereo.cas.jpa.CasHibernatePhysicalNamingStrategy
+# ${configurationKey}.physicalNamingStrategyClassName=org.apereo.cas.hibernate.CasHibernatePhysicalNamingStrategy
 
 # ${configurationKey}.autocommit=false
 # ${configurationKey}.idleTimeout=5000
@@ -504,6 +514,7 @@ The following options related to Hazelcast support in CAS apply equally to a num
 # ${configurationKey}.cluster.port=5701
 
 # ${configurationKey}.licenseKey=
+# ${configurationKey}.enableCompression=false
 ```
 
 More advanced Hazelcast configuration settings are listed below, given the component's *configuration key*:
@@ -512,13 +523,13 @@ More advanced Hazelcast configuration settings are listed below, given the compo
 # ${configurationKey}.cluster.tcpipEnabled=true
 
 # ${configurationKey}.cluster.partitionMemberGroupType=HOST_AWARE|CUSTOM|PER_MEMBER|ZONE_AWARE|SPI
-# ${configurationKey}.cluster.mapMergePolicy=com.hazelcast.map.merge.PutIfAbsentMapMergePolicy
+# ${configurationKey}.cluster.mapMergePolicy=PUT_IF_ABSENT|HIGHER_HITS|DISCARD|PASS_THROUGH|EXPIRATION_TIME|LATEST_UPDATE|LATEST_ACCESS
 
 # ${configurationKey}.cluster.evictionPolicy=LRU
 # ${configurationKey}.cluster.maxNoHeartbeatSeconds=300
 # ${configurationKey}.cluster.loggingType=slf4j
 # ${configurationKey}.cluster.portAutoIncrement=true
-# ${configurationKey}.cluster.maxHeapSizePercentage=85
+# ${configurationKey}.cluster.maxSize=85
 # ${configurationKey}.cluster.backupCount=1
 # ${configurationKey}.cluster.asyncBackupCount=0
 # ${configurationKey}.cluster.maxSizePolicy=USED_HEAP_PERCENTAGE
@@ -526,14 +537,8 @@ More advanced Hazelcast configuration settings are listed below, given the compo
 
 # ${configurationKey}.cluster.localAddress=
 # ${configurationKey}.cluster.publicAddress=
-```
 
-### Management Center
-
-```properties
-# ${configurationKey}.managementCenter.url=
-# ${configurationKey}.managementCenter.enabled=false
-# ${configurationKey}.managementCenter.updateInterval=5
+# ${configurationKey}.cluster.outboundPorts[0]=45000
 ```
 
 ### Static WAN Replication
@@ -542,18 +547,21 @@ More advanced Hazelcast configuration settings are listed below, given the compo
 # ${configurationKey}.cluster.wanReplication.enabled=false
 # ${configurationKey}.cluster.wanReplication.replicationName=CAS
 
-# ${configurationKey}.cluster.wanReplication[0].groupName=
-# ${configurationKey}.cluster.wanReplication[0].groupPassword=
-# ${configurationKey}.cluster.wanReplication[0].endpoints=1.2.3.4,4.5.6.7
-# ${configurationKey}.cluster.wanReplication[0].publisherClassName=com.hazelcast.enterprise.wan.replication.WanBatchReplication
-# ${configurationKey}.cluster.wanReplication[0].queueFullBehavior=THROW_EXCEPTION
-# ${configurationKey}.cluster.wanReplication[0].acknowledgeType=ACK_ON_OPERATION_COMPLETE
-# ${configurationKey}.cluster.wanReplication[0].queueCapacity=10000
-# ${configurationKey}.cluster.wanReplication[0].batchSize=500
-# ${configurationKey}.cluster.wanReplication[0].snapshotEnabled=false
-# ${configurationKey}.cluster.wanReplication[0].batchMaximumDelayMilliseconds=1000
-# ${configurationKey}.cluster.wanReplication[0].responseTimeoutMilliseconds=60000
-# ${configurationKey}.cluster.wanReplication[0].executorThreadCount=2
+# ${configurationKey}.cluster.wanReplication.targets[0].endpoints=1.2.3.4,4.5.6.7
+# ${configurationKey}.cluster.wanReplication.targets[0].publisherClassName=com.hazelcast.enterprise.wan.replication.WanBatchReplication
+# ${configurationKey}.cluster.wanReplication.targets[0].queueFullBehavior=THROW_EXCEPTION
+# ${configurationKey}.cluster.wanReplication.targets[0].acknowledgeType=ACK_ON_OPERATION_COMPLETE
+# ${configurationKey}.cluster.wanReplication.targets[0].queueCapacity=10000
+# ${configurationKey}.cluster.wanReplication.targets[0].batchSize=500
+# ${configurationKey}.cluster.wanReplication.targets[0].snapshotEnabled=false
+# ${configurationKey}.cluster.wanReplication.targets[0].batchMaximumDelayMilliseconds=1000
+# ${configurationKey}.cluster.wanReplication.targets[0].responseTimeoutMilliseconds=60000
+# ${configurationKey}.cluster.wanReplication.targets[0].executorThreadCount=2
+
+# ${configurationKey}.cluster.wanReplication.targets[0].consistencyCheckStrategy=NONE|MERKLE_TREES
+# ${configurationKey}.cluster.wanReplication.targets[0].clusterName=
+# ${configurationKey}.cluster.wanReplication.targets[0].publisherId=
+# ${configurationKey}.cluster.wanReplication.targets[0].properties=
 ```
 
 ### Multicast Discovery
@@ -1074,7 +1082,6 @@ The following settings may also need to be defined to describe the mail server s
 # spring.mail.port=
 # spring.mail.username=
 # spring.mail.password=
-# spring.mail.testConnection=true
 # spring.mail.properties.mail.smtp.auth=true
 # spring.mail.properties.mail.smtp.starttls.enable=true
 ```
@@ -1091,7 +1098,15 @@ The following options are shared and apply when CAS is configured to send SMS no
 
 You will also need to ensure a provider is defined that is able to send SMS messages. To learn more about this 
 topic, [please review this guide](../notifications/SMS-Messaging-Configuration.html).
- 
+
+## Webflow Auto Configuration
+
+Control aspects of webflow that relate to auto-configuration of webflow states, transitions and execution order.
+
+```properties
+# ${configurationKey}.order=
+``` 
+
 ## Delegated Authentication Settings
 
 The following options are shared and apply when CAS is configured to delegate authentication 
@@ -1136,9 +1151,8 @@ The following  options apply  to features that integrate with an LDAP server (i.
 #${configurationKey}.bindDn=cn=Directory Manager,dc=example,dc=org
 #${configurationKey}.bindCredential=Password
 
-#${configurationKey}.poolPassivator=NONE|CLOSE|BIND
+#${configurationKey}.poolPassivator=NONE|BIND
 #${configurationKey}.connectionStrategy=
-#${configurationKey}.providerClass=org.ldaptive.provider.unboundid.UnboundIDProvider
 #${configurationKey}.connectTimeout=PT5S
 #${configurationKey}.trustCertificates=
 #${configurationKey}.trustStore=
@@ -1147,6 +1161,7 @@ The following  options apply  to features that integrate with an LDAP server (i.
 #${configurationKey}.keystore=
 #${configurationKey}.keystorePassword=
 #${configurationKey}.keystoreType=JKS|JCEKS|PKCS12
+#${configurationKey}.disablePooling=false
 #${configurationKey}.minPoolSize=3
 #${configurationKey}.maxPoolSize=10
 #${configurationKey}.validateOnCheckout=true
@@ -1157,7 +1172,7 @@ The following  options apply  to features that integrate with an LDAP server (i.
 #${configurationKey}.idleTime=PT10M
 #${configurationKey}.prunePeriod=PT2H
 #${configurationKey}.blockWaitTime=PT3S
-#${configurationKey}.useSsl=true
+
 #${configurationKey}.useStartTls=false
 #${configurationKey}.responseTimeout=PT5S
 #${configurationKey}.allowMultipleDns=false
@@ -1185,7 +1200,6 @@ The following options can be used to passivate objects when they are checked bac
 | Type                    | Description
 |-------------------------|----------------------------------------------------------------------------------------------------
 | `NONE`                  | No passivation takes place.
-| `CLOSE`                 | Passivates a connection by attempting to close it.
 | `BIND`                  | The default behavior which passivates a connection by performing a bind operation on it. This option requires the availability of bind credentials when establishing connections to LDAP.
 
 #### Why Passivators?
@@ -1200,7 +1214,6 @@ If multiple URLs are provided as the LDAP url, this describes how each URL will 
 
 | Provider              | Description              
 |-----------------------|-----------------------------------------------------------------------------------------------
-| `DEFAULT`             | The default JNDI provider behavior will be used.    
 | `ACTIVE_PASSIVE`      | First LDAP will be used for every request unless it fails and then the next shall be used.    
 | `ROUND_ROBIN`         | For each new connection the next url in the list will be used.      
 | `RANDOM`              | For each new connection a random LDAP url will be selected.
@@ -1233,7 +1246,7 @@ The following LDAP validators can be used to test connection health status:
 #${configurationKey}.validator.searchFilter=(objectClass=*)
 #${configurationKey}.validator.scope=OBJECT|ONELEVEL|SUBTREE
 #${configurationKey}.validator.attributeName=objectClass
-#${configurationKey}.validator.attributeValues=top
+#${configurationKey}.validator.attributeValue=top
 #${configurationKey}.validator.dn=
 ```
 

@@ -4,6 +4,7 @@ import org.apereo.cas.audit.config.CasSupportJdbcAuditConfiguration;
 import org.apereo.cas.audit.spi.BaseAuditConfigurationTests;
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasHibernateJpaConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 
 import lombok.Getter;
@@ -25,6 +26,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 @SpringBootTest(classes = {
     CasCoreAuditConfiguration.class,
     CasSupportJdbcAuditConfiguration.class,
+    CasHibernateJpaConfiguration.class,
     CasCoreUtilConfiguration.class,
     AopAutoConfiguration.class,
     RefreshAutoConfiguration.class

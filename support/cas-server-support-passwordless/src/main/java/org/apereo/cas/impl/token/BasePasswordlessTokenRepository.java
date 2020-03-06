@@ -19,6 +19,7 @@ public abstract class BasePasswordlessTokenRepository implements PasswordlessTok
     private static final int TOKEN_LENGTH = 6;
 
     private final RandomStringGenerator tokenGenerator = new DefaultRandomNumberGenerator(TOKEN_LENGTH);
+
     private final int tokenExpirationInSeconds;
 
     @Override

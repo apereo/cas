@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.principal.SimpleWebApplicationServiceImplTe
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactoryTests;
 import org.apereo.cas.services.AnonymousRegisteredServiceUsernameAttributeProviderTests;
 import org.apereo.cas.services.ChainingRegisteredServiceSingleSignOnParticipationPolicyTests;
+import org.apereo.cas.services.ChainingServicesManagerTests;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategyTests;
 import org.apereo.cas.services.DefaultRegisteredServiceDomainExtractorTests;
 import org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicyTests;
@@ -17,6 +18,7 @@ import org.apereo.cas.services.DefaultRegisteredServiceUsernameProviderTests;
 import org.apereo.cas.services.DefaultServicesManagerByEnvironmentTests;
 import org.apereo.cas.services.DefaultServicesManagerTests;
 import org.apereo.cas.services.DomainServicesManagerTests;
+import org.apereo.cas.services.GroovyAuthenticationHandlerResolverTests;
 import org.apereo.cas.services.GroovyRegisteredServiceAccessStrategyTests;
 import org.apereo.cas.services.GroovyRegisteredServiceMultifactorPolicyTests;
 import org.apereo.cas.services.GroovyRegisteredServiceUsernameProviderTests;
@@ -76,6 +78,7 @@ import org.junit.runner.RunWith;
     UnauthorizedServiceExceptionTests.class,
     UnauthorizedSsoServiceExceptionTests.class,
     ResponseTests.class,
+    GroovyAuthenticationHandlerResolverTests.class,
     RegisteredServicesEventListenerTests.class,
     DefaultRegisteredServiceDomainExtractorTests.class,
     ChainingRegisteredServiceSingleSignOnParticipationPolicyTests.class,
@@ -94,6 +97,7 @@ import org.junit.runner.RunWith;
     RegisteredServiceMutantRegexAttributeFilterTests.class,
     RegisteredServiceScriptedAttributeFilterTests.class,
     GroovyRegisteredServiceAccessStrategyTests.class,
+    ChainingServicesManagerTests.class,
     DefaultRegisteredServiceJsonSerializerTests.class
 })
 @RunWith(JUnitPlatform.class)

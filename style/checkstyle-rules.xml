@@ -14,6 +14,16 @@
     <!-- TreeWalker module checks -->
     <module name="TreeWalker">
         <property name="tabWidth" value="4"/>
+        <module name="JavadocContentLocationCheck">
+            <property name="severity" value="error"/>
+            <property name="location" value="SECOND_LINE" />
+        </module>
+        <module name="NoEnumTrailingComma">
+            <property name="severity" value="error"/>
+        </module>
+        <module name="AvoidNoArgumentSuperConstructorCall">
+            <property name="severity" value="error"/>
+        </module>
         <module name="UnnecessarySemicolonAfterTypeMemberDeclaration">
             <property name="severity" value="error"/>
         </module>
@@ -31,8 +41,6 @@
             <property name="scope" value="protected"/>
             <property name="severity" value="error"/>
             <property name="tokens" value="METHOD_DEF, ANNOTATION_FIELD_DEF"/>
-            <property name="allowUndeclaredRTE" value="true"/>
-            <property name="allowThrowsTagsForSubclasses" value="true"/>
         </module>
         <module name="JavadocType">
             <property name="severity" value="error"/>

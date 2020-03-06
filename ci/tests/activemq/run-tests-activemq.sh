@@ -30,7 +30,7 @@ echo -e "***********************************************"
 ./ci/tests/activemq/run-activemq-server.sh
 
 gradleBuild="$gradleBuild testActiveMQ jacocoRootReport -x test -x javadoc -x check \
-    -DskipGradleLint=true --parallel \
+    --parallel \
     -DskipNestedConfigMetadataGen=true "
 
 if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[show streams]"* ]]; then
@@ -57,8 +57,7 @@ else
     waitloop="while sleep 9m; do echo -e '\n=====[ Gradle build is still running ]====='; done &"
     eval $waitloop
     waitRetVal=$?
-
-
+    
     eval $tasks
     retVal=$?
 

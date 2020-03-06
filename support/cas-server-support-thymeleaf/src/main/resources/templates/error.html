@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+
+    <title th:text="#{screen.unavailable.header}">CAS Error View</title>
+    <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag" />
+
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+
+        function showErrorDetails() {
+            $("#errorMsg").hide();
+            $("#errorDetails").empty();
+            $("#errorDetails").append("<p><pre style='white-space: pre-wrap;'>" + /*[[${#strings.escapeXml(trace)}]]*/ +"</pre></p>");
+        }
+        /*]]>*/
+    </script>
+</head>
+
+<body>
+<main role="main" class="container mt-3 mb-3">
+<div layout:fragment="content">
+    <div class="mdc-card p-4 banner banner-danger">
+        <h2 th:utext="#{screen.unavailable.heading(${status},${error})}">CAS is unable to process this request: "{0}:{1}"</h2>
+        <div th:utext="#{screen.unavailable.message}">screen.unavailable.message would go here</div>
+        <pre id="errorMsg" class="mt-4" style="white-space: pre-wrap;" th:text="${'Error: ' + message}">error message would go here</pre>
+        <p id="errorDetails" class="word-break-all">
+            <button type="button" class="mdc-button mdc-button--raised"
+                    onclick="showErrorDetails();">
+                <span class="mdc-button__label">View Details</span>
+            </button>
+        </p>
+    </div>
+</div>
+</main>
+</body>
+</html>

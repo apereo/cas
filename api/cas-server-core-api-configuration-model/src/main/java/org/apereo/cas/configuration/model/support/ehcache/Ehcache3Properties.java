@@ -30,31 +30,15 @@ public class Ehcache3Properties implements Serializable {
     private boolean enabled = true;
 
     /**
-     * The name of the cache manager instance.
-     */
-    @RequiredProperty
-    private String cacheManagerName = "ticketRegistryCacheManager";
-
-    /**
      * Builder that sets the maximum objects to be held in memory (0 = no limit).
      */
     private int maxElementsInMemory = 10_000;
-
-    /**
-     * Size of disk cache.
-     */
-    private String maxSizeOnDisk = "200MB";
 
     /**
      * Per cache size of disk cache.
      */
     private String perCacheSizeOnDisk = "20MB";
 
-    /**
-     * Size of off heap cache.
-     */
-    private String maxSizeOffHeap = "100MB";
-    
     /**
      * Sets whether elements are eternal.
      * If eternal, timeouts are ignored and the element is never expired. False by default.
@@ -114,7 +98,6 @@ public class Ehcache3Properties implements Serializable {
     private Consistency clusteredCacheConsistency = Consistency.STRONG;
 
     /**
-     *
      * Enumeration of the different consistency levels supported in clustered caches.
      */
     public enum Consistency {

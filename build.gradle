@@ -5,7 +5,6 @@ defaultTasks "clean", "build"
 
 buildscript {
     repositories {
-        mavenLocal()
         jcenter()
         maven {
             url "https://maven.eveoh.nl/content/repositories/releases"
@@ -31,9 +30,9 @@ buildscript {
 
     dependencies {
         classpath "gradle.plugin.com.ewerk.gradle.plugins:jaxb2-plugin:1.0.10"
+        classpath "org.gradle:test-retry-gradle-plugin:$gradleRetryVersion"
         classpath "com.github.jk1:gradle-license-report:$gradleLicenseVersion"
         classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
-        classpath "com.netflix.nebula:gradle-lint-plugin:$gradleLintVersion"
         classpath "gradle.plugin.com.gorylenko.gradle-git-properties:gradle-git-properties:$gradleGitVersion"
         classpath "io.franzbecker:gradle-lombok:$gradleLombokVersion"
         classpath "com.github.ben-manes:gradle-versions-plugin:$gradleDependencyVersionsVersion"
@@ -69,7 +68,7 @@ ext {
     remoteDebuggingSuspend = Boolean.getBoolean("remoteDebuggingSuspend") ? "y" : "n"
     generateGitProperties = Boolean.getBoolean("generateGitProperties")
 
-    continuousIntegrationBuild = Boolean.getBoolean("CI") || Boolean.getBoolean("TRAVIS") || Boolean.getBoolean("CONTINUOUS_INTEGRATION")
+    continuousIntegrationBuild = System.getenv("CI") || Boolean.getBoolean("CI") || Boolean.getBoolean("TRAVIS") || Boolean.getBoolean("CONTINUOUS_INTEGRATION")
 }
 
 def isArtifactSigningRequired = {
@@ -84,7 +83,7 @@ if (!Boolean.getBoolean("skipSonarqube")) {
     apply plugin: "org.sonarqube"
 }
 
-if (continuousIntegrationBuild) {
+if (continuousIntegrationBuild || Boolean.getBoolean("enableBuildTimeTracker")) {
     apply plugin: "build-time-tracker"
     buildtimetracker {
         reporters {
@@ -141,6 +140,7 @@ allprojects {
     apply plugin: "eclipse"
     apply plugin: "jacoco"
     apply plugin: "java"
+    apply plugin: "org.gradle.test-retry"
 
     apply from: rootProject.file("gradle/tasks.gradle")
 
@@ -155,13 +155,10 @@ allprojects {
 
     project.ext["forceBootifulArtifact"] = null
 
-    if (!rootProject.publishSnapshots && !Boolean.getBoolean("skipGradleLint")) {
-        apply plugin: "nebula.lint"
-        gradleLint.rules = ["dependency-parentheses", "dependency-tuple"]
-    }
-
-    jacoco {
-        toolVersion = "$gradleJacocoVersion"
+    afterEvaluate { project ->
+        jacoco {
+            toolVersion = "$gradleJacocoVersion"
+        }
     }
 
     idea {
@@ -176,7 +173,11 @@ allprojects {
     }
 
     repositories {
-        mavenLocal()
+        mavenLocal {
+            content {
+                includeGroup "org.apereo.service.persondir"
+            }
+        }
         mavenCentral()
         jcenter()
         maven {
@@ -235,7 +236,11 @@ subprojects {
     ext.libraries = rootProject.ext.libraries
 
     repositories {
-        mavenLocal()
+        mavenLocal {
+            content {
+                includeGroup "org.apereo.service.persondir"
+            }
+        }
         mavenCentral()
         maven {
             url "https://build.shibboleth.net/nexus/content/repositories/releases"
@@ -282,7 +287,7 @@ subprojects {
         }
         jcenter()
     }
-    
+
     configurations {
         tests
     }
@@ -377,7 +382,7 @@ subprojects {
                     }
                 }
             }
-            
+
             signing {
                 required = isArtifactSigningRequired
                 sign publishing.publications
@@ -436,14 +441,6 @@ subprojects {
         it.options.compilerArgs += casCompilerArgs
     }
 
-    def currentTime = java.time.ZonedDateTime.now(ZoneId.systemDefault())
-    compileJava.doLast {
-        buildDate = currentTime
-        jar.manifest {
-            attributes("Implementation-Date": project.buildDate)
-        }
-    }
-
     tasks.jar.onlyIf {
         project.buildDate != null || !project.buildJarFile.exists()
     }
@@ -462,6 +459,7 @@ subprojects {
                     "Implementation-Title": project.name,
                     "Implementation-Vendor": project.group,
                     "Created-By": project.group,
+                    "Implementation-Date": java.time.ZonedDateTime.now(ZoneId.systemDefault()),
                     "Specification-Version": "${-> project.ext.has("gitProps") ? project.ext.gitProps['git.commit.id'] : 'N/A'}",
                     "Implementation-Version": project.version)
         }
@@ -500,7 +498,7 @@ subprojects {
         [spotbugsMain, spotbugsTest].each {
             it.reports {
                 xml.enabled = true
-                html.enabled = false
+                html.enabled = !rootProject.continuousIntegrationBuild
             }
             it.pluginClasspath = project.configurations.spotbugsPlugins
             it.finalizedBy outputSpotbugsReports
@@ -519,10 +517,11 @@ subprojects {
         api libraries.inspektr
         api libraries.persondirectory
         api libraries.spring
+        api libraries.bytebuddy
         api libraries.jackson
         api libraries.httpclient
         api libraries.quartz
-        api libraries.hibernate
+        api libraries.hibernatevalidator
         api libraries.groovy
         api libraries.caffein
         api libraries.springcloud
@@ -632,15 +631,9 @@ task jacocoRootReport(type: JacocoReport, group: "Coverage reports") {
         fileTree(dir: it,
                 include: '**/*.class',
                 exclude: [
-                        '**/**Configuration.class',
-                        '**/shell/cli/**',
-                        '**/shell/commands/**',
-                        '**/**Configuration$**',
                         '**/**ConfigurationMetadataGenerator**',
                         '**/**Application.class',
                         '**/**Application$**',
-                        '**/**Exception.class',
-                        '**/**Banner.class',
                         '**/**Exception$**',
                         '**/**Properties.class',
                         '**/**Properties$**'
@@ -648,7 +641,7 @@ task jacocoRootReport(type: JacocoReport, group: "Coverage reports") {
     }
     executionData jacocoMerge.destinationFile
     reports {
-        html.enabled = false
+        html.enabled = true
         xml.enabled = true
     }
 }

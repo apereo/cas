@@ -23,11 +23,11 @@ import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfigu
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.binding.expression.support.LiteralExpression;
 import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
-import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -56,7 +56,6 @@ import static org.mockito.Mockito.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     MailSenderAutoConfiguration.class,
-    ThymeleafAutoConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreHttpConfiguration.class,
@@ -78,10 +77,10 @@ import static org.mockito.Mockito.*;
     CasPersonDirectoryConfiguration.class
 }, properties = {
     "spring.mail.host=localhost",
-    "spring.mail.port=25000",
-    "spring.mail.testConnection=false"
+    "spring.mail.port=25000"
 })
 @DirtiesContext
+@Tag("MFA")
 public class DefaultMultifactorAuthenticationProviderResolverTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;
@@ -103,7 +102,7 @@ public class DefaultMultifactorAuthenticationProviderResolverTests {
         when(selector.resolve(any(), any(), any())).thenReturn(provider);
 
         val resolver = new DefaultMultifactorAuthenticationProviderResolver(selector);
-        
+
         val authentication = CoreAuthenticationTestUtils.getAuthentication("casuser", CollectionUtils.wrap("authlevel", List.of(provider.getId())));
         val results = resolver.resolveEventViaAuthenticationAttribute(authentication,
             List.of("authlevel"), CoreAuthenticationTestUtils.getRegisteredService(),

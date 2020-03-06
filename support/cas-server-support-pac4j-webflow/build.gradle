@@ -27,15 +27,16 @@ dependencies {
     implementation libraries.nimbus
     implementation libraries.apachevelocity
     implementation libraries.opensaml
+    implementation libraries.dropwizard
     implementation libraries.shibidpjavasupport
     
     testImplementation project(":core:cas-server-core-authentication-api")
     testImplementation project(":core:cas-server-core-tickets")
     
-    
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-webflow", configuration: "tests")
 }

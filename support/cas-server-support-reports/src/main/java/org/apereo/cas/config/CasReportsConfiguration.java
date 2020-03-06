@@ -29,7 +29,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.actuate.health.HealthEndpoint;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -43,8 +43,6 @@ import org.springframework.context.annotation.Configuration;
 @Configuration(value = "casReportsConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasReportsConfiguration {
-
-
     @Autowired
     @Qualifier("defaultTicketRegistrySupport")
     private ObjectProvider<TicketRegistrySupport> ticketRegistrySupport;
@@ -58,7 +56,7 @@ public class CasReportsConfiguration {
     private ObjectProvider<AuditTrailExecutionPlan> auditTrailExecutionPlan;
 
     @Autowired
-    private ApplicationContext applicationContext;
+    private ConfigurableApplicationContext applicationContext;
 
     @Autowired
     @Qualifier("defaultAuthenticationSystemSupport")
@@ -168,7 +166,7 @@ public class CasReportsConfiguration {
         @Bean
         @ConditionalOnAvailableEndpoint
         public StatusEndpoint statusEndpoint() {
-            return new StatusEndpoint(casProperties, healthEndpoint.getObject());
+            return new StatusEndpoint(casProperties, healthEndpoint.getIfAvailable());
         }
     }
 }

@@ -6,7 +6,6 @@ import org.apereo.cas.configuration.model.support.hazelcast.discovery.HazelcastD
 
 import com.hazelcast.config.Config;
 import com.hazelcast.config.DiscoveryStrategyConfig;
-import com.hazelcast.config.GroupConfig;
 import com.hazelcast.config.JoinConfig;
 import com.hazelcast.config.NetworkConfig;
 import lombok.SneakyThrows;
@@ -27,21 +26,6 @@ import java.util.Properties;
  * @since 6.0.0
  */
 public class HazelcastDockerSwarmDiscoveryStrategy implements HazelcastDiscoveryStrategy {
-
-    @Override
-    public DiscoveryStrategyConfig get(final HazelcastClusterProperties cluster, final JoinConfig joinConfig, final Config configuration, final NetworkConfig networkConfig) {
-        val dockerSwarm = cluster.getDiscovery().getDockerSwarm();
-        val memberProvider = dockerSwarm.getMemberProvider();
-        val dnsProvider = dockerSwarm.getDnsProvider();
-
-        if (memberProvider.isEnabled()) {
-            return getDiscoveryStrategyConfigViaMemberAddressProvider(configuration, networkConfig, memberProvider);
-        }
-        if (dnsProvider.isEnabled()) {
-            return getDiscoveryStrategyConfigViaDnsProvider(networkConfig, dnsProvider);
-        }
-        throw new IllegalArgumentException("No discovery strategy is turned on and enabled in configuration");
-    }
 
     @SneakyThrows
     private static DiscoveryStrategyConfig getDiscoveryStrategyConfigViaDnsProvider(final NetworkConfig networkConfig,
@@ -67,10 +51,6 @@ public class HazelcastDockerSwarmDiscoveryStrategy implements HazelcastDiscovery
         configuration.setProperty(BaseHazelcastProperties.SHUT_DOWN_HOOK_ENABLED_PROP, Boolean.TRUE.toString());
         configuration.setProperty(BaseHazelcastProperties.SOCKET_BIND_ANY_PROP, Boolean.FALSE.toString());
 
-        val groupName = StringUtils.defaultString(memberProvider.getGroupName(), GroupConfig.DEFAULT_GROUP_NAME);
-        val password = StringUtils.defaultString(memberProvider.getGroupPassword(), GroupConfig.DEFAULT_GROUP_PASSWORD);
-        configuration.setGroupConfig(new GroupConfig(groupName, password));
-
         val memberAddressProviderConfig = networkConfig.getMemberAddressProviderConfig();
         memberAddressProviderConfig.setEnabled(true);
         memberAddressProviderConfig.setImplementation(new SwarmMemberAddressProvider());
@@ -93,6 +73,21 @@ public class HazelcastDockerSwarmDiscoveryStrategy implements HazelcastDiscovery
             properties.put("hazelcast-peer-port", memberProvider.getHazelcastPeerPort());
         }
         return new DiscoveryStrategyConfig(new DockerSwarmDiscoveryStrategyFactory(), properties);
+    }
+
+    @Override
+    public DiscoveryStrategyConfig get(final HazelcastClusterProperties cluster, final JoinConfig joinConfig, final Config configuration, final NetworkConfig networkConfig) {
+        val dockerSwarm = cluster.getDiscovery().getDockerSwarm();
+        val memberProvider = dockerSwarm.getMemberProvider();
+        val dnsProvider = dockerSwarm.getDnsProvider();
+
+        if (memberProvider.isEnabled()) {
+            return getDiscoveryStrategyConfigViaMemberAddressProvider(configuration, networkConfig, memberProvider);
+        }
+        if (dnsProvider.isEnabled()) {
+            return getDiscoveryStrategyConfigViaDnsProvider(networkConfig, dnsProvider);
+        }
+        throw new IllegalArgumentException("No discovery strategy is turned on and enabled in configuration");
     }
 
 }

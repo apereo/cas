@@ -1,16 +1,17 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
+import org.apereo.cas.config.CasThymeleafConfiguration;
 import org.apereo.cas.config.OpenIdConfiguration;
+import org.apereo.cas.services.web.config.CasThemesConfiguration;
 import org.apereo.cas.validation.config.CasCoreValidationConfiguration;
-import org.apereo.cas.web.config.CasProtocolViewsConfiguration;
 import org.apereo.cas.web.config.CasValidationConfiguration;
 import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.web.flow.config.OpenIdWebflowConfiguration;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration;
 import org.springframework.context.annotation.Import;
 import org.springframework.webflow.engine.Flow;
 
@@ -21,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  * @author Misagh Moayyed
  * @since 6.2.0
+ * @deprecated 6.2
  */
 @Import({
     BaseWebflowConfigurerTests.SharedTestConfiguration.class,
@@ -28,11 +30,13 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreMultifactorAuthenticationConfiguration.class,
     CasCoreValidationConfiguration.class,
     CasValidationConfiguration.class,
-    ThymeleafAutoConfiguration.class,
+    CasThemesConfiguration.class,
+    CasThymeleafConfiguration.class,
     OpenIdConfiguration.class,
-    OpenIdWebflowConfiguration.class,
-    CasProtocolViewsConfiguration.class
+    OpenIdWebflowConfiguration.class
 })
+@Tag("Webflow")
+@Deprecated
 public class OpenIdWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Test
     public void verifyOperation() {

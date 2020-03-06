@@ -8,7 +8,6 @@ import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.EncodingUtils;
-import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.HttpUtils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -96,7 +95,7 @@ public class MetadataQueryProtocolMetadataResolver extends UrlResourceMetadataRe
             }
         }
 
-        LOGGER.debug("Fetching dynamic metadata via MDQ for [{}]", metadataLocation);
+        LOGGER.trace("Fetching dynamic metadata via MDQ for [{}]", metadataLocation);
         val response = HttpUtils.executeGet(metadataLocation, metadata.getBasicAuthnUsername(),
             samlIdPProperties.getMetadata().getBasicAuthnPassword(), new HashMap<>(0), headers);
         if (response == null) {
@@ -108,7 +107,7 @@ public class MetadataQueryProtocolMetadataResolver extends UrlResourceMetadataRe
 
     @Override
     protected String getMetadataLocationForService(final SamlRegisteredService service, final CriteriaSet criteriaSet) {
-        LOGGER.debug("Getting metadata location dynamically for [{}] based on criteria [{}]", service.getName(), criteriaSet);
+        LOGGER.trace("Getting metadata location dynamically for [{}] based on criteria [{}]", service.getName(), criteriaSet);
         val entityIdCriteria = criteriaSet.get(EntityIdCriterion.class);
         val entityId = Optional.ofNullable(entityIdCriteria).map(EntityIdCriterion::getEntityId).orElseGet(service::getServiceId);
         if (StringUtils.isBlank(entityId)) {
@@ -120,14 +119,5 @@ public class MetadataQueryProtocolMetadataResolver extends UrlResourceMetadataRe
     @Override
     public boolean supports(final SamlRegisteredService service) {
         return SamlUtils.isDynamicMetadataQueryConfigured(service.getMetadataLocation());
-    }
-
-    @Override
-    public boolean isAvailable(final SamlRegisteredService service) {
-        if (supports(service)) {
-            val status = HttpRequestUtils.pingUrl(service.getMetadataLocation());
-            return !status.isError();
-        }
-        return false;
     }
 }

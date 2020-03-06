@@ -31,9 +31,13 @@ import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.SpringBootConfiguration;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
+import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -51,36 +55,11 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Timur Duehr
  * @since 6.0.0
  */
-@SpringBootTest(classes = {
-    RefreshAutoConfiguration.class,
-    MailSenderAutoConfiguration.class,
-    CasCoreTicketsConfiguration.class,
-    CasCoreTicketIdGeneratorsConfiguration.class,
-    CasCoreTicketCatalogConfiguration.class,
-    CasCoreWebConfiguration.class,
-    CasCookieConfiguration.class,
-    CasRegisteredServicesTestConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class,
-    CasCoreAuthenticationConfiguration.class,
-    CasAuthenticationEventExecutionPlanTestConfiguration.class,
-    CasDefaultServiceTicketIdGeneratorsConfiguration.class,
-    CasCoreAuthenticationSupportConfiguration.class,
-    CasCoreAuthenticationPrincipalConfiguration.class,
-    CasAcceptableUsagePolicyWebflowConfiguration.class,
-    CasPersonDirectoryTestConfiguration.class,
-    CasCoreUtilConfiguration.class,
-    CasCoreHttpConfiguration.class,
-    CasWebflowContextConfiguration.class,
-    CasCoreWebflowConfiguration.class,
-    CasCoreConfiguration.class,
-    CasCoreLogoutConfiguration.class,
-    CasCoreServicesConfiguration.class,
-    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class
-}, properties = {
-    "spring.mail.host=localhost",
-    "spring.mail.port=25000",
-    "spring.mail.testConnection=false"
-})
+@SpringBootTest(classes = BaseAcceptableUsagePolicyRepositoryTests.SharedTestConfiguration.class,
+    properties = {
+        "spring.mail.host=localhost",
+        "spring.mail.port=25000"
+    })
 public abstract class BaseAcceptableUsagePolicyRepositoryTests {
     @Autowired
     @Qualifier("ticketRegistry")
@@ -97,7 +76,7 @@ public abstract class BaseAcceptableUsagePolicyRepositoryTests {
         return false;
     }
 
-    public void verifyRepositoryAction(final String actualPrincipalId, final Map<String, List<Object>> profileAttributes) {
+    protected void verifyRepositoryAction(final String actualPrincipalId, final Map<String, List<Object>> profileAttributes) {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
@@ -113,5 +92,38 @@ public abstract class BaseAcceptableUsagePolicyRepositoryTests {
         if (hasLiveUpdates()) {
             assertTrue(getAcceptableUsagePolicyRepository().verify(context, c).isAccepted());
         }
+    }
+
+    @ImportAutoConfiguration({
+        RefreshAutoConfiguration.class,
+        MailSenderAutoConfiguration.class,
+        AopAutoConfiguration.class
+    })
+    @SpringBootConfiguration
+    @Import({
+        CasCoreTicketsConfiguration.class,
+        CasCoreTicketIdGeneratorsConfiguration.class,
+        CasCoreTicketCatalogConfiguration.class,
+        CasCoreWebConfiguration.class,
+        CasCookieConfiguration.class,
+        CasRegisteredServicesTestConfiguration.class,
+        CasWebApplicationServiceFactoryConfiguration.class,
+        CasCoreAuthenticationConfiguration.class,
+        CasAuthenticationEventExecutionPlanTestConfiguration.class,
+        CasDefaultServiceTicketIdGeneratorsConfiguration.class,
+        CasCoreAuthenticationSupportConfiguration.class,
+        CasCoreAuthenticationPrincipalConfiguration.class,
+        CasAcceptableUsagePolicyWebflowConfiguration.class,
+        CasPersonDirectoryTestConfiguration.class,
+        CasCoreUtilConfiguration.class,
+        CasCoreHttpConfiguration.class,
+        CasWebflowContextConfiguration.class,
+        CasCoreWebflowConfiguration.class,
+        CasCoreConfiguration.class,
+        CasCoreLogoutConfiguration.class,
+        CasCoreServicesConfiguration.class,
+        CasCoreAuthenticationServiceSelectionStrategyConfiguration.class
+    })
+    public static class SharedTestConfiguration {
     }
 }

@@ -33,7 +33,8 @@ public class ServiceTicketRequestWebflowEventResolver extends AbstractCasWebflow
     public Set<Event> resolveInternal(final RequestContext context) {
         if (isRequestAskingForServiceTicket(context)) {
             LOGGER.debug("Authentication request is asking for service tickets");
-            return CollectionUtils.wrapSet(grantServiceTicket(context));
+            val source = grantServiceTicket(context);
+            return source != null ? CollectionUtils.wrapSet(source) : null;
         }
         return null;
     }
@@ -52,19 +53,20 @@ public class ServiceTicketRequestWebflowEventResolver extends AbstractCasWebflow
         val service = WebUtils.getService(context);
         LOGGER.debug("Located service [{}] from the request context", service);
 
-        val renewParam = getWebflowEventResolutionConfigurationContext().getCasProperties().getSso().isRenewAuthnEnabled()
+        val configContext = getWebflowEventResolutionConfigurationContext();
+        val renewParam = configContext.getCasProperties().getSso().isRenewAuthnEnabled()
             ? context.getRequestParameters().get(CasProtocolConstants.PARAMETER_RENEW)
             : StringUtils.EMPTY;
         LOGGER.debug("Provided value for [{}] request parameter is [{}]", CasProtocolConstants.PARAMETER_RENEW, renewParam);
 
         if (service != null && StringUtils.isNotBlank(ticketGrantingTicketId)) {
-            val authn = getWebflowEventResolutionConfigurationContext().getTicketRegistrySupport().getAuthenticationFrom(ticketGrantingTicketId);
+            val authn = configContext.getTicketRegistrySupport().getAuthenticationFrom(ticketGrantingTicketId);
             if (StringUtils.isNotBlank(renewParam)) {
                 LOGGER.debug("Request identifies itself as one asking for service tickets. Checking for authentication context validity...");
                 val validAuthn = authn != null;
                 if (validAuthn) {
                     LOGGER.debug("Existing authentication context linked to ticket-granting ticket [{}] is valid. "
-                        + "CAS should begin to issue service tickets for [{}] once credentials are renewed", ticketGrantingTicketId, service);
+                        + "CAS will try to issue service tickets for [{}] once credentials are renewed", ticketGrantingTicketId, service);
                     return true;
                 }
                 LOGGER.debug("Existing authentication context linked to ticket-granting ticket [{}] is NOT valid. "
@@ -92,31 +94,39 @@ public class ServiceTicketRequestWebflowEventResolver extends AbstractCasWebflow
 
         try {
             val service = WebUtils.getService(context);
-            val authn = getWebflowEventResolutionConfigurationContext().getTicketRegistrySupport().getAuthenticationFrom(ticketGrantingTicketId);
-            val registeredService = getWebflowEventResolutionConfigurationContext().getServicesManager().findServiceBy(service);
+            val configContext = getWebflowEventResolutionConfigurationContext();
 
-            if (authn != null && registeredService != null) {
-                LOGGER.debug("Enforcing access strategy policies for registered service [{}] and principal [{}]", registeredService, authn.getPrincipal());
+            val existingAuthn = configContext.getTicketRegistrySupport().getAuthenticationFrom(ticketGrantingTicketId);
+            val registeredService = configContext.getServicesManager().findServiceBy(service);
+
+            if (existingAuthn != null && registeredService != null) {
+                LOGGER.debug("Enforcing access strategy policies for registered service [{}] and principal [{}]", registeredService, existingAuthn.getPrincipal());
 
                 val audit = AuditableContext.builder().service(service)
-                    .authentication(authn)
+                    .authentication(existingAuthn)
                     .registeredService(registeredService)
                     .retrievePrincipalAttributesFromReleasePolicy(Boolean.TRUE)
                     .build();
-                val accessResult = getWebflowEventResolutionConfigurationContext().getRegisteredServiceAccessStrategyEnforcer().execute(audit);
+                val accessResult = configContext.getRegisteredServiceAccessStrategyEnforcer().execute(audit);
                 accessResult.throwExceptionIfNeeded();
             }
 
-            val authenticationResult =
-                getWebflowEventResolutionConfigurationContext().getAuthenticationSystemSupport()
-                    .handleAndFinalizeSingleAuthenticationTransaction(service, credential);
-            val serviceTicketId = getWebflowEventResolutionConfigurationContext().getCentralAuthenticationService()
-                .grantServiceTicket(ticketGrantingTicketId, service, authenticationResult);
-            WebUtils.putServiceTicketInRequestScope(context, serviceTicketId);
-            WebUtils.putWarnCookieIfRequestParameterPresent(getWebflowEventResolutionConfigurationContext().getWarnCookieGenerator(), context);
-            return newEvent(CasWebflowConstants.TRANSITION_ID_WARN);
+            LOGGER.trace("Finalizing authentication transaction for [{}]", credential);
+            val authenticationResult = configContext.getAuthenticationSystemSupport()
+                .handleAndFinalizeSingleAuthenticationTransaction(service, credential);
 
+            val principal = authenticationResult.getAuthentication().getPrincipal();
+            if (existingAuthn != null && !existingAuthn.getPrincipal().equals(principal)) {
+                LOGGER.trace("Existing authentication context linked to ticket-granting ticket [{}] is issued for principal [{}] "
+                        + " which does not match [{}], established by the requested authentication transaction. CAS will NOT re-use the existing "
+                        + "authentication context to issue service tickets",
+                    ticketGrantingTicketId, existingAuthn.getPrincipal(), principal);
+                return null;
+            }
+
+            return newEvent(CasWebflowConstants.TRANSITION_ID_GENERATE_SERVICE_TICKET);
         } catch (final AuthenticationException | AbstractTicketException e) {
+            LOGGER.trace(e.getMessage(), e);
             return newEvent(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, e);
         }
     }

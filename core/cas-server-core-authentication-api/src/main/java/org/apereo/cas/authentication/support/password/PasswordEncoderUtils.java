@@ -37,6 +37,7 @@ public class PasswordEncoderUtils {
      * @param applicationContext the application context
      * @return the password encoder
      */
+    @SuppressWarnings("java:S5344")
     public static PasswordEncoder newPasswordEncoder(final PasswordEncoderProperties properties,
                                                      final ApplicationContext applicationContext) {
         val type = properties.getType();
@@ -46,7 +47,7 @@ public class PasswordEncoderUtils {
         }
 
         if (type.endsWith(".groovy")) {
-            LOGGER.debug("Creating Groovy-based password encoder at [{}]", type);
+            LOGGER.trace("Creating Groovy-based password encoder at [{}]", type);
             val resource = applicationContext.getResource(type);
             return new GroovyPasswordEncoder(resource, applicationContext);
         }

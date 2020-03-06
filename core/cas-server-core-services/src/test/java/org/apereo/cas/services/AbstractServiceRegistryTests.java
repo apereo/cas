@@ -175,21 +175,21 @@ public abstract class AbstractServiceRegistryTests {
         assertNotNull(rs, registeredServiceClass::getName);
         rs.setEvaluationOrder(9999);
         rs.setUsernameAttributeProvider(new DefaultRegisteredServiceUsernameProvider());
-        rs.setName("Another Test Service");
         rs.setDescription("The new description");
         rs.setServiceId("https://hello.world");
+        rs.setTheme("some-theme");
         rs.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy("https"));
         rs.setAttributeReleasePolicy(new ReturnAllowedAttributeReleasePolicy());
         assertNotNull(this.serviceRegistry.save(rs), registeredServiceClass::getName);
 
         val rs3 = this.serviceRegistry.findServiceById(rs.getId());
-        assertEquals(rs3.getName(), rs.getName());
         assertEquals(rs3.getDescription(), rs.getDescription());
         assertEquals(rs3.getEvaluationOrder(), rs.getEvaluationOrder());
         assertEquals(rs3.getUsernameAttributeProvider(), rs.getUsernameAttributeProvider());
         assertEquals(rs3.getProxyPolicy(), rs.getProxyPolicy());
         assertEquals(rs3.getUsernameAttributeProvider(), rs.getUsernameAttributeProvider());
         assertEquals(rs3.getServiceId(), rs.getServiceId());
+        assertEquals(rs3.getTheme(), rs.getTheme());
 
         val rs4 = this.serviceRegistry.findServicePredicate(registeredService -> registeredService.getId() == rs.getId());
         assertEquals(rs4.getName(), rs.getName());
@@ -553,6 +553,7 @@ public abstract class AbstractServiceRegistryTests {
         r.setContacts(CollectionUtils.wrap(contact));
         this.serviceRegistry.save(r);
         this.serviceRegistry.load();
+        this.serviceRegistry.delete(r);
     }
 
     @ParameterizedTest
@@ -585,6 +586,7 @@ public abstract class AbstractServiceRegistryTests {
 
         val prop = r.getProperties().get("field1");
         assertEquals(2, prop.getValues().size());
+        this.serviceRegistry.delete(r);
     }
 
     /**

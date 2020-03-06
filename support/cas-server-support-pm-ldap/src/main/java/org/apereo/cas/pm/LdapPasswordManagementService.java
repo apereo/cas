@@ -75,12 +75,12 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
                     LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
                     CollectionUtils.wrap(username));
                 LOGGER.debug("Constructed LDAP filter [{}] to locate security questions", filter);
-                val ldapConnectionFactory = LdapUtils.newLdaptivePooledConnectionFactory(ldap);
+                val ldapConnectionFactory = LdapUtils.newLdaptiveConnectionFactory(ldap);
                 val response = LdapUtils.executeSearchOperation(ldapConnectionFactory, ldap.getBaseDn(), filter, ldap.getPageSize());
                 LOGGER.debug("LDAP response for security questions [{}]", response);
 
                 if (LdapUtils.containsResultEntry(response)) {
-                    val entry = response.getResult().getEntry();
+                    val entry = response.getEntry();
                     LOGGER.debug("Located LDAP entry [{}] in the response", entry);
                     val questionsAndAnswers = ldap.getSecurityQuestionsAttributes();
                     LOGGER.debug("Security question attributes are defined to be [{}]", questionsAndAnswers);
@@ -120,12 +120,12 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
                         LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
                         CollectionUtils.wrap(username));
                     LOGGER.debug("Constructed LDAP filter [{}] to locate account", filter);
-                    val ldapConnectionFactory = LdapUtils.newLdaptivePooledConnectionFactory(ldap);
+                    val ldapConnectionFactory = LdapUtils.newLdaptiveConnectionFactory(ldap);
                     val response = LdapUtils.executeSearchOperation(ldapConnectionFactory, ldap.getBaseDn(), filter, ldap.getPageSize());
                     LOGGER.debug("LDAP response is [{}]", response);
 
                     if (LdapUtils.containsResultEntry(response)) {
-                        val entry = response.getResult().getEntry();
+                        val entry = response.getEntry();
                         LOGGER.debug("Found LDAP entry [{}] to use", entry);
 
                         return attributeNames.stream()
@@ -168,23 +168,23 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
                         LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
                         CollectionUtils.wrap(c.getId()));
                     LOGGER.debug("Constructed LDAP filter [{}] to update account password", filter);
-                    val ldapConnectionFactory = LdapUtils.newLdaptivePooledConnectionFactory(ldap);
+                    val ldapConnectionFactory = LdapUtils.newLdaptiveConnectionFactory(ldap);
                     val response = LdapUtils.executeSearchOperation(ldapConnectionFactory, ldap.getBaseDn(), filter, ldap.getPageSize());
                     LOGGER.debug("LDAP response to update password is [{}]", response);
 
                     if (LdapUtils.containsResultEntry(response)) {
-                        val dn = response.getResult().getEntry().getDn();
+                        val dn = response.getEntry().getDn();
                         LOGGER.debug("Updating account password for [{}]", dn);
                         if (LdapUtils.executePasswordModifyOperation(dn, ldapConnectionFactory, c.getPassword(), bean.getPassword(),
                             ldap.getType())) {
                             LOGGER.debug("Successfully updated the account password for [{}]", dn);
-                            return true;
+                            return Boolean.TRUE;
                         }
                         LOGGER.error("Could not update the LDAP entry's password for [{}] and base DN [{}]", filter.format(), ldap.getBaseDn());
                     } else {
                         LOGGER.error("Could not locate an LDAP entry for [{}] and base DN [{}]", filter.format(), ldap.getBaseDn());
                     }
-                    return false;
+                    return Boolean.FALSE;
                 }))
                 .collect(Collectors.toList());
 

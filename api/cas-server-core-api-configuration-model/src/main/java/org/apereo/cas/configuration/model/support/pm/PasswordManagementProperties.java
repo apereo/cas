@@ -2,9 +2,11 @@ package org.apereo.cas.configuration.model.support.pm;
 
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
+import org.apereo.cas.configuration.model.core.web.flow.WebflowAutoConfigurationProperties;
 import org.apereo.cas.configuration.model.support.email.EmailProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.sms.SmsProperties;
+import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.SpringResourceProperties;
 import org.apereo.cas.util.crypto.CipherExecutor;
@@ -89,6 +91,12 @@ public class PasswordManagementProperties implements Serializable {
      */
     private Groovy groovy = new Groovy();
 
+    /**
+     * The webflow configuration.
+     */
+    @NestedConfigurationProperty
+    private WebflowAutoConfigurationProperties webflow = new WebflowAutoConfigurationProperties(200);
+
     @RequiresModule(name = "cas-server-support-pm-jdbc")
     @Getter
     @Setter
@@ -163,11 +171,13 @@ public class PasswordManagementProperties implements Serializable {
         /**
          * Username for Basic-Auth at the password management endpoints.
          */
+        @RequiredProperty
         private String endpointUsername;
 
         /**
          * Password for Basic-Auth at the password management endpoints.
          */
+        @RequiredProperty
         private String endpointPassword;
     }
 
@@ -238,6 +248,16 @@ public class PasswordManagementProperties implements Serializable {
          * or should they be marked as optional.
          */
         private boolean securityQuestionsEnabled = true;
+
+        /**
+         * Whether the Password Management Token will contain the server IP Address.
+         */
+        private boolean includeServerIpAddress = true;
+
+        /**
+         * Whether the Password Management Token will contain the client IP Address.
+         */
+        private boolean includeClientIpAddress = true;
 
         /**
          * How long in minutes should the password expiration link remain valid.

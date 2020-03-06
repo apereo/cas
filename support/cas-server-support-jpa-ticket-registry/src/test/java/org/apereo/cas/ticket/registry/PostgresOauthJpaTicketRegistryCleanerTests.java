@@ -22,5 +22,5 @@ import org.springframework.test.context.TestPropertySource;
 @EnabledIfPortOpen(port = 5432)
 @EnabledIfContinuousIntegration
 @Tag("Postgres")
-public class PostgresOauthJpaTicketRegistryCleanerTests extends OauthJpaTicketRegistryCleanerTests {
+public class PostgresOauthJpaTicketRegistryCleanerTests extends OAuthJpaTicketRegistryCleanerTests {
 }

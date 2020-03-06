@@ -39,7 +39,6 @@ import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
-import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
@@ -58,8 +57,7 @@ import org.springframework.test.annotation.DirtiesContext;
 @SpringBootTest(classes = BaseCasCoreTests.SharedTestConfiguration.class,
     properties = {
         "spring.mail.host=localhost",
-        "spring.mail.port=25000",
-        "spring.mail.testConnection=false"
+        "spring.mail.port=25000"
     })
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @DirtiesContext
@@ -91,7 +89,6 @@ public abstract class BaseCasCoreTests {
 
     @ImportAutoConfiguration({
         MailSenderAutoConfiguration.class,
-        ThymeleafAutoConfiguration.class,
         AopAutoConfiguration.class,
         RefreshAutoConfiguration.class
     })

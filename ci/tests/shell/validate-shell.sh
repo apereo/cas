@@ -5,7 +5,7 @@ casVersion=$(./gradlew casVersion --no-daemon -q)
 echo "Current CAS version is $casVersion"
 gradle="./gradlew $@"
 gradleBuild=""
-gradleBuildOptions="--build-cache --configure-on-demand --no-daemon --parallel -x test -x javadoc -x check -DskipGradleLint=true -DskipNestedConfigMetadataGen=true "
+gradleBuildOptions="--build-cache --configure-on-demand --no-daemon --parallel -x test -x javadoc -x check -DskipNestedConfigMetadataGen=true "
 
 echo -e "***********************************************"
 echo -e "Gradle build started at `date`"
@@ -37,8 +37,7 @@ else
     waitloop="while sleep 9m; do echo -e '\n=====[ Gradle build is still running ]====='; done &"
     eval $waitloop
     waitRetVal=$?
-
-
+    
     eval $tasks
     retVal=$?
 

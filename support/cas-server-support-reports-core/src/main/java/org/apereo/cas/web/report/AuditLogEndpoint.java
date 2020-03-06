@@ -11,6 +11,7 @@ import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.boot.actuate.endpoint.annotation.Selector;
 import org.springframework.boot.actuate.endpoint.annotation.WriteOperation;
+import org.springframework.lang.Nullable;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -36,18 +37,6 @@ public class AuditLogEndpoint extends BaseCasActuatorEndpoint {
         this.auditTrailManager = auditTrailManager;
     }
 
-
-    /**
-     * Gets audit log.
-     *
-     * @return the audit log
-     */
-    @ReadOperation
-    public Set<AuditActionContext> getAuditLog() {
-        val sinceDate = LocalDate.now(ZoneId.systemDefault()).minusDays(casProperties.getAudit().getNumberOfDaysInHistory());
-        return this.auditTrailManager.getAuditRecordsSince(sinceDate);
-    }
-
     /**
      * Gets Audit log for passed interval.
      *
@@ -55,7 +44,12 @@ public class AuditLogEndpoint extends BaseCasActuatorEndpoint {
      * @return the auditlog
      */
     @ReadOperation
-    public Set<AuditActionContext> getAuditLog(final @Selector String interval) {
+    public Set<AuditActionContext> getAuditLog(@Selector @Nullable final String interval) {
+        if (StringUtils.isBlank(interval)) {
+            val sinceDate = LocalDate.now(ZoneId.systemDefault()).minusDays(casProperties.getAudit().getNumberOfDaysInHistory());
+            return this.auditTrailManager.getAuditRecordsSince(sinceDate);
+        }
+        
         val duration = Duration.parse(interval);
         val sinceTime = new Date(new Date().getTime() - duration.toMillis());
         val days = duration.toDays();

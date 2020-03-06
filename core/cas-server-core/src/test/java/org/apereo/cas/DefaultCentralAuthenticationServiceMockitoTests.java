@@ -184,14 +184,13 @@ public class DefaultCentralAuthenticationServiceMockitoTests extends BaseCasCore
             CipherExecutor.noOpOfStringToString(),
             enforcer,
             new DefaultServiceMatchingStrategy(smMock));
-        this.cas.setApplicationEventPublisher(mock(ApplicationEventPublisher.class));
     }
 
     private static TicketFactory getTicketFactory() {
         val factory = new DefaultTicketFactory();
         factory.addTicketFactory(ProxyGrantingTicket.class,
             new DefaultProxyGrantingTicketFactory(null,
-                null, CipherExecutor.noOpOfStringToString()));
+                null, CipherExecutor.noOpOfStringToString(), mock(ServicesManager.class)));
         factory.addTicketFactory(TicketGrantingTicket.class,
             new DefaultTicketGrantingTicketFactory(null,
                 null, CipherExecutor.noOpOfSerializableToString()));

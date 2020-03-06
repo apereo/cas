@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -27,6 +28,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@Tag("Webflow")
 public class SurrogateSelectionActionTests extends BaseSurrogateInitialAuthenticationActionTests {
 
     @Autowired
@@ -56,7 +58,7 @@ public class SurrogateSelectionActionTests extends BaseSurrogateInitialAuthentic
             val request = new MockHttpServletRequest();
 
             val builder = mock(AuthenticationResultBuilder.class);
-            when(builder.getInitialAuthentication()).thenReturn(Optional.of(CoreAuthenticationTestUtils.getAuthentication()));
+            when(builder.getInitialAuthentication()).thenReturn(Optional.of(CoreAuthenticationTestUtils.getAuthentication("casuser")));
             when(builder.collect(any(Authentication.class))).thenReturn(builder);
 
             WebUtils.putAuthenticationResultBuilder(builder, context);

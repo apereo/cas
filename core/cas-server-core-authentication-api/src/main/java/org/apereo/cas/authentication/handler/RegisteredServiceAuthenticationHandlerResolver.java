@@ -2,12 +2,15 @@ package org.apereo.cas.authentication.handler;
 
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationHandlerResolver;
+import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationTransaction;
 import org.apereo.cas.authentication.handler.support.HttpBasedServiceCredentialsAuthenticationHandler;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedSsoServiceException;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
@@ -24,6 +27,8 @@ import java.util.Set;
  */
 @Slf4j
 @RequiredArgsConstructor
+@Getter
+@Setter
 public class RegisteredServiceAuthenticationHandlerResolver implements AuthenticationHandlerResolver {
 
     /**
@@ -31,9 +36,16 @@ public class RegisteredServiceAuthenticationHandlerResolver implements Authentic
      */
     protected final ServicesManager servicesManager;
 
+    /**
+     * The service selection plan.
+     */
+    protected final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan;
+
+    private int order;
+
     @Override
     public boolean supports(final Set<AuthenticationHandler> handlers, final AuthenticationTransaction transaction) {
-        val service = transaction.getService();
+        val service = authenticationServiceSelectionPlan.resolveService(transaction.getService());
         if (service != null) {
             val registeredService = this.servicesManager.findServiceBy(service);
             LOGGER.trace("Located registered service definition [{}] for this authentication transaction", registeredService);
@@ -48,7 +60,7 @@ public class RegisteredServiceAuthenticationHandlerResolver implements Authentic
 
     @Override
     public Set<AuthenticationHandler> resolve(final Set<AuthenticationHandler> candidateHandlers, final AuthenticationTransaction transaction) {
-        val service = transaction.getService();
+        val service = authenticationServiceSelectionPlan.resolveService(transaction.getService());
         val registeredService = this.servicesManager.findServiceBy(service);
 
         val requiredHandlers = registeredService.getRequiredHandlers();
@@ -67,6 +79,5 @@ public class RegisteredServiceAuthenticationHandlerResolver implements Authentic
         }
         LOGGER.debug("Authentication handlers for this transaction are [{}]", handlerSet);
         return handlerSet;
-
     }
 }

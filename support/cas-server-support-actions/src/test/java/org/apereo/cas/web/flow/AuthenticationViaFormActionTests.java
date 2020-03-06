@@ -8,6 +8,7 @@ import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,10 +28,13 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Scott Battaglia
  * @since 3.0.0
  */
+@Tag("Webflow")
 public class AuthenticationViaFormActionTests extends AbstractWebflowActionsTests {
 
     private static final String TEST = "test";
+
     private static final String USERNAME_PARAM = "username";
+
     private static final String PASSWORD_PARAM = "password";
 
     @Autowired
@@ -141,7 +145,7 @@ public class AuthenticationViaFormActionTests extends AbstractWebflowActionsTest
         context.getFlowScope().put(CasProtocolConstants.PARAMETER_SERVICE, RegisteredServiceTestUtils.getService());
 
         val ev = this.action.getObject().execute(context);
-        assertEquals(CasWebflowConstants.STATE_ID_WARN, ev.getId());
+        assertEquals(CasWebflowConstants.STATE_ID_GENERATE_SERVICE_TICKET, ev.getId());
     }
 
     @Test

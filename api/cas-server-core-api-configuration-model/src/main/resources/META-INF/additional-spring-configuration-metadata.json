@@ -1,6 +1,17 @@
 {
   "properties": [
     {
+      "name": "cas.session-replication.session-cookie-name",
+      "type": "java.lang.String",
+      "description": "Choose the name of the cookie for session replication.",
+      "defaultValue": "DISSESSION",
+      "deprecation": {
+        "replacement": "cas.session-replication.cookie.name",
+        "reason": "Cookie settings are moved to a new cookie namespace under cas.session-replication.",
+        "level": "error"
+      }
+    },
+    {
       "name": "cas.authn.release-protocol-attributes",
       "type": "java.lang.Boolean",
       "description": "Whether to release authentication attributes.",
@@ -8,6 +19,25 @@
       "deprecation": {
         "replacement": "cas.authn.authentication-attribute-release.enabled",
         "reason": "Property renamed due to new cas.authn.authenticationAttributeRelease.* settings.",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.ticket.registry.hazelcast.cluster.max-heap-size-percentage",
+      "type": "java.lang.Boolean",
+      "description": "Maximum size of the map.",
+      "deprecation": {
+        "replacement": "cas.ticket.registry.hazelcast.cluster.max-size",
+        "reason": "Property renamed to new\"cas.ticket.registry.hazelcast.cluster.max-size.",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.ticket.registry.hazelcast.cluster.wan-replication.targets[0].group-name",
+      "type": "java.lang.Boolean",
+      "description": "Maximum size of the map.",
+      "deprecation": {
+        "reason": "Property is removed in Hazelcast 4",
         "level": "error"
       }
     },
@@ -22,13 +52,12 @@
       }
     },
     {
-      "name": "cas.authn.throttle.appcode",
+      "name": "cas.authn.saml-idp.scope",
       "type": "java.lang.String",
-      "description": "Throttling application code to record.",
-      "defaultValue": "CAS",
+      "description": "Definition of scope for CAS acting as a SAML IdP.",
       "deprecation": {
-        "replacement": "cas.authn.throttle.app-code",
-        "reason": "Property is renamed to account for new property naming rules",
+        "replacement": "cas.server.scope",
+        "reason": "Property is moved to cas.server.scope to be applied globally.",
         "level": "error"
       }
     },
@@ -148,6 +177,16 @@
       "deprecation": {
         "replacement": "cas.authn.x509.cache-time-to-live-seconds",
         "reason": "This setting no longer applies to the ehcache 3 cache used for x509 CRL caching.",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.authn.pac4j.saml[0].single-logout-requests",
+      "type": "java.lang.Boolean",
+      "description": "Whether logout requests and responses should be signed.",
+      "deprecation": {
+        "replacement": "cas.authn.pac4j.saml[0].sign-service-provider-logout-request",
+        "reason": "It is a duplication of cas.authn.pac4j.saml[0].sign-service-provider-logout-request.",
         "level": "error"
       }
     }

@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.yubikey;
 
+import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -13,6 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Timur Duehr
  * @since 6.0.0
  */
+@Tag("MFA")
 public abstract class AbstractYubiKeyAccountRegistryTests {
     private static final String OTP = "cccccccvlidcnlednilgctgcvcjtivrjidfbdgrefcvi";
     private static final String BAD_TOKEN = "123456";
@@ -27,21 +30,24 @@ public abstract class AbstractYubiKeyAccountRegistryTests {
 
     @Test
     public void verifyAccountNotRegisteredWithBadToken() {
-        assertFalse(getYubiKeyAccountRegistry().registerAccountFor(CASUSER, BAD_TOKEN));
-        assertFalse(getYubiKeyAccountRegistry().isYubiKeyRegisteredFor(CASUSER));
+        val yubiKeyAccountRegistry = getYubiKeyAccountRegistry();
+        assertFalse(yubiKeyAccountRegistry.registerAccountFor(CASUSER, BAD_TOKEN));
+        assertFalse(yubiKeyAccountRegistry.isYubiKeyRegisteredFor(CASUSER));
     }
 
     @Test
     public void verifyAccountRegistered() {
-        assertTrue(getYubiKeyAccountRegistry().registerAccountFor(CASUSER, OTP));
-        assertTrue(getYubiKeyAccountRegistry().isYubiKeyRegisteredFor(CASUSER));
-        assertEquals(1, getYubiKeyAccountRegistry().getAccounts().size());
+        val yubiKeyAccountRegistry = getYubiKeyAccountRegistry();
+        assertTrue(yubiKeyAccountRegistry.registerAccountFor(CASUSER, OTP));
+        assertTrue(yubiKeyAccountRegistry.isYubiKeyRegisteredFor(CASUSER));
+        assertEquals(1, yubiKeyAccountRegistry.getAccounts().size());
     }
 
     @Test
     public void verifyEncryptedAccount() {
-        assertTrue(getYubiKeyAccountRegistry().registerAccountFor("encrypteduser", OTP));
-        assertTrue(getYubiKeyAccountRegistry().isYubiKeyRegisteredFor("encrypteduser", getYubiKeyAccountRegistry().getAccountValidator().getTokenPublicId(OTP)));
+        val yubiKeyAccountRegistry = getYubiKeyAccountRegistry();
+        assertTrue(yubiKeyAccountRegistry.registerAccountFor("encrypteduser", OTP));
+        assertTrue(yubiKeyAccountRegistry.isYubiKeyRegisteredFor("encrypteduser", yubiKeyAccountRegistry.getAccountValidator().getTokenPublicId(OTP)));
     }
 
 

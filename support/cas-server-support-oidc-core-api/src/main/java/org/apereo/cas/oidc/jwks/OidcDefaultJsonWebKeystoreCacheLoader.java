@@ -7,7 +7,7 @@ import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jose4j.jwk.JsonWebKeySet;
-import org.jose4j.jwk.RsaJsonWebKey;
+import org.jose4j.jwk.PublicJsonWebKey;
 import org.springframework.core.io.Resource;
 
 import java.nio.charset.StandardCharsets;
@@ -22,16 +22,16 @@ import java.util.Optional;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class OidcDefaultJsonWebKeystoreCacheLoader implements CacheLoader<String, Optional<RsaJsonWebKey>> {
+public class OidcDefaultJsonWebKeystoreCacheLoader implements CacheLoader<String, Optional<PublicJsonWebKey>> {
     private final Resource jwksFile;
 
-    private static RsaJsonWebKey getJsonSigningWebKeyFromJwks(final JsonWebKeySet jwks) {
+    private static PublicJsonWebKey getJsonSigningWebKeyFromJwks(final JsonWebKeySet jwks) {
         if (jwks.getJsonWebKeys().isEmpty()) {
             LOGGER.warn("No JSON web keys are available in the keystore");
             return null;
         }
 
-        val key = (RsaJsonWebKey) jwks.getJsonWebKeys().get(0);
+        val key = PublicJsonWebKey.class.cast(jwks.getJsonWebKeys().get(0));
         if (StringUtils.isBlank(key.getAlgorithm())) {
             LOGGER.debug("Located JSON web key [{}] has no algorithm defined", key);
         }
@@ -50,6 +50,16 @@ public class OidcDefaultJsonWebKeystoreCacheLoader implements CacheLoader<String
         val json = IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8);
         LOGGER.debug("Retrieved JSON web key from [{}] as [{}]", resource, json);
         return buildJsonWebKeySet(json);
+    }
+
+    private static JsonWebKeySet buildJsonWebKeySet(final String json) throws Exception {
+        val jsonWebKeySet = new JsonWebKeySet(json);
+        val webKey = getJsonSigningWebKeyFromJwks(jsonWebKeySet);
+        if (webKey == null || webKey.getPrivateKey() == null) {
+            LOGGER.warn("JSON web key retrieved [{}] is not found or has no associated private key", webKey);
+            return null;
+        }
+        return jsonWebKeySet;
     }
 
     /**
@@ -79,7 +89,7 @@ public class OidcDefaultJsonWebKeystoreCacheLoader implements CacheLoader<String
                 }
 
                 val webKey = getJsonSigningWebKeyFromJwks(jsonWebKeySet);
-                if (webKey.getPrivateKey() == null) {
+                if (webKey != null && webKey.getPrivateKey() == null) {
                     LOGGER.warn("JSON web key retrieved [{}] has no associated private key", webKey.getKeyId());
                     return Optional.empty();
                 }
@@ -91,18 +101,8 @@ public class OidcDefaultJsonWebKeystoreCacheLoader implements CacheLoader<String
         return Optional.empty();
     }
 
-    private static JsonWebKeySet buildJsonWebKeySet(final String json) throws Exception {
-        val jsonWebKeySet = new JsonWebKeySet(json);
-        val webKey = getJsonSigningWebKeyFromJwks(jsonWebKeySet);
-        if (webKey == null || webKey.getPrivateKey() == null) {
-            LOGGER.warn("JSON web key retrieved [{}] is not found or has no associated private key", webKey);
-            return null;
-        }
-        return jsonWebKeySet;
-    }
-
     @Override
-    public Optional<RsaJsonWebKey> load(final String issuer) {
+    public Optional<PublicJsonWebKey> load(final String issuer) {
         val jwks = buildJsonWebKeySet();
         if (jwks.isEmpty() || jwks.get().getJsonWebKeys().isEmpty()) {
             return Optional.empty();

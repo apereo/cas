@@ -4,6 +4,7 @@ import org.apereo.cas.audit.AuditTrailConstants;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
+import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.principal.PersistentIdGenerator;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -123,8 +124,8 @@ public class SamlIdPConfiguration {
     private ObjectProvider<VelocityEngine> velocityEngineFactory;
 
     @Autowired
-    @Qualifier("webApplicationServiceFactory")
-    private ObjectProvider<ServiceFactory> webApplicationServiceFactory;
+    @Qualifier("samlIdPServiceFactory")
+    private ObjectProvider<ServiceFactory> samlIdPServiceFactory;
 
     @Autowired
     @Qualifier("urlValidator")
@@ -141,6 +142,10 @@ public class SamlIdPConfiguration {
     @Autowired
     @Qualifier("authenticationServiceSelectionPlan")
     private ObjectProvider<AuthenticationServiceSelectionPlan> authenticationServiceSelectionPlan;
+
+    @Autowired
+    @Qualifier("attributeDefinitionStore")
+    private ObjectProvider<AttributeDefinitionStore> attributeDefinitionStore;
 
     @ConditionalOnMissingBean(name = "samlSingleLogoutServiceLogoutUrlBuilder")
     @Bean
@@ -187,7 +192,7 @@ public class SamlIdPConfiguration {
     public SamlArtifactTicketFactory samlArtifactTicketFactory() {
         return new DefaultSamlArtifactTicketFactory(samlArtifactTicketExpirationPolicy(),
             openSamlConfigBean.getObject(),
-            webApplicationServiceFactory.getObject());
+            samlIdPServiceFactory.getObject());
     }
 
     @ConditionalOnMissingBean(name = "samlArtifactTicketExpirationPolicy")
@@ -310,7 +315,8 @@ public class SamlIdPConfiguration {
             openSamlConfigBean.getObject(),
             samlAttributeEncoder(),
             casProperties.getAuthn().getSamlIdp(),
-            samlObjectEncrypter());
+            samlObjectEncrypter(), 
+            attributeDefinitionStore.getObject());
     }
 
     @ConditionalOnMissingBean(name = "samlAttributeEncoder")
@@ -362,7 +368,7 @@ public class SamlIdPConfiguration {
     @RefreshScope
     public SamlAttributeQueryTicketFactory samlAttributeQueryTicketFactory() {
         return new DefaultSamlAttributeQueryTicketFactory(samlAttributeQueryTicketExpirationPolicy(),
-            webApplicationServiceFactory.getObject(),
+            samlIdPServiceFactory.getObject(),
             openSamlConfigBean.getObject());
     }
 
@@ -396,7 +402,9 @@ public class SamlIdPConfiguration {
         };
     }
 
-    private SamlProfileSamlResponseBuilderConfigurationContext.SamlProfileSamlResponseBuilderConfigurationContextBuilder getSamlResponseBuilderConfigurationContextBuilder() {
+    private SamlProfileSamlResponseBuilderConfigurationContext.
+        SamlProfileSamlResponseBuilderConfigurationContextBuilder getSamlResponseBuilderConfigurationContextBuilder() {
+
         return SamlProfileSamlResponseBuilderConfigurationContext.builder()
             .openSamlConfigBean(openSamlConfigBean.getObject())
             .samlObjectSigner(samlObjectSigner())

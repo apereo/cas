@@ -8,6 +8,7 @@ layout: null
     *   [Security Guide](/$version/planning/Security-Guide.html)
     *   [Upgrade Guide](/$version/planning/Upgrade-Guide.html)
     *   [Release Policy](/cas/developer/Release-Policy.html)
+    *   [Release Schedule](https://github.com/apereo/cas/milestones)
     *   [Maintenance Policy](/cas/developer/Maintenance-Policy.html)
 
 * [Installation](#casinstallation)
@@ -80,12 +81,14 @@ layout: null
     
 * [Attributes](#casattributes)
     *   [Attribute Resolution](/$version/integration/Attribute-Resolution.html)
+        *   [Definitions](/$version/integration/Attribute-Definitions.html)
     *   [Attribute Release](/$version/integration/Attribute-Release.html)
         *   [Principal Id](/$version/integration/Attribute-Release-PrincipalId.html)
         *   [Release Policies](/$version/integration/Attribute-Release-Policies.html)
         *   [Value Filters](/$version/integration/Attribute-Value-Release-Policies.html)
         *   [Consent](/$version/integration/Attribute-Release-Consent.html)
         *   [Caching](/$version/integration/Attribute-Release-Caching.html)
+        *   [Definitions](/$version/integration/Attribute-Definitions.html)
         
 * [Multifactor Authentication](#mfaauthn)
     *   [Overview](/$version/mfa/Configuring-Multifactor-Authentication.html)
@@ -258,3 +261,5 @@ layout: null
     *   [Code Conventions](/cas/developer/Code-Conventions.html)
     *   [Release Process](/cas/developer/Release-Process.html)
     *   [Build Process](/cas/developer/Build-Process.html)
+        *   [6.x](/cas/developer/Build-Process-6X.html)
+        *   [5.x](/cas/developer/Build-Process-5X.html)

@@ -20,8 +20,7 @@ import org.springframework.boot.test.context.SpringBootTest;
     BaseTicketRegistryTests.SharedTestConfiguration.class
 }, properties = {
     "spring.mail.host=localhost",
-    "spring.mail.port=25000",
-    "spring.mail.testConnection=false"
+    "spring.mail.port=25000"
 })
 @Tag("Ehcache")
 public class EhCache3TicketRegistryTests extends BaseTicketRegistryTests {

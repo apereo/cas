@@ -5,12 +5,14 @@ import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
 
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.IMap;
+import com.hazelcast.map.IMap;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.DisposableBean;
+
+import javax.annotation.Nonnull;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -47,7 +49,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements A
     public void addTicket(final Ticket ticket) {
         val ttl = ticket.getExpirationPolicy().getTimeToLive();
         if (ttl < 0) {
-            throw new IllegalArgumentException("The expiration policy of ticket " + ticket.getId() + "is set to use a negative ttl");
+            throw new IllegalArgumentException("The expiration policy of ticket " + ticket.getId() + " is set to use a negative ttl");
         }
 
         LOGGER.debug("Adding ticket [{}] with ttl [{}s]", ticket.getId(), ttl);
@@ -55,9 +57,12 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements A
 
         val metadata = this.ticketCatalog.find(ticket);
         val ticketMap = getTicketMapInstanceByMetadata(metadata);
-
-        ticketMap.set(encTicket.getId(), encTicket, ttl, TimeUnit.SECONDS);
-        LOGGER.debug("Added ticket [{}] with ttl [{}s]", encTicket.getId(), ttl);
+        if (ticketMap != null) {
+            ticketMap.set(encTicket.getId(), encTicket, ttl, TimeUnit.SECONDS);
+            LOGGER.debug("Added ticket [{}] with ttl [{}s]", encTicket.getId(), ttl);
+        } else {
+            LOGGER.warn("Unable to locate ticket map for ticket metadata [{}]", metadata);
+        }
     }
 
     private IMap<String, Ticket> getTicketMapInstanceByMetadata(final TicketDefinition metadata) {
@@ -75,12 +80,16 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements A
         val metadata = this.ticketCatalog.find(ticketId);
         if (metadata != null) {
             val map = getTicketMapInstanceByMetadata(metadata);
-            val ticket = map.get(encTicketId);
-            val result = decodeTicket(ticket);
-            if (predicate.test(result)) {
-                return result;
+            if (map != null) {
+                val ticket = map.get(encTicketId);
+                val result = decodeTicket(ticket);
+                if (predicate.test(result)) {
+                    return result;
+                }
+                return null;
+            } else {
+                LOGGER.error("Unable to locate ticket map for ticket definition [{}]", metadata);
             }
-            return null;
         }
         LOGGER.warn("No ticket definition could be found in the catalog to match [{}]", ticketId);
         return null;
@@ -91,7 +100,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements A
         val encTicketId = encodeTicketId(ticketIdToDelete);
         val metadata = this.ticketCatalog.find(ticketIdToDelete);
         val map = getTicketMapInstanceByMetadata(metadata);
-        return map.remove(encTicketId) != null;
+        return map != null && map.remove(encTicketId) != null;
     }
 
     @Override
@@ -146,7 +155,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements A
         shutdown();
     }
 
-    private IMap<String, Ticket> getTicketMapInstance(final String mapName) {
+    private IMap<String, Ticket> getTicketMapInstance(@Nonnull final String mapName) {
         try {
             val inst = hazelcastInstance.<String, Ticket>getMap(mapName);
             LOGGER.debug("Located Hazelcast map instance [{}]", mapName);

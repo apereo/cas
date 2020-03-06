@@ -41,7 +41,7 @@ public class OidcServiceRegistryListener implements ServiceRegistryListener {
         val attributeReleasePolicy = registeredService.getAttributeReleasePolicy();
         policyToAdd.setConsentPolicy(attributeReleasePolicy.getConsentPolicy());
         policyToAdd.setPrincipalAttributesRepository(attributeReleasePolicy.getPrincipalAttributesRepository());
-        chain.getPolicies().add(policyToAdd);
+        chain.addPolicy(policyToAdd);
     }
 
     @Override

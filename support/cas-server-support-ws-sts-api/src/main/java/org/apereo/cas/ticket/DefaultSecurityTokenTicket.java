@@ -3,6 +3,7 @@ package org.apereo.cas.ticket;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.util.EncodingUtils;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.val;
@@ -33,6 +34,7 @@ public class DefaultSecurityTokenTicket extends AbstractTicket implements Securi
 
     @ManyToOne(targetEntity = TicketGrantingTicketImpl.class)
     @Getter
+    @JsonProperty("ticketGrantingTicket")
     private TicketGrantingTicket ticketGrantingTicket;
 
     @Column(name = "SECURITY_TOKEN", length = 4096)

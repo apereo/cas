@@ -338,6 +338,23 @@ Support is provided via the following dependency in the WAR overlay:
 
 See [this guide](Configuration-Properties.html#amazon-secrets-manager) for relevant settings.
 
+##### Amazon Systems Manager Parameter Store (SSM)
+
+CAS is also able to use [AWS Systems Manager Parameter Store](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-parameter-store.html) 
+to locate properties and settings.
+
+Support is provided via the following dependency in the WAR overlay:
+
+```xml
+<dependency>
+     <groupId>org.apereo.cas</groupId>
+     <artifactId>cas-server-support-configuration-cloud-aws-ssm</artifactId>
+     <version>${cas.version}</version>
+</dependency>
+```
+
+See [this guide](Configuration-Properties.html#amazon-parameter-store) for relevant settings.
+
 ##### DynamoDb
 
 CAS is also able to use [DynamoDb](https://aws.amazon.com/dynamodb/) to locate properties and settings.
@@ -400,6 +417,24 @@ Support is provided via the following dependency in the WAR overlay:
 
 By default, settings are expected to be found under a `CAS_SETTINGS_TABLE` that contains the fields: `id`, `name` and `value`.
 To see the relevant list of CAS properties for this feature, please [review this guide](Configuration-Properties.html#jdbc).
+
+##### REST
+
+CAS is also able to locate properties and settings using a REST API.
+
+Support is provided via the following dependency in the WAR overlay:
+
+```xml
+<dependency>
+     <groupId>org.apereo.cas</groupId>
+     <artifactId>cas-server-support-configuration-cloud-rest</artifactId>
+     <version>${cas.version}</version>
+</dependency>
+```
+
+The REST endpoint is expected to produce a `Map` in the payload with keys as the setting names
+and values as the setting value. To see the relevant list of CAS properties for this 
+feature, please [review this guide](Configuration-Properties.html#rest).
 
 #### CAS Server Cloud Configuration
 

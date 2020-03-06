@@ -68,7 +68,22 @@ subsequent attempt to authenticate to a SSO-participating application.
 
 Plausibly, a CAS adopter may want this behavior to be different, such that logging in to a non-SSO-participating application
 via CAS either does not create a CAS SSO session and the SSO session it creates is not honored for authenticating subsequently
-to an SSO-participating application. This might better match user expectations.
+to an SSO-participating application. This might better match user expectations. This behavior can be altered either globally
+via CAS settings or on a per-service basis.
+
+```json
+{
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId" : "...",
+  "name" : "...",
+  "id" : 1,
+  "singleSignOnParticipationPolicy":
+    {
+      "@class": "org.apereo.cas.services.DefaultRegisteredServiceSingleSignOnParticipationPolicy",
+      "createCookieOnRenewedAuthentication": "TRUE"
+    }
+}
+```
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#global-sso-behavior).
 

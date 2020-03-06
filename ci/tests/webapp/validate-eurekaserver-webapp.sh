@@ -2,7 +2,7 @@
 
 gradle="./gradlew "
 gradleBuild=""
-gradleBuildOptions="--build-cache --configure-on-demand --no-daemon -DskipNestedConfigMetadataGen=true -DskipGradleLint=true "
+gradleBuildOptions="--build-cache --configure-on-demand --no-daemon -DskipNestedConfigMetadataGen=true "
 
 webAppServerType="$1"
 

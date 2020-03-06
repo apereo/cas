@@ -57,7 +57,7 @@ public class SerializationUtils {
      * Deserialize an object.
      *
      * @param <T>     the type parameter
-     * @param inBytes The bytes to be deserialized
+     * @param inBytes The bytes to be de-serialized
      * @param clazz   the clazz
      * @return the object
      * @since 5.0.0
@@ -71,7 +71,7 @@ public class SerializationUtils {
      * Deserialize an object.
      *
      * @param <T>         the type parameter
-     * @param inputStream The stream to be deserialized
+     * @param inputStream The stream to be de-serialized
      * @param clazz       the clazz
      * @return the object
      * @since 5.0.0

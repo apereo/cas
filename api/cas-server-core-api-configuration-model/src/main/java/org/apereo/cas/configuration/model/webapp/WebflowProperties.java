@@ -70,6 +70,18 @@ public class WebflowProperties implements Serializable {
      */
     private Groovy groovy = new Groovy();
 
+    /**
+     * With a base path defined, the algorithm that assigns flow identifiers changes slightly.
+     * Flows will now be assigned registry identifiers equal to the the path segment between
+     * their base path and file name. For example, if a flow definition is located
+     * at {@code /WEB-INF/hotels/booking/booking-flow.xml} and the base path is {@code /WEB-INF} the remaining path
+     * to this flow is {@code hotels/booking} which becomes the flow id.
+     * If no base path is not specified or if the flow definition is directly on the base
+     * path, flow id assignment from the filename (minus the extension) is used. For example,
+     * if a flow definition file is {@code booking.xml}, the flow identifier is simply {@code booking}.
+     */
+    private String basePath;
+
     @RequiresModule(name = "cas-server-core-webflow", automated = true)
     @Getter
     @Setter

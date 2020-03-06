@@ -32,21 +32,23 @@ public class GenerateYamlRegisteredServiceCommand {
      *
      * @param file        the file
      * @param destination the destination
+     * @return the file
      */
     @ShellMethod(key = "generate-yaml", value = "Generate a YAML registered service definition")
-    public static void generateYaml(
-        @ShellOption(value = { "file", "--file" },
+    public static File generateYaml(
+        @ShellOption(value = {"file", "--file"},
             help = "Path to the JSON service definition file") final String file,
-        @ShellOption(value = { "destination", "--destination" },
+        @ShellOption(value = {"destination", "--destination"},
             help = "Path to the destination YAML service definition file") final String destination) {
         if (StringUtils.isBlank(file)) {
             LOGGER.warn("File must be specified");
-            return;
+            return null;
         }
 
         val filePath = new File(file);
         val result = StringUtils.isBlank(destination) ? null : new File(destination);
         generate(filePath, result);
+        return filePath;
     }
 
     private static void generate(final File filePath, final File result) {

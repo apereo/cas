@@ -29,7 +29,6 @@ import java.util.stream.StreamSupport;
 @RequiredArgsConstructor
 public class RedisTicketRegistry extends AbstractTicketRegistry {
     private static final String CAS_TICKET_PREFIX = "CAS_TICKET:";
-    private static final long SCAN_COUNT = 100L;
 
     private final RedisTemplate<String, Ticket> client;
 
@@ -58,6 +57,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
+    @SuppressWarnings("java:S2583")
     public long deleteAll() {
         val redisKeys = this.client.keys(getPatternTicketRedisKey());
         if (redisKeys == null) {
@@ -162,7 +162,6 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
     private Stream<String> getKeysStream() {
         val cursor = client.getConnectionFactory().getConnection()
                 .scan(ScanOptions.scanOptions().match(getPatternTicketRedisKey())
-                .count(SCAN_COUNT)
                 .build());
         return StreamSupport
             .stream(Spliterators.spliteratorUnknownSize(cursor, Spliterator.ORDERED), false)

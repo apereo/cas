@@ -30,7 +30,7 @@ echo -e "***********************************************"
 ./ci/tests/oracle/run-oracle-server.sh
 
 gradleBuild="$gradleBuild testOracle jacocoRootReport -x test -x javadoc -x check \
-    -DskipGradleLint=true--parallel \
+    --parallel \
     -DskipNestedConfigMetadataGen=true "
 
 if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[show streams]"* ]]; then

@@ -7,7 +7,6 @@ import org.apereo.cas.util.LdapUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.ldaptive.AttributeModification;
-import org.ldaptive.AttributeModificationType;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.ModifyOperation;
@@ -30,7 +29,7 @@ public class LdapPasswordSynchronizationAuthenticationPostProcessor implements A
 
     public LdapPasswordSynchronizationAuthenticationPostProcessor(final AbstractLdapSearchProperties properties) {
         this.ldapProperties = properties;
-        this.searchFactory = LdapUtils.newLdaptivePooledConnectionFactory(properties);
+        this.searchFactory = LdapUtils.newLdaptiveConnectionFactory(properties);
     }
 
     @Override
@@ -51,21 +50,18 @@ public class LdapPasswordSynchronizationAuthenticationPostProcessor implements A
             LOGGER.debug("LDAP response is [{}]", response);
 
             if (LdapUtils.containsResultEntry(response)) {
-                val searchResult = response.getResult();
-                val dn = searchResult.getEntry().getDn();
+                val dn = response.getEntry().getDn();
                 LOGGER.trace("Updating account password for [{}]", dn);
 
-                try (val modifyConnection = LdapUtils.createConnection(searchFactory)) {
-                    val operation = new ModifyOperation(modifyConnection);
-                    val mod = new AttributeModification(AttributeModificationType.REPLACE, getLdapPasswordAttribute(credential));
-                    val updateResponse = operation.execute(new ModifyRequest(dn, mod));
-                    LOGGER.trace("Result code [{}], message: [{}]", searchResult, response.getMessage());
-                    val result = updateResponse.getResultCode() == ResultCode.SUCCESS;
-                    if (result) {
-                        LOGGER.info("Updated the LDAP entry's password for [{}] and base DN [{}]", filter.format(), ldapProperties.getBaseDn());
-                    } else {
-                        LOGGER.warn("Could not update the LDAP entry's password for [{}] and base DN [{}]", filter.format(), ldapProperties.getBaseDn());
-                    }
+                val operation = new ModifyOperation(searchFactory);
+                val mod = new AttributeModification(AttributeModification.Type.REPLACE, getLdapPasswordAttribute(credential));
+                val updateResponse = operation.execute(new ModifyRequest(dn, mod));
+                LOGGER.trace("Result code [{}], message: [{}]", response.getResultCode(), response.getDiagnosticMessage());
+                val result = updateResponse.getResultCode() == ResultCode.SUCCESS;
+                if (result) {
+                    LOGGER.info("Updated the LDAP entry's password for [{}] and base DN [{}]", filter.format(), ldapProperties.getBaseDn());
+                } else {
+                    LOGGER.warn("Could not update the LDAP entry's password for [{}] and base DN [{}]", filter.format(), ldapProperties.getBaseDn());
                 }
             } else {
                 LOGGER.error("Could not locate an LDAP entry for [{}] and base DN [{}]", filter.format(), ldapProperties.getBaseDn());

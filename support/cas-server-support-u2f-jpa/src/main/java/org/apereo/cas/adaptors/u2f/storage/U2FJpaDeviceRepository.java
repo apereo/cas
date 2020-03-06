@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -30,10 +31,12 @@ import java.util.stream.Collectors;
 @Transactional(transactionManager = "transactionManagerU2f")
 @Slf4j
 public class U2FJpaDeviceRepository extends BaseU2FDeviceRepository {
-    private static final String DELETE_QUERY = "DELETE from U2FDeviceRegistration r ";
-    private static final String SELECT_QUERY = "SELECT r from U2FDeviceRegistration r ";
+    private static final String DELETE_QUERY = "DELETE from U2FJpaDeviceRegistration r ";
+
+    private static final String SELECT_QUERY = "SELECT r from U2FJpaDeviceRegistration r ";
 
     private final long expirationTime;
+
     private final TimeUnit expirationTimeUnit;
 
     @PersistenceContext(unitName = "u2fEntityManagerFactory")
@@ -51,7 +54,8 @@ public class U2FJpaDeviceRepository extends BaseU2FDeviceRepository {
         try {
             val expirationDate = LocalDate.now(ZoneId.systemDefault()).minus(this.expirationTime, DateTimeUtils.toChronoUnit(this.expirationTimeUnit));
             return this.entityManager.createQuery(
-                SELECT_QUERY.concat("where r.username = :username and r.createdDate >= :expdate"), U2FDeviceRegistration.class)
+                SELECT_QUERY.concat("where r.username = :username and r.createdDate >= :expdate"),
+                U2FJpaDeviceRegistration.class)
                 .setParameter("username", username)
                 .setParameter("expdate", expirationDate)
                 .getResultList()
@@ -81,7 +85,7 @@ public class U2FJpaDeviceRepository extends BaseU2FDeviceRepository {
 
     @Override
     public void authenticateDevice(final String username, final DeviceRegistration registration) {
-        val jpa = new U2FDeviceRegistration();
+        val jpa = new U2FJpaDeviceRegistration();
         jpa.setUsername(username);
         jpa.setRecord(getCipherExecutor().encode(registration.toJson()));
         jpa.setCreatedDate(LocalDate.now(ZoneId.systemDefault()));

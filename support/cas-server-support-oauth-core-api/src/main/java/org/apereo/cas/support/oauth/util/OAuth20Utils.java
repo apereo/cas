@@ -25,6 +25,8 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.pac4j.core.context.JEEContext;
+import org.pac4j.core.context.WebContext;
+import org.pac4j.core.credentials.extractor.BasicAuthExtractor;
 import org.pac4j.core.profile.CommonProfile;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.ModelAndView;
@@ -444,8 +446,11 @@ public class OAuth20Utils {
      * @return the client id from authenticated profile
      */
     public static String getClientIdFromAuthenticatedProfile(final CommonProfile profile) {
-        if (profile.containsAttribute(OAuth20Constants.CLIENT_ID)) {
-            val attribute = profile.getAttribute(OAuth20Constants.CLIENT_ID);
+        val attrs = new HashMap<>(profile.getAttributes());
+        attrs.putAll(profile.getAuthenticationAttributes());
+        
+        if (attrs.containsKey(OAuth20Constants.CLIENT_ID)) {
+            val attribute = attrs.get(OAuth20Constants.CLIENT_ID);
             return CollectionUtils.toCollection(attribute, ArrayList.class).get(0).toString();
         }
         return null;
@@ -486,5 +491,25 @@ public class OAuth20Utils {
     public static Set<String> parseUserInfoRequestClaims(final JEEContext context) throws Exception {
         val requestedClaims = parseRequestClaims(context);
         return requestedClaims.getOrDefault("userinfo", new HashMap<>(0)).keySet();
+    }
+
+    /**
+     * Gets client id and client secret.
+     *
+     * @param context the context
+     * @return the client id and client secret
+     */
+    public static Pair<String, String> getClientIdAndClientSecret(final WebContext context) {
+        val extractor = new BasicAuthExtractor();
+        val upcResult = extractor.extract(context);
+        if (upcResult.isPresent()) {
+            val upc = upcResult.get();
+            return Pair.of(upc.getUsername(), upc.getPassword());
+        }
+        val clientId = context.getRequestParameter(OAuth20Constants.CLIENT_ID)
+                .map(String::valueOf).orElse(StringUtils.EMPTY);
+        val clientSecret = context.getRequestParameter(OAuth20Constants.CLIENT_SECRET)
+                .map(String::valueOf).orElse(StringUtils.EMPTY);
+        return Pair.of(clientId, clientSecret);
     }
 }

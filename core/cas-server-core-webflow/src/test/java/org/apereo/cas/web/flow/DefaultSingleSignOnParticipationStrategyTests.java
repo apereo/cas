@@ -8,9 +8,11 @@ import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionStrate
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.util.model.TriStateBoolean;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -27,6 +29,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
+@Tag("Webflow")
 public class DefaultSingleSignOnParticipationStrategyTests {
     @Test
     public void verifyParticipatesForRenew() {
@@ -39,7 +42,7 @@ public class DefaultSingleSignOnParticipationStrategyTests {
             mock(TicketRegistrySupport.class), mock(AuthenticationServiceSelectionPlan.class));
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
         request.addParameter(CasProtocolConstants.PARAMETER_RENEW, "true");
-        assertTrue(strategy.isParticipating(context) || strategy.isCreateCookieOnRenewedAuthentication(context));
+        assertTrue(strategy.isParticipating(context) || strategy.isCreateCookieOnRenewedAuthentication(context) == TriStateBoolean.TRUE);
     }
 
     @Test

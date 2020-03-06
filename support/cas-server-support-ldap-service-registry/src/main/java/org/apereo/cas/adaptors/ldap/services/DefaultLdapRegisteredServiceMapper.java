@@ -56,7 +56,7 @@ public class DefaultLdapRegisteredServiceMapper implements LdapRegisteredService
         }
         LOGGER.debug("LDAP attributes assigned to the DN [{}] are [{}]", newDn, attrs);
 
-        val entry = new LdapEntry(newDn, attrs);
+        val entry = LdapEntry.builder().dn(newDn).attributes(attrs).build();
         LOGGER.debug("Created LDAP entry [{}]", entry);
         return entry;
 

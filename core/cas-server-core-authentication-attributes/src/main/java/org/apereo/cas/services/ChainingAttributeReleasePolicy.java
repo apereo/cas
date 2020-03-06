@@ -44,12 +44,12 @@ public class ChainingAttributeReleasePolicy implements RegisteredServiceAttribut
 
     @Override
     public RegisteredServiceConsentPolicy getConsentPolicy() {
-        AnnotationAwareOrderComparator.sortIfNecessary(policies);
         val chainingConsentPolicy = new ChainingRegisteredServiceConsentPolicy();
         val newConsentPolicies = policies
             .stream()
             .map(policy -> policy.getConsentPolicy().getPolicies())
             .flatMap(List::stream)
+            .sorted(AnnotationAwareOrderComparator.INSTANCE)
             .collect(Collectors.toCollection(LinkedHashSet::new));
         chainingConsentPolicy.addPolicies(newConsentPolicies);
         return chainingConsentPolicy;
@@ -57,11 +57,10 @@ public class ChainingAttributeReleasePolicy implements RegisteredServiceAttribut
 
     @Override
     public Map<String, List<Object>> getAttributes(final Principal p, final Service selectedService, final RegisteredService service) {
-        AnnotationAwareOrderComparator.sortIfNecessary(policies);
 
         val merger = CoreAuthenticationUtils.getAttributeMerger(mergingPolicy);
         val attributes = new HashMap<String, List<Object>>();
-        policies.forEach(policy -> {
+        policies.stream().sorted(AnnotationAwareOrderComparator.INSTANCE).forEach(policy -> {
             LOGGER.trace("Fetching attributes from policy [{}] for principal [{}]", policy.getName(), p.getId());
             val policyAttributes = policy.getAttributes(p, selectedService, service);
             merger.mergeAttributes(attributes, policyAttributes);
@@ -72,11 +71,9 @@ public class ChainingAttributeReleasePolicy implements RegisteredServiceAttribut
 
     @Override
     public Map<String, List<Object>> getConsentableAttributes(final Principal principal, final Service selectedService, final RegisteredService service) {
-        AnnotationAwareOrderComparator.sortIfNecessary(policies);
-
         val merger = CoreAuthenticationUtils.getAttributeMerger(mergingPolicy);
         val attributes = new HashMap<String, List<Object>>();
-        policies.forEach(policy -> {
+        policies.stream().sorted(AnnotationAwareOrderComparator.INSTANCE).forEach(policy -> {
             LOGGER.trace("Fetching consentable attributes from policy [{}] for principal [{}]", policy.getName(), principal.getId());
             val policyAttributes = policy.getConsentableAttributes(principal, selectedService, service);
             merger.mergeAttributes(attributes, policyAttributes);
@@ -95,7 +92,7 @@ public class ChainingAttributeReleasePolicy implements RegisteredServiceAttribut
     }
 
     /**
-     * Add policies.
+     * Add all policies at once and then sort them.
      *
      * @param policies the policies
      */

@@ -22,9 +22,8 @@ import org.apache.logging.log4j.core.layout.PatternLayout;
  */
 @Plugin(name = "CasAppender", category = "Core", elementType = "appender", printObject = true)
 public class CasAppender extends AbstractAppender {
-    private static final long serialVersionUID = 3744758323628847477L;
-
     private final Configuration config;
+
     private final AppenderRef appenderRef;
 
     /**
@@ -67,7 +66,7 @@ public class CasAppender extends AbstractAppender {
                 LOGGER.warn("No log appender could be found for [{}]", refName);
             }
         } else {
-            LOGGER.warn("No log appender reference could be located in logging configuration.");
+            LOGGER.warn("No log appender reference for [{}] could be located in logging configuration.", refName);
         }
     }
 }

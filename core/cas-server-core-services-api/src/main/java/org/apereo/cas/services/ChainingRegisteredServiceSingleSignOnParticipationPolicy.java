@@ -1,7 +1,9 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.ticket.TicketState;
+import org.apereo.cas.util.model.TriStateBoolean;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.EqualsAndHashCode;
@@ -60,6 +62,12 @@ public class ChainingRegisteredServiceSingleSignOnParticipationPolicy implements
      */
     public void addPolicies(final @NonNull RegisteredServiceSingleSignOnParticipationPolicy... policy) {
         policies.addAll(Arrays.stream(policy).collect(Collectors.toList()));
+    }
+
+    @JsonIgnore
+    @Override
+    public TriStateBoolean isCreateCookieOnRenewedAuthentication() {
+        return TriStateBoolean.UNDEFINED;
     }
 
     @Override

@@ -27,19 +27,29 @@ public class FilterAndDelegateAuditTrailManager implements AuditTrailManager {
 
     private final List<String> supportedActionsPerformed;
 
+    private final List<String> excludedActionsPerformed;
+
     @Override
     public void record(final AuditActionContext auditActionContext) {
-        val matched = supportedActionsPerformed
+        var matched = supportedActionsPerformed
             .stream()
             .anyMatch(action -> {
                 val actionPerformed = auditActionContext.getActionPerformed();
                 return "*".equals(action) || RegexUtils.find(action, actionPerformed);
             });
         if (matched) {
+            matched = excludedActionsPerformed
+                .stream()
+                .noneMatch(action -> {
+                    val actionPerformed = auditActionContext.getActionPerformed();
+                    return "*".equals(action) || RegexUtils.find(action, actionPerformed);
+                });
+        }
+        if (matched) {
             LOGGER.trace("Recording audit action context [{}]", auditActionContext);
             auditTrailManagers.forEach(mgr -> mgr.record(auditActionContext));
         } else {
-            LOGGER.trace("Skipping to record audit action context [{}] as it's not authorizing as an audit action among [{}]",
+            LOGGER.trace("Skipping to record audit action context [{}] as it's not authorized as an audit action among [{}]",
                 auditActionContext, supportedActionsPerformed);
         }
     }

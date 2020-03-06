@@ -3,8 +3,8 @@ package org.apereo.cas.web.flow;
 import org.apereo.cas.config.CasGoogleAnalyticsConfiguration;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.engine.Flow;
@@ -22,10 +22,10 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @TestPropertySource(properties ="cas.google-analytics.google-analytics-tracking-id=123456")
 @Import({
-    ThymeleafAutoConfiguration.class,
     CasGoogleAnalyticsConfiguration.class,
     BaseWebflowConfigurerTests.SharedTestConfiguration.class
 })
+@Tag("Webflow")
 public class CasGoogleAnalyticsWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Test
     public void verifyOperation() {

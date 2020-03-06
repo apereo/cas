@@ -17,10 +17,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.test.annotation.DirtiesContext;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -43,14 +40,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 4.0.0
  */
 @SuppressWarnings("JDBCExecuteWithNonConstantString")
-@SpringBootTest(classes = {
-    RefreshAutoConfiguration.class,
-    DatabaseAuthenticationTestConfiguration.class
-})
-@DirtiesContext
 @Tag("JDBC")
-public class QueryDatabaseAuthenticationHandlerTests {
+public class QueryDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthenticationHandlerTests {
     private static final String SQL = "SELECT * FROM casusers where username=?";
+
     private static final String PASSWORD_FIELD = "password";
 
     @Autowired
@@ -159,7 +152,6 @@ public class QueryDatabaseAuthenticationHandlerTests {
     /**
      * This test proves that in case BCRYPT is used authentication using encoded password always fail
      * with FailedLoginException
-     *
      */
     @Test
     public void verifyBCryptFail() {

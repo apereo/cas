@@ -13,11 +13,13 @@ import java.io.Serializable;
  * This is {@link OpenIdProperties}.
  *
  * @author Misagh Moayyed
+ * @deprecated 6.2
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-openid")
 @Getter
 @Setter
+@Deprecated(since = "6.2")
 public class OpenIdProperties implements Serializable {
 
     private static final long serialVersionUID = -2935759289483632610L;

@@ -23,7 +23,6 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CharacterEncodingFilter;
@@ -59,7 +58,6 @@ public class CasFiltersConfiguration {
 
     @RefreshScope
     @Bean
-    @Lazy
     public FilterRegistrationBean characterEncodingFilter() {
         val bean = new FilterRegistrationBean<CharacterEncodingFilter>();
         val web = casProperties.getHttpWebRequest().getWeb();
@@ -72,7 +70,6 @@ public class CasFiltersConfiguration {
 
     @RefreshScope
     @Bean
-    @Lazy
     public FilterRegistrationBean responseHeadersFilter() {
         val bean = new FilterRegistrationBean<AddResponseHeadersFilter>();
         val filter = new AddResponseHeadersFilter();
@@ -136,9 +133,12 @@ public class CasFiltersConfiguration {
     public FilterRegistrationBean requestParameterSecurityFilter() {
         val httpWebRequest = casProperties.getHttpWebRequest();
         val initParams = new HashMap<String, String>();
-        initParams.put(RequestParameterPolicyEnforcementFilter.PARAMETERS_TO_CHECK,
-            httpWebRequest.getParamsToCheck());
-        initParams.put(RequestParameterPolicyEnforcementFilter.CHARACTERS_TO_FORBID, "none");
+        if (StringUtils.isNotBlank(httpWebRequest.getParamsToCheck())) {
+            initParams.put(RequestParameterPolicyEnforcementFilter.PARAMETERS_TO_CHECK,
+                httpWebRequest.getParamsToCheck());
+        }
+        initParams.put(RequestParameterPolicyEnforcementFilter.CHARACTERS_TO_FORBID,
+            httpWebRequest.getCharactersToForbid());
         initParams.put(RequestParameterPolicyEnforcementFilter.ALLOW_MULTI_VALUED_PARAMETERS,
             BooleanUtils.toStringTrueFalse(httpWebRequest.isAllowMultiValueParameters()));
         initParams.put(RequestParameterPolicyEnforcementFilter.ONLY_POST_PARAMETERS,

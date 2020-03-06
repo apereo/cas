@@ -9,6 +9,7 @@ import lombok.Setter;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -91,11 +92,29 @@ public class HazelcastClusterProperties implements Serializable {
     private int port = 5701;
 
     /**
-     * Define how data items in Hazelcast maps are merged together from source to destination.
-     * Requires the fully qualified class name of the merge policy component.
-     * By default, merges map entries from source to destination if they don't exist in the destination map.
+     * The outbound ports for the Hazelcast configuration.
      */
-    private String mapMergePolicy = "com.hazelcast.map.merge.PutIfAbsentMapMergePolicy";
+    private List<String> outboundPorts = new ArrayList<>();
+
+    /**
+     * Define how data items in Hazelcast maps are merged together from source to destination.
+     * By default, merges map entries from source to destination if they don't exist in the destination map.
+     * Accepted values are:
+     * <ul>
+     *     <li>{@code PUT_IF_ABSENT}: Merges data structure entries from source to destination if they don't exist in the destination data structure.</li>
+     *     <li>{@code HIGHER_HITS}:  * Merges data structure entries from source to destination data structure if the source entry
+     *     has more hits than the destination one.</li>
+     *     <li>{@code DISCARD}: Merges only entries from the destination data structure and discards all entries from the source data structure. </li>
+     *     <li>{@code PASS_THROUGH}: Merges data structure entries from source to destination directly unless the merging entry is null</li>
+     *     <li>{@code EXPIRATION_TIME}: Merges data structure entries from source to destination data structure if the source entry
+     *     will expire later than the destination entry. This policy can only be used if the clocks of the nodes are in sync. </li>
+     *     <li>{@code LATEST_UPDATE}:  Merges data structure entries from source to destination data structure if the source entry was
+     *     updated more frequently than the destination entry. This policy can only be used if the clocks of the nodes are in sync. </li>
+     *     <li>{@code LATEST_ACCESS}: Merges data structure entries from source to destination data structure if the source entry
+     *     has been accessed more recently than the destination entry. This policy can only be used if the clocks of the nodes are in sync.</li>
+     * </ul>
+     */
+    private String mapMergePolicy = "PUT_IF_ABSENT";
 
     /**
      * Enables a multicast configuration using a group address and port.
@@ -126,7 +145,7 @@ public class HazelcastClusterProperties implements Serializable {
     /**
      * Sets the maximum size of the map.
      */
-    private int maxHeapSizePercentage = 85;
+    private int maxSize = 85;
 
     /**
      * <ul>

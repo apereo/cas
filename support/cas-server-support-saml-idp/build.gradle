@@ -14,6 +14,7 @@ dependencies {
     implementation project(":core:cas-server-core-services-registry")
     implementation project(":core:cas-server-core-services-api")
     implementation project(":core:cas-server-core-authentication-api")
+    implementation project(":core:cas-server-core-services-authentication")
     implementation project(":core:cas-server-core-webflow")
     implementation project(":core:cas-server-core-webflow-api")
     implementation project(":core:cas-server-core-tickets-api")
@@ -45,30 +46,23 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-webflow", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")
 
+    testImplementation project(":support:cas-server-support-jpa-hibernate")
+    testImplementation project(":support:cas-server-support-jpa-util")
     testImplementation project(":support:cas-server-support-json-service-registry")
     testImplementation project(":support:cas-server-support-jpa-service-registry")
     testImplementation project(":support:cas-server-support-jdbc-drivers")
-
     testImplementation project(":support:cas-server-support-person-directory")
 
     testImplementation project(":core:cas-server-core-util")
-    
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-validation")
     testImplementation project(":core:cas-server-core-validation-api")
     testImplementation project(":core:cas-server-core-authentication")
     testImplementation project(":core:cas-server-core-configuration")
-    testImplementation project(":core:cas-server-core-services-authentication")
     testImplementation project(":core:cas-server-core-authentication-attributes")
-    
     testImplementation project(":core:cas-server-core-logout")
-    
-    
-    
-    
     testImplementation project(":core:cas-server-core-cookie")
     testImplementation project(":core:cas-server-core-web")
-    
     testImplementation project(":core:cas-server-core-tickets")
     
 }

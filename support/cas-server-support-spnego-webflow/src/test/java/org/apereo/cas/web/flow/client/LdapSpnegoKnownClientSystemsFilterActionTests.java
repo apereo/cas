@@ -4,6 +4,7 @@ import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
 import org.apereo.cas.util.junit.DisabledIfContinuousIntegration;
 
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
 import org.springframework.test.context.TestPropertySource;
 
 /**
@@ -14,7 +15,6 @@ import org.springframework.test.context.TestPropertySource;
  */
 @TestPropertySource(properties = {
     "cas.authn.spnego.ldap.ldapUrl=ldap://localhost:1381",
-    "cas.authn.spnego.ldap.useSsl=false",
     "cas.authn.spnego.ldap.baseDn=ou=people,dc=example,dc=org",
     "cas.authn.spnego.ldap.searchFilter=host={host}",
     "cas.authn.spnego.ldap.bindDn=cn=Directory Manager,dc=example,dc=org",
@@ -31,6 +31,7 @@ import org.springframework.test.context.TestPropertySource;
     "cas.authn.spnego.spnegoAttributeName=mail"
 })
 @DisabledIfContinuousIntegration
+@Tag("Ldap")
 public class LdapSpnegoKnownClientSystemsFilterActionTests extends BaseLdapSpnegoKnownClientSystemsFilterActionTests {
 
     @BeforeAll

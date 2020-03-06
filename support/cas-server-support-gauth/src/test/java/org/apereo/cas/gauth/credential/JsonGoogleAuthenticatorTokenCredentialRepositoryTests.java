@@ -4,6 +4,7 @@ import org.apereo.cas.gauth.BaseGoogleAuthenticatorTests;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 
 import lombok.Getter;
+import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,10 +19,10 @@ import org.springframework.boot.test.context.SpringBootTest;
     properties = {
         "cas.authn.mfa.gauth.json.location=classpath:/repository.json",
         "spring.mail.host=localhost",
-        "spring.mail.port=25000",
-        "spring.mail.testConnection=false"
+        "spring.mail.port=25000"
     })
 @Getter
+@Tag("MFA")
 public class JsonGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTimeTokenCredentialRepositoryTests {
 
     @Autowired

@@ -23,6 +23,7 @@ import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguratio
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.monitor.config.HazelcastMonitorConfiguration;
 
+import com.hazelcast.internal.memory.MemoryStats;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +38,7 @@ import java.util.Arrays;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link HazelcastHealthIndicatorTests}.
@@ -73,8 +75,7 @@ import static org.junit.jupiter.api.Assertions.*;
     properties = {
         "cas.ticket.registry.hazelcast.cluster.instanceName=testlocalmonitor",
         "spring.mail.host=localhost",
-        "spring.mail.port=25000",
-        "spring.mail.testConnection=false"
+        "spring.mail.port=25000"
     })
 public class HazelcastHealthIndicatorTests {
     @Autowired
@@ -101,5 +102,15 @@ public class HazelcastHealthIndicatorTests {
             }
         });
         assertNotNull(hazelcastHealthIndicator.toString());
+    }
+
+    @Test
+    public void verifyFreeHeapPercentageCalculation() {
+        val memoryStats = mock(MemoryStats.class);
+        when(memoryStats.getFreeHeap()).thenReturn(125_555_248L);
+        when(memoryStats.getCommittedHeap()).thenReturn(251_658_240L);
+        val statistics = new HazelcastHealthIndicator.HazelcastStatistics(null, 1, memoryStats);
+
+        assertEquals(49, statistics.getPercentFree());
     }
 }

@@ -23,6 +23,8 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
     
     testImplementation project(":support:cas-server-support-person-directory")
+    testImplementation project(":support:cas-server-support-jpa-hibernate")
+    
     testImplementation project(":core:cas-server-core-configuration")
     testImplementation project(":core:cas-server-core-web-api")
     testImplementation project(":core:cas-server-core-web")

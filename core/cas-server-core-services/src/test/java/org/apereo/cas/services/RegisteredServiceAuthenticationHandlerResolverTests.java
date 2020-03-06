@@ -2,6 +2,8 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.AcceptUsersAuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
+import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.DefaultAuthenticationTransaction;
 import org.apereo.cas.authentication.handler.DefaultAuthenticationHandlerResolver;
 import org.apereo.cas.authentication.handler.RegisteredServiceAuthenticationHandlerResolver;
@@ -29,7 +31,7 @@ import static org.mockito.Mockito.*;
  */
 public class RegisteredServiceAuthenticationHandlerResolverTests {
 
-    private DefaultServicesManager defaultServicesManager;
+    private ServicesManager defaultServicesManager;
     private Set<AuthenticationHandler> authenticationHandlers;
 
     @BeforeEach
@@ -59,7 +61,8 @@ public class RegisteredServiceAuthenticationHandlerResolverTests {
 
     @Test
     public void checkAuthenticationHandlerResolutionDefault() {
-        val resolver = new RegisteredServiceAuthenticationHandlerResolver(this.defaultServicesManager);
+        val resolver = new RegisteredServiceAuthenticationHandlerResolver(this.defaultServicesManager,
+                new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()));
         val transaction = DefaultAuthenticationTransaction.of(RegisteredServiceTestUtils.getService("serviceid1"),
             RegisteredServiceTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
 

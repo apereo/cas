@@ -8,23 +8,27 @@ import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.ISOStandardDateFormat;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.actuate.endpoint.annotation.DeleteOperation;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.boot.actuate.endpoint.annotation.Selector;
+import org.springframework.lang.Nullable;
 
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 
 /**
  * SSO Report web controller that produces JSON data for the view.
@@ -42,6 +46,7 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
     private static final String STATUS = "status";
 
     private static final String TICKET_GRANTING_TICKET = "ticketGrantingTicket";
+
     private final CentralAuthenticationService centralAuthenticationService;
 
     public SingleSignOnSessionsEndpoint(final CentralAuthenticationService centralAuthenticationService,
@@ -57,34 +62,35 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
      * @return the sso sessions
      */
     private Collection<Map<String, Object>> getActiveSsoSessions(final SsoSessionReportOptions option) {
-        val activeSessions = new ArrayList<Map<String, Object>>();
         val dateFormat = new ISOStandardDateFormat();
-        getNonExpiredTicketGrantingTickets().stream().map(TicketGrantingTicket.class::cast)
+        return getNonExpiredTicketGrantingTickets()
+            .stream()
+            .map(TicketGrantingTicket.class::cast)
             .filter(tgt -> !(option == SsoSessionReportOptions.DIRECT && tgt.getProxiedBy() != null))
-            .forEach(tgt -> {
+            .map(tgt -> {
                 val authentication = tgt.getAuthentication();
                 val principal = authentication.getPrincipal();
                 val sso = new HashMap<String, Object>(SsoSessionAttributeKeys.values().length);
-                sso.put(SsoSessionAttributeKeys.AUTHENTICATED_PRINCIPAL.toString(), principal.getId());
-                sso.put(SsoSessionAttributeKeys.AUTHENTICATION_DATE.toString(), authentication.getAuthenticationDate());
-                sso.put(SsoSessionAttributeKeys.AUTHENTICATION_DATE_FORMATTED.toString(),
+                sso.put(SsoSessionAttributeKeys.AUTHENTICATED_PRINCIPAL.getAttributeKey(), principal.getId());
+                sso.put(SsoSessionAttributeKeys.AUTHENTICATION_DATE.getAttributeKey(), authentication.getAuthenticationDate());
+                sso.put(SsoSessionAttributeKeys.AUTHENTICATION_DATE_FORMATTED.getAttributeKey(),
                     dateFormat.format(DateTimeUtils.dateOf(authentication.getAuthenticationDate())));
-                sso.put(SsoSessionAttributeKeys.NUMBER_OF_USES.toString(), tgt.getCountOfUses());
-                sso.put(SsoSessionAttributeKeys.TICKET_GRANTING_TICKET.toString(), tgt.getId());
-                sso.put(SsoSessionAttributeKeys.PRINCIPAL_ATTRIBUTES.toString(), principal.getAttributes());
-                sso.put(SsoSessionAttributeKeys.AUTHENTICATION_ATTRIBUTES.toString(), authentication.getAttributes());
+                sso.put(SsoSessionAttributeKeys.NUMBER_OF_USES.getAttributeKey(), tgt.getCountOfUses());
+                sso.put(SsoSessionAttributeKeys.TICKET_GRANTING_TICKET.getAttributeKey(), tgt.getId());
+                sso.put(SsoSessionAttributeKeys.PRINCIPAL_ATTRIBUTES.getAttributeKey(), principal.getAttributes());
+                sso.put(SsoSessionAttributeKeys.AUTHENTICATION_ATTRIBUTES.getAttributeKey(), authentication.getAttributes());
                 if (option != SsoSessionReportOptions.DIRECT) {
                     if (tgt.getProxiedBy() != null) {
-                        sso.put(SsoSessionAttributeKeys.IS_PROXIED.toString(), Boolean.TRUE);
-                        sso.put(SsoSessionAttributeKeys.PROXIED_BY.toString(), tgt.getProxiedBy().getId());
+                        sso.put(SsoSessionAttributeKeys.IS_PROXIED.getAttributeKey(), Boolean.TRUE);
+                        sso.put(SsoSessionAttributeKeys.PROXIED_BY.getAttributeKey(), tgt.getProxiedBy().getId());
                     } else {
-                        sso.put(SsoSessionAttributeKeys.IS_PROXIED.toString(), Boolean.FALSE);
+                        sso.put(SsoSessionAttributeKeys.IS_PROXIED.getAttributeKey(), Boolean.FALSE);
                     }
                 }
-                sso.put(SsoSessionAttributeKeys.AUTHENTICATED_SERVICES.toString(), tgt.getServices());
-                activeSessions.add(sso);
-            });
-        return activeSessions;
+                sso.put(SsoSessionAttributeKeys.AUTHENTICATED_SERVICES.getAttributeKey(), tgt.getServices());
+                return sso;
+            })
+            .collect(Collectors.toList());
     }
 
     /**
@@ -103,8 +109,9 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
      * @return the sso sessions
      */
     @ReadOperation
+    @SuppressFBWarnings("PSC_SUBOPTIMAL_COLLECTION_SIZING")
     public Map<String, Object> getSsoSessions(final String type) {
-        val sessionsMap = new HashMap<String, Object>(6);
+        val sessionsMap = new HashMap<String, Object>();
         val option = SsoSessionReportOptions.valueOf(type);
         val activeSsoSessions = getActiveSsoSessions(option);
         sessionsMap.put("activeSsoSessions", activeSsoSessions);
@@ -113,21 +120,21 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
         val totalUsageCount = new AtomicLong();
         val uniquePrincipals = new HashSet<Object>(activeSsoSessions.size());
         for (val activeSsoSession : activeSsoSessions) {
-            if (activeSsoSession.containsKey(SsoSessionAttributeKeys.IS_PROXIED.toString())) {
-                val isProxied = Boolean.valueOf(activeSsoSession.get(SsoSessionAttributeKeys.IS_PROXIED.toString()).toString());
+            if (activeSsoSession.containsKey(SsoSessionAttributeKeys.IS_PROXIED.getAttributeKey())) {
+                val isProxied = Boolean.valueOf(activeSsoSession.get(SsoSessionAttributeKeys.IS_PROXIED.getAttributeKey()).toString());
                 if (isProxied) {
                     totalProxyGrantingTickets.incrementAndGet();
                 } else {
                     totalTicketGrantingTickets.incrementAndGet();
-                    val principal = activeSsoSession.get(SsoSessionAttributeKeys.AUTHENTICATED_PRINCIPAL.toString()).toString();
+                    val principal = activeSsoSession.get(SsoSessionAttributeKeys.AUTHENTICATED_PRINCIPAL.getAttributeKey()).toString();
                     uniquePrincipals.add(principal);
                 }
             } else {
                 totalTicketGrantingTickets.incrementAndGet();
-                val principal = activeSsoSession.get(SsoSessionAttributeKeys.AUTHENTICATED_PRINCIPAL.toString()).toString();
+                val principal = activeSsoSession.get(SsoSessionAttributeKeys.AUTHENTICATED_PRINCIPAL.getAttributeKey()).toString();
                 uniquePrincipals.add(principal);
             }
-            val uses = Long.parseLong(activeSsoSession.get(SsoSessionAttributeKeys.NUMBER_OF_USES.toString()).toString());
+            val uses = Long.parseLong(activeSsoSession.get(SsoSessionAttributeKeys.NUMBER_OF_USES.getAttributeKey()).toString());
             totalUsageCount.getAndAdd(uses);
         }
         sessionsMap.put("totalProxyGrantingTickets", totalProxyGrantingTickets);
@@ -164,11 +171,24 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
     /**
      * Destroy sso sessions map.
      *
-     * @param type the type
+     * @param type     the type
+     * @param username the username
      * @return the map
      */
     @DeleteOperation
-    public Map<String, Object> destroySsoSessions(final String type) {
+    public Map<String, Object> destroySsoSessions(@Nullable final String type, @Nullable final String username) {
+
+        if (StringUtils.isBlank(username) && StringUtils.isBlank(type)) {
+            return Map.of(STATUS, HttpServletResponse.SC_BAD_REQUEST);
+        }
+
+        if (StringUtils.isNotBlank(username)) {
+            val sessionsMap = new HashMap<String, Object>(1);
+            val tickets = centralAuthenticationService.getTickets(ticket -> ticket instanceof TicketGrantingTicket
+                && ((TicketGrantingTicket) ticket).getAuthentication().getPrincipal().getId().equalsIgnoreCase(username));
+            tickets.forEach(ticket -> sessionsMap.put(ticket.getId(), destroySsoSession(ticket.getId())));
+            return sessionsMap;
+        }
 
         val sessionsMap = new HashMap<String, Object>();
         val failedTickets = new HashMap<String, String>();
@@ -194,11 +214,14 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
         return sessionsMap;
     }
 
+    /**
+     * The enum SSO session report options.
+     */
     @RequiredArgsConstructor
     @Getter
-    private enum SsoSessionReportOptions {
+    enum SsoSessionReportOptions {
 
-        ALL("all"), PROXIED("proxied"), DIRECT("direct");
+        ALL("ALL"), PROXIED("PROXIED"), DIRECT("DIRECT");
 
         private final String type;
     }
@@ -207,12 +230,16 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
      * The enum Sso session attribute keys.
      */
     @Getter
-    private enum SsoSessionAttributeKeys {
+    enum SsoSessionAttributeKeys {
 
-        AUTHENTICATED_PRINCIPAL("authenticated_principal"), PRINCIPAL_ATTRIBUTES("principal_attributes"),
-        AUTHENTICATION_DATE("authentication_date"), AUTHENTICATION_DATE_FORMATTED("authentication_date_formatted"),
-        TICKET_GRANTING_TICKET("ticket_granting_ticket"), AUTHENTICATION_ATTRIBUTES("authentication_attributes"),
-        PROXIED_BY("proxied_by"), AUTHENTICATED_SERVICES("authenticated_services"),
+        AUTHENTICATED_PRINCIPAL("authenticated_principal"),
+        PRINCIPAL_ATTRIBUTES("principal_attributes"),
+        AUTHENTICATION_DATE("authentication_date"),
+        AUTHENTICATION_DATE_FORMATTED("authentication_date_formatted"),
+        TICKET_GRANTING_TICKET("ticket_granting_ticket"),
+        AUTHENTICATION_ATTRIBUTES("authentication_attributes"),
+        PROXIED_BY("proxied_by"),
+        AUTHENTICATED_SERVICES("authenticated_services"),
         IS_PROXIED("is_proxied"),
         NUMBER_OF_USES("number_of_uses");
 

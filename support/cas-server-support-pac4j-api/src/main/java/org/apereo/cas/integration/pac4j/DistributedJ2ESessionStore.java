@@ -1,5 +1,6 @@
 package org.apereo.cas.integration.pac4j;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.LogoutPostProcessor;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -7,36 +8,65 @@ import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.ticket.TransientSessionTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.HttpRequestUtils;
+import org.apereo.cas.web.support.CookieUtils;
+import org.apereo.cas.web.support.gen.CookieRetrievingCookieGenerator;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.pac4j.core.context.JEEContext;
-import org.pac4j.core.context.session.JEESessionStore;
+import org.pac4j.core.context.session.SessionStore;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpSessionEvent;
-import javax.servlet.http.HttpSessionListener;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * This is {@link DistributedJ2ESessionStore}.
  *
  * @author Misagh Moayyed
+ * @author Jerome LELEU
  * @since 6.1.0
  */
 @Transactional(transactionManager = "ticketTransactionManager")
-@RequiredArgsConstructor
 @Slf4j
-public class DistributedJ2ESessionStore extends JEESessionStore implements HttpSessionListener, LogoutPostProcessor {
+public class DistributedJ2ESessionStore implements SessionStore<JEEContext>, LogoutPostProcessor {
+    private static final String SESSION_ID_IN_REQUEST_ATTRIBUTE = "sessionIdInRequestAttribute";
+
     private final TicketRegistry ticketRegistry;
+
     private final TicketFactory ticketFactory;
-    private final String sessionCookieName;
+
+    private final CookieRetrievingCookieGenerator cookieGenerator;
+
+    public DistributedJ2ESessionStore(final TicketRegistry ticketRegistry, final TicketFactory ticketFactory,
+                                      final CasConfigurationProperties casProperties) {
+        this.ticketRegistry = ticketRegistry;
+        this.ticketFactory = ticketFactory;
+        val context = CookieUtils.buildCookieGenerationContext(casProperties.getSessionReplication().getCookie());
+        this.cookieGenerator = new CookieRetrievingCookieGenerator(context);
+    }
+
+    @Override
+    public String getOrCreateSessionId(final JEEContext context) {
+        var sessionId = (String) context.getRequestAttribute(SESSION_ID_IN_REQUEST_ATTRIBUTE).orElse(null);
+        if (sessionId == null) {
+            sessionId = cookieGenerator.retrieveCookieValue(context.getNativeRequest());
+        }
+        LOGGER.trace("Retrieved sessionId: [{}}", sessionId);
+        if (sessionId == null) {
+            sessionId = UUID.randomUUID().toString();
+            LOGGER.debug("Generated sessionId: [{}]", sessionId);
+            cookieGenerator.addCookie(context.getNativeRequest(), context.getNativeResponse(), sessionId);
+            context.setRequestAttribute(SESSION_ID_IN_REQUEST_ATTRIBUTE, sessionId);
+        }
+        return sessionId;
+    }
 
     @Override
     public Optional get(final JEEContext context, final String key) {
+        LOGGER.trace("Getting key: [{}]", key);
         val ticket = getTransientSessionTicketForSession(context);
         if (ticket == null) {
             return Optional.empty();
@@ -46,15 +76,15 @@ public class DistributedJ2ESessionStore extends JEESessionStore implements HttpS
 
     @Override
     public void set(final JEEContext context, final String key, final Object value) {
-        val transientFactory = (TransientSessionTicketFactory) this.ticketFactory.get(TransientSessionTicket.class);
-        val id = getOrCreateSessionId(context);
+        LOGGER.trace("Setting key: [{}]", key);
+        val sessionId = getOrCreateSessionId(context);
 
         val properties = new HashMap<String, Serializable>();
         if (value instanceof Serializable) {
             properties.put(key, (Serializable) value);
         } else if (value != null) {
             LOGGER.trace("Object value [{}] assigned to [{}] is not serializable and may not be part of the ticket [{}]",
-                value, key, id);
+                value, key, sessionId);
         }
 
         var ticket = getTransientSessionTicketForSession(context);
@@ -62,7 +92,8 @@ public class DistributedJ2ESessionStore extends JEESessionStore implements HttpS
             ticket.getProperties().remove(key);
             this.ticketRegistry.updateTicket(ticket);
         } else if (ticket == null) {
-            ticket = transientFactory.create(id, properties);
+            val transientFactory = (TransientSessionTicketFactory) this.ticketFactory.get(TransientSessionTicket.class);
+            ticket = transientFactory.create(sessionId, properties);
             this.ticketRegistry.addTicket(ticket);
         } else {
             ticket.getProperties().putAll(properties);
@@ -70,54 +101,59 @@ public class DistributedJ2ESessionStore extends JEESessionStore implements HttpS
         }
     }
 
-    private TransientSessionTicket getTransientSessionTicketForSession(final JEEContext context) {
-        String id = null;
-        val cookies = context.getRequestCookies();
-        if (cookies != null && !cookies.isEmpty()) {
-            id = cookies.stream().filter(c -> this.sessionCookieName.equals(c.getName())).map(c -> c.getValue()).findFirst().orElse(null);
+    @Override
+    public boolean destroySession(final JEEContext context) {
+        try {
+            val sessionId = getOrCreateSessionId(context);
+            val ticketId = TransientSessionTicketFactory.normalizeTicketId(sessionId);
+            this.ticketRegistry.deleteTicket(ticketId);
+            cookieGenerator.removeCookie(context.getNativeResponse());
+            LOGGER.trace("Removes session cookie and ticket: [{}]", ticketId);
+            return true;
+        } catch (final Exception e) {
+            LOGGER.trace(e.getMessage(), e);
+            return false;
         }
-        if (id != null) {
-            LOGGER.trace("Session identifier found from {} cookie [{}]", this.sessionCookieName, id);
-        } else {
-            id = getOrCreateSessionId(context);
-            LOGGER.trace("Session identifier created for HTTP session [{}]", id);
-        }
-        val ticketId = TransientSessionTicketFactory.normalizeTicketId(id);
+    }
 
-        LOGGER.trace("Fetching session ticket via identifier [{}]", ticketId);
+    @Override
+    public Optional getTrackableSession(final JEEContext context) {
+        val sessionId = getOrCreateSessionId(context);
+        LOGGER.trace("Track sessionId: [{}]", sessionId);
+        return Optional.of(sessionId);
+    }
+
+    @Override
+    public Optional<SessionStore<JEEContext>> buildFromTrackableSession(final JEEContext context, final Object trackableSession) {
+        context.setRequestAttribute(SESSION_ID_IN_REQUEST_ATTRIBUTE, trackableSession);
+        LOGGER.trace("Force sessionId: [{}]", trackableSession);
+        return Optional.of(this);
+    }
+
+    @Override
+    public boolean renewSession(final JEEContext context) {
+        return false;
+    }
+
+    private TransientSessionTicket getTransientSessionTicketForSession(final JEEContext context) {
+        val sessionId = getOrCreateSessionId(context);
+        val ticketId = TransientSessionTicketFactory.normalizeTicketId(sessionId);
+
+        LOGGER.trace("fetching ticket: {}", ticketId);
         val ticket = this.ticketRegistry.getTicket(ticketId, TransientSessionTicket.class);
         if (ticket == null || ticket.isExpired()) {
-            LOGGER.trace("The expiration policy for ticket id [{}] has expired the ticket", ticketId);
+            LOGGER.trace("Ticket [{}] does not exist or is expired", ticketId);
             return null;
         }
         return ticket;
     }
 
     @Override
-    public void sessionDestroyed(final HttpSessionEvent se) {
-        val id = se.getSession().getId();
-        removeSessionTicket(id);
-    }
-
-    /**
-     * Remove session ticket.
-     *
-     * @param id the id
-     */
-    private void removeSessionTicket(final String id) {
-        val ticketId = TransientSessionTicketFactory.normalizeTicketId(id);
-        this.ticketRegistry.deleteTicket(ticketId);
-    }
-
-    @Override
     public void handle(final TicketGrantingTicket ticketGrantingTicket) {
-        try {
-            val request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
-            val response = HttpRequestUtils.getHttpServletResponseFromRequestAttributes();
-            val id = getOrCreateSessionId(new JEEContext(request, response, this));
-            removeSessionTicket(id);
-        } catch (final Exception e) {
-            LOGGER.trace(e.getMessage(), e);
+        val request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
+        val response = HttpRequestUtils.getHttpServletResponseFromRequestAttributes();
+        if (request != null && response != null) {
+            destroySession(new JEEContext(request, response, this));
         }
     }
 }
