@@ -28,7 +28,7 @@ import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class CloudWatchAppenderTests {
+public class CloudWatchAppenderSpecTests {
     @Test
     @DisplayName("make sure that log4j plugin file is generated")
     public void fileGenerated() {
