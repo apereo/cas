@@ -120,6 +120,10 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator<U
             LOGGER.debug("Skipping Client credential authentication to use password authentication");
             return false;
         }
+        if (grantType.isPresent() && OAuth20Utils.isGrantType(grantType.get(), OAuth20GrantTypes.REFRESH_TOKEN)) {
+            LOGGER.debug("Skipping Client credential authentication to use refresh_token authentication");
+            return false;
+        }
 
         val code = context.getRequestParameter(OAuth20Constants.CODE);
 
