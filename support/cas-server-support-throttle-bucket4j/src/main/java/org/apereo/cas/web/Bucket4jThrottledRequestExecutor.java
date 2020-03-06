@@ -53,8 +53,9 @@ public class Bucket4jThrottledRequestExecutor implements ThrottledRequestExecuto
             if (this.blocking) {
                 LOGGER.trace("Attempting to consume a token for the authentication attempt");
                 result = !this.bucket.tryConsume(1, MAX_WAIT_NANOS, BlockingStrategy.PARKING);
+            } else {
+                result = !this.bucket.tryConsume(1);
             }
-            result = !this.bucket.tryConsume(1);
         } catch (final InterruptedException e) {
             LOGGER.error(e.getMessage(), e);
             Thread.currentThread().interrupt();
