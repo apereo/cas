@@ -11,7 +11,7 @@ import org.junit.runner.RunWith;
  * @since 6.2.0
  */
 @SelectClasses({
-    CasSpringBootAdminServerBanner.class,
+    CasSpringBootAdminServerBannerTests.class,
     CasSpringBootAdminServerServletInitializerTests.class
 })
 @RunWith(JUnitPlatform.class)
