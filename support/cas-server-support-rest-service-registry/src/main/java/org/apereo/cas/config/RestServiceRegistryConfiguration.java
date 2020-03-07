@@ -1,6 +1,8 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.DefaultRegisteredServiceEntityMapper;
+import org.apereo.cas.services.RegisteredServiceEntityMapper;
 import org.apereo.cas.services.RestfulServiceRegistry;
 import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
@@ -34,6 +36,7 @@ import java.util.Collection;
  */
 @Configuration("restServiceRegistryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ConditionalOnProperty(name = "cas.serviceRegistry.rest.url")
 public class RestServiceRegistryConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -47,8 +50,14 @@ public class RestServiceRegistryConfiguration {
 
     @Bean
     @RefreshScope
+    @ConditionalOnMissingBean(name = "registeredServiceEntityMapper")
+    public RegisteredServiceEntityMapper registeredServiceEntityMapper() {
+        return new DefaultRegisteredServiceEntityMapper();
+    }
+
+    @Bean
+    @RefreshScope
     @SneakyThrows
-    @ConditionalOnProperty(name = "cas.serviceRegistry.rest.url")
     public ServiceRegistry restfulServiceRegistry() {
         val registry = casProperties.getServiceRegistry().getRest();
         val restTemplate = new RestTemplate();
@@ -62,9 +71,15 @@ public class RestServiceRegistryConfiguration {
         headers.add("Content-Type", MediaType.APPLICATION_JSON_VALUE);
         headers.add("Accept", MediaType.APPLICATION_JSON_VALUE);
 
-        return new RestfulServiceRegistry(applicationContext, restTemplate, registry.getUrl(), headers, serviceRegistryListeners.getObject());
+        return new RestfulServiceRegistry(applicationContext,
+            restTemplate,
+            registry.getUrl(),
+            headers,
+            serviceRegistryListeners.getObject(),
+            registeredServiceEntityMapper());
     }
 
+    @RefreshScope
     @Bean
     @ConditionalOnMissingBean(name = "restfulServiceRegistryExecutionPlanConfigurer")
     public ServiceRegistryExecutionPlanConfigurer restfulServiceRegistryExecutionPlanConfigurer() {
