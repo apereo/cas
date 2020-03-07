@@ -40,4 +40,6 @@ dependencies {
     testImplementation project(":core:cas-server-core-cookie")
     testImplementation project(":core:cas-server-core-web")
     testImplementation project(":core:cas-server-core-util")
+
+    testImplementation libraries.unboundid_ldapsdk
 }
