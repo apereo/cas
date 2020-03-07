@@ -3,6 +3,7 @@ package org.apereo.cas.mfa.accepto;
 import org.apereo.cas.mfa.accepto.web.flow.AccepttoMultifactorFetchChannelActionTests;
 import org.apereo.cas.mfa.accepto.web.flow.AccepttoMultifactorValidateChannelActionTests;
 import org.apereo.cas.mfa.accepto.web.flow.qr.AccepttoQRCodeAuthenticationHandlerTests;
+import org.apereo.cas.mfa.accepto.web.flow.qr.AccepttoQRCodeValidateWebSocketChannelActionTests;
 
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
@@ -17,6 +18,8 @@ import org.junit.runner.RunWith;
 @SelectClasses({
     AccepttoMultifactorAuthenticationHandlerTests.class,
     AccepttoQRCodeAuthenticationHandlerTests.class,
+    AccepttoApiUtilsTests.class,
+    AccepttoQRCodeValidateWebSocketChannelActionTests.class,
     AccepttoMultifactorFetchChannelActionTests.class,
     AccepttoMultifactorValidateChannelActionTests.class
 })

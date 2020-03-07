@@ -5,9 +5,9 @@ import java.io.Serializable;
 /**
  * This is {@link RegisteredServiceEntityMapper}.
  *
+ * @author Misagh Moayyed
  * @param <R> the type parameter
  * @param <M> the type parameter
- * @author Misagh Moayyed
  * @since 6.2.0
  */
 public interface RegisteredServiceEntityMapper<R extends RegisteredService, M extends Serializable> {
