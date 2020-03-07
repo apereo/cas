@@ -1695,6 +1695,10 @@ ext.libraries = [
                     exclude(module: "commons-io")
                     force = true
                 },
+                dependencies.create("com.github.kstyrc:embedded-redis:$embeddedRedisVersion") {
+                    exclude(module: "commons-io")
+                    force = true
+                },
                 dependencies.create("org.mockito:mockito-core:$mockitoVersion") {
                     exclude(group: "org.hamcrest", module: "hamcrest-core")
                     exclude(group: "org.objenesis", module: "objenesis")

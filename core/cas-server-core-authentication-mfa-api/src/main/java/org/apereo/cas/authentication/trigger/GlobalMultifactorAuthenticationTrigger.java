@@ -88,6 +88,12 @@ public class GlobalMultifactorAuthenticationTrigger implements MultifactorAuthen
             throw new MultifactorAuthenticationProviderAbsentException(message);
         }
 
+        if (resolvedProviders.size() == 1) {
+            val provider = resolvedProviders.get(0);
+            LOGGER.debug("Resolved single multifactor provider [{}]", provider);
+            return Optional.of(provider);
+        }
+
         val principal = authentication.getPrincipal();
         val provider = multifactorAuthenticationProviderSelector.resolve(resolvedProviders, registeredService, principal);
         LOGGER.debug("Selected multifactor authentication provider for this transaction is [{}]", provider);
