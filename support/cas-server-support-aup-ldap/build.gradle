@@ -33,4 +33,6 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-tickets", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
+
+    testImplementation libraries.unboundid_ldapsdk
 }
