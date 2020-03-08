@@ -19,6 +19,7 @@ import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
+import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
@@ -126,7 +127,9 @@ public class AuthyConfiguration {
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer authyMultifactorWebflowConfigurer() {
         return new AuthyMultifactorWebflowConfigurer(flowBuilderServices.getObject(),
-            loginFlowDefinitionRegistry.getObject(), authyAuthenticatorFlowRegistry(), applicationContext, casProperties);
+            loginFlowDefinitionRegistry.getObject(), authyAuthenticatorFlowRegistry(),
+            applicationContext, casProperties,
+            MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
     }
 
     @RefreshScope
@@ -156,10 +159,12 @@ public class AuthyConfiguration {
             val deviceRegistrationEnabled = casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled();
             return new AuthyMultifactorTrustWebflowConfigurer(flowBuilderServices.getObject(),
                 loginFlowDefinitionRegistry.getObject(), deviceRegistrationEnabled,
-                authyAuthenticatorFlowRegistry(), applicationContext, casProperties);
+                authyAuthenticatorFlowRegistry(), applicationContext, casProperties,
+                MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
         }
 
         @Bean
+        @ConditionalOnMissingBean(name = "authyMultifactorTrustCasWebflowExecutionPlanConfigurer")
         public CasWebflowExecutionPlanConfigurer authyMultifactorTrustCasWebflowExecutionPlanConfigurer() {
             return plan -> plan.registerWebflowConfigurer(authyMultifactorTrustWebflowConfigurer());
         }

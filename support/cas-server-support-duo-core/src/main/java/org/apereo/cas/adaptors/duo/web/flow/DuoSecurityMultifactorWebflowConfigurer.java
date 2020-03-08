@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorProp
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.configurer.AbstractMultifactorTrustedDeviceWebflowConfigurer;
+import org.apereo.cas.web.flow.configurer.CasMultifactorWebflowCustomizer;
 import org.apereo.cas.web.flow.configurer.DynamicFlowModelBuilder;
 
 import lombok.extern.slf4j.Slf4j;
@@ -70,9 +71,11 @@ public class DuoSecurityMultifactorWebflowConfigurer extends AbstractMultifactor
                                                    final FlowDefinitionRegistry loginFlowDefinitionRegistry,
                                                    final boolean enableDeviceRegistration,
                                                    final ConfigurableApplicationContext applicationContext,
-                                                   final CasConfigurationProperties casProperties) {
+                                                   final CasConfigurationProperties casProperties,
+                                                   final List<CasMultifactorWebflowCustomizer> mfaFlowCustomizers) {
         super(flowBuilderServices, loginFlowDefinitionRegistry,
-            enableDeviceRegistration, applicationContext, casProperties, Optional.empty());
+            enableDeviceRegistration, applicationContext, casProperties, Optional.empty(),
+            mfaFlowCustomizers);
     }
 
     private static void createDuoFlowStates(final DynamicFlowModelBuilder modelBuilder) {

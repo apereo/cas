@@ -29,6 +29,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
+import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -157,7 +158,8 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
             loginFlowDefinitionRegistry.getObject(),
             deviceRegistrationEnabled,
             applicationContext,
-            casProperties);
+            casProperties,
+            MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
     }
 
     private AuthenticationMetaDataPopulator duoAuthenticationMetaDataPopulator(final AuthenticationHandler authenticationHandler) {

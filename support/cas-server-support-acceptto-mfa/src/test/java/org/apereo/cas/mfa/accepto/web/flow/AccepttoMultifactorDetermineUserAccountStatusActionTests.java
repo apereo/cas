@@ -44,9 +44,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("RestfulApi")
-@SpringBootTest(classes = {
-    BaseAcceptoMultifactorAuthenticationTests.SharedTestConfiguration.class
-},
+@SpringBootTest(classes = BaseAcceptoMultifactorAuthenticationTests.SharedTestConfiguration.class,
     properties = {
         "cas.authn.mfa.acceptto.registrationApiUrl=http://localhost:5013",
         "cas.authn.mfa.acceptto.application-id=thisisatestid",
@@ -63,7 +61,6 @@ public class AccepttoMultifactorDetermineUserAccountStatusActionTests {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-
 
     @Test
     public void verifyOperationRegister() throws Exception {

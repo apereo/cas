@@ -493,9 +493,22 @@ public interface CasWebflowConstants {
     String STATE_ID_OPEN_ID_SINGLE_SIGN_ON_ACTION = "openIdSingleSignOnAction";
 
     /**
-     * The view id 'registerDeviceView'.
+     * The state id 'registerDeviceView'.
      */
     String STATE_ID_REGISTER_DEVICE = "registerDeviceView";
+
+    /**
+     * The state id 'spnego'.
+     */
+    String STATE_ID_SPNEGO = "spnego";
+    /**
+     * The state id 'startSpnegoAuthenticate'.
+     */
+    String STATE_ID_START_SPNEGO_AUTHENTICATE = "startSpnegoAuthenticate";
+    /**
+     * The state id 'evaluateClientRequest'.
+     */
+    String STATE_ID_EVALUATE_SPNEGO_CLIENT = "evaluateClientRequest";
 
     /*
      ****************************************
@@ -756,7 +769,13 @@ public interface CasWebflowConstants {
 
     /**
      * Action id 'openIdSingleSignOnAction .
+     * @deprecated Since 6.2
      */
+    @Deprecated
     String ACTION_ID_OPEN_ID_SINGLE_SIGN_ON_ACTION = "openIdSingleSignOnAction";
 
+    /**
+     * Action id 'negociateSpnego .
+     */
+    String ACTION_ID_SPNEGO_NEGOTIATE = "negociateSpnego";
 }

@@ -20,6 +20,7 @@ import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
+import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
@@ -108,7 +109,8 @@ public class SwivelConfiguration {
     public CasWebflowConfigurer swivelMultifactorWebflowConfigurer() {
         return new SwivelMultifactorWebflowConfigurer(flowBuilderServices.getObject(),
             loginFlowDefinitionRegistry.getObject(),
-            swivelAuthenticatorFlowRegistry(), applicationContext, casProperties);
+            swivelAuthenticatorFlowRegistry(), applicationContext, casProperties,
+            MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
     }
 
     @Bean
@@ -163,7 +165,8 @@ public class SwivelConfiguration {
             return new SwivelMultifactorTrustWebflowConfigurer(flowBuilderServices.getObject(),
                 loginFlowDefinitionRegistry.getObject(),
                 casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled(),
-                swivelAuthenticatorFlowRegistry(), applicationContext, casProperties);
+                swivelAuthenticatorFlowRegistry(), applicationContext, casProperties,
+                MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
         }
 
         @Bean

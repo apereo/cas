@@ -16,6 +16,7 @@ import org.apereo.cas.util.io.CommunicationsManager;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
+import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 
 import lombok.val;
 import org.springframework.beans.factory.BeanCreationException;
@@ -84,7 +85,8 @@ public class CasSimpleMultifactorAuthenticationConfiguration {
     public CasWebflowConfigurer mfaSimpleMultifactorWebflowConfigurer() {
         return new CasSimpleMultifactorWebflowConfigurer(flowBuilderServices.getObject(),
             loginFlowDefinitionRegistry.getObject(),
-            mfaSimpleAuthenticatorFlowRegistry(), applicationContext, casProperties);
+            mfaSimpleAuthenticatorFlowRegistry(), applicationContext, casProperties,
+            MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
     }
 
     @Bean
@@ -144,7 +146,8 @@ public class CasSimpleMultifactorAuthenticationConfiguration {
                 loginFlowDefinitionRegistry.getObject(),
                 casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled(),
                 mfaSimpleAuthenticatorFlowRegistry(),
-                applicationContext, casProperties);
+                applicationContext, casProperties,
+                MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
         }
 
         @Bean
