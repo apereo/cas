@@ -36,6 +36,7 @@ import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
+import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -145,7 +146,8 @@ public class AccepttoMultifactorAuthenticationConfiguration {
     public CasWebflowConfigurer mfaAccepttoMultifactorWebflowConfigurer() {
         return new AccepttoMultifactorWebflowConfigurer(flowBuilderServices.getObject(),
             loginFlowDefinitionRegistry.getObject(),
-            mfaAccepttoAuthenticatorFlowRegistry(), applicationContext, casProperties);
+            mfaAccepttoAuthenticatorFlowRegistry(), applicationContext, casProperties,
+            MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
     }
 
     @ConditionalOnMissingBean(name = "mfaAccepttoCasWebflowExecutionPlanConfigurer")

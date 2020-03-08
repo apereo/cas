@@ -22,6 +22,7 @@ import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
+import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -119,7 +120,9 @@ public class YubiKeyConfiguration {
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer yubikeyMultifactorWebflowConfigurer() {
         return new YubiKeyMultifactorWebflowConfigurer(flowBuilderServices.getObject(),
-            loginFlowDefinitionRegistry.getObject(), yubikeyFlowRegistry(), applicationContext, casProperties);
+            loginFlowDefinitionRegistry.getObject(), yubikeyFlowRegistry(),
+            applicationContext, casProperties,
+            MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
     }
 
     @Bean
@@ -179,7 +182,8 @@ public class YubiKeyConfiguration {
             return new YubiKeyMultifactorTrustWebflowConfigurer(flowBuilderServices.getObject(),
                 deviceRegistrationEnabled, yubikeyFlowRegistry(),
                 loginFlowDefinitionRegistry.getObject(),
-                applicationContext, casProperties);
+                applicationContext, casProperties,
+                MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
         }
 
         @Bean

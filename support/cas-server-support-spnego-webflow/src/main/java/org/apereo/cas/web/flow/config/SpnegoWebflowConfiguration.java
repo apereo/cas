@@ -3,13 +3,16 @@ package org.apereo.cas.web.flow.config;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
+import org.apereo.cas.web.flow.SpnegoCasMultifactorWebflowCustomizer;
 import org.apereo.cas.web.flow.SpnegoWebflowConfigurer;
+import org.apereo.cas.web.flow.configurer.CasMultifactorWebflowCustomizer;
 
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -49,7 +52,15 @@ public class SpnegoWebflowConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "spnegoCasMultifactorWebflowCustomizer")
+    @RefreshScope
+    public CasMultifactorWebflowCustomizer spnegoCasMultifactorWebflowCustomizer() {
+        return new SpnegoCasMultifactorWebflowCustomizer();
+    }
+
+    @Bean
     @ConditionalOnMissingBean(name = "spnegoCasWebflowExecutionPlanConfigurer")
+    @RefreshScope
     public CasWebflowExecutionPlanConfigurer spnegoCasWebflowExecutionPlanConfigurer() {
         return plan -> plan.registerWebflowConfigurer(spnegoWebflowConfigurer());
     }

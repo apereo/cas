@@ -7,6 +7,7 @@ import org.apereo.cas.trusted.config.MultifactorAuthnTrustConfiguration;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
+import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
@@ -63,7 +64,8 @@ public class GoogleAuthenticatorConfiguration {
     public CasWebflowConfigurer googleAuthenticatorMultifactorWebflowConfigurer() {
         return new GoogleAuthenticatorMultifactorWebflowConfigurer(flowBuilderServices.getObject(),
             loginFlowDefinitionRegistry.getObject(),
-            googleAuthenticatorFlowRegistry(), applicationContext, casProperties);
+            googleAuthenticatorFlowRegistry(), applicationContext, casProperties,
+            MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
     }
 
     @Bean
@@ -87,7 +89,8 @@ public class GoogleAuthenticatorConfiguration {
             return new GoogleAuthenticatorMultifactorTrustWebflowConfigurer(flowBuilderServices.getObject(),
                 loginFlowDefinitionRegistry.getObject(),
                 casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled(), googleAuthenticatorFlowRegistry(),
-                applicationContext, casProperties);
+                applicationContext, casProperties,
+                MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
         }
 
         @Bean
