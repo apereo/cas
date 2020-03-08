@@ -11,7 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
- * this is {@link GlibcCryptPasswordEncoder}.
+ * This is {@link GlibcCryptPasswordEncoder}.
  *
  * @author Martin Böhmer
  * @since 5.3.10

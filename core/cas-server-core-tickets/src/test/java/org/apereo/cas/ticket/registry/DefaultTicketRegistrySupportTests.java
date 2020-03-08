@@ -6,7 +6,6 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 
 import lombok.val;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 
 import java.util.List;
 import java.util.Map;

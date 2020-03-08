@@ -2,26 +2,11 @@ package org.apereo.cas.util;
 
 import lombok.val;
 import org.junit.jupiter.api.Test;
-import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.Resource;
-
-import java.nio.charset.StandardCharsets;
-
-import static org.junit.jupiter.api.Assertions.*;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.AfterEach;
 import org.springframework.core.io.UrlResource;
 
-import static org.apereo.cas.util.junit.Assertions.*;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.*;
-
-import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -35,7 +20,8 @@ public class ResourceUtilsTests {
     public void verifyResourceExists() {
         assertFalse(ResourceUtils.doesResourceExist(new FileSystemResource("invalid.json")));
         assertFalse(ResourceUtils.doesResourceExist("invalid.json"));
-        assertTrue(ResourceUtils.doesResourceExist("classpath:valid.json", new DefaultResourceLoader(ResourceUtilsTests.class.getClassLoader())));
+        assertTrue(ResourceUtils.doesResourceExist("classpath:valid.json",
+            new DefaultResourceLoader(ResourceUtilsTests.class.getClassLoader())));
     }
 
     @Test
