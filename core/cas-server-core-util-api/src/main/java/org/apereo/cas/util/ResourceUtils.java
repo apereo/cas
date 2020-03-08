@@ -173,8 +173,7 @@ public class ResourceUtils {
         val url = org.springframework.util.ResourceUtils.extractArchiveURL(resource.getURL());
         val file = org.springframework.util.ResourceUtils.getFile(url);
 
-        val casDirectory = new File(FileUtils.getTempDirectory(), "cas");
-        val destination = new File(casDirectory, Objects.requireNonNull(resource.getFilename()));
+        val destination = new File(FileUtils.getTempDirectory(), Objects.requireNonNull(resource.getFilename()));
         if (isDirectory) {
             LOGGER.trace("Creating resource directory [{}]", destination);
             FileUtils.forceMkdir(destination);

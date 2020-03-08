@@ -9,6 +9,7 @@ import org.springframework.beans.factory.DisposableBean;
 import java.io.Closeable;
 import java.io.File;
 import java.nio.file.ClosedWatchServiceException;
+import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
@@ -59,7 +60,7 @@ public class PathWatcherService implements WatcherService, Runnable, Closeable, 
         this.onCreate = onCreate;
         this.onModify = onModify;
         this.onDelete = onDelete;
-        this.watcher = watchablePath.getFileSystem().newWatchService();
+        this.watcher = FileSystems.getDefault().newWatchService();
         LOGGER.trace("Created service registry watcher for events of type [{}]", Arrays.stream(KINDS)
             .map(WatchEvent.Kind::name)
             .collect(Collectors.joining(",")));
