@@ -190,6 +190,7 @@ public class AccepttoMultifactorAuthenticationConfiguration {
 
     @Bean
     @RefreshScope
+    @ConditionalOnMissingBean(name = "mfaAccepttoApiPublicKey")
     public PublicKey mfaAccepttoApiPublicKey() throws Exception {
         val props = casProperties.getAuthn().getMfa().getAcceptto();
         val location = props.getRegistrationApiPublicKey().getLocation();
