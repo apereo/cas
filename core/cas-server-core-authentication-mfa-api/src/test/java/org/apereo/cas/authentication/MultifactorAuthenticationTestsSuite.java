@@ -12,6 +12,7 @@ import org.apereo.cas.authentication.mfa.trigger.AuthenticationAttributeMultifac
 import org.apereo.cas.authentication.mfa.trigger.GlobalMultifactorAuthenticationTriggerTests;
 import org.apereo.cas.authentication.mfa.trigger.GroovyScriptMultifactorAuthenticationTriggerTests;
 import org.apereo.cas.authentication.mfa.trigger.HttpRequestMultifactorAuthenticationTriggerTests;
+import org.apereo.cas.authentication.mfa.trigger.PredicatedPrincipalAttributeMultifactorAuthenticationTriggerTests;
 import org.apereo.cas.authentication.mfa.trigger.PrincipalAttributeMultifactorAuthenticationTriggerTests;
 import org.apereo.cas.authentication.mfa.trigger.RegisteredServiceMultifactorAuthenticationTriggerTests;
 import org.apereo.cas.authentication.mfa.trigger.RegisteredServicePrincipalAttributeMultifactorAuthenticationTriggerTests;
@@ -38,6 +39,7 @@ import org.junit.runner.RunWith;
     AdaptiveMultifactorAuthenticationTriggerTests.class,
     GlobalMultifactorAuthenticationTriggerTests.class,
     MultifactorAuthenticationUtilsTests.class,
+    PredicatedPrincipalAttributeMultifactorAuthenticationTriggerTests.class,
     ScriptedRegisteredServiceMultifactorAuthenticationTriggerTests.class,
     RegisteredServiceMultifactorAuthenticationTriggerTests.class,
     RegisteredServicePrincipalAttributeMultifactorAuthenticationTriggerTests.class,

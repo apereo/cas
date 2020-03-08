@@ -22,7 +22,9 @@ public class GlibcCryptPasswordEncoder implements PasswordEncoder {
     private static final int SALT_LENGTH = 8;
 
     private final String encodingAlgorithm;
+
     private final int strength;
+
     private String secret;
 
     @Override
