@@ -20,6 +20,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.core.Ordered;
 
 import javax.servlet.http.HttpServletRequest;
+
 import java.util.Optional;
 
 import static org.springframework.util.StringUtils.commaDelimitedListToSet;
@@ -36,7 +37,9 @@ import static org.springframework.util.StringUtils.commaDelimitedListToSet;
 @RequiredArgsConstructor
 public class AuthenticationAttributeMultifactorAuthenticationTrigger implements MultifactorAuthenticationTrigger {
     private final CasConfigurationProperties casProperties;
+
     private final MultifactorAuthenticationProviderResolver multifactorAuthenticationProviderResolver;
+
     private final ApplicationContext applicationContext;
 
     private int order = Ordered.LOWEST_PRECEDENCE;
@@ -69,7 +72,8 @@ public class AuthenticationAttributeMultifactorAuthenticationTrigger implements 
         if (providers.size() == 1 && StringUtils.isNotBlank(globalAuthenticationAttributeValueRegex)) {
             val provider = providers.iterator().next();
             LOGGER.debug("Found a single multifactor provider [{}] in the application context", provider);
-            val result = multifactorAuthenticationProviderResolver.resolveEventViaAuthenticationAttribute(authentication, attributeNames, registeredService, Optional.empty(), providers,
+            val result = multifactorAuthenticationProviderResolver.resolveEventViaAuthenticationAttribute(
+                authentication, attributeNames, registeredService, Optional.empty(), providers,
                 input -> input != null && input.matches(globalAuthenticationAttributeValueRegex));
             if (result != null && !result.isEmpty()) {
                 return Optional.of(provider);

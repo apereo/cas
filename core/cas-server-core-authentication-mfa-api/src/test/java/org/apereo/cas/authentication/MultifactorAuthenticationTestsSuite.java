@@ -18,6 +18,7 @@ import org.apereo.cas.authentication.mfa.trigger.RegisteredServiceMultifactorAut
 import org.apereo.cas.authentication.mfa.trigger.RegisteredServicePrincipalAttributeMultifactorAuthenticationTriggerTests;
 import org.apereo.cas.authentication.mfa.trigger.RestEndpointMultifactorAuthenticationTriggerTests;
 import org.apereo.cas.authentication.mfa.trigger.ScriptedRegisteredServiceMultifactorAuthenticationTriggerTests;
+import org.apereo.cas.authentication.mfa.trigger.TimedMultifactorAuthenticationTriggerTests;
 
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
@@ -39,6 +40,7 @@ import org.junit.runner.RunWith;
     AdaptiveMultifactorAuthenticationTriggerTests.class,
     GlobalMultifactorAuthenticationTriggerTests.class,
     MultifactorAuthenticationUtilsTests.class,
+    TimedMultifactorAuthenticationTriggerTests.class,
     PredicatedPrincipalAttributeMultifactorAuthenticationTriggerTests.class,
     ScriptedRegisteredServiceMultifactorAuthenticationTriggerTests.class,
     RegisteredServiceMultifactorAuthenticationTriggerTests.class,
