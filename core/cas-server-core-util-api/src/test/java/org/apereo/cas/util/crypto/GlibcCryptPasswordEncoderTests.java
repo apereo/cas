@@ -17,6 +17,25 @@ public class GlibcCryptPasswordEncoderTests {
 
     private static final String PASSWORD_CLEAR = "12345abcDEF!$";
 
+    private static boolean testEncodingRoundtrip(final String algorithm) {
+        val encoder = new GlibcCryptPasswordEncoder(algorithm, 0, null);
+
+        val passwordHash = encoder.encode(PASSWORD_CLEAR);
+        LOGGER.debug("Password [{}] was encoded by algorithm [{}] to hash [{}]", PASSWORD_CLEAR, algorithm, passwordHash);
+
+        val match = encoder.matches(PASSWORD_CLEAR, passwordHash);
+        LOGGER.debug("Does password [{}] match original password [{}]: [{}]", passwordHash, PASSWORD_CLEAR, match);
+
+        return match;
+    }
+
+    private static boolean testMatchWithDifferentSalt(final String algorithm, final String encodedPassword) {
+        val encoder = new GlibcCryptPasswordEncoder(algorithm, 0, null);
+        val match = encoder.matches(PASSWORD_CLEAR, encodedPassword);
+        LOGGER.debug("Does password [{}] match original password [{}]: [{}]", encodedPassword, PASSWORD_CLEAR, match);
+        return match;
+    }
+
     @Test
     public void sha512EncodingTest() {
         assertTrue(testEncodingRoundtrip("SHA-512"));
@@ -43,25 +62,6 @@ public class GlibcCryptPasswordEncoderTests {
         assertTrue(testEncodingRoundtrip("aB"));
         assertTrue(testEncodingRoundtrip("42xyz"));
         assertTrue(testMatchWithDifferentSalt("aB", "aB4fMcNOggJoQ"));
-    }
-
-    private static boolean testEncodingRoundtrip(final String algorithm) {
-        val encoder = new GlibcCryptPasswordEncoder(algorithm, 0, null);
-
-        val passwordHash = encoder.encode(PASSWORD_CLEAR);
-        LOGGER.debug("Password [{}] was encoded by algorithm [{}] to hash [{}]", PASSWORD_CLEAR, algorithm, passwordHash);
-
-        val match = encoder.matches(PASSWORD_CLEAR, passwordHash);
-        LOGGER.debug("Does password [{}] match original password [{}]: [{}]", passwordHash, PASSWORD_CLEAR, match);
-
-        return match;
-    }
-
-    private static boolean testMatchWithDifferentSalt(final String algorithm, final String encodedPassword) {
-        val encoder = new GlibcCryptPasswordEncoder(algorithm, 0, null);
-        val match = encoder.matches(PASSWORD_CLEAR, encodedPassword);
-        LOGGER.debug("Does password [{}] match original password [{}]: [{}]", encodedPassword, PASSWORD_CLEAR, match);
-        return match;
     }
 
 }

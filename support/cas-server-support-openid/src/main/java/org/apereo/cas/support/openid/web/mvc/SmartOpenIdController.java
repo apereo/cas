@@ -15,6 +15,7 @@ import org.springframework.web.servlet.View;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -33,6 +34,7 @@ public class SmartOpenIdController extends AbstractDelegateController implements
     private static final long serialVersionUID = -594058549445950430L;
 
     private final transient ServerManager serverManager;
+
     private final transient View successView;
 
     /**
@@ -63,12 +65,6 @@ public class SmartOpenIdController extends AbstractDelegateController implements
     }
 
     @Override
-    protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) {
-        val parameters = new HashMap<String, String>(getAssociationResponse(request));
-        return new ModelAndView(this.successView, parameters);
-    }
-
-    @Override
     public boolean canHandle(final HttpServletRequest request, final HttpServletResponse response) {
         val openIdMode = request.getParameter(OpenIdProtocolConstants.OPENID_MODE);
         if (StringUtils.equals(openIdMode, OpenIdProtocolConstants.ASSOCIATE)) {
@@ -77,5 +73,11 @@ public class SmartOpenIdController extends AbstractDelegateController implements
         }
         LOGGER.info("Cannot handle request. openid.mode : [{}]", openIdMode);
         return false;
+    }
+
+    @Override
+    protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) {
+        val parameters = new HashMap<String, String>(getAssociationResponse(request));
+        return new ModelAndView(this.successView, parameters);
     }
 }

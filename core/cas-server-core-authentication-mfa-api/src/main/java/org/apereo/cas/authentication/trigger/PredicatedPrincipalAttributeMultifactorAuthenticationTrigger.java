@@ -19,6 +19,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.core.Ordered;
 
 import javax.servlet.http.HttpServletRequest;
+
 import java.util.Comparator;
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -37,6 +38,7 @@ public class PredicatedPrincipalAttributeMultifactorAuthenticationTrigger implem
     private static final Class[] PREDICATE_CTOR_PARAMETERS = {Object.class, Object.class, Object.class, Object.class};
 
     private final CasConfigurationProperties casProperties;
+
     private final ApplicationContext applicationContext;
 
     private int order = Ordered.LOWEST_PRECEDENCE;

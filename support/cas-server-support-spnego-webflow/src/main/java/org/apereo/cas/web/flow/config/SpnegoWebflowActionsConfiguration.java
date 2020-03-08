@@ -102,7 +102,7 @@ public class SpnegoWebflowActionsConfiguration {
         val searchRequest = LdapUtils.newLdaptiveSearchRequest(spnegoProperties.getLdap().getBaseDn(), filter);
         val searchOperation = new SearchOperation(connectionFactory, searchRequest);
         searchOperation.setTemplate(filter);
-        
+
         return new LdapSpnegoKnownClientSystemsFilterAction(RegexUtils.createPattern(spnegoProperties.getIpsToCheckPattern()),
             spnegoProperties.getAlternativeRemoteHostAttribute(),
             Beans.newDuration(spnegoProperties.getDnsTimeout()).toMillis(),
