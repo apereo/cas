@@ -169,6 +169,7 @@ public class CasRestConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "restAuditTrailRecordResolutionPlanConfigurer")
     public AuditTrailRecordResolutionPlanConfigurer restAuditTrailRecordResolutionPlanConfigurer() {
         return plan -> {
             plan.registerAuditActionResolver("REST_API_TICKET_GRANTING_TICKET_ACTION_RESOLVER",
