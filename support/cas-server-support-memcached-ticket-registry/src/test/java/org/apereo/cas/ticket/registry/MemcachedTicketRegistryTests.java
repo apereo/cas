@@ -12,7 +12,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.code.OAuth20Code;
 import org.apereo.cas.ticket.code.OAuth20DefaultOAuthCodeFactory;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
+import org.apereo.cas.util.junit.EnabledIfPortOpen;
 import org.apereo.cas.util.serialization.ComponentSerializationPlan;
 import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurer;
 
@@ -49,7 +49,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.ticket.registry.memcached.hashAlgorithm=FNV1A_64_HASH",
         "cas.ticket.registry.memcached.kryoRegistrationRequired=true"
     })
-@EnabledIfContinuousIntegration
+@EnabledIfPortOpen(port = 11211)
 @Tag("Memcached")
 public class MemcachedTicketRegistryTests extends BaseTicketRegistryTests {
     @Autowired

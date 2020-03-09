@@ -1,6 +1,5 @@
 package org.apereo.cas.pm.jdbc;
 
-import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -21,7 +20,6 @@ import org.springframework.test.context.TestPropertySource;
     "cas.authn.pm.jdbc.url=jdbc:mysql://localhost:3306/mysql?allowPublicKeyRetrieval=true&characterEncoding=UTF-8&useSSL=FALSE",
     "cas.authn.pm.jdbc.dialect=org.hibernate.dialect.MySQL57InnoDBDialect"
 })
-@EnabledIfContinuousIntegration
 @EnabledIfPortOpen(port = 3306)
 @Tag("MySQL")
 public class MySQLJdbcPasswordHistoryServiceTests extends JdbcPasswordHistoryServiceTests {

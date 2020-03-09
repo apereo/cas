@@ -6,7 +6,6 @@ import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.LdapPasswordManagementConfiguration;
 import org.apereo.cas.pm.config.PasswordManagementConfiguration;
-import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import com.unboundid.ldap.sdk.LDAPConnection;
@@ -54,7 +53,6 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.pm.ldap[0].securityQuestionsAttributes.postalCode=teletexTerminalIdentifier"
 })
 @DirtiesContext
-@EnabledIfContinuousIntegration
 @EnabledIfPortOpen(port = 10389)
 public class LdapPasswordManagementServiceTests {
     private static final int LDAP_PORT = 10389;

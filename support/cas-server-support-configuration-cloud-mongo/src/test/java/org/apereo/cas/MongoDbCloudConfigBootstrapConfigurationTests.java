@@ -3,7 +3,7 @@ package org.apereo.cas;
 import org.apereo.cas.config.MongoDbCloudConfigBootstrapConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
-import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
+import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.val;
 import org.junit.jupiter.api.BeforeAll;
@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.0.0
  */
 @Tag("MongoDb")
-@EnabledIfContinuousIntegration
+@EnabledIfPortOpen(port = 27017)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,

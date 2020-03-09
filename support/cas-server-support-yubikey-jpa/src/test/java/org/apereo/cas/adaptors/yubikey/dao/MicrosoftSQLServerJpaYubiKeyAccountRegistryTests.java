@@ -1,6 +1,5 @@
 package org.apereo.cas.adaptors.yubikey.dao;
 
-import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import org.junit.jupiter.api.Tag;
@@ -13,7 +12,6 @@ import org.springframework.test.context.TestPropertySource;
  * @since 6.2.0
  */
 @EnabledIfPortOpen(port = 1433)
-@EnabledIfContinuousIntegration
 @Tag("MsSqlServer")
 @TestPropertySource(properties = {
     "cas.jdbc.showSql=true",

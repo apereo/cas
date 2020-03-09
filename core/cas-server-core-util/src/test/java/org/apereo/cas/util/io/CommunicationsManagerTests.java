@@ -4,7 +4,6 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.configuration.model.support.email.EmailProperties;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.val;
@@ -42,7 +41,6 @@ import static org.mockito.Mockito.*;
         "spring.mail.port=25000"
     })
 @Tag("Mail")
-@EnabledIfContinuousIntegration
 @EnabledIfPortOpen(port = 25000)
 public class CommunicationsManagerTests {
     @Autowired

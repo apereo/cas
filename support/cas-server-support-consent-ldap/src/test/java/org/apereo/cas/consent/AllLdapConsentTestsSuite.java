@@ -10,10 +10,7 @@ import org.junit.runner.RunWith;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@SelectClasses({
-    LdapContinuousIntegrationConsentRepositoryTests.class,
-    LdapEmbeddedConsentRepositoryTests.class
-})
+@SelectClasses(LdapContinuousIntegrationConsentRepositoryTests.class)
 @RunWith(JUnitPlatform.class)
 public class AllLdapConsentTestsSuite {
 }

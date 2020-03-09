@@ -1,6 +1,5 @@
 package org.apereo.cas.ticket.registry;
 
-import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import org.junit.jupiter.api.Tag;
@@ -20,7 +19,6 @@ import org.springframework.test.context.TestPropertySource;
     "cas.ticket.registry.jpa.dialect=org.hibernate.dialect.Oracle12cDialect"
 })
 @EnabledIfPortOpen(port = 1521)
-@EnabledIfContinuousIntegration
 @Tag("Oracle")
 public class OracleJpaTicketRegistryTests extends JpaTicketRegistryTests {
 }

@@ -4,7 +4,6 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 import org.apereo.cas.util.serialization.SerializationUtils;
 
@@ -44,7 +43,6 @@ import static org.junit.jupiter.api.Assertions.*;
     "database.dialect=org.hibernate.dialect.PostgreSQL95Dialect"
 })
 @EnabledIfPortOpen(port = 5432)
-@EnabledIfContinuousIntegration
 @Tag("Postgres")
 public class QueryDatabaseAuthenticationHandlerPostgresTests extends BaseDatabaseAuthenticationHandlerTests {
     private static final String SQL = "SELECT * FROM caspgusers where username=?";

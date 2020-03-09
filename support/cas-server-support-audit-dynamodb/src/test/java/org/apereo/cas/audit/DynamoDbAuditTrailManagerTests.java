@@ -6,7 +6,6 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasSupportDynamoDbAuditConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
-import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.Getter;
@@ -40,7 +39,6 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 )
 @Tag("DynamoDb")
 @Getter
-@EnabledIfContinuousIntegration
 @EnabledIfPortOpen(port = 8000)
 public class DynamoDbAuditTrailManagerTests extends BaseAuditConfigurationTests {
 

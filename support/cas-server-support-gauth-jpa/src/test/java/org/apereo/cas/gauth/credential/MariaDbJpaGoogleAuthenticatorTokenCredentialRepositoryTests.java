@@ -1,6 +1,5 @@
 package org.apereo.cas.gauth.credential;
 
-import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import org.junit.jupiter.api.Tag;
@@ -20,7 +19,6 @@ import org.springframework.test.context.TestPropertySource;
     "cas.authn.mfa.gauth.jpa.dialect=org.hibernate.dialect.MariaDB103Dialect"
 })
 @EnabledIfPortOpen(port = 3306)
-@EnabledIfContinuousIntegration
 @Tag("MariaDb")
 public class MariaDbJpaGoogleAuthenticatorTokenCredentialRepositoryTests extends JpaGoogleAuthenticatorTokenCredentialRepositoryTests {
 }
