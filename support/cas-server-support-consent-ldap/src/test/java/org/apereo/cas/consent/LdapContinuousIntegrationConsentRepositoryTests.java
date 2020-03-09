@@ -2,7 +2,7 @@ package org.apereo.cas.consent;
 
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
+import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import com.unboundid.ldap.sdk.LDAPConnection;
 import lombok.Cleanup;
@@ -28,7 +28,7 @@ import org.springframework.test.context.TestPropertySource;
     "cas.consent.ldap.bindDn=cn=Directory Manager",
     "cas.consent.ldap.bindCredential=password"
 })
-@EnabledIfContinuousIntegration
+@EnabledIfPortOpen(port = 10389)
 @Slf4j
 public class LdapContinuousIntegrationConsentRepositoryTests extends BaseLdapConsentRepositoryTests {
     private static final int LDAP_PORT = 10389;

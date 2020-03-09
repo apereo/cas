@@ -5,7 +5,7 @@ import org.apereo.cas.config.CasCouchDbThrottlingConfiguration;
 import org.apereo.cas.config.CasSupportCouchDbAuditConfiguration;
 import org.apereo.cas.couchdb.audit.AuditActionContextCouchDbRepository;
 import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
-import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
+import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.Getter;
 import org.junit.jupiter.api.AfterEach;
@@ -35,7 +35,7 @@ import org.springframework.boot.test.context.SpringBootTest;
         "cas.audit.couchdb.password=password"
     })
 @Getter
-@EnabledIfContinuousIntegration
+@EnabledIfPortOpen(port = 5984)
 public class CouchDbThrottledSubmissionHandlerInterceptorAdapterTests extends
     BaseThrottledSubmissionHandlerInterceptorAdapterTests {
 

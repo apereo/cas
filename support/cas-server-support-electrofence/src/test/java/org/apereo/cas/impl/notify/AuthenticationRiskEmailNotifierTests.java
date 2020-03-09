@@ -4,7 +4,6 @@ import org.apereo.cas.api.AuthenticationRiskScore;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.impl.calcs.BaseAuthenticationRequestRiskCalculatorTests;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.val;
@@ -24,7 +23,6 @@ import java.util.List;
  * @since 5.3.0
  */
 @EnabledIfPortOpen(port = 25000)
-@EnabledIfContinuousIntegration
 @TestPropertySource(properties = {
     "spring.mail.host=localhost",
     "spring.mail.port=25000",

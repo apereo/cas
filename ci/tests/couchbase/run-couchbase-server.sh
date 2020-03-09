@@ -3,7 +3,7 @@
 # while sleep 9m; do echo -e '\n=====[ Gradle build is still running ]====='; done &
 
 echo "Running Couchbase docker image..."
-docker run -d --name couchbase -p 8091-8094:8091-8094 -p 11210:11210 couchbase/server:5.1.3
+docker run -d --name couchbase -p 8091-8094:8091-8094 -p 11210:11210 couchbase/server:6.5.0
 
 docker ps | grep "couchbase"
 retVal=$?
@@ -45,21 +45,20 @@ curl http://localhost:8091/node/controller/setupServices -d 'services=kv%2Cn1ql%
 echo -e "\n*************************************************************"
 echo -e "Setup Administrator username and password..."
 echo -e "*************************************************************"
-curl http://localhost:8091/settings/web -d password=password -d username=admin -d port=8091
+curl http://localhost:8091/settings/web -d password=password -d username=admin -d port=8091 -d roles=full_admin
 
 echo -e "\n*************************************************************"
 echo -e "Creating Couchbase buckets..."
 echo -e "*************************************************************"
 
-curl -u 'admin:password'  -d 'name=testbucket' -d 'bucketType=couchbase' -d 'ramQuotaMB=120' -d 'authType=sasl' -d \
-'saslPassword=password' -d 'proxyPort=11216' http://localhost:8091/pools/default/buckets
+curl -u 'admin:password' -d 'name=testbucket' -d 'bucketType=couchbase' -d 'ramQuotaMB=220' -d 'authType=sasl' -d \
+'saslPassword=password' http://localhost:8091/pools/default/buckets
 
-curl -u 'admin:password' -X PUT --data "roles=bucket_admin[testbucket]&password=password" \
+curl -u 'admin:password' -X PUT --data "roles=bucket_full_access[testbucket]&password=password" \
              -H "Content-Type: application/x-www-form-urlencoded" \
              http://localhost:8091/settings/rbac/users/local/testbucket
 
-curl -u 'admin:password' -d name=casbucket -d bucketType=couchbase -d 'ramQuotaMB=120' -d authType='none' -d \
-'proxyPort=11217' http://localhost:8091/pools/default/buckets
+curl -u 'admin:password' -d name=casbucket -d bucketType=couchbase -d 'ramQuotaMB=120' -d authType='none' http://localhost:8091/pools/default/buckets
 
 echo -e "\n*************************************************************"
 echo -e "Loading Couchbase buckets..."

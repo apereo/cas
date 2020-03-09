@@ -5,7 +5,6 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.MongoDbServiceRegistryConfiguration;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.val;
@@ -40,7 +39,6 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.serviceRegistry.mongo.dropCollection=true"
     })
 @Tag("MongoDb")
-@EnabledIfContinuousIntegration
 @EnabledIfPortOpen(port = 27017)
 public class MongoDbServiceRegistryCloudTests extends AbstractServiceRegistryTests {
 

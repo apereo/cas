@@ -7,7 +7,6 @@ import org.apereo.cas.support.events.service.CasRegisteredServiceExpiredEvent;
 import org.apereo.cas.util.MockSmsSender;
 import org.apereo.cas.util.io.CommunicationsManager;
 import org.apereo.cas.util.io.SmsSender;
-import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.val;
@@ -47,7 +46,6 @@ import org.springframework.context.annotation.Bean;
     "cas.serviceRegistry.mail.text=Service %s has expired in CAS service registry"
 })
 @Tag("Mail")
-@EnabledIfContinuousIntegration
 @EnabledIfPortOpen(port = 25000)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class RegisteredServicesEventListenerTests {

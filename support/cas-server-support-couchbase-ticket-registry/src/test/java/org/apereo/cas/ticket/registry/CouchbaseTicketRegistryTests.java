@@ -1,7 +1,7 @@
 package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.config.CouchbaseTicketRegistryConfiguration;
-import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
+import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
  * @since 5.3.0
  */
 @Tag("Couchbase")
-@EnabledIfContinuousIntegration
+@EnabledIfPortOpen(port = 8091)
 @SpringBootTest(classes = {
     CouchbaseTicketRegistryConfiguration.class,
     BaseTicketRegistryTests.SharedTestConfiguration.class

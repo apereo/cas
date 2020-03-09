@@ -1,7 +1,7 @@
 package org.apereo.cas.shell.commands.util;
 
 import org.apereo.cas.shell.commands.BaseCasShellCommandTests;
-import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
+import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnableScheduling
 @DirtiesContext
 @Tag("Ldap")
-@EnabledIfContinuousIntegration
+@EnabledIfPortOpen(port = 10389)
 public class ValidateLdapConnectionCommandTests extends BaseCasShellCommandTests {
     @Test
     public void verifyOperation() {
