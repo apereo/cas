@@ -305,7 +305,7 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
     @Bean
     @RefreshScope
     public MultifactorAuthenticationTrigger globalMultifactorAuthenticationTrigger() {
-        return new GlobalMultifactorAuthenticationTrigger(casProperties, applicationContext);
+        return new GlobalMultifactorAuthenticationTrigger(casProperties, applicationContext, multifactorAuthenticationProviderSelector());
     }
 
     @ConditionalOnMissingBean(name = "globalAuthenticationPolicyWebflowEventResolver")

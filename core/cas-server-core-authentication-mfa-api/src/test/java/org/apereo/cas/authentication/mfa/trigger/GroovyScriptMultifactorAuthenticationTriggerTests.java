@@ -28,4 +28,35 @@ public class GroovyScriptMultifactorAuthenticationTriggerTests extends BaseMulti
         val result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
         assertTrue(result.isPresent());
     }
+
+    @Test
+    public void verifyScriptDoesNotExist() {
+        val props = new CasConfigurationProperties();
+        var trigger = new GroovyScriptMultifactorAuthenticationTrigger(props, applicationContext);
+        var result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
+        assertFalse(result.isPresent());
+        
+        props.getAuthn().getMfa().setGroovyScript(new ClassPathResource("DoesNotExist.groovy"));
+        trigger = new GroovyScriptMultifactorAuthenticationTrigger(props, applicationContext);
+        result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
+        assertFalse(result.isPresent());
+    }
+
+    @Test
+    public void verifyBadInputParameters() {
+        val props = new CasConfigurationProperties();
+        props.getAuthn().getMfa().setGroovyScript(new ClassPathResource("GroovyMfaTrigger.groovy"));
+
+        var trigger = new GroovyScriptMultifactorAuthenticationTrigger(props, applicationContext);
+        var result = trigger.isActivated(null, registeredService, this.httpRequest, mock(Service.class));
+        assertFalse(result.isPresent());
+
+        result = trigger.isActivated(authentication, null, this.httpRequest, mock(Service.class));
+        assertFalse(result.isPresent());
+
+        result = trigger.isActivated(authentication, registeredService, this.httpRequest, null);
+        assertFalse(result.isPresent());
+
+        trigger.destroy();
+    }
 }

@@ -19,6 +19,7 @@ import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
+import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
@@ -139,7 +140,8 @@ public class RadiusMultifactorConfiguration {
             loginFlowDefinitionRegistry.getObject(),
             radiusFlowRegistry(),
             applicationContext,
-            casProperties);
+            casProperties,
+            MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
     }
 
     @Bean
@@ -163,7 +165,8 @@ public class RadiusMultifactorConfiguration {
             val deviceRegistrationEnabled = casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled();
             return new RadiusMultifactorTrustWebflowConfigurer(flowBuilderServices.getObject(),
                 loginFlowDefinitionRegistry.getObject(), deviceRegistrationEnabled,
-                radiusFlowRegistry(), applicationContext, casProperties);
+                radiusFlowRegistry(), applicationContext, casProperties,
+                MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
         }
 
         @Bean

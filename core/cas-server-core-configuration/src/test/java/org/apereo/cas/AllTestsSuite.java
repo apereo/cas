@@ -2,6 +2,7 @@
 package org.apereo.cas;
 
 import org.apereo.cas.configuration.CasConfigurationPropertiesValidatorTests;
+import org.apereo.cas.configuration.CasConfigurationWatchServiceTests;
 import org.apereo.cas.configuration.support.CasConfigurationJasyptCipherExecutorTests;
 import org.apereo.cas.configuration.support.DefaultCasConfigurationPropertiesSourceLocatorTests;
 
@@ -18,6 +19,7 @@ import org.junit.runner.RunWith;
 @SelectClasses({
     CasConfigurationJasyptCipherExecutorTests.class,
     CasConfigurationPropertiesValidatorTests.class,
+    CasConfigurationWatchServiceTests.class,
     DefaultCasConfigurationPropertiesSourceLocatorTests.class
 })
 @RunWith(JUnitPlatform.class)
