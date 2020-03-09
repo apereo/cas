@@ -4,7 +4,6 @@ import org.apereo.cas.JmsQueueIdentifier;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
-import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.val;
@@ -19,7 +18,6 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@EnabledIfContinuousIntegration
 @EnabledIfPortOpen(port = 61616)
 @Tag("ActiveMQ")
 public class AddTicketMessageQueueCommandTests extends AbstractTicketMessageQueueCommandTests {

@@ -1,7 +1,7 @@
 package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
-import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
+import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import org.jooq.lambda.Unchecked;
 import org.jooq.lambda.UncheckedException;
@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.ldap[0].bindCredential=password",
     "cas.authn.ldap[0].principalAttributeList=description,cn"
     })
-@EnabledIfContinuousIntegration
+@EnabledIfPortOpen(port = 10389)
 public class AuthenticatedLdapAuthenticationHandlerTests extends BaseLdapAuthenticationHandlerTests {
     @Test
     public void verifyAuthenticateNotFound() {

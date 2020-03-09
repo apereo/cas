@@ -9,7 +9,6 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockSmsSender;
 import org.apereo.cas.util.io.SmsSender;
-import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
@@ -55,7 +54,6 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.mfa.simple.sms.from=347746512"
     })
 @EnabledIfPortOpen(port = 25000)
-@EnabledIfContinuousIntegration
 @Tag("Mail")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasSimpleSendTokenActionTests {

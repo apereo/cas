@@ -90,6 +90,4 @@ public class Assertions {
         }
         return (T) assertThrows(expected.getClass(), executable, messageSupplier);
     }
-
-
 }

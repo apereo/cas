@@ -1,7 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.config.JmsTicketRegistryConfiguration;
-import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import org.junit.jupiter.api.Tag;
@@ -26,7 +25,6 @@ import org.springframework.jms.annotation.EnableJms;
 },
     properties = {"spring.activemq.pool.enabled=false", "spring.activemq.packages.trust-all=true"})
 @EnableJms
-@EnabledIfContinuousIntegration
 @EnabledIfPortOpen(port = 61616)
 @Tag("ActiveMQ")
 public class JmsTicketRegistryTests extends BaseTicketRegistryTests {

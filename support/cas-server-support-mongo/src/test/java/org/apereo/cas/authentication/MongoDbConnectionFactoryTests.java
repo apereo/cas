@@ -2,7 +2,7 @@ package org.apereo.cas.authentication;
 
 import org.apereo.cas.configuration.model.support.mongo.SingleCollectionMongoDbProperties;
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
-import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
+import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@EnabledIfContinuousIntegration
+@EnabledIfPortOpen(port = 27017)
 @Tag("MongoDb")
 public class MongoDbConnectionFactoryTests {
     private static final String URI = "mongodb://root:secret@localhost:27017/admin";

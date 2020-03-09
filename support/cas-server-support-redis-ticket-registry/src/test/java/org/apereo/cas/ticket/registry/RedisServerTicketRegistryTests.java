@@ -1,6 +1,5 @@
 package org.apereo.cas.ticket.registry;
 
-import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +17,6 @@ import org.springframework.test.context.TestPropertySource;
     "cas.ticket.registry.redis.port=6379",
     "cas.ticket.registry.redis.pool.max-active=20"
 })
-@EnabledIfContinuousIntegration
 @EnabledIfPortOpen(port = 6379)
 public class RedisServerTicketRegistryTests extends BaseRedisSentinelTicketRegistryTests {
 

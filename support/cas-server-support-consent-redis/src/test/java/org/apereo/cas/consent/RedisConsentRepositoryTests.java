@@ -1,7 +1,7 @@
 package org.apereo.cas.consent;
 
 import org.apereo.cas.config.CasConsentRedisConfiguration;
-import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
+import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.Getter;
 import org.junit.jupiter.api.Tag;
@@ -25,7 +25,7 @@ import org.springframework.boot.test.context.SpringBootTest;
     })
 @Tag("Redis")
 @Getter
-@EnabledIfContinuousIntegration
+@EnabledIfPortOpen(port = 6379)
 public class RedisConsentRepositoryTests extends BaseConsentRepositoryTests {
 
     @Autowired

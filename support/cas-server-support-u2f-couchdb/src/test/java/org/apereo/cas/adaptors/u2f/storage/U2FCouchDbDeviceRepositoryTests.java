@@ -5,7 +5,7 @@ import org.apereo.cas.config.U2FConfiguration;
 import org.apereo.cas.config.U2FCouchDbConfiguration;
 import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
 import org.apereo.cas.couchdb.u2f.U2FDeviceRegistrationCouchDbRepository;
-import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
+import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.Getter;
 import org.junit.jupiter.api.AfterEach;
@@ -36,7 +36,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
         "cas.authn.mfa.u2f.couchdb.password=password"
     })
 @Getter
-@EnabledIfContinuousIntegration
+@EnabledIfPortOpen(port = 5984)
 public class U2FCouchDbDeviceRepositoryTests extends AbstractU2FDeviceRepositoryTests {
     @Autowired
     @Qualifier("u2fCouchDbFactory")

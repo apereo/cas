@@ -2,7 +2,7 @@ package org.apereo.cas.aup;
 
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
 import org.apereo.cas.config.CasAcceptableUsagePolicyLdapConfiguration;
-import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
+import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import com.unboundid.ldap.sdk.LDAPConnection;
 import lombok.Cleanup;
@@ -29,7 +29,7 @@ import org.springframework.test.context.TestPropertySource;
  */
 @Tag("Ldap")
 @Import(CasAcceptableUsagePolicyLdapConfiguration.class)
-@EnabledIfContinuousIntegration
+@EnabledIfPortOpen(port = 10389)
 @TestPropertySource(properties = {
     "cas.acceptableUsagePolicy.ldap[0].ldapUrl=ldap://localhost:10389",
     "cas.acceptableUsagePolicy.ldap[0].baseDn=ou=people,dc=example,dc=org",

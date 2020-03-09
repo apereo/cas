@@ -2,7 +2,7 @@ package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
+import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
     })
 @Tag("Ldap")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@EnabledIfContinuousIntegration
+@EnabledIfPortOpen(port = 10389)
 public class LdapPasswordSynchronizationAuthenticationPostProcessorTests {
     @Autowired
     private CasConfigurationProperties casProperties;

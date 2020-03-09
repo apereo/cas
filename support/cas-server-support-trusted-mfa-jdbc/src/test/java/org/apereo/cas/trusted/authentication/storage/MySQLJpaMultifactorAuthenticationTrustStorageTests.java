@@ -1,6 +1,5 @@
 package org.apereo.cas.trusted.authentication.storage;
 
-import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import org.junit.jupiter.api.Tag;
@@ -20,7 +19,6 @@ import org.springframework.test.context.TestPropertySource;
     "cas.authn.mfa.trusted.jpa.url=jdbc:mysql://localhost:3306/mysql?allowPublicKeyRetrieval=true&characterEncoding=UTF-8&useSSL=FALSE",
     "cas.authn.mfa.trusted.jpa.dialect=org.hibernate.dialect.MySQL57InnoDBDialect"
 })
-@EnabledIfContinuousIntegration
 @EnabledIfPortOpen(port = 3306)
 @Tag("MySQL")
 public class MySQLJpaMultifactorAuthenticationTrustStorageTests extends JpaMultifactorAuthenticationTrustStorageTests {

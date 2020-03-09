@@ -7,7 +7,6 @@ import org.apereo.cas.authentication.principal.resolvers.ChainingPrincipalResolv
 import org.apereo.cas.authentication.principal.resolvers.EchoingPrincipalResolver;
 import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
-import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.val;
@@ -47,7 +46,6 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @DirtiesContext
 @Tag("Ldap")
-@EnabledIfContinuousIntegration
 @EnabledIfPortOpen(port = 10389)
 public class PersonDirectoryPrincipalResolverLdaptiveTests {
     @Autowired

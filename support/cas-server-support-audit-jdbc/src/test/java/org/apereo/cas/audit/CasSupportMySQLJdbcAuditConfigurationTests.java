@@ -1,6 +1,5 @@
 package org.apereo.cas.audit;
 
-import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import org.junit.jupiter.api.Tag;
@@ -20,7 +19,6 @@ import org.springframework.test.context.TestPropertySource;
     "cas.audit.jdbc.dialect=org.hibernate.dialect.MySQL57InnoDBDialect"
 })
 @EnabledIfPortOpen(port = 3306)
-@EnabledIfContinuousIntegration
 @Tag("MySQL")
 public class CasSupportMySQLJdbcAuditConfigurationTests extends CasSupportJdbcAuditConfigurationTests {
 }

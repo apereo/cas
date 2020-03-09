@@ -1,7 +1,7 @@
 package org.apereo.cas.aup;
 
 import org.apereo.cas.config.CasAcceptableUsagePolicyMongoDbConfiguration;
-import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
+import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.Getter;
 import org.junit.jupiter.api.Tag;
@@ -18,7 +18,7 @@ import org.springframework.test.context.TestPropertySource;
  */
 @Tag("MongoDb")
 @Import(CasAcceptableUsagePolicyMongoDbConfiguration.class)
-@EnabledIfContinuousIntegration
+@EnabledIfPortOpen(port = 27017)
 @TestPropertySource(properties = {
     "cas.acceptableUsagePolicy.mongo.host=localhost",
     "cas.acceptableUsagePolicy.mongo.port=27017",

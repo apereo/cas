@@ -19,8 +19,8 @@ import static java.lang.annotation.RetentionPolicy.*;
 @ExtendWith(EnabledIfPortOpenCondition.class)
 public @interface EnabledIfPortOpen {
     /**
-     * Port to check for listener.
+     * Ports to check for listener.
      * @return TCP port to check
      */
-    int port();
+    int[] port();
 }

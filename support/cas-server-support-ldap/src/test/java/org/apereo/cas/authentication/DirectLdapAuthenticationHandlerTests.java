@@ -1,6 +1,6 @@
 package org.apereo.cas.authentication;
 
-import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
+import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import org.springframework.test.context.TestPropertySource;
 
@@ -18,6 +18,6 @@ import org.springframework.test.context.TestPropertySource;
     "cas.authn.ldap[0].principalAttributeList=description,cn",
     "cas.authn.ldap[0].enhanceWithEntryResolver=false"
     })
-@EnabledIfContinuousIntegration
+@EnabledIfPortOpen(port = 10389)
 public class DirectLdapAuthenticationHandlerTests extends BaseLdapAuthenticationHandlerTests {
 }

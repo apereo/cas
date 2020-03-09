@@ -19,7 +19,7 @@ import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.CouchbaseAuthenticationConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
-import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
+import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("Couchbase")
-@EnabledIfContinuousIntegration
+@EnabledIfPortOpen(port = 8091)
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     CouchbaseAuthenticationConfiguration.class,
