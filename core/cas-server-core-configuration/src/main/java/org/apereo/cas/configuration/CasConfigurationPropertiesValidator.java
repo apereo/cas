@@ -58,13 +58,6 @@ public class CasConfigurationPropertiesValidator {
 
     private void validateCasConfiguration(final List<String> validationResults) {
         try {
-            /*
-            val reflections = new Reflections(new ConfigurationBuilder()
-                .setUrls(ClasspathHelper.forJavaClassPath())
-                .setScanners(new SubTypesScanner(), new TypeAnnotationsScanner()));
-            val results = reflections.getTypesAnnotatedWith(ConfigurationProperties.class);
-            results.forEach(result -> validateConfiguration(result, validationResults));
-             */
             validateConfiguration(CasConfigurationProperties.class, validationResults);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
