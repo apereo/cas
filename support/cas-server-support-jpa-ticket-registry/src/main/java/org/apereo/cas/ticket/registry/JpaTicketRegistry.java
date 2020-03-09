@@ -191,6 +191,18 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
         return countToLong(query.getSingleResult());
     }
 
+    /**
+     * Delete a ticket by its identifier.
+     * Simple call to the super method to force a transaction to be started in case of a direct call.
+     *
+     * @param ticketId the ticket identifier
+     * @return the number of tickets deleted including children.
+     */
+    @Override
+    public int deleteTicket(final String ticketId) {
+        return super.deleteTicket(ticketId);
+    }
+
     @Override
     public boolean deleteSingleTicket(final String ticketIdToDelete) {
         val encTicketId = encodeTicketId(ticketIdToDelete);
