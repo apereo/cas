@@ -3,7 +3,7 @@ package org.apereo.cas.support.events.mongo;
 import org.apereo.cas.config.MongoDbEventsConfiguration;
 import org.apereo.cas.support.events.AbstractCasEventRepositoryTests;
 import org.apereo.cas.support.events.CasEventRepository;
-import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
+import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.Getter;
 import org.junit.jupiter.api.Tag;
@@ -30,7 +30,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
         "cas.events.mongo.dropCollection=true"
     })
 @Getter
-@EnabledIfContinuousIntegration
+@EnabledIfPortOpen(port = 27017)
 public class MongoDbCasEventRepositoryTests extends AbstractCasEventRepositoryTests {
 
     @Autowired

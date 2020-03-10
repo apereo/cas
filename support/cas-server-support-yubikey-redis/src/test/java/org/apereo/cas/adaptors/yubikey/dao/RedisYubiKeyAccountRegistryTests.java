@@ -25,7 +25,7 @@ import org.apereo.cas.config.support.authentication.YubiKeyAuthenticationMultifa
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.services.web.config.CasThemesConfiguration;
-import org.apereo.cas.util.junit.DisabledIfContinuousIntegration;
+import org.apereo.cas.util.junit.EnabledIfPortOpen;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
@@ -91,12 +91,11 @@ import static org.junit.jupiter.api.Assertions.*;
 },
     properties = {
         "cas.authn.mfa.yubikey.redis.host=localhost",
-        "cas.authn.mfa.yubikey.redis.port=6111",
-        "cas.authn.mfa.yubikey.redis.pool.max-active=20",
+        "cas.authn.mfa.yubikey.redis.port=6379",
         "cas.authn.mfa.yubikey.clientId=18423",
         "cas.authn.mfa.yubikey.secretKey=zAIqhjui12mK8x82oe9qzBEb0As="
     })
-@DisabledIfContinuousIntegration
+@EnabledIfPortOpen(port = 6379)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class RedisYubiKeyAccountRegistryTests {
     private static final String OTP = "cccccccvlidcnlednilgctgcvcjtivrjidfbdgrefcvi";

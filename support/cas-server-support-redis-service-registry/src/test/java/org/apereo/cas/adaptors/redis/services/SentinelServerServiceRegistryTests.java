@@ -1,6 +1,6 @@
 package org.apereo.cas.adaptors.redis.services;
 
-import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
+import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import org.springframework.test.context.TestPropertySource;
 
@@ -19,6 +19,6 @@ import org.springframework.test.context.TestPropertySource;
     "cas.ticket.registry.redis.sentinel.node[1]=localhost:26380",
     "cas.ticket.registry.redis.sentinel.node[2]=localhost:26381"
 })
-@EnabledIfContinuousIntegration
+@EnabledIfPortOpen(port = 6379)
 public class SentinelServerServiceRegistryTests extends BaseRedisSentinelServiceRegistryTests {
 }

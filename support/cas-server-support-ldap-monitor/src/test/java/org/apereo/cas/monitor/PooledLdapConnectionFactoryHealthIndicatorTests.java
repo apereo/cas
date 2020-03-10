@@ -2,7 +2,7 @@ package org.apereo.cas.monitor;
 
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.monitor.config.LdapMonitorConfiguration;
-import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
+import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.monitor.ldap[0].name=LDAP"
     })
 @Tag("Ldap")
-@EnabledIfContinuousIntegration
+@EnabledIfPortOpen(port = 10389)
 public class PooledLdapConnectionFactoryHealthIndicatorTests {
     @Autowired
     @Qualifier("pooledLdapConnectionFactoryHealthIndicator")

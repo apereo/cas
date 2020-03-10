@@ -78,7 +78,7 @@ public class AccepttoQRCodeValidateWebSocketChannelAction extends AbstractAction
                     val success = BooleanUtils.toBoolean(results.get("success").toString());
                     if (success) {
                         val email = results.get("user_email").toString();
-                        LOGGER.debug("Storing channel [{}] in http session", channel);
+                        LOGGER.trace("Storing channel [{}] in http session", channel);
                         AccepttoWebflowUtils.storeChannelInSessionStore(channel, webContext);
                         WebUtils.putCredential(requestContext, new AccepttoEmailCredential(email));
                         return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_FINALIZE);

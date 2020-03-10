@@ -11,8 +11,6 @@ import org.junit.runner.RunWith;
  * @since 6.0.0
  */
 @SelectClasses({
-    RedisEmbeddedServiceRegistryTests.class,
-    SentinelEmbeddedServiceRegistryTests.class,
     RedisServerServiceRegistryTests.class,
     SentinelServerServiceRegistryTests.class
 })

@@ -4,7 +4,7 @@ import org.apereo.cas.config.CasConsentCouchDbConfiguration;
 import org.apereo.cas.config.CasCouchDbCoreConfiguration;
 import org.apereo.cas.couchdb.consent.ConsentDecisionCouchDbRepository;
 import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
-import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
+import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.Getter;
 import org.junit.jupiter.api.AfterEach;
@@ -31,7 +31,7 @@ import org.springframework.boot.test.context.SpringBootTest;
     })
 @Tag("CouchDb")
 @Getter
-@EnabledIfContinuousIntegration
+@EnabledIfPortOpen(port = 5984)
 public class CouchDbConsentRepositoryTests extends BaseConsentRepositoryTests {
 
     @Autowired

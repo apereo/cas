@@ -25,16 +25,28 @@ public class GlobalMultifactorAuthenticationTriggerTests extends BaseMultifactor
     public void verifyOperationByProvider() {
         val props = new CasConfigurationProperties();
         props.getAuthn().getMfa().setGlobalProviderId(TestMultifactorAuthenticationProvider.ID);
-        val trigger = new GlobalMultifactorAuthenticationTrigger(props, applicationContext);
+        val trigger = new GlobalMultifactorAuthenticationTrigger(props, applicationContext,
+            (providers, service, principal) -> providers.iterator().next());
         val result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
         assertTrue(result.isPresent());
+    }
+
+    @Test
+    public void verifyOperationByManyProviders() {
+        val props = new CasConfigurationProperties();
+        props.getAuthn().getMfa().setGlobalProviderId(TestMultifactorAuthenticationProvider.ID + ",mfa-invalid");
+        val trigger = new GlobalMultifactorAuthenticationTrigger(props, applicationContext,
+            (providers, service, principal) -> providers.iterator().next());
+        assertThrows(AuthenticationException.class,
+            () -> trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class)));
     }
 
     @Test
     public void verifyOperationByUnresolvedProvider() {
         val props = new CasConfigurationProperties();
         props.getAuthn().getMfa().setGlobalProviderId("does-not-exist");
-        val trigger = new GlobalMultifactorAuthenticationTrigger(props, applicationContext);
+        val trigger = new GlobalMultifactorAuthenticationTrigger(props, applicationContext,
+            (providers, service, principal) -> providers.iterator().next());
         assertThrows(AuthenticationException.class,
             () -> trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class)));
     }
@@ -42,7 +54,8 @@ public class GlobalMultifactorAuthenticationTriggerTests extends BaseMultifactor
     @Test
     public void verifyOperationByUndefinedProvider() {
         val props = new CasConfigurationProperties();
-        val trigger = new GlobalMultifactorAuthenticationTrigger(props, applicationContext);
+        val trigger = new GlobalMultifactorAuthenticationTrigger(props, applicationContext,
+            (providers, service, principal) -> providers.iterator().next());
         val result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
         assertFalse(result.isPresent());
     }

@@ -4,7 +4,6 @@ import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.DynamoDbServiceRegistryConfiguration;
-import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import org.junit.jupiter.api.Tag;
@@ -32,7 +31,6 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
         "cas.serviceRegistry.dynamoDb.region=us-east-1"
     })
 @Tag("DynamoDb")
-@EnabledIfContinuousIntegration
 @EnabledIfPortOpen(port = 8000)
 public class DynamoDbServiceRegistryTests extends AbstractServiceRegistryTests {
 

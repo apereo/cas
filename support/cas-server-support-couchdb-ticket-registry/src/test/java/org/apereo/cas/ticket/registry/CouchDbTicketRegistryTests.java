@@ -4,7 +4,7 @@ import org.apereo.cas.config.CasCouchDbCoreConfiguration;
 import org.apereo.cas.config.CouchDbTicketRegistryConfiguration;
 import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
 import org.apereo.cas.couchdb.tickets.TicketRepository;
-import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
+import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Tag;
@@ -28,7 +28,7 @@ import org.springframework.boot.test.context.SpringBootTest;
         "cas.ticket.registry.couchDb.password=password"
     })
 @Tag("CouchDb")
-@EnabledIfContinuousIntegration
+@EnabledIfPortOpen(port = 5984)
 public class CouchDbTicketRegistryTests extends BaseTicketRegistryTests {
 
     @Autowired
