@@ -87,6 +87,7 @@ public class CloudWatchAppender extends AbstractAppender implements Serializable
      * Create appender cloud watch appender.
      *
      * @param name                             the name
+     * @param endpoint                         the endpoint
      * @param awsLogStreamName                 the aws log stream name
      * @param awsLogGroupName                  the aws log group name
      * @param awsLogStreamFlushPeriodInSeconds the aws log stream flush period in seconds
