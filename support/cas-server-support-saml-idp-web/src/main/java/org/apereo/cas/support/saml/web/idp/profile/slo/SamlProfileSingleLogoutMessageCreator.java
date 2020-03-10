@@ -24,8 +24,6 @@ import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.saml.attribute.encoding.impl.SAML2StringNameIDEncoder;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.client.authentication.AttributePrincipal;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.saml.common.xml.SAMLConstants;
@@ -34,6 +32,9 @@ import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.soap.common.SOAPObjectBuilder;
 import org.opensaml.soap.soap11.Body;
 import org.opensaml.soap.soap11.Envelope;
+
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 
 /**
  * This is {@link SamlProfileSingleLogoutMessageCreator}.
@@ -94,7 +95,7 @@ public class SamlProfileSingleLogoutMessageCreator extends AbstractSaml20ObjectB
             ? samlService.getSkewAllowance()
             : samlIdPProperties.getResponse().getSkewAllowance();
 
-        val issueInstant = DateTime.now(DateTimeZone.UTC).plusSeconds(skewAllowance);
+        val issueInstant = ZonedDateTime.now(ZoneOffset.UTC).plusSeconds(skewAllowance);
 
         val encoder = new SAML2StringNameIDEncoder();
 
