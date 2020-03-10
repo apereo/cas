@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.model.core.web.security.HttpCorsRequestPrope
 import org.apereo.cas.configuration.model.core.web.security.HttpHeadersRequestProperties;
 import org.apereo.cas.configuration.model.core.web.security.HttpWebRequestProperties;
 import org.apereo.cas.security.AddResponseHeadersFilter;
+import org.apereo.cas.security.FilterUtils;
 import org.apereo.cas.security.RequestParameterPolicyEnforcementFilter;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.web.support.RegisteredServiceResponseHeadersEnforcementFilter;
@@ -151,6 +152,7 @@ public class CasFiltersConfiguration {
         initParams.put(RequestParameterPolicyEnforcementFilter.ONLY_POST_PARAMETERS,
             casProperties.getHttpWebRequest().getOnlyPostParams());
 
+        FilterUtils.setThrowOnErrors(true);
         final FilterRegistrationBean bean = new FilterRegistrationBean();
         bean.setFilter(new RequestParameterPolicyEnforcementFilter());
         bean.setUrlPatterns(CollectionUtils.wrap("/*"));
