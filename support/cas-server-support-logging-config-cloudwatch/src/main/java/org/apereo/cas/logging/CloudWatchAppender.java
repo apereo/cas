@@ -104,7 +104,6 @@ public class CloudWatchAppender extends AbstractAppender implements Serializable
      * @param createLogStreamIfNeeded          whether to create a Cloud Watch log stream if needed. Default value is
      *                                         `false`. A value of `true takes precedence over a value of `false` for
      *                                         `createIfNeeded`
-     * @return the cloud watch appender
      */
     public CloudWatchAppender(final String name,
                               final String endpoint,
@@ -153,7 +152,6 @@ public class CloudWatchAppender extends AbstractAppender implements Serializable
      *                                         `false`. A value of `true takes precedence over a value of `false` for
      *                                         `createIfNeeded`
      * @param awsLogs                          instance of AWSLogs to use
-     * @return the cloud watch appender
      */
     public CloudWatchAppender(final String name,
                               final String awsLogGroupName,
