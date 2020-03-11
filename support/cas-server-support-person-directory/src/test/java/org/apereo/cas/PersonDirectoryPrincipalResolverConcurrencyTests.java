@@ -35,7 +35,6 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  * @since 6.2
  */
-@Slf4j
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     CasPersonDirectoryConfiguration.class,
